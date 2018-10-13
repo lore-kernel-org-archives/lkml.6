@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5003C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 04:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40509C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 04:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69F082064E
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 04:55:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED38E20865
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 04:56:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RH4fu3ia"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F082064E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TN0C2NGh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED38E20865
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbeJMMbc (ORCPT
+        id S1726830AbeJMMay (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 08:31:32 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34266 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbeJMMbE (ORCPT
+        Sat, 13 Oct 2018 08:30:54 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44980 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbeJMMax (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 08:31:04 -0400
-Received: by mail-pg1-f196.google.com with SMTP id g12-v6so6752973pgs.1;
-        Fri, 12 Oct 2018 21:55:23 -0700 (PDT)
+        Sat, 13 Oct 2018 08:30:53 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r9-v6so7148478pff.11;
+        Fri, 12 Oct 2018 21:55:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Jn/ZX3hb0+yTSU6k3OosQBetoXzlV4oZREJuCtMHGxI=;
-        b=RH4fu3iasPalfHrG537wWspyJP+KLdb8/OuQOHtQmIf3nCZKiTqjes9z68nKRxflQW
-         6GHVGwKKa413z5m7fP8/SKkEu5BemSpOA6mKKdLygrot7O4mEQ9pK1xMZk4Mlgjc3cuH
-         744gyQJU7XtV7X1eWDu8MfyVSQtCfMSJsadfuaxS7eVBxnwQBXjA9nCQohAQ5g35VECX
-         sluFaR779u8G+YimKhPRhTdAuW9LFSDB7z9HjpBOgmsVIS/iAnzVG6yaFfEXSbicsR2d
-         oVlOem0r5jfIicJ8jvd7mMX36Sb4YB1BL9lAFzNnuxyopJ+5dm1f2QaEB95Jsy6fh6gu
-         BtTQ==
+        bh=Y8f+zX4OUAoqVg/3NA0TrDwr4Zjok9K4JF3715XNZDg=;
+        b=TN0C2NGhYjK88hDnYMJu04tPsvFFVQF89aayf5OmNyzWECQvEkD9ulD0urAGCZP40I
+         5fptg6J9R/ZumR/RQz/ABDlVWOXynH/hsJuzy4xE4l4aggHZYuslxbeEzDK7Ncw1bx0o
+         d+6OuWgSdHZYvNw4OAgPK8BbD5AkaRyJvyTcY1H1LToN61kZXEfrnNqpLwq6BXuWUDfh
+         T8mHJ2+ti0xk2gTVmR3tgGIcyOOfivfQae6ymBFUT8aZdJY2ZjDcqwZS085aKyrJVfWk
+         u4Sz3n6iKFyfDqxdzcZQY8hWUN2opLuOSIq4Gr3jHfBQAJeWAObvyUo8ErSXj5eDR41/
+         453g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Jn/ZX3hb0+yTSU6k3OosQBetoXzlV4oZREJuCtMHGxI=;
-        b=CdbbPJmhjq3r2/qZzSSPX3JBDbbEcizzkpuisLFctWA18CsYcJLnuJ56pW8xyQ0xxa
-         ZsFcquXrFnRQHcfHe+Cv9yYdh95KXQC2f9/1fDBu2dZiQfJzZhAv2GF0P4udmFG9pQGP
-         n257+RMICdSKvZZcd5WjZLmTp9gRN/yeZSohgbeb3rq7sZRmo26igXXP1pMNQ1GlXd9i
-         66RGW9lK8nQVPUJUvLEPY2M2+D3DPGR8O9yVWlBbhTFEh508I6gg1xHZxYxyMsjqIWbV
-         rJCeTWfrrIpHGBwzIKJWQXwUHAUf3W3tUu3U7ljkRu0KeHJfe0SGrKVJUhoihMiJqHlm
-         tm4A==
-X-Gm-Message-State: ABuFfohPtAzvXaEApwk8vy+nWvR/PV4QZWw4o3YQmmyeCiaXO5UZ3FX8
-        qbwA3f50aqTymVaTatq+k0M=
-X-Google-Smtp-Source: ACcGV60Wv46/MYJhfWLjYTnKw+vP92HN4giuGWayXDZ+2rB6mkOnpa+h7cC8WZ2QmOqjPugW7Tkcfg==
-X-Received: by 2002:a62:c08b:: with SMTP id g11-v6mr8926427pfk.72.1539406523453;
-        Fri, 12 Oct 2018 21:55:23 -0700 (PDT)
+        bh=Y8f+zX4OUAoqVg/3NA0TrDwr4Zjok9K4JF3715XNZDg=;
+        b=B0mCuWEazXrSCCk+6ajk/ERnE5L/clVavYn92leDxUgZ6J/QOl7IZCBQvn7hHRmybc
+         iG2pk5h3JYANwMAkZozJV6zlmdEpKdLtVXW4+HEHzVATYeL33YvaqLzmJHwBqtzfS+BD
+         wQahKP445MEJEh5rA9Rfw+eX9UKUpyIp0keRCkxxytxMDVnR2gAMACXrx98gZyc2eO/f
+         h35B7Zj0flXiiA+oxU+mz5bzmILfaFQBzGBn8hQnxjIh8R5UScFPWSdDKEoPvJWsvW3v
+         INATGboUjpijAt8oPnr8bjFpVTuwGq+P/lsgERnYdPj72J4fwPEYN/ddQ7PKO1XNyvda
+         08qQ==
+X-Gm-Message-State: ABuFfogCUHipAASJQs1s3BmUL4/YF5v3nPyPUYhyUWKkXW+zYw1Rr9Yt
+        sCFVe7OlAUBWFZvGI9DNfZg=
+X-Google-Smtp-Source: ACcGV63QjsrJbRwU5cAl0MzKeHSMW/wwfoQ5OxrsVSViU8k1wPBAVs/y59uPeF9znxjnDgYruHnI7g==
+X-Received: by 2002:a63:78cc:: with SMTP id t195-v6mr8146071pgc.329.1539406512206;
+        Fri, 12 Oct 2018 21:55:12 -0700 (PDT)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id h87-v6sm6959462pfj.78.2018.10.12.21.55.22
+        by smtp.gmail.com with ESMTPSA id h87-v6sm6959462pfj.78.2018.10.12.21.55.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 12 Oct 2018 21:55:22 -0700 (PDT)
+        Fri, 12 Oct 2018 21:55:11 -0700 (PDT)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -68,9 +68,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v2 15/18] of: overlay: set node fields from properties when add new overlay node
-Date:   Fri, 12 Oct 2018 21:53:35 -0700
-Message-Id: <1539406418-18162-16-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v2 06/18] of: overlay: do not duplicate properties from overlay for new nodes
+Date:   Fri, 12 Oct 2018 21:53:26 -0700
+Message-Id: <1539406418-18162-7-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1539406418-18162-1-git-send-email-frowand.list@gmail.com>
 References: <1539406418-18162-1-git-send-email-frowand.list@gmail.com>
@@ -81,131 +81,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-Overlay nodes added by add_changeset_node() do not have the node
-fields name, phandle, and type set.
+When allocating a new node, add_changeset_node() was duplicating the
+properties from the respective node in the overlay instead of
+allocating a node with no properties.
 
-The node passed to __of_attach_node() when the add node changeset
-entry is processed does not contain any properties.  The node's
-properties are located in add property changeset entries that will
-be processed after the add node changeset is applied.
+When this patch is applied the errors reported by the devictree
+unittest from patch "of: overlay: add tests to validate kfrees from
+overlay removal" will no longer occur.  These error messages are of
+the form:
 
-Set the node's fields in the node contained in the add node
-changeset entry and do not set them to incorrect values in
-add_changeset_node().
+   "OF: ERROR: ..."
 
-A visible symptom that is fixed by this patch is the names of nodes
-added by overlays that have an entry in /sys/bus/platform/drivers/*/
-will contain the unit-address but the node-name will be <NULL>,  for
-example, "fc4ab000.<NULL>".  After applying the patch the name, in
-this example, for node restart@fc4ab000 is "fc4ab000.restart".
+and the unittest results will change from:
+
+   ### dt-test ### end of unittest - 203 passed, 7 failed
+
+to
+
+   ### dt-test ### end of unittest - 210 passed, 0 failed
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- drivers/of/dynamic.c | 27 ++++++++++++++++++---------
- drivers/of/overlay.c | 29 ++++++++++++++++++++++++-----
- 2 files changed, 42 insertions(+), 14 deletions(-)
+ drivers/of/overlay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index 5f7c99b9de0d..5b740114dbdc 100644
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -205,15 +205,24 @@ static void __of_attach_node(struct device_node *np)
- 	const __be32 *phandle;
- 	int sz;
- 
--	np->name = __of_get_property(np, "name", NULL) ? : "<NULL>";
--	np->type = __of_get_property(np, "device_type", NULL) ? : "<NULL>";
--
--	phandle = __of_get_property(np, "phandle", &sz);
--	if (!phandle)
--		phandle = __of_get_property(np, "linux,phandle", &sz);
--	if (IS_ENABLED(CONFIG_PPC_PSERIES) && !phandle)
--		phandle = __of_get_property(np, "ibm,phandle", &sz);
--	np->phandle = (phandle && (sz >= 4)) ? be32_to_cpup(phandle) : 0;
-+	if (!of_node_check_flag(np, OF_OVERLAY)) {
-+		np->name = __of_get_property(np, "name", NULL);
-+		np->type = __of_get_property(np, "device_type", NULL);
-+		if (!np->name)
-+			np->name = "<NULL>";
-+		if (!np->type)
-+			np->type = "<NULL>";
-+
-+		phandle = __of_get_property(np, "phandle", &sz);
-+		if (!phandle)
-+			phandle = __of_get_property(np, "linux,phandle", &sz);
-+		if (IS_ENABLED(CONFIG_PPC_PSERIES) && !phandle)
-+			phandle = __of_get_property(np, "ibm,phandle", &sz);
-+		if (phandle && (sz >= 4))
-+			np->phandle = be32_to_cpup(phandle);
-+		else
-+			np->phandle = 0;
-+	}
- 
- 	np->child = NULL;
- 	np->sibling = np->parent->child;
 diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 41f56091663b..df808f73918e 100644
+index 94740f4ee34c..7fcf4a812d06 100644
 --- a/drivers/of/overlay.c
 +++ b/drivers/of/overlay.c
-@@ -307,10 +307,11 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
- 	int ret = 0;
- 	bool check_for_non_overlay_node = false;
+@@ -393,7 +393,7 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 			break;
  
--	if (!of_prop_cmp(overlay_prop->name, "name") ||
--	    !of_prop_cmp(overlay_prop->name, "phandle") ||
--	    !of_prop_cmp(overlay_prop->name, "linux,phandle"))
--		return 0;
-+	if (target->in_livetree)
-+		if (!of_prop_cmp(overlay_prop->name, "name") ||
-+		    !of_prop_cmp(overlay_prop->name, "phandle") ||
-+		    !of_prop_cmp(overlay_prop->name, "linux,phandle"))
-+			return 0;
- 
- 	if (target->in_livetree)
- 		prop = of_find_property(target->np, overlay_prop->name, NULL);
-@@ -331,6 +332,10 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
- 	if (!prop) {
- 
- 		check_for_non_overlay_node = true;
-+		if (!target->in_livetree) {
-+			new_prop->next = target->np->deadprops;
-+			target->np->deadprops = new_prop;
-+		}
- 		ret = of_changeset_add_property(&ovcs->cset, target->np,
- 						new_prop);
- 
-@@ -406,9 +411,10 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
- 		struct target *target, struct device_node *node)
- {
- 	const char *node_kbasename;
-+	const __be32 *phandle;
- 	struct device_node *tchild;
- 	struct target target_child;
--	int ret = 0;
-+	int ret = 0, size;
- 
- 	node_kbasename = kbasename(node->full_name);
- 
-@@ -422,6 +428,19 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 	if (!tchild) {
+-		tchild = __of_node_dup(node, node_kbasename);
++		tchild = __of_node_dup(NULL, node_kbasename);
+ 		if (!tchild)
  			return -ENOMEM;
  
- 		tchild->parent = target->np;
-+		tchild->name = __of_get_property(node, "name", NULL);
-+		tchild->type = __of_get_property(node, "device_type", NULL);
-+
-+		if (!tchild->name)
-+			tchild->name = "<NULL>";
-+		if (!tchild->type)
-+			tchild->type = "<NULL>";
-+
-+		/* ignore obsolete "linux,phandle" */
-+		phandle = __of_get_property(node, "phandle", &size);
-+		if (phandle && (size == 4))
-+			tchild->phandle = be32_to_cpup(phandle);
-+
- 		of_node_set_flag(tchild, OF_OVERLAY);
- 
- 		ret = of_changeset_attach_node(&ovcs->cset, tchild);
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
