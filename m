@@ -2,77 +2,141 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC310C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD08C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:35:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5917B2098A
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:33:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0bZZu4e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5917B2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B3838204EC
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:35:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3838204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbeJMRKD (ORCPT
+        id S1726911AbeJMRKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 13:10:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbeJMRKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 13:10:03 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F294D20859;
-        Sat, 13 Oct 2018 09:33:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539423216;
-        bh=NulM7QtVwVgoBhVQHC+iyoYzrytfPSJO0nziTVaVp58=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V0bZZu4e+iTmMpW9bZqe5ilDRK+7sts2pZBOB10Lk+fSoXia2md/F7hbeU24Gj9CU
-         LGoaEcHBJl4q+BZgrqkJtnoIjwyaKHyryPZzqmElBcYpOplUVG9pOP6N20iZeh3wfs
-         phl7adW/Y+wbxzPhRgEpVRr0IH8nttS24Ei5oaX4=
-Date:   Sat, 13 Oct 2018 11:33:34 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dunlap@infradead.org
-Subject: Re: [PATCH] ubifs: Fix WARN_ON logic in exit path
-Message-ID: <20181013093334.GA11189@kroah.com>
-References: <20181013081841.13369-1-richard@nod.at>
+        Sat, 13 Oct 2018 13:10:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32966 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726287AbeJMRKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 13:10:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C2C9ED1;
+        Sat, 13 Oct 2018 02:34:20 -0700 (PDT)
+Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80E513F5D3;
+        Sat, 13 Oct 2018 02:34:14 -0700 (PDT)
+Date:   Sat, 13 Oct 2018 10:34:11 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Eugene Syromiatnikov <esyr@redhat.com>
+Cc:     linux-doc@vger.kernel.org, Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        linux-arch@vger.kernel.org,
+        Steve Ellcey <sellcey@caviumnetworks.com>,
+        Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
+        Andreas Schwab <schwab@suse.de>,
+        Alexander Graf <agraf@suse.de>,
+        Bamvor Zhangjian <bamv2005@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Adam Borowski <kilobyte@angband.pl>,
+        Manuel Montezelo <manuel.montezelo@gmail.com>,
+        James Hogan <james.hogan@imgtec.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Pinski <pinskia@gmail.com>,
+        Lin Yongting <linyongting@huawei.com>,
+        Alexey Klimov <klimov.linux@gmail.com>,
+        Wookey <wookey@wookware.org>, Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>, linux-api@vger.kernel.org,
+        Nathan_Lynch <Nathan_Lynch@mentor.com>,
+        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Christoph Muellner <christoph.muellner@theobroma-systems.com>
+Subject: Re: [PATCH v9 00/24] ILP32 for ARM64
+Message-ID: <20181013093411.o3id6yzkspsxr5jt@mbp>
+References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
+ <20180724173957.GA22106@yury-thinkpad>
+ <20181010141017.GA2881@asgard.redhat.com>
+ <20181010153655.GA212880@arrakis.emea.arm.com>
+ <20181013021416.GE21972@asgard.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181013081841.13369-1-richard@nod.at>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181013021416.GE21972@asgard.redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 10:18:41AM +0200, Richard Weinberger wrote:
-> ubifs_assert() is not WARN_ON(), so we have to invert
-> the checks.
-> Randy faced this warning with UBIFS being a module, since
-> most users use UBIFS as builtin because UBIFS is the rootfs
-> nobody noticed so far. :-(
-> Including me.
+On Sat, Oct 13, 2018 at 04:14:16AM +0200, Eugene Syromiatnikov wrote:
+> On Wed, Oct 10, 2018 at 04:36:56PM +0100, Catalin Marinas wrote:
+> > On Wed, Oct 10, 2018 at 04:10:21PM +0200, Eugene Syromiatnikov wrote:
+> > > I have some questions regarding AArch64 ILP32 implementation for which I
+> > > failed to find an answer myself:
+> > >  * How ptrace() tracer is supposed to distinguish between ILP32 and LP64
+> > >    tracees? For MIPS N32 and x32 this is possible based on syscall
+> > >    number, but for AArch64 ILP32 I do not see such a sign. There's also
+> > >    ARM_ip is employed for signalling entering/exiting, I wonder whether
+> > >    it's possible to employ it also for signalling tracee's personality.
+> > 
+> > With the current implementation, I don't think you can distinguish. From
+> > the kernel perspective, the register set is the same. What is the
+> > use-case for this?
 > 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Fixes: 54169ddd382d ("ubifs: Turn two ubifs_assert() into a WARN_ON()")
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-> ---
-> Greg,
+> Err, a ptrace()-based tracer trying to trace a process, for example?
+
+I first thought it wouldn't matter for ptrace-based tracers since the
+syscall numbers are (mostly) the same. But the arguments layout in
+register is indeed different, so I see your point now about having to
+distinguish.
+
+> > We could add a new regset to expose the ILP32 state (NT_ARM_..., I can't
+> > think of a name now but probably not PER* as this implies PER_LINUX_...
+> > which is independent from TIF_32BIT_*).
 > 
-> can you please take this patch directly?
-> It fixes a brown paper bug which was introduced in rc1, I'd like to avoid
-> having it in a release and going the -stable path.
+> So that would require an additional ptrace() call on each syscall stop,
+> is that correct?
 
-Now merged, thanks.
+The ILP32 state does not change at run-time, so it could only do a
+ptrace() call once and save the information. No need to re-read it on
+each syscall stop.
 
-greg k-h
+We could set a high bit in the syscall number reported to the ptrace
+caller (though not changing the syscall ABI) but I haven't thought of
+other consequences. For example, can the ptrace caller change the
+syscall number?
+
+> > >  * What's the reasoning behind capping syscall arguments to 32 bit? x32
+> > >    and MIPS N32 do not have such a restriction (and do not need special
+> > >    wrappers for syscalls that pass 64-bit values as a result, except
+> > >    when they do,  as it is the case for preadv2 on x32); moreover, that
+> > >    would lead to insurmountable difficulties for AArch64 ILP32 tracers
+> > >    that try to trace LP64 tracees, as it would be impossible to pass
+> > >    64-bit addresses to process_vm_{read,write} or ptrace PEEK/POKE.
+> > 
+> > We've attempted in earlier versions to allow a mix of 32 and 64-bit
+> > register values from ILP32 but it got pretty complicated. The entry code
+> > would need to know which registers need zeroing of the top 32-bit
+> 
+> If kernel specifies 64-bit wide registers for syscalls, then it's the
+> caller's (libc's) responsibility to properly sign-extend arguments when
+> needed, and glibc, for example, already has proper type definitions that
+> aimed to handle this.
+
+We tried, see my other reply.
+
+-- 
+Catalin
