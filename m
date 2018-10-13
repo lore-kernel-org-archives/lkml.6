@@ -2,307 +2,262 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C78C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 19:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7EEC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 19:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 953BB2077C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 19:11:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="MC64G/94"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953BB2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id BED3820652
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 19:33:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BED3820652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbeJNCtV (ORCPT
+        id S1726798AbeJNDMD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 22:49:21 -0400
-Received: from mail.efficios.com ([167.114.142.138]:57920 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726712AbeJNCtU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 22:49:20 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 3C9E71A8764;
-        Sat, 13 Oct 2018 15:11:04 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id wr-I9Eog8i12; Sat, 13 Oct 2018 15:11:03 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 82C071A8761;
-        Sat, 13 Oct 2018 15:11:03 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 82C071A8761
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1539457863;
-        bh=bZUIu67iIW4tgrLX8WuuK0zDJaXnb8YHfZIV/ojcrKE=;
-        h=From:To:Date:Message-Id;
-        b=MC64G/94VKwjlTnN1tMA3cJOONNHmUSM/vVrgJEVbGBHNWbhqF0S9KAolkwtovEEG
-         aEq4HvkJAaqaVHpEIihlHpchLJvowY8G95zDqtIWSPuSwD2X73ZJreJyiMSIUeuKiZ
-         B6X78Udc89jJmts0ip/qDbkKZGH1HaqwXrTuKXIJMF8k1rE29TXpHzWFmwXoiuiFBu
-         YRIWnl3W7rGs6FMB1IzYHeOGhRti2Z8yRnB+1/aYXDKlSbe0NwnTDN/2ZxckmW79t+
-         wR/D7/emTB9VFs0bOBUC1SVBxDH7Wqxf/hosWdJjKM5z45vxETI/lMxbNLDYQhQEtj
-         TlAVwA4G4gjvg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id LurGCVSyzjZy; Sat, 13 Oct 2018 15:11:03 -0400 (EDT)
-Received: from localhost.localdomain (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 074B81A875B;
-        Sat, 13 Oct 2018 15:11:03 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Ingo Molnar <mingo@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morris <james.morris@microsoft.com>,
-        James Morris <jmorris@namei.org>, Jessica Yu <jeyu@kernel.org>,
+        Sat, 13 Oct 2018 23:12:03 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:35440 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726712AbeJNDMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 23:12:02 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id rPolNPAx7JBB; Sat, 13 Oct 2018 21:33:41 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BDC0500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:500:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 878141EC095E;
+        Sat, 13 Oct 2018 21:33:41 +0200 (CEST)
+Date:   Sat, 13 Oct 2018 21:33:35 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Ingo Molnar <mingo@kernel.org>, Richard Biener <rguenther@suse.de>,
+        Michael Matz <matz@suse.de>, gcc@gcc.gnu.org,
+        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Alok Kataria <akataria@vmware.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
         Kees Cook <keescook@chromium.org>,
-        Nicolas Pitre <nico@linaro.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Thomas Garnier <thgarnie@google.com>,
+        linux-sparse@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH for 4.19] tracepoint: Fix: tracepoint array element size mismatch
-Date:   Sat, 13 Oct 2018 15:10:50 -0400
-Message-Id: <20181013191050.22389-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.17.1
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
+Message-ID: <20181013193335.GD31650@zn.tnic>
+References: <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de>
+ <20181008073128.GL29268@gate.crashing.org>
+ <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
+ <20181009145330.GT29268@gate.crashing.org>
+ <alpine.LSU.2.20.1810100909140.16707@zhemvz.fhfr.qr>
+ <20181010072240.GB103159@gmail.com>
+ <20181010080324.GV29268@gate.crashing.org>
+ <20181010081906.GA5533@zn.tnic>
+ <20181010185432.GB29268@gate.crashing.org>
+ <20181010191427.GF5533@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181010191427.GF5533@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 46e0c9be206f ("kernel: tracepoints: add support for relative
-references") changes the layout of the __tracepoint_ptrs section on
-architectures supporting relative references. However, it does so
-without turning struct tracepoint * const into const int elsewhere in
-the tracepoint code, which has the following side-effect:
+Ok,
 
-Setting mod->num_tracepoints is done in by module.c:
+with Segher's help I've been playing with his patch ontop of bleeding
+edge gcc 9 and here are my observations. Please double-check me for
+booboos so that they can be addressed while there's time.
 
-    mod->tracepoints_ptrs = section_objs(info, "__tracepoints_ptrs",
-                                         sizeof(*mod->tracepoints_ptrs),
-                                         &mod->num_tracepoints);
+So here's what I see ontop of 4.19-rc7:
 
-Basically, since sizeof(*mod->tracepoints_ptrs) is a pointer size
-(rather than sizeof(int)), num_tracepoints is erroneously set to half the
-size it should be on 64-bit arch. So a module with an odd number of
-tracepoints misses the last tracepoint due to effect of integer
-division.
+First marked the alternative asm() as inline and undeffed the "inline"
+keyword. I need to do that because of the funky games we do with
+"inline" redefinitions in include/linux/compiler_types.h.
 
-So in the module going notifier:
+And Segher hinted at either doing:
 
-        for_each_tracepoint_range(mod->tracepoints_ptrs,
-                mod->tracepoints_ptrs + mod->num_tracepoints,
-                tp_module_going_check_quiescent, NULL);
+asm volatile inline(...
 
-the expression (mod->tracepoints_ptrs + mod->num_tracepoints) actually
-evaluates to something within the bounds of the array, but miss the
-last tracepoint if the number of tracepoints is odd on 64-bit arch.
+or
 
-Fix this by introducing a new typedef: tracepoint_ptr_t, which
-is either "const int" on architectures that have PREL32 relocations,
-or "struct tracepoint * const" on architectures that does not have
-this feature.
+asm volatile __inline__(...
 
-Also provide a new tracepoint_ptr_defer() static inline to
-encapsulate deferencing this type rather than duplicate code and
-ugly idefs within the for_each_tracepoint_range() implementation.
+but both "inline" variants are defined as macros in that file.
 
-This issue appears in 4.19-rc kernels, and should ideally be fixed
-before the end of the rc cycle.
+Which means we either need to #undef inline before using it in asm() or
+come up with something cleverer.
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Link: http://lkml.kernel.org/r/20180704083651.24360-7-ard.biesheuvel@linaro.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: James Morris <james.morris@microsoft.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Nicolas Pitre <nico@linaro.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Thomas Garnier <thgarnie@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Anyway, did this:
+
 ---
- include/linux/module.h          |  3 ++-
- include/linux/tracepoint-defs.h |  6 ++++++
- include/linux/tracepoint.h      | 36 +++++++++++++++++++++------------
- kernel/tracepoint.c             | 24 ++++++++--------------
- 4 files changed, 39 insertions(+), 30 deletions(-)
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 4cd6a3b71824..7c0639087da7 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -165,11 +165,13 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  * For non barrier like inlines please define new variants
+  * without volatile and memory clobber.
+  */
++
++#undef inline
+ #define alternative(oldinstr, newinstr, feature)                       \
+-       asm volatile (ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
++       asm volatile inline(ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
+ 
+ #define alternative_2(oldinstr, newinstr1, feature1, newinstr2, feature2) \
+-       asm volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
++       asm volatile inline(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
+ 
+ /*
+  * Alternative inline assembly with input.
+---
 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index f807f15bebbe..e19ae08c7fb8 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -20,6 +20,7 @@
- #include <linux/export.h>
- #include <linux/rbtree_latch.h>
- #include <linux/error-injection.h>
-+#include <linux/tracepoint-defs.h>
+Build failed at link time with:
+
+arch/x86/boot/compressed/cmdline.o: In function `native_save_fl':
+cmdline.c:(.text+0x0): multiple definition of `native_save_fl'
+arch/x86/boot/compressed/misc.o:misc.c:(.text+0x1e0): first defined here
+arch/x86/boot/compressed/cmdline.o: In function `native_restore_fl':
+cmdline.c:(.text+0x10): multiple definition of `native_restore_fl'
+arch/x86/boot/compressed/misc.o:misc.c:(.text+0x1f0): first defined here
+arch/x86/boot/compressed/error.o: In function `native_save_fl':
+error.c:(.text+0x0): multiple definition of `native_save_fl'
+
+which I had to fix with this:
+
+---
+diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
+index 15450a675031..0d772598c37c 100644
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -14,8 +14,7 @@
+  */
  
- #include <linux/percpu.h>
- #include <asm/module.h>
-@@ -430,7 +431,7 @@ struct module {
- 
- #ifdef CONFIG_TRACEPOINTS
- 	unsigned int num_tracepoints;
--	struct tracepoint * const *tracepoints_ptrs;
-+	tracepoint_ptr_t *tracepoints_ptrs;
- #endif
- #ifdef HAVE_JUMP_LABEL
- 	struct jump_entry *jump_entries;
-diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
-index 22c5a46e9693..49ba9cde7e4b 100644
---- a/include/linux/tracepoint-defs.h
-+++ b/include/linux/tracepoint-defs.h
-@@ -35,6 +35,12 @@ struct tracepoint {
- 	struct tracepoint_func __rcu *funcs;
- };
- 
-+#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
-+typedef const int tracepoint_ptr_t;
-+#else
-+typedef struct tracepoint * const tracepoint_ptr_t;
-+#endif
-+
- struct bpf_raw_event_map {
- 	struct tracepoint	*tp;
- 	void			*bpf_func;
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 041f7e56a289..538ba1a58f5b 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -99,6 +99,29 @@ extern void syscall_unregfunc(void);
- #define TRACE_DEFINE_ENUM(x)
- #define TRACE_DEFINE_SIZEOF(x)
- 
-+#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
-+static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-+{
-+	return offset_to_ptr(p);
-+}
-+
-+#define __TRACEPOINT_ENTRY(name)					\
-+	asm("	.section \"__tracepoints_ptrs\", \"a\"		\n"	\
-+	    "	.balign 4					\n"	\
-+	    "	.long 	__tracepoint_" #name " - .		\n"	\
-+	    "	.previous					\n")
-+#else
-+static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-+{
-+	return *p;
-+}
-+
-+#define __TRACEPOINT_ENTRY(name)					 \
-+	static tracepoint_ptr_t __tracepoint_ptr_##name __used		 \
-+	__attribute__((section("__tracepoints_ptrs"))) =		 \
-+		&__tracepoint_##name
-+#endif
-+
- #endif /* _LINUX_TRACEPOINT_H */
- 
- /*
-@@ -253,19 +276,6 @@ extern void syscall_unregfunc(void);
- 		return static_key_false(&__tracepoint_##name.key);	\
- 	}
- 
--#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
--#define __TRACEPOINT_ENTRY(name)					\
--	asm("	.section \"__tracepoints_ptrs\", \"a\"		\n"	\
--	    "	.balign 4					\n"	\
--	    "	.long 	__tracepoint_" #name " - .		\n"	\
--	    "	.previous					\n")
--#else
--#define __TRACEPOINT_ENTRY(name)					 \
--	static struct tracepoint * const __tracepoint_ptr_##name __used	 \
--	__attribute__((section("__tracepoints_ptrs"))) =		 \
--		&__tracepoint_##name
--#endif
--
- /*
-  * We have no guarantee that gcc and the linker won't up-align the tracepoint
-  * structures, so we create an array of pointers that will be used for iteration
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index bf2c06ef9afc..a3be42304485 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -28,8 +28,8 @@
- #include <linux/sched/task.h>
- #include <linux/static_key.h>
- 
--extern struct tracepoint * const __start___tracepoints_ptrs[];
--extern struct tracepoint * const __stop___tracepoints_ptrs[];
-+extern tracepoint_ptr_t __start___tracepoints_ptrs[];
-+extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
- 
- DEFINE_SRCU(tracepoint_srcu);
- EXPORT_SYMBOL_GPL(tracepoint_srcu);
-@@ -371,25 +371,17 @@ int tracepoint_probe_unregister(struct tracepoint *tp, void *probe, void *data)
- }
- EXPORT_SYMBOL_GPL(tracepoint_probe_unregister);
- 
--static void for_each_tracepoint_range(struct tracepoint * const *begin,
--		struct tracepoint * const *end,
-+static void for_each_tracepoint_range(
-+		tracepoint_ptr_t *begin, tracepoint_ptr_t *end,
- 		void (*fct)(struct tracepoint *tp, void *priv),
- 		void *priv)
+ /* Declaration required for gcc < 4.9 to prevent -Werror=missing-prototypes */
+-extern inline unsigned long native_save_fl(void);
+-extern inline unsigned long native_save_fl(void)
++static inline unsigned long native_save_fl(void)
  {
-+	tracepoint_ptr_t *iter;
-+
- 	if (!begin)
- 		return;
--
--	if (IS_ENABLED(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)) {
--		const int *iter;
--
--		for (iter = (const int *)begin; iter < (const int *)end; iter++)
--			fct(offset_to_ptr(iter), priv);
--	} else {
--		struct tracepoint * const *iter;
--
--		for (iter = begin; iter < end; iter++)
--			fct(*iter, priv);
--	}
-+	for (iter = begin; iter < end; iter++)
-+		fct(tracepoint_ptr_deref(iter), priv);
- }
+        unsigned long flags;
  
- #ifdef CONFIG_MODULES
--- 
-2.17.1
+@@ -33,8 +32,7 @@ ex
+---
 
+That "extern inline" declaration looks fishy to me anyway, maybe not really
+needed ? Apparently, gcc < 4.9 complains with -Werror=missing-prototypes...
+
+Then the build worked and the results look like this:
+
+   text    data     bss     dec     hex filename
+17287384        5040656 2019532 24347572        17383b4 vmlinux-before
+17288020        5040656 2015436 24344112        1737630 vmlinux-2nd-version
+
+so some inlining must be happening.
+
+Then I did this:
+
+---
+diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
+index 9c5606d88f61..a0170344cf08 100644
+--- a/arch/x86/lib/usercopy_64.c
++++ b/arch/x86/lib/usercopy_64.c
+@@ -20,7 +20,7 @@ unsigned long __clear_user(void __user *addr, unsigned long size)
+        /* no memory constraint because it doesn't change any memory gcc knows
+           about */
+        stac();
+-       asm volatile(
++       asm volatile inline(
+                "       testq  %[size8],%[size8]\n"
+                "       jz     4f\n"
+                "0:     movq $0,(%[dst])\n"
+---
+
+to force inlining of a somewhat bigger asm() statement. And yap, more
+got inlined:
+
+   text    data     bss     dec     hex filename
+17287384        5040656 2019532 24347572        17383b4 vmlinux-before
+17288020        5040656 2015436 24344112        1737630 vmlinux-2nd-version
+17288076        5040656 2015436 24344168        1737668 vmlinux-2nd-version__clear_user
+
+so more stuff gets inlined.
+
+Looking at the asm output, it had before:
+
+---
+clear_user:
+# ./arch/x86/include/asm/current.h:15:  return this_cpu_read_stable(current_task);
+#APP
+# 15 "./arch/x86/include/asm/current.h" 1
+        movq %gs:current_task,%rax      #, pfo_ret__
+# 0 "" 2
+# arch/x86/lib/usercopy_64.c:51:        if (access_ok(VERIFY_WRITE, to, n))
+#NO_APP
+        movq    2520(%rax), %rdx        # pfo_ret___12->thread.addr_limit.seg, _1
+        movq    %rdi, %rax      # to, tmp93
+        addq    %rsi, %rax      # n, tmp93
+        jc      .L3     #,
+# arch/x86/lib/usercopy_64.c:51:        if (access_ok(VERIFY_WRITE, to, n))
+        cmpq    %rax, %rdx      # tmp93, _1
+        jb      .L3     #,
+# arch/x86/lib/usercopy_64.c:52:                return __clear_user(to, n);
+        jmp     __clear_user    #
+---
+
+note the JMP to __clear_user. After marking the asm() in __clear_user() as
+inline, clear_user() inlines __clear_user() directly:
+
+---
+clear_user:
+# ./arch/x86/include/asm/current.h:15:  return this_cpu_read_stable(current_task);
+#APP
+# 15 "./arch/x86/include/asm/current.h" 1
+        movq %gs:current_task,%rax      #, pfo_ret__
+# 0 "" 2
+# arch/x86/lib/usercopy_64.c:51:        if (access_ok(VERIFY_WRITE, to, n))
+#NO_APP
+        movq    2520(%rax), %rdx        # pfo_ret___12->thread.addr_limit.seg, _1
+        movq    %rdi, %rax      # to, tmp95
+        addq    %rsi, %rax      # n, tmp95
+        jc      .L8     #,
+# arch/x86/lib/usercopy_64.c:51:        if (access_ok(VERIFY_WRITE, to, n))
+        cmpq    %rax, %rdx      # tmp95, _1
+        jb      .L8     #,
+# ./arch/x86/include/asm/smap.h:58:     alternative("", __stringify(__ASM_STAC), X86_FEATURE_SMAP);
+...
+
+this last line is the stac() macro which gets inlined due to the
+alternative() inlined macro above.
+
+So I guess this all looks like what we wanted.
+
+And if this lands in gcc9, we would need to do a asm_volatile() macro
+which is defined differently based on the compiler used.
+
+Thoughts, suggestions, etc are most welcome.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
