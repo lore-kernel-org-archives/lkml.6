@@ -2,137 +2,123 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3966EC71122
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 11:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6406CC71122
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 11:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A05720895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 11:28:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A05720895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 2BB092098A
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 11:48:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BB092098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbeJMTFc (ORCPT
+        id S1726312AbeJMTZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 15:05:32 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:32040 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbeJMTFb (ORCPT
+        Sat, 13 Oct 2018 15:25:41 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.65]:22625 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726033AbeJMTZk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 15:05:31 -0400
-Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9DBSg3f011643;
-        Sat, 13 Oct 2018 20:28:42 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
- Sat, 13 Oct 2018 20:28:42 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9DBSfCf011630
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 13 Oct 2018 20:28:42 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms
- without eligible tasks
-To:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-References: <000000000000dc48d40577d4a587@google.com>
- <20181010151135.25766-1-mhocko@kernel.org>
- <20181012112008.GA27955@cmpxchg.org> <20181012120858.GX5873@dhcp22.suse.cz>
- <9174f087-3f6f-f0ed-6009-509d4436a47a@i-love.sakura.ne.jp>
- <20181012124137.GA29330@cmpxchg.org>
- <0417c888-d74e-b6ae-a8f0-234cbde03d38@i-love.sakura.ne.jp>
- <bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp>
- <20181013112238.GA762@cmpxchg.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <b61b2e60-d899-90c6-579a-587815cebff6@i-love.sakura.ne.jp>
-Date:   Sat, 13 Oct 2018 20:28:38 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 13 Oct 2018 15:25:40 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 2F022A909
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 06:48:51 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id BIPbgGBBRPvAdBIPbg4wFz; Sat, 13 Oct 2018 06:48:51 -0500
+X-Authority-Reason: nr=8
+Received: from lputeaux-656-1-34-183.w80-15.abo.wanadoo.fr ([80.15.51.183]:44230 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gBIPZ-0003G9-VH; Sat, 13 Oct 2018 06:48:50 -0500
+Date:   Sat, 13 Oct 2018 13:48:47 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] signal: Mark expected switch fall-throughs
+Message-ID: <20181013114847.GA3160@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20181013112238.GA762@cmpxchg.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 80.15.51.183
+X-Source-L: No
+X-Exim-ID: 1gBIPZ-0003G9-VH
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lputeaux-656-1-34-183.w80-15.abo.wanadoo.fr (embeddedor) [80.15.51.183]:44230
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/13 20:22, Johannes Weiner wrote:
-> On Sat, Oct 13, 2018 at 08:09:30PM +0900, Tetsuo Handa wrote:
->> ---------- Michal's patch ----------
->>
->> 73133 lines (5.79MB) of kernel messages per one run
->>
->> [root@ccsecurity ~]# time ./a.out
->>
->> real    3m44.389s
->> user    0m0.000s
->> sys     3m42.334s
->>
->> [root@ccsecurity ~]# time ./a.out
->>
->> real    3m41.767s
->> user    0m0.004s
->> sys     3m39.779s
->>
->> ---------- My v2 patch ----------
->>
->> 50 lines (3.40 KB) of kernel messages per one run
->>
->> [root@ccsecurity ~]# time ./a.out
->>
->> real    0m5.227s
->> user    0m0.000s
->> sys     0m4.950s
->>
->> [root@ccsecurity ~]# time ./a.out
->>
->> real    0m5.249s
->> user    0m0.000s
->> sys     0m4.956s
-> 
-> Your patch is suppressing information that I want to have and my
-> console can handle, just because your console is slow, even though
-> there is no need to use that console at that log level.
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-My patch is not suppressing information you want to have.
-My patch is mainly suppressing
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ include/linux/signal.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-[   52.393146] Out of memory and no killable processes...
-[   52.395195] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
-[   52.398623] Out of memory and no killable processes...
-[   52.401195] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
-[   52.404356] Out of memory and no killable processes...
-[   52.406492] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
-[   52.409595] Out of memory and no killable processes...
-[   52.411745] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
-[   52.415588] Out of memory and no killable processes...
-[   52.418484] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
-[   52.421904] Out of memory and no killable processes...
-[   52.424273] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index 200ed96..f428e86 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -129,9 +129,11 @@ static inline void name(sigset_t *r, const sigset_t *a, const sigset_t *b) \
+ 		b3 = b->sig[3]; b2 = b->sig[2];				\
+ 		r->sig[3] = op(a3, b3);					\
+ 		r->sig[2] = op(a2, b2);					\
++		/* fall through */					\
+ 	case 2:								\
+ 		a1 = a->sig[1]; b1 = b->sig[1];				\
+ 		r->sig[1] = op(a1, b1);					\
++		/* fall through */					\
+ 	case 1:								\
+ 		a0 = a->sig[0]; b0 = b->sig[0];				\
+ 		r->sig[0] = op(a0, b0);					\
+@@ -161,7 +163,9 @@ static inline void name(sigset_t *set)					\
+ 	switch (_NSIG_WORDS) {						\
+ 	case 4:	set->sig[3] = op(set->sig[3]);				\
+ 		set->sig[2] = op(set->sig[2]);				\
++		/* fall through */					\
+ 	case 2:	set->sig[1] = op(set->sig[1]);				\
++		/* fall through */					\
+ 	case 1:	set->sig[0] = op(set->sig[0]);				\
+ 		    break;						\
+ 	default:							\
+@@ -182,6 +186,7 @@ static inline void sigemptyset(sigset_t *set)
+ 		memset(set, 0, sizeof(sigset_t));
+ 		break;
+ 	case 2: set->sig[1] = 0;
++		/* fall through */
+ 	case 1:	set->sig[0] = 0;
+ 		break;
+ 	}
+@@ -194,6 +199,7 @@ static inline void sigfillset(sigset_t *set)
+ 		memset(set, -1, sizeof(sigset_t));
+ 		break;
+ 	case 2: set->sig[1] = -1;
++		/* fall through */
+ 	case 1:	set->sig[0] = -1;
+ 		break;
+ 	}
+-- 
+2.7.4
 
-lines which Michal's patch cannot suppress.
-
-Also, my console is console=ttyS0,115200n8 . Not slow at all.
-
-> 
-> NAK to your patch. I think you're looking at this from the wrong
-> angle. A console that takes almost 4 minutes to print 70k lines
-> shouldn't be the baseline for how verbose KERN_INFO is.
-> 
-
-Run the testcase in your environment.
