@@ -2,71 +2,62 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 448B5C6787C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9306C6787C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9E7D20868
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D52F20868
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:44:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mRAnllfV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9E7D20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="TX0jPv1m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D52F20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbeJMJO5 (ORCPT
+        id S1726928AbeJMJTn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 05:14:57 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:42027 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbeJMJO5 (ORCPT
+        Sat, 13 Oct 2018 05:19:43 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45564 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbeJMJTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 05:14:57 -0400
-Received: by mail-io1-f66.google.com with SMTP id n18-v6so10517654ioa.9
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 18:39:47 -0700 (PDT)
+        Sat, 13 Oct 2018 05:19:43 -0400
+Received: by mail-pg1-f194.google.com with SMTP id t70-v6so6598641pgd.12
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 18:44:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Wde0HcwExXY831MfxZDBcHjXK7XvngyeZU1X9StNjyk=;
-        b=mRAnllfVhCFMlnCIOcENVRpZ9fWtdthn5GIa/84lOa1zfYRyC7orxaopMW45sB8eGB
-         ivJ95/M5otzqwf+a9a0kBxZZQSGJZfhDMo+nmJKVkyBRnP8qxtUI1xy15rJyzhFmnyt0
-         8+wcDDhVwfzIxE7o4UdypM1uFOyBZO+dsZHL9V9EjcRk/t9uN1N8+jXX+FQbQNwLNM6+
-         Yw/NuPi1khJ60fOVJAglTvakPu+RdegP9nyurUbv1ptWNwxhwQDL9ydwtFB3Y4wuPcbb
-         mQP4MZorbCaZStz3SOglr9oedZvionoAiMgHFAr+d3BHihJaHkX9rSbjnDxfL9w+LOjP
-         xsfg==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EOwbPFoajGZi3/uQe5h542M6UYdoOEkmWBYBoXp9OV8=;
+        b=TX0jPv1mV+ruD3G3qgqRA9UMXe+0i0YS6UXGUy6KTVLywoPyxQGhhjXFi4dn2iQI3x
+         x/BukZ3beT2AFdW61n55JqI5ANyPOWfr1rNKfv8VAcertpXgkQEbv+tQZOTO68qVwDHs
+         51gxQI0b3N3xdtlX+SiDVTyY2dpjIIcZ8JErQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Wde0HcwExXY831MfxZDBcHjXK7XvngyeZU1X9StNjyk=;
-        b=VPJ5A3cRf2JXQ8i7rQhY6a5fCSU+irvDLQTDqaSySjrTjpV2mX/NjbbqcGfCaSXmm6
-         ETb/Ve3Q4af2+VtvybMvywm1mndlZV6mRcGDkcwFrh9Gbz2FR0odHvHYQrhigFLu/k6+
-         Ci+r0V5mj8ICULdX08CJTuTukzxZD3sHpM9imUa7q2h3ht7UM3lmbu46+S1KSL+II7gv
-         DsawiYu66tBjupi/x7xX6DGdphZPXVf+oK1FLRlu4Aeg10V8YhDWqXLZAYqBHMY7RdBM
-         fnvn4giEwUAkiquGbnKcF992d9SHdp3Utghi5XBKGGK7Iqal3FmWl1eizdNde6OUbKPX
-         FJww==
-X-Gm-Message-State: ABuFfoiOqk2mFmWmusMB2szwXfvj2OcmThWdG/70yWjT5eBJ4u6aDf6c
-        VwT/+7p4DbYcMcHrO/Hd/qpEcTiGqI+pLQmhJU3AVg==
-X-Google-Smtp-Source: ACcGV63O+2oHow+MnmDFFN/fGr+ypIXJq0Jebw7vm8a3hwEac10cSSqcJGLdjRO5qFIM+0mJ+lFBqqSZgai2siyMk8M=
-X-Received: by 2002:a6b:b249:: with SMTP id b70-v6mr5998814iof.252.1539394786418;
- Fri, 12 Oct 2018 18:39:46 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:d604:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 18:39:45
- -0700 (PDT)
-In-Reply-To: <20181013013540.GA207108@joelaf.mtv.corp.google.com>
-References: <20181012013756.11285-2-joel@joelfernandes.org>
- <20181012113056.gxhcbrqyu7k7xnyv@kshutemo-mobl1> <20181012125046.GA170912@joelaf.mtv.corp.google.com>
- <20181012.111836.1569129998592378186.davem@davemloft.net> <20181013013540.GA207108@joelaf.mtv.corp.google.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Fri, 12 Oct 2018 18:39:45 -0700
-Message-ID: <CAKOZueuNvWvn18vffJWpbpg7h-uScT8gXrrudTB2pnT4M2HJ_w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mm: speed up mremap by 500x on large regions
-To:     Joel Fernandes <joel@joelfernandes.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EOwbPFoajGZi3/uQe5h542M6UYdoOEkmWBYBoXp9OV8=;
+        b=ZgviZjsjreUO8QO5zm4UjWow1Ob/2tuJAD3RzJbl9ZscS+5/VMWEGYPafBzd8s2wCP
+         F9OOyyP04qN6UG8jtgtWaz/RI1FMERYvHyXyoozHKNX1RUeUOziAnKCp/yXJCxM6zJW5
+         GX3VRUtZNZH5GpQ7Bg3w426NcMdvQyiMwpvMYLDEcnp3nf5ZhaDC5BRqwUzmINmBbtoN
+         i1Giqs4IIXznqxC7ckAlXKBbEXC9q+nvgFDVzW8iTi4yB22veJHIJvB14kI7Zsyseydw
+         h2A5NqGPtrE+g8lSpTrig9RwN68zQOPK8eew+Cn4x0pGRP9M4uED2wfSk57+0hYB9Rwn
+         p31w==
+X-Gm-Message-State: ABuFfojJbd9SOg4qYQFx340MgtJNON+20nqGds2sbXH9IB2yKFYVfDE6
+        WlAitL7y4gBvfVKDqr1uzAj+tw==
+X-Google-Smtp-Source: ACcGV63XxXW9pGHxVnF8xzzLyeXhR7XaYBjfw87dDDQ+CF+OqnNRmShTWlj1H1kUQbwXg/j2G4ghiQ==
+X-Received: by 2002:a62:968a:: with SMTP id s10-v6mr8356398pfk.191.1539395071806;
+        Fri, 12 Oct 2018 18:44:31 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id r81-v6sm6155322pfa.110.2018.10.12.18.44.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 18:44:30 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 18:44:29 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Daniel Colascione <dancol@google.com>
 Cc:     David Miller <davem@davemloft.net>, kirill@shutemov.name,
         linux-kernel <linux-kernel@vger.kernel.org>,
         kernel-team@android.com, Minchan Kim <minchan@kernel.org>,
@@ -91,41 +82,33 @@ Cc:     David Miller <davem@davemloft.net>, kirill@shutemov.name,
         linux-xtensa@linux-xtensa.org, jcmvbkbc@gmail.com,
         nios2-dev@lists.rocketboards.org,
         Peter Zijlstra <peterz@infradead.org>, richard@nod.at
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 2/2] mm: speed up mremap by 500x on large regions
+Message-ID: <20181013014429.GB207108@joelaf.mtv.corp.google.com>
+References: <20181012013756.11285-2-joel@joelfernandes.org>
+ <20181012113056.gxhcbrqyu7k7xnyv@kshutemo-mobl1>
+ <20181012125046.GA170912@joelaf.mtv.corp.google.com>
+ <20181012.111836.1569129998592378186.davem@davemloft.net>
+ <20181013013540.GA207108@joelaf.mtv.corp.google.com>
+ <CAKOZueuNvWvn18vffJWpbpg7h-uScT8gXrrudTB2pnT4M2HJ_w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKOZueuNvWvn18vffJWpbpg7h-uScT8gXrrudTB2pnT4M2HJ_w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not 32-bit ARM?
+On Fri, Oct 12, 2018 at 06:39:45PM -0700, Daniel Colascione wrote:
+> Not 32-bit ARM?
 
-On Fri, Oct 12, 2018 at 6:35 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Fri, Oct 12, 2018 at 11:18:36AM -0700, David Miller wrote:
->> From: Joel Fernandes <joel@joelfernandes.org>
-> [...]
->> > Also, do we not flush the caches from any path when we munmap
->> > address space?  We do call do_munmap on the old mapping from mremap
->> > after moving to the new one.
->>
->> Sparc makes sure that shared mapping have consistent colors.  Therefore
->> all that's left are private mappings and those will be initialized by
->> block stores to clear the page out or similar.
->>
->> Also, when creating new mappings, we flush the D-cache when necessary
->> in update_mmu_cache().
->>
->> We also maintain a bit in the page struct to track when a page which
->> was potentially written to on one cpu ends up mapped into another
->> address space and flush as necessary.
->>
->> The cache is write-through, which simplifies the preconditions we have
->> to maintain.
->
-> Makes sense, thanks. For the moment I sent patches to enable this on arm64
-> and x86. We can enable it on sparc as well at a later time as it sounds it
-> could be a safe optimization to apply to that architecture as well.
->
-> thanks,
->
->  - Joel
->
+Well, I didn't want to enable every possible architecture we could in a
+single go. Certainly arm32 can be a follow on enablement as can be other
+architectures. The point of this series is to upstream this feature and
+enable a hand-picked few architectures as a first step.
+
+thanks,
+
+ - Joel
+
