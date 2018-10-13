@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E19ABC71122
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC73C71123
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A80DE2075B
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B50D02075B
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:55:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AdljiIzy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A80DE2075B
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vf2+ez73"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B50D02075B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbeJMIaf (ORCPT
+        id S1727082AbeJMIag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 04:30:35 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36085 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbeJMIae (ORCPT
+        Sat, 13 Oct 2018 04:30:36 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45100 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbeJMIaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 04:30:34 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f18-v6so6586962pgv.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 17:55:33 -0700 (PDT)
+        Sat, 13 Oct 2018 04:30:35 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y15-v6so6649631plr.12
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 17:55:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tOvjbpyRsbuPWsomBHKEhFntlFsBYkZHEyyX+xGS5QQ=;
-        b=AdljiIzyMDquZb9pCUfNyYhk9HK9POSax2bqMyH/NirH0WQ812CNVR4RN0PblLrfQK
-         USVSnza1jgclk+GiOWBJH5hcTuIlPKApATf+zRWW29ZAEs3PxYaeTr7oO7Sa3+NYASe9
-         ztWFMuXVp9fKKcaLxyP2YfzFmVN6uqUAMjEQI=
+        bh=szr5KLhOEepnxhuji3Nc/YMARBLGRK4oTE2y29Q5DuI=;
+        b=Vf2+ez732wRfmVM5sn8xhWJ3KJnSnR4AoDZzbC6Vwr6SxJ2oi+WphOdQ7d1JF1g/VW
+         DsWjigQ6B3oVlmy6rHzucW3S3IsbNj9y9HiY5cQzFKImG/RuJJbnS1UakIeCGlD7ip45
+         X+G/DJNufbQ4WVt1LKM36ZidXZOhb5pZ7DeB0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tOvjbpyRsbuPWsomBHKEhFntlFsBYkZHEyyX+xGS5QQ=;
-        b=NEXQjntJzTZDf1COrlTN7beTBPEp6Oradb9DV5+6p2qiOuDEEs3b880bxGEKy8DKX8
-         zHvjeSvLGFixm/yn7N9mKhYexPxCxBf2X2kjfDY67Q8XFi5zMQJ4zSePFZm0hNn0AsVp
-         eM6ZlT4ZlzQX3fKCF/RmC2FJRJwP2wM6bSW6tYWpRcD+pQXWYDEq1VtJZFFGHdIeMgV5
-         n/eJwdKLaQy2/jqYPJ1DH7qbFG4f9m/2WE9IdtRQiog0goie+ubPt24xd1gbdm8Ebzua
-         El6d0xDJ+BvpkQMjN5e/9GbP7tZWvn3AGTHz8w4zMWpDcuzLsSkADX+5BwhSyGLyEGj5
-         NszQ==
-X-Gm-Message-State: ABuFfohGtuAvILyurzfjxSsMIiwra4TdFK0dLdrkAa6p8cTzishqvo66
-        90o2498/Tbtroe9v7F0tHQaw3w==
-X-Google-Smtp-Source: ACcGV636T8rgHZXKPx3yLm7H8V4lIl+E7W0FvbdhAc1M7wUaDYMi66v7SX/QXmMKjKDUf7xopXFazQ==
-X-Received: by 2002:a62:b09:: with SMTP id t9-v6mr8341927pfi.36.1539392132798;
-        Fri, 12 Oct 2018 17:55:32 -0700 (PDT)
+        bh=szr5KLhOEepnxhuji3Nc/YMARBLGRK4oTE2y29Q5DuI=;
+        b=OJQ0Zj5xEThYAkxov2SFswwqG3WmYBWBuhWAEqtme3Fuc6uu8NLBpiORlQFC+LYJV3
+         YklyvrW77FMltcpUr2gOx+WNDlynvwrVGbkzV3RMglrPfK5POmBjrZiddxifmyluK21K
+         VOAUrEMEOtpCFGcNx002/F6bfbm902S7bJCWCc1/r3EABevkX69saVgiHF3NEh2rH7FW
+         AwrowLWYYOQcunLKxvivOAHQbCLCYcMBhtYRGwTmJWOuBUGD+uIc8cHl382jQYcxnJ6l
+         6kzJuF/FrF25AgQXKon9tcG+Hzdsj7STCHpbvTiugTL8zvjWy3qhYIjofyST2lROm9Zp
+         Jkrg==
+X-Gm-Message-State: ABuFfojV3Oflkaprm2rZ31QlnidA9GFOgJSGSV+YCrNJk7rilDH1VF+Y
+        H6mirc+oljYc4vx4o7GGoAPOt6i54qvDww==
+X-Google-Smtp-Source: ACcGV61Zu1kR1AYSCorKL4Rnwd2Ixd4lQtWeU4CYJ3liGav4XVMNIc+mMIc1AgBkcymlOtFlH5hF9g==
+X-Received: by 2002:a17:902:50e3:: with SMTP id c32-v6mr5923263plj.129.1539392134274;
+        Fri, 12 Oct 2018 17:55:34 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id n7-v6sm2766183pgv.63.2018.10.12.17.55.30
+        by smtp.gmail.com with ESMTPSA id n7-v6sm2766183pgv.63.2018.10.12.17.55.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 17:55:31 -0700 (PDT)
+        Fri, 12 Oct 2018 17:55:33 -0700 (PDT)
 From:   Brian Norris <briannorris@chromium.org>
 To:     Kalle Valo <kvalo@qca.qualcomm.com>
 Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
         Doug Anderson <dianders@chromium.org>,
         <linux-kernel@vger.kernel.org>,
         Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 3/4] ath10k: snoc: relax voltage requirements
-Date:   Fri, 12 Oct 2018 17:55:03 -0700
-Message-Id: <20181013005504.46399-3-briannorris@chromium.org>
+Subject: [PATCH 4/4] ath10k: snoc: fix unbalanced clock error handling
+Date:   Fri, 12 Oct 2018 17:55:04 -0700
+Message-Id: <20181013005504.46399-4-briannorris@chromium.org>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
 In-Reply-To: <20181013005504.46399-1-briannorris@chromium.org>
 References: <20181013005504.46399-1-briannorris@chromium.org>
@@ -76,44 +76,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I rarely see drivers specify precise voltage requirements like this, but
-if we really have to...let's at least give a little wiggle room. Board
-designs (and accompanying device trees) may not provide exactly the
-voltage listed here, and we shouldn't fail to probe just because of
-this.
-
-Round these ranges down to the nearest volt, and provide a 0.05V margin.
-The regulator should provide its own supported ranges, which will
-helpfully intersect with these ranges.
-
-I would just as well remove these ranges entirely, but if I understand
-correctly, there's some reason that QCOM SoC's like to set zero /
-non-zero voltages.
+Similar to regulator error handling, we should only start tearing down
+the 'i - 1' clock when clock 'i' fails to enable. Otherwise, we might
+end up with an unbalanced clock, where we never successfully enabled the
+clock, but we try to disable it anyway.
 
 Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
- drivers/net/wireless/ath/ath10k/snoc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath10k/snoc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
-index b63ae8b006b4..5a8e87339df2 100644
+index 5a8e87339df2..a835599a8d55 100644
 --- a/drivers/net/wireless/ath/ath10k/snoc.c
 +++ b/drivers/net/wireless/ath/ath10k/snoc.c
-@@ -47,10 +47,10 @@ static char *const ce_name[] = {
- };
+@@ -1470,7 +1470,7 @@ static int ath10k_snoc_clk_init(struct ath10k *ar)
+ 	return 0;
  
- static struct ath10k_vreg_info vreg_cfg[] = {
--	{NULL, "vdd-0.8-cx-mx", 800000, 800000, 0, 0, false},
--	{NULL, "vdd-1.8-xo", 1800000, 1800000, 0, 0, false},
--	{NULL, "vdd-1.3-rfa", 1304000, 1304000, 0, 0, false},
--	{NULL, "vdd-3.3-ch0", 3312000, 3312000, 0, 0, false},
-+	{NULL, "vdd-0.8-cx-mx", 800000, 850000, 0, 0, false},
-+	{NULL, "vdd-1.8-xo", 1800000, 1850000, 0, 0, false},
-+	{NULL, "vdd-1.3-rfa", 1300000, 1350000, 0, 0, false},
-+	{NULL, "vdd-3.3-ch0", 3300000, 3350000, 0, 0, false},
- };
+ err_clock_config:
+-	for (; i >= 0; i--) {
++	for (i = i - 1; i >= 0; i--) {
+ 		clk_info = &ar_snoc->clk[i];
  
- static struct ath10k_clk_info clk_cfg[] = {
+ 		if (!clk_info->handle)
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
