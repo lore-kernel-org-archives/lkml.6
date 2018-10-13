@@ -2,83 +2,146 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BD3C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD46C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 186442098A
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:19:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 186442098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 5FEFD20835
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:20:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FEFD20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbeJMPz7 (ORCPT
+        id S1726758AbeJMP4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 11:55:59 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:59878 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeJMPz7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 11:55:59 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id 2C594180230D1;
-        Sat, 13 Oct 2018 10:19:44 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dunlap@infradead.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH] ubifs: Fix WARN_ON logic in exit path
-Date:   Sat, 13 Oct 2018 10:18:41 +0200
-Message-Id: <20181013081841.13369-1-richard@nod.at>
-X-Mailer: git-send-email 2.19.1
+        Sat, 13 Oct 2018 11:56:32 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:31562 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726125AbeJMP4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 11:56:32 -0400
+Received: from smtp1.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 7B726A105D;
+        Sat, 13 Oct 2018 10:20:15 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id FG5uUfxWPzkC; Sat, 13 Oct 2018 10:20:14 +0200 (CEST)
+Date:   Sat, 13 Oct 2018 19:20:03 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Eric Biederman <ebiederm@xmission.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>, dev@opencontainers.org,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] namei: implement O_BENEATH-style AT_* flags
+Message-ID: <20181013082003.5fvgx3g4i2vx2cdt@ryuk>
+References: <20181009070230.12884-1-cyphar@cyphar.com>
+ <20181009070230.12884-2-cyphar@cyphar.com>
+ <20181013073319.GS32577@ZenIV.linux.org.uk>
+ <20181013080511.GT32577@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zghhtdmiqqb2lfl5"
+Content-Disposition: inline
+In-Reply-To: <20181013080511.GT32577@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ubifs_assert() is not WARN_ON(), so we have to invert
-the checks.
-Randy faced this warning with UBIFS being a module, since
-most users use UBIFS as builtin because UBIFS is the rootfs
-nobody noticed so far. :-(
-Including me.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Fixes: 54169ddd382d ("ubifs: Turn two ubifs_assert() into a WARN_ON()")
-Signed-off-by: Richard Weinberger <richard@nod.at>
----
-Greg,
+--zghhtdmiqqb2lfl5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-can you please take this patch directly?
-It fixes a brown paper bug which was introduced in rc1, I'd like to avoid
-having it in a release and going the -stable path.
+On 2018-10-13, Al Viro <viro@ZenIV.linux.org.uk> wrote:
+> > Pardon me, but... huh?  The reason for your two calls of dirfd_path_ini=
+t() is,
+> > AFAICS, the combination of absolute pathname with both LOOKUP_XDEV and
+> > LOOKUP_BENEATH at the same time.  That combination is treated as if the=
+ pathname
+> > had been relative.  Note that LOOKUP_BENEATH alone is ignored for absol=
+ute ones
+> > (and with a good reason - it's a no-op on path_init() level in that cas=
+e).
+> >=20
+> > What the hell?  It complicates your code and doesn't seem to provide an=
+y benefits
+> > whatsoever -- you could bloody well have passed the relative pathname t=
+o start with.
+> >=20
+> > IDGI...  Without that kludge it becomes simply "do as we currently do f=
+or absolute
+> > pathnames, call dirfd_path_init() for relative ones".  And I would argu=
+e that
+> > taking LOOKUP_BENEATH handling out of dirfd_path_init() into path_init(=
+) (relative)
+> > case would be a good idea.
+> >=20
+> > As it is, the logics is very hard to follow.
+>=20
+> 	... and it fails on LOOKUP_BENEATH anyway.  Egads...  So that's for your
+> LOOKUP_CHROOT ;-/  IMO that's awful, especially with the way you've sprea=
+d those
+> LOOKUP_CHROOT cases between these two.
 
-Thanks,
-//richard
----
- fs/ubifs/super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Yeah, the ->root setting in dirfd_path_init() is ugly. :/
 
-diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-index bf000c8aeffb..fec62e9dfbe6 100644
---- a/fs/ubifs/super.c
-+++ b/fs/ubifs/super.c
-@@ -2337,8 +2337,8 @@ late_initcall(ubifs_init);
-=20
- static void __exit ubifs_exit(void)
- {
--	WARN_ON(list_empty(&ubifs_infos));
--	WARN_ON(atomic_long_read(&ubifs_clean_zn_cnt) =3D=3D 0);
-+	WARN_ON(!list_empty(&ubifs_infos));
-+	WARN_ON(atomic_long_read(&ubifs_clean_zn_cnt) !=3D 0);
-=20
- 	dbg_debugfs_exit();
- 	ubifs_compressors_exit();
+> 	Why not simply have O_THISROOT pick root by dirfd and call file_open_roo=
+t()?
+
+Wouldn't this require replicating the dirfd_path_init()-like code inside
+all of the path_*at() callers which use path_init()? Or is there another
+common place we could put it?
+
+> And if something wants it for stat(), etc. just have them use it combined=
+ with
+> O_PATH and pass the result to ...at()...
+
+This works for stat and quite a few other things (which is why I only
+added openat(2) support for the moment), but I think we'd eventually
+need something like this for renameat2(2) as well as a few other choice
+*at(2) syscalls. Though I also think that more AT_EMPTY_PATH support
+would removed the need for _most_ *at(2) implementations to use this.
+
 --=20
-2.19.1
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
+--zghhtdmiqqb2lfl5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlvBqrMACgkQnhiqJn3b
+jbR1Nw//cNe++vgwSqmvqDGh3gUr0fD2hCd5QWqwG3u0eE0cBu7GsJFA3t5IhfIL
+zFh5UkBJA9qHI51z0+G3ULPv/CnOYz2cON0yx4s3o7eRybt77E0LNUZA+wPU8840
+YY36BE0OD0EmlDQASdyq4zOmwqdiJzOmhDRQbcnYwgANjaP5etZfX1MBurJ9ssdT
+cIe1JZQqnXEpkekNlnrxNF6pLWeVH7YtiFasZAFwh+2i9YcLrzdTQwG7RAlBd6u2
+95k69Ag4cGMvl7lcxsZjJ0/vjW4CKK/NtF1kzF9cXTvbIIMazNImYTMa9CqmAZOZ
+vMshesoPcEcCmljW9yf2AGkM3fmMQ6w6i5gbhmJZP6kvU48/P0fVBnUoL3PEwTC1
+J+EiAjPEIoeTRBcPRbNpUaCr+JDs/HtoY7JIHWnmzcRmLuvVu2ss/2tme6B/WqSI
+ljnJt5SvaMPd712fk4HEdJ27SlXfzcIpaHHVW2ZrUYFrj2JvDr3t3oP5laLPzsYa
+xQ8yT5r0VHSkqLhkm8E2YZduJhZ9FKn+fsxykLcCltXv/yLD1XG6g0yAGp399ibQ
+Hajh+QRAzRvghKhlemLuYb2f3MQj/2pemjAzcHjr0TKLV+kgFOPI33CXpMCnST2F
+vgN/b12cFexN4OLtrp0JRjQYnIMHLuiUVCezpor0pYJIvE/wPug=
+=f2Dg
+-----END PGP SIGNATURE-----
+
+--zghhtdmiqqb2lfl5--
