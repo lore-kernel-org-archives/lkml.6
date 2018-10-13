@@ -2,141 +2,112 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD08C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5DFC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3838204EC
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:35:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3838204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A60FF20835
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:39:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A60FF20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbeJMRKs (ORCPT
+        id S1726896AbeJMRQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 13:10:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32966 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbeJMRKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 13:10:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C2C9ED1;
-        Sat, 13 Oct 2018 02:34:20 -0700 (PDT)
-Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80E513F5D3;
-        Sat, 13 Oct 2018 02:34:14 -0700 (PDT)
-Date:   Sat, 13 Oct 2018 10:34:11 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     linux-doc@vger.kernel.org, Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        linux-arch@vger.kernel.org,
-        Steve Ellcey <sellcey@caviumnetworks.com>,
-        Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
-        Andreas Schwab <schwab@suse.de>,
-        Alexander Graf <agraf@suse.de>,
-        Bamvor Zhangjian <bamv2005@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Manuel Montezelo <manuel.montezelo@gmail.com>,
-        James Hogan <james.hogan@imgtec.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Pinski <pinskia@gmail.com>,
-        Lin Yongting <linyongting@huawei.com>,
-        Alexey Klimov <klimov.linux@gmail.com>,
-        Wookey <wookey@wookware.org>, Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>, linux-api@vger.kernel.org,
-        Nathan_Lynch <Nathan_Lynch@mentor.com>,
-        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Christoph Muellner <christoph.muellner@theobroma-systems.com>
-Subject: Re: [PATCH v9 00/24] ILP32 for ARM64
-Message-ID: <20181013093411.o3id6yzkspsxr5jt@mbp>
-References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
- <20180724173957.GA22106@yury-thinkpad>
- <20181010141017.GA2881@asgard.redhat.com>
- <20181010153655.GA212880@arrakis.emea.arm.com>
- <20181013021416.GE21972@asgard.redhat.com>
+        Sat, 13 Oct 2018 13:16:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45024 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726400AbeJMRQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 13:16:21 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 697743078ABD;
+        Sat, 13 Oct 2018 09:39:54 +0000 (UTC)
+Received: from [10.36.116.42] (ovpn-116-42.ams2.redhat.com [10.36.116.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C9F2A10018FF;
+        Sat, 13 Oct 2018 09:39:49 +0000 (UTC)
+Subject: Re: [PATCH] KVM: vmx: hyper-v: don't pass EPT configuration info to
+ vmx_hv_remote_flush_tlb()
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Tianyu Lan <lantianyu1986@gmail.com>
+Cc:     kvm <kvm@vger.kernel.org>, Radim Krcmar <rkrcmar@redhat.com>,
+        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        Michael.H.Kelley@microsoft.com,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>
+References: <20181011100312.4083-1-vkuznets@redhat.com>
+ <CAOLK0pzTzubAcgv3nd_G6pSbB48Xw-ANbCn7+wX0NE1ssDW2Vg@mail.gmail.com>
+ <87zhvkpth0.fsf@vitty.brq.redhat.com>
+ <CAOLK0pzL5qvUksKwieoVgsqM9e6Bibu1kKR1kvr96jMMz_RxdQ@mail.gmail.com>
+ <87woqopri8.fsf@vitty.brq.redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a536568a-a4bf-c1ea-8027-ff3ff3f0ee37@redhat.com>
+Date:   Sat, 13 Oct 2018 11:39:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181013021416.GE21972@asgard.redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <87woqopri8.fsf@vitty.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Sat, 13 Oct 2018 09:39:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 04:14:16AM +0200, Eugene Syromiatnikov wrote:
-> On Wed, Oct 10, 2018 at 04:36:56PM +0100, Catalin Marinas wrote:
-> > On Wed, Oct 10, 2018 at 04:10:21PM +0200, Eugene Syromiatnikov wrote:
-> > > I have some questions regarding AArch64 ILP32 implementation for which I
-> > > failed to find an answer myself:
-> > >  * How ptrace() tracer is supposed to distinguish between ILP32 and LP64
-> > >    tracees? For MIPS N32 and x32 this is possible based on syscall
-> > >    number, but for AArch64 ILP32 I do not see such a sign. There's also
-> > >    ARM_ip is employed for signalling entering/exiting, I wonder whether
-> > >    it's possible to employ it also for signalling tracee's personality.
-> > 
-> > With the current implementation, I don't think you can distinguish. From
-> > the kernel perspective, the register set is the same. What is the
-> > use-case for this?
+On 11/10/2018 15:00, Vitaly Kuznetsov wrote:
+>> Yes. that need to rename ept_pointer.
+>>
+> Honestly, I would prefer to keep more information cached, e.g. if
+> someone needs EPT configuration data later he can easily get it from
+> ept_pointer and by putting raw cr3 there we'll just keep less.
 > 
-> Err, a ptrace()-based tracer trying to trace a process, for example?
-
-I first thought it wouldn't matter for ptrace-based tracers since the
-syscall numbers are (mostly) the same. But the arguments layout in
-register is indeed different, so I see your point now about having to
-distinguish.
-
-> > We could add a new regset to expose the ILP32 state (NT_ARM_..., I can't
-> > think of a name now but probably not PER* as this implies PER_LINUX_...
-> > which is independent from TIF_32BIT_*).
+> But I don't have a strong opinion, I'll leave it up to the maintainers
+> to tell us how to proceed)
 > 
-> So that would require an additional ptrace() call on each syscall stop,
-> is that correct?
 
-The ILP32 state does not change at run-time, so it could only do a
-ptrace() call once and save the information. No need to re-read it on
-each syscall stop.
+I have (re)applied your patch (I had queued it and tested it earlier,
+now I've added it back).
 
-We could set a high bit in the syscall number reported to the ptrace
-caller (though not changing the syscall ABI) but I haven't thought of
-other consequences. For example, can the ptrace caller change the
-syscall number?
-
-> > >  * What's the reasoning behind capping syscall arguments to 32 bit? x32
-> > >    and MIPS N32 do not have such a restriction (and do not need special
-> > >    wrappers for syscalls that pass 64-bit values as a result, except
-> > >    when they do,  as it is the case for preadv2 on x32); moreover, that
-> > >    would lead to insurmountable difficulties for AArch64 ILP32 tracers
-> > >    that try to trace LP64 tracees, as it would be impossible to pass
-> > >    64-bit addresses to process_vm_{read,write} or ptrace PEEK/POKE.
-> > 
-> > We've attempted in earlier versions to allow a mix of 32 and 64-bit
-> > register values from ILP32 but it got pretty complicated. The entry code
-> > would need to know which registers need zeroing of the top 32-bit
-> 
-> If kernel specifies 64-bit wide registers for syscalls, then it's the
-> caller's (libc's) responsibility to properly sign-extend arguments when
-> needed, and glibc, for example, already has proper type definitions that
-> aimed to handle this.
-
-We tried, see my other reply.
-
--- 
-Catalin
+Paolo
