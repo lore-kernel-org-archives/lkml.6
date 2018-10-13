@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46AACC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 15:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EEF6C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 15:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08F3820895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 15:17:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60A242151D
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 15:17:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="edSt3tZA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08F3820895
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RR1zzHcN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A242151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbeJMWyq (ORCPT
+        id S1726944AbeJMWys (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 18:54:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33496 "EHLO
+        Sat, 13 Oct 2018 18:54:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33512 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbeJMWyp (ORCPT
+        with ESMTP id S1726294AbeJMWys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 18:54:45 -0400
+        Sat, 13 Oct 2018 18:54:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=eyxJkjl3ux4PWhRp8+cF0xRnH8kd79hW67RefGOvRXc=; b=edSt3tZAs8zCuCcDPpgW40mEkG
-        //OfnNxjsu8TMbc2Uf3RjUpj9eEzxtFfC36J3Rhz3PPEQdt4srCAtrQAj274HCtSOJKEhMzZx1sLM
-        hQzJtM5FnUcr6N+O+xkMHEmD79pJHFe4coZx3I+r8JrJqzWjGsT29Olz8z3D/q9copRRefayvz95P
-        OPSY5c5/GiYjFyKCl43JQTEMd3n3j5bXNxG/kEGAovFNH0E5pPOilDb+t8rCwoyDnwelTn0bTEtJ6
-        ia9yOwuMQQlHXMsVJJjMIt5+AK7zSsjJaiKkM+mZtXaT9wopZmZRn6rTYcn3FZGNch2Cd385HRRdK
-        2IlUtkkQ==;
+        bh=VOOg2jZR93ZgSDWc4idp7gl5WiJmFFr+34LQzsxinKE=; b=RR1zzHcNLIADP7ppNXFDffWt00
+        YPuPqmMC1ELUMqtg5VnAv9hKrG5qadhYMoM2dmB83dRvlv/zTDhGK5sAJ3+jRhxV7mNO1j78bIgf0
+        P+DKgfeVtaI8y4B2CwDUq+2abRVU1OE2uWXY0O3Bm9aYO9029LxjpGCZin2MRtFgvtdzXwB9BPQtW
+        lUS++vL5+97R7OQuSSOIfYms32ZwVTRTt0cmnyFmW19HEwrqsTQqlZ1N4HxoRIjHZHEvkghLVTp5Q
+        7Woq+BBP3MU3A0GcGpZY/ex+lsdXk1f6f8Hb7FPhtq2kDVXnoS1Wsmbx/YRVta75PhOqOQD+O38Rc
+        M1MShsTQ==;
 Received: from 089144199123.atnat0008.highway.a1.net ([89.144.199.123] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gBLfE-0004zc-FJ; Sat, 13 Oct 2018 15:17:12 +0000
+        id 1gBLfH-0004zy-7L; Sat, 13 Oct 2018 15:17:15 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-fbdev@vger.kernel.org,
         alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 1/8] cpufreq: tegra186: don't pass GFP_DMA32 to dma_alloc_coherent
-Date:   Sat, 13 Oct 2018 17:17:00 +0200
-Message-Id: <20181013151707.32210-2-hch@lst.de>
+Subject: [PATCH 2/8] firmware: tegra: don't pass GFP_DMA32 to dma_alloc_coherent
+Date:   Sat, 13 Oct 2018 17:17:01 +0200
+Message-Id: <20181013151707.32210-3-hch@lst.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181013151707.32210-1-hch@lst.de>
 References: <20181013151707.32210-1-hch@lst.de>
@@ -65,21 +65,66 @@ The DMA API does its own zone decisions based on the coherent_dma_mask.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/cpufreq/tegra186-cpufreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/tegra/bpmp-debugfs.c | 11 +++++------
+ drivers/firmware/tegra/bpmp.c         |  2 +-
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index 1f59966573aa..f1e09022b819 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -121,7 +121,7 @@ static struct cpufreq_frequency_table *init_vhint_table(
- 	void *virt;
+diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
+index f7f6a0a5cb07..567160897bac 100644
+--- a/drivers/firmware/tegra/bpmp-debugfs.c
++++ b/drivers/firmware/tegra/bpmp-debugfs.c
+@@ -218,12 +218,12 @@ static int debugfs_show(struct seq_file *m, void *p)
+ 		return -ENOENT;
  
- 	virt = dma_alloc_coherent(bpmp->dev, sizeof(*data), &phys,
+ 	namevirt = dma_alloc_coherent(bpmp->dev, namesize, &namephys,
+-				      GFP_KERNEL | GFP_DMA32);
++				      GFP_KERNEL);
+ 	if (!namevirt)
+ 		return -ENOMEM;
+ 
+ 	datavirt = dma_alloc_coherent(bpmp->dev, datasize, &dataphys,
+-				      GFP_KERNEL | GFP_DMA32);
++				      GFP_KERNEL);
+ 	if (!datavirt) {
+ 		ret = -ENOMEM;
+ 		goto free_namebuf;
+@@ -269,12 +269,12 @@ static ssize_t debugfs_store(struct file *file, const char __user *buf,
+ 		return -ENOENT;
+ 
+ 	namevirt = dma_alloc_coherent(bpmp->dev, namesize, &namephys,
+-				      GFP_KERNEL | GFP_DMA32);
++				      GFP_KERNEL);
+ 	if (!namevirt)
+ 		return -ENOMEM;
+ 
+ 	datavirt = dma_alloc_coherent(bpmp->dev, datasize, &dataphys,
+-				      GFP_KERNEL | GFP_DMA32);
++				      GFP_KERNEL);
+ 	if (!datavirt) {
+ 		ret = -ENOMEM;
+ 		goto free_namebuf;
+@@ -422,8 +422,7 @@ int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
+ 	if (!root)
+ 		return -ENOMEM;
+ 
+-	virt = dma_alloc_coherent(bpmp->dev, sz, &phys,
+-				  GFP_KERNEL | GFP_DMA32);
++	virt = dma_alloc_coherent(bpmp->dev, sz, &phys, GFP_KERNEL);
+ 	if (!virt) {
+ 		ret = -ENOMEM;
+ 		goto out;
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index 14a456afa379..e6d2356ccec3 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -531,7 +531,7 @@ static int tegra_bpmp_get_firmware_tag(struct tegra_bpmp *bpmp, char *tag,
+ 	int err;
+ 
+ 	virt = dma_alloc_coherent(bpmp->dev, MSG_DATA_MIN_SZ, &phys,
 -				  GFP_KERNEL | GFP_DMA32);
 +				  GFP_KERNEL);
  	if (!virt)
- 		return ERR_PTR(-ENOMEM);
+ 		return -ENOMEM;
  
 -- 
 2.19.1
