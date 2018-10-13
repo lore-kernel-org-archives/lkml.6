@@ -2,96 +2,205 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839ADC6787C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881DFC6787C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2880A20868
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:11:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2880A20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D3E0204EC
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:15:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Cfm6fJZe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3E0204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbeJMHqa convert rfc822-to-8bit (ORCPT
+        id S1726294AbeJMHuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 03:46:30 -0400
-Received: from mga02.intel.com ([134.134.136.20]:29550 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725812AbeJMHq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 03:46:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 17:11:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,374,1534834800"; 
-   d="scan'208";a="82221003"
-Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
-  by orsmga006.jf.intel.com with ESMTP; 12 Oct 2018 17:11:38 -0700
-Received: from orsmsx116.amr.corp.intel.com (10.22.240.14) by
- ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 12 Oct 2018 17:11:38 -0700
-Received: from orsmsx101.amr.corp.intel.com ([169.254.8.122]) by
- ORSMSX116.amr.corp.intel.com ([169.254.7.58]) with mapi id 14.03.0319.002;
- Fri, 12 Oct 2018 17:11:38 -0700
-From:   "Brown, Aaron F" <aaron.f.brown@intel.com>
-To:     Lance Roy <ldr709@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [PATCH 05/16] igbvf: Replace spin_is_locked() with lockdep
-Thread-Topic: [PATCH 05/16] igbvf: Replace spin_is_locked() with lockdep
-Thread-Index: AQHUWtu+IcNCVZ3vS0qf/ftsJ7vWgaUcXMDg
-Date:   Sat, 13 Oct 2018 00:11:37 +0000
-Message-ID: <309B89C4C689E141A5FF6A0C5FB2118B9657ABF9@ORSMSX101.amr.corp.intel.com>
-References: <20181003053902.6910-1-ldr709@gmail.com>
- <20181003053902.6910-6-ldr709@gmail.com>
-In-Reply-To: <20181003053902.6910-6-ldr709@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Sat, 13 Oct 2018 03:50:46 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:10192 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbeJMHup (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 03:50:45 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bc139320001>; Fri, 12 Oct 2018 17:15:46 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 12 Oct 2018 17:15:52 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 12 Oct 2018 17:15:52 -0700
+Received: from [10.2.173.107] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 13 Oct
+ 2018 00:15:51 +0000
+Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
+To:     Balbir Singh <bsingharora@gmail.com>
+CC:     Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20181012060014.10242-1-jhubbard@nvidia.com>
+ <20181012060014.10242-5-jhubbard@nvidia.com> <20181012105612.GK8537@350D>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <b115b2ce-8fe8-db03-da9c-452511c8ed27@nvidia.com>
+Date:   Fri, 12 Oct 2018 17:15:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
+In-Reply-To: <20181012105612.GK8537@350D>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1539389746; bh=FMtUn+bpvsQtJYHyG/4/qDRUUFNJeag/Psp7i7mvpxA=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Cfm6fJZekKoFUbUiREQ9heor73hEje8paCNygLLeiB6W0h38X+el1/KYJzHEay4Hp
+         nTJfUGu2EIPluiTpkiU41CP7iNEO/k2eGBH05wZmgGp7VUp1pvC+m4TulJfWyWXqw4
+         tRFPFwOSFzwASf4e7IgzN5R9BvHfDke6afKraygouhc34+Htum0JnZHty/dlhs7i6t
+         FfhjtMtK/I+MKcN3YYSYQPvLigRCNzNFB+CSikN/ZJpAYRhaE9j5ZUoMnctKGgc/IN
+         Z2EpWvg8tWGHZezizLWYVmgyruO26yyBENK3q+1vYbbYZxtwfvJUolJEnAjsgzknE/
+         LiClXzVg9WVhQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: netdev-owner@vger.kernel.org [mailto:netdev-
-> owner@vger.kernel.org] On Behalf Of Lance Roy
-> Sent: Tuesday, October 2, 2018 10:39 PM
-> To: linux-kernel@vger.kernel.org
-> Cc: Paul E. McKenney <paulmck@linux.ibm.com>; Lance Roy
-> <ldr709@gmail.com>; Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David
-> S. Miller <davem@davemloft.net>; intel-wired-lan@lists.osuosl.org;
-> netdev@vger.kernel.org
-> Subject: [PATCH 05/16] igbvf: Replace spin_is_locked() with lockdep
+On 10/12/18 3:56 AM, Balbir Singh wrote:
+> On Thu, Oct 11, 2018 at 11:00:12PM -0700, john.hubbard@gmail.com wrote:
+>> From: John Hubbard <jhubbard@nvidia.com>
+[...]
+>> + * Because page->dma_pinned_flags is unioned with page->lru, any page that
+>> + * uses these flags must NOT be on an LRU. That's partly enforced by
+>> + * ClearPageDmaPinned, which gives the page back to LRU.
+>> + *
+>> + * PageDmaPinned also corresponds to PageTail (the 0th bit in the first union
+>> + * of struct page), and this flag is checked without knowing whether it is a
+>> + * tail page or a PageDmaPinned page. Therefore, start the flags at bit 1 (0x2),
+>> + * rather than bit 0.
+>> + */
+>> +#define PAGE_DMA_PINNED		0x2
+>> +#define PAGE_DMA_PINNED_FLAGS	(PAGE_DMA_PINNED)
+>> +
 > 
-> lockdep_assert_held() is better suited to checking locking requirements,
-> since it won't get confused when someone else holds the lock. This is
-> also a step towards possibly removing spin_is_locked().
-> 
-> Signed-off-by: Lance Roy <ldr709@gmail.com>
-> Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: intel-wired-lan@lists.osuosl.org
-> Cc: <netdev@vger.kernel.org>
-> ---
->  drivers/net/ethernet/intel/igbvf/mbx.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> This is really subtle, additional changes to compound_head will need to coordinate
+> with these flags? Also doesn't this bit need to be unique across all structs in
+> the union? I guess that is guaranteed by the fact that page == compound_head(page)
+> as per your assertion, but I've forgotten why that is true. Could you please
+> add some commentary on that
 > 
 
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Yes, agreed. I've rewritten and augmented that comment block, plus removed the 
+PAGE_DMA_PINNED_FLAGS (there are no more bits available, so it's just misleading 
+to even have it). So now it looks like this:
 
+/*
+ * Because page->dma_pinned_flags is unioned with page->lru, any page that
+ * uses these flags must NOT be on an LRU. That's partly enforced by
+ * ClearPageDmaPinned, which gives the page back to LRU.
+ *
+ * PageDmaPinned is checked without knowing whether it is a tail page or a
+ * PageDmaPinned page. For that reason, PageDmaPinned avoids PageTail (the 0th
+ * bit in the first union of struct page), and instead uses bit 1 (0x2),
+ * rather than bit 0.
+ *
+ * PageDmaPinned can only be used if no other systems are using the same bit
+ * across the first struct page union. In this regard, it is similar to
+ * PageTail, and in fact, because of PageTail's constraint that bit 0 be left
+ * alone, bit 1 is also left alone so far: other union elements (ignoring tail
+ * pages) put pointers there, and pointer alignment leaves the lower two bits
+ * available.
+ *
+ * So, constraints include:
+ *
+ *     -- Only use PageDmaPinned on non-tail pages.
+ *     -- Remove the page from any LRU list first.
+ */
+#define PAGE_DMA_PINNED		0x2
+
+/*
+ * Because these flags are read outside of a lock, ensure visibility between
+ * different threads, by using READ|WRITE_ONCE.
+ */
+static __always_inline int PageDmaPinned(struct page *page)
+{
+	VM_BUG_ON(page != compound_head(page));
+	return (READ_ONCE(page->dma_pinned_flags) & PAGE_DMA_PINNED) != 0;
+}
+
+[...]
+>> +static __always_inline void SetPageDmaPinned(struct page *page)
+>> +{
+>> +	VM_BUG_ON(page != compound_head(page));
+> 
+> VM_BUG_ON(!list_empty(&page->lru))
+
+
+There is only one place where we set this flag, and that is when (in patch 6/6)
+transitioning from a page that might (or might not) have been
+on an LRU. In that case, the calling code has already corrupted page->lru, by
+writing to page->dma_pinned_count, which is unions with page->lru:
+
+		atomic_set(&page->dma_pinned_count, 1);
+		SetPageDmaPinned(page);
+
+...so it would be inappropriate to call a list function, such as 
+list_empty(), on that field.  Let's just leave it as-is.
+
+
+> 
+>> +	WRITE_ONCE(page->dma_pinned_flags, PAGE_DMA_PINNED);
+>> +}
+>> +
+>> +static __always_inline void ClearPageDmaPinned(struct page *page)
+>> +{
+>> +	VM_BUG_ON(page != compound_head(page));
+>> +	VM_BUG_ON_PAGE(!PageDmaPinnedFlags(page), page);
+>> +
+>> +	/* This does a WRITE_ONCE to the lru.next, which is also the
+>> +	 * page->dma_pinned_flags field. So in addition to restoring page->lru,
+>> +	 * this provides visibility to other threads.
+>> +	 */
+>> +	INIT_LIST_HEAD(&page->lru);
+> 
+> This assumes certain things about list_head, why not use the correct
+> initialization bits.
+> 
+
+Yes, OK, changed to:
+
+static __always_inline void ClearPageDmaPinned(struct page *page)
+{
+	VM_BUG_ON(page != compound_head(page));
+	VM_BUG_ON_PAGE(!PageDmaPinned(page), page);
+
+	/* Provide visibility to other threads: */
+	WRITE_ONCE(page->dma_pinned_flags, 0);
+
+	/*
+	 * Safety precaution: restore the list head, before possibly returning
+	 * the page to other subsystems.
+	 */
+	INIT_LIST_HEAD(&page->lru);
+}
+
+
+
+-- 
+thanks,
+John Hubbard
+NVIDIA
