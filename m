@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1159C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDDBC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C17120865
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:18:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C17120865
+	by mail.kernel.org (Postfix) with ESMTP id E42202077C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:20:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E42202077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbeJMX4Q (ORCPT
+        id S1726791AbeJMX6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 19:56:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44120 "EHLO mx1.suse.de"
+        Sat, 13 Oct 2018 19:58:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44378 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726329AbeJMX4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 19:56:16 -0400
+        id S1725919AbeJMX6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 19:58:23 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A3902AF66;
-        Sat, 13 Oct 2018 16:18:28 +0000 (UTC)
-Date:   Sat, 13 Oct 2018 18:18:28 +0200
-Message-ID: <s5hpnwdn7l7.wl-tiwai@suse.de>
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CEA73AF66;
+        Sat, 13 Oct 2018 16:20:35 +0000 (UTC)
+Date:   Sat, 13 Oct 2018 18:20:35 +0200
+Message-ID: <s5ho9bxn7ho.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-fbdev@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [alsa-devel] [PATCH 4/8] sound: hpios: don't pass GFP_DMA32 to     dma_alloc_coherent
-In-Reply-To: <20181013151707.32210-5-hch@lst.de>
+Subject: Re: [alsa-devel] [PATCH 5/8] sound: intel/sst: don't pass GFP_DMA32 to dma_alloc_coherent
+In-Reply-To: <20181013151707.32210-6-hch@lst.de>
 References: <20181013151707.32210-1-hch@lst.de>
-        <20181013151707.32210-5-hch@lst.de>
+        <20181013151707.32210-6-hch@lst.de>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -48,7 +48,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 13 Oct 2018 17:17:03 +0200,
+On Sat, 13 Oct 2018 17:17:04 +0200,
 Christoph Hellwig wrote:
 > 
 > The DMA API does its own zone decisions based on the coherent_dma_mask.
@@ -58,31 +58,27 @@ Christoph Hellwig wrote:
 Reviewed-by: Takashi Iwai <tiwai@suse.de>
 
 
-Would you like to take this as a series, or shall I take individually
-through sound tree?
-
-
 thanks,
 
 Takashi
 
 > ---
->  sound/pci/asihpi/hpios.c | 2 +-
+>  sound/soc/intel/common/sst-firmware.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/sound/pci/asihpi/hpios.c b/sound/pci/asihpi/hpios.c
-> index 5ef4fe964366..7c91330af719 100644
-> --- a/sound/pci/asihpi/hpios.c
-> +++ b/sound/pci/asihpi/hpios.c
-> @@ -49,7 +49,7 @@ u16 hpios_locked_mem_alloc(struct consistent_dma_area *p_mem_area, u32 size,
->  	/*?? any benefit in using managed dmam_alloc_coherent? */
->  	p_mem_area->vaddr =
->  		dma_alloc_coherent(&pdev->dev, size, &p_mem_area->dma_handle,
-> -		GFP_DMA32 | GFP_KERNEL);
-> +		GFP_KERNEL);
+> diff --git a/sound/soc/intel/common/sst-firmware.c b/sound/soc/intel/common/sst-firmware.c
+> index 11041aedea31..1e067504b604 100644
+> --- a/sound/soc/intel/common/sst-firmware.c
+> +++ b/sound/soc/intel/common/sst-firmware.c
+> @@ -355,7 +355,7 @@ struct sst_fw *sst_fw_new(struct sst_dsp *dsp,
 >  
->  	if (p_mem_area->vaddr) {
->  		HPI_DEBUG_LOG(DEBUG, "allocated %d bytes, dma 0x%x vma %p\n",
+>  	/* allocate DMA buffer to store FW data */
+>  	sst_fw->dma_buf = dma_alloc_coherent(dsp->dma_dev, sst_fw->size,
+> -				&sst_fw->dmable_fw_paddr, GFP_DMA | GFP_KERNEL);
+> +				&sst_fw->dmable_fw_paddr, GFP_KERNEL);
+>  	if (!sst_fw->dma_buf) {
+>  		dev_err(dsp->dev, "error: DMA alloc failed\n");
+>  		kfree(sst_fw);
 > -- 
 > 2.19.1
 > 
