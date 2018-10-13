@@ -2,195 +2,213 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64657C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA2DC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08AD620859
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFF5020659
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:58:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="srEHmbCc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08AD620859
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOlRCVqx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF5020659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbeJNAc2 (ORCPT
+        id S1726727AbeJNAge (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 20:32:28 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55328 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726711AbeJNAc1 (ORCPT
+        Sat, 13 Oct 2018 20:36:34 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41499 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbeJNAge (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 20:32:27 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 206-v6so15018830wmb.5
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 09:54:34 -0700 (PDT)
+        Sat, 13 Oct 2018 20:36:34 -0400
+Received: by mail-oi1-f196.google.com with SMTP id l197-v6so12140710oib.8;
+        Sat, 13 Oct 2018 09:58:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rNeK5vnnQLBXU8G7tM3UGYPZJ4q3ibTQWXyuPGdzd9Q=;
-        b=srEHmbCcqizI//+XMuncApOJ/4e7rE9VEYkCL/EQTh8320gLYvfjl6c8JDdUQZXnMA
-         t4xeskwMn7zS311ARuS5OW4daOinEEdBJha8brdEuQvmDa9+C4EOdZdVC5qdH2/NRQUf
-         slTmgAk2oy2ZAvQEtbS+v0OjTISGEffV2pcrsx+60ddycqW8zNmP/gYSdy6izTMYLS9p
-         gP5C0Ucs/FhX+qvIo0r4bejmlfWINhWVX1rnj+3CbQbNw89xDgWTdD/KdQ3zKEXD7vhA
-         kXHuSwiIsJO1sXiIhY+TUGg/iabfxgdqJLMp4raqFNqW4UFOirHKv2dAAH8R/+qlMlhX
-         Jp2g==
+        bh=Q/ReSYIuFOFaRJhbbz3/wwsKBIHKrTWE6n3IfmclR94=;
+        b=MOlRCVqx2Y+1giGNbcCrP/xUK8phJjVp+aM+gjXCsTuBn8PDNwbDPJ+vuPSg4MhM9S
+         ynAS9qEs+8cjQZs54KUKRB7TR1N3F/CuNRB5CE8bOMEiJj3lcUMHfPotttIHJm+mb/zJ
+         gE/q7VHKaFIAgoo92UGnQQ2UYC+8s51hGOy6uSlOhUf+JYQKu4YSSxBGCQ3dCZDHS48U
+         h1eZqDSX7lp99MrHR045X5HZLBs299lovrbOPWgt2R9eXDDXxFtXJT/aT4pC2aYhTS5Z
+         p+khnx7sotroVN8FE3deykrx/azq6qgR0a/OP98uxeRzXoVdan5k2h5TqejIDzh5jv3K
+         XcmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rNeK5vnnQLBXU8G7tM3UGYPZJ4q3ibTQWXyuPGdzd9Q=;
-        b=dS9mHc5impFkoKiHGjeytbfqarY5rhvw530u6HlDMbRUV4Cov2DsMpyv0+YCrvn5gE
-         wHrwriCi0S8CGCXvlPYdZ21jeKJPySBoADw9tY4/pN02vcNFYI+YrF4wVqRSXNsjxU50
-         k1wS/AsX12dXOeZeAYi1rQ4V1tiCfBMl0u4ZxkXG00Lb+M8DfwRrEllOuSRtWYN0a5yR
-         HqIxOIQGSEya4ys7FGwsG1wWUCUjY/cJj5prwlxMmcCnMaWtC1sXR3bqJRSzFhbS0mbW
-         dYVr4RaicyH1BSlHileun3eoubUAt8vVuIPXIHhQTIAutqo0TOJeA+DezdZOE0TaMTUt
-         kXkQ==
-X-Gm-Message-State: ABuFfoix9zFQvQhVp4Gu+QCFlE1B0WUURsK5HDwXohQvY/JWj2eEz8sT
-        QdsnyGRpnlzsHWqB8uh5IFRwWDPy+1H/tNgy6MCGVA==
-X-Google-Smtp-Source: ACcGV61Oc5ReOp1ewY1WkQM2/DIERa3t/imMfXnKsz1nQE0Eldrq3s0AzGhF9TEXVqYt9oUQNwcVOydgAWqm3O/kvyg=
-X-Received: by 2002:a1c:1fcd:: with SMTP id f196-v6mr8456282wmf.19.1539449673683;
- Sat, 13 Oct 2018 09:54:33 -0700 (PDT)
+        bh=Q/ReSYIuFOFaRJhbbz3/wwsKBIHKrTWE6n3IfmclR94=;
+        b=iEfw43lQ0NaqagypN5Kc7dmMsspme9NKjVCoDrHwOFib1uyWJAMOiDuuoqUZNuhwYF
+         h33jlaIQ+fQK3+6OictCgG0ND8hiBsqNTG/PgWXbjP1P/rYXXk02GJNMIoZolY8HjN/Q
+         XOJRhyEh0Ibp5c/ESsGGM0Y1gmmegXxq+K3EIYH9yn+PnBcj7vTakSitN5ar84lVo9QO
+         4GbTjeDWsoL/gdaT6BPFyCM5Mtr8ePZo2zDdar9fpsdUmS++lXAg9ek/xLCesJWbJ4xv
+         u5nWCmKTmrDPRHZUqok9Zza8QHCQoMFBK/Q6FUlbX9F8C9+68LLfx7oIoa9YCKc9fR6t
+         568Q==
+X-Gm-Message-State: ABuFfogI39PmRjUIFCJ9VItyVl6+Q0MDMFi3ZpjCaZPnjyBBtio5DHql
+        JPPJR9Pjo9xhh9Vfoyus1t/wQ/ydKU9n12AQNRo=
+X-Google-Smtp-Source: ACcGV63COr6BtiejFrSjVhlgKO13u271ANuhQiqviC7cJts//xF2z9gen884pTdR1tBxjJv+yxEjy4CPNEuBykH2upw=
+X-Received: by 2002:aca:d4d3:: with SMTP id l202-v6mr5440360oig.15.1539449919711;
+ Sat, 13 Oct 2018 09:58:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
- <20180724173957.GA22106@yury-thinkpad> <20181010141017.GA2881@asgard.redhat.com>
- <20181010153655.GA212880@arrakis.emea.arm.com> <20181013021416.GE21972@asgard.redhat.com>
- <20181013093411.o3id6yzkspsxr5jt@mbp>
-In-Reply-To: <20181013093411.o3id6yzkspsxr5jt@mbp>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Sat, 13 Oct 2018 09:54:22 -0700
-Message-ID: <CALCETrW0sFoOknkLGFSiobQLg9O4qzD9f-9ws8uk69J1X866cg@mail.gmail.com>
-Subject: Re: [PATCH v9 00/24] ILP32 for ARM64
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Eugene Syromiatnikov <esyr@redhat.com>, linux-doc@vger.kernel.org,
-        szabolcs.nagy@arm.com, palmer@sifive.com,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        ynorov@caviumnetworks.com, Pavel Machek <pavel@ucw.cz>,
-        philipp.tomsich@theobroma-systems.com,
-        "Joseph S. Myers" <joseph@codesourcery.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        sellcey@caviumnetworks.com, Prasun.Kapoor@caviumnetworks.com,
-        schwab@suse.de, Alexander Graf <agraf@suse.de>, bamv2005@gmail.com,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        manuel.montezelo@gmail.com, James Hogan <james.hogan@imgtec.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Pinski <pinskia@gmail.com>, linyongting@huawei.com,
-        klimov.linux@gmail.com, wookey@wookware.org,
-        Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Nathan Lynch <Nathan_Lynch@mentor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>, ramana.gcc@googlemail.com,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        christoph.muellner@theobroma-systems.com
+References: <20181011221237.1925.85591.stgit@localhost.localdomain> <20181011221334.1925.31961.stgit@localhost.localdomain>
+In-Reply-To: <20181011221334.1925.31961.stgit@localhost.localdomain>
+From:   Pavel Tatashin <pasha.tatashin@gmail.com>
+Date:   Sat, 13 Oct 2018 12:58:03 -0400
+Message-ID: <CAGM2rebWT43mTrpsbiwqpioNa=K68OQp=fstBmgov3tdkXjPiQ@mail.gmail.com>
+Subject: Re: [mm PATCH v2 1/6] mm: Use mm_zero_struct_page from SPARC on all
+ 64b architectures
+To:     alexander.h.duyck@linux.intel.com
+Cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Michal Hocko <mhocko@suse.com>, dave.jiang@intel.com,
+        LKML <linux-kernel@vger.kernel.org>, willy@infradead.org,
+        davem@davemloft.net, yi.z.zhang@linux.intel.com,
+        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com,
+        Vlastimil Babka <vbabka@suse.cz>, sparclinux@vger.kernel.org,
+        dan.j.williams@intel.com, ldufour@linux.vnet.ibm.com,
+        mgorman@techsingularity.net, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Oct 13, 2018, at 2:34 AM, Catalin Marinas <catalin.marinas@arm.com> wrote:
->
->> On Sat, Oct 13, 2018 at 04:14:16AM +0200, Eugene Syromiatnikov wrote:
->>> On Wed, Oct 10, 2018 at 04:36:56PM +0100, Catalin Marinas wrote:
->>>> On Wed, Oct 10, 2018 at 04:10:21PM +0200, Eugene Syromiatnikov wrote:
->>>> I have some questions regarding AArch64 ILP32 implementation for which I
->>>> failed to find an answer myself:
->>>> * How ptrace() tracer is supposed to distinguish between ILP32 and LP64
->>>>   tracees? For MIPS N32 and x32 this is possible based on syscall
->>>>   number, but for AArch64 ILP32 I do not see such a sign. There's also
->>>>   ARM_ip is employed for signalling entering/exiting, I wonder whether
->>>>   it's possible to employ it also for signalling tracee's personality.
->>>
->>> With the current implementation, I don't think you can distinguish. From
->>> the kernel perspective, the register set is the same. What is the
->>> use-case for this?
->>
->> Err, a ptrace()-based tracer trying to trace a process, for example?
->
-> I first thought it wouldn't matter for ptrace-based tracers since the
-> syscall numbers are (mostly) the same. But the arguments layout in
-> register is indeed different, so I see your point now about having to
-> distinguish.
->
->>> We could add a new regset to expose the ILP32 state (NT_ARM_..., I can't
->>> think of a name now but probably not PER* as this implies PER_LINUX_...
->>> which is independent from TIF_32BIT_*).
->>
->> So that would require an additional ptrace() call on each syscall stop,
->> is that correct?
->
-> The ILP32 state does not change at run-time, so it could only do a
-> ptrace() call once and save the information. No need to re-read it on
-> each syscall stop.
->
+I am worried about this change. I added SPARC optimized
+mm_zero_struct_page() specifically to SPARC because it has a poor
+performance with small memset()s, since it uses STBI instructions.
+However, other architectures might not suffer with small memset()s,
+and have hardware optimized memset variants for small sizes. Don't
+forget, this is a leaf routine on most arches, so the function call
+should be cheap. Also, the macro itself is not very flexible: when
+size of struct page is changed, it also must be modified (we could add
+fall throughs though), I would add this macro only to those arches
+that benefit from this change, in other words, I would like to see
+performance data.
 
-Please solve this in an arch independent way.  This situation is
-basically unusably broken on x86 right now.  Please solve it for real,
-by, for example, adding a new ptrace operation that returns something
-like this:
+I will review the rest of the patches in this series on Monday.
 
-enum ptrace_syscall_state {
-  NO_SYSCALL,
-  SYSCALL_ENTRY,
-  SYSCALL_EXIT,
-  /* other values may be defined in the future. */
-};
-
-struct ptrace_syscall_info {
-  enum ptrace_syscall_state state;
-  unsigned long arch;
-  union {
-    struct {
-      unsigned long nr;
-      unsigned long args[6];
-   } entry;
-   struct {
-      unsigned long ret;
-   } exit;
-};
-
-where arch is an AUDIT_ARCH_XYZ constant.
-
-On x86, it's currently essentially impossible for tools like strace to
-correctly decode syscalls.
-
-> We could set a high bit in the syscall number reported to the ptrace
-> caller (though not changing the syscall ABI) but I haven't thought of
-> other consequences. For example, can the ptrace caller change the
-> syscall number?
-
-Yes it can.
-
+Thank you,
+Pavel
+On Thu, Oct 11, 2018 at 6:17 PM Alexander Duyck
+<alexander.h.duyck@linux.intel.com> wrote:
 >
->>>> * What's the reasoning behind capping syscall arguments to 32 bit? x32
->>>>   and MIPS N32 do not have such a restriction (and do not need special
->>>>   wrappers for syscalls that pass 64-bit values as a result, except
->>>>   when they do,  as it is the case for preadv2 on x32); moreover, that
->>>>   would lead to insurmountable difficulties for AArch64 ILP32 tracers
->>>>   that try to trace LP64 tracees, as it would be impossible to pass
->>>>   64-bit addresses to process_vm_{read,write} or ptrace PEEK/POKE.
->>>
->>> We've attempted in earlier versions to allow a mix of 32 and 64-bit
->>> register values from ILP32 but it got pretty complicated. The entry code
->>> would need to know which registers need zeroing of the top 32-bit
->>
->> If kernel specifies 64-bit wide registers for syscalls, then it's the
->> caller's (libc's) responsibility to properly sign-extend arguments when
->> needed, and glibc, for example, already has proper type definitions that
->> aimed to handle this.
+> This change makes it so that we use the same approach that was already in
+> use on Sparc on all the archtectures that support a 64b long.
 >
-> We tried, see my other reply.
+> This is mostly motivated by the fact that 8 to 10 store/move instructions
+> are likely always going to be faster than having to call into a function
+> that is not specialized for handling page init.
 >
-> --
-> Catalin
+> An added advantage to doing it this way is that the compiler can get away
+> with combining writes in the __init_single_page call. As a result the
+> memset call will be reduced to only about 4 write operations, or at least
+> that is what I am seeing with GCC 6.2 as the flags, LRU poitners, and
+> count/mapcount seem to be cancelling out at least 4 of the 8 assignments on
+> my system.
+>
+> One change I had to make to the function was to reduce the minimum page
+> size to 56 to support some powerpc64 configurations.
+>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> ---
+>  arch/sparc/include/asm/pgtable_64.h |   30 ------------------------------
+>  include/linux/mm.h                  |   34 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 34 insertions(+), 30 deletions(-)
+>
+> diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
+> index 1393a8ac596b..22500c3be7a9 100644
+> --- a/arch/sparc/include/asm/pgtable_64.h
+> +++ b/arch/sparc/include/asm/pgtable_64.h
+> @@ -231,36 +231,6 @@
+>  extern struct page *mem_map_zero;
+>  #define ZERO_PAGE(vaddr)       (mem_map_zero)
+>
+> -/* This macro must be updated when the size of struct page grows above 80
+> - * or reduces below 64.
+> - * The idea that compiler optimizes out switch() statement, and only
+> - * leaves clrx instructions
+> - */
+> -#define        mm_zero_struct_page(pp) do {                                    \
+> -       unsigned long *_pp = (void *)(pp);                              \
+> -                                                                       \
+> -        /* Check that struct page is either 64, 72, or 80 bytes */     \
+> -       BUILD_BUG_ON(sizeof(struct page) & 7);                          \
+> -       BUILD_BUG_ON(sizeof(struct page) < 64);                         \
+> -       BUILD_BUG_ON(sizeof(struct page) > 80);                         \
+> -                                                                       \
+> -       switch (sizeof(struct page)) {                                  \
+> -       case 80:                                                        \
+> -               _pp[9] = 0;     /* fallthrough */                       \
+> -       case 72:                                                        \
+> -               _pp[8] = 0;     /* fallthrough */                       \
+> -       default:                                                        \
+> -               _pp[7] = 0;                                             \
+> -               _pp[6] = 0;                                             \
+> -               _pp[5] = 0;                                             \
+> -               _pp[4] = 0;                                             \
+> -               _pp[3] = 0;                                             \
+> -               _pp[2] = 0;                                             \
+> -               _pp[1] = 0;                                             \
+> -               _pp[0] = 0;                                             \
+> -       }                                                               \
+> -} while (0)
+> -
+>  /* PFNs are real physical page numbers.  However, mem_map only begins to record
+>   * per-page information starting at pfn_base.  This is to handle systems where
+>   * the first physical page in the machine is at some huge physical address,
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 273d4dbd3883..dee407998366 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -102,8 +102,42 @@ static inline void set_max_mapnr(unsigned long limit) { }
+>   * zeroing by defining this macro in <asm/pgtable.h>.
+>   */
+>  #ifndef mm_zero_struct_page
+> +#if BITS_PER_LONG == 64
+> +/* This function must be updated when the size of struct page grows above 80
+> + * or reduces below 64. The idea that compiler optimizes out switch()
+> + * statement, and only leaves move/store instructions
+> + */
+> +#define        mm_zero_struct_page(pp) __mm_zero_struct_page(pp)
+> +static inline void __mm_zero_struct_page(struct page *page)
+> +{
+> +       unsigned long *_pp = (void *)page;
+> +
+> +        /* Check that struct page is either 56, 64, 72, or 80 bytes */
+> +       BUILD_BUG_ON(sizeof(struct page) & 7);
+> +       BUILD_BUG_ON(sizeof(struct page) < 56);
+> +       BUILD_BUG_ON(sizeof(struct page) > 80);
+> +
+> +       switch (sizeof(struct page)) {
+> +       case 80:
+> +               _pp[9] = 0;     /* fallthrough */
+> +       case 72:
+> +               _pp[8] = 0;     /* fallthrough */
+> +       default:
+> +               _pp[7] = 0;     /* fallthrough */
+> +       case 56:
+> +               _pp[6] = 0;
+> +               _pp[5] = 0;
+> +               _pp[4] = 0;
+> +               _pp[3] = 0;
+> +               _pp[2] = 0;
+> +               _pp[1] = 0;
+> +               _pp[0] = 0;
+> +       }
+> +}
+> +#else
+>  #define mm_zero_struct_page(pp)  ((void)memset((pp), 0, sizeof(struct page)))
+>  #endif
+> +#endif
+>
+>  /*
+>   * Default maximum number of active map areas, this limits the number of vmas
+>
