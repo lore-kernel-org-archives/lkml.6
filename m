@@ -2,121 +2,137 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52244C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 22:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A582C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 23:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02DA42077C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 22:51:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="VUJazSP1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02DA42077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 1F56C2077C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 23:01:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F56C2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726319AbeJNGad (ORCPT
+        id S1726333AbeJNGkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 02:30:33 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42812 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbeJNGad (ORCPT
+        Sun, 14 Oct 2018 02:40:16 -0400
+Received: from ipmail01.adl6.internode.on.net ([150.101.137.136]:54716 "EHLO
+        ipmail01.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725990AbeJNGkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 02:30:33 -0400
-Received: by mail-pl1-f196.google.com with SMTP id c8-v6so7515168plo.9
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 15:51:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dy8OGn++qkXUtglqZnMoFTudmTKlaXI3pKPshiuA8dE=;
-        b=VUJazSP1gObbC6j1Dw4h3nQQdGHkuOJrEaFUg1vfzzOFNi1a1BxHaou4zTVxrf7BWT
-         X8FyKZkfx8k419lftE0+pi1/Iio+Dlv0BtEjrWAHfa6IOMKyLEKhEg++4wF5M25/1XJN
-         sELA2NLCTE7lu2NYgFf9zcDMyrSVjqLhMiR68TTd4L4CEEl49rjSZD1WLEUpOFMLWcMo
-         9KzdNlR5a/TM/c+lKlrRyrTgwjjG34XNGPez95M1mF+IRYMyo7UcDgNqblnSZwn6rKFR
-         TJMpbRFOR7OLijvCLoK/vUt9gNr7b3HyQMwqe1VJvsa4mqfJv6dEiws/906S+MGHgr8z
-         GfjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dy8OGn++qkXUtglqZnMoFTudmTKlaXI3pKPshiuA8dE=;
-        b=bspJKtpsaFETZOKc9lGpsWI1FNjOM0Wf9tJwnHvPTBpqJcxW1qZViwbbQdFNTV+uTZ
-         JhG+tgalQQljDFmCMren4PZa95v/mJFVL4HGhFMoeO2xe7zkCEc4KyjcKjHohWNpBVAD
-         jc8weKle9p/RhuB+u8lkxZdtxGN0Id6LP027EtF6xsfj1dCBD4PpPSL/r9OqY5StHtQo
-         OADkn/hi7iPKl32bdQJDFNRSFsPflkh0rs91DaaoTYx6zU/V9buhWEmrDsr7hvfVZj1l
-         /c80BaCKr0vVnilZ1qRz/T/sqISxFzS0wqS9ZTLWMf336MDqPj7cqipDm7C1uuACPxCr
-         kQMA==
-X-Gm-Message-State: ABuFfogm8wlkqTvY5hTkg/HDl3dGy2045sdpHlgQOvOr8UtO5u+moeEY
-        01bO4yfoNl5pLCZu8qMyddMpVwXwbew=
-X-Google-Smtp-Source: ACcGV63/iDeegH5zvS8paTl7Ur87qwod+xk6vuJqUaDVStVwDo9pr9ULmwnfUPjYQEcdUNGsO5I4tQ==
-X-Received: by 2002:a17:902:24a5:: with SMTP id w34-v6mr10810377pla.73.1539471107250;
-        Sat, 13 Oct 2018 15:51:47 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id d2-v6sm6854068pfn.118.2018.10.13.15.51.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 13 Oct 2018 15:51:45 -0700 (PDT)
-Subject: Re: [PATCH V2 0/2] blk-mq: some fixes about updating hw queues
-To:     Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc:     keith.busch@linux.intel.com, ming.lei@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1539338848-1789-1-git-send-email-jianchao.w.wang@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3d50f599-4243-6a11-b7d0-9eee9d71ec63@kernel.dk>
-Date:   Sat, 13 Oct 2018 16:51:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sun, 14 Oct 2018 02:40:16 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail01.adl6.internode.on.net with ESMTP; 14 Oct 2018 09:31:25 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gBSuS-0007hP-6c; Sun, 14 Oct 2018 10:01:24 +1100
+Date:   Sun, 14 Oct 2018 10:01:24 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
+Message-ID: <20181013230124.GB18822@dastard>
+References: <20181012060014.10242-1-jhubbard@nvidia.com>
+ <20181012060014.10242-5-jhubbard@nvidia.com>
+ <20181013035516.GA18822@dastard>
+ <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1539338848-1789-1-git-send-email-jianchao.w.wang@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/18 4:07 AM, Jianchao Wang wrote:
-> Hi Jens
+On Sat, Oct 13, 2018 at 12:34:12AM -0700, John Hubbard wrote:
+> On 10/12/18 8:55 PM, Dave Chinner wrote:
+> > On Thu, Oct 11, 2018 at 11:00:12PM -0700, john.hubbard@gmail.com wrote:
+> >> From: John Hubbard <jhubbard@nvidia.com>
+> [...]
+> >> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> >> index 5ed8f6292a53..017ab82e36ca 100644
+> >> --- a/include/linux/mm_types.h
+> >> +++ b/include/linux/mm_types.h
+> >> @@ -78,12 +78,22 @@ struct page {
+> >>  	 */
+> >>  	union {
+> >>  		struct {	/* Page cache and anonymous pages */
+> >> -			/**
+> >> -			 * @lru: Pageout list, eg. active_list protected by
+> >> -			 * zone_lru_lock.  Sometimes used as a generic list
+> >> -			 * by the page owner.
+> >> -			 */
+> >> -			struct list_head lru;
+> >> +			union {
+> >> +				/**
+> >> +				 * @lru: Pageout list, eg. active_list protected
+> >> +				 * by zone_lru_lock.  Sometimes used as a
+> >> +				 * generic list by the page owner.
+> >> +				 */
+> >> +				struct list_head lru;
+> >> +				/* Used by get_user_pages*(). Pages may not be
+> >> +				 * on an LRU while these dma_pinned_* fields
+> >> +				 * are in use.
+> >> +				 */
+> >> +				struct {
+> >> +					unsigned long dma_pinned_flags;
+> >> +					atomic_t      dma_pinned_count;
+> >> +				};
+> >> +			};
+> > 
+> > Isn't this broken for mapped file-backed pages? i.e. they may be
+> > passed as the user buffer to read/write direct IO and so the pages
+> > passed to gup will be on the active/inactive LRUs. hence I can't see
+> > how you can have dual use of the LRU list head like this....
+> > 
+> > What am I missing here?
 > 
-> This patch set fixes some defects during update hw queues.
+> Hi Dave,
 > 
-> 1st patch refactor the blk-mq debugfs and sysfs register during
-> blk_mq_update_nr_hw_queues.
-> 
-> 2nd patch change the GFP_KERNEL to GFP_NOIO during blk_mq_realloc_hw_ctxs,
-> 
-> 3rd patch try to realloc hctx when this hctx is mapped to a different node.
-> 
-> 4th patch should be able to fix the panic reported in follwing link
-> https://marc.info/?l=linux-block&m=153799465603723&w=2
-> 
-> V2:
->  - Newly add 2nd and 3rd patch.
->  - Use blk_mq_map_queues when __blk_mq_update_nr_hw_queues fallbacks to
->    previous nr_hw_queues to avoid driver's .map_queues leak mapping of
->    some cpus due the fallback nr_hw_queues.
->  - Add Ming's Reviewed-by in 1st patch.
-> 
-> 
-> Jianchao Wang[4]
-> blk-mq: adjust debugfs and sysfs register when
-> blk-mq: change gfp flags to GFP_NOIO in
-> blk-mq: realloc hctx when hw queue is mapped to
-> blk-mq: fallback to previous nr_hw_queues when
-> 
->  block/blk-core.c  |   2 +-
->  block/blk-flush.c |   6 +--
->  block/blk-mq.c    | 155 ++++++++++++++++++++++++++++++++++--------------------
->  block/blk.h       |   2 +-
->  4 files changed, 102 insertions(+), 63 deletions(-)
-> 
+> In patch 6/6, pin_page_for_dma(), which is called at the end of get_user_pages(),
+> unceremoniously rips the pages out of the LRU, as a prerequisite to using
+> either of the page->dma_pinned_* fields. 
 
-Applied, thanks.
+How is that safe? If you've ripped the page out of the LRU, it's no
+longer being tracked by the page cache aging and reclaim algorithms.
+Patch 6 doesn't appear to put these pages back in the LRU, either,
+so it looks to me like this just dumps them on the ground after the
+gup reference is dropped.  How do we reclaim these page cache pages
+when there is memory pressure if they aren't in the LRU?
 
+> The idea is that LRU is not especially useful for this situation anyway,
+> so we'll just make it one or the other: either a page is dma-pinned, and
+> just hanging out doing RDMA most likely (and LRU is less meaningful during that
+> time), or it's possibly on an LRU list.
+
+gup isn't just used for RDMA. It's used by direct IO in far, far
+more situations and machines than RDMA is. Please explain why
+ripping pages out of the LRU and not putting them back is safe, has
+no side effects, doesn't adversely impact page cache reclaim, etc.
+Indeed, I'd love to see a description of all the page references and
+where they come and go so we know the changes aren't just leaking
+these pages until the filesystem invalidates them at unmount.
+
+Maybe I'm not seeing why this is safe yet, but seeing as you haven't
+explained why it is safe then, at minimum, the patch descriptions
+are incomplete.
+
+Cheers,
+
+Dave.
 -- 
-Jens Axboe
-
+Dave Chinner
+david@fromorbit.com
