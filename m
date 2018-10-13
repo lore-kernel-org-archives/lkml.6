@@ -2,130 +2,272 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C91ACC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34CBFC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8305A2064E
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:26:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8305A2064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id DC1F22064E
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:28:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kil9J/+W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC1F22064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbeJNCEv (ORCPT
+        id S1726878AbeJNCGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 22:04:51 -0400
-Received: from gateway23.websitewelcome.com ([192.185.48.251]:24247 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726668AbeJNCEu (ORCPT
+        Sat, 13 Oct 2018 22:06:16 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40348 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbeJNCGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 22:04:50 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 60F947A38
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 13:26:40 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id BOcag91bgBcCXBOcagQlLx; Sat, 13 Oct 2018 13:26:40 -0500
-X-Authority-Reason: nr=8
-Received: from 57.154.24.109.rev.sfr.net ([109.24.154.57]:38162 helo=[192.168.43.69])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gBOcZ-0041sz-R6; Sat, 13 Oct 2018 13:26:40 -0500
-Subject: Re: [PATCH] ath10k: htt_rx: Fix signedness bug in
- ath10k_update_per_peer_tx_stats
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181005184245.GA11700@embeddedor.com>
- <20181013172330.1CC8E60BFE@smtp.codeaurora.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <832fd7db-4e67-b757-d1bb-dbc109a90571@embeddedor.com>
-Date:   Sat, 13 Oct 2018 20:26:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 13 Oct 2018 22:06:15 -0400
+Received: by mail-oi1-f194.google.com with SMTP id j68-v6so12254882oib.7
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 11:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A/8Y0Hb6Wyj/qkND39Hgf/WWfH6YJH4yKTgmz9ZnF3A=;
+        b=Kil9J/+WsGxve+TAkuLPVQxkmNl9o2ziXWey4kM9rXQkjVl9sZjGAKWuvCx11tLkoD
+         cvJ0v4+DcU2QrwBosy+1tPlFgyh3nYdShLCPqUdBkccpfnOwuxpajAzvpR4P3gkN5mNH
+         /ml7VXssETEDk5qhJgYRF20YT9CX6/nHninXnKslZiOEbLnOJTYNr67amVSLqlzyicGJ
+         W00AiDZkFlThgdc6Xjzol+NE1YbkL+EkRmmcsWbOSBH5+vQkKZiFwB/q1Z8ESn9JpK2R
+         jleYzSVezWrxqWk8silsN/PnoRqEKqwuTStMTFaL2SL++fVjsy8xmOIUhKM9IJsPNAAS
+         ZB9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A/8Y0Hb6Wyj/qkND39Hgf/WWfH6YJH4yKTgmz9ZnF3A=;
+        b=WyOWTBeSebyakAMx6bxldwKZwV/FCOtIEYL+qAQxPvo9ChaabJbVXp21+g8t1x3PW5
+         ErGHNMdw5Ql85SyJ0lik7Ri7FXtfGlTcIHVyRCT21UBFtgr82Kq7t/7u1xcKoKHpgWRu
+         1/uQ5bTcSvj4ypi0B2atyTlcyYT+o9J4oebux2pffs3ble6SXSExr6ZYWl5DzlmvAgvr
+         KkrXuRvxy4rQkq70tRbac3Ihtk7GZ8bEL/EX8UAM6wigvASz5w+Mrq28harQv0ZKCs0Y
+         iE9noNtvHOzJ3DlgmQVceo4lXSqE/OUGiEyqnDbzXml0VP48CCUGqyTezkkw0PY3nKlA
+         UM6A==
+X-Gm-Message-State: ABuFfojYOASqm/gb9hbbg/F8TjMhzsolv28FQrybD15+ECMjDgSxf6e1
+        ndyMtArt/KjuNXakGImCwAQCKwudt+oJKtuT6aRrRw==
+X-Google-Smtp-Source: ACcGV63Pnnbdkm+2Pl6f5G+QsPWxynGEuA/PMoQ5RYCizerrJBiTIQWVu7tdO/7FF7Q9gLqT2t6fqciGOXf8rHnQuqo=
+X-Received: by 2002:aca:efd6:: with SMTP id n205-v6mr5580705oih.3.1539455285088;
+ Sat, 13 Oct 2018 11:28:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181013172330.1CC8E60BFE@smtp.codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 109.24.154.57
-X-Source-L: No
-X-Exim-ID: 1gBOcZ-0041sz-R6
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 57.154.24.109.rev.sfr.net ([192.168.43.69]) [109.24.154.57]:38162
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+In-Reply-To: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Sat, 13 Oct 2018 20:27:38 +0200
+Message-ID: <CAG48ez2ZPhnxudqgU7nC2ORvLnS0Ja-qhLSE5WAY361jst7XNw@mail.gmail.com>
+Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
+To:     enkechen@cisco.com
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>, deller@gmx.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        christian@brauner.io, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Dave.Martin@arm.com,
+        mchehab+samsung@kernel.org, Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        guro@fb.com, marcos.souza.org@gmail.com,
+        Oleg Nesterov <oleg@redhat.com>, linux@dominikbrodowski.net,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        yang.shi@linux.alibaba.com, Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>, kamensky@cisco.com,
+        xe-linux-external@cisco.com, sstrogin@cisco.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Oct 13, 2018 at 2:33 AM Enke Chen <enkechen@cisco.com> wrote:
+> For simplicity and consistency, this patch provides an implementation
+> for signal-based fault notification prior to the coredump of a child
+> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+> be used by an application to express its interest and to specify the
+> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
+> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
 
-On 10/13/18 7:23 PM, Kalle Valo wrote:
-> 
-> Patch applied to ath-next branch of ath.git, thanks.
-> 
-> 9d9cdbf3f9ed ath10k: htt_rx: fix signedness bug in ath10k_update_per_peer_tx_stats
-> 
+Your suggested API looks vaguely similar to PR_SET_PDEATHSIG, but with
+some important differences:
 
-Thank you, Kalle.
---
-Gustavo
+ - You don't reset the signal on setuid execution.
+ - You permit setting this not just on the current process, but also on others.
+
+For both of these: Are these differences actually necessary, and if
+so, can you provide a specific rationale? From a security perspective,
+I would very much prefer it if this API had semantics closer to
+PR_SET_PDEATHSIG.
+
+[...]
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 312b43e..eb4a483 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2337,6 +2337,44 @@ static int ptrace_signal(int signr, kernel_siginfo_t *info)
+>         return signr;
+>  }
+>
+> +/*
+> + * Let the parent, if so desired, know about the imminent death of a child
+> + * prior to its coredump.
+> + *
+> + * Locking logic is similar to do_notify_parent_cldstop().
+> + */
+> +static void do_notify_parent_predump(struct task_struct *tsk)
+> +{
+> +       struct sighand_struct *sighand;
+> +       struct task_struct *parent;
+> +       struct kernel_siginfo info;
+> +       unsigned long flags;
+> +       int sig;
+> +
+> +       parent = tsk->real_parent;
+> +       sig = parent->predump_signal;
+> +
+> +       /* Check again with "tasklist_lock" locked by the caller */
+> +       if (!valid_predump_signal(sig))
+> +               return;
+> +
+> +       clear_siginfo(&info);
+> +       info.si_signo = sig;
+> +       if (sig == SIGCHLD)
+> +               info.si_code = CLD_PREDUMP;
+> +
+> +       rcu_read_lock();
+> +       info.si_pid = task_pid_nr_ns(tsk, task_active_pid_ns(parent));
+> +       info.si_uid = from_kuid_munged(task_cred_xxx(parent, user_ns),
+> +                                      task_uid(tsk));
+
+You're sending a signal from the current namespaces, but with IDs that
+have been mapped into the parent's namespaces? That looks wrong to me.
+
+> +       rcu_read_unlock();
+> +
+> +       sighand = parent->sighand;
+> +       spin_lock_irqsave(&sighand->siglock, flags);
+> +       __group_send_sig_info(sig, &info, parent);
+> +       spin_unlock_irqrestore(&sighand->siglock, flags);
+> +}
+> +
+>  bool get_signal(struct ksignal *ksig)
+>  {
+>         struct sighand_struct *sighand = current->sighand;
+> @@ -2497,6 +2535,19 @@ bool get_signal(struct ksignal *ksig)
+>                 current->flags |= PF_SIGNALED;
+>
+>                 if (sig_kernel_coredump(signr)) {
+> +                       /*
+> +                        * Notify the parent prior to the coredump if the
+> +                        * parent is interested in such a notificaiton.
+> +                        */
+> +                       int p_sig = current->real_parent->predump_signal;
+
+current->real_parent is an __rcu member. I think if you run the sparse
+checker against this patch, it's going to complain. Are you allowed to
+access current->real_parent in this context?
+
+> +                       if (valid_predump_signal(p_sig)) {
+> +                               read_lock(&tasklist_lock);
+> +                               do_notify_parent_predump(current);
+> +                               read_unlock(&tasklist_lock);
+> +                               cond_resched();
+> +                       }
+> +
+>                         if (print_fatal_signals)
+>                                 print_fatal_signal(ksig->info.si_signo);
+>                         proc_coredump_connector(current);
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index 123bd73..43eb250d 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -2258,6 +2258,76 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
+>         return -EINVAL;
+>  }
+>
+> +static int prctl_get_predump_signal(struct task_struct *tsk, pid_t pid,
+> +                                   int __user *addr)
+> +{
+> +       struct task_struct *p;
+> +       int error;
+> +
+> +       /* For the current task, the common case */
+> +       if (pid == 0) {
+> +               put_user(tsk->predump_signal, addr);
+> +               return 0;
+> +       }
+> +
+> +       error = -ESRCH;
+> +       rcu_read_lock();
+> +       p = find_task_by_vpid(pid);
+> +       if (p) {
+> +               error = 0;
+> +               put_user(p->predump_signal, addr);
+
+This is wrong. You can't call put_user() while you're in an RCU
+read-side critical section.
+
+As below, I would like it if you could just get rid of this branch,
+and restrict this prctl to operating on the current process.
+
+> +       }
+> +       rcu_read_unlock();
+> +       return error;
+> +}
+> +
+> +/*
+> + * Returns true if current's euid is same as p's uid or euid,
+> + * or has CAP_SYS_ADMIN.
+> + *
+> + * Called with rcu_read_lock, creds are safe.
+> + *
+> + * Adapted from set_one_prio_perm().
+> + */
+> +static bool set_predump_signal_perm(struct task_struct *p)
+> +{
+> +       const struct cred *cred = current_cred(), *pcred = __task_cred(p);
+> +
+> +       return uid_eq(pcred->uid, cred->euid) ||
+> +              uid_eq(pcred->euid, cred->euid) ||
+> +              capable(CAP_SYS_ADMIN);
+> +}
+
+This permission check permits fiddling with other processes in
+scenarios where kill() wouldn't let you send signals (specifically, if
+you control the EUID of the target task). That worries me. Also,
+kill() is subject to LSM checks (see check_kill_permission()), but
+this interface isn't. I would really prefer it if you could amend this
+so that you can only operate on the current task, and get rid of this
+permission check.
+
+[...]
+>  SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+>                 unsigned long, arg4, unsigned long, arg5)
+>  {
+> @@ -2476,6 +2546,13 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
+>                         return -EINVAL;
+>                 error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
+>                 break;
+> +       case PR_SET_PREDUMP_SIG:
+> +               error = prctl_set_predump_signal(me, (pid_t)arg2, (int)arg3);
+> +               break;
+> +       case PR_GET_PREDUMP_SIG:
+> +               error = prctl_get_predump_signal(me, (pid_t)arg2,
+> +                                                (int __user *)arg3);
+> +               break;
+
+New prctl() calls should check that the unused arguments are zero, in
+order to make it possible to safely add more flags in the future.
