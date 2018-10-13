@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE97C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 634C0C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62528205C9
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0528E205C9
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mb2bWoK5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62528205C9
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0VnJccr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0528E205C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbeJMWcn (ORCPT
+        id S1727132AbeJMWcs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 18:32:43 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38239 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbeJMWcn (ORCPT
+        Sat, 13 Oct 2018 18:32:48 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40916 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726281AbeJMWcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 18:32:43 -0400
-Received: by mail-pf1-f193.google.com with SMTP id f29-v6so7604853pff.5;
-        Sat, 13 Oct 2018 07:55:17 -0700 (PDT)
+        Sat, 13 Oct 2018 18:32:48 -0400
+Received: by mail-pf1-f196.google.com with SMTP id g21-v6so595595pfi.7;
+        Sat, 13 Oct 2018 07:55:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nxRqhHh/R4eocFIDtZHepU4uQVZQG1Lz/6BjqudaHXE=;
-        b=Mb2bWoK5kSh5dmDNPo/Xp9Iy+GtRr+aHMcDJiyKl6wW6SHEwiGMqho/Sg8i6ff6Ut8
-         kpfRFdIkIegcOS0UignucA5rWkNdjMN2s2MkGzVj+/cYEPiYHlE0dQfUfudFmoYMgioG
-         XzNu+kB2+jBOliU0HqO64QSC9gaG+0Xr00cW6znarwnIC095/Xd2enBudxKa6NqG5UVD
-         XKTRjxef6LWXXf+GpDs69CD6nPl7AZ3Iy6HW8UfKpX3xY8KX9wq9tPqotTVS/uUk0OFy
-         WCnizhcAxRZk15SXwNbdr/gRJsTdl3IUv1nretV+0/7IG0rT8UGMh8Jnpylh8lRs3jCA
-         X84A==
+        bh=SLcpsb/KQ3TPJU0d4iQbAvxWnSdRgrbN95f0H43CeAw=;
+        b=g0VnJccrNjfchgaprzW2kceKNmFDUrNGTjAOl/VyJqtgyxnogVSiSug7zaQ3ULIlMW
+         jZ3PlgXOJoIm+kyvI0qA+cVbMiJVn+0kK4CnoWijPOBiBJbP5hOKBPydleYeDJAoK0Oy
+         hyjyA2Xe5LW02ehR0rTuhH34yu+9QTMeAtjj0qsxuBc6Cj/4gpCTNL1wvuZYmCmpwmY9
+         xF066r3vIO7h4j/hmPWOZcWOI+TJ3+/HUpnt/ktXdyTrftLlDL77vIvpIUBhhE+/NzNM
+         PD7f4kfJIcsTiK2DLx3KYhKGVYPID0hBbipGku1IJZu4cELZrWGhqDCdSRq9gZLmhFpa
+         gOag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=nxRqhHh/R4eocFIDtZHepU4uQVZQG1Lz/6BjqudaHXE=;
-        b=D/cXdH1TxMVAw7I4foW+KhXvOY8TvYIOvbZOkLAlFfcfDo7L9/T0In8as7jxPsNU7j
-         j29QZTL7k6dtuG53FVJ95ylHZHHlva0mueId+0H2RkxRA4Z8V/eYGSBa0zFYD8B4P08h
-         evIFpkR5wHlAgyo/FKc6oh0+e63mzmrcqnlLI10KSx3NA71em7sdNQ8CpcaM8LtIuWJN
-         Ry+/swylcu7uo+ZhIcpWn06AIRiLFqtqAvbGRvWrafcVzblZoL6IuWCnUjmp5mIc42iJ
-         oloNJ4b/13Nk1bjIJeyidI4DO/rau5T75FFxzcOXcB4JTUYGeJYhjcMdHMQ4UqoG0mEg
-         iHbQ==
-X-Gm-Message-State: ABuFfog9TLGl2trglnpCFq/20H2k3bNlGFrMpgHs6glqW/H8a2u+wvWO
-        1XVm0xyt2Z7MaA66LcgYJtw=
-X-Google-Smtp-Source: ACcGV62ODMfI/skopQRC4vHH5MMF/M0ebIjFgPf4goi5NsRFYVyxcdjdqfPDRp84QQbOT5EVCngPdg==
-X-Received: by 2002:a63:4a0e:: with SMTP id x14-v6mr9391338pga.34.1539442516968;
-        Sat, 13 Oct 2018 07:55:16 -0700 (PDT)
+        bh=SLcpsb/KQ3TPJU0d4iQbAvxWnSdRgrbN95f0H43CeAw=;
+        b=tbi/QL2QwVspHDcYN6lij2kjKm+AXmcWxjJNE/4u3lHq+RqH8VcUf6lFzoQ3ZTwFkb
+         emSDXpgPAk5khss4FFZ369jsRoaa2b8X1Quc9UTQw6KJaodPYT4Xdexjp+mmShCNB8PO
+         nzvWL7/MWj0FBMZNS65WPSQ3+dOzXa8Hd6ZvjNyCR0L/u1dBKUbvzvUmFyU47WkStVwL
+         gtHi/I3EiNb0A2pxOFFNXc0dKVpcOTAh28GswwTNSFv3GWWkNvzZbSLKB1Jo5tjhej7x
+         Jj8UCRc8Pi88v72cVL8Bo/lc6rRjdJB5bU/BS5eSzrQYP/hQouSlvxd8nl3rWzMmtMua
+         gLHg==
+X-Gm-Message-State: ABuFfoize7OjD2SDlpNB7jEi/bB9VCKyxA2zOyGyshPb/EAQRjECkCeM
+        MRJUXo6ekn795k6twOuIoGU=
+X-Google-Smtp-Source: ACcGV61QhVDaDAGtZit1b2xAug+ZYhHS83/rfpt1BBQT/+k/+beZ6q6imh4NbT8F6bEPjqZWxaEzXg==
+X-Received: by 2002:a63:c044:: with SMTP id z4-v6mr9479108pgi.274.1539442521805;
+        Sat, 13 Oct 2018 07:55:21 -0700 (PDT)
 Received: from localhost.corp.microsoft.com ([2404:f801:9000:18:d9bf:62c6:740b:9fc4])
-        by smtp.googlemail.com with ESMTPSA id v81-v6sm8688724pfj.25.2018.10.13.07.55.12
+        by smtp.googlemail.com with ESMTPSA id v81-v6sm8688724pfj.25.2018.10.13.07.55.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 13 Oct 2018 07:55:16 -0700 (PDT)
+        Sat, 13 Oct 2018 07:55:21 -0700 (PDT)
 From:   lantianyu1986@gmail.com
 X-Google-Original-From: Tianyu.Lan@microsoft.com
 Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
@@ -67,9 +67,9 @@ Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
         devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org, michael.h.kelley@microsoft.com,
         vkuznets@redhat.com
-Subject: [PATCH V4 9/15] KVM: Add flush_link and parent_pte in the struct kvm_mmu_page
-Date:   Sat, 13 Oct 2018 22:54:00 +0800
-Message-Id: <20181013145406.4911-10-Tianyu.Lan@microsoft.com>
+Subject: [PATCH V4 10/15] KVM: Add spte's point in the struct kvm_mmu_page
+Date:   Sat, 13 Oct 2018 22:54:01 +0800
+Message-Id: <20181013145406.4911-11-Tianyu.Lan@microsoft.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
 References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
@@ -81,25 +81,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-PV EPT tlb flush function will accept a list of flush ranges and
-use struct kvm_mmu_page as the list entry.
+It's necessary to check whether mmu page is last or large page when add
+mmu page into flush list. "spte" is needed for such check and so add
+spte point in the struct kvm_mmu_page.
 
 Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 ---
  arch/x86/include/asm/kvm_host.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/mmu.c              | 5 +++++
+ arch/x86/kvm/paging_tmpl.h      | 2 ++
+ 3 files changed, 8 insertions(+)
 
 diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 19985c602ed6..8279235285f8 100644
+index 8279235285f8..c986ebefc9ac 100644
 --- a/arch/x86/include/asm/kvm_host.h
 +++ b/arch/x86/include/asm/kvm_host.h
-@@ -316,6 +316,7 @@ struct kvm_rmap_head {
+@@ -333,6 +333,7 @@ struct kvm_mmu_page {
+ 	int root_count;          /* Currently serving as active root */
+ 	unsigned int unsync_children;
+ 	struct kvm_rmap_head parent_ptes; /* rmap pointers to parent sptes */
++	u64 *sptep;
  
- struct kvm_mmu_page {
- 	struct list_head link;
-+	struct list_head flush_link;
- 	struct hlist_node hash_link;
- 	bool unsync;
+ 	/* The page is obsolete if mmu_valid_gen != kvm->arch.mmu_valid_gen.  */
+ 	unsigned long mmu_valid_gen;
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index e984a0067a43..393f4048dd7a 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -3165,6 +3165,7 @@ static int __direct_map(struct kvm_vcpu *vcpu, int write, int map_writable,
+ 			pseudo_gfn = base_addr >> PAGE_SHIFT;
+ 			sp = kvm_mmu_get_page(vcpu, pseudo_gfn, iterator.addr,
+ 					      iterator.level - 1, 1, ACC_ALL);
++			sp->sptep = iterator.sptep;
+ 
+ 			link_shadow_page(vcpu, iterator.sptep, sp);
+ 		}
+@@ -3602,6 +3603,7 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
+ 		sp = kvm_mmu_get_page(vcpu, 0, 0,
+ 				vcpu->arch.mmu->shadow_root_level, 1, ACC_ALL);
+ 		++sp->root_count;
++		sp->sptep = NULL;
+ 		spin_unlock(&vcpu->kvm->mmu_lock);
+ 		vcpu->arch.mmu->root_hpa = __pa(sp->spt);
+ 	} else if (vcpu->arch.mmu->shadow_root_level == PT32E_ROOT_LEVEL) {
+@@ -3618,6 +3620,7 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
+ 					i << 30, PT32_ROOT_LEVEL, 1, ACC_ALL);
+ 			root = __pa(sp->spt);
+ 			++sp->root_count;
++			sp->sptep = NULL;
+ 			spin_unlock(&vcpu->kvm->mmu_lock);
+ 			vcpu->arch.mmu->pae_root[i] = root | PT_PRESENT_MASK;
+ 		}
+@@ -3658,6 +3661,7 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
+ 				vcpu->arch.mmu->shadow_root_level, 0, ACC_ALL);
+ 		root = __pa(sp->spt);
+ 		++sp->root_count;
++		sp->sptep = NULL;
+ 		spin_unlock(&vcpu->kvm->mmu_lock);
+ 		vcpu->arch.mmu->root_hpa = root;
+ 		return 0;
+@@ -3695,6 +3699,7 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
+ 				      0, ACC_ALL);
+ 		root = __pa(sp->spt);
+ 		++sp->root_count;
++		sp->sptep = NULL;
+ 		spin_unlock(&vcpu->kvm->mmu_lock);
+ 
+ 		vcpu->arch.mmu->pae_root[i] = root | pm_mask;
+diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
+index 6bdca39829bc..833e8855bbc9 100644
+--- a/arch/x86/kvm/paging_tmpl.h
++++ b/arch/x86/kvm/paging_tmpl.h
+@@ -633,6 +633,7 @@ static int FNAME(fetch)(struct kvm_vcpu *vcpu, gva_t addr,
+ 			table_gfn = gw->table_gfn[it.level - 2];
+ 			sp = kvm_mmu_get_page(vcpu, table_gfn, addr, it.level-1,
+ 					      false, access);
++			sp->sptep = it.sptep;
+ 		}
+ 
+ 		/*
+@@ -663,6 +664,7 @@ static int FNAME(fetch)(struct kvm_vcpu *vcpu, gva_t addr,
+ 
+ 		sp = kvm_mmu_get_page(vcpu, direct_gfn, addr, it.level-1,
+ 				      true, direct_access);
++		sp->sptep = it.sptep;
+ 		link_shadow_page(vcpu, it.sptep, sp);
+ 	}
  
 -- 
 2.14.4
