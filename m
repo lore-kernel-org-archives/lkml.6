@@ -2,127 +2,163 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A19CC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 23:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59205C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 23:19:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD9A42077C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 23:04:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="1Wk7jHJ0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD9A42077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 0E5E920659
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 23:19:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E5E920659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbeJNGnK (ORCPT
+        id S1726289AbeJNG5z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 02:43:10 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37169 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbeJNGnK (ORCPT
+        Sun, 14 Oct 2018 02:57:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53132 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725990AbeJNG5z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 02:43:10 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y11-v6so17079044wrd.4
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 16:04:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zDU55Z7GEv2DLZuPO5DfQC2EZl5hyoZHqjCYlXCgYWg=;
-        b=1Wk7jHJ0WYlvj6/zxx/Rix+ts/UbwS7BmyfmUQjOAETj3dGlbpqBehyRqlC5GGUHBt
-         bpfpXjApY1Ba0WsKptGvu++1C0Vsix0o2Z2nUmBcDSOgcm5pgYe4tryVvckbqqZcwwh+
-         ZIpWSS+LFvJ6fxGVamZIR8IjhlAZJqlTb2DuSouAWggmYPC6ghShTk1aqjCYM2C+T2y4
-         NP6AWedmUNtk8b3OCZQl0nNfcrTIW536CNeYLOoSlWGCVX8Ef2rLp8FWTVmXqMbBy8BH
-         2BBIa4B5/pskuKsAC/9LtMrVRzKiEEwytfRhCJ97b9jAgBfc0wAxngxL6DZf6K+OUR/I
-         3Xsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zDU55Z7GEv2DLZuPO5DfQC2EZl5hyoZHqjCYlXCgYWg=;
-        b=PfHM1RVDmfQWybFvCNKSxFkYiOUSNqAI+0O1YiI3bsCLaxixXTzFu5Zq9NjNDmlon+
-         x81hfFo3rNYF0upLih637GzvP4vzysp7+d4+8gpto426CK5AANcK6mTI6DTD2qas0gnF
-         c0WaMAXa/lPwDlR4cNbjx6i48f4CEWb0EMdwjSiC526j/lo+qW8gFVcOxC916G02m/95
-         HOhM4Rn0liHXjXjNok2gVlfQqWNWHTNpQvWJygJk8Gp7SqvWr9uLzqWcbzcETmb+U3Ww
-         KluqXfGO5U+gse5UAgiLhPjV7FPBGoHAywAPdmpKUWue2eiDm9r4ggvVpw+sMkYeXKiV
-         s/lw==
-X-Gm-Message-State: ABuFfoiEhLxE0pVQ++O0fQhHq5d6WoQ8aa1rEFp0BDD1xgD1hMrs1NcY
-        z72ZHi0EzqulK23ev2m0GHTj8bFAVnkZkTBI6/fx8A==
-X-Google-Smtp-Source: ACcGV62/WboaGWYZ75js5qFvOb9kIBby8f2zwCDUtOT0UF80cpxfQznhlEOKJbqs4nei1xKwZ/Pz2zS04WakpNQbTCY=
-X-Received: by 2002:adf:b188:: with SMTP id q8-v6mr9665317wra.95.1539471861516;
- Sat, 13 Oct 2018 16:04:21 -0700 (PDT)
+        Sun, 14 Oct 2018 02:57:55 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9DNEDPZ009412
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 19:19:05 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n3m63ruq5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 19:19:04 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sat, 13 Oct 2018 19:19:03 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 13 Oct 2018 19:19:01 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9DNJ0SM36700258
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 13 Oct 2018 23:19:00 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2810DB2064;
+        Sat, 13 Oct 2018 19:16:58 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 082A4B205F;
+        Sat, 13 Oct 2018 19:16:58 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.131.128])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sat, 13 Oct 2018 19:16:57 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id D232016C0F04; Sat, 13 Oct 2018 16:19:02 -0700 (PDT)
+Date:   Sat, 13 Oct 2018 16:19:02 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org
+Subject: Re: [rcu:dev.2018.10.03a 44/73] kernel/rcu/tree.c:2704:5: warning:
+ 'max_cpu' may be used uninitialized in this function
+Reply-To: paulmck@linux.ibm.com
+References: <201810081957.GsKmX8Wz%fengguang.wu@intel.com>
 MIME-Version: 1.0
-References: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
- <153754766004.17872.9829232103614083565.stgit@warthog.procyon.org.uk>
- <9b8bf436-65de-13b9-0002-0479d11c18ca@gmail.com> <20181013061141.GR32577@ZenIV.linux.org.uk>
- <68a2107f-bf70-055b-86cf-1ba2ba9422bf@gmail.com>
-In-Reply-To: <68a2107f-bf70-055b-86cf-1ba2ba9422bf@gmail.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Sat, 13 Oct 2018 16:04:09 -0700
-Message-ID: <CALCETrWvEJHGWNXvOBcaFbX16pyBEqmNk4V+dBxX00OAS4OMng@mail.gmail.com>
-Subject: Re: [PATCH 31/34] vfs: syscall: Add fspick() to select a superblock
- for reconfiguration [ver #12]
-To:     alan.christopher.jenkins@gmail.com
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201810081957.GsKmX8Wz%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18101323-0040-0000-0000-000004802C16
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009874; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01102268; UDB=6.00570450; IPR=6.00882313;
+ MB=3.00023746; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-13 23:19:02
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101323-0041-0000-0000-000008883F63
+Message-Id: <20181013231902.GI2674@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-13_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810130218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 2:45 AM Alan Jenkins
-<alan.christopher.jenkins@gmail.com> wrote:
->
-> On 13/10/2018 07:11, Al Viro wrote:
-> > On Fri, Oct 12, 2018 at 03:49:50PM +0100, Alan Jenkins wrote:
-> >>> +SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags)
-> >>> +{
-> >>> +   struct fs_context *fc;
-> >>> +   struct path target;
-> >>> +   unsigned int lookup_flags;
-> >>> +   int ret;
-> >>> +
-> >>> +   if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
-> >>> +           return -EPERM;
-> >>
-> >> This seems to accept basically any mount.  Specifically: are you sure it's
-> >> OK to return a handle to a SB_NO_USER superblock?
-> > Umm...  As long as we don't try to do pathname resolution from its ->s_root,
-> > shouldn't be a problem and I don't see anything that would do that.  I might've
-> > missed something, but...
->
-> Sorry, I guess SB_NOUSER was the wrong word.  I was trying find if
-> anything stopped things like
->
-> int memfd = memfd_create("foo", 0);
-> int fsfd = fspick(memfd, "", FSPICK_EMPTY_PATH);
->
-> fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-> fsconfig(fsfd, FSCONFIG_SET_STRING, "size", "100M", 0);
-> fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
->
-> So far I'm getting -EBUSY if I try to apply the "ro", -EINVAL if I try
-> to apply the "size=100M".  But if I don't apply either, then
-> FSCONFIG_CMD_RECONFIGURE succeeds.
->
-> It seems worrying that it might let me set options on shm_mnt. Or at
-> least letting me get as far as the -EBUSY check for the "ro" superblock
-> flag.
->
-> I'm not sure why I'm getting the -EINVAL setting the "size" option.  But
-> it would be much more reassuring if I was getting -EPERM :-).
->
+On Mon, Oct 08, 2018 at 07:25:58PM +0800, kbuild test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2018.10.03a
+> head:   ef44a26c84188888f97e5d7b3f8e4f8c0decd248
+> commit: 813f47a94e3b61439bba90340b532f3a6319d4f5 [44/73] rcu: Print per-CPU callback counts for forward-progress failures
+> config: x86_64-randconfig-x006-10081527 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         git checkout 813f47a94e3b61439bba90340b532f3a6319d4f5
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+> 
+> Note: it may well be a FALSE warning. FWIW you are at least aware of it now.
+> http://gcc.gnu.org/wiki/Better_Uninitialized_Warnings
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    kernel/rcu/tree.c: In function 'rcu_fwd_progress_check':
+> >> kernel/rcu/tree.c:2704:5: warning: 'max_cpu' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>      if (max_cpu >= 0)
+>         ^
+> >> kernel/rcu/tree.c:2699:6: warning: 'max_cbs' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>       if (cbs <= max_cbs)
+>          ^
 
-I would argue that the filesystem associated with a memfd, and even
-the fact that there *is* a filesystem, is none of user code's
-business.  So that fspick() call should return -EINVAL or similar.
+Good catch!  A fix is on its way.
+
+							Thanx, Paul
+
+> vim +/max_cpu +2704 kernel/rcu/tree.c
+> 
+>   2670	
+>   2671	/*
+>   2672	 * Do a forward-progress check for rcutorture.  This is normally invoked
+>   2673	 * due to an OOM event.  The argument "j" gives the time period during
+>   2674	 * which rcutorture would like progress to have been made.
+>   2675	 */
+>   2676	void rcu_fwd_progress_check(unsigned long j)
+>   2677	{
+>   2678		unsigned long cbs;
+>   2679		int cpu;
+>   2680		unsigned long max_cbs;
+>   2681		int max_cpu;
+>   2682		struct rcu_data *rdp;
+>   2683	
+>   2684		if (rcu_gp_in_progress()) {
+>   2685			show_rcu_gp_kthreads();
+>   2686		} else {
+>   2687			preempt_disable();
+>   2688			rdp = this_cpu_ptr(&rcu_data);
+>   2689			rcu_check_gp_start_stall(rdp->mynode, rdp, j);
+>   2690			preempt_enable();
+>   2691		}
+>   2692		for_each_possible_cpu(cpu) {
+>   2693			cbs = rcu_get_n_cbs_cpu(cpu);
+>   2694			if (!cbs)
+>   2695				continue;
+>   2696			if (max_cpu < 0)
+>   2697				pr_info("%s: callbacks", __func__);
+>   2698			pr_cont(" %d: %lu", cpu, cbs);
+> > 2699			if (cbs <= max_cbs)
+>   2700				continue;
+>   2701			max_cbs = cbs;
+>   2702			max_cpu = cpu;
+>   2703		}
+> > 2704		if (max_cpu >= 0)
+>   2705			pr_cont("\n");
+>   2706	}
+>   2707	EXPORT_SYMBOL_GPL(rcu_fwd_progress_check);
+>   2708	
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+
