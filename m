@@ -2,74 +2,71 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73114C6787C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC080C6787C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23AF520868
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57FF82075B
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:55:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcxFY+tc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23AF520868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AMreK8x/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57FF82075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbeJMI26 (ORCPT
+        id S1726907AbeJMIab (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 04:28:58 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51219 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbeJMI25 (ORCPT
+        Sat, 13 Oct 2018 04:30:31 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:47048 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbeJMIaa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 04:28:57 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 143-v6so13711377wmf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 17:53:56 -0700 (PDT)
+        Sat, 13 Oct 2018 04:30:30 -0400
+Received: by mail-pg1-f193.google.com with SMTP id a5-v6so6559686pgv.13
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 17:55:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=1MxP964SJNuxvyrJcQLscB6E/aBSlXrtX10bhOcvWSY=;
-        b=jcxFY+tcIrdpJ6VI/UbpsucxZmeqjdv+wReuryK35tl4olgSAdptJKHbpPx5cMvR9m
-         TKWD1wlyAy6qis9WaPH0K9Q9/T8qxN837Ol3rib6IxRgpLDGRRGHlOCTI8ifhvfrZ92o
-         VtJqULwxEuxscJ/NbWZ8/Pn12Ve7Yacs/HwDe4MDMyg5lzqLjkbwNjoIvvcPt83VNlV3
-         0/ED27/VRjN7wQ1fwpNnCcCjZuo6KhvDGxWrY8tDg02ckHEpBnW6lwyOgXxY/r7MFBY/
-         Cb1cVqrScFZV1yVfPs4FCTRlpdqyygaRLrYXE2sAh0Y8CigCeRlKCMmZj7VtCfOpcMJl
-         DAgg==
+        bh=KhatUidEATM1dyEWadH/V2c3Hdep3l08021kxRdjpjQ=;
+        b=AMreK8x/2VIp0PScOGFiVbRdb3ntCFc422TRdQCZ9nXxj68RwHn0hDzZ6p2NmF7mN2
+         oxI2gqHK5ek4UozFaNfjocC77eJZ/3YlxeJ5UZfReuPCl7NeeTgV+gUarI3X85jpHUE0
+         h9EchBlvybovGflTL9AF8mYZJxiZgrL7HoZ80=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=1MxP964SJNuxvyrJcQLscB6E/aBSlXrtX10bhOcvWSY=;
-        b=fB59lQ0F/HJ0GjXUh+4SOZ/Nu859CK1wiUB5ae892/B9go5oDTJm7PfMq+YU58itPh
-         +97CnGePf6B1smJ6ylCXKFbkS66hPv2iBzODs4jBSvy0i210T5xUD3fM6/jRz91v7fLy
-         j+/L21J/E6Vd+8phryLLlda5vTTdWgialG/Ifx+ec2/qKbW7EDYEH4SdziLvSOwWbwGa
-         yPPhMb5IaqxxcTDieLuGlbrgVIFon+amcrXUX3vyJC+Ools2lCLZB6JdCvv6gnFK+6Dn
-         HZdbmQM7XU5WPQSZ6OR72SDxDdyogy4tafWr54m7OwuBQmNyfxN+n9uNgW9gPXcmUfsw
-         Z6xA==
-X-Gm-Message-State: ABuFfojAolN+R0fZR3K7Ngso4xLYW/R+saHij0dYvejMtzaEMDIWMz1S
-        x4QMGTLNa4KpT11UEUtj770=
-X-Google-Smtp-Source: ACcGV61GWL85P5246CUibATbBFuSRESb9XMM/yw+2pb7QUtD6RULle+jgi63IdNrfIanLaK5Bkrznw==
-X-Received: by 2002:a1c:41c5:: with SMTP id o188-v6mr7202861wma.34.1539392035212;
-        Fri, 12 Oct 2018 17:53:55 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id w192-v6sm1899226wmf.33.2018.10.12.17.53.54
+        bh=KhatUidEATM1dyEWadH/V2c3Hdep3l08021kxRdjpjQ=;
+        b=fKgh6oc9OeBEDZyWvqE+XVu/8ArVT2RxYWllHDV0tq7sMI0zNYosATpfvFkWfuE4sB
+         /m+qL9VTIUatu5BE98rQeauvTgmPt+trlFdxoQD+VWI7UCCGEUI+jnzVZLSU326NuQds
+         auiLqTZPnTmVga7KiYbhEdzWj8dPlyWjTj8ktBYOudATn/DBaeqB7FtFNwg1fg+IZUm1
+         7B0eGTyk+xeqLBz30IYEoVt5V+4vSNQoxtpLbr1esSOk2rlzJb+Wqvz5RZHPAj1xXaUH
+         +ouM/YfS3Zxp9q7Smkd3mkjIyfLxq4bEvclRVnfr0eVtihg1OhU68LMT/z3hGWWFgdX1
+         dghg==
+X-Gm-Message-State: ABuFfoiIWStSxQyvqoFbB+RoHnRvjV9gUlsydXF+EuGLbxLzucN4/r6v
+        2+gsQ+FZp/36hC6haSxXambRp7asR3x67w==
+X-Google-Smtp-Source: ACcGV6318p75321C6lU7pfqQUG8yiKK/ZQ4cliRSbYOhal1cfKuYCTB51x1HtCsdyf7OKSOJVuTACA==
+X-Received: by 2002:a62:64d5:: with SMTP id y204-v6mr8228333pfb.187.1539392128884;
+        Fri, 12 Oct 2018 17:55:28 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id n7-v6sm2766183pgv.63.2018.10.12.17.55.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 17:53:54 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] x86/time: Correct the attribute on jiffies' definition
-Date:   Fri, 12 Oct 2018 17:53:12 -0700
-Message-Id: <20181013005311.28617-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 12 Oct 2018 17:55:27 -0700 (PDT)
+From:   Brian Norris <briannorris@chromium.org>
+To:     Kalle Valo <kvalo@qca.qualcomm.com>
+Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
+        <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 1/4] ath10k: snoc: remove 'wcn3990' from generic resource handling
+Date:   Fri, 12 Oct 2018 17:55:01 -0700
+Message-Id: <20181013005504.46399-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,52 +74,174 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns that the declaration of jiffies in include/linux/jiffies.h
-doesn't match the definition in arch/x86/time/kernel.c:
+ath10k_wcn3990_clk_info and ath10k_wcn3990_vreg_info are not
+WCN3990-specific structures. They hold generic data. So don't name them
+with wcn3990 specifics.
 
-arch/x86/kernel/time.c:29:42: warning: section does not match previous declaration [-Wsection]
-__visible volatile unsigned long jiffies __cacheline_aligned = INITIAL_JIFFIES;
-                                         ^
-./include/linux/cache.h:49:4: note: expanded from macro '__cacheline_aligned'
-                 __section__(".data..cacheline_aligned")))
-                 ^
-./include/linux/jiffies.h:81:31: note: previous attribute is here
-extern unsigned long volatile __cacheline_aligned_in_smp __jiffy_arch_data jiffies;
-                              ^
-./arch/x86/include/asm/cache.h:20:2: note: expanded from macro '__cacheline_aligned_in_smp'
-        __page_aligned_data
-        ^
-./include/linux/linkage.h:39:29: note: expanded from macro '__page_aligned_data'
-#define __page_aligned_data     __section(.data..page_aligned) __aligned(PAGE_SIZE)
-                                ^
-./include/linux/compiler_attributes.h:233:56: note: expanded from macro '__section'
-#define __section(S)                    __attribute__((__section__(#S)))
-                                                       ^
-1 warning generated.
-
-The declaration was changed in commit 7c30f352c852 ("jiffies.h: declare
-jiffies and jiffies_64 with ____cacheline_aligned_in_smp") but wasn't
-updated here. Make them match so Clang no longer warns.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/98
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
- arch/x86/kernel/time.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/snoc.c | 34 +++++++++++++-------------
+ drivers/net/wireless/ath/ath10k/snoc.h |  8 +++---
+ 2 files changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/kernel/time.c b/arch/x86/kernel/time.c
-index b23f5420b26a..0e14f6c0d35e 100644
---- a/arch/x86/kernel/time.c
-+++ b/arch/x86/kernel/time.c
-@@ -26,7 +26,7 @@
- #include <asm/time.h>
+diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
+index 8d3d9bca410f..c6254db17dab 100644
+--- a/drivers/net/wireless/ath/ath10k/snoc.c
++++ b/drivers/net/wireless/ath/ath10k/snoc.c
+@@ -46,14 +46,14 @@ static char *const ce_name[] = {
+ 	"WLAN_CE_11",
+ };
  
- #ifdef CONFIG_X86_64
--__visible volatile unsigned long jiffies __cacheline_aligned = INITIAL_JIFFIES;
-+__visible volatile unsigned long jiffies __cacheline_aligned_in_smp = INITIAL_JIFFIES;
- #endif
+-static struct ath10k_wcn3990_vreg_info vreg_cfg[] = {
++static struct ath10k_vreg_info vreg_cfg[] = {
+ 	{NULL, "vdd-0.8-cx-mx", 800000, 800000, 0, 0, false},
+ 	{NULL, "vdd-1.8-xo", 1800000, 1800000, 0, 0, false},
+ 	{NULL, "vdd-1.3-rfa", 1304000, 1304000, 0, 0, false},
+ 	{NULL, "vdd-3.3-ch0", 3312000, 3312000, 0, 0, false},
+ };
  
- unsigned long profile_pc(struct pt_regs *regs)
+-static struct ath10k_wcn3990_clk_info clk_cfg[] = {
++static struct ath10k_clk_info clk_cfg[] = {
+ 	{NULL, "cxo_ref_clk_pin", 0, false},
+ };
+ 
+@@ -1246,7 +1246,7 @@ static void ath10k_snoc_release_resource(struct ath10k *ar)
+ }
+ 
+ static int ath10k_get_vreg_info(struct ath10k *ar, struct device *dev,
+-				struct ath10k_wcn3990_vreg_info *vreg_info)
++				struct ath10k_vreg_info *vreg_info)
+ {
+ 	struct regulator *reg;
+ 	int ret = 0;
+@@ -1284,7 +1284,7 @@ static int ath10k_get_vreg_info(struct ath10k *ar, struct device *dev,
+ }
+ 
+ static int ath10k_get_clk_info(struct ath10k *ar, struct device *dev,
+-			       struct ath10k_wcn3990_clk_info *clk_info)
++			       struct ath10k_clk_info *clk_info)
+ {
+ 	struct clk *handle;
+ 	int ret = 0;
+@@ -1311,10 +1311,10 @@ static int ath10k_get_clk_info(struct ath10k *ar, struct device *dev,
+ 	return ret;
+ }
+ 
+-static int ath10k_wcn3990_vreg_on(struct ath10k *ar)
++static int ath10k_snoc_vreg_on(struct ath10k *ar)
+ {
+ 	struct ath10k_snoc *ar_snoc = ath10k_snoc_priv(ar);
+-	struct ath10k_wcn3990_vreg_info *vreg_info;
++	struct ath10k_vreg_info *vreg_info;
+ 	int ret = 0;
+ 	int i;
+ 
+@@ -1376,10 +1376,10 @@ static int ath10k_wcn3990_vreg_on(struct ath10k *ar)
+ 	return ret;
+ }
+ 
+-static int ath10k_wcn3990_vreg_off(struct ath10k *ar)
++static int ath10k_snoc_vreg_off(struct ath10k *ar)
+ {
+ 	struct ath10k_snoc *ar_snoc = ath10k_snoc_priv(ar);
+-	struct ath10k_wcn3990_vreg_info *vreg_info;
++	struct ath10k_vreg_info *vreg_info;
+ 	int ret = 0;
+ 	int i;
+ 
+@@ -1412,10 +1412,10 @@ static int ath10k_wcn3990_vreg_off(struct ath10k *ar)
+ 	return ret;
+ }
+ 
+-static int ath10k_wcn3990_clk_init(struct ath10k *ar)
++static int ath10k_snoc_clk_init(struct ath10k *ar)
+ {
+ 	struct ath10k_snoc *ar_snoc = ath10k_snoc_priv(ar);
+-	struct ath10k_wcn3990_clk_info *clk_info;
++	struct ath10k_clk_info *clk_info;
+ 	int ret = 0;
+ 	int i;
+ 
+@@ -1461,10 +1461,10 @@ static int ath10k_wcn3990_clk_init(struct ath10k *ar)
+ 	return ret;
+ }
+ 
+-static int ath10k_wcn3990_clk_deinit(struct ath10k *ar)
++static int ath10k_snoc_clk_deinit(struct ath10k *ar)
+ {
+ 	struct ath10k_snoc *ar_snoc = ath10k_snoc_priv(ar);
+-	struct ath10k_wcn3990_clk_info *clk_info;
++	struct ath10k_clk_info *clk_info;
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(clk_cfg); i++) {
+@@ -1488,18 +1488,18 @@ static int ath10k_hw_power_on(struct ath10k *ar)
+ 
+ 	ath10k_dbg(ar, ATH10K_DBG_SNOC, "soc power on\n");
+ 
+-	ret = ath10k_wcn3990_vreg_on(ar);
++	ret = ath10k_snoc_vreg_on(ar);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = ath10k_wcn3990_clk_init(ar);
++	ret = ath10k_snoc_clk_init(ar);
+ 	if (ret)
+ 		goto vreg_off;
+ 
+ 	return ret;
+ 
+ vreg_off:
+-	ath10k_wcn3990_vreg_off(ar);
++	ath10k_snoc_vreg_off(ar);
+ 	return ret;
+ }
+ 
+@@ -1509,9 +1509,9 @@ static int ath10k_hw_power_off(struct ath10k *ar)
+ 
+ 	ath10k_dbg(ar, ATH10K_DBG_SNOC, "soc power off\n");
+ 
+-	ath10k_wcn3990_clk_deinit(ar);
++	ath10k_snoc_clk_deinit(ar);
+ 
+-	ret = ath10k_wcn3990_vreg_off(ar);
++	ret = ath10k_snoc_vreg_off(ar);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/net/wireless/ath/ath10k/snoc.h b/drivers/net/wireless/ath/ath10k/snoc.h
+index e1d2d6675556..4a3837b5c68d 100644
+--- a/drivers/net/wireless/ath/ath10k/snoc.h
++++ b/drivers/net/wireless/ath/ath10k/snoc.h
+@@ -53,7 +53,7 @@ struct ath10k_snoc_ce_irq {
+ 	u32 irq_line;
+ };
+ 
+-struct ath10k_wcn3990_vreg_info {
++struct ath10k_vreg_info {
+ 	struct regulator *reg;
+ 	const char *name;
+ 	u32 min_v;
+@@ -63,7 +63,7 @@ struct ath10k_wcn3990_vreg_info {
+ 	bool required;
+ };
+ 
+-struct ath10k_wcn3990_clk_info {
++struct ath10k_clk_info {
+ 	struct clk *handle;
+ 	const char *name;
+ 	u32 freq;
+@@ -81,8 +81,8 @@ struct ath10k_snoc {
+ 	struct ath10k_snoc_ce_irq ce_irqs[CE_COUNT_MAX];
+ 	struct ath10k_ce ce;
+ 	struct timer_list rx_post_retry;
+-	struct ath10k_wcn3990_vreg_info *vreg;
+-	struct ath10k_wcn3990_clk_info *clk;
++	struct ath10k_vreg_info *vreg;
++	struct ath10k_clk_info *clk;
+ 	struct ath10k_qmi *qmi;
+ };
+ 
 -- 
-2.19.1
+2.19.1.331.ge82ca0e54c-goog
 
