@@ -2,83 +2,195 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA9AC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64657C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 297A92077C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:48:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08AD620859
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:54:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Fnb73Eo1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 297A92077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="srEHmbCc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08AD620859
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbeJNAZk (ORCPT
+        id S1726870AbeJNAc2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 20:25:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43354 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbeJNAZk (ORCPT
+        Sat, 13 Oct 2018 20:32:28 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55328 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726711AbeJNAc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 20:25:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5JTAhWThjAfobE+w/amOQSt4mRL4A8wfY378mriehps=; b=Fnb73Eo1jtSEVWcBDa3on5oAe
-        XuBE0osk8cPwu1N0cGXHBb4fKGxnOhoyg+VqH1oijuIR9x3+qK5xDUHBcaOdLotOiznzP+xvVXprK
-        HWkwtbaK6SNsiC/XGLPcDb7V3BZ+rw4xKtMPXV81MQWK7w/MJTpfD0MhPwk8lSa43cA1+XqO1Qbcd
-        LZOiPA51JxoHxtM129XQuSzNjgsBlXUJ02nWiWR2j1ictuUYQEMUch1NG4Y/vAScrFcLqJIa8EGOf
-        Gwt+gai4Z2ouhBGsJ9+od4JhaLJ3USzKpY8/9VlGr26NLaq5i9m1xla7G8+v7x7C/G1LdXpTAR90/
-        dCD1W4TSA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gBN4n-0001qf-Cd; Sat, 13 Oct 2018 16:47:41 +0000
-Date:   Sat, 13 Oct 2018 09:47:41 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
-Message-ID: <20181013164740.GA6593@infradead.org>
-References: <20181012060014.10242-1-jhubbard@nvidia.com>
- <20181012060014.10242-5-jhubbard@nvidia.com>
- <20181013035516.GA18822@dastard>
- <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
+        Sat, 13 Oct 2018 20:32:27 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 206-v6so15018830wmb.5
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 09:54:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rNeK5vnnQLBXU8G7tM3UGYPZJ4q3ibTQWXyuPGdzd9Q=;
+        b=srEHmbCcqizI//+XMuncApOJ/4e7rE9VEYkCL/EQTh8320gLYvfjl6c8JDdUQZXnMA
+         t4xeskwMn7zS311ARuS5OW4daOinEEdBJha8brdEuQvmDa9+C4EOdZdVC5qdH2/NRQUf
+         slTmgAk2oy2ZAvQEtbS+v0OjTISGEffV2pcrsx+60ddycqW8zNmP/gYSdy6izTMYLS9p
+         gP5C0Ucs/FhX+qvIo0r4bejmlfWINhWVX1rnj+3CbQbNw89xDgWTdD/KdQ3zKEXD7vhA
+         kXHuSwiIsJO1sXiIhY+TUGg/iabfxgdqJLMp4raqFNqW4UFOirHKv2dAAH8R/+qlMlhX
+         Jp2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rNeK5vnnQLBXU8G7tM3UGYPZJ4q3ibTQWXyuPGdzd9Q=;
+        b=dS9mHc5impFkoKiHGjeytbfqarY5rhvw530u6HlDMbRUV4Cov2DsMpyv0+YCrvn5gE
+         wHrwriCi0S8CGCXvlPYdZ21jeKJPySBoADw9tY4/pN02vcNFYI+YrF4wVqRSXNsjxU50
+         k1wS/AsX12dXOeZeAYi1rQ4V1tiCfBMl0u4ZxkXG00Lb+M8DfwRrEllOuSRtWYN0a5yR
+         HqIxOIQGSEya4ys7FGwsG1wWUCUjY/cJj5prwlxMmcCnMaWtC1sXR3bqJRSzFhbS0mbW
+         dYVr4RaicyH1BSlHileun3eoubUAt8vVuIPXIHhQTIAutqo0TOJeA+DezdZOE0TaMTUt
+         kXkQ==
+X-Gm-Message-State: ABuFfoix9zFQvQhVp4Gu+QCFlE1B0WUURsK5HDwXohQvY/JWj2eEz8sT
+        QdsnyGRpnlzsHWqB8uh5IFRwWDPy+1H/tNgy6MCGVA==
+X-Google-Smtp-Source: ACcGV61Oc5ReOp1ewY1WkQM2/DIERa3t/imMfXnKsz1nQE0Eldrq3s0AzGhF9TEXVqYt9oUQNwcVOydgAWqm3O/kvyg=
+X-Received: by 2002:a1c:1fcd:: with SMTP id f196-v6mr8456282wmf.19.1539449673683;
+ Sat, 13 Oct 2018 09:54:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
+ <20180724173957.GA22106@yury-thinkpad> <20181010141017.GA2881@asgard.redhat.com>
+ <20181010153655.GA212880@arrakis.emea.arm.com> <20181013021416.GE21972@asgard.redhat.com>
+ <20181013093411.o3id6yzkspsxr5jt@mbp>
+In-Reply-To: <20181013093411.o3id6yzkspsxr5jt@mbp>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Sat, 13 Oct 2018 09:54:22 -0700
+Message-ID: <CALCETrW0sFoOknkLGFSiobQLg9O4qzD9f-9ws8uk69J1X866cg@mail.gmail.com>
+Subject: Re: [PATCH v9 00/24] ILP32 for ARM64
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Eugene Syromiatnikov <esyr@redhat.com>, linux-doc@vger.kernel.org,
+        szabolcs.nagy@arm.com, palmer@sifive.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        ynorov@caviumnetworks.com, Pavel Machek <pavel@ucw.cz>,
+        philipp.tomsich@theobroma-systems.com,
+        "Joseph S. Myers" <joseph@codesourcery.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        sellcey@caviumnetworks.com, Prasun.Kapoor@caviumnetworks.com,
+        schwab@suse.de, Alexander Graf <agraf@suse.de>, bamv2005@gmail.com,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Adam Borowski <kilobyte@angband.pl>,
+        manuel.montezelo@gmail.com, James Hogan <james.hogan@imgtec.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Pinski <pinskia@gmail.com>, linyongting@huawei.com,
+        klimov.linux@gmail.com, wookey@wookware.org,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Nathan Lynch <Nathan_Lynch@mentor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        James Morse <james.morse@arm.com>, ramana.gcc@googlemail.com,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        christoph.muellner@theobroma-systems.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 12:34:12AM -0700, John Hubbard wrote:
-> In patch 6/6, pin_page_for_dma(), which is called at the end of get_user_pages(),
-> unceremoniously rips the pages out of the LRU, as a prerequisite to using
-> either of the page->dma_pinned_* fields. 
-> 
-> The idea is that LRU is not especially useful for this situation anyway,
-> so we'll just make it one or the other: either a page is dma-pinned, and
-> just hanging out doing RDMA most likely (and LRU is less meaningful during that
-> time), or it's possibly on an LRU list.
+> On Oct 13, 2018, at 2:34 AM, Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+>> On Sat, Oct 13, 2018 at 04:14:16AM +0200, Eugene Syromiatnikov wrote:
+>>> On Wed, Oct 10, 2018 at 04:36:56PM +0100, Catalin Marinas wrote:
+>>>> On Wed, Oct 10, 2018 at 04:10:21PM +0200, Eugene Syromiatnikov wrote:
+>>>> I have some questions regarding AArch64 ILP32 implementation for which I
+>>>> failed to find an answer myself:
+>>>> * How ptrace() tracer is supposed to distinguish between ILP32 and LP64
+>>>>   tracees? For MIPS N32 and x32 this is possible based on syscall
+>>>>   number, but for AArch64 ILP32 I do not see such a sign. There's also
+>>>>   ARM_ip is employed for signalling entering/exiting, I wonder whether
+>>>>   it's possible to employ it also for signalling tracee's personality.
+>>>
+>>> With the current implementation, I don't think you can distinguish. From
+>>> the kernel perspective, the register set is the same. What is the
+>>> use-case for this?
+>>
+>> Err, a ptrace()-based tracer trying to trace a process, for example?
+>
+> I first thought it wouldn't matter for ptrace-based tracers since the
+> syscall numbers are (mostly) the same. But the arguments layout in
+> register is indeed different, so I see your point now about having to
+> distinguish.
+>
+>>> We could add a new regset to expose the ILP32 state (NT_ARM_..., I can't
+>>> think of a name now but probably not PER* as this implies PER_LINUX_...
+>>> which is independent from TIF_32BIT_*).
+>>
+>> So that would require an additional ptrace() call on each syscall stop,
+>> is that correct?
+>
+> The ILP32 state does not change at run-time, so it could only do a
+> ptrace() call once and save the information. No need to re-read it on
+> each syscall stop.
+>
 
-Have you done any benchmarking what this does to direct I/O performance,
-especially for small I/O directly to a (fast) block device?
+Please solve this in an arch independent way.  This situation is
+basically unusably broken on x86 right now.  Please solve it for real,
+by, for example, adding a new ptrace operation that returns something
+like this:
+
+enum ptrace_syscall_state {
+  NO_SYSCALL,
+  SYSCALL_ENTRY,
+  SYSCALL_EXIT,
+  /* other values may be defined in the future. */
+};
+
+struct ptrace_syscall_info {
+  enum ptrace_syscall_state state;
+  unsigned long arch;
+  union {
+    struct {
+      unsigned long nr;
+      unsigned long args[6];
+   } entry;
+   struct {
+      unsigned long ret;
+   } exit;
+};
+
+where arch is an AUDIT_ARCH_XYZ constant.
+
+On x86, it's currently essentially impossible for tools like strace to
+correctly decode syscalls.
+
+> We could set a high bit in the syscall number reported to the ptrace
+> caller (though not changing the syscall ABI) but I haven't thought of
+> other consequences. For example, can the ptrace caller change the
+> syscall number?
+
+Yes it can.
+
+>
+>>>> * What's the reasoning behind capping syscall arguments to 32 bit? x32
+>>>>   and MIPS N32 do not have such a restriction (and do not need special
+>>>>   wrappers for syscalls that pass 64-bit values as a result, except
+>>>>   when they do,  as it is the case for preadv2 on x32); moreover, that
+>>>>   would lead to insurmountable difficulties for AArch64 ILP32 tracers
+>>>>   that try to trace LP64 tracees, as it would be impossible to pass
+>>>>   64-bit addresses to process_vm_{read,write} or ptrace PEEK/POKE.
+>>>
+>>> We've attempted in earlier versions to allow a mix of 32 and 64-bit
+>>> register values from ILP32 but it got pretty complicated. The entry code
+>>> would need to know which registers need zeroing of the top 32-bit
+>>
+>> If kernel specifies 64-bit wide registers for syscalls, then it's the
+>> caller's (libc's) responsibility to properly sign-extend arguments when
+>> needed, and glibc, for example, already has proper type definitions that
+>> aimed to handle this.
+>
+> We tried, see my other reply.
+>
+> --
+> Catalin
