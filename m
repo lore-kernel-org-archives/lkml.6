@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D49C71122
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7331BC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 787BA2151C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:09:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2434120835
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:09:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="u+KohG31"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787BA2151C
+	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="PTkLAXcd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2434120835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemmela.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeJMPpw (ORCPT
+        id S1726928AbeJMPpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 11:45:52 -0400
-Received: from mail1.kuutio.org ([92.222.216.83]:44428 "EHLO mail1.kuutio.org"
+        Sat, 13 Oct 2018 11:45:49 -0400
+Received: from mail1.kuutio.org ([92.222.216.83]:44360 "EHLO mail1.kuutio.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726932AbeJMPpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 11:45:51 -0400
+        id S1726663AbeJMPpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 11:45:47 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail1.kuutio.org (Postfix) with ESMTP id BF69F20FEB;
-        Sat, 13 Oct 2018 10:09:37 +0200 (CEST)
+        by mail1.kuutio.org (Postfix) with ESMTP id BDEA820B70;
+        Sat, 13 Oct 2018 10:09:34 +0200 (CEST)
 Authentication-Results: mail1.kuutio.org (amavisd-new);
         dkim=pass (4096-bit key) reason="pass (just generated, assumed good)"
         header.d=lemmela.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lemmela.net; h=
         references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:from:from:received:received; s=dkim; t=1539418172; x=
-        1542010173; bh=yUoz/J22jZ3O8qivvjzvadJN4Zms13Ygz3EIGWpJgm0=; b=u
-        +KohG31FEjv8GbVQwIGL3lnpw1mWVfXXBvfqkskS5YhzUBkohleqMrcM5AHLLLEQ
-        TvPpt/7Np5/Lh82xPTzGSGsnQc2+edrLA/8LgMnYESe1w7EHmkH5GVWgU3p/60fv
-        3ncGRmrFtbMcu7R35lT9x20YdRrJeV04RNsz8RQ2f2CP9FLRFQfd/1pBrKgYV/94
-        3xNOjl8BBGR4/VrBOdBcBjGoR/4vCcA/zqTXXvMScfK4GrL1JxBv6AgzTmqKzrVu
-        WZ+YpkGXOQIvo+szNR1jSNFbxe9C4vYICWl1luGq9w4kQsVvbhKOpd+Wv0dfL9by
-        b708/7/1grq/TsA6Co4I1jtqTnSnbV5Zuw/kg9OYwI2xnCeSapWg3mSNosoCSm1+
-        Ux8LPQhjnY8OmPti+Tmn0UsiI6DfXo8YfRioSW4hDGW/aoSoCFfatnXRG2VFKUju
-        iUKGrvQbi4Wfxa7rwegcFvzOSmcjiRQSVErRdpLeWZAw8WaWWHLOpJlWMoXlG14y
-        mGWv4LWGHyc9NcZyKHziaVJnNXZRE7MWFf2wfk71NL2etDyZThewJmviJt1RWhzm
-        pC8lcjbL0k0izl24hZVJi2c9f081ZLEn6acXkSXFHYCVe6ANgD6Ik+jsgwQ4iERu
-        AR/GkvA7mVPCsDrZpyJgtJvKayMpqLATY8uJcNsOCU=
+        :subject:from:from:received:received; s=dkim; t=1539418174; x=
+        1542010175; bh=9AOQZD8CZEsYHFILfRVx3iqqbKmnzj1G7gNg4TQ9414=; b=P
+        TkLAXcdt/+0aknn+uSKZESPZf+QhYSTonhco+NI2OTyeDuRd5a+B+hVyIw4iIrMg
+        i7LGKfkSNpAdK2CqjiWb4wWdlbQsrRaD/CSqHIRqB95QH+bWrSbAcWykNgV8vKn1
+        GBFnHd4B4ICY1s3VrCVpbYuS7xMBn+crbu0WsnzloKjrf6xZJtwEsA0WsB/9Vf67
+        jiqE955LMp8FQG5TXU/7Q+XgbTwhYatzhWFgVQjxtvhOBfi9X3JRp3WLgakVZRNl
+        oqJ7+SCWZq9EtwPHCUv4ciVunQwK7Rn2IVlEeIWYsRa50haWWgqXWYh4ezI4V1aq
+        wTz9k/Kw7manZ/HmB+RjpeZCwzohN8q+OjgT0Fi3JOXerSakSB2MAoeW71Acw4+F
+        4dr9J3O2Ewh/o55S4K8rpSLXNo5bXCr0MSNEGtg8Z4i/xi6jNyKxP6rkKhcOSoSF
+        dosqKuzUoWI2voQWJSA/Wic2XqL13onM7ibuF1UrjXvs8uYff5BTKb/3dVOi+reH
+        6g2xNcQMf9+Ja1zRXKKxkL33Ny8ldnwWmUIzNYohgGeVhcFWWDccSw9H7rv8p2xH
+        8/9fmKKF5kQ4If8sLjpviTIkOH//lHKnYkLDBxrzBf/DAvf5x1GT6SuQxuqRbmc4
+        RnOBTkRAxgBL2IPvUhEgj4auSF0fiPbITFo99YGU14=
 X-Virus-Scanned: amavisd-new at kuutio.org
 Received: from mail1.kuutio.org ([127.0.0.1])
         by localhost (mail1.kuutio.org [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id WBYLi7M9y53V; Sat, 13 Oct 2018 10:09:32 +0200 (CEST)
+        with LMTP id BV-HmirljvKh; Sat, 13 Oct 2018 10:09:34 +0200 (CEST)
 Received: from build.kuutio.org (unknown [IPv6:2001:998:13:e4::69])
-        by mail1.kuutio.org (Postfix) with ESMTPSA id BA0F11FBA4;
-        Sat, 13 Oct 2018 10:09:31 +0200 (CEST)
+        by mail1.kuutio.org (Postfix) with ESMTPSA id 79CF3202F8;
+        Sat, 13 Oct 2018 10:09:33 +0200 (CEST)
 From:   Oskari Lemmela <oskari@lemmela.net>
 To:     Sebastian Reichel <sre@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -64,9 +64,9 @@ Cc:     Lee Jones <lee.jones@linaro.org>,
         Oskari Lemmela <oskari@lemmela.net>, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 1/7] dt-bindings: power: supply: axp20x: add AXP813 AC power DT binding
-Date:   Sat, 13 Oct 2018 11:08:42 +0300
-Message-Id: <20181013080848.29894-2-oskari@lemmela.net>
+Subject: [PATCH v4 4/7] arm64: dts: allwinner: a64: sopine: enable power supplies
+Date:   Sat, 13 Oct 2018 11:08:45 +0300
+Message-Id: <20181013080848.29894-5-oskari@lemmela.net>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181013080848.29894-1-oskari@lemmela.net>
 References: <20181013080848.29894-1-oskari@lemmela.net>
@@ -75,36 +75,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AXP803/AXP813 AC power supply can limit input current and voltage.
+Sopine baseboard have ACIN and battery connectors.
 
 Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
 ---
- .../devicetree/bindings/power/supply/axp20x_ac_power.txt       | 3 +++
- 1 file changed, 3 insertions(+)
+ .../boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts    | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-index 826e8a879121..7a1fb532abe5 100644
---- a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-+++ b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-@@ -4,6 +4,7 @@ Required Properties:
-  - compatible: One of:
- 			"x-powers,axp202-ac-power-supply"
- 			"x-powers,axp221-ac-power-supply"
-+			"x-powers,axp813-ac-power-supply"
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+index c21f2331add6..335cf2263d19 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+@@ -69,6 +69,14 @@
+ 	};
+ };
  
- This node is a subnode of the axp20x PMIC.
- 
-@@ -13,6 +14,8 @@ reading ADC channels from the AXP20X ADC.
- The AXP22X is only able to tell if an AC power supply is present and
- usable.
- 
-+AXP813/AXP803 are able to limit current and supply voltage
++&ac_power_supply {
++	status = "okay";
++};
 +
- Example:
- 
- &axp209 {
++&battery_power_supply {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
 -- 
 2.17.1
 
