@@ -2,231 +2,117 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C129C71122
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B494C71122
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6246320895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:31:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6246320895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id DC58C20895
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:34:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="USyS9cwA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC58C20895
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbeJMVIM (ORCPT
+        id S1726567AbeJMVLh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 17:08:12 -0400
-Received: from gateway30.websitewelcome.com ([50.116.127.1]:13578 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726255AbeJMVIM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 17:08:12 -0400
-X-Greylist: delayed 1369 seconds by postgrey-1.27 at vger.kernel.org; Sat, 13 Oct 2018 17:08:11 EDT
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 2F5AE12D14
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 08:08:17 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id BJeTgSJUVaSeyBJeTgnikw; Sat, 13 Oct 2018 08:08:17 -0500
-X-Authority-Reason: nr=8
-Received: from lputeaux-656-1-34-183.w80-15.abo.wanadoo.fr ([80.15.51.183]:40388 helo=[10.88.108.42])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gBJeS-000n8L-DK; Sat, 13 Oct 2018 08:08:16 -0500
-To:     Jonathan Cameron <jic23@kernel.org>, Peter Rosin <peda@axentia.se>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181008173528.GA31787@embeddedor.com>
- <ded46d23-0ec9-3fc8-3fc2-fa8003639272@axentia.se>
- <20181013133831.7dbd31e8@archlinux>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] iio: dpot-dac: mark expected switch fall-through
-Message-ID: <1f64449a-ef19-20c8-f8cb-7e629f8fe71b@embeddedor.com>
-Date:   Sat, 13 Oct 2018 15:08:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 13 Oct 2018 17:11:37 -0400
+Received: from mail-eopbgr30083.outbound.protection.outlook.com ([40.107.3.83]:11632
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726281AbeJMVLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 17:11:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i8m/8kKJ5N0iT+fv5TrhYPceo1FnCEIb2JLs6qLPUzM=;
+ b=USyS9cwAgvP1mavQued7usdz4uFt1Bg/XW1Oc80pzK24tszJntNYhNdqaJ6ChBIsaoPHRBdUmYeMqzeyTl8X3/0PwVv+t872DnYEO+DI72xFaAMAx3kehNZ1TxqMztjD665OO0lMnlkw4GdKnvsYQYdBfI8a5GfaUB/vqp14duo=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5060.eurprd04.prod.outlook.com (20.177.40.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.25; Sat, 13 Oct 2018 13:33:54 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::25a0:3167:d718:91c1]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::25a0:3167:d718:91c1%3]) with mapi id 15.20.1228.020; Sat, 13 Oct 2018
+ 13:33:54 +0000
+From:   "A.s. Dong" <aisheng.dong@nxp.com>
+To:     "thor.thayer@linux.intel.com" <thor.thayer@linux.intel.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>
+Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+Thread-Topic: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+Thread-Index: AQHUQOYAqzg0fl5c6km76P92aepQ6qTin9AQgBBfjVCABM4uAIAAv5kggBzYKaCACAuTYA==
+Date:   Sat, 13 Oct 2018 13:33:54 +0000
+Message-ID: <AM0PR04MB4211DBDC8D0684442A927CE580E30@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <7e612f6f-e9d2-2f6f-1903-3a6bcf1b65ba@linux.intel.com>
+ <AM0PR04MB4211B170CAC1B3F9E7356AF980130@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB42119BD28DDB7826DEE577F180E60@AM0PR04MB4211.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB42119BD28DDB7826DEE577F180E60@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5060;6:nM+WUeNYZamMZCDeaBABPRyIXPz/KgxGHi7Qz2zfVLayqFM31LgDg8Px2++4pDKLL2YxXgNvrvFFfzsUHnpEsREGqUweIkI8gBLvqQXPosSc6iChLbg4oQGu0KQsaUqDzUM02uUS/oeKprA9SOwrC08IL4Np32hHrguKrvi1NjfYMCTB6ytA3jnctsR/jHdg38y5YLOUtccmhRYTc8388I4rzwfdHT8gSnA9ySNCANUIxhRKCZyZ6lzzTjaE1L2vSxFK/edjx1wanx2KFlEBjMDjeAIzLb7sOU9THA+Jp1o/ZFYvl9Lo+pG/o7qzAimNz0C5t8J0HHYwhHiN6BuOw5hrCx5ILJuNTiClRfF2nGN+0tOtW1vgGHT/y/6KyZj+lZs4hEzpZezNjvcE8quvGVbPNK4yintdaZJ3LWmZ8k1TEnx/9uf7bvk4iXXIcct2k/lZyiPXHsQLwYUaxadFgQ==;5:rBA5U7RSzPYm90Gy5PDsbm31AlSZFCIX0pYx2wU8swOsjM4KJXab26nIZUH6XtHfyQOWTg7WM5n9Um+I9qO/1JDVRk1qSb9jfKfjvyA0HLXVeKlL2P4M78gDjsvI7SBJBmUnUENmRFtT5l5oslk5IKf2vN0sY7/qlP4eUusBTrE=;7:v7WjPclYx9w8jRnJseRa3FCQUflkWuaRIOTDF+qpz8abh7MAFipUcqtgBy7shaKBDMGlof0LN9Q+f+0yox5YJdi1b+nTZIkrRx8CbV5bfycLKErOFJRaXLogbkh8HhavkPt8pfGISRndIDnWx7QjbMMJA930c73NZv9lASh7xEj7gyg9BDb1KkTKjaHr9dZf1NvwnBt9cxlrBBKKmkE2Qr/fH+wvagifSMRYu+yOIUTRcF3tRvbrtCFUofotamxt
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: b3ced4ec-1761-43b5-a83c-08d631108515
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5060;
+x-ms-traffictypediagnostic: AM0PR04MB5060:
+x-microsoft-antispam-prvs: <AM0PR04MB50604526C764BA4FE43E92B680E30@AM0PR04MB5060.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699)(9452136761055)(258649278758335)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:AM0PR04MB5060;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5060;
+x-forefront-prvs: 082465FB26
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(39860400002)(396003)(366004)(346002)(199004)(189003)(13464003)(86362001)(2201001)(68736007)(8676002)(3846002)(54906003)(6116002)(97736004)(5660300001)(106356001)(105586002)(102836004)(110136005)(8936002)(256004)(33656002)(71190400001)(14454004)(71200400001)(2906002)(478600001)(81156014)(81166006)(55016002)(25786009)(9686003)(4326008)(53936002)(74316002)(6436002)(11346002)(229853002)(6246003)(316002)(305945005)(99286004)(7736002)(26005)(76176011)(486006)(186003)(2900100001)(93886005)(2501003)(476003)(446003)(5250100002)(66066001)(7696005)(53546011)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5060;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: yhn7//pbBwlwnU36kzCCItTVgW2Lk3ekHc7GadEZ4VtFpoag+QthqOW4Dw0D63Ywa3acMx8eLXT52kLSKPvx6sWPhFMLPKxha+kS5f4MNvgTfVKhuf4aZ6MxDRk5r7Aed9n/TcM0xqy5MgqJ9kbYb/SxC9K2wHPGb+9Ge0umsg9NiJg7VNitBA85mSSnmBf4o0PWZhtuxSWSbmnI+aP1T9iEoUK2Pnv9bInmJieriEm3HAoyncqDPSrR3oTKz7HPejzmZecgdWVtppLD9p31/6fXILRyqhAr1uTTC4AcenVtIMXtF94oS+0e8POvQ8y5x5IXXAehlqiWkzDuaXu1rb3p57Rt+SRYZAugSr55DLM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20181013133831.7dbd31e8@archlinux>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 80.15.51.183
-X-Source-L: No
-X-Exim-ID: 1gBJeS-000n8L-DK
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lputeaux-656-1-34-183.w80-15.abo.wanadoo.fr ([10.88.108.42]) [80.15.51.183]:40388
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3ced4ec-1761-43b5-a83c-08d631108515
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Oct 2018 13:33:54.0830
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5060
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/13/18 2:38 PM, Jonathan Cameron wrote:
-> On Mon, 8 Oct 2018 20:42:41 +0000
-> Peter Rosin <peda@axentia.se> wrote:
-> 
->> On 2018-10-08 19:35, Gustavo A. R. Silva wrote:
->>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->>> where we are expecting to fall through.  
->>
->> The way I see it, it is pretty well marked up as is. So, this paragraph
->> is not describing the change.
->>
->>>
->>> Notice that in this particular case, I replaced "...and fall through."
->>> with a proper "fall through", which is what GCC is expecting to find.  
->>
->> What is not "proper" about the existing comment? Yes yes, I *know* that
->> GCC is not very intelligent about it and requires hand-holding, but
->> blaming the existing comment for not *properly* marking an intentional
->> fall through is ... rich.
->>
->>>
->>> Addresses-Coverity-ID: 1462408 ("Missing break in switch")
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>> ---
->>>  drivers/iio/dac/dpot-dac.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/iio/dac/dpot-dac.c b/drivers/iio/dac/dpot-dac.c
->>> index a791d0a..e353946 100644
->>> --- a/drivers/iio/dac/dpot-dac.c
->>> +++ b/drivers/iio/dac/dpot-dac.c
->>> @@ -78,7 +78,7 @@ static int dpot_dac_read_raw(struct iio_dev *indio_dev,  
->>
->> Adding some more context here.
->>
->> 		case IIO_VAL_INT:
->> 			/*
->> 			 * Convert integer scale to fractional scale by
->> 			 * setting the denominator (val2) to one...
->>>  			 */
->>>  			*val2 = 1;
->>>  			ret = IIO_VAL_FRACTIONAL;
->>> -			/* ...and fall through. */
->>> +			/* fall through */
->>>  		case IIO_VAL_FRACTIONAL:
->>>  			*val *= regulator_get_voltage(dac->vref) / 1000;
->>>  			*val2 *= dac->max_ohms;
->>>   
->>
->> Considering the above added context, I have to say that this mindless
->> change is not an improvement, as you have just destroyed the continued
->> sentence from the previous comment. You must have noticed that this
->> was the end of a continued sentence, as you even quoted it in the commit
->> message. The big question is why you did not stop to think and consider
->> the context?
->>
->> Yes, I'm annoyed by mindless changes. Especially mindless changes aimed
->> at improving readability while in fact making things less readable.
->>
->> TL;DR, if you are desperate to fix "the problem" with this fall through
->> comment, please do so in a way that preserves overall readability. And
->> it would be nice to not blame the existing code for brain damage in GCC
->> and various other static analyzers.
->>
->> Cheers,
->> Peter
-> I agree with you in principle Peter and have tweaked the patch description
-> to make it clearer that we are doing this to make GCC static analysis more
-> helpful (suppressing a false warning is a worthwhile if you are dealing with
-> lots of them).
-> 
-> However, nice though it is to have elegant comment structure I think we
-> should still have this patch in place.  This effort to 'fix' these
-> warnings has already identified a few places where it was wrong so
-> I'm keen to see it applied by default even if it isn't perfect.
-> 
-
-Thanks, Jonathan. Below are some examples of cases in which the fall-through
-warning turned out to be an actual bug:
-
-commit c24bfa8f21b59283580043dada19a6e943b6e426
-commit ad0eaee6195db1db1749dd46b9e6f4466793d178
-commit 9ba8376ce1e2cbf4ce44f7e4bee1d0648e10d594
-commit dc586a60a11d0260308db1bebe788ad8973e2729
-commit a8e9b186f153a44690ad0363a56716e7077ad28c
-commit 4e57562b4846e42cd1c2e556f0ece18c1154e116
-commit 7c92e5fbf4dac0dd4dd41a0383adc54f16f403e2
-commit c5b974bee9d2ceae4c441ae5a01e498c2674e100
-commit 2c930e3d0aed1505e86e0928d323df5027817740
-commit 882518debc8487147d618d5f26f4bb0bea1cc05b
-commit f745e9cc7e40c4570ab5e8d5ef32bfaa6e8ced46
-commit 5dc874252faa818426480a7c00fa05738fe05402
-commit 4a00aa057759d713e1296ecbc614fa560d569977
-commit 6d3f06a0042ebd59a5e9d4ba6e8a85596901e140
-commit 827d240a232d27cc12e9657d012f2e5ba953e98a
-commit a28b259b43914b04746184cec318c67bded7234c
-commit 9e7b319e1d1e6cba41ae96f791789a7806b29584
-commit d393be3ed0bebb30a4666d7f5ed4486cd6b31716
-commit 680682d4d537565e2c358483e1feeca30a8cf3d4
-commit 06af9b0f4949b85b20107e6d75f5eba15111d220
-
-So, yeah. This effort is worth it.
-
-Thanks
---
-Gustavo
+UGluZw0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEEucy4gRG9uZw0K
+PiBTZW50OiBNb25kYXksIE9jdG9iZXIgOCwgMjAxOCA2OjQzIFBNDQo+IFRvOiB0aG9yLnRoYXll
+ckBsaW51eC5pbnRlbC5jb207IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IHNib3lkQGtlcm5l
+bC5vcmcNCj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJu
+ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNoYXdu
+Z3VvQGtlcm5lbC5vcmc7IGRsLWxpbnV4LWlteA0KPiA8bGludXgtaW14QG54cC5jb20+OyBoZGVn
+b2VkZUByZWRoYXQuY29tDQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggVjYgMC80XSBjbGs6IG5ldyBB
+UElzIHRvIGhhbmRsZSBhbGwgYXZhaWxhYmxlIGNsb2Nrcw0KPiANCj4gSGkgU3RlcGhlbiwNCj4g
+DQo+IEdlbnRseSBwaW5nIGFnYWluLi4NCj4gDQo+ID4gPiA+DQo+ID4gPiBKdXN0IGNoZWNraW5n
+IG9uIHRoZSBzdGF0dXMgb2YgdGhpcyBwYXRjaC4gVGhlIGNsb2NrIHJvdXRpbmVzDQo+ID4gPiAo
+cGF0Y2hlcw0KPiA+ID4gMS0zKSBhcmUgdXNlZnVsIGZvciBvbmUgb2YgbXkgZHJpdmVycyBidXQg
+aWYgdGhleSBhcmVuJ3QgYWNjZXB0ZWQgb3INCj4gPiA+IHdpbGwgdGFrZSBhIGxvbmcgdGltZSB0
+byBiZSBhY2NlcHRlZCwgSSdsbCBuZWVkIHRvIHJlZmFjdG9yIG15IGRyaXZlci4NCj4gPiA+DQo+
+ID4NCj4gPiBUaGFua3MgZm9yIHRoaXMgaW5mb3JtYXRpb24uDQo+ID4NCj4gPiBTdGVwaGVuLA0K
+PiA+IFdvdWxkIHlvdSBoZWxwIHRvIHByb2NlZWQgdGhpcz8NCj4gPg0KPiANCj4gUmVnYXJkcw0K
+PiBEb25nIEFpc2hlbmcNCg==
