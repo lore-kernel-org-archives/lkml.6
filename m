@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B09DC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BACC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F09E420645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:44:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F09E420645
+	by mail.kernel.org (Postfix) with ESMTP id EBBDF20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:44:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBDF20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729397AbeJNX0F (ORCPT
+        id S1729409AbeJNX0H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:26:05 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37095 "EHLO
+        Sun, 14 Oct 2018 19:26:07 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37099 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728079AbeJNX0E (ORCPT
+        by vger.kernel.org with ESMTP id S1728079AbeJNX0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:26:04 -0400
+        Sun, 14 Oct 2018 19:26:06 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiMK-0004cD-3w; Sun, 14 Oct 2018 16:31:12 +0100
+        id 1gBiM1-0004cC-TM; Sun, 14 Oct 2018 16:30:54 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLN-0000AB-Oc; Sun, 14 Oct 2018 16:30:13 +0100
+        id 1gBiLT-0000Me-8A; Sun, 14 Oct 2018 16:30:19 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Date:   Sun, 14 Oct 2018 16:25:40 +0100
-Message-ID: <lsq.1539530740.90277622@decadent.org.uk>
+CC:     akpm@linux-foundation.org, aryabinin@virtuozzo.com, hpa@zytor.com,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Joerg Roedel" <jroedel@suse.de>, jgross@suse.com,
+        JBeulich@suse.com, kirill.shutemov@linux.intel.com
+Date:   Sun, 14 Oct 2018 16:25:41 +0100
+Message-ID: <lsq.1539530741.828213442@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 022/366] serial: pxa: Fix out-of-bounds access
- through serial port index
+Subject: [PATCH 3.16 165/366] x86/mm: Prevent kernel Oops in PTDUMP code
+ with HIGHPTE=y
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,35 +59,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Joerg Roedel <jroedel@suse.de>
 
-commit afc7851fab8329eddcf321c9e0a58c893f351dd6 upstream.
+commit d6ef1f194b7569af8b8397876dc9ab07649d63cb upstream.
 
-The serial_pxa_ports[] array is indexed using a value derived from the
-"serialN" alias in DT, or from platform data, which may lead to an
-out-of-bounds access.
+The walk_pte_level() function just uses __va to get the virtual address of
+the PTE page, but that breaks when the PTE page is not in the direct
+mapping with HIGHPTE=y.
 
-Fix this by adding a range check.
+The result is an unhandled kernel paging request at some random address
+when accessing the current_kernel or current_user file.
 
-Fixes: 699c20f3e6310aa2 ("serial: pxa: add OF support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Use the correct API to access PTE pages.
+
+Fixes: fe770bf0310d ('x86: clean up the page table dumper and add 32-bit support')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: jgross@suse.com
+Cc: JBeulich@suse.com
+Cc: hpa@zytor.com
+Cc: aryabinin@virtuozzo.com
+Cc: kirill.shutemov@linux.intel.com
+Link: https://lkml.kernel.org/r/1523971636-4137-1-git-send-email-joro@8bytes.org
+[bwh: Backported to 3.16:
+ - Keep using pte_pgprot() to get protection flags
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/serial/pxa.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
---- a/drivers/tty/serial/pxa.c
-+++ b/drivers/tty/serial/pxa.c
-@@ -888,6 +888,10 @@ static int serial_pxa_probe(struct platf
- 		sport->port.line = dev->id;
- 	else if (ret < 0)
- 		goto err_clk;
-+	if (sport->port.line >= ARRAY_SIZE(serial_pxa_ports)) {
-+		dev_err(&dev->dev, "serial%d out of range\n", sport->port.line);
-+		return -EINVAL;
-+	}
- 	snprintf(sport->name, PXA_NAME_LEN - 1, "UART%d", sport->port.line + 1);
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -16,6 +16,7 @@
+ #include <linux/mm.h>
+ #include <linux/module.h>
+ #include <linux/seq_file.h>
++#include <linux/highmem.h>
  
- 	sport->port.membase = ioremap(mmres->start, resource_size(mmres));
+ #include <asm/pgtable.h>
+ 
+@@ -263,15 +264,16 @@ static void walk_pte_level(struct seq_fi
+ 							unsigned long P)
+ {
+ 	int i;
+-	pte_t *start;
++	pte_t *pte;
+ 
+-	start = (pte_t *) pmd_page_vaddr(addr);
+ 	for (i = 0; i < PTRS_PER_PTE; i++) {
+-		pgprot_t prot = pte_pgprot(*start);
++		pgprot_t prot;
+ 
+ 		st->current_address = normalize_addr(P + i * PTE_LEVEL_MULT);
++		pte = pte_offset_map(&addr, st->current_address);
++		prot = pte_pgprot(*pte);
+ 		note_page(m, st, prot, 4);
+-		start++;
++		pte_unmap(pte);
+ 	}
+ }
+ 
 
