@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB578C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 09:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A59C6787C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 09:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A25B2064E
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 09:18:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A25B2064E
+	by mail.kernel.org (Postfix) with ESMTP id A58102064E
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 09:18:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A58102064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbeJNQ6v (ORCPT
+        id S1726821AbeJNQ7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 12:58:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58941 "EHLO
+        Sun, 14 Oct 2018 12:59:01 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45201 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726352AbeJNQ6v (ORCPT
+        with ESMTP id S1726352AbeJNQ7A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 12:58:51 -0400
+        Sun, 14 Oct 2018 12:59:00 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9E9HCdn3117062
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9E9IOBf3117310
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 14 Oct 2018 02:17:12 -0700
+        Sun, 14 Oct 2018 02:18:24 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9E9HAmH3117059;
-        Sun, 14 Oct 2018 02:17:10 -0700
-Date:   Sun, 14 Oct 2018 02:17:10 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9E9IKU33117307;
+        Sun, 14 Oct 2018 02:18:20 -0700
+Date:   Sun, 14 Oct 2018 02:18:20 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-16561f27f94e6193ee8f5b9b74801e1668c86efc@git.kernel.org>
-Cc:     bp@alien8.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        luto@kernel.org, dave.hansen@linux.intel.com, hpa@zytor.com,
-        tglx@linutronix.de
-Reply-To: hpa@zytor.com, dave.hansen@linux.intel.com, mingo@kernel.org,
-          luto@kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de
-In-Reply-To: <20181012232118.3EAAE77B@viggo.jf.intel.com>
-References: <20181012232118.3EAAE77B@viggo.jf.intel.com>
+From:   tip-bot for Nathan Chancellor <tipbot@zytor.com>
+Message-ID: <tip-dca5203e3fe2f5d8bc8157b205d766142d3a6b77@git.kernel.org>
+Cc:     ndesaulniers@google.com, hpa@zytor.com, natechancellor@gmail.com,
+        bp@alien8.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        mingo@kernel.org
+Reply-To: natechancellor@gmail.com, hpa@zytor.com, ndesaulniers@google.com,
+          tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20181013010713.6999-1-natechancellor@gmail.com>
+References: <20181013010713.6999-1-natechancellor@gmail.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/entry: Add some paranoid entry/exit CR3
- handling comments
-Git-Commit-ID: 16561f27f94e6193ee8f5b9b74801e1668c86efc
+Subject: [tip:x86/urgent] x86/boot: Add -Wno-pointer-sign to KBUILD_CFLAGS
+Git-Commit-ID: dca5203e3fe2f5d8bc8157b205d766142d3a6b77
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,79 +58,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  16561f27f94e6193ee8f5b9b74801e1668c86efc
-Gitweb:     https://git.kernel.org/tip/16561f27f94e6193ee8f5b9b74801e1668c86efc
-Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Fri, 12 Oct 2018 16:21:18 -0700
+Commit-ID:  dca5203e3fe2f5d8bc8157b205d766142d3a6b77
+Gitweb:     https://git.kernel.org/tip/dca5203e3fe2f5d8bc8157b205d766142d3a6b77
+Author:     Nathan Chancellor <natechancellor@gmail.com>
+AuthorDate: Fri, 12 Oct 2018 18:07:14 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 14 Oct 2018 11:11:22 +0200
+CommitDate: Sun, 14 Oct 2018 11:11:23 +0200
 
-x86/entry: Add some paranoid entry/exit CR3 handling comments
+x86/boot: Add -Wno-pointer-sign to KBUILD_CFLAGS
 
-Andi Kleen was just asking me about the NMI CR3 handling and why
-we restore it unconditionally.  I was *sure* we had documented it
-well.  We did not.
+When compiling the kernel with Clang, this warning appears even though
+it is disabled for the whole kernel because this folder has its own set
+of KBUILD_CFLAGS. It was disabled before the beginning of git history.
 
-Add some documentation.  We have common entry code where the CR3
-value is stashed, but three places in two big code paths where we
-restore it.  I put bulk of the comments in this common path and
-then refer to it from the other spots.
+In file included from arch/x86/boot/compressed/kaslr.c:29:
+In file included from arch/x86/boot/compressed/misc.h:21:
+In file included from ./include/linux/elf.h:5:
+In file included from ./arch/x86/include/asm/elf.h:77:
+In file included from ./arch/x86/include/asm/vdso.h:11:
+In file included from ./include/linux/mm_types.h:9:
+In file included from ./include/linux/spinlock.h:88:
+In file included from ./arch/x86/include/asm/spinlock.h:43:
+In file included from ./arch/x86/include/asm/qrwlock.h:6:
+./include/asm-generic/qrwlock.h:101:53: warning: passing 'u32 *' (aka
+'unsigned int *') to parameter of type 'int *' converts between pointers
+to integer types with different sign [-Wpointer-sign]
+        if (likely(atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED)))
+                                                           ^~~~~
+./include/linux/compiler.h:76:40: note: expanded from macro 'likely'
+# define likely(x)      __builtin_expect(!!(x), 1)
+                                            ^
+./include/asm-generic/atomic-instrumented.h:69:66: note: passing
+argument to parameter 'old' here
+static __always_inline bool atomic_try_cmpxchg(atomic_t *v, int *old, int new)
+                                                                 ^
 
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: luto@kernel.org
-Cc: bp@alien8.de
-Cc: "H. Peter Anvin" <hpa@zytor.come
-Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
-Link: https://lkml.kernel.org/r/20181012232118.3EAAE77B@viggo.jf.intel.com
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Link: https://lkml.kernel.org/r/20181013010713.6999-1-natechancellor@gmail.com
 
 ---
- arch/x86/entry/entry_64.S | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/x86/boot/compressed/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 957dfb693ecc..1d9b4a300c8c 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1187,6 +1187,18 @@ ENTRY(paranoid_entry)
- 	xorl	%ebx, %ebx
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 28764dacf018..466f66c8a7f8 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -37,6 +37,7 @@ KBUILD_CFLAGS += $(call cc-option,-ffreestanding)
+ KBUILD_CFLAGS += $(call cc-option,-fno-stack-protector)
+ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+ KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
++KBUILD_CFLAGS += -Wno-pointer-sign
  
- 1:
-+	/*
-+	 * Always stash CR3 in %r14.  This value will be restored,
-+	 * verbatim, at exit.  Needed if kernel is interrupted
-+	 * after switching to the user CR3 value but before
-+	 * returning to userspace.
-+	 *
-+	 * This is also why CS (stashed in the "iret frame" by the
-+	 * hardware at entry) can not be used: this may be a return
-+	 * to kernel code, but with a user CR3 value.  The %ebx flag
-+	 * for SWAPGS is also unusable for CR3 because there is a
-+	 * window with a user GS and a kernel CR3.
-+	 */
- 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
- 
- 	ret
-@@ -1211,11 +1223,13 @@ ENTRY(paranoid_exit)
- 	testl	%ebx, %ebx			/* swapgs needed? */
- 	jnz	.Lparanoid_exit_no_swapgs
- 	TRACE_IRQS_IRETQ
-+	/* Always restore stashed CR3 value (see paranoid_entry) */
- 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
- 	SWAPGS_UNSAFE_STACK
- 	jmp	.Lparanoid_exit_restore
- .Lparanoid_exit_no_swapgs:
- 	TRACE_IRQS_IRETQ_DEBUG
-+	/* Always restore stashed CR3 value (see paranoid_entry) */
- 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
- .Lparanoid_exit_restore:
- 	jmp restore_regs_and_return_to_kernel
-@@ -1626,6 +1640,7 @@ end_repeat_nmi:
- 	movq	$-1, %rsi
- 	call	do_nmi
- 
-+	/* Always restore stashed CR3 value (see paranoid_entry) */
- 	RESTORE_CR3 scratch_reg=%r15 save_reg=%r14
- 
- 	testl	%ebx, %ebx			/* swapgs needed? */
+ KBUILD_AFLAGS  := $(KBUILD_CFLAGS) -D__ASSEMBLY__
+ GCOV_PROFILE := n
