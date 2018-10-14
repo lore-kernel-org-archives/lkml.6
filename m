@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13C7C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF6CEC7112B
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2BE720645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:06:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2BE720645
+	by mail.kernel.org (Postfix) with ESMTP id B4B9620645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:06:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4B9620645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbeJNXLj (ORCPT
+        id S1727467AbeJNXsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:11:39 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35566 "EHLO
+        Sun, 14 Oct 2018 19:48:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35583 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726319AbeJNXLj (ORCPT
+        by vger.kernel.org with ESMTP id S1726536AbeJNXLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:39 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLS-0004cU-FU; Sun, 14 Oct 2018 16:30:18 +0100
+        id 1gBiLS-0004cm-NT; Sun, 14 Oct 2018 16:30:18 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLN-00008z-9K; Sun, 14 Oct 2018 16:30:13 +0100
+        id 1gBiLN-00009g-HG; Sun, 14 Oct 2018 16:30:13 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>,
-        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>
+CC:     akpm@linux-foundation.org, "Hans Verkuil" <hans.verkuil@cisco.com>,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
+        "Colin Ian King" <colin.king@canonical.com>
 Date:   Sun, 14 Oct 2018 16:25:40 +0100
-Message-ID: <lsq.1539530740.990570062@decadent.org.uk>
+Message-ID: <lsq.1539530740.822910925@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 008/366] drm: rcar-du: lvds: Fix LVDS startup on
- R-Car Gen2
+Subject: [PATCH 3.16 016/366] media: cx25821: prevent out-of-bounds read
+ on array card
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,51 +58,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 8525d04ba8a6a9ecfa4bd619c988ca873a5fc2a4 upstream.
+commit 67300abdbe9f1717532aaf4e037222762716d0f6 upstream.
 
-According to the latest revision 2.00 of the R-Car Gen2 manual, the LVDS
-and the bias circuit must be enabled after the LVDS I/O pins are
-enabled, not before. Fix the Gen2 LVDS startup sequence accordingly.
+Currently an out of range dev->nr is detected by just reporting the
+issue and later on an out-of-bounds read on array card occurs because
+of this. Fix this by checking the upper range of dev->nr with the size
+of array card (removes the hard coded size), move this check earlier
+and also exit with the error -ENOSYS to avoid the later out-of-bounds
+array read.
 
-While at it, also fix the comment preceding the first LVDCR0 write that
-still talks about hardcoding the LVDS mode 0.
+Detected by CoverityScan, CID#711191 ("Out-of-bounds-read")
 
-Fixes: 90374b5c25c9 ("drm/rcar-du: Add internal LVDS encoder support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-[bwh: Backported to 3.16:
- - Mode is always 0
- - Adjust context]
+Fixes: commit 02b20b0b4cde ("V4L/DVB (12730): Add conexant cx25821 driver")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+[hans.verkuil@cisco.com: %ld -> %zd]
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-@@ -87,10 +87,8 @@ static int rcar_du_lvdsenc_start(struct
+ drivers/media/pci/cx25821/cx25821-core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+--- a/drivers/media/pci/cx25821/cx25821-core.c
++++ b/drivers/media/pci/cx25821/cx25821-core.c
+@@ -871,6 +871,10 @@ static int cx25821_dev_setup(struct cx25
+ 	dev->nr = ++cx25821_devcount;
+ 	sprintf(dev->name, "cx25821[%d]", dev->nr);
  
- 	rcar_lvds_write(lvds, LVDCHCR, lvdhcr);
++	if (dev->nr >= ARRAY_SIZE(card)) {
++		CX25821_INFO("dev->nr >= %zd", ARRAY_SIZE(card));
++		return -ENODEV;
++	}
+ 	if (dev->pci->device != 0x8210) {
+ 		pr_info("%s(): Exiting. Incorrect Hardware device = 0x%02x\n",
+ 			__func__, dev->pci->device);
+@@ -887,9 +891,6 @@ static int cx25821_dev_setup(struct cx25
+ 		dev->channels[i].sram_channels = &cx25821_sram_channels[i];
+ 	}
  
--	/* Select the input, hardcode mode 0, enable LVDS operation and turn
--	 * bias circuitry on.
--	 */
--	lvdcr0 = LVDCR0_BEN | LVDCR0_LVEN;
-+	/* Select the input and set the LVDS mode. */
-+	lvdcr0 = 0;
- 	if (rcrtc->index == 2)
- 		lvdcr0 |= LVDCR0_DUSEL;
- 	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
-@@ -99,6 +97,10 @@ static int rcar_du_lvdsenc_start(struct
- 	rcar_lvds_write(lvds, LVDCR1, LVDCR1_CHSTBY(3) | LVDCR1_CHSTBY(2) |
- 			LVDCR1_CHSTBY(1) | LVDCR1_CHSTBY(0) | LVDCR1_CLKSTBY);
- 
-+	/* Enable LVDS operation and turn bias circuitry on. */
-+	lvdcr0 |= LVDCR0_BEN | LVDCR0_LVEN;
-+	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
-+
- 	/* Turn the PLL on, wait for the startup delay, and turn the output
- 	 * on.
- 	 */
+-	if (dev->nr > 1)
+-		CX25821_INFO("dev->nr > 1!");
+-
+ 	/* board config */
+ 	dev->board = 1;		/* card[dev->nr]; */
+ 	dev->_max_num_decoders = MAX_DECODERS;
 
