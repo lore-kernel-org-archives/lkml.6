@@ -2,50 +2,48 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BACC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DACC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBBDF20645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:44:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBDF20645
+	by mail.kernel.org (Postfix) with ESMTP id A582B20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A582B20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729409AbeJNX0H (ORCPT
+        id S1729110AbeJNX01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:26:07 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37099 "EHLO
+        Sun, 14 Oct 2018 19:26:27 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37112 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728079AbeJNX0G (ORCPT
+        by vger.kernel.org with ESMTP id S1728079AbeJNX01 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:26:06 -0400
+        Sun, 14 Oct 2018 19:26:27 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM1-0004cC-TM; Sun, 14 Oct 2018 16:30:54 +0100
+        id 1gBiMH-0004cZ-Jk; Sun, 14 Oct 2018 16:31:09 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLT-0000Me-8A; Sun, 14 Oct 2018 16:30:19 +0100
+        id 1gBiLO-0000Az-4M; Sun, 14 Oct 2018 16:30:14 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, aryabinin@virtuozzo.com, hpa@zytor.com,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Joerg Roedel" <jroedel@suse.de>, jgross@suse.com,
-        JBeulich@suse.com, kirill.shutemov@linux.intel.com
-Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.828213442@decadent.org.uk>
+CC:     akpm@linux-foundation.org, "Igor Pylypiv" <igor.pylypiv@gmail.com>,
+        "Wim Van Sebroeck" <wim@iguana.be>,
+        "Guenter Roeck" <linux@roeck-us.net>
+Date:   Sun, 14 Oct 2018 16:25:40 +0100
+Message-ID: <lsq.1539530740.491746814@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 165/366] x86/mm: Prevent kernel Oops in PTDUMP code
- with HIGHPTE=y
+Subject: [PATCH 3.16 032/366] watchdog: f71808e_wdt: Fix WD_EN register read
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,62 +57,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joerg Roedel <jroedel@suse.de>
+From: Igor Pylypiv <igor.pylypiv@gmail.com>
 
-commit d6ef1f194b7569af8b8397876dc9ab07649d63cb upstream.
+commit 977f6f68331f94bb72ad84ee96b7b87ce737d89d upstream.
 
-The walk_pte_level() function just uses __va to get the virtual address of
-the PTE page, but that breaks when the PTE page is not in the direct
-mapping with HIGHPTE=y.
+F71808FG_FLAG_WD_EN defines bit position, not a bitmask
 
-The result is an unhandled kernel paging request at some random address
-when accessing the current_kernel or current_user file.
-
-Use the correct API to access PTE pages.
-
-Fixes: fe770bf0310d ('x86: clean up the page table dumper and add 32-bit support')
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: jgross@suse.com
-Cc: JBeulich@suse.com
-Cc: hpa@zytor.com
-Cc: aryabinin@virtuozzo.com
-Cc: kirill.shutemov@linux.intel.com
-Link: https://lkml.kernel.org/r/1523971636-4137-1-git-send-email-joro@8bytes.org
-[bwh: Backported to 3.16:
- - Keep using pte_pgprot() to get protection flags
- - Adjust context]
+Signed-off-by: Igor Pylypiv <igor.pylypiv@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -16,6 +16,7 @@
- #include <linux/mm.h>
- #include <linux/module.h>
- #include <linux/seq_file.h>
-+#include <linux/highmem.h>
+ drivers/watchdog/f71808e_wdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/watchdog/f71808e_wdt.c
++++ b/drivers/watchdog/f71808e_wdt.c
+@@ -450,7 +450,7 @@ static bool watchdog_is_running(void)
  
- #include <asm/pgtable.h>
+ 	is_running = (superio_inb(watchdog.sioaddr, SIO_REG_ENABLE) & BIT(0))
+ 		&& (superio_inb(watchdog.sioaddr, F71808FG_REG_WDT_CONF)
+-			& F71808FG_FLAG_WD_EN);
++			& BIT(F71808FG_FLAG_WD_EN));
  
-@@ -263,15 +264,16 @@ static void walk_pte_level(struct seq_fi
- 							unsigned long P)
- {
- 	int i;
--	pte_t *start;
-+	pte_t *pte;
- 
--	start = (pte_t *) pmd_page_vaddr(addr);
- 	for (i = 0; i < PTRS_PER_PTE; i++) {
--		pgprot_t prot = pte_pgprot(*start);
-+		pgprot_t prot;
- 
- 		st->current_address = normalize_addr(P + i * PTE_LEVEL_MULT);
-+		pte = pte_offset_map(&addr, st->current_address);
-+		prot = pte_pgprot(*pte);
- 		note_page(m, st, prot, 4);
--		start++;
-+		pte_unmap(pte);
- 	}
- }
+ 	superio_exit(watchdog.sioaddr);
  
 
