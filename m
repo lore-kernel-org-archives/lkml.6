@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B590C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16208C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DC7120645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:57:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC7120645
+	by mail.kernel.org (Postfix) with ESMTP id DCCFD20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:58:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCCFD20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729604AbeJNXjL (ORCPT
+        id S1729865AbeJNXj1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:39:11 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35971 "EHLO
+        Sun, 14 Oct 2018 19:39:27 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35926 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727565AbeJNXLw (ORCPT
+        by vger.kernel.org with ESMTP id S1727483AbeJNXLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:11:52 -0400
+        Sun, 14 Oct 2018 19:11:51 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLf-0004cF-Vp; Sun, 14 Oct 2018 16:30:32 +0100
+        id 1gBiLe-0004cD-SF; Sun, 14 Oct 2018 16:30:31 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLb-0000kU-0R; Sun, 14 Oct 2018 16:30:27 +0100
+        id 1gBiLb-0000kj-4g; Sun, 14 Oct 2018 16:30:27 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Wei Huang" <wei@redhat.com>,
-        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
-        "Bandan Das" <bsd@redhat.com>
+CC:     akpm@linux-foundation.org,
+        "Guillaume Nault" <g.nault@alphalink.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Beniamino Galvani" <bgalvani@redhat.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.831180161@decadent.org.uk>
+Message-ID: <lsq.1539530741.583563981@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 348/366] KVM: x86: Update cpuid properly when
- CR4.OSXAVE or CR4.PKE is changed
+Subject: [PATCH 3.16 351/366] ppp: fix race in ppp device destruction
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,55 +58,127 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Huang <wei@redhat.com>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
-commit c4d2188206bafa177ea58e9a25b952baa0bf7712 upstream.
+commit 6151b8b37b119e8e3a8401b080d532520c95faf4 upstream.
 
-The CPUID bits of OSXSAVE (function=0x1) and OSPKE (func=0x7, leaf=0x0)
-allows user apps to detect if OS has set CR4.OSXSAVE or CR4.PKE. KVM is
-supposed to update these CPUID bits when CR4 is updated. Current KVM
-code doesn't handle some special cases when updates come from emulator.
-Here is one example:
+ppp_release() tries to ensure that netdevices are unregistered before
+decrementing the unit refcount and running ppp_destroy_interface().
 
-  Step 1: guest boots
-  Step 2: guest OS enables XSAVE ==> CR4.OSXSAVE=1 and CPUID.OSXSAVE=1
-  Step 3: guest hot reboot ==> QEMU reset CR4 to 0, but CPUID.OSXAVE==1
-  Step 4: guest os checks CPUID.OSXAVE, detects 1, then executes xgetbv
+This is all fine as long as the the device is unregistered by
+ppp_release(): the unregister_netdevice() call, followed by
+rtnl_unlock(), guarantee that the unregistration process completes
+before rtnl_unlock() returns.
 
-Step 4 above will cause an #UD and guest crash because guest OS hasn't
-turned on OSXAVE yet. This patch solves the problem by comparing the the
-old_cr4 with cr4. If the related bits have been changed,
-kvm_update_cpuid() needs to be called.
+However, the device may be unregistered by other means (like
+ppp_nl_dellink()). If this happens right before ppp_release() calling
+rtnl_lock(), then ppp_release() has to wait for the concurrent
+unregistration code to release the lock.
+But rtnl_unlock() releases the lock before completing the device
+unregistration process. This allows ppp_release() to proceed and
+eventually call ppp_destroy_interface() before the unregistration
+process completes. Calling free_netdev() on this partially unregistered
+device will BUG():
 
-Signed-off-by: Wei Huang <wei@redhat.com>
-Reviewed-by: Bandan Das <bsd@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-[bwh: Backported to 3.16: PKE is not supported]
+ ------------[ cut here ]------------
+ kernel BUG at net/core/dev.c:8141!
+ invalid opcode: 0000 [#1] SMP
+
+ CPU: 1 PID: 1557 Comm: pppd Not tainted 4.14.0-rc2+ #4
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
+
+ Call Trace:
+  ppp_destroy_interface+0xd8/0xe0 [ppp_generic]
+  ppp_disconnect_channel+0xda/0x110 [ppp_generic]
+  ppp_unregister_channel+0x5e/0x110 [ppp_generic]
+  pppox_unbind_sock+0x23/0x30 [pppox]
+  pppoe_connect+0x130/0x440 [pppoe]
+  SYSC_connect+0x98/0x110
+  ? do_fcntl+0x2c0/0x5d0
+  SyS_connect+0xe/0x10
+  entry_SYSCALL_64_fastpath+0x1a/0xa5
+
+ RIP: free_netdev+0x107/0x110 RSP: ffffc28a40573d88
+ ---[ end trace ed294ff0cc40eeff ]---
+
+We could set the ->needs_free_netdev flag on PPP devices and move the
+ppp_destroy_interface() logic in the ->priv_destructor() callback. But
+that'd be quite intrusive as we'd first need to unlink from the other
+channels and units that depend on the device (the ones that used the
+PPPIOCCONNECT and PPPIOCATTACH ioctls).
+
+Instead, we can just let the netdevice hold a reference on its
+ppp_file. This reference is dropped in ->priv_destructor(), at the very
+end of the unregistration process, so that neither ppp_release() nor
+ppp_disconnect_channel() can call ppp_destroy_interface() in the interim.
+
+Reported-by: Beniamino Galvani <bgalvani@redhat.com>
+Fixes: 8cb775bc0a34 ("ppp: fix device unregistration upon netns deletion")
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: Set net_device::destructor instead of
+ priv_destructor, and call ppp_dev_priv_destructor() if register_netdevice()
+ fails after call ppp_dev_init().]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kvm/x86.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ppp/ppp_generic.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6668,6 +6668,7 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -1092,7 +1092,17 @@ ppp_get_stats64(struct net_device *dev,
+ static struct lock_class_key ppp_tx_busylock;
+ static int ppp_dev_init(struct net_device *dev)
  {
- 	struct msr_data apic_base_msr;
- 	int mmu_reset_needed = 0;
-+	int cpuid_update_needed = 0;
- 	int pending_vec, max_bits, idx;
- 	struct desc_ptr dt;
++	struct ppp *ppp;
++
+ 	dev->qdisc_tx_busylock = &ppp_tx_busylock;
++
++	ppp = netdev_priv(dev);
++	/* Let the netdevice take a reference on the ppp file. This ensures
++	 * that ppp_destroy_interface() won't run before the device gets
++	 * unregistered.
++	 */
++	atomic_inc(&ppp->file.refcnt);
++
+ 	return 0;
+ }
  
-@@ -6702,8 +6703,10 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct
- 	vcpu->arch.cr0 = sregs->cr0;
+@@ -1115,6 +1125,15 @@ static void ppp_dev_uninit(struct net_de
+ 	wake_up_interruptible(&ppp->file.rwait);
+ }
  
- 	mmu_reset_needed |= kvm_read_cr4(vcpu) != sregs->cr4;
-+	cpuid_update_needed |= ((kvm_read_cr4(vcpu) ^ sregs->cr4) &
-+				X86_CR4_OSXSAVE);
- 	kvm_x86_ops->set_cr4(vcpu, sregs->cr4);
--	if (sregs->cr4 & X86_CR4_OSXSAVE)
-+	if (cpuid_update_needed)
- 		kvm_update_cpuid(vcpu);
++static void ppp_dev_priv_destructor(struct net_device *dev)
++{
++	struct ppp *ppp;
++
++	ppp = netdev_priv(dev);
++	if (atomic_dec_and_test(&ppp->file.refcnt))
++		ppp_destroy_interface(ppp);
++}
++
+ static const struct net_device_ops ppp_netdev_ops = {
+ 	.ndo_init	 = ppp_dev_init,
+ 	.ndo_uninit      = ppp_dev_uninit,
+@@ -1134,6 +1153,7 @@ static void ppp_setup(struct net_device
+ 	dev->flags = IFF_POINTOPOINT | IFF_NOARP | IFF_MULTICAST;
+ 	dev->features |= NETIF_F_NETNS_LOCAL;
+ 	dev->priv_flags &= ~IFF_XMIT_DST_RELEASE;
++	dev->destructor = ppp_dev_priv_destructor;
+ }
  
- 	idx = srcu_read_lock(&vcpu->kvm->srcu);
+ /*
+@@ -2769,6 +2789,12 @@ static struct ppp *ppp_create_interface(
+ 
+ 	ret = register_netdevice(dev);
+ 	if (ret != 0) {
++		/* register_netdevice() may have called ppp_dev_init()
++		 * but will not have called our destructor, so do that
++		 * now.
++		 */
++		if (dev->qdisc_tx_busylock)
++			ppp_dev_priv_destructor(dev);
+ 		unit_put(&pn->units_idr, unit);
+ 		netdev_err(ppp->dev, "PPP: couldn't register device %s (%d)\n",
+ 			   dev->name, ret);
 
