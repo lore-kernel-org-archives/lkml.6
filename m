@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9CCC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 043BBC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B8020645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B8020645
+	by mail.kernel.org (Postfix) with ESMTP id C885A20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C885A20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbeJNX0y (ORCPT
+        id S1729444AbeJNX06 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:26:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37141 "EHLO
+        Sun, 14 Oct 2018 19:26:58 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37145 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728683AbeJNX0x (ORCPT
+        by vger.kernel.org with ESMTP id S1728141AbeJNX05 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:26:53 -0400
+        Sun, 14 Oct 2018 19:26:57 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiMB-0004cH-Ue; Sun, 14 Oct 2018 16:31:04 +0100
+        id 1gBiLx-0004cH-EJ; Sun, 14 Oct 2018 16:30:49 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLP-0000F9-W2; Sun, 14 Oct 2018 16:30:15 +0100
+        id 1gBiLU-0000Px-V8; Sun, 14 Oct 2018 16:30:20 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David Sterba" <dsterba@suse.com>,
-        "Nikolay Borisov" <nborisov@suse.com>
+CC:     akpm@linux-foundation.org, "Eric Dumazet" <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "David Ahern" <dsahern@gmail.com>,
+        "syzbot" <syzkaller@googlegroups.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.534005325@decadent.org.uk>
+Message-ID: <lsq.1539530741.98808138@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 081/366] btrfs: Handle error from btrfs_uuid_tree_rem
- call in _btrfs_ioctl_set_received_subvol
+Subject: [PATCH 3.16 203/366] ipv6: add RTA_TABLE and RTA_PREFSRC to
+ rtm_ipv6_policy
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,47 +59,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit d87ff75863e92a500538ab53318c5740f196631e upstream.
+commit aa8f8778493c85fff480cdf8b349b1e1dcb5f243 upstream.
 
-As with every function which deals with modifying the btree
-btrfs_uuid_tree_rem can fail for any number of reasons (ie. EIO/ENOMEM).
-Handle return error value from this function gracefully by aborting the
-transaction.
+KMSAN reported use of uninit-value that I tracked to lack
+of proper size check on RTA_TABLE attribute.
 
-Fixes: dd5f9615fc5c ("Btrfs: maintain subvolume items in the UUID tree")
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 3.16:
- - btrfs_{abort,end}_transaction() take a pointer to btrfs_root
- - Adjust context]
+I also believe RTA_PREFSRC lacks a similar check.
+
+Fixes: 86872cb57925 ("[IPv6] route: FIB6 configuration using struct fib6_config")
+Fixes: c3968a857a6b ("ipv6: RTA_PREFSRC support for ipv6 route source address selection")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -5051,11 +5051,17 @@ static long _btrfs_ioctl_set_received_su
- 	received_uuid_changed = memcmp(root_item->received_uuid, sa->uuid,
- 				       BTRFS_UUID_SIZE);
- 	if (received_uuid_changed &&
--	    !btrfs_is_empty_uuid(root_item->received_uuid))
--		btrfs_uuid_tree_rem(trans, root->fs_info->uuid_root,
--				    root_item->received_uuid,
--				    BTRFS_UUID_KEY_RECEIVED_SUBVOL,
--				    root->root_key.objectid);
-+	    !btrfs_is_empty_uuid(root_item->received_uuid)) {
-+		ret = btrfs_uuid_tree_rem(trans, root->fs_info->uuid_root,
-+					  root_item->received_uuid,
-+					  BTRFS_UUID_KEY_RECEIVED_SUBVOL,
-+					  root->root_key.objectid);
-+		if (ret && ret != -ENOENT) {
-+			btrfs_abort_transaction(trans, root, ret);
-+		        btrfs_end_transaction(trans, root);
-+		        goto out;
-+		}
-+	}
- 	memcpy(root_item->received_uuid, sa->uuid, BTRFS_UUID_SIZE);
- 	btrfs_set_root_stransid(root_item, sa->stransid);
- 	btrfs_set_root_rtransid(root_item, sa->rtransid);
+ net/ipv6/route.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -2344,11 +2344,13 @@ void rt6_mtu_change(struct net_device *d
+ 
+ static const struct nla_policy rtm_ipv6_policy[RTA_MAX+1] = {
+ 	[RTA_GATEWAY]           = { .len = sizeof(struct in6_addr) },
++	[RTA_PREFSRC]		= { .len = sizeof(struct in6_addr) },
+ 	[RTA_OIF]               = { .type = NLA_U32 },
+ 	[RTA_IIF]		= { .type = NLA_U32 },
+ 	[RTA_PRIORITY]          = { .type = NLA_U32 },
+ 	[RTA_METRICS]           = { .type = NLA_NESTED },
+ 	[RTA_MULTIPATH]		= { .len = sizeof(struct rtnexthop) },
++	[RTA_TABLE]		= { .type = NLA_U32 },
+ };
+ 
+ static int rtm_to_fib6_config(struct sk_buff *skb, struct nlmsghdr *nlh,
 
