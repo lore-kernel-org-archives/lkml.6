@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A59C6787C
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 09:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C0BC6787C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 09:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A58102064E
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 09:18:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A58102064E
+	by mail.kernel.org (Postfix) with ESMTP id 9FDD62064E
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 09:19:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FDD62064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbeJNQ7B (ORCPT
+        id S1726846AbeJNQ7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 12:59:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45201 "EHLO
+        Sun, 14 Oct 2018 12:59:34 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40161 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726352AbeJNQ7A (ORCPT
+        with ESMTP id S1726352AbeJNQ7e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 12:59:00 -0400
+        Sun, 14 Oct 2018 12:59:34 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9E9IOBf3117310
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9E9J2XU3117356
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 14 Oct 2018 02:18:24 -0700
+        Sun, 14 Oct 2018 02:19:02 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9E9IKU33117307;
-        Sun, 14 Oct 2018 02:18:20 -0700
-Date:   Sun, 14 Oct 2018 02:18:20 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9E9Ivkt3117353;
+        Sun, 14 Oct 2018 02:18:57 -0700
+Date:   Sun, 14 Oct 2018 02:18:57 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Nathan Chancellor <tipbot@zytor.com>
-Message-ID: <tip-dca5203e3fe2f5d8bc8157b205d766142d3a6b77@git.kernel.org>
-Cc:     ndesaulniers@google.com, hpa@zytor.com, natechancellor@gmail.com,
-        bp@alien8.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        mingo@kernel.org
-Reply-To: natechancellor@gmail.com, hpa@zytor.com, ndesaulniers@google.com,
-          tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20181013010713.6999-1-natechancellor@gmail.com>
-References: <20181013010713.6999-1-natechancellor@gmail.com>
+From:   tip-bot for Christoph Hellwig <tipbot@zytor.com>
+Message-ID: <tip-ab555321e4ddc7f6f17f6c80dfaad228883a8e7c@git.kernel.org>
+Cc:     tedheadster@gmail.com, mingo@kernel.org, hpa@zytor.com, hch@lst.de,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: mingo@kernel.org, tedheadster@gmail.com, hpa@zytor.com,
+          hch@lst.de, linux-kernel@vger.kernel.org, tglx@linutronix.de
+In-Reply-To: <20181014075208.2715-1-hch@lst.de>
+References: <20181014075208.2715-1-hch@lst.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/boot: Add -Wno-pointer-sign to KBUILD_CFLAGS
-Git-Commit-ID: dca5203e3fe2f5d8bc8157b205d766142d3a6b77
+Subject: [tip:x86/urgent] x86/swiotlb: Enable swiotlb for > 4GiG ram on
+ 32-bit kernels
+Git-Commit-ID: ab555321e4ddc7f6f17f6c80dfaad228883a8e7c
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,61 +57,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dca5203e3fe2f5d8bc8157b205d766142d3a6b77
-Gitweb:     https://git.kernel.org/tip/dca5203e3fe2f5d8bc8157b205d766142d3a6b77
-Author:     Nathan Chancellor <natechancellor@gmail.com>
-AuthorDate: Fri, 12 Oct 2018 18:07:14 -0700
+Commit-ID:  ab555321e4ddc7f6f17f6c80dfaad228883a8e7c
+Gitweb:     https://git.kernel.org/tip/ab555321e4ddc7f6f17f6c80dfaad228883a8e7c
+Author:     Christoph Hellwig <hch@lst.de>
+AuthorDate: Sun, 14 Oct 2018 09:52:08 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sun, 14 Oct 2018 11:11:23 +0200
 
-x86/boot: Add -Wno-pointer-sign to KBUILD_CFLAGS
+x86/swiotlb: Enable swiotlb for > 4GiG ram on 32-bit kernels
 
-When compiling the kernel with Clang, this warning appears even though
-it is disabled for the whole kernel because this folder has its own set
-of KBUILD_CFLAGS. It was disabled before the beginning of git history.
+We already build the swiotlb code for 32b-t kernels with PAE support,
+but the code to actually use swiotlb has only been enabled for 64-bit
+kernel for an unknown reason.
 
-In file included from arch/x86/boot/compressed/kaslr.c:29:
-In file included from arch/x86/boot/compressed/misc.h:21:
-In file included from ./include/linux/elf.h:5:
-In file included from ./arch/x86/include/asm/elf.h:77:
-In file included from ./arch/x86/include/asm/vdso.h:11:
-In file included from ./include/linux/mm_types.h:9:
-In file included from ./include/linux/spinlock.h:88:
-In file included from ./arch/x86/include/asm/spinlock.h:43:
-In file included from ./arch/x86/include/asm/qrwlock.h:6:
-./include/asm-generic/qrwlock.h:101:53: warning: passing 'u32 *' (aka
-'unsigned int *') to parameter of type 'int *' converts between pointers
-to integer types with different sign [-Wpointer-sign]
-        if (likely(atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED)))
-                                                           ^~~~~
-./include/linux/compiler.h:76:40: note: expanded from macro 'likely'
-# define likely(x)      __builtin_expect(!!(x), 1)
-                                            ^
-./include/asm-generic/atomic-instrumented.h:69:66: note: passing
-argument to parameter 'old' here
-static __always_inline bool atomic_try_cmpxchg(atomic_t *v, int *old, int new)
-                                                                 ^
+Before Linux 4.18 we paper over this fact because the networking code,
+the scsi layer and some random block drivers implemented their own
+bounce buffering scheme.
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Link: https://lkml.kernel.org/r/20181013010713.6999-1-natechancellor@gmail.com
+Fixes: 21e07dba9fb1 ("scsi: reduce use of block bounce buffers")
+Fixes: ab74cfebafa3 ("net: remove the PCI_DMA_BUS_IS_PHYS check in illegal_highdma")
+Reported-by: tedheadster <tedheadster@gmail.com>
+Tested-by: tedheadster <tedheadster@gmail.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Cc: konrad.wilk@oracle.com
+Cc: iommu@lists.linux-foundation.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20181014075208.2715-1-hch@lst.de
 
 ---
- arch/x86/boot/compressed/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/pci-swiotlb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 28764dacf018..466f66c8a7f8 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -37,6 +37,7 @@ KBUILD_CFLAGS += $(call cc-option,-ffreestanding)
- KBUILD_CFLAGS += $(call cc-option,-fno-stack-protector)
- KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
- KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
-+KBUILD_CFLAGS += -Wno-pointer-sign
+diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
+index 661583662430..71c0b01d93b1 100644
+--- a/arch/x86/kernel/pci-swiotlb.c
++++ b/arch/x86/kernel/pci-swiotlb.c
+@@ -42,10 +42,8 @@ IOMMU_INIT_FINISH(pci_swiotlb_detect_override,
+ int __init pci_swiotlb_detect_4gb(void)
+ {
+ 	/* don't initialize swiotlb if iommu=off (no_iommu=1) */
+-#ifdef CONFIG_X86_64
+ 	if (!no_iommu && max_possible_pfn > MAX_DMA32_PFN)
+ 		swiotlb = 1;
+-#endif
  
- KBUILD_AFLAGS  := $(KBUILD_CFLAGS) -D__ASSEMBLY__
- GCOV_PROFILE := n
+ 	/*
+ 	 * If SME is active then swiotlb will be set to 1 so that bounce
