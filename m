@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E12C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F123C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC57C2077C
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:02:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC57C2077C
+	by mail.kernel.org (Postfix) with ESMTP id 502A020645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:03:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 502A020645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729927AbeJNXoY (ORCPT
+        id S1729914AbeJNXoY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 14 Oct 2018 19:44:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35724 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35734 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727148AbeJNXLp (ORCPT
+        by vger.kernel.org with ESMTP id S1727159AbeJNXLp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:45 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLY-0004cg-NH; Sun, 14 Oct 2018 16:30:24 +0100
+        id 1gBiLY-0004cS-Pe; Sun, 14 Oct 2018 16:30:25 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLV-0000Sm-KP; Sun, 14 Oct 2018 16:30:21 +0100
+        id 1gBiLV-0000T6-PW; Sun, 14 Oct 2018 16:30:21 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -39,9 +39,9 @@ From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.121248128@decadent.org.uk>
+Message-ID: <lsq.1539530741.822996228@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 223/366] virtio: add ability to iterate over vqs
+Subject: [PATCH 3.16 227/366] virtio_console: reset on out of memory
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,27 +57,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Michael S. Tsirkin" <mst@redhat.com>
 
-commit 24a7e4d20783c0514850f24a5c41ede46ab058f0 upstream.
+commit 5c60300d68da32ca77f7f978039dc72bfc78b06b upstream.
 
-For cleanup it's helpful to be able to simply scan all vqs and discard
-all data. Add an iterator to do that.
+When out of memory and we can't add ctrl vq buffers,
+probe fails. Unfortunately the error handling is
+out of spec: it calls del_vqs without bothering
+to reset the device first.
+
+To fix, call the full cleanup function in this case.
 
 Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/linux/virtio.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/char/virtio_console.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
---- a/include/linux/virtio.h
-+++ b/include/linux/virtio.h
-@@ -108,6 +108,9 @@ void unregister_virtio_device(struct vir
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -2073,6 +2073,7 @@ static int virtcons_probe(struct virtio_
  
- void virtio_break_device(struct virtio_device *dev);
+ 	spin_lock_init(&portdev->ports_lock);
+ 	INIT_LIST_HEAD(&portdev->ports);
++	INIT_LIST_HEAD(&portdev->list);
  
-+#define virtio_device_for_each_vq(vdev, vq) \
-+	list_for_each_entry(vq, &vdev->vqs, list)
-+
- /**
-  * virtio_driver - operations for a virtio I/O driver
-  * @driver: underlying device driver (populate name and owner).
+ 	INIT_WORK(&portdev->config_work, &config_work_handler);
+ 	INIT_WORK(&portdev->control_work, &control_work_handler);
+@@ -2088,8 +2089,15 @@ static int virtcons_probe(struct virtio_
+ 		if (!nr_added_bufs) {
+ 			dev_err(&vdev->dev,
+ 				"Error allocating buffers for control queue\n");
+-			err = -ENOMEM;
+-			goto free_vqs;
++			/*
++			 * The host might want to notify mgmt sw about device
++			 * add failure.
++			 */
++			__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
++					   VIRTIO_CONSOLE_DEVICE_READY, 0);
++			/* Device was functional: we need full cleanup. */
++			virtcons_remove(vdev);
++			return -ENOMEM;
+ 		}
+ 	} else {
+ 		/*
+@@ -2120,11 +2128,6 @@ static int virtcons_probe(struct virtio_
+ 
+ 	return 0;
+ 
+-free_vqs:
+-	/* The host might want to notify mgmt sw about device add failure */
+-	__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
+-			   VIRTIO_CONSOLE_DEVICE_READY, 0);
+-	remove_vqs(portdev);
+ free_chrdev:
+ 	unregister_chrdev(portdev->chr_major, "virtio-portsdev");
+ free:
 
