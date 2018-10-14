@@ -6,43 +6,55 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3042DC7112B
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C8FC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F319920645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F319920645
+	by mail.kernel.org (Postfix) with ESMTP id 1B44820645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B44820645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729068AbeJNXf2 (ORCPT
+        id S1728409AbeJNXf2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 14 Oct 2018 19:35:28 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36099 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36100 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727851AbeJNXL5 (ORCPT
+        by vger.kernel.org with ESMTP id S1727857AbeJNXL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:57 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLl-0004cJ-0Z; Sun, 14 Oct 2018 16:30:37 +0100
+        id 1gBiLl-0004cZ-1P; Sun, 14 Oct 2018 16:30:37 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLZ-0000hc-Nj; Sun, 14 Oct 2018 16:30:25 +0100
+        id 1gBiLZ-0000hh-P9; Sun, 14 Oct 2018 16:30:25 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Sekhar Nori" <nsekhar@ti.com>
+CC:     akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jork Loeser" <Jork.Loeser@microsoft.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Alexey Dobriyan" <adobriyan@gmail.com>,
+        "Dmitry Vyukov" <dvyukov@google.com>,
+        "KY Srinivasan" <kys@microsoft.com>,
+        "Josh Poulson" <jopoulso@microsoft.com>,
+        "Dexuan Cui" <decui@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Frederic Weisbecker" <fweisbec@gmail.com>,
+        "Rakib Mullick" <rakib.mullick@gmail.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.200997759@decadent.org.uk>
+Message-ID: <lsq.1539530741.413820146@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 321/366] ARM: davinci: board-dm646x-evm: set VPIF
- capture card name
+Subject: [PATCH 3.16 322/366] tick/broadcast: Use for_each_cpu() specially
+ on UP kernels
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,44 +68,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sekhar Nori <nsekhar@ti.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-commit bb7298a7e87cf3430eb62be8746e5d7a07ca9d7c upstream.
+commit 5596fe34495cf0f645f417eb928ef224df3e3cb4 upstream.
 
-VPIF capture driver expects card name to be set since it
-uses it without checking for NULL. The commit which
-introduced VPIF display and capture support added card
-name only for display, not for capture.
+for_each_cpu() unintuitively reports CPU0 as set independent of the actual
+cpumask content on UP kernels. This causes an unexpected PIT interrupt
+storm on a UP kernel running in an SMP virtual machine on Hyper-V, and as
+a result, the virtual machine can suffer from a strange random delay of 1~20
+minutes during boot-up, and sometimes it can hang forever.
 
-Set it in platform data to probe driver successfully.
+Protect if by checking whether the cpumask is empty before entering the
+for_each_cpu() loop.
 
-While at it, also fix the display card name to something more
-appropriate.
+[ tglx: Use !IS_ENABLED(CONFIG_SMP) instead of #ifdeffery ]
 
-Fixes: 85609c1ccda6 ("DaVinci: DM646x - platform changes for vpif capture and display drivers")
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Josh Poulson <jopoulso@microsoft.com>
+Cc: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Rakib Mullick <rakib.mullick@gmail.com>
+Cc: Jork Loeser <Jork.Loeser@microsoft.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: KY Srinivasan <kys@microsoft.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Link: https://lkml.kernel.org/r/KL1P15301MB000678289FE55BA365B3279ABF990@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM
+Link: https://lkml.kernel.org/r/KL1P15301MB0006FA63BC22BEB64902EAA0BF930@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arm/mach-davinci/board-dm646x-evm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/time/tick-broadcast.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -541,7 +541,7 @@ static struct vpif_display_config dm646x
- 		.outputs = dm6467_ch0_outputs,
- 		.output_count = ARRAY_SIZE(dm6467_ch0_outputs),
- 	},
--	.card_name	= "DM646x EVM",
-+	.card_name	= "DM646x EVM Video Display",
- };
- 
- /**
-@@ -699,6 +699,7 @@ static struct vpif_capture_config dm646x
- 			.fid_pol = 0,
- 		},
- 	},
-+	.card_name = "DM646x EVM Video Capture",
- };
- 
- static void __init evm_init_video(void)
+--- a/kernel/time/tick-broadcast.c
++++ b/kernel/time/tick-broadcast.c
+@@ -585,6 +585,14 @@ again:
+ 	now = ktime_get();
+ 	/* Find all expired events */
+ 	for_each_cpu(cpu, tick_broadcast_oneshot_mask) {
++		/*
++		 * Required for !SMP because for_each_cpu() reports
++		 * unconditionally CPU0 as set on UP kernels.
++		 */
++		if (!IS_ENABLED(CONFIG_SMP) &&
++		    cpumask_empty(tick_broadcast_oneshot_mask))
++			break;
++
+ 		td = &per_cpu(tick_cpu_device, cpu);
+ 		if (td->evtdev->next_event.tv64 <= now.tv64) {
+ 			cpumask_set_cpu(cpu, tmpmask);
 
