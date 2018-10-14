@@ -6,47 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F103C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF295C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B2F620645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:49:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B2F620645
+	by mail.kernel.org (Postfix) with ESMTP id 9303E20876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:49:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9303E20876
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729473AbeJNXar (ORCPT
+        id S1729578AbeJNXa4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:30:47 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37369 "EHLO
+        Sun, 14 Oct 2018 19:30:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37381 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728546AbeJNXar (ORCPT
+        by vger.kernel.org with ESMTP id S1728546AbeJNXa4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:30:47 -0400
+        Sun, 14 Oct 2018 19:30:56 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLv-0004cU-K0; Sun, 14 Oct 2018 16:30:47 +0100
+        id 1gBiMC-0004cS-3P; Sun, 14 Oct 2018 16:31:04 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLV-0000Qr-41; Sun, 14 Oct 2018 16:30:21 +0100
+        id 1gBiLP-0000F3-UY; Sun, 14 Oct 2018 16:30:15 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Boris Brezillon" <boris.brezillon@bootlin.com>,
-        "Joakim Tjernlund" <joakim.tjernlund@infinera.com>,
-        "Joakim Tjernlund" <joakim.tjernlund@transmode.se>,
-        "Richard Weinberger" <richard@nod.at>
+CC:     akpm@linux-foundation.org, "Nikolay Borisov" <nborisov@suse.com>,
+        "David Sterba" <dsterba@suse.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.793173208@decadent.org.uk>
+Message-ID: <lsq.1539530741.967505897@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 208/366] mtd: cfi: cmdset_0001: Do not allow
- read/write to suspend erase block.
+Subject: [PATCH 3.16 080/366] btrfs: Refactor transaction handling in
+ received subvolume ioctl
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,82 +57,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit 6510bbc88e3258631831ade49033537081950605 upstream.
+commit efd38150af45375b46576d0110a323d7fab7e142 upstream.
 
-Currently it is possible to read and/or write to suspend EB's.
-Writing /dev/mtdX or /dev/mtdblockX from several processes may
-break the flash state machine.
+If btrfs_transaction_commit fails it will proceed to call
+cleanup_transaction, which in turn already does btrfs_abort_transaction.
+So let's remove the unnecessary code duplication. Also let's be explicit
+about handling failure of btrfs_uuid_tree_add by calling
+btrfs_end_transaction.
 
-Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
-Reviewed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+[bwh: Backported to 3.16:
+ - btrfs_{abort,end}_transaction() take a pointer to btrfs_root
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/mtd/chips/cfi_cmdset_0001.c | 16 +++++++++++-----
- include/linux/mtd/flashchip.h       |  1 +
- 2 files changed, 12 insertions(+), 5 deletions(-)
+ fs/btrfs/ioctl.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
---- a/drivers/mtd/chips/cfi_cmdset_0001.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0001.c
-@@ -825,21 +825,25 @@ static int chip_ready (struct map_info *
- 		     (mode == FL_WRITING && (cfip->SuspendCmdSupport & 1))))
- 			goto sleep;
- 
-+		/* Do not allow suspend iff read/write to EB address */
-+		if ((adr & chip->in_progress_block_mask) ==
-+		    chip->in_progress_block_addr)
-+			goto sleep;
- 
- 		/* Erase suspend */
--		map_write(map, CMD(0xB0), adr);
-+		map_write(map, CMD(0xB0), chip->in_progress_block_addr);
- 
- 		/* If the flash has finished erasing, then 'erase suspend'
- 		 * appears to make some (28F320) flash devices switch to
- 		 * 'read' mode.  Make sure that we switch to 'read status'
- 		 * mode so we get the right data. --rmk
- 		 */
--		map_write(map, CMD(0x70), adr);
-+		map_write(map, CMD(0x70), chip->in_progress_block_addr);
- 		chip->oldstate = FL_ERASING;
- 		chip->state = FL_ERASE_SUSPENDING;
- 		chip->erase_suspended = 1;
- 		for (;;) {
--			status = map_read(map, adr);
-+			status = map_read(map, chip->in_progress_block_addr);
- 			if (map_word_andequal(map, status, status_OK, status_OK))
- 			        break;
- 
-@@ -1035,8 +1039,8 @@ static void put_chip(struct map_info *ma
- 		   sending the 0x70 (Read Status) command to an erasing
- 		   chip and expecting it to be ignored, that's what we
- 		   do. */
--		map_write(map, CMD(0xd0), adr);
--		map_write(map, CMD(0x70), adr);
-+		map_write(map, CMD(0xd0), chip->in_progress_block_addr);
-+		map_write(map, CMD(0x70), chip->in_progress_block_addr);
- 		chip->oldstate = FL_READY;
- 		chip->state = FL_ERASING;
- 		break;
-@@ -1927,6 +1931,8 @@ static int __xipram do_erase_oneblock(st
- 	map_write(map, CMD(0xD0), adr);
- 	chip->state = FL_ERASING;
- 	chip->erase_suspended = 0;
-+	chip->in_progress_block_addr = adr;
-+	chip->in_progress_block_mask = ~(len - 1);
- 
- 	ret = INVAL_CACHE_AND_WAIT(map, chip, adr,
- 				   adr, len,
---- a/include/linux/mtd/flashchip.h
-+++ b/include/linux/mtd/flashchip.h
-@@ -85,6 +85,7 @@ struct flchip {
- 	unsigned int write_suspended:1;
- 	unsigned int erase_suspended:1;
- 	unsigned long in_progress_block_addr;
-+	unsigned long in_progress_block_mask;
- 
- 	struct mutex mutex;
- 	wait_queue_head_t wq; /* Wait on here when we're waiting for the chip
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -5077,15 +5077,11 @@ static long _btrfs_ioctl_set_received_su
+ 					  root->root_key.objectid);
+ 		if (ret < 0 && ret != -EEXIST) {
+ 			btrfs_abort_transaction(trans, root, ret);
++			btrfs_end_transaction(trans, root);
+ 			goto out;
+ 		}
+ 	}
+ 	ret = btrfs_commit_transaction(trans, root);
+-	if (ret < 0) {
+-		btrfs_abort_transaction(trans, root, ret);
+-		goto out;
+-	}
+-
+ out:
+ 	up_write(&root->fs_info->subvol_sem);
+ 	mnt_drop_write_file(file);
 
