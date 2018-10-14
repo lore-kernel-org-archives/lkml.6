@@ -6,51 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE5EC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A575C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FA6C20835
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA6C20835
+	by mail.kernel.org (Postfix) with ESMTP id 4C9022087D
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C9022087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbeJNXMI (ORCPT
+        id S1728464AbeJNXM4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:12:08 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36353 "EHLO
+        Sun, 14 Oct 2018 19:12:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36434 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728155AbeJNXMG (ORCPT
+        by vger.kernel.org with ESMTP id S1728264AbeJNXMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:12:06 -0400
+        Sun, 14 Oct 2018 19:12:08 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLr-0004cm-Fn; Sun, 14 Oct 2018 16:30:43 +0100
+        id 1gBiLu-0004cH-CK; Sun, 14 Oct 2018 16:30:46 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLX-0000W5-DI; Sun, 14 Oct 2018 16:30:23 +0100
+        id 1gBiLV-0000SH-D9; Sun, 14 Oct 2018 16:30:21 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Mike Galbraith" <efault@gmx.de>,
-        "Peter Zijlstra" <a.p.zijlstra@chello.nl>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "linux-man" <linux-man@vger.kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Mike Galbraith" <umgwanakikbuti@gmail.com>,
-        "Michael Kerrisk" <mtk.manpages@gmail.com>
+CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
+        "Eliot Blennerhassett" <eliot@blennerhassett.gen.nz>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.563310568@decadent.org.uk>
+Message-ID: <lsq.1539530741.481148884@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 262/366] sched/autogroup: Fix 64-bit kernel nice
- level adjustment
+Subject: [PATCH 3.16 217/366] ALSA: asihpi: used parts of message/response
+ are zeroed before use
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -64,76 +57,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Galbraith <efault@gmx.de>
+From: Eliot Blennerhassett <eliot@blennerhassett.gen.nz>
 
-commit 83929cce95251cc77e5659bf493bd424ae0e7a67 upstream.
+commit 51e6f47dd2e3463dac6f37128fd7b7cb40c500de upstream.
 
-Michael Kerrisk reported:
-
-> Regarding the previous paragraph...  My tests indicate
-> that writing *any* value to the autogroup [nice priority level]
-> file causes the task group to get a lower priority.
-
-Because autogroup didn't call the then meaningless scale_load()...
-
-Autogroup nice level adjustment has been broken ever since load
-resolution was increased for 64-bit kernels.  Use scale_load() to
-scale group weight.
-
-Michael Kerrisk tested this patch to fix the problem:
-
-> Applied and tested against 4.9-rc6 on an Intel u7 (4 cores).
-> Test setup:
->
-> Terminal window 1: running 40 CPU burner jobs
-> Terminal window 2: running 40 CPU burner jobs
-> Terminal window 1: running  1 CPU burner job
->
-> Demonstrated that:
-> * Writing "0" to the autogroup file for TW1 now causes no change
->   to the rate at which the process on the terminal consume CPU.
-> * Writing -20 to the autogroup file for TW1 caused those processes
->   to get the lion's share of CPU while TW2 TW3 get a tiny amount.
-> * Writing -20 to the autogroup files for TW1 and TW3 allowed the
->   process on TW3 to get as much CPU as it was getting as when
->   the autogroup nice values for both terminals were 0.
-
-Reported-by: Michael Kerrisk <mtk.manpages@gmail.com>
-Tested-by: Michael Kerrisk <mtk.manpages@gmail.com>
-Signed-off-by: Mike Galbraith <umgwanakikbuti@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-man <linux-man@vger.kernel.org>
-Link: http://lkml.kernel.org/r/1479897217.4306.6.camel@gmx.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: s/sched_prio_to_weight/prio_to_weight/]
+Signed-off-by: Eliot Blennerhassett <eliot@blennerhassett.gen.nz>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/sched/auto_group.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/pci/asihpi/hpimsginit.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
---- a/kernel/sched/auto_group.c
-+++ b/kernel/sched/auto_group.c
-@@ -197,6 +197,7 @@ int proc_sched_autogroup_set_nice(struct
+--- a/sound/pci/asihpi/hpimsginit.c
++++ b/sound/pci/asihpi/hpimsginit.c
+@@ -1,7 +1,7 @@
+ /******************************************************************************
+ 
+     AudioScience HPI driver
+-    Copyright (C) 1997-2011  AudioScience Inc. <support@audioscience.com>
++    Copyright (C) 1997-2014  AudioScience Inc. <support@audioscience.com>
+ 
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of version 2 of the GNU General Public License as
+@@ -37,11 +37,15 @@ static u16 gwSSX2_bypass;
+ static void hpi_init_message(struct hpi_message *phm, u16 object,
+ 	u16 function)
  {
- 	static unsigned long next = INITIAL_JIFFIES;
- 	struct autogroup *ag;
-+	unsigned long shares;
- 	int err;
+-	memset(phm, 0, sizeof(*phm));
++	u16 size;
++
+ 	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX))
+-		phm->size = msg_size[object];
++		size = msg_size[object];
+ 	else
+-		phm->size = sizeof(*phm);
++		size = sizeof(*phm);
++
++	memset(phm, 0, size);
++	phm->size = size;
  
- 	if (nice < MIN_NICE || nice > MAX_NICE)
-@@ -215,9 +216,10 @@ int proc_sched_autogroup_set_nice(struct
- 
- 	next = HZ / 10 + jiffies;
- 	ag = autogroup_task_get(p);
-+	shares = scale_load(prio_to_weight[nice + 20]);
- 
- 	down_write(&ag->lock);
--	err = sched_group_set_shares(ag->tg, prio_to_weight[nice + 20]);
-+	err = sched_group_set_shares(ag->tg, shares);
- 	if (!err)
- 		ag->nice = nice;
- 	up_write(&ag->lock);
+ 	if (gwSSX2_bypass)
+ 		phm->type = HPI_TYPE_SSX2BYPASS_MESSAGE;
+@@ -60,12 +64,16 @@ static void hpi_init_message(struct hpi_
+ void hpi_init_response(struct hpi_response *phr, u16 object, u16 function,
+ 	u16 error)
+ {
+-	memset(phr, 0, sizeof(*phr));
+-	phr->type = HPI_TYPE_RESPONSE;
++	u16 size;
++
+ 	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX))
+-		phr->size = res_size[object];
++		size = res_size[object];
+ 	else
+-		phr->size = sizeof(*phr);
++		size = sizeof(*phr);
++
++	memset(phr, 0, sizeof(*phr));
++	phr->size = size;
++	phr->type = HPI_TYPE_RESPONSE;
+ 	phr->object = object;
+ 	phr->function = function;
+ 	phr->error = error;
+@@ -86,7 +94,7 @@ void hpi_init_message_response(struct hp
+ static void hpi_init_messageV1(struct hpi_message_header *phm, u16 size,
+ 	u16 object, u16 function)
+ {
+-	memset(phm, 0, sizeof(*phm));
++	memset(phm, 0, size);
+ 	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX)) {
+ 		phm->size = size;
+ 		phm->type = HPI_TYPE_REQUEST;
+@@ -100,7 +108,9 @@ static void hpi_init_messageV1(struct hp
+ void hpi_init_responseV1(struct hpi_response_header *phr, u16 size,
+ 	u16 object, u16 function)
+ {
+-	memset(phr, 0, sizeof(*phr));
++	(void)object;
++	(void)function;
++	memset(phr, 0, size);
+ 	phr->size = size;
+ 	phr->version = 1;
+ 	phr->type = HPI_TYPE_RESPONSE;
 
