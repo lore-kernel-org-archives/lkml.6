@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15318C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92219C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D698B20835
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:34:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D698B20835
+	by mail.kernel.org (Postfix) with ESMTP id 63F9A20835
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:34:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63F9A20835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728561AbeJNXPT (ORCPT
+        id S1728669AbeJNXPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:15:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36305 "EHLO
+        Sun, 14 Oct 2018 19:15:25 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36301 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728177AbeJNXME (ORCPT
+        by vger.kernel.org with ESMTP id S1728176AbeJNXME (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:12:04 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLr-0004cj-FD; Sun, 14 Oct 2018 16:30:43 +0100
+        id 1gBiLr-0004cD-Ft; Sun, 14 Oct 2018 16:30:43 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLW-0000V5-Sl; Sun, 14 Oct 2018 16:30:22 +0100
+        id 1gBiLW-0000V0-Qo; Sun, 14 Oct 2018 16:30:22 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Neil Horman" <nhorman@tuxdriver.com>,
-        "Marcelo Ricardo Leitner" <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Xin Long" <lucien.xin@gmail.com>
+CC:     akpm@linux-foundation.org, rui.zhang@intel.com,
+        "Thomas Gleixner" <tglx@linutronix.de>, rjw@rjwysocki.net,
+        "Peter Zijlstra" <peterz@infradead.org>, len.brown@intel.com,
+        "Diego Viola" <diego.viola@gmail.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.875700982@decadent.org.uk>
+Message-ID: <lsq.1539530741.157009207@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 251/366] sctp: fix the issue that the cookie-ack with
- auth can't get processed
+Subject: [PATCH 3.16 250/366] clocksource: Initialize cs->wd_list
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,42 +59,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit ce402f044e4e432c296f90eaabb8dbe8f3624391 upstream.
+commit 5b9e886a4af97574ca3ce1147f35545da0e7afc7 upstream.
 
-When auth is enabled for cookie-ack chunk, in sctp_inq_pop, sctp
-processes auth chunk first, then continues to the next chunk in
-this packet if chunk_end + chunk_hdr size < skb_tail_pointer().
-Otherwise, it will go to the next packet or discard this chunk.
+A number of places relies on list_empty(&cs->wd_list), however the
+list_head does not get initialized. Do so upon registration, such that
+thereafter it is possible to rely on list_empty() correctly reflecting
+the list membership status.
 
-However, it missed the fact that cookie-ack chunk's size is equal
-to chunk_hdr size, which couldn't match that check, and thus this
-chunk would not get processed.
-
-This patch fixes it by changing the check to chunk_end + chunk_hdr
-size <= skb_tail_pointer().
-
-Fixes: 26b87c788100 ("net: sctp: fix remote memory pressure from excessive queueing")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Diego Viola <diego.viola@gmail.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: len.brown@intel.com
+Cc: rjw@rjwysocki.net
+Cc: rui.zhang@intel.com
+Link: https://lkml.kernel.org/r/20180430100344.472662715@infradead.org
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/sctp/inqueue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/time/clocksource.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/sctp/inqueue.c
-+++ b/net/sctp/inqueue.c
-@@ -178,7 +178,7 @@ struct sctp_chunk *sctp_inq_pop(struct s
- 	skb_pull(chunk->skb, sizeof(sctp_chunkhdr_t));
- 	chunk->subh.v = NULL; /* Subheader is no longer valid.  */
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -385,6 +385,8 @@ static void clocksource_enqueue_watchdog
+ {
+ 	unsigned long flags;
  
--	if (chunk->chunk_end + sizeof(sctp_chunkhdr_t) <
-+	if (chunk->chunk_end + sizeof(sctp_chunkhdr_t) <=
- 	    skb_tail_pointer(chunk->skb)) {
- 		/* This is not a singleton */
- 		chunk->singleton = 0;
++	INIT_LIST_HEAD(&cs->wd_list);
++
+ 	spin_lock_irqsave(&watchdog_lock, flags);
+ 	if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
+ 		/* cs is a clocksource to be watched. */
 
