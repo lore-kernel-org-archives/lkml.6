@@ -3,49 +3,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8516BC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE5EC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F5542089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F5542089D
+	by mail.kernel.org (Postfix) with ESMTP id 2FA6C20835
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA6C20835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728445AbeJNXMm (ORCPT
+        id S1728304AbeJNXMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:12:42 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36439 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728279AbeJNXMI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:12:08 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36353 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728155AbeJNXMG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Oct 2018 19:12:06 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLu-0004cA-8n; Sun, 14 Oct 2018 16:30:46 +0100
+        id 1gBiLr-0004cm-Fn; Sun, 14 Oct 2018 16:30:43 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLV-0000RG-6a; Sun, 14 Oct 2018 16:30:21 +0100
+        id 1gBiLX-0000W5-DI; Sun, 14 Oct 2018 16:30:23 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "DaeRyong Jeong" <threeearcat@gmail.com>,
-        "Byoungyoung Lee" <byoungyoung@purdue.edu>,
-        "Willem de Bruijn" <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
+CC:     akpm@linux-foundation.org, "Mike Galbraith" <efault@gmx.de>,
+        "Peter Zijlstra" <a.p.zijlstra@chello.nl>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "linux-man" <linux-man@vger.kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Mike Galbraith" <umgwanakikbuti@gmail.com>,
+        "Michael Kerrisk" <mtk.manpages@gmail.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.635708873@decadent.org.uk>
+Message-ID: <lsq.1539530741.563310568@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 211/366] packet: fix bitfield update race
+Subject: [PATCH 3.16 262/366] sched/autogroup: Fix 64-bit kernel nice
+ level adjustment
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,197 +64,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Mike Galbraith <efault@gmx.de>
 
-commit a6361f0ca4b25460f2cdf3235ebe8115f622901e upstream.
+commit 83929cce95251cc77e5659bf493bd424ae0e7a67 upstream.
 
-Updates to the bitfields in struct packet_sock are not atomic.
-Serialize these read-modify-write cycles.
+Michael Kerrisk reported:
 
-Move po->running into a separate variable. Its writes are protected by
-po->bind_lock (except for one startup case at packet_create). Also
-replace a textual precondition warning with lockdep annotation.
+> Regarding the previous paragraph...  My tests indicate
+> that writing *any* value to the autogroup [nice priority level]
+> file causes the task group to get a lower priority.
 
-All others are set only in packet_setsockopt. Serialize these
-updates by holding the socket lock. Analogous to other field updates,
-also hold the lock when testing whether a ring is active (pg_vec).
+Because autogroup didn't call the then meaningless scale_load()...
 
-Fixes: 8dc419447415 ("[PACKET]: Add optional checksum computation for recvmsg")
-Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
-Reported-by: Byoungyoung Lee <byoungyoung@purdue.edu>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
+Autogroup nice level adjustment has been broken ever since load
+resolution was increased for 64-bit kernels.  Use scale_load() to
+scale group weight.
+
+Michael Kerrisk tested this patch to fix the problem:
+
+> Applied and tested against 4.9-rc6 on an Intel u7 (4 cores).
+> Test setup:
+>
+> Terminal window 1: running 40 CPU burner jobs
+> Terminal window 2: running 40 CPU burner jobs
+> Terminal window 1: running  1 CPU burner job
+>
+> Demonstrated that:
+> * Writing "0" to the autogroup file for TW1 now causes no change
+>   to the rate at which the process on the terminal consume CPU.
+> * Writing -20 to the autogroup file for TW1 caused those processes
+>   to get the lion's share of CPU while TW2 TW3 get a tiny amount.
+> * Writing -20 to the autogroup files for TW1 and TW3 allowed the
+>   process on TW3 to get as much CPU as it was getting as when
+>   the autogroup nice values for both terminals were 0.
+
+Reported-by: Michael Kerrisk <mtk.manpages@gmail.com>
+Tested-by: Michael Kerrisk <mtk.manpages@gmail.com>
+Signed-off-by: Mike Galbraith <umgwanakikbuti@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-man <linux-man@vger.kernel.org>
+Link: http://lkml.kernel.org/r/1479897217.4306.6.camel@gmx.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: s/sched_prio_to_weight/prio_to_weight/]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/packet/af_packet.c | 60 +++++++++++++++++++++++++++++++-----------
- net/packet/internal.h  | 10 +++----
- 2 files changed, 49 insertions(+), 21 deletions(-)
+ kernel/sched/auto_group.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -343,11 +343,11 @@ static void packet_pick_tx_queue(struct
- 	skb_set_queue_mapping(skb, queue_index);
- }
- 
--/* register_prot_hook must be invoked with the po->bind_lock held,
-+/* __register_prot_hook must be invoked through register_prot_hook
-  * or from a context in which asynchronous accesses to the packet
-  * socket is not possible (packet_create()).
-  */
--static void register_prot_hook(struct sock *sk)
-+static void __register_prot_hook(struct sock *sk)
+--- a/kernel/sched/auto_group.c
++++ b/kernel/sched/auto_group.c
+@@ -197,6 +197,7 @@ int proc_sched_autogroup_set_nice(struct
  {
- 	struct packet_sock *po = pkt_sk(sk);
+ 	static unsigned long next = INITIAL_JIFFIES;
+ 	struct autogroup *ag;
++	unsigned long shares;
+ 	int err;
  
-@@ -362,8 +362,13 @@ static void register_prot_hook(struct so
- 	}
- }
+ 	if (nice < MIN_NICE || nice > MAX_NICE)
+@@ -215,9 +216,10 @@ int proc_sched_autogroup_set_nice(struct
  
--/* {,__}unregister_prot_hook() must be invoked with the po->bind_lock
-- * held.   If the sync parameter is true, we will temporarily drop
-+static void register_prot_hook(struct sock *sk)
-+{
-+	lockdep_assert_held_once(&pkt_sk(sk)->bind_lock);
-+	__register_prot_hook(sk);
-+}
-+
-+/* If the sync parameter is true, we will temporarily drop
-  * the po->bind_lock and do a synchronize_net to make sure no
-  * asynchronous packet processing paths still refer to the elements
-  * of po->prot_hook.  If the sync parameter is false, it is the
-@@ -373,6 +378,8 @@ static void __unregister_prot_hook(struc
- {
- 	struct packet_sock *po = pkt_sk(sk);
+ 	next = HZ / 10 + jiffies;
+ 	ag = autogroup_task_get(p);
++	shares = scale_load(prio_to_weight[nice + 20]);
  
-+	lockdep_assert_held_once(&po->bind_lock);
-+
- 	po->running = 0;
- 
- 	if (po->fanout)
-@@ -2887,7 +2894,7 @@ static int packet_create(struct net *net
- 
- 	if (proto) {
- 		po->prot_hook.type = proto;
--		register_prot_hook(sk);
-+		__register_prot_hook(sk);
- 	}
- 
- 	mutex_lock(&net->packet.sklist_lock);
-@@ -3386,12 +3393,18 @@ packet_setsockopt(struct socket *sock, i
- 
- 		if (optlen != sizeof(val))
- 			return -EINVAL;
--		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
--			return -EBUSY;
- 		if (copy_from_user(&val, optval, sizeof(val)))
- 			return -EFAULT;
--		po->tp_loss = !!val;
--		return 0;
-+
-+		lock_sock(sk);
-+		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
-+			ret = -EBUSY;
-+		} else {
-+			po->tp_loss = !!val;
-+			ret = 0;
-+		}
-+		release_sock(sk);
-+		return ret;
- 	}
- 	case PACKET_AUXDATA:
- 	{
-@@ -3402,7 +3415,9 @@ packet_setsockopt(struct socket *sock, i
- 		if (copy_from_user(&val, optval, sizeof(val)))
- 			return -EFAULT;
- 
-+		lock_sock(sk);
- 		po->auxdata = !!val;
-+		release_sock(sk);
- 		return 0;
- 	}
- 	case PACKET_ORIGDEV:
-@@ -3414,7 +3429,9 @@ packet_setsockopt(struct socket *sock, i
- 		if (copy_from_user(&val, optval, sizeof(val)))
- 			return -EFAULT;
- 
-+		lock_sock(sk);
- 		po->origdev = !!val;
-+		release_sock(sk);
- 		return 0;
- 	}
- 	case PACKET_VNET_HDR:
-@@ -3423,15 +3440,20 @@ packet_setsockopt(struct socket *sock, i
- 
- 		if (sock->type != SOCK_RAW)
- 			return -EINVAL;
--		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
--			return -EBUSY;
- 		if (optlen < sizeof(val))
- 			return -EINVAL;
- 		if (copy_from_user(&val, optval, sizeof(val)))
- 			return -EFAULT;
- 
--		po->has_vnet_hdr = !!val;
--		return 0;
-+		lock_sock(sk);
-+		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
-+			ret = -EBUSY;
-+		} else {
-+			po->has_vnet_hdr = !!val;
-+			ret = 0;
-+		}
-+		release_sock(sk);
-+		return ret;
- 	}
- 	case PACKET_TIMESTAMP:
- 	{
-@@ -3462,11 +3484,17 @@ packet_setsockopt(struct socket *sock, i
- 
- 		if (optlen != sizeof(val))
- 			return -EINVAL;
--		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
--			return -EBUSY;
- 		if (copy_from_user(&val, optval, sizeof(val)))
- 			return -EFAULT;
--		po->tp_tx_has_off = !!val;
-+
-+		lock_sock(sk);
-+		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
-+			ret = -EBUSY;
-+		} else {
-+			po->tp_tx_has_off = !!val;
-+			ret = 0;
-+		}
-+		release_sock(sk);
- 		return 0;
- 	}
- 	case PACKET_QDISC_BYPASS:
---- a/net/packet/internal.h
-+++ b/net/packet/internal.h
-@@ -100,10 +100,12 @@ struct packet_sock {
- 	int			copy_thresh;
- 	spinlock_t		bind_lock;
- 	struct mutex		pg_vec_lock;
--	unsigned int		running:1,	/* prot_hook is attached*/
--				auxdata:1,
-+	unsigned int		running;	/* bind_lock must be held */
-+	unsigned int		auxdata:1,	/* writer must hold sock lock */
- 				origdev:1,
--				has_vnet_hdr:1;
-+				has_vnet_hdr:1,
-+				tp_loss:1,
-+				tp_tx_has_off:1;
- 	int			ifindex;	/* bound device		*/
- 	__be16			num;
- 	struct packet_mclist	*mclist;
-@@ -111,8 +113,6 @@ struct packet_sock {
- 	enum tpacket_versions	tp_version;
- 	unsigned int		tp_hdrlen;
- 	unsigned int		tp_reserve;
--	unsigned int		tp_loss:1;
--	unsigned int		tp_tx_has_off:1;
- 	unsigned int		tp_tstamp;
- 	struct net_device __rcu	*cached_dev;
- 	int			(*xmit)(struct sk_buff *skb);
+ 	down_write(&ag->lock);
+-	err = sched_group_set_shares(ag->tg, prio_to_weight[nice + 20]);
++	err = sched_group_set_shares(ag->tg, shares);
+ 	if (!err)
+ 		ag->nice = nice;
+ 	up_write(&ag->lock);
 
