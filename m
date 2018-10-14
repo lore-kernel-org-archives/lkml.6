@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B7DC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B23ADC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0A9F20645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:53:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0A9F20645
+	by mail.kernel.org (Postfix) with ESMTP id 820BA20890
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:53:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 820BA20890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbeJNXen (ORCPT
+        id S1729666AbeJNXes (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:34:43 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37477 "EHLO
+        Sun, 14 Oct 2018 19:34:48 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37481 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727972AbeJNXen (ORCPT
+        by vger.kernel.org with ESMTP id S1727864AbeJNXer (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:34:43 -0400
+        Sun, 14 Oct 2018 19:34:47 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM0-0004cJ-Jb; Sun, 14 Oct 2018 16:30:52 +0100
+        id 1gBiM4-0004cC-Ox; Sun, 14 Oct 2018 16:30:56 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLT-0000NY-PP; Sun, 14 Oct 2018 16:30:19 +0100
+        id 1gBiLR-0000Jd-TU; Sun, 14 Oct 2018 16:30:17 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,14 +38,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Jordan Crouse" <jcrouse@codeaurora.org>,
-        "Rob Clark" <robdclark@gmail.com>,
-        "Ben Hutchings" <ben.hutchings@codethink.co.uk>
+        "Heiko Carstens" <heiko.carstens@de.ibm.com>,
+        "Vasily Gorbik" <gor@linux.ibm.com>,
+        "Martin Schwidefsky" <schwidefsky@de.ibm.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.32353457@decadent.org.uk>
+Message-ID: <lsq.1539530741.100264053@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 176/366] drm/msm: Fix possible null dereference on
- failure of get_pages()
+Subject: [PATCH 3.16 129/366] s390/ipl: ensure loadparm valid flag is set
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,60 +58,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-commit 3976626ea3d2011f8fd3f3a47070a8b792018253 upstream.
+commit 15deb080a6087b73089139569558965750e69d67 upstream.
 
-Commit 62e3a3e342af changed get_pages() to initialise
-msm_gem_object::pages before trying to initialise msm_gem_object::sgt,
-so that put_pages() would properly clean up pages in the failure
-case.
+When loadparm is set in reipl parm block, the kernel should also set
+DIAG308_FLAGS_LP_VALID flag.
 
-However, this means that put_pages() now needs to check that
-msm_gem_object::sgt is not null before trying to clean it up, and
-this check was only applied to part of the cleanup code.  Move
-it all into the conditional block.  (Strictly speaking we don't
-need to make the kfree() conditional, but since we can't avoid
-checking for null ourselves we may as well do so.)
+This fixes loadparm ignoring during z/VM fcp -> ccw reipl and kvm direct
+boot -> ccw reipl.
 
-Fixes: 62e3a3e342af ("drm/msm: fix leak in failed get_pages")
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/gpu/drm/msm/msm_gem.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ arch/s390/kernel/ipl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -110,17 +110,19 @@ static void put_pages(struct drm_gem_obj
- 	struct msm_gem_object *msm_obj = to_msm_bo(obj);
+--- a/arch/s390/kernel/ipl.c
++++ b/arch/s390/kernel/ipl.c
+@@ -825,6 +825,7 @@ static ssize_t reipl_generic_loadparm_st
+ 	/* copy and convert to ebcdic */
+ 	memcpy(ipb->ipl_info.ccw.load_parm, buf, lp_len);
+ 	ASCEBC(ipb->ipl_info.ccw.load_parm, LOADPARM_LEN);
++	ipb->hdr.flags |= DIAG308_FLAGS_LP_VALID;
+ 	return len;
+ }
  
- 	if (msm_obj->pages) {
--		/* For non-cached buffers, ensure the new pages are clean
--		 * because display controller, GPU, etc. are not coherent:
--		 */
--		if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
--			dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
--					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
-+		if (msm_obj->sgt) {
-+			/* For non-cached buffers, ensure the new
-+			 * pages are clean because display controller,
-+			 * GPU, etc. are not coherent:
-+			 */
-+			if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
-+				dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
-+					     msm_obj->sgt->nents,
-+					     DMA_BIDIRECTIONAL);
- 
--		if (msm_obj->sgt)
- 			sg_free_table(msm_obj->sgt);
--
--		kfree(msm_obj->sgt);
-+			kfree(msm_obj->sgt);
-+		}
- 
- 		if (iommu_present(&platform_bus_type))
- 			drm_gem_put_pages(obj, msm_obj->pages, true, false);
 
