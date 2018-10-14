@@ -2,48 +2,47 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CC7C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA3DC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:46:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E00E520876
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:46:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E00E520876
+	by mail.kernel.org (Postfix) with ESMTP id A9A2420876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:46:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A2420876
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729601AbeJNX16 (ORCPT
+        id S1729609AbeJNX2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:27:58 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37226 "EHLO
+        Sun, 14 Oct 2018 19:28:03 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37231 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728141AbeJNX16 (ORCPT
+        by vger.kernel.org with ESMTP id S1728141AbeJNX2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:27:58 -0400
+        Sun, 14 Oct 2018 19:28:02 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiMI-0004cU-HK; Sun, 14 Oct 2018 16:31:10 +0100
+        id 1gBiMH-0004cJ-Is; Sun, 14 Oct 2018 16:31:09 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLN-0000Af-Vz; Sun, 14 Oct 2018 16:30:13 +0100
+        id 1gBiLO-0000B4-5t; Sun, 14 Oct 2018 16:30:14 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Eric Biggers" <ebiggers@google.com>,
-        "Herbert Xu" <herbert@gondor.apana.org.au>
+CC:     akpm@linux-foundation.org, "Guenter Roeck" <linux@roeck-us.net>
 Date:   Sun, 14 Oct 2018 16:25:40 +0100
-Message-ID: <lsq.1539530740.188861900@decadent.org.uk>
+Message-ID: <lsq.1539530740.100910761@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 028/366] crypto: x86/cast5-avx - fix ECB encryption
- when long sg follows short one
+Subject: [PATCH 3.16 033/366] hwmon: (pmbus/max8688) Accept negative page
+ register values
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,40 +56,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit 8f461b1e02ed546fbd0f11611138da67fd85a30f upstream.
+commit a46f8cd696624ef757be0311eb28f119c36778e8 upstream.
 
-With ecb-cast5-avx, if a 128+ byte scatterlist element followed a
-shorter one, then the algorithm accidentally encrypted/decrypted only 8
-bytes instead of the expected 128 bytes.  Fix it by setting the
-encryption/decryption 'fn' correctly.
+A negative page register value means that no page needs to be
+selected. This is used by status register evaluations and needs
+to be accepted.
 
-Fixes: c12ab20b162c ("crypto: cast5/avx - avoid using temporary stack buffers")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: da8e48ab483e1 ("hwmon: (pmbus) Always call _pmbus_read_byte in core driver")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/crypto/cast5_avx_glue.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/hwmon/pmbus/max8688.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/crypto/cast5_avx_glue.c
-+++ b/arch/x86/crypto/cast5_avx_glue.c
-@@ -67,8 +67,6 @@ static int ecb_crypt(struct blkcipher_de
- 	void (*fn)(struct cast5_ctx *ctx, u8 *dst, const u8 *src);
- 	int err;
+--- a/drivers/hwmon/pmbus/max8688.c
++++ b/drivers/hwmon/pmbus/max8688.c
+@@ -44,7 +44,7 @@ static int max8688_read_word_data(struct
+ {
+ 	int ret;
  
--	fn = (enc) ? cast5_ecb_enc_16way : cast5_ecb_dec_16way;
--
- 	err = blkcipher_walk_virt(desc, walk);
- 	desc->flags &= ~CRYPTO_TFM_REQ_MAY_SLEEP;
+-	if (page)
++	if (page > 0)
+ 		return -ENXIO;
  
-@@ -80,6 +78,7 @@ static int ecb_crypt(struct blkcipher_de
- 
- 		/* Process multi-block batch */
- 		if (nbytes >= bsize * CAST5_PARALLEL_BLOCKS) {
-+			fn = (enc) ? cast5_ecb_enc_16way : cast5_ecb_dec_16way;
- 			do {
- 				fn(ctx, wdst, wsrc);
- 
+ 	switch (reg) {
 
