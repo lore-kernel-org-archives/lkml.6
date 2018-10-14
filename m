@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B69AC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C556EC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E344320876
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:38:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E344320876
+	by mail.kernel.org (Postfix) with ESMTP id 971AB20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:38:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 971AB20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbeJNXTy (ORCPT
+        id S1728986AbeJNXT6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:19:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36798 "EHLO
+        Sun, 14 Oct 2018 19:19:58 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36802 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728015AbeJNXTy (ORCPT
+        by vger.kernel.org with ESMTP id S1728015AbeJNXT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:19:54 -0400
+        Sun, 14 Oct 2018 19:19:58 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiMC-0004cY-0a; Sun, 14 Oct 2018 16:31:04 +0100
+        id 1gBiM9-0004cW-Fs; Sun, 14 Oct 2018 16:31:01 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLP-0000Ee-Qq; Sun, 14 Oct 2018 16:30:15 +0100
+        id 1gBiLQ-0000Ge-HH; Sun, 14 Oct 2018 16:30:16 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
-        "Martin Kelly" <mkelly@xevo.com>
+CC:     akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.85075120@decadent.org.uk>
+Message-ID: <lsq.1539530741.922183139@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 075/366] iio:kfifo_buf: check for uint overflow
+Subject: [PATCH 3.16 095/366] powerpc/mm/hugetlb: initialize the pagetable
+ cache correctly for hugetlb
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,58 +57,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Kelly <mkelly@xevo.com>
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
 
-commit 3d13de4b027d5f6276c0f9d3a264f518747d83f2 upstream.
+commit 6fa504835d6969144b2bd3699684dd447c789ba2 upstream.
 
-Currently, the following causes a kernel OOPS in memcpy:
+With 64k page size, we have hugetlb pte entries at the pmd and pud level for
+book3s64. We don't need to create a separate page table cache for that. With 4k
+we need to make sure hugepd page table cache for 16M is placed at PUD level
+and 16G at the PGD level.
 
-echo 1073741825 > buffer/length
-echo 1 > buffer/enable
+Simplify all these by not using HUGEPD_PD_SHIFT which is confusing for book3s64.
 
-Note that using 1073741824 instead of 1073741825 causes "write error:
-Cannot allocate memory" but no OOPS.
+Without this patch, with 64k page size we create pagetable caches with shift
+value 10 and 7 which are not used at all.
 
-This is because 1073741824 == 2^30 and 1073741825 == 2^30+1. Since kfifo
-rounds up to the nearest power of 2, it will actually call kmalloc with
-roundup_pow_of_two(length) * bytes_per_datum.
+Fixes: 419df06eea5b ("powerpc: Reduce the PTE_INDEX_SIZE")
 
-Using length == 1073741825 and bytes_per_datum == 2, we get:
-
-kmalloc(roundup_pow_of_two(1073741825) * 2
-or kmalloc(2147483648 * 2)
-or kmalloc(4294967296)
-or kmalloc(UINT_MAX + 1)
-
-so this overflows to 0, causing kmalloc to return ZERO_SIZE_PTR and
-subsequent memcpy to fail once the device is enabled.
-
-Fix this by checking for overflow prior to allocating a kfifo. With this
-check added, the above code returns -EINVAL when enabling the buffer,
-rather than causing an OOPS.
-
-Signed-off-by: Martin Kelly <mkelly@xevo.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-[bwh: Backported to 3.16: adjust filename]
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[bwh: Backported to 3.16: Don't use an #ifdef because this implementation of
+ hugetlbpage_init() is only used if CONFIG_PPC_BOOK3S_64 is enabled.]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/iio/kfifo_buf.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
---- a/drivers/iio/kfifo_buf.c
-+++ b/drivers/iio/kfifo_buf.c
-@@ -24,6 +24,13 @@ static inline int __iio_allocate_kfifo(s
- 	if ((length == 0) || (bytes_per_datum == 0))
- 		return -EINVAL;
+--- a/arch/powerpc/mm/hugetlbpage.c
++++ b/arch/powerpc/mm/hugetlbpage.c
+@@ -175,9 +175,6 @@ static int __hugepte_alloc(struct mm_str
+ #ifdef CONFIG_PPC_FSL_BOOK3E
+ #define HUGEPD_PGD_SHIFT PGDIR_SHIFT
+ #define HUGEPD_PUD_SHIFT PUD_SHIFT
+-#else
+-#define HUGEPD_PGD_SHIFT PUD_SHIFT
+-#define HUGEPD_PUD_SHIFT PMD_SHIFT
+ #endif
  
-+	/*
-+	 * Make sure we don't overflow an unsigned int after kfifo rounds up to
-+	 * the next power of 2.
-+	 */
-+	if (roundup_pow_of_two(length) > UINT_MAX / bytes_per_datum)
-+		return -EINVAL;
+ #ifdef CONFIG_PPC_BOOK3S_64
+@@ -871,15 +868,17 @@ static int __init hugetlbpage_init(void)
+ 
+ 		shift = mmu_psize_to_shift(psize);
+ 
+-		if (add_huge_page_size(1ULL << shift) < 0)
++		if (shift > PGDIR_SHIFT)
+ 			continue;
+-
+-		if (shift < PMD_SHIFT)
+-			pdshift = PMD_SHIFT;
+-		else if (shift < PUD_SHIFT)
++		else if (shift > PUD_SHIFT)
++			pdshift = PGDIR_SHIFT;
++		else if (shift > PMD_SHIFT)
+ 			pdshift = PUD_SHIFT;
+ 		else
+-			pdshift = PGDIR_SHIFT;
++			pdshift = PMD_SHIFT;
 +
- 	return __kfifo_alloc((struct __kfifo *)&buf->kf, length,
- 			     bytes_per_datum, GFP_KERNEL);
- }
++		if (add_huge_page_size(1ULL << shift) < 0)
++			continue;
+ 		/*
+ 		 * if we have pdshift and shift value same, we don't
+ 		 * use pgt cache for hugepd.
 
