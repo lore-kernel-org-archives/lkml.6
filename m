@@ -6,45 +6,48 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05657C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A17DC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB53320645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB53320645
+	by mail.kernel.org (Postfix) with ESMTP id 0B6B120876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6B120876
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729464AbeJNX1D (ORCPT
+        id S1729477AbeJNX1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:27:03 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37156 "EHLO
+        Sun, 14 Oct 2018 19:27:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37161 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728141AbeJNX1C (ORCPT
+        by vger.kernel.org with ESMTP id S1728141AbeJNX1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:27:02 -0400
+        Sun, 14 Oct 2018 19:27:04 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM9-0004cZ-Dn; Sun, 14 Oct 2018 16:31:01 +0100
+        id 1gBiME-0004cf-R9; Sun, 14 Oct 2018 16:31:06 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLQ-0000GZ-G0; Sun, 14 Oct 2018 16:30:16 +0100
+        id 1gBiLO-0000Cc-SE; Sun, 14 Oct 2018 16:30:14 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Jason Gunthorpe" <jgg@mellanox.com>,
-        "Roland Dreier" <roland@purestorage.com>,
-        "" <syzbot+a67bc93e14682d92fc2f@syzkaller.appspotmail.com>
-Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.822339637@decadent.org.uk>
+CC:     akpm@linux-foundation.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Mika Westerberg" <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        "Mike Lothian" <mike@fireburn.co.uk>
+Date:   Sun, 14 Oct 2018 16:25:40 +0100
+Message-ID: <lsq.1539530740.145069661@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 094/366] RDMA/ucma: Don't allow setting
- RDMA_OPTION_IB_PATH without an RDMA device
+Subject: [PATCH 3.16 051/366] ACPI / hotplug / PCI: Check presence of slot
+ itself in get_slot_status()
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,32 +61,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roland Dreier <roland@purestorage.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit 8435168d50e66fa5eae01852769d20a36f9e5e83 upstream.
+commit 13d3047c81505cc0fb9bdae7810676e70523c8bf upstream.
 
-Check to make sure that ctx->cm_id->device is set before we use it.
-Otherwise userspace can trigger a NULL dereference by doing
-RDMA_USER_CM_CMD_SET_OPTION on an ID that is not bound to a device.
+Mike Lothian reported that plugging in a USB-C device does not work
+properly in his Dell Alienware system.  This system has an Intel Alpine
+Ridge Thunderbolt controller providing USB-C functionality.  In these
+systems the USB controller (xHCI) is hotplugged whenever a device is
+connected to the port using ACPI-based hotplug.
 
-Reported-by: <syzbot+a67bc93e14682d92fc2f@syzkaller.appspotmail.com>
-Signed-off-by: Roland Dreier <roland@purestorage.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+The ACPI description of the root port in question is as follows:
+
+  Device (RP01)
+  {
+      Name (_ADR, 0x001C0000)
+
+      Device (PXSX)
+      {
+          Name (_ADR, 0x02)
+
+          Method (_RMV, 0, NotSerialized)
+          {
+              // ...
+          }
+      }
+
+Here _ADR 0x02 means device 0, function 2 on the bus under root port (RP01)
+but that seems to be incorrect because device 0 is the upstream port of the
+Alpine Ridge PCIe switch and it has no functions other than 0 (the bridge
+itself).  When we get ACPI Notify() to the root port resulting from
+connecting a USB-C device, Linux tries to read PCI_VENDOR_ID from device 0,
+function 2 which of course always returns 0xffffffff because there is no
+such function and we never find the device.
+
+In Windows this works fine.
+
+Now, since we get ACPI Notify() to the root port and not to the PXSX device
+we should actually start our scan from there as well and not from the
+non-existent PXSX device.  Fix this by checking presence of the slot itself
+(function 0) if we fail to do that otherwise.
+
+While there use pci_bus_read_dev_vendor_id() in get_slot_status(), which is
+the recommended way to read Device and Vendor IDs of devices on PCI buses.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=198557
+Reported-by: Mike Lothian <mike@fireburn.co.uk>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/infiniband/core/ucma.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pci/hotplug/acpiphp_glue.c | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1142,6 +1142,9 @@ static int ucma_set_ib_path(struct ucma_
- 	if (!optlen)
- 		return -EINVAL;
+--- a/drivers/pci/hotplug/acpiphp_glue.c
++++ b/drivers/pci/hotplug/acpiphp_glue.c
+@@ -601,6 +601,7 @@ static unsigned int get_slot_status(stru
+ {
+ 	unsigned long long sta = 0;
+ 	struct acpiphp_func *func;
++	u32 dvid;
  
-+	if (!ctx->cm_id->device)
-+		return -EINVAL;
+ 	list_for_each_entry(func, &slot->funcs, sibling) {
+ 		if (func->flags & FUNC_HAS_STA) {
+@@ -611,19 +612,27 @@ static unsigned int get_slot_status(stru
+ 			if (ACPI_SUCCESS(status) && sta)
+ 				break;
+ 		} else {
+-			u32 dvid;
+-
+-			pci_bus_read_config_dword(slot->bus,
+-						  PCI_DEVFN(slot->device,
+-							    func->function),
+-						  PCI_VENDOR_ID, &dvid);
+-			if (dvid != 0xffffffff) {
++			if (pci_bus_read_dev_vendor_id(slot->bus,
++					PCI_DEVFN(slot->device, func->function),
++					&dvid, 0)) {
+ 				sta = ACPI_STA_ALL;
+ 				break;
+ 			}
+ 		}
+ 	}
+ 
++	if (!sta) {
++		/*
++		 * Check for the slot itself since it may be that the
++		 * ACPI slot is a device below PCIe upstream port so in
++		 * that case it may not even be reachable yet.
++		 */
++		if (pci_bus_read_dev_vendor_id(slot->bus,
++				PCI_DEVFN(slot->device, 0), &dvid, 0)) {
++			sta = ACPI_STA_ALL;
++		}
++	}
 +
- 	memset(&sa_path, 0, sizeof(sa_path));
- 	sa_path.vlan_id = 0xffff;
+ 	return (unsigned int)sta;
+ }
  
 
