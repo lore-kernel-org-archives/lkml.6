@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A4CC7112B
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F12B8C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8292720876
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:40:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8292720876
+	by mail.kernel.org (Postfix) with ESMTP id 9B93220645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:41:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B93220645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728592AbeJNXWE (ORCPT
+        id S1728680AbeJNXWU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:22:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36249 "EHLO
+        Sun, 14 Oct 2018 19:22:20 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36241 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728091AbeJNXMC (ORCPT
+        by vger.kernel.org with ESMTP id S1727989AbeJNXMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:12:02 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLp-0004cC-W5; Sun, 14 Oct 2018 16:30:42 +0100
+        id 1gBiLp-0004cI-Uw; Sun, 14 Oct 2018 16:30:42 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLX-0000WU-FE; Sun, 14 Oct 2018 16:30:23 +0100
+        id 1gBiLX-0000XK-IR; Sun, 14 Oct 2018 16:30:23 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,21 +38,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Jiri Olsa" <jolsa@redhat.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Vince Weaver" <vincent.weaver@maine.edu>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Stephane Eranian" <eranian@google.com>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>
+        "Johannes Berg" <johannes.berg@intel.com>,
+        "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
+        "Johan Hovold" <johan@kernel.org>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.349099951@decadent.org.uk>
+Message-ID: <lsq.1539530741.457841300@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 264/366] perf/x86: Fix possible Spectre-v1 indexing
- for x86_pmu::event_map()
+Subject: [PATCH 3.16 266/366] rfkill: gpio: fix memory leak in probe error
+ path
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -66,54 +59,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Johan Hovold <johan@kernel.org>
 
-commit 46b1b577229a091b137831becaa0fae8690ee15a upstream.
+commit 4bf01ca21e2e0e4561d1a03c48c3d740418702db upstream.
 
-> arch/x86/events/intel/cstate.c:307 cstate_pmu_event_init() warn: potential spectre issue 'pkg_msr' (local cap)
-> arch/x86/events/intel/core.c:337 intel_pmu_event_map() warn: potential spectre issue 'intel_perfmon_event_map'
-> arch/x86/events/intel/knc.c:122 knc_pmu_event_map() warn: potential spectre issue 'knc_perfmon_event_map'
-> arch/x86/events/intel/p4.c:722 p4_pmu_event_map() warn: potential spectre issue 'p4_general_events'
-> arch/x86/events/intel/p6.c:116 p6_pmu_event_map() warn: potential spectre issue 'p6_perfmon_event_map'
-> arch/x86/events/amd/core.c:132 amd_pmu_event_map() warn: potential spectre issue 'amd_perfmon_event_map'
+Make sure to free the rfkill device in case registration fails during
+probe.
 
-Userspace controls @attr, sanitize @attr->config before passing it on
-to x86_pmu::event_map().
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: adjust filename]
+Fixes: 5e7ca3937fbe ("net: rfkill: gpio: convert to resource managed allocation")
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/perf_event.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/rfkill/rfkill-gpio.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/perf_event.c
-+++ b/arch/x86/kernel/cpu/perf_event.c
-@@ -25,6 +25,7 @@
- #include <linux/cpu.h>
- #include <linux/bitops.h>
- #include <linux/device.h>
-+#include <linux/nospec.h>
+--- a/net/rfkill/rfkill-gpio.c
++++ b/net/rfkill/rfkill-gpio.c
+@@ -134,13 +134,18 @@ static int rfkill_gpio_probe(struct plat
  
- #include <asm/apic.h>
- #include <asm/stacktrace.h>
-@@ -319,6 +320,8 @@ int x86_setup_perfctr(struct perf_event
- 	if (attr->config >= x86_pmu.max_events)
- 		return -EINVAL;
+ 	ret = rfkill_register(rfkill->rfkill_dev);
+ 	if (ret < 0)
+-		return ret;
++		goto err_destroy;
  
-+	attr->config = array_index_nospec((unsigned long)attr->config, x86_pmu.max_events);
+ 	platform_set_drvdata(pdev, rfkill);
+ 
+ 	dev_info(&pdev->dev, "%s device registered.\n", rfkill->name);
+ 
+ 	return 0;
 +
- 	/*
- 	 * The generic map:
- 	 */
++err_destroy:
++	rfkill_destroy(rfkill->rfkill_dev);
++
++	return ret;
+ }
+ 
+ static int rfkill_gpio_remove(struct platform_device *pdev)
 
