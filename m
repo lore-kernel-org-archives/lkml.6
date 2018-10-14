@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A17DC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E82C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B6B120876
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6B120876
+	by mail.kernel.org (Postfix) with ESMTP id EDD5720645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:45:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDD5720645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729477AbeJNX1G (ORCPT
+        id S1729486AbeJNX1J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:27:06 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37161 "EHLO
+        Sun, 14 Oct 2018 19:27:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37167 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728141AbeJNX1E (ORCPT
+        by vger.kernel.org with ESMTP id S1728141AbeJNX1I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:27:04 -0400
+        Sun, 14 Oct 2018 19:27:08 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiME-0004cf-R9; Sun, 14 Oct 2018 16:31:06 +0100
+        id 1gBiM9-0004cj-FY; Sun, 14 Oct 2018 16:31:01 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLO-0000Cc-SE; Sun, 14 Oct 2018 16:30:14 +0100
+        id 1gBiLQ-0000GP-Dc; Sun, 14 Oct 2018 16:30:16 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,16 +38,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Mika Westerberg" <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Bjorn Helgaas" <bhelgaas@google.com>,
-        "Mike Lothian" <mike@fireburn.co.uk>
-Date:   Sun, 14 Oct 2018 16:25:40 +0100
-Message-ID: <lsq.1539530740.145069661@decadent.org.uk>
+        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>,
+        "Shawn Guo" <shawn.guo@linaro.org>
+Date:   Sun, 14 Oct 2018 16:25:41 +0100
+Message-ID: <lsq.1539530741.577113963@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 051/366] ACPI / hotplug / PCI: Check presence of slot
- itself in get_slot_status()
+Subject: [PATCH 3.16 092/366] rtc: snvs: Fix usage of snvs_rtc_enable
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -61,104 +58,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 
-commit 13d3047c81505cc0fb9bdae7810676e70523c8bf upstream.
+commit 1485991c024603b2fb4ae77beb7a0d741128a48e upstream.
 
-Mike Lothian reported that plugging in a USB-C device does not work
-properly in his Dell Alienware system.  This system has an Intel Alpine
-Ridge Thunderbolt controller providing USB-C functionality.  In these
-systems the USB controller (xHCI) is hotplugged whenever a device is
-connected to the port using ACPI-based hotplug.
+commit 179a502f8c46 ("rtc: snvs: add Freescale rtc-snvs driver") introduces
+the SNVS RTC driver with a function snvs_rtc_enable().
 
-The ACPI description of the root port in question is as follows:
+snvs_rtc_enable() can return an error on the enable path however this
+driver does not currently trap that failure on the probe() path and
+consequently if enabling the RTC fails we encounter a later error spinning
+forever in rtc_write_sync_lp().
 
-  Device (RP01)
-  {
-      Name (_ADR, 0x001C0000)
+[   36.093481] [<c010d630>] (__irq_svc) from [<c0c2e9ec>] (_raw_spin_unlock_irqrestore+0x34/0x44)
+[   36.102122] [<c0c2e9ec>] (_raw_spin_unlock_irqrestore) from [<c072e32c>] (regmap_read+0x4c/0x5c)
+[   36.110938] [<c072e32c>] (regmap_read) from [<c085d0f4>] (rtc_write_sync_lp+0x6c/0x98)
+[   36.118881] [<c085d0f4>] (rtc_write_sync_lp) from [<c085d160>] (snvs_rtc_alarm_irq_enable+0x40/0x4c)
+[   36.128041] [<c085d160>] (snvs_rtc_alarm_irq_enable) from [<c08567b4>] (rtc_timer_do_work+0xd8/0x1a8)
+[   36.137291] [<c08567b4>] (rtc_timer_do_work) from [<c01441b8>] (process_one_work+0x28c/0x76c)
+[   36.145840] [<c01441b8>] (process_one_work) from [<c01446cc>] (worker_thread+0x34/0x58c)
+[   36.153961] [<c01446cc>] (worker_thread) from [<c014aee4>] (kthread+0x138/0x150)
+[   36.161388] [<c014aee4>] (kthread) from [<c0107e14>] (ret_from_fork+0x14/0x20)
+[   36.168635] rcu_sched kthread starved for 2602 jiffies! g496 c495 f0x2 RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=0
+[   36.178564] rcu_sched       R  running task        0     8      2 0x00000000
+[   36.185664] [<c0c288b0>] (__schedule) from [<c0c29134>] (schedule+0x3c/0xa0)
+[   36.192739] [<c0c29134>] (schedule) from [<c0c2db80>] (schedule_timeout+0x78/0x4e0)
+[   36.200422] [<c0c2db80>] (schedule_timeout) from [<c01a7ab0>] (rcu_gp_kthread+0x648/0x1864)
+[   36.208800] [<c01a7ab0>] (rcu_gp_kthread) from [<c014aee4>] (kthread+0x138/0x150)
+[   36.216309] [<c014aee4>] (kthread) from [<c0107e14>] (ret_from_fork+0x14/0x20)
 
-      Device (PXSX)
-      {
-          Name (_ADR, 0x02)
+This patch fixes by parsing the result of rtc_write_sync_lp() and
+propagating both in the probe and elsewhere. If the RTC doesn't start we
+don't proceed loading the driver and don't get into this loop mess later
+on.
 
-          Method (_RMV, 0, NotSerialized)
-          {
-              // ...
-          }
-      }
-
-Here _ADR 0x02 means device 0, function 2 on the bus under root port (RP01)
-but that seems to be incorrect because device 0 is the upstream port of the
-Alpine Ridge PCIe switch and it has no functions other than 0 (the bridge
-itself).  When we get ACPI Notify() to the root port resulting from
-connecting a USB-C device, Linux tries to read PCI_VENDOR_ID from device 0,
-function 2 which of course always returns 0xffffffff because there is no
-such function and we never find the device.
-
-In Windows this works fine.
-
-Now, since we get ACPI Notify() to the root port and not to the PXSX device
-we should actually start our scan from there as well and not from the
-non-existent PXSX device.  Fix this by checking presence of the slot itself
-(function 0) if we fail to do that otherwise.
-
-While there use pci_bus_read_dev_vendor_id() in get_slot_status(), which is
-the recommended way to read Device and Vendor IDs of devices on PCI buses.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=198557
-Reported-by: Mike Lothian <mike@fireburn.co.uk>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 179a502f8c46 ("rtc: snvs: add Freescale rtc-snvs driver")
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+[bwh: Backported to 3.16:
+ - No cleanup is needed on error in snvs_rtc_probe(); just return
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/pci/hotplug/acpiphp_glue.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+ drivers/rtc/rtc-snvs.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/drivers/pci/hotplug/acpiphp_glue.c
-+++ b/drivers/pci/hotplug/acpiphp_glue.c
-@@ -601,6 +601,7 @@ static unsigned int get_slot_status(stru
+--- a/drivers/rtc/rtc-snvs.c
++++ b/drivers/rtc/rtc-snvs.c
+@@ -130,20 +130,23 @@ static int snvs_rtc_set_time(struct devi
  {
- 	unsigned long long sta = 0;
- 	struct acpiphp_func *func;
-+	u32 dvid;
+ 	struct snvs_rtc_data *data = dev_get_drvdata(dev);
+ 	unsigned long time;
++	int ret;
  
- 	list_for_each_entry(func, &slot->funcs, sibling) {
- 		if (func->flags & FUNC_HAS_STA) {
-@@ -611,19 +612,27 @@ static unsigned int get_slot_status(stru
- 			if (ACPI_SUCCESS(status) && sta)
- 				break;
- 		} else {
--			u32 dvid;
--
--			pci_bus_read_config_dword(slot->bus,
--						  PCI_DEVFN(slot->device,
--							    func->function),
--						  PCI_VENDOR_ID, &dvid);
--			if (dvid != 0xffffffff) {
-+			if (pci_bus_read_dev_vendor_id(slot->bus,
-+					PCI_DEVFN(slot->device, func->function),
-+					&dvid, 0)) {
- 				sta = ACPI_STA_ALL;
- 				break;
- 			}
- 		}
- 	}
+ 	rtc_tm_to_time(tm, &time);
  
-+	if (!sta) {
-+		/*
-+		 * Check for the slot itself since it may be that the
-+		 * ACPI slot is a device below PCIe upstream port so in
-+		 * that case it may not even be reachable yet.
-+		 */
-+		if (pci_bus_read_dev_vendor_id(slot->bus,
-+				PCI_DEVFN(slot->device, 0), &dvid, 0)) {
-+			sta = ACPI_STA_ALL;
-+		}
-+	}
-+
- 	return (unsigned int)sta;
+ 	/* Disable RTC first */
+-	snvs_rtc_enable(data, false);
++	ret = snvs_rtc_enable(data, false);
++	if (ret)
++		return ret;
+ 
+ 	/* Write 32-bit time to 47-bit timer, leaving 15 LSBs blank */
+ 	writel(time << CNTR_TO_SECS_SH, data->ioaddr + SNVS_LPSRTCLR);
+ 	writel(time >> (32 - CNTR_TO_SECS_SH), data->ioaddr + SNVS_LPSRTCMR);
+ 
+ 	/* Enable RTC again */
+-	snvs_rtc_enable(data, true);
++	ret = snvs_rtc_enable(data, true);
+ 
+-	return 0;
++	return ret;
  }
+ 
+ static int snvs_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+@@ -271,7 +274,11 @@ static int snvs_rtc_probe(struct platfor
+ 	writel(0xffffffff, data->ioaddr + SNVS_LPSR);
+ 
+ 	/* Enable RTC */
+-	snvs_rtc_enable(data, true);
++	ret = snvs_rtc_enable(data, true);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to enable rtc %d\n", ret);
++		return ret;
++	}
+ 
+ 	device_init_wakeup(&pdev->dev, true);
  
 
