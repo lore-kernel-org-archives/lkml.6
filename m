@@ -2,106 +2,84 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F316C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 22:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9AAC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 22:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E022D20652
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 22:14:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E022D20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by mail.kernel.org (Postfix) with ESMTP id DC75320835
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 22:27:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC75320835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbeJOF4t (ORCPT
+        id S1726444AbeJOGKC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 01:56:49 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58930 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbeJOF4t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 01:56:49 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id D86CE22C36;
-        Sun, 14 Oct 2018 18:14:20 -0400 (EDT)
-Date:   Mon, 15 Oct 2018 09:14:18 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Hannes Reinecke <hare@suse.de>,
-        scsi <linux-scsi@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/6] esp_scsi: Track residual for PIO transfers
-In-Reply-To: <CAMuHMdV-VUCeO_uOwOtF2Cu-eXria2n-wEaj1qMMnnFWcOSFeg@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1810150902430.10@nippy.intranet>
-References: <cover.1539497520.git.fthain@telegraphics.com.au> <11a3a80e74a006040460fa051747e6a79c6382ce.1539497520.git.fthain@telegraphics.com.au> <CAMuHMdV-VUCeO_uOwOtF2Cu-eXria2n-wEaj1qMMnnFWcOSFeg@mail.gmail.com>
+        Mon, 15 Oct 2018 02:10:02 -0400
+Received: from sauhun.de ([88.99.104.3]:38352 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726250AbeJOGKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 02:10:02 -0400
+Received: from localhost (p54B33E30.dip0.t-ipconnect.de [84.179.62.48])
+        by pokefinder.org (Postfix) with ESMTPSA id D350B2C786F;
+        Mon, 15 Oct 2018 00:27:32 +0200 (CEST)
+Date:   Mon, 15 Oct 2018 00:27:32 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: renesas_sdhi: rename DTRAN_MODE_BUS_WID_TH to
+ DTRAN_MODE_BUS_WIDTH
+Message-ID: <20181014222732.GA3260@kunai>
+References: <1538566780-30794-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
+Content-Disposition: inline
+In-Reply-To: <1538566780-30794-1-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 14 Oct 2018, Geert Uytterhoeven wrote:
 
-> 
-> > Fixes: 6fe07aaffbf0
-> 
-> Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
-> 
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixed.
+On Wed, Oct 03, 2018 at 08:39:40PM +0900, Masahiro Yamada wrote:
+> Socionext UniPhier SoCs use the almost the same internal DMAC.
+> My datasheet says 'BUS_WIDTH' instead of 'BUS_WID_TH'.  I suspect
+> this is a typo.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-> > Tested-by: Stan Johnson <userm57@yahoo.com>
-> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> > Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-> 
-> > --- a/drivers/scsi/esp_scsi.h
-> > +++ b/drivers/scsi/esp_scsi.h
-> > @@ -540,6 +540,8 @@ struct esp {
-> >
-> >         void                    *dma;
-> >         int                     dmarev;
-> > +
-> > +       int                     send_cmd_residual;
-> 
-> unsigned int?
-> 
+Already fixed in mmc/next.
 
-My first thought was to use u32, same as esp_count. But it turns out that 
-the end result really is an int --
 
-static int esp_data_bytes_sent(struct esp *esp, struct esp_cmd_entry *ent,
-                               struct scsi_cmnd *cmd)
-{
-        int fifo_cnt, ecount, bytes_sent, flush_fifo;
+--u3/rZRmxL6MmkK24
+Content-Type: application/pgp-signature; name="signature.asc"
 
-        ...
-        bytes_sent = esp->data_dma_len;
-        bytes_sent -= ecount;
-        bytes_sent -= esp->send_cmd_residual;
-	...
-        return bytes_sent;
-}
+-----BEGIN PGP SIGNATURE-----
 
-Apparently over/underflow is a real possibility, because there is a test 
-for this in esp_process_event().
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvDws8ACgkQFA3kzBSg
+Kbae0hAAk1ud4fQ9XRysjZGWzFaoGAk9vpJ/kzPlXu1xTq6gA90U+j6tJ9yOi6DK
+FjnExPdUTtdpHeZ5jbwAmZQbJJObHhkpXBQMPyesRJkfdwo9Ne6oTGuefZayjL4M
+x4UnYpp64xvnageUNEsu5zAgq5sx8TEnN1Ru69G0KnRhE7CXgqVNU2QFsgKpLQ6c
+PqHd3imb4JqXmYHeWlcsHLWY5qz6FfbSqz9oADml8w092FoaE1MMqicFwk6CUTBy
+0TTLOajVxBg1/V0rXUSFqYtBjsZApU7CERHoiWs+WmeTWk5qRRXLLUBx6d97pD8s
+PjAPLUn0FAvVkQTjO63Utw3Z3MutyFSIpdPYe411ytFLCzCWPMECFeOObEh6tta+
+o5izZrh7fYBFJEyPOYelRVxFN4NlUfvBPGuMB7Pvw0n6Yqs6OPBWF6MlZLqsCH3I
+tu9JJ0Vr2NSfBTPrnbIL+oatdW/Ih3cJDkx/By+5WORkpJrTmOGiJOzR0xBeIlxY
+hZ9ntYyPjE3EbjyjYh5FeTw+rOI+siFtg2zh5btXgz6Qf3Jk1wJf5wJvbJRG2FH2
+cUtlX1Wsg9jL5gulUH3tQIbbqEQVm3p8t9bE85vXeu799QU7EwD+pMoqpM3T1fDc
+6e5pDlxGkzKQPHFqHwNcQQK7CeYseQuyhyAEmFD0gl8nAzypVdQ=
+=TH/1
+-----END PGP SIGNATURE-----
 
--- 
-
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> 
+--u3/rZRmxL6MmkK24--
