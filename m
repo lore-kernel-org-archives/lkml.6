@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3E5C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494A5C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D7220645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D7220645
+	by mail.kernel.org (Postfix) with ESMTP id 167A120645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 167A120645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbeJNXsZ (ORCPT
+        id S1727724AbeJNXsZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 14 Oct 2018 19:48:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35573 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35577 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726436AbeJNXLj (ORCPT
+        by vger.kernel.org with ESMTP id S1726470AbeJNXLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:39 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLS-0004cZ-HN; Sun, 14 Oct 2018 16:30:18 +0100
+        id 1gBiLS-0004cY-Gs; Sun, 14 Oct 2018 16:30:18 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLN-00009E-Bl; Sun, 14 Oct 2018 16:30:13 +0100
+        id 1gBiLN-000099-Az; Sun, 14 Oct 2018 16:30:13 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Aaron Ma" <aaron.ma@canonical.com>,
-        "Jiri Kosina" <jkosina@suse.cz>
+CC:     akpm@linux-foundation.org, "Jason Andryuk" <jandryuk@gmail.com>,
+        "Jiri Kosina" <jkosina@suse.cz>, "John Smith" <john-s-84@gmx.net>
 Date:   Sun, 14 Oct 2018 16:25:40 +0100
-Message-ID: <lsq.1539530740.472026047@decadent.org.uk>
+Message-ID: <lsq.1539530740.320369129@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 011/366] HID: core: Fix size as type u32
+Subject: [PATCH 3.16 010/366] HID: i2c-hid: Fix "incomplete report" noise
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,98 +56,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Jason Andryuk <jandryuk@gmail.com>
 
-commit 6de0b13cc0b4ba10e98a9263d7a83b940720b77a upstream.
+commit ef6eaf27274c0351f7059163918f3795da13199c upstream.
 
-When size is negative, calling memset will make segment fault.
-Declare the size as type u32 to keep memset safe.
+Commit ac75a041048b ("HID: i2c-hid: fix size check and type usage") started
+writing messages when the ret_size is <= 2 from i2c_master_recv.  However, my
+device i2c-DLL07D1 returns 2 for a short period of time (~0.5s) after I stop
+moving the pointing stick or touchpad.  It varies, but you get ~50 messages
+each time which spams the log hard.
 
-size in struct hid_report is unsigned, fix return type of
-hid_report_len to u32.
+[  95.925055] i2c_hid i2c-DLL07D1:01: i2c_hid_get_input: incomplete report (83/2)
 
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+This has also been observed with a i2c-ALP0017.
+
+[ 1781.266353] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
+
+Only print the message when ret_size is totally invalid and less than 2 to cut
+down on the log spam.
+
+Fixes: ac75a041048b ("HID: i2c-hid: fix size check and type usage")
+Reported-by: John Smith <john-s-84@gmx.net>
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
 Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-[bwh: Backported to 3.16: adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/hid/hid-core.c | 10 +++++-----
- include/linux/hid.h    |  6 +++---
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/hid/i2c-hid/i2c-hid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -1284,7 +1284,7 @@ void hid_output_report(struct hid_report
- }
- EXPORT_SYMBOL_GPL(hid_output_report);
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -399,7 +399,7 @@ static void i2c_hid_get_input(struct i2c
+ 		return;
+ 	}
  
--static int hid_report_len(struct hid_report *report)
-+static u32 hid_report_len(struct hid_report *report)
- {
- 	/* equivalent to DIV_ROUND_UP(report->size, 8) + !!(report->id > 0) */
- 	return ((report->size - 1) >> 3) + 1 + (report->id > 0);
-@@ -1300,7 +1300,7 @@ u8 *hid_alloc_report_buf(struct hid_repo
- 	 * of implement() working on 8 byte chunks
- 	 */
- 
--	int len = hid_report_len(report) + 7;
-+	u32 len = hid_report_len(report) + 7;
- 
- 	return kmalloc(len, flags);
- }
-@@ -1365,7 +1365,7 @@ void __hid_request(struct hid_device *hi
- {
- 	char *buf;
- 	int ret;
--	int len;
-+	u32 len;
- 
- 	buf = hid_alloc_report_buf(report, GFP_KERNEL);
- 	if (!buf)
-@@ -1391,14 +1391,14 @@ out:
- }
- EXPORT_SYMBOL_GPL(__hid_request);
- 
--int hid_report_raw_event(struct hid_device *hid, int type, u8 *data, int size,
-+int hid_report_raw_event(struct hid_device *hid, int type, u8 *data, u32 size,
- 		int interrupt)
- {
- 	struct hid_report_enum *report_enum = hid->report_enum + type;
- 	struct hid_report *report;
- 	struct hid_driver *hdrv;
- 	unsigned int a;
--	int rsize, csize = size;
-+	u32 rsize, csize = size;
- 	u8 *cdata = data;
- 	int ret = 0;
- 
-@@ -1456,7 +1456,7 @@ EXPORT_SYMBOL_GPL(hid_report_raw_event);
-  *
-  * This is data entry for lower layers.
-  */
--int hid_input_report(struct hid_device *hid, int type, u8 *data, int size, int interrupt)
-+int hid_input_report(struct hid_device *hid, int type, u8 *data, u32 size, int interrupt)
- {
- 	struct hid_report_enum *report_enum;
- 	struct hid_driver *hdrv;
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -757,7 +757,7 @@ extern int hidinput_connect(struct hid_d
- extern void hidinput_disconnect(struct hid_device *);
- 
- int hid_set_field(struct hid_field *, unsigned, __s32);
--int hid_input_report(struct hid_device *, int type, u8 *, int, int);
-+int hid_input_report(struct hid_device *, int type, u8 *, u32, int);
- int hidinput_find_field(struct hid_device *hid, unsigned int type, unsigned int code, struct hid_field **field);
- struct hid_field *hidinput_get_led_field(struct hid_device *hid);
- unsigned int hidinput_count_leds(struct hid_device *hid);
-@@ -1055,7 +1055,7 @@ static inline void hid_hw_wait(struct hi
- 		hdev->ll_driver->wait(hdev);
- }
- 
--int hid_report_raw_event(struct hid_device *hid, int type, u8 *data, int size,
-+int hid_report_raw_event(struct hid_device *hid, int type, u8 *data, u32 size,
- 		int interrupt);
- 
- /* HID quirks API */
+-	if ((ret_size > size) || (ret_size <= 2)) {
++	if ((ret_size > size) || (ret_size < 2)) {
+ 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
+ 			__func__, size, ret_size);
+ 		return;
 
