@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81FE7C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33AEDC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BE5220876
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:47:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BE5220876
+	by mail.kernel.org (Postfix) with ESMTP id 074372087D
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:47:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074372087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729688AbeJNX2y (ORCPT
+        id S1729702AbeJNX25 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:28:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37281 "EHLO
+        Sun, 14 Oct 2018 19:28:57 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37286 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728125AbeJNX2x (ORCPT
+        by vger.kernel.org with ESMTP id S1728125AbeJNX24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:28:53 -0400
+        Sun, 14 Oct 2018 19:28:56 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM8-0004cU-2R; Sun, 14 Oct 2018 16:31:00 +0100
+        id 1gBiMB-0004cm-Vz; Sun, 14 Oct 2018 16:31:04 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLR-0000Hu-1Y; Sun, 14 Oct 2018 16:30:17 +0100
+        id 1gBiLQ-0000FY-3j; Sun, 14 Oct 2018 16:30:16 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
+CC:     akpm@linux-foundation.org, "Qu Wenruo" <wqu@suse.com>,
+        "David Sterba" <dsterba@suse.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.518487415@decadent.org.uk>
+Message-ID: <lsq.1539530741.937406057@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 108/366] ip_tunnel: better validate user provided
- tunnel names
+Subject: [PATCH 3.16 084/366] btrfs: tests/qgroup: Fix wrong tree backref
+ level
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,76 +57,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 9cb726a212a82c88c98aa9f0037fd04777cd8fe5 upstream.
+commit 3c0efdf03b2d127f0e40e30db4e7aa0429b1b79a upstream.
 
-Use dev_valid_name() to make sure user does not provide illegal
-device name.
+The extent tree of the test fs is like the following:
 
-syzbot caught the following bug :
+ BTRFS info (device (null)): leaf 16327509003777336587 total ptrs 1 free space 3919
+  item 0 key (4096 168 4096) itemoff 3944 itemsize 51
+          extent refs 1 gen 1 flags 2
+          tree block key (68719476736 0 0) level 1
+                                           ^^^^^^^
+          ref#0: tree block backref root 5
 
-BUG: KASAN: stack-out-of-bounds in strlcpy include/linux/string.h:300 [inline]
-BUG: KASAN: stack-out-of-bounds in __ip_tunnel_create+0xca/0x6b0 net/ipv4/ip_tunnel.c:257
-Write of size 20 at addr ffff8801ac79f810 by task syzkaller268107/4482
+And it's using an empty tree for fs tree, so there is no way that its
+level can be 1.
 
-CPU: 0 PID: 4482 Comm: syzkaller268107 Not tainted 4.16.0+ #1
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x1b9/0x29f lib/dump_stack.c:53
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
- memcpy+0x37/0x50 mm/kasan/kasan.c:303
- strlcpy include/linux/string.h:300 [inline]
- __ip_tunnel_create+0xca/0x6b0 net/ipv4/ip_tunnel.c:257
- ip_tunnel_create net/ipv4/ip_tunnel.c:352 [inline]
- ip_tunnel_ioctl+0x818/0xd40 net/ipv4/ip_tunnel.c:861
- ipip_tunnel_ioctl+0x1c5/0x420 net/ipv4/ipip.c:350
- dev_ifsioc+0x43e/0xb90 net/core/dev_ioctl.c:334
- dev_ioctl+0x69a/0xcc0 net/core/dev_ioctl.c:525
- sock_ioctl+0x47e/0x680 net/socket.c:1015
- vfs_ioctl fs/ioctl.c:46 [inline]
- file_ioctl fs/ioctl.c:500 [inline]
- do_vfs_ioctl+0x1cf/0x1650 fs/ioctl.c:684
- ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
- SYSC_ioctl fs/ioctl.c:708 [inline]
- SyS_ioctl+0x24/0x30 fs/ioctl.c:706
- do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
+For REAL (created by mkfs) fs tree backref with no skinny metadata, the
+result should look like:
 
-Fixes: c54419321455 ("GRE: Refactor GRE tunneling code.")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+ item 3 key (30408704 EXTENT_ITEM 4096) itemoff 3845 itemsize 51
+         refs 1 gen 4 flags TREE_BLOCK
+         tree block key (256 INODE_ITEM 0) level 0
+                                           ^^^^^^^
+         tree block backref root 5
+
+Fix the level to 0, so it won't break later tree level checker.
+
+Fixes: faa2dbf004e8 ("Btrfs: add sanity tests for new qgroup accounting code")
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv4/ip_tunnel.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ fs/btrfs/tests/qgroup-tests.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/ip_tunnel.c
-+++ b/net/ipv4/ip_tunnel.c
-@@ -300,13 +300,14 @@ static struct net_device *__ip_tunnel_cr
- 	struct net_device *dev;
- 	char name[IFNAMSIZ];
- 
--	if (parms->name[0])
-+	err = -E2BIG;
-+	if (parms->name[0]) {
-+		if (!dev_valid_name(parms->name))
-+			goto failed;
- 		strlcpy(name, parms->name, IFNAMSIZ);
--	else {
--		if (strlen(ops->kind) > (IFNAMSIZ - 3)) {
--			err = -E2BIG;
-+	} else {
-+		if (strlen(ops->kind) > (IFNAMSIZ - 3))
- 			goto failed;
--		}
- 		strlcpy(name, ops->kind, IFNAMSIZ);
- 		strncat(name, "%d", 2);
- 	}
+--- a/fs/btrfs/tests/qgroup-tests.c
++++ b/fs/btrfs/tests/qgroup-tests.c
+@@ -69,7 +69,7 @@ static int insert_normal_tree_ref(struct
+ 	btrfs_set_extent_generation(leaf, item, 1);
+ 	btrfs_set_extent_flags(leaf, item, BTRFS_EXTENT_FLAG_TREE_BLOCK);
+ 	block_info = (struct btrfs_tree_block_info *)(item + 1);
+-	btrfs_set_tree_block_level(leaf, block_info, 1);
++	btrfs_set_tree_block_level(leaf, block_info, 0);
+ 	iref = (struct btrfs_extent_inline_ref *)(block_info + 1);
+ 	if (parent > 0) {
+ 		btrfs_set_extent_inline_ref_type(leaf, iref,
 
