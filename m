@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB80C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15558C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CF8920645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:41:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CF8920645
+	by mail.kernel.org (Postfix) with ESMTP id D980E20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:41:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D980E20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728705AbeJNXWa (ORCPT
+        id S1728087AbeJNXMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:22:30 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36194 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728027AbeJNXMB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:12:01 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36153 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727989AbeJNXL7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Oct 2018 19:11:59 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLo-0004cZ-8f; Sun, 14 Oct 2018 16:30:40 +0100
+        id 1gBiLm-0004cI-5u; Sun, 14 Oct 2018 16:30:38 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLY-0000bA-Cx; Sun, 14 Oct 2018 16:30:24 +0100
+        id 1gBiLY-0000dB-Ie; Sun, 14 Oct 2018 16:30:24 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Jaegeuk Kim" <jaegeuk@kernel.org>
+CC:     akpm@linux-foundation.org, "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Jan Kara" <jack@suse.cz>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.796499847@decadent.org.uk>
+Message-ID: <lsq.1539530741.903928293@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 285/366] f2fs: call f2fs_unlock_op after error was
- handled
+Subject: [PATCH 3.16 289/366] udf: fix the udf_iget() vs. udf_new_inode()
+ races
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,170 +57,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 44c16156512f33c81e382a1e1df9524e26a7026a upstream.
+commit b231509616feb911c2a7a8814d58c0014ef5b17f upstream.
 
-This patch relocates f2fs_unlock_op in every directory operations to be called
-after any error was processed.
-Otherwise, the checkpoint can be entered with valid node ids without its
-dentry when -ENOSPC is occurred.
+Currently udf_iget() (triggered by NFS) can race with udf_new_inode()
+leading to two inode structures with the same inode number:
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-[bwh: Backported to 3.16:
- - Drop changes in f2fs_tmpfile()
- - Use F2FS_SB() instead of F2FS_I_SB()]
+nfsd: iget_locked() creates inode
+nfsd: try to read from disk, block on that.
+udf_new_inode(): allocate inode with that inumber
+udf_new_inode(): insert it into icache, set it up and dirty
+udf_write_inode(): write inode into buffer cache
+nfsd: get CPU again, look into buffer cache, see nice and sane on-disk
+  inode, set the in-core inode from it
+
+Fix the problem by putting inode into icache in locked state (I_NEW set)
+and unlocking it only after it's fully set up.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/f2fs/f2fs.h  |  1 +
- fs/f2fs/inode.c | 23 +++++++++++++++++++++++
- fs/f2fs/namei.c | 32 +++++++++++---------------------
- 3 files changed, 35 insertions(+), 21 deletions(-)
+ fs/udf/ialloc.c | 7 ++++++-
+ fs/udf/namei.c  | 7 +++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1121,6 +1121,7 @@ void update_inode(struct inode *, struct
- void update_inode_page(struct inode *);
- int f2fs_write_inode(struct inode *, struct writeback_control *);
- void f2fs_evict_inode(struct inode *);
-+void handle_failed_inode(struct inode *);
+--- a/fs/udf/ialloc.c
++++ b/fs/udf/ialloc.c
+@@ -123,7 +123,12 @@ struct inode *udf_new_inode(struct inode
+ 		iinfo->i_alloc_type = ICBTAG_FLAG_AD_LONG;
+ 	inode->i_mtime = inode->i_atime = inode->i_ctime =
+ 		iinfo->i_crtime = current_fs_time(inode->i_sb);
+-	insert_inode_hash(inode);
++	if (unlikely(insert_inode_locked(inode) < 0)) {
++		make_bad_inode(inode);
++		iput(inode);
++		*err = -EIO;
++		return NULL;
++	}
+ 	mark_inode_dirty(inode);
  
- /*
-  * namei.c
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -299,3 +299,26 @@ no_delete:
- 	clear_inode(inode);
- 	invalidate_mapping_pages(NODE_MAPPING(sbi), inode->i_ino, inode->i_ino);
- }
-+
-+/* caller should call f2fs_lock_op() */
-+void handle_failed_inode(struct inode *inode)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-+
-+	clear_nlink(inode);
-+	make_bad_inode(inode);
+ 	*err = 0;
+--- a/fs/udf/namei.c
++++ b/fs/udf/namei.c
+@@ -562,6 +562,7 @@ static int udf_add_nondir(struct dentry
+ 	fi = udf_add_entry(dir, dentry, &fibh, &cfi, &err);
+ 	if (unlikely(!fi)) {
+ 		inode_dec_link_count(inode);
++		unlock_new_inode(inode);
+ 		iput(inode);
+ 		return err;
+ 	}
+@@ -575,6 +576,7 @@ static int udf_add_nondir(struct dentry
+ 	if (fibh.sbh != fibh.ebh)
+ 		brelse(fibh.ebh);
+ 	brelse(fibh.sbh);
 +	unlock_new_inode(inode);
-+
-+	i_size_write(inode, 0);
-+	if (F2FS_HAS_BLOCKS(inode))
-+		f2fs_truncate(inode);
-+
-+	remove_inode_page(inode);
-+	stat_dec_inline_inode(inode);
-+
-+	alloc_nid_failed(sbi, inode->i_ino);
-+	f2fs_unlock_op(sbi);
-+
-+	/* iput will drop the inode object */
-+	iput(inode);
-+}
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -124,9 +124,9 @@ static int f2fs_create(struct inode *dir
+ 	d_instantiate(dentry, inode);
  
- 	f2fs_lock_op(sbi);
- 	err = f2fs_add_link(dentry, inode);
--	f2fs_unlock_op(sbi);
- 	if (err)
- 		goto out;
-+	f2fs_unlock_op(sbi);
- 
- 	alloc_nid_done(sbi, ino);
- 
-@@ -134,9 +134,7 @@ static int f2fs_create(struct inode *dir
- 	unlock_new_inode(inode);
  	return 0;
- out:
--	clear_nlink(inode);
--	iget_failed(inode);
--	alloc_nid_failed(sbi, ino);
-+	handle_failed_inode(inode);
- 	return err;
+@@ -622,6 +624,7 @@ static int udf_tmpfile(struct inode *dir
+ 	mark_inode_dirty(inode);
+ 
+ 	d_tmpfile(dentry, inode);
++	unlock_new_inode(inode);
+ 	return 0;
  }
  
-@@ -156,15 +154,16 @@ static int f2fs_link(struct dentry *old_
- 	set_inode_flag(F2FS_I(inode), FI_INC_LINK);
- 	f2fs_lock_op(sbi);
- 	err = f2fs_add_link(dentry, inode);
--	f2fs_unlock_op(sbi);
- 	if (err)
+@@ -663,6 +666,7 @@ static int udf_mkdir(struct inode *dir,
+ 	fi = udf_add_entry(inode, NULL, &fibh, &cfi, &err);
+ 	if (!fi) {
+ 		inode_dec_link_count(inode);
++		unlock_new_inode(inode);
+ 		iput(inode);
  		goto out;
-+	f2fs_unlock_op(sbi);
- 
+ 	}
+@@ -681,6 +685,7 @@ static int udf_mkdir(struct inode *dir,
+ 	if (!fi) {
+ 		clear_nlink(inode);
+ 		mark_inode_dirty(inode);
++		unlock_new_inode(inode);
+ 		iput(inode);
+ 		goto out;
+ 	}
+@@ -692,6 +697,7 @@ static int udf_mkdir(struct inode *dir,
+ 	udf_write_fi(dir, &cfi, fi, &fibh, NULL, NULL);
+ 	inc_nlink(dir);
+ 	mark_inode_dirty(dir);
++	unlock_new_inode(inode);
  	d_instantiate(dentry, inode);
- 	return 0;
- out:
- 	clear_inode_flag(F2FS_I(inode), FI_INC_LINK);
+ 	if (fibh.sbh != fibh.ebh)
+ 		brelse(fibh.ebh);
+@@ -999,6 +1005,7 @@ out:
+ out_no_entry:
+ 	up_write(&iinfo->i_data_sem);
+ 	inode_dec_link_count(inode);
++	unlock_new_inode(inode);
  	iput(inode);
-+	f2fs_unlock_op(sbi);
- 	return err;
+ 	goto out;
  }
- 
-@@ -257,9 +256,9 @@ static int f2fs_symlink(struct inode *di
- 
- 	f2fs_lock_op(sbi);
- 	err = f2fs_add_link(dentry, inode);
--	f2fs_unlock_op(sbi);
- 	if (err)
- 		goto out;
-+	f2fs_unlock_op(sbi);
- 
- 	err = page_symlink(inode, symname, symlen);
- 	alloc_nid_done(sbi, inode->i_ino);
-@@ -268,9 +267,7 @@ static int f2fs_symlink(struct inode *di
- 	unlock_new_inode(inode);
- 	return err;
- out:
--	clear_nlink(inode);
--	iget_failed(inode);
--	alloc_nid_failed(sbi, inode->i_ino);
-+	handle_failed_inode(inode);
- 	return err;
- }
- 
-@@ -294,9 +291,9 @@ static int f2fs_mkdir(struct inode *dir,
- 	set_inode_flag(F2FS_I(inode), FI_INC_LINK);
- 	f2fs_lock_op(sbi);
- 	err = f2fs_add_link(dentry, inode);
--	f2fs_unlock_op(sbi);
- 	if (err)
- 		goto out_fail;
-+	f2fs_unlock_op(sbi);
- 
- 	alloc_nid_done(sbi, inode->i_ino);
- 
-@@ -307,9 +304,7 @@ static int f2fs_mkdir(struct inode *dir,
- 
- out_fail:
- 	clear_inode_flag(F2FS_I(inode), FI_INC_LINK);
--	clear_nlink(inode);
--	iget_failed(inode);
--	alloc_nid_failed(sbi, inode->i_ino);
-+	handle_failed_inode(inode);
- 	return err;
- }
- 
-@@ -343,18 +338,16 @@ static int f2fs_mknod(struct inode *dir,
- 
- 	f2fs_lock_op(sbi);
- 	err = f2fs_add_link(dentry, inode);
--	f2fs_unlock_op(sbi);
- 	if (err)
- 		goto out;
-+	f2fs_unlock_op(sbi);
- 
- 	alloc_nid_done(sbi, inode->i_ino);
- 	d_instantiate(dentry, inode);
- 	unlock_new_inode(inode);
- 	return 0;
- out:
--	clear_nlink(inode);
--	iget_failed(inode);
--	alloc_nid_failed(sbi, inode->i_ino);
-+	handle_failed_inode(inode);
- 	return err;
- }
- 
 
