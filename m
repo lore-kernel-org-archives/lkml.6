@@ -2,48 +2,46 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94839C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C1CC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 693B120645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693B120645
+	by mail.kernel.org (Postfix) with ESMTP id 8973F20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8973F20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729522AbeJNX3u (ORCPT
+        id S1729748AbeJNX3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:29:50 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37327 "EHLO
+        Sun, 14 Oct 2018 19:29:52 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37332 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728128AbeJNX3t (ORCPT
+        by vger.kernel.org with ESMTP id S1728128AbeJNX3v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:29:49 -0400
+        Sun, 14 Oct 2018 19:29:51 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM6-0004cf-9R; Sun, 14 Oct 2018 16:30:58 +0100
+        id 1gBiME-0004cp-SC; Sun, 14 Oct 2018 16:31:07 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLR-0000J3-KN; Sun, 14 Oct 2018 16:30:17 +0100
+        id 1gBiLP-0000DN-7R; Sun, 14 Oct 2018 16:30:15 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Eric Dumazet" <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "syzbot" <syzkaller@googlegroups.com>
+CC:     akpm@linux-foundation.org, "Guenter Roeck" <linux@roeck-us.net>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.279267313@decadent.org.uk>
+Message-ID: <lsq.1539530741.726227510@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 122/366] net: fix uninit-value in __hw_addr_add_ex()
+Subject: [PATCH 3.16 060/366] hwmon: (nct6775) Fix writing pwmX_mode
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,54 +55,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit 77d36398d99f2565c0a8d43a86fd520a82e64bb8 upstream.
+commit 415eb2a1aaa4881cf85bd86c683356fdd8094a23 upstream.
 
-syzbot complained :
+pwmX_mode is defined in the ABI as 0=DC mode, 1=pwm mode. The chip
+register bit is set to 1 for DC mode. This got mixed up, and writing
+1 into pwmX_mode resulted in DC mode enabled. Fix it up by using
+the ABI definition throughout the driver for consistency.
 
-BUG: KMSAN: uninit-value in memcmp+0x119/0x180 lib/string.c:861
-CPU: 0 PID: 3 Comm: kworker/0:0 Not tainted 4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: ipv6_addrconf addrconf_dad_work
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
- memcmp+0x119/0x180 lib/string.c:861
- __hw_addr_add_ex net/core/dev_addr_lists.c:60 [inline]
- __dev_mc_add+0x1c2/0x8e0 net/core/dev_addr_lists.c:670
- dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
- igmp6_group_added+0x2db/0xa00 net/ipv6/mcast.c:662
- ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
- addrconf_join_solict net/ipv6/addrconf.c:2078 [inline]
- addrconf_dad_begin net/ipv6/addrconf.c:3828 [inline]
- addrconf_dad_work+0x427/0x2150 net/ipv6/addrconf.c:3954
- process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2113
- worker_thread+0x113c/0x24f0 kernel/workqueue.c:2247
- kthread+0x539/0x720 kernel/kthread.c:239
-
-Fixes: f001fde5eadd ("net: introduce a list of device addresses dev_addr_list (v6)")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 77eb5b3703d99 ("hwmon: (nct6775) Add support for pwm, pwm_mode, ... ")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/core/dev_addr_lists.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hwmon/nct6775.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/core/dev_addr_lists.c
-+++ b/net/core/dev_addr_lists.c
-@@ -57,8 +57,8 @@ static int __hw_addr_add_ex(struct netde
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -1287,7 +1287,7 @@ static void nct6775_update_pwm(struct de
+ 		duty_is_dc = data->REG_PWM_MODE[i] &&
+ 		  (nct6775_read_value(data, data->REG_PWM_MODE[i])
+ 		   & data->PWM_MODE_MASK[i]);
+-		data->pwm_mode[i] = duty_is_dc;
++		data->pwm_mode[i] = !duty_is_dc;
+ 
+ 		fanmodecfg = nct6775_read_value(data, data->REG_FAN_MODE[i]);
+ 		for (j = 0; j < ARRAY_SIZE(data->REG_PWM); j++) {
+@@ -2146,7 +2146,7 @@ show_pwm_mode(struct device *dev, struct
+ 	struct nct6775_data *data = nct6775_update_device(dev);
+ 	struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
+ 
+-	return sprintf(buf, "%d\n", !data->pwm_mode[sattr->index]);
++	return sprintf(buf, "%d\n", data->pwm_mode[sattr->index]);
+ }
+ 
+ static ssize_t
+@@ -2167,9 +2167,9 @@ store_pwm_mode(struct device *dev, struc
+ 	if (val > 1)
  		return -EINVAL;
  
- 	list_for_each_entry(ha, &list->list, list) {
--		if (!memcmp(ha->addr, addr, addr_len) &&
--		    ha->type == addr_type) {
-+		if (ha->type == addr_type &&
-+		    !memcmp(ha->addr, addr, addr_len)) {
- 			if (global) {
- 				/* check if addr is already used as global */
- 				if (ha->global_use)
+-	/* Setting DC mode is not supported for all chips/channels */
++	/* Setting DC mode (0) is not supported for all chips/channels */
+ 	if (data->REG_PWM_MODE[nr] == 0) {
+-		if (val)
++		if (!val)
+ 			return -EINVAL;
+ 		return count;
+ 	}
+@@ -2178,7 +2178,7 @@ store_pwm_mode(struct device *dev, struc
+ 	data->pwm_mode[nr] = val;
+ 	reg = nct6775_read_value(data, data->REG_PWM_MODE[nr]);
+ 	reg &= ~data->PWM_MODE_MASK[nr];
+-	if (val)
++	if (!val)
+ 		reg |= data->PWM_MODE_MASK[nr];
+ 	nct6775_write_value(data, data->REG_PWM_MODE[nr], reg);
+ 	mutex_unlock(&data->update_lock);
 
