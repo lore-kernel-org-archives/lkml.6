@@ -2,68 +2,219 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E70C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 00:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91ED0C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 01:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7320E20859
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 00:11:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7320E20859
+	by mail.kernel.org (Postfix) with ESMTP id 4999A20693
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 01:06:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4999A20693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbeJNHuE (ORCPT
+        id S1726147AbeJNIpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 03:50:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48358 "EHLO mx1.redhat.com"
+        Sun, 14 Oct 2018 04:45:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34630 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726042AbeJNHuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 03:50:03 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1725733AbeJNIpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Oct 2018 04:45:50 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 77C5EC05D3FF;
-        Sun, 14 Oct 2018 00:11:06 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B05C93082133;
+        Sun, 14 Oct 2018 01:06:41 +0000 (UTC)
 Received: from asgard.redhat.com (ovpn-200-28.brq.redhat.com [10.40.200.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E93F95EB18;
-        Sun, 14 Oct 2018 00:11:04 +0000 (UTC)
-Date:   Sun, 14 Oct 2018 02:11:26 +0200
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A239280795;
+        Sun, 14 Oct 2018 01:06:36 +0000 (UTC)
+Date:   Sun, 14 Oct 2018 03:06:58 +0200
 From:   Eugene Syromiatnikov <esyr@redhat.com>
-To:     tbhardwa@codeaurora.org
-Cc:     "'Zhang, Ning A'" <ning.a.zhang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: question about V4L2_MEMORY_USERPTR on 64bit applications
-Message-ID: <20181014001126.GA717@asgard.redhat.com>
-References: <1539313441.21249.3.camel@intel.com>
- <1539318782.21249.7.camel@intel.com>
- <000601d461eb$a1f7afc0$e5e70f40$@codeaurora.org>
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     linux-parisc@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org
+Subject: Re: [PATCH v4 3/6] parisc: add system call table generation support
+Message-ID: <20181014010658.GB717@asgard.redhat.com>
+References: <1539337442-3676-1-git-send-email-firoz.khan@linaro.org>
+ <1539337442-3676-4-git-send-email-firoz.khan@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000601d461eb$a1f7afc0$e5e70f40$@codeaurora.org>
+In-Reply-To: <1539337442-3676-4-git-send-email-firoz.khan@linaro.org>
 User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Sun, 14 Oct 2018 00:11:06 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Sun, 14 Oct 2018 01:06:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 10:52:51AM +0530, tbhardwa@codeaurora.org wrote:
-> (in 64 bit userspace long is 32-bit)
+On Fri, Oct 12, 2018 at 03:13:59PM +0530, Firoz Khan wrote:
+> diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+> new file mode 100644
+> index 0000000..7c9f268
 
-Not on Linux.
+> +86      common  uselib                          sys_ni_syscall
 
-$ cat /tmp/c.c
-int main(void)
-{
-        return sizeof(long);
-}
-$ gcc /tmp/c.c
-$ ./a.out; echo $?
-8
-$ file ./a.out
-./a.out: ELF 64-bit LSB pie executable, 64-bit PowerPC or cisco 7500, version 1 (SYSV), dynamically linked, interpreter /lib64/ld64.so.2, for GNU/Linux 3.10.0, BuildID[sha1]=dad78822e741b7900dc7568222822d5d63c31a6c, not stripped
+Again, why is this definition left, while others have been removed?
+
+> +348     common  pwritev2                        sys_pwritev2                    compat_sys_pwritev2
+> +349     common  statx                           sys_statx
+> +350	common  io_pgetevents			sys_io_pgetevents		compat_sys_io_pgetevents
+
+Tab instead of spaces.
+
+> diff --git a/arch/parisc/kernel/syscalls/syscallhdr.sh b/arch/parisc/kernel/syscalls/syscallhdr.sh
+> new file mode 100644
+> index 0000000..607d4ca
+> --- /dev/null
+> +++ b/arch/parisc/kernel/syscalls/syscallhdr.sh
+> @@ -0,0 +1,35 @@
+> +#!/bin/sh
+
+/bin/sh -efu
+
+> +# SPDX-License-Identifier: GPL-2.0
+
+"export LANG=C", due to usage of sed/grep/sort.
+
+> +
+> +in="$1"
+> +out="$2"
+> +my_abis=`echo "($3)" | tr ',' '|'`
+> +prefix="$4"
+> +offset="$5"
+> +
+> +fileguard=_UAPI_ASM_PARISC_`basename "$out" | sed \
+> +    -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
+> +    -e 's/[^A-Z0-9_]/_/g' -e 's/__/_/g'`
+> +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
+
+grep -E '^[[:xdigit:]Xx]+[[:space:]]+'"${my_abis}" "$in"
+sort -n -k1,1
+
+> +    echo "#ifndef ${fileguard}"
+> +    echo "#define ${fileguard}"
+> +    echo ""
+
+	cat <<-EOF
+		#ifndef ${fileguard}
+		#define ${fileguard}
+
+	EOF
+
+> +
+> +    nxt=0
+> +    while read nr abi name entry compat ; do
+> +	if [ -z "$offset" ]; then
+> +	    echo -e "#define __NR_${prefix}${name}\t$nr"
+> +	else
+> +	    echo -e "#define __NR_${prefix}${name}\t($offset + $nr)"
+> +	fi
+
+echo options are not portable; something like
+
+	printf "#define __NR_%s%s\t(%s + %s)" "${prefix}" "${name}" "${offset}" "${nr}"
+
+> +	nxt=$nr
+> +	let nxt=nxt+1
+
+"let" is a bash extension, posix-conformant expression would be
+
+	nxt=$((nr + 1))
+
+(I would also check that nr >= nxt, however)
+
+> +    done
+> +
+> +    echo ""
+> +    echo "#ifdef __KERNEL__"
+> +    echo -e "#define __NR_syscalls\t$nxt"
+> +    echo "#endif"
+> +    echo ""
+> +    echo "#endif /* ${fileguard} */"
+
+	cat <<-EOF
+
+		#ifdef __KERNEL__
+		# define __NR_syscalls\t${nxt}
+		#endif
+
+		#endif /* ${fileguard} */
+	EOF
+
+> +) > "$out"
+> diff --git a/arch/parisc/kernel/syscalls/syscalltbl.sh b/arch/parisc/kernel/syscalls/syscalltbl.sh
+> new file mode 100644
+> index 0000000..04abde7
+> --- /dev/null
+> +++ b/arch/parisc/kernel/syscalls/syscalltbl.sh
+> @@ -0,0 +1,46 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +in="$1"
+> +out="$2"
+> +my_abis=`echo "($3)" | tr ',' '|'`
+> +offset="$4"
+> +
+> +emit() {
+> +    nxt="$1"
+> +    if [ -z "$offset" ]; then
+> +	nr="$2"
+> +    else
+> +	nr="$2"
+> +	nr=$((nr+offset))
+> +    fi
+> +    entry="$3"
+> +
+> +    while [ $nxt -lt $nr ]; do
+
+It would break nicely if nxt="-n x -o 1" or something like that.
+
+> +	echo "__SYSCALL($nxt, sys_ni_syscall, )"
+> +        let nxt=nxt+1
+> +    done
+> +    echo "__SYSCALL($nxt, $entry, )"
+> +}
+> +
+> +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
+> +    if [ -z "$offset" ]; then
+> +	nxt=0
+> +    else
+> +	nxt=$offset
+> +    fi
+> +
+> +    my_abi="$(cut -d'|' -f2 <<< $my_abis)"
+
+	my_abi="${my_abis#*|}"
+
+But it looks like that $my_abis includes parentheses and this code
+is broken.
+
+> +    while read nr abi name entry compat ; do
+> +	if [ $my_abi = "compat" ]; then
+> +	    if [ -z "$compat" ]; then
+> +		emit $nxt $nr $entry
+> +	    else
+> +		emit $nxt $nr $compat
+> +	    fi
+> +	else
+> +	    emit $nxt $nr $entry
+> +	fi
+> +        let nxt=nxt+1
+> +    done
+> +) > "$out"
+> -- 
+> 1.9.1
+> 
