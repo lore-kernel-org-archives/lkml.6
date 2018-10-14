@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F231C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 10:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF73C6787C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 10:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0504820652
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 10:18:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2411A20876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 10:18:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vhAL7U4d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0504820652
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dntF81Gr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2411A20876
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbeJNR6g (ORCPT
+        id S1726915AbeJNR6h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 13:58:36 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39453 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeJNR6g (ORCPT
+        Sun, 14 Oct 2018 13:58:37 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42589 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbeJNR6h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 13:58:36 -0400
-Received: by mail-ed1-f67.google.com with SMTP id d15-v6so15174587edq.6
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 03:18:04 -0700 (PDT)
+        Sun, 14 Oct 2018 13:58:37 -0400
+Received: by mail-ed1-f66.google.com with SMTP id b7-v6so15158639edd.9
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 03:18:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZVe3sLA7Li9tmLx/ZBk6UE4ok8H8C6nGEYSEtwjE+os=;
-        b=vhAL7U4d4hvvS09ysgDbk47+OQ/WLwxiBCciAWn7rDcMvKIyom3Ruql++Ik3+e3v5A
-         IM4pLH/1qOunwg15LzuyaGqS+fmVok5Ncdv550pNOR7LJZrWG1NH8vFRWDNQofsy5tOB
-         jCHwsCUxQl7mbxvD9w+Z6fNYG5lk0OnEVYRJBOd5A4epqJQFkGa8OM39+LInaqBQ/zaN
-         TO4fIVaOAHwkAyXwjOBbgN0g7pyFCbHvG5RouI/0E/pQZnnDBYfbCnhn9hm1kmXaWBS4
-         08bZEIKD8EjcFIVEYf7M5DDgDMh3BVi5/i9OuxDsJThZwzHEA7x9C0eroVRAJ9QxhQqt
-         wp7w==
+        bh=uCE7PnYWwVrkVYQANCS8/euoQ0pQ/V0n8F9pWUDc+8c=;
+        b=dntF81GrmQkLqvkDlMVAn22j+vxbrSUu6CU2eH9gZYdOP6BdeB85tUfqWI9TuDWwF9
+         eJSwoHp2eENc1IP4CBMtNjGzDBjuoNKIwNUSKBZ1TDS1lxG6UAjI3r6881hMXPc+62Aq
+         CjAH1e3YvImRoLioieMgXHwPKu3X92oAwbF/CVhWy+4An6HgLrSqWfNK5gktD2n5bpNB
+         3Gkm8KZ9sJm7MwQQ8qewXTOF700f2408oRHFeKdtv/CMm+W8PmPIpoIfITR6SSoXP+w4
+         ApDcIVp/n6v0XioOHkTZQszY6n2eSbrTq4DPRLNbsbYe9CeGKxwf0bSmvYjmzflonY9N
+         vILw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZVe3sLA7Li9tmLx/ZBk6UE4ok8H8C6nGEYSEtwjE+os=;
-        b=oCWWsTlme5CsJOTvJfaxsKnmAZlLCtd3gzjWbgMzRzZRXuTARN70PTTXSpR3wlEwpi
-         Wb3DlneZVF0FVz+Ov65tNcHVH/dBDgo+ro1kYJ/g8wJ/C8TwJv0E6ojOwAGNV9FbDxPF
-         yUAizx/rlW6hoMNhIOxP48uL8ZGAWTlxGp7yE+zJUlSMmPJqfjKImdW0AavGpxsiGzAZ
-         2yeP2fi1Zuow6+xLCvcqCLxmRKFk3Nb7+7mAMQ8CuP6p1ilIiItusKKEmFrzcE7ybtdf
-         VJVRj2OjqgH6VLD/us9NYzjPN0LKS+qg59N0sPvvLqpWf2PFhhORxTjIHjRsjzVt3q+I
-         NNCA==
-X-Gm-Message-State: ABuFfohz9kQ3xrI3YXLN8Abl0LYVag39audraKE4ZJoMdvqYfK+LAdrG
-        U0ozZo9yXNbREuQeU5mlVPg=
-X-Google-Smtp-Source: ACcGV62097CeNBTveIGCDNF5Tm+GzppJGKYJXwrE274Aii3HnFCGZiom7SXrTEhN/6cG4TnR1y230A==
-X-Received: by 2002:a50:862e:: with SMTP id o43-v6mr18823204edo.209.1539512283529;
-        Sun, 14 Oct 2018 03:18:03 -0700 (PDT)
+        bh=uCE7PnYWwVrkVYQANCS8/euoQ0pQ/V0n8F9pWUDc+8c=;
+        b=HI16ae9OZCyEqxAYyFvXfCYFTqDkKwNMjY5bn6fRemPuqYmkkPQKI4Jsbrax2Sc/wb
+         jk6Jk6Hg+cVdOhgQFF3mPfG2o4jsFUFe6u7xJzlPmlxS+GLhUwaFuINAZ3FFjfNgB2Jp
+         COPp74U1QIwyXgrnBdPVA2h90nbzqlDtjCnA+wAPxW0Kz6MnkIPaU7zNh0hNemQUkxx0
+         ZDgMz3aMVwM3tVI+DX2BdQKCg4TRI3a5VOeMXEbmpewbI5GKTwPI5+d4uXY1ixz9eZlC
+         EYhWFIfaVoIIGfTLD/Yim0NEzqRS/jYHQypPMXClGKmb7nKyRfjp8vRt1EvJueu7QrEK
+         Cu+Q==
+X-Gm-Message-State: ABuFfogShgtTSK9CWO7KuUfLUh78Lja/TG1fYmDgGsLxBu+Y5BwyJIB4
+        wK5J49WbliKirD2YBgs/019B9E7k
+X-Google-Smtp-Source: ACcGV62N8piUHHoDXuGU4NIgRmymoIpZF5gQ0COSl/sv0w/cLxgCbBxF3mNs0OAGfycuuP9IiCT+Rw==
+X-Received: by 2002:a50:a643:: with SMTP id d61-v6mr18918949edc.281.1539512284505;
+        Sun, 14 Oct 2018 03:18:04 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:85c0:57c8:bc68:3d44:305d:951f])
-        by smtp.gmail.com with ESMTPSA id o13-v6sm1475630ejb.34.2018.10.14.03.18.02
+        by smtp.gmail.com with ESMTPSA id o13-v6sm1475630ejb.34.2018.10.14.03.18.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 14 Oct 2018 03:18:02 -0700 (PDT)
+        Sun, 14 Oct 2018 03:18:03 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 5/8] staging: rtl8188eu: rename parameter of hal_com_get_channel_plan() - style
-Date:   Sun, 14 Oct 2018 12:17:39 +0200
-Message-Id: <20181014101742.10952-5-straube.linux@gmail.com>
+Subject: [PATCH 6/8] staging: rtl8188eu: rename parameters of Hal_MappingOutPipe() - style
+Date:   Sun, 14 Oct 2018 12:17:40 +0200
+Message-Id: <20181014101742.10952-6-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181014101742.10952-1-straube.linux@gmail.com>
 References: <20181014101742.10952-1-straube.linux@gmail.com>
@@ -76,9 +76,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename parameter of hal_com_get_channel_plan() in header to avoid
-CamelCase and match the name used in the function definition in
-hal_com.c. AutoLoadFail -> load_fail
+Rename parameters of Hal_MappingOutPipe() in header to avoid CamelCase
+and match the names used in the function definition in hal_com.c.
+pAdapter -> adapter
+NumOutPipe -> numoutpipe
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
@@ -86,18 +87,18 @@ Signed-off-by: Michael Straube <straube.linux@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/rtl8188eu/include/hal_com.h b/drivers/staging/rtl8188eu/include/hal_com.h
-index 7c2bc77a1dc1..613aa35ce10d 100644
+index 613aa35ce10d..a2d8108f9ef1 100644
 --- a/drivers/staging/rtl8188eu/include/hal_com.h
 +++ b/drivers/staging/rtl8188eu/include/hal_com.h
-@@ -140,7 +140,7 @@ void dump_chip_info(struct HAL_VERSION	ChipVersion);
+@@ -146,7 +146,7 @@ u8 MRateToHwRate(u8 rate);
  
- /* return the final channel plan decision */
- u8 hal_com_get_channel_plan(u8 hw_channel_plan, u8 sw_channel_plan,
--			    u8 def_channel_plan, bool AutoLoadFail);
-+			    u8 def_channel_plan, bool load_fail);
+ void hal_set_brate_cfg(u8 *brates, u16 *rate_cfg);
  
- u8 MRateToHwRate(u8 rate);
+-bool Hal_MappingOutPipe(struct adapter *pAdapter, u8 NumOutPipe);
++bool Hal_MappingOutPipe(struct adapter *adapter, u8 numoutpipe);
  
+ void hal_init_macaddr(struct adapter *adapter);
+ #endif /* __HAL_COMMON_H__ */
 -- 
 2.19.1
 
