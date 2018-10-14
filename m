@@ -2,46 +2,48 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C1CC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1FFC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8973F20645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8973F20645
+	by mail.kernel.org (Postfix) with ESMTP id AF73020645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF73020645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729748AbeJNX3w (ORCPT
+        id S1729554AbeJNXaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:29:52 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37332 "EHLO
+        Sun, 14 Oct 2018 19:30:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37340 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728128AbeJNX3v (ORCPT
+        by vger.kernel.org with ESMTP id S1728128AbeJNXaI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:29:51 -0400
+        Sun, 14 Oct 2018 19:30:08 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiME-0004cp-SC; Sun, 14 Oct 2018 16:31:07 +0100
+        id 1gBiMB-0004cD-W5; Sun, 14 Oct 2018 16:31:04 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLP-0000DN-7R; Sun, 14 Oct 2018 16:30:15 +0100
+        id 1gBiLQ-0000FR-2U; Sun, 14 Oct 2018 16:30:16 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Guenter Roeck" <linux@roeck-us.net>
+CC:     akpm@linux-foundation.org, "David Sterba" <dsterba@suse.com>,
+        "Filipe Manana" <fdmanana@suse.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.726227510@decadent.org.uk>
+Message-ID: <lsq.1539530741.195468558@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 060/366] hwmon: (nct6775) Fix writing pwmX_mode
+Subject: [PATCH 3.16 083/366] Btrfs: fix copy_items() return value when
+ logging an inode
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,61 +57,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 415eb2a1aaa4881cf85bd86c683356fdd8094a23 upstream.
+commit 8434ec46c6e3232cebc25a910363b29f5c617820 upstream.
 
-pwmX_mode is defined in the ABI as 0=DC mode, 1=pwm mode. The chip
-register bit is set to 1 for DC mode. This got mixed up, and writing
-1 into pwmX_mode resulted in DC mode enabled. Fix it up by using
-the ABI definition throughout the driver for consistency.
+When logging an inode, at tree-log.c:copy_items(), if we call
+btrfs_next_leaf() at the loop which checks for the need to log holes, we
+need to make sure copy_items() returns the value 1 to its caller and
+not 0 (on success). This is because the path the caller passed was
+released and is now different from what is was before, and the caller
+expects a return value of 0 to mean both success and that the path
+has not changed, while a return value of 1 means both success and
+signals the caller that it can not reuse the path, it has to perform
+another tree search.
 
-Fixes: 77eb5b3703d99 ("hwmon: (nct6775) Add support for pwm, pwm_mode, ... ")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Even though this is a case that should not be triggered on normal
+circumstances or very rare at least, its consequences can be very
+unpredictable (especially when replaying a log tree).
+
+Fixes: 16e7549f045d ("Btrfs: incompatible format change to remove hole extents")
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/hwmon/nct6775.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ fs/btrfs/tree-log.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/hwmon/nct6775.c
-+++ b/drivers/hwmon/nct6775.c
-@@ -1287,7 +1287,7 @@ static void nct6775_update_pwm(struct de
- 		duty_is_dc = data->REG_PWM_MODE[i] &&
- 		  (nct6775_read_value(data, data->REG_PWM_MODE[i])
- 		   & data->PWM_MODE_MASK[i]);
--		data->pwm_mode[i] = duty_is_dc;
-+		data->pwm_mode[i] = !duty_is_dc;
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3524,6 +3524,7 @@ fill_holes:
+ 			ASSERT(ret == 0);
+ 			src = src_path->nodes[0];
+ 			i = 0;
++			need_find_last_extent = true;
+ 		}
  
- 		fanmodecfg = nct6775_read_value(data, data->REG_FAN_MODE[i]);
- 		for (j = 0; j < ARRAY_SIZE(data->REG_PWM); j++) {
-@@ -2146,7 +2146,7 @@ show_pwm_mode(struct device *dev, struct
- 	struct nct6775_data *data = nct6775_update_device(dev);
- 	struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
- 
--	return sprintf(buf, "%d\n", !data->pwm_mode[sattr->index]);
-+	return sprintf(buf, "%d\n", data->pwm_mode[sattr->index]);
- }
- 
- static ssize_t
-@@ -2167,9 +2167,9 @@ store_pwm_mode(struct device *dev, struc
- 	if (val > 1)
- 		return -EINVAL;
- 
--	/* Setting DC mode is not supported for all chips/channels */
-+	/* Setting DC mode (0) is not supported for all chips/channels */
- 	if (data->REG_PWM_MODE[nr] == 0) {
--		if (val)
-+		if (!val)
- 			return -EINVAL;
- 		return count;
- 	}
-@@ -2178,7 +2178,7 @@ store_pwm_mode(struct device *dev, struc
- 	data->pwm_mode[nr] = val;
- 	reg = nct6775_read_value(data, data->REG_PWM_MODE[nr]);
- 	reg &= ~data->PWM_MODE_MASK[nr];
--	if (val)
-+	if (!val)
- 		reg |= data->PWM_MODE_MASK[nr];
- 	nct6775_write_value(data, data->REG_PWM_MODE[nr], reg);
- 	mutex_unlock(&data->update_lock);
+ 		btrfs_item_key_to_cpu(src, &key, i);
 
