@@ -6,41 +6,39 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72781C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 22:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1DFC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 22:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F16520645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 22:30:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F16520645
+	by mail.kernel.org (Postfix) with ESMTP id 367BC20835
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 22:33:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367BC20835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbeJOGMn (ORCPT
+        id S1726477AbeJOGPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 02:12:43 -0400
-Received: from sauhun.de ([88.99.104.3]:38412 "EHLO pokefinder.org"
+        Mon, 15 Oct 2018 02:15:42 -0400
+Received: from sauhun.de ([88.99.104.3]:38450 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726250AbeJOGMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 02:12:43 -0400
+        id S1726262AbeJOGPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 02:15:42 -0400
 Received: from localhost (p54B33E30.dip0.t-ipconnect.de [84.179.62.48])
-        by pokefinder.org (Postfix) with ESMTPSA id 8E57F2C786F;
-        Mon, 15 Oct 2018 00:30:12 +0200 (CEST)
-Date:   Mon, 15 Oct 2018 00:30:12 +0200
+        by pokefinder.org (Postfix) with ESMTPSA id 9DD5F2C786F;
+        Mon, 15 Oct 2018 00:33:11 +0200 (CEST)
+Date:   Mon, 15 Oct 2018 00:33:11 +0200
 From:   Wolfram Sang <wsa@the-dreams.de>
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] mmc: tmio: remove confusing
- TMIO_MMC_HAVE_HIGH_REG flag
-Message-ID: <20181014223011.GD3260@kunai>
-References: <1539143492-32605-1-git-send-email-yamada.masahiro@socionext.com>
+Cc:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] mmc: uniphier-sd: two bug-fixes
+Message-ID: <20181014223311.GE3260@kunai>
+References: <1539356258-12374-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="76DTJ5CE0DCVQemd"
+        protocol="application/pgp-signature"; boundary="KlAEzMkarCnErv5Q"
 Content-Disposition: inline
-In-Reply-To: <1539143492-32605-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1539356258-12374-1-git-send-email-yamada.masahiro@socionext.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -48,43 +46,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---76DTJ5CE0DCVQemd
+--KlAEzMkarCnErv5Q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Oct 10, 2018 at 12:51:30PM +0900, Masahiro Yamada wrote:
-> CTL_SDIO_REGS is a register specific to tmio_mmc.c
->=20
-> Currently, we handle it in tmio_mmc_core.c, hence need
-> TMIO_MMC_HAVE_HIGH_REG flag to prevent the other platforms
-> from accessing to it.
->=20
-> We can just move CTL_SDIO_REGS to tmio_mmc.c
-> and delete the confusing TMIO_MMC_HAVE_HIGH_REG flag.
-
-Looks good, thanks! Ulf, please give me Monday to test the changes on
-some more devices...
 
 
---76DTJ5CE0DCVQemd
+> In further testing in uniphier-sd.c,
+> I found my stupid mistakes.
+
+I don't have the uniphier HW but I still had a look at these patches.
+You never know if there is something interesting for SDHI in there :)
+
+> Can you squash this series into
+> 3fd784f745dd
+> "mmc: uniphier-sd: add UniPhier SD/eMMC controller driver"
+> if you have a chance to do rebase?
+
+Please don't rebase! We actually develop on top of mmc/next and rebasing
+creates a lot of pain because we lose the base for that work.
+
+
+--KlAEzMkarCnErv5Q
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvDw3MACgkQFA3kzBSg
-KbZLfQ/5Af4/pUZqW/1cDPQlI5MGOgP5r7qOdRItI0JWBkRYEJbxo/3RJDRCki78
-CA9tiz0wUQoWYOrNrgQcPXb7wX68ph8yu7v9upuEZiY6/u8t1k/ez2aSIrZ4nY8g
-s0ePf8txDjTYDYfsMaUsm1G8OvuH1TnCp/NOkBo+FxUtxwCq4vpBQzi0mfYyq0hs
-B8gwzuR8Q8oqCpmttvlnfgW08Odo6UNGNgGLcKSL1I21GtGAawuFDChzkJALKdi2
-WUnaMRaULXFMhvdv7UzxzAcd8ES6HaPKWUlXw6LEnvLWMtM7XYDLSC4ev8mERSAu
-Yd4VxNw8D8QdSbiHsbR5TAFhYB5MTwwVIVrNrNurZyom0ftBE8+s0nZ8v4HFGixS
-r6qYNCvQvRyArsLwmZ2eMthEw7DR6d73aDlKm/4gROwbuuKXlR3kwZU9jqCrS+/6
-dIZUapbH0r8xfQaYqFZrGPhYfWKjr8i2sEzcLzU0IWMT+75E03w9UOkMLJgfHonX
-3kA15Mkuqii+D3CmT7d/mvxRZSSwiYjQMzZEbGYlNzn2aoU7PLjGeEjkMY6bvNDI
-KNRGu1eEltAdQHltfGeMLUJwN7NEPRWhFv2Alv9/nvQmzfY6bwucum6rbBP0AGOr
-H2lvrrdf9AZQJvl4jZUXAThOwSCzVOJ6qjr9Ns0Wp7ujfuwl6x0=
-=XJV3
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvDxCYACgkQFA3kzBSg
+KbZz3w/8C+AjQKdK8RwipxwPj7yxXCIEz1arXMXn/FhWTo4KwFI0bwESKdFGDcrr
+edcGkc7Eqj52t6Fs9onpc+mbOUfaMWhBIqHUJ5EJz4RMKhPVFFWgZDm+5nNCduJn
+bCb+Z+g91ww6APySwxDxeE/PVUDbVa6X7inSDAaJUmdnWzl4EDjHPB9pKRLqNxEM
+UMo8QQEyYFCvgfh5EDaQW5DYb8UpSHfcGQyCpDH9041V1E6ouQhVjuoMAzIU8Co0
+qB2zV2+TcIDZXX5hHUfYoNwubWXQNJ8QPqhFzMutfZc9DItL3F92K4sht84HUZ2h
+n0KHVvt0mkdsQ3rLKUuCatXdQONGxiMH5rTzmdK6+U5V6nb4F9cxL+eYs0C2mdDP
+7Vdiuuh64D/d4nos5BQsrVrlDeMQ3vsIXTOOtaPa5PhmHp31JdrWn9ZbiiysdTaU
+jaFcksIhMwWTV+EQ1bH5WEeNkUmKij40/5XFgboYrbNSobJdEqNo8P3qqhIfJrew
+2nhhB03501bg0ph2Wh+rRBXLb+rWxqRRhXXJyFi0xO2qyjqtdA1UJjrofFKewbuv
+Z3eIWKHfJ5yfibeJ5YKWdQ1LG9WIm4Gl37w3E5J6/jyAcZklTmEaTGOBaiT1uxlw
+O/iLkAQQyZETT+dN5u3eC/6NW0MiXUNTO/1mZObCHC1surmEXo4=
+=pbql
 -----END PGP SIGNATURE-----
 
---76DTJ5CE0DCVQemd--
+--KlAEzMkarCnErv5Q--
