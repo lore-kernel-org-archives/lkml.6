@@ -2,76 +2,106 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318D4C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE9BC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC71620659
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:30:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC71620659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 8FE7B2086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:33:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7B8gieX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE7B2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbeJOEMg (ORCPT
+        id S1726417AbeJOEPi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 00:12:36 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:50666 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725722AbeJOEMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 00:12:35 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 3eSO2nYBWR-m; Sun, 14 Oct 2018 22:30:23 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BDC0500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A2B831EC0987;
-        Sun, 14 Oct 2018 22:30:23 +0200 (CEST)
-Date:   Sun, 14 Oct 2018 22:30:22 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Uros Bizjak <ubizjak@gmail.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86: Use assembly instruction mnemonics instead of
- .byte streams in arch_hweight.h
-Message-ID: <20181014203022.GF7667@zn.tnic>
-References: <20181014202354.21281-1-ubizjak@gmail.com>
+        Mon, 15 Oct 2018 00:15:38 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40025 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbeJOEPh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 00:15:37 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n31-v6so8143064pgm.7;
+        Sun, 14 Oct 2018 13:33:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Qq7E9tZIOUP66Jct/ZaNP10oZaz1YOnIRdk4bc4qiiA=;
+        b=g7B8gieX2Vf6VToQWbpPRDPPwLAU4/AMfLYXkbMVZERJ0uXgeTq5oEFryApgg/vbx5
+         hADhxiph/6ZK1ZAMERIDMWpMt6HnUDXDTp0FADhjg0m+JnR3I0JH1Sor0b8s5qWKrvN5
+         /dH+FFkQq5FwaAz92ijswKw24M9UFbUOcXG91zswc4RS0vIi6lNV97RFUtm1cKqZp7UF
+         BvhLr+qbQ80fse+AhamGu5RDvxtPjcn4EiUt7vd7g2aeR7vDhwlJMLvFYXp2nvB12tW+
+         xWIMxZFqfHo80umkSOLDRG6TNEfGVOUD2fO9DK19XAbf1AUZc4pU2cqffjpW/Ljas9i1
+         n/Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Qq7E9tZIOUP66Jct/ZaNP10oZaz1YOnIRdk4bc4qiiA=;
+        b=NUADuFHCwmRfeyU+sWVD3L3ZWVS5+sj/n7Xq7ODQhlFZMfZp/n+2MU4/qrJwHUY0jG
+         +iQ6lUWAmM6Z7QRy2rjJR5D3f8cGPTJCWq9z6aWb1UgdPxFhBxfBnSu0dET+h92vjh/V
+         d1rUvT4CDVbFL/poRYzyA5i2TWe+L72qLOLEfVSyrcdxiiMStolKD1hhjxvndiUT8U7K
+         6QWmtu/VdVVSL32RaBESvsOhLOkDpnqgdw7VrYWGEDfC8i1sioAYOvcRMsVphmftcTdV
+         skzckCfXZIvaf+pA3bEztaHpF/vbZkANQi5/SCUqyiN+liWxOla0WlfZtOOKKQ8iiZmV
+         7xZA==
+X-Gm-Message-State: ABuFfojaT9sAESiJ2A0RJTX9I2UhXm12dHbCmynwvFwoInS8pgLEeOJs
+        7zWrk5ia/Ux8gXBWyHhknRwMNvfUPts=
+X-Google-Smtp-Source: ACcGV63+fEypMnDnCIgA1u2374PoIz6rJKtP4MQvlR6448OvGJkPMsQMGDp6TfIDFB/ZJfu9IINhvA==
+X-Received: by 2002:a62:6c48:: with SMTP id h69-v6mr14671697pfc.61.1539549205557;
+        Sun, 14 Oct 2018 13:33:25 -0700 (PDT)
+Received: from ?IPv6:2001:df0:0:200c:9c82:66af:8a08:b31e? ([2001:df0:0:200c:9c82:66af:8a08:b31e])
+        by smtp.gmail.com with ESMTPSA id s80-v6sm12049583pfa.114.2018.10.14.13.33.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 14 Oct 2018 13:33:24 -0700 (PDT)
+Subject: Re: [PATCH v2 3/6] esp_scsi: Grant disconnect privilege for untagged
+ commands
+To:     Christoph Hellwig <hch@infradead.org>,
+        Finn Thain <fthain@telegraphics.com.au>
+Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+References: <cover.1539497520.git.fthain@telegraphics.com.au>
+ <91b9ff9fc19ba40e3a2562171c8cd78a2ce7dc79.1539497520.git.fthain@telegraphics.com.au>
+ <20181014154753.GA19252@infradead.org>
+From:   Michael Schmitz <schmitzmic@gmail.com>
+Message-ID: <4719e984-2c7e-33e1-6e7c-16dea5d4f610@gmail.com>
+Date:   Mon, 15 Oct 2018 09:33:19 +1300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181014202354.21281-1-ubizjak@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181014154753.GA19252@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 14, 2018 at 10:23:54PM +0200, Uros Bizjak wrote:
-> Recently the minimum required version of binutils was changed to 2.20,
-> which supports popcnt instruction mnemonics. The patch removes
-> corresponding #defines that implement popcnt instructions using target-dependant
-> .byte streams and uses unified instruction mnemonics instead.
-> 
-> Tested by building x86_64 and i386 version of the kernel and comparing
-> objdump dumps of the pathced and unpatched vmlinux.o. They were the same.
-> 
-> v2: Update commit message to emphasize removal of #defines.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> ---
->  arch/x86/include/asm/arch_hweight.h | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
+On 15/10/18 04:47, Christoph Hellwig wrote:
 
-Thanks.
+>> +	*p++ = IDENTIFY(lp && (tp->flags & ESP_TGT_DISCONNECT), lun);
+> I think lp should always be non-NULL here.
 
-But with one week before the merge window and this being not nearly
-urgent, it'll have to wait for after the merge window.
+That indeed appears to be the case these days.
 
--- 
-Regards/Gruss,
-    Boris.
+So we can't rely on !lp to detect when probing the bus any longer. What 
+else would be available? Do commands used for device probing also have a 
+tag these days by default?
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Do we really need to make that distinction?
+
+Cheers,
+
+     Michael
+
+
+
