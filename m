@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB45C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 244F0C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3FEC20645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3FEC20645
+	by mail.kernel.org (Postfix) with ESMTP id EB16120835
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB16120835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbeJNXst (ORCPT
+        id S1726713AbeJNXLj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:48:49 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35570 "EHLO
+        Sun, 14 Oct 2018 19:11:39 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35562 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726425AbeJNXLj (ORCPT
+        by vger.kernel.org with ESMTP id S1726316AbeJNXLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:39 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLS-0004cf-KY; Sun, 14 Oct 2018 16:30:18 +0100
+        id 1gBiLS-0004cJ-Fa; Sun, 14 Oct 2018 16:30:18 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLN-00009O-DX; Sun, 14 Oct 2018 16:30:13 +0100
+        id 1gBiLN-00008p-74; Sun, 14 Oct 2018 16:30:13 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>
+CC:     akpm@linux-foundation.org, "Mark Brown" <broonie@kernel.org>
 Date:   Sun, 14 Oct 2018 16:25:40 +0100
-Message-ID: <lsq.1539530740.688526938@decadent.org.uk>
+Message-ID: <lsq.1539530740.393051976@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 013/366] jbd2: if the journal is aborted then don't
- allow update of the log tail
+Subject: [PATCH 3.16 006/366] regmap: Support bulk reads for devices
+ without raw formatting
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,38 +56,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Mark Brown <broonie@kernel.org>
 
-commit 85e0c4e89c1b864e763c4e3bb15d0b6d501ad5d9 upstream.
+commit d5b98eb12420ce856caaf57dc5256eedc56a3747 upstream.
 
-This updates the jbd2 superblock unnecessarily, and on an abort we
-shouldn't truncate the log.
+When doing a bulk read from a device which lacks raw I/O support we fall
+back to doing register at a time reads but we still use the raw
+formatters in order to render the data into the word size used by the
+device (since bulk reads still operate on the device word size rather
+than unsigned ints).  This means that devices without raw formatting
+such as those that provide reg_read() are not supported.  Provide
+handling for them by copying the values read into native endian values
+of the appropriate size.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/jbd2/journal.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/base/regmap/regmap.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -923,7 +923,7 @@ out:
- }
- 
- /*
-- * This is a variaon of __jbd2_update_log_tail which checks for validity of
-+ * This is a variation of __jbd2_update_log_tail which checks for validity of
-  * provided log tail and locks j_checkpoint_mutex. So it is safe against races
-  * with other threads updating log tail.
-  */
-@@ -1399,6 +1399,9 @@ int jbd2_journal_update_sb_log_tail(jour
- 	journal_superblock_t *sb = journal->j_superblock;
- 	int ret;
- 
-+	if (is_journal_aborted(journal))
-+		return -EIO;
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -2246,7 +2246,34 @@ int regmap_bulk_read(struct regmap *map,
+ 					  &ival);
+ 			if (ret != 0)
+ 				return ret;
+-			map->format.format_val(val + (i * val_bytes), ival, 0);
 +
- 	BUG_ON(!mutex_is_locked(&journal->j_checkpoint_mutex));
- 	jbd_debug(1, "JBD2: updating superblock (start %lu, seq %u)\n",
- 		  tail_block, tail_tid);
++			if (map->format.format_val) {
++				map->format.format_val(val + (i * val_bytes), ival, 0);
++			} else {
++				/* Devices providing read and write
++				 * operations can use the bulk I/O
++				 * functions if they define a val_bytes,
++				 * we assume that the values are native
++				 * endian.
++				 */
++				u32 *u32 = val;
++				u16 *u16 = val;
++				u8 *u8 = val;
++
++				switch (map->format.val_bytes) {
++				case 4:
++					u32[i] = ival;
++					break;
++				case 2:
++					u16[i] = ival;
++					break;
++				case 1:
++					u8[i] = ival;
++					break;
++				default:
++					return -EINVAL;
++				}
++			}
+ 		}
+ 	}
+ 
 
