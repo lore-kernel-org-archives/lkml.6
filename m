@@ -2,104 +2,95 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE77C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5903C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D519B20659
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:25:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D519B20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6906C20659
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6906C20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kleine-koenig.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbeJOEHO (ORCPT
+        id S1726298AbeJOEKX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 00:07:14 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36473 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725722AbeJOEHO (ORCPT
+        Mon, 15 Oct 2018 00:10:23 -0400
+Received: from antares.kleine-koenig.org ([94.130.110.236]:33750 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725722AbeJOEKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 00:07:14 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gBmwd-0001ag-1m; Sun, 14 Oct 2018 22:24:59 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gBmwb-0002ny-4g; Sun, 14 Oct 2018 22:24:57 +0200
-Date:   Sun, 14 Oct 2018 22:24:57 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 15 Oct 2018 00:10:23 -0400
+Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
+        id 41D26414091; Sun, 14 Oct 2018 22:28:10 +0200 (CEST)
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alessandro Rubini <rubini@gnudd.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-kernel@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>
-Subject: Re: =?iso-8859-1?B?W1JDRqBQQVRDSCx2Miwy?= =?iso-8859-1?B?LzJd?= pwm:
- imx: Configure output to GPIO in disabled state
-Message-ID: <20181014202457.dohwgz3frgcpdpy6@pengutronix.de>
-References: <1539163920-9442-3-git-send-email-michal.vokac@ysoft.com>
- <20181012085720.GA9451@taurus.defre.kleine-koenig.org>
- <fa96ae2a-c2cc-b47a-1198-5daffa7c865f@ysoft.com>
- <20181012160854.hmgpokxgsrqdzobx@pengutronix.de>
+        =?UTF-8?q?Vok=C3=A1=C4=8D=20Michal?= <Michal.Vokac@ysoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kernel@pengutronix.de
+Subject: [PATCH RFC] err.h: document that PTR_ERR should only be used if IS_ERR returns true
+Date:   Sun, 14 Oct 2018 22:28:07 +0200
+Message-Id: <20181014202807.16412-1-uwe@kleine-koenig.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181012160854.hmgpokxgsrqdzobx@pengutronix.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I have no idea about the rationale, but that's what LDD3 recommends.
+
+Signed-off-by: Uwe Kleine-KÃ¶nig <uwe@kleine-koenig.org>
+---
 Hello,
 
-On Fri, Oct 12, 2018 at 06:08:54PM +0200, Uwe Kleine-König wrote:
-> > >> +	if (PTR_ERR(imx_chip->pwm_gpiod) == -EPROBE_DEFER) {
-> > > 
-> > > You must not use PTR_ERR on a value that might not contain an error
-> > > pointer.
-> > 
-> > OK, thank you for valuable info.
-> > So it seems like the I2C folks are in troubles as well:
-> > 
-> > 	https://elixir.bootlin.com/linux/latest/source/drivers/i2c/busses/i2c-imx.c#L996
-> 
-> correct. I cannot find this documented though.
+during a review I claimed that PTR_ERR should only be used if IS_ERR was
+already checked. The rationale isn't obvious though and Thierry
+suggested to keep the code as is and not introduce an IS_ERR check.
 
-I found in LDD3[1], chapter 11 on page 295:
+I found in Linux Device Drivers 3[1]:
 
-	If you need the actual error code, it can be extracted with:
+	You should use PTR_ERR only on a value for which IS_ERR returns
+	a true value; any other value is a valid pointer
 
-		long PTR_ERR(const void *ptr);
+I wonder if there is a relevant reason that LDD3 suggests to check
+IS_ERR first, maybe something like "On an Alpha it is important because
+not doing it results in a bus error there." There are no details
+mentioned there however. If there is a reason, this patch should be
+adapted such that the comment includes it.
 
-	You should use PTR_ERR only on a value for which IS_ERR returns a true
-	value; any other value is a valid pointer.
-
-That is probably where I have my claim from. There is no further
-explanation though, so I'll post a patch adding a comment to the
-definition of PTR_ERR to find out if there is a relevant reason.
+Any ideas?
 
 Best regards
 Uwe
 
-[1] https://lwn.net/Kernel/LDD3/
+[1] https://static.lwn.net/images/pdf/LDD3/ch11.pdf, on page 295
 
+ include/linux/err.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/linux/err.h b/include/linux/err.h
+index 87be24350e91..8f052983108e 100644
+--- a/include/linux/err.h
++++ b/include/linux/err.h
+@@ -26,6 +26,9 @@ static inline void * __must_check ERR_PTR(long error)
+ 	return (void *) error;
+ }
+ 
++/*
++ * You should use PTR_ERR only on a value for which IS_ERR returns a true value.
++ */
+ static inline long __must_check PTR_ERR(__force const void *ptr)
+ {
+ 	return (long) ptr;
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.19.1
+
