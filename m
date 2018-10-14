@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 249DEC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041D0C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB9F520645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:56:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB9F520645
+	by mail.kernel.org (Postfix) with ESMTP id CB7952077C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:56:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB7952077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729028AbeJNXiO (ORCPT
+        id S1729178AbeJNXiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:38:14 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35967 "EHLO
+        Sun, 14 Oct 2018 19:38:21 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37563 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727563AbeJNXLw (ORCPT
+        by vger.kernel.org with ESMTP id S1727563AbeJNXiU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:11:52 -0400
+        Sun, 14 Oct 2018 19:38:20 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLf-0004cI-Vg; Sun, 14 Oct 2018 16:30:32 +0100
+        id 1gBiMC-0004cA-3f; Sun, 14 Oct 2018 16:31:04 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLb-0000kf-3b; Sun, 14 Oct 2018 16:30:27 +0100
+        id 1gBiLP-0000Eo-SV; Sun, 14 Oct 2018 16:30:15 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Guillaume Nault" <g.nault@alphalink.fr>,
-        "Sedat Dilek" <sedat.dilek@gmail.com>
+CC:     akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Nicholas Piggin" <npiggin@gmail.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.654497342@decadent.org.uk>
+Message-ID: <lsq.1539530741.246750560@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 350/366] ppp: fix lockdep splat in ppp_dev_uninit()
+Subject: [PATCH 3.16 077/366] powerpc/64: Fix smp_wmb barrier definition
+ use use lwsync consistently
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,103 +57,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guillaume Nault <g.nault@alphalink.fr>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 58a89ecaca53736aa465170530acea4f8be34ab4 upstream.
+commit 0bfdf598900fd62869659f360d3387ed80eb71cf upstream.
 
-ppp_dev_uninit() locks all_ppp_mutex while under rtnl mutex protection.
-ppp_create_interface() must then lock these mutexes in that same order
-to avoid possible deadlock.
+asm/barrier.h is not always included after asm/synch.h, which meant
+it was missing __SUBARCH_HAS_LWSYNC, so in some files smp_wmb() would
+be eieio when it should be lwsync. kernel/time/hrtimer.c is one case.
 
-[  120.880011] ======================================================
-[  120.880011] [ INFO: possible circular locking dependency detected ]
-[  120.880011] 4.2.0 #1 Not tainted
-[  120.880011] -------------------------------------------------------
-[  120.880011] ppp-apitest/15827 is trying to acquire lock:
-[  120.880011]  (&pn->all_ppp_mutex){+.+.+.}, at: [<ffffffffa0145f56>] ppp_dev_uninit+0x64/0xb0 [ppp_generic]
-[  120.880011]
-[  120.880011] but task is already holding lock:
-[  120.880011]  (rtnl_mutex){+.+.+.}, at: [<ffffffff812e4255>] rtnl_lock+0x12/0x14
-[  120.880011]
-[  120.880011] which lock already depends on the new lock.
-[  120.880011]
-[  120.880011]
-[  120.880011] the existing dependency chain (in reverse order) is:
-[  120.880011]
-[  120.880011] -> #1 (rtnl_mutex){+.+.+.}:
-[  120.880011]        [<ffffffff81073a6f>] lock_acquire+0xcf/0x10e
-[  120.880011]        [<ffffffff813ab18a>] mutex_lock_nested+0x56/0x341
-[  120.880011]        [<ffffffff812e4255>] rtnl_lock+0x12/0x14
-[  120.880011]        [<ffffffff812d9d94>] register_netdev+0x11/0x27
-[  120.880011]        [<ffffffffa0147b17>] ppp_ioctl+0x289/0xc98 [ppp_generic]
-[  120.880011]        [<ffffffff8113b367>] do_vfs_ioctl+0x4ea/0x532
-[  120.880011]        [<ffffffff8113b3fd>] SyS_ioctl+0x4e/0x7d
-[  120.880011]        [<ffffffff813ad7d7>] entry_SYSCALL_64_fastpath+0x12/0x6f
-[  120.880011]
-[  120.880011] -> #0 (&pn->all_ppp_mutex){+.+.+.}:
-[  120.880011]        [<ffffffff8107334e>] __lock_acquire+0xb07/0xe76
-[  120.880011]        [<ffffffff81073a6f>] lock_acquire+0xcf/0x10e
-[  120.880011]        [<ffffffff813ab18a>] mutex_lock_nested+0x56/0x341
-[  120.880011]        [<ffffffffa0145f56>] ppp_dev_uninit+0x64/0xb0 [ppp_generic]
-[  120.880011]        [<ffffffff812d5263>] rollback_registered_many+0x19e/0x252
-[  120.880011]        [<ffffffff812d5381>] rollback_registered+0x29/0x38
-[  120.880011]        [<ffffffff812d53fa>] unregister_netdevice_queue+0x6a/0x77
-[  120.880011]        [<ffffffffa0146a94>] ppp_release+0x42/0x79 [ppp_generic]
-[  120.880011]        [<ffffffff8112d9f6>] __fput+0xec/0x192
-[  120.880011]        [<ffffffff8112dacc>] ____fput+0x9/0xb
-[  120.880011]        [<ffffffff8105447a>] task_work_run+0x66/0x80
-[  120.880011]        [<ffffffff81001801>] prepare_exit_to_usermode+0x8c/0xa7
-[  120.880011]        [<ffffffff81001900>] syscall_return_slowpath+0xe4/0x104
-[  120.880011]        [<ffffffff813ad931>] int_ret_from_sys_call+0x25/0x9f
-[  120.880011]
-[  120.880011] other info that might help us debug this:
-[  120.880011]
-[  120.880011]  Possible unsafe locking scenario:
-[  120.880011]
-[  120.880011]        CPU0                    CPU1
-[  120.880011]        ----                    ----
-[  120.880011]   lock(rtnl_mutex);
-[  120.880011]                                lock(&pn->all_ppp_mutex);
-[  120.880011]                                lock(rtnl_mutex);
-[  120.880011]   lock(&pn->all_ppp_mutex);
-[  120.880011]
-[  120.880011]  *** DEADLOCK ***
+__SUBARCH_HAS_LWSYNC is only used in one place, so just fold it in
+to where it's used. Previously with my small simulator config, 377
+instances of eieio in the tree. After this patch there are 55.
 
-Fixes: 8cb775bc0a34 ("ppp: fix device unregistration upon netns deletion")
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 46d075be585e ("powerpc: Optimise smp_wmb")
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ppp/ppp_generic.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/powerpc/include/asm/barrier.h | 3 ++-
+ arch/powerpc/include/asm/synch.h   | 4 ----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -2736,6 +2736,7 @@ static struct ppp *ppp_create_interface(
- 	 */
- 	dev_net_set(dev, net);
+--- a/arch/powerpc/include/asm/barrier.h
++++ b/arch/powerpc/include/asm/barrier.h
+@@ -39,7 +39,8 @@
  
-+	rtnl_lock();
- 	mutex_lock(&pn->all_ppp_mutex);
+ #ifdef CONFIG_SMP
  
- 	if (unit < 0) {
-@@ -2766,7 +2767,7 @@ static struct ppp *ppp_create_interface(
- 	ppp->file.index = unit;
- 	sprintf(dev->name, "ppp%d", unit);
+-#ifdef __SUBARCH_HAS_LWSYNC
++/* The sub-arch has lwsync */
++#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
+ #    define SMPWMB      LWSYNC
+ #else
+ #    define SMPWMB      eieio
+--- a/arch/powerpc/include/asm/synch.h
++++ b/arch/powerpc/include/asm/synch.h
+@@ -5,10 +5,6 @@
+ #include <linux/stringify.h>
+ #include <asm/feature-fixups.h>
  
--	ret = register_netdev(dev);
-+	ret = register_netdevice(dev);
- 	if (ret != 0) {
- 		unit_put(&pn->units_idr, unit);
- 		netdev_err(ppp->dev, "PPP: couldn't register device %s (%d)\n",
-@@ -2778,6 +2779,7 @@ static struct ppp *ppp_create_interface(
- 
- 	atomic_inc(&ppp_unit_count);
- 	mutex_unlock(&pn->all_ppp_mutex);
-+	rtnl_unlock();
- 
- 	*retp = 0;
- 	return ppp;
+-#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
+-#define __SUBARCH_HAS_LWSYNC
+-#endif
+-
+ #ifndef __ASSEMBLY__
+ extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
+ extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
 
