@@ -2,35 +2,35 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C470BC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4934C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95F8220835
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95F8220835
+	by mail.kernel.org (Postfix) with ESMTP id 829BE20835
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:32:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 829BE20835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728494AbeJNXNM (ORCPT
+        id S1728513AbeJNXNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:13:12 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36404 "EHLO
+        Sun, 14 Oct 2018 19:13:18 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36406 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728259AbeJNXMH (ORCPT
+        by vger.kernel.org with ESMTP id S1728261AbeJNXMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:12:07 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLu-0004cJ-8Q; Sun, 14 Oct 2018 16:30:46 +0100
+        id 1gBiLu-0004cS-5v; Sun, 14 Oct 2018 16:30:46 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLW-0000UC-Cp; Sun, 14 Oct 2018 16:30:22 +0100
+        id 1gBiLW-0000UM-Fi; Sun, 14 Oct 2018 16:30:22 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -39,13 +39,12 @@ From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
         "Steve Wise" <swise@opengridcomputing.com>,
-        "Raju Rangoju" <rajur@chelsio.com>,
+        "Bharat Potnuri" <bharat@chelsio.com>,
         "Doug Ledford" <dledford@redhat.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.430864709@decadent.org.uk>
+Message-ID: <lsq.1539530741.730857965@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 240/366] RDMA/cxgb4: release hw resources on device
- removal
+Subject: [PATCH 3.16 242/366] iw_cxgb4: Atomically flush per QP HW CQEs
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,142 +58,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Raju Rangoju <rajur@chelsio.com>
+From: Bharat Potnuri <bharat@chelsio.com>
 
-commit 26bff1bd74a4f7417509a83295614e9dab995b2a upstream.
+commit 2df19e19ae90d94fd8724083f161f368a2797537 upstream.
 
-The c4iw_rdev_close() logic was not releasing all the hw
-resources (PBL and RQT memory) during the device removal
-event (driver unload / system reboot). This can cause panic
-in gen_pool_destroy().
+When a CQ is shared by multiple QPs, c4iw_flush_hw_cq() needs to acquire
+corresponding QP lock before moving the CQEs into its corresponding SW
+queue and accessing the SQ contents for completing a WR.
+Ignore CQEs if corresponding QP is already flushed.
 
-The module remove function will wait for all the hw
-resources to be released during the device removal event.
-
-Fixes c12a67fe(iw_cxgb4: free EQ queue memory on last deref)
-Signed-off-by: Raju Rangoju <rajur@chelsio.com>
+Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
 Reviewed-by: Steve Wise <swise@opengridcomputing.com>
 Signed-off-by: Doug Ledford <dledford@redhat.com>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/infiniband/hw/cxgb4/device.c
-+++ b/drivers/infiniband/hw/cxgb4/device.c
-@@ -698,6 +698,12 @@ static int c4iw_rdev_open(struct c4iw_rd
- 		goto err4;
+ drivers/infiniband/hw/cxgb4/cq.c       | 11 ++++++++++-
+ drivers/infiniband/hw/cxgb4/iw_cxgb4.h |  2 +-
+ drivers/infiniband/hw/cxgb4/qp.c       |  4 ++--
+ 3 files changed, 13 insertions(+), 4 deletions(-)
+
+--- a/drivers/infiniband/hw/cxgb4/cq.c
++++ b/drivers/infiniband/hw/cxgb4/cq.c
+@@ -331,7 +331,7 @@ static void advance_oldest_read(struct t
+  * Deal with out-of-order and/or completions that complete
+  * prior unsignalled WRs.
+  */
+-void c4iw_flush_hw_cq(struct c4iw_cq *chp)
++void c4iw_flush_hw_cq(struct c4iw_cq *chp, struct c4iw_qp *flush_qhp)
+ {
+ 	struct t4_cqe *hw_cqe, *swcqe, read_cqe;
+ 	struct c4iw_qp *qhp;
+@@ -355,6 +355,13 @@ void c4iw_flush_hw_cq(struct c4iw_cq *ch
+ 		if (qhp == NULL)
+ 			goto next_cqe;
+ 
++		if (flush_qhp != qhp) {
++			spin_lock(&qhp->lock);
++
++			if (qhp->wq.flushed == 1)
++				goto next_cqe;
++		}
++
+ 		if (CQE_OPCODE(hw_cqe) == FW_RI_TERMINATE)
+ 			goto next_cqe;
+ 
+@@ -406,6 +413,8 @@ void c4iw_flush_hw_cq(struct c4iw_cq *ch
+ next_cqe:
+ 		t4_hwcq_consume(&chp->cq);
+ 		ret = t4_next_hw_cqe(&chp->cq, &hw_cqe);
++		if (qhp && flush_qhp != qhp)
++			spin_unlock(&qhp->lock);
  	}
- 	rdev->status_page->db_off = 0;
-+
-+	init_completion(&rdev->rqt_compl);
-+	init_completion(&rdev->pbl_compl);
-+	kref_init(&rdev->rqt_kref);
-+	kref_init(&rdev->pbl_kref);
-+
- 	return 0;
- err4:
- 	c4iw_rqtpool_destroy(rdev);
-@@ -714,6 +720,8 @@ static void c4iw_rdev_close(struct c4iw_
- 	free_page((unsigned long)rdev->status_page);
- 	c4iw_pblpool_destroy(rdev);
- 	c4iw_rqtpool_destroy(rdev);
-+	wait_for_completion(&rdev->pbl_compl);
-+	wait_for_completion(&rdev->rqt_compl);
- 	c4iw_destroy_resource(&rdev->resource);
  }
  
 --- a/drivers/infiniband/hw/cxgb4/iw_cxgb4.h
 +++ b/drivers/infiniband/hw/cxgb4/iw_cxgb4.h
-@@ -157,6 +157,10 @@ struct c4iw_rdev {
- 	void __iomem *oc_mw_kva;
- 	struct c4iw_stats stats;
- 	struct t4_dev_status_page *status_page;
-+	struct completion rqt_compl;
-+	struct completion pbl_compl;
-+	struct kref rqt_kref;
-+	struct kref pbl_kref;
- };
+@@ -977,7 +977,7 @@ void c4iw_pblpool_free(struct c4iw_rdev
+ u32 c4iw_ocqp_pool_alloc(struct c4iw_rdev *rdev, int size);
+ void c4iw_ocqp_pool_free(struct c4iw_rdev *rdev, u32 addr, int size);
+ int c4iw_ofld_send(struct c4iw_rdev *rdev, struct sk_buff *skb);
+-void c4iw_flush_hw_cq(struct c4iw_cq *chp);
++void c4iw_flush_hw_cq(struct c4iw_cq *chp, struct c4iw_qp *flush_qhp);
+ void c4iw_count_rcqes(struct t4_cq *cq, struct t4_wq *wq, int *count);
+ int c4iw_ep_disconnect(struct c4iw_ep *ep, int abrupt, gfp_t gfp);
+ int c4iw_flush_rq(struct t4_wq *wq, struct t4_cq *cq, int count);
+--- a/drivers/infiniband/hw/cxgb4/qp.c
++++ b/drivers/infiniband/hw/cxgb4/qp.c
+@@ -1082,7 +1082,7 @@ static void __flush_qp(struct c4iw_qp *q
+ 	}
+ 	qhp->wq.flushed = 1;
  
- static inline int c4iw_fatal_error(struct c4iw_rdev *rdev)
---- a/drivers/infiniband/hw/cxgb4/resource.c
-+++ b/drivers/infiniband/hw/cxgb4/resource.c
-@@ -260,12 +260,22 @@ u32 c4iw_pblpool_alloc(struct c4iw_rdev
- 		rdev->stats.pbl.cur += roundup(size, 1 << MIN_PBL_SHIFT);
- 		if (rdev->stats.pbl.cur > rdev->stats.pbl.max)
- 			rdev->stats.pbl.max = rdev->stats.pbl.cur;
-+		kref_get(&rdev->pbl_kref);
- 	} else
- 		rdev->stats.pbl.fail++;
- 	mutex_unlock(&rdev->stats.lock);
- 	return (u32)addr;
- }
- 
-+static void destroy_pblpool(struct kref *kref)
-+{
-+	struct c4iw_rdev *rdev;
-+
-+	rdev = container_of(kref, struct c4iw_rdev, pbl_kref);
-+	gen_pool_destroy(rdev->pbl_pool);
-+	complete(&rdev->pbl_compl);
-+}
-+
- void c4iw_pblpool_free(struct c4iw_rdev *rdev, u32 addr, int size)
- {
- 	PDBG("%s addr 0x%x size %d\n", __func__, addr, size);
-@@ -273,6 +283,7 @@ void c4iw_pblpool_free(struct c4iw_rdev
- 	rdev->stats.pbl.cur -= roundup(size, 1 << MIN_PBL_SHIFT);
- 	mutex_unlock(&rdev->stats.lock);
- 	gen_pool_free(rdev->pbl_pool, (unsigned long)addr, size);
-+	kref_put(&rdev->pbl_kref, destroy_pblpool);
- }
- 
- int c4iw_pblpool_create(struct c4iw_rdev *rdev)
-@@ -312,7 +323,7 @@ int c4iw_pblpool_create(struct c4iw_rdev
- 
- void c4iw_pblpool_destroy(struct c4iw_rdev *rdev)
- {
--	gen_pool_destroy(rdev->pbl_pool);
-+	kref_put(&rdev->pbl_kref, destroy_pblpool);
- }
- 
- /*
-@@ -333,12 +344,22 @@ u32 c4iw_rqtpool_alloc(struct c4iw_rdev
- 		rdev->stats.rqt.cur += roundup(size << 6, 1 << MIN_RQT_SHIFT);
- 		if (rdev->stats.rqt.cur > rdev->stats.rqt.max)
- 			rdev->stats.rqt.max = rdev->stats.rqt.cur;
-+		kref_get(&rdev->rqt_kref);
- 	} else
- 		rdev->stats.rqt.fail++;
- 	mutex_unlock(&rdev->stats.lock);
- 	return (u32)addr;
- }
- 
-+static void destroy_rqtpool(struct kref *kref)
-+{
-+	struct c4iw_rdev *rdev;
-+
-+	rdev = container_of(kref, struct c4iw_rdev, rqt_kref);
-+	gen_pool_destroy(rdev->rqt_pool);
-+	complete(&rdev->rqt_compl);
-+}
-+
- void c4iw_rqtpool_free(struct c4iw_rdev *rdev, u32 addr, int size)
- {
- 	PDBG("%s addr 0x%x size %d\n", __func__, addr, size << 6);
-@@ -346,6 +367,7 @@ void c4iw_rqtpool_free(struct c4iw_rdev
- 	rdev->stats.rqt.cur -= roundup(size << 6, 1 << MIN_RQT_SHIFT);
- 	mutex_unlock(&rdev->stats.lock);
- 	gen_pool_free(rdev->rqt_pool, (unsigned long)addr, size << 6);
-+	kref_put(&rdev->rqt_kref, destroy_rqtpool);
- }
- 
- int c4iw_rqtpool_create(struct c4iw_rdev *rdev)
-@@ -383,7 +405,7 @@ int c4iw_rqtpool_create(struct c4iw_rdev
- 
- void c4iw_rqtpool_destroy(struct c4iw_rdev *rdev)
- {
--	gen_pool_destroy(rdev->rqt_pool);
-+	kref_put(&rdev->rqt_kref, destroy_rqtpool);
- }
- 
- /*
+-	c4iw_flush_hw_cq(rchp);
++	c4iw_flush_hw_cq(rchp, qhp);
+ 	c4iw_count_rcqes(&rchp->cq, &qhp->wq, &count);
+ 	flushed = c4iw_flush_rq(&qhp->wq, &rchp->cq, count);
+ 	spin_unlock(&qhp->lock);
+@@ -1097,7 +1097,7 @@ static void __flush_qp(struct c4iw_qp *q
+ 	spin_lock_irqsave(&schp->lock, flag);
+ 	spin_lock(&qhp->lock);
+ 	if (schp != rchp)
+-		c4iw_flush_hw_cq(schp);
++		c4iw_flush_hw_cq(schp, qhp);
+ 	flushed = c4iw_flush_sq(qhp);
+ 	spin_unlock(&qhp->lock);
+ 	spin_unlock_irqrestore(&schp->lock, flag);
 
