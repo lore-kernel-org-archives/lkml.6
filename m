@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 041D0C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A697BC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB7952077C
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:56:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB7952077C
+	by mail.kernel.org (Postfix) with ESMTP id 7769D20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:57:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7769D20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729178AbeJNXiV (ORCPT
+        id S1729341AbeJNXi0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:38:21 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37563 "EHLO
+        Sun, 14 Oct 2018 19:38:26 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37568 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727563AbeJNXiU (ORCPT
+        by vger.kernel.org with ESMTP id S1727563AbeJNXiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:38:20 -0400
+        Sun, 14 Oct 2018 19:38:25 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiMC-0004cA-3f; Sun, 14 Oct 2018 16:31:04 +0100
+        id 1gBiMI-0004io-HE; Sun, 14 Oct 2018 16:31:10 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLP-0000Eo-SV; Sun, 14 Oct 2018 16:30:15 +0100
+        id 1gBiLO-0000Ak-0s; Sun, 14 Oct 2018 16:30:14 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
-        "Nicholas Piggin" <npiggin@gmail.com>
-Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.246750560@decadent.org.uk>
+CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?=" <j.neuschaefer@gmx.net>
+Date:   Sun, 14 Oct 2018 16:25:40 +0100
+Message-ID: <lsq.1539530740.33362241@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 077/366] powerpc/64: Fix smp_wmb barrier definition
- use use lwsync consistently
+Subject: [PATCH 3.16 029/366] net: core: dst: Add kernel-doc for 'net'
+ parameter
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,50 +57,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 
-commit 0bfdf598900fd62869659f360d3387ed80eb71cf upstream.
+commit 8eb1a8590f5ca114fabf16ebb26a4bce0255ace9 upstream.
 
-asm/barrier.h is not always included after asm/synch.h, which meant
-it was missing __SUBARCH_HAS_LWSYNC, so in some files smp_wmb() would
-be eieio when it should be lwsync. kernel/time/hrtimer.c is one case.
+This fixes the following kernel-doc warning:
 
-__SUBARCH_HAS_LWSYNC is only used in one place, so just fold it in
-to where it's used. Previously with my small simulator config, 377
-instances of eieio in the tree. After this patch there are 55.
+./include/net/dst.h:366: warning: Function parameter or member 'net' not described in 'skb_tunnel_rx'
 
-Fixes: 46d075be585e ("powerpc: Optimise smp_wmb")
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: ea23192e8e57 ("tunnels: harmonize cleanup done on skb on rx path")
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/powerpc/include/asm/barrier.h | 3 ++-
- arch/powerpc/include/asm/synch.h   | 4 ----
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ include/net/dst.h | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/include/asm/barrier.h
-+++ b/arch/powerpc/include/asm/barrier.h
-@@ -39,7 +39,8 @@
- 
- #ifdef CONFIG_SMP
- 
--#ifdef __SUBARCH_HAS_LWSYNC
-+/* The sub-arch has lwsync */
-+#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
- #    define SMPWMB      LWSYNC
- #else
- #    define SMPWMB      eieio
---- a/arch/powerpc/include/asm/synch.h
-+++ b/arch/powerpc/include/asm/synch.h
-@@ -5,10 +5,6 @@
- #include <linux/stringify.h>
- #include <asm/feature-fixups.h>
- 
--#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
--#define __SUBARCH_HAS_LWSYNC
--#endif
--
- #ifndef __ASSEMBLY__
- extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
- extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
+--- a/include/net/dst.h
++++ b/include/net/dst.h
+@@ -350,6 +350,7 @@ static inline void __skb_tunnel_rx(struc
+  *	skb_tunnel_rx - prepare skb for rx reinsert
+  *	@skb: buffer
+  *	@dev: tunnel device
++ *	@net: netns for packet i/o
+  *
+  *	After decapsulation, packet is going to re-enter (netif_rx()) our stack,
+  *	so make some cleanups, and perform accounting.
 
