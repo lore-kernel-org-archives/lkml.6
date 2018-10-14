@@ -2,286 +2,198 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DATE_IN_PAST_12_24,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE33C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 904D9C7112B
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6DBB2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:12:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CEB420895
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:13:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MUc4MMci"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6DBB2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="SPhVsQdJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CEB420895
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbeJOM4Q (ORCPT
+        id S1726729AbeJOM45 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 08:56:16 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:37211 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbeJOM4P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 08:56:15 -0400
-Received: by mail-yb1-f193.google.com with SMTP id h1-v6so7034573ybm.4
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 22:12:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OzLx9svj9e+xo59LjiZy1h2emoOjD0YaaRGDH5d9hAk=;
-        b=MUc4MMciRN2E4RqNwbFVtr84p9iEhatfgTuhzEhczEJZOhM9AzWKKSDtqTtmrx9us1
-         BVw3QIHb/eTGT2hTvOiZNVQivdfZZZqNwUT17Vq8PvCnm89ki796AbLledBnH6QfhWvL
-         RcYFE+zcnhLLo7yHE1ng5djtdTkBhCeCun28o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OzLx9svj9e+xo59LjiZy1h2emoOjD0YaaRGDH5d9hAk=;
-        b=C1lcidXddqHLRdVd1l4yADmNv27xizZYAnyYCCdovbxvB+C5sItuFCPK57JmEXCXL8
-         XCTmOHj+bDJF/LoLHnHiCngJ2iPNGVx3qTW9jfhV4CuOYTyfmCKPh0Mjik3T62qdzttC
-         OFByZNmKASeBE02rd2AwIsHNTVAS3GwxzciUsgWfYsorX+t1GpMgcPvreF3EsieHfqDQ
-         Ubvwa9aY26v7apVP6UrPFikEHG2RZ0EraT/JyJIwjoAF3CoT8bH3XNZgNjVcOweFFAt1
-         WZYovs3BqYA4N7boK4uBxKpUXmp7Ic/+4PfBns94WityxLBuebZBLXdaeXaVAjo1dDq0
-         cGkQ==
-X-Gm-Message-State: ABuFfohbYcT+OXI9964jx/N8cl4c8yE3xbnNWXtm9Sdc3UrXEFOM7CCr
-        dc2MwDihQlXObfoVyy0IsWdafocOcF442dxlCsz2xw==
-X-Google-Smtp-Source: ACcGV61qMPaSWHPBvyi2V7pYGawUFNE3pFYXXAdHYQ/mVJIp6ZvRwdPgzWbdQnhV2XT+7SdLfrDUVdKVuKJAcA5lOE4=
-X-Received: by 2002:a25:a063:: with SMTP id x90-v6mr8796156ybh.174.1539580358614;
- Sun, 14 Oct 2018 22:12:38 -0700 (PDT)
+        Mon, 15 Oct 2018 08:56:57 -0400
+Received: from mail-eopbgr30044.outbound.protection.outlook.com ([40.107.3.44]:39201
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726663AbeJOM45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 08:56:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tKGpZCEFfT1qRKnJExP19+I1QM6x7Dp1yyiQ8CDptBE=;
+ b=SPhVsQdJv9FxEQCjpnoCikHNOUs8FlqA9yz9XyXsODEBbFlWau1HcRwbKtfQyTO4eVmDrSu777sfqFpkv0s9KB7S9iCFATDWCLlaZY2FbIbdgxGQMJSImtBXSn2ia+hPmounUyyQ5BxLG4rIUWnVxAN3aLH5FYK5c1BcSlOBWrY=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=vabhav.sharma@nxp.com; 
+Received: from uefi-OptiPlex-790.ap.freescale.net (14.143.30.134) by
+ AM6PR04MB4790.eurprd04.prod.outlook.com (2603:10a6:20b:3::27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.26; Mon, 15 Oct 2018 05:13:12 +0000
+From:   Vabhav Sharma <vabhav.sharma@nxp.com>
+To:     sudeep.holla@arm.com, oss@buserror.net,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        sboyd@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel-owner@vger.kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de,
+        kstewart@linuxfoundation.org, yamada.masahiro@socionext.com,
+        leoyang.li@nxp.com, shawnguo@kernel.org
+Cc:     linux@armlinux.org.uk, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, V.Sethi@nxp.com, udit.kumar@nxp.com,
+        pankaj.bansal@nxp.com, Vabhav Sharma <vabhav.sharma@nxp.com>
+Subject: [PATCH v5 0/6] arm64: dts: NXP: add basic dts file for LX2160A SoC
+Date:   Sun, 14 Oct 2018 22:37:57 +0530
+Message-Id: <1539536883-1928-1-git-send-email-vabhav.sharma@nxp.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <1539337442-3676-1-git-send-email-firoz.khan@linaro.org>
- <1539337442-3676-4-git-send-email-firoz.khan@linaro.org> <20181014010658.GB717@asgard.redhat.com>
-In-Reply-To: <20181014010658.GB717@asgard.redhat.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Mon, 15 Oct 2018 10:42:27 +0530
-Message-ID: <CALxhOnhLQooctntdD69BsSmwzsx692QbMmHVTcemKFHr2a1SPQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/6] parisc: add system call table generation support
-To:     esyr@redhat.com
-Cc:     linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [14.143.30.134]
+X-ClientProxiedBy: PN1PR01CA0082.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c00:1::22) To AM6PR04MB4790.eurprd04.prod.outlook.com
+ (2603:10a6:20b:3::27)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 811c6d15-fdaa-4142-0b17-08d6325ceaa7
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4790;
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4790;3:M0/+Ko3MwMPmem8tajXfV0PPE3T36PB72+8F+N/t2gs02Mg+u5O6cns/rJKOx82eDRDnPSlgCjq6Xr585encyKfYqoqp/N8dDE57nIdGHoBLlPZP/tpRZIiIY0tpN6kuR85DaHGe5qh5q4nDe/L8ELkqUHx1Zcnt9MsM1pjsiVs08ZdLvvZNACWMe9Nx1K8zHOKeQhNpx8nwUmvnVlNikzmDAeZLuFFwXfVIBF/q+buBN4quiQAiVnTVUz7n+8So;25:a11X4IyDb74xRMjR8FpbzrvA563WAV/KncJSegjIozPpLZ1ddQYMerPMuy6lIZyCqiA0kMQNZLR9fAUrFGufmlZiVo+sufa2mJGdI/dpTYixAF47otfVaWT70t1Ey+4tamCBM3An0zzg7o24pXw0tZ8wxmqMzsnUykFvV3/TUdvYkCfZw2Oba7IMR9sgvNPm8jr3BxRPVJ+6e87AmJxFFX1I7esNSmWGZ3w6fjLySgYtuPRKaVcw3PniLvCq9bXi0BFcec+JQ3REjH+piQPhKhfCmEasFX/ceqqhA7hXFro1ucLXNbazOUczrbpkmf+fHU+ramAU5oDoiR0PfHvl3A==;31:udJ04a+0xwChw1kZ/t5CRugCgJfH7YuildwJyuP0jD8F7RsK7iSTD3QsiL0oz3mpLs4ZybULH1cH5Kdus6wxATkEukuZUr4XWdt5FS3/V7AYbQqd9vDUipq3dYqgRu7jy0q7YM7r7d0AY2LyTiDpt28/rUzSpo5OjMvS8Ys0ueuSFjBbf/FQmwhJh07S0Jq5/s9VrqQ2vuUXCTuPnOXW9ED/b5FSIIO9jH4Jk0VUCR0=
+X-MS-TrafficTypeDiagnostic: AM6PR04MB4790:
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4790;20:YQjgajd2HCTzKtgt7qO5SW2BzJkVgAketDl9aykFkbXm/qCW/qMQcV5E92VgMRg7TxVEdKNe1QQWFfd6T0RWR2blmisjw3S1DI4DhUwb7d0MQPicDEB1r1r63Yo+C1eMhHv49D4dxlHTEsthdBCtk/y4KVZHikcRCobmn//r6o/2DJvvCLUg4MAfpULjWbNfK4Q2YKAX3vw4kawWc9i9nEzjf2DsxJdlhwDYWKyk4P07iPilLSm4qarFyGvYDYRnmGXqx4U4K8uobokRfKu9DMft7saLe1xsbEucwXhxj7PTa43LOktCczbp6FKjOnD5B9xQcqGvu2LeiX6MdMnhzpJOFAW2RxCmG5LP0fBwh5Wyaikc7GfyJZ0FLhl1OatVzwnlU4uMEHPCXXsL4Pc2k6znwgg7yt2J5aPyFFTsgTotPSalxZqPrYKmHLKo51MAlHz8hlqfz3vN9d56KXIMKNkYsmANrxPzYoB286DI5tGfxtUSum8h1tlGC3PPP+b9;4:PXAZi1sH7VnU7ftUcxhwM4YdVzNTajufepkA/d84y2DhKKG80yf6VcYw7odEhk/a0NX7618r3HI2BPq4qIWZep8oHLlRv6y0BCTVMZlUrOt1hPKdy60zh+Zax2grlDrsmXb1rR39gS13JkTufhRZuNFFF3hzC4w8ardFPVPdExE/5bBrFobfN+7CYRx7QSDQgD7b/MwekqpKU18UK5L9HYnPSTZdoYfsMBNgQaWaXni/SjEd9lEcPY3/4O9WoWxFailHETqZivBqx5kvyxLrPg==
+X-Microsoft-Antispam-PRVS: <AM6PR04MB47903770D6469CE09E016802F3FD0@AM6PR04MB4790.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991067);SRVR:AM6PR04MB4790;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4790;
+X-Forefront-PRVS: 0826B2F01B
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(136003)(366004)(396003)(199004)(189003)(53936002)(2870700001)(478600001)(6512007)(2906002)(23676004)(52116002)(3846002)(6116002)(1006002)(86362001)(14444005)(6666004)(5660300001)(316002)(50226002)(8936002)(8676002)(97736004)(68736007)(81156014)(81166006)(486006)(956004)(44832011)(2616005)(476003)(7736002)(47776003)(305945005)(66066001)(25786009)(186003)(16526019)(50466002)(26005)(106356001)(36756003)(105586002)(4326008)(386003)(6506007)(55236004)(7416002)(6486002)(110426005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4790;H:uefi-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTZQUjA0TUI0NzkwOzIzOmtTenlvTXF0alFSUmJqZW13d1ZCS3hIdjQ4?=
+ =?utf-8?B?akxHNW1VVHplaU9TNkRlNFV2YVE1Uk1USG52aGFBS21qZDMrWm9Ob0x0cUZ4?=
+ =?utf-8?B?Mi9TN2JZU0xzOGxyeW5uWEJwYnB2SnpLVjFzbEt4L3lDZjdKS0NHNE9sT3F6?=
+ =?utf-8?B?bzhDTGJjbkFYWmNYZElDSUZ0d2FnWVNTcWtBbmkzcEN1U1lQM1hKR2FxaFg0?=
+ =?utf-8?B?TTNwL1Y0SzV3aEdtMWJDeUZYUFE0eFg4ZW0zZEdTdkdlRU8zOWlwZU5uNTJU?=
+ =?utf-8?B?YVB6MUt1VEVHdjFBSTZEWm1oYVQ5cFJTdU5ZMkVqL0NTaThBWDVCNWRUUWh1?=
+ =?utf-8?B?MG9maGM5U0pHbUhoK3VNOXhiRENlWlB1NTFmZlNYM2g0Z0NWZklxbzl3djNL?=
+ =?utf-8?B?L1lma0FMY1VVUnNpdEVCK0grT1dRbGh3TFRFNHozQ3I3WGd3NElRV3hSMk5J?=
+ =?utf-8?B?ZHFNQ1o2TEtxc2MwdHp5dGhwM1FhcitUcTBZRXlDZlJyZ3RRTmhDWjN6dlJa?=
+ =?utf-8?B?TGtTMXhBaXNwdFRiQXpaaFA1M2w2M1JQRkhEWk44YTJpS0dNMnI0cnhlNHho?=
+ =?utf-8?B?MldEUWRyNU9ucENRdU1SZksxTVJRZElhbTkyTlBYRlFKTzA2MGhPd3JLRzdv?=
+ =?utf-8?B?eXRXL0ZIRm11bjZmYU5DQmFTR1llZmwyWlJXbGNvblZIQmlFM3ppSXFIQTFC?=
+ =?utf-8?B?SmNiSjluYzNCdkxaRnhpMEVxNWo1Uy8zNWROYVpBNW5mQ2IwVUtUUU1JQmg2?=
+ =?utf-8?B?THhYK2VtOUpPMFRVLzRmaHdWcUg4emZxaUhhOEZZK1dHSWxJZldjaGJmK2ZZ?=
+ =?utf-8?B?clFSWlNJZURmSHUvY2RsODhHWlRBOEl3b3Q4aEEvbnB1UUdMNXdPNHFSYVd3?=
+ =?utf-8?B?eE1NbVdsR3NkTkpzR05RaXlxblZjQmNOa2ZFVE5Zdm5MUnMrcmxSZ3UzZ1VF?=
+ =?utf-8?B?TnFydWFuWTYxSmJBdlZOcWRrV2JVeVdPajRIc1lvS0pueDJjSUI5b2IzUzZL?=
+ =?utf-8?B?ZHRzSlIwYWFUK3A3MzFlVlprNDBCcUl3OVdvUU82Sk42dHZZbDRqQVl3WERJ?=
+ =?utf-8?B?UHB1VlBwV2QzeFRBbkFwZjJlR3djeW9CVUptYkFzenAyNENZMHp0VmRXN0ow?=
+ =?utf-8?B?QWhHcXk0Yms1R1hKWDduS0RzUVc3Rm1USE5mRmx0UTRPUmNqeW9VS0JEeURZ?=
+ =?utf-8?B?ZVlSQjVMNHo4M0tjWGh5UGNtOGlwZGUyMWhJQS9FZE9RbFFueHF3UGpWS2ZT?=
+ =?utf-8?B?c1VzaGc3c2FvejBnSzJPbTVHOGdFaG9zaWh3MHdscjcvTS94U2ZqUitTdStY?=
+ =?utf-8?B?WlJxRGw4MW1hSHVCczhudllPZVN5Z3VwSVVTb2xWVG1LMWp2Q1FiaXFOQ3BM?=
+ =?utf-8?B?VCtpSkE1WDVlZFJzVFM2SkJEWkx3SFBKa25ucFc1WlJYR0tFT1ZKRHRYa2l5?=
+ =?utf-8?B?VXRyd3NvbHB0TTBOQTZuL0VhUXVYNUZIQkgxRDVqSlUvbm1FdDR3WUZra3JT?=
+ =?utf-8?B?amptemY4dzBicGdlS1NHNWNvb1ZvV2V3NFZUWi9UNnJ3QmNSYTVpcCtybXZO?=
+ =?utf-8?B?RUVDREt5RUhweHVZVUxrZWxVKy9JMG55N0ZrTGtKY0MyeUtGWG1YeU85VjN2?=
+ =?utf-8?B?TWJLdlJUUTBhalN3dUpQdm1ZMnlIcHVpdnFDQVhlTlQ0dlh5aGZEN3VBPT0=?=
+X-Microsoft-Antispam-Message-Info: AowERvtX2hRkZZYTzNMf7wwlDKJGZXuFxxi1YKcuXrgBqFPSVyVskmuke7zNqV4e1Lnlz9eZMSBtK6vmARBg9KQGWKuhH1oO5TkEFmlY5KHKP0J6b4E2u0CuXNkCHBuev++vOmq9al+KRRMF7UREulYLuo0gx4Y5/5JyDx9GX9dbst/CknmgivkPg+2c/1OM8HiY3oDHDf7SYMJG+NnxrcDMF/2yvPzC/TMNGIif1Eqa1+uksjUWdYunqzcF+5WUeQ0S8r1ZtkHcGXbUj6V1dCwpy7YODkdQ1ATULjso/QmVRMFoBsid+IaWoGDc+9aeTOL/ehag+9by2a1kx9FLn1mm8yoorYsTIDHCuy6KNWI=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4790;6:eY/f3K5PJd+856i8HrpBvnw067XgJh3dT+ke06f4Fv6yXyL4PHGl1X+6ngD8EuVwnb/GeDFLKlqgcqDuJs8uLuc0l1WhRosdJbZiLKF59sBMGSQUduJpL7UYqOR90/j93wC7cy1wrbG8sQrqKrRtS7D/m7+H2bTqDLkBfooA9ng0ZgdDAbSYHhHEOJ8j0f7naqT453dwcuhmH5wmyRQTi8isQ43qu/4IKS0TPWhdQMaOWSRuOV2PsKfBSj8qaK3rmHtNIbDym+4LR0PaoB1fQCWFRNrQxMQ+yLuNDx6j2uyypRQZVQCyedxLoh+iq1OHnGy2Q2tgZpcc/+NVn/ZXJt/BMYcrPGjkYNgf81WxDdO6G/HOvTQvHafoC/f9h6u8X2gDPewQgla1UqsHkXwTBGc3gUUkBtTd3nXFBD0YrkjddzxH2ocZ9L1rPmjZpAEIJ5OYZtaYIUAaFyIl0tqaXA==;5:0oBWoYHKaz8fSvTQdR7AvGiXJKJpsHVdWIxO4fC0VjSmEs6RUSJOVbSY7zM9e6rXeiyg9Czjkn0zgrqejkr730nlOjf2HAeQ2v3VAlxN/5E0aaJ0XvtbgULQ713e8JiOwpYJBSyMCdb74YYgBrdG1XEH/uTU9BhYl2rTMXWKkn0=;7:DSS5OgLKMEGs1tHRVjlOq61AWceSsB2IYbI6WwPlPB/lW1XWsuoKRfrBTDEuc6bAs0XGTcImCaI10vgJ82cOGFTt+vb+Gh8R08vKzqLQm5yGXJQz3T1r9oqkI9ZebhoYFwNhJYD0LkXIcV1dRvf9o+ol+n8k7Xdim/YGvfNmI/4IaQTDZ3Rho3pbCOvqkCfNSFfYL92DXb4eHjrwIyNNxlRZ9bzAD6NPlVWu2MzJwMREVgyfLQUBGGbaw5De/jfU
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2018 05:13:12.1131
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 811c6d15-fdaa-4142-0b17-08d6325ceaa7
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4790
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eugene,
+Changes for v5:
+- Updated temperature sensor regulator name in board device tree
+- Sorted nodes alphabatically and unit-address in SoC/board device tree
+- Identation, new line update in SoC/board device tree
+- Updated nodes name as per DT spec generic name recommendation in SoC DT
+- Updated macro define for interrupt/gpio property
+- Updated i2c node property name scl-gpio
+- Removed device_type property except cpu/memory node
+- Added esdhc controller nodes in SoC/RDB board device tree
+- Added aliases for uart/crypto nodes
+- Add SoC die attribute definition for LX2160A
 
-On Sun, 14 Oct 2018 at 06:36, Eugene Syromiatnikov <esyr@redhat.com> wrote:
->
-> On Fri, Oct 12, 2018 at 03:13:59PM +0530, Firoz Khan wrote:
-> > diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-> > new file mode 100644
-> > index 0000000..7c9f268
->
-> > +86      common  uselib                          sys_ni_syscall
->
-> Again, why is this definition left, while others have been removed?
+Changes for v4:
+- Updated bindings for lx2160a clockgen and dcfg
+- Modified commit message for lx2160a clockgen changes
+- Updated interrupt property with macro definition
+- Added required enable-method property to each core node with psci value
+- Removed unused node syscon in device tree
+- Removed blank lines in device tree fsl-lx2160a.dtsi
+- Updated uart node compatible sbsa-uart first
+- Added and defined vcc-supply property to temperature sensor node in
+  device tree fsl-lx2160a-rdb.dts
 
-The system call generation script will generate new uapi and syscall
-table files and replace the existed one. We'll make sure the generated
-file against replaced one will be identical.
+Changes for v3:
+-Split clockgen support patch into below two patches:
+- a)Updated array size of cmux_to_group[] with NUM_CMUX+1 to include -1
+ terminator and p4080 cmux_to_group[] array with -1 terminator
+- b)Add clockgen support for lx2160a
 
-uselib is declared in uapi header:
-https://github.com/torvalds/linux/blob/master/arch/parisc/include/uapi/asm/unistd.h#L103
-So I have to make sure this entry is present in the generated uapi header.
+Changes for v2:
+- Modified cmux_to_group array to include -1 terminator
+- Revert NUM_CMUX to original value 8 from 16
+- Remove “As LX2160A is 16 core, so modified value for NUM_CMUX”
+  in patch "[PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
+  lx2160a" description
+- Populated cache properties for L1 and L2 cache in lx2160a device-tree.
+- Removed reboot node from lx2160a device-tree as PSCI is implemented.
+- Removed incorrect comment for timer node interrupt property in
+  lx2160a device-tree.
+- Modified pmu node compatible property from "arm,armv8-pmuv3" to
+  "arm,cortex-a72-pmu" in lx2160a device-tree
+- Non-standard aliases removed in lx2160a rdb board device-tree
+- Updated i2c child nodes to generic name in lx2160a rdb device-tree.
 
->
-> > +348     common  pwritev2                        sys_pwritev2                    compat_sys_pwritev2
-> > +349     common  statx                           sys_statx
-> > +350  common  io_pgetevents                   sys_io_pgetevents               compat_sys_io_pgetevents
->
-> Tab instead of spaces.
+Changes for v1:
+- Add compatible string for LX2160A clockgen support
+- Add compatible string to initialize LX2160A guts driver
+- Add compatible string for LX2160A support in dt-bindings
+- Add dts file to enable support for LX2160A SoC and LX2160A RDB
+  (Reference design board)
 
-I'm using emacs editor with default settings. In the actual file, there is no
-indentation problem which I find but if I get patch using git format-patch,
-it has inconsistent indentation.
+Vabhav Sharma (4):
+  dt-bindings: arm64: add compatible for LX2160A
+  soc/fsl/guts: Add definition for LX2160A
+  arm64: dts: add QorIQ LX2160A SoC support
+  arm64: dts: add LX2160ARDB board support
 
-No idea. I could find the same problem in other patches also.
-Let me use the vi editor to save the file and get the patch.
+Yogesh Gaur (2):
+  clk: qoriq: increase array size of cmux_to_group
+  clk: qoriq: Add clockgen support for lx2160a
 
->
-> > diff --git a/arch/parisc/kernel/syscalls/syscallhdr.sh b/arch/parisc/kernel/syscalls/syscallhdr.sh
-> > new file mode 100644
-> > index 0000000..607d4ca
-> > --- /dev/null
-> > +++ b/arch/parisc/kernel/syscalls/syscallhdr.sh
-> > @@ -0,0 +1,35 @@
-> > +#!/bin/sh
->
-> /bin/sh -efu
->
-> > +# SPDX-License-Identifier: GPL-2.0
->
-> "export LANG=C", due to usage of sed/grep/sort.
+ Documentation/devicetree/bindings/arm/fsl.txt      |  14 +-
+ .../devicetree/bindings/clock/qoriq-clock.txt      |   1 +
+ arch/arm64/boot/dts/freescale/Makefile             |   1 +
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts  | 119 ++++
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi     | 765 +++++++++++++++++++++
+ drivers/clk/clk-qoriq.c                            |  16 +-
+ drivers/cpufreq/qoriq-cpufreq.c                    |   1 +
+ drivers/soc/fsl/guts.c                             |   6 +
+ 8 files changed, 920 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
 
-I got this frame work from x86/entry/syscalls;
-https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscallhdr.sh
-I haven't modified the script but I tune this script to meet my requirements.
+-- 
+2.7.4
 
-Sure, I'll look into this.
-
->
-> > +
-> > +in="$1"
-> > +out="$2"
-> > +my_abis=`echo "($3)" | tr ',' '|'`
-> > +prefix="$4"
-> > +offset="$5"
-> > +
-> > +fileguard=_UAPI_ASM_PARISC_`basename "$out" | sed \
-> > +    -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
-> > +    -e 's/[^A-Z0-9_]/_/g' -e 's/__/_/g'`
-> > +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
->
-> grep -E '^[[:xdigit:]Xx]+[[:space:]]+'"${my_abis}" "$in"
-> sort -n -k1,1
->
-> > +    echo "#ifndef ${fileguard}"
-> > +    echo "#define ${fileguard}"
-> > +    echo ""
->
->         cat <<-EOF
->                 #ifndef ${fileguard}
->                 #define ${fileguard}
->
->         EOF
->
-> > +
-> > +    nxt=0
-> > +    while read nr abi name entry compat ; do
-> > +     if [ -z "$offset" ]; then
-> > +         echo -e "#define __NR_${prefix}${name}\t$nr"
-> > +     else
-> > +         echo -e "#define __NR_${prefix}${name}\t($offset + $nr)"
-> > +     fi
->
-> echo options are not portable; something like
->
->         printf "#define __NR_%s%s\t(%s + %s)" "${prefix}" "${name}" "${offset}" "${nr}"
-
-x86/armhas similar echo implementation.
-https://github.com/torvalds/linux/blob/master/arch/arm/tools/syscallhdr.sh
-
-s390 has this printf implemenation.
-https://github.com/torvalds/linux/blob/master/arch/s390/kernel/syscalls/syscalltbl
-
-I chose echo one. but it is easy to change to printf :)
-
->
-> > +     nxt=$nr
-> > +     let nxt=nxt+1
->
-> "let" is a bash extension, posix-conformant expression would be
->
->         nxt=$((nr + 1))
->
-> (I would also check that nr >= nxt, however)
-
-Sure.
-
->
-> > +    done
-> > +
-> > +    echo ""
-> > +    echo "#ifdef __KERNEL__"
-> > +    echo -e "#define __NR_syscalls\t$nxt"
-> > +    echo "#endif"
-> > +    echo ""
-> > +    echo "#endif /* ${fileguard} */"
->
->         cat <<-EOF
->
->                 #ifdef __KERNEL__
->                 # define __NR_syscalls\t${nxt}
->                 #endif
->
->                 #endif /* ${fileguard} */
->         EOF
->
-> > +) > "$out"
-> > diff --git a/arch/parisc/kernel/syscalls/syscalltbl.sh b/arch/parisc/kernel/syscalls/syscalltbl.sh
-> > new file mode 100644
-> > index 0000000..04abde7
-> > --- /dev/null
-> > +++ b/arch/parisc/kernel/syscalls/syscalltbl.sh
-> > @@ -0,0 +1,46 @@
-> > +#!/bin/sh
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +in="$1"
-> > +out="$2"
-> > +my_abis=`echo "($3)" | tr ',' '|'`
-> > +offset="$4"
-> > +
-> > +emit() {
-> > +    nxt="$1"
-> > +    if [ -z "$offset" ]; then
-> > +     nr="$2"
-> > +    else
-> > +     nr="$2"
-> > +     nr=$((nr+offset))
-> > +    fi
-> > +    entry="$3"
-> > +
-> > +    while [ $nxt -lt $nr ]; do
->
-> It would break nicely if nxt="-n x -o 1" or something like that.
->
-> > +     echo "__SYSCALL($nxt, sys_ni_syscall, )"
-> > +        let nxt=nxt+1
-> > +    done
-> > +    echo "__SYSCALL($nxt, $entry, )"
-> > +}
-> > +
-> > +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
-> > +    if [ -z "$offset" ]; then
-> > +     nxt=0
-> > +    else
-> > +     nxt=$offset
-> > +    fi
-> > +
-> > +    my_abi="$(cut -d'|' -f2 <<< $my_abis)"
->
->         my_abi="${my_abis#*|}"
->
-> But it looks like that $my_abis includes parentheses and this code
-> is broken.
-
-I may planned to have some different implementation for the same.
-
->
-> > +    while read nr abi name entry compat ; do
-> > +     if [ $my_abi = "compat" ]; then
-> > +         if [ -z "$compat" ]; then
-> > +             emit $nxt $nr $entry
-> > +         else
-> > +             emit $nxt $nr $compat
-> > +         fi
-> > +     else
-> > +         emit $nxt $nr $entry
-> > +     fi
-> > +        let nxt=nxt+1
-> > +    done
-> > +) > "$out"
-
-Thanks
-Firoz
-
-> > --
-> > 1.9.1
-> >
