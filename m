@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6994DC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 18:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E83ABC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 18:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 238F520835
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 18:03:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238F520835
+	by mail.kernel.org (Postfix) with ESMTP id AC94B20835
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 18:06:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC94B20835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbeJOBpI (ORCPT
+        id S1726822AbeJOBry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 21:45:08 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:38120 "EHLO
+        Sun, 14 Oct 2018 21:47:54 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:38132 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726327AbeJOBpI (ORCPT
+        by vger.kernel.org with ESMTP id S1726327AbeJOBry (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 21:45:08 -0400
+        Sun, 14 Oct 2018 21:47:54 -0400
 Received: from 188.29.164.50.threembb.co.uk ([188.29.164.50] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBkjV-0005hf-FS; Sun, 14 Oct 2018 19:03:17 +0100
+        id 1gBkmB-0005xp-Hw; Sun, 14 Oct 2018 19:06:03 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBkjO-0005aS-IZ; Sun, 14 Oct 2018 19:03:10 +0100
-Message-ID: <b9d260e3461ed622110848858970c016054d622a.camel@decadent.org.uk>
-Subject: Re: [PATCH 3.16 194/366] drivers: tty: Merge alloc_tty_struct and
- initialize_tty_struct
+        id 1gBkm4-0005dA-Ok; Sun, 14 Oct 2018 19:05:56 +0100
+Message-ID: <482a6bce7a01778168a169af4e5db4c080d44278.camel@decadent.org.uk>
+Subject: Re: [PATCH 3.16 232/366] tracing: Deletion of an unnecessary check
+ before iput()
 From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        akpm@linux-foundation.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Sun, 14 Oct 2018 19:03:06 +0100
-In-Reply-To: <CAKwiHFisgkjvaU9gtTdv=XF+7vhQeQo9TSNLAcNU5_uqALohYQ@mail.gmail.com>
-References: <lsq.1539530740.755408431@decadent.org.uk>
-         <lsq.1539530741.287802176@decadent.org.uk>
-         <CAKwiHFisgkjvaU9gtTdv=XF+7vhQeQo9TSNLAcNU5_uqALohYQ@mail.gmail.com>
+To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     akpm@linux-foundation.org,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Steven Rostedt <rostedt@goodmis.org>
+Date:   Sun, 14 Oct 2018 19:05:56 +0100
+In-Reply-To: <9b4c97ade076d0ea6b4c2adde7535a5b48f0c5bc.camel@perches.com>
+References: <lsq.1539530741.752314819@decadent.org.uk>
+         <9b4c97ade076d0ea6b4c2adde7535a5b48f0c5bc.camel@perches.com>
 Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-rrz/p7jpAW9DNK1t1tQO"
+        protocol="application/pgp-signature"; boundary="=-aSQM/syPiZ1eg6Ltnaw1"
 User-Agent: Evolution 3.30.0-1 
 Mime-Version: 1.0
 X-SA-Exim-Connect-IP: 188.29.164.50
@@ -57,229 +57,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-rrz/p7jpAW9DNK1t1tQO
+--=-aSQM/syPiZ1eg6Ltnaw1
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, 2018-10-14 at 19:22 +0200, Rasmus Villemoes wrote:
-> IIRC, I messed up back then, so you'll need some followup as well, but I'=
-m
-> on my phone ATM.
+On Sun, 2018-10-14 at 10:24 -0700, Joe Perches wrote:
+> On Sun, 2018-10-14 at 16:25 +0100, Ben Hutchings wrote:
+> > 3.16.60-rc1 review patch.  If anyone has any objections, please let me =
+know.
+>=20
+> I believe that no stable or backport kernel needs to
+> apply patches like this unless it's needed for other
+> real patches to be applied more easily.
 
-I guess that's commit 07584d4a356e "drivers: tty: Fix use-after-free in
-pty_common_install"?  I missed that but will add it now.
-
->  I assume you're taking this to make it easier to backport
-> some actual fix?
-
-This is required as preparation for commit 903f9db10f18 "tty: Don't
-call panic() at tty_ldisc_init()".
+This is only included so I could apply commit 0c92c7a3c5d4 "tracing:
+Fix bad use of igrab in trace_uprobe.c" with fewer changes.
 
 Ben.
 
->=20
-> On Sun, Oct 14, 2018, 17:39 Ben Hutchings <ben@decadent.org.uk> wrote:
->=20
-> > 3.16.60-rc1 review patch.  If anyone has any objections, please let me
-> > know.
-> >=20
 > > ------------------
 > >=20
-> > From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> > From: Markus Elfring <elfring@users.sourceforge.net>
 > >=20
-> > commit 2c964a2f4191f2229566895f1a0e85f8339f5dd1 upstream.
+> > commit 16a8ef2751801346f1f76a18685b2beb63cd170f upstream.
 > >=20
-> > The two functions alloc_tty_struct and initialize_tty_struct are
-> > always called together. Merge them into alloc_tty_struct, updating its
-> > prototype and the only two callers of these functions.
+> > The iput() function tests whether its argument is NULL and then
+> > returns immediately. Thus the test around the call is not needed.
 > >=20
-> > Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > This issue was detected by using the Coccinelle software.
+> >=20
+> > Link: http://lkml.kernel.org/r/5468F875.7080907@users.sourceforge.net
+> >=20
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
 > > Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 > > ---
-> >  drivers/tty/pty.c    | 19 +++++++++----------
-> >  drivers/tty/tty_io.c | 37 +++++++++++++------------------------
-> >  include/linux/tty.h  |  4 +---
-> >  3 files changed, 23 insertions(+), 37 deletions(-)
+> >  kernel/trace/trace_uprobe.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
 > >=20
-> > --- a/drivers/tty/pty.c
-> > +++ b/drivers/tty/pty.c
-> > @@ -319,7 +319,7 @@ done:
-> >   *     pty_common_install              -       set up the pty pair
-> >   *     @driver: the pty driver
-> >   *     @tty: the tty being instantiated
-> > - *     @bool: legacy, true if this is BSD style
-> > + *     @legacy: true if this is BSD style
-> >   *
-> >   *     Perform the initial set up for the tty/pty pair. Called from th=
-e
-> >   *     tty layer when the port is first opened.
-> > @@ -334,18 +334,17 @@ static int pty_common_install(struct tty
-> >         int idx =3D tty->index;
-> >         int retval =3D -ENOMEM;
-> >=20
-> > -       o_tty =3D alloc_tty_struct();
-> > -       if (!o_tty)
-> > -               goto err;
-> >         ports[0] =3D kmalloc(sizeof **ports, GFP_KERNEL);
-> >         ports[1] =3D kmalloc(sizeof **ports, GFP_KERNEL);
-> >         if (!ports[0] || !ports[1])
-> > -               goto err_free_tty;
-> > +               goto err;
-> >         if (!try_module_get(driver->other->owner)) {
-> >                 /* This cannot in fact currently happen */
-> > -               goto err_free_tty;
-> > +               goto err;
-> >         }
-> > -       initialize_tty_struct(o_tty, driver->other, idx);
-> > +       o_tty =3D alloc_tty_struct(driver->other, idx);
-> > +       if (!o_tty)
-> > +               goto err_put_module;
-> >=20
-> >         if (legacy) {
-> >                 /* We always use new tty termios data so we can do this
-> > @@ -390,12 +389,12 @@ err_free_termios:
-> >                 tty_free_termios(tty);
-> >  err_deinit_tty:
-> >         deinitialize_tty_struct(o_tty);
-> > +       free_tty_struct(o_tty);
-> > +err_put_module:
-> >         module_put(o_tty->driver->owner);
-> > -err_free_tty:
-> > +err:
-> >         kfree(ports[0]);
-> >         kfree(ports[1]);
-> > -       free_tty_struct(o_tty);
-> > -err:
-> >         return retval;
-> >  }
-> >=20
-> > --- a/drivers/tty/tty_io.c
-> > +++ b/drivers/tty/tty_io.c
-> > @@ -157,20 +157,6 @@ static void __proc_set_tty(struct task_s
-> >  static void proc_set_tty(struct task_struct *tsk, struct tty_struct *t=
-ty);
-> >=20
-> >  /**
-> > - *     alloc_tty_struct        -       allocate a tty object
-> > - *
-> > - *     Return a new empty tty structure. The data fields have not
-> > - *     been initialized in any way but has been zeroed
-> > - *
-> > - *     Locking: none
-> > - */
-> > -
-> > -struct tty_struct *alloc_tty_struct(void)
-> > -{
-> > -       return kzalloc(sizeof(struct tty_struct), GFP_KERNEL);
-> > -}
-> > -
-> > -/**
-> >   *     free_tty_struct         -       free a disused tty
-> >   *     @tty: tty struct to free
-> >   *
-> > @@ -1455,12 +1441,11 @@ struct tty_struct *tty_init_dev(struct t
-> >         if (!try_module_get(driver->owner))
-> >                 return ERR_PTR(-ENODEV);
-> >=20
-> > -       tty =3D alloc_tty_struct();
-> > +       tty =3D alloc_tty_struct(driver, idx);
-> >         if (!tty) {
-> >                 retval =3D -ENOMEM;
-> >                 goto err_module_put;
-> >         }
-> > -       initialize_tty_struct(tty, driver, idx);
-> >=20
-> >         tty_lock(tty);
-> >         retval =3D tty_driver_install_tty(driver, tty);
-> > @@ -3034,19 +3019,21 @@ static struct device *tty_get_device(str
-> >=20
-> >=20
-> >  /**
-> > - *     initialize_tty_struct
-> > - *     @tty: tty to initialize
-> > + *     alloc_tty_struct
-> >   *
-> > - *     This subroutine initializes a tty structure that has been newly
-> > - *     allocated.
-> > + *     This subroutine allocates and initializes a tty structure.
-> >   *
-> > - *     Locking: none - tty in question must not be exposed at this poi=
-nt
-> > + *     Locking: none - tty in question is not exposed at this point
-> >   */
-> >=20
-> > -void initialize_tty_struct(struct tty_struct *tty,
-> > -               struct tty_driver *driver, int idx)
-> > +struct tty_struct *alloc_tty_struct(struct tty_driver *driver, int idx=
-)
-> >  {
-> > -       memset(tty, 0, sizeof(struct tty_struct));
-> > +       struct tty_struct *tty;
-> > +
-> > +       tty =3D kzalloc(sizeof(*tty), GFP_KERNEL);
-> > +       if (!tty)
-> > +               return NULL;
-> > +
-> >         kref_init(&tty->kref);
-> >         tty->magic =3D TTY_MAGIC;
-> >         tty_ldisc_init(tty);
-> > @@ -3070,6 +3057,8 @@ void initialize_tty_struct(struct tty_st
-> >         tty->index =3D idx;
-> >         tty_line_name(driver, idx, tty->name);
-> >         tty->dev =3D tty_get_device(tty);
-> > +
-> > +       return tty;
-> >  }
-> >=20
-> >  /**
-> > --- a/include/linux/tty.h
-> > +++ b/include/linux/tty.h
-> > @@ -477,13 +477,11 @@ extern int tty_mode_ioctl(struct tty_str
-> >                         unsigned int cmd, unsigned long arg);
-> >  extern int tty_perform_flush(struct tty_struct *tty, unsigned long arg=
-);
-> >  extern void tty_default_fops(struct file_operations *fops);
-> > -extern struct tty_struct *alloc_tty_struct(void);
-> > +extern struct tty_struct *alloc_tty_struct(struct tty_driver *driver, =
-int
-> > idx);
-> >  extern int tty_alloc_file(struct file *file);
-> >  extern void tty_add_file(struct tty_struct *tty, struct file *file);
-> >  extern void tty_free_file(struct file *file);
-> >  extern void free_tty_struct(struct tty_struct *tty);
-> > -extern void initialize_tty_struct(struct tty_struct *tty,
-> > -               struct tty_driver *driver, int idx);
-> >  extern void deinitialize_tty_struct(struct tty_struct *tty);
-> >  extern struct tty_struct *tty_init_dev(struct tty_driver *driver, int
-> > idx);
-> >  extern int tty_release(struct inode *inode, struct file *filp);
-> >=20
+> > --- a/kernel/trace/trace_uprobe.c
+> > +++ b/kernel/trace/trace_uprobe.c
+> > @@ -552,8 +552,7 @@ error:
+> >  	return ret;
+> > =20
+> >  fail_address_parse:
+> > -	if (inode)
+> > -		iput(inode);
+> > +	iput(inode);
+> > =20
+> >  	pr_info("Failed to parse address or file.\n");
+> > =20
 > >=20
 --=20
 Ben Hutchings
 I haven't lost my mind; it's backed up on tape somewhere.
 
 
---=-rrz/p7jpAW9DNK1t1tQO
+--=-aSQM/syPiZ1eg6Ltnaw1
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlvDhNoACgkQ57/I7JWG
-EQkDXw//SYxuafg5qQBOw6trFdRXjsrvqq+2BPAUdUnzhKMwY67mXCdzB9/7Ko1G
-GYlqMZpU/Od0H5ooPe4w25aem8HMl4hAD6w0h96lM/KTsIfDLRk3FmNFKn5jQrgv
-ZyVkl1Ok03/ptm05Oh85Q6Bxw9IuqRAKrVo0KVnORMWO8OA/jXOYP7Pc3AXS3DuG
-TMAVPEifvfzUtt3+ai4fMbZ39kcJp8+oHQbf+cU3GkiQJOnG8FS/FdXsT3Y1xpEa
-nVPmIE5Y4n3HSCzokRSa+XK8UK9InW6rij5nFMcWVg1Cnt2ztgAeN9oOZAnkpLvx
-T4s5QVfDgHIiQPoDneef4yRgG50iyxfl86J1io7x/fElYrZRXEBSLvCnYA2hcapS
-YUCDZVY3LrYn/aJ1/9mJBnsiJIvgzZ/eISTXpI9mcjoTNJH41bIQ8jg+2pYeYbsL
-leZZK52iyBYJWbqqY5Vhk/Y8ixZPKchuYGpuz5gSpfzJ3mnriUq/eOa0hGhNWDQI
-lUAhYDTQRtZPVdTUbFg57Bd21K6Z/2iLQAUgggU2hIgSiMofitytWrtzbjuTXD2h
-8/iWtyyMw4B9AfdtEulUzfyaWSQ06QNaBDaUSZ+eCzfvkdZl7/Cz/4T9aEImTc+l
-pE8VOMGSDqDWXccBRCt2/XrMg49IaSW4GYgxPbT5YiFScqB6s38=
-=R7Iy
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlvDhYQACgkQ57/I7JWG
+EQnhhw/+IaAKLRxtQzLv3YEak9I1Tpaip8F4ARuwJjK52r3OCbztSiuEQdRJf+p5
+2RfhyTs0CsQHkSDLg0RBGH+1xdsIqAOwbxx3YlMBUyhOssyjE24tuSD6AvT3ORa3
+6m57jHExMzXW6jDP9LldDhxxSx+uHx46PzmqEmIqjWl2++zE0m7HA3zvQjZreBf7
+2kk8VsauU5rLERwyH9zyA0jmnIa8obA/oCci3W+LlvfTSgFIlW9cXfHqE62KHxZg
+NCQgGInQqUjMJ9juoE/c6h64PKkPWa0AUjfuMjAIJ4VRkD6D/7rI9Amli1Y2vYwa
+qYOFmaEE2IxrjM9A+AFn4btJ9URrgqiLld5M0z4WLlCUiLf/mfBvOz3rZQoTCuKh
+mBgyPBm0HXS9PidgnHbGQTqAKqtFCvLozkicGw7AXGZQmvp1/0fSVu6v9Bb+8sy4
+rX/U/4FxMQYROQlJbdcs4hIYCzYonWttPRiBmCA0Jq6UFAttmdaxC9y5qP8rCvGO
+9X0XDXsZbkJNAkH5ScFwprLt7Zrn7SEnjfB0gMxbPaF0z3ZA0xLhRz4Zv3mvQm7h
+utavG5bFYWaeZZSiXfHb5xucW6yK1FYFKUXGOPEJvS3BbGqMxTxXG/VdhsbC+z0y
+c8cVDguKYO5IwLW680ldRl6ClLHgMC8au2Z5xDqPNAQfMEVOOFs=
+=zetv
 -----END PGP SIGNATURE-----
 
---=-rrz/p7jpAW9DNK1t1tQO--
+--=-aSQM/syPiZ1eg6Ltnaw1--
