@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2140CC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2675CC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E540220890
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:38:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E540220890
+	by mail.kernel.org (Postfix) with ESMTP id EBF7C20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:38:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBF7C20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbeJNXUE (ORCPT
+        id S1729007AbeJNXUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:20:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36807 "EHLO
+        Sun, 14 Oct 2018 19:20:08 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36813 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728015AbeJNXUD (ORCPT
+        by vger.kernel.org with ESMTP id S1728015AbeJNXUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:20:03 -0400
+        Sun, 14 Oct 2018 19:20:07 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM3-0004cj-8m; Sun, 14 Oct 2018 16:30:55 +0100
+        id 1gBiLv-0004cF-KL; Sun, 14 Oct 2018 16:30:47 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLS-0000Ki-E6; Sun, 14 Oct 2018 16:30:18 +0100
+        id 1gBiLU-0000Q4-Vs; Sun, 14 Oct 2018 16:30:20 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Mark Brown" <broonie@kernel.org>,
-        "Marek Vasut" <marex@denx.de>,
-        "Nicolin Chen" <nicoleotsuka@gmail.com>,
-        "Fabio Estevam" <fabio.estevam@nxp.com>
+CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Guillaume Nault" <g.nault@alphalink.fr>,
+        syzbot+a70ac890b23b1bf29f5c@syzkaller.appspotmail.com
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.728023490@decadent.org.uk>
+Message-ID: <lsq.1539530741.297077421@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 141/366] ASoC: fsl_esai: Fix divisor calculation
- failure at lower ratio
+Subject: [PATCH 3.16 204/366] l2tp: check sockaddr length in
+ pppol2tp_connect()
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,44 +58,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolin Chen <nicoleotsuka@gmail.com>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
-commit c656941df9bc80f7ec65b92ca73c42f8b0b62628 upstream.
+commit eb1c28c05894a4b1f6b56c5bf072205e64cfa280 upstream.
 
-When the desired ratio is less than 256, the savesub (tolerance)
-in the calculation would become 0. This will then fail the loop-
-search immediately without reporting any errors.
+Check sockaddr_len before dereferencing sp->sa_protocol, to ensure that
+it actually points to valid data.
 
-But if the ratio is smaller enough, there is no need to calculate
-the tolerance because PM divisor alone is enough to get the ratio.
-
-So a simple fix could be just to set PM directly instead of going
-into the loop-search.
-
-Reported-by: Marek Vasut <marex@denx.de>
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Tested-by: Marek Vasut <marex@denx.de>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: fd558d186df2 ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
+Reported-by: syzbot+a70ac890b23b1bf29f5c@syzkaller.appspotmail.com
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/soc/fsl/fsl_esai.c | 7 +++++++
+ net/l2tp/l2tp_ppp.c | 7 +++++++
  1 file changed, 7 insertions(+)
 
---- a/sound/soc/fsl/fsl_esai.c
-+++ b/sound/soc/fsl/fsl_esai.c
-@@ -142,6 +142,13 @@ static int fsl_esai_divisor_cal(struct s
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -641,6 +641,13 @@ static int pppol2tp_connect(struct socke
+ 	lock_sock(sk);
  
- 	psr = ratio <= 256 * maxfp ? ESAI_xCCR_xPSR_BYPASS : ESAI_xCCR_xPSR_DIV8;
- 
-+	/* Do not loop-search if PM (1 ~ 256) alone can serve the ratio */
-+	if (ratio <= 256) {
-+		pm = ratio;
-+		fp = 1;
-+		goto out;
-+	}
+ 	error = -EINVAL;
 +
- 	/* Set the max fluctuation -- 0.1% of the max devisor */
- 	savesub = (psr ? 1 : 8)  * 256 * maxfp / 1000;
++	if (sockaddr_len != sizeof(struct sockaddr_pppol2tp) &&
++	    sockaddr_len != sizeof(struct sockaddr_pppol2tpv3) &&
++	    sockaddr_len != sizeof(struct sockaddr_pppol2tpin6) &&
++	    sockaddr_len != sizeof(struct sockaddr_pppol2tpv3in6))
++		goto end;
++
+ 	if (sp->sa_protocol != PX_PROTO_OL2TP)
+ 		goto end;
  
 
