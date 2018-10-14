@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C3FC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C900C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F076820645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:01:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F076820645
+	by mail.kernel.org (Postfix) with ESMTP id 5E50820876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:01:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E50820876
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbeJNXLr (ORCPT
+        id S1727305AbeJNXLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:11:47 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35753 "EHLO
+        Sun, 14 Oct 2018 19:11:46 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35746 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727170AbeJNXLp (ORCPT
+        by vger.kernel.org with ESMTP id S1727166AbeJNXLp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:45 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLY-0004cW-Ln; Sun, 14 Oct 2018 16:30:24 +0100
+        id 1gBiLY-0004cD-QA; Sun, 14 Oct 2018 16:30:25 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLV-0000TQ-Si; Sun, 14 Oct 2018 16:30:21 +0100
+        id 1gBiLW-0000Tf-1c; Sun, 14 Oct 2018 16:30:22 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "Omar Sandoval" <osandov@fb.com>, "Kenny Yu" <kennyyu@fb.com>
+CC:     akpm@linux-foundation.org, "Tejun Heo" <tj@kernel.org>,
+        "Hans de Goede" <hdegoede@redhat.com>,
+        "Richard W.M. Jones" <rjones@redhat.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.640202943@decadent.org.uk>
+Message-ID: <lsq.1539530741.748100624@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 231/366] uprobe: Find last occurrence of ':' when
- parsing uprobe PATH:OFFSET
+Subject: [PATCH 3.16 234/366] libata: Apply NOLPM quirk for SanDisk
+ SD7UB3Q*G1001 SSDs
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,57 +58,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kenny Yu <kennyyu@fb.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 6496bb72bf20c1c7e4d6be44dfa663163e709116 upstream.
+commit 184add2ca23ce5edcac0ab9c3b9be13f91e7b567 upstream.
 
-Previously, `create_trace_uprobe` found the *first* occurence
-of the ':' character when parsing `PATH:OFFSET` for a uprobe.
-However, if the path contains a ':' character, then the function
-would parse the path incorrectly. Even worse, if the path does not
-exist, the subsequent call to `kern_path()` would set `ret` to
-`ENOENT`, leading to very cryptic errno values in user space.
+Richard Jones has reported that using med_power_with_dipm on a T450s
+with a Sandisk SD7UB3Q256G1001 SSD (firmware version X2180501) is
+causing the machine to hang.
 
-The fix is to find the *last* occurence of ':'.
+Switching the LPM to max_performance fixes this, so it seems that
+this Sandisk SSD does not handle LPM well.
 
-How to repro:: The write fails with "No such file or directory", suggesting
-incorrectly that the `uprobe_events` file does not exist.
+Note in the past there have been bug-reports about the following
+Sandisk models not working with min_power, so we may need to extend
+the quirk list in the future: name - firmware
+Sandisk SD6SB2M512G1022I   - X210400
+Sandisk SD6PP4M-256G-1006  - A200906
 
-  $ mkdir testing && cd testing
-  $ cp /bin/bash .
-  $ cp /bin/bash ./bash:with:colon
-  $ echo "p:uprobes/p__root_testing_bash_0x6 /root/testing/bash:0x6" > /sys/kernel/debug/tracing/uprobe_events     # this works
-  $ echo "p:uprobes/p__root_testing_bash_with_colon_0x6 /root/testing/bash:with:colon:0x6" >> /sys/kernel/debug/tracing/uprobe_events     # this doesn't
-  -bash: echo: write error: No such file or directory
-
-With the patch:
-
-  $ echo "p:uprobes/p__root_testing_bash_0x6 /root/testing/bash:0x6" > /sys/kernel/debug/tracing/uprobe_events     # this still works
-  $ echo "p:uprobes/p__root_testing_bash_with_colon_0x6 /root/testing/bash:with:colon:0x6" >> /sys/kernel/debug/tracing/uprobe_events     # this works now too!
-  $ cat /sys/kernel/debug/tracing/uprobe_events
-  p:uprobes/p__root_testing_bash_0x6 /root/testing/bash:0x0000000000000006
-  p:uprobes/p__root_testing_bash_with_colon_0x6 /root/testing/bash:with:colon:0x0000000000000006
-
-Link: http://lkml.kernel.org/r/20170113165834.4081016-1-kennyyu@fb.com
-
-Signed-off-by: Kenny Yu <kennyyu@fb.com>
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Richard W.M. Jones <rjones@redhat.com>
+Reported-and-tested-by: Richard W.M. Jones <rjones@redhat.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/trace/trace_uprobe.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/ata/libata-core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -430,7 +430,8 @@ static int create_trace_uprobe(int argc,
- 		pr_info("Probe point is not specified.\n");
- 		return -EINVAL;
- 	}
--	arg = strchr(argv[1], ':');
-+	/* Find the last occurrence, in case the path contains ':' too. */
-+	arg = strrchr(argv[1], ':');
- 	if (!arg) {
- 		ret = -EINVAL;
- 		goto fail_address_parse;
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4239,6 +4239,9 @@ static const struct ata_blacklist_entry
+ 	{ "Crucial_CT960M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_NOLPM, },
+ 
++	/* Sandisk devices which are known to not handle LPM well */
++	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
++
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM, },
+ 	{ "Crucial_CT*M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM, },
 
