@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 391DBC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47892C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF88920895
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:30:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF88920895
+	by mail.kernel.org (Postfix) with ESMTP id 1805D2145D
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:30:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1805D2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbeJNXLk (ORCPT
+        id S1726928AbeJNXLk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 14 Oct 2018 19:11:40 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35589 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35591 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726620AbeJNXLj (ORCPT
+        by vger.kernel.org with ESMTP id S1726623AbeJNXLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:39 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLS-0004cI-BI; Sun, 14 Oct 2018 16:30:18 +0100
+        id 1gBiLS-0004cH-Dz; Sun, 14 Oct 2018 16:30:18 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLN-00008k-6R; Sun, 14 Oct 2018 16:30:13 +0100
+        id 1gBiLN-00008f-5p; Sun, 14 Oct 2018 16:30:13 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Charles Keepax" <ckeepax@opensource.cirrus.com>,
-        "Mark Brown" <broonie@kernel.org>
+CC:     akpm@linux-foundation.org, "Michal Srb" <msrb@suse.com>,
+        "Chris Wilson" <chris@chris-wilson.co.uk>
 Date:   Sun, 14 Oct 2018 16:25:40 +0100
-Message-ID: <lsq.1539530740.639573632@decadent.org.uk>
+Message-ID: <lsq.1539530740.657169528@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 005/366] regmap: Correct offset handling in
- regmap_volatile_range
+Subject: [PATCH 3.16 004/366] drm/i915/cmdparser: Do not check past the
+ cmd length.
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,33 +57,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Michal Srb <msrb@suse.com>
 
-commit b8f9a03b741ddfdde4aa8b607fa7d88eb63a6338 upstream.
+commit 3aec7f871c65eb5f76b4125fda432593c834a6f2 upstream.
 
-The current implementation is broken for regmaps that have a reg_stride,
-since it doesn't take the stride into account. Correct this by using the
-helper function to calculate the register offset.
+The command MEDIA_VFE_STATE checks bits at offset +2 dwords. However, it is
+possible to have MEDIA_VFE_STATE command with length = 0 + LENGTH_BIAS = 2.
+In that case check_cmd will read bits from the following command, or even past
+the end of the buffer.
 
-Fixes: f01ee60fffa4 ("regmap: implement register striding")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-[bwh: Backported to 3.16: Use simple multiplication instead of
- regmap_get_offset()]
+If the offset ends up outside of the command length, reject the command.
+
+Fixes: 351e3db2b363 ("drm/i915: Implement command buffer parsing logic")
+Signed-off-by: Michal Srb <msrb@suse.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180205151745.29292-1-msrb@suse.com
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180205160438.3267-2-chris@chris-wilson.co.uk
+[bwh: Backported to 3.16: Log ring->id rather than engine->name]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/base/regmap/regmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/i915/i915_cmd_parser.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -144,7 +144,7 @@ static bool regmap_volatile_range(struct
- 	unsigned int i;
+--- a/drivers/gpu/drm/i915/i915_cmd_parser.c
++++ b/drivers/gpu/drm/i915/i915_cmd_parser.c
+@@ -941,6 +941,12 @@ static bool check_cmd(const struct intel
+ 					continue;
+ 			}
  
- 	for (i = 0; i < num; i++)
--		if (!regmap_volatile(map, reg + i))
-+		if (!regmap_volatile(map, reg + (i * map->reg_stride)))
- 			return false;
++			if (desc->bits[i].offset >= length) {
++				DRM_DEBUG_DRIVER("CMD: Rejected command 0x%08X, too short to check bitmask (ring=%d)\n",
++						 *cmd, ring->id);
++				return false;
++			}
++
+ 			dword = cmd[desc->bits[i].offset] &
+ 				desc->bits[i].mask;
  
- 	return true;
 
