@@ -6,42 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E927AC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C04AC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC0B2205C9
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC0B2205C9
+	by mail.kernel.org (Postfix) with ESMTP id 3E5C120644
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E5C120644
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729419AbeJNXg5 (ORCPT
+        id S1729629AbeJNXhE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:36:57 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36035 "EHLO
+        Sun, 14 Oct 2018 19:37:04 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36041 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727688AbeJNXLz (ORCPT
+        by vger.kernel.org with ESMTP id S1727718AbeJNXLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:55 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLh-0004cW-Nl; Sun, 14 Oct 2018 16:30:34 +0100
+        id 1gBiLh-0004cd-TZ; Sun, 14 Oct 2018 16:30:34 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLa-0000kF-Rd; Sun, 14 Oct 2018 16:30:26 +0100
+        id 1gBiLa-0000jq-KC; Sun, 14 Oct 2018 16:30:26 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Al Viro" <viro@zeniv.linux.org.uk>
+CC:     akpm@linux-foundation.org, "Al Viro" <viro@zeniv.linux.org.uk>,
+        "David Sterba" <dsterba@suse.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.589675738@decadent.org.uk>
+Message-ID: <lsq.1539530741.533778459@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 345/366] fix io_destroy()/aio_complete() race
+Subject: [PATCH 3.16 340/366] affs_lookup(): close a race with
+ affs_remove_link()
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,38 +59,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 4faa99965e027cc057c5145ce45fa772caa04e8d upstream.
+commit 30da870ce4a4e007c901858a96e9e394a1daa74a upstream.
 
-If io_destroy() gets to cancelling everything that can be cancelled and
-gets to kiocb_cancel() calling the function driver has left in ->ki_cancel,
-it becomes vulnerable to a race with IO completion.  At that point req
-is already taken off the list and aio_complete() does *NOT* spin until
-we (in free_ioctx_users()) releases ->ctx_lock.  As the result, it proceeds
-to kiocb_free(), freing req just it gets passed to ->ki_cancel().
+we unlock the directory hash too early - if we are looking at secondary
+link and primary (in another directory) gets removed just as we unlock,
+we could have the old primary moved in place of the secondary, leaving
+us to look into freed entry (and leaving our dentry with ->d_fsdata
+pointing to a freed entry).
 
-Fix is simple - remove from the list after the call of kiocb_cancel().  All
-instances of ->ki_cancel() already have to cope with the being called with
-iocb still on list - that's what happens in io_cancel(2).
-
-Fixes: 0460fef2a921 "aio: use cancellation list lazily"
+Acked-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/aio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/affs/namei.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -565,9 +565,8 @@ static void free_ioctx_users(struct perc
- 	while (!list_empty(&ctx->active_reqs)) {
- 		req = list_first_entry(&ctx->active_reqs,
- 				       struct kiocb, ki_list);
--
--		list_del_init(&req->ki_list);
- 		kiocb_cancel(req);
-+		list_del_init(&req->ki_list);
- 	}
+--- a/fs/affs/namei.c
++++ b/fs/affs/namei.c
+@@ -224,9 +224,10 @@ affs_lookup(struct inode *dir, struct de
  
- 	spin_unlock_irq(&ctx->ctx_lock);
+ 	affs_lock_dir(dir);
+ 	bh = affs_find_entry(dir, dentry);
+-	affs_unlock_dir(dir);
+-	if (IS_ERR(bh))
++	if (IS_ERR(bh)) {
++		affs_unlock_dir(dir);
+ 		return ERR_CAST(bh);
++	}
+ 	if (bh) {
+ 		u32 ino = bh->b_blocknr;
+ 
+@@ -240,10 +241,13 @@ affs_lookup(struct inode *dir, struct de
+ 		}
+ 		affs_brelse(bh);
+ 		inode = affs_iget(sb, ino);
+-		if (IS_ERR(inode))
++		if (IS_ERR(inode)) {
++			affs_unlock_dir(dir);
+ 			return ERR_CAST(inode);
++		}
+ 	}
+ 	d_add(dentry, inode);
++	affs_unlock_dir(dir);
+ 	return NULL;
+ }
+ 
 
