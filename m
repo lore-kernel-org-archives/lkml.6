@@ -2,95 +2,76 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5903C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 318D4C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6906C20659
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:28:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6906C20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kleine-koenig.org
+	by mail.kernel.org (Postfix) with ESMTP id BC71620659
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:30:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC71620659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbeJOEKX (ORCPT
+        id S1726381AbeJOEMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 00:10:23 -0400
-Received: from antares.kleine-koenig.org ([94.130.110.236]:33750 "EHLO
-        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725722AbeJOEKX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 00:10:23 -0400
-Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
-        id 41D26414091; Sun, 14 Oct 2018 22:28:10 +0200 (CEST)
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alessandro Rubini <rubini@gnudd.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Vok=C3=A1=C4=8D=20Michal?= <Michal.Vokac@ysoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kernel@pengutronix.de
-Subject: [PATCH RFC] err.h: document that PTR_ERR should only be used if IS_ERR returns true
-Date:   Sun, 14 Oct 2018 22:28:07 +0200
-Message-Id: <20181014202807.16412-1-uwe@kleine-koenig.org>
-X-Mailer: git-send-email 2.19.1
+        Mon, 15 Oct 2018 00:12:36 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:50666 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725722AbeJOEMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 00:12:35 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 3eSO2nYBWR-m; Sun, 14 Oct 2018 22:30:23 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BDC0500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:500:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A2B831EC0987;
+        Sun, 14 Oct 2018 22:30:23 +0200 (CEST)
+Date:   Sun, 14 Oct 2018 22:30:22 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Uros Bizjak <ubizjak@gmail.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86: Use assembly instruction mnemonics instead of
+ .byte streams in arch_hweight.h
+Message-ID: <20181014203022.GF7667@zn.tnic>
+References: <20181014202354.21281-1-ubizjak@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181014202354.21281-1-ubizjak@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have no idea about the rationale, but that's what LDD3 recommends.
+On Sun, Oct 14, 2018 at 10:23:54PM +0200, Uros Bizjak wrote:
+> Recently the minimum required version of binutils was changed to 2.20,
+> which supports popcnt instruction mnemonics. The patch removes
+> corresponding #defines that implement popcnt instructions using target-dependant
+> .byte streams and uses unified instruction mnemonics instead.
+> 
+> Tested by building x86_64 and i386 version of the kernel and comparing
+> objdump dumps of the pathced and unpatched vmlinux.o. They were the same.
+> 
+> v2: Update commit message to emphasize removal of #defines.
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> ---
+>  arch/x86/include/asm/arch_hweight.h | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
 
-Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
----
-Hello,
+Thanks.
 
-during a review I claimed that PTR_ERR should only be used if IS_ERR was
-already checked. The rationale isn't obvious though and Thierry
-suggested to keep the code as is and not introduce an IS_ERR check.
+But with one week before the merge window and this being not nearly
+urgent, it'll have to wait for after the merge window.
 
-I found in Linux Device Drivers 3[1]:
-
-	You should use PTR_ERR only on a value for which IS_ERR returns
-	a true value; any other value is a valid pointer
-
-I wonder if there is a relevant reason that LDD3 suggests to check
-IS_ERR first, maybe something like "On an Alpha it is important because
-not doing it results in a bus error there." There are no details
-mentioned there however. If there is a reason, this patch should be
-adapted such that the comment includes it.
-
-Any ideas?
-
-Best regards
-Uwe
-
-[1] https://static.lwn.net/images/pdf/LDD3/ch11.pdf, on page 295
-
- include/linux/err.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/include/linux/err.h b/include/linux/err.h
-index 87be24350e91..8f052983108e 100644
---- a/include/linux/err.h
-+++ b/include/linux/err.h
-@@ -26,6 +26,9 @@ static inline void * __must_check ERR_PTR(long error)
- 	return (void *) error;
- }
- 
-+/*
-+ * You should use PTR_ERR only on a value for which IS_ERR returns a true value.
-+ */
- static inline long __must_check PTR_ERR(__force const void *ptr)
- {
- 	return (long) ptr;
 -- 
-2.19.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
