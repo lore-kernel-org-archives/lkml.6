@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D919C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DF4C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF61720645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:01:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF61720645
+	by mail.kernel.org (Postfix) with ESMTP id 9CEC62077C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:01:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CEC62077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbeJNXmf (ORCPT
+        id S1728773AbeJNXme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:42:35 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35820 "EHLO
+        Sun, 14 Oct 2018 19:42:34 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35822 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727170AbeJNXLs (ORCPT
+        by vger.kernel.org with ESMTP id S1727348AbeJNXLs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:48 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLb-0004cA-S1; Sun, 14 Oct 2018 16:30:28 +0100
+        id 1gBiLb-0004cJ-Q2; Sun, 14 Oct 2018 16:30:28 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLZ-0000fx-45; Sun, 14 Oct 2018 16:30:25 +0100
+        id 1gBiLZ-0000fp-2a; Sun, 14 Oct 2018 16:30:25 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, linux-mips@linux-mips.org,
-        "Ralf Baechle" <ralf@linux-mips.org>,
-        "Maciej W. Rozycki" <macro@mips.com>,
-        "James Hogan" <jhogan@kernel.org>
+CC:     akpm@linux-foundation.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Juergen Gross" <jgross@suse.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.301885320@decadent.org.uk>
+Message-ID: <lsq.1539530741.710172338@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 306/366] MIPS: ptrace: Expose FIR register through FP
- regset
+Subject: [PATCH 3.16 305/366] tracing/x86/xen: Remove zero data size trace
+ events trace_xen_mmu_flush_tlb{_all}
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,93 +58,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Maciej W. Rozycki" <macro@mips.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-commit 71e909c0cdad28a1df1fa14442929e68615dee45 upstream.
+commit 45dd9b0666a162f8e4be76096716670cf1741f0e upstream.
 
-Correct commit 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
-and expose the FIR register using the unused 4 bytes at the end of the
-NT_PRFPREG regset.  Without that register included clients cannot use
-the PTRACE_GETREGSET request to retrieve the complete FPU register set
-and have to resort to one of the older interfaces, either PTRACE_PEEKUSR
-or PTRACE_GETFPREGS, to retrieve the missing piece of data.  Also the
-register is irreversibly missing from core dumps.
+Doing an audit of trace events, I discovered two trace events in the xen
+subsystem that use a hack to create zero data size trace events. This is not
+what trace events are for. Trace events add memory footprint overhead, and
+if all you need to do is see if a function is hit or not, simply make that
+function noinline and use function tracer filtering.
 
-This register is architecturally hardwired and read-only so the write
-path does not matter.  Ignore data supplied on writes then.
+Worse yet, the hack used was:
 
-Fixes: 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/19273/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+ __array(char, x, 0)
+
+Which creates a static string of zero in length. There's assumptions about
+such constructs in ftrace that this is a dynamic string that is nul
+terminated. This is not the case with these tracepoints and can cause
+problems in various parts of ftrace.
+
+Nuke the trace events!
+
+Link: http://lkml.kernel.org/r/20180509144605.5a220327@gandalf.local.home
+
+Fixes: 95a7d76897c1e ("xen/mmu: Use Xen specific TLB flush instead of the generic one.")
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+[bwh: Backported to 3.16: adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/mips/kernel/ptrace.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
-
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -481,7 +481,7 @@ static int fpr_get_msa(struct task_struc
- /*
-  * Copy the floating-point context to the supplied NT_PRFPREG buffer.
-  * Choose the appropriate helper for general registers, and then copy
-- * the FCSR register separately.
-+ * the FCSR and FIR registers separately.
-  */
- static int fpr_get(struct task_struct *target,
- 		   const struct user_regset *regset,
-@@ -489,6 +489,7 @@ static int fpr_get(struct task_struct *t
- 		   void *kbuf, void __user *ubuf)
- {
- 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
-+	const int fir_pos = fcr31_pos + sizeof(u32);
- 	int err;
+--- a/arch/x86/xen/mmu.c
++++ b/arch/x86/xen/mmu.c
+@@ -1283,8 +1283,6 @@ void xen_flush_tlb_all(void)
+ 	struct mmuext_op *op;
+ 	struct multicall_space mcs;
  
- 	if (sizeof(target->thread.fpu.fpr[0]) == sizeof(elf_fpreg_t))
-@@ -501,6 +502,12 @@ static int fpr_get(struct task_struct *t
- 	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
- 				  &target->thread.fpu.fcr31,
- 				  fcr31_pos, fcr31_pos + sizeof(u32));
-+	if (err)
-+		return err;
-+
-+	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
-+				  &boot_cpu_data.fpu_id,
-+				  fir_pos, fir_pos + sizeof(u32));
+-	trace_xen_mmu_flush_tlb_all(0);
+-
+ 	preempt_disable();
  
- 	return err;
+ 	mcs = xen_mc_entry(sizeof(*op));
+@@ -1297,13 +1295,11 @@ void xen_flush_tlb_all(void)
+ 
+ 	preempt_enable();
  }
-@@ -549,7 +556,8 @@ static int fpr_set_msa(struct task_struc
- /*
-  * Copy the supplied NT_PRFPREG buffer to the floating-point context.
-  * Choose the appropriate helper for general registers, and then copy
-- * the FCSR register separately.
-+ * the FCSR register separately.  Ignore the incoming FIR register
-+ * contents though, as the register is read-only.
-  *
-  * We optimize for the case where `count % sizeof(elf_fpreg_t) == 0',
-  * which is supposed to have been guaranteed by the kernel before
-@@ -563,6 +571,7 @@ static int fpr_set(struct task_struct *t
- 		   const void *kbuf, const void __user *ubuf)
+-static void xen_flush_tlb(void)
++static noinline void xen_flush_tlb(void)
  {
- 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
-+	const int fir_pos = fcr31_pos + sizeof(u32);
- 	u32 fcr31;
- 	int err;
+ 	struct mmuext_op *op;
+ 	struct multicall_space mcs;
  
-@@ -590,6 +599,11 @@ static int fpr_set(struct task_struct *t
- 		ptrace_setfcr31(target, fcr31);
- 	}
+-	trace_xen_mmu_flush_tlb(0);
+-
+ 	preempt_disable();
  
-+	if (count > 0)
-+		err = user_regset_copyin_ignore(&pos, &count, &kbuf, &ubuf,
-+						fir_pos,
-+						fir_pos + sizeof(u32));
-+
- 	return err;
- }
+ 	mcs = xen_mc_entry(sizeof(*op));
+--- a/include/trace/events/xen.h
++++ b/include/trace/events/xen.h
+@@ -377,22 +377,6 @@ DECLARE_EVENT_CLASS(xen_mmu_pgd,
+ DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_pin);
+ DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_unpin);
  
+-TRACE_EVENT(xen_mmu_flush_tlb_all,
+-	    TP_PROTO(int x),
+-	    TP_ARGS(x),
+-	    TP_STRUCT__entry(__array(char, x, 0)),
+-	    TP_fast_assign((void)x),
+-	    TP_printk("%s", "")
+-	);
+-
+-TRACE_EVENT(xen_mmu_flush_tlb,
+-	    TP_PROTO(int x),
+-	    TP_ARGS(x),
+-	    TP_STRUCT__entry(__array(char, x, 0)),
+-	    TP_fast_assign((void)x),
+-	    TP_printk("%s", "")
+-	);
+-
+ TRACE_EVENT(xen_mmu_flush_tlb_single,
+ 	    TP_PROTO(unsigned long addr),
+ 	    TP_ARGS(addr),
 
