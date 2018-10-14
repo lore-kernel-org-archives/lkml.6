@@ -6,45 +6,42 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656B4C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBA0C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28B9A20645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:59:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28B9A20645
+	by mail.kernel.org (Postfix) with ESMTP id A1F6620645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:59:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1F6620645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729198AbeJNXlL (ORCPT
+        id S1729803AbeJNXlV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:41:11 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35881 "EHLO
+        Sun, 14 Oct 2018 19:41:21 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35869 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727392AbeJNXLu (ORCPT
+        by vger.kernel.org with ESMTP id S1727386AbeJNXLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:11:50 -0400
+        Sun, 14 Oct 2018 19:11:49 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLb-0004co-QI; Sun, 14 Oct 2018 16:30:28 +0100
+        id 1gBiLd-0004cF-6M; Sun, 14 Oct 2018 16:30:29 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLY-0000fJ-VK; Sun, 14 Oct 2018 16:30:24 +0100
+        id 1gBiLa-0000k0-N9; Sun, 14 Oct 2018 16:30:26 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David Sterba" <dsterba@suse.com>,
-        "Robbie Ko" <robbieko@synology.com>,
-        "Filipe Manana" <fdmanana@suse.com>
+CC:     akpm@linux-foundation.org, "Al Viro" <viro@zeniv.linux.org.uk>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.576208886@decadent.org.uk>
+Message-ID: <lsq.1539530741.874534774@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 302/366] Btrfs: send, fix invalid access to commit
- roots due to concurrent snapshotting
+Subject: [PATCH 3.16 342/366] aio: fix io_destroy(2) vs. lookup_ioctx() race
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,134 +55,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Robbie Ko <robbieko@synology.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 6f2f0b394b54e2b159ef969a0b5274e9bbf82ff2 upstream.
+commit baf10564fbb66ea222cae66fbff11c444590ffd9 upstream.
 
-[BUG]
-btrfs incremental send BUG happens when creating a snapshot of snapshot
-that is being used by send.
+kill_ioctx() used to have an explicit RCU delay between removing the
+reference from ->ioctx_table and percpu_ref_kill() dropping the refcount.
+At some point that delay had been removed, on the theory that
+percpu_ref_kill() itself contained an RCU delay.  Unfortunately, that was
+the wrong kind of RCU delay and it didn't care about rcu_read_lock() used
+by lookup_ioctx().  As the result, we could get ctx freed right under
+lookup_ioctx().  Tejun has fixed that in a6d7cff472e ("fs/aio: Add explicit
+RCU grace period when freeing kioctx"); however, that fix is not enough.
 
-[REASON]
-The problem can happen if while we are doing a send one of the snapshots
-used (parent or send) is snapshotted, because snapshoting implies COWing
-the root of the source subvolume/snapshot.
+Suppose io_destroy() from one thread races with e.g. io_setup() from another;
+CPU1 removes the reference from current->mm->ioctx_table[...] just as CPU2
+has picked it (under rcu_read_lock()).  Then CPU1 proceeds to drop the
+refcount, getting it to 0 and triggering a call of free_ioctx_users(),
+which proceeds to drop the secondary refcount and once that reaches zero
+calls free_ioctx_reqs().  That does
+        INIT_RCU_WORK(&ctx->free_rwork, free_ioctx);
+        queue_rcu_work(system_wq, &ctx->free_rwork);
+and schedules freeing the whole thing after RCU delay.
 
-1. When doing an incremental send, the send process will get the commit
-   roots from the parent and send snapshots, and add references to them
-   through extent_buffer_get().
+In the meanwhile CPU2 has gotten around to percpu_ref_get(), bumping the
+refcount from 0 to 1 and returned the reference to io_setup().
 
-2. When a snapshot/subvolume is snapshotted, its root node is COWed
-   (transaction.c:create_pending_snapshot()).
+Tejun's fix (that queue_rcu_work() in there) guarantees that ctx won't get
+freed until after percpu_ref_get().  Sure, we'd increment the counter before
+ctx can be freed.  Now we are out of rcu_read_lock() and there's nothing to
+stop freeing of the whole thing.  Unfortunately, CPU2 assumes that since it
+has grabbed the reference, ctx is *NOT* going away until it gets around to
+dropping that reference.
 
-3. COWing releases the space used by the node immediately, through:
+The fix is obvious - use percpu_ref_tryget_live() and treat failure as miss.
+It's not costlier than what we currently do in normal case, it's safe to
+call since freeing *is* delayed and it closes the race window - either
+lookup_ioctx() comes before percpu_ref_kill() (in which case ctx->users
+won't reach 0 until the caller of lookup_ioctx() drops it) or lookup_ioctx()
+fails, ctx->users is unaffected and caller of lookup_ioctx() doesn't see
+the object in question at all.
 
-   __btrfs_cow_block()
-   --btrfs_free_tree_block()
-   ----btrfs_add_free_space(bytenr of node)
-
-4. Because send doesn't hold a transaction open, it's possible that
-   the transaction used to create the snapshot commits, switches the
-   commit root and the old space used by the previous root node gets
-   assigned to some other node allocation. Allocation of a new node will
-   use the existing extent buffer found in memory, which we previously
-   got a reference through extent_buffer_get(), and allow the extent
-   buffer's content (pages) to be modified:
-
-   btrfs_alloc_tree_block
-   --btrfs_reserve_extent
-   ----find_free_extent (get bytenr of old node)
-   --btrfs_init_new_buffer (use bytenr of old node)
-   ----btrfs_find_create_tree_block
-   ------alloc_extent_buffer
-   --------find_extent_buffer (get old node)
-
-5. So send can access invalid memory content and have unpredictable
-   behaviour.
-
-[FIX]
-So we fix the problem by copying the commit roots of the send and
-parent snapshots and use those copies.
-
-CallTrace looks like this:
- ------------[ cut here ]------------
- kernel BUG at fs/btrfs/ctree.c:1861!
- invalid opcode: 0000 [#1] SMP
- CPU: 6 PID: 24235 Comm: btrfs Tainted: P           O 3.10.105 #23721
- ffff88046652d680 ti: ffff88041b720000 task.ti: ffff88041b720000
- RIP: 0010:[<ffffffffa08dd0e8>] read_node_slot+0x108/0x110 [btrfs]
- RSP: 0018:ffff88041b723b68  EFLAGS: 00010246
- RAX: ffff88043ca6b000 RBX: ffff88041b723c50 RCX: ffff880000000000
- RDX: 000000000000004c RSI: ffff880314b133f8 RDI: ffff880458b24000
- RBP: 0000000000000000 R08: 0000000000000001 R09: ffff88041b723c66
- R10: 0000000000000001 R11: 0000000000001000 R12: ffff8803f3e48890
- R13: ffff8803f3e48880 R14: ffff880466351800 R15: 0000000000000001
- FS:  00007f8c321dc8c0(0000) GS:ffff88047fcc0000(0000)
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- R2: 00007efd1006d000 CR3: 0000000213a24000 CR4: 00000000003407e0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- Stack:
- ffff88041b723c50 ffff8803f3e48880 ffff8803f3e48890 ffff8803f3e48880
- ffff880466351800 0000000000000001 ffffffffa08dd9d7 ffff88041b723c50
- ffff8803f3e48880 ffff88041b723c66 ffffffffa08dde85 a9ff88042d2c4400
- Call Trace:
- [<ffffffffa08dd9d7>] ? tree_move_down.isra.33+0x27/0x50 [btrfs]
- [<ffffffffa08dde85>] ? tree_advance+0xb5/0xc0 [btrfs]
- [<ffffffffa08e83d4>] ? btrfs_compare_trees+0x2d4/0x760 [btrfs]
- [<ffffffffa0982050>] ? finish_inode_if_needed+0x870/0x870 [btrfs]
- [<ffffffffa09841ea>] ? btrfs_ioctl_send+0xeda/0x1050 [btrfs]
- [<ffffffffa094bd3d>] ? btrfs_ioctl+0x1e3d/0x33f0 [btrfs]
- [<ffffffff81111133>] ? handle_pte_fault+0x373/0x990
- [<ffffffff8153a096>] ? atomic_notifier_call_chain+0x16/0x20
- [<ffffffff81063256>] ? set_task_cpu+0xb6/0x1d0
- [<ffffffff811122c3>] ? handle_mm_fault+0x143/0x2a0
- [<ffffffff81539cc0>] ? __do_page_fault+0x1d0/0x500
- [<ffffffff81062f07>] ? check_preempt_curr+0x57/0x90
- [<ffffffff8115075a>] ? do_vfs_ioctl+0x4aa/0x990
- [<ffffffff81034f83>] ? do_fork+0x113/0x3b0
- [<ffffffff812dd7d7>] ? trace_hardirqs_off_thunk+0x3a/0x6c
- [<ffffffff81150cc8>] ? SyS_ioctl+0x88/0xa0
- [<ffffffff8153e422>] ? system_call_fastpath+0x16/0x1b
- ---[ end trace 29576629ee80b2e1 ]---
-
-Fixes: 7069830a9e38 ("Btrfs: add btrfs_compare_trees function")
-Signed-off-by: Robbie Ko <robbieko@synology.com>
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 3.16: s/fs_info/left_root->fs_info/]
+Fixes: a6d7cff472e "fs/aio: Add explicit RCU grace period when freeing kioctx"
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/btrfs/ctree.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ fs/aio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -5406,12 +5406,24 @@ int btrfs_compare_trees(struct btrfs_roo
- 	down_read(&left_root->fs_info->commit_root_sem);
- 	left_level = btrfs_header_level(left_root->commit_root);
- 	left_root_level = left_level;
--	left_path->nodes[left_level] = left_root->commit_root;
-+	left_path->nodes[left_level] =
-+			btrfs_clone_extent_buffer(left_root->commit_root);
-+	if (!left_path->nodes[left_level]) {
-+		up_read(&left_root->fs_info->commit_root_sem);
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 	extent_buffer_get(left_path->nodes[left_level]);
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1025,8 +1025,8 @@ static struct kioctx *lookup_ioctx(unsig
  
- 	right_level = btrfs_header_level(right_root->commit_root);
- 	right_root_level = right_level;
--	right_path->nodes[right_level] = right_root->commit_root;
-+	right_path->nodes[right_level] =
-+			btrfs_clone_extent_buffer(right_root->commit_root);
-+	if (!right_path->nodes[right_level]) {
-+		up_read(&left_root->fs_info->commit_root_sem);
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 	extent_buffer_get(right_path->nodes[right_level]);
- 	up_read(&left_root->fs_info->commit_root_sem);
- 
+ 	ctx = rcu_dereference(table->table[id]);
+ 	if (ctx && ctx->user_id == ctx_id) {
+-		percpu_ref_get(&ctx->users);
+-		ret = ctx;
++		if (percpu_ref_tryget_live(&ctx->users))
++			ret = ctx;
+ 	}
+ out:
+ 	rcu_read_unlock();
 
