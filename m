@@ -2,143 +2,136 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3F4C6787C
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 12:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCE0C6787C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 13:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D55F2077C
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 12:57:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iABS1Buu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D55F2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 85D2520652
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 13:17:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D2520652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbeJNUia (ORCPT
+        id S1726328AbeJNU6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 16:38:30 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33413 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726151AbeJNUia (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 16:38:30 -0400
-Received: by mail-pg1-f193.google.com with SMTP id y18-v6so7897425pge.0;
-        Sun, 14 Oct 2018 05:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=QOh3/rAAMNg6qWlR3ockjsVxuDsHmKYoJ0FCAyRqfh4=;
-        b=iABS1BuuIxLgQKHch2Dlc2zTZiMd5aUIeqllYaFVgeR7hoGPuvGN0BBSP3H1vOGBVn
-         KnNmfDgbSWbJo+V1YyBGzEulGIQI4dKrQDtk/qd41E6RZlIfP2uxnp0+oBAtOmE4lG68
-         x70+eGZP6uqx3qIucJWNiOGFfutGJX0zNuk02P85pVbzAfz/cdNnL7N6mjQ9px/1vLGR
-         0JCrXbMG1TROv4dsnHtWFYQhX2S77DifFBaPTKHxH7wYOLvmaT9qB/OI8BYNCWShL/X9
-         mFcN7LHngJUy/JxGOyjI6S48h8FN8nkPma5iSqUuYea8u+8O4wp45CoWdE8sNLx2J/u+
-         jenA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=QOh3/rAAMNg6qWlR3ockjsVxuDsHmKYoJ0FCAyRqfh4=;
-        b=OaJsWyv3iJfe+5wYy4VmOWcNlbFnLPobcedYWTYUv1c8auJIo6Y9LmqbSHg2shZkJu
-         YTDG+umgj41xv+KOMz3SnRGox3zR2CRxQ+ngjOUVyvclxEIvl8OlXDhezswUzaFrNdDR
-         e99nhdSUgclM/QE1pFbhx1eRz9bRsQK03bmEFJuGp2JIwWbOBPmOsjxSlMRpat9/K3yV
-         FthWCtjNQNwNBq2GVeltOeenlbRHR6qgZOf5UuBOjYXl0OrXcuCs7jVCy2KDLRhu8XGG
-         bGnCf6RPxnDF9ttot4/cp0NZY8/IgNbb43So0YnCnfKv/vjK0b0kMzQHJiPtMrPFJXUz
-         atXA==
-X-Gm-Message-State: ABuFfogs66iY69I6pXzPmVFLB6haw2yX6V5PpSn19X1Wog8/+T6Tayb4
-        1omgKH8xrsf6ogPnRzWc9xNxQugQngPNuGAJwE0=
-X-Google-Smtp-Source: ACcGV60zf0Hi3mZezp2hDEDaLIs17dXAsuvuc8YysL8650sEBPqrqgQAvzNYudsoqEWRyq2I1MEzwEjavgjecjVnptw=
-X-Received: by 2002:a62:8910:: with SMTP id v16-v6mr13526160pfd.106.1539521853925;
- Sun, 14 Oct 2018 05:57:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
- <20181013145406.4911-3-Tianyu.Lan@microsoft.com> <4D709C3A-A91C-4CA7-922A-E77618EF21B4@oracle.com>
- <alpine.DEB.2.21.1810141014350.1438@nanos.tec.linutronix.de> <1BDC7949-CFED-46C2-9D05-42864B0AD0F0@oracle.com>
-In-Reply-To: <1BDC7949-CFED-46C2-9D05-42864B0AD0F0@oracle.com>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Sun, 14 Oct 2018 20:57:22 +0800
-Message-ID: <CAOLK0pxC9S7YzoC-YmE7bw2VyPEZfxZSCOW+hW+t3Mi8V6Y-RQ@mail.gmail.com>
-Subject: Re: [PATCH V4 2/15] KVM/MMU: Add tlb flush with range helper function
-To:     liran.alon@oracle.com
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        christoffer.dall@arm.com, marc.zyngier@arm.com, linux@armlinux.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, jhogan@kernel.org,
-        ralf@linux-mips.org, paul.burton@mips.com, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
+        Sun, 14 Oct 2018 16:58:25 -0400
+Received: from sauhun.de ([88.99.104.3]:35280 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726129AbeJNU6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Oct 2018 16:58:25 -0400
+Received: from localhost (mue-88-130-99-254.dsl.tropolys.de [88.130.99.254])
+        by pokefinder.org (Postfix) with ESMTPSA id DB3382C786F;
+        Sun, 14 Oct 2018 15:17:24 +0200 (CEST)
+Date:   Sun, 14 Oct 2018 15:17:24 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        linux-mips@linux-mips.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devel@linuxdriverproject.org,
-        kvm <kvm@vger.kernel.org>, michael.h.kelley@microsoft.com,
-        vkuznets@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "H . Peter Anvin" <hpa@zytor.com>, linux-i2c@vger.kernel.org,
+        linux-acpi@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] x86: baytrail/cherrytrail: Rework and move P-Unit
+ PMIC bus semaphore code
+Message-ID: <20181014131724.GA863@kunai>
+References: <20181011142911.13750-1-hdegoede@redhat.com>
+ <20181011142911.13750-2-hdegoede@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
+Content-Disposition: inline
+In-Reply-To: <20181011142911.13750-2-hdegoede@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Liran & Thomas:
-              Thanks for your review.
+
+--9jxsPFA5p3P2qPhR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Oct 11, 2018 at 04:29:09PM +0200, Hans de Goede wrote:
+> On some BYT/CHT systems the SoC's P-Unit shares the I2C bus with the
+> kernel. The P-Unit has a semaphore for the PMIC bus which we can take to
+> block it from accessing the shared bus while the kernel wants to access i=
+t.
+>=20
+> Currently we have the I2C-controller driver acquiring and releasing the
+> semaphore around each I2C transfer. There are 2 problems with this:
+>=20
+> 1) PMIC accesses often come in the form of a read-modify-write on one of
+> the PMIC registers, we currently release the P-Unit's PMIC bus semaphore
+> between the read and the write. If the P-Unit modifies the register during
+> this window?, then we end up overwriting the P-Unit's changes.
+> I believe that this is mostly an academic problem, but I'm not sure.
+>=20
+> 2) To safely access the shared I2C bus, we need to do 3 things:
+> a) Notify the GPU driver that we are starting a window in which it may not
+> access the P-Unit, since the P-Unit seems to ignore the semaphore for
+> explicit power-level requests made by the GPU driver
+> b) Make a pm_qos request to force all CPU cores out of C6/C7 since enteri=
+ng
+> C6/C7 while we hold the semaphore hangs the SoC
+> c) Finally take the P-Unit's PMIC bus semaphore
+> All 3 these steps together are somewhat expensive, so ideally if we have
+> a bunch of i2c transfers grouped together we only do this once for the
+> entire group.
+>=20
+> Taking the read-modify-write on a PMIC register as example then ideally we
+> would only do all 3 steps once at the beginning and undo all 3 steps once
+> at the end.
+>=20
+> For this we need to be able to take the semaphore from within e.g. the PM=
+IC
+> opregion driver, yet we do not want to remove the taking of the semaphore
+> from the I2C-controller driver, as that is still necessary to protect many
+> other code-paths leading to accessing the shared I2C bus.
+>=20
+> This means that we first have the PMIC driver acquire the semaphore and
+> then have the I2C controller driver trying to acquire it again.
+>=20
+> To make this possible this commit does the following:
+>=20
+> 1) Move the semaphore code from being private to the I2C controller driver
+> into the generic iosf_mbi code, which already has other code to deal with
+> the shared bus so that it can be accessed outside of the I2C bus driver.
+>=20
+> 2) Rework the code so that it can be called multiple times nested, while
+> still blocking I2C accesses while e.g. the GPU driver has indicated the
+> P-Unit needs the bus through a iosf_mbi_punit_acquire() call.
+>=20
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+
+For the record: once the designware maintainers are okay with this
+change, I am also okay with it going via the x86 platform tree.
 
 
-On Sun, Oct 14, 2018 at 5:20 PM Liran Alon <liran.alon@oracle.com> wrote:
->
->
->
-> > On 14 Oct 2018, at 11:16, Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> > On Sun, 14 Oct 2018, Liran Alon wrote:
-> >>> On 13 Oct 2018, at 17:53, lantianyu1986@gmail.com wrote:
-> >>>
-> >>> +
-> >>> +static inline bool kvm_available_flush_tlb_with_range(void)
-> >>> +{
-> >>> +   return kvm_x86_ops->tlb_remote_flush_with_range;
-> >>> +}
-> >>
-> >> Seems that kvm_available_flush_tlb_with_range() is not used in this pa=
-tch=E2=80=A6
-> >
-> > What's wrong with that?
-> >
-> > It provides the implementation and later patches make use of it. It's a
-> > sensible way to split patches into small, self contained entities.
-> >
-> > Thanks,
-> >
-> >       tglx
-> >
->
-> I guess it=E2=80=99s a matter of taste, but I prefer to not add dead-code=
- for patches
-> in order for each commit to compile nicely without warnings of declared a=
-nd unused functions.
-> I would prefer to just add this utility function on the patch that actual=
-ly use it.
->
-> -Liran
->
+--9jxsPFA5p3P2qPhR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Normally, I also prefer to put the function definition into the patch
-which use it.
-But the following patch "KVM: Replace old tlb flush function with new
-one to flush a specified range"
-and other patches which use new functions will change a lot of places.
-It's not friendly for review and
-so I split them into pieces.
---
-Best regards
-Tianyu Lan
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvDQeAACgkQFA3kzBSg
+Kba8cw//bcFMGnUf5u7LGI5EJg3nCoZhj4aZTu/Z4yxcWFtkgN3duynk3hnf5NiM
+XcbT+8L/nIsvg2JhvBcGFAkFk4qIbMS5sibBWxAjrDpxR2welru8R+gk0kLqyxIL
+LPT81ikAVz/nZ9Qd3smDu8cel6N2uu7bYGHwQdXszdp74prV64ZBbiByaV29zy59
+LjvyW8+mBHszrrbnJu80VjmAhGFb2eYk8n7j/Csa/WdYZMZRxCTxkXzc2wmJva87
+m3ZH132QJ73GLpnY4+Ey1idJyWrob65IXi3A3UklKsbzPWJWAyGuZPlr7O9/Ttx/
+jYUvW7qJrA8+GmwPkbGRx9eL7oAT+ixZDAUEvi2ASxysh6e+pluvZTvM0S1gyU0/
+Fh3fOLu/QmALd7ki3urs7fPJR113JU5eyQeF4FLQu2JUW0KPlLjTL07PlciEOqDK
+hQIjWnGbJTi+5wsrQI0PC2D1GqmBvhT384ZvnT4GAL4kbog7ZAuiBtcKG5lgGOup
+DHWkBHokM2zSMAsbYCnDbBcK4zVC54OR715w6hcFAlld3Tr3UZI0Y764zZ9R6moz
+SPntQgy8ABOVdpOWY4yLZinkxRXDb0sJ8LNefF6C5UoJ7ht//BKvMdustiHE4yr6
+16wk5RxkAnB0jvGMcPrTYhVYXJqvRnYoXfCwJRG26vTQl6ygsFU=
+=iVmh
+-----END PGP SIGNATURE-----
+
+--9jxsPFA5p3P2qPhR--
