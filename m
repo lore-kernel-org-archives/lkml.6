@@ -6,45 +6,42 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4079C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E927AC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71BBD20645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71BBD20645
+	by mail.kernel.org (Postfix) with ESMTP id BC0B2205C9
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC0B2205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729512AbeJNXgq (ORCPT
+        id S1729419AbeJNXg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:36:46 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36060 "EHLO
+        Sun, 14 Oct 2018 19:36:57 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36035 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727719AbeJNXLz (ORCPT
+        by vger.kernel.org with ESMTP id S1727688AbeJNXLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:55 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLh-0004co-TD; Sun, 14 Oct 2018 16:30:34 +0100
+        id 1gBiLh-0004cW-Nl; Sun, 14 Oct 2018 16:30:34 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLa-0000jW-Ea; Sun, 14 Oct 2018 16:30:26 +0100
+        id 1gBiLa-0000kF-Rd; Sun, 14 Oct 2018 16:30:26 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Russell King" <rmk+kernel@armlinux.org.uk>,
-        "=?UTF-8?q?=C5=81ukasz=20Stelmach?=" <l.stelmach@samsung.com>
+CC:     akpm@linux-foundation.org, "Al Viro" <viro@zeniv.linux.org.uk>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.719353733@decadent.org.uk>
+Message-ID: <lsq.1539530741.589675738@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 336/366] ARM: 8753/1: decompressor: add a missing
- parameter to the addruart macro
+Subject: [PATCH 3.16 345/366] fix io_destroy()/aio_complete() race
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,84 +55,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Łukasz Stelmach <l.stelmach@samsung.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit e07e3c33b9c0b5751ade624f44325c9bf2487ea6 upstream.
+commit 4faa99965e027cc057c5145ce45fa772caa04e8d upstream.
 
-In commit 639da5ee374b ("ARM: add an extra temp register to the low
-level debugging addruart macro") an additional temporary register was
-added to the addruart macro, but the decompressor code wasn't updated.
+If io_destroy() gets to cancelling everything that can be cancelled and
+gets to kiocb_cancel() calling the function driver has left in ->ki_cancel,
+it becomes vulnerable to a race with IO completion.  At that point req
+is already taken off the list and aio_complete() does *NOT* spin until
+we (in free_ioctx_users()) releases ->ctx_lock.  As the result, it proceeds
+to kiocb_free(), freing req just it gets passed to ->ki_cancel().
 
-Fixes: 639da5ee374b ("ARM: add an extra temp register to the low level debugging addruart macro")
-Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fix is simple - remove from the list after the call of kiocb_cancel().  All
+instances of ->ki_cancel() already have to cope with the being called with
+iocb still on list - that's what happens in io_cancel(2).
+
+Fixes: 0460fef2a921 "aio: use cancellation list lazily"
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arm/boot/compressed/head.S | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/aio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/arm/boot/compressed/head.S
-+++ b/arch/arm/boot/compressed/head.S
-@@ -24,19 +24,19 @@
- #if defined(CONFIG_DEBUG_ICEDCC)
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -565,9 +565,8 @@ static void free_ioctx_users(struct perc
+ 	while (!list_empty(&ctx->active_reqs)) {
+ 		req = list_first_entry(&ctx->active_reqs,
+ 				       struct kiocb, ki_list);
+-
+-		list_del_init(&req->ki_list);
+ 		kiocb_cancel(req);
++		list_del_init(&req->ki_list);
+ 	}
  
- #if defined(CONFIG_CPU_V6) || defined(CONFIG_CPU_V6K) || defined(CONFIG_CPU_V7)
--		.macro	loadsp, rb, tmp
-+		.macro	loadsp, rb, tmp1, tmp2
- 		.endm
- 		.macro	writeb, ch, rb
- 		mcr	p14, 0, \ch, c0, c5, 0
- 		.endm
- #elif defined(CONFIG_CPU_XSCALE)
--		.macro	loadsp, rb, tmp
-+		.macro	loadsp, rb, tmp1, tmp2
- 		.endm
- 		.macro	writeb, ch, rb
- 		mcr	p14, 0, \ch, c8, c0, 0
- 		.endm
- #else
--		.macro	loadsp, rb, tmp
-+		.macro	loadsp, rb, tmp1, tmp2
- 		.endm
- 		.macro	writeb, ch, rb
- 		mcr	p14, 0, \ch, c1, c0, 0
-@@ -52,7 +52,7 @@
- 		.endm
- 
- #if defined(CONFIG_ARCH_SA1100)
--		.macro	loadsp, rb, tmp
-+		.macro	loadsp, rb, tmp1, tmp2
- 		mov	\rb, #0x80000000	@ physical base address
- #ifdef CONFIG_DEBUG_LL_SER3
- 		add	\rb, \rb, #0x00050000	@ Ser3
-@@ -61,8 +61,8 @@
- #endif
- 		.endm
- #else
--		.macro	loadsp,	rb, tmp
--		addruart \rb, \tmp
-+		.macro	loadsp,	rb, tmp1, tmp2
-+		addruart \rb, \tmp1, \tmp2
- 		.endm
- #endif
- #endif
-@@ -1219,7 +1219,7 @@ phex:		adr	r3, phexbuf
- 		b	1b
- 
- @ puts corrupts {r0, r1, r2, r3}
--puts:		loadsp	r3, r1
-+puts:		loadsp	r3, r2, r1
- 1:		ldrb	r2, [r0], #1
- 		teq	r2, #0
- 		moveq	pc, lr
-@@ -1236,8 +1236,8 @@ puts:		loadsp	r3, r1
- @ putc corrupts {r0, r1, r2, r3}
- putc:
- 		mov	r2, r0
-+		loadsp	r3, r1, r0
- 		mov	r0, #0
--		loadsp	r3, r1
- 		b	2b
- 
- @ memdump corrupts {r0, r1, r2, r3, r10, r11, r12, lr}
+ 	spin_unlock_irq(&ctx->ctx_lock);
 
