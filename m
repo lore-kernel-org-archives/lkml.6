@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 578CEC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F167DC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CAD20876
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:30:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CAD20876
+	by mail.kernel.org (Postfix) with ESMTP id C25B020876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:31:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25B020876
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbeJNXMP (ORCPT
+        id S1728413AbeJNXMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:12:15 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36485 "EHLO
+        Sun, 14 Oct 2018 19:12:18 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36498 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728373AbeJNXMO (ORCPT
+        by vger.kernel.org with ESMTP id S1728373AbeJNXMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:12:14 -0400
+        Sun, 14 Oct 2018 19:12:17 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM1-0004io-TR; Sun, 14 Oct 2018 16:30:54 +0100
+        id 1gBiM4-0004io-Q8; Sun, 14 Oct 2018 16:30:57 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLT-0000Mt-Cw; Sun, 14 Oct 2018 16:30:19 +0100
+        id 1gBiLR-0000JO-PB; Sun, 14 Oct 2018 16:30:17 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Eric Biggers" <ebiggers@google.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>
+CC:     akpm@linux-foundation.org, "Jan Kara" <jack@suse.cz>,
+        "Amir Goldstein" <amir73il@gmail.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.188282517@decadent.org.uk>
+Message-ID: <lsq.1539530741.372472858@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 168/366] KEYS: DNS: limit the length of option strings
+Subject: [PATCH 3.16 126/366] fanotify: fix logic of events on child
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,75 +56,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit 9c438d7a3a52dcc2b9ed095cb87d3a5e83cf7e60 upstream.
+commit 54a307ba8d3cd00a3902337ffaae28f436eeb1a4 upstream.
 
-Adding a dns_resolver key whose payload contains a very long option name
-resulted in that string being printed in full.  This hit the WARN_ONCE()
-in set_precision() during the printk(), because printk() only supports a
-precision of up to 32767 bytes:
+When event on child inodes are sent to the parent inode mark and
+parent inode mark was not marked with FAN_EVENT_ON_CHILD, the event
+will not be delivered to the listener process. However, if the same
+process also has a mount mark, the event to the parent inode will be
+delivered regadless of the mount mark mask.
 
-    precision 1000000 too large
-    WARNING: CPU: 0 PID: 752 at lib/vsprintf.c:2189 vsnprintf+0x4bc/0x5b0
+This behavior is incorrect in the case where the mount mark mask does
+not contain the specific event type. For example, the process adds
+a mark on a directory with mask FAN_MODIFY (without FAN_EVENT_ON_CHILD)
+and a mount mark with mask FAN_CLOSE_NOWRITE (without FAN_ONDIR).
 
-Fix it by limiting option strings (combined name + value) to a much more
-reasonable 128 bytes.  The exact limit is arbitrary, but currently the
-only recognized option is formatted as "dnserror=%lu" which fits well
-within this limit.
+A modify event on a file inside that directory (and inside that mount)
+should not create a FAN_MODIFY event, because neither of the marks
+requested to get that event on the file.
 
-Also ratelimit the printks.
-
-Reproducer:
-
-    perl -e 'print "#", "A" x 1000000, "\x00"' | keyctl padd dns_resolver desc @s
-
-This bug was found using syzkaller.
-
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Fixes: 4a2d789267e0 ("DNS: If the DNS server returns an error, allow that to be cached [ver #2]")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16:
- - Also stop logging the key serial number
- - Include <linux/ratelimit.h> directly]
+Fixes: 1968f5eed54c ("fanotify: use both marks when possible")
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/dns_resolver/dns_key.c
-+++ b/net/dns_resolver/dns_key.c
-@@ -29,6 +29,7 @@
- #include <linux/keyctl.h>
- #include <linux/err.h>
- #include <linux/seq_file.h>
-+#include <linux/ratelimit.h>
- #include <keys/dns_resolver-type.h>
- #include <keys/user-type.h>
- #include "internal.h"
-@@ -93,10 +94,9 @@ dns_resolver_instantiate(struct key *key
+ fs/notify/fanotify/fanotify.c | 34 +++++++++++++++-------------------
+ 1 file changed, 15 insertions(+), 19 deletions(-)
+
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -92,7 +92,7 @@ static bool fanotify_should_send_event(s
+ 				       u32 event_mask,
+ 				       void *data, int data_type)
+ {
+-	__u32 marks_mask, marks_ignored_mask;
++	__u32 marks_mask = 0, marks_ignored_mask = 0;
+ 	struct path *path = data;
  
- 			next_opt = memchr(opt, '#', end - opt) ?: end;
- 			opt_len = next_opt - opt;
--			if (!opt_len) {
--				printk(KERN_WARNING
--				       "Empty option to dns_resolver key %d\n",
--				       key->serial);
-+			if (opt_len <= 0 || opt_len > 128) {
-+				pr_warn_ratelimited("Invalid option length (%d) for dns_resolver key\n",
-+						    opt_len);
- 				return -EINVAL;
- 			}
+ 	pr_debug("%s: inode_mark=%p vfsmnt_mark=%p mask=%x data=%p"
+@@ -108,24 +108,20 @@ static bool fanotify_should_send_event(s
+ 	    !S_ISDIR(path->dentry->d_inode->i_mode))
+ 		return false;
  
-@@ -130,10 +130,8 @@ dns_resolver_instantiate(struct key *key
- 			}
- 
- 		bad_option_value:
--			printk(KERN_WARNING
--			       "Option '%*.*s' to dns_resolver key %d:"
--			       " bad/missing value\n",
--			       opt_nlen, opt_nlen, opt, key->serial);
-+			pr_warn_ratelimited("Option '%*.*s' to dns_resolver key: bad/missing value\n",
-+					    opt_nlen, opt_nlen, opt);
- 			return -EINVAL;
- 		} while (opt = next_opt + 1, opt < end);
+-	if (inode_mark && vfsmnt_mark) {
+-		marks_mask = (vfsmnt_mark->mask | inode_mark->mask);
+-		marks_ignored_mask = (vfsmnt_mark->ignored_mask | inode_mark->ignored_mask);
+-	} else if (inode_mark) {
+-		/*
+-		 * if the event is for a child and this inode doesn't care about
+-		 * events on the child, don't send it!
+-		 */
+-		if ((event_mask & FS_EVENT_ON_CHILD) &&
+-		    !(inode_mark->mask & FS_EVENT_ON_CHILD))
+-			return false;
+-		marks_mask = inode_mark->mask;
+-		marks_ignored_mask = inode_mark->ignored_mask;
+-	} else if (vfsmnt_mark) {
+-		marks_mask = vfsmnt_mark->mask;
+-		marks_ignored_mask = vfsmnt_mark->ignored_mask;
+-	} else {
+-		BUG();
++	/*
++	 * if the event is for a child and this inode doesn't care about
++	 * events on the child, don't send it!
++	 */
++	if (inode_mark &&
++	    (!(event_mask & FS_EVENT_ON_CHILD) ||
++	     (inode_mark->mask & FS_EVENT_ON_CHILD))) {
++		marks_mask |= inode_mark->mask;
++		marks_ignored_mask |= inode_mark->ignored_mask;
++	}
++
++	if (vfsmnt_mark) {
++		marks_mask |= vfsmnt_mark->mask;
++		marks_ignored_mask |= vfsmnt_mark->ignored_mask;
  	}
+ 
+ 	if (S_ISDIR(path->dentry->d_inode->i_mode) &&
 
