@@ -2,129 +2,91 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBB2C6787C
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 07:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C24C6787C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 07:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E8FC20659
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 07:42:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E8FC20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 329BD2064E
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 07:52:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pEXyV/b4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 329BD2064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbeJNPWt (ORCPT
+        id S1726375AbeJNPcX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 11:22:49 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:41396 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbeJNPWt (ORCPT
+        Sun, 14 Oct 2018 11:32:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42810 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbeJNPcX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 11:22:49 -0400
-Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1FC8F13D36D29;
-        Sun, 14 Oct 2018 00:42:42 -0700 (PDT)
-Date:   Sun, 14 Oct 2018 00:42:38 -0700 (PDT)
-Message-Id: <20181014.004238.292485794143606801.davem@davemloft.net>
-To:     acme@redhat.com
-CC:     linux-kernel@vger.kernel.org
-Subject: perf's handling of unfindable user symbols...
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 14 Oct 2018 00:42:42 -0700 (PDT)
+        Sun, 14 Oct 2018 11:32:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/icEzEWJfTHlN0Oc7lY0KnPqMRT/U6+nnWEROoGc650=; b=pEXyV/b42HObEC3GDh4HevHr4
+        cua1/mD2h14263JPj4u3knFdKyzleMx9IbV82c5bYFdvY6wgwdo81LE/039QwdmcF/ZP0t6VKxy4e
+        cneZHI89YHxH8XJZ5BSZupbSpcNa4oUGIB+I3ntHe3JPsHwAgTgGHsxpdT+DJoodXtf5OpCM/PIWC
+        Yj+1Myeq7214cMCzt7mJFSa0MP8Pdayfspa8i0v3oEyNm8bJWtcw3V58OyvdmPLI5K/PVnO6Q8Z8d
+        RLQK43gKHxS2qzquJVHeFeLHtP03BzFVC0ZDmHQdx9ZsAfpKLqBH+C+MBNcwEa3E6L/1UZfjU31Zx
+        44QwdWMzQ==;
+Received: from 089144199123.atnat0008.highway.a1.net ([89.144.199.123] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gBbC7-0000Fy-Ue; Sun, 14 Oct 2018 07:52:12 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     x86@kernel.org
+Cc:     tedheadster@gmail.com, konrad.wilk@oracle.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86: enable swiotlb for > 4GiG ram on 32-bit kernels
+Date:   Sun, 14 Oct 2018 09:52:08 +0200
+Message-Id: <20181014075208.2715-1-hch@lst.de>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We already build the swiotlb code for 32b-t kernels with PAE support,
+but the code to actually use swiotlb has only been enabled for 64-bit
+kernel for an unknown reason.
 
-Perf has this hack where it uses the kernel symbol map as a backup
-when a symbol can't be found in the user's symbol table(s).
+Before Linux 4.18 we papers over this fact because the networking code,
+the scsi layer and some random block drivers implenented their own
+bounce buffering scheme.
 
-This causes problems because the tests driving this code path use
-machine__kernel_ip(), and that is completely meaningless on Sparc.  On
-sparc64 the kernel and user live in physically separate virtual
-address spaces, rather than a shared one.  And the kernel lives at a
-virtual address that overlaps common userspace addresses.  So this
-test passes almost all the time when a user symbol lookup fails.
+Fixes: 21e07dba ("scsi: reduce use of block bounce buffers")
+Fixes: ab74cfeb ("net: remove the PCI_DMA_BUS_IS_PHYS check in illegal_highdma")
+Reported-by: tedheadster <tedheadster@gmail.com>
+Tested-by: tedheadster <tedheadster@gmail.com>
+---
+ arch/x86/kernel/pci-swiotlb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-The consequence of this is that, if the unfound user virtual address
-in the sample doesn't match up to a kernel symbol either, we trigger
-things like this code in builtin-top.c:
+diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
+index 661583662430..71c0b01d93b1 100644
+--- a/arch/x86/kernel/pci-swiotlb.c
++++ b/arch/x86/kernel/pci-swiotlb.c
+@@ -42,10 +42,8 @@ IOMMU_INIT_FINISH(pci_swiotlb_detect_override,
+ int __init pci_swiotlb_detect_4gb(void)
+ {
+ 	/* don't initialize swiotlb if iommu=off (no_iommu=1) */
+-#ifdef CONFIG_X86_64
+ 	if (!no_iommu && max_possible_pfn > MAX_DMA32_PFN)
+ 		swiotlb = 1;
+-#endif
+ 
+ 	/*
+ 	 * If SME is active then swiotlb will be set to 1 so that bounce
+-- 
+2.19.1
 
-	if (al.sym == NULL && al.map != NULL) {
-		const char *msg = "Kernel samples will not be resolved.\n";
-		/*
-		 * As we do lazy loading of symtabs we only will know if the
-		 * specified vmlinux file is invalid when we actually have a
-		 * hit in kernel space and then try to load it. So if we get
-		 * here and there are _no_ symbols in the DSO backing the
-		 * kernel map, bail out.
-		 *
-		 * We may never get here, for instance, if we use -K/
-		 * --hide-kernel-symbols, even if the user specifies an
-		 * invalid --vmlinux ;-)
-		 */
-		if (!machine->kptr_restrict_warned && !top->vmlinux_warned &&
-		    __map__is_kernel(al.map) && map__has_symbols(al.map)) {
-			if (symbol_conf.vmlinux_name) {
-				char serr[256];
-				dso__strerror_load(al.map->dso, serr, sizeof(serr));
-				ui__warning("The %s file can't be used: %s\n%s",
-					    symbol_conf.vmlinux_name, serr, msg);
-			} else {
-				ui__warning("A vmlinux file was not found.\n%s",
-					    msg);
-			}
-
-			if (use_browser <= 0)
-				sleep(5);
-			top->vmlinux_warned = true;
-		}
-	}
-
-When I fire up a compilation on sparc, this triggers immediately.
-
-I'm trying to figure out what the "backup to kernel map" code is
-accomplishing.
-
-I see some language in the current code and in the changes that have
-happened in this area talking about vdso.  Does that really happen?
-
-The vdso is mapped into userspace virtual addresses, not kernel ones.
-
-More history.  This didn't cause problems on sparc some time ago,
-because the kernel IP check used to be "ip < 0" :-) Sparc kernel
-addresses are not negative.  But now with machine__kernel_ip(), which
-works using the symbol table determined kernel address range, it does
-trigger.
-
-What it all boils down to is that on architectures like sparc,
-machine__kernel_ip() should always return false in this scenerio, and
-therefore this kind of logic:
-
-		if (cpumode == PERF_RECORD_MISC_USER && machine &&
-		    mg != &machine->kmaps &&
-		    machine__kernel_ip(machine, al->addr)) {
-
-is basically invalid.  PERF_RECORD_MISC_USER implies no kernel address
-can possibly match for the sample/event in question (no matter how
-hard you try!) :-)
-
-At the very least there should be an arch way to disable this logic,
-or even formalize in some way the situation.  Have some kind of
-"user_kernel_shared_address_space" boolean, and then
-machine__kernel_ip() can take a cpumode parameter and it can thus say:
-
-	if (cpumode == PERF_RECORD_MISC_USER &&
-	    !user_kernel_shared_address_space)
-		return false;
-
-Comments?
