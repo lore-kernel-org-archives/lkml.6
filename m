@@ -3,47 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1FFC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65430C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF73020645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF73020645
+	by mail.kernel.org (Postfix) with ESMTP id 308F220876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 308F220876
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbeJNXaJ (ORCPT
+        id S1729677AbeJNXaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:30:09 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37340 "EHLO
+        Sun, 14 Oct 2018 19:30:13 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37345 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728128AbeJNXaI (ORCPT
+        by vger.kernel.org with ESMTP id S1728974AbeJNXaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:30:08 -0400
+        Sun, 14 Oct 2018 19:30:12 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiMB-0004cD-W5; Sun, 14 Oct 2018 16:31:04 +0100
+        id 1gBiM6-0004cJ-9N; Sun, 14 Oct 2018 16:30:58 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLQ-0000FR-2U; Sun, 14 Oct 2018 16:30:16 +0100
+        id 1gBiLR-0000Iy-JD; Sun, 14 Oct 2018 16:30:17 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David Sterba" <dsterba@suse.com>,
-        "Filipe Manana" <fdmanana@suse.com>
+CC:     akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.195468558@decadent.org.uk>
+Message-ID: <lsq.1539530741.483847936@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 083/366] Btrfs: fix copy_items() return value when
- logging an inode
+Subject: [PATCH 3.16 121/366] net: initialize skb->peeked when cloning
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,40 +57,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 8434ec46c6e3232cebc25a910363b29f5c617820 upstream.
+commit b13dda9f9aa7caceeee61c080c2e544d5f5d85e5 upstream.
 
-When logging an inode, at tree-log.c:copy_items(), if we call
-btrfs_next_leaf() at the loop which checks for the need to log holes, we
-need to make sure copy_items() returns the value 1 to its caller and
-not 0 (on success). This is because the path the caller passed was
-released and is now different from what is was before, and the caller
-expects a return value of 0 to mean both success and that the path
-has not changed, while a return value of 1 means both success and
-signals the caller that it can not reuse the path, it has to perform
-another tree search.
+syzbot reported __skb_try_recv_from_queue() was using skb->peeked
+while it was potentially unitialized.
 
-Even though this is a case that should not be triggered on normal
-circumstances or very rare at least, its consequences can be very
-unpredictable (especially when replaying a log tree).
+We need to clear it in __skb_clone()
 
-Fixes: 16e7549f045d ("Btrfs: incompatible format change to remove hole extents")
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/btrfs/tree-log.c | 1 +
+ net/core/skbuff.c | 1 +
  1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -3524,6 +3524,7 @@ fill_holes:
- 			ASSERT(ret == 0);
- 			src = src_path->nodes[0];
- 			i = 0;
-+			need_find_last_extent = true;
- 		}
- 
- 		btrfs_item_key_to_cpu(src, &key, i);
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -767,6 +767,7 @@ static struct sk_buff *__skb_clone(struc
+ 	n->hdr_len = skb->nohdr ? skb_headroom(skb) : skb->hdr_len;
+ 	n->cloned = 1;
+ 	n->nohdr = 0;
++	n->peeked = 0;
+ 	n->destructor = NULL;
+ 	C(tail);
+ 	C(end);
 
