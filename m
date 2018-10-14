@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E6FBC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D3DFC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33A1C2087D
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:39:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33A1C2087D
+	by mail.kernel.org (Postfix) with ESMTP id C31A220645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:39:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31A220645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbeJNXUu (ORCPT
+        id S1729078AbeJNXUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:20:50 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36865 "EHLO
+        Sun, 14 Oct 2018 19:20:53 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36869 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728015AbeJNXUu (ORCPT
+        by vger.kernel.org with ESMTP id S1728015AbeJNXUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:20:50 -0400
+        Sun, 14 Oct 2018 19:20:52 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM3-0004cJ-7Y; Sun, 14 Oct 2018 16:30:55 +0100
+        id 1gBiME-0004cD-PR; Sun, 14 Oct 2018 16:31:06 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLS-0000KN-AC; Sun, 14 Oct 2018 16:30:18 +0100
+        id 1gBiLP-0000DX-9s; Sun, 14 Oct 2018 16:30:15 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        syzbot+fbeeb5c3b538e8545644@syzkaller.appspotmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        "Guillaume Nault" <g.nault@alphalink.fr>
+CC:     akpm@linux-foundation.org, "Helge Deller" <deller@gmx.de>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.837863778@decadent.org.uk>
+Message-ID: <lsq.1539530741.660045037@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 138/366] l2tp: fix races in tunnel creation
+Subject: [PATCH 3.16 062/366] parisc: Fix out of array access in
+ match_pci_device()
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,324 +56,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guillaume Nault <g.nault@alphalink.fr>
+From: Helge Deller <deller@gmx.de>
 
-commit 6b9f34239b00e6956a267abed2bc559ede556ad6 upstream.
+commit 615b2665fd20c327b631ff1e79426775de748094 upstream.
 
-l2tp_tunnel_create() inserts the new tunnel into the namespace's tunnel
-list and sets the socket's ->sk_user_data field, before returning it to
-the caller. Therefore, there are two ways the tunnel can be accessed
-and freed, before the caller even had the opportunity to take a
-reference. In practice, syzbot could crash the module by closing the
-socket right after a new tunnel was returned to pppol2tp_create().
+As found by the ubsan checker, the value of the 'index' variable can be
+out of range for the bc[] array:
 
-This patch moves tunnel registration out of l2tp_tunnel_create(), so
-that the caller can safely hold a reference before publishing the
-tunnel. This second step is done with the new l2tp_tunnel_register()
-function, which is now responsible for associating the tunnel to its
-socket and for inserting it into the namespace's list.
+UBSAN: Undefined behaviour in arch/parisc/kernel/drivers.c:655:21
+index 6 is out of range for type 'char [6]'
+Backtrace:
+ [<104fa850>] __ubsan_handle_out_of_bounds+0x68/0x80
+ [<1019d83c>] check_parent+0xc0/0x170
+ [<1019d91c>] descend_children+0x30/0x6c
+ [<1059e164>] device_for_each_child+0x60/0x98
+ [<1019cd54>] parse_tree_node+0x40/0x54
+ [<1019d86c>] check_parent+0xf0/0x170
+ [<1019d91c>] descend_children+0x30/0x6c
+ [<1059e164>] device_for_each_child+0x60/0x98
+ [<1019d938>] descend_children+0x4c/0x6c
+ [<1059e164>] device_for_each_child+0x60/0x98
+ [<1019cd54>] parse_tree_node+0x40/0x54
+ [<1019cffc>] hwpath_to_device+0xa4/0xc4
 
-While moving the code to l2tp_tunnel_register(), a few modifications
-have been done. First, the socket validation tests are done in a helper
-function, for clarity. Also, modifying the socket is now done after
-having inserted the tunnel to the namespace's tunnels list. This will
-allow insertion to fail, without having to revert theses modifications
-in the error path (a followup patch will check for duplicate tunnels
-before insertion). Either the socket is a kernel socket which we
-control, or it is a user-space socket for which we have a reference on
-the file descriptor. In any case, the socket isn't going to be closed
-from under us.
-
-Reported-by: syzbot+fbeeb5c3b538e8545644@syzkaller.appspotmail.com
-Fixes: fd558d186df2 ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
-Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16:
- - Socket setup is open-coded rather than using setup_udp_tunnel_sock()
- - l2tp_nl_cmd_tunnel_create() doesn't call l2tp_tunnel_notify()
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/l2tp/l2tp_core.c    | 192 ++++++++++++++++++----------------------
- net/l2tp/l2tp_core.h    |   3 +
- net/l2tp/l2tp_netlink.c |  16 +++-
- net/l2tp/l2tp_ppp.c     |   9 ++
- 4 files changed, 110 insertions(+), 110 deletions(-)
+ arch/parisc/kernel/drivers.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1560,74 +1560,11 @@ int l2tp_tunnel_create(struct net *net,
- {
- 	struct l2tp_tunnel *tunnel = NULL;
- 	int err;
--	struct socket *sock = NULL;
--	struct sock *sk = NULL;
--	struct l2tp_net *pn;
- 	enum l2tp_encap_type encap = L2TP_ENCAPTYPE_UDP;
- 
--	/* Get the tunnel socket from the fd, which was opened by
--	 * the userspace L2TP daemon. If not specified, create a
--	 * kernel socket.
--	 */
--	if (fd < 0) {
--		err = l2tp_tunnel_sock_create(net, tunnel_id, peer_tunnel_id,
--				cfg, &sock);
--		if (err < 0)
--			goto err;
--	} else {
--		sock = sockfd_lookup(fd, &err);
--		if (!sock) {
--			pr_err("tunl %u: sockfd_lookup(fd=%d) returned %d\n",
--			       tunnel_id, fd, err);
--			err = -EBADF;
--			goto err;
--		}
--
--		/* Reject namespace mismatches */
--		if (!net_eq(sock_net(sock->sk), net)) {
--			pr_err("tunl %u: netns mismatch\n", tunnel_id);
--			err = -EINVAL;
--			goto err;
--		}
--	}
--
--	sk = sock->sk;
--
- 	if (cfg != NULL)
- 		encap = cfg->encap;
- 
--	/* Quick sanity checks */
--	err = -EPROTONOSUPPORT;
--	if (sk->sk_type != SOCK_DGRAM) {
--		pr_debug("tunl %hu: fd %d wrong socket type\n",
--			 tunnel_id, fd);
--		goto err;
--	}
--	switch (encap) {
--	case L2TP_ENCAPTYPE_UDP:
--		if (sk->sk_protocol != IPPROTO_UDP) {
--			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
--			       tunnel_id, fd, sk->sk_protocol, IPPROTO_UDP);
--			goto err;
--		}
--		break;
--	case L2TP_ENCAPTYPE_IP:
--		if (sk->sk_protocol != IPPROTO_L2TP) {
--			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
--			       tunnel_id, fd, sk->sk_protocol, IPPROTO_L2TP);
--			goto err;
--		}
--		break;
--	}
--
--	/* Check if this socket has already been prepped */
--	tunnel = l2tp_tunnel(sk);
--	if (tunnel != NULL) {
--		/* This socket has already been prepped */
--		err = -EBUSY;
--		goto err;
--	}
--
- 	tunnel = kzalloc(sizeof(struct l2tp_tunnel), GFP_KERNEL);
- 	if (tunnel == NULL) {
- 		err = -ENOMEM;
-@@ -1644,17 +1581,83 @@ int l2tp_tunnel_create(struct net *net,
- 	rwlock_init(&tunnel->hlist_lock);
- 	tunnel->acpt_newsess = true;
- 
--	/* The net we belong to */
--	tunnel->l2tp_net = net;
--	pn = l2tp_pernet(net);
--
- 	if (cfg != NULL)
- 		tunnel->debug = cfg->debug;
- 
--	/* Mark socket as an encapsulation socket. See net/ipv4/udp.c */
- 	tunnel->encap = encap;
--	if (encap == L2TP_ENCAPTYPE_UDP) {
--		/* Mark socket as an encapsulation socket. See net/ipv4/udp.c */
-+
-+	atomic_set(&tunnel->ref_count, 1);
-+	tunnel->fd = fd;
-+
-+	/* Init delete workqueue struct */
-+	INIT_WORK(&tunnel->del_work, l2tp_tunnel_del_work);
-+
-+	INIT_LIST_HEAD(&tunnel->list);
-+
-+	err = 0;
-+err:
-+	if (tunnelp)
-+		*tunnelp = tunnel;
-+
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(l2tp_tunnel_create);
-+
-+static int l2tp_validate_socket(const struct sock *sk, const struct net *net,
-+				enum l2tp_encap_type encap)
-+{
-+	if (!net_eq(sock_net(sk), net))
-+		return -EINVAL;
-+
-+	if (sk->sk_type != SOCK_DGRAM)
-+		return -EPROTONOSUPPORT;
-+
-+	if ((encap == L2TP_ENCAPTYPE_UDP && sk->sk_protocol != IPPROTO_UDP) ||
-+	    (encap == L2TP_ENCAPTYPE_IP && sk->sk_protocol != IPPROTO_L2TP))
-+		return -EPROTONOSUPPORT;
-+
-+	if (sk->sk_user_data)
-+		return -EBUSY;
-+
-+	return 0;
-+}
-+
-+int l2tp_tunnel_register(struct l2tp_tunnel *tunnel, struct net *net,
-+			 struct l2tp_tunnel_cfg *cfg)
-+{
-+	struct l2tp_net *pn;
-+	struct socket *sock;
-+	struct sock *sk;
-+	int ret;
-+
-+	if (tunnel->fd < 0) {
-+		ret = l2tp_tunnel_sock_create(net, tunnel->tunnel_id,
-+					      tunnel->peer_tunnel_id, cfg,
-+					      &sock);
-+		if (ret < 0)
-+			goto err;
-+	} else {
-+		sock = sockfd_lookup(tunnel->fd, &ret);
-+		if (!sock)
-+			goto err;
-+
-+		ret = l2tp_validate_socket(sock->sk, net, tunnel->encap);
-+		if (ret < 0)
-+			goto err_sock;
-+	}
-+
-+	sk = sock->sk;
-+
-+	sock_hold(sk);
-+	tunnel->sock = sk;
-+	tunnel->l2tp_net = net;
-+
-+	pn = l2tp_pernet(net);
-+	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
-+	list_add_rcu(&tunnel->list, &pn->l2tp_tunnel_list);
-+	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
-+
-+	if (tunnel->encap == L2TP_ENCAPTYPE_UDP) {
- 		udp_sk(sk)->encap_type = UDP_ENCAP_L2TPINUDP;
- 		udp_sk(sk)->encap_rcv = l2tp_udp_encap_recv;
- 		udp_sk(sk)->encap_destroy = l2tp_udp_encap_destroy;
-@@ -1668,49 +1671,23 @@ int l2tp_tunnel_create(struct net *net,
- 
- 	sk->sk_user_data = tunnel;
- 
--	/* Bump the reference count. The tunnel context is deleted
--	 * only when this drops to zero. A reference is also held on
--	 * the tunnel socket to ensure that it is not released while
--	 * the tunnel is extant. Must be done before sk_destruct is
--	 * set.
--	 */
--	atomic_set(&tunnel->ref_count, 1);
--	sock_hold(sk);
--	tunnel->sock = sk;
--	tunnel->fd = fd;
--
--	/* Hook on the tunnel socket destructor so that we can cleanup
--	 * if the tunnel socket goes away.
--	 */
- 	tunnel->old_sk_destruct = sk->sk_destruct;
- 	sk->sk_destruct = &l2tp_tunnel_destruct;
--	lockdep_set_class_and_name(&sk->sk_lock.slock, &l2tp_socket_class, "l2tp_sock");
--
-+	lockdep_set_class_and_name(&sk->sk_lock.slock, &l2tp_socket_class,
-+				   "l2tp_sock");
- 	sk->sk_allocation = GFP_ATOMIC;
- 
--	/* Init delete workqueue struct */
--	INIT_WORK(&tunnel->del_work, l2tp_tunnel_del_work);
-+	if (tunnel->fd >= 0)
-+		sockfd_put(sock);
- 
--	/* Add tunnel to our list */
--	INIT_LIST_HEAD(&tunnel->list);
--	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
--	list_add_rcu(&tunnel->list, &pn->l2tp_tunnel_list);
--	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
-+	return 0;
- 
--	err = 0;
-+err_sock:
-+	sockfd_put(sock);
- err:
--	if (tunnelp)
--		*tunnelp = tunnel;
--
--	/* If tunnel's socket was created by the kernel, it doesn't
--	 *  have a file.
--	 */
--	if (sock && sock->file)
--		sockfd_put(sock);
--
--	return err;
-+	return ret;
- }
--EXPORT_SYMBOL_GPL(l2tp_tunnel_create);
-+EXPORT_SYMBOL_GPL(l2tp_tunnel_register);
- 
- /* This function is used by the netlink TUNNEL_DELETE command.
-  */
---- a/net/l2tp/l2tp_core.h
-+++ b/net/l2tp/l2tp_core.h
-@@ -246,6 +246,9 @@ struct l2tp_tunnel *l2tp_tunnel_find_nth
- int l2tp_tunnel_create(struct net *net, int fd, int version, u32 tunnel_id,
- 		       u32 peer_tunnel_id, struct l2tp_tunnel_cfg *cfg,
- 		       struct l2tp_tunnel **tunnelp);
-+int l2tp_tunnel_register(struct l2tp_tunnel *tunnel, struct net *net,
-+			 struct l2tp_tunnel_cfg *cfg);
-+
- void l2tp_tunnel_closeall(struct l2tp_tunnel *tunnel);
- void l2tp_tunnel_delete(struct l2tp_tunnel *tunnel);
- struct l2tp_session *l2tp_session_create(int priv_size,
---- a/net/l2tp/l2tp_netlink.c
-+++ b/net/l2tp/l2tp_netlink.c
-@@ -192,6 +192,17 @@ static int l2tp_nl_cmd_tunnel_create(str
- 		break;
+--- a/arch/parisc/kernel/drivers.c
++++ b/arch/parisc/kernel/drivers.c
+@@ -648,6 +648,10 @@ static int match_pci_device(struct devic
+ 					(modpath->mod == PCI_FUNC(devfn)));
  	}
  
-+	if (ret < 0)
-+		goto out;
++	/* index might be out of bounds for bc[] */
++	if (index >= 6)
++		return 0;
 +
-+	l2tp_tunnel_inc_refcount(tunnel);
-+	ret = l2tp_tunnel_register(tunnel, net, &cfg);
-+	if (ret < 0) {
-+		kfree(tunnel);
-+		goto out;
-+	}
-+	l2tp_tunnel_dec_refcount(tunnel);
-+
- out:
- 	return ret;
+ 	id = PCI_SLOT(pdev->devfn) | (PCI_FUNC(pdev->devfn) << 5);
+ 	return (modpath->bc[index] == id);
  }
---- a/net/l2tp/l2tp_ppp.c
-+++ b/net/l2tp/l2tp_ppp.c
-@@ -720,6 +720,15 @@ static int pppol2tp_connect(struct socke
- 			error = l2tp_tunnel_create(sock_net(sk), fd, ver, tunnel_id, peer_tunnel_id, &tcfg, &tunnel);
- 			if (error < 0)
- 				goto end;
-+
-+			l2tp_tunnel_inc_refcount(tunnel);
-+			error = l2tp_tunnel_register(tunnel, sock_net(sk),
-+						     &tcfg);
-+			if (error < 0) {
-+				kfree(tunnel);
-+				goto end;
-+			}
-+			drop_tunnel = true;
- 		}
- 	} else {
- 		/* Error if we can't find the tunnel */
 
