@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B44EC6787C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB578C71122
 	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 09:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29E1D2064E
+	by mail.kernel.org (Postfix) with ESMTP id 8A25B2064E
 	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 09:18:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29E1D2064E
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A25B2064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbeJNQ5U (ORCPT
+        id S1726770AbeJNQ6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 12:57:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35079 "EHLO
+        Sun, 14 Oct 2018 12:58:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58941 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726352AbeJNQ5T (ORCPT
+        with ESMTP id S1726352AbeJNQ6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 12:57:19 -0400
+        Sun, 14 Oct 2018 12:58:51 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9E9Gb6u3116981
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9E9HCdn3117062
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 14 Oct 2018 02:16:37 -0700
+        Sun, 14 Oct 2018 02:17:12 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9E9GXZu3116954;
-        Sun, 14 Oct 2018 02:16:33 -0700
-Date:   Sun, 14 Oct 2018 02:16:33 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9E9HAmH3117059;
+        Sun, 14 Oct 2018 02:17:10 -0700
+Date:   Sun, 14 Oct 2018 02:17:10 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-b59167ac7bafd804c91e49ad53c6d33a7394d4c8@git.kernel.org>
-Cc:     hpa@zytor.com, edumazet@google.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@kernel.org
-Reply-To: edumazet@google.com, hpa@zytor.com, mingo@kernel.org,
-          peterz@infradead.org, linux-kernel@vger.kernel.org,
+From:   tip-bot for Dave Hansen <tipbot@zytor.com>
+Message-ID: <tip-16561f27f94e6193ee8f5b9b74801e1668c86efc@git.kernel.org>
+Cc:     bp@alien8.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        luto@kernel.org, dave.hansen@linux.intel.com, hpa@zytor.com,
+        tglx@linutronix.de
+Reply-To: hpa@zytor.com, dave.hansen@linux.intel.com, mingo@kernel.org,
+          luto@kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org,
           tglx@linutronix.de
-In-Reply-To: <20181011104019.748208519@infradead.org>
-References: <20181011104019.748208519@infradead.org>
+In-Reply-To: <20181012232118.3EAAE77B@viggo.jf.intel.com>
+References: <20181012232118.3EAAE77B@viggo.jf.intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/percpu: Fix this_cpu_read()
-Git-Commit-ID: b59167ac7bafd804c91e49ad53c6d33a7394d4c8
+Subject: [tip:x86/urgent] x86/entry: Add some paranoid entry/exit CR3
+ handling comments
+Git-Commit-ID: 16561f27f94e6193ee8f5b9b74801e1668c86efc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,63 +59,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b59167ac7bafd804c91e49ad53c6d33a7394d4c8
-Gitweb:     https://git.kernel.org/tip/b59167ac7bafd804c91e49ad53c6d33a7394d4c8
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Thu, 11 Oct 2018 12:38:27 +0200
+Commit-ID:  16561f27f94e6193ee8f5b9b74801e1668c86efc
+Gitweb:     https://git.kernel.org/tip/16561f27f94e6193ee8f5b9b74801e1668c86efc
+Author:     Dave Hansen <dave.hansen@linux.intel.com>
+AuthorDate: Fri, 12 Oct 2018 16:21:18 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sun, 14 Oct 2018 11:11:22 +0200
 
-x86/percpu: Fix this_cpu_read()
+x86/entry: Add some paranoid entry/exit CR3 handling comments
 
-Eric reported that a sequence count loop using this_cpu_read() got
-optimized out. This is wrong, this_cpu_read() must imply READ_ONCE()
-because the interface is IRQ-safe, therefore an interrupt can have
-changed the per-cpu value.
+Andi Kleen was just asking me about the NMI CR3 handling and why
+we restore it unconditionally.  I was *sure* we had documented it
+well.  We did not.
 
-Fixes: 7c3576d261ce ("[PATCH] i386: Convert PDA into the percpu section")
-Reported-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Add some documentation.  We have common entry code where the CR3
+value is stashed, but three places in two big code paths where we
+restore it.  I put bulk of the comments in this common path and
+then refer to it from the other spots.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Eric Dumazet <edumazet@google.com>
-Cc: hpa@zytor.com
-Cc: eric.dumazet@gmail.com
+Cc: luto@kernel.org
 Cc: bp@alien8.de
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181011104019.748208519@infradead.org
+Cc: "H. Peter Anvin" <hpa@zytor.come
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Link: https://lkml.kernel.org/r/20181012232118.3EAAE77B@viggo.jf.intel.com
 
 ---
- arch/x86/include/asm/percpu.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/entry/entry_64.S | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index e9202a0de8f0..1a19d11cfbbd 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -185,22 +185,22 @@ do {									\
- 	typeof(var) pfo_ret__;				\
- 	switch (sizeof(var)) {				\
- 	case 1:						\
--		asm(op "b "__percpu_arg(1)",%0"		\
-+		asm volatile(op "b "__percpu_arg(1)",%0"\
- 		    : "=q" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
- 	case 2:						\
--		asm(op "w "__percpu_arg(1)",%0"		\
-+		asm volatile(op "w "__percpu_arg(1)",%0"\
- 		    : "=r" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
- 	case 4:						\
--		asm(op "l "__percpu_arg(1)",%0"		\
-+		asm volatile(op "l "__percpu_arg(1)",%0"\
- 		    : "=r" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
- 	case 8:						\
--		asm(op "q "__percpu_arg(1)",%0"		\
-+		asm volatile(op "q "__percpu_arg(1)",%0"\
- 		    : "=r" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 957dfb693ecc..1d9b4a300c8c 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1187,6 +1187,18 @@ ENTRY(paranoid_entry)
+ 	xorl	%ebx, %ebx
+ 
+ 1:
++	/*
++	 * Always stash CR3 in %r14.  This value will be restored,
++	 * verbatim, at exit.  Needed if kernel is interrupted
++	 * after switching to the user CR3 value but before
++	 * returning to userspace.
++	 *
++	 * This is also why CS (stashed in the "iret frame" by the
++	 * hardware at entry) can not be used: this may be a return
++	 * to kernel code, but with a user CR3 value.  The %ebx flag
++	 * for SWAPGS is also unusable for CR3 because there is a
++	 * window with a user GS and a kernel CR3.
++	 */
+ 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
+ 
+ 	ret
+@@ -1211,11 +1223,13 @@ ENTRY(paranoid_exit)
+ 	testl	%ebx, %ebx			/* swapgs needed? */
+ 	jnz	.Lparanoid_exit_no_swapgs
+ 	TRACE_IRQS_IRETQ
++	/* Always restore stashed CR3 value (see paranoid_entry) */
+ 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
+ 	SWAPGS_UNSAFE_STACK
+ 	jmp	.Lparanoid_exit_restore
+ .Lparanoid_exit_no_swapgs:
+ 	TRACE_IRQS_IRETQ_DEBUG
++	/* Always restore stashed CR3 value (see paranoid_entry) */
+ 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
+ .Lparanoid_exit_restore:
+ 	jmp restore_regs_and_return_to_kernel
+@@ -1626,6 +1640,7 @@ end_repeat_nmi:
+ 	movq	$-1, %rsi
+ 	call	do_nmi
+ 
++	/* Always restore stashed CR3 value (see paranoid_entry) */
+ 	RESTORE_CR3 scratch_reg=%r15 save_reg=%r14
+ 
+ 	testl	%ebx, %ebx			/* swapgs needed? */
