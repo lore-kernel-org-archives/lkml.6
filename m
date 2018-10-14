@@ -2,136 +2,160 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCE0C6787C
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 13:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE7BC6787C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 13:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85D2520652
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 13:17:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D2520652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 4F1C720652
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 13:21:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M4QK1ccb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F1C720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726328AbeJNU6Z (ORCPT
+        id S1726401AbeJNVCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 16:58:25 -0400
-Received: from sauhun.de ([88.99.104.3]:35280 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726129AbeJNU6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 16:58:25 -0400
-Received: from localhost (mue-88-130-99-254.dsl.tropolys.de [88.130.99.254])
-        by pokefinder.org (Postfix) with ESMTPSA id DB3382C786F;
-        Sun, 14 Oct 2018 15:17:24 +0200 (CEST)
-Date:   Sun, 14 Oct 2018 15:17:24 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-i2c@vger.kernel.org,
-        linux-acpi@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] x86: baytrail/cherrytrail: Rework and move P-Unit
- PMIC bus semaphore code
-Message-ID: <20181014131724.GA863@kunai>
-References: <20181011142911.13750-1-hdegoede@redhat.com>
- <20181011142911.13750-2-hdegoede@redhat.com>
+        Sun, 14 Oct 2018 17:02:34 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34698 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbeJNVCe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Oct 2018 17:02:34 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f18-v6so8004919plr.1;
+        Sun, 14 Oct 2018 06:21:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=3p7rOh3EHCcs5xJhBdJ9os0FBYpeHAf7F1aAnqF/f30=;
+        b=M4QK1ccb/idnXeaKqj+Ewbkhcgm7CdlXT/yTIpkXgaATox26SQJltMaTvHPGPG79xb
+         8FdicVlinm6TH9QQZywahbCsqU2Qo2cEeNF/BnNBRbcLzSuKYDeFaDlRsj9PNMtQl5/u
+         ZX4AYSOkwd0qBIZSPiNXtPkByaFmv+vy/1D1182c0mcu5ApITPdk/hdFU1kMcAg5ZMkg
+         VsR+cVaH4ChJ8jYBsBoXC7i04fwmIuiOlMYd8Hl4YZnQbq7dclEzhNcqcApiQBoSECiM
+         GrKvFRQUSNqIOucytr38BPo65LejZNhIRfZwDzWlLHOw8Mlxuq6P6JkUPEi+BT/bzRTj
+         FQbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3p7rOh3EHCcs5xJhBdJ9os0FBYpeHAf7F1aAnqF/f30=;
+        b=jHXvbbnZnZpS1f6ZgpisjJ9mfYXH1tDZrV/sWMb1ShpmR2v/vxO+oc9DKH6eiUnQy/
+         xLhgY9FeI3WhruBpPfX5wsMBx/PDF/cLvy58IZEJ0Nv/AehefFKgjCC00JN6KCPXZB2x
+         Q0med2EbGJpRACBJ4SZ23HB6xUyFtx+bCQ3YM/9rqj1hQDEebXUoMGcEcgzPtWz8ZJT0
+         pPGSd32fqmUbYH4sA1pqtFXr5A6sy/mCBVhWld4PhUC2zwiHB9YNdzXOoURTV0vIv4fn
+         FFzr7+YEKYHs8JVo3KLdEBE3pwQGATsO0B9YKonkTOeFtbkMqT2p0YkybrlcbF+Wbawg
+         tG7Q==
+X-Gm-Message-State: ABuFfoiDMXBlhHGuS1BfXpsVTGpt20fAT2TraNNmlCnN4S6ludI9bsmW
+        c7GX0nDwgXjJ+1aVtTy7TE5ydsbS6WtotCkN5R6q0EBsGax6Tw==
+X-Google-Smtp-Source: ACcGV60Bsdv+2lbefbGLxTexZhfM8a9SDOpaKx+exqAsk4LqnWktEAF8KcHNub/RKj7H2PyE8ha/L2lfpnhhtHYxQ0w=
+X-Received: by 2002:a17:902:da4:: with SMTP id 33-v6mr12916512plv.172.1539523294880;
+ Sun, 14 Oct 2018 06:21:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
-Content-Disposition: inline
-In-Reply-To: <20181011142911.13750-2-hdegoede@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
+ <20181013145406.4911-3-Tianyu.Lan@microsoft.com> <4D709C3A-A91C-4CA7-922A-E77618EF21B4@oracle.com>
+ <alpine.DEB.2.21.1810141014350.1438@nanos.tec.linutronix.de>
+ <20181014092734.GV30658@n2100.armlinux.org.uk> <20181014093541.GW30658@n2100.armlinux.org.uk>
+In-Reply-To: <20181014093541.GW30658@n2100.armlinux.org.uk>
+From:   Tianyu Lan <lantianyu1986@gmail.com>
+Date:   Sun, 14 Oct 2018 21:21:23 +0800
+Message-ID: <CAOLK0pzHAc1ipDbd3Trg2W_Gb_DxdEKM2ML5Fk09u0-O8y6UAg@mail.gmail.com>
+Subject: Re: [PATCH V4 2/15] KVM/MMU: Add tlb flush with range helper function
+To:     linux@armlinux.org.uk
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-mips@linux-mips.org,
+        linux@armlinux.org, kvm <kvm@vger.kernel.org>,
+        Radim Krcmar <rkrcmar@redhat.com>, benh@kernel.crashing.org,
+        will.deacon@arm.com, christoffer.dall@arm.com, paulus@ozlabs.org,
+        "H. Peter Anvin" <hpa@zytor.com>, kys@microsoft.com,
+        kvmarm@lists.cs.columbia.edu, sthemmin@microsoft.com,
+        mpe@ellerman.id.au, "the arch/x86 maintainers" <x86@kernel.org>,
+        michael.h.kelley@microsoft.com, Ingo Molnar <mingo@redhat.com>,
+        catalin.marinas@arm.com, jhogan@kernel.org,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>, marc.zyngier@arm.com,
+        haiyangz@microsoft.com, kvm-ppc@vger.kernel.org,
+        liran.alon@oracle.com, Paolo Bonzini <pbonzini@redhat.com>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
+        ralf@linux-mips.org, paul.burton@mips.com,
+        devel@linuxdriverproject.org, vkuznets@redhat.com,
+        linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Russell:
+              Thanks for your review.
 
---9jxsPFA5p3P2qPhR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, Oct 14, 2018 at 5:36 PM Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+>
+> On Sun, Oct 14, 2018 at 10:27:34AM +0100, Russell King - ARM Linux wrote:
+> > On Sun, Oct 14, 2018 at 10:16:56AM +0200, Thomas Gleixner wrote:
+> > > On Sun, 14 Oct 2018, Liran Alon wrote:
+> > > > > On 13 Oct 2018, at 17:53, lantianyu1986@gmail.com wrote:
+> > > > >
+> > > > > From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+> > > > >
+> > > > > This patch is to add wrapper functions for tlb_remote_flush_with_=
+range
+> > > > > callback.
+> > > > >
+> > > > > Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+> > > > > ---
+> > > > > Change sicne V3:
+> > > > >       Remove code of updating "tlbs_dirty"
+> > > > > Change since V2:
+> > > > >       Fix comment in the kvm_flush_remote_tlbs_with_range()
+> > > > > ---
+> > > > > arch/x86/kvm/mmu.c | 40 ++++++++++++++++++++++++++++++++++++++++
+> > > > > 1 file changed, 40 insertions(+)
+> > > > >
+> > > > > diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> > > > > index c73d9f650de7..ff656d85903a 100644
+> > > > > --- a/arch/x86/kvm/mmu.c
+> > > > > +++ b/arch/x86/kvm/mmu.c
+> > > > > @@ -264,6 +264,46 @@ static void mmu_spte_set(u64 *sptep, u64 spt=
+e);
+> > > > > static union kvm_mmu_page_role
+> > > > > kvm_mmu_calc_root_page_role(struct kvm_vcpu *vcpu);
+> > > > >
+> > > > > +
+> > > > > +static inline bool kvm_available_flush_tlb_with_range(void)
+> > > > > +{
+> > > > > +       return kvm_x86_ops->tlb_remote_flush_with_range;
+> > > > > +}
+> > > >
+> > > > Seems that kvm_available_flush_tlb_with_range() is not used in this=
+ patch=E2=80=A6
+> > >
+> > > What's wrong with that?
+> > >
+> > > It provides the implementation and later patches make use of it. It's=
+ a
+> > > sensible way to split patches into small, self contained entities.
+> >
+> > From what I can see of the patches that follow _this_ patch in the
+> > series, this function remains unused.  So, not only is it not used
+> > in this patch, it's not used in this series.
+>
+> Note - I seem to have only received patches 1 through 4, so this is
+> based on the patches I've received.
+>
 
-On Thu, Oct 11, 2018 at 04:29:09PM +0200, Hans de Goede wrote:
-> On some BYT/CHT systems the SoC's P-Unit shares the I2C bus with the
-> kernel. The P-Unit has a semaphore for the PMIC bus which we can take to
-> block it from accessing the shared bus while the kernel wants to access i=
-t.
->=20
-> Currently we have the I2C-controller driver acquiring and releasing the
-> semaphore around each I2C transfer. There are 2 problems with this:
->=20
-> 1) PMIC accesses often come in the form of a read-modify-write on one of
-> the PMIC registers, we currently release the P-Unit's PMIC bus semaphore
-> between the read and the write. If the P-Unit modifies the register during
-> this window?, then we end up overwriting the P-Unit's changes.
-> I believe that this is mostly an academic problem, but I'm not sure.
->=20
-> 2) To safely access the shared I2C bus, we need to do 3 things:
-> a) Notify the GPU driver that we are starting a window in which it may not
-> access the P-Unit, since the P-Unit seems to ignore the semaphore for
-> explicit power-level requests made by the GPU driver
-> b) Make a pm_qos request to force all CPU cores out of C6/C7 since enteri=
-ng
-> C6/C7 while we hold the semaphore hangs the SoC
-> c) Finally take the P-Unit's PMIC bus semaphore
-> All 3 these steps together are somewhat expensive, so ideally if we have
-> a bunch of i2c transfers grouped together we only do this once for the
-> entire group.
->=20
-> Taking the read-modify-write on a PMIC register as example then ideally we
-> would only do all 3 steps once at the beginning and undo all 3 steps once
-> at the end.
->=20
-> For this we need to be able to take the semaphore from within e.g. the PM=
-IC
-> opregion driver, yet we do not want to remove the taking of the semaphore
-> from the I2C-controller driver, as that is still necessary to protect many
-> other code-paths leading to accessing the shared I2C bus.
->=20
-> This means that we first have the PMIC driver acquire the semaphore and
-> then have the I2C controller driver trying to acquire it again.
->=20
-> To make this possible this commit does the following:
->=20
-> 1) Move the semaphore code from being private to the I2C controller driver
-> into the generic iosf_mbi code, which already has other code to deal with
-> the shared bus so that it can be accessed outside of the I2C bus driver.
->=20
-> 2) Rework the code so that it can be called multiple times nested, while
-> still blocking I2C accesses while e.g. the GPU driver has indicated the
-> P-Unit needs the bus through a iosf_mbi_punit_acquire() call.
->=20
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Sorry to confuse your. I get from CCers from get_maintainer.pl script.
+The next patch "[PATCH V4 3/15]KVM: Replace old tlb flush function with
+new one to flush a specified range" calls new function.
+https://lkml.org/lkml/2018/10/13/254
 
-For the record: once the designware maintainers are okay with this
-change, I am also okay with it going via the x86 platform tree.
-
-
---9jxsPFA5p3P2qPhR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvDQeAACgkQFA3kzBSg
-Kba8cw//bcFMGnUf5u7LGI5EJg3nCoZhj4aZTu/Z4yxcWFtkgN3duynk3hnf5NiM
-XcbT+8L/nIsvg2JhvBcGFAkFk4qIbMS5sibBWxAjrDpxR2welru8R+gk0kLqyxIL
-LPT81ikAVz/nZ9Qd3smDu8cel6N2uu7bYGHwQdXszdp74prV64ZBbiByaV29zy59
-LjvyW8+mBHszrrbnJu80VjmAhGFb2eYk8n7j/Csa/WdYZMZRxCTxkXzc2wmJva87
-m3ZH132QJ73GLpnY4+Ey1idJyWrob65IXi3A3UklKsbzPWJWAyGuZPlr7O9/Ttx/
-jYUvW7qJrA8+GmwPkbGRx9eL7oAT+ixZDAUEvi2ASxysh6e+pluvZTvM0S1gyU0/
-Fh3fOLu/QmALd7ki3urs7fPJR113JU5eyQeF4FLQu2JUW0KPlLjTL07PlciEOqDK
-hQIjWnGbJTi+5wsrQI0PC2D1GqmBvhT384ZvnT4GAL4kbog7ZAuiBtcKG5lgGOup
-DHWkBHokM2zSMAsbYCnDbBcK4zVC54OR715w6hcFAlld3Tr3UZI0Y764zZ9R6moz
-SPntQgy8ABOVdpOWY4yLZinkxRXDb0sJ8LNefF6C5UoJ7ht//BKvMdustiHE4yr6
-16wk5RxkAnB0jvGMcPrTYhVYXJqvRnYoXfCwJRG26vTQl6ygsFU=
-=iVmh
------END PGP SIGNATURE-----
-
---9jxsPFA5p3P2qPhR--
+The patch "[PATCH V4 4/15] KVM: Make kvm_set_spte_hva() return int"
+changes under ARM directory. Please have a look. Thanks.
+--=20
+Best regards
+Tianyu Lan
