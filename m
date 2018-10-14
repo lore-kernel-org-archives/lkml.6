@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A48DEC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AEDC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76A5F20645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:51:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76A5F20645
+	by mail.kernel.org (Postfix) with ESMTP id 09EC920876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:51:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09EC920876
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbeJNXXr (ORCPT
+        id S1729317AbeJNXcb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:23:47 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36197 "EHLO
+        Sun, 14 Oct 2018 19:32:31 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36183 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728029AbeJNXMA (ORCPT
+        by vger.kernel.org with ESMTP id S1728016AbeJNXMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:12:00 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLo-0004cf-8h; Sun, 14 Oct 2018 16:30:40 +0100
+        id 1gBiLo-0004cJ-8d; Sun, 14 Oct 2018 16:30:40 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLX-0000YD-Le; Sun, 14 Oct 2018 16:30:23 +0100
+        id 1gBiLY-0000aH-99; Sun, 14 Oct 2018 16:30:24 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Pablo Neira Ayuso" <pablo@netfilter.org>,
-        "Julian Anastasov" <ja@ssi.bg>, "Simon Horman" <horms@verge.net.au>
+CC:     akpm@linux-foundation.org, "Filipe Manana" <fdmanana@suse.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.205393079@decadent.org.uk>
+Message-ID: <lsq.1539530741.484349219@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 270/366] ipvs: fix stats update from local clients
+Subject: [PATCH 3.16 283/366] Btrfs: don't leave dangling dentry if
+ symlink creation failed
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,102 +56,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julian Anastasov <ja@ssi.bg>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit d5e032fc5697b6c0d6b4958bcacb981a08f8174e upstream.
+commit d50866d00fb39fcf72307001763ee9cc92625a43 upstream.
 
-Local clients are not properly synchronized on 32-bit CPUs when
-updating stats (3.10+). Now it is possible estimation_timer (timer),
-a stats reader, to interrupt the local client in the middle of
-write_seqcount_{begin,end} sequence leading to loop (DEADLOCK).
-The same interrupt can happen from received packet (SoftIRQ)
-which updates the same per-CPU stats.
+When we are creating a symlink we might fail with an error after we
+created its inode and added the corresponding directory indexes to its
+parent inode. In this case we end up never removing the directory indexes
+because the inode eviction handler, called for our symlink inode on the
+final iput(), only removes items associated with the symlink inode and
+not with the parent inode.
 
-Fix it by disabling BH while updating stats.
+Example:
 
-Found with debug:
+  $ mkfs.btrfs -f /dev/sdi
+  $ mount /dev/sdi /mnt
+  $ touch /mnt/foo
+  $ ln -s /mnt/foo /mnt/bar
+  ln: failed to create symbolic link ‘bar’: Cannot allocate memory
+  $ umount /mnt
+  $ btrfsck /dev/sdi
+  Checking filesystem on /dev/sdi
+  UUID: d5acb5ba-31bd-42da-b456-89dca2e716e1
+  checking extents
+  checking free space cache
+  checking fs roots
+  root 5 inode 258 errors 2001, no inode item, link count wrong
+	unresolved ref dir 256 index 3 namelen 3 name bar filetype 7 errors 4, no inode ref
+  found 131073 bytes used err is 1
+  total csum bytes: 0
+  total tree bytes: 131072
+  total fs tree bytes: 32768
+  total extent tree bytes: 16384
+  btree space waste bytes: 124305
+  file data blocks allocated: 262144
+   referenced 262144
+  btrfs-progs v4.2.3
 
-WARNING: inconsistent lock state
-4.17.0-rc2-00105-g35cb6d7-dirty #2 Not tainted
---------------------------------
-inconsistent {IN-SOFTIRQ-R} -> {SOFTIRQ-ON-W} usage.
-ftp/2545 [HC0[0]:SC0[0]:HE1:SE1] takes:
-86845479 (&syncp->seq#6){+.+-}, at: ip_vs_schedule+0x1c5/0x59e [ip_vs]
-{IN-SOFTIRQ-R} state was registered at:
- lock_acquire+0x44/0x5b
- estimation_timer+0x1b3/0x341 [ip_vs]
- call_timer_fn+0x54/0xcd
- run_timer_softirq+0x10c/0x12b
- __do_softirq+0xc1/0x1a9
- do_softirq_own_stack+0x1d/0x23
- irq_exit+0x4a/0x64
- smp_apic_timer_interrupt+0x63/0x71
- apic_timer_interrupt+0x3a/0x40
- default_idle+0xa/0xc
- arch_cpu_idle+0x9/0xb
- default_idle_call+0x21/0x23
- do_idle+0xa0/0x167
- cpu_startup_entry+0x19/0x1b
- start_secondary+0x133/0x182
- startup_32_smp+0x164/0x168
-irq event stamp: 42213
+So fix this by adding the directory index entries as the very last
+step of symlink creation.
 
-other info that might help us debug this:
-Possible unsafe locking scenario:
-
-      CPU0
-      ----
- lock(&syncp->seq#6);
- <Interrupt>
-   lock(&syncp->seq#6);
-
-*** DEADLOCK ***
-
-Fixes: ac69269a45e8 ("ipvs: do not disable bh for long time")
-Signed-off-by: Julian Anastasov <ja@ssi.bg>
-Acked-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-[bwh: Backported to 3.16:
- - Drop change in ip_vs_conn_stats(), which doesn't use a seqlock
- - Adjust context]
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/netfilter/ipvs/ip_vs_core.c
-+++ b/net/netfilter/ipvs/ip_vs_core.c
-@@ -118,6 +118,8 @@ ip_vs_in_stats(struct ip_vs_conn *cp, st
- 		struct ip_vs_cpu_stats *s;
- 		struct ip_vs_service *svc;
+ fs/btrfs/inode.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -8877,10 +8877,6 @@ static int btrfs_symlink(struct inode *d
+ 	if (err)
+ 		goto out_unlock_inode;
  
-+		local_bh_disable();
-+
- 		s = this_cpu_ptr(dest->stats.cpustats);
- 		s->ustats.inpkts++;
- 		u64_stats_update_begin(&s->syncp);
-@@ -138,6 +140,8 @@ ip_vs_in_stats(struct ip_vs_conn *cp, st
- 		u64_stats_update_begin(&s->syncp);
- 		s->ustats.inbytes += skb->len;
- 		u64_stats_update_end(&s->syncp);
-+
-+		local_bh_enable();
- 	}
- }
- 
-@@ -152,6 +156,8 @@ ip_vs_out_stats(struct ip_vs_conn *cp, s
- 		struct ip_vs_cpu_stats *s;
- 		struct ip_vs_service *svc;
- 
-+		local_bh_disable();
-+
- 		s = this_cpu_ptr(dest->stats.cpustats);
- 		s->ustats.outpkts++;
- 		u64_stats_update_begin(&s->syncp);
-@@ -172,6 +178,8 @@ ip_vs_out_stats(struct ip_vs_conn *cp, s
- 		u64_stats_update_begin(&s->syncp);
- 		s->ustats.outbytes += skb->len;
- 		u64_stats_update_end(&s->syncp);
-+
-+		local_bh_enable();
- 	}
- }
- 
+-	err = btrfs_add_nondir(trans, dir, dentry, inode, 0, index);
+-	if (err)
+-		goto out_unlock_inode;
+-
+ 	path = btrfs_alloc_path();
+ 	if (!path) {
+ 		err = -ENOMEM;
+@@ -8918,6 +8914,13 @@ static int btrfs_symlink(struct inode *d
+ 	inode_set_bytes(inode, name_len);
+ 	btrfs_i_size_write(inode, name_len);
+ 	err = btrfs_update_inode(trans, root, inode);
++	/*
++	 * Last step, add directory indexes for our symlink inode. This is the
++	 * last step to avoid extra cleanup of these indexes if an error happens
++	 * elsewhere above.
++	 */
++	if (!err)
++		err = btrfs_add_nondir(trans, dir, dentry, inode, 0, index);
+ 	if (err) {
+ 		drop_inode = 1;
+ 		goto out_unlock_inode;
 
