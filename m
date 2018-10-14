@@ -6,44 +6,48 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ACADC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FA9C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C548B20645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:58:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C548B20645
+	by mail.kernel.org (Postfix) with ESMTP id 83D6020890
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:58:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83D6020890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729852AbeJNXj1 (ORCPT
+        id S1729838AbeJNXj1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 14 Oct 2018 19:39:27 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35928 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35945 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727353AbeJNXLv (ORCPT
+        by vger.kernel.org with ESMTP id S1727542AbeJNXLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:51 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLe-0004cp-Ss; Sun, 14 Oct 2018 16:30:31 +0100
+        id 1gBiLe-0004cf-Ss; Sun, 14 Oct 2018 16:30:31 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLb-0000l8-9S; Sun, 14 Oct 2018 16:30:27 +0100
+        id 1gBiLb-0000lH-BK; Sun, 14 Oct 2018 16:30:27 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Govindarajulu Varadarajan" <gvaradar@cisco.com>,
-        "David S. Miller" <davem@davemloft.net>
+CC:     akpm@linux-foundation.org, "Davidlohr Bueso" <dave@stgolabs.net>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Andrea Arcangeli" <aarcange@redhat.com>,
+        "Joe Lawrence" <joe.lawrence@redhat.com>,
+        "Davidlohr Bueso" <dbueso@suse.de>,
+        "Manfred Spraul" <manfred@colorfullife.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.37763134@decadent.org.uk>
+Message-ID: <lsq.1539530741.574695554@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 355/366] enic: set DMA mask to 47 bit
+Subject: [PATCH 3.16 357/366] ipc/shm: fix shmat() nil address after
+ round-down when remapping
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,49 +61,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Govindarajulu Varadarajan <gvaradar@cisco.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-commit 322eaa06d55ebc1402a4a8d140945cff536638b4 upstream.
+commit 8f89c007b6dec16a1793cb88de88fcc02117bbbc upstream.
 
-In commit 624dbf55a359b ("driver/net: enic: Try DMA 64 first, then
-failover to DMA") DMA mask was changed from 40 bits to 64 bits.
-Hardware actually supports only 47 bits.
+shmat()'s SHM_REMAP option forbids passing a nil address for; this is in
+fact the very first thing we check for.  Andrea reported that for
+SHM_RND|SHM_REMAP cases we can end up bypassing the initial addr check,
+but we need to check again if the address was rounded down to nil.  As
+of this patch, such cases will return -EINVAL.
 
-Fixes: 624dbf55a359b ("driver/net: enic: Try DMA 64 first, then failover to DMA")
-Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/20180503204934.kk63josdu6u53fbd@linux-n805
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Reported-by: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: Manfred Spraul <manfred@colorfullife.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ethernet/cisco/enic/enic_main.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ ipc/shm.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/cisco/enic/enic_main.c
-+++ b/drivers/net/ethernet/cisco/enic/enic_main.c
-@@ -2198,11 +2198,11 @@ static int enic_probe(struct pci_dev *pd
- 	pci_set_master(pdev);
- 
- 	/* Query PCI controller on system for DMA addressing
--	 * limitation for the device.  Try 64-bit first, and
-+	 * limitation for the device.  Try 47-bit first, and
- 	 * fail to 32-bit.
- 	 */
- 
--	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
-+	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(47));
- 	if (err) {
- 		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
- 		if (err) {
-@@ -2216,10 +2216,10 @@ static int enic_probe(struct pci_dev *pd
- 			goto err_out_release_regions;
- 		}
- 	} else {
--		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
-+		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(47));
- 		if (err) {
- 			dev_err(dev, "Unable to obtain %u-bit DMA "
--				"for consistent allocations, aborting\n", 64);
-+				"for consistent allocations, aborting\n", 47);
- 			goto err_out_release_regions;
- 		}
- 		using_dac = 1;
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -1112,9 +1112,17 @@ long do_shmat(int shmid, char __user *sh
+ 		goto out;
+ 	else if ((addr = (ulong)shmaddr)) {
+ 		if (addr & (shmlba - 1)) {
+-			if (shmflg & SHM_RND)
++			if (shmflg & SHM_RND) {
+ 				addr &= ~(shmlba - 1);  /* round down */
+-			else
++
++				/*
++				 * Ensure that the round-down is non-nil
++				 * when remapping. This can happen for
++				 * cases when addr < shmlba.
++				 */
++				if (!addr && (shmflg & SHM_REMAP))
++					goto out;
++			} else
+ #ifndef __ARCH_FORCE_SHMLBA
+ 				if (addr & ~PAGE_MASK)
+ #endif
 
