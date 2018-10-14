@@ -6,48 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0099AC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31C4C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:43:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3C4020645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:42:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3C4020645
+	by mail.kernel.org (Postfix) with ESMTP id AFA4F20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:43:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA4F20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728966AbeJNXYM (ORCPT
+        id S1729104AbeJNXXr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:24:12 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36968 "EHLO
+        Sun, 14 Oct 2018 19:23:47 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36184 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728020AbeJNXYJ (ORCPT
+        by vger.kernel.org with ESMTP id S1728019AbeJNXMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:24:09 -0400
+        Sun, 14 Oct 2018 19:12:00 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM3-0004cZ-B6; Sun, 14 Oct 2018 16:30:55 +0100
+        id 1gBiLo-0004cW-7S; Sun, 14 Oct 2018 16:30:40 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLS-0000K8-5Y; Sun, 14 Oct 2018 16:30:18 +0100
+        id 1gBiLY-0000Zt-56; Sun, 14 Oct 2018 16:30:24 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Jeff Mahoney" <jeffm@suse.com>,
-        "" <syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com>,
-        "Jan Kara" <jack@suse.com>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        "Randy Dunlap" <rdunlap@infradead.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+CC:     akpm@linux-foundation.org, "Chris Mason" <clm@fb.com>,
+        "Filipe Manana" <fdmanana@suse.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.556099704@decadent.org.uk>
+Message-ID: <lsq.1539530741.84278653@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 135/366] fs/reiserfs/journal.c: add missing
- resierfs_warning() arg
+Subject: [PATCH 3.16 281/366] Btrfs: ensure tmpfile inode is always
+ persisted with link count of 0
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -61,49 +57,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 9ad553abe66f8be3f4755e9fa0a6ba137ce76341 upstream.
+commit 5762b5c958abbecb7fb9f4596a6476d1ce91ecf6 upstream.
 
-One use of the reiserfs_warning() macro in journal_init_dev() is missing
-a parameter, causing the following warning:
+If we open a file with O_TMPFILE, don't do any further operation on
+it (so that the inode item isn't updated) and then force a transaction
+commit, we get a persisted inode item with a link count of 1, and not 0
+as it should be.
 
-  REISERFS warning (device loop0): journal_init_dev: Cannot open '%s': %i journal_init_dev:
+Steps to reproduce it (requires a modern xfs_io with -T support):
 
-This also causes a WARN_ONCE() warning in the vsprintf code, and then a
-panic if panic_on_warn is set.
+    $ mkfs.btrfs -f /dev/sdd
+    $ mount -o /dev/sdd /mnt
+    $ xfs_io -T /mnt &
+    $ sync
 
-  Please remove unsupported %/ in format string
-  WARNING: CPU: 1 PID: 4480 at lib/vsprintf.c:2138 format_decode+0x77f/0x830 lib/vsprintf.c:2138
-  Kernel panic - not syncing: panic_on_warn set ...
+Then btrfs-debug-tree shows the inode item with a link count of 1:
 
-Just add another string argument to the macro invocation.
+    $ btrfs-debug-tree /dev/sdd
+    (...)
+    fs tree key (FS_TREE ROOT_ITEM 0)
+    leaf 29556736 items 4 free space 15851 generation 6 owner 5
+    fs uuid f164d01b-1b92-481d-a4e4-435fb0f843d0
+    chunk uuid 0e3d0e56-bcca-4a1c-aa5f-cec2c6f4f7a6
+    	item 0 key (256 INODE_ITEM 0) itemoff 16123 itemsize 160
+		inode generation 3 transid 6 size 0 block group 0 mode 40755 links 1
+    	item 1 key (256 INODE_REF 256) itemoff 16111 itemsize 12
+    		inode ref index 0 namelen 2 name: ..
+    	item 2 key (257 INODE_ITEM 0) itemoff 15951 itemsize 160
+    		inode generation 6 transid 6 size 0 block group 0 mode 100600 links 1
+    	item 3 key (ORPHAN ORPHAN_ITEM 257) itemoff 15951 itemsize 0
+		orphan item
+    checksum tree key (CSUM_TREE ROOT_ITEM 0)
+    (...)
 
-Addresses https://syzkaller.appspot.com/bug?id=0627d4551fdc39bf1ef5d82cd9eef587047f7718
-
-Link: http://lkml.kernel.org/r/d678ebe1-6f54-8090-df4c-b9affad62293@infradead.org
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: <syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Jeff Mahoney <jeffm@suse.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Chris Mason <clm@fb.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/reiserfs/journal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/inode.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -2641,7 +2641,7 @@ static int journal_init_dev(struct super
- 	if (IS_ERR(journal->j_dev_bd)) {
- 		result = PTR_ERR(journal->j_dev_bd);
- 		journal->j_dev_bd = NULL;
--		reiserfs_warning(super,
-+		reiserfs_warning(super, "sh-457",
- 				 "journal_init_dev: Cannot open '%s': %i",
- 				 jdev_name, result);
- 		return result;
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -5731,6 +5731,13 @@ static struct inode *btrfs_new_inode(str
+ 	}
+ 
+ 	/*
++	 * O_TMPFILE, set link count to 0, so that after this point,
++	 * we fill in an inode item with the correct link count.
++	 */
++	if (!name)
++		set_nlink(inode, 0);
++
++	/*
+ 	 * we have to initialize this early, so we can reclaim the inode
+ 	 * number if we fail afterwards in this function.
+ 	 */
+@@ -9096,6 +9103,14 @@ static int btrfs_tmpfile(struct inode *d
+ 	if (ret)
+ 		goto out;
+ 
++	/*
++	 * We set number of links to 0 in btrfs_new_inode(), and here we set
++	 * it to 1 because d_tmpfile() will issue a warning if the count is 0,
++	 * through:
++	 *
++	 *    d_tmpfile() -> inode_dec_link_count() -> drop_nlink()
++	 */
++	set_nlink(inode, 1);
+ 	d_tmpfile(dentry, inode);
+ 	mark_inode_dirty(inode);
+ 
 
