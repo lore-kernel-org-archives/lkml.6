@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 634B8C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E265C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35EB620876
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:43:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35EB620876
+	by mail.kernel.org (Postfix) with ESMTP id 10C5920645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:43:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10C5920645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729212AbeJNXY5 (ORCPT
+        id S1729226AbeJNXY7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:24:57 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37014 "EHLO
+        Sun, 14 Oct 2018 19:24:59 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37018 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728020AbeJNXY4 (ORCPT
+        by vger.kernel.org with ESMTP id S1728020AbeJNXY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:24:56 -0400
+        Sun, 14 Oct 2018 19:24:58 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM6-0004cA-BJ; Sun, 14 Oct 2018 16:30:58 +0100
+        id 1gBiMK-0004cY-5N; Sun, 14 Oct 2018 16:31:12 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLR-0000IE-71; Sun, 14 Oct 2018 16:30:17 +0100
+        id 1gBiLN-0000A6-NF; Sun, 14 Oct 2018 16:30:13 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Steffen Klassert" <steffen.klassert@secunet.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>
-Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.557725246@decadent.org.uk>
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Date:   Sun, 14 Oct 2018 16:25:40 +0100
+Message-ID: <lsq.1539530740.912015514@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 112/366] vti6: better validate user provided tunnel names
+Subject: [PATCH 3.16 021/366] serial: mxs-auart: Fix out-of-bounds access
+ through serial port index
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,38 +58,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 537b361fbcbcc3cd6fe2bb47069fd292b9256d16 upstream.
+commit dd345a31bfdec350d2593e6de5964e55c7f19c76 upstream.
 
-Use valid_name() to make sure user does not provide illegal
-device name.
+The auart_port[] array is indexed using a value derived from the
+"serialN" alias in DT, or from platform data, which may lead to an
+out-of-bounds access.
 
-Fixes: ed1efb2aefbb ("ipv6: Add support for IPsec virtual tunnel interfaces")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix this by adding a range check.
+
+Fixes: 1ea6607d4cdc9179 ("serial: mxs-auart: Allow device tree probing")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16:
+ - Explicitly clean up port on error
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv6/ip6_vti.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/tty/serial/mxs-auart.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -195,10 +195,13 @@ static struct ip6_tnl *vti6_tnl_create(s
- 	char name[IFNAMSIZ];
- 	int err;
- 
--	if (p->name[0])
-+	if (p->name[0]) {
-+		if (!dev_valid_name(p->name))
-+			goto failed;
- 		strlcpy(name, p->name, IFNAMSIZ);
--	else
-+	} else {
- 		sprintf(name, "ip6_vti%%d");
+--- a/drivers/tty/serial/mxs-auart.c
++++ b/drivers/tty/serial/mxs-auart.c
+@@ -1050,6 +1050,11 @@ static int mxs_auart_probe(struct platfo
+ 		s->port.line = pdev->id < 0 ? 0 : pdev->id;
+ 	else if (ret < 0)
+ 		goto out_free;
++	if (s->port.line >= ARRAY_SIZE(auart_port)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", s->port.line);
++		ret = -EINVAL;
++		goto out_free;
 +	}
  
- 	dev = alloc_netdev(sizeof(*t), name, vti6_dev_setup);
- 	if (dev == NULL)
+ 	if (of_id) {
+ 		pdev->id_entry = of_id->data;
 
