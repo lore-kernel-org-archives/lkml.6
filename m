@@ -2,74 +2,96 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F37C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 17:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91E2C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 17:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCDDA20835
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 17:19:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCDDA20835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 6B6392077C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 17:24:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6392077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726602AbeJOBAm (ORCPT
+        id S1726810AbeJOBGF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 21:00:42 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:38978 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbeJOBAm (ORCPT
+        Sun, 14 Oct 2018 21:06:05 -0400
+Received: from smtprelay0085.hostedemail.com ([216.40.44.85]:53675 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726319AbeJOBGE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 21:00:42 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gBk2Z-0001r8-Pn; Sun, 14 Oct 2018 17:18:55 +0000
-Date:   Sun, 14 Oct 2018 18:18:55 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, mcgrof@kernel.org,
-        akpm@linux-foundation.org, joe.lawrence@redhat.com,
-        longman@redhat.com
-Subject: Re: [PATCH 1/2] sysctl: add overflow detection to proc_get_long()
-Message-ID: <20181014171855.GW32577@ZenIV.linux.org.uk>
-References: <20181014132510.25943-1-christian@brauner.io>
- <20181014132510.25943-2-christian@brauner.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181014132510.25943-2-christian@brauner.io>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Sun, 14 Oct 2018 21:06:04 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 6FDF4182CF665;
+        Sun, 14 Oct 2018 17:24:20 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: tree24_7d0c1faec7e17
+X-Filterd-Recvd-Size: 2173
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 14 Oct 2018 17:24:19 +0000 (UTC)
+Message-ID: <9b4c97ade076d0ea6b4c2adde7535a5b48f0c5bc.camel@perches.com>
+Subject: Re: [PATCH 3.16 232/366] tracing: Deletion of an unnecessary check
+ before iput()
+From:   Joe Perches <joe@perches.com>
+To:     Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     akpm@linux-foundation.org,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Steven Rostedt <rostedt@goodmis.org>
+Date:   Sun, 14 Oct 2018 10:24:18 -0700
+In-Reply-To: <lsq.1539530741.752314819@decadent.org.uk>
+References: <lsq.1539530741.752314819@decadent.org.uk>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 14, 2018 at 03:25:09PM +0200, Christian Brauner wrote:
+On Sun, 2018-10-14 at 16:25 +0100, Ben Hutchings wrote:
+> 3.16.60-rc1 review patch.  If anyone has any objections, please let me know.
 
-> +static unsigned long sysctl_strtoul_lenient(const char *cp, char **endp,
-> +					    unsigned int base, bool *overflow)
-> +{
-> +	unsigned long long result;
-> +	unsigned int rv;
-> +
-> +	cp = _parse_integer_fixup_radix(cp, &base);
-> +	rv = _parse_integer(cp, base, &result);
-> +	if ((rv & KSTRTOX_OVERFLOW) ||
-> +	    (result != (unsigned long long)(unsigned long)result))
-> +		*overflow = true;
-> +	else
-> +		*overflow = false;
+I believe that no stable or backport kernel needs to
+apply patches like this unless it's needed for other
+real patches to be applied more easily.
 
-Yecchh...  First of all, the cast back to unsigned long long is completely
-pointless.  What's more,
-	if (expr)
-		foo = true;
-	else
-		foo = flase;
-is a fairly unidiomatic way to spell foo = expr;
+> ------------------
+> 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> 
+> commit 16a8ef2751801346f1f76a18685b2beb63cd170f upstream.
+> 
+> The iput() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Link: http://lkml.kernel.org/r/5468F875.7080907@users.sourceforge.net
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+> ---
+>  kernel/trace/trace_uprobe.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -552,8 +552,7 @@ error:
+>  	return ret;
+>  
+>  fail_address_parse:
+> -	if (inode)
+> -		iput(inode);
+> +	iput(inode);
+>  
+>  	pr_info("Failed to parse address or file.\n");
+>  
+> 
 
-And... is there anything that would really care if this "overflow" thing had
-been replaced by simply returning ~0UL on such?  That would appear to be
-a lot more natural API...
