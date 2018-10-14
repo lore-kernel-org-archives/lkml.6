@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DD8C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F244CC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A024720876
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:39:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A024720876
+	by mail.kernel.org (Postfix) with ESMTP id B675B20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:40:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B675B20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729115AbeJNXU7 (ORCPT
+        id S1728217AbeJNXVt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:20:59 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36880 "EHLO
+        Sun, 14 Oct 2018 19:21:49 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36250 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728015AbeJNXU6 (ORCPT
+        by vger.kernel.org with ESMTP id S1728094AbeJNXMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:20:58 -0400
+        Sun, 14 Oct 2018 19:12:02 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLy-0004cC-EN; Sun, 14 Oct 2018 16:30:50 +0100
+        id 1gBiLq-0004cU-62; Sun, 14 Oct 2018 16:30:42 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLU-0000OF-5U; Sun, 14 Oct 2018 16:30:20 +0100
+        id 1gBiLX-0000WJ-ED; Sun, 14 Oct 2018 16:30:23 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Shuah Khan" <shuahkh@osg.samsung.com>
+        "Dan Carpenter" <dan.carpenter@oracle.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Ingo Molnar" <mingo@kernel.org>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.634284374@decadent.org.uk>
+Message-ID: <lsq.1539530741.122664497@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 184/366] usbip: vhci_hcd: check rhport before using
- in vhci_hub_control()
+Subject: [PATCH 3.16 263/366] sched/autogroup: Fix possible Spectre-v1
+ indexing for sched_prio_to_weight[]
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,57 +61,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 5b22f676118ff25049382041da0db8012e57c9e8 upstream.
+commit 354d7793070611b4df5a79fbb0f12752d0ed0cc5 upstream.
 
-Validate !rhport < 0 before using it to access port_status array.
+> kernel/sched/autogroup.c:230 proc_sched_autogroup_set_nice() warn: potential spectre issue 'sched_prio_to_weight'
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16:
- - Drop changes to the SetPortFeature
-   USB_PORT_FEAT_{SUSPEND,POWER,BH_PORT_RESET} cases
- - Add the "error" label
- - Adjust filename, context]
+Userspace controls @nice, sanitize the array index.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/staging/usbip/vhci_hcd.c
-+++ b/drivers/staging/usbip/vhci_hcd.c
-@@ -266,6 +266,8 @@ static int vhci_hub_control(struct usb_h
- 		usbip_dbg_vhci_rh(" ClearHubFeature\n");
- 		break;
- 	case ClearPortFeature:
-+		if (rhport < 0)
-+			goto error;
- 		switch (wValue) {
- 		case USB_PORT_FEAT_SUSPEND:
- 			if (dum->port_status[rhport] & USB_PORT_STAT_SUSPEND) {
-@@ -370,6 +372,8 @@ static int vhci_hub_control(struct usb_h
- 		case USB_PORT_FEAT_RESET:
- 			usbip_dbg_vhci_rh(
- 				" SetPortFeature: USB_PORT_FEAT_RESET\n");
-+			if (rhport < 0)
-+				goto error;
- 			/* if it's already running, disconnect first */
- 			if (dum->port_status[rhport] & USB_PORT_STAT_ENABLE) {
- 				dum->port_status[rhport] &=
-@@ -385,6 +389,8 @@ static int vhci_hub_control(struct usb_h
- 		default:
- 			usbip_dbg_vhci_rh(" SetPortFeature: default %d\n",
- 					  wValue);
-+			if (rhport < 0)
-+				goto error;
- 			dum->port_status[rhport] |= (1 << wValue);
- 			break;
- 		}
-@@ -392,7 +398,7 @@ static int vhci_hub_control(struct usb_h
+ kernel/sched/auto_group.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/kernel/sched/auto_group.c
++++ b/kernel/sched/auto_group.c
+@@ -8,6 +8,7 @@
+ #include <linux/utsname.h>
+ #include <linux/security.h>
+ #include <linux/export.h>
++#include <linux/nospec.h>
  
- 	default:
- 		pr_err("default: no such request\n");
--
-+error:
- 		/* "protocol stall" on error */
- 		retval = -EPIPE;
- 	}
+ unsigned int __read_mostly sysctl_sched_autogroup_enabled = 1;
+ static struct autogroup autogroup_default;
+@@ -198,7 +199,7 @@ int proc_sched_autogroup_set_nice(struct
+ 	static unsigned long next = INITIAL_JIFFIES;
+ 	struct autogroup *ag;
+ 	unsigned long shares;
+-	int err;
++	int err, idx;
+ 
+ 	if (nice < MIN_NICE || nice > MAX_NICE)
+ 		return -EINVAL;
+@@ -216,7 +217,9 @@ int proc_sched_autogroup_set_nice(struct
+ 
+ 	next = HZ / 10 + jiffies;
+ 	ag = autogroup_task_get(p);
+-	shares = scale_load(prio_to_weight[nice + 20]);
++
++	idx = array_index_nospec(nice + 20, 40);
++	shares = scale_load(prio_to_weight[idx]);
+ 
+ 	down_write(&ag->lock);
+ 	err = sched_group_set_shares(ag->tg, shares);
 
