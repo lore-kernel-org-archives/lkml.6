@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 494A5C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6B2C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 167A120645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 167A120645
+	by mail.kernel.org (Postfix) with ESMTP id CF95220645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF95220645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeJNXsZ (ORCPT
+        id S1727526AbeJNXsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:48:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35577 "EHLO
+        Sun, 14 Oct 2018 19:48:24 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35580 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726470AbeJNXLj (ORCPT
+        by vger.kernel.org with ESMTP id S1726498AbeJNXLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:39 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLS-0004cY-Gs; Sun, 14 Oct 2018 16:30:18 +0100
+        id 1gBiLS-0004cg-MV; Sun, 14 Oct 2018 16:30:18 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLN-000099-Az; Sun, 14 Oct 2018 16:30:13 +0100
+        id 1gBiLN-00009T-Es; Sun, 14 Oct 2018 16:30:13 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Jason Andryuk" <jandryuk@gmail.com>,
-        "Jiri Kosina" <jkosina@suse.cz>, "John Smith" <john-s-84@gmx.net>
+CC:     akpm@linux-foundation.org, "Richard Weinberger" <richard@nod.at>,
+        "Krzysztof Mazur" <krzysiek@podlesie.net>
 Date:   Sun, 14 Oct 2018 16:25:40 +0100
-Message-ID: <lsq.1539530740.320369129@decadent.org.uk>
+Message-ID: <lsq.1539530740.2434181@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 010/366] HID: i2c-hid: Fix "incomplete report" noise
+Subject: [PATCH 3.16 014/366] um: Use POSIX ucontext_t instead of struct
+ ucontext
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,43 +57,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Andryuk <jandryuk@gmail.com>
+From: Krzysztof Mazur <krzysiek@podlesie.net>
 
-commit ef6eaf27274c0351f7059163918f3795da13199c upstream.
+commit 4d1a535b8ec5e74b42dfd9dc809142653b2597f6 upstream.
 
-Commit ac75a041048b ("HID: i2c-hid: fix size check and type usage") started
-writing messages when the ret_size is <= 2 from i2c_master_recv.  However, my
-device i2c-DLL07D1 returns 2 for a short period of time (~0.5s) after I stop
-moving the pointing stick or touchpad.  It varies, but you get ~50 messages
-each time which spams the log hard.
+glibc 2.26 removed the 'struct ucontext' to "improve" POSIX compliance
+and break programs, including User Mode Linux. Fix User Mode Linux
+by using POSIX ucontext_t.
 
-[  95.925055] i2c_hid i2c-DLL07D1:01: i2c_hid_get_input: incomplete report (83/2)
+This fixes:
 
-This has also been observed with a i2c-ALP0017.
+arch/um/os-Linux/signal.c: In function 'hard_handler':
+arch/um/os-Linux/signal.c:163:22: error: dereferencing pointer to incomplete type 'struct ucontext'
+  mcontext_t *mc = &uc->uc_mcontext;
+arch/x86/um/stub_segv.c: In function 'stub_segv_handler':
+arch/x86/um/stub_segv.c:16:13: error: dereferencing pointer to incomplete type 'struct ucontext'
+          &uc->uc_mcontext);
 
-[ 1781.266353] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
-
-Only print the message when ret_size is totally invalid and less than 2 to cut
-down on the log spam.
-
-Fixes: ac75a041048b ("HID: i2c-hid: fix size check and type usage")
-Reported-by: John Smith <john-s-84@gmx.net>
-Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Krzysztof Mazur <krzysiek@podlesie.net>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/hid/i2c-hid/i2c-hid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/um/os-Linux/signal.c | 2 +-
+ arch/x86/um/stub_segv.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -399,7 +399,7 @@ static void i2c_hid_get_input(struct i2c
- 		return;
- 	}
+--- a/arch/um/os-Linux/signal.c
++++ b/arch/um/os-Linux/signal.c
+@@ -135,7 +135,7 @@ static void (*handlers[_NSIG])(int sig,
  
--	if ((ret_size > size) || (ret_size <= 2)) {
-+	if ((ret_size > size) || (ret_size < 2)) {
- 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
- 			__func__, size, ret_size);
- 		return;
+ static void hard_handler(int sig, siginfo_t *si, void *p)
+ {
+-	struct ucontext *uc = p;
++	ucontext_t *uc = p;
+ 	mcontext_t *mc = &uc->uc_mcontext;
+ 	unsigned long pending = 1UL << sig;
+ 
+--- a/arch/x86/um/stub_segv.c
++++ b/arch/x86/um/stub_segv.c
+@@ -10,7 +10,7 @@
+ void __attribute__ ((__section__ (".__syscall_stub")))
+ stub_segv_handler(int sig, siginfo_t *info, void *p)
+ {
+-	struct ucontext *uc = p;
++	ucontext_t *uc = p;
+ 
+ 	GET_FAULTINFO_FROM_MC(*((struct faultinfo *) STUB_DATA),
+ 			      &uc->uc_mcontext);
 
