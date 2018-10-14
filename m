@@ -2,67 +2,128 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C90C0C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1775CC7112B
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87F1120645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n4U0l/sN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87F1120645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id D799320876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:48:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D799320876
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729297AbeJNX3W (ORCPT
+        id S1729723AbeJNX3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:29:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46402 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728125AbeJNX3W (ORCPT
+        Sun, 14 Oct 2018 19:29:25 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37308 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728125AbeJNX3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:29:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0lRLoKpiIc+IKNfb3idhqj+9RVOQ3vYZdWGUekhyeLA=; b=n4U0l/sNNp57FDNvHzTUQgX64
-        ROMbhrCQD5USUdUW1KdGD3EJ6cePCuUXCBA4nyqysNVSz4qsZBc4QRK390S+h10qtvmtYBXbisiAH
-        LmP7jYF3Lu0cNnqHUban7atbdx84jF5wPXVKazuRjY2cRqXePsLioiCMAsxGF7xJs+GX/qD9kyVi3
-        r3uiYZrDdOGZczMYSSO9bFPP3v222amUh5JZiI20Mf9iNYJA+9f9dkTGshINjxsPW/g/yY4Bq42oc
-        K/+IN1doutJufkjYfslnHdkNUIiQpq72glp4Lo+I+AZPxjYOVhc23bjcTMv/jpb2EsMMctmTFapOy
-        7sVP3opzA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gBicT-0006GM-NL; Sun, 14 Oct 2018 15:47:53 +0000
-Date:   Sun, 14 Oct 2018 08:47:53 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] esp_scsi: Grant disconnect privilege for untagged
- commands
-Message-ID: <20181014154753.GA19252@infradead.org>
-References: <cover.1539497520.git.fthain@telegraphics.com.au>
- <91b9ff9fc19ba40e3a2562171c8cd78a2ce7dc79.1539497520.git.fthain@telegraphics.com.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Sun, 14 Oct 2018 19:29:24 -0400
+Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gBiLx-0004cf-C8; Sun, 14 Oct 2018 16:30:49 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gBiLU-0000PN-Pl; Sun, 14 Oct 2018 16:30:20 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <91b9ff9fc19ba40e3a2562171c8cd78a2ce7dc79.1539497520.git.fthain@telegraphics.com.au>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Tetsuo Handa" <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Jiri Slaby" <jslaby@suse.com>,
+        "syzbot" <syzkaller@googlegroups.com>
+Date:   Sun, 14 Oct 2018 16:25:41 +0100
+Message-ID: <lsq.1539530741.13907349@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 197/366] tty: Don't call panic() at tty_ldisc_init()
+In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +	*p++ = IDENTIFY(lp && (tp->flags & ESP_TGT_DISCONNECT), lun);
+3.16.60-rc1 review patch.  If anyone has any objections, please let me know.
 
-I think lp should always be non-NULL here.
+------------------
+
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+
+commit 903f9db10f18f735e62ba447147b6c434b6af003 upstream.
+
+syzbot is reporting kernel panic [1] triggered by memory allocation failure
+at tty_ldisc_get() from tty_ldisc_init(). But since both tty_ldisc_get()
+and caller of tty_ldisc_init() can cleanly handle errors, tty_ldisc_init()
+does not need to call panic() when tty_ldisc_get() failed.
+
+[1] https://syzkaller.appspot.com/bug?id=883431818e036ae6a9981156a64b821110f39187
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/tty/tty_io.c    | 5 ++++-
+ drivers/tty/tty_ldisc.c | 5 +++--
+ include/linux/tty.h     | 2 +-
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -3036,7 +3036,10 @@ struct tty_struct *alloc_tty_struct(stru
+ 
+ 	kref_init(&tty->kref);
+ 	tty->magic = TTY_MAGIC;
+-	tty_ldisc_init(tty);
++	if (tty_ldisc_init(tty)) {
++		kfree(tty);
++		return NULL;
++	}
+ 	tty->session = NULL;
+ 	tty->pgrp = NULL;
+ 	mutex_init(&tty->legacy_mutex);
+--- a/drivers/tty/tty_ldisc.c
++++ b/drivers/tty/tty_ldisc.c
+@@ -820,12 +820,13 @@ void tty_ldisc_release(struct tty_struct
+  *	the tty structure is not completely set up when this call is made.
+  */
+ 
+-void tty_ldisc_init(struct tty_struct *tty)
++int tty_ldisc_init(struct tty_struct *tty)
+ {
+ 	struct tty_ldisc *ld = tty_ldisc_get(tty, N_TTY);
+ 	if (IS_ERR(ld))
+-		panic("n_tty: init_tty");
++		return PTR_ERR(ld);
+ 	tty->ldisc = ld;
++	return 0;
+ }
+ 
+ /**
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -556,7 +556,7 @@ extern int tty_unregister_ldisc(int disc
+ extern int tty_set_ldisc(struct tty_struct *tty, int ldisc);
+ extern int tty_ldisc_setup(struct tty_struct *tty, struct tty_struct *o_tty);
+ extern void tty_ldisc_release(struct tty_struct *tty, struct tty_struct *o_tty);
+-extern void tty_ldisc_init(struct tty_struct *tty);
++extern int __must_check tty_ldisc_init(struct tty_struct *tty);
+ extern void tty_ldisc_deinit(struct tty_struct *tty);
+ extern void tty_ldisc_begin(void);
+ 
+
