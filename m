@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACD5C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C3EC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4985D20835
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:35:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4985D20835
+	by mail.kernel.org (Postfix) with ESMTP id 01B7D20835
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:35:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01B7D20835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbeJNXQT (ORCPT
+        id S1728649AbeJNXQX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:16:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36609 "EHLO
+        Sun, 14 Oct 2018 19:16:23 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36615 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727809AbeJNXQT (ORCPT
+        by vger.kernel.org with ESMTP id S1727809AbeJNXQX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:16:19 -0400
+        Sun, 14 Oct 2018 19:16:23 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiMF-0004cF-Ra; Sun, 14 Oct 2018 16:31:07 +0100
+        id 1gBiM0-0004cd-Jw; Sun, 14 Oct 2018 16:30:52 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLO-0000C8-Kl; Sun, 14 Oct 2018 16:30:14 +0100
+        id 1gBiLT-0000NO-MG; Sun, 14 Oct 2018 16:30:19 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Jan Kara" <jack@suse.cz>,
-        "Eryu Guan" <guaneryu@gmail.com>, "Theodore Ts'o" <tytso@mit.edu>
-Date:   Sun, 14 Oct 2018 16:25:40 +0100
-Message-ID: <lsq.1539530740.678899079@decadent.org.uk>
+CC:     akpm@linux-foundation.org,
+        "Mahesh Rajashekhara" <mahesh.rajashekhara@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Date:   Sun, 14 Oct 2018 16:25:41 +0100
+Message-ID: <lsq.1539530741.82980866@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 045/366] ext4: protect i_disksize update by
- i_data_sem in direct write path
+Subject: [PATCH 3.16 174/366] scsi: sd: Defer spinning up drive while
+ SANITIZE is in progress
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,53 +58,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eryu Guan <guaneryu@gmail.com>
+From: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
 
-commit 73fdad00b208b139cf43f3163fbc0f67e4c6047c upstream.
+commit 505aa4b6a8834a2300971c5220c380c3271ebde3 upstream.
 
-i_disksize update should be protected by i_data_sem, by either taking
-the lock explicitly or by using ext4_update_i_disksize() helper. But the
-i_disksize updates in ext4_direct_IO_write() are not protected at all,
-which may be racing with i_disksize updates in writeback path in
-delalloc buffer write path.
+A drive being sanitized will return NOT READY / ASC 0x4 / ASCQ
+0x1b ("LOGICAL UNIT NOT READY. SANITIZE IN PROGRESS").
 
-This is found by code inspection, and I didn't hit any i_disksize
-corruption due to this bug. Thanks to Jan Kara for catching this bug and
-suggesting the fix!
+Prevent spinning up the drive until this condition clears.
 
-Reported-by: Jan Kara <jack@suse.cz>
-Suggested-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Eryu Guan <guaneryu@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-[bwh: Backported to 3.16: The relevant code is in ext4_ind_direct_IO()]
+[mkp: tweaked commit message]
+
+Signed-off-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/ext4/indirect.c
-+++ b/fs/ext4/indirect.c
-@@ -649,7 +649,6 @@ ssize_t ext4_ind_direct_IO(int rw, struc
- {
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file->f_mapping->host;
--	struct ext4_inode_info *ei = EXT4_I(inode);
- 	handle_t *handle;
- 	ssize_t ret;
- 	int orphan = 0;
-@@ -672,7 +671,7 @@ ssize_t ext4_ind_direct_IO(int rw, struc
- 				goto out;
- 			}
- 			orphan = 1;
--			ei->i_disksize = inode->i_size;
-+			ext4_update_i_disksize(inode, inode->i_size);
- 			ext4_journal_stop(handle);
- 		}
- 	}
-@@ -731,7 +730,7 @@ locked:
- 		if (ret > 0) {
- 			loff_t end = offset + ret;
- 			if (end > inode->i_size) {
--				ei->i_disksize = end;
-+				ext4_update_i_disksize(inode, end);
- 				i_size_write(inode, end);
- 				/*
- 				 * We're going to return a positive `ret'
+ drivers/scsi/sd.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1832,6 +1832,8 @@ sd_spinup_disk(struct scsi_disk *sdkp)
+ 				break;	/* standby */
+ 			if (sshdr.asc == 4 && sshdr.ascq == 0xc)
+ 				break;	/* unavailable */
++			if (sshdr.asc == 4 && sshdr.ascq == 0x1b)
++				break;	/* sanitize in progress */
+ 			/*
+ 			 * Issue command to spin up drive when not ready
+ 			 */
 
