@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17973C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3042DC7112B
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D734620645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D734620645
+	by mail.kernel.org (Postfix) with ESMTP id F319920645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F319920645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbeJNXL5 (ORCPT
+        id S1729068AbeJNXf2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:11:57 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36027 "EHLO
+        Sun, 14 Oct 2018 19:35:28 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36099 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727715AbeJNXLz (ORCPT
+        by vger.kernel.org with ESMTP id S1727851AbeJNXL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:11:55 -0400
+        Sun, 14 Oct 2018 19:11:57 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLh-0004cm-TV; Sun, 14 Oct 2018 16:30:34 +0100
+        id 1gBiLl-0004cJ-0Z; Sun, 14 Oct 2018 16:30:37 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLa-0000jI-Dv; Sun, 14 Oct 2018 16:30:26 +0100
+        id 1gBiLZ-0000hc-Nj; Sun, 14 Oct 2018 16:30:25 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Joe Jin" <joe.jin@oracle.com>,
-        "John Sobecki" <john.sobecki@oracle.com>,
-        "Rzeszutek Wilk" <konrad.wilk@oracle.com>
+CC:     akpm@linux-foundation.org, "Sekhar Nori" <nsekhar@ti.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.153048413@decadent.org.uk>
+Message-ID: <lsq.1539530741.200997759@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 335/366] xen-swiotlb: fix the check condition for
- xen_swiotlb_free_coherent
+Subject: [PATCH 3.16 321/366] ARM: davinci: board-dm646x-evm: set VPIF
+ capture card name
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,41 +56,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Jin <joe.jin@oracle.com>
+From: Sekhar Nori <nsekhar@ti.com>
 
-commit 4855c92dbb7b3b85c23e88ab7ca04f99b9677b41 upstream.
+commit bb7298a7e87cf3430eb62be8746e5d7a07ca9d7c upstream.
 
-When run raidconfig from Dom0 we found that the Xen DMA heap is reduced,
-but Dom Heap is increased by the same size. Tracing raidconfig we found
-that the related ioctl() in megaraid_sas will call dma_alloc_coherent()
-to apply memory. If the memory allocated by Dom0 is not in the DMA area,
-it will exchange memory with Xen to meet the requiment. Later drivers
-call dma_free_coherent() to free the memory, on xen_swiotlb_free_coherent()
-the check condition (dev_addr + size - 1 <= dma_mask) is always false,
-it prevents calling xen_destroy_contiguous_region() to return the memory
-to the Xen DMA heap.
+VPIF capture driver expects card name to be set since it
+uses it without checking for NULL. The commit which
+introduced VPIF display and capture support added card
+name only for display, not for capture.
 
-This issue introduced by commit 6810df88dcfc2 "xen-swiotlb: When doing
-coherent alloc/dealloc check before swizzling the MFNs.".
+Set it in platform data to probe driver successfully.
 
-Signed-off-by: Joe Jin <joe.jin@oracle.com>
-Tested-by: John Sobecki <john.sobecki@oracle.com>
-Reviewed-by: Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+While at it, also fix the display card name to something more
+appropriate.
+
+Fixes: 85609c1ccda6 ("DaVinci: DM646x - platform changes for vpif capture and display drivers")
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/xen/swiotlb-xen.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-davinci/board-dm646x-evm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -366,7 +366,7 @@ xen_swiotlb_free_coherent(struct device
- 	 * physical address */
- 	phys = xen_bus_to_phys(dev_addr);
+--- a/arch/arm/mach-davinci/board-dm646x-evm.c
++++ b/arch/arm/mach-davinci/board-dm646x-evm.c
+@@ -541,7 +541,7 @@ static struct vpif_display_config dm646x
+ 		.outputs = dm6467_ch0_outputs,
+ 		.output_count = ARRAY_SIZE(dm6467_ch0_outputs),
+ 	},
+-	.card_name	= "DM646x EVM",
++	.card_name	= "DM646x EVM Video Display",
+ };
  
--	if (((dev_addr + size - 1 > dma_mask)) ||
-+	if (((dev_addr + size - 1 <= dma_mask)) ||
- 	    range_straddles_page_boundary(phys, size))
- 		xen_destroy_contiguous_region(phys, order);
+ /**
+@@ -699,6 +699,7 @@ static struct vpif_capture_config dm646x
+ 			.fid_pol = 0,
+ 		},
+ 	},
++	.card_name = "DM646x EVM Video Capture",
+ };
  
+ static void __init evm_init_video(void)
 
