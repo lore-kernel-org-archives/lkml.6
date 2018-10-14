@@ -2,90 +2,118 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6996C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB410C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A60EA2077C
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:03:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A60EA2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id BF59320645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:03:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF59320645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbeJNXo4 convert rfc822-to-8bit (ORCPT
+        id S1727205AbeJNXLp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:44:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50858 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726595AbeJNXoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:44:55 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7EAC2207BB; Sun, 14 Oct 2018 18:03:24 +0200 (CEST)
-Received: from xps13 (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id CE3AE20703;
-        Sun, 14 Oct 2018 18:03:23 +0200 (CEST)
-Date:   Sun, 14 Oct 2018 18:03:24 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] irqchip/irq-mvebu-sei: Fix a NULL vs IS_ERR() bug in
- probe
-Message-ID: <20181014180324.56e7d8d5@xps13>
-In-Reply-To: <20181013102246.GD16086@mwanda>
-References: <20181013102246.GD16086@mwanda>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 14 Oct 2018 19:11:45 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35713 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727139AbeJNXLo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Oct 2018 19:11:44 -0400
+Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gBiLX-0004cI-GI; Sun, 14 Oct 2018 16:30:23 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gBiLV-0000R4-4u; Sun, 14 Oct 2018 16:30:21 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org,
+        "Joakim Tjernlund" <joakim.tjernlund@transmode.se>,
+        "Richard Weinberger" <richard@nod.at>,
+        "Joakim Tjernlund" <joakim.tjernlund@infinera.com>,
+        "Boris Brezillon" <boris.brezillon@bootlin.com>
+Date:   Sun, 14 Oct 2018 16:25:41 +0100
+Message-ID: <lsq.1539530741.701292776@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 209/366] mtd: cfi: cmdset_0001: Workaround Micron
+ Erase suspend bug.
+In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+3.16.60-rc1 review patch.  If anyone has any objections, please let me know.
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote on Sat, 13 Oct 2018
-13:22:46 +0300:
+------------------
 
-> The devm_ioremap_resource() function never returns NULL, it returns
-> error pointers.
-> 
-> Fixes: 61ce8d8d8a81 ("irqchip/irq-mvebu-sei: Add new driver for Marvell SEI")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/irqchip/irq-mvebu-sei.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-mvebu-sei.c b/drivers/irqchip/irq-mvebu-sei.c
-> index 566d69a2edbc..add4c9c934c8 100644
-> --- a/drivers/irqchip/irq-mvebu-sei.c
-> +++ b/drivers/irqchip/irq-mvebu-sei.c
-> @@ -384,9 +384,9 @@ static int mvebu_sei_probe(struct platform_device *pdev)
->  
->  	sei->res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	sei->base = devm_ioremap_resource(sei->dev, sei->res);
-> -	if (!sei->base) {
-> +	if (IS_ERR(sei->base)) {
->  		dev_err(sei->dev, "Failed to remap SEI resource\n");
-> -		return -ENODEV;
-> +		return PTR_ERR(sei->base);
->  	}
->  
->  	/* Retrieve the SEI capabilities with the interrupt ranges */
+From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
 
+commit 46a16a2283f9e678a4e26829175e0c37a5191860 upstream.
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Some Micron chips does not work well wrt Erase suspend for
+boot blocks. This avoids the issue by not allowing Erase suspend
+for the boot blocks for the 28F00AP30(1GBit) chip.
 
+Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/mtd/chips/cfi_cmdset_0001.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Thanks,
-Miquèl
+--- a/drivers/mtd/chips/cfi_cmdset_0001.c
++++ b/drivers/mtd/chips/cfi_cmdset_0001.c
+@@ -45,6 +45,7 @@
+ #define I82802AB	0x00ad
+ #define I82802AC	0x00ac
+ #define PF38F4476	0x881c
++#define M28F00AP30	0x8963
+ /* STMicroelectronics chips */
+ #define M50LPW080       0x002F
+ #define M50FLW080A	0x0080
+@@ -375,6 +376,17 @@ static void cfi_fixup_major_minor(struct
+ 		extp->MinorVersion = '1';
+ }
+ 
++static int cfi_is_micron_28F00AP30(struct cfi_private *cfi, struct flchip *chip)
++{
++	/*
++	 * Micron(was Numonyx) 1Gbit bottom boot are buggy w.r.t
++	 * Erase Supend for their small Erase Blocks(0x8000)
++	 */
++	if (cfi->mfr == CFI_MFR_INTEL && cfi->id == M28F00AP30)
++		return 1;
++	return 0;
++}
++
+ static inline struct cfi_pri_intelext *
+ read_pri_intelext(struct map_info *map, __u16 adr)
+ {
+@@ -830,6 +842,11 @@ static int chip_ready (struct map_info *
+ 		    chip->in_progress_block_addr)
+ 			goto sleep;
+ 
++		/* do not suspend small EBs, buggy Micron Chips */
++		if (cfi_is_micron_28F00AP30(cfi, chip) &&
++		    (chip->in_progress_block_mask == ~(0x8000-1)))
++			goto sleep;
++
+ 		/* Erase suspend */
+ 		map_write(map, CMD(0xB0), chip->in_progress_block_addr);
+ 
+
