@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 919D5C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E80D8C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 501B6205C9
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 501B6205C9
+	by mail.kernel.org (Postfix) with ESMTP id B716F205C9
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:55:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B716F205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbeJNXhU (ORCPT
+        id S1729733AbeJNXhX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:37:20 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37538 "EHLO
+        Sun, 14 Oct 2018 19:37:23 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37542 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727718AbeJNXhU (ORCPT
+        by vger.kernel.org with ESMTP id S1727718AbeJNXhX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:37:20 -0400
+        Sun, 14 Oct 2018 19:37:23 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM6-0004cH-6e; Sun, 14 Oct 2018 16:30:58 +0100
+        id 1gBiMH-0004cY-Fy; Sun, 14 Oct 2018 16:31:09 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLR-0000J8-LU; Sun, 14 Oct 2018 16:30:17 +0100
+        id 1gBiLO-0000Bq-Gz; Sun, 14 Oct 2018 16:30:14 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>
-Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.368229354@decadent.org.uk>
+CC:     akpm@linux-foundation.org, "Sean Young" <sean@mess.org>,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>
+Date:   Sun, 14 Oct 2018 16:25:40 +0100
+Message-ID: <lsq.1539530740.518745549@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 123/366] soreuseport: initialise timewait reuseport field
+Subject: [PATCH 3.16 042/366] media: rc: oops in ir_timer_keyup after
+ device unplug
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,148 +57,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Sean Young <sean@mess.org>
 
-commit 3099a52918937ab86ec47038ad80d377ba16c531 upstream.
+commit 8d4068810d9926250dd2435719a080b889eb44c3 upstream.
 
-syzbot reported an uninit-value in inet_csk_bind_conflict() [1]
+If there is IR in the raw kfifo when ir_raw_event_unregister() is called,
+then kthread_stop() causes ir_raw_event_thread to be scheduled, decode
+some scancodes and re-arm timer_keyup. The timer_keyup then fires when
+the rc device is long gone.
 
-It turns out we never propagated sk->sk_reuseport into timewait socket.
-
-[1]
-BUG: KMSAN: uninit-value in inet_csk_bind_conflict+0x5f9/0x990 net/ipv4/inet_connection_sock.c:151
-CPU: 1 PID: 3589 Comm: syzkaller008242 Not tainted 4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
- inet_csk_bind_conflict+0x5f9/0x990 net/ipv4/inet_connection_sock.c:151
- inet_csk_get_port+0x1d28/0x1e40 net/ipv4/inet_connection_sock.c:320
- inet6_bind+0x121c/0x1820 net/ipv6/af_inet6.c:399
- SYSC_bind+0x3f2/0x4b0 net/socket.c:1474
- SyS_bind+0x54/0x80 net/socket.c:1460
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x4416e9
-RSP: 002b:00007ffce6d15c88 EFLAGS: 00000217 ORIG_RAX: 0000000000000031
-RAX: ffffffffffffffda RBX: 0100000000000000 RCX: 00000000004416e9
-RDX: 000000000000001c RSI: 0000000020402000 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 00000000e6d15e08 R09: 00000000e6d15e08
-R10: 0000000000000004 R11: 0000000000000217 R12: 0000000000009478
-R13: 00000000006cd448 R14: 0000000000000000 R15: 0000000000000000
-
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
- kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
- __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
- tcp_time_wait+0xf17/0xf50 net/ipv4/tcp_minisocks.c:283
- tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
- tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __release_sock+0x2d6/0x680 net/core/sock.c:2271
- release_sock+0x97/0x2a0 net/core/sock.c:2786
- tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
- inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
- inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
- sock_release net/socket.c:595 [inline]
- sock_close+0xe0/0x300 net/socket.c:1149
- __fput+0x49e/0xa10 fs/file_table.c:209
- ____fput+0x37/0x40 fs/file_table.c:243
- task_work_run+0x243/0x2c0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x10e1/0x38d0 kernel/exit.c:867
- do_group_exit+0x1a0/0x360 kernel/exit.c:970
- SYSC_exit_group+0x21/0x30 kernel/exit.c:981
- SyS_exit_group+0x25/0x30 kernel/exit.c:979
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
- kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
- __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
- inet_twsk_alloc+0xaef/0xc00 net/ipv4/inet_timewait_sock.c:182
- tcp_time_wait+0xd9/0xf50 net/ipv4/tcp_minisocks.c:258
- tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
- tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __release_sock+0x2d6/0x680 net/core/sock.c:2271
- release_sock+0x97/0x2a0 net/core/sock.c:2786
- tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
- inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
- inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
- sock_release net/socket.c:595 [inline]
- sock_close+0xe0/0x300 net/socket.c:1149
- __fput+0x49e/0xa10 fs/file_table.c:209
- ____fput+0x37/0x40 fs/file_table.c:243
- task_work_run+0x243/0x2c0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x10e1/0x38d0 kernel/exit.c:867
- do_group_exit+0x1a0/0x360 kernel/exit.c:970
- SYSC_exit_group+0x21/0x30 kernel/exit.c:981
- SyS_exit_group+0x25/0x30 kernel/exit.c:979
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
- kmem_cache_alloc+0xaab/0xb90 mm/slub.c:2756
- inet_twsk_alloc+0x13b/0xc00 net/ipv4/inet_timewait_sock.c:163
- tcp_time_wait+0xd9/0xf50 net/ipv4/tcp_minisocks.c:258
- tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
- tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __release_sock+0x2d6/0x680 net/core/sock.c:2271
- release_sock+0x97/0x2a0 net/core/sock.c:2786
- tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
- inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
- inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
- sock_release net/socket.c:595 [inline]
- sock_close+0xe0/0x300 net/socket.c:1149
- __fput+0x49e/0xa10 fs/file_table.c:209
- ____fput+0x37/0x40 fs/file_table.c:243
- task_work_run+0x243/0x2c0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x10e1/0x38d0 kernel/exit.c:867
- do_group_exit+0x1a0/0x360 kernel/exit.c:970
- SYSC_exit_group+0x21/0x30 kernel/exit.c:981
- SyS_exit_group+0x25/0x30 kernel/exit.c:979
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Fixes: da5e36308d9f ("soreuseport: TCP/IPv4 implementation")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+[bwh: Backported to 3.16:
+ - There's no timer_repeat to move
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/net/inet_timewait_sock.h | 1 +
- net/ipv4/inet_timewait_sock.c    | 1 +
- 2 files changed, 2 insertions(+)
-
---- a/include/net/inet_timewait_sock.h
-+++ b/include/net/inet_timewait_sock.h
-@@ -108,6 +108,7 @@ struct inet_timewait_sock {
- #define tw_family		__tw_common.skc_family
- #define tw_state		__tw_common.skc_state
- #define tw_reuse		__tw_common.skc_reuse
-+#define tw_reuseport		__tw_common.skc_reuseport
- #define tw_bound_dev_if		__tw_common.skc_bound_dev_if
- #define tw_node			__tw_common.skc_nulls_node
- #define tw_bind_node		__tw_common.skc_bind_node
---- a/net/ipv4/inet_timewait_sock.c
-+++ b/net/ipv4/inet_timewait_sock.c
-@@ -191,6 +191,7 @@ struct inet_timewait_sock *inet_twsk_all
- 		tw->tw_dport	    = inet->inet_dport;
- 		tw->tw_family	    = sk->sk_family;
- 		tw->tw_reuse	    = sk->sk_reuse;
-+		tw->tw_reuseport    = sk->sk_reuseport;
- 		tw->tw_hash	    = sk->sk_hash;
- 		tw->tw_ipv6only	    = 0;
- 		tw->tw_transparent  = inet->transparent;
+--- a/drivers/media/rc/rc-main.c
++++ b/drivers/media/rc/rc-main.c
+@@ -1427,13 +1427,13 @@ void rc_unregister_device(struct rc_dev
+ 	if (!dev)
+ 		return;
+ 
+-	del_timer_sync(&dev->timer_keyup);
+-
+ 	clear_bit(dev->devno, ir_core_dev_number);
+ 
+ 	if (dev->driver_type == RC_DRIVER_IR_RAW)
+ 		ir_raw_event_unregister(dev);
+ 
++	del_timer_sync(&dev->timer_keyup);
++
+ 	/* Freeing the table should also call the stop callback */
+ 	ir_free_table(&dev->rc_map);
+ 	IR_dprintk(1, "Freed keycode table\n");
 
