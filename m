@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DE5C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C200FC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 659A820835
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:36:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 659A820835
+	by mail.kernel.org (Postfix) with ESMTP id 87EAC20835
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:36:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87EAC20835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbeJNXRk (ORCPT
+        id S1728421AbeJNXSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:17:40 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36698 "EHLO
+        Sun, 14 Oct 2018 19:18:00 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36706 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727252AbeJNXRj (ORCPT
+        by vger.kernel.org with ESMTP id S1727252AbeJNXSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:17:39 -0400
+        Sun, 14 Oct 2018 19:18:00 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiMC-0004cJ-3M; Sun, 14 Oct 2018 16:31:04 +0100
+        id 1gBiMD-0004cI-5P; Sun, 14 Oct 2018 16:31:05 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLP-0000EK-LR; Sun, 14 Oct 2018 16:30:15 +0100
+        id 1gBiLP-0000Dz-GD; Sun, 14 Oct 2018 16:30:15 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,12 +38,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Nagarathnam Muthusamy" <nagarathnam.muthusamy@oracle.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.519394247@decadent.org.uk>
+Message-ID: <lsq.1539530741.291673417@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 071/366] ipc/sem: Fix semctl(..., GETPID, ...)
- between pid namespaces
+Subject: [PATCH 3.16 067/366] ipc/shm: Fix shmctl(..., IPC_STAT, ...)
+ between pid namespaces.
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,174 +60,127 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-commit 51d6f2635b39709ee5e62479be23d423b760292c upstream.
+commit 98f929b1bd4d0b7c7a77d0d9776d1b924db2e454 upstream.
 
-Today the last process to update a semaphore is remembered and
-reported in the pid namespace of that process.  If there are processes
-in any other pid namespace querying that process id with GETPID the
-result will be unusable nonsense as it does not make any
-sense in your own pid namespace.
+Today shm_cpid and shm_lpid are remembered in the pid namespace of the
+creator and the processes that last touched a sysvipc shared memory
+segment.   If you have processes in multiple pid namespaces that
+is just wrong, and I don't know how this has been over-looked for
+so long.
 
-Due to ipc_update_pid I don't think you will be able to get System V
-ipc semaphores into a troublesome cache line ping-pong.  Using struct
-pids from separate process are not a problem because they do not share
-a cache line.  Using struct pid from different threads of the same
-process are unlikely to be a problem as the reference count update
-can be avoided.
+As only creation and shared memory attach and shared memory detach
+update the pids I do not expect there to be a repeat of the issues
+when struct pid was attached to each af_unix skb, which in some
+notable cases cut the performance in half.  The problem was threads of
+the same process updating same struct pid from different cpus causing
+the cache line to be highly contended and bounce between cpus.
 
-Further linux futexes are a much better tool for the job of mutual
-exclusion between processes than System V semaphores.  So I expect
-programs that  are performance limited by their interprocess mutual
-exclusion primitive will be using futexes.
-
-So while it is possible that enhancing the storage of the last
-rocess of a System V semaphore from an integer to a struct pid
-will cause a performance regression because of the effect
-of frequently updating the pid reference count.  I don't expect
-that to happen in practice.
-
-This change updates semctl(..., GETPID, ...) to return the
-process id of the last process to update a semphore inthe
-pid namespace of the calling process.
+As creation, attach, and detach are expected to be rare operations for
+sysvipc shared memory segments I do not expect that kind of cache line
+ping pong to cause probems.  In addition because the pid is at a fixed
+location in the structure instead of being dynamic on a skb, the
+reference count of the pid does not need to be updated on each
+operation if the pid is the same.  This ability to simply skip the pid
+reference count changes if the pid is unchanging further reduces the
+likelihood of the a cache line holding a pid reference count
+ping-ponging between cpus.
 
 Fixes: b488893a390e ("pid namespaces: changes to show virtual ids to user")
+Reviewed-by: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-[bwh: Backported to 3.16:
- - sem_queue::pid was also used to store an error temporarily; add a new
-   wake_error field for this purpose
- - Adjust context]
+[bwh: Backported to 3.16: adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- ipc/sem.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -99,7 +99,7 @@ struct sem {
- 	 *  - semctl, via SETVAL and SETALL.
- 	 *  - at task exit when performing undo adjustments (see exit_sem).
- 	 */
--	int	sempid;
-+	struct pid *sempid;
- 	spinlock_t	lock;	/* spinlock for fine-grained semtimedop */
- 	struct list_head pending_alter; /* pending single-sop operations */
- 					/* that alter the semaphore */
-@@ -113,7 +113,8 @@ struct sem_queue {
- 	struct list_head	list;	 /* queue of pending operations */
- 	struct task_struct	*sleeper; /* this process */
- 	struct sem_undo		*undo;	 /* undo structure */
--	int			pid;	 /* process id of requesting process */
-+	struct pid		*pid;	 /* process id of requesting process */
-+	int			wake_error;
- 	int			status;	 /* completion status of operation */
- 	struct sembuf		*sops;	 /* array of pending operations */
- 	struct sembuf		*blocking; /* the operation that blocked */
-@@ -644,7 +645,8 @@ SYSCALL_DEFINE3(semget, key_t, key, int,
-  */
- static int perform_atomic_semop(struct sem_array *sma, struct sem_queue *q)
- {
--	int result, sem_op, nsops, pid;
-+	int result, sem_op, nsops;
-+	struct pid *pid;
- 	struct sembuf *sop;
- 	struct sem *curr;
- 	struct sembuf *sops;
-@@ -682,7 +684,7 @@ static int perform_atomic_semop(struct s
- 	sop--;
- 	pid = q->pid;
- 	while (sop >= sops) {
--		sma->sem_base[sop->sem_num].sempid = pid;
-+		ipc_update_pid(&sma->sem_base[sop->sem_num].sempid, pid);
- 		sop--;
- 	}
+--- a/include/linux/shm.h
++++ b/include/linux/shm.h
+@@ -14,8 +14,8 @@ struct shmid_kernel /* private to the ke
+ 	time_t			shm_atim;
+ 	time_t			shm_dtim;
+ 	time_t			shm_ctim;
+-	pid_t			shm_cprid;
+-	pid_t			shm_lprid;
++	struct pid		*shm_cprid;
++	struct pid		*shm_lprid;
+ 	struct user_struct	*mlock_user;
  
-@@ -730,7 +732,7 @@ static void wake_up_sem_queue_prepare(st
- 		preempt_disable();
- 	}
- 	q->status = IN_WAKEUP;
--	q->pid = error;
-+	q->wake_error = error;
+ 	/* The task created the shm object.  NULL if the task is dead. */
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -198,7 +198,7 @@ static int __shm_open(struct vm_area_str
+ 		return PTR_ERR(shp);
  
- 	list_add_tail(&q->list, pt);
+ 	shp->shm_atim = get_seconds();
+-	shp->shm_lprid = task_tgid_vnr(current);
++	ipc_update_pid(&shp->shm_lprid, task_tgid(current));
+ 	shp->shm_nattch++;
+ 	shm_unlock(shp);
+ 	return 0;
+@@ -238,6 +238,8 @@ static void shm_destroy(struct ipc_names
+ 	else if (shp->mlock_user)
+ 		user_shm_unlock(file_inode(shm_file)->i_size, shp->mlock_user);
+ 	fput(shm_file);
++	ipc_update_pid(&shp->shm_cprid, NULL);
++	ipc_update_pid(&shp->shm_lprid, NULL);
+ 	ipc_rcu_putref(shp, shm_rcu_free);
  }
-@@ -754,7 +756,7 @@ static void wake_up_sem_queue_do(struct
- 		wake_up_process(q->sleeper);
- 		/* q can disappear immediately after writing q->status. */
- 		smp_wmb();
--		q->status = q->pid;
-+		q->status = q->wake_error;
- 	}
- 	if (did_something)
- 		preempt_enable();
-@@ -812,7 +814,7 @@ static int check_restart(struct sem_arra
-  * be called with semnum = -1, as well as with the number of each modified
-  * semaphore.
-  * The tasks that must be woken up are added to @pt. The return code
-- * is stored in q->pid.
-+ * is stored in q->wake_error.
-  * The function returns 1 if at least one operation was completed successfully.
-  */
- static int wake_const_ops(struct sem_array *sma, int semnum,
-@@ -912,7 +914,7 @@ static int do_smart_wakeup_zero(struct s
-  * be called with semnum = -1, as well as with the number of each modified
-  * semaphore.
-  * The tasks that must be woken up are added to @pt. The return code
-- * is stored in q->pid.
-+ * is stored in q->wake_error.
-  * The function internally checks if const operations can now succeed.
-  *
-  * The function return 1 if at least one semop was completed successfully.
-@@ -1156,6 +1158,7 @@ static void freeary(struct ipc_namespace
- 			unlink_queue(sma, q);
- 			wake_up_sem_queue_prepare(&tasks, q, -EIDRM);
- 		}
-+		ipc_update_pid(&sem->sempid, NULL);
- 	}
  
- 	/* Remove the semaphore set from the IDR */
-@@ -1357,7 +1360,7 @@ static int semctl_setval(struct ipc_name
- 		un->semadj[semnum] = 0;
+@@ -282,7 +284,7 @@ static void shm_close(struct vm_area_str
+ 	if (WARN_ON_ONCE(IS_ERR(shp)))
+ 		goto done; /* no-op */
  
- 	curr->semval = val;
--	curr->sempid = task_tgid_vnr(current);
-+	ipc_update_pid(&curr->sempid, task_tgid(current));
- 	sma->sem_ctime = get_seconds();
- 	/* maybe some queued-up processes were waiting for this */
- 	do_smart_update(sma, NULL, 0, 0, &tasks);
-@@ -1478,7 +1481,7 @@ static int semctl_main(struct ipc_namesp
+-	shp->shm_lprid = task_tgid_vnr(current);
++	ipc_update_pid(&shp->shm_lprid, task_tgid(current));
+ 	shp->shm_dtim = get_seconds();
+ 	shp->shm_nattch--;
+ 	if (shm_may_destroy(ns, shp))
+@@ -581,8 +583,8 @@ static int newseg(struct ipc_namespace *
+ 	if (IS_ERR(file))
+ 		goto no_file;
  
- 		for (i = 0; i < nsems; i++) {
- 			sma->sem_base[i].semval = sem_io[i];
--			sma->sem_base[i].sempid = task_tgid_vnr(current);
-+			ipc_update_pid(&sma->sem_base[i].sempid, task_tgid(current));
- 		}
+-	shp->shm_cprid = task_tgid_vnr(current);
+-	shp->shm_lprid = 0;
++	shp->shm_cprid = get_pid(task_tgid(current));
++	shp->shm_lprid = NULL;
+ 	shp->shm_atim = shp->shm_dtim = 0;
+ 	shp->shm_ctim = get_seconds();
+ 	shp->shm_segsz = size;
+@@ -614,6 +616,8 @@ no_id:
+ 		user_shm_unlock(size, shp->mlock_user);
+ 	fput(file);
+ no_file:
++	ipc_update_pid(&shp->shm_cprid, NULL);
++	ipc_update_pid(&shp->shm_lprid, NULL);
+ 	ipc_rcu_putref(shp, shm_rcu_free);
+ 	return error;
+ }
+@@ -952,8 +956,8 @@ static int shmctl_nolock(struct ipc_name
+ 		tbuf.shm_atime	= shp->shm_atim;
+ 		tbuf.shm_dtime	= shp->shm_dtim;
+ 		tbuf.shm_ctime	= shp->shm_ctim;
+-		tbuf.shm_cpid	= shp->shm_cprid;
+-		tbuf.shm_lpid	= shp->shm_lprid;
++		tbuf.shm_cpid	= pid_vnr(shp->shm_cprid);
++		tbuf.shm_lpid	= pid_vnr(shp->shm_lprid);
+ 		tbuf.shm_nattch	= shp->shm_nattch;
+ 		rcu_read_unlock();
  
- 		ipc_assert_locked_object(&sma->sem_perm);
-@@ -1510,7 +1513,7 @@ static int semctl_main(struct ipc_namesp
- 		err = curr->semval;
- 		goto out_unlock;
- 	case GETPID:
--		err = curr->sempid;
-+		err = pid_vnr(curr->sempid);
- 		goto out_unlock;
- 	case GETNCNT:
- 		err = count_semcnt(sma, semnum, 0);
-@@ -1933,7 +1936,7 @@ SYSCALL_DEFINE4(semtimedop, int, semid,
- 	queue.sops = sops;
- 	queue.nsops = nsops;
- 	queue.undo = un;
--	queue.pid = task_tgid_vnr(current);
-+	queue.pid = task_tgid(current);
- 	queue.alter = alter;
- 
- 	error = perform_atomic_semop(sma, &queue);
-@@ -2193,7 +2196,7 @@ void exit_sem(struct task_struct *tsk)
- 					semaphore->semval = 0;
- 				if (semaphore->semval > SEMVMX)
- 					semaphore->semval = SEMVMX;
--				semaphore->sempid = task_tgid_vnr(current);
-+				ipc_update_pid(&semaphore->sempid, task_tgid(current));
- 			}
- 		}
- 		/* maybe some queued-up processes were waiting for this */
+@@ -1363,6 +1367,7 @@ SYSCALL_DEFINE1(shmdt, char __user *, sh
+ #ifdef CONFIG_PROC_FS
+ static int sysvipc_shm_proc_show(struct seq_file *s, void *it)
+ {
++	struct pid_namespace *pid_ns = ipc_seq_pid_ns(s);
+ 	struct user_namespace *user_ns = seq_user_ns(s);
+ 	struct shmid_kernel *shp = it;
+ 	unsigned long rss = 0, swp = 0;
+@@ -1383,8 +1388,8 @@ static int sysvipc_shm_proc_show(struct
+ 		   shp->shm_perm.id,
+ 		   shp->shm_perm.mode,
+ 		   shp->shm_segsz,
+-		   shp->shm_cprid,
+-		   shp->shm_lprid,
++		   pid_nr_ns(shp->shm_cprid, pid_ns),
++		   pid_nr_ns(shp->shm_lprid, pid_ns),
+ 		   shp->shm_nattch,
+ 		   from_kuid_munged(user_ns, shp->shm_perm.uid),
+ 		   from_kgid_munged(user_ns, shp->shm_perm.gid),
 
