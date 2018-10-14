@@ -2,160 +2,101 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE7BC6787C
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 13:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74415C6787C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 13:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F1C720652
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 13:21:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21A1920659
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 13:25:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M4QK1ccb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F1C720652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="grnKZHYX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21A1920659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbeJNVCe (ORCPT
+        id S1726369AbeJNVGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 17:02:34 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34698 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbeJNVCe (ORCPT
+        Sun, 14 Oct 2018 17:06:43 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53745 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbeJNVGm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 17:02:34 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f18-v6so8004919plr.1;
-        Sun, 14 Oct 2018 06:21:35 -0700 (PDT)
+        Sun, 14 Oct 2018 17:06:42 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y11-v6so16246602wma.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 06:25:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=3p7rOh3EHCcs5xJhBdJ9os0FBYpeHAf7F1aAnqF/f30=;
-        b=M4QK1ccb/idnXeaKqj+Ewbkhcgm7CdlXT/yTIpkXgaATox26SQJltMaTvHPGPG79xb
-         8FdicVlinm6TH9QQZywahbCsqU2Qo2cEeNF/BnNBRbcLzSuKYDeFaDlRsj9PNMtQl5/u
-         ZX4AYSOkwd0qBIZSPiNXtPkByaFmv+vy/1D1182c0mcu5ApITPdk/hdFU1kMcAg5ZMkg
-         VsR+cVaH4ChJ8jYBsBoXC7i04fwmIuiOlMYd8Hl4YZnQbq7dclEzhNcqcApiQBoSECiM
-         GrKvFRQUSNqIOucytr38BPo65LejZNhIRfZwDzWlLHOw8Mlxuq6P6JkUPEi+BT/bzRTj
-         FQbg==
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=JjMOnNbkHTz1P9rN4XSj7SibReObVypZDErDMByt9Dk=;
+        b=grnKZHYXYlQJKsg9Ur6kZ3BtwkNtsmeCQHUsYCPV+R4UpKBvHyi3anxt17zVWamIYO
+         8ZlWw+VPYGbXOMkNY35ICr1KJuev3DqYBz45xLX6mhnbuCwVcO/ULvsABZob2jwIHxNG
+         uEfZwZ0jPH+pd2i7Hk/rYjv4MaR+qTT/x9vAI2RysiWBp0rHzHye1Hj3gtw4UzyBauC4
+         qvRj8D0KSMTbQkQlxdAXyO0ZjxRNVinwmgn5UpvjmTBVLRH3Zb38RJ06sPCTNXQZOpES
+         +3a4Sv4GuHBZ7B7xJYvSCQ5MAOVs7umx2ASBZD9y1vl1Q3iD0YB6kQPbKxX+L54MtrGl
+         yBgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3p7rOh3EHCcs5xJhBdJ9os0FBYpeHAf7F1aAnqF/f30=;
-        b=jHXvbbnZnZpS1f6ZgpisjJ9mfYXH1tDZrV/sWMb1ShpmR2v/vxO+oc9DKH6eiUnQy/
-         xLhgY9FeI3WhruBpPfX5wsMBx/PDF/cLvy58IZEJ0Nv/AehefFKgjCC00JN6KCPXZB2x
-         Q0med2EbGJpRACBJ4SZ23HB6xUyFtx+bCQ3YM/9rqj1hQDEebXUoMGcEcgzPtWz8ZJT0
-         pPGSd32fqmUbYH4sA1pqtFXr5A6sy/mCBVhWld4PhUC2zwiHB9YNdzXOoURTV0vIv4fn
-         FFzr7+YEKYHs8JVo3KLdEBE3pwQGATsO0B9YKonkTOeFtbkMqT2p0YkybrlcbF+Wbawg
-         tG7Q==
-X-Gm-Message-State: ABuFfoiDMXBlhHGuS1BfXpsVTGpt20fAT2TraNNmlCnN4S6ludI9bsmW
-        c7GX0nDwgXjJ+1aVtTy7TE5ydsbS6WtotCkN5R6q0EBsGax6Tw==
-X-Google-Smtp-Source: ACcGV60Bsdv+2lbefbGLxTexZhfM8a9SDOpaKx+exqAsk4LqnWktEAF8KcHNub/RKj7H2PyE8ha/L2lfpnhhtHYxQ0w=
-X-Received: by 2002:a17:902:da4:: with SMTP id 33-v6mr12916512plv.172.1539523294880;
- Sun, 14 Oct 2018 06:21:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
- <20181013145406.4911-3-Tianyu.Lan@microsoft.com> <4D709C3A-A91C-4CA7-922A-E77618EF21B4@oracle.com>
- <alpine.DEB.2.21.1810141014350.1438@nanos.tec.linutronix.de>
- <20181014092734.GV30658@n2100.armlinux.org.uk> <20181014093541.GW30658@n2100.armlinux.org.uk>
-In-Reply-To: <20181014093541.GW30658@n2100.armlinux.org.uk>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Sun, 14 Oct 2018 21:21:23 +0800
-Message-ID: <CAOLK0pzHAc1ipDbd3Trg2W_Gb_DxdEKM2ML5Fk09u0-O8y6UAg@mail.gmail.com>
-Subject: Re: [PATCH V4 2/15] KVM/MMU: Add tlb flush with range helper function
-To:     linux@armlinux.org.uk
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-mips@linux-mips.org,
-        linux@armlinux.org, kvm <kvm@vger.kernel.org>,
-        Radim Krcmar <rkrcmar@redhat.com>, benh@kernel.crashing.org,
-        will.deacon@arm.com, christoffer.dall@arm.com, paulus@ozlabs.org,
-        "H. Peter Anvin" <hpa@zytor.com>, kys@microsoft.com,
-        kvmarm@lists.cs.columbia.edu, sthemmin@microsoft.com,
-        mpe@ellerman.id.au, "the arch/x86 maintainers" <x86@kernel.org>,
-        michael.h.kelley@microsoft.com, Ingo Molnar <mingo@redhat.com>,
-        catalin.marinas@arm.com, jhogan@kernel.org,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>, marc.zyngier@arm.com,
-        haiyangz@microsoft.com, kvm-ppc@vger.kernel.org,
-        liran.alon@oracle.com, Paolo Bonzini <pbonzini@redhat.com>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        ralf@linux-mips.org, paul.burton@mips.com,
-        devel@linuxdriverproject.org, vkuznets@redhat.com,
-        linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JjMOnNbkHTz1P9rN4XSj7SibReObVypZDErDMByt9Dk=;
+        b=o0U2z4RDeG40abImOvgqpWcA6Yr/NwVp2JJStCy6O91nSXLu1nBHhr8E4MH+Pa0p/s
+         sQ4x2FpieD0JY3J++Wg3uOtAfr7PkE4dXKfRR++jUOmnWlEHQ84gu4UBbhEdnO0Qg+gk
+         Y2h2+Q85KMzNrZIFTuXwe7O3OXDbrAQqqbJngS4lyu2FjPOMEswU2WfUPoissyNbRSFI
+         C6oYuOcK9L5kEbVC0zU99PgGML2EfCtgsCyfquVzPbxQcUARi9N60iyzQoTrHhpIigO2
+         wUFl5wMzd3uWsVP6M1yG2oHM6VIRMzTPxp37x+yZ0SCsEleCC9aDNlmBkQIckyJqK2kt
+         iP8Q==
+X-Gm-Message-State: ABuFfoh1jWSlVbORMBm9FFvxmYAbXcdNVfEpc50HkO+DSK/vGc1tVJ5N
+        qM5+lPdcmENlxLx9lRbDhto4dg==
+X-Google-Smtp-Source: ACcGV60liU0+F7f11nOX1ffjd0GN/XM7L2lMtkulH1vgwjYBDZ4A2N+2ykAfPBkW+crndL50arTGcg==
+X-Received: by 2002:a1c:1694:: with SMTP id 142-v6mr10695427wmw.113.1539523541194;
+        Sun, 14 Oct 2018 06:25:41 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8070:8895:9700:8197:8849:535a:4f00])
+        by smtp.gmail.com with ESMTPSA id a11-v6sm10550050wrp.3.2018.10.14.06.25.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 14 Oct 2018 06:25:40 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     keescook@chromium.org, linux-kernel@vger.kernel.org
+Cc:     ebiederm@xmission.com, mcgrof@kernel.org,
+        akpm@linux-foundation.org, joe.lawrence@redhat.com,
+        longman@redhat.com, Christian Brauner <christian@brauner.io>
+Subject: [PATCH 0/2] sysctl: cap file-max value at ULONG_MAX
+Date:   Sun, 14 Oct 2018 15:25:08 +0200
+Message-Id: <20181014132510.25943-1-christian@brauner.io>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Russell:
-              Thanks for your review.
+Hey,
 
-On Sun, Oct 14, 2018 at 5:36 PM Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
->
-> On Sun, Oct 14, 2018 at 10:27:34AM +0100, Russell King - ARM Linux wrote:
-> > On Sun, Oct 14, 2018 at 10:16:56AM +0200, Thomas Gleixner wrote:
-> > > On Sun, 14 Oct 2018, Liran Alon wrote:
-> > > > > On 13 Oct 2018, at 17:53, lantianyu1986@gmail.com wrote:
-> > > > >
-> > > > > From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> > > > >
-> > > > > This patch is to add wrapper functions for tlb_remote_flush_with_=
-range
-> > > > > callback.
-> > > > >
-> > > > > Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> > > > > ---
-> > > > > Change sicne V3:
-> > > > >       Remove code of updating "tlbs_dirty"
-> > > > > Change since V2:
-> > > > >       Fix comment in the kvm_flush_remote_tlbs_with_range()
-> > > > > ---
-> > > > > arch/x86/kvm/mmu.c | 40 ++++++++++++++++++++++++++++++++++++++++
-> > > > > 1 file changed, 40 insertions(+)
-> > > > >
-> > > > > diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> > > > > index c73d9f650de7..ff656d85903a 100644
-> > > > > --- a/arch/x86/kvm/mmu.c
-> > > > > +++ b/arch/x86/kvm/mmu.c
-> > > > > @@ -264,6 +264,46 @@ static void mmu_spte_set(u64 *sptep, u64 spt=
-e);
-> > > > > static union kvm_mmu_page_role
-> > > > > kvm_mmu_calc_root_page_role(struct kvm_vcpu *vcpu);
-> > > > >
-> > > > > +
-> > > > > +static inline bool kvm_available_flush_tlb_with_range(void)
-> > > > > +{
-> > > > > +       return kvm_x86_ops->tlb_remote_flush_with_range;
-> > > > > +}
-> > > >
-> > > > Seems that kvm_available_flush_tlb_with_range() is not used in this=
- patch=E2=80=A6
-> > >
-> > > What's wrong with that?
-> > >
-> > > It provides the implementation and later patches make use of it. It's=
- a
-> > > sensible way to split patches into small, self contained entities.
-> >
-> > From what I can see of the patches that follow _this_ patch in the
-> > series, this function remains unused.  So, not only is it not used
-> > in this patch, it's not used in this series.
->
-> Note - I seem to have only received patches 1 through 4, so this is
-> based on the patches I've received.
->
+Currently, when writing
 
-Sorry to confuse your. I get from CCers from get_maintainer.pl script.
-The next patch "[PATCH V4 3/15]KVM: Replace old tlb flush function with
-new one to flush a specified range" calls new function.
-https://lkml.org/lkml/2018/10/13/254
+echo 18446744073709551616 > /proc/sys/fs/file-max
 
-The patch "[PATCH V4 4/15] KVM: Make kvm_set_spte_hva() return int"
-changes under ARM directory. Please have a look. Thanks.
---=20
-Best regards
-Tianyu Lan
+/proc/sys/fs/file-max will overflow and be set to 0. That quickly
+crashes the system. Let's detect the overflow and set to ULONG_MAX in
+this case effectively capping the value.
+
+The patch tries to ensure that there is no other user visible change in
+behavior for other values. Only when a maximum value is set for a
+specific sysctl will it be capped on overflow. The details are outlined
+in the commit message of the first commit.
+
+(This patchset is in reference to https://lkml.org/lkml/2018/10/11/585.)
+
+Thanks!
+Christian
+
+Christian Brauner (2):
+  sysctl: add overflow detection to proc_get_long()
+  sysctl: handle overflow for file-max
+
+ kernel/sysctl.c | 54 ++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 42 insertions(+), 12 deletions(-)
+
+-- 
+2.17.1
+
