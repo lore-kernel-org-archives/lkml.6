@@ -6,74 +6,110 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AFD7C6787C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74AD1C71123
 	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 06:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E11D2077C
+	by mail.kernel.org (Postfix) with ESMTP id 3B0C120843
 	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 06:34:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E11D2077C
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B0C120843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbeJNOOP (ORCPT
+        id S1726704AbeJNOOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 14 Oct 2018 10:14:15 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:42592 "EHLO
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:42626 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726372AbeJNOOO (ORCPT
+        with ESMTP id S1726342AbeJNOOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 10:14:14 -0400
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 2295C2A1CA; Sun, 14 Oct 2018 02:34:18 -0400 (EDT)
+        id 690B82A1CF; Sun, 14 Oct 2018 02:34:18 -0400 (EDT)
 To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc:     Michael Schmitz <schmitzmic@gmail.com>,
         Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <91b9ff9fc19ba40e3a2562171c8cd78a2ce7dc79.1539497520.git.fthain@telegraphics.com.au>
+Message-Id: <83ae6c0a090dc46decf8e99c544cb6329b516ed1.1539497520.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1539497520.git.fthain@telegraphics.com.au>
 References: <cover.1539497520.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v2 3/6] esp_scsi: Grant disconnect privilege for untagged
- commands
+Subject: [PATCH v2 6/6] esp_scsi: Optimize PIO loops
 Date:   Sun, 14 Oct 2018 17:12:00 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A SCSI device is not granted disconnect privilege by an esp_scsi host
-unless that device has its simple_tags flag set. However, a device may
-support disconnect/reselect and not support command queueing. Allow
-these devices to disconnect and improve bus utilization.
+Avoid function calls in the inner PIO loops. On a Centris 660av this
+improves throughput for sequential read transfers by about 40% and
+sequential write by about 10%.
+
+Unfortunately it is not possible to have method calls like esp_write8()
+placed inline so this is always going to be slow (even with LTO).
 
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Tested-by: Michael Schmitz <schmitzmic@gmail.com>
 ---
- drivers/scsi/esp_scsi.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Changed since v1:
+ - Don't touch the scsi_esp_cmd(esp, ESP_CMD_FLUSH) that's outside the loop.
+---
+ drivers/scsi/esp_scsi.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
-index 9e5d3f7d29ae..b7c41aa9927c 100644
+index 305a322ad13c..cdf55bd8562e 100644
 --- a/drivers/scsi/esp_scsi.c
 +++ b/drivers/scsi/esp_scsi.c
-@@ -800,13 +800,9 @@ static void esp_maybe_execute_command(struct esp *esp)
+@@ -2788,7 +2788,7 @@ static inline unsigned int esp_wait_for_fifo(struct esp *esp)
+ 		if (fbytes)
+ 			return fbytes;
  
- build_identify:
- 	/* If we don't have a lun-data struct yet, we're probing
--	 * so do not disconnect.  Also, do not disconnect unless
--	 * we have a tag on this command.
-+	 * so do not disconnect.
- 	 */
--	if (lp && (tp->flags & ESP_TGT_DISCONNECT) && ent->tag[0])
--		*p++ = IDENTIFY(1, lun);
--	else
--		*p++ = IDENTIFY(0, lun);
-+	*p++ = IDENTIFY(lp && (tp->flags & ESP_TGT_DISCONNECT), lun);
+-		udelay(2);
++		udelay(1);
+ 	} while (--i);
  
- 	if (ent->tag[0] && esp->rev == ESP100) {
- 		/* ESP100 lacks select w/atn3 command, use select
+ 	shost_printk(KERN_ERR, esp->host, "FIFO is empty (sreg %02x)\n",
+@@ -2805,7 +2805,7 @@ static inline int esp_wait_for_intr(struct esp *esp)
+ 		if (esp->sreg & ESP_STAT_INTR)
+ 			return 0;
+ 
+-		udelay(2);
++		udelay(1);
+ 	} while (--i);
+ 
+ 	shost_printk(KERN_ERR, esp->host, "IRQ timeout (sreg %02x)\n",
+@@ -2833,7 +2833,7 @@ void esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
+ 			if (!esp_wait_for_fifo(esp))
+ 				break;
+ 
+-			*dst++ = esp_read8(ESP_FDATA);
++			*dst++ = readb(esp->fifo_reg);
+ 			--esp_count;
+ 
+ 			if (!esp_count)
+@@ -2854,9 +2854,9 @@ void esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
+ 			}
+ 
+ 			if (phase == ESP_MIP)
+-				scsi_esp_cmd(esp, ESP_CMD_MOK);
++				esp_write8(ESP_CMD_MOK, ESP_CMD);
+ 
+-			scsi_esp_cmd(esp, ESP_CMD_TI);
++			esp_write8(ESP_CMD_TI, ESP_CMD);
+ 		}
+ 	} else {
+ 		unsigned int n = ESP_FIFO_SIZE;
+@@ -2896,7 +2896,7 @@ void esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
+ 			src += n;
+ 			esp_count -= n;
+ 
+-			scsi_esp_cmd(esp, ESP_CMD_TI);
++			esp_write8(ESP_CMD_TI, ESP_CMD);
+ 		}
+ 	}
+ 
 -- 
 2.18.1
 
