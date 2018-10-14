@@ -6,46 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B00C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BE2C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D56B220645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:41:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D56B220645
+	by mail.kernel.org (Postfix) with ESMTP id 6A22020876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:41:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A22020876
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbeJNXWn (ORCPT
+        id S1728071AbeJNXMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:22:43 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36201 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728046AbeJNXMB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:12:01 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36155 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727992AbeJNXL7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Oct 2018 19:11:59 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLo-0004cD-Ai; Sun, 14 Oct 2018 16:30:40 +0100
+        id 1gBiLm-0004cF-5u; Sun, 14 Oct 2018 16:30:38 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLX-0000YN-N9; Sun, 14 Oct 2018 16:30:23 +0100
+        id 1gBiLY-0000dh-Ll; Sun, 14 Oct 2018 16:30:24 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Hendrik Brueckner" <brueckner@linux.ibm.com>,
-        "Martin Schwidefsky" <schwidefsky@de.ibm.com>,
-        "Heiko Carstens" <heiko.carstens@de.ibm.com>
+CC:     akpm@linux-foundation.org, "Jan Kara" <jack@suse.cz>,
+        "Al Viro" <viro@zeniv.linux.org.uk>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.882871538@decadent.org.uk>
+Message-ID: <lsq.1539530741.912692285@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 272/366] s390/cpum_sf: ensure sample frequency of
- perf event attributes is non-zero
+Subject: [PATCH 3.16 291/366] ufs: Fix warning from unlock_new_inode()
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,35 +56,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hendrik Brueckner <brueckner@linux.ibm.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 4bbaf2584b86b0772413edeac22ff448f36351b1 upstream.
+commit 12ecbb4b1d765a5076920999298d9625439dbe58 upstream.
 
-Correct a trinity finding for the perf_event_open() system call with
-a perf event attribute structure that uses a frequency but has the
-sampling frequency set to zero.  This causes a FP divide exception during
-the sample rate initialization for the hardware sampling facility.
+Commit e4502c63f56aeca88 (ufs: deal with nfsd/iget races) introduced
+unlock_new_inode() call into ufs_add_nondir(). However that function
+gets called also from ufs_link() which hands it already initialized
+inode and thus unlock_new_inode() complains. The problem is harmless but
+annoying.
 
-Fixes: 8c069ff4bd606 ("s390/perf: add support for the CPU-Measurement Sampling Facility")
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fix the problem by opencoding necessary stuff in ufs_link()
+
+Fixes: e4502c63f56aeca887ced37f24e0def1ef11cec8
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/s390/kernel/perf_cpum_sf.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ufs/namei.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/arch/s390/kernel/perf_cpum_sf.c
-+++ b/arch/s390/kernel/perf_cpum_sf.c
-@@ -744,6 +744,10 @@ static int __hw_perf_event_init(struct p
- 	 */
- 	rate = 0;
- 	if (attr->freq) {
-+		if (!attr->sample_freq) {
-+			err = -EINVAL;
-+			goto out;
-+		}
- 		rate = freq_to_sample_rate(&si, attr->sample_freq);
- 		rate = hw_limit_rate(&si, rate);
- 		attr->freq = 0;
+--- a/fs/ufs/namei.c
++++ b/fs/ufs/namei.c
+@@ -174,7 +174,12 @@ static int ufs_link (struct dentry * old
+ 	inode_inc_link_count(inode);
+ 	ihold(inode);
+ 
+-	error = ufs_add_nondir(dentry, inode);
++	error = ufs_add_link(dentry, inode);
++	if (error) {
++		inode_dec_link_count(inode);
++		iput(inode);
++	} else
++		d_instantiate(dentry, inode);
+ 	unlock_ufs(dir->i_sb);
+ 	return error;
+ }
 
