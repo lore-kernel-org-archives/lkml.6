@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AE2C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 892B8C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 382A820645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 382A820645
+	by mail.kernel.org (Postfix) with ESMTP id 5CB3520645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:54:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CB3520645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbeJNXL4 (ORCPT
+        id S1729215AbeJNXgG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:11:56 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36021 "EHLO
+        Sun, 14 Oct 2018 19:36:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36080 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727669AbeJNXLy (ORCPT
+        by vger.kernel.org with ESMTP id S1727769AbeJNXL4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:11:54 -0400
+        Sun, 14 Oct 2018 19:11:56 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLh-0004cH-TS; Sun, 14 Oct 2018 16:30:34 +0100
+        id 1gBiLi-0004io-Vr; Sun, 14 Oct 2018 16:30:35 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLa-0000jg-HC; Sun, 14 Oct 2018 16:30:26 +0100
+        id 1gBiLZ-0000hr-Ra; Sun, 14 Oct 2018 16:30:25 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Masami Hiramatsu" <mhiramat@kernel.org>,
-        "Russell King" <rmk+kernel@armlinux.org.uk>
+        "Marc Dionne" <marc.dionne@auristor.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "David Howells" <dhowells@redhat.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.529885248@decadent.org.uk>
+Message-ID: <lsq.1539530741.197927745@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 338/366] ARM: 8772/1: kprobes: Prohibit kprobes on
- get_user functions
+Subject: [PATCH 3.16 324/366] afs: Ignore AFS_ACE_READ and AFS_ACE_WRITE
+ for directories
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,70 +59,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Marc Dionne <marc.dionne@auristor.com>
 
-commit 0d73c3f8e7f6ee2aab1bb350f60c180f5ae21a2c upstream.
+commit fd2498211a551fd42b2d6b9050d649d43536e75c upstream.
 
-Since do_undefinstr() uses get_user to get the undefined
-instruction, it can be called before kprobes processes
-recursive check. This can cause an infinit recursive
-exception.
-Prohibit probing on get_user functions.
+The AFS_ACE_READ and AFS_ACE_WRITE permission bits should not
+be used to make access decisions for the directory itself.  They
+are meant to control access for the objects contained in that
+directory.
 
-Fixes: 24ba613c9d6c ("ARM kprobes: core code")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-[bwh: Backported to 3.16: Drop changes to __get_user_{8,32_t_8,64t_{1,2,4}}]
+Reading a directory is allowed if the AFS_ACE_LOOKUP bit is set.
+This would cause an incorrect access denied error for a directory
+with AFS_ACE_LOOKUP but not AFS_ACE_READ.
+
+The AFS_ACE_WRITE bit does not allow operations that modify the
+directory.  For a directory with AFS_ACE_WRITE but neither
+AFS_ACE_INSERT nor AFS_ACE_DELETE, this would result in trying
+operations that would ultimately be denied by the server.
+
+Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/arm/include/asm/assembler.h
-+++ b/arch/arm/include/asm/assembler.h
-@@ -425,4 +425,14 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
- #endif
- 	.endm
- 
-+#ifdef CONFIG_KPROBES
-+#define _ASM_NOKPROBE(entry)				\
-+	.pushsection "_kprobe_blacklist", "aw" ;	\
-+	.balign 4 ;					\
-+	.long entry;					\
-+	.popsection
-+#else
-+#define _ASM_NOKPROBE(entry)
-+#endif
-+
- #endif /* __ASM_ASSEMBLER_H__ */
---- a/arch/arm/lib/getuser.S
-+++ b/arch/arm/lib/getuser.S
-@@ -38,6 +38,7 @@ ENTRY(__get_user_1)
- 	mov	r0, #0
- 	mov	pc, lr
- ENDPROC(__get_user_1)
-+_ASM_NOKPROBE(__get_user_1)
- 
- ENTRY(__get_user_2)
- 	check_uaccess r0, 2, r1, r2, __get_user_bad
-@@ -58,6 +59,7 @@ rb	.req	r0
- 	mov	r0, #0
- 	mov	pc, lr
- ENDPROC(__get_user_2)
-+_ASM_NOKPROBE(__get_user_2)
- 
- ENTRY(__get_user_4)
- 	check_uaccess r0, 4, r1, r2, __get_user_bad
-@@ -65,12 +67,14 @@ ENTRY(__get_user_4)
- 	mov	r0, #0
- 	mov	pc, lr
- ENDPROC(__get_user_4)
-+_ASM_NOKPROBE(__get_user_4)
- 
- __get_user_bad:
- 	mov	r2, #0
- 	mov	r0, #-EFAULT
- 	mov	pc, lr
- ENDPROC(__get_user_bad)
-+_ASM_NOKPROBE(__get_user_bad)
- 
- .pushsection __ex_table, "a"
- 	.long	1b, __get_user_bad
+ fs/afs/security.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+--- a/fs/afs/security.c
++++ b/fs/afs/security.c
+@@ -327,12 +327,11 @@ int afs_permission(struct inode *inode,
+ 			if (!(access & AFS_ACE_LOOKUP))
+ 				goto permission_denied;
+ 		} else if (mask & MAY_READ) {
+-			if (!(access & AFS_ACE_READ))
++			if (!(access & AFS_ACE_LOOKUP))
+ 				goto permission_denied;
+ 		} else if (mask & MAY_WRITE) {
+ 			if (!(access & (AFS_ACE_DELETE | /* rmdir, unlink, rename from */
+-					AFS_ACE_INSERT | /* create, mkdir, symlink, rename to */
+-					AFS_ACE_WRITE))) /* chmod */
++					AFS_ACE_INSERT))) /* create, mkdir, symlink, rename to */
+ 				goto permission_denied;
+ 		} else {
+ 			BUG();
 
