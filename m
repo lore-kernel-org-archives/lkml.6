@@ -6,109 +6,198 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74AD1C71123
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 06:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F2FC6787C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 06:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B0C120843
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 06:34:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B0C120843
+	by mail.kernel.org (Postfix) with ESMTP id 2487020890
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 06:34:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2487020890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbeJNOOP (ORCPT
+        id S1726636AbeJNOOO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 10:14:15 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:42626 "EHLO
+        Sun, 14 Oct 2018 10:14:14 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:42612 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726342AbeJNOOO (ORCPT
+        with ESMTP id S1726377AbeJNOOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 10:14:14 -0400
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 690B82A1CF; Sun, 14 Oct 2018 02:34:18 -0400 (EDT)
+        id 412E22A1CD; Sun, 14 Oct 2018 02:34:18 -0400 (EDT)
 To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc:     Michael Schmitz <schmitzmic@gmail.com>,
         Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <83ae6c0a090dc46decf8e99c544cb6329b516ed1.1539497520.git.fthain@telegraphics.com.au>
+Message-Id: <7e8229dc8d3c27e7eff7e2111e2475fbf2521766.1539497520.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1539497520.git.fthain@telegraphics.com.au>
 References: <cover.1539497520.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v2 6/6] esp_scsi: Optimize PIO loops
+Subject: [PATCH v2 4/6] esp_scsi: Eliminate ESP_FLAG_DOING_SLOWCMD
 Date:   Sun, 14 Oct 2018 17:12:00 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoid function calls in the inner PIO loops. On a Centris 660av this
-improves throughput for sequential read transfers by about 40% and
-sequential write by about 10%.
+The concept of a 'slow command' as it appears in esp_scsi is confusing
+because it could refer to an ESP command or a SCSI command. It turns out
+that it refers to a particular ESP select command which the driver also
+tracks as 'ESP_SELECT_MSGOUT'. For readability, it is better to use the
+terminology from the datasheets.
 
-Unfortunately it is not possible to have method calls like esp_write8()
-placed inline so this is always going to be slow (even with LTO).
+The global ESP_FLAG_DOING_SLOWCMD flag is redundant anyway, as it can be
+inferred from esp->select_state. Remove the ESP_FLAG_DOING_SLOWCMD cruft
+and just use a boolean local variable.
 
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Tested-by: Michael Schmitz <schmitzmic@gmail.com>
 ---
-Changed since v1:
- - Don't touch the scsi_esp_cmd(esp, ESP_CMD_FLUSH) that's outside the loop.
----
- drivers/scsi/esp_scsi.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/scsi/esp_scsi.c | 57 +++++++++++++++++------------------------
+ drivers/scsi/esp_scsi.h |  3 +--
+ 2 files changed, 24 insertions(+), 36 deletions(-)
 
 diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
-index 305a322ad13c..cdf55bd8562e 100644
+index b7c41aa9927c..6ccaf818357e 100644
 --- a/drivers/scsi/esp_scsi.c
 +++ b/drivers/scsi/esp_scsi.c
-@@ -2788,7 +2788,7 @@ static inline unsigned int esp_wait_for_fifo(struct esp *esp)
- 		if (fbytes)
- 			return fbytes;
+@@ -478,17 +478,6 @@ static void esp_restore_pointers(struct esp *esp, struct esp_cmd_entry *ent)
+ 	spriv->tot_residue = ent->saved_tot_residue;
+ }
  
--		udelay(2);
-+		udelay(1);
- 	} while (--i);
+-static void esp_check_command_len(struct esp *esp, struct scsi_cmnd *cmd)
+-{
+-	if (cmd->cmd_len == 6 ||
+-	    cmd->cmd_len == 10 ||
+-	    cmd->cmd_len == 12) {
+-		esp->flags &= ~ESP_FLAG_DOING_SLOWCMD;
+-	} else {
+-		esp->flags |= ESP_FLAG_DOING_SLOWCMD;
+-	}
+-}
+-
+ static void esp_write_tgt_config3(struct esp *esp, int tgt)
+ {
+ 	if (esp->rev > ESP100A) {
+@@ -721,6 +710,7 @@ static void esp_maybe_execute_command(struct esp *esp)
+ 	struct scsi_device *dev;
+ 	struct scsi_cmnd *cmd;
+ 	struct esp_cmd_entry *ent;
++	bool select_and_stop = false;
+ 	int tgt, lun, i;
+ 	u32 val, start_cmd;
+ 	u8 *p;
+@@ -752,7 +742,8 @@ static void esp_maybe_execute_command(struct esp *esp)
+ 	esp_map_dma(esp, cmd);
+ 	esp_save_pointers(esp, ent);
  
- 	shost_printk(KERN_ERR, esp->host, "FIFO is empty (sreg %02x)\n",
-@@ -2805,7 +2805,7 @@ static inline int esp_wait_for_intr(struct esp *esp)
- 		if (esp->sreg & ESP_STAT_INTR)
- 			return 0;
+-	esp_check_command_len(esp, cmd);
++	if (!(cmd->cmd_len == 6 || cmd->cmd_len == 10 || cmd->cmd_len == 12))
++		select_and_stop = true;
  
--		udelay(2);
-+		udelay(1);
- 	} while (--i);
+ 	p = esp->command_block;
  
- 	shost_printk(KERN_ERR, esp->host, "IRQ timeout (sreg %02x)\n",
-@@ -2833,7 +2833,7 @@ void esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
- 			if (!esp_wait_for_fifo(esp))
- 				break;
- 
--			*dst++ = esp_read8(ESP_FDATA);
-+			*dst++ = readb(esp->fifo_reg);
- 			--esp_count;
- 
- 			if (!esp_count)
-@@ -2854,9 +2854,9 @@ void esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
- 			}
- 
- 			if (phase == ESP_MIP)
--				scsi_esp_cmd(esp, ESP_CMD_MOK);
-+				esp_write8(ESP_CMD_MOK, ESP_CMD);
- 
--			scsi_esp_cmd(esp, ESP_CMD_TI);
-+			esp_write8(ESP_CMD_TI, ESP_CMD);
+@@ -793,9 +784,9 @@ static void esp_maybe_execute_command(struct esp *esp)
+ 			tp->flags &= ~ESP_TGT_CHECK_NEGO;
  		}
- 	} else {
- 		unsigned int n = ESP_FIFO_SIZE;
-@@ -2896,7 +2896,7 @@ void esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
- 			src += n;
- 			esp_count -= n;
  
--			scsi_esp_cmd(esp, ESP_CMD_TI);
-+			esp_write8(ESP_CMD_TI, ESP_CMD);
- 		}
+-		/* Process it like a slow command.  */
+-		if (tp->flags & (ESP_TGT_NEGO_WIDE | ESP_TGT_NEGO_SYNC))
+-			esp->flags |= ESP_FLAG_DOING_SLOWCMD;
++		/* If there are multiple message bytes, use Select and Stop */
++		if (esp->msg_out_len)
++			select_and_stop = true;
  	}
+ 
+ build_identify:
+@@ -808,23 +799,10 @@ static void esp_maybe_execute_command(struct esp *esp)
+ 		/* ESP100 lacks select w/atn3 command, use select
+ 		 * and stop instead.
+ 		 */
+-		esp->flags |= ESP_FLAG_DOING_SLOWCMD;
++		select_and_stop = true;
+ 	}
+ 
+-	if (!(esp->flags & ESP_FLAG_DOING_SLOWCMD)) {
+-		start_cmd = ESP_CMD_SELA;
+-		if (ent->tag[0]) {
+-			*p++ = ent->tag[0];
+-			*p++ = ent->tag[1];
+-
+-			start_cmd = ESP_CMD_SA3;
+-		}
+-
+-		for (i = 0; i < cmd->cmd_len; i++)
+-			*p++ = cmd->cmnd[i];
+-
+-		esp->select_state = ESP_SELECT_BASIC;
+-	} else {
++	if (select_and_stop) {
+ 		esp->cmd_bytes_left = cmd->cmd_len;
+ 		esp->cmd_bytes_ptr = &cmd->cmnd[0];
+ 
+@@ -839,6 +817,19 @@ static void esp_maybe_execute_command(struct esp *esp)
+ 
+ 		start_cmd = ESP_CMD_SELAS;
+ 		esp->select_state = ESP_SELECT_MSGOUT;
++	} else {
++		start_cmd = ESP_CMD_SELA;
++		if (ent->tag[0]) {
++			*p++ = ent->tag[0];
++			*p++ = ent->tag[1];
++
++			start_cmd = ESP_CMD_SA3;
++		}
++
++		for (i = 0; i < cmd->cmd_len; i++)
++			*p++ = cmd->cmnd[i];
++
++		esp->select_state = ESP_SELECT_BASIC;
+ 	}
+ 	val = tgt;
+ 	if (esp->rev == FASHME)
+@@ -1248,7 +1239,6 @@ static int esp_finish_select(struct esp *esp)
+ 			esp_unmap_dma(esp, cmd);
+ 			esp_free_lun_tag(ent, cmd->device->hostdata);
+ 			tp->flags &= ~(ESP_TGT_NEGO_SYNC | ESP_TGT_NEGO_WIDE);
+-			esp->flags &= ~ESP_FLAG_DOING_SLOWCMD;
+ 			esp->cmd_bytes_ptr = NULL;
+ 			esp->cmd_bytes_left = 0;
+ 		} else {
+@@ -1299,9 +1289,8 @@ static int esp_finish_select(struct esp *esp)
+ 				esp_flush_fifo(esp);
+ 		}
+ 
+-		/* If we are doing a slow command, negotiation, etc.
+-		 * we'll do the right thing as we transition to the
+-		 * next phase.
++		/* If we are doing a Select And Stop command, negotiation, etc.
++		 * we'll do the right thing as we transition to the next phase.
+ 		 */
+ 		esp_event(esp, ESP_EVENT_CHECK_PHASE);
+ 		return 0;
+diff --git a/drivers/scsi/esp_scsi.h b/drivers/scsi/esp_scsi.h
+index db4b6ea94caa..d0c032803749 100644
+--- a/drivers/scsi/esp_scsi.h
++++ b/drivers/scsi/esp_scsi.h
+@@ -490,7 +490,6 @@ struct esp {
+ 	u32			flags;
+ #define ESP_FLAG_DIFFERENTIAL	0x00000001
+ #define ESP_FLAG_RESETTING	0x00000002
+-#define ESP_FLAG_DOING_SLOWCMD	0x00000004
+ #define ESP_FLAG_WIDE_CAPABLE	0x00000008
+ #define ESP_FLAG_QUICKIRQ_CHECK	0x00000010
+ #define ESP_FLAG_DISABLE_SYNC	0x00000020
+@@ -532,7 +531,7 @@ struct esp {
+ 	u32			min_period;
+ 	u32			radelay;
+ 
+-	/* Slow command state.  */
++	/* ESP_CMD_SELAS command state */
+ 	u8			*cmd_bytes_ptr;
+ 	int			cmd_bytes_left;
  
 -- 
 2.18.1
