@@ -3,53 +3,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E45C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 19:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B08FC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 19:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2746520890
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 19:49:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2746520890
+	by mail.kernel.org (Postfix) with ESMTP id 302AE2064E
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 19:53:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 302AE2064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbeJODbY (ORCPT
+        id S1726718AbeJODfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 23:31:24 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36051 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbeJODbX (ORCPT
+        Sun, 14 Oct 2018 23:35:46 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39704 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbeJODfq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 23:31:23 -0400
-Received: by mail-qt1-f193.google.com with SMTP id u34-v6so19283182qth.3;
-        Sun, 14 Oct 2018 12:49:18 -0700 (PDT)
+        Sun, 14 Oct 2018 23:35:46 -0400
+Received: by mail-qt1-f194.google.com with SMTP id e22-v6so19303629qto.6;
+        Sun, 14 Oct 2018 12:53:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pi89fFNjq2DxTE+Ppo+G6rtDEmLNPUOvGaFtWbUTl/A=;
-        b=VdZ0Kirl7jXeA/HstIf7iikJHdy3+EXjAgkuZP1k49+ycgVgoYfKBD64n+oJ6NHNtx
-         N9paj+c31NQ6Q/rK7QgrZ5/sqtQrU08u3Xtaxif5ZovAEUhiiGgTZNZkAyK3+qDbOxr/
-         Xiu3F0+VIcphVTujR1JWQNPDkc3geG+gj90ojBSZ3W79XO9ljTT44CtjLuo/hSHtWNhk
-         QnmAVMIPuh6PaQVW9iDwTUD28hgc9pjBE+gI4HrLX6BAPz4/BSVHIilKXJKpeQGEtG6K
-         33nHqNw9KW8vs/zKEICc1XyFcIJikCwIeh2sMiat/ofDGgVx9drE/ppty0wpgqOrCUGe
-         oqrQ==
-X-Gm-Message-State: ABuFfojhfMlhlZ6nNM82NHuDY+luC9vy0xovmeH7yRNmqmhXf0RaG/xX
-        TeJVT2y58Ys5uNNdHLbqu/00tmvryBGbEP0C7wA=
-X-Google-Smtp-Source: ACcGV60Nf0wfOyrysOwAcQQsm246PiIxS7QFi4FRfNoFsKEXmfo8dmUXcDbVD9OFla5Uos9t3iLfHLzj32lpQnAvG0U=
-X-Received: by 2002:a0c:881c:: with SMTP id 28mr13917792qvl.40.1539546557452;
- Sun, 14 Oct 2018 12:49:17 -0700 (PDT)
+        bh=doFYNN6dg8ppo+j0Zk07aanLk9qlmCb+R+JOhgmPces=;
+        b=NOV0Ty2gUpYYkPOO1jS3ibCLHiiF+w7roqw5JM2WIr1E7tpHcKEICssxGljUIHlNMW
+         1QmFytEeVbLiq6Okag4H1vNKiYRd5pGJeseB9Usd24DH6WMBL+/uEoOIZg0rDhgaZSUV
+         vjK+t4flDMSvYG9Qz9KOtrU1I2lDaC+O72lMXDsIGjfgwbK8mE61ZoXSJ7Z/dy7hXc8a
+         za4OAz66PkjhGrAA+Y+UPMR7mR7UXVlFaFhNVtDYu4BOUJ6WQ67mYf0n4LRIgnvLpScu
+         +Opxm9UQNE5mUkemIBfc5FUS8+NN8VoAvtb2S2mAAJD2GRCaMomGFca8F0+6kGS/aW+Y
+         8EvQ==
+X-Gm-Message-State: ABuFfoiTcbcFTlJ8IEjJEqv3e8LFRacP8zQ0oUvE3GVaRpS0Kk2NF4YT
+        BhASoqdb3AwPHTL0y3OQE7MAFBkVgv449T1e/iU=
+X-Google-Smtp-Source: ACcGV62QbtpuaX/eixbfMELMPr+dxSrPH2IwBh2hGKi8FHx447B1/XjpDxeL7I6jyyytgzyVaVfFf/zOK4wXV/xg8Zk=
+X-Received: by 2002:ac8:2bf0:: with SMTP id n45-v6mr13913853qtn.152.1539546818882;
+ Sun, 14 Oct 2018 12:53:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180516081910.10067-1-ynorov@caviumnetworks.com> <CALCETrVuabkb5ZQOSgQQTEq8CrS602NBpAkE2=4n982r1f5reQ@mail.gmail.com>
-In-Reply-To: <CALCETrVuabkb5ZQOSgQQTEq8CrS602NBpAkE2=4n982r1f5reQ@mail.gmail.com>
+References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
+ <20180724173957.GA22106@yury-thinkpad> <20181010141017.GA2881@asgard.redhat.com>
+ <7aac1a08-8948-1a04-cbd3-fbc6a53f9ff0@arm.com> <20181013020731.GD21972@asgard.redhat.com>
+In-Reply-To: <20181013020731.GD21972@asgard.redhat.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sun, 14 Oct 2018 21:49:01 +0200
-Message-ID: <CAK8P3a1Yhhv1TcQTcF0MinicGovgp_0g_sXqADe3fjVTtOK_aw@mail.gmail.com>
+Date:   Sun, 14 Oct 2018 21:53:22 +0200
+Message-ID: <CAK8P3a1qUVoE0CYkCOU2N+-WkqMad15fFsakbwkpiiPPRFz-eA@mail.gmail.com>
 Subject: Re: [PATCH v9 00/24] ILP32 for ARM64
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Yury Norov <ynorov@caviumnetworks.com>,
+To:     Eugene Syromiatnikov <esyr@redhat.com>
+Cc:     Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Yury Norov <ynorov@caviumnetworks.com>, nd@arm.com,
         Catalin Marinas <catalin.marinas@arm.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -82,61 +84,58 @@ Cc:     Yury Norov <ynorov@caviumnetworks.com>,
         Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
         Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
         Steve Ellcey <sellcey@caviumnetworks.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>
+        Pavel Machek <pavel@ucw.cz>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Wookey <wookey@wookware.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 9:36 PM Andy Lutomirski <luto@amacapital.net> wrote:
+On Sat, Oct 13, 2018 at 4:07 AM Eugene Syromiatnikov <esyr@redhat.com> wrote:
 >
-> On Wed, May 16, 2018 at 1:19 AM Yury Norov <ynorov@caviumnetworks.com> wrote:
+> On Wed, Oct 10, 2018 at 03:39:07PM +0100, Szabolcs Nagy wrote:
+> > On 10/10/18 15:10, Eugene Syromiatnikov wrote:
+> > >  * What's the reasoning behind capping syscall arguments to 32 bit? x32
+> > >    and MIPS N32 do not have such a restriction (and do not need special
+> > >    wrappers for syscalls that pass 64-bit values as a result, except
+> > >    when they do,  as it is the case for preadv2 on x32); moreover, that
+> > >    would lead to insurmountable difficulties for AArch64 ILP32 tracers
+> > >    that try to trace LP64 tracees, as it would be impossible to pass
+> > >    64-bit addresses to process_vm_{read,write} or ptrace PEEK/POKE.
 > >
-> > This series enables AARCH64 with ILP32 mode.
-> >
-> > As supporting work, it introduces ARCH_32BIT_OFF_T configuration
-> > option that is enabled for existing 32-bit architectures but disabled
-> > for new arches (so 64-bit off_t userspace type is used by new userspace).
-> > Also it deprecates getrlimit and setrlimit syscalls prior to prlimit64.
+> > but that's necessarily the case for all ilp32 abis:
+> > the userspace syscall function receives 32bit
+> > arguments so even if the kernel abi takes 64bit
+> > args you cannot use that from c code. (the libc
+> > does not even know which args should be sign or
+> > zero extended.)
 >
-> Second, ILP32 user code is highly unlikely
-> to end up with the same struct layout as ILP64 code.  The latter seems
-> like it should be solved entirely in userspace by adding a way to
-> annotate a structure as being a kernel ABI structure and getting the
-> toolchain to lay it out as if it were ILP64 even though the target is
-> ILP32.
-
-The syscall ABI could be almost completely abstracted in glibc, the
-main issue is ioctl and a couple of related interfaces that pass data
-structures (read() on /dev/input/*, mmap on /dev/snd/*
-or raw sockets, fcntl).
-
-The question whether a data type is laid out like a 64-bit architecture
-would cannot be a property of the type in most of those cases,
-because the same types are used elsewhere. Many ioctls just
-take a pointer to a 'long' or similar, and then you have structures
-like 'timespec' that are used both in syscall/ioctl ABI and in normal
-user space code, but are required to be laid out differently there.
-(timespec is a bad example because y2038 of course, but it
-illustrates the point).
-
-> 2. I think you should make a conscious decision as to whether the
-> ILP32-ness of a syscall is a property of the task or of the syscall.
-> On x86, x32-ness is a property of the syscall, but historically it
-> also got rather entangled with the state of the task, and the result
-> was a mess.  It looks like you're making it be a property of the task,
-> which is fine, but you're making it impossible for very clever ILP32
-> libraries to include little ILP64 stubs that do fancy things with full
-> 64-bit syscalls.
+> glibc's syscall() prototype has kernel_ulong_t as its arguments (more
+> specifically, to __syscall_ulong_t, which is 64-bit wide on x32; it
+> should also have kernel_long_t as its return type instead of long,
+> but that's another story), so it works perfectly fine in case of x32.
 >
-> 3. Make very certain that you aren't exploitable by malicious
-> processes that set the high bits in ILP32 syscall args.  x86 compat
-> has issues like that in the past.
+> > process_vm_readv/writev is limited by the ilp32
+> > iovec struct, not by the syscall arguments.
+>
+> Right, on x32/N32 this issue is worked around by the usage of the respective
+> x86_64/N64 call, and it looks like another thing that is impossible
+> with AArch64 ilp32.
+>
+> > ptrace is specified to take void* addr argument,
+> > and void* is 32bit on all ilp32 targets.
+> > so again on the c language level there is no
+> > way around the 32bit limitation.
+>
+> Which is an issue.
 
-This point was actually the most important one for keeping the
-aarch64 ilp32 interface as restricted as it is: it doesn't allow
-anything that the normal aarch32/armv7 emulation doesn't
-already provide.
+I have no idea why you think this is a problem specific to aarch64-ilp32:
+If we want to be able to debug 64-bit tasks from a 32-bit task on any
+architecture that has compat mode, we should solve it once and
+extend the ptrace interface to allow it on *all* of them. We certainly
+don't need /more/ special cases for the x32 hack, there should really
+be fewer of them.
 
-        Arnd
+      Arnd
