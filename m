@@ -2,160 +2,97 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B613C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE045C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B86720645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:07:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B86720645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 81CDA20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:14:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="BBG9qBv/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81CDA20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbeJNXs6 (ORCPT
+        id S1726660AbeJNXzz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:48:58 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35569 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726413AbeJNXLj (ORCPT
+        Sun, 14 Oct 2018 19:55:55 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43275 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbeJNXzz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:11:39 -0400
-Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLS-0004cj-LE; Sun, 14 Oct 2018 16:30:18 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLN-00009Z-G1; Sun, 14 Oct 2018 16:30:13 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>
-Date:   Sun, 14 Oct 2018 16:25:40 +0100
-Message-ID: <lsq.1539530740.737280247@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 015/366] ext4: don't update checksum of new
- initialized bitmaps
-In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Sun, 14 Oct 2018 19:55:55 -0400
+Received: by mail-pf1-f195.google.com with SMTP id p24-v6so8443341pff.10
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 09:14:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=zRcH3T8yUdTcbDhY24LHGx3ONrET9UkNditmuRsltOE=;
+        b=BBG9qBv/tcoQ26I0zl3H97IoGj/ctm+0ya7mdTaGgGH4YVDvw9oTc+vWf8B4+P5+e2
+         VkGp0LKUsM/HsUM1hXvYjluM1xKdmQZIF1JctEtAVQEn4JDCPQ8XOCWrTandXToz5CYZ
+         PWGJG7O+mLYq9u+313Hmg7iAtnGfEFMk/Jwc/5DCHiqU4SuzcX0q8ZbeOTIdQ3Y6rsBW
+         LmwOa+q4RhZZ7dUaTxeJM/s9SPJCiTUpnqavspWMR5CvaHLgyQcq2gndSOuvMXE3T6sT
+         KzdIVA0gCWT6CCMCmGiOn+usqBymf5nNojxzFjKHtKwQJUOjOmbYszHOgv+DhHlrwnVg
+         89Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=zRcH3T8yUdTcbDhY24LHGx3ONrET9UkNditmuRsltOE=;
+        b=kCzpioGM3am7gNf8mxS9KTebr4FaeYoCNEtFLml9WLdi1kMlR7fGcD62z7skgn69iu
+         SXZuEjeZRcaP4GSiyg5IdN5uTPG/sxiVp+FN3mzbURIO61jP1LQrUqqIQ4crp6BxC/1/
+         /YexpYeEzIqQ+BW1wCfF5PLAC8LcTA+4A1VMa3aAza10p4prQbYh3S62hFIuFv8Pv1hN
+         AY+LrV3PmzVH4KdatF0mZ9kKfvNoy9dUFWR70HoIby7ClQYGQFcmiwcwqyH3FgD4PV5q
+         EdbUuNrFffJYGUG1EKgQH4IWc4iIUIdZqubq6y2G421YN0SEJRg29LtNyQA77SJBFTB9
+         r5rQ==
+X-Gm-Message-State: ABuFfoho9NynwJqs8FZqUQq79uTEE1JqhwTSTD5uJP+SgzwPqBo5YBNV
+        dLW9MSOh5v48VT7XjtQSAa+wEQ==
+X-Google-Smtp-Source: ACcGV62apI7MsQ/rH8gHFhcPoboplgyeF8f+KJSc3ABzrk5x0d73PzXHYzdI16sO5Kgo5yMkf1V8JQ==
+X-Received: by 2002:a63:d805:: with SMTP id b5-v6mr12660987pgh.174.1539533663792;
+        Sun, 14 Oct 2018 09:14:23 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b023:6e7d:b96b:7246:35a9:32? ([2600:1010:b023:6e7d:b96b:7246:35a9:32])
+        by smtp.gmail.com with ESMTPSA id j19-v6sm8834081pfi.137.2018.10.14.09.14.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 14 Oct 2018 09:14:22 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [tip:x86/urgent] x86/entry: Add some paranoid entry/exit CR3 handling comments
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A366)
+In-Reply-To: <tip-16561f27f94e6193ee8f5b9b74801e1668c86efc@git.kernel.org>
+Date:   Sun, 14 Oct 2018 09:14:20 -0700
+Cc:     linux-tip-commits@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <6985DE9A-63DB-4348-B46F-92BE1240C9D6@amacapital.net>
+References: <20181012232118.3EAAE77B@viggo.jf.intel.com> <tip-16561f27f94e6193ee8f5b9b74801e1668c86efc@git.kernel.org>
+To:     hpa@zytor.com, dave.hansen@linux.intel.com, mingo@kernel.org,
+        luto@kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.60-rc1 review patch.  If anyone has any objections, please let me know.
 
-------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+> On Oct 14, 2018, at 2:17 AM, tip-bot for Dave Hansen <tipbot@zytor.com> wr=
+ote:
+>=20
+> Commit-ID:  16561f27f94e6193ee8f5b9b74801e1668c86efc
+> Gitweb:     https://git.kernel.org/tip/16561f27f94e6193ee8f5b9b74801e1668c=
+86efc
+> Author:     Dave Hansen <dave.hansen@linux.intel.com>
+> AuthorDate: Fri, 12 Oct 2018 16:21:18 -0700
+> Committer:  Thomas Gleixner <tglx@linutronix.de>
+> CommitDate: Sun, 14 Oct 2018 11:11:22 +0200
+>=20
+> x86/entry: Add some paranoid entry/exit CR3 handling comments
 
-commit 044e6e3d74a3d7103a0c8a9305dfd94d64000660 upstream.
-
-When reading the inode or block allocation bitmap, if the bitmap needs
-to be initialized, do not update the checksum in the block group
-descriptor.  That's because we're not set up to journal those changes.
-Instead, just set the verified bit on the bitmap block, so that it's
-not necessary to validate the checksum.
-
-When a block or inode allocation actually happens, at that point the
-checksum will be calculated, and update of the bg descriptor block
-will be properly journalled.
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-[bwh: Backported to 3.16:
- - Deleted code is slightly different
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/ext4/balloc.c |  3 +--
- fs/ext4/ialloc.c | 47 +++--------------------------------------------
- 2 files changed, 4 insertions(+), 46 deletions(-)
-
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -239,8 +239,6 @@ static int ext4_init_block_bitmap(struct
- 	 */
- 	ext4_mark_bitmap_end(num_clusters_in_group(sb, block_group),
- 			     sb->s_blocksize * 8, bh->b_data);
--	ext4_block_bitmap_csum_set(sb, block_group, gdp, bh);
--	ext4_group_desc_csum_set(sb, block_group, gdp);
- 	return 0;
- }
- 
-@@ -464,6 +462,7 @@ ext4_read_block_bitmap_nowait(struct sup
- 		err = ext4_init_block_bitmap(sb, bh, block_group, desc);
- 		set_bitmap_uptodate(bh);
- 		set_buffer_uptodate(bh);
-+		set_buffer_verified(bh);
- 		ext4_unlock_group(sb, block_group);
- 		unlock_buffer(bh);
- 		if (err)
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -64,45 +64,6 @@ void ext4_mark_bitmap_end(int start_bit,
- 		memset(bitmap + (i >> 3), 0xff, (end_bit - i) >> 3);
- }
- 
--/* Initializes an uninitialized inode bitmap */
--static unsigned ext4_init_inode_bitmap(struct super_block *sb,
--				       struct buffer_head *bh,
--				       ext4_group_t block_group,
--				       struct ext4_group_desc *gdp)
--{
--	struct ext4_group_info *grp;
--	struct ext4_sb_info *sbi = EXT4_SB(sb);
--	J_ASSERT_BH(bh, buffer_locked(bh));
--
--	/* If checksum is bad mark all blocks and inodes use to prevent
--	 * allocation, essentially implementing a per-group read-only flag. */
--	if (!ext4_group_desc_csum_verify(sb, block_group, gdp)) {
--		ext4_error(sb, "Checksum bad for group %u", block_group);
--		grp = ext4_get_group_info(sb, block_group);
--		if (!EXT4_MB_GRP_BBITMAP_CORRUPT(grp))
--			percpu_counter_sub(&sbi->s_freeclusters_counter,
--					   grp->bb_free);
--		set_bit(EXT4_GROUP_INFO_BBITMAP_CORRUPT_BIT, &grp->bb_state);
--		if (!EXT4_MB_GRP_IBITMAP_CORRUPT(grp)) {
--			int count;
--			count = ext4_free_inodes_count(sb, gdp);
--			percpu_counter_sub(&sbi->s_freeinodes_counter,
--					   count);
--		}
--		set_bit(EXT4_GROUP_INFO_IBITMAP_CORRUPT_BIT, &grp->bb_state);
--		return 0;
--	}
--
--	memset(bh->b_data, 0, (EXT4_INODES_PER_GROUP(sb) + 7) / 8);
--	ext4_mark_bitmap_end(EXT4_INODES_PER_GROUP(sb), sb->s_blocksize * 8,
--			bh->b_data);
--	ext4_inode_bitmap_csum_set(sb, block_group, gdp, bh,
--				   EXT4_INODES_PER_GROUP(sb) / 8);
--	ext4_group_desc_csum_set(sb, block_group, gdp);
--
--	return EXT4_INODES_PER_GROUP(sb);
--}
--
- void ext4_end_bitmap_read(struct buffer_head *bh, int uptodate)
- {
- 	if (uptodate) {
-@@ -166,7 +127,9 @@ ext4_read_inode_bitmap(struct super_bloc
- 			put_bh(bh);
- 			return NULL;
- 		}
--		ext4_init_inode_bitmap(sb, bh, block_group, desc);
-+		memset(bh->b_data, 0, (EXT4_INODES_PER_GROUP(sb) + 7) / 8);
-+		ext4_mark_bitmap_end(EXT4_INODES_PER_GROUP(sb),
-+				     sb->s_blocksize * 8, bh->b_data);
- 		set_bitmap_uptodate(bh);
- 		set_buffer_uptodate(bh);
- 		set_buffer_verified(bh);
+Phooey. I *typed* some comments but didn=E2=80=99t hit send.  I=E2=80=99ll s=
+end a follow up patch.
 
