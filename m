@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9B5C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 151FAC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1350620876
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:34:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1350620876
+	by mail.kernel.org (Postfix) with ESMTP id DB3A420876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:34:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB3A420876
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbeJNXPc (ORCPT
+        id S1728749AbeJNXPg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:15:32 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36283 "EHLO
+        Sun, 14 Oct 2018 19:15:36 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36573 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728051AbeJNXME (ORCPT
+        by vger.kernel.org with ESMTP id S1728174AbeJNXPf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:12:04 -0400
+        Sun, 14 Oct 2018 19:15:35 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLr-0004cd-C1; Sun, 14 Oct 2018 16:30:43 +0100
+        id 1gBiME-0004cS-Oj; Sun, 14 Oct 2018 16:31:06 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLW-0000VA-UM; Sun, 14 Oct 2018 16:30:22 +0100
+        id 1gBiLO-0000Ci-TP; Sun, 14 Oct 2018 16:30:14 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Alexei Starovoitov" <ast@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Daniel Borkmann" <daniel@iogearbox.net>
-Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.879041542@decadent.org.uk>
+CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
+Date:   Sun, 14 Oct 2018 16:25:40 +0100
+Message-ID: <lsq.1539530740.707771688@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 252/366] bpf, x64: fix memleak when not converging
- after image
+Subject: [PATCH 3.16 052/366] ALSA: pcm: Use ERESTARTSYS instead of EINTR
+ in OSS emulation
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,46 +56,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 3aab8884c9eb99189a3569ac4e6b205371c9ac0b upstream.
+commit c64ed5dd9feba193c76eb460b451225ac2a0d87b upstream.
 
-While reviewing x64 JIT code, I noticed that we leak the prior allocated
-JIT image in the case where proglen != oldproglen during the JIT passes.
-Prior to the commit e0ee9c12157d ("x86: bpf_jit: fix two bugs in eBPF JIT
-compiler") we would just break out of the loop, and using the image as the
-JITed prog since it could only shrink in size anyway. After e0ee9c12157d,
-we would bail out to out_addrs label where we free addrs and jit_data but
-not the image coming from bpf_jit_binary_alloc().
+Fix the last standing EINTR in the whole subsystem.  Use more correct
+ERESTARTSYS for pending signals.
 
-Fixes: e0ee9c12157d ("x86: bpf_jit: fix two bugs in eBPF JIT compiler")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Acked-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-[bwh: Backported to 3.16: Deleted code is slightly different]
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/net/bpf_jit_comp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/core/oss/pcm_oss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/net/bpf_jit_comp.c
-+++ b/arch/x86/net/bpf_jit_comp.c
-@@ -914,6 +914,7 @@ void bpf_int_jit_compile(struct sk_filte
- 	for (pass = 0; pass < 10 || image; pass++) {
- 		proglen = do_jit(prog, addrs, image, oldproglen, &ctx);
- 		if (proglen <= 0) {
-+out_image:
- 			image = NULL;
- 			if (header)
- 				module_free(NULL, header);
-@@ -923,7 +924,7 @@ void bpf_int_jit_compile(struct sk_filte
- 			if (proglen != oldproglen) {
- 				pr_err("bpf_jit: proglen=%d != oldproglen=%d\n",
- 				       proglen, oldproglen);
--				goto out;
-+				goto out_image;
- 			}
- 			break;
- 		}
+--- a/sound/core/oss/pcm_oss.c
++++ b/sound/core/oss/pcm_oss.c
+@@ -852,7 +852,7 @@ static int snd_pcm_oss_change_params(str
+ 		if (!(mutex_trylock(&runtime->oss.params_lock)))
+ 			return -EAGAIN;
+ 	} else if (mutex_lock_interruptible(&runtime->oss.params_lock))
+-		return -EINTR;
++		return -ERESTARTSYS;
+ 	sw_params = kmalloc(sizeof(*sw_params), GFP_KERNEL);
+ 	params = kmalloc(sizeof(*params), GFP_KERNEL);
+ 	sparams = kmalloc(sizeof(*sparams), GFP_KERNEL);
 
