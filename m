@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCDDC7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6CEC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98DF8204FD
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:37:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98DF8204FD
+	by mail.kernel.org (Postfix) with ESMTP id 004DC20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:37:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 004DC20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbeJNXSW (ORCPT
+        id S1728768AbeJNXSZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:18:22 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36717 "EHLO
+        Sun, 14 Oct 2018 19:18:25 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36721 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728591AbeJNXSV (ORCPT
+        by vger.kernel.org with ESMTP id S1728404AbeJNXSY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:18:21 -0400
+        Sun, 14 Oct 2018 19:18:24 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiM9-0004cA-Dr; Sun, 14 Oct 2018 16:31:01 +0100
+        id 1gBiMD-0004cU-5D; Sun, 14 Oct 2018 16:31:05 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLQ-0000Ha-SN; Sun, 14 Oct 2018 16:30:16 +0100
+        id 1gBiLP-0000Du-F1; Sun, 14 Oct 2018 16:30:15 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Hans Verkuil" <hans.verkuil@cisco.com>,
-        "Sakari Ailus" <sakari.ailus@linux.intel.com>,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>
+CC:     akpm@linux-foundation.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.548146316@decadent.org.uk>
+Message-ID: <lsq.1539530741.978979959@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 104/366] media: v4l2-compat-ioctl32: don't oops on
- overlay
+Subject: [PATCH 3.16 066/366] ipc/util: Helpers for making the sysvipc
+ operations pid namespace aware
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,127 +57,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-commit 85ea29f19eab56ec16ec6b92bc67305998706afa upstream.
+commit 03f1fc09180b345582889a344b012d069b3a6dbe upstream.
 
-At put_v4l2_window32(), it tries to access kp->clips. However,
-kp points to an userspace pointer. So, it should be obtained
-via get_user(), otherwise it can OOPS:
+Capture the pid namespace when /proc/sysvipc/msg /proc/sysvipc/shm
+and /proc/sysvipc/sem are opened, and make it available through
+the new helper ipc_seq_pid_ns.
 
- vivid-000: ==================  END STATUS  ==================
- BUG: unable to handle kernel paging request at 00000000fffb18e0
- IP: [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
- PGD 3f5776067 PUD 3f576f067 PMD 3f5769067 PTE 800000042548f067
- Oops: 0001 [#1] SMP
- Modules linked in: vivid videobuf2_vmalloc videobuf2_memops v4l2_dv_timings videobuf2_core v4l2_common videodev media xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables bluetooth rfkill binfmt_misc snd_hda_codec_hdmi i915 snd_hda_intel snd_hda_controller snd_hda_codec intel_rapl x86_pkg_temp_thermal snd_hwdep intel_powerclamp snd_pcm coretemp snd_seq_midi kvm_intel kvm snd_seq_midi_event snd_rawmidi i2c_algo_bit drm_kms_helper snd_seq drm crct10dif_pclmul e1000e snd_seq_device crc32_pclmul snd_timer ghash_clmulni_intel snd mei_me mei ptp pps_core soundcore lpc_ich video crc32c_intel [last unloaded: media]
- CPU: 2 PID: 28332 Comm: v4l2-compliance Not tainted 3.18.102+ #107
- Hardware name:                  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
- task: ffff8804293f8000 ti: ffff8803f5640000 task.ti: ffff8803f5640000
- RIP: 0010:[<ffffffffc05468d9>]  [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
- RSP: 0018:ffff8803f5643e28  EFLAGS: 00010246
- RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00000000fffb1ab4
- RDX: 00000000fffb1a68 RSI: 00000000fffb18d8 RDI: 00000000fffb1aa8
- RBP: ffff8803f5643e48 R08: 0000000000000001 R09: ffff8803f54b0378
- R10: 0000000000000000 R11: 0000000000000168 R12: 00000000fffb18c0
- R13: 00000000fffb1a94 R14: 00000000fffb18c8 R15: 0000000000000000
- FS:  0000000000000000(0000) GS:ffff880456d00000(0063) knlGS:00000000f7100980
- CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
- CR2: 00000000fffb18e0 CR3: 00000003f552b000 CR4: 00000000003407e0
- Stack:
-  00000000fffb1a94 00000000c0cc5640 0000000000000056 ffff8804274f3600
-  ffff8803f5643ed0 ffffffffc0547e16 0000000000000003 ffff8803f5643eb0
-  ffffffff81301460 ffff88009db44b01 ffff880441942520 ffff8800c0d05640
- Call Trace:
-  [<ffffffffc0547e16>] v4l2_compat_ioctl32+0x12d6/0x1b1d [videodev]
-  [<ffffffff81301460>] ? file_has_perm+0x70/0xc0
-  [<ffffffff81252a2c>] compat_SyS_ioctl+0xec/0x1200
-  [<ffffffff8173241a>] sysenter_dispatch+0x7/0x21
- Code: 00 00 48 8b 80 48 c0 ff ff 48 83 e8 38 49 39 c6 0f 87 2b ff ff ff 49 8d 45 1c e8 a3 ce e3 c0 85 c0 0f 85 1a ff ff ff 41 8d 40 ff <4d> 8b 64 24 20 41 89 d5 48 8d 44 40 03 4d 8d 34 c4 eb 15 0f 1f
- RIP  [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
- RSP <ffff8803f5643e28>
- CR2: 00000000fffb18e0
+This makes it possible to report the pids in these files in the
+pid namespace of the opener of the files.
 
-Tested with vivid driver on Kernel v3.18.102.
+Implement ipc_update_pid.  A simple impline helper that will only update
+a struct pid pointer if the new value does not equal the old value.  This
+removes the need for wordy code sequences like:
 
-Same bug happens upstream too:
+	old = object->pid;
+	object->pid = new;
+	put_pid(old);
 
- BUG: KASAN: user-memory-access in __put_v4l2_format32+0x98/0x4d0 [videodev]
- Read of size 8 at addr 00000000ffe48400 by task v4l2-compliance/8713
+and
 
- CPU: 0 PID: 8713 Comm: v4l2-compliance Not tainted 4.16.0-rc4+ #108
- Hardware name:  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
- Call Trace:
-  dump_stack+0x5c/0x7c
-  kasan_report+0x164/0x380
-  ? __put_v4l2_format32+0x98/0x4d0 [videodev]
-  __put_v4l2_format32+0x98/0x4d0 [videodev]
-  v4l2_compat_ioctl32+0x1aec/0x27a0 [videodev]
-  ? __fsnotify_inode_delete+0x20/0x20
-  ? __put_v4l2_format32+0x4d0/0x4d0 [videodev]
-  compat_SyS_ioctl+0x646/0x14d0
-  ? do_ioctl+0x30/0x30
-  do_fast_syscall_32+0x191/0x3f4
-  entry_SYSENTER_compat+0x6b/0x7a
- ==================================================================
- Disabling lock debugging due to kernel taint
- BUG: unable to handle kernel paging request at 00000000ffe48400
- IP: __put_v4l2_format32+0x98/0x4d0 [videodev]
- PGD 3a22fb067 P4D 3a22fb067 PUD 39b6f0067 PMD 39b6f1067 PTE 80000003256af067
- Oops: 0001 [#1] SMP KASAN
- Modules linked in: vivid videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops v4l2_tpg v4l2_dv_timings videobuf2_v4l2 videobuf2_common v4l2_common videodev xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack libcrc32c tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables bluetooth rfkill ecdh_generic binfmt_misc snd_hda_codec_hdmi intel_rapl x86_pkg_temp_thermal intel_powerclamp i915 coretemp snd_hda_intel snd_hda_codec kvm_intel snd_hwdep snd_hda_core kvm snd_pcm irqbypass crct10dif_pclmul crc32_pclmul snd_seq_midi ghash_clmulni_intel snd_seq_midi_event i2c_algo_bit intel_cstate snd_rawmidi intel_uncore snd_seq drm_kms_helper e1000e snd_seq_device snd_timer intel_rapl_perf
-  drm ptp snd mei_me mei lpc_ich pps_core soundcore video crc32c_intel
- CPU: 0 PID: 8713 Comm: v4l2-compliance Tainted: G    B            4.16.0-rc4+ #108
- Hardware name:  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
- RIP: 0010:__put_v4l2_format32+0x98/0x4d0 [videodev]
- RSP: 0018:ffff8803b9be7d30 EFLAGS: 00010282
- RAX: 0000000000000000 RBX: ffff8803ac983e80 RCX: ffffffff8cd929f2
- RDX: 1ffffffff1d0a149 RSI: 0000000000000297 RDI: 0000000000000297
- RBP: 00000000ffe485c0 R08: fffffbfff1cf5123 R09: ffffffff8e7a8948
- R10: 0000000000000001 R11: fffffbfff1cf5122 R12: 00000000ffe483e0
- R13: 00000000ffe485c4 R14: ffff8803ac985918 R15: 00000000ffe483e8
- FS:  0000000000000000(0000) GS:ffff880407400000(0063) knlGS:00000000f7a46980
- CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
- CR2: 00000000ffe48400 CR3: 00000003a83f2003 CR4: 00000000003606f0
- Call Trace:
-  v4l2_compat_ioctl32+0x1aec/0x27a0 [videodev]
-  ? __fsnotify_inode_delete+0x20/0x20
-  ? __put_v4l2_format32+0x4d0/0x4d0 [videodev]
-  compat_SyS_ioctl+0x646/0x14d0
-  ? do_ioctl+0x30/0x30
-  do_fast_syscall_32+0x191/0x3f4
-  entry_SYSENTER_compat+0x6b/0x7a
- Code: 4c 89 f7 4d 8d 7c 24 08 e8 e6 a4 69 cb 48 8b 83 98 1a 00 00 48 83 e8 10 49 39 c7 0f 87 9d 01 00 00 49 8d 7c 24 20 e8 c8 a4 69 cb <4d> 8b 74 24 20 4c 89 ef 4c 89 fe ba 10 00 00 00 e8 23 d9 08 cc
- RIP: __put_v4l2_format32+0x98/0x4d0 [videodev] RSP: ffff8803b9be7d30
- CR2: 00000000ffe48400
+	old = object->pid;
+	if (old != new) {
+		object->pid = new;
+		put_pid(old);
+	}
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Allowing the following to be written instead:
+
+	ipc_update_pid(&object->pid, new);
+
+Which is easier to read and ensures that the pid reference count is
+not touched the old and the new values are the same.  Not touching
+the reference count in this case is important to help avoid issues
+like af_unix experienced, where multiple threads of the same
+process managed to bounce the struct pid between cpu cache lines,
+but updating the pids reference count.
+
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ ipc/util.c |  9 +++++++++
+ ipc/util.h | 11 +++++++++++
+ 2 files changed, 20 insertions(+)
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -101,7 +101,7 @@ static int get_v4l2_window32(struct v4l2
- static int put_v4l2_window32(struct v4l2_window __user *kp,
- 			     struct v4l2_window32 __user *up)
- {
--	struct v4l2_clip __user *kclips = kp->clips;
-+	struct v4l2_clip __user *kclips;
- 	struct v4l2_clip32 __user *uclips;
- 	compat_caddr_t p;
- 	u32 clipcount;
-@@ -116,6 +116,8 @@ static int put_v4l2_window32(struct v4l2
- 	if (!clipcount)
- 		return 0;
+--- a/ipc/util.c
++++ b/ipc/util.c
+@@ -777,9 +777,16 @@ int ipc_parse_version(int *cmd)
+ #ifdef CONFIG_PROC_FS
+ struct ipc_proc_iter {
+ 	struct ipc_namespace *ns;
++	struct pid_namespace *pid_ns;
+ 	struct ipc_proc_iface *iface;
+ };
  
-+	if (get_user(kclips, &kp->clips))
-+		return -EFAULT;
- 	if (get_user(p, &up->clips))
- 		return -EFAULT;
- 	uclips = compat_ptr(p);
++struct pid_namespace *ipc_seq_pid_ns(struct seq_file *s)
++{
++	struct ipc_proc_iter *iter = s->private;
++	return iter->pid_ns;
++}
++
+ /*
+  * This routine locks the ipc structure found at least at position pos.
+  */
+@@ -914,6 +921,7 @@ static int sysvipc_proc_open(struct inod
+ 
+ 	iter->iface = PDE_DATA(inode);
+ 	iter->ns    = get_ipc_ns(current->nsproxy->ipc_ns);
++	iter->pid_ns = get_pid_ns(task_active_pid_ns(current));
+ out:
+ 	return ret;
+ }
+@@ -923,6 +931,7 @@ static int sysvipc_proc_release(struct i
+ 	struct seq_file *seq = file->private_data;
+ 	struct ipc_proc_iter *iter = seq->private;
+ 	put_ipc_ns(iter->ns);
++	put_pid_ns(iter->pid_ns);
+ 	return seq_release_private(inode, file);
+ }
+ 
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -20,6 +20,7 @@ void msg_init(void);
+ void shm_init(void);
+ 
+ struct ipc_namespace;
++struct pid_namespace;
+ 
+ #ifdef CONFIG_POSIX_MQUEUE
+ extern void mq_clear_sbinfo(struct ipc_namespace *ns);
+@@ -90,6 +91,7 @@ void ipc_init_ids(struct ipc_ids *);
+ #ifdef CONFIG_PROC_FS
+ void __init ipc_init_proc_interface(const char *path, const char *header,
+ 		int ids, int (*show)(struct seq_file *, void *));
++struct pid_namespace *ipc_seq_pid_ns(struct seq_file *);
+ #else
+ #define ipc_init_proc_interface(path, header, ids, show) do {} while (0)
+ #endif
+@@ -141,6 +143,15 @@ struct kern_ipc_perm *ipcctl_pre_down_no
+ 					     struct ipc_ids *ids, int id, int cmd,
+ 					     struct ipc64_perm *perm, int extra_perm);
+ 
++static inline void ipc_update_pid(struct pid **pos, struct pid *pid)
++{
++	struct pid *old = *pos;
++	if (old != pid) {
++		*pos = get_pid(pid);
++		put_pid(old);
++	}
++}
++
+ #ifndef CONFIG_ARCH_WANT_IPC_PARSE_VERSION
+ /* On IA-64, we always use the "64-bit version" of the IPC structures.  */
+ # define ipc_parse_version(cmd)	IPC_64
 
