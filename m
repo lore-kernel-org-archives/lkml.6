@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE79C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 946F9C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E568D205C9
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:56:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E568D205C9
+	by mail.kernel.org (Postfix) with ESMTP id 67AD420645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:56:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67AD420645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729764AbeJNXh0 (ORCPT
+        id S1727713AbeJNXLy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:37:26 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37545 "EHLO
+        Sun, 14 Oct 2018 19:11:54 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35990 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727718AbeJNXhZ (ORCPT
+        by vger.kernel.org with ESMTP id S1727650AbeJNXLx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:37:25 -0400
+        Sun, 14 Oct 2018 19:11:53 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiME-0004cd-RB; Sun, 14 Oct 2018 16:31:06 +0100
+        id 1gBiLg-0004cU-NP; Sun, 14 Oct 2018 16:30:32 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLP-0000Cy-1N; Sun, 14 Oct 2018 16:30:15 +0100
+        id 1gBiLa-0000kK-TE; Sun, 14 Oct 2018 16:30:26 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "Tony Lindgren" <tony@atomide.com>,
-        "David Lechner" <david@lechnology.com>
-Date:   Sun, 14 Oct 2018 16:25:40 +0100
-Message-ID: <lsq.1539530740.93037236@decadent.org.uk>
+CC:     akpm@linux-foundation.org, "Ralf Baechle" <ralf@linux-mips.org>,
+        "Maciej W. Rozycki" <macro@mips.com>, linux-mips@linux-mips.org,
+        "James Hogan" <jhogan@kernel.org>
+Date:   Sun, 14 Oct 2018 16:25:41 +0100
+Message-ID: <lsq.1539530741.826015967@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 055/366] pinctrl: pinctrl-single: Fix pcs_request_gpio()
- when bits_per_mux != 0
+Subject: [PATCH 3.16 346/366] MIPS: ptrace: Fix PTRACE_PEEKUSR requests
+ for 64-bit FGRs
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,52 +58,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Lechner <david@lechnology.com>
+From: "Maciej W. Rozycki" <macro@mips.com>
 
-commit 45dcb54f014d3d1f5cc3919b5f0c97087d7cb3dd upstream.
+commit c7e814628df65f424fe197dde73bfc67e4a244d7 upstream.
 
-This fixes pcs_request_gpio() in the pinctrl-single driver when
-bits_per_mux != 0. It appears this was overlooked when the multiple
-pins per register feature was added.
+Use 64-bit accesses for 64-bit floating-point general registers with
+PTRACE_PEEKUSR, removing the truncation of their upper halves in the
+FR=1 mode, caused by commit bbd426f542cb ("MIPS: Simplify FP context
+access"), which inadvertently switched them to using 32-bit accesses.
 
-Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
-Signed-off-by: David Lechner <david@lechnology.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+The PTRACE_POKEUSR side is fine as it's never been broken and continues
+using 64-bit accesses.
+
+Fixes: bbd426f542cb ("MIPS: Simplify FP context access")
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/19334/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/pinctrl/pinctrl-single.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+ arch/mips/kernel/ptrace.c   | 2 +-
+ arch/mips/kernel/ptrace32.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -562,9 +562,25 @@ static int pcs_request_gpio(struct pinct
- 			|| pin < frange->offset)
- 			continue;
- 		mux_bytes = pcs->width / BITS_PER_BYTE;
--		data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
--		data |= frange->gpiofunc;
--		pcs->write(data, pcs->base + pin * mux_bytes);
-+
-+		if (pcs->bits_per_mux) {
-+			int byte_num, offset, pin_shift;
-+
-+			byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
-+			offset = (byte_num / mux_bytes) * mux_bytes;
-+			pin_shift = pin % (pcs->width / pcs->bits_per_pin) *
-+				    pcs->bits_per_pin;
-+
-+			data = pcs->read(pcs->base + offset);
-+			data &= ~(pcs->fmask << pin_shift);
-+			data |= frange->gpiofunc << pin_shift;
-+			pcs->write(data, pcs->base + offset);
-+		} else {
-+			data = pcs->read(pcs->base + pin * mux_bytes);
-+			data &= ~pcs->fmask;
-+			data |= frange->gpiofunc;
-+			pcs->write(data, pcs->base + pin * mux_bytes);
-+		}
- 		break;
- 	}
- 	return 0;
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -752,7 +752,7 @@ long arch_ptrace(struct task_struct *chi
+ 				break;
+ 			}
+ #endif
+-			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
++			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
+ 			break;
+ 		case PC:
+ 			tmp = regs->cp0_epc;
+--- a/arch/mips/kernel/ptrace32.c
++++ b/arch/mips/kernel/ptrace32.c
+@@ -107,7 +107,7 @@ long compat_arch_ptrace(struct task_stru
+ 						addr & 1);
+ 				break;
+ 			}
+-			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
++			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
+ 			break;
+ 		case PC:
+ 			tmp = regs->cp0_epc;
 
