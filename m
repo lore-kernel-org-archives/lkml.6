@@ -1,91 +1,102 @@
 Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SERGIO_SUBJECT_PORN014,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F0CC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 21:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4744DC7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 21:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5FA620652
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 21:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C03DB20659
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 21:57:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="ROi38N2R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FA620652
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="iW9Iyib8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03DB20659
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbeJOFSe (ORCPT
+        id S1726413AbeJOFju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 01:18:34 -0400
-Received: from cock.li ([185.100.85.212]:41158 "EHLO cock.li"
+        Mon, 15 Oct 2018 01:39:50 -0400
+Received: from cock.li ([185.100.85.212]:34414 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726084AbeJOFSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 01:18:33 -0400
+        id S1726084AbeJOFju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 01:39:50 -0400
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1539552915; bh=D8brcEdlE6DeFn1D0r5FTm53ZHp3JIx1Nz/m5kk11qA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ROi38N2RqcvZsKxRlXmPM94vqx+sTmZXyFjlZhozTLxEsvG4Dl8QAou+mYrqSs7Pi
-         WtMPg9K2IYSyLfZL7VGlrhwtLmMXW0cjKZzL5JYByeMcawB56Uq2n4JWTVFufncDkM
-         K5FDpBSL4znjMpBH+MzyLzaWk7Dv1UyXN6ZiFlPWqyf1iMoU190PjKDmYxXVvHfwk9
-         x9BcEWiVybmrIL/6Ay2wc1TZvmrJmCs6VAQKPLVdVSqle9+P6VGxkStne7EkOqJdiw
-         lq5a1Ily21s/8C0IoagzOJauz7WxCjpuKCXOEEstSav4lorG4nRI3r0fsxrKKKYkKd
-         rGllkyxkdKrqQ==
+        t=1539554170; bh=5AbwiBWKMO0M+6NSfODnd1ue9SjJWncw2jT1Ndux4Zk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=iW9Iyib8CcaN6JNkNaG2+7SKt9PeHxAmp7S8y+9Bj4dwa3UPB2hDw3BQWeEVf/tYJ
+         95wuuukpx/O+WQRNklpWGUXaoYZLVSnWuV9Ue+dOs9FMww7JejjGDoZz+57jk5Sm4c
+         ad3hf85l6xDj+X6V5/pvmQeuBoPuqSc6Pf5JOgONxiB+iJdaGJytYbn8t/bwqzFqzu
+         1tBdfwPLGfxYUSMtrpAjLHl3gzWPeevV8IrO+ycVliIyNPlRP7F/U4ogIMONOmdP1q
+         o5MtgysBLmc1RpxGLRutO24qdlfne0jOaKffsdbWBbqq9a1ehbfch9qiBm1uYOgL3u
+         7XBP2DJAjODeA==
 Content-Type: multipart/mixed;
- boundary="=_b94a411fa1caa8bce7f7c82c391c1577"
-Date:   Sun, 14 Oct 2018 21:35:15 +0000
-From:   missingterms@redchan.it
-To:     linux-kernel@vger.kernel.org, debian-user@lists.debian.org
-Cc:     rms@gnu.org, bruce@perens.com, esr@thyrsus.com,
-        moglen@columbia.edu, bkuhn@sfconservancy.org, editor@lwn.net,
-        torvalds@osdl.org, tcallawa@redhat.com
-Subject: The GPLv2 is not a contract, it is a revocable license.
-Message-ID: <70c37b00a9e93567059fdc55629ddbd5@redchan.it>
-X-Sender: missingterms@redchan.it
+ boundary="=_65ee0642933b5fd404c7be84c990039c"
+Date:   Sun, 14 Oct 2018 21:56:10 +0000
+From:   unconditionedwitness@redchan.it
+To:     Joey Pabalinas <joeypabalinas@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     linux-kernel-owner@vger.kernel.org
+Subject: Re: A Plea to Unfuck our Codes of Conduct
+In-Reply-To: <bcc117cb6a5f11de9d444425e22011c8@redchan.it>
+References: <20180920082257.znyb3drbkyaeiwbm@gmail.com>
+ <bcc117cb6a5f11de9d444425e22011c8@redchan.it>
+Message-ID: <c771a42b3f143fc0c35e825d650f51ac@redchan.it>
+X-Sender: unconditionedwitness@redchan.it
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=_b94a411fa1caa8bce7f7c82c391c1577
+--=_65ee0642933b5fd404c7be84c990039c
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 
 The GPLv2 is not a contract, it is a revocable license.
 
-Enjoy the read:
+Here is a paper explaining what the GPL is and is not:
 http://illinoisjltp.com/journal/wp-content/uploads/2013/10/kumar.pdf
 
 (With full citations).
 (PDF attached)
 
 Page 12 starts the relevant discussion.
-Page 16 gives the rundown on all the ways the GPL is not a contract.
+Page 16 begins the explanation of all the ways the GPL is not a 
+contract.
 
-Later there is a short gloss of state law promissory estopple doctrines, 
-but remember: in the case of the linux kernel it, unlike other projects, 
+Later there is a short gloss of state law promissory estopple doctrines.
+Remember: in the case of the linux kernel it, unlike other projects, 
 omitted the "or any later version" codicil, and is only under version 2 
 of the GPL, which makes no promise of irrevocability by grantor.
 
-(Note: The  SFConservancy conflates clauses that clarify that if a 
-licensee's license is automatically revoked for a GPL violation, that 
-sub-licensees licenses are not-in-turn automatically revoked)
+(Note: The SFConservancy recently chose to publish a "correction" that 
+conflates clauses, within version 2 of the GPL, [that clarify that if a 
+licensee's license is revoked by operation of the license for a 
+violation of the terms, that sub-licensees licenses are not-in-turn 
+automatically revoked] - [with an inexistent irrevocability doctrine 
+within the text of the GPLv2])
 (Additionally: Clause 0 of GPLv2 specifically defines the "you" in said 
-clauses as referring to the licensee (not the grantor), so the 
-SFConservancy's conflation is shown to be ever more disengenious)
-(Little more that a hope and a prayer to the wind)
+clauses as referring to the licensee (not the grantor); the 
+SFConservancy's conflation is shown to be ever more disingenuous)
 
-So: Not a contract. Is a bare license akin to a property license. And 
-there is no "irrevocable by grantor" promise in v2. .: Can be rescinded 
-at will.
+The Linux Kernel License grant:
+Is Not: a contract. [No breach of contract damages vs grantor if 
+rescinded]
+Is: a bare license akin to a property license.
+And: There is no "irrevocable by grantor" promise in v2. [No promissory 
+estopple defense]
+.: Can be rescinded at will.
 
-
---=_b94a411fa1caa8bce7f7c82c391c1577
+--=_65ee0642933b5fd404c7be84c990039c
 Content-Transfer-Encoding: base64
 Content-Type: application/pdf;
  name=kumar-gpl-licenses.pdf
@@ -4681,4 +4692,4 @@ IAowMDAwMjU1MzMwIDAwMDAwIG4gCjAwMDAyNTU1NDIgMDAwMDAgbiAKMDAwMDI1ODQ2MiAwMDAw
 MCBuIAp0cmFpbGVyCjw8Ci9TaXplIDEzOQovUm9vdCAxMzggMCBSCi9JbmZvIDEzNiAwIFIKL0lE
 Wzw0OTZhNjQ1Yjk1Y2EyMzZhNDdmMWE2MTg2YWI2NDBkNz48NDk2YTY0NWI5NWNhMjM2YTQ3ZjFh
 NjE4NmFiNjQwZDc+XQo+PgpzdGFydHhyZWYKMjU4NTU5CiUlRU9GCg==
---=_b94a411fa1caa8bce7f7c82c391c1577--
+--=_65ee0642933b5fd404c7be84c990039c--
