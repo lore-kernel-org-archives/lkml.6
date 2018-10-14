@@ -2,128 +2,104 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4619C7112A
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE77C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87E4020659
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:24:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwwz2JKu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87E4020659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D519B20659
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 20:25:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D519B20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbeJOEGO (ORCPT
+        id S1726453AbeJOEHO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 00:06:14 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37344 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725722AbeJOEGN (ORCPT
+        Mon, 15 Oct 2018 00:07:14 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36473 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725722AbeJOEHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 00:06:13 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 185-v6so17629492wmt.2
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 13:24:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=L37uplPqEMhWZ/f84YCge4YKakRsY/JsUJTcR/39LA0=;
-        b=bwwz2JKuepSvZItpYV0GVfIxSmtb8L+4+A0Y4hehYT026HM1xgrErCUD7cPQWGqXPA
-         T8BNuCoEaAZePAL4oWn93EnNfbX1B0sfkQzwmtlHfBvCYhWWgARPOw+PYr48jty/9fMn
-         1Vgcb3MSu7kY20nA8yekTGQHAX4XdCaPgcx/so+27xv6JKELgm0oXbP4z627iGnpY1gX
-         kxuzfrAnwkfOQ1MZ0p+6HL2mvFN5QSLAO+9Yct1MkU8muVIhTpROpAzaqu+L+GbM4cSS
-         O5jzPMXFdAZEOhEqP2yWUXpa3uXc6hjMd1zjqRXb2BsA1Ib8qqrdzJspT0ZJxGmWQCy4
-         cmBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=L37uplPqEMhWZ/f84YCge4YKakRsY/JsUJTcR/39LA0=;
-        b=AXBLW3AD2fVkXzh7/d+ZEAn4GI95jZSBi3TY2JqIFCAonksP+rEdZBAxrB1BCSsPDj
-         akm4c+ycAFrzAEicHnv1mNgrPkqj3MFtJ+RN0t39sJFuBxiNdAuycTmleuD5n4MjCdcs
-         2kXtmWt93H1l75odw/9Pv/x9pe4aw91JnUJcWzVsjPzMuUAMkpxs26Aj36wwx7bogLkF
-         +TVg1S3WA803Pdc4oYUp3zEPIYPPW5GEYQthMViH5ebC3FS/gR0zAghiVAeE+UXCENUa
-         r3vH43e/ousBS6M4XjQFfdXXbq9jyjPgqm5X42BW2KMQ/02mbC57rtn8/VQMoNumNllf
-         boOQ==
-X-Gm-Message-State: ABuFfog0/O3MnUYJTmvTtjyX5ZjjOdjbZLYOQ1diuOc4ZNraCIM3gH59
-        W81Kdw1MVJ2Ouki9aPxc/mmRyFZe
-X-Google-Smtp-Source: ACcGV615Y3QzYcla2ZCWBjWxz0G0kk3OXbwS/BnV2ZN5+N8iBnjWy+XEB8mJGR1x5roROmKc4j3Q3A==
-X-Received: by 2002:a1c:ca04:: with SMTP id a4-v6mr10430384wmg.83.1539548641404;
-        Sun, 14 Oct 2018 13:24:01 -0700 (PDT)
-Received: from localhost.localdomain.com (93-103-18-160.static.t-2.net. [93.103.18.160])
-        by smtp.gmail.com with ESMTPSA id y64-v6sm6199236wmg.28.2018.10.14.13.24.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 14 Oct 2018 13:24:00 -0700 (PDT)
-From:   Uros Bizjak <ubizjak@gmail.com>
-To:     x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de
-Cc:     Uros Bizjak <ubizjak@gmail.com>
-Subject: [PATCH v2] x86: Use assembly instruction mnemonics instead of .byte streams in arch_hweight.h
-Date:   Sun, 14 Oct 2018 22:23:54 +0200
-Message-Id: <20181014202354.21281-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.17.2
+        Mon, 15 Oct 2018 00:07:14 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gBmwd-0001ag-1m; Sun, 14 Oct 2018 22:24:59 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gBmwb-0002ny-4g; Sun, 14 Oct 2018 22:24:57 +0200
+Date:   Sun, 14 Oct 2018 22:24:57 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        Lukasz Majewski <l.majewski@majess.pl>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>
+Subject: Re: =?iso-8859-1?B?W1JDRqBQQVRDSCx2Miwy?= =?iso-8859-1?B?LzJd?= pwm:
+ imx: Configure output to GPIO in disabled state
+Message-ID: <20181014202457.dohwgz3frgcpdpy6@pengutronix.de>
+References: <1539163920-9442-3-git-send-email-michal.vokac@ysoft.com>
+ <20181012085720.GA9451@taurus.defre.kleine-koenig.org>
+ <fa96ae2a-c2cc-b47a-1198-5daffa7c865f@ysoft.com>
+ <20181012160854.hmgpokxgsrqdzobx@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181012160854.hmgpokxgsrqdzobx@pengutronix.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recently the minimum required version of binutils was changed to 2.20,
-which supports popcnt instruction mnemonics. The patch removes
-corresponding #defines that implement popcnt instructions using target-dependant
-.byte streams and uses unified instruction mnemonics instead.
+Hello,
 
-Tested by building x86_64 and i386 version of the kernel and comparing
-objdump dumps of the pathced and unpatched vmlinux.o. They were the same.
+On Fri, Oct 12, 2018 at 06:08:54PM +0200, Uwe Kleine-König wrote:
+> > >> +	if (PTR_ERR(imx_chip->pwm_gpiod) == -EPROBE_DEFER) {
+> > > 
+> > > You must not use PTR_ERR on a value that might not contain an error
+> > > pointer.
+> > 
+> > OK, thank you for valuable info.
+> > So it seems like the I2C folks are in troubles as well:
+> > 
+> > 	https://elixir.bootlin.com/linux/latest/source/drivers/i2c/busses/i2c-imx.c#L996
+> 
+> correct. I cannot find this documented though.
 
-v2: Update commit message to emphasize removal of #defines.
+I found in LDD3[1], chapter 11 on page 295:
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
----
- arch/x86/include/asm/arch_hweight.h | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+	If you need the actual error code, it can be extracted with:
 
-diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
-index 34a10b2d5b73..d668e411bd32 100644
---- a/arch/x86/include/asm/arch_hweight.h
-+++ b/arch/x86/include/asm/arch_hweight.h
-@@ -5,15 +5,9 @@
- #include <asm/cpufeatures.h>
- 
- #ifdef CONFIG_64BIT
--/* popcnt %edi, %eax */
--#define POPCNT32 ".byte 0xf3,0x0f,0xb8,0xc7"
--/* popcnt %rdi, %rax */
--#define POPCNT64 ".byte 0xf3,0x48,0x0f,0xb8,0xc7"
- #define REG_IN "D"
- #define REG_OUT "a"
- #else
--/* popcnt %eax, %eax */
--#define POPCNT32 ".byte 0xf3,0x0f,0xb8,0xc0"
- #define REG_IN "a"
- #define REG_OUT "a"
- #endif
-@@ -24,7 +18,8 @@ static __always_inline unsigned int __arch_hweight32(unsigned int w)
- {
- 	unsigned int res;
- 
--	asm (ALTERNATIVE("call __sw_hweight32", POPCNT32, X86_FEATURE_POPCNT)
-+	asm (ALTERNATIVE("call __sw_hweight32",
-+			 "popcntl %1, %0", X86_FEATURE_POPCNT)
- 			 : "="REG_OUT (res)
- 			 : REG_IN (w));
- 
-@@ -52,7 +47,8 @@ static __always_inline unsigned long __arch_hweight64(__u64 w)
- {
- 	unsigned long res;
- 
--	asm (ALTERNATIVE("call __sw_hweight64", POPCNT64, X86_FEATURE_POPCNT)
-+	asm (ALTERNATIVE("call __sw_hweight64",
-+			 "popcntq %1, %0", X86_FEATURE_POPCNT)
- 			 : "="REG_OUT (res)
- 			 : REG_IN (w));
- 
+		long PTR_ERR(const void *ptr);
+
+	You should use PTR_ERR only on a value for which IS_ERR returns a true
+	value; any other value is a valid pointer.
+
+That is probably where I have my claim from. There is no further
+explanation though, so I'll post a patch adding a comment to the
+definition of PTR_ERR to find out if there is a relevant reason.
+
+Best regards
+Uwe
+
+[1] https://lwn.net/Kernel/LDD3/
+
 -- 
-2.17.2
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
