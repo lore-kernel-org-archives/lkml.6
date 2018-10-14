@@ -2,148 +2,88 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F334C71125
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 12:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6659C6787C
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 12:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EB5D20843
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 12:49:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EB5D20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8ABA020659
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 12:50:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxE3RlfR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ABA020659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbeJNUaU (ORCPT
+        id S1726444AbeJNUar (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 16:30:20 -0400
-Received: from mga03.intel.com ([134.134.136.65]:35756 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbeJNUaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 16:30:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2018 05:49:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,380,1534834800"; 
-   d="scan'208";a="100130489"
-Received: from unknown (HELO [10.239.13.114]) ([10.239.13.114])
-  by orsmga002.jf.intel.com with ESMTP; 14 Oct 2018 05:49:23 -0700
-Message-ID: <5BC33C63.7010904@intel.com>
-Date:   Sun, 14 Oct 2018 20:53:55 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        Sun, 14 Oct 2018 16:30:47 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:36627 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbeJNUar (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Oct 2018 16:30:47 -0400
+Received: by mail-vs1-f65.google.com with SMTP id c205so14765103vsd.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 05:49:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=QRvhbyTHzYELYh8296Os59BrrmdUFvGchyyp2eObsp4=;
+        b=PxE3RlfREkDZtMabUoKa33A7Qvi9jfAElTq83XcFcnBnH3t6B4UcI6HIl9cp8uyDwY
+         Io9/AWB2nS0bLr5NeWf2Qx8kEHj360kCI52VVBFNH6ov7uEWPgk90/bmVdSrmpqQsKlt
+         el1tBZblC4kuXkR0bkzGXaJo66B1z2pJsJv+UdMEfXoHcDVJCY4pboXI803nsZuKoI7J
+         GPi0NKi3Rf8c35UFyTe+pvLlza5LsbOFO1fo3ulgA4GI+JtM6AC8jwU7Pu4wvBrNrdLe
+         5QRkVS3AsrBkk+/Nvpdy/M5LsahGRRjvJDDP+HonSWidMUoAiR/q44R2RhLWndWRFLxd
+         G0Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=QRvhbyTHzYELYh8296Os59BrrmdUFvGchyyp2eObsp4=;
+        b=buK59pU8IJEcQa7Wqdb3SVDOaW0HwM3ZTEtwK4f8JjFGQmobffmEaWsgIFIx+Ntz0K
+         tbrEgh8/5O8Y+mGQR1/WVrGHzTPgE7ubcHcRctRaBlTVpkk1SDA3KAUBqp7c9KjO0lc6
+         xN+ZyAvvwyl13Sx29iVJjKJ2yNEHP0jIV0XMEiNnJ39JL9RkfpeAhiKnH5VoqOITR7Wm
+         sUfAvMTueRIB3DTjVVZOqV38d+YoKc5VstZaWLmFYu0hUzL3INXM5DE+3ArBdaJsAlnw
+         QouXC/YlJup7zJYdukReFQKwMul+/w2U1uHMzMsy/z0qrgNizKGS4cXbKf0WOkCWsW/L
+         PpWA==
+X-Gm-Message-State: ABuFfog5caovAlO/gXjRk4pGPYzEdQz/4n1fAjTCKC43V+3Rz7O3+u9/
+        AiI839jND9VoMwPK4fh5b+K+oBvZfz8rIVRvFg==
+X-Google-Smtp-Source: ACcGV63dBMCXSpytm1gZhRNLxxyDqqb89WhH+TIbW4xVbiJCbzjr0gYFESSX0YXnRPy4g1KOo5HP9mtMD+Wo/qEE0dQ=
+X-Received: by 2002:a67:c484:: with SMTP id d4mr5211096vsk.151.1539521392295;
+ Sun, 14 Oct 2018 05:49:52 -0700 (PDT)
 MIME-Version: 1.0
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, ak@linux.intel.com, mingo@redhat.com,
-        rkrcmar@redhat.com, like.xu@intel.com
-Subject: Re: [PATCH v1] KVM/x86/vPMU: Guest PMI Optimization
-References: <1539346817-8638-1-git-send-email-wei.w.wang@intel.com> <20181013133013.GA15612@worktop.programming.kicks-ass.net>
-In-Reply-To: <20181013133013.GA15612@worktop.programming.kicks-ass.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20181014075208.2715-1-hch@lst.de> <alpine.DEB.2.21.1810141012510.1438@nanos.tec.linutronix.de>
+ <20181014081443.GA17889@lst.de> <alpine.DEB.2.21.1810141055440.1438@nanos.tec.linutronix.de>
+ <20181014090433.GA28319@gmail.com>
+In-Reply-To: <20181014090433.GA28319@gmail.com>
+Reply-To: whiteheadm@acm.org
+From:   tedheadster <tedheadster@gmail.com>
+Date:   Sun, 14 Oct 2018 08:49:40 -0400
+Message-ID: <CAP8WD_ZANLea11JtbbV+i0W8VDn4gsV2tDPPLRDsybHk-PEHCQ@mail.gmail.com>
+Subject: Re: [PATCH] x86: enable swiotlb for > 4GiG ram on 32-bit kernels
+To:     mingo@kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>, x86@kernel.org,
+        konrad.wilk@oracle.com, iommu@lists.linux-foundation.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/13/2018 09:30 PM, Peter Zijlstra wrote:
-> On Fri, Oct 12, 2018 at 08:20:17PM +0800, Wei Wang wrote:
->> Guest changing MSR_CORE_PERF_GLOBAL_CTRL causes KVM to reprogram pmc
->> counters, which re-allocates a host perf event. This process is
-> Yea gawds, that's horrific. Why does it do that? We have
-> PERF_EVENT_IOC_PERIOD which does that much better. Still, what you're
-> proposing is faster still -- if it is correct.
+Please change:
 
-I'm not sure about the back story. Probably it was an initial functional 
-implementation.
+Reported-by: tedheadster <tedheadster@gmail.com>
+Tested-by: tedheadster <tedheadster@gmail.com>
 
->> This patch implements a fast path to handle the guest change of
->> MSR_CORE_PERF_GLOBAL_CTRL for the guest pmi case. Guest change of the
->> msr will be applied to the hardware when entering the guest, and the
->> old perf event will continue to be used. The guest setting of the
->> perf counter for the next irq period in pmi will also be written
->> directly to the hardware counter when entering the guest.
-> What you're failing to explain here is why exactly it is ok to write to
-> the MSR directly without updating the perf_event state. I didn't take
-> the time to go through all that, but it certainly needs documenting.
+to
 
-OK. The guest itself has the perf event (the one that is using the 
-hardware counter), and the event state is managed by the guest perf core.
-The host side perf event isn't the one that uses the hardware counter. 
-Essentially, it is here on the host just to occupy the counter (via the 
-host perf core) for the guest. The writing to the MSR here is 
-essentially performed on behave of the guest perf event.
-So, for the host side perf event, I think its state should be active as 
-long as the guest is using the counter. The state will be changed to 
-inactive (as usual) when the vCPU is scheduled out.
+Reported-by: Matthew Whitehead <tedheadster@gmail.com>
+Tested-by: Matthew Whitehead <tedheadster@gmail.com>
 
-> This is something that can certainly get broken by accident.
->
-> Is there any documentation/comment that explains how this virtual PMU
-> crud works in general?
-
-I haven't found any docs that could be useful so far.
-
-
->> +u64 intel_pmu_disable_guest_counters(void)
->> +{
->> +	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
->> +	u64 mask = cpuc->intel_ctrl_host_mask;
->> +
->> +	cpuc->intel_ctrl_host_mask = ULONG_MAX;
->> +
->> +	return mask;
->> +}
->> +EXPORT_SYMBOL_GPL(intel_pmu_disable_guest_counters);
-> OK, this them gets the MSR written when we re-enter the guest, after the
-> WRMSR trap, right?
-
-Yes, the guest value will be loaded to the MSR.
-
->
-> +		/*
-> +		 * The guest PMI handler is asking for enabling the perf
-> +		 * counters. This happens at the end of the guest PMI handler,
-> +		 * so clear in_pmi.
-> +		 */
-> +		intel_pmu_enable_guest_counters(pmu->counter_mask);
-> +		pmu->in_pmi = false;
-> +	}
-> +}
-> The v4 PMI handler does not in fact do that I think.
->
->> @@ -237,9 +267,23 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->>   	default:
->>   		if ((pmc = get_gp_pmc(pmu, msr, MSR_IA32_PERFCTR0)) ||
->>   		    (pmc = get_fixed_pmc(pmu, msr))) {
->> -			if (!msr_info->host_initiated)
->> -				data = (s64)(s32)data;
->> -			pmc->counter += data - pmc_read_counter(pmc);
->> +			if (pmu->in_pmi) {
->> +				/*
->> +				 * Since we are not re-allocating a perf event
->> +				 * to reconfigure the sampling time when the
->> +				 * guest pmu is in PMI, just set the value to
->> +				 * the hardware perf counter. Counting will
->> +				 * continue after the guest enables the
->> +				 * counter bit in MSR_CORE_PERF_GLOBAL_CTRL.
->> +				 */
->> +				struct hw_perf_event *hwc =
->> +						&pmc->perf_event->hw;
->> +				wrmsrl(hwc->event_base, data);
-> But all this relies on the event calling the overflow handler; how does
-> this not corrupt the event state such that x86_perf_event_set_period()
-> might decide that the generated PMI is a spurious one?
->
-
-We will make the optimization more general in the next version, instead 
-of relying on PMI, so the above 2 questions would be gone then.
-
-Best,
-Wei
-
-
-
+- Matthew
