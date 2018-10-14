@@ -2,63 +2,62 @@ Return-Path: <SRS0=+AQW=M2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4488C71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 23:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D20C7112A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 23:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC8820835
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 23:13:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC8820835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by mail.kernel.org (Postfix) with ESMTP id 511C02086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 23:14:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 511C02086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gherkin.frus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbeJOG4R (ORCPT
+        id S1726489AbeJOG44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 02:56:17 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:59568 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbeJOG4R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 02:56:17 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 8BD0422C30;
-        Sun, 14 Oct 2018 19:13:38 -0400 (EDT)
-Date:   Mon, 15 Oct 2018 10:13:37 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Christoph Hellwig <hch@infradead.org>
-cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] esp_scsi: Grant disconnect privilege for untagged
- commands
-In-Reply-To: <20181014154753.GA19252@infradead.org>
-Message-ID: <alpine.LNX.2.21.1810151004440.10@nippy.intranet>
-References: <cover.1539497520.git.fthain@telegraphics.com.au> <91b9ff9fc19ba40e3a2562171c8cd78a2ce7dc79.1539497520.git.fthain@telegraphics.com.au> <20181014154753.GA19252@infradead.org>
+        Mon, 15 Oct 2018 02:56:56 -0400
+Received: from gherkin.frus.com ([192.158.254.49]:59124 "EHLO gherkin.frus.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726186AbeJOG44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 02:56:56 -0400
+Received: by gherkin.frus.com (Postfix, from userid 500)
+        id 0A82B3D001; Sun, 14 Oct 2018 18:14:20 -0500 (CDT)
+Date:   Sun, 14 Oct 2018 18:14:20 -0500
+From:   Bob Tracy <rct@gherkin.frus.com>
+To:     Michael Cree <mcree@orcon.net.nz>, Meelis Roos <mroos@linux.ee>,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Relocation (type 4) overflow on alpha for big module
+Message-ID: <20181014231420.GA17263@gherkin.frus.com>
+References: <5bc11e00-258d-a6ea-fe63-ddcfdb847071@linux.ee>
+ <20181014173306.GA14639@gherkin.frus.com>
+ <20181014184148.m6jb5ohb5onu6c3k@tower>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181014184148.m6jb5ohb5onu6c3k@tower>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 14 Oct 2018, Christoph Hellwig wrote:
-
-> > +	*p++ = IDENTIFY(lp && (tp->flags & ESP_TGT_DISCONNECT), lun);
+On Mon, Oct 15, 2018 at 07:41:48AM +1300, Michael Cree wrote:
+> On Sun, Oct 14, 2018 at 12:33:06PM -0500, Bob Tracy wrote:
+> > On Sun, Oct 14, 2018 at 10:07:13AM +0300, Meelis Roos wrote:
+> > > I decided to try btrfs on one of my alphas and got a surprise - btrfs module does not load:
+> > 
+> > Confirmed on a PWS 433au running 4.19.0-rc6 with latest "sid" toolchain.
 > 
-> I think lp should always be non-NULL here.
-> 
+> Known and long-standing problem in the Alpha kernel module loader.
+> Requires extra code implmented to support loading such large modules
+> which no one has done.  Workaround is to build the kernel with such
+> modules (e.g. radeon, btrfs) in-built.
 
-It's not clear from Documentation/scsi/scsi_mid_low_api.txt, but I guess 
-that's true for scanning of targets.
+ACK on the workaround.  Never noticed the problem with, per your
+example, the radeon driver because I seldom build a driver as a
+module for a piece of hardware (or filesystem type) that's present
+at boot and won't be removed.
 
-Is it true in general that queuecommand for a device will not occur before 
-its slave_alloc and not after its slave_destroy invocation?
-
-(I'm thinking of queuecommand via the other command submission paths, like 
-ioctl.)
-
--- 
+--Bob
