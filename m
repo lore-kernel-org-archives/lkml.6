@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FFFC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3521C71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 058C920645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:04:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 058C920645
+	by mail.kernel.org (Postfix) with ESMTP id BA36520645
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 16:05:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA36520645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbeJNXqE (ORCPT
+        id S1727421AbeJNXqa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:46:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35669 "EHLO
+        Sun, 14 Oct 2018 19:46:30 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35652 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727023AbeJNXLm (ORCPT
+        by vger.kernel.org with ESMTP id S1726942AbeJNXLm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 14 Oct 2018 19:11:42 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLV-0004cW-Ci; Sun, 14 Oct 2018 16:30:21 +0100
+        id 1gBiLV-0004cH-9o; Sun, 14 Oct 2018 16:30:21 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLS-0000MA-VQ; Sun, 14 Oct 2018 16:30:18 +0100
+        id 1gBiLS-0000Lb-O7; Sun, 14 Oct 2018 16:30:18 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Pablo Neira Ayuso" <pablo@netfilter.org>,
-        "Florian Westphal" <fw@strlen.de>
+CC:     akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>,
+        "Collin May" <collin@collinswebsite.com>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.921346362@decadent.org.uk>
+Message-ID: <lsq.1539530741.586953860@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 159/366] netfilter: nf_tables: can't fail after
- linking rule into active rule list
+Subject: [PATCH 3.16 152/366] USB: serial: simple: add libtransistor console
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,109 +56,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Collin May <collin@collinswebsite.com>
 
-commit 569ccae68b38654f04b6842b034aa33857f605fe upstream.
+commit fe710508b6ba9d28730f3021fed70e7043433b2e upstream.
 
-rules in nftables a free'd using kfree, but protected by rcu, i.e. we
-must wait for a grace period to elapse.
+Add simple driver for libtransistor USB console.
+This device is implemented in software:
+https://github.com/reswitched/libtransistor/blob/development/lib/usb_serial.c
 
-Normal removal patch does this, but nf_tables_newrule() doesn't obey
-this rule during error handling.
-
-It calls nft_trans_rule_add() *after* linking rule, and, if that
-fails to allocate memory, it unlinks the rule and then kfree() it --
-this is unsafe.
-
-Switch order -- first add rule to transaction list, THEN link it
-to public list.
-
-Note: nft_trans_rule_add() uses GFP_KERNEL; it will not fail so this
-is not a problem in practice (spotted only during code review).
-
-Fixes: 0628b123c96d12 ("netfilter: nfnetlink: add batch support and use it from nf_tables")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-[bwh: Backported to 3.16: Some function names are different]
+Signed-off-by: Collin May <collin@collinswebsite.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/netfilter/nf_tables_api.c | 59 +++++++++++++++++++----------------
- 1 file changed, 32 insertions(+), 27 deletions(-)
+ drivers/usb/serial/Kconfig             | 1 +
+ drivers/usb/serial/usb-serial-simple.c | 7 +++++++
+ 2 files changed, 8 insertions(+)
 
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -1829,41 +1829,46 @@ static int nf_tables_newrule(struct sock
- 	}
+--- a/drivers/usb/serial/Kconfig
++++ b/drivers/usb/serial/Kconfig
+@@ -62,6 +62,7 @@ config USB_SERIAL_SIMPLE
+ 		- Fundamental Software dongle.
+ 		- Google USB serial devices
+ 		- HP4x calculators
++		- Libtransistor USB console
+ 		- a number of Motorola phones
+ 		- Motorola Tetra devices
+ 		- Novatel Wireless GPS receivers
+--- a/drivers/usb/serial/usb-serial-simple.c
++++ b/drivers/usb/serial/usb-serial-simple.c
+@@ -66,6 +66,11 @@ DEVICE(flashloader, FLASHLOADER_IDS);
+ 					0x01) }
+ DEVICE(google, GOOGLE_IDS);
  
- 	if (nlh->nlmsg_flags & NLM_F_REPLACE) {
--		if (nft_rule_is_active_next(net, old_rule)) {
--			trans = nft_trans_rule_add(&ctx, NFT_MSG_DELRULE,
--						   old_rule);
--			if (trans == NULL) {
--				err = -ENOMEM;
--				goto err2;
--			}
--			nft_rule_disactivate_next(net, old_rule);
--			chain->use--;
--			list_add_tail_rcu(&rule->list, &old_rule->list);
--		} else {
-+		if (!nft_rule_is_active_next(net, old_rule)) {
- 			err = -ENOENT;
- 			goto err2;
- 		}
--	} else if (nlh->nlmsg_flags & NLM_F_APPEND)
--		if (old_rule)
--			list_add_rcu(&rule->list, &old_rule->list);
--		else
--			list_add_tail_rcu(&rule->list, &chain->rules);
--	else {
--		if (old_rule)
--			list_add_tail_rcu(&rule->list, &old_rule->list);
--		else
--			list_add_rcu(&rule->list, &chain->rules);
--	}
-+		trans = nft_trans_rule_add(&ctx, NFT_MSG_DELRULE,
-+					   old_rule);
-+		if (trans == NULL) {
-+			err = -ENOMEM;
-+			goto err2;
-+		}
-+		nft_rule_disactivate_next(net, old_rule);
-+		chain->use--;
++/* Libtransistor USB console */
++#define LIBTRANSISTOR_IDS()			\
++	{ USB_DEVICE(0x1209, 0x8b00) }
++DEVICE(libtransistor, LIBTRANSISTOR_IDS);
 +
-+		if (nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule) == NULL) {
-+			err = -ENOMEM;
-+			goto err2;
-+		}
- 
--	if (nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule) == NULL) {
--		err = -ENOMEM;
--		goto err3;
-+		list_add_tail_rcu(&rule->list, &old_rule->list);
-+	} else {
-+		if (nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule) == NULL) {
-+			err = -ENOMEM;
-+			goto err2;
-+		}
-+
-+		if (nlh->nlmsg_flags & NLM_F_APPEND) {
-+			if (old_rule)
-+				list_add_rcu(&rule->list, &old_rule->list);
-+			else
-+				list_add_tail_rcu(&rule->list, &chain->rules);
-+		 } else {
-+			if (old_rule)
-+				list_add_tail_rcu(&rule->list, &old_rule->list);
-+			else
-+				list_add_rcu(&rule->list, &chain->rules);
-+		}
- 	}
- 	chain->use++;
- 	return 0;
- 
--err3:
--	list_del_rcu(&rule->list);
- err2:
- 	nf_tables_rule_destroy(&ctx, rule);
- err1:
+ /* ViVOpay USB Serial Driver */
+ #define VIVOPAY_IDS()			\
+ 	{ USB_DEVICE(0x1d5f, 0x1004) }	/* ViVOpay 8800 */
+@@ -113,6 +118,7 @@ static struct usb_serial_driver * const
+ 	&funsoft_device,
+ 	&flashloader_device,
+ 	&google_device,
++	&libtransistor_device,
+ 	&vivopay_device,
+ 	&moto_modem_device,
+ 	&motorola_tetra_device,
+@@ -129,6 +135,7 @@ static const struct usb_device_id id_tab
+ 	FUNSOFT_IDS(),
+ 	FLASHLOADER_IDS(),
+ 	GOOGLE_IDS(),
++	LIBTRANSISTOR_IDS(),
+ 	VIVOPAY_IDS(),
+ 	MOTO_IDS(),
+ 	MOTOROLA_TETRA_IDS(),
 
