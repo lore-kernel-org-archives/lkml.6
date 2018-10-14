@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6CEC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CFBC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 004DC20645
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 004DC20645
+	by mail.kernel.org (Postfix) with ESMTP id 26AB2204FD
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:37:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26AB2204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbeJNXSZ (ORCPT
+        id S1728151AbeJNXMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:18:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36721 "EHLO
+        Sun, 14 Oct 2018 19:12:02 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36214 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728404AbeJNXSY (ORCPT
+        by vger.kernel.org with ESMTP id S1728049AbeJNXMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:18:24 -0400
+        Sun, 14 Oct 2018 19:12:01 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiMD-0004cU-5D; Sun, 14 Oct 2018 16:31:05 +0100
+        id 1gBiLo-0004cp-Aj; Sun, 14 Oct 2018 16:30:40 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLP-0000Du-F1; Sun, 14 Oct 2018 16:30:15 +0100
+        id 1gBiLX-0000Z7-T5; Sun, 14 Oct 2018 16:30:23 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
+CC:     akpm@linux-foundation.org, "Antonio Quartulli" <a@unstable.cc>,
+        "Sven Eckelmann" <sven@narfation.org>,
+        "Simon Wunderlich" <sw@simonwunderlich.de>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.978979959@decadent.org.uk>
+Message-ID: <lsq.1539530741.977049933@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 066/366] ipc/util: Helpers for making the sysvipc
- operations pid namespace aware
+Subject: [PATCH 3.16 276/366] batman-adv: Avoid race in TT TVLV allocator
+ helper
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,119 +58,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit 03f1fc09180b345582889a344b012d069b3a6dbe upstream.
+commit 8ba0f9bd3bdea1058c2b2676bec7905724418e40 upstream.
 
-Capture the pid namespace when /proc/sysvipc/msg /proc/sysvipc/shm
-and /proc/sysvipc/sem are opened, and make it available through
-the new helper ipc_seq_pid_ns.
+The functions batadv_tt_prepare_tvlv_local_data and
+batadv_tt_prepare_tvlv_global_data are responsible for preparing a buffer
+which can be used to store the TVLV container for TT and add the VLAN
+information to it.
 
-This makes it possible to report the pids in these files in the
-pid namespace of the opener of the files.
+This will be done in three phases:
 
-Implement ipc_update_pid.  A simple impline helper that will only update
-a struct pid pointer if the new value does not equal the old value.  This
-removes the need for wordy code sequences like:
+1. count the number of VLANs and their entries
+2. allocate the buffer using the counters from the previous step and limits
+   from the caller (parameter tt_len)
+3. insert the VLAN information to the buffer
 
-	old = object->pid;
-	object->pid = new;
-	put_pid(old);
+The step 1 and 3 operate on a list which contains the VLANs. The access to
+these lists must be protected with an appropriate lock or otherwise they
+might operate on on different entries. This could for example happen when
+another context is adding VLAN entries to this list.
 
-and
+This could lead to a buffer overflow in these functions when enough entries
+were added between step 1 and 3 to the VLAN lists that the buffer room for
+the entries (*tt_change) is smaller then the now required extra buffer for
+new VLAN entries.
 
-	old = object->pid;
-	if (old != new) {
-		object->pid = new;
-		put_pid(old);
-	}
-
-Allowing the following to be written instead:
-
-	ipc_update_pid(&object->pid, new);
-
-Which is easier to read and ensures that the pid reference count is
-not touched the old and the new values are the same.  Not touching
-the reference count in this case is important to help avoid issues
-like af_unix experienced, where multiple threads of the same
-process managed to bounce the struct pid between cpu cache lines,
-but updating the pids reference count.
-
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Fixes: 7ea7b4a14275 ("batman-adv: make the TT CRC logic VLAN specific")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Acked-by: Antonio Quartulli <a@unstable.cc>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- ipc/util.c |  9 +++++++++
- ipc/util.h | 11 +++++++++++
- 2 files changed, 20 insertions(+)
+ net/batman-adv/translation-table.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/ipc/util.c
-+++ b/ipc/util.c
-@@ -777,9 +777,16 @@ int ipc_parse_version(int *cmd)
- #ifdef CONFIG_PROC_FS
- struct ipc_proc_iter {
- 	struct ipc_namespace *ns;
-+	struct pid_namespace *pid_ns;
- 	struct ipc_proc_iface *iface;
- };
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -718,7 +718,7 @@ batadv_tt_prepare_tvlv_global_data(struc
+ 	struct batadv_orig_node_vlan *vlan;
+ 	uint8_t *tt_change_ptr;
  
-+struct pid_namespace *ipc_seq_pid_ns(struct seq_file *s)
-+{
-+	struct ipc_proc_iter *iter = s->private;
-+	return iter->pid_ns;
-+}
-+
- /*
-  * This routine locks the ipc structure found at least at position pos.
-  */
-@@ -914,6 +921,7 @@ static int sysvipc_proc_open(struct inod
+-	rcu_read_lock();
++	spin_lock_bh(&orig_node->vlan_list_lock);
+ 	list_for_each_entry_rcu(vlan, &orig_node->vlan_list, list) {
+ 		num_vlan++;
+ 		num_entries += atomic_read(&vlan->tt.num_entries);
+@@ -756,7 +756,7 @@ batadv_tt_prepare_tvlv_global_data(struc
+ 	*tt_change = (struct batadv_tvlv_tt_change *)tt_change_ptr;
  
- 	iter->iface = PDE_DATA(inode);
- 	iter->ns    = get_ipc_ns(current->nsproxy->ipc_ns);
-+	iter->pid_ns = get_pid_ns(task_active_pid_ns(current));
  out:
- 	return ret;
- }
-@@ -923,6 +931,7 @@ static int sysvipc_proc_release(struct i
- 	struct seq_file *seq = file->private_data;
- 	struct ipc_proc_iter *iter = seq->private;
- 	put_ipc_ns(iter->ns);
-+	put_pid_ns(iter->pid_ns);
- 	return seq_release_private(inode, file);
+-	rcu_read_unlock();
++	spin_unlock_bh(&orig_node->vlan_list_lock);
+ 	return tvlv_len;
  }
  
---- a/ipc/util.h
-+++ b/ipc/util.h
-@@ -20,6 +20,7 @@ void msg_init(void);
- void shm_init(void);
+@@ -790,7 +790,7 @@ batadv_tt_prepare_tvlv_local_data(struct
+ 	uint8_t *tt_change_ptr;
+ 	int change_offset;
  
- struct ipc_namespace;
-+struct pid_namespace;
+-	rcu_read_lock();
++	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
+ 	hlist_for_each_entry_rcu(vlan, &bat_priv->softif_vlan_list, list) {
+ 		num_vlan++;
+ 		num_entries += atomic_read(&vlan->tt.num_entries);
+@@ -828,7 +828,7 @@ batadv_tt_prepare_tvlv_local_data(struct
+ 	*tt_change = (struct batadv_tvlv_tt_change *)tt_change_ptr;
  
- #ifdef CONFIG_POSIX_MQUEUE
- extern void mq_clear_sbinfo(struct ipc_namespace *ns);
-@@ -90,6 +91,7 @@ void ipc_init_ids(struct ipc_ids *);
- #ifdef CONFIG_PROC_FS
- void __init ipc_init_proc_interface(const char *path, const char *header,
- 		int ids, int (*show)(struct seq_file *, void *));
-+struct pid_namespace *ipc_seq_pid_ns(struct seq_file *);
- #else
- #define ipc_init_proc_interface(path, header, ids, show) do {} while (0)
- #endif
-@@ -141,6 +143,15 @@ struct kern_ipc_perm *ipcctl_pre_down_no
- 					     struct ipc_ids *ids, int id, int cmd,
- 					     struct ipc64_perm *perm, int extra_perm);
+ out:
+-	rcu_read_unlock();
++	spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
+ 	return tvlv_len;
+ }
  
-+static inline void ipc_update_pid(struct pid **pos, struct pid *pid)
-+{
-+	struct pid *old = *pos;
-+	if (old != pid) {
-+		*pos = get_pid(pid);
-+		put_pid(old);
-+	}
-+}
-+
- #ifndef CONFIG_ARCH_WANT_IPC_PARSE_VERSION
- /* On IA-64, we always use the "64-bit version" of the IPC structures.  */
- # define ipc_parse_version(cmd)	IPC_64
 
