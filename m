@@ -6,42 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DCAC71122
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2513FC71122
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 951CD20835
-	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:32:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 951CD20835
+	by mail.kernel.org (Postfix) with ESMTP id DBDB020876
+	for <linux-kernel@archiver.kernel.org>; Sun, 14 Oct 2018 15:32:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBDB020876
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbeJNXNY (ORCPT
+        id S1728601AbeJNXNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 19:13:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36393 "EHLO
+        Sun, 14 Oct 2018 19:13:48 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36380 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728254AbeJNXMH (ORCPT
+        by vger.kernel.org with ESMTP id S1728246AbeJNXMG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 19:12:07 -0400
+        Sun, 14 Oct 2018 19:12:06 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLu-0004co-CK; Sun, 14 Oct 2018 16:30:46 +0100
+        id 1gBiLu-0004cg-8i; Sun, 14 Oct 2018 16:30:46 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gBiLV-0000Si-J9; Sun, 14 Oct 2018 16:30:21 +0100
+        id 1gBiLV-0000SN-FZ; Sun, 14 Oct 2018 16:30:21 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
+CC:     akpm@linux-foundation.org,
+        "Dan Carpenter" <dan.carpenter@oracle.com>,
+        "Takashi Iwai" <tiwai@suse.de>
 Date:   Sun, 14 Oct 2018 16:25:41 +0100
-Message-ID: <lsq.1539530741.53454328@decadent.org.uk>
+Message-ID: <lsq.1539530741.802320502@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 222/366] virtio_console: don't tie bufs to a vq
+Subject: [PATCH 3.16 218/366] ALSA: asihpi: Hardening for potential Spectre v1
 In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,78 +57,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Michael S. Tsirkin" <mst@redhat.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 2855b33514d290c51d52d94e25d3ef942cd4d578 upstream.
+commit f9d94b57e30fd1575b4935045b32d738668aa74b upstream.
 
-an allocated buffer doesn't need to be tied to a vq -
-only vq->vdev is ever used. Pass the function the
-just what it needs - the vdev.
+As recently Smatch suggested, a couple of places in ASIHPI driver may
+expand the array directly from the user-space value with speculation:
+  sound/pci/asihpi/hpimsginit.c:70 hpi_init_response() warn: potential spectre issue 'res_size' (local cap)
+  sound/pci/asihpi/hpioctl.c:189 asihpi_hpi_ioctl() warn: potential spectre issue 'adapters'
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+This patch puts array_index_nospec() for hardening against them.
+
+BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/char/virtio_console.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ sound/pci/asihpi/hpimsginit.c | 13 +++++++++----
+ sound/pci/asihpi/hpioctl.c    |  4 +++-
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -417,7 +417,7 @@ static void reclaim_dma_bufs(void)
- 	}
- }
+--- a/sound/pci/asihpi/hpimsginit.c
++++ b/sound/pci/asihpi/hpimsginit.c
+@@ -23,6 +23,7 @@
  
--static struct port_buffer *alloc_buf(struct virtqueue *vq, size_t buf_size,
-+static struct port_buffer *alloc_buf(struct virtio_device *vdev, size_t buf_size,
- 				     int pages)
+ #include "hpi_internal.h"
+ #include "hpimsginit.h"
++#include <linux/nospec.h>
+ 
+ /* The actual message size for each object type */
+ static u16 msg_size[HPI_OBJ_MAXINDEX + 1] = HPI_MESSAGE_SIZE_BY_OBJECT;
+@@ -39,10 +40,12 @@ static void hpi_init_message(struct hpi_
  {
- 	struct port_buffer *buf;
-@@ -440,7 +440,7 @@ static struct port_buffer *alloc_buf(str
- 		return buf;
- 	}
+ 	u16 size;
  
--	if (is_rproc_serial(vq->vdev)) {
-+	if (is_rproc_serial(vdev)) {
- 		/*
- 		 * Allocate DMA memory from ancestor. When a virtio
- 		 * device is created by remoteproc, the DMA memory is
-@@ -450,9 +450,9 @@ static struct port_buffer *alloc_buf(str
- 		 * DMA_MEMORY_INCLUDES_CHILDREN had been supported
- 		 * in dma-coherent.c
- 		 */
--		if (!vq->vdev->dev.parent || !vq->vdev->dev.parent->parent)
-+		if (!vdev->dev.parent || !vdev->dev.parent->parent)
- 			goto free_buf;
--		buf->dev = vq->vdev->dev.parent->parent;
-+		buf->dev = vdev->dev.parent->parent;
+-	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX))
++	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX)) {
++		object = array_index_nospec(object, HPI_OBJ_MAXINDEX + 1);
+ 		size = msg_size[object];
+-	else
++	} else {
+ 		size = sizeof(*phm);
++	}
  
- 		/* Increase device refcnt to avoid freeing it */
- 		get_device(buf->dev);
-@@ -834,7 +834,7 @@ static ssize_t port_fops_write(struct fi
+ 	memset(phm, 0, size);
+ 	phm->size = size;
+@@ -66,10 +69,12 @@ void hpi_init_response(struct hpi_respon
+ {
+ 	u16 size;
  
- 	count = min((size_t)(32 * 1024), count);
+-	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX))
++	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX)) {
++		object = array_index_nospec(object, HPI_OBJ_MAXINDEX + 1);
+ 		size = res_size[object];
+-	else
++	} else {
+ 		size = sizeof(*phr);
++	}
  
--	buf = alloc_buf(port->out_vq, count, 0);
-+	buf = alloc_buf(port->portdev->vdev, count, 0);
- 	if (!buf)
- 		return -ENOMEM;
+ 	memset(phr, 0, sizeof(*phr));
+ 	phr->size = size;
+--- a/sound/pci/asihpi/hpioctl.c
++++ b/sound/pci/asihpi/hpioctl.c
+@@ -35,6 +35,7 @@ Common Linux HPI ioctl and module probe/
+ #include <linux/pci.h>
+ #include <linux/stringify.h>
+ #include <linux/module.h>
++#include <linux/nospec.h>
  
-@@ -953,7 +953,7 @@ static ssize_t port_fops_splice_write(st
- 	if (ret < 0)
- 		goto error_out;
+ #ifdef MODULE_FIRMWARE
+ MODULE_FIRMWARE("asihpi/dsp5000.bin");
+@@ -182,7 +183,8 @@ long asihpi_hpi_ioctl(struct file *file,
+ 		struct hpi_adapter *pa = NULL;
  
--	buf = alloc_buf(port->out_vq, 0, pipe->nrbufs);
-+	buf = alloc_buf(port->portdev->vdev, 0, pipe->nrbufs);
- 	if (!buf) {
- 		ret = -ENOMEM;
- 		goto error_out;
-@@ -1370,7 +1370,7 @@ static unsigned int fill_queue(struct vi
+ 		if (hm->h.adapter_index < ARRAY_SIZE(adapters))
+-			pa = &adapters[hm->h.adapter_index];
++			pa = &adapters[array_index_nospec(hm->h.adapter_index,
++							  ARRAY_SIZE(adapters))];
  
- 	nr_added_bufs = 0;
- 	do {
--		buf = alloc_buf(vq, PAGE_SIZE, 0);
-+		buf = alloc_buf(vq->vdev, PAGE_SIZE, 0);
- 		if (!buf)
- 			break;
- 
+ 		if (!pa || !pa->adapter || !pa->adapter->type) {
+ 			hpi_init_response(&hr->r0, hm->h.object,
 
