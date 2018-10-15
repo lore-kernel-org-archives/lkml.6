@@ -2,239 +2,234 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NORMAL_HTTP_TO_IP,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0797AC28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759E9C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A30E420853
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:50:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ovOjGFWg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A30E420853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EAB02064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:52:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EAB02064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726626AbeJOPeJ (ORCPT
+        id S1726654AbeJOPg0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 11:34:09 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:36472 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbeJOPeJ (ORCPT
+        Mon, 15 Oct 2018 11:36:26 -0400
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:38316 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbeJOPg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 11:34:09 -0400
-Received: by mail-it1-f195.google.com with SMTP id c85-v6so4085917itd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 00:50:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=1k1ZWPsUZOcs8odXi5OJYdsag8d/ZjI6ASaUwZlNdA8=;
-        b=ovOjGFWgutzDWo2L3DNktz69SAwCaV5IL4342o4B2kylFNsYZMv8hWOGJbe9uCNzxq
-         Qd7y3pLaw9s3a5Renr88uEEIg6phwSpDkkDtcFzGcVNmlXsXKAF37xqEqI5fVAaqRxLE
-         VcPAuLt9K3NUzfCtmiQDzWiV/Z/IE5of1581zFvC6bA381inZsbJDTaGqSaTY6QIItUK
-         oFDgE4s9oXATqChVSV21fsjurpZFoPbEtf+z3J+rlHV+Rh2DvR+qLR0VpR6Q21IoNUD/
-         PhNCltW7Pr3yXbOklTXsntKNNn/VVCknfxfKxFQHdFuUb0jjdIv3MXCb15M/Md40BzlJ
-         uOUg==
+        Mon, 15 Oct 2018 11:36:26 -0400
+Received: by mail-ot1-f44.google.com with SMTP id l1so18000523otj.5;
+        Mon, 15 Oct 2018 00:52:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=1k1ZWPsUZOcs8odXi5OJYdsag8d/ZjI6ASaUwZlNdA8=;
-        b=aTndufFDm29ljDuGM1rrfl4XdTlOWg1FerIkCVZ9h5XQo4LHCJgxampztSwp9+/XbM
-         fglOiwA2jdBsZ9+ulOlIyJbOG1UiDOxsiwLdRKeDgioausPk/u71JPp5TqIZwmtGSapN
-         pdaFH4331xgNxfC4F8B2zTj+g2XmuEyaQ42BRqisDpnDCjJV+lzGfCPBgfrqLbztNoHq
-         3wIRHEF3WJYrrD7F42Xuoha1Yyqan6HPNzCmEUnyUFFZ2sA8droi2AqFZz3UcjX4Nm+Z
-         0b2yxzqrOh3+aBL/QAGrxqnlw8PWzDYWtsMqhi3zBtcuxd97f3bCSvIp94yjDOa909Iv
-         xuYg==
-X-Gm-Message-State: ABuFfohDXMOMleMgzNvTMhZXO+Kon6OAEWnftB1hUIPcngMxa346mMIb
-        hKvezm3hAFgKulH4PfQMEYh7mnmPDBrTSfsoxYC5GA==
-X-Google-Smtp-Source: ACcGV61x+NIyhAhAkuzT9/wRV9B/KnHcMWHUqRzXLjNCy3GW3XprIuRQiUQQHSSuU+VSurbJxjJMC9zKyyr9+TK547A=
-X-Received: by 2002:a02:9716:: with SMTP id x22-v6mr12407112jai.82.1539589801213;
- Mon, 15 Oct 2018 00:50:01 -0700 (PDT)
+        bh=851BLYopi0B5hF5DLdZYQjBsFAeBNpr5HpY1/QerRmY=;
+        b=TDJXOsgpI18Qn0ZuZH7oaA4m0C5ZgFkxaJOvmc2VcYEx9eKf6rlta5rlXRKELdim05
+         3e8uufYARd+PmiixehbgwDlUFEVPkT5nYWBUBlrgRPl6j79/IdNrwsFoUqg31iQX12EW
+         CNZdY8jEqocJ0/nLT1jxhaJ4pUaCyrvr2amfvfHyiQh8818hO8SlnKaP2R+bBXJQLd83
+         UoStTUmj0wZwvlfIiuATlavQOSq1zoun/BMDnrsC05iqVj7vrRV5c9gyBvKI4d2Jt1Ox
+         JCowjL0eJVKeQclRnA8X1px392qDzxCGEeOgatspyGGyr+JFMVgdCu1LuX2QYE12Szn+
+         Qt2w==
+X-Gm-Message-State: ABuFfojMVOTWPm6XtAwoUEt88Q5bF/RjjbVF2p3SOrIG9SzLiRA3Um3k
+        WvMAUYmSL663RFrcCpLWq/jRwCzqL8nf8ePw3fU=
+X-Google-Smtp-Source: ACcGV61yaHzRxlREA6Wcc8j/72ApNvSCWUheMdoPGGCfpxeg2LAJ8+CedD60s8yXkpto7QdlKwgjLYeO1p9eIUewNS0=
+X-Received: by 2002:a9d:63:: with SMTP id 90-v6mr539311ota.244.1539589938061;
+ Mon, 15 Oct 2018 00:52:18 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 00:49:40
- -0700 (PDT)
-In-Reply-To: <0000000000003ba80905783e9189@google.com>
-References: <0000000000003ba80905783e9189@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 15 Oct 2018 09:49:40 +0200
-Message-ID: <CACT4Y+YrgUy6CC7N873a_tkJJcFsTnMtd2h5K5bTP8pQzGY_SA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Write in skb_release_data (2)
-To:     syzbot <syzbot+580be3953ed99133804f@syzkaller.appspotmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+References: <000e01d4638a$91a20c60$b4e62520$@net>
+In-Reply-To: <000e01d4638a$91a20c60$b4e62520$@net>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 15 Oct 2018 09:52:02 +0200
+Message-ID: <CAJZ5v0jieqjQXdYaP4qKhyv5gFm5tEREyxfgrxGhgiAxg5Pf0g@mail.gmail.com>
+Subject: Re: [RFC/RFT/[PATCH] cpuidle: New timer events oriented governor for
+ tickless systems
+To:     Doug Smythies <dsmythies@telus.net>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 8:30 AM, syzbot
-<syzbot+580be3953ed99133804f@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    e40a826a6cbc qed: Add support for virtual link.
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=168954a5400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7e7e2279c0020d5f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=580be3953ed99133804f
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+580be3953ed99133804f@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KASAN: use-after-free in atomic_sub_return
-> include/asm-generic/atomic-instrumented.h:305 [inline]
-> BUG: KASAN: use-after-free in skb_release_data+0x1a3/0x880
-> net/core/skbuff.c:559
-> Write of size 4 at addr ffff8801d8cb4120 by task syz-executor0/8395
->
-> CPU: 0 PID: 8395 Comm: syz-executor0 Not tainted 4.19.0-rc6+ #254
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
->  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
->  kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
->  atomic_sub_return include/asm-generic/atomic-instrumented.h:305 [inline]
->  skb_release_data+0x1a3/0x880 net/core/skbuff.c:559
->  skb_release_all+0x4a/0x60 net/core/skbuff.c:627
->  __kfree_skb net/core/skbuff.c:641 [inline]
->  kfree_skb+0x1bb/0x580 net/core/skbuff.c:659
->  sit_tunnel_xmit+0x173/0x30d0 net/ipv6/sit.c:1044
->  __netdev_start_xmit include/linux/netdevice.h:4328 [inline]
->  netdev_start_xmit include/linux/netdevice.h:4337 [inline]
->  xmit_one net/core/dev.c:3219 [inline]
->  dev_hard_start_xmit+0x295/0xc90 net/core/dev.c:3235
->  __dev_queue_xmit+0x2f0d/0x3950 net/core/dev.c:3805
->  dev_queue_xmit+0x17/0x20 net/core/dev.c:3838
->  packet_sendmsg_spkt+0xf44/0x16f0 net/packet/af_packet.c:1975
->  sock_sendmsg_nosec net/socket.c:621 [inline]
->  sock_sendmsg+0xd5/0x120 net/socket.c:631
->  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
->  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
->  __do_sys_sendmsg net/socket.c:2163 [inline]
->  __se_sys_sendmsg net/socket.c:2161 [inline]
->  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457519
-> Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f2a52d30c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457519
-> RDX: 0000000000000000 RSI: 00000000200003c0 RDI: 0000000000000003
-> RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2a52d316d4
-> R13: 00000000004c34d5 R14: 00000000004d52c8 R15: 00000000ffffffff
->
-> Allocated by task 8395:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
->  __do_kmalloc_node mm/slab.c:3682 [inline]
->  __kmalloc_node_track_caller+0x47/0x70 mm/slab.c:3696
->  __kmalloc_reserve.isra.39+0x41/0xe0 net/core/skbuff.c:137
->  __alloc_skb+0x155/0x770 net/core/skbuff.c:205
->  alloc_skb include/linux/skbuff.h:997 [inline]
->  sock_wmalloc+0x16d/0x1f0 net/core/sock.c:1934
->  packet_sendmsg_spkt+0x48a/0x16f0 net/packet/af_packet.c:1922
->  sock_sendmsg_nosec net/socket.c:621 [inline]
->  sock_sendmsg+0xd5/0x120 net/socket.c:631
->  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
->  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
->  __do_sys_sendmsg net/socket.c:2163 [inline]
->  __se_sys_sendmsg net/socket.c:2161 [inline]
->  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> Freed by task 8395:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->  __cache_free mm/slab.c:3498 [inline]
->  kfree+0xcf/0x230 mm/slab.c:3813
->  skb_free_head+0x99/0xc0 net/core/skbuff.c:550
->  skb_release_data+0x6a4/0x880 net/core/skbuff.c:570
->  skb_release_all+0x4a/0x60 net/core/skbuff.c:627
->  __kfree_skb net/core/skbuff.c:641 [inline]
->  consume_skb+0x1ae/0x570 net/core/skbuff.c:701
->  packet_rcv+0x172/0x1820 net/packet/af_packet.c:2139
->  dev_queue_xmit_nit+0x8ae/0xb30 net/core/dev.c:2020
->  xmit_one net/core/dev.c:3215 [inline]
->  dev_hard_start_xmit+0x186/0xc90 net/core/dev.c:3235
->  __dev_queue_xmit+0x2f0d/0x3950 net/core/dev.c:3805
->  dev_queue_xmit+0x17/0x20 net/core/dev.c:3838
->  packet_sendmsg_spkt+0xf44/0x16f0 net/packet/af_packet.c:1975
->  sock_sendmsg_nosec net/socket.c:621 [inline]
->  sock_sendmsg+0xd5/0x120 net/socket.c:631
->  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
->  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
->  __do_sys_sendmsg net/socket.c:2163 [inline]
->  __se_sys_sendmsg net/socket.c:2161 [inline]
->  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> The buggy address belongs to the object at ffff8801d8cb4040
->  which belongs to the cache kmalloc-512 of size 512
-> The buggy address is located 224 bytes inside of
->  512-byte region [ffff8801d8cb4040, ffff8801d8cb4240)
-> The buggy address belongs to the page:
-> page:ffffea0007632d00 count:1 mapcount:0 mapping:ffff8801da800940
-> index:0xffff8801d8cb42c0
-> flags: 0x2fffc0000000100(slab)
-> raw: 02fffc0000000100 ffffea00070baf08 ffffea000736a788 ffff8801da800940
-> raw: ffff8801d8cb42c0 ffff8801d8cb4040 0000000100000005 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8801d8cb4000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
->  ffff8801d8cb4080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>
->> ffff8801d8cb4100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->
->                                ^
->  ffff8801d8cb4180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801d8cb4200: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-> ==================================================================
+Hi Doug,
 
-FWIW from the log this was triggered on this program:
-
-05:22:33 executing program 0:
-r0 = socket(0x11, 0xa, 0x0)
-sendmsg(r0, &(0x7f00000003c0)={&(0x7f00000000c0)=@pptp={0x18, 0x2,
-{0x0, @dev}}, 0x80, &(0x7f0000000380), 0x0, &(0x7f0000001880)}, 0x0)
-
-Looks like a race with a very short inconsistency window since it was
-triggered only once.
-
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+On Sun, Oct 14, 2018 at 8:53 AM Doug Smythies <dsmythies@telus.net> wrote:
 >
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
+> Hi Rafael,
+>
+> I tried your TEO idle governor.
+
+Thanks!
+
+> On 2018.10.11 14:02 Rafael J. Wysocki wrote:
+>
+> ...[cut]...
+>
+> > It has been tested on a few different systems with a number of
+> > different workloads and compared with the menu governor.  In the
+> > majority of cases the workloads performed similarly regardless of
+> > the cpuidle governor in use, but in one case the TEO governor
+> > allowed the workload to perform 75% better, which is a clear
+> > indication that some workloads may benefit from using it quite
+> > a bit depending on the hardware they run on.
+>
+> Could you supply more detail for the 75% better case, so that
+> I can try to repeat the results on my system?
+
+This was encryption on Skylake X, but I'll get more details on that later.
+
+> ...[cut]...
+>
+> > It is likely to select the "polling" state less often than menu
+> > due to the lack of the extra latency limit derived from the
+> > predicted idle duration, so the workloads depending on that
+> > behavior may be worse off (but less energy should be used
+> > while running them at the same time).
+>
+> Yes, and I see exactly that with the 1 core pipe test: Less
+> performance (~10%), but also less processor package power
+> (~3%), compared to the 8 patch set results from the other day.
+>
+> The iperf test (running 3 clients at once) results were similar
+> for both power and throughput.
+>
+> > Overall, it selects deeper idle states than menu more often, but
+> > that doesn't seem to make a significant difference in the majority
+> > of cases.
+>
+> Not always, that viscous powernightmare sweep test that I run used
+> way way more processor package power and spent a staggering amount
+> of time in idle state 0. [1].
+
+Can you please remind me what exactly the workload is in that test?
+
+>
+> ... [cut]...
+>
+> > + * The sleep length is the maximum duration of the upcoming idle time of the
+> > + * CPU and it is always known to the kernel.  Using it alone for selecting an
+> > + * idle state for the CPU every time is a viable option in principle, but that
+> > + * might lead to suboptimal results if the other wakeup sources are more active
+> > + * for some reason.  Thus this governor estimates whether or not the CPU idle
+> > + * time is likely to be significantly shorter than the sleep length and selects
+> > + * an idle state for it in accordance with that, as follows:
+>
+> There is something wrong here, in my opinion, but I have not isolated exactly where
+> by staring at the code.
+> Read on.
+>
+> ... [cut]...
+>
+> > + * Assuming an idle interval every second tick, take the maximum number of CPU
+> > + * wakeups regarded as recent to rougly correspond to 10 minutes.
+> > + *
+> > + * When the total number of CPU wakeups goes above this value, all of the
+> > + * counters corresponding to the given CPU undergo a "decay" and the counting
+> > + * of recent events stars over.
+> > + */
+> > +#define TEO_MAX_RECENT_WAKEUPS       (300 * HZ)
+>
+> In my opinion, there are problems with this is approach:
+>
+> First, the huge huge range of possible times between decay events,
+> anywhere from ~ a second to approximately a week.
+>         In an idle 1000 HZ system, at 2 idle entries per 4 second watchdog event:
+>         time = 300,000 wakes * 2 seconds/wake = 6.9 days
+>         Note: The longest single idle time I measured was 3.5 seconds, but that is
+>         always combined with a shorter one. Even using a more realistic, and
+>         just now measured, average value of 0.7 idles/second would be 2.4 days.
+>
+> Second: It leads to unpredictable behaviour, sometimes for a long time, until
+> the effects of some previous work are completely flushed. And from the first
+> point above, that previous work might have been days ago. In my case, and while
+> doing this work, it resulted in non-repeatability of tests and confusion
+> for awhile. Decay events are basically asynchronous to the actual tasks being
+> executed. For data to support what I am saying I did the following:
+>         Do a bunch of times {
+>                 Start the powernightmare sweep test.
+>                 Abort after several seconds (enough time to flush filters
+>                         and prefer idle state 0)
+>                 Wait a random amount of time
+>                 Start a very light work load, but such that the sleep time
+>                         per work cycle is less than one tick
+>                 Observe varying times until idle state 0 is not excessively selected.
+>                         Anywhere from 0 to 17 minutes (the maximum length of test) was observed.
+>         }
+>
+> Additional information:
+>
+> Periodic workflow: I am having difficulty understanding an unexpected high
+> number of idle entries/exits in steady state (i.e. once things have settled
+> down and the filters have finally flushed) For example, a 60% work / 40% sleep
+> at 500 hertz workflow seems to have an extra idle entry exit. Trace excerpt
+> (edited, the first column is uSeconds since previous):
+>
+>      140 cpu_idle: state=4294967295 cpu_id=7
+>     1152 cpu_idle: state=4 cpu_id=7    <<<< The expected ~1200 uSecs of work
+>      690 cpu_idle: state=4294967295 cpu_id=7  <<<< Unexpected, Expected ~800 uSecs
+>       18 cpu_idle: state=2 cpu_id=7           <<<< So this extra idle makes up the difference
+>      138 cpu_idle: state=4294967295 cpu_id=7  <<<< But why is it there?
+>     1152 cpu_idle: state=4 cpu_id=7     <<<< Repeat
+>      690 cpu_idle: state=4294967295 cpu_id=7
+>       13 cpu_idle: state=2 cpu_id=7
+>      143 cpu_idle: state=4294967295 cpu_id=7
+>     1152 cpu_idle: state=4 cpu_id=7      <<<< Repeat
+>      689 cpu_idle: state=4294967295 cpu_id=7
+>       19 cpu_idle: state=2 cpu_id=7
+>
+> Now compare with trace data for kernel 4.16-rc6 with the 9 patches
+> from the other day (which is what I expect to see):
+>
+>      846 cpu_idle: state=4294967295 cpu_id=7
+>     1150 cpu_idle: state=4 cpu_id=7    <<<< The expected ~1200 uSecs of work
+>      848 cpu_idle: state=4294967295 cpu_id=7 <<<< The expected ~800 uSecs of idle
+>     1152 cpu_idle: state=4 cpu_id=7    <<<< Repeat
+>      848 cpu_idle: state=4294967295 cpu_id=7
+>     1151 cpu_idle: state=4 cpu_id=7    <<<< Repeat
+>      848 cpu_idle: state=4294967295 cpu_id=7
+>     1152 cpu_idle: state=4 cpu_id=7    <<<< Repeat
+>      848 cpu_idle: state=4294967295 cpu_id=7
+>     1152 cpu_idle: state=4 cpu_id=7    <<<< Repeat
+>
+> Anyway, in the end we really only care about power. So for this test:
+> Kernel 4.19-rc6 + 9 patches: 9.133 watts
+> TEO (on top of 4.19-rc7):
+> At start, high number of idle state 0 entries: 11.33 watts (+24%)
+> After awhile, it shifted to idle state 1: 10.00 watts (+9.5%)
+> After awhile, it shifted to idle state 2: 9.67 watts (+5.9%)
+> That seemed to finally be a steady state scenario (at least for over 2 hours).
+> Note: it was always using idle state 4 also.
+>
+> ...[snip]...
+>
+> > +     /* Decay past events information. */
+> > +     for (i = 0; i < drv->state_count; i++) {
+> > +             cpu_data->states[i].early_wakeups_old += cpu_data->states[i].early_wakeups;
+> > +             cpu_data->states[i].early_wakeups_old /= 2;
+> > +             cpu_data->states[i].early_wakeups = 0;
+> > +
+> > +             cpu_data->states[i].hits_old += cpu_data->states[i].hits;
+> > +             cpu_data->states[i].hits_old /= 2;
+> > +             cpu_data->states[i].hits = 0;
+>
+> I wonder if this decay rate is strong enough.
+>
+> Hope this helps.
+
+Yes, it does, thank you!
+
+Cheers,
+Rafael
