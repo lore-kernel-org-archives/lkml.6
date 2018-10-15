@@ -2,116 +2,202 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81AB6C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22849C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 476972089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:56:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 476972089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id D3DCA208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:56:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ybK2K+Pq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3DCA208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbeJOWlp (ORCPT
+        id S1726697AbeJOWm0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 18:41:45 -0400
-Received: from muru.com ([72.249.23.125]:52088 "EHLO muru.com"
+        Mon, 15 Oct 2018 18:42:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbeJOWlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 18:41:45 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 4639C80B7;
-        Mon, 15 Oct 2018 14:56:06 +0000 (UTC)
-Date:   Mon, 15 Oct 2018 07:56:01 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Sekhar Nori <nsekhar@ti.com>
-Cc:     Vignesh R <vigneshr@ti.com>, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] spi: omap2-mcspi: Add slave mode support
-Message-ID: <20181015145601.GA5907@atomide.com>
-References: <20181015063829.26978-1-vigneshr@ti.com>
- <20181015063829.26978-4-vigneshr@ti.com>
- <2bef1218-ef43-cdc1-303f-b85863887a6b@ti.com>
- <28333ef8-22ca-e95f-b9d5-c0aeece20603@ti.com>
- <87459424-1083-0716-0481-89d7b7e3f08c@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87459424-1083-0716-0481-89d7b7e3f08c@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726422AbeJOWm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 18:42:26 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2272E2089D;
+        Mon, 15 Oct 2018 14:56:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539615409;
+        bh=XSXLG5c/NBipF7D3ols5tUR2GuhGDL1CpyIUzJv842A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ybK2K+PqU3KaIkVC2j6ZkbM4xfXSFH37hPeFrQF7oziaLdfehEmLVkSZOUs2WaNWR
+         c7RBXkQilJXTT74QMzylnYIE/tVH70vNNDXSe2fciRC1laSWJxOSeB9jvEpej7tAeZ
+         6zXT/+xeUbJfxfZ9D4kZ/v7jD49DxrJXkW9GmOWs=
+Date:   Mon, 15 Oct 2018 23:56:46 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [RFC][PATCH] x86: ptrace: Add function argument access API
+Message-Id: <20181015235646.2cbb7dc9bc4b7b54f900e0fb@kernel.org>
+In-Reply-To: <20181012155439.59f77556@gandalf.local.home>
+References: <20181011230021.0a7604fa@vmware.local.home>
+        <20181012122641.3d87ed29@gandalf.local.home>
+        <CALCETrXn9zKTb9i1LP3qoFcpqZHF34BdkuZ5D3N0uCmRr+VnbA@mail.gmail.com>
+        <20181012155439.59f77556@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Sekhar Nori <nsekhar@ti.com> [181015 10:04]:
-> On Monday 15 October 2018 03:12 PM, Vignesh R wrote:
-> > Hi Sekhar,
-> > 
-> > On Monday 15 October 2018 01:53 PM, Sekhar Nori wrote:
-> > 
-> > [...]
-> >>>  
-> >>> +static irqreturn_t omap2_mcspi_irq_handler(int irq, void *data)
-> >>> +{
-> >>> +	struct omap2_mcspi *mcspi = data;
-> >>> +	u32 irqstat;
-> >>> +
-> >>> +	irqstat	= mcspi_read_reg(mcspi->master, OMAP2_MCSPI_IRQSTATUS);
-> >>> +	if (!irqstat)
-> >>> +		return IRQ_NONE;
-> >>> +
-> >>> +	/* Disable IRQ and wakeup slave xfer task */
-> >>> +	mcspi_write_reg(mcspi->master, OMAP2_MCSPI_IRQENABLE, 0);
-> >>> +	if (irqstat & OMAP2_MCSPI_IRQSTATUS_EOW)
-> >>> +		complete(&mcspi->txdone);
-> >>> +
-> >>> +	return IRQ_HANDLED;
-> >>
-> >> You need to have the:
-> >>
-> >> pm_runtime_get_sync();
-> >>
-> >> /* access registers */
-> >>
-> >> pm_runtime_mark_last_busy();
-> >> pm_runtime_put_autosuspend();
-> >>
-> >> sequence here. I think thats also missing from the dma callbacks.
-> >> Probably working by chance today.
-> >>
-> > 
-> > This is taken care of by the SPI core as part of __spi_pump_messages():
-> > pm_runtime_get_sync()
-> > ...
-> > spi_transfer_one_message
-> > ...
-> > 	omap2_mcspi_transfer_one
-> > 	...
-> > 		omap2_mcspi_txrx_dma
-> > 
-> > So, both in dma callbacks and in IRQ handler, SPI controller is in
-> > active state.
+On Fri, 12 Oct 2018 15:54:39 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Fri, 12 Oct 2018 11:21:28 -0700
+> Andy Lutomirski <luto@amacapital.net> wrote:
 > 
-> Ah, okay then. False alarm :)
+> > On Fri, Oct 12, 2018 at 9:26 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > >
+> > >
+> > > Anyone have any issues with this patch?
+> > >  
+> > 
+> > I'm conceptually okay with it.  That being said,
+> > regs_within_kernel_stack(), which you're indirectly using, is
+> > off-by-a-few.  And updating it to use probe_kernel_read() might be
+> > nice for robustness.
+> > 
+> 
+> Something like this?
+> 
+> -- Steve
+> 
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> Date: Fri, 12 Oct 2018 15:44:20 -0400
+> Subject: [PATCH] x86: ptrace.h: Add regs_get_kernel_stack_nth_safe() function
+> 
+> Andy had some concerns about using regs_get_kernel_stack_nth() in a new
+> function regs_get_kernel_argument() as if there's any error in the stack
+> code, it could cause a bad memory access. Instead, add a new function called
+> regs_get_kernel_stack_nth_safe() that does a probe_kernel_read() on the
+> stack address to be extra careful in accessing the memory. To share the
+> code, regs_get_kernel_stack_nth_addr() was added to just return the stack
+> address (or NULL if not on the stack), that both regs_get_kernel_stack_nth()
+> and the _safe() version can use.
 
-FYI, we never want to do pm_runtime_get_sync() from the irq handler as that
-implies pm_runtime_irq_safe(). And pm_runtime_irq_safe() takes a permanent
-use count on the parent device which is something we don't want to do. And
-we need to fix in existing drivers to not rely on using pm_runtime_irq_safe().
+This patch looks good to me.
+But if the concern is real, all regs_get_kernel_stack_nth() user must move
+onto _safe() version, at least all tracers code.
 
-The way to deal with having an event wake up a device is to configure a
-generic wakeirq that then wakes up the device and have the interrupt handler
-bail out early in the unlikely case the device is not awake when servicing
-interrupts. And in some cases with clock autoidle we can just use cpu_pm
-notifiers instead of PM runtime if the changes are related to SoC idle states.
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-Anyways, sounds like no need to do anything with these patches :)
+Thanks,
 
-Regards,
+> 
+> Link: http://lkml.kernel.org/r/CALCETrXn9zKTb9i1LP3qoFcpqZHF34BdkuZ5D3N0uCmRr+VnbA@mail.gmail.com
+> Requested-by: Andy Lutomirski <luto@amacapital.net>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  arch/x86/include/asm/ptrace.h | 57 ++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 54 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+> index c2304b25e2fd..8df7ab6a17c5 100644
+> --- a/arch/x86/include/asm/ptrace.h
+> +++ b/arch/x86/include/asm/ptrace.h
+> @@ -237,6 +237,27 @@ static inline int regs_within_kernel_stack(struct pt_regs *regs,
+>  }
+>  
+>  /**
+> + * regs_get_kernel_stack_nth_addr() - get the address of the Nth entry on stack
+> + * @regs:	pt_regs which contains kernel stack pointer.
+> + * @n:		stack entry number.
+> + *
+> + * regs_get_kernel_stack_nth() returns the address of the @n th entry of the
+> + * kernel stack which is specified by @regs. If the @n th entry is NOT in
+> + * the kernel stack, this returns NULL.
+> + */
+> +static inline unsigned long *regs_get_kernel_stack_nth_addr(struct pt_regs *regs,
+> +							    unsigned int n)
+> +{
+> +	unsigned long *addr = (unsigned long *)kernel_stack_pointer(regs);
+> +
+> +	addr += n;
+> +	if (regs_within_kernel_stack(regs, (unsigned long)addr))
+> +		return addr;
+> +	else
+> +		return NULL;
+> +}
+> +
+> +/**
+>   * regs_get_kernel_stack_nth() - get Nth entry of the stack
+>   * @regs:	pt_regs which contains kernel stack pointer.
+>   * @n:		stack entry number.
+> @@ -248,14 +269,44 @@ static inline int regs_within_kernel_stack(struct pt_regs *regs,
+>  static inline unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
+>  						      unsigned int n)
+>  {
+> -	unsigned long *addr = (unsigned long *)kernel_stack_pointer(regs);
+> -	addr += n;
+> -	if (regs_within_kernel_stack(regs, (unsigned long)addr))
+> +	unsigned long *addr;
+> +
+> +	addr = regs_get_kernel_stack_nth_addr(regs, n);
+> +	if (addr)
+>  		return *addr;
+>  	else
+>  		return 0;
+>  }
+>  
+> +/* To avoid include hell, we can't include uaccess.h */
+> +extern long probe_kernel_read(void *dst, const void *src, size_t size);
+> +
+> +/**
+> + * regs_get_kernel_stack_nth_safe() - safely get Nth entry of the stack
+> + * @regs:	pt_regs which contains kernel stack pointer.
+> + * @n:		stack entry number.
+> + *
+> + * Same as regs_get_kernel_stack_nth(), but references the stack value
+> + * with a probe_kernel_read() in case there's a bad stack pointer, it
+> + * will not cause a bad memory access. If the @n is not on the stack,
+> + * or a bad memory access happened, it returns zero.
+> + */
+> +static inline unsigned long regs_get_kernel_stack_nth_safe(struct pt_regs *regs,
+> +							   unsigned int n)
+> +{
+> +	unsigned long *addr;
+> +	unsigned long val;
+> +	long ret;
+> +
+> +	addr = regs_get_kernel_stack_nth_addr(regs, n);
+> +	if (addr) {
+> +		ret = probe_kernel_read(&val, addr, sizeof(val));
+> +		if (!ret)
+> +			return val;
+> +	}
+> +	return 0;
+> +}
+> +
+>  /**
+>   * regs_get_kernel_argument() - get Nth function argument in kernel
+>   * @regs:	pt_regs of that context
+> -- 
+> 2.13.6
+> 
 
-Tony
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
