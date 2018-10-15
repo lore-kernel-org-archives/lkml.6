@@ -2,151 +2,200 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D115FC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93992C7113E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93159208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:01:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59587208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:01:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="AyD9p1Sg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93159208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRo3ovJI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59587208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbeJPCsV (ORCPT
+        id S1726989AbeJPCs1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:48:21 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35748 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbeJPCsV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:48:21 -0400
-Received: by mail-lf1-f66.google.com with SMTP id r191-v6so14931180lff.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 12:01:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pd6lezi5BylV008NDKsRb2G+WBfRgJSK+ixJIXZYXcE=;
-        b=AyD9p1SgMytW0i2sL74jEYMwAKUjeQ7MQj3toTcv60JUZ2Z93fHc8jnW3hNguH0LZ/
-         MKV+80uIwTEQhyShvS4AORDGp2NVSrIsz918KXKCwpAEGknRUeidqj8jTK1ijp1VUMfP
-         4swoSDnMdWWSFBuLbvT8d7nLbfWwOdR2/rSaNxFiSJ5rCiaM4QWKcQD04GUtozPiBIOM
-         4u8fCJdoaGiFK/yG+Haov+8UMhX62QCxyUgQnGlc+WNooS7tJIMqKRzROnWHrC2Yttk9
-         dQa/mZETeDAWVK5w7+bQ1Tn0mVWjFOhmPku4EYsTsO3M9ATa446E7aJ6SVI9JeJX00gT
-         dmzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pd6lezi5BylV008NDKsRb2G+WBfRgJSK+ixJIXZYXcE=;
-        b=t4Bn8Vn3f7xq/cDL5XymGanvbKUXp7lPiUkJije27EPztnLD2jU2LYkclGIM/Z4iBH
-         CIFbOQ2vLrIghK9DC5r/At0yWjaGifiv9xvFs0joqxjRdAMbzgVafFaBZuQVvQBrmqLV
-         alj0hqIfEgq38/qoG0DScUG1AVuvZyd1c8tv/VzeKgHfyaqmhEKoL8Yo2jErZyydF/De
-         swDU530ZJzUNp8Tl9hYoRKuV8vt1exWTzriiuDahMeMXcECmZefF34SPrs8RMt7JyYDe
-         IqQ3M+89WmhSsuFiaK17SYNzHEuT5jpSCD6yYROCvcKyMxZlEMi8Sr3lixO5swfE0B8n
-         ryWQ==
-X-Gm-Message-State: ABuFfohsV7QP7yAWe9BwTaPzbKboyCFHnuIa+H6QdAExgcsU4twKeIWx
-        GxLG8afqMR19nAjTM0bFe1lblRaU4SamaMSpBV1gcQ==
-X-Google-Smtp-Source: ACcGV60DK7T7zLRRte1xfE47GERemoKFBWEWLa0cHukToB+ytI3ge3O7qroWfJuv1RNsQpoNdWhF3221xguoa3FxKck=
-X-Received: by 2002:a19:be46:: with SMTP id o67-v6mr10015041lff.139.1539630108059;
- Mon, 15 Oct 2018 12:01:48 -0700 (PDT)
+        Mon, 15 Oct 2018 22:48:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726654AbeJPCs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 22:48:26 -0400
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A06DA2145D;
+        Mon, 15 Oct 2018 19:01:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539630113;
+        bh=HZTikMm58VpHYYjCoXzcMq7g8Vxcno1d4W4fqZ5OWo0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GRo3ovJIp2jdatGOFaTllO16wLgJAhJFK5inzMHOGCWcQvhHqrDR+cmfn0V4HSbzy
+         rWdu6kTxFE0NR5gKkjxOmhToSKsUNjCEzaqzBAJmt94STfdU7yiQVnp+Ah7g4BrlWL
+         hLZZEJaDvNTzsmfo8qxRSu2coSUUw/uwPNry71Cs=
+Received: by mail-ed1-f41.google.com with SMTP id c26-v6so18905077edt.3;
+        Mon, 15 Oct 2018 12:01:53 -0700 (PDT)
+X-Gm-Message-State: ABuFfog4GAt4DoSxWFWXA63CgU0GUhHgFSqPmReT/lKsCBPcWYROh9ef
+        5D0NqlYiVCEGZl8RUgq9t2/f01G2tPHrBjgB8OA=
+X-Google-Smtp-Source: ACcGV6146qI+cOqdKHB+Qj+knr8+y8I0gxkOYol7MAfdqtRpsbM+R8Vnd3PAXY2mg54pDeTtTxji2N+fBPOWsFBHtN8=
+X-Received: by 2002:a17:906:7384:: with SMTP id f4-v6mr20302835ejl.8.1539630111956;
+ Mon, 15 Oct 2018 12:01:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181015105544.4395-1-christian@brauner.io> <20181015105544.4395-2-christian@brauner.io>
- <CAGXu5j+BZsmRXwXfXk1YcyuSRNMmre=K55e1CXaLJDUZ07rmvQ@mail.gmail.com> <20181015163009.byd2lklpk2n3qzpq@brauner.io>
-In-Reply-To: <20181015163009.byd2lklpk2n3qzpq@brauner.io>
-From:   Christian Brauner <christian@brauner.io>
-Date:   Mon, 15 Oct 2018 21:01:35 +0200
-Message-ID: <CAHrFyr4LLxeVFMaP+H=QTLUcVsnNp0JEP4T0L02nKVXU5OwwUA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] sysctl: cap to ULONG_MAX in proc_get_long()
-To:     Kees Cook <keescook@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Al Viro <viro@zeniv.linux.org.uk>
+References: <1539563070-12969-1-git-send-email-frowand.list@gmail.com> <1539563070-12969-10-git-send-email-frowand.list@gmail.com>
+In-Reply-To: <1539563070-12969-10-git-send-email-frowand.list@gmail.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Mon, 15 Oct 2018 14:01:15 -0500
+X-Gmail-Original-Message-ID: <CANk1AXQNkYDA9hRCMR_MkOJiobPjmYoJN8Gv+3YN9ReV+q5XEw@mail.gmail.com>
+Message-ID: <CANk1AXQNkYDA9hRCMR_MkOJiobPjmYoJN8Gv+3YN9ReV+q5XEw@mail.gmail.com>
+Subject: Re: [PATCH v3 09/18] of: overlay: validate overlay properties
+ #address-cells and #size-cells
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 6:30 PM Christian Brauner <christian@brauner.io> wrote:
+On Sun, Oct 14, 2018 at 7:26 PM <frowand.list@gmail.com> wrote:
 >
-> On Mon, Oct 15, 2018 at 09:18:40AM -0700, Kees Cook wrote:
-> > On Mon, Oct 15, 2018 at 3:55 AM, Christian Brauner <christian@brauner.io> wrote:
-> > > proc_get_long() is a funny function. It uses simple_strtoul() and for a
-> > > good reason. proc_get_long() wants to always succeed the parse and return
-> > > the maybe incorrect value and the trailing characters to check against a
-> > > pre-defined list of acceptable trailing values.
-> > > However, simple_strtoul() explicitly ignores overflows which can cause
-> >
-> > What depends on simple_strtoul() ignoring overflows? Can we just cap
-> > it to ULONG_MAX instead?
-> >
-> > I note that both simple_strtoul() and simple_strtoull() are marked as
-> > obsolete (more below).
-> >
-> > > funny things like the following to happen:
-> > >
-> > > echo 18446744073709551616 > /proc/sys/fs/file-max
-> > > cat /proc/sys/fs/file-max
-> > > 0
-> > >
-> > > (Which will cause your system to silently die behind your back.)
-> > >
-> > > On the other hand kstrtoul() does do overflow detection but fails the parse
-> > > in this case, does not return the trailing characters, and also fails the
-> > > parse when anything other than '\n' is a trailing character whereas
-> > > proc_get_long() wants to be more lenient.
-> >
-> > This parsing strictness difference makes it seem like the simple_*()
-> > shouldn't be considered obsolete...
-
-So what I would prefer in this case - if people agree that such a function
-is useful - is to add a new function to lib/kstrtox.c and include/linux/kernel.h
-e.g.:
-
-int kstrtoul_bounded(const char *s, unsigned int base, char
-**trailing, unsigned long long *res)
-
-which aligns with the other kstrto*() functions, caps at <TYPE>_MAX,
-doesn't fail the parse,
-and returns the trailing characters in char **trailing. Then people
-can start switching users of
-simple_strtoul() over to this function without regressing anything.
-
-Christian
-
-> >
-> > and it's still very heavily used:
-> >
-> > $ git grep -E 'simple_strtoull?\(' | wc -l
-> > 745
+> From: Frank Rowand <frank.rowand@sony.com>
 >
-> Maybe, but the intention is probably to fade it out and to not use it in
-> new code because it doesn't handle overflow.
-> Tbh, I'm weary to change that to suddenly return a ULONG_MAX on overflow
-> instead of what it is doing now. I have absolutely no idea what this
-> might break given how much it is still used in the kernel...
+> If overlay properties #address-cells or #size-cells are already in
+> the live devicetree for any given node, then the values in the
+> overlay must match the values in the live tree.
 >
-> >
-> > > Now, before adding another kstrtoul() function let's simply add a static
-> > > parse strtoul_cap_erange() which does:
-> > > - returns ULONG_MAX on ERANGE
-> > > - returns the trailing characters to the caller
-> > > This guarantees that we don't regress userspace in any way but also caps
-> > > any parsed value to ULONG_MAX and prevents things like file-max to become 0
-> > > on overflow.
-> >
-> > -Kees
-> >
-> > --
-> > Kees Cook
-> > Pixel Security
+> If the properties are already in the live tree then there is no
+> need to create a changeset entry to add them since they must
+> have the same value.  This reduces the memory used by the
+> changeset and eliminates a possible memory leak.  This is
+> verified by 12 fewer warnings during the devicetree unittest,
+> as the possible memory leak warnings about #address-cells and
+>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
+>  drivers/of/overlay.c | 38 +++++++++++++++++++++++++++++++++++---
+>  1 file changed, 35 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+> index 272a0d1a5e18..ee66651db553 100644
+> --- a/drivers/of/overlay.c
+> +++ b/drivers/of/overlay.c
+> @@ -287,7 +287,12 @@ static struct property *dup_and_fixup_symbol_prop(
+>   * @target may be either in the live devicetree or in a new subtree that
+>   * is contained in the changeset.
+>   *
+> - * Some special properties are not updated (no error returned).
+> + * Some special properties are not added or updated (no error returned):
+> + * "name", "phandle", "linux,phandle".
+> + *
+> + * Properties "#address-cells" and "#size-cells" are not updated if they
+> + * are already in the live tree, but if present in the live tree, the values
+> + * in the overlay must match the values in the live tree.
+>   *
+>   * Update of property in symbols node is not allowed.
+>   *
+> @@ -300,6 +305,7 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+>  {
+>         struct property *new_prop = NULL, *prop;
+>         int ret = 0;
+> +       bool check_for_non_overlay_node = false;
+>
+>         if (!of_prop_cmp(overlay_prop->name, "name") ||
+>             !of_prop_cmp(overlay_prop->name, "phandle") ||
+> @@ -322,13 +328,39 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+>         if (!new_prop)
+>                 return -ENOMEM;
+>
+> -       if (!prop)
+> +       if (!prop) {
+> +
+> +               check_for_non_overlay_node = true;
+>                 ret = of_changeset_add_property(&ovcs->cset, target->np,
+>                                                 new_prop);
+> -       else
+> +
+> +       } else if (!of_prop_cmp(prop->name, "#address-cells")) {
+> +
+
+Hi Frank,
+
+If we get these ERROR messages, I suggest that this function should
+return an error so the overlay will be rejected.
+
+> +               if (prop->length != 4 || new_prop->length != 4 ||
+> +                   *(u32 *)prop->value != *(u32 *)new_prop->value)
+
+                        *(u32 *)prop->value != *(u32 *)new_prop->value) {
+
+> +                       pr_err("ERROR: overlay and/or live tree #address-cells invalid in node %pOF\n",
+> +                              target->np);
+
+                       ret = -EINVAL;
+                }
+
+Otherwise there is an ERROR message, but it continues trying to apply
+the invalid overlay anyway and I get an oops.  By adding the ret =
+-EINVAL, the overlay gets rejected and the oops is avoided.
+
+> +
+> +       } else if (!of_prop_cmp(prop->name, "#size-cells")) {
+> +
+> +               if (prop->length != 4 || new_prop->length != 4 ||
+> +                   *(u32 *)prop->value != *(u32 *)new_prop->value)
+> +                       pr_err("ERROR: overlay and/or live tree #size-cells invalid in node %pOF\n",
+> +                              target->np);
+
+Add the ret = -EINVAL here also.  This give me the following (if my
+overlay changes #address-cells):
+
+[   21.167551] OF: overlay: ERROR: overlay and/or live tree
+#address-cells invalid in node /soc/base_fpga_region
+[   21.177442] OF: overlay: add_changeset_property ret=-22
+[   21.182656] create_overlay: Failed to create overlay (err=-22)
+
+Also, I wonder if the ERROR message could be more direct.  Currently
+it says the #address-cells property is invalid but that doesn't say
+anything about why it's invalid.  How about something like:
+
+ OF: overlay: ERROR: changing #address-cells not allowed (/soc/base_fpga_region)
+
+The 'OF: overlay' part still makes it clear it's overlay related.  The
+rest of it makes it clear *why* it's invalid.  This ERROR will be a
+surprise for people who have been using overlays, so that could be
+helpful to light the way a bit.
+
+Alan
+
+> +
+> +       } else {
+> +
+> +               check_for_non_overlay_node = true;
+>                 ret = of_changeset_update_property(&ovcs->cset, target->np,
+>                                                    new_prop);
+>
+> +       }
+> +
+> +       if (check_for_non_overlay_node &&
+> +           !of_node_check_flag(target->np, OF_OVERLAY))
+> +               pr_err("WARNING: %s(), memory leak will occur if overlay removed.  Property: %pOF/%s\n",
+> +                      __func__, target->np, new_prop->name);
+> +
+>         if (ret) {
+>                 kfree(new_prop->name);
+>                 kfree(new_prop->value);
+> --
+> Frank Rowand <frank.rowand@sony.com>
+>
