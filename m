@@ -2,259 +2,137 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3664AC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FD4C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5E9B208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:40:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E506208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:40:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYHurD4X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E9B208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pf5yexvK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E506208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeJPD0s (ORCPT
+        id S1727044AbeJPD12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 23:26:48 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36076 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbeJPD0r (ORCPT
+        Mon, 15 Oct 2018 23:27:28 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34998 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbeJPD12 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 23:26:47 -0400
-Received: by mail-lj1-f195.google.com with SMTP id p89-v6so18624425ljb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 12:40:07 -0700 (PDT)
+        Mon, 15 Oct 2018 23:27:28 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f8-v6so9809715plb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 12:40:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gpAxKCJHhJjj+lN8WLPl+rXChbbfElVUx5p01InmYQs=;
-        b=MYHurD4Xkb1B7L+kxZUVQlsP5PUnaB9kLusgTgCH1UuMUclt5SPa5GMyRQPNqgsetc
-         Vy6Nmdc3/kIyXTJuh3wfBO6ruqDTO7N69jL2JQ0+XCVyHt4Vo0AB2E0jv8HKv+Cm4msB
-         xiLCST16guNCVuQLzxW1zLxFTiYcOpzac9kAdp5lG4emuPzUpmeCZ3URzlTtcS3FZw3L
-         /g0zo9ub/DLTELFMm2P1YP0ZWsGGZYTgel6sclAL4/ZxaTlm9jv6UkNOZmc9a5/PJbQ0
-         pZGhPE0S7XUf02kpuIqmOmJmbPruGz7XZjYECqcTkhC627Umt1nmKhepFHQvXBOP9oEt
-         6IAA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CEthvG9hbLFisXKYvA1uvR5sptAXPWPC66vp5D7EQCU=;
+        b=Pf5yexvKuvxQud93ll/wVaG0SCYSKtW0NCVXCpvlB7yqr6fyTBvZHr/jC9kpyp08OM
+         UTt2HX24ka4+O7c4Z7D+BMna5II85R7u8k28DzVPqhVbJDgx6qut3Q1jQ8Db1o9A4GRt
+         b+dAqk5++He/LcP/Os/CgYU0JkR4+7iLah5828LDpEYgwLNr5aqsKEoRq38fh2VMiraB
+         qryZ3jud+mtd+HYcUY7tCtUuGjDcAMJJ2VFloy6jEVn341ONvdydwFJ+5nXIfcFf4gxs
+         X1E1rFQ5x+m8BbmqwZfLFRkvFc+porAQrtLlefbHC05QNAph+R1X70KgM/Zvhl46OBaX
+         x/SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gpAxKCJHhJjj+lN8WLPl+rXChbbfElVUx5p01InmYQs=;
-        b=lAXCep81te2r0g1/lTL5/qTq2hyIjIGkS5dSZzNu4q58wAU3EPG71HGv3qmyvnCKbR
-         nI/GIXZiJqroF4AWm7oZ2j1E+6IYoqPxAYKWS1n2Huq2GW9l3N+RSMlZVWi7ag05u0Kj
-         7XROF/IyVGZWpULRo19oc+fMQv1Qn0PcnIHRhER84EFT9rVmnTQb+oiQFjxzr0dW+u4H
-         kMD2oDIWL2GT+/c+SWECrTmgqDgex3bD3e16gOAnOZUac2YEvBBlcmUOLbvvrMhE4/AM
-         oH3YDbyx714nxuVmhCAn88gk9yBVmOVVZmj0oJ4PocdD98ojwU2jcVnRiATi/i19X0c7
-         OQ2Q==
-X-Gm-Message-State: ABuFfojafaDM/Hbsofs1101haGIG0iNk6mtdAvzyK0d/w7SBHGBF5rjW
-        n9IhKBJL9QMwaesrIrPLShu9CgZXVLo=
-X-Google-Smtp-Source: ACcGV61fnaMuAsDAf3s0AhMj0stIdVVD58fbQT4wsjdSyTC/zyvYzkxis+6UreLnt3i86lQy5ukTBA==
-X-Received: by 2002:a2e:8797:: with SMTP id n23-v6mr11701628lji.173.1539632406519;
-        Mon, 15 Oct 2018 12:40:06 -0700 (PDT)
-Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm2658830lji.60.2018.10.15.12.40.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 12:40:05 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH v3 3/3] mtd: rawnand: ams-delta: Convert the driver to ->exec_op()
-Date:   Mon, 15 Oct 2018 21:41:30 +0200
-Message-Id: <20181015194130.21764-3-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20181015194130.21764-1-jmkrzyszt@gmail.com>
-References: <20181012204101.26274-1-jmkrzyszt@gmail.com>
- <20181015194130.21764-1-jmkrzyszt@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CEthvG9hbLFisXKYvA1uvR5sptAXPWPC66vp5D7EQCU=;
+        b=rkgD7WGBWTgoFzK7BZMq2N0TEVjNpO+N90hV4oBfm+xVWrr/fQP7IJlFfQ1fzRzvzQ
+         UiAON+5RvmA2bjcaZ9dNNjU3551Me5yepK+rKMsKlMv4W5s2J6gSj7fMEA02O1/mltLT
+         M8PWi/1AYjubWIfNbt9gV675EKHnkcY1G3zr5sGcT64jnRuBbZLUkz0AfnIqxGtz8A1J
+         gNmwbDluQrKspRHeCUMftGLfVzlnsY+uAFlrOdxYTR9RfywL7/aNtr6y219IyAXmuZOV
+         dat3b3atkOvoe9pjdznGnV0abEgnEnAHzGGJhFrQ0sjo1+R3xv/ZYoMz9pN4t3B6wa0k
+         bk6Q==
+X-Gm-Message-State: ABuFfojKbG17COtX/mtsn9GiRJNnIB5f0rTJ1MiWPar9HGZFbWeABlcN
+        C/khnTJJO4XB8aHItyVOrnZx8ih3VLK+rpo54szoIw==
+X-Google-Smtp-Source: ACcGV62fOI+sbx0H68jB9ClaIGrW+z59whuNrxFbPFwMK8zkquO/JAO70+bWPOkv09KCRTT3tQGUtBsGw7BmV6hoDZ8=
+X-Received: by 2002:a17:902:b40d:: with SMTP id x13-v6mr18616989plr.13.1539632448058;
+ Mon, 15 Oct 2018 12:40:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181013010348.6740-1-natechancellor@gmail.com>
+In-Reply-To: <20181013010348.6740-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 15 Oct 2018 12:40:36 -0700
+Message-ID: <CAKwvOdk8HGTtQ=qb2THgRb3B6O=iErXFyrbKVoGDkMeFAdD3kA@mail.gmail.com>
+Subject: Re: [PATCH] efi/libstub: Disable some warnings for x86{,_64}
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace legacy callbacks with ->select_chip() and ->exec_op().
+On Fri, Oct 12, 2018 at 6:06 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> When building the kernel with Clang, some disabled warnings appear
+> because this Makefile overrides KBUILD_CFLAGS for x86{,_64}. Add them to
+> this list so that the build is clean again.
+>
+> -Wpointer-sign was disabled for the whole kernel before the beginning
+> of git history.
+>
+> -Waddress-of-packed-member was disabled for the whole kernel in
+> commit bfb38988c51e ("kbuild: clang: Disable 'address-of-packed-member'
+> warning") and for x86/boot/compressed in commit 20c6c1890455 ("x86/boot:
+> Disable the address-of-packed-member compiler warning").
+>
+> -Wgnu was disabled for the whole kernel in commit 61163efae020 ("kbuild:
+> LLVMLinux: Add Kbuild support for building kernel with Clang") and for
+> x86/boot/compressed in commit 6c3b56b19730 ("x86/boot: Disable Clang
+> warnings about GNU extensions").
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/112
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>
+> Nick expressed concern that this Makefile is overwriting KBUILD_CFLAGS
+> and suggested potentially rewriting the x86 portion of this Makefile to
+> behave like the arm/arm64 one where problematic flags are filtered out.
+> While that comes to fruition, it would be nice for this folder to behave
+> like the rest of the kernel when it comes to this warnings so that the
+> build is cleaner, thus this patch.
+>
+>  drivers/firmware/efi/libstub/Makefile | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> index c51627660dbb..d9845099635e 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -9,7 +9,10 @@ cflags-$(CONFIG_X86_32)                := -march=i386
+>  cflags-$(CONFIG_X86_64)                := -mcmodel=small
+>  cflags-$(CONFIG_X86)           += -m$(BITS) -D__KERNEL__ -O2 \
+>                                    -fPIC -fno-strict-aliasing -mno-red-zone \
+> -                                  -mno-mmx -mno-sse -fshort-wchar
+> +                                  -mno-mmx -mno-sse -fshort-wchar \
+> +                                  -Wno-pointer-sign \
 
-Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
----
-Changelog:
-v3:
-- former PATCH 2/2 from which PATCH v3 2/3 has been split out,
-- added missing return on check_only - requested by Boris Brezillon,
-  thanks
-v2:
-- replace references to legacy structure .IO_ADDR_R/W members with 
-  runtime calculated values - requested by Boris Brezillon, thanks!
-- modify ams_delta_read/write_buf() functions, no longer exposed as 
-  callbacks, to accept driver private structure instead of struct 
-  nand_chip,
-- use newly introduced nand_gpio_waitrdy() helper instead of legacy 
-  nand_wait_ready() - suggested by Boris Brezillon, thanks!
-- remove no longer needed ams_delta_dev_ready() legacy callback and
-  legacy structure member .chip_delay.
+Hi Nathan, thanks for this patch.
 
- drivers/mtd/nand/raw/ams-delta.c | 100 ++++++++++++++++++++++-----------------
- 1 file changed, 56 insertions(+), 44 deletions(-)
+Should this be:
+$(call cc-disable-warning, pointer-sign)
+as well?
 
-diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
-index 46193db6d368..9ca70aab199d 100644
---- a/drivers/mtd/nand/raw/ams-delta.c
-+++ b/drivers/mtd/nand/raw/ams-delta.c
-@@ -99,10 +99,9 @@ static void ams_delta_dir_input(struct ams_delta_nand *priv, bool in)
- 	priv->data_in = in;
- }
- 
--static void ams_delta_write_buf(struct nand_chip *this, const u_char *buf,
-+static void ams_delta_write_buf(struct ams_delta_nand *priv, const u_char *buf,
- 				int len)
- {
--	struct ams_delta_nand *priv = nand_get_controller_data(this);
- 	int i;
- 
- 	if (priv->data_in)
-@@ -112,9 +111,9 @@ static void ams_delta_write_buf(struct nand_chip *this, const u_char *buf,
- 		ams_delta_io_write(priv, buf[i]);
- }
- 
--static void ams_delta_read_buf(struct nand_chip *this, u_char *buf, int len)
-+static void ams_delta_read_buf(struct ams_delta_nand *priv, u_char *buf,
-+			       int len)
- {
--	struct ams_delta_nand *priv = nand_get_controller_data(this);
- 	int i;
- 
- 	if (!priv->data_in)
-@@ -124,46 +123,66 @@ static void ams_delta_read_buf(struct nand_chip *this, u_char *buf, int len)
- 		buf[i] = ams_delta_io_read(priv);
- }
- 
--static u_char ams_delta_read_byte(struct nand_chip *this)
--{
--	u_char res;
--
--	ams_delta_read_buf(this, &res, 1);
--
--	return res;
--}
--
--/*
-- * Command control function
-- *
-- * ctrl:
-- * NAND_NCE: bit 0 -> bit 2
-- * NAND_CLE: bit 1 -> bit 7
-- * NAND_ALE: bit 2 -> bit 6
-- */
--static void ams_delta_hwcontrol(struct nand_chip *this, int cmd,
--				unsigned int ctrl)
-+static void ams_delta_select_chip(struct nand_chip *this, int n)
- {
- 	struct ams_delta_nand *priv = nand_get_controller_data(this);
- 
--	if (ctrl & NAND_CTRL_CHANGE) {
--		gpiod_set_value(priv->gpiod_nce, !(ctrl & NAND_NCE));
--		gpiod_set_value(priv->gpiod_cle, !!(ctrl & NAND_CLE));
--		gpiod_set_value(priv->gpiod_ale, !!(ctrl & NAND_ALE));
--	}
--
--	if (cmd != NAND_CMD_NONE) {
--		u_char byte = cmd;
-+	if (n > 0)
-+		return;
- 
--		ams_delta_write_buf(this, &byte, 1);
--	}
-+	gpiod_set_value(priv->gpiod_nce, n < 0);
- }
- 
--static int ams_delta_nand_ready(struct nand_chip *this)
-+static int ams_delta_exec_op(struct nand_chip *this,
-+			     const struct nand_operation *op, bool check_only)
- {
- 	struct ams_delta_nand *priv = nand_get_controller_data(this);
-+	const struct nand_op_instr *instr;
-+	int ret = 0;
-+
-+	if (check_only)
-+		return 0;
-+
-+	for (instr = op->instrs; instr < op->instrs + op->ninstrs; instr++) {
-+
-+		switch (instr->type) {
-+		case NAND_OP_CMD_INSTR:
-+			gpiod_set_value(priv->gpiod_cle, 1);
-+			ams_delta_write_buf(priv, &instr->ctx.cmd.opcode, 1);
-+			gpiod_set_value(priv->gpiod_cle, 0);
-+			break;
-+
-+		case NAND_OP_ADDR_INSTR:
-+			gpiod_set_value(priv->gpiod_ale, 1);
-+			ams_delta_write_buf(priv, instr->ctx.addr.addrs,
-+					    instr->ctx.addr.naddrs);
-+			gpiod_set_value(priv->gpiod_ale, 0);
-+			break;
-+
-+		case NAND_OP_DATA_IN_INSTR:
-+			ams_delta_read_buf(priv, instr->ctx.data.buf.in,
-+					   instr->ctx.data.len);
-+			break;
-+
-+		case NAND_OP_DATA_OUT_INSTR:
-+			ams_delta_write_buf(priv, instr->ctx.data.buf.out,
-+					    instr->ctx.data.len);
-+			break;
-+
-+		case NAND_OP_WAITRDY_INSTR:
-+			ret = priv->gpiod_rdy ?
-+			      nand_gpio_waitrdy(this, priv->gpiod_rdy,
-+						instr->ctx.waitrdy.timeout_ms) :
-+			      nand_soft_waitrdy(this,
-+						instr->ctx.waitrdy.timeout_ms);
-+			break;
-+		}
-+
-+		if (ret)
-+			break;
-+	}
- 
--	return gpiod_get_value(priv->gpiod_rdy);
-+	return ret;
- }
- 
- 
-@@ -211,10 +230,8 @@ static int ams_delta_init(struct platform_device *pdev)
- 	nand_set_controller_data(this, priv);
- 
- 	/* Set address of NAND IO lines */
--	this->legacy.read_byte = ams_delta_read_byte;
--	this->legacy.write_buf = ams_delta_write_buf;
--	this->legacy.read_buf = ams_delta_read_buf;
--	this->legacy.cmd_ctrl = ams_delta_hwcontrol;
-+	this->select_chip = ams_delta_select_chip;
-+	this->exec_op = ams_delta_exec_op;
- 
- 	priv->gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
- 	if (IS_ERR(priv->gpiod_rdy)) {
-@@ -223,11 +240,6 @@ static int ams_delta_init(struct platform_device *pdev)
- 		goto out_mtd;
- 	}
- 
--	if (priv->gpiod_rdy)
--		this->legacy.dev_ready = ams_delta_nand_ready;
--
--	/* 25 us command delay time */
--	this->legacy.chip_delay = 30;
- 	this->ecc.mode = NAND_ECC_SOFT;
- 	this->ecc.algo = NAND_ECC_HAMMING;
- 
+> +                                  $(call cc-disable-warning, address-of-packed-member) \
+> +                                  $(call cc-disable-warning, gnu)
+>
+>  # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
+>  # disable the stackleak plugin
+> --
+> 2.19.1
+>
+
+
 -- 
-2.16.4
-
+Thanks,
+~Nick Desaulniers
