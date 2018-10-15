@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A0DC71130
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFF2C71130
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2929520652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:50:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D69C20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:50:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emlid.com header.i=@emlid.com header.b="Q0Fl3cn3";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emlid.com header.i=@emlid.com header.b="a6T1qAtH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2929520652
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emlid.com header.i=@emlid.com header.b="oMCutczm";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emlid.com header.i=@emlid.com header.b="IfR2II+p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D69C20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emlid.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbeJOTfX (ORCPT
+        id S1726707AbeJOTf3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:35:23 -0400
-Received: from forward104j.mail.yandex.net ([5.45.198.247]:47682 "EHLO
-        forward104j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726591AbeJOTfW (ORCPT
+        Mon, 15 Oct 2018 15:35:29 -0400
+Received: from forward106p.mail.yandex.net ([77.88.28.109]:34658 "EHLO
+        forward106p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726591AbeJOTf3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:35:22 -0400
-Received: from mxback6j.mail.yandex.net (mxback6j.mail.yandex.net [IPv6:2a02:6b8:0:1619::10f])
-        by forward104j.mail.yandex.net (Yandex) with ESMTP id 9187B44FD1;
-        Mon, 15 Oct 2018 14:50:24 +0300 (MSK)
+        Mon, 15 Oct 2018 15:35:29 -0400
+Received: from mxback7o.mail.yandex.net (mxback7o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::21])
+        by forward106p.mail.yandex.net (Yandex) with ESMTP id 2D32A2D8167E;
+        Mon, 15 Oct 2018 14:50:30 +0300 (MSK)
 Received: from smtp3p.mail.yandex.net (smtp3p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:8])
-        by mxback6j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 7A9xjzIrGG-oNDm3F4T;
-        Mon, 15 Oct 2018 14:50:24 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emlid.com; s=mail; t=1539604224;
-        bh=yKt37R/DOocoHmUwW4kStzPpcVHpEMEqFPFnPtiMmHg=;
+        by mxback7o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id etuN2fYFi3-oSe8AesV;
+        Mon, 15 Oct 2018 14:50:30 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emlid.com; s=mail; t=1539604230;
+        bh=ofW3ywV5XHUiZFqr21uEHVd46Hc3iW9mPAJ8XKEBp+A=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        b=Q0Fl3cn3Gx2p2vNyygDSMcHhmKoGTc05x1XGWMRk8xqL67pslIqedvn923FEW5PqB
-         k6wWRzHZn7m9fDQTXfNyroswbvN3+GtdWfotbI36dvX93ywZrT5Z5kLnLfokw40md8
-         dyMyNp2RCIfRKZ37u5a8XSQOMKQmnmWjVaCAmLT4=
-Received: by smtp3p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id q72Y4XcU2b-oLx0knVv;
-        Mon, 15 Oct 2018 14:50:21 +0300
+        b=oMCutczmPVfbjuSNfjq9sIsvQHM1HV/U4ebc77m7CGomL+iiD8srXNVNADm6LKcsr
+         nHYtOh4thGIQAUhknm3FQarunOYREZb4xqQOrYkM8Zrg/zzVo8io4NEGzemKysOVO/
+         oiNYPeaTQ1xeUbm8UR6kzzSwDvmB+PFJmnsaUbp4=
+Received: by smtp3p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id q72Y4XcU2b-oQxmkvim;
+        Mon, 15 Oct 2018 14:50:26 +0300
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emlid.com; s=mail; t=1539604221;
-        bh=yKt37R/DOocoHmUwW4kStzPpcVHpEMEqFPFnPtiMmHg=;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emlid.com; s=mail; t=1539604227;
+        bh=ofW3ywV5XHUiZFqr21uEHVd46Hc3iW9mPAJ8XKEBp+A=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        b=a6T1qAtHOdnnPHBm3Wbil3NvXpjcUQafBkFnsmA8N0CMtUCZ2+iF1mM0Fc5X5ohoN
-         UAeFPz9trs+E5NPKyuSz0pZYxFHHUkEyLpRGl3dlX208DQipReHExWJP8MBzByZgHN
-         rU2wbXP4/N9rb0IBvY0EbPZ6ekENj56lz1zyD/yU=
+        b=IfR2II+pTNKEP2T4Hnfe1YneZirtszp191jQd/H3ghdyHELdAe0X1QuNMsZzlWJzD
+         36KNNueZPkXs93B+XMySqsl0M8C39KawOcbRxiBrtX8Odsd5Z1EKiBJTGiVgBG/kcx
+         AkFKiIcJTTxfwDQaV8/CHM6C9nkpalg3Lbm8qOIg=
 Authentication-Results: smtp3p.mail.yandex.net; dkim=pass header.i=@emlid.com
 From:   Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
 Cc:     Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>,
@@ -59,12 +59,12 @@ Cc:     Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
         David Lechner <david@lechnology.com>,
         Thierry Reding <treding@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
         Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 1/2] dt-bindings: vendor-prefix: new vendor - Emlid
-Date:   Mon, 15 Oct 2018 14:49:49 +0300
-Message-Id: <1539604192-17561-2-git-send-email-aleksandr.aleksandrov@emlid.com>
+Subject: [PATCH v5 2/2] arm64: dts: allwinner: new board - Emlid Neutis N5
+Date:   Mon, 15 Oct 2018 14:49:50 +0300
+Message-Id: <1539604192-17561-3-git-send-email-aleksandr.aleksandrov@emlid.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1539604192-17561-1-git-send-email-aleksandr.aleksandrov@emlid.com>
 References: <1539339841-22235-2-git-send-email-aleksandr.aleksandrov@emlid.com>
@@ -75,26 +75,256 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add vendor Emlid Ltd to vendor-prefixes.txt
+Emlid Neutis N5 is a SoM based on Allwinner H5, has a WiFi & BT
+module, DDR3 RAM and eMMC.
 
-Acked-by: Rob Herring <robh@kernel.org>
+- add neutis n5 dtsi file for SoM needs
+- add neutis devboard dts file
+- add neutis devboard target to dtb makefile
+
 Signed-off-by: Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ .../sun50i-h5-emlid-neutis-n5-devboard.dts         | 149 +++++++++++++++++++++
+ .../dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi   |  61 +++++++++
+ 3 files changed, 211 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 2c3fc51..2336e44 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -112,6 +112,7 @@ edt	Emerging Display Technologies
- eeti	eGalax_eMPIA Technology Inc
- elan	Elan Microelectronic Corp.
- embest	Shenzhen Embest Technology Co., Ltd.
-+emlid	Emlid, Ltd.
- emmicro	EM Microelectronic
- emtrion	emtrion GmbH
- energymicro	Silicon Laboratories (formerly Energy Micro AS)
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+index 9ffa7a0..eefe74c 100644
+--- a/arch/arm64/boot/dts/allwinner/Makefile
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pinebook.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-sopine-baseboard.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-teres-i.dtb
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-emlid-neutis-n5-devboard.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-libretech-all-h3-cc.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
+new file mode 100644
+index 0000000..85e7993
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
+@@ -0,0 +1,149 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/*
++ * DTS for Emlid Neutis N5 Dev board.
++ *
++ * Copyright (C) 2018 Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
++ */
++
++/dts-v1/;
++
++#include "sun50i-h5-emlid-neutis-n5.dtsi"
++
++/ {
++	model = "Emlid Neutis N5 Developer board";
++	compatible = "emlid,neutis-n5-devboard",
++		     "emlid,neutis-n5",
++		     "allwinner,sun50i-h5";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
++	reg_usb0_vbus: usb0-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "usb0-vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		enable-active-high;
++		gpio = <&r_pio 0 9 GPIO_ACTIVE_HIGH>;   /* PL9 */
++		status = "okay";
++	};
++
++	vdd_cpux: gpio-regulator {
++		compatible = "regulator-gpio";
++		pinctrl-names = "default";
++		regulator-name = "vdd-cpux";
++		regulator-type = "voltage";
++		regulator-boot-on;
++		regulator-always-on;
++		regulator-min-microvolt = <1100000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-ramp-delay = <50>; /* 4ms */
++		gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
++		gpios-states = <0x1>;
++		states = <1100000 0x0
++			  1300000 0x1>;
++	};
++};
++
++&codec {
++	allwinner,audio-routing =
++		"Line Out", "LINEOUT",
++		"LINEIN", "Line In",
++		"MIC1", "Mic",
++		"MIC2", "Mic",
++		"Mic",  "MBIAS";
++	status = "okay";
++};
++
++&de {
++	status = "okay";
++};
++
++&ehci0 {
++	status = "okay";
++};
++
++&ehci1 {
++	status = "okay";
++};
++
++&ehci2 {
++	status = "okay";
++};
++
++&ehci3 {
++	status = "okay";
++};
++
++&emac {
++	phy-handle = <&int_mii_phy>;
++	phy-mode = "mii";
++	allwinner,leds-active-low;
++	status = "okay";
++};
++
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
++&mmc0 {
++	vmmc-supply = <&reg_vcc3v3>;
++	bus-width = <4>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
++	status = "okay";
++};
++
++&ohci0 {
++	status = "okay";
++};
++
++&ohci1 {
++	status = "okay";
++};
++
++&ohci2 {
++	status = "okay";
++};
++
++&ohci3 {
++	status = "okay";
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_a>;
++	status = "okay";
++};
++
++&usb_otg {
++	dr_mode = "otg";
++	status = "okay";
++};
++
++&usbphy {
++	usb0_id_det-gpios = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
++	usb0_vbus-supply = <&reg_usb0_vbus>;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
+new file mode 100644
+index 0000000..e4d5037
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/*
++ * DTSI for Emlid Neutis N5 SoM.
++ *
++ * Copyright (C) 2018 Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
++ */
++
++/dts-v1/;
++
++#include "sun50i-h5.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	reg_vcc3v3: vcc3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	wifi_pwrseq: wifi_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		pinctrl-names = "default";
++		reset-gpios = <&pio 2 7 GPIO_ACTIVE_LOW>; /* PC7 */
++		post-power-on-delay-ms = <200>;
++	};
++};
++
++&mmc1 {
++	vmmc-supply = <&reg_vcc3v3>;
++	vqmmc-supply = <&reg_vcc3v3>;
++	mmc-pwrseq = <&wifi_pwrseq>;
++	bus-width = <4>;
++	non-removable;
++	status = "okay";
++
++	brcmf: wifi@1 {
++		reg = <1>;
++		compatible = "brcm,bcm4329-fmac";
++		interrupt-parent = <&r_pio>;
++		interrupts = <0 5 IRQ_TYPE_LEVEL_LOW>;	/* PL5 */
++		interrupt-names = "host-wake";
++	};
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_8bit_pins>;
++	vmmc-supply = <&reg_vcc3v3>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
++
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
++	status = "okay";
++};
 -- 
 2.7.4
 
