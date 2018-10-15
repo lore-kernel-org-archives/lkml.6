@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D65C7112A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B93C7112C
 	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1E5F20895
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BE782087D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:00:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="trRDsJRq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E5F20895
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9Z3O8Xr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BE782087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbeJOMni (ORCPT
+        id S1726927AbeJOMnj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 08:43:38 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35036 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbeJOMng (ORCPT
+        Mon, 15 Oct 2018 08:43:39 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45133 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbeJOMni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 08:43:36 -0400
-Received: by mail-pf1-f194.google.com with SMTP id l17-v6so9038451pff.2
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 22:00:03 -0700 (PDT)
+        Mon, 15 Oct 2018 08:43:38 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y15-v6so8660380plr.12
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 22:00:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lIT73f6eOrzGq4/Kgb9qmkqos5ywoYT6UDYKgjvtARI=;
-        b=trRDsJRqYRbCQxXzK3kVCSUousgdX9FjXeuihzSimjYrL4Uc0FzIGKAAsnB+prH9UD
-         2utZVUdIzn0piZwvjCLjIotnzLaE5J2GVZAW5EYu5fNzaADU6dsiQ9SfEkHG9vNiBpQQ
-         97x57Q74ZdLYoUs9KliDpzxiCrLsR9uH/VSsUFH6sURNq6ILPA5lBOFMTP8hn8aqopn5
-         4vtrVA1CUQByH6LCQG+ucaljVjlzk/3RmlzloFcXBhnP5+sK8UCkYEVOWx6Wdcfsab0R
-         kYA7EeheTTWEtY78DtTCqDmelX2Q9/wBua3JBjmg+R6fNvrAv4plThAUujGZILImxahL
-         eUsw==
+        bh=PrrjXDylsjA8jXfuKWOkw4AqKD8yYRoBXOn147lLQNE=;
+        b=i9Z3O8Xrmtt8JumQRsjb/vUSS3zIvZTcrw6Yb6+ynwiC8Gj+aFTmDUm/Ep9s79qAMa
+         RchU5GlOTDHY5H18yNph0PdRKsEgGACAX9jo850WVCQJc9IuDAzwdydyQKoixLBGcyVa
+         e4tTeXHXwyhznvI5iCEc9Ev1cY3WaXPZT7Us4+pVckSI33UppB78ynFddmg31AElCdp4
+         3Y0e8R5ChPgZTW227WqWYJscd6lba93n53Pl0kfs40nNhkdzQdcL1BXFrTYwHV7rQzDM
+         IuEN8+bt23ynzv2G7+v0KE0bjueLLI/1CXDF8AeSKIaIKJGe02dlzY/1RLFZ0OO/FLyD
+         BG1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lIT73f6eOrzGq4/Kgb9qmkqos5ywoYT6UDYKgjvtARI=;
-        b=GUPQG82NHunsRzhx0ZzlgbYwGNQ/vZKcx8ZY9j0mJk9uHu2W7nB7p3pKPuK3h6R2K4
-         MeSPVFdLWBomnnv9WhfuxXNDr6MbJNp80yW6nagTs2snkq9H8sTqnXkZaMmxNPMuVPoQ
-         jPqL1SZAcUwFjqs/W0x/ww4s9FJ41vrR+PK2zYXvGxkhZpbHs4KZvQjCp2dk0Gqs7/zo
-         0xKzbeyyQ5zcGE9lxVv5GRJKWuM1gzpESAE/rGwIItwxqttovbeXdQ03yFVmu3q0rLlD
-         FUPRXoKDAJa8ZSMn5KH5OaIqU27gic808MgQo02ATFVjyNl3B2isaIVkBXMJ/OfL2uwq
-         MevQ==
-X-Gm-Message-State: ABuFfojbNdabJwYmRJEL8pRLC34yyBHa5Q40WcY4FMKSe6EYgK5UxOTG
-        uFUXuvXNqO88YtORJRMtZjw=
-X-Google-Smtp-Source: ACcGV63WqaQb5NVeGpz9XjpVOCiesnLgE/jLK+w3QBMy3UWnwUffws08K6R/4LCa9YuBj4KrQAlLqQ==
-X-Received: by 2002:a62:cfc4:: with SMTP id b187-v6mr7442330pfg.249.1539579602454;
-        Sun, 14 Oct 2018 22:00:02 -0700 (PDT)
+        bh=PrrjXDylsjA8jXfuKWOkw4AqKD8yYRoBXOn147lLQNE=;
+        b=F5335iMUEH2Nuu2vf6HtJ1gEvE5uC6Mqs2m3ZkY1IWxMbphWi7PZ3YNkAOqvfSZeCN
+         t4Wi0H40QzOUrCMpP7pP2eTOGf01vYLe5rzYO7z+Mq/xJUleSPqC6WnE09UoOGeiPVgs
+         IpyECJlG/sicuGw0wEf9xqInyJ/AcsJ/n8TqIPdMX7oYmy+E2xOPAoinp6o40cY8yNXw
+         jLicjArMhXqUu59zkuEsy+29jV91jQ3Ng/z0JiQ4X72sPta3fpA76OPiAalyyhijlhoM
+         Aym7HUZnDouNJXn9xbYCSXMO0NurWjbBljTCLrfrSASiIPn3su7vLLywjQrNbR1A2Evs
+         TRqg==
+X-Gm-Message-State: ABuFfojG9z6ovNA0F/WRgPMeYOWQgWn5LVTLseQ0uLhoXR5Yd6S1ALQy
+        YKPKsPnOV0cFST3oyjFk2yteEAHg
+X-Google-Smtp-Source: ACcGV61BtY8/5bVzJTRbSrdfKApYZ+gm8sXyDKN1lxYeRCyYY3u9AEVkam4/O3p/xtV6VU25S01T0A==
+X-Received: by 2002:a17:902:3041:: with SMTP id u59-v6mr2888730plb.279.1539579605100;
+        Sun, 14 Oct 2018 22:00:05 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id p62-v6sm12244698pfp.111.2018.10.14.22.00.01
+        by smtp.gmail.com with ESMTPSA id p62-v6sm12244698pfp.111.2018.10.14.22.00.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 14 Oct 2018 22:00:01 -0700 (PDT)
+        Sun, 14 Oct 2018 22:00:04 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         Ben Chan <benchan@chromium.org>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Nick Ewalt <nicholasewalt@google.com>,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 08/11] staging: gasket: page_table: simplify gasket_components_to_dev_address
-Date:   Sun, 14 Oct 2018 21:59:24 -0700
-Message-Id: <20181015045927.156790-9-toddpoynor@gmail.com>
+Subject: [PATCH 11/11] staging: gasket: Update device virtual address comment
+Date:   Sun, 14 Oct 2018 21:59:27 -0700
+Message-Id: <20181015045927.156790-12-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 In-Reply-To: <20181015045927.156790-1-toddpoynor@gmail.com>
 References: <20181015045927.156790-1-toddpoynor@gmail.com>
@@ -81,50 +81,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nick Ewalt <nicholasewalt@google.com>
 
-Refactor gasket_components_to_dev_address to be faster and easier to
-understand. The old implementation was unnecessarily complex and masked
-the page_index for simple addresses but not extended ones. It makes the
-most sense for this function to perform no such masking.
+Add that number of page table entries and extended address bit offset
+are configurable. Update example virtual address format to be more
+consistent with typical usage.
 
 Signed-off-by: Nick Ewalt <nicholasewalt@google.com>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_page_table.c | 21 ++-------------------
- 1 file changed, 2 insertions(+), 19 deletions(-)
+ drivers/staging/gasket/gasket_page_table.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index ec9359576ea7c..c2fbab74194f8 100644
+index c2fbab74194f8..5b398b7ba81d3 100644
 --- a/drivers/staging/gasket/gasket_page_table.c
 +++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -699,26 +699,9 @@ static ulong gasket_components_to_dev_address(struct gasket_page_table *pg_tbl,
- 					      int is_simple, uint page_index,
- 					      uint offset)
- {
--	ulong lvl0_index, lvl1_index;
-+	ulong dev_addr = (page_index << GASKET_SIMPLE_PAGE_SHIFT) | offset;
- 
--	if (is_simple) {
--		/* Return simple addresses directly. */
--		lvl0_index = page_index & (pg_tbl->config.total_entries - 1);
--		return (lvl0_index << GASKET_SIMPLE_PAGE_SHIFT) | offset;
--	}
--
--	/*
--	 * This could be compressed into fewer statements, but
--	 * A) the compiler should optimize it
--	 * B) this is not slow
--	 * C) this is an uncommon operation
--	 * D) this is actually readable this way.
--	 */
--	lvl0_index = page_index / GASKET_PAGES_PER_SUBTABLE;
--	lvl1_index = page_index & (GASKET_PAGES_PER_SUBTABLE - 1);
--	return (pg_tbl)->extended_flag |
--	       (lvl0_index << GASKET_EXTENDED_LVL0_SHIFT) |
--	       (lvl1_index << GASKET_EXTENDED_LVL1_SHIFT) | offset;
-+	return is_simple ? dev_addr : (pg_tbl->extended_flag | dev_addr);
- }
- 
- /*
+@@ -10,10 +10,18 @@
+  *
+  * This file assumes 4kB pages throughout; can be factored out when necessary.
+  *
+- * Address format is as follows:
++ * There is a configurable number of page table entries, as well as a
++ * configurable bit index for the extended address flag. Both of these are
++ * specified in gasket_page_table_init through the page_table_config parameter.
++ *
++ * The following example assumes:
++ *   page_table_config->total_entries = 8192
++ *   page_table_config->extended_bit = 63
++ *
++ * Address format:
+  * Simple addresses - those whose containing pages are directly placed in the
+  * device's address translation registers - are laid out as:
+- * [ 63 - 40: Unused | 39 - 28: 0 | 27 - 12: page index | 11 - 0: page offset ]
++ * [ 63 - 25: 0 | 24 - 12: page index | 11 - 0: page offset ]
+  * page index:  The index of the containing page in the device's address
+  *              translation registers.
+  * page offset: The index of the address into the containing page.
+@@ -21,7 +29,7 @@
+  * Extended address - those whose containing pages are contained in a second-
+  * level page table whose address is present in the device's address translation
+  * registers - are laid out as:
+- * [ 63 - 40: Unused | 39: flag | 38 - 37: 0 | 36 - 21: dev/level 0 index |
++ * [ 63: flag | 62 - 34: 0 | 33 - 21: dev/level 0 index |
+  *   20 - 12: host/level 1 index | 11 - 0: page offset ]
+  * flag:        Marker indicating that this is an extended address. Always 1.
+  * dev index:   The index of the first-level page in the device's extended
 -- 
 2.19.0.605.g01d371f741-goog
 
