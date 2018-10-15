@@ -2,1552 +2,362 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90482C7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2499C070C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5C8D20895
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:34:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EAEE2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:36:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ozlabs-ru.20150623.gappssmtp.com header.i=@ozlabs-ru.20150623.gappssmtp.com header.b="IOA1sgLg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5C8D20895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ozlabs.ru
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0Hi7z7L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EAEE2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726588AbeJOJRL (ORCPT
+        id S1726594AbeJOJTK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 05:17:11 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:32787 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726549AbeJOJRK (ORCPT
+        Mon, 15 Oct 2018 05:19:10 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45700 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbeJOJTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 05:17:10 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y18-v6so8373621pge.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 18:34:10 -0700 (PDT)
+        Mon, 15 Oct 2018 05:19:10 -0400
+Received: by mail-pl1-f196.google.com with SMTP id y15-v6so8452535plr.12;
+        Sun, 14 Oct 2018 18:36:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=u0I+nhSNcN1oGXOScqxLrTI8a0Iat+fjLD/sH5A1J2Q=;
-        b=IOA1sgLgK0YLwPQdrwUtxHrGgNNRY/iDNbcmwDeh/TGrXVmfgVQb9BBZax34Nq2iqO
-         ZTcbJTVNV+Te8vptdSP+JnEIhtYOMNKgdexK0mmMqnZ8DR0w+PSgQQms9ha7/BK0rlLW
-         H7G68PuYRHCNIhC8g/ZfmPGiMdlUN+vxVQQHpz7JscCm6EMEQmXlAHQ1rYyk3Ohc6vdE
-         oyvMAvGFgRJL/CUaQuO6YxqZZeJwBUlY3iJzkiL/0LvpyVXn9vUjM6vpFEHbbSeX9B02
-         0Ipz5vCRy65o44lfryH/4tn0zP1DiliTrdqMfuqQWu9kl9jfm37lYmg6dTYwnq8bjJaf
-         PyEw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=149Vx0D2W8mjcNCJKL70YPlmOsdKJvPAZQnKIp1X6OQ=;
+        b=d0Hi7z7L2oPLOyfir+GZ9ueKFAOJV3K4jOuP7EJgDNAw8bJ2OGU3mbxaOjmRFN4GpM
+         MmblDaRpgMK5nXyqz8FxvSM+v+Gck8DoeB1LcpQVnO45ZTm5C/zAuWZlFr4f8L+yPsSR
+         htx70FAeZPqNhXiIPyFYQNyV3lwYXWLfHPEWJsrK+gGYdqDw+ttg9VLs3TQQnZrdP/i/
+         pMgPMnNPiHfGgE+/zLcNlE4xh9o4a+zCKdljJfzaX1ORcXcjFbizaHZD2tcSJp5oXJrs
+         IipgNUgmxhojp4rF4D2E94kuDRUSUvRAj0wOQf+wSOMzYCUgI2tGhpLMb3aVydJH7DDx
+         UCKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=u0I+nhSNcN1oGXOScqxLrTI8a0Iat+fjLD/sH5A1J2Q=;
-        b=du1NfndEazoLd4aOATn3b3QGSe+Yw32SBsWeQxdMSmMYovbNnrkJ/JWD2Y8EAAtCEC
-         2O0oQn/CPAoE7uIu8K5SFFukFmz0bcfnARv2znKDoEO8QxRK6ggolBYjpKffXZyYfT1J
-         IS3bTaEhb+MGyYbCTqUwU47+zycnFOVPV/gk/4JKWfMeVNYY5nxcJtYQwyv6UIkpm5jc
-         sy4zLbNOHyGubt6uVcCZXoCcNeYcnruNDE7H+tc9zIwPC9qatQ0X6EAuIChsiTUkrPaO
-         5V76Gm23lOh/7Yn/j+tTcfwNrIOQ8LAXS3p2Vm79Vi1D3iFyikL5EN0vIBTXyHz1DhWc
-         BIgA==
-X-Gm-Message-State: ABuFfojVzJ7mqba/DnVE3NCWDAwVQZ9GzQRDlBf9/VEVhj3I1u6oJQmx
-        5lzhic0MfD6FWZZH2jX8FossrwOcQZ8=
-X-Google-Smtp-Source: ACcGV60SMtI1kfw1gwEuNH91O3/GWz9GXAYgAATLmic/+uWKhsK+T0LSSoSKc3MjRASFX3gLc2tdHQ==
-X-Received: by 2002:a63:510a:: with SMTP id f10-v6mr14065542pgb.31.1539567249705;
-        Sun, 14 Oct 2018 18:34:09 -0700 (PDT)
-Received: from [10.61.2.175] ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id s85-v6sm12928674pfi.15.2018.10.14.18.34.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 14 Oct 2018 18:34:08 -0700 (PDT)
-Subject: Re: [PATCH 16/33] powerpc/powernv: remove dead npu-dma code
-To:     Christoph Hellwig <hch@lst.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181009132500.17643-1-hch@lst.de>
- <20181009132500.17643-17-hch@lst.de>
-From:   Alexey Kardashevskiy <aik@ozlabs.ru>
-Openpgp: preference=signencrypt
-Autocrypt: addr=aik@ozlabs.ru; keydata=
- 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
-Message-ID: <7709932d-efb8-2c9b-5128-99cc491c302b@ozlabs.ru>
-Date:   Mon, 15 Oct 2018 12:34:02 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181009132500.17643-17-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=149Vx0D2W8mjcNCJKL70YPlmOsdKJvPAZQnKIp1X6OQ=;
+        b=Pq2E3CMTj5dnUlvrmwSoW784kOQfgx8f/JA2HpNIbSx8sBf/8Km2uqO8KnzsRJFMaT
+         lQpBRY2dvspC7EBeYO+Cv8xqFkH4L1Ud08/KLKGqm3Hu+S4mi1IWGi5FwcjcM7eXoNok
+         sFPxVKifa4wP7oG8kEkcRimIZBdj00iwXiBV2+dYcAgK/K63fkzJwWZjg4yjilsAuNY4
+         qdOg2EuaYRXxIgt0Omr25KPoa5LOX1vwwQXLuK+rUAJBpuseDYt8uaoAAJmHu84fjuBv
+         W6H8Xf1kAKA5l0XVgr+ZYsTCtE6O7LPrBsJokplILJRe7zBYHM08Fgom0BMlzIC5SksW
+         CwPA==
+X-Gm-Message-State: ABuFfoiiL2F62pW1HJxZ0rS6Kl+MoMpEyrL8hqHAqOOJHzERizrCIX91
+        CnwYnNdm26+n8OAlOtELbio=
+X-Google-Smtp-Source: ACcGV62iIaVd8HAyKcQO4B289vTJaiW1rBOQOBWOAk4/ml9pQ22yhiTwgyip1nnVjIXzAqdbP80CdA==
+X-Received: by 2002:a17:902:930b:: with SMTP id bc11-v6mr15220216plb.101.1539567369882;
+        Sun, 14 Oct 2018 18:36:09 -0700 (PDT)
+Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id l2-v6sm9221350pgp.20.2018.10.14.18.36.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 14 Oct 2018 18:36:09 -0700 (PDT)
+From:   frowand.list@gmail.com
+To:     Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, Alan Tull <atull@kernel.org>
+Subject: [PATCH] of: overlay: user space synchronization
+Date:   Sun, 14 Oct 2018 18:34:42 -0700
+Message-Id: <1539567282-1326-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Frank Rowand <frank.rowand@sony.com>
 
-On 10/10/2018 00:24, Christoph Hellwig wrote:
-> This code has been unused since it was merged and is in the way of
-> cleaning up the DMA code, thus remove it.
-> 
-> This effectively reverts commit 5d2aa710 ("powerpc/powernv: Add support
-> for Nvlink NPUs").
+When an overlay is applied or removed, the live devicetree visible in
+/proc/device-tree/, aka /sys/firmware/devicetree/base/, reflects the
+changes.  There is no method for user space to determine whether the
+live devicetree was modified by overlay actions.
 
+Provide a sysfs file, /sys/firmware/devicetree/tree_version,  to allow
+user space to determine if the live devicetree has remained unchanged
+while a series of one or more accesses of /proc/device-tree/ occur.
 
-This code is heavily used by the NVIDIA GPU driver.
+The use of both dynamic devicetree modifications and overlay apply and
+removal are not supported during the same boot cycle.  Thus non-overlay
+dynamic modifications are not reflected in the value of tree_version.
 
+Example shell use:
 
+	done=1
 
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/powerpc/include/asm/pci.h            |   3 -
->  arch/powerpc/include/asm/powernv.h        |  23 -
->  arch/powerpc/platforms/powernv/Makefile   |   2 +-
->  arch/powerpc/platforms/powernv/npu-dma.c  | 999 ----------------------
->  arch/powerpc/platforms/powernv/pci-ioda.c | 243 ------
->  arch/powerpc/platforms/powernv/pci.h      |  11 -
->  6 files changed, 1 insertion(+), 1280 deletions(-)
->  delete mode 100644 arch/powerpc/platforms/powernv/npu-dma.c
-> 
-> diff --git a/arch/powerpc/include/asm/pci.h b/arch/powerpc/include/asm/pci.h
-> index 2af9ded80540..a01d2e3d6ff9 100644
-> --- a/arch/powerpc/include/asm/pci.h
-> +++ b/arch/powerpc/include/asm/pci.h
-> @@ -127,7 +127,4 @@ extern void pcibios_scan_phb(struct pci_controller *hose);
->  
->  #endif	/* __KERNEL__ */
->  
-> -extern struct pci_dev *pnv_pci_get_gpu_dev(struct pci_dev *npdev);
-> -extern struct pci_dev *pnv_pci_get_npu_dev(struct pci_dev *gpdev, int index);
-> -
->  #endif /* __ASM_POWERPC_PCI_H */
-> diff --git a/arch/powerpc/include/asm/powernv.h b/arch/powerpc/include/asm/powernv.h
-> index 2f3ff7a27881..4848a6b3c6b2 100644
-> --- a/arch/powerpc/include/asm/powernv.h
-> +++ b/arch/powerpc/include/asm/powernv.h
-> @@ -11,33 +11,10 @@
->  #define _ASM_POWERNV_H
->  
->  #ifdef CONFIG_PPC_POWERNV
-> -#define NPU2_WRITE 1
->  extern void powernv_set_nmmu_ptcr(unsigned long ptcr);
-> -extern struct npu_context *pnv_npu2_init_context(struct pci_dev *gpdev,
-> -			unsigned long flags,
-> -			void (*cb)(struct npu_context *, void *),
-> -			void *priv);
-> -extern void pnv_npu2_destroy_context(struct npu_context *context,
-> -				struct pci_dev *gpdev);
-> -extern int pnv_npu2_handle_fault(struct npu_context *context, uintptr_t *ea,
-> -				unsigned long *flags, unsigned long *status,
-> -				int count);
-> -
->  void pnv_tm_init(void);
->  #else
->  static inline void powernv_set_nmmu_ptcr(unsigned long ptcr) { }
-> -static inline struct npu_context *pnv_npu2_init_context(struct pci_dev *gpdev,
-> -			unsigned long flags,
-> -			struct npu_context *(*cb)(struct npu_context *, void *),
-> -			void *priv) { return ERR_PTR(-ENODEV); }
-> -static inline void pnv_npu2_destroy_context(struct npu_context *context,
-> -					struct pci_dev *gpdev) { }
-> -
-> -static inline int pnv_npu2_handle_fault(struct npu_context *context,
-> -					uintptr_t *ea, unsigned long *flags,
-> -					unsigned long *status, int count) {
-> -	return -ENODEV;
-> -}
->  
->  static inline void pnv_tm_init(void) { }
->  static inline void pnv_power9_force_smt4(void) { }
-> diff --git a/arch/powerpc/platforms/powernv/Makefile b/arch/powerpc/platforms/powernv/Makefile
-> index b540ce8eec55..2b13e9dd137c 100644
-> --- a/arch/powerpc/platforms/powernv/Makefile
-> +++ b/arch/powerpc/platforms/powernv/Makefile
-> @@ -6,7 +6,7 @@ obj-y			+= opal-msglog.o opal-hmi.o opal-power.o opal-irqchip.o
->  obj-y			+= opal-kmsg.o opal-powercap.o opal-psr.o opal-sensor-groups.o
->  
->  obj-$(CONFIG_SMP)	+= smp.o subcore.o subcore-asm.o
-> -obj-$(CONFIG_PCI)	+= pci.o pci-ioda.o npu-dma.o pci-ioda-tce.o
-> +obj-$(CONFIG_PCI)	+= pci.o pci-ioda.o pci-ioda-tce.o
->  obj-$(CONFIG_CXL_BASE)	+= pci-cxl.o
->  obj-$(CONFIG_EEH)	+= eeh-powernv.o
->  obj-$(CONFIG_PPC_SCOM)	+= opal-xscom.o
-> diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
-> deleted file mode 100644
-> index 8006c54a91e3..000000000000
-> --- a/arch/powerpc/platforms/powernv/npu-dma.c
-> +++ /dev/null
-> @@ -1,999 +0,0 @@
-> -/*
-> - * This file implements the DMA operations for NVLink devices. The NPU
-> - * devices all point to the same iommu table as the parent PCI device.
-> - *
-> - * Copyright Alistair Popple, IBM Corporation 2015.
-> - *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of version 2 of the GNU General Public
-> - * License as published by the Free Software Foundation.
-> - */
-> -
-> -#include <linux/slab.h>
-> -#include <linux/mmu_notifier.h>
-> -#include <linux/mmu_context.h>
-> -#include <linux/of.h>
-> -#include <linux/export.h>
-> -#include <linux/pci.h>
-> -#include <linux/memblock.h>
-> -#include <linux/iommu.h>
-> -#include <linux/debugfs.h>
-> -
-> -#include <asm/debugfs.h>
-> -#include <asm/tlb.h>
-> -#include <asm/powernv.h>
-> -#include <asm/reg.h>
-> -#include <asm/opal.h>
-> -#include <asm/io.h>
-> -#include <asm/iommu.h>
-> -#include <asm/pnv-pci.h>
-> -#include <asm/msi_bitmap.h>
-> -#include <asm/opal.h>
-> -
-> -#include "powernv.h"
-> -#include "pci.h"
-> -
-> -#define npu_to_phb(x) container_of(x, struct pnv_phb, npu)
-> -
-> -/*
-> - * spinlock to protect initialisation of an npu_context for a particular
-> - * mm_struct.
-> - */
-> -static DEFINE_SPINLOCK(npu_context_lock);
-> -
-> -/*
-> - * When an address shootdown range exceeds this threshold we invalidate the
-> - * entire TLB on the GPU for the given PID rather than each specific address in
-> - * the range.
-> - */
-> -static uint64_t atsd_threshold = 2 * 1024 * 1024;
-> -static struct dentry *atsd_threshold_dentry;
-> -
-> -/*
-> - * Other types of TCE cache invalidation are not functional in the
-> - * hardware.
-> - */
-> -static struct pci_dev *get_pci_dev(struct device_node *dn)
-> -{
-> -	struct pci_dn *pdn = PCI_DN(dn);
-> -
-> -	return pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
-> -					   pdn->busno, pdn->devfn);
-> -}
-> -
-> -/* Given a NPU device get the associated PCI device. */
-> -struct pci_dev *pnv_pci_get_gpu_dev(struct pci_dev *npdev)
-> -{
-> -	struct device_node *dn;
-> -	struct pci_dev *gpdev;
-> -
-> -	if (WARN_ON(!npdev))
-> -		return NULL;
-> -
-> -	if (WARN_ON(!npdev->dev.of_node))
-> -		return NULL;
-> -
-> -	/* Get assoicated PCI device */
-> -	dn = of_parse_phandle(npdev->dev.of_node, "ibm,gpu", 0);
-> -	if (!dn)
-> -		return NULL;
-> -
-> -	gpdev = get_pci_dev(dn);
-> -	of_node_put(dn);
-> -
-> -	return gpdev;
-> -}
-> -EXPORT_SYMBOL(pnv_pci_get_gpu_dev);
-> -
-> -/* Given the real PCI device get a linked NPU device. */
-> -struct pci_dev *pnv_pci_get_npu_dev(struct pci_dev *gpdev, int index)
-> -{
-> -	struct device_node *dn;
-> -	struct pci_dev *npdev;
-> -
-> -	if (WARN_ON(!gpdev))
-> -		return NULL;
-> -
-> -	/* Not all PCI devices have device-tree nodes */
-> -	if (!gpdev->dev.of_node)
-> -		return NULL;
-> -
-> -	/* Get assoicated PCI device */
-> -	dn = of_parse_phandle(gpdev->dev.of_node, "ibm,npu", index);
-> -	if (!dn)
-> -		return NULL;
-> -
-> -	npdev = get_pci_dev(dn);
-> -	of_node_put(dn);
-> -
-> -	return npdev;
-> -}
-> -EXPORT_SYMBOL(pnv_pci_get_npu_dev);
-> -
-> -#define NPU_DMA_OP_UNSUPPORTED()					\
-> -	dev_err_once(dev, "%s operation unsupported for NVLink devices\n", \
-> -		__func__)
-> -
-> -static void *dma_npu_alloc(struct device *dev, size_t size,
-> -			   dma_addr_t *dma_handle, gfp_t flag,
-> -			   unsigned long attrs)
-> -{
-> -	NPU_DMA_OP_UNSUPPORTED();
-> -	return NULL;
-> -}
-> -
-> -static void dma_npu_free(struct device *dev, size_t size,
-> -			 void *vaddr, dma_addr_t dma_handle,
-> -			 unsigned long attrs)
-> -{
-> -	NPU_DMA_OP_UNSUPPORTED();
-> -}
-> -
-> -static dma_addr_t dma_npu_map_page(struct device *dev, struct page *page,
-> -				   unsigned long offset, size_t size,
-> -				   enum dma_data_direction direction,
-> -				   unsigned long attrs)
-> -{
-> -	NPU_DMA_OP_UNSUPPORTED();
-> -	return 0;
-> -}
-> -
-> -static int dma_npu_map_sg(struct device *dev, struct scatterlist *sglist,
-> -			  int nelems, enum dma_data_direction direction,
-> -			  unsigned long attrs)
-> -{
-> -	NPU_DMA_OP_UNSUPPORTED();
-> -	return 0;
-> -}
-> -
-> -static int dma_npu_dma_supported(struct device *dev, u64 mask)
-> -{
-> -	NPU_DMA_OP_UNSUPPORTED();
-> -	return 0;
-> -}
-> -
-> -static u64 dma_npu_get_required_mask(struct device *dev)
-> -{
-> -	NPU_DMA_OP_UNSUPPORTED();
-> -	return 0;
-> -}
-> -
-> -static const struct dma_map_ops dma_npu_ops = {
-> -	.map_page		= dma_npu_map_page,
-> -	.map_sg			= dma_npu_map_sg,
-> -	.alloc			= dma_npu_alloc,
-> -	.free			= dma_npu_free,
-> -	.dma_supported		= dma_npu_dma_supported,
-> -	.get_required_mask	= dma_npu_get_required_mask,
-> -};
-> -
-> -/*
-> - * Returns the PE assoicated with the PCI device of the given
-> - * NPU. Returns the linked pci device if pci_dev != NULL.
-> - */
-> -static struct pnv_ioda_pe *get_gpu_pci_dev_and_pe(struct pnv_ioda_pe *npe,
-> -						  struct pci_dev **gpdev)
-> -{
-> -	struct pnv_phb *phb;
-> -	struct pci_controller *hose;
-> -	struct pci_dev *pdev;
-> -	struct pnv_ioda_pe *pe;
-> -	struct pci_dn *pdn;
-> -
-> -	pdev = pnv_pci_get_gpu_dev(npe->pdev);
-> -	if (!pdev)
-> -		return NULL;
-> -
-> -	pdn = pci_get_pdn(pdev);
-> -	if (WARN_ON(!pdn || pdn->pe_number == IODA_INVALID_PE))
-> -		return NULL;
-> -
-> -	hose = pci_bus_to_host(pdev->bus);
-> -	phb = hose->private_data;
-> -	pe = &phb->ioda.pe_array[pdn->pe_number];
-> -
-> -	if (gpdev)
-> -		*gpdev = pdev;
-> -
-> -	return pe;
-> -}
-> -
-> -long pnv_npu_set_window(struct pnv_ioda_pe *npe, int num,
-> -		struct iommu_table *tbl)
-> -{
-> -	struct pnv_phb *phb = npe->phb;
-> -	int64_t rc;
-> -	const unsigned long size = tbl->it_indirect_levels ?
-> -		tbl->it_level_size : tbl->it_size;
-> -	const __u64 start_addr = tbl->it_offset << tbl->it_page_shift;
-> -	const __u64 win_size = tbl->it_size << tbl->it_page_shift;
-> -
-> -	pe_info(npe, "Setting up window %llx..%llx pg=%lx\n",
-> -			start_addr, start_addr + win_size - 1,
-> -			IOMMU_PAGE_SIZE(tbl));
-> -
-> -	rc = opal_pci_map_pe_dma_window(phb->opal_id,
-> -			npe->pe_number,
-> -			npe->pe_number,
-> -			tbl->it_indirect_levels + 1,
-> -			__pa(tbl->it_base),
-> -			size << 3,
-> -			IOMMU_PAGE_SIZE(tbl));
-> -	if (rc) {
-> -		pe_err(npe, "Failed to configure TCE table, err %lld\n", rc);
-> -		return rc;
-> -	}
-> -	pnv_pci_ioda2_tce_invalidate_entire(phb, false);
-> -
-> -	/* Add the table to the list so its TCE cache will get invalidated */
-> -	pnv_pci_link_table_and_group(phb->hose->node, num,
-> -			tbl, &npe->table_group);
-> -
-> -	return 0;
-> -}
-> -
-> -long pnv_npu_unset_window(struct pnv_ioda_pe *npe, int num)
-> -{
-> -	struct pnv_phb *phb = npe->phb;
-> -	int64_t rc;
-> -
-> -	pe_info(npe, "Removing DMA window\n");
-> -
-> -	rc = opal_pci_map_pe_dma_window(phb->opal_id, npe->pe_number,
-> -			npe->pe_number,
-> -			0/* levels */, 0/* table address */,
-> -			0/* table size */, 0/* page size */);
-> -	if (rc) {
-> -		pe_err(npe, "Unmapping failed, ret = %lld\n", rc);
-> -		return rc;
-> -	}
-> -	pnv_pci_ioda2_tce_invalidate_entire(phb, false);
-> -
-> -	pnv_pci_unlink_table_and_group(npe->table_group.tables[num],
-> -			&npe->table_group);
-> -
-> -	return 0;
-> -}
-> -
-> -/*
-> - * Enables 32 bit DMA on NPU.
-> - */
-> -static void pnv_npu_dma_set_32(struct pnv_ioda_pe *npe)
-> -{
-> -	struct pci_dev *gpdev;
-> -	struct pnv_ioda_pe *gpe;
-> -	int64_t rc;
-> -
-> -	/*
-> -	 * Find the assoicated PCI devices and get the dma window
-> -	 * information from there.
-> -	 */
-> -	if (!npe->pdev || !(npe->flags & PNV_IODA_PE_DEV))
-> -		return;
-> -
-> -	gpe = get_gpu_pci_dev_and_pe(npe, &gpdev);
-> -	if (!gpe)
-> -		return;
-> -
-> -	rc = pnv_npu_set_window(npe, 0, gpe->table_group.tables[0]);
-> -
-> -	/*
-> -	 * We don't initialise npu_pe->tce32_table as we always use
-> -	 * dma_npu_ops which are nops.
-> -	 */
-> -	set_dma_ops(&npe->pdev->dev, &dma_npu_ops);
-> -}
-> -
-> -/*
-> - * Enables bypass mode on the NPU. The NPU only supports one
-> - * window per link, so bypass needs to be explicitly enabled or
-> - * disabled. Unlike for a PHB3 bypass and non-bypass modes can't be
-> - * active at the same time.
-> - */
-> -static int pnv_npu_dma_set_bypass(struct pnv_ioda_pe *npe)
-> -{
-> -	struct pnv_phb *phb = npe->phb;
-> -	int64_t rc = 0;
-> -	phys_addr_t top = memblock_end_of_DRAM();
-> -
-> -	if (phb->type != PNV_PHB_NPU_NVLINK || !npe->pdev)
-> -		return -EINVAL;
-> -
-> -	rc = pnv_npu_unset_window(npe, 0);
-> -	if (rc != OPAL_SUCCESS)
-> -		return rc;
-> -
-> -	/* Enable the bypass window */
-> -
-> -	top = roundup_pow_of_two(top);
-> -	dev_info(&npe->pdev->dev, "Enabling bypass for PE %x\n",
-> -			npe->pe_number);
-> -	rc = opal_pci_map_pe_dma_window_real(phb->opal_id,
-> -			npe->pe_number, npe->pe_number,
-> -			0 /* bypass base */, top);
-> -
-> -	if (rc == OPAL_SUCCESS)
-> -		pnv_pci_ioda2_tce_invalidate_entire(phb, false);
-> -
-> -	return rc;
-> -}
-> -
-> -void pnv_npu_try_dma_set_bypass(struct pci_dev *gpdev, bool bypass)
-> -{
-> -	int i;
-> -	struct pnv_phb *phb;
-> -	struct pci_dn *pdn;
-> -	struct pnv_ioda_pe *npe;
-> -	struct pci_dev *npdev;
-> -
-> -	for (i = 0; ; ++i) {
-> -		npdev = pnv_pci_get_npu_dev(gpdev, i);
-> -
-> -		if (!npdev)
-> -			break;
-> -
-> -		pdn = pci_get_pdn(npdev);
-> -		if (WARN_ON(!pdn || pdn->pe_number == IODA_INVALID_PE))
-> -			return;
-> -
-> -		phb = pci_bus_to_host(npdev->bus)->private_data;
-> -
-> -		/* We only do bypass if it's enabled on the linked device */
-> -		npe = &phb->ioda.pe_array[pdn->pe_number];
-> -
-> -		if (bypass) {
-> -			dev_info(&npdev->dev,
-> -					"Using 64-bit DMA iommu bypass\n");
-> -			pnv_npu_dma_set_bypass(npe);
-> -		} else {
-> -			dev_info(&npdev->dev, "Using 32-bit DMA via iommu\n");
-> -			pnv_npu_dma_set_32(npe);
-> -		}
-> -	}
-> -}
-> -
-> -/* Switch ownership from platform code to external user (e.g. VFIO) */
-> -void pnv_npu_take_ownership(struct pnv_ioda_pe *npe)
-> -{
-> -	struct pnv_phb *phb = npe->phb;
-> -	int64_t rc;
-> -
-> -	/*
-> -	 * Note: NPU has just a single TVE in the hardware which means that
-> -	 * while used by the kernel, it can have either 32bit window or
-> -	 * DMA bypass but never both. So we deconfigure 32bit window only
-> -	 * if it was enabled at the moment of ownership change.
-> -	 */
-> -	if (npe->table_group.tables[0]) {
-> -		pnv_npu_unset_window(npe, 0);
-> -		return;
-> -	}
-> -
-> -	/* Disable bypass */
-> -	rc = opal_pci_map_pe_dma_window_real(phb->opal_id,
-> -			npe->pe_number, npe->pe_number,
-> -			0 /* bypass base */, 0);
-> -	if (rc) {
-> -		pe_err(npe, "Failed to disable bypass, err %lld\n", rc);
-> -		return;
-> -	}
-> -	pnv_pci_ioda2_tce_invalidate_entire(npe->phb, false);
-> -}
-> -
-> -struct pnv_ioda_pe *pnv_pci_npu_setup_iommu(struct pnv_ioda_pe *npe)
-> -{
-> -	struct pnv_phb *phb = npe->phb;
-> -	struct pci_bus *pbus = phb->hose->bus;
-> -	struct pci_dev *npdev, *gpdev = NULL, *gptmp;
-> -	struct pnv_ioda_pe *gpe = get_gpu_pci_dev_and_pe(npe, &gpdev);
-> -
-> -	if (!gpe || !gpdev)
-> -		return NULL;
-> -
-> -	list_for_each_entry(npdev, &pbus->devices, bus_list) {
-> -		gptmp = pnv_pci_get_gpu_dev(npdev);
-> -
-> -		if (gptmp != gpdev)
-> -			continue;
-> -
-> -		pe_info(gpe, "Attached NPU %s\n", dev_name(&npdev->dev));
-> -		iommu_group_add_device(gpe->table_group.group, &npdev->dev);
-> -	}
-> -
-> -	return gpe;
-> -}
-> -
-> -/* Maximum number of nvlinks per npu */
-> -#define NV_MAX_LINKS 6
-> -
-> -/* Maximum index of npu2 hosts in the system. Always < NV_MAX_NPUS */
-> -static int max_npu2_index;
-> -
-> -struct npu_context {
-> -	struct mm_struct *mm;
-> -	struct pci_dev *npdev[NV_MAX_NPUS][NV_MAX_LINKS];
-> -	struct mmu_notifier mn;
-> -	struct kref kref;
-> -	bool nmmu_flush;
-> -
-> -	/* Callback to stop translation requests on a given GPU */
-> -	void (*release_cb)(struct npu_context *context, void *priv);
-> -
-> -	/*
-> -	 * Private pointer passed to the above callback for usage by
-> -	 * device drivers.
-> -	 */
-> -	void *priv;
-> -};
-> -
-> -struct mmio_atsd_reg {
-> -	struct npu *npu;
-> -	int reg;
-> -};
-> -
-> -/*
-> - * Find a free MMIO ATSD register and mark it in use. Return -ENOSPC
-> - * if none are available.
-> - */
-> -static int get_mmio_atsd_reg(struct npu *npu)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < npu->mmio_atsd_count; i++) {
-> -		if (!test_bit(i, &npu->mmio_atsd_usage))
-> -			if (!test_and_set_bit_lock(i, &npu->mmio_atsd_usage))
-> -				return i;
-> -	}
-> -
-> -	return -ENOSPC;
-> -}
-> -
-> -static void put_mmio_atsd_reg(struct npu *npu, int reg)
-> -{
-> -	clear_bit_unlock(reg, &npu->mmio_atsd_usage);
-> -}
-> -
-> -/* MMIO ATSD register offsets */
-> -#define XTS_ATSD_AVA  1
-> -#define XTS_ATSD_STAT 2
-> -
-> -static void mmio_launch_invalidate(struct mmio_atsd_reg *mmio_atsd_reg,
-> -				unsigned long launch, unsigned long va)
-> -{
-> -	struct npu *npu = mmio_atsd_reg->npu;
-> -	int reg = mmio_atsd_reg->reg;
-> -
-> -	__raw_writeq_be(va, npu->mmio_atsd_regs[reg] + XTS_ATSD_AVA);
-> -	eieio();
-> -	__raw_writeq_be(launch, npu->mmio_atsd_regs[reg]);
-> -}
-> -
-> -static void mmio_invalidate_pid(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS],
-> -				unsigned long pid, bool flush)
-> -{
-> -	int i;
-> -	unsigned long launch;
-> -
-> -	for (i = 0; i <= max_npu2_index; i++) {
-> -		if (mmio_atsd_reg[i].reg < 0)
-> -			continue;
-> -
-> -		/* IS set to invalidate matching PID */
-> -		launch = PPC_BIT(12);
-> -
-> -		/* PRS set to process-scoped */
-> -		launch |= PPC_BIT(13);
-> -
-> -		/* AP */
-> -		launch |= (u64)
-> -			mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
-> -
-> -		/* PID */
-> -		launch |= pid << PPC_BITLSHIFT(38);
-> -
-> -		/* No flush */
-> -		launch |= !flush << PPC_BITLSHIFT(39);
-> -
-> -		/* Invalidating the entire process doesn't use a va */
-> -		mmio_launch_invalidate(&mmio_atsd_reg[i], launch, 0);
-> -	}
-> -}
-> -
-> -static void mmio_invalidate_va(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS],
-> -			unsigned long va, unsigned long pid, bool flush)
-> -{
-> -	int i;
-> -	unsigned long launch;
-> -
-> -	for (i = 0; i <= max_npu2_index; i++) {
-> -		if (mmio_atsd_reg[i].reg < 0)
-> -			continue;
-> -
-> -		/* IS set to invalidate target VA */
-> -		launch = 0;
-> -
-> -		/* PRS set to process scoped */
-> -		launch |= PPC_BIT(13);
-> -
-> -		/* AP */
-> -		launch |= (u64)
-> -			mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
-> -
-> -		/* PID */
-> -		launch |= pid << PPC_BITLSHIFT(38);
-> -
-> -		/* No flush */
-> -		launch |= !flush << PPC_BITLSHIFT(39);
-> -
-> -		mmio_launch_invalidate(&mmio_atsd_reg[i], launch, va);
-> -	}
-> -}
-> -
-> -#define mn_to_npu_context(x) container_of(x, struct npu_context, mn)
-> -
-> -static void mmio_invalidate_wait(
-> -	struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
-> -{
-> -	struct npu *npu;
-> -	int i, reg;
-> -
-> -	/* Wait for all invalidations to complete */
-> -	for (i = 0; i <= max_npu2_index; i++) {
-> -		if (mmio_atsd_reg[i].reg < 0)
-> -			continue;
-> -
-> -		/* Wait for completion */
-> -		npu = mmio_atsd_reg[i].npu;
-> -		reg = mmio_atsd_reg[i].reg;
-> -		while (__raw_readq(npu->mmio_atsd_regs[reg] + XTS_ATSD_STAT))
-> -			cpu_relax();
-> -	}
-> -}
-> -
-> -/*
-> - * Acquires all the address translation shootdown (ATSD) registers required to
-> - * launch an ATSD on all links this npu_context is active on.
-> - */
-> -static void acquire_atsd_reg(struct npu_context *npu_context,
-> -			struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
-> -{
-> -	int i, j;
-> -	struct npu *npu;
-> -	struct pci_dev *npdev;
-> -	struct pnv_phb *nphb;
-> -
-> -	for (i = 0; i <= max_npu2_index; i++) {
-> -		mmio_atsd_reg[i].reg = -1;
-> -		for (j = 0; j < NV_MAX_LINKS; j++) {
-> -			/*
-> -			 * There are no ordering requirements with respect to
-> -			 * the setup of struct npu_context, but to ensure
-> -			 * consistent behaviour we need to ensure npdev[][] is
-> -			 * only read once.
-> -			 */
-> -			npdev = READ_ONCE(npu_context->npdev[i][j]);
-> -			if (!npdev)
-> -				continue;
-> -
-> -			nphb = pci_bus_to_host(npdev->bus)->private_data;
-> -			npu = &nphb->npu;
-> -			mmio_atsd_reg[i].npu = npu;
-> -			mmio_atsd_reg[i].reg = get_mmio_atsd_reg(npu);
-> -			while (mmio_atsd_reg[i].reg < 0) {
-> -				mmio_atsd_reg[i].reg = get_mmio_atsd_reg(npu);
-> -				cpu_relax();
-> -			}
-> -			break;
-> -		}
-> -	}
-> -}
-> -
-> -/*
-> - * Release previously acquired ATSD registers. To avoid deadlocks the registers
-> - * must be released in the same order they were acquired above in
-> - * acquire_atsd_reg.
-> - */
-> -static void release_atsd_reg(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i <= max_npu2_index; i++) {
-> -		/*
-> -		 * We can't rely on npu_context->npdev[][] being the same here
-> -		 * as when acquire_atsd_reg() was called, hence we use the
-> -		 * values stored in mmio_atsd_reg during the acquire phase
-> -		 * rather than re-reading npdev[][].
-> -		 */
-> -		if (mmio_atsd_reg[i].reg < 0)
-> -			continue;
-> -
-> -		put_mmio_atsd_reg(mmio_atsd_reg[i].npu, mmio_atsd_reg[i].reg);
-> -	}
-> -}
-> -
-> -/*
-> - * Invalidate either a single address or an entire PID depending on
-> - * the value of va.
-> - */
-> -static void mmio_invalidate(struct npu_context *npu_context, int va,
-> -			unsigned long address, bool flush)
-> -{
-> -	struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS];
-> -	unsigned long pid = npu_context->mm->context.id;
-> -
-> -	if (npu_context->nmmu_flush)
-> -		/*
-> -		 * Unfortunately the nest mmu does not support flushing specific
-> -		 * addresses so we have to flush the whole mm once before
-> -		 * shooting down the GPU translation.
-> -		 */
-> -		flush_all_mm(npu_context->mm);
-> -
-> -	/*
-> -	 * Loop over all the NPUs this process is active on and launch
-> -	 * an invalidate.
-> -	 */
-> -	acquire_atsd_reg(npu_context, mmio_atsd_reg);
-> -	if (va)
-> -		mmio_invalidate_va(mmio_atsd_reg, address, pid, flush);
-> -	else
-> -		mmio_invalidate_pid(mmio_atsd_reg, pid, flush);
-> -
-> -	mmio_invalidate_wait(mmio_atsd_reg);
-> -	if (flush) {
-> -		/*
-> -		 * The GPU requires two flush ATSDs to ensure all entries have
-> -		 * been flushed. We use PID 0 as it will never be used for a
-> -		 * process on the GPU.
-> -		 */
-> -		mmio_invalidate_pid(mmio_atsd_reg, 0, true);
-> -		mmio_invalidate_wait(mmio_atsd_reg);
-> -		mmio_invalidate_pid(mmio_atsd_reg, 0, true);
-> -		mmio_invalidate_wait(mmio_atsd_reg);
-> -	}
-> -	release_atsd_reg(mmio_atsd_reg);
-> -}
-> -
-> -static void pnv_npu2_mn_release(struct mmu_notifier *mn,
-> -				struct mm_struct *mm)
-> -{
-> -	struct npu_context *npu_context = mn_to_npu_context(mn);
-> -
-> -	/* Call into device driver to stop requests to the NMMU */
-> -	if (npu_context->release_cb)
-> -		npu_context->release_cb(npu_context, npu_context->priv);
-> -
-> -	/*
-> -	 * There should be no more translation requests for this PID, but we
-> -	 * need to ensure any entries for it are removed from the TLB.
-> -	 */
-> -	mmio_invalidate(npu_context, 0, 0, true);
-> -}
-> -
-> -static void pnv_npu2_mn_change_pte(struct mmu_notifier *mn,
-> -				struct mm_struct *mm,
-> -				unsigned long address,
-> -				pte_t pte)
-> -{
-> -	struct npu_context *npu_context = mn_to_npu_context(mn);
-> -
-> -	mmio_invalidate(npu_context, 1, address, true);
-> -}
-> -
-> -static void pnv_npu2_mn_invalidate_range(struct mmu_notifier *mn,
-> -					struct mm_struct *mm,
-> -					unsigned long start, unsigned long end)
-> -{
-> -	struct npu_context *npu_context = mn_to_npu_context(mn);
-> -	unsigned long address;
-> -
-> -	if (end - start > atsd_threshold) {
-> -		/*
-> -		 * Just invalidate the entire PID if the address range is too
-> -		 * large.
-> -		 */
-> -		mmio_invalidate(npu_context, 0, 0, true);
-> -	} else {
-> -		for (address = start; address < end; address += PAGE_SIZE)
-> -			mmio_invalidate(npu_context, 1, address, false);
-> -
-> -		/* Do the flush only on the final addess == end */
-> -		mmio_invalidate(npu_context, 1, address, true);
-> -	}
-> -}
-> -
-> -static const struct mmu_notifier_ops nv_nmmu_notifier_ops = {
-> -	.release = pnv_npu2_mn_release,
-> -	.change_pte = pnv_npu2_mn_change_pte,
-> -	.invalidate_range = pnv_npu2_mn_invalidate_range,
-> -};
-> -
-> -/*
-> - * Call into OPAL to setup the nmmu context for the current task in
-> - * the NPU. This must be called to setup the context tables before the
-> - * GPU issues ATRs. pdev should be a pointed to PCIe GPU device.
-> - *
-> - * A release callback should be registered to allow a device driver to
-> - * be notified that it should not launch any new translation requests
-> - * as the final TLB invalidate is about to occur.
-> - *
-> - * Returns an error if there no contexts are currently available or a
-> - * npu_context which should be passed to pnv_npu2_handle_fault().
-> - *
-> - * mmap_sem must be held in write mode and must not be called from interrupt
-> - * context.
-> - */
-> -struct npu_context *pnv_npu2_init_context(struct pci_dev *gpdev,
-> -			unsigned long flags,
-> -			void (*cb)(struct npu_context *, void *),
-> -			void *priv)
-> -{
-> -	int rc;
-> -	u32 nvlink_index;
-> -	struct device_node *nvlink_dn;
-> -	struct mm_struct *mm = current->mm;
-> -	struct pnv_phb *nphb;
-> -	struct npu *npu;
-> -	struct npu_context *npu_context;
-> -
-> -	/*
-> -	 * At present we don't support GPUs connected to multiple NPUs and I'm
-> -	 * not sure the hardware does either.
-> -	 */
-> -	struct pci_dev *npdev = pnv_pci_get_npu_dev(gpdev, 0);
-> -
-> -	if (!firmware_has_feature(FW_FEATURE_OPAL))
-> -		return ERR_PTR(-ENODEV);
-> -
-> -	if (!npdev)
-> -		/* No nvlink associated with this GPU device */
-> -		return ERR_PTR(-ENODEV);
-> -
-> -	nvlink_dn = of_parse_phandle(npdev->dev.of_node, "ibm,nvlink", 0);
-> -	if (WARN_ON(of_property_read_u32(nvlink_dn, "ibm,npu-link-index",
-> -							&nvlink_index)))
-> -		return ERR_PTR(-ENODEV);
-> -
-> -	if (!mm || mm->context.id == 0) {
-> -		/*
-> -		 * Kernel thread contexts are not supported and context id 0 is
-> -		 * reserved on the GPU.
-> -		 */
-> -		return ERR_PTR(-EINVAL);
-> -	}
-> -
-> -	nphb = pci_bus_to_host(npdev->bus)->private_data;
-> -	npu = &nphb->npu;
-> -
-> -	/*
-> -	 * Setup the NPU context table for a particular GPU. These need to be
-> -	 * per-GPU as we need the tables to filter ATSDs when there are no
-> -	 * active contexts on a particular GPU. It is safe for these to be
-> -	 * called concurrently with destroy as the OPAL call takes appropriate
-> -	 * locks and refcounts on init/destroy.
-> -	 */
-> -	rc = opal_npu_init_context(nphb->opal_id, mm->context.id, flags,
-> -				PCI_DEVID(gpdev->bus->number, gpdev->devfn));
-> -	if (rc < 0)
-> -		return ERR_PTR(-ENOSPC);
-> -
-> -	/*
-> -	 * We store the npu pci device so we can more easily get at the
-> -	 * associated npus.
-> -	 */
-> -	spin_lock(&npu_context_lock);
-> -	npu_context = mm->context.npu_context;
-> -	if (npu_context) {
-> -		if (npu_context->release_cb != cb ||
-> -			npu_context->priv != priv) {
-> -			spin_unlock(&npu_context_lock);
-> -			opal_npu_destroy_context(nphb->opal_id, mm->context.id,
-> -						PCI_DEVID(gpdev->bus->number,
-> -							gpdev->devfn));
-> -			return ERR_PTR(-EINVAL);
-> -		}
-> -
-> -		WARN_ON(!kref_get_unless_zero(&npu_context->kref));
-> -	}
-> -	spin_unlock(&npu_context_lock);
-> -
-> -	if (!npu_context) {
-> -		/*
-> -		 * We can set up these fields without holding the
-> -		 * npu_context_lock as the npu_context hasn't been returned to
-> -		 * the caller meaning it can't be destroyed. Parallel allocation
-> -		 * is protected against by mmap_sem.
-> -		 */
-> -		rc = -ENOMEM;
-> -		npu_context = kzalloc(sizeof(struct npu_context), GFP_KERNEL);
-> -		if (npu_context) {
-> -			kref_init(&npu_context->kref);
-> -			npu_context->mm = mm;
-> -			npu_context->mn.ops = &nv_nmmu_notifier_ops;
-> -			rc = __mmu_notifier_register(&npu_context->mn, mm);
-> -		}
-> -
-> -		if (rc) {
-> -			kfree(npu_context);
-> -			opal_npu_destroy_context(nphb->opal_id, mm->context.id,
-> -					PCI_DEVID(gpdev->bus->number,
-> -						gpdev->devfn));
-> -			return ERR_PTR(rc);
-> -		}
-> -
-> -		mm->context.npu_context = npu_context;
-> -	}
-> -
-> -	npu_context->release_cb = cb;
-> -	npu_context->priv = priv;
-> -
-> -	/*
-> -	 * npdev is a pci_dev pointer setup by the PCI code. We assign it to
-> -	 * npdev[][] to indicate to the mmu notifiers that an invalidation
-> -	 * should also be sent over this nvlink. The notifiers don't use any
-> -	 * other fields in npu_context, so we just need to ensure that when they
-> -	 * deference npu_context->npdev[][] it is either a valid pointer or
-> -	 * NULL.
-> -	 */
-> -	WRITE_ONCE(npu_context->npdev[npu->index][nvlink_index], npdev);
-> -
-> -	if (!nphb->npu.nmmu_flush) {
-> -		/*
-> -		 * If we're not explicitly flushing ourselves we need to mark
-> -		 * the thread for global flushes
-> -		 */
-> -		npu_context->nmmu_flush = false;
-> -		mm_context_add_copro(mm);
-> -	} else
-> -		npu_context->nmmu_flush = true;
-> -
-> -	return npu_context;
-> -}
-> -EXPORT_SYMBOL(pnv_npu2_init_context);
-> -
-> -static void pnv_npu2_release_context(struct kref *kref)
-> -{
-> -	struct npu_context *npu_context =
-> -		container_of(kref, struct npu_context, kref);
-> -
-> -	if (!npu_context->nmmu_flush)
-> -		mm_context_remove_copro(npu_context->mm);
-> -
-> -	npu_context->mm->context.npu_context = NULL;
-> -}
-> -
-> -/*
-> - * Destroy a context on the given GPU. May free the npu_context if it is no
-> - * longer active on any GPUs. Must not be called from interrupt context.
-> - */
-> -void pnv_npu2_destroy_context(struct npu_context *npu_context,
-> -			struct pci_dev *gpdev)
-> -{
-> -	int removed;
-> -	struct pnv_phb *nphb;
-> -	struct npu *npu;
-> -	struct pci_dev *npdev = pnv_pci_get_npu_dev(gpdev, 0);
-> -	struct device_node *nvlink_dn;
-> -	u32 nvlink_index;
-> -
-> -	if (WARN_ON(!npdev))
-> -		return;
-> -
-> -	if (!firmware_has_feature(FW_FEATURE_OPAL))
-> -		return;
-> -
-> -	nphb = pci_bus_to_host(npdev->bus)->private_data;
-> -	npu = &nphb->npu;
-> -	nvlink_dn = of_parse_phandle(npdev->dev.of_node, "ibm,nvlink", 0);
-> -	if (WARN_ON(of_property_read_u32(nvlink_dn, "ibm,npu-link-index",
-> -							&nvlink_index)))
-> -		return;
-> -	WRITE_ONCE(npu_context->npdev[npu->index][nvlink_index], NULL);
-> -	opal_npu_destroy_context(nphb->opal_id, npu_context->mm->context.id,
-> -				PCI_DEVID(gpdev->bus->number, gpdev->devfn));
-> -	spin_lock(&npu_context_lock);
-> -	removed = kref_put(&npu_context->kref, pnv_npu2_release_context);
-> -	spin_unlock(&npu_context_lock);
-> -
-> -	/*
-> -	 * We need to do this outside of pnv_npu2_release_context so that it is
-> -	 * outside the spinlock as mmu_notifier_destroy uses SRCU.
-> -	 */
-> -	if (removed) {
-> -		mmu_notifier_unregister(&npu_context->mn,
-> -					npu_context->mm);
-> -
-> -		kfree(npu_context);
-> -	}
-> -
-> -}
-> -EXPORT_SYMBOL(pnv_npu2_destroy_context);
-> -
-> -/*
-> - * Assumes mmap_sem is held for the contexts associated mm.
-> - */
-> -int pnv_npu2_handle_fault(struct npu_context *context, uintptr_t *ea,
-> -			unsigned long *flags, unsigned long *status, int count)
-> -{
-> -	u64 rc = 0, result = 0;
-> -	int i, is_write;
-> -	struct page *page[1];
-> -
-> -	/* mmap_sem should be held so the struct_mm must be present */
-> -	struct mm_struct *mm = context->mm;
-> -
-> -	if (!firmware_has_feature(FW_FEATURE_OPAL))
-> -		return -ENODEV;
-> -
-> -	WARN_ON(!rwsem_is_locked(&mm->mmap_sem));
-> -
-> -	for (i = 0; i < count; i++) {
-> -		is_write = flags[i] & NPU2_WRITE;
-> -		rc = get_user_pages_remote(NULL, mm, ea[i], 1,
-> -					is_write ? FOLL_WRITE : 0,
-> -					page, NULL, NULL);
-> -
-> -		/*
-> -		 * To support virtualised environments we will have to do an
-> -		 * access to the page to ensure it gets faulted into the
-> -		 * hypervisor. For the moment virtualisation is not supported in
-> -		 * other areas so leave the access out.
-> -		 */
-> -		if (rc != 1) {
-> -			status[i] = rc;
-> -			result = -EFAULT;
-> -			continue;
-> -		}
-> -
-> -		status[i] = 0;
-> -		put_page(page[0]);
-> -	}
-> -
-> -	return result;
-> -}
-> -EXPORT_SYMBOL(pnv_npu2_handle_fault);
-> -
-> -int pnv_npu2_init(struct pnv_phb *phb)
-> -{
-> -	unsigned int i;
-> -	u64 mmio_atsd;
-> -	struct device_node *dn;
-> -	struct pci_dev *gpdev;
-> -	static int npu_index;
-> -	uint64_t rc = 0;
-> -
-> -	if (!atsd_threshold_dentry) {
-> -		atsd_threshold_dentry = debugfs_create_x64("atsd_threshold",
-> -				   0600, powerpc_debugfs_root, &atsd_threshold);
-> -	}
-> -
-> -	phb->npu.nmmu_flush =
-> -		of_property_read_bool(phb->hose->dn, "ibm,nmmu-flush");
-> -	for_each_child_of_node(phb->hose->dn, dn) {
-> -		gpdev = pnv_pci_get_gpu_dev(get_pci_dev(dn));
-> -		if (gpdev) {
-> -			rc = opal_npu_map_lpar(phb->opal_id,
-> -				PCI_DEVID(gpdev->bus->number, gpdev->devfn),
-> -				0, 0);
-> -			if (rc)
-> -				dev_err(&gpdev->dev,
-> -					"Error %lld mapping device to LPAR\n",
-> -					rc);
-> -		}
-> -	}
-> -
-> -	for (i = 0; !of_property_read_u64_index(phb->hose->dn, "ibm,mmio-atsd",
-> -							i, &mmio_atsd); i++)
-> -		phb->npu.mmio_atsd_regs[i] = ioremap(mmio_atsd, 32);
-> -
-> -	pr_info("NPU%lld: Found %d MMIO ATSD registers", phb->opal_id, i);
-> -	phb->npu.mmio_atsd_count = i;
-> -	phb->npu.mmio_atsd_usage = 0;
-> -	npu_index++;
-> -	if (WARN_ON(npu_index >= NV_MAX_NPUS))
-> -		return -ENOSPC;
-> -	max_npu2_index = npu_index;
-> -	phb->npu.index = npu_index;
-> -
-> -	return 0;
-> -}
-> diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-> index 913175ba1c10..b6db65917bb4 100644
-> --- a/arch/powerpc/platforms/powernv/pci-ioda.c
-> +++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-> @@ -1203,75 +1203,6 @@ static struct pnv_ioda_pe *pnv_ioda_setup_bus_PE(struct pci_bus *bus, bool all)
->  	return pe;
->  }
->  
-> -static struct pnv_ioda_pe *pnv_ioda_setup_npu_PE(struct pci_dev *npu_pdev)
-> -{
-> -	int pe_num, found_pe = false, rc;
-> -	long rid;
-> -	struct pnv_ioda_pe *pe;
-> -	struct pci_dev *gpu_pdev;
-> -	struct pci_dn *npu_pdn;
-> -	struct pci_controller *hose = pci_bus_to_host(npu_pdev->bus);
-> -	struct pnv_phb *phb = hose->private_data;
-> -
-> -	/*
-> -	 * Due to a hardware errata PE#0 on the NPU is reserved for
-> -	 * error handling. This means we only have three PEs remaining
-> -	 * which need to be assigned to four links, implying some
-> -	 * links must share PEs.
-> -	 *
-> -	 * To achieve this we assign PEs such that NPUs linking the
-> -	 * same GPU get assigned the same PE.
-> -	 */
-> -	gpu_pdev = pnv_pci_get_gpu_dev(npu_pdev);
-> -	for (pe_num = 0; pe_num < phb->ioda.total_pe_num; pe_num++) {
-> -		pe = &phb->ioda.pe_array[pe_num];
-> -		if (!pe->pdev)
-> -			continue;
-> -
-> -		if (pnv_pci_get_gpu_dev(pe->pdev) == gpu_pdev) {
-> -			/*
-> -			 * This device has the same peer GPU so should
-> -			 * be assigned the same PE as the existing
-> -			 * peer NPU.
-> -			 */
-> -			dev_info(&npu_pdev->dev,
-> -				"Associating to existing PE %x\n", pe_num);
-> -			pci_dev_get(npu_pdev);
-> -			npu_pdn = pci_get_pdn(npu_pdev);
-> -			rid = npu_pdev->bus->number << 8 | npu_pdn->devfn;
-> -			npu_pdn->pe_number = pe_num;
-> -			phb->ioda.pe_rmap[rid] = pe->pe_number;
-> -
-> -			/* Map the PE to this link */
-> -			rc = opal_pci_set_pe(phb->opal_id, pe_num, rid,
-> -					OpalPciBusAll,
-> -					OPAL_COMPARE_RID_DEVICE_NUMBER,
-> -					OPAL_COMPARE_RID_FUNCTION_NUMBER,
-> -					OPAL_MAP_PE);
-> -			WARN_ON(rc != OPAL_SUCCESS);
-> -			found_pe = true;
-> -			break;
-> -		}
-> -	}
-> -
-> -	if (!found_pe)
-> -		/*
-> -		 * Could not find an existing PE so allocate a new
-> -		 * one.
-> -		 */
-> -		return pnv_ioda_setup_dev_PE(npu_pdev);
-> -	else
-> -		return pe;
-> -}
-> -
-> -static void pnv_ioda_setup_npu_PEs(struct pci_bus *bus)
-> -{
-> -	struct pci_dev *pdev;
-> -
-> -	list_for_each_entry(pdev, &bus->devices, bus_list)
-> -		pnv_ioda_setup_npu_PE(pdev);
-> -}
-> -
->  static void pnv_pci_ioda_setup_PEs(void)
->  {
->  	struct pci_controller *hose, *tmp;
-> @@ -1281,13 +1212,6 @@ static void pnv_pci_ioda_setup_PEs(void)
->  
->  	list_for_each_entry_safe(hose, tmp, &hose_list, list_node) {
->  		phb = hose->private_data;
-> -		if (phb->type == PNV_PHB_NPU_NVLINK) {
-> -			/* PE#0 is needed for error reporting */
-> -			pnv_ioda_reserve_pe(phb, 0);
-> -			pnv_ioda_setup_npu_PEs(hose->bus);
-> -			if (phb->model == PNV_PHB_MODEL_NPU2)
-> -				pnv_npu2_init(phb);
-> -		}
->  		if (phb->type == PNV_PHB_NPU_OCAPI) {
->  			bus = hose->bus;
->  			list_for_each_entry(pdev, &bus->devices, bus_list)
-> @@ -1871,9 +1795,6 @@ static int pnv_pci_ioda_dma_set_mask(struct pci_dev *pdev, u64 dma_mask)
->  	}
->  	*pdev->dev.dma_mask = dma_mask;
->  
-> -	/* Update peer npu devices */
-> -	pnv_npu_try_dma_set_bypass(pdev, bypass);
-> -
->  	return 0;
->  }
->  
-> @@ -2119,14 +2040,6 @@ static void pnv_pci_ioda2_tce_invalidate(struct iommu_table *tbl,
->  	}
->  }
->  
-> -void pnv_pci_ioda2_tce_invalidate_entire(struct pnv_phb *phb, bool rm)
-> -{
-> -	if (phb->model == PNV_PHB_MODEL_NPU || phb->model == PNV_PHB_MODEL_PHB3)
-> -		pnv_pci_phb3_tce_invalidate_entire(phb, rm);
-> -	else
-> -		opal_pci_tce_kill(phb->opal_id, OPAL_PCI_TCE_KILL, 0, 0, 0, 0);
-> -}
-> -
->  static int pnv_ioda2_tce_build(struct iommu_table *tbl, long index,
->  		long npages, unsigned long uaddr,
->  		enum dma_data_direction direction,
-> @@ -2615,137 +2528,6 @@ static struct iommu_table_group_ops pnv_pci_ioda2_ops = {
->  	.take_ownership = pnv_ioda2_take_ownership,
->  	.release_ownership = pnv_ioda2_release_ownership,
->  };
-> -
-> -static int gpe_table_group_to_npe_cb(struct device *dev, void *opaque)
-> -{
-> -	struct pci_controller *hose;
-> -	struct pnv_phb *phb;
-> -	struct pnv_ioda_pe **ptmppe = opaque;
-> -	struct pci_dev *pdev = container_of(dev, struct pci_dev, dev);
-> -	struct pci_dn *pdn = pci_get_pdn(pdev);
-> -
-> -	if (!pdn || pdn->pe_number == IODA_INVALID_PE)
-> -		return 0;
-> -
-> -	hose = pci_bus_to_host(pdev->bus);
-> -	phb = hose->private_data;
-> -	if (phb->type != PNV_PHB_NPU_NVLINK)
-> -		return 0;
-> -
-> -	*ptmppe = &phb->ioda.pe_array[pdn->pe_number];
-> -
-> -	return 1;
-> -}
-> -
-> -/*
-> - * This returns PE of associated NPU.
-> - * This assumes that NPU is in the same IOMMU group with GPU and there is
-> - * no other PEs.
-> - */
-> -static struct pnv_ioda_pe *gpe_table_group_to_npe(
-> -		struct iommu_table_group *table_group)
-> -{
-> -	struct pnv_ioda_pe *npe = NULL;
-> -	int ret = iommu_group_for_each_dev(table_group->group, &npe,
-> -			gpe_table_group_to_npe_cb);
-> -
-> -	BUG_ON(!ret || !npe);
-> -
-> -	return npe;
-> -}
-> -
-> -static long pnv_pci_ioda2_npu_set_window(struct iommu_table_group *table_group,
-> -		int num, struct iommu_table *tbl)
-> -{
-> -	struct pnv_ioda_pe *npe = gpe_table_group_to_npe(table_group);
-> -	int num2 = (num == 0) ? 1 : 0;
-> -	long ret = pnv_pci_ioda2_set_window(table_group, num, tbl);
-> -
-> -	if (ret)
-> -		return ret;
-> -
-> -	if (table_group->tables[num2])
-> -		pnv_npu_unset_window(npe, num2);
-> -
-> -	ret = pnv_npu_set_window(npe, num, tbl);
-> -	if (ret) {
-> -		pnv_pci_ioda2_unset_window(table_group, num);
-> -		if (table_group->tables[num2])
-> -			pnv_npu_set_window(npe, num2,
-> -					table_group->tables[num2]);
-> -	}
-> -
-> -	return ret;
-> -}
-> -
-> -static long pnv_pci_ioda2_npu_unset_window(
-> -		struct iommu_table_group *table_group,
-> -		int num)
-> -{
-> -	struct pnv_ioda_pe *npe = gpe_table_group_to_npe(table_group);
-> -	int num2 = (num == 0) ? 1 : 0;
-> -	long ret = pnv_pci_ioda2_unset_window(table_group, num);
-> -
-> -	if (ret)
-> -		return ret;
-> -
-> -	if (!npe->table_group.tables[num])
-> -		return 0;
-> -
-> -	ret = pnv_npu_unset_window(npe, num);
-> -	if (ret)
-> -		return ret;
-> -
-> -	if (table_group->tables[num2])
-> -		ret = pnv_npu_set_window(npe, num2, table_group->tables[num2]);
-> -
-> -	return ret;
-> -}
-> -
-> -static void pnv_ioda2_npu_take_ownership(struct iommu_table_group *table_group)
-> -{
-> -	/*
-> -	 * Detach NPU first as pnv_ioda2_take_ownership() will destroy
-> -	 * the iommu_table if 32bit DMA is enabled.
-> -	 */
-> -	pnv_npu_take_ownership(gpe_table_group_to_npe(table_group));
-> -	pnv_ioda2_take_ownership(table_group);
-> -}
-> -
-> -static struct iommu_table_group_ops pnv_pci_ioda2_npu_ops = {
-> -	.get_table_size = pnv_pci_ioda2_get_table_size,
-> -	.create_table = pnv_pci_ioda2_create_table_userspace,
-> -	.set_window = pnv_pci_ioda2_npu_set_window,
-> -	.unset_window = pnv_pci_ioda2_npu_unset_window,
-> -	.take_ownership = pnv_ioda2_npu_take_ownership,
-> -	.release_ownership = pnv_ioda2_release_ownership,
-> -};
-> -
-> -static void pnv_pci_ioda_setup_iommu_api(void)
-> -{
-> -	struct pci_controller *hose, *tmp;
-> -	struct pnv_phb *phb;
-> -	struct pnv_ioda_pe *pe, *gpe;
-> -
-> -	/*
-> -	 * Now we have all PHBs discovered, time to add NPU devices to
-> -	 * the corresponding IOMMU groups.
-> -	 */
-> -	list_for_each_entry_safe(hose, tmp, &hose_list, list_node) {
-> -		phb = hose->private_data;
-> -
-> -		if (phb->type != PNV_PHB_NPU_NVLINK)
-> -			continue;
-> -
-> -		list_for_each_entry(pe, &phb->ioda.pe_list, list) {
-> -			gpe = pnv_pci_npu_setup_iommu(pe);
-> -			if (gpe)
-> -				gpe->table_group.ops = &pnv_pci_ioda2_npu_ops;
-> -		}
-> -	}
-> -}
-> -#else /* !CONFIG_IOMMU_API */
-> -static void pnv_pci_ioda_setup_iommu_api(void) { };
->  #endif
->  
->  static unsigned long pnv_ioda_parse_tce_sizes(struct pnv_phb *phb)
-> @@ -3242,7 +3024,6 @@ static void pnv_pci_enable_bridges(void)
->  static void pnv_pci_ioda_fixup(void)
->  {
->  	pnv_pci_ioda_setup_PEs();
-> -	pnv_pci_ioda_setup_iommu_api();
->  	pnv_pci_ioda_create_dbgfs();
->  
->  	pnv_pci_enable_bridges();
-> @@ -3689,27 +3470,6 @@ static const struct pci_controller_ops pnv_pci_ioda_controller_ops = {
->  	.shutdown		= pnv_pci_ioda_shutdown,
->  };
->  
-> -static int pnv_npu_dma_set_mask(struct pci_dev *npdev, u64 dma_mask)
-> -{
-> -	dev_err_once(&npdev->dev,
-> -			"%s operation unsupported for NVLink devices\n",
-> -			__func__);
-> -	return -EPERM;
-> -}
-> -
-> -static const struct pci_controller_ops pnv_npu_ioda_controller_ops = {
-> -	.dma_dev_setup		= pnv_pci_dma_dev_setup,
-> -#ifdef CONFIG_PCI_MSI
-> -	.setup_msi_irqs		= pnv_setup_msi_irqs,
-> -	.teardown_msi_irqs	= pnv_teardown_msi_irqs,
-> -#endif
-> -	.enable_device_hook	= pnv_pci_enable_device_hook,
-> -	.window_alignment	= pnv_pci_window_alignment,
-> -	.reset_secondary_bus	= pnv_pci_reset_secondary_bus,
-> -	.dma_set_mask		= pnv_npu_dma_set_mask,
-> -	.shutdown		= pnv_pci_ioda_shutdown,
-> -};
-> -
->  static const struct pci_controller_ops pnv_npu_ocapi_ioda_controller_ops = {
->  	.enable_device_hook	= pnv_pci_enable_device_hook,
->  	.window_alignment	= pnv_pci_window_alignment,
-> @@ -3931,9 +3691,6 @@ static void __init pnv_pci_init_ioda_phb(struct device_node *np,
->  	ppc_md.pcibios_fixup = pnv_pci_ioda_fixup;
->  
->  	switch (phb->type) {
-> -	case PNV_PHB_NPU_NVLINK:
-> -		hose->controller_ops = pnv_npu_ioda_controller_ops;
-> -		break;
->  	case PNV_PHB_NPU_OCAPI:
->  		hose->controller_ops = pnv_npu_ocapi_ioda_controller_ops;
->  		break;
-> diff --git a/arch/powerpc/platforms/powernv/pci.h b/arch/powerpc/platforms/powernv/pci.h
-> index 8b37b28e3831..54f2935b7ac5 100644
-> --- a/arch/powerpc/platforms/powernv/pci.h
-> +++ b/arch/powerpc/platforms/powernv/pci.h
-> @@ -231,17 +231,6 @@ extern void pe_level_printk(const struct pnv_ioda_pe *pe, const char *level,
->  #define pe_info(pe, fmt, ...)					\
->  	pe_level_printk(pe, KERN_INFO, fmt, ##__VA_ARGS__)
->  
-> -/* Nvlink functions */
-> -extern void pnv_npu_try_dma_set_bypass(struct pci_dev *gpdev, bool bypass);
-> -extern void pnv_pci_ioda2_tce_invalidate_entire(struct pnv_phb *phb, bool rm);
-> -extern struct pnv_ioda_pe *pnv_pci_npu_setup_iommu(struct pnv_ioda_pe *npe);
-> -extern long pnv_npu_set_window(struct pnv_ioda_pe *npe, int num,
-> -		struct iommu_table *tbl);
-> -extern long pnv_npu_unset_window(struct pnv_ioda_pe *npe, int num);
-> -extern void pnv_npu_take_ownership(struct pnv_ioda_pe *npe);
-> -extern void pnv_npu_release_ownership(struct pnv_ioda_pe *npe);
-> -extern int pnv_npu2_init(struct pnv_phb *phb);
-> -
->  /* pci-ioda-tce.c */
->  #define POWERNV_IOMMU_DEFAULT_LEVELS	1
->  #define POWERNV_IOMMU_MAX_LEVELS	5
-> 
+	while [ $done = 1 ] ; do
 
+		pre_version=$(cat /sys/firmware/devicetree/tree_version)
+		version=$pre_version
+		while [ $(( ${version} & 1 )) != 0 ] ; do
+			# echo is optional, sleep value can be tuned
+ 			echo "${version}  sleeping"
+ 			sleep 2;
+ 			pre_version=$(cat /sys/firmware/devicetree/tree_version)
+ 			version=${pre_version}
+		done
+
+		# 'critical region'
+		# access /proc/device-tree/ one or more times
+
+		post_version=$(cat /sys/firmware/devicetree/tree_version)
+
+		if [ ${post_version} = ${pre_version} ] ; then
+			done=0
+		fi
+
+	done
+
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+---
+ Documentation/ABI/testing/sysfs-firmware-ofw | 64 ++++++++++++++++++++++++---
+ drivers/of/base.c                            | 66 ++++++++++++++++++++++++++++
+ drivers/of/of_private.h                      |  2 +
+ drivers/of/overlay.c                         | 12 +++++
+ 4 files changed, 137 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-firmware-ofw b/Documentation/ABI/testing/sysfs-firmware-ofw
+index edcab3ccfcc0..4111797e8ed5 100644
+--- a/Documentation/ABI/testing/sysfs-firmware-ofw
++++ b/Documentation/ABI/testing/sysfs-firmware-ofw
+@@ -1,4 +1,10 @@
+-What:		/sys/firmware/devicetree/*
++What:		/sys/firmware/devicetree/
++Date:		November 2013
++Contact:	Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org
++Description:
++		Top level Open Firmware, aka devicetree, sysfs directory.
++
++What:		/sys/firmware/devicetree/base
+ Date:		November 2013
+ Contact:	Grant Likely <grant.likely@arm.com>, devicetree@vger.kernel.org
+ Description:
+@@ -6,11 +12,6 @@ Description:
+ 		hardware, the device tree structure will be exposed in this
+ 		directory.
+ 
+-		It is possible for multiple device-tree directories to exist.
+-		Some device drivers use a separate detached device tree which
+-		have no attachment to the system tree and will appear in a
+-		different subdirectory under /sys/firmware/devicetree.
+-
+ 		Userspace must not use the /sys/firmware/devicetree/base
+ 		path directly, but instead should follow /proc/device-tree
+ 		symlink. It is possible that the absolute path will change
+@@ -20,13 +21,62 @@ Description:
+ 		filesystem support, and has largely the same semantics and
+ 		should be compatible with existing userspace.
+ 
+-		The contents of /sys/firmware/devicetree/ is a
++		The /sys/firmware/devicetree/base directory is the root
++		node of the devicetree.
++
++		The contents of /sys/firmware/devicetree/base is a
+ 		hierarchy of directories, one per device tree node. The
+ 		directory name is the resolved path component name (node
+ 		name plus address). Properties are represented as files
+ 		in the directory. The contents of each file is the exact
+ 		binary data from the device tree.
+ 
++What:		/sys/firmware/devicetree/tree_version
++Date:		October 2018
++KernelVersion:	4.20
++Contact:	Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org
++Description:
++		When an overlay is applied or removed, the live devicetree
++		visible in /proc/device-tree/, aka
++		/sys/firmware/devicetree/base/, reflects the changes.
++
++		tree_version provides a way for user space to determine if the
++		live devicetree has remained unchanged while a series of one
++		or more accesses of /proc/device-tree/ occur.
++
++		The use of both dynamic devicetree modifications and overlay
++		apply and removal are not supported during the same boot
++		cycle.  Thus non-overlay dynamic modifications are not
++		reflected in the value of tree_version.
++
++		Example shell use of tree_version:
++
++		done=1
++
++		while [ $done = 1 ] ; do
++
++		   pre_version=$(cat /sys/firmware/devicetree/tree_version)
++		   version=$pre_version
++		   while [ $(( ${version} & 1 )) != 0 ] ; do
++		      # echo is optional, sleep value can be tuned
++		      echo "${version}  sleeping"
++		      sleep 2;
++		      pre_version=$(cat /sys/firmware/devicetree/tree_version)
++		      version=${pre_version}
++		   done
++
++		   # 'critical region'
++		   # access /proc/device-tree/ one or more times
++
++		   post_version=$(cat /sys/firmware/devicetree/tree_version)
++
++		   if [ ${post_version} = ${pre_version} ] ; then
++		      done=0
++		   fi
++
++		done
++
++
+ What:		/sys/firmware/fdt
+ Date:		February 2015
+ KernelVersion:	3.19
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 466e3c8582f0..ec0428e47577 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -151,9 +151,71 @@ int of_free_phandle_cache(void)
+ late_initcall_sync(of_free_phandle_cache);
+ #endif
+ 
++#define show_one(object)						\
++	static ssize_t show_##object					\
++	(struct kobject *kobj, struct attribute *attr, char *buf)	\
++	{								\
++		return sprintf(buf, "%u\n", object);			\
++	}
++
++struct global_attr {
++	struct attribute attr;
++	ssize_t (*show)(struct kobject *kobj,
++			struct attribute *attr, char *buf);
++	ssize_t (*store)(struct kobject *a, struct attribute *b,
++			 const char *c, size_t count);
++};
++
++#define define_one_global_ro(_name)		\
++static struct global_attr attr_##_name =	\
++__ATTR(_name, 0444, show_##_name, NULL)
++
++/*
++ * tree_version must be unsigned so that at maximum value it wraps
++ * from an odd value (4294967295) to an even value (0).
++ */
++static u32 tree_version;
++
++show_one(tree_version);
++
++define_one_global_ro(tree_version);
++
++static struct attribute *of_attributes[] = {
++	&attr_tree_version.attr,
++	NULL
++};
++
++static const struct attribute_group of_attr_group = {
++	.attrs = of_attributes,
++};
++
++/*
++ * internal documentation
++ * tree_version_increment() - increment base version
++ *
++ * Before starting overlay apply or overlay remove, call this function.
++ * After completing overlay apply or overlay remove, call this function.
++ *
++ * caller must hold of_mutex
++ *
++ * Userspace can use the value of this variable to determine whether the
++ * devicetree has changed while accessing the devicetree.  An odd value
++ * means a modification is underway.  An even value means no modification
++ * is underway.
++ *
++ * The use of both (1) dynamic devicetree modifications and (2) overlay apply
++ * and removal are not supported during the same boot cycle.  Thus non-overlay
++ * dynamic modifications are not reflected in the value of tree_version.
++ */
++void tree_version_increment(void)
++{
++	tree_version++;
++}
++
+ void __init of_core_init(void)
+ {
+ 	struct device_node *np;
++	int ret;
+ 
+ 	of_populate_phandle_cache();
+ 
+@@ -172,6 +234,10 @@ void __init of_core_init(void)
+ 	/* Symlink in /proc as required by userspace ABI */
+ 	if (of_root)
+ 		proc_symlink("device-tree", NULL, "/sys/firmware/devicetree/base");
++
++	ret = sysfs_create_group(&of_kset->kobj, &of_attr_group);
++	if (ret)
++		pr_err("sysfs_create_group of_attr_group failed: %d\n", ret);
+ }
+ 
+ static struct property *__of_find_property(const struct device_node *np,
+diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+index 216175d11d3d..adf89f6bad81 100644
+--- a/drivers/of/of_private.h
++++ b/drivers/of/of_private.h
+@@ -31,6 +31,8 @@ struct alias_prop {
+ extern struct list_head aliases_lookup;
+ extern struct kset *of_kset;
+ 
++void tree_version_increment(void);
++
+ #if defined(CONFIG_OF_DYNAMIC)
+ extern int of_property_notify(int action, struct device_node *np,
+ 			      struct property *prop, struct property *old_prop);
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index eda57ef12fd0..53b1810b1e03 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -770,6 +770,9 @@ static int of_overlay_apply(const void *fdt, struct device_node *tree,
+ 	of_overlay_mutex_lock();
+ 	mutex_lock(&of_mutex);
+ 
++	/* live tree may change after this point, user space synchronization */
++	tree_version_increment();
++
+ 	ret = of_resolve_phandles(tree);
+ 	if (ret)
+ 		goto err_free_tree;
+@@ -832,6 +835,9 @@ static int of_overlay_apply(const void *fdt, struct device_node *tree,
+ 	free_overlay_changeset(ovcs);
+ 
+ out_unlock:
++	/* live tree change complete, user space synchronization */
++	tree_version_increment();
++
+ 	mutex_unlock(&of_mutex);
+ 	of_overlay_mutex_unlock();
+ 
+@@ -1028,6 +1034,9 @@ int of_overlay_remove(int *ovcs_id)
+ 
+ 	mutex_lock(&of_mutex);
+ 
++	/* live tree may change after this point, user space synchronization */
++	tree_version_increment();
++
+ 	ovcs = idr_find(&ovcs_idr, *ovcs_id);
+ 	if (!ovcs) {
+ 		ret = -ENODEV;
+@@ -1083,6 +1092,9 @@ int of_overlay_remove(int *ovcs_id)
+ 	free_overlay_changeset(ovcs);
+ 
+ out_unlock:
++	/* live tree change complete, user space synchronization */
++	tree_version_increment();
++
+ 	mutex_unlock(&of_mutex);
+ 
+ out:
 -- 
-Alexey
+Frank Rowand <frank.rowand@sony.com>
+
