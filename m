@@ -4,135 +4,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31628C04EBC
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FECC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6D07208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:46:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4724D208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:50:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F9ba1EdO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6D07208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="h8TPu7ML"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4724D208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbeJPGdy (ORCPT
+        id S1727017AbeJPGhZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:33:54 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:35046 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbeJPGdx (ORCPT
+        Tue, 16 Oct 2018 02:37:25 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48334 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbeJPGhY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:33:53 -0400
-Received: by mail-yb1-f196.google.com with SMTP id o63-v6so8156199yba.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 15:46:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Yq7cAHf8F7PW+t95dpp6GCWUFslhvWiPYFUB7IEr9FU=;
-        b=F9ba1EdOUKaafX9xrEqBARmbgLTf5BTazH9EUA2zqpIfgfemc+EGfElDFaacLlXV70
-         SA7qSzK0tJNB0lhVdaPyb67bG07z0qrCMfA8JY1yy0usQeNdR/5MAAilhLx9CDq/xc6w
-         D6ks2MQH8YTAZYX27MjGeIYcrdDQWf7iSlB7Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Yq7cAHf8F7PW+t95dpp6GCWUFslhvWiPYFUB7IEr9FU=;
-        b=FfiXN4Fo6AGHK2HXn3o1vq1o/gMZ/EuqfOPCBsja0td1hWqAi4u1zMXOBgjTS6CeIk
-         pVjpsMSDL6HQDncmOUx2WDTCtuYjgOfRumZ3xIANj2OdgainSmbEqG7fhDoce4zbPxhJ
-         GcSIket8lHqJ/tFo0uKCYN9+Ws1zhzzGmZ7U6qRwYAKDQk9TmXXJnLTV1MoAljRqjjpB
-         kEJk5xOaLmOaaTqRtDWoS1WlNbTR62U/HqVLbkWInwycpOJFna7SkfzQcqPdpwyqoe7/
-         nO9NBX8l08edC5Zgins48xC9JeoQcu46/DykNxwEOUAh4dkhT0LTYtdpMA1RnkE5JO8K
-         RejQ==
-X-Gm-Message-State: ABuFfoiJvQ0kM2nXToAiWEN7qOSip+pCVBfAamFUHG6i//NjItyk3Edq
-        DsXWjzyuWJdviDdBqMwMvcx9gE61ZhU=
-X-Google-Smtp-Source: ACcGV62/9wEpazOQBMe1VfVZgoGNXXewZ/sm7fa5VUoW5uWyhV9FnuWZXSb+Qg29H0fwPxH2yB5ayw==
-X-Received: by 2002:a25:ce83:: with SMTP id x125-v6mr10686326ybe.145.1539643595159;
-        Mon, 15 Oct 2018 15:46:35 -0700 (PDT)
-Received: from mail-yw1-f49.google.com (mail-yw1-f49.google.com. [209.85.161.49])
-        by smtp.gmail.com with ESMTPSA id r5-v6sm4966713ywr.80.2018.10.15.15.46.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 15:46:34 -0700 (PDT)
-Received: by mail-yw1-f49.google.com with SMTP id j75-v6so8165167ywj.10
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 15:46:34 -0700 (PDT)
-X-Received: by 2002:a81:2cc3:: with SMTP id s186-v6mr10806432yws.168.1539643133798;
- Mon, 15 Oct 2018 15:38:53 -0700 (PDT)
+        Tue, 16 Oct 2018 02:37:24 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9FMmdx2021213;
+        Mon, 15 Oct 2018 22:49:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=jy7qEuDRGqGQH+cwmDv61Fp0ms0JdTM5vUaiMs66EJY=;
+ b=h8TPu7ML0xPnsZqq9w3w5dlpRS532GImSxjpFOppGC5pzKqJvWspKRnKRgEep29D9VOZ
+ ZIbvrHQWprh121y7owCvBQjl4ph5D+DQwvjOtHTSo5L2qU2zjZysoNrctXtBqznsyW+j
+ jQkAU2V36DP70JKZRFXaDA9m/ig41xiXC/+K2BDIz4vB+2yW3Ph+bYwd3IwzjrUyADKQ
+ QPFzR4zzk+wPmHGEC0pppMosDsQ7i4h0MfL0sNQlxi70fl5VbsYyKsNnmqA9iZBAzjrk
+ RD4IynkVISWZ5bQjXGC67DiypGma5RiaLzmnfOetixs4me/fOjBEcvzJcpxvJfT8QKts 6A== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2n39br54g7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Oct 2018 22:49:45 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9FMniuF006752
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Oct 2018 22:49:44 GMT
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9FMnhRt030396;
+        Mon, 15 Oct 2018 22:49:43 GMT
+Received: from [10.132.91.175] (/10.132.91.175)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 15 Oct 2018 15:49:43 -0700
+Subject: Re: Gang scheduling
+To:     Tim Chen <tim.c.chen@linux.intel.com>, linux-kernel@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>
+References: <44347e72-d595-5c2d-3983-7237526c71c6@oracle.com>
+ <c08136ad-3e68-ce1c-af03-b591acc582fc@linux.intel.com>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <cc445d4f-8532-cd38-08ed-0a70f2cb40a1@oracle.com>
+Date:   Mon, 15 Oct 2018 15:49:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 15:38:53
- -0700 (PDT)
-In-Reply-To: <d0e36e1f-fa1a-f4ab-5a83-11e095801fef@arm.com>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
- <20181005084754.20950-18-kristina.martsenko@arm.com> <d0e36e1f-fa1a-f4ab-5a83-11e095801fef@arm.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 15 Oct 2018 15:38:53 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jL5v_Db9RnLYEJtFcGHYf3j023Kxd5eWvtpBjYYQorYMQ@mail.gmail.com>
-Message-ID: <CAGXu5jL5v_Db9RnLYEJtFcGHYf3j023Kxd5eWvtpBjYYQorYMQ@mail.gmail.com>
-Subject: Re: [RFC 17/17] arm64: compile the kernel with ptrauth -msign-return-address
-To:     Vladimir Murzin <vladimir.murzin@arm.com>
-Cc:     Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Adam Wallis <awallis@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c08136ad-3e68-ce1c-af03-b591acc582fc@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9047 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810150196
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 7:23 AM, Vladimir Murzin
-<vladimir.murzin@arm.com> wrote:
-> Hi Kristina,
->
-> On 05/10/18 09:47, Kristina Martsenko wrote:
->> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
->> index 106039d25e2f..dbcd43ea99d8 100644
->> --- a/arch/arm64/Makefile
->> +++ b/arch/arm64/Makefile
->> @@ -56,6 +56,10 @@ KBUILD_AFLAGS      += $(lseinstr) $(brokengasinst)
->>  KBUILD_CFLAGS        += $(call cc-option,-mabi=lp64)
->>  KBUILD_AFLAGS        += $(call cc-option,-mabi=lp64)
+
+
+On 10/12/2018 11:01 AM, Tim Chen wrote:
+> On 10/10/2018 05:09 PM, Subhra Mazumdar wrote:
+>> Hi,
 >>
->> +ifeq ($(CONFIG_ARM64_PTR_AUTH),y)
->> +KBUILD_CFLAGS        += -msign-return-address=all
->> +endif
+>> I was following the Coscheduling patch discussion on lkml and Peter mentioned he had a patch series. I found the following on github.
+>>
+>> https://github.com/pdxChen/gang/commits/sched_1.23-loadbal
+>>
+>> I would like to test this with KVMs. Are the commits from 38d5acb to f019876 sufficient? Also is there any documentaion on how to use it (any knobs I need to turn on for gang scheduling to happen?) or is it enabled by default for KVMs?
+>>
+>> Thanks,
+>> Subhra
+>>
+> I would suggest you try
+> https://github.com/pdxChen/gang/tree/sched_1.23-base
+> without the load balancing part of gang scheduling.
+> It is enabled by default for KVMs.
 >
-> Should not it be done via cc-option so old toolchains keep working [1]?
+> Due to the constant change in gang scheduling status of the QEMU thread
+> depending on whether vcpu is loaded or unloaded,
+> the load balancing part of the code doesn't work very well.
+Thanks. Does this mean each vcpu thread need to be affinitized to a cpu?
 >
-> [1]
-> $ aarch64-linux-gnu-gcc --version
-> aarch64-linux-gnu-gcc (Linaro GCC 2014.11) 4.9.3 20141031 (prerelease)
-> Copyright (C) 2014 Free Software Foundation, Inc.
-> This is free software; see the source for copying conditions.  There is NO
-> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+> The current version of the code need to be optimized further.  Right now
+> the QEMU thread constantly does vcpu load and unload during VM enter and exit.
+> We gang schedule only after vcpu load and register the thread to be gang
+> scheduled.  When we do vcpu unload, the thread is removed from the set
+> to be gang scheduled.  Each time there's a synchronization with the
+> sibling thread that's expensive.
 >
-> $ aarch64-linux-gnu-gcc -msign-return-address=all
-> aarch64-linux-gnu-gcc: error: unrecognized command line option '-msign-return-address=all'
-> ...
+> However, for QEMU, there's a one to one correspondence between the QEMU
+> thread and vcpu.  So we don't have to change the gang scheduling status
+> for such thread to avoid the church and sync with the sibling. That should
+> be helpful for VM with lots of I/O causing constant VM exits.  We're
+> still working on this optimization.  And the load balancing should be
+> better after this change.
+>
+> Tim
+>
 
-I would like to see CONFIG_ARM64_PTR_AUTH testing for compiler support
-via Kconfig (as stack-protector does). This would allow developers to
-only see the option if it was available (i.e. no "downgrade" happens
-if the compiler is missing support). Using cc-option runs the risk of
-building a kernel with CONFIG_ARM64_PTR_AUTH set, but _not_ actually
-using ptr auth.
+Also FYI I get the following error while building sched_1.23-base:
 
--Kees
+ERROR: "sched_ttwu_pending" [arch/x86/kvm/kvm-intel.ko] undefined!
+scripts/Makefile.modpost:92: recipe for target '__modpost' failed
 
--- 
-Kees Cook
-Pixel Security
+Adding the following fixed it:
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 46807dc..302b77d 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -21,6 +21,7 @@
+  #include <trace/events/sched.h>
+
+  DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
++EXPORT_SYMBOL_GPL(sched_ttwu_pending);
+
+  #if defined(CONFIG_SCHED_DEBUG) && defined(HAVE_JUMP_LABEL)
+  /*
