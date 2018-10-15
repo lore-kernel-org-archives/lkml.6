@@ -2,133 +2,149 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8342DC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A73C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F2F20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:12:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45F2F20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F65320652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:14:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aLEZxw25"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F65320652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbeJOR4x (ORCPT
+        id S1726920AbeJOR6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 13:56:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56006 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbeJOR4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 13:56:52 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4AAFB86671;
-        Mon, 15 Oct 2018 10:12:17 +0000 (UTC)
-Received: from [10.36.117.209] (ovpn-117-209.ams2.redhat.com [10.36.117.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DF98A2AAB5;
-        Mon, 15 Oct 2018 10:12:12 +0000 (UTC)
-Subject: Re: [PATCH V4 9/15] KVM: Add flush_link and parent_pte in the struct
- kvm_mmu_page
-To:     lantianyu1986@gmail.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        rkrcmar@redhat.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        michael.h.kelley@microsoft.com, vkuznets@redhat.com
-References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
- <20181013145406.4911-10-Tianyu.Lan@microsoft.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <638de1c3-0efd-9319-4dcb-86c3ac88ebf3@redhat.com>
-Date:   Mon, 15 Oct 2018 12:12:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 15 Oct 2018 13:58:43 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:36754 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeJOR6m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 13:58:42 -0400
+Received: by mail-yw1-f67.google.com with SMTP id e201-v6so7309983ywa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 03:14:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ltSeLTifuW11G43C+EeaDED4E8SWxt+UFfxhiYAcMKM=;
+        b=aLEZxw253Y/s0rkkJyBVg1Ovq3WhQkqA6NjUCUuAOcOuTlyFTCkRFQUQS5yE7jd8gB
+         Fq0we8Rvm5wogEPXCQ5JMqfJu73clis330YjTykYa6cwYUhgavEutULfvpkZtYMg9UXG
+         K88pyVT4ttK7LyFti8/CwfZ72QzWwk9uguuQ4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ltSeLTifuW11G43C+EeaDED4E8SWxt+UFfxhiYAcMKM=;
+        b=QqtlZEczJ+793dtK8P6hxVUYbEp7eK5L650nN/BuGPvL0euJlicroEiHOQ+xA8IB6w
+         jKNHpP2JdI88kgKFRNsejKQGdEKp50ZJ7XsKUE6r8Ydly04ioukOfdn32H9AUDMjwfzC
+         OkZ9vtTIFlckeOdJwSE6OMnwyZPORsw5IbRRCly1IL4wcPw0k4A8sgKK8XDAavagoOMI
+         u1bHz3GDt9rYhi4l25iibkp27iQaaKNSScPfrpCg9A17nAaRmfC4JGgn/hctEE2TuWQ6
+         WJ+JGShiuVSMWt7tSUDmWH7TiOnF4HRGx+tJgX8Gyd5XT/Katy8mj97xnOoy6mcJVEDe
+         NN8Q==
+X-Gm-Message-State: ABuFfogYU5MmkzogMnNu4BfWgfZhmGe5di7bOgV+Y0tMxusunnJwnvnb
+        GcG8zBZE4zphL7ySsFlJp+V7xwtzTRY=
+X-Google-Smtp-Source: ACcGV63+dPJ/Gk2VG1EqRGa2o9PT9m1W1+NLraE9i6JwjAWHpVmgqoQcGXobw56YzROI2/Bwn+5gXA==
+X-Received: by 2002:a0d:d4c9:: with SMTP id w192-v6mr8569228ywd.211.1539598446325;
+        Mon, 15 Oct 2018 03:14:06 -0700 (PDT)
+Received: from mail-yw1-f49.google.com (mail-yw1-f49.google.com. [209.85.161.49])
+        by smtp.gmail.com with ESMTPSA id y126-v6sm2753809ywe.26.2018.10.15.03.14.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 03:14:05 -0700 (PDT)
+Received: by mail-yw1-f49.google.com with SMTP id v1-v6so7308569ywv.6
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 03:14:04 -0700 (PDT)
+X-Received: by 2002:a81:3d8d:: with SMTP id k135-v6mr8943563ywa.415.1539598444339;
+ Mon, 15 Oct 2018 03:14:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181013145406.4911-10-Tianyu.Lan@microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 15 Oct 2018 10:12:17 +0000 (UTC)
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
+ <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl> <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
+ <a6af3dc9-1d09-a414-ce31-bc1b3e69894f@xs4all.nl> <CAAFQd5AnC+hWy4QUGE-s+qgRvvgGC7rMhH6x8koTfYJzTLw8Cg@mail.gmail.com>
+ <f0aa7c84-08e3-9b04-8d1b-95f741d6817b@xs4all.nl> <CAAFQd5ACWO0FxzZdxf-N-GStCMOSWzxKxhcpCRUh=BqT7jLJWw@mail.gmail.com>
+In-Reply-To: <CAAFQd5ACWO0FxzZdxf-N-GStCMOSWzxKxhcpCRUh=BqT7jLJWw@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Mon, 15 Oct 2018 19:13:51 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5ASZU-tSadEbE5NuD3aiNeZakPe-UT7oXdBxASqCpujWw@mail.gmail.com>
+Message-ID: <CAAFQd5ASZU-tSadEbE5NuD3aiNeZakPe-UT7oXdBxASqCpujWw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/10/2018 16:54, lantianyu1986@gmail.com wrote:
-> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> 
-> PV EPT tlb flush function will accept a list of flush ranges and
-> use struct kvm_mmu_page as the list entry.
-> 
-> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> ---
->  arch/x86/include/asm/kvm_host.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 19985c602ed6..8279235285f8 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -316,6 +316,7 @@ struct kvm_rmap_head {
->  
->  struct kvm_mmu_page {
->  	struct list_head link;
-> +	struct list_head flush_link;
+On Wed, Aug 8, 2018 at 11:55 AM Tomasz Figa <tfiga@chromium.org> wrote:
+>
+> On Tue, Aug 7, 2018 at 4:37 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> >
+> > On 08/07/2018 09:05 AM, Tomasz Figa wrote:
+> > > On Thu, Jul 26, 2018 at 7:57 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> > >>>> I wonder if we should make these min buffer controls required. It might be easier
+> > >>>> that way.
+> > >>>
+> > >>> Agreed. Although userspace is still free to ignore it, because REQBUFS
+> > >>> would do the right thing anyway.
+> > >>
+> > >> It's never been entirely clear to me what the purpose of those min buffers controls
+> > >> is. REQBUFS ensures that the number of buffers is at least the minimum needed to
+> > >> make the HW work. So why would you need these controls? It only makes sense if they
+> > >> return something different from REQBUFS.
+> > >>
+> > >
+> > > The purpose of those controls is to let the client allocate a number
+> > > of buffers bigger than minimum, without the need to allocate the
+> > > minimum number of buffers first (to just learn the number), free them
+> > > and then allocate a bigger number again.
+> >
+> > I don't feel this is particularly useful. One problem with the minimum number
+> > of buffers as used in the kernel is that it is often the minimum number of
+> > buffers required to make the hardware work, but it may not be optimal. E.g.
+> > quite a few capture drivers set the minimum to 2, which is enough for the
+> > hardware, but it will likely lead to dropped frames. You really need 3
+> > (one is being DMAed, one is queued and linked into the DMA engine and one is
+> > being processed by userspace).
+> >
+> > I would actually prefer this to be the recommended minimum number of buffers,
+> > which is >= the minimum REQBUFS uses.
+> >
+> > I.e., if you use this number and you have no special requirements, then you'll
+> > get good performance.
+>
+> I guess we could make it so. It would make existing user space request
+> more buffers than it used to with the original meaning, but I guess it
+> shouldn't be a big problem.
 
-This can be an hlist.  However, you are not documenting what's the
-locking here.  There are many places in which KVM does a
-"cond_resched_lock(&vcpu->kvm->mmu_lock);" and you need to explain how
-flush_link is not live across that.
+I gave it a bit more thought and I feel like kernel is not the right
+place to put any assumptions on what the userspace expects "good
+performance" to be. Actually, having these controls return the minimum
+number of buffers as REQBUFS would allocate makes it very well
+specified - with this number you can only process frame by frame and
+the number of buffers added by userspace defines exactly the queue
+depth. It leaves no space for driver-specific quirks, because the
+driver doesn't decide what's "good performance" anymore.
 
-I would start from a simpler patch that just uses the list-based flush
-in kvm_mmu_commit_zap_page, where you already have the list of things to
-flush as invalid_list.
-
->  	struct hlist_node hash_link;
->  	bool unsync;
->  
-> 
-
-Also this is not adding parent_pte, so the subject is incorrect.
-
-Paolo
+Best regards,
+Tomasz
