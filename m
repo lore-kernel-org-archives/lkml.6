@@ -2,137 +2,119 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BF5C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39552C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 204332098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFCDD21470
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:52:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AcJoOG4P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 204332098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qx0yaDQl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFCDD21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbeJPCh7 (ORCPT
+        id S1726914AbeJPCin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:37:59 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45724 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726707AbeJPCh7 (ORCPT
+        Mon, 15 Oct 2018 22:38:43 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50654 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbeJPCin (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:37:59 -0400
-Received: by mail-pl1-f196.google.com with SMTP id y15-v6so9725805plr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 11:51:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DWciO0XBN3UW6fn55r9D0ORvUXjAdv8IMu+2+L7MJCc=;
-        b=AcJoOG4PlDVljWnnONd00UzurFoAYE23LtI8MUX3Fs+D9siEzOmuajLIFGksaar5ys
-         sog0gg363LWiPBADrsH089Kusm3iQGVOsCwftLL1symwncmRGK39Wd/g0UkY18bjVqYA
-         CIoZtHM0Xz+zXGD2D+Oo+rMOBKJOxtQXWPCh0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DWciO0XBN3UW6fn55r9D0ORvUXjAdv8IMu+2+L7MJCc=;
-        b=cefyJU8rl0/vUc03JI4gB3jSufO9hjbLf2lCkJiYNJEARYqV0bMMKxwsZ8q4fl9e4R
-         gli8Gw/kgUSjZ8SeHKHtvKJ9cn4mrmj4woYZvOr1y8L1CVtjIufpMmI8t48QhFw1BOOq
-         klBGserGLB32sosKCRlnLTK5Tbb+sm2ABcDhIDS81yPe1CNB80876dfW5NZbLzhDyrEu
-         gnzY1iXOe5VzLOwZre6oYH8hxcRwzNskMjSrZRtHKIQFLLD+IsQz180dMQCKeHWiDQBn
-         s2ZWhtxtgE1zJWrMFx1aG570lXLlz5j389+9FXRn5pRBCUMhxUCXutA/JNtcq8prQCFZ
-         VdOA==
-X-Gm-Message-State: ABuFfojCtYLiE5z8CdRaTYM27tZEuNSByfOoriygbclH2X9PS6s97yCE
-        HPuxVRY3xK+VPQAFXQ4JMR6SEg==
-X-Google-Smtp-Source: ACcGV61nUcQMf/OVSXH+M1yIW4Ce3o7xMxmc3zvPhTbBMKO48Ya+NLW13+U/GA3GSAMNhGupajbrHQ==
-X-Received: by 2002:a17:902:205:: with SMTP id 5-v6mr18318501plc.307.1539629489504;
-        Mon, 15 Oct 2018 11:51:29 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id l10-v6sm15873841pgs.45.2018.10.15.11.51.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 11:51:28 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 11:51:28 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Sinan Kaya <okaya@codeaurora.org>,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Andy Shevchenko Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v4 1/2] Bluetooth: Add device_get_bd_address()
-Message-ID: <20181015185128.GT22824@google.com>
-References: <20180927004810.124185-1-mka@chromium.org>
- <20180927004810.124185-2-mka@chromium.org>
- <b28c34475e447cc29a139f9121b3c1d9@codeaurora.org>
- <e6752d4b-b22a-d951-e9db-1ae7445dc403@codeaurora.org>
- <20180927171305.GG22824@google.com>
- <20181004173338.GL22824@google.com>
- <9B742DB5-F584-4A47-A04B-4F72EB17519C@holtmann.org>
+        Mon, 15 Oct 2018 22:38:43 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9FId6Te078044;
+        Mon, 15 Oct 2018 18:52:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=LvlJKWLbOrAulcjHvwydWZksSapHFybt6NEQPd5hrgM=;
+ b=qx0yaDQlOJ8JoxKtvHXqoLCR12fg+q06bvmsM6Di3ZHzxqCC/UOXmprNf14gPVhB+QGC
+ bXEqZG1vCmAn3pjXf7gJ3QfjxHVzVSVqW54Ysj8PNd5m92cgcE0s6N6YYITzo+zkzs4g
+ a7FitjbzqrhuVox2D2SVdpwYVsAYiYWcnVLdJN6+pJ5rCVVHWQkNs2iHvabeO6QxSFF+
+ lJRS7aYVjMxb++EJiGP/iVkPd349PjMSpBXzvlJ+mZxtaAiXxVFhiB/cceMFsRm6uKgL
+ xDIL+OhkBx3LVu9g/pBgwvnhbPTQ2y29WUolki6ABRjRDYLjL5f9psel3BeSzIcp/PoO vw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2n38npv9jv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Oct 2018 18:52:07 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9FIq6kP014220
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Oct 2018 18:52:06 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9FIq6EQ001659;
+        Mon, 15 Oct 2018 18:52:06 GMT
+Received: from konrads-mbp.lan (/209.6.36.129)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 15 Oct 2018 11:52:06 -0700
+Subject: Re: [PATCH] x86: enable swiotlb for > 4GiG ram on 32-bit kernels
+To:     Christoph Hellwig <hch@lst.de>, x86@kernel.org
+Cc:     tedheadster@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+References: <20181014075208.2715-1-hch@lst.de>
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <0a8d58b8-3c8b-c89f-e023-9d7d5d79f37c@oracle.com>
+Date:   Mon, 15 Oct 2018 14:52:04 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9B742DB5-F584-4A47-A04B-4F72EB17519C@holtmann.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181014075208.2715-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9047 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810150162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 08:06:02PM +0200, Marcel Holtmann wrote:
-> Hi Matthias,
+On 10/14/18 3:52 AM, Christoph Hellwig wrote:
+> We already build the swiotlb code for 32b-t kernels with PAE support,
+> but the code to actually use swiotlb has only been enabled for 64-bit
+> kernel for an unknown reason.
 > 
-> >>>>  void bt_sock_reclassify_lock(struct sock *sk, int proto);
-> >>>> 
-> >>>> +int device_get_bd_address(struct device *dev, bdaddr_t *bd_addr);
-> >>> 
-> >>> Maybe change the API name to start with bt_ and get rid of device_?
-> >> 
-> >> device_ indicates that we get the BD_ADDR for a 'struct device' and
-> >> not for e.g. a 'struct fwnode_handle'.
-> >> 
-> >> Anyway with this version of the patch fwnode_get_bd_address() has been
-> >> scrapped and it might never be introduced again, so I'm open to change
-> >> the name to bt_ if there is a general preference for it.
-> > 
-> > Marcel, can you live with this being added to the Bluetooth code base
-> > instead of property? Also if you'd prefer the function to be named
-> > bt_get_bd_address() let me know.
+> Before Linux 4.18 we papers over this fact because the networking code,
+> the scsi layer and some random block drivers implenented their own
+> bounce buffering scheme.
 > 
-> explain to me again why this is useful?
+> Fixes: 21e07dba ("scsi: reduce use of block bounce buffers")
+> Fixes: ab74cfeb ("net: remove the PCI_DMA_BUS_IS_PHYS check in illegal_highdma")
+> Reported-by: tedheadster <tedheadster@gmail.com>
+> Tested-by: tedheadster <tedheadster@gmail.com>
 
-The official binding for providing the BD_ADDR through the device tree
-is the property 'local-bd-address'. device_get_bd_address() provides a
-common API to retrieve the BD_ADDR instead of requiring BT drivers to
-use the lower level fwnode_property_read_u8_array(). It also avoids
-repeating the check for an all zeroes BD_ADDR in multiple drivers.
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-> I am failing to see the benefit if this is not part of the property.h API.
+But since it is already in 'tip' feel free to ignore my tag.
 
-My understanding is that the intention of property.h it to provide an
-API for common property types used by drivers from different
-subsystems, hence the implementation 'lives' in drivers/base.
-Obtaining the BD_ADDR is clearly limited to the Bluetooth subsystem,
-and drivers/base doesn't seem to be the right place for it. It's true,
-device_get_mac_address() lives in the common property code, but that
-doesn't necessarily mean it really should be there and we should do
-the same. I agree with Sakari that the the approach taken by V4L2
-(drivers/media/v4l2-core/v4l2-fwnode.c) seems more appropriate.
+Thanks!
+> ---
+>   arch/x86/kernel/pci-swiotlb.c | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
+> index 661583662430..71c0b01d93b1 100644
+> --- a/arch/x86/kernel/pci-swiotlb.c
+> +++ b/arch/x86/kernel/pci-swiotlb.c
+> @@ -42,10 +42,8 @@ IOMMU_INIT_FINISH(pci_swiotlb_detect_override,
+>   int __init pci_swiotlb_detect_4gb(void)
+>   {
+>   	/* don't initialize swiotlb if iommu=off (no_iommu=1) */
+> -#ifdef CONFIG_X86_64
+>   	if (!no_iommu && max_possible_pfn > MAX_DMA32_PFN)
+>   		swiotlb = 1;
+> -#endif
+>   
+>   	/*
+>   	 * If SME is active then swiotlb will be set to 1 so that bounce
+> 
 
-That said I wouldn't raise opposition if the maintainers of
-drivers/base agreed to add device_get_mac_address() there, however so
-far several recent authors of property.[ch] have raised objections.
-
-Thanks
-
-Matthias
