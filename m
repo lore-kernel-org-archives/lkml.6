@@ -2,101 +2,123 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD406C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7CCC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78504205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:23:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78504205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id C8F69205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:23:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8F69205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbeJPFKM (ORCPT
+        id S1726967AbeJPFKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 01:10:12 -0400
-Received: from www.llwyncelyn.cymru ([82.70.14.225]:35432 "EHLO fuzix.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725974AbeJPFKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 01:10:12 -0400
-Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
-        by fuzix.org (8.15.2/8.15.2) with ESMTP id w9FLLiqJ025498;
-        Mon, 15 Oct 2018 22:21:45 +0100
-Date:   Mon, 15 Oct 2018 22:21:44 +0100
-From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To:     Enke Chen <enkechen@cisco.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
-Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
-Message-ID: <20181015222144.27fdafc3@alans-desktop>
-In-Reply-To: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 16 Oct 2018 01:10:50 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:40066 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbeJPFKt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 01:10:49 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 42Yrz66ZCxz1qtXt;
+        Mon, 15 Oct 2018 23:23:46 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 42Yrz65PM7z1qr2D;
+        Mon, 15 Oct 2018 23:23:46 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id kHnr3yz34TSt; Mon, 15 Oct 2018 23:23:45 +0200 (CEST)
+X-Auth-Info: sg+o82iT9jNDNDrbj7cSWpyuqESjJvepf2VH4dA6eGQ=
+Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Mon, 15 Oct 2018 23:23:45 +0200 (CEST)
+Date:   Mon, 15 Oct 2018 23:23:36 +0200
+From:   Lukasz Majewski <lukma@denx.de>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: misc: bk4: Add device tree binding for
+ Liebherr's BK4 SPI bus
+Message-ID: <20181015232336.643bc335@jawa>
+In-Reply-To: <20181015184627.GA23207@bogus>
+References: <20180927222655.24482-1-lukma@denx.de>
+        <20181015184627.GA23207@bogus>
+Organization: denx.de
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ZDwnx6VQnqDQV5rlWtg4MGN"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +/*
-> + * Returns true if current's euid is same as p's uid or euid,
-> + * or has CAP_SYS_ADMIN.
-> + *
-> + * Called with rcu_read_lock, creds are safe.
-> + *
-> + * Adapted from set_one_prio_perm().
-> + */
-> +static bool set_predump_signal_perm(struct task_struct *p)
-> +{
-> +	const struct cred *cred = current_cred(), *pcred = __task_cred(p);
-> +
-> +	return uid_eq(pcred->uid, cred->euid) ||
-> +	       uid_eq(pcred->euid, cred->euid) ||
-> +	       capable(CAP_SYS_ADMIN);
-> +}
+--Sig_/ZDwnx6VQnqDQV5rlWtg4MGN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This makes absolutely no security sense whatsoever. The uid and euid of
-the parent and child can both change between the test and the signal
-delivery.
+Hi All,
 
-There are reasons that the child signal control code is incredibly
-careful about either the parent or child using execve or doing a
-privilege change that might pose a risk.
+> On Fri, Sep 28, 2018 at 12:26:55AM +0200, Lukasz Majewski wrote:
+> > Add Device Tree binding document for Liebherr's BK4 external SPI
+> > bus.
+> >=20
+> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> > ---
+> >  Documentation/devicetree/bindings/misc/lwn-bk4.txt | 26
+> > ++++++++++++++++++++++ 1 file changed, 26 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/misc/lwn-bk4.txt =20
+>=20
+> Applied.
+>=20
+> To add to Mark's comments, the status of binding patches can be
+> checked on patchwork[1]. There's no reason for pings to me. If it is
+> in the "New" state, I will get to it and you can see where you are in
+> the queue. ATM, I'm rather backed up.
 
-Until this code gets the same protections I don't believe it's safe.
+Thanks for explanation and the hint regarding patchwork usage.
 
-Alan
+>=20
+> Rob
+>=20
+> [1] https://patchwork.ozlabs.org/project/devicetree-bindings/list/
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+--Sig_/ZDwnx6VQnqDQV5rlWtg4MGN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlvFBVkACgkQAR8vZIA0
+zr3FtAf/Zqj1ranCIlnjxXEXUDqaRNK14K20ruEPU9okXaFrg4JPq9Gfc9Tzh6py
+15c+xzytkaxgwyQb3kYvIrzpzA/seA1k1m7ZaAlRxUf8OAbCpoJbql8efROpdToa
+BZbKONSY9tRw6GIVJbUk+LbCEtp3NVOFacBh7EecZNR3iFtISaBRbJQu7+6d/Q7H
+rX6GZoGSuimYyeldIb4AXxBytvoU+SNP74tlsB0/RuVEYNKMQBSSAG6ElxIeahVK
+RJT3tkmIx0qVK+rR0321M0IxvPAKxLgZhTRk9Y0JSBmffKD/mnoCmTQ8p4w5yNd4
+p321VOatU0Qsj+lUnZ/cqHc6FLIdjg==
+=/EYV
+-----END PGP SIGNATURE-----
+
+--Sig_/ZDwnx6VQnqDQV5rlWtg4MGN--
