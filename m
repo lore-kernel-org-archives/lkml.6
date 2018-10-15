@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A67C7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F35C9C070C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D877520652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:26:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFC3E20895
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:26:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LoFoG0z4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D877520652
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bh5+o4A0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFC3E20895
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbeJOIJE (ORCPT
+        id S1726978AbeJOIJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 04:09:04 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46872 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbeJOIJC (ORCPT
+        Mon, 15 Oct 2018 04:09:09 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43487 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbeJOIJH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 04:09:02 -0400
-Received: by mail-pl1-f193.google.com with SMTP id v5-v6so8387532plz.13;
-        Sun, 14 Oct 2018 17:26:14 -0700 (PDT)
+        Mon, 15 Oct 2018 04:09:07 -0400
+Received: by mail-pl1-f196.google.com with SMTP id 30-v6so8384198plb.10;
+        Sun, 14 Oct 2018 17:26:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1eIq+bpAJjW92EtiaqYATBx5CfeVYNbB6/35CF3TsEg=;
-        b=LoFoG0z4djWfCNWrmlTfkOJ8gI3cf0TUCAFw5Ul6YGRCTrmapvDPGir/nsVK0/68+o
-         vdipEEeCp9Yh83lLDvN0ccG+nu7bk3zBjY5ZxOyDhsOUN57h6HAJ20dtfmoRP1LjqeKz
-         wQJdgi4L6aF57vqe/JG0FnaZYt4C7gXR6B4S17D/MVIZl7g4PcywhZwx9NmnlWwoRyJT
-         pHh7bgr1txoXhPrgehFjL78ihE1LraMbOg7XLbTJ93LZGRFe2jSJqUxNnnbZDqAUmHS7
-         e0X3JHMd5V6uEaWh5XXWk+kDSzxcey7doBAAkwmrZarDZI5JfwS72DyQ+8CPqS0G0NB/
-         6F3A==
+        bh=lcuTd93Zs0lVeU8vKhWhv5GEua+bMb9Vyzo19XuwRmc=;
+        b=Bh5+o4A0M2N6QlVmdomIjWhFrf4xvr1abWLG9NqdVLB+bcy3AGcqSRkPGCzn3wYY8s
+         YtrjktZUaz3bFyJ5EdvmqqSTA/TOp5SXaQgEs+SYh432/4j9sAzcMDoeQxgMmmy6e7vG
+         hJivODcbGojVwlm/x3puKgANs5bB0KO7x38C8+NlPRvJjUdKCNssiEL67egRZJ7rN0l4
+         JCCMqHpGmaiDkKA+/L4GVpLbDQ8y2pmK/ScEiWklxud0Mt8dqEwb2+zXF9WC+Ne9CQe0
+         gdN7+8B07io3RvzaWnpkK0p5iYXxmhXtHLZ1UQX/6p+V/jNl+hUThrSR0Fiikasmxpl3
+         bABA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=1eIq+bpAJjW92EtiaqYATBx5CfeVYNbB6/35CF3TsEg=;
-        b=UeBNW+jQQ8D7ZfxrKUxj/5Vzxc8b+8lLx6EH92kPr0tddoWZjomcvNiHz1hkYWrlPM
-         1NFhC9NpIrG7CRbBsihlq3WA/vYK5keiyi6Owsc5GBRFpLc4OGgznna4C3VDzR+z2oDr
-         tgAPH8V9rrbrv3FPP+2brGTcaGyJl5m2deGop18u4lPsQGHjR3d1EiMjUqk/ifmq39cr
-         LG/M7OAflFjXGDkH9RgF+Zwauy3cPKIUAql93W1MtzbYsk2ZZBt/jD+Lkk2w4Pak4yGj
-         QURtenP0dVYOF/y+/HNvcYcbBWf3LeXNNX5Uw0Ea/bppXXKw/pzfZB/+SxYeuIApP5o3
-         NfyA==
-X-Gm-Message-State: ABuFfoiucUSfO2cscWb8MZ+FuElGy6KJ7OxjZyKO2O+pURR7wnHi2hNE
-        uuTFcKSP/hl+kL50peJd3rE=
-X-Google-Smtp-Source: ACcGV618xE1lA4L3Mkze3dqIWBO1N64nQOACIO4CENbAMUAOYN+yUSXwAlElTjtEzf+S9SOmQzgvRg==
-X-Received: by 2002:a17:902:70c3:: with SMTP id l3-v6mr15376728plt.125.1539563173692;
-        Sun, 14 Oct 2018 17:26:13 -0700 (PDT)
+        bh=lcuTd93Zs0lVeU8vKhWhv5GEua+bMb9Vyzo19XuwRmc=;
+        b=dSvDql5zlUInRsaKmLcR2+KRzZz9sPLMo1gnViUEInGFS4hQSIWl4b81Mj4Oiv8jQF
+         FCwZ+2PPVSDgW+fJ9vcVHSQOL9vpn0oq9fa85PNFmFfaQ6/jf73mDHXf01+cG/8ICwzu
+         3xio9dD0JHQPSFRmh0aIyGxmYAZGrmn9SWEgVlO34HfsVdwhe+de4A7cZO0Bs5FKO9pQ
+         mNRJWW6WxU9F0yH4KnQpXs2x1sr82pxxAdcXp0W9aRDWbcZNN046zGHZNO4S0raMuM6R
+         GAYYUYeLOyJ7OS8AG+T+UW6CAKetlUXTloxpaSg1ca/J5PLo13DbZ3+meE4cx5eAw8Ck
+         jpLg==
+X-Gm-Message-State: ABuFfoh82QiJ6hXKGOpUQUL56Bi2z9+hXLSmQ9WE2bk1bKRloBhJkkT+
+        QwA5cVbrFjMACDBbZ3pKsn4=
+X-Google-Smtp-Source: ACcGV63xgSMZmmfakM1xgmwWpxXa2OCrH10UuSWo8uVM11CtijeadZtv2y99CZR1xD+Gk91tNXiRLw==
+X-Received: by 2002:a17:902:6848:: with SMTP id f8-v6mr15031222pln.27.1539563178699;
+        Sun, 14 Oct 2018 17:26:18 -0700 (PDT)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id j14-v6sm11387110pgh.52.2018.10.14.17.26.12
+        by smtp.gmail.com with ESMTPSA id j14-v6sm11387110pgh.52.2018.10.14.17.26.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 14 Oct 2018 17:26:13 -0700 (PDT)
+        Sun, 14 Oct 2018 17:26:18 -0700 (PDT)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -67,9 +67,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v3 11/18] of: overlay: test case of two fragments adding same node
-Date:   Sun, 14 Oct 2018 17:24:23 -0700
-Message-Id: <1539563070-12969-12-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v3 15/18] of: overlay: set node fields from properties when add new overlay node
+Date:   Sun, 14 Oct 2018 17:24:27 -0700
+Message-Id: <1539563070-12969-16-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1539563070-12969-1-git-send-email-frowand.list@gmail.com>
 References: <1539563070-12969-1-git-send-email-frowand.list@gmail.com>
@@ -80,117 +80,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-Multiple overlay fragments adding or deleting the same node is not
-supported.  An attempt to do so results in an incorrect devicetree.
-The node name will be munged for the second add.
+Overlay nodes added by add_changeset_node() do not have the node
+fields name, phandle, and type set.
 
-After adding this patch, the unittest messages will show:
+The node passed to __of_attach_node() when the add node changeset
+entry is processed does not contain any properties.  The node's
+properties are located in add property changeset entries that will
+be processed after the add node changeset is applied.
 
-   Duplicate name in motor-1, renamed to "controller#1"
-   OF: overlay: of_overlay_apply() err=0
-   ### dt-test ### of_overlay_fdt_apply() expected -22, ret=0, overlay_bad_add_dup_node
-   ### dt-test ### FAIL of_unittest_overlay_high_level():2419 Adding overlay 'overlay_bad_add_dup_node' failed
+Set the node's fields in the node contained in the add node
+changeset entry and do not set them to incorrect values in
+add_changeset_node().
 
-   ...
-
-   ### dt-test ### end of unittest - 210 passed, 1 failed
-
-The incorrect (munged) node name "controller#1" can be seen in the
-/proc filesystem:
-
-   $ pwd
-   /proc/device-tree/testcase-data-2/substation@100/motor-1
-   $ ls
-   compatible    controller    controller#1  name          phandle       spin
-   $ ls controller
-   power_bus
-   $ ls controller#1
-   power_bus_emergency
+A visible symptom that is fixed by this patch is the names of nodes
+added by overlays that have an entry in /sys/bus/platform/drivers/*/
+will contain the unit-address but the node-name will be <NULL>,  for
+example, "fc4ab000.<NULL>".  After applying the patch the name, in
+this example, for node restart@fc4ab000 is "fc4ab000.restart".
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- drivers/of/unittest-data/Makefile                  |  1 +
- .../of/unittest-data/overlay_bad_add_dup_node.dts  | 28 ++++++++++++++++++++++
- drivers/of/unittest.c                              |  5 ++++
- 3 files changed, 34 insertions(+)
- create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_node.dts
+ drivers/of/dynamic.c | 27 ++++++++++++++++++---------
+ drivers/of/overlay.c | 29 ++++++++++++++++++++++++-----
+ 2 files changed, 42 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/of/unittest-data/Makefile b/drivers/of/unittest-data/Makefile
-index 013d85e694c6..166dbdbfd1c5 100644
---- a/drivers/of/unittest-data/Makefile
-+++ b/drivers/of/unittest-data/Makefile
-@@ -17,6 +17,7 @@ obj-$(CONFIG_OF_OVERLAY) += overlay.dtb.o \
- 			    overlay_12.dtb.o \
- 			    overlay_13.dtb.o \
- 			    overlay_15.dtb.o \
-+			    overlay_bad_add_dup_node.dtb.o \
- 			    overlay_bad_phandle.dtb.o \
- 			    overlay_bad_symbol.dtb.o \
- 			    overlay_base.dtb.o
-diff --git a/drivers/of/unittest-data/overlay_bad_add_dup_node.dts b/drivers/of/unittest-data/overlay_bad_add_dup_node.dts
-new file mode 100644
-index 000000000000..145dfc3b1024
---- /dev/null
-+++ b/drivers/of/unittest-data/overlay_bad_add_dup_node.dts
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+/*
-+ * &electric_1/motor-1 and &spin_ctrl_1 are the same node:
-+ *   /testcase-data-2/substation@100/motor-1
-+ *
-+ * Thus the new node "controller" in each fragment will
-+ * result in an attempt to add the same node twice.
-+ * This will result in an error and the overlay apply
-+ * will fail.
-+ */
-+
-+&electric_1 {
-+
-+	motor-1 {
-+		controller {
-+			power_bus = < 0x1 0x2 >;
-+		};
-+	};
-+};
-+
-+&spin_ctrl_1 {
-+		controller {
-+			power_bus_emergency = < 0x101 0x102 >;
-+		};
-+};
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 722537e14848..471b8eb6e842 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -2147,6 +2147,7 @@ struct overlay_info {
- OVERLAY_INFO_EXTERN(overlay_12);
- OVERLAY_INFO_EXTERN(overlay_13);
- OVERLAY_INFO_EXTERN(overlay_15);
-+OVERLAY_INFO_EXTERN(overlay_bad_add_dup_node);
- OVERLAY_INFO_EXTERN(overlay_bad_phandle);
- OVERLAY_INFO_EXTERN(overlay_bad_symbol);
+diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+index 5f7c99b9de0d..5b740114dbdc 100644
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -205,15 +205,24 @@ static void __of_attach_node(struct device_node *np)
+ 	const __be32 *phandle;
+ 	int sz;
  
-@@ -2169,6 +2170,7 @@ struct overlay_info {
- 	OVERLAY_INFO(overlay_12, 0),
- 	OVERLAY_INFO(overlay_13, 0),
- 	OVERLAY_INFO(overlay_15, 0),
-+	OVERLAY_INFO(overlay_bad_add_dup_node, -EINVAL),
- 	OVERLAY_INFO(overlay_bad_phandle, -EINVAL),
- 	OVERLAY_INFO(overlay_bad_symbol, -EINVAL),
- 	{}
-@@ -2413,6 +2415,9 @@ static __init void of_unittest_overlay_high_level(void)
- 	unittest(overlay_data_apply("overlay", NULL),
- 		 "Adding overlay 'overlay' failed\n");
- 
-+	unittest(overlay_data_apply("overlay_bad_add_dup_node", NULL),
-+		 "Adding overlay 'overlay_bad_add_dup_node' failed\n");
+-	np->name = __of_get_property(np, "name", NULL) ? : "<NULL>";
+-	np->type = __of_get_property(np, "device_type", NULL) ? : "<NULL>";
+-
+-	phandle = __of_get_property(np, "phandle", &sz);
+-	if (!phandle)
+-		phandle = __of_get_property(np, "linux,phandle", &sz);
+-	if (IS_ENABLED(CONFIG_PPC_PSERIES) && !phandle)
+-		phandle = __of_get_property(np, "ibm,phandle", &sz);
+-	np->phandle = (phandle && (sz >= 4)) ? be32_to_cpup(phandle) : 0;
++	if (!of_node_check_flag(np, OF_OVERLAY)) {
++		np->name = __of_get_property(np, "name", NULL);
++		np->type = __of_get_property(np, "device_type", NULL);
++		if (!np->name)
++			np->name = "<NULL>";
++		if (!np->type)
++			np->type = "<NULL>";
 +
- 	unittest(overlay_data_apply("overlay_bad_phandle", NULL),
- 		 "Adding overlay 'overlay_bad_phandle' failed\n");
++		phandle = __of_get_property(np, "phandle", &sz);
++		if (!phandle)
++			phandle = __of_get_property(np, "linux,phandle", &sz);
++		if (IS_ENABLED(CONFIG_PPC_PSERIES) && !phandle)
++			phandle = __of_get_property(np, "ibm,phandle", &sz);
++		if (phandle && (sz >= 4))
++			np->phandle = be32_to_cpup(phandle);
++		else
++			np->phandle = 0;
++	}
  
+ 	np->child = NULL;
+ 	np->sibling = np->parent->child;
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index 908bcc62019b..f5c3330567b6 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -307,10 +307,11 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+ 	int ret = 0;
+ 	bool check_for_non_overlay_node = false;
+ 
+-	if (!of_prop_cmp(overlay_prop->name, "name") ||
+-	    !of_prop_cmp(overlay_prop->name, "phandle") ||
+-	    !of_prop_cmp(overlay_prop->name, "linux,phandle"))
+-		return 0;
++	if (target->in_livetree)
++		if (!of_prop_cmp(overlay_prop->name, "name") ||
++		    !of_prop_cmp(overlay_prop->name, "phandle") ||
++		    !of_prop_cmp(overlay_prop->name, "linux,phandle"))
++			return 0;
+ 
+ 	if (target->in_livetree)
+ 		prop = of_find_property(target->np, overlay_prop->name, NULL);
+@@ -331,6 +332,10 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+ 	if (!prop) {
+ 
+ 		check_for_non_overlay_node = true;
++		if (!target->in_livetree) {
++			new_prop->next = target->np->deadprops;
++			target->np->deadprops = new_prop;
++		}
+ 		ret = of_changeset_add_property(&ovcs->cset, target->np,
+ 						new_prop);
+ 
+@@ -406,9 +411,10 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 		struct target *target, struct device_node *node)
+ {
+ 	const char *node_kbasename;
++	const __be32 *phandle;
+ 	struct device_node *tchild;
+ 	struct target target_child;
+-	int ret = 0;
++	int ret = 0, size;
+ 
+ 	node_kbasename = kbasename(node->full_name);
+ 
+@@ -422,6 +428,19 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 			return -ENOMEM;
+ 
+ 		tchild->parent = target->np;
++		tchild->name = __of_get_property(node, "name", NULL);
++		tchild->type = __of_get_property(node, "device_type", NULL);
++
++		if (!tchild->name)
++			tchild->name = "<NULL>";
++		if (!tchild->type)
++			tchild->type = "<NULL>";
++
++		/* ignore obsolete "linux,phandle" */
++		phandle = __of_get_property(node, "phandle", &size);
++		if (phandle && (size == 4))
++			tchild->phandle = be32_to_cpup(phandle);
++
+ 		of_node_set_flag(tchild, OF_OVERLAY);
+ 
+ 		ret = of_changeset_attach_node(&ovcs->cset, tchild);
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
