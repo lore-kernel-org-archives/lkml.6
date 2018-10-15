@@ -3,44 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F20C71132
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56853C71132
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E1E720644
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1E720644
+	by mail.kernel.org (Postfix) with ESMTP id 10C3E20644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:09:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10C3E20644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbeJOWyt (ORCPT
+        id S1726917AbeJOWyz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 18:54:49 -0400
-Received: from mga18.intel.com ([134.134.136.126]:40555 "EHLO mga18.intel.com"
+        Mon, 15 Oct 2018 18:54:55 -0400
+Received: from mga11.intel.com ([192.55.52.93]:21459 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726744AbeJOWys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 18:54:48 -0400
+        id S1726711AbeJOWyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 18:54:54 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 08:09:08 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 08:09:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,384,1534834800"; 
-   d="scan'208";a="100389617"
+   d="scan'208";a="100389674"
 Received: from jhli-desk1.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
-  by orsmga002.jf.intel.com with ESMTP; 15 Oct 2018 08:09:08 -0700
-Subject: [driver-core PATCH v4 1/6] workqueue: Provide queue_work_node to
- queue work near a given NUMA node
+  by orsmga002.jf.intel.com with ESMTP; 15 Oct 2018 08:09:14 -0700
+Subject: [driver-core PATCH v4 2/6] async: Add support for queueing on
+ specific NUMA node
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Cc:     len.brown@intel.com, rafael@kernel.org, linux-pm@vger.kernel.org,
         jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org,
         tj@kernel.org, akpm@linux-foundation.org,
         alexander.h.duyck@linux.intel.com
-Date:   Mon, 15 Oct 2018 08:09:07 -0700
-Message-ID: <20181015150907.29520.96423.stgit@localhost.localdomain>
+Date:   Mon, 15 Oct 2018 08:09:14 -0700
+Message-ID: <20181015150913.29520.79136.stgit@localhost.localdomain>
 In-Reply-To: <20181015150305.29520.86363.stgit@localhost.localdomain>
 References: <20181015150305.29520.86363.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
@@ -52,134 +52,215 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch provides a new function queue_work_node which is meant to
-schedule work on a "random" CPU of the requested NUMA node. The main
-motivation for this is to help assist asynchronous init to better improve
-boot times for devices that are local to a specific node.
+This patch introduces four new variants of the async_schedule_ functions
+that allow scheduling on a specific NUMA node.
 
-For now we just default to the first CPU that is in the intersection of the
-cpumask of the node and the online cpumask. The only exception is if the
-CPU is local to the node we will just use the current CPU. This should work
-for our purposes as we are currently only using this for unbound work so
-the CPU will be translated to a node anyway instead of being directly used.
+The first two functions are async_schedule_near and
+async_schedule_near_domain which end up mapping to async_schedule and
+async_schedule_domain but provide NUMA node specific functionality. They
+replace the original functions which were moved to inline function
+definitions that call the new functions while passing NUMA_NO_NODE.
 
-As we are only using the first CPU to represent the NUMA node for now I am
-limiting the scope of the function so that it can only be used with unbound
-workqueues.
+The second two functions are async_schedule_dev and
+async_schedule_dev_domain which provide NUMA specific functionality when
+passing a device as the data member and that device has a NUMA node other
+than NUMA_NO_NODE.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+The main motivation behind this is to address the need to be able to
+schedule device specific init work on specific NUMA nodes in order to
+improve performance of memory initialization.
+
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- include/linux/workqueue.h |    2 +
- kernel/workqueue.c        |   84 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 86 insertions(+)
+ include/linux/async.h |   84 +++++++++++++++++++++++++++++++++++++++++++++++--
+ kernel/async.c        |   53 +++++++++++++++++--------------
+ 2 files changed, 110 insertions(+), 27 deletions(-)
 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index 60d673e15632..1f50c1e586e7 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -463,6 +463,8 @@ int apply_workqueue_attrs(struct workqueue_struct *wq,
+diff --git a/include/linux/async.h b/include/linux/async.h
+index 6b0226bdaadc..98a94e6e367d 100644
+--- a/include/linux/async.h
++++ b/include/linux/async.h
+@@ -14,6 +14,8 @@
  
- extern bool queue_work_on(int cpu, struct workqueue_struct *wq,
- 			struct work_struct *work);
-+extern bool queue_work_node(int node, struct workqueue_struct *wq,
-+			    struct work_struct *work);
- extern bool queue_delayed_work_on(int cpu, struct workqueue_struct *wq,
- 			struct delayed_work *work, unsigned long delay);
- extern bool mod_delayed_work_on(int cpu, struct workqueue_struct *wq,
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 0280deac392e..6ed7c2eb84b0 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -1492,6 +1492,90 @@ bool queue_work_on(int cpu, struct workqueue_struct *wq,
+ #include <linux/types.h>
+ #include <linux/list.h>
++#include <linux/numa.h>
++#include <linux/device.h>
+ 
+ typedef u64 async_cookie_t;
+ typedef void (*async_func_t) (void *data, async_cookie_t cookie);
+@@ -37,9 +39,85 @@ struct async_domain {
+ 	struct async_domain _name = { .pending = LIST_HEAD_INIT(_name.pending), \
+ 				      .registered = 0 }
+ 
+-extern async_cookie_t async_schedule(async_func_t func, void *data);
+-extern async_cookie_t async_schedule_domain(async_func_t func, void *data,
+-					    struct async_domain *domain);
++async_cookie_t async_schedule_node(async_func_t func, void *data,
++				   int node);
++async_cookie_t async_schedule_node_domain(async_func_t func, void *data,
++					  int node,
++					  struct async_domain *domain);
++
++/**
++ * async_schedule - schedule a function for asynchronous execution
++ * @func: function to execute asynchronously
++ * @data: data pointer to pass to the function
++ *
++ * Returns an async_cookie_t that may be used for checkpointing later.
++ * Note: This function may be called from atomic or non-atomic contexts.
++ */
++static inline async_cookie_t async_schedule(async_func_t func, void *data)
++{
++	return async_schedule_node(func, data, NUMA_NO_NODE);
++}
++
++/**
++ * async_schedule_domain - schedule a function for asynchronous execution within a certain domain
++ * @func: function to execute asynchronously
++ * @data: data pointer to pass to the function
++ * @domain: the domain
++ *
++ * Returns an async_cookie_t that may be used for checkpointing later.
++ * @domain may be used in the async_synchronize_*_domain() functions to
++ * wait within a certain synchronization domain rather than globally.  A
++ * synchronization domain is specified via @domain.
++ * Note: This function may be called from atomic or non-atomic contexts.
++ */
++static inline async_cookie_t
++async_schedule_domain(async_func_t func, void *data,
++		      struct async_domain *domain)
++{
++	return async_schedule_node_domain(func, data, NUMA_NO_NODE, domain);
++}
++
++/**
++ * async_schedule_dev - A device specific version of async_schedule
++ * @func: function to execute asynchronously
++ * @dev: device argument to be passed to function
++ *
++ * Returns an async_cookie_t that may be used for checkpointing later.
++ * @dev is used as both the argument for the function and to provide NUMA
++ * context for where to run the function. By doing this we can try to
++ * provide for the best possible outcome by operating on the device on the
++ * CPUs closest to the device.
++ * Note: This function may be called from atomic or non-atomic contexts.
++ */
++static inline async_cookie_t
++async_schedule_dev(async_func_t func, struct device *dev)
++{
++	return async_schedule_node(func, dev, dev_to_node(dev));
++}
++
++/**
++ * async_schedule_dev_domain - A device specific version of async_schedule_domain
++ * @func: function to execute asynchronously
++ * @dev: device argument to be passed to function
++ * @domain: the domain
++ *
++ * Returns an async_cookie_t that may be used for checkpointing later.
++ * @dev is used as both the argument for the function and to provide NUMA
++ * context for where to run the function. By doing this we can try to
++ * provide for the best possible outcome by operating on the device on the
++ * CPUs closest to the device.
++ * @domain may be used in the async_synchronize_*_domain() functions to
++ * wait within a certain synchronization domain rather than globally.  A
++ * synchronization domain is specified via @domain.
++ * Note: This function may be called from atomic or non-atomic contexts.
++ */
++static inline async_cookie_t
++async_schedule_dev_domain(async_func_t func, struct device *dev,
++			  struct async_domain *domain)
++{
++	return async_schedule_node_domain(func, dev, dev_to_node(dev), domain);
++}
++
+ void async_unregister_domain(struct async_domain *domain);
+ extern void async_synchronize_full(void);
+ extern void async_synchronize_full_domain(struct async_domain *domain);
+diff --git a/kernel/async.c b/kernel/async.c
+index a893d6170944..23cf67b4b4f8 100644
+--- a/kernel/async.c
++++ b/kernel/async.c
+@@ -149,7 +149,25 @@ static void async_run_entry_fn(struct work_struct *work)
+ 	wake_up(&async_done);
  }
- EXPORT_SYMBOL(queue_work_on);
  
+-static async_cookie_t __async_schedule(async_func_t func, void *data, struct async_domain *domain)
 +/**
-+ * workqueue_select_cpu_near - Select a CPU based on NUMA node
-+ * @node: NUMA node ID that we want to bind a CPU from
++ * async_schedule_node_domain - NUMA specific version of async_schedule_domain
++ * @func: function to execute asynchronously
++ * @data: data pointer to pass to the function
++ * @node: NUMA node that we want to schedule this on or close to
++ * @domain: the domain
 + *
-+ * This function will attempt to find a "random" cpu available on a given
-+ * node. If there are no CPUs available on the given node it will return
-+ * WORK_CPU_UNBOUND indicating that we should just schedule to any
-+ * available CPU if we need to schedule this work.
++ * Returns an async_cookie_t that may be used for checkpointing later.
++ * @domain may be used in the async_synchronize_*_domain() functions to
++ * wait within a certain synchronization domain rather than globally.  A
++ * synchronization domain is specified via @domain.  Note: This function
++ * may be called from atomic or non-atomic contexts.
++ *
++ * The node requested will be honored on a best effort basis. If the node
++ * has no CPUs associated with it then the work is distributed among all
++ * available CPUs.
 + */
-+static int workqueue_select_cpu_near(int node)
-+{
-+	int cpu;
-+
-+	/* No point in doing this if NUMA isn't enabled for workqueues */
-+	if (!wq_numa_enabled)
-+		return WORK_CPU_UNBOUND;
-+
-+	/* Delay binding to CPU if node is not valid or online */
-+	if (node < 0 || node >= MAX_NUMNODES || !node_online(node))
-+		return WORK_CPU_UNBOUND;
-+
-+	/* Use local node/cpu if we are already there */
-+	cpu = raw_smp_processor_id();
-+	if (node == cpu_to_node(cpu))
-+		return cpu;
-+
-+	/* Use "random" otherwise know as "first" online CPU of node */
-+	cpu = cpumask_any_and(cpumask_of_node(node), cpu_online_mask);
-+
-+	/* If CPU is valid return that, otherwise just defer */
-+	return (cpu < nr_cpu_ids) ? cpu : WORK_CPU_UNBOUND;
-+}
-+
-+/**
-+ * queue_work_node - queue work on a "random" cpu for a given NUMA node
-+ * @node: NUMA node that we are targeting the work for
-+ * @wq: workqueue to use
-+ * @work: work to queue
-+ *
-+ * We queue the work to a "random" CPU within a given NUMA node. The basic
-+ * idea here is to provide a way to somehow associate work with a given
-+ * NUMA node.
-+ *
-+ * This function will only make a best effort attempt at getting this onto
-+ * the right NUMA node. If no node is requested or the requested node is
-+ * offline then we just fall back to standard queue_work behavior.
-+ *
-+ * Currently the "random" CPU ends up being the first available CPU in the
-+ * intersection of cpu_online_mask and the cpumask of the node, unless we
-+ * are running on the node. In that case we just use the current CPU.
-+ *
-+ * Return: %false if @work was already on a queue, %true otherwise.
-+ */
-+bool queue_work_node(int node, struct workqueue_struct *wq,
-+		     struct work_struct *work)
-+{
-+	unsigned long flags;
-+	bool ret = false;
-+
-+	/*
-+	 * This current implementation is specific to unbound workqueues.
-+	 * Specifically we only return the first available CPU for a given
-+	 * node instead of cycling through individual CPUs within the node.
-+	 *
-+	 * If this is used with a per-cpu workqueue then the logic in
-+	 * workqueue_select_cpu_near would need to be updated to allow for
-+	 * some round robin type logic.
-+	 */
-+	WARN_ON_ONCE(!(wq->flags & WQ_UNBOUND));
-+
-+	local_irq_save(flags);
-+
-+	if (!test_and_set_bit(WORK_STRUCT_PENDING_BIT, work_data_bits(work))) {
-+		int cpu = workqueue_select_cpu_near(node);
-+
-+		__queue_work(cpu, wq, work);
-+		ret = true;
-+	}
-+
-+	local_irq_restore(flags);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(queue_work_node);
-+
- void delayed_work_timer_fn(struct timer_list *t)
++async_cookie_t async_schedule_node_domain(async_func_t func, void *data,
++					  int node, struct async_domain *domain)
  {
- 	struct delayed_work *dwork = from_timer(dwork, t, timer);
+ 	struct async_entry *entry;
+ 	unsigned long flags;
+@@ -195,43 +213,30 @@ static async_cookie_t __async_schedule(async_func_t func, void *data, struct asy
+ 	current->flags |= PF_USED_ASYNC;
+ 
+ 	/* schedule for execution */
+-	queue_work(system_unbound_wq, &entry->work);
++	queue_work_node(node, system_unbound_wq, &entry->work);
+ 
+ 	return newcookie;
+ }
++EXPORT_SYMBOL_GPL(async_schedule_node_domain);
+ 
+ /**
+- * async_schedule - schedule a function for asynchronous execution
++ * async_schedule_node - NUMA specific version of async_schedule
+  * @func: function to execute asynchronously
+  * @data: data pointer to pass to the function
++ * @node: NUMA node that we want to schedule this on or close to
+  *
+  * Returns an async_cookie_t that may be used for checkpointing later.
+  * Note: This function may be called from atomic or non-atomic contexts.
+- */
+-async_cookie_t async_schedule(async_func_t func, void *data)
+-{
+-	return __async_schedule(func, data, &async_dfl_domain);
+-}
+-EXPORT_SYMBOL_GPL(async_schedule);
+-
+-/**
+- * async_schedule_domain - schedule a function for asynchronous execution within a certain domain
+- * @func: function to execute asynchronously
+- * @data: data pointer to pass to the function
+- * @domain: the domain
+  *
+- * Returns an async_cookie_t that may be used for checkpointing later.
+- * @domain may be used in the async_synchronize_*_domain() functions to
+- * wait within a certain synchronization domain rather than globally.  A
+- * synchronization domain is specified via @domain.  Note: This function
+- * may be called from atomic or non-atomic contexts.
++ * The node requested will be honored on a best effort basis. If the node
++ * has no CPUs associated with it then the work is distributed among all
++ * available CPUs.
+  */
+-async_cookie_t async_schedule_domain(async_func_t func, void *data,
+-				     struct async_domain *domain)
++async_cookie_t async_schedule_node(async_func_t func, void *data, int node)
+ {
+-	return __async_schedule(func, data, domain);
++	return async_schedule_node_domain(func, data, node, &async_dfl_domain);
+ }
+-EXPORT_SYMBOL_GPL(async_schedule_domain);
++EXPORT_SYMBOL_GPL(async_schedule_node);
+ 
+ /**
+  * async_synchronize_full - synchronize all asynchronous function calls
 
