@@ -2,413 +2,212 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E38A2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F25C04EBD
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92A7E208B3
+	by mail.kernel.org (Postfix) with ESMTP id D4569208E4
 	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:29:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A7E208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4569208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbeJPHQH (ORCPT
+        id S1727159AbeJPHQZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 03:16:07 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:60850 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbeJPHQH (ORCPT
+        Tue, 16 Oct 2018 03:16:25 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:43844 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727105AbeJPHQY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 03:16:07 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gCCHf-0007C3-0k; Mon, 15 Oct 2018 17:28:23 -0600
-Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gCCHc-0003Wp-GJ; Mon, 15 Oct 2018 17:28:22 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Enke Chen <enkechen@cisco.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky \(kamensky\)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
-Date:   Mon, 15 Oct 2018 18:28:03 -0500
-In-Reply-To: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com> (Enke Chen's
-        message of "Fri, 12 Oct 2018 17:33:35 -0700")
-Message-ID: <87va62lri4.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gCCHc-0003Wp-GJ;;;mid=<87va62lri4.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/2IzdcUh+cVVPDRDjon1VyTaYiixi7dx8=
-X-SA-Exim-Connect-IP: 67.3.154.154
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Tue, 16 Oct 2018 03:16:24 -0400
+Received: from mr6.cc.vt.edu (mr6.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w9FNSvhU031529
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 19:28:57 -0400
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w9FNSqMM000556
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 19:28:57 -0400
+Received: by mail-qk1-f197.google.com with SMTP id y201-v6so22046735qka.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 16:28:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:mime-version:date:message-id;
+        bh=L8dbBoCsHNCVxXbV4SMMjN9yz5saBJpxawtrJRs9KEY=;
+        b=pUARi2m0m5FL1+8sNCNT2qjBLtrTbGTEdHquEOePquvHGjTaF7A5yhItrrkWSYFFG+
+         71EJ4HFYM/DtmbUMrkJFZ7TwmC+jnsjyqvKWpwJ0rmrGAwl1o8U7V+kYJiuS9JPEhF/m
+         B61LgLMcaBAF6HgkwoCt+WIs/oQy/wYo20jD1OTX49WmlX+iOg6HtgYbbBDlROm5gudS
+         FmhYMh4CbOM18iWrTtwRyZ968KyW9sb3GPTwmPFq5lu+TlGVLqWuGIU2rgVtF2RS6hzN
+         jZ36cQpCMDNA2WxpoatDwwySfcM3HJJP3RrWSV+1sSIPF+wNLAURpvDwSmEgy/N8sYY+
+         9MPg==
+X-Gm-Message-State: ABuFfohZmT+umJyrVdMD51mdY6UWXRLZMSRGSih9SRzXjRCWB/Ag3byp
+        2CkHPbydNJSoLELZEx/lS6/UTVdZrPK+/mS0Yo+Yj3HcSRSs/Xhtx8U3GSkpRMC7mu1s8zce+rd
+        loN3g6l9v8frxF5vbTR/SHZDE+4F3GCpn7VI=
+X-Received: by 2002:ac8:955:: with SMTP id z21-v6mr17881470qth.305.1539646131243;
+        Mon, 15 Oct 2018 16:28:51 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV61a/3zfXaKlcnK6pbLBh8ZkKYdA4Kqu8Lkj7ufDNzWA9ypVfDT48srOerOEIZ9oY8f5Di7FGg==
+X-Received: by 2002:ac8:955:: with SMTP id z21-v6mr17881443qth.305.1539646130720;
+        Mon, 15 Oct 2018 16:28:50 -0700 (PDT)
+Received: from turing-police.cc.vt.edu (turing-police.cc.ipv6.vt.edu. [2001:468:c80:2103:f21f:afff:fe0c:8ada])
+        by smtp.gmail.com with ESMTPSA id v7-v6sm9778612qkl.39.2018.10.15.16.28.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 16:28:49 -0700 (PDT)
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+From:   valdis.kletnieks@vt.edu
+To:     Dennis Zhou <dennisszhou@gmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jens Axboe <axboe@kernel.dk>
+cc:     Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: [BUG] ext4/block null pointer crashes in linux-next
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date:   Mon, 15 Oct 2018 19:28:48 -0400
+Message-ID: <13987.1539646128@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enke Chen <enkechen@cisco.com> writes:
+So I finally had a chance to find a replicator and finish bisecting this and:
 
-> For simplicity and consistency, this patch provides an implementation
-> for signal-based fault notification prior to the coredump of a child
-> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
-> be used by an application to express its interest and to specify the
-> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
-> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
->
-> Background:
->
-> As the coredump of a process may take time, in certain time-sensitive
-> applications it is necessary for a parent process (e.g., a process
-> manager) to be notified of a child's imminent death before the coredump
-> so that the parent process can act sooner, such as re-spawning an
-> application process, or initiating a control-plane fail-over.
+[/usr/src/linux-next] git bisect good
+e2b0989954ae7c80609f77e7ce203bea6d2c54e1 is the first bad commit
+commit e2b0989954ae7c80609f77e7ce203bea6d2c54e1
+Author: Dennis Zhou (Facebook) <dennisszhou@gmail.com>
+Date:   Tue Sep 11 14:41:35 2018 -0400
 
-You talk about time senstive and then you talk about bash scripts.
-I don't think your definition of time-sensitive and my definition match.
+    blkcg: cleanup and make blk_get_rl use blkg_lookup_create
 
-With that said I think the best solution would be to figure out how to
-allow the coredump to run in parallel with the usual exit signal, and
-exit code reaping of the process.
+I was able to do a bit of sleuthing with strace, and I tracked it down to one of
+several execve() calls that 'rpm' makes with my replicating test case.
 
-That would solve the problem for everyone, and would not introduce any
-new complicated APIs.
+ grep execve /root/rpm-exec-strace 
+execve("/usr/bin/rpm", ["rpm", "-Uvh", "--force", "dracut-049-4.git20181010.fc30.x8"...], 0x7ffc9d967d80 /* 33 vars */) = 0
+[pid 119212] execve("/bin/sh", ["/bin/sh", "/usr/src/redhat/tmp/rpm-tmp.w7fu"..., "0", "0"], 0x7ffdfe17d480 /* 33 vars */) = 0
+[pid 119213] execve("/sbin/ldconfig", ["/sbin/ldconfig"], 0x558ccf928ac0 /* 33 vars */) = 0
+[pid 119216] execve("/bin/sh", ["/bin/sh", "/usr/src/redhat/tmp/rpm-tmp.bIKt"..., "0", "0"], 0x7ffdfe17d480 /* 33 vars */) = 0
+[pid 119217] execve("/usr/bin/systemd-run", ["/usr/bin/systemd-run", "/usr/bin/systemctl", "start", "man-db-cache-update"], 0x56360645d290 /* 33 vars */) = 0
+[pid 119221] execve("/bin/sh", ["/bin/sh", "/usr/src/redhat/tmp/rpm-tmp.OGWg"..., "0", "0"], 0x7ffdfe17d480 /* 33 vars */) = 0
+[pid 119920] execve("/usr/bin/systemctl", ["/usr/bin/systemctl", "daemon-reload"], 0x55c0f5d43c30 /* 33 vars */) = 0
 
-Short of that having the prctl in the process that receives the signals
-they you are doing is the right way to go.
+The ldconfig and systemctl commands run just fine stand-alone, so I'm suspecting the
+calls to run the temp files - it's quite possible that execve() gets invoked on them before
+writeback has actually gotten the data to the disk - though that shouldn't matter.
 
-You are however calling do_notify_parent_predump from the wrong
-function, and frankly with the wrong locking.  There are multiple paths
-to the do_coredump function so you really want this notification from
-do_coredump.
+But I managed to trigger a different traceback. I cd /usr/src/redhat/tmp, and I
+did an 'rm *' - and never got a prompt back. Traceback out of pstore below.
 
-But I still think it would be better to solve the root cause problem and
-change the coredump logic to be able to run in parallel with the normal
-exit notification and zombie reaping logic.  Then the problem you are
-trying to solve goes away and everyone's code gets simpler.
+Now here's the weird part - I'd already unmounted, fsck'ed, and remounted the
+file system before the 'rm *'.  And thinking that there was one file with a
+busted inode that passed fsck.ext4's sniff test, I did:
 
-Eric
+cd /usr/src/redhat/tmp
+for i in `find . -type f`; do sleep 5; echo $i; rm $i; done
 
-> Currently there are two ways for a parent process to be notified of a
-> child process's state change. One is to use the POSIX signal, and
-> another is to use the kernel connector module. The specific events and
-> actions are summarized as follows:
->
-> Process Event    POSIX Signal                Connector-based
-> ----------------------------------------------------------------------
-> ptrace_attach()  do_notify_parent_cldstop()  proc_ptrace_connector()
->                  SIGCHLD / CLD_STOPPED
->
-> ptrace_detach()  do_notify_parent_cldstop()  proc_ptrace_connector()
->                  SIGCHLD / CLD_CONTINUED
->
-> pre_coredump/    N/A                         proc_coredump_connector()
-> get_signal()
->
-> post_coredump/   do_notify_parent()          proc_exit_connector()
-> do_exit()        SIGCHLD / exit_signal
-> ----------------------------------------------------------------------
->
-> As shown in the table, the signal-based pre-coredump notification is not
-> currently available. In some cases using a connector-based notification
-> can be quite complicated (e.g., when a process manager is written in shell
-> scripts and thus is subject to certain inherent limitations), and a
-> signal-based notification would be simpler and better suited.
->
-> Signed-off-by: Enke Chen <enkechen@cisco.com>
-> ---
->  arch/x86/kernel/signal_compat.c    |  2 +-
->  include/linux/sched.h              |  4 ++
->  include/linux/signal.h             |  5 +++
->  include/uapi/asm-generic/siginfo.h |  3 +-
->  include/uapi/linux/prctl.h         |  4 ++
->  kernel/fork.c                      |  1 +
->  kernel/signal.c                    | 51 +++++++++++++++++++++++++
->  kernel/sys.c                       | 77 ++++++++++++++++++++++++++++++++++++++
->  8 files changed, 145 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/kernel/signal_compat.c b/arch/x86/kernel/signal_compat.c
-> index 9ccbf05..a3deba8 100644
-> --- a/arch/x86/kernel/signal_compat.c
-> +++ b/arch/x86/kernel/signal_compat.c
-> @@ -30,7 +30,7 @@ static inline void signal_compat_build_tests(void)
->  	BUILD_BUG_ON(NSIGSEGV != 7);
->  	BUILD_BUG_ON(NSIGBUS  != 5);
->  	BUILD_BUG_ON(NSIGTRAP != 5);
-> -	BUILD_BUG_ON(NSIGCHLD != 6);
-> +	BUILD_BUG_ON(NSIGCHLD != 7);
->  	BUILD_BUG_ON(NSIGSYS  != 1);
->  
->  	/* This is part of the ABI and can never change in size: */
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 09026ea..cfb9645 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -696,6 +696,10 @@ struct task_struct {
->  	int				exit_signal;
->  	/* The signal sent when the parent dies: */
->  	int				pdeath_signal;
-> +
-> +	/* The signal sent prior to a child's coredump: */
-> +	int				predump_signal;
-> +
->  	/* JOBCTL_*, siglock protected: */
->  	unsigned long			jobctl;
->  
-> diff --git a/include/linux/signal.h b/include/linux/signal.h
-> index 706a499..7cb976d 100644
-> --- a/include/linux/signal.h
-> +++ b/include/linux/signal.h
-> @@ -256,6 +256,11 @@ static inline int valid_signal(unsigned long sig)
->  	return sig <= _NSIG ? 1 : 0;
->  }
->  
-> +static inline int valid_predump_signal(int sig)
-> +{
-> +	return (sig == SIGCHLD) || (sig == SIGUSR1) || (sig == SIGUSR2);
-> +}
-> +
->  struct timespec;
->  struct pt_regs;
->  enum pid_type;
-> diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-> index cb3d6c2..1a47cef 100644
-> --- a/include/uapi/asm-generic/siginfo.h
-> +++ b/include/uapi/asm-generic/siginfo.h
-> @@ -267,7 +267,8 @@ struct {				\
->  #define CLD_TRAPPED	4	/* traced child has trapped */
->  #define CLD_STOPPED	5	/* child has stopped */
->  #define CLD_CONTINUED	6	/* stopped child has continued */
-> -#define NSIGCHLD	6
-> +#define CLD_PREDUMP	7	/* child is about to dump core */
-> +#define NSIGCHLD	7
->  
->  /*
->   * SIGPOLL (or any other signal without signal specific si_codes) si_codes
-> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> index c0d7ea0..79f0a8a 100644
-> --- a/include/uapi/linux/prctl.h
-> +++ b/include/uapi/linux/prctl.h
-> @@ -219,4 +219,8 @@ struct prctl_mm_map {
->  # define PR_SPEC_DISABLE		(1UL << 2)
->  # define PR_SPEC_FORCE_DISABLE		(1UL << 3)
->  
-> +/* Whether to receive signal prior to child's coredump */
-> +#define PR_SET_PREDUMP_SIG	54
-> +#define PR_GET_PREDUMP_SIG	55
-> +
->  #endif /* _LINUX_PRCTL_H */
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 07cddff..c296c11 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1985,6 +1985,7 @@ static __latent_entropy struct task_struct *copy_process(
->  	p->dirty_paused_when = 0;
->  
->  	p->pdeath_signal = 0;
-> +	p->predump_signal = 0;
->  	INIT_LIST_HEAD(&p->thread_group);
->  	p->task_works = NULL;
->  
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 312b43e..eb4a483 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -2337,6 +2337,44 @@ static int ptrace_signal(int signr, kernel_siginfo_t *info)
->  	return signr;
->  }
->  
-> +/*
-> + * Let the parent, if so desired, know about the imminent death of a child
-> + * prior to its coredump.
-> + *
-> + * Locking logic is similar to do_notify_parent_cldstop().
-> + */
-> +static void do_notify_parent_predump(struct task_struct *tsk)
-> +{
-> +	struct sighand_struct *sighand;
-> +	struct task_struct *parent;
-> +	struct kernel_siginfo info;
-> +	unsigned long flags;
-> +	int sig;
-> +
-> +	parent = tsk->real_parent;
-> +	sig = parent->predump_signal;
-> +
-> +	/* Check again with "tasklist_lock" locked by the caller */
-> +	if (!valid_predump_signal(sig))
-> +		return;
-> +
-> +	clear_siginfo(&info);
-> +	info.si_signo = sig;
-> +	if (sig == SIGCHLD)
-> +		info.si_code = CLD_PREDUMP;
-> +
-> +	rcu_read_lock();
-> +	info.si_pid = task_pid_nr_ns(tsk, task_active_pid_ns(parent));
-> +	info.si_uid = from_kuid_munged(task_cred_xxx(parent, user_ns),
-> +				       task_uid(tsk));
-> +	rcu_read_unlock();
-> +
-> +	sighand = parent->sighand;
-> +	spin_lock_irqsave(&sighand->siglock, flags);
-> +	__group_send_sig_info(sig, &info, parent);
-> +	spin_unlock_irqrestore(&sighand->siglock, flags);
-> +}
-> +
->  bool get_signal(struct ksignal *ksig)
->  {
->  	struct sighand_struct *sighand = current->sighand;
-> @@ -2497,6 +2535,19 @@ bool get_signal(struct ksignal *ksig)
->  		current->flags |= PF_SIGNALED;
->  
->  		if (sig_kernel_coredump(signr)) {
-> +			/*
-> +			 * Notify the parent prior to the coredump if the
-> +			 * parent is interested in such a notificaiton.
-> +			 */
-> +			int p_sig = current->real_parent->predump_signal;
-> +
-> +			if (valid_predump_signal(p_sig)) {
-> +				read_lock(&tasklist_lock);
-> +				do_notify_parent_predump(current);
-> +				read_unlock(&tasklist_lock);
-> +				cond_resched();
-> +			}
-> +
->  			if (print_fatal_signals)
->  				print_fatal_signal(ksig->info.si_signo);
->  			proc_coredump_connector(current);
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index 123bd73..43eb250d 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -2258,6 +2258,76 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
->  	return -EINVAL;
->  }
->  
-> +static int prctl_get_predump_signal(struct task_struct *tsk, pid_t pid,
-> +				    int __user *addr)
-> +{
-> +	struct task_struct *p;
-> +	int error;
-> +
-> +	/* For the current task, the common case */
-> +	if (pid == 0) {
-> +		put_user(tsk->predump_signal, addr);
-> +		return 0;
-> +	}
-> +
-> +	error = -ESRCH;
-> +	rcu_read_lock();
-> +	p = find_task_by_vpid(pid);
-> +	if (p) {
-> +		error = 0;
-> +		put_user(p->predump_signal, addr);
-> +	}
-> +	rcu_read_unlock();
-> +	return error;
-> +}
-> +
-> +/*
-> + * Returns true if current's euid is same as p's uid or euid,
-> + * or has CAP_SYS_ADMIN.
-> + *
-> + * Called with rcu_read_lock, creds are safe.
-> + *
-> + * Adapted from set_one_prio_perm().
-> + */
-> +static bool set_predump_signal_perm(struct task_struct *p)
-> +{
-> +	const struct cred *cred = current_cred(), *pcred = __task_cred(p);
-> +
-> +	return uid_eq(pcred->uid, cred->euid) ||
-> +	       uid_eq(pcred->euid, cred->euid) ||
-> +	       capable(CAP_SYS_ADMIN);
-> +}
-> +
-> +static int prctl_set_predump_signal(struct task_struct *tsk, pid_t pid, int sig)
-> +{
-> +	struct task_struct *p;
-> +	int error;
-> +
-> +	/* 0 is valid for disabling the feature */
-> +	if (sig && !valid_predump_signal(sig))
-> +		return -EINVAL;
-> +
-> +	/* For the current task, the common case */
-> +	if (pid == 0) {
-> +		tsk->predump_signal = sig;
-> +		return 0;
-> +	}
-> +
-> +	error = -ESRCH;
-> +	rcu_read_lock();
-> +	p = find_task_by_vpid(pid);
-> +	if (p) {
-> +		if (!set_predump_signal_perm(p))
-> +			error = -EPERM;
-> +		else {
-> +			error = 0;
-> +			p->predump_signal = sig;
-> +		}
-> +	}
-> +	rcu_read_unlock();
-> +	return error;
-> +}
-> +
->  SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->  		unsigned long, arg4, unsigned long, arg5)
->  {
-> @@ -2476,6 +2546,13 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
->  			return -EINVAL;
->  		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
->  		break;
-> +	case PR_SET_PREDUMP_SIG:
-> +		error = prctl_set_predump_signal(me, (pid_t)arg2, (int)arg3);
-> +		break;
-> +	case PR_GET_PREDUMP_SIG:
-> +		error = prctl_get_predump_signal(me, (pid_t)arg2,
-> +						 (int __user *)arg3);
-> +		break;
->  	default:
->  		error = -EINVAL;
->  		break;
+and that worked just fine. Nothing left in that directory but . and ..  
+I then re-ran my rpm-based replicator and it blew up again.
+
+Traceback of the rm crash (I have *no* idea why it has systemd-tmpfile as Comm:
+as none of the tmpfile config reference /usr/src at all, and the config says it
+shouldn't have been running at the time of the crash, and I can't replicate as
+the directory is now empty...)
+
+[  919.756309] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+[  919.756317] PGD 0 P4D 0
+[  919.756327] Oops: 0000 [#1] PREEMPT SMP PTI
+[  919.756333] CPU: 0 PID: 3659 Comm: systemd-tmpfile Tainted: G           O    T 4.19.0-rc6-next-20181005-dirty #621
+[  919.756337] Hardware name: Dell Inc. Latitude E6530/07Y85M, BIOS A21 02/21/2018
+[  919.756346] RIP: 0010:__get_request+0x31/0x7e0
+[  919.756351] Code: 89 e5 41 57 41 56 41 55 49 89 fd 41 54 41 89 f4 53 48 83 ec 50 48 8b 1f 48 85 d2 48 89 55 b8 89 4d c0 44 89 45 c4 48 8b 43 18 <48> 8b 00
+48 89 45 b0 0f 84 ba 03 00 00 48 8b 42 58 48 85 c0 48 89
+[  919.756355] RSP: 0018:ffffad75883ef858 EFLAGS: 00010086
+[  919.756361] RAX: 0000000000000000 RBX: ffffa27a9892b000 RCX: 0000000000000000
+[  919.756366] RDX: ffffa27a8a81cf00 RSI: 0000000000003000 RDI: ffffa27993c25840
+[  919.756370] RBP: ffffad75883ef8d0 R08: 0000000000600000 R09: 0000000000000001
+[  919.756374] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000003000
+[  919.756378] R13: ffffa27993c25840 R14: ffffa27a8a81cf00 R15: ffffa27993c258c0
+[  919.756383] FS:  00007f15be4f7940(0000) GS:ffffa27a9d400000(0000) knlGS:0000000000000000
+[  919.756387] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  919.756391] CR2: 0000000000000000 CR3: 00000004058ee006 CR4: 00000000001606f0
+[  919.756395] Call Trace:
+[  919.756410]  get_request+0x214/0x8b0
+[  919.756420]  ? remove_wait_queue+0x70/0x70
+[  919.756429]  blk_queue_bio+0x23b/0x760
+[  919.756439]  generic_make_request+0x2fe/0x570
+[  919.756446]  ? guard_bio_eod+0x40/0x320
+[  919.756455]  submit_bio+0x4d/0x190
+[  919.756460]  ? submit_bio+0x4d/0x190
+[  919.756465]  ? guard_bio_eod+0x172/0x320
+[  919.756473]  submit_bh_wbc+0x236/0x2b0
+[  919.756481]  ll_rw_block+0xdf/0xf0
+[  919.756490]  ext4_bread+0x96/0xe0
+[  919.756498]  __ext4_read_dirblock+0x44/0x3c0
+[  919.756508]  htree_dirblock_to_tree+0x6f/0x2c0
+[  919.756522]  ext4_htree_fill_tree+0xc6/0x3c0
+[  919.756529]  ? ext4_readdir+0x9e8/0xc30
+[  919.756536]  ? ext4_readdir+0x9e8/0xc30
+[  919.756542]  ? kmem_cache_alloc_trace+0x382/0x4a0
+[  919.756551]  ext4_readdir+0x893/0xc30
+[  919.756568]  iterate_dir+0xa6/0x1c0
+[  919.756575]  ksys_getdents64+0x13d/0x1f0
+[  919.756580]  ? iterate_dir+0x1c0/0x1c0
+[  919.756590]  __x64_sys_getdents64+0x1b/0x20
+[  919.756596]  do_syscall_64+0x8f/0xa52
+[  919.756602]  ? trace_hardirqs_off_caller+0x22/0x150
+[  919.756609]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+[  919.756619]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  919.756624] RIP: 0033:0x7f15bf1ace7b
+
+The original RPM replicable traceback:
+[  680.692888] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+[  680.692895] PGD 0 P4D 0
+[  680.692901] Oops: 0000 [#1] PREEMPT SMP PTI
+[  680.692905] CPU: 3 PID: 15464 Comm: sh Tainted: G           O    T 4.19.0-rc6-next-20181005-dirty #621
+[  680.692908] Hardware name: Dell Inc. Latitude E6530/07Y85M, BIOS A21 02/21/2018
+[  680.692915] RIP: 0010:__get_request+0x31/0x7e0
+[  680.692918] Code: 89 e5 41 57 41 56 41 55 49 89 fd 41 54 41 89 f4 53 48 83 ec 50 48 8b 1f 48 85 d2 48 89 55 b8 89 4d 
+c0 44 89 45 c4 48 8b 43 18 <48> 8b 00 48 89 45 b0 0f 84 ba 03 00 00 48 8b 42 58 48 85 c0 48 89
+[  680.692921] RSP: 0018:ffff9fa98d93f578 EFLAGS: 00010086
+[  680.692925] RAX: 0000000000000000 RBX: ffff975ad40e7040 RCX: 0000000000000000
+[  680.692927] RDX: ffff975aac306e00 RSI: 0000000000080000 RDI: ffff975acce39840
+[  680.692930] RBP: ffff9fa98d93f5f0 R08: 0000000000600000 R09: 0000000000000001
+[  680.692933] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000080000
+[  680.692935] R13: ffff975acce39840 R14: ffff975aac306e00 R15: ffff975acce398c0
+[  680.692938] FS:  00007f8fb7876740(0000) GS:ffff975adda00000(0000) knlGS:0000000000000000
+[  680.692941] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  680.692944] CR2: 0000000000000000 CR3: 00000003ebc64006 CR4: 00000000001606e0
+[  680.692946] Call Trace:
+[  680.692957]  get_request+0x214/0x8b0
+[  680.692964]  ? remove_wait_queue+0x70/0x70
+[  680.692971]  blk_queue_bio+0x23b/0x760
+[  680.692977]  generic_make_request+0x2fe/0x570
+[  680.692983]  submit_bio+0x4d/0x190
+[  680.692987]  ? submit_bio+0x4d/0x190
+[  680.692992]  ? bio_add_page+0x4b/0x60
+[  680.692997]  ext4_mpage_readpages+0x814/0xed4
+[  680.693002]  ? get_page_from_freelist+0x42c/0x1bd0
+[  680.693015]  ext4_readpages+0x55/0x60
+[  680.693020]  read_pages+0x72/0x190
+[  680.693031]  __do_page_cache_readahead+0x1f6/0x220
+[  680.693045]  ondemand_readahead+0x2ae/0x4f0
+[  680.693055]  page_cache_sync_readahead+0x112/0x250
+[  680.693065]  generic_file_buffered_read+0x542/0xf70
+[  680.693079]  ? _raw_spin_unlock_irqrestore+0x78/0xa0
+[  680.693087]  ? avc_update_node+0x1b6/0x2c0
+[  680.693095]  generic_file_read_iter+0xd0/0x140
+[  680.693102]  ext4_file_read_iter+0x6c/0x80
+[  680.693107]  new_sync_read+0x121/0x1a0
+[  680.693116]  __vfs_read+0x49/0x60
+[  680.693120]  vfs_read+0x152/0x250
+[  680.693126]  kernel_read+0x43/0x60
+[  680.693131]  prepare_binprm+0x19b/0x1f0
+[  680.693136]  __do_execve_file+0x5ca/0xbc0
+[  680.693142]  __x64_sys_execve+0x38/0x50
+[  680.693148]  do_syscall_64+0x8f/0xa52
+[  680.693152]  ? trace_hardirqs_off_caller+0x22/0x150
+[  680.693156]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+[  680.693162]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  680.693165] RIP: 0033:0x7f8fb7942b5b
+[  680.693169] Code: 41 89 01 eb da 66 2e 0f 1f 84 00 00 00 00 00 f7 d8 64 41 89 01 eb d6 0f 1f 84 00 00 00 00 00 f3 0f 
+1e fa b8 3b 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d fd 62 0f 00 f7 d8 64 89 01 48
+
