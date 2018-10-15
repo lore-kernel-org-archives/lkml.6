@@ -2,135 +2,99 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7F7C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C11C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21D332089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:13:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QJMM9uB1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D332089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id ACF492089D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:14:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACF492089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbeJPA7F (ORCPT
+        id S1726988AbeJPBAL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:59:05 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:37680 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbeJPA7E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:59:04 -0400
-Received: by mail-it1-f193.google.com with SMTP id e74-v6so28710945ita.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 10:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=gsIjagZNQQkA9ksth8WVhZslPoiX8pxtrxY0yInE/5E=;
-        b=QJMM9uB180Cbwfc4yBHdtMF/w60gdxlosriR7PLx6f8mr0mx/2CyXkL0J3svQs5Qcw
-         KQF2efQXzgQdUF3fedI+BOac8h4kypxGNyubglKlefuUjVFm1H2S+92nQesAOG7cP7aG
-         NT1/iTfaZh2ugJ5ZgTBoTbui17tUXcolLXr6/cR33GlAgf1A15iKtJ49pHlBVXDLZcLR
-         rzXWrnrocIAKcaI7TOAdAZ1RdBMhS4fpu+MjWO7yWAgPOzh9zGH67NLCunIQmTluil/t
-         n9nrswxhHZxl3gH/ylwc79XlsJ/yVswrKI/g/T6pvsuZuGwTRlcyUE5TgwVacxyOQMtN
-         zgCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=gsIjagZNQQkA9ksth8WVhZslPoiX8pxtrxY0yInE/5E=;
-        b=jSdpOnVQ7RI2AP+aWoxfXVe1mlJ7bBnLNy1tfJveX6g0Vn+ADbhRe+uRS3ADRmbX0u
-         Z9oRPW/sxX1K1riM2vNM8SL+BNLBab/qfJI4KiDG6zfG9nlQFU26aKFyph10suncwOJ2
-         5Eb97SlhfBq6WcCqNgF9WVDQ/ugkb5iNsOeYzYGc57C+q8uEbviU2YRQw02uMmSUcky+
-         zDMIaZLu/+KSBha9t5droVJ92eJIKnoxlL0ScuJB1a4g0pm02UNFiToc8RzjoWm4TYXd
-         oQd94s5bdha5MXU/4sE+Rxv7cbh8udxZI/bo4BpX37ZxI8v0g/GAe3AjJhNONZtxCdrU
-         DzcA==
-X-Gm-Message-State: ABuFfoglE8PbB7jWcOGnPDjf6VkyR8bmQrGCYZJYWaca2u0Qrlj9ILcy
-        7oReFOWYNBsKeQO3GtaCfYy8ACQLpXvO7xYzbHX2bA==
-X-Google-Smtp-Source: ACcGV600JB+z5+1XCg77dZqE48RTBQVBNITjNZSr/hoKN5IiaiAnrpe3FdQY3iQ7Rl2RCqUIbcKsDpX4DN6KRj5Oo1I=
-X-Received: by 2002:a24:f584:: with SMTP id k126-v6mr12170786ith.166.1539623576986;
- Mon, 15 Oct 2018 10:12:56 -0700 (PDT)
+        Mon, 15 Oct 2018 21:00:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51360 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726585AbeJPBAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 21:00:11 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5508430820DC;
+        Mon, 15 Oct 2018 17:14:01 +0000 (UTC)
+Received: from [10.36.117.209] (ovpn-117-209.ams2.redhat.com [10.36.117.209])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 63D905FCBE;
+        Mon, 15 Oct 2018 17:13:57 +0000 (UTC)
+Subject: Re: [PATCH] KVM: x86: fix failure of injecting
+ exceptionsinx86_emulate_instruction
+To:     peng.hao2@zte.com.cn, rkrcmar@redhat.com
+Cc:     sean.j.christopherson@intel.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <201810091051106835496@zte.com.cn>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <bc6f2c4b-f0ac-a800-a044-ae1907b51eeb@redhat.com>
+Date:   Mon, 15 Oct 2018 19:13:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 10:12:36
- -0700 (PDT)
-In-Reply-To: <20181015124552.GD30927@quack2.suse.cz>
-References: <00000000000036c76a057842c97f@google.com> <20181015121541.GC30927@quack2.suse.cz>
- <CACT4Y+ZabUTpP6HZQVkVDvMYbktn=gP2C-m=ueKK3NRh7teY5A@mail.gmail.com> <20181015124552.GD30927@quack2.suse.cz>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 15 Oct 2018 19:12:36 +0200
-Message-ID: <CACT4Y+ZrMvNi8GvO3S5gSf7ofcQKFNG_JuusSOUXCxZEx5R8Ag@mail.gmail.com>
-Subject: Re: INFO: task hung in fanotify_handle_event
-To:     Jan Kara <jack@suse.cz>
-Cc:     syzbot <syzbot+29143581b0ded3213e99@syzkaller.appspotmail.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <201810091051106835496@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 15 Oct 2018 17:14:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 2:45 PM, Jan Kara <jack@suse.cz> wrote:
-> Hi Dmirty!
->
-> On Mon 15-10-18 14:29:14, Dmitry Vyukov wrote:
->> On Mon, Oct 15, 2018 at 2:15 PM, Jan Kara <jack@suse.cz> wrote:
->> > Hello,
->> >
->> > On Mon 15-10-18 04:32:02, syzbot wrote:
->> >> syzbot found the following crash on:
->> >>
->> >> HEAD commit:    90ad18418c2d Merge git://git.kernel.org/pub/scm/linux/kern..
->> >> git tree:       upstream
->> >> console output: https://syzkaller.appspot.com/x/log.txt?x=17f1776e400000
->> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=88e9a8a39dc0be2d
->> >> dashboard link: https://syzkaller.appspot.com/bug?extid=29143581b0ded3213e99
->> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=123459d6400000
->> >>
->> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> >> Reported-by: syzbot+29143581b0ded3213e99@syzkaller.appspotmail.com
->> >
->> > Syzbot has apparently generated fanotify watch for FAN_OPEN_PERM event and
->> > then the process got stuck waiting for userspace to respond to that event -
->> > which never happened. So everything works as designed here - the process
->> > placing FAN_OPEN_PERM mark is responsible for replying to the generated
->> > events as all opens hang waiting for responses. That's why the
->> > functionality is behind CAP_SYS_ADMIN after all... Could we fix syzbot to
->> > actually generate replies for these events?
->>
->> Is there a reliable way to kill such processes?
->> Or admins are never supposed to kill any root processes and have not
->> bugs whatsoever? :)
->
-> Currently the wait is not killable but yes, we want to make it killable
-> exactly because of userspace bugs :). But it is non-trivial because
-> currently the waker has also other responsibilities and all that stuff has
-> to be cleaned up when handling killed wait. Konstantin Khlebnikov was
-> working on that so I might need to prod him.
->
->> syzkaller probably capable of generating replies in some cases, but
->> unfortunately it can't work this way. It's practically not possible to
->> ensure that it will always generate a proper reply and it will be
->> actually delivered and the process won't be killed in the middle, or
->> another thread won't crash or call exit_group concurrently, etc. The
->> thing either needs to be reliable, work without any but's and be
->> reliably killable, or it's not suitable for stress testing.
->> If there is no reliable way to kill it, I think we need to disable
->> FAN_OPEN_PERM entirely.
->
-> Understood. Then just disable FAN_OPEN_PERM & FAN_ACCESS_PERM for now.
+On 09/10/2018 04:51, peng.hao2@zte.com.cn wrote:
+> ping
+> patch  ;https://patchwork.kernel.org/patch/10604977/
+> test case :https://patchwork.kernel.org/patch/10631781/
 
+I need to understand the double fault I'm seeing before applying this patch.
 
-Disabled FAN_OPEN_PERM & FAN_ACCESS_PERM for now:
-https://github.com/google/syzkaller/commit/6ce17935cb99fa11aaa2f2d1889261da6b298013
-
-
-#syz invalid
+Paolo
