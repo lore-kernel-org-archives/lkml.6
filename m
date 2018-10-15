@@ -2,329 +2,144 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFF2C71130
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A38C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D69C20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:50:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emlid.com header.i=@emlid.com header.b="oMCutczm";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emlid.com header.i=@emlid.com header.b="IfR2II+p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D69C20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emlid.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D43920652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:51:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D43920652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbeJOTf3 (ORCPT
+        id S1726638AbeJOTgQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:35:29 -0400
-Received: from forward106p.mail.yandex.net ([77.88.28.109]:34658 "EHLO
-        forward106p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726591AbeJOTf3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:35:29 -0400
-Received: from mxback7o.mail.yandex.net (mxback7o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::21])
-        by forward106p.mail.yandex.net (Yandex) with ESMTP id 2D32A2D8167E;
-        Mon, 15 Oct 2018 14:50:30 +0300 (MSK)
-Received: from smtp3p.mail.yandex.net (smtp3p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:8])
-        by mxback7o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id etuN2fYFi3-oSe8AesV;
-        Mon, 15 Oct 2018 14:50:30 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emlid.com; s=mail; t=1539604230;
-        bh=ofW3ywV5XHUiZFqr21uEHVd46Hc3iW9mPAJ8XKEBp+A=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        b=oMCutczmPVfbjuSNfjq9sIsvQHM1HV/U4ebc77m7CGomL+iiD8srXNVNADm6LKcsr
-         nHYtOh4thGIQAUhknm3FQarunOYREZb4xqQOrYkM8Zrg/zzVo8io4NEGzemKysOVO/
-         oiNYPeaTQ1xeUbm8UR6kzzSwDvmB+PFJmnsaUbp4=
-Received: by smtp3p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id q72Y4XcU2b-oQxmkvim;
-        Mon, 15 Oct 2018 14:50:26 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emlid.com; s=mail; t=1539604227;
-        bh=ofW3ywV5XHUiZFqr21uEHVd46Hc3iW9mPAJ8XKEBp+A=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        b=IfR2II+pTNKEP2T4Hnfe1YneZirtszp191jQd/H3ghdyHELdAe0X1QuNMsZzlWJzD
-         36KNNueZPkXs93B+XMySqsl0M8C39KawOcbRxiBrtX8Odsd5Z1EKiBJTGiVgBG/kcx
-         AkFKiIcJTTxfwDQaV8/CHM6C9nkpalg3Lbm8qOIg=
-Authentication-Results: smtp3p.mail.yandex.net; dkim=pass header.i=@emlid.com
-From:   Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-Cc:     Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        David Lechner <david@lechnology.com>,
-        Thierry Reding <treding@nvidia.com>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 2/2] arm64: dts: allwinner: new board - Emlid Neutis N5
-Date:   Mon, 15 Oct 2018 14:49:50 +0300
-Message-Id: <1539604192-17561-3-git-send-email-aleksandr.aleksandrov@emlid.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539604192-17561-1-git-send-email-aleksandr.aleksandrov@emlid.com>
-References: <1539339841-22235-2-git-send-email-aleksandr.aleksandrov@emlid.com>
- <1539604192-17561-1-git-send-email-aleksandr.aleksandrov@emlid.com>
-To:     unlisted-recipients:; (no To-header on input)
+        Mon, 15 Oct 2018 15:36:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46278 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726319AbeJOTgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 15:36:16 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 92C1C7F6C8;
+        Mon, 15 Oct 2018 11:51:20 +0000 (UTC)
+Received: from [10.36.117.209] (ovpn-117-209.ams2.redhat.com [10.36.117.209])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1ADC910018FB;
+        Mon, 15 Oct 2018 11:51:15 +0000 (UTC)
+Subject: Re: [PATCH V4 11/15] KVM/MMU: Replace tlb flush function with range
+ list flush function
+To:     lantianyu1986@gmail.com
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
+        haiyangz@microsoft.com, sthemmin@microsoft.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        rkrcmar@redhat.com, devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        michael.h.kelley@microsoft.com, vkuznets@redhat.com
+References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
+ <20181013145406.4911-12-Tianyu.Lan@microsoft.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <f23f0869-fd33-339a-4833-1249dd4c1670@redhat.com>
+Date:   Mon, 15 Oct 2018 13:51:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20181013145406.4911-12-Tianyu.Lan@microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 15 Oct 2018 11:51:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Emlid Neutis N5 is a SoM based on Allwinner H5, has a WiFi & BT
-module, DDR3 RAM and eMMC.
+On 13/10/2018 16:54, lantianyu1986@gmail.com wrote:
+>  	while (mmu_unsync_walk(parent, &pages)) {
+>  		bool protected = false;
+> +		LIST_HEAD(flush_list);
+>  
+> -		for_each_sp(pages, sp, parents, i)
+> +		for_each_sp(pages, sp, parents, i) {
+>  			protected |= rmap_write_protect(vcpu, sp->gfn);
+> +			kvm_mmu_queue_flush_request(sp, &flush_list);
+> +		}
 
-- add neutis n5 dtsi file for SoM needs
-- add neutis devboard dts file
-- add neutis devboard target to dtb makefile
+Here you already know that the page has to be flushed, because you are
+dealing with shadow page tables and those always use 4K pages.  So the
+check on is_last_page is unnecessary.
 
-Signed-off-by: Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
----
- arch/arm64/boot/dts/allwinner/Makefile             |   1 +
- .../sun50i-h5-emlid-neutis-n5-devboard.dts         | 149 +++++++++++++++++++++
- .../dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi   |  61 +++++++++
- 3 files changed, 211 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
+> 
+>  					 pte_access, PT_PAGE_TABLE_LEVEL,
+>  					 gfn, spte_to_pfn(sp->spt[i]),
+>  					 true, false, host_writable);
+> +		if (set_spte_ret && kvm_available_flush_tlb_with_range())
+> +			kvm_mmu_queue_flush_request(sp, &flush_list);
+>  	}
 
-diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-index 9ffa7a0..eefe74c 100644
---- a/arch/arm64/boot/dts/allwinner/Makefile
-+++ b/arch/arm64/boot/dts/allwinner/Makefile
-@@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pinebook.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-sopine-baseboard.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-teres-i.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-emlid-neutis-n5-devboard.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-libretech-all-h3-cc.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
-new file mode 100644
-index 0000000..85e7993
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
-@@ -0,0 +1,149 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * DTS for Emlid Neutis N5 Dev board.
-+ *
-+ * Copyright (C) 2018 Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "sun50i-h5-emlid-neutis-n5.dtsi"
-+
-+/ {
-+	model = "Emlid Neutis N5 Developer board";
-+	compatible = "emlid,neutis-n5-devboard",
-+		     "emlid,neutis-n5",
-+		     "allwinner,sun50i-h5";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
-+	reg_usb0_vbus: usb0-vbus {
-+		compatible = "regulator-fixed";
-+		regulator-name = "usb0-vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		enable-active-high;
-+		gpio = <&r_pio 0 9 GPIO_ACTIVE_HIGH>;   /* PL9 */
-+		status = "okay";
-+	};
-+
-+	vdd_cpux: gpio-regulator {
-+		compatible = "regulator-gpio";
-+		pinctrl-names = "default";
-+		regulator-name = "vdd-cpux";
-+		regulator-type = "voltage";
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-min-microvolt = <1100000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-ramp-delay = <50>; /* 4ms */
-+		gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
-+		gpios-states = <0x1>;
-+		states = <1100000 0x0
-+			  1300000 0x1>;
-+	};
-+};
-+
-+&codec {
-+	allwinner,audio-routing =
-+		"Line Out", "LINEOUT",
-+		"LINEIN", "Line In",
-+		"MIC1", "Mic",
-+		"MIC2", "Mic",
-+		"Mic",  "MBIAS";
-+	status = "okay";
-+};
-+
-+&de {
-+	status = "okay";
-+};
-+
-+&ehci0 {
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&ehci2 {
-+	status = "okay";
-+};
-+
-+&ehci3 {
-+	status = "okay";
-+};
-+
-+&emac {
-+	phy-handle = <&int_mii_phy>;
-+	phy-mode = "mii";
-+	allwinner,leds-active-low;
-+	status = "okay";
-+};
-+
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
-+&mmc0 {
-+	vmmc-supply = <&reg_vcc3v3>;
-+	bus-width = <4>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
-+	status = "okay";
-+};
-+
-+&ohci0 {
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
-+
-+&ohci3 {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_a>;
-+	status = "okay";
-+};
-+
-+&usb_otg {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	usb0_id_det-gpios = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
-+	usb0_vbus-supply = <&reg_usb0_vbus>;
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
-new file mode 100644
-index 0000000..e4d5037
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
-@@ -0,0 +1,61 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * DTSI for Emlid Neutis N5 SoM.
-+ *
-+ * Copyright (C) 2018 Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "sun50i-h5.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	reg_vcc3v3: vcc3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	wifi_pwrseq: wifi_pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		pinctrl-names = "default";
-+		reset-gpios = <&pio 2 7 GPIO_ACTIVE_LOW>; /* PC7 */
-+		post-power-on-delay-ms = <200>;
-+	};
-+};
-+
-+&mmc1 {
-+	vmmc-supply = <&reg_vcc3v3>;
-+	vqmmc-supply = <&reg_vcc3v3>;
-+	mmc-pwrseq = <&wifi_pwrseq>;
-+	bus-width = <4>;
-+	non-removable;
-+	status = "okay";
-+
-+	brcmf: wifi@1 {
-+		reg = <1>;
-+		compatible = "brcm,bcm4329-fmac";
-+		interrupt-parent = <&r_pio>;
-+		interrupts = <0 5 IRQ_TYPE_LEVEL_LOW>;	/* PL5 */
-+		interrupt-names = "host-wake";
-+	};
-+};
-+
-+&mmc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc2_8bit_pins>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	bus-width = <8>;
-+	non-removable;
-+	cap-mmc-hw-reset;
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
-+	status = "okay";
-+};
--- 
-2.7.4
+This is wrong, I think.  sp is always the same throughout the loop, so
+you are adding it multiple times to flush_list.
+
+Instead, you need to add a separate range for each virtual address (in
+this case L2 GPA) that is synced; but for each PTE that you call
+set_spte here for, you could be syncing multiple L2 GPAs if a single
+page is reused multiple times by the guest's EPT page tables.
+
+And actually I may be missing something, but doesn't this apply to all
+call sites?  For mmu_sync_children you can do the flush in
+__rmap_write_protect and return false, similar to the first part of the
+series, but not for kvm_mmu_commit_zap_page and sync_page.
+
+Can you simplify this series to only have hv_remote_flush_tlb_with_range
+and remove all the flush_list stuff?  That first part is safe and well
+understood, because it uses the rmap and so it's clear that you have L2
+GPAs at hand.  Most of the remarks I made on the Hyper-V API will still
+apply.
+
+Paolo
+
+>  	if (set_spte_ret & SET_SPTE_NEED_REMOTE_TLB_FLUSH)
+> -		kvm_flush_remote_tlbs(vcpu->kvm);
+> +		kvm_flush_remote_tlbs_with_list(vcpu->kvm, &flush_list);
+>  
+>  	return nr_present;
 
