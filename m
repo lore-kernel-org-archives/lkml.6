@@ -2,108 +2,143 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE44C7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC09EC7112A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B097120853
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:53:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B097120853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 89C6E20644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:53:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89C6E20644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbeJOQh5 (ORCPT
+        id S1726802AbeJOQiI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 12:37:57 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36830 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJOQh5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 12:37:57 -0400
-Received: by mail-oi1-f194.google.com with SMTP id p125-v6so14454554oic.3;
-        Mon, 15 Oct 2018 01:53:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nV/aUmawwCkM8R1/zI5sKC2x5zU4RlvLegUUGfAZAHI=;
-        b=SBYGNuwY9UfU+Ha/Qm+a5jym+SaTTxye3sePMIOERJfx6Qxsx32Bx1dbdRw1FWAGbB
-         nlgGj3F1gk9iwQ9zADZi47TaykpjiaQFcSypIM9yvEiIbkJkqBNfcdTtWIa0CW2Le1GI
-         AU8h2qPujHem1vLT/2Ua/zGYnOlatKLHu6DLvuNj1noIfSnjpTRgTTW5YIU1ITuGgoYV
-         HthenSnF+Q73StxtAhNnIXBLkh470Zl9jHKXbhT9T12fLK9TFGuQOQpbUcJ/ErJl4wWj
-         HiGdyBda4nB1zu4bf8WAwqnXXYGDhMtZ99ansg7GGDVjgRq82MWQbPz/7HJv+X11WbX9
-         bb9Q==
-X-Gm-Message-State: ABuFfoh6rfLJRP4XxaL2EN+eaC1Cc3HPPvDpKP+8aW1QxhgzRsWA5MAs
-        QpwCDkHBm5Rro4gsAKuquvLe7PEywNl8P3ufkiQ=
-X-Google-Smtp-Source: ACcGV63y3E3YyfRXVhgRzaCZtNFNuVstJ332UbVqxQzoU8TSbplvyi46okCNLWGeG5BZNEeFGXM5q0u2MBDOgxhcV/A=
-X-Received: by 2002:aca:af91:: with SMTP id y139-v6mr8044089oie.322.1539593616880;
- Mon, 15 Oct 2018 01:53:36 -0700 (PDT)
+        Mon, 15 Oct 2018 12:38:08 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13636 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726273AbeJOQiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 12:38:08 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 79FA6F999506F;
+        Mon, 15 Oct 2018 16:53:44 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Mon, 15 Oct 2018
+ 16:53:40 +0800
+Subject: Re: [PATCH] bitfield: add constant field preparation macros
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        <linux-wireless@vger.kernel.org>
+References: <20181012194556.31004-1-johannes@sipsolutions.net>
+CC:     <linux-kernel@vger.kernel.org>, <nbd@nbd.name>,
+        Johannes Berg <johannes.berg@intel.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <d250e401-e939-c521-8e66-d9f6648db986@huawei.com>
+Date:   Mon, 15 Oct 2018 09:53:36 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-References: <20181012164400.3479-1-srinivas.pandruvada@linux.intel.com> <20181012164400.3479-4-srinivas.pandruvada@linux.intel.com>
-In-Reply-To: <20181012164400.3479-4-srinivas.pandruvada@linux.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 15 Oct 2018 10:53:25 +0200
-Message-ID: <CAJZ5v0iXOtcNSqPU7NYwG=S_JCdoTFzLRD1qZocWMnFnVJ-oMQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] Documentation: intel_pstate: Add base_frequency information
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Robert Moore <robert.moore@intel.com>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>, devel@acpica.org,
-        Prashanth Prakash <pprakash@codeaurora.org>,
-        George Cherian <george.cherian@cavium.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181012194556.31004-1-johannes@sipsolutions.net>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 6:44 PM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
+On 12/10/2018 20:45, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
 >
-> Updated documentation to explain base_frequency attribute.
+> John Garry requested to be able to use FIELD_PREP() and friends
+> in constant initializers, but we cannot completely switch all of
+> the current assertions to BUILD_BUG_ON_ZERO().
 >
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+
+Thanks for this.
+
+> So instead of this, add __FIELD_PREP() which is suitable in such
+> contexts, and also add __{u,le,be}{16,32,64}encode_bits() like
+> the existing versions without underscores, but again suitable in
+> constant contexts.
+>
+> Requested-by: John Garry <john.garry@huawei.com>
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 > ---
->  Documentation/admin-guide/pm/intel_pstate.rst | 4 ++++
->  1 file changed, 4 insertions(+)
+>  include/linux/bitfield.h | 34 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
 >
-> diff --git a/Documentation/admin-guide/pm/intel_pstate.rst b/Documentation/admin-guide/pm/intel_pstate.rst
-> index 8f1d3de449b5..14a5505e073e 100644
-> --- a/Documentation/admin-guide/pm/intel_pstate.rst
-> +++ b/Documentation/admin-guide/pm/intel_pstate.rst
-> @@ -465,6 +465,10 @@ Next, the following policy attributes have special meaning if
->         policy for the time interval between the last two invocations of the
->         driver's utilization update callback by the CPU scheduler for that CPU.
+> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> index 3f1ef4450a7c..245dfb47d201 100644
+> --- a/include/linux/bitfield.h
+> +++ b/include/linux/bitfield.h
+> @@ -63,6 +63,14 @@
+>  					      (1ULL << __bf_shf(_mask))); \
+>  	})
 >
-> +``base_frequency``
-> +       When present, shows the base frequency of the CPU. Any frequency above
-> +       this will be in the turbo frequency range.
+> +#define __BF_CHECK_POW2(n)	BUILD_BUG_ON_ZERO(((n) & ((n) - 1)) != 0)
 > +
+> +#define __BF_FIELD_CHECK_CONST(_mask, _reg, _val)			\
+> +	(BUILD_BUG_ON_ZERO((_mask) == 0) +				\
+> +	 BUILD_BUG_ON_ZERO(~((_mask) >> __bf_shf(_mask)) & (_val)) +	\
+> +	 BUILD_BUG_ON_ZERO((_mask) > (typeof(_reg))~0ull) +		\
+> +	 __BF_CHECK_POW2((_mask) + (1ULL << __bf_shf(_mask))))
+> +
+>  /**
+>   * FIELD_FIT() - check if value fits in the field
+>   * @_mask: shifted mask defining the field's length and position
+> @@ -90,6 +98,21 @@
+>  		((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);	\
+>  	})
+>
+> +/**
+> + * __FIELD_PREP() - prepare a constant bitfield element
 
-This isn't entirely correct, because base_frequency is not present in
-the passive mode (and it is not present for the other drivers for that
-matter).
+My impression is that the name prefix - '__' - tells little about the 
+function. If you agree, how about even CFIELD_PREP() or 
+FIELD_PREP_CONST() or similar? I preper the latter, but becomes rather long.
 
->  The meaning of these attributes in the `passive mode <Passive Mode_>`_ is the
->  same as for other scaling drivers.
+> + * @_mask: shifted mask defining the field's length and position
+> + * @_val:  value to put in the field
+> + *
+> + * __FIELD_PREP() masks and shifts up the value.  The result should
+> + * be combined with other fields of the bitfield using local OR.
 
-Instead, I would say:
+should this be 'logical OR', or indeed 'bitwise OR'?
 
-"One more policy attribute is present if the `HWP feature is enabled
-in the processor <Active Mode With HWP_>`_:"
+> + *
+> + * This version is suitable for use in a pure constant context, e.g.
+> + * a constant initializer.
+> + */
+> +#define __FIELD_PREP(_mask, _val)					\
+> +	((typeof(_mask))__BF_FIELD_CHECK_CONST(_mask, 0ULL, _val) +	\
+> +	 (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask)))
+> +
+>  /**
+>   * FIELD_GET() - extract a bitfield element
+>   * @_mask: shifted mask defining the field's length and position
+> @@ -150,4 +173,15 @@ __MAKE_OP(64)
+>  #undef __MAKE_OP
+>  #undef ____MAKE_OP
+>
+> +#define __encode_bits(w, v, field)	__FIELD_PREP((u##w)(field), v)
+> +#define __u16_encode_bits(v, field)	__encode_bits(16, v, field)
+> +#define __le16_encode_bits(v, field)	cpu_to_le16(__encode_bits(16, v, field))
+> +#define __be16_encode_bits(v, field)	cpu_to_be16(__encode_bits(16, v, field))
+> +#define __u32_encode_bits(v, field)	__encode_bits(32, v, field)
+> +#define __le32_encode_bits(v, field)	cpu_to_le32(__encode_bits(32, v, field))
+> +#define __be32_encode_bits(v, field)	cpu_to_be32(__encode_bits(32, v, field))
+> +#define __u64_encode_bits(v, field)	__encode_bits(64, v, field)
+> +#define __le64_encode_bits(v, field)	cpu_to_le64(__encode_bits(64, v, field))
+> +#define __be64_encode_bits(v, field)	cpu_to_be64(__encode_bits(64, v, field))
+> +
+>  #endif
+>
 
-here and I would add the description of the attribute below.
+Thanks again,
+John
 
-Thanks,
-Rafael
+
