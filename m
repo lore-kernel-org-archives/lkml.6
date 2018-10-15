@@ -2,171 +2,81 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5476C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FFDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 673BF20658
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:02:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KqArj2jd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 673BF20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 049212098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:02:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 049212098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbeJPGtq (ORCPT
+        id S1727139AbeJPGuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:49:46 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:48492 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbeJPGtq (ORCPT
+        Tue, 16 Oct 2018 02:50:11 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:39108 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbeJPGuL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:49:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rgqGvJESciL9wTXwv/93QO4Zer+exqU0wL6S9kL+IhU=; b=KqArj2jdoAZ38BzP0NXTGFODk
-        brh0DiOc67RtGNzUT071I7C+1cB23SIIqEJYKpnckODkyiZI1tLZhuRbh+rRmXi7+V+kwklqewqak
-        Wd0R5KrknhjN9XgWcDmdUfDKoV/S1olrRbqr8t6DirIxXKSEnrzFSRwFnpe0a9aK0+lqc=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:44489)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gCBsQ-0003CR-JE; Tue, 16 Oct 2018 00:02:18 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gCBsI-0008Ck-QH; Tue, 16 Oct 2018 00:02:11 +0100
-Date:   Tue, 16 Oct 2018 00:02:07 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc:     arnd@arndb.de, ulli.kroll@googlemail.com,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        joel@jms.id.au, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] ARM: copypage: do not use naked functions
-Message-ID: <20181015230206.GC30658@n2100.armlinux.org.uk>
-References: <20181015222621.14673-1-stefan@agner.ch>
- <nycvar.YSQ.7.76.1810151831040.1498@knanqh.ubzr>
- <20181015224152.GA30658@n2100.armlinux.org.uk>
- <nycvar.YSQ.7.76.1810151843100.1498@knanqh.ubzr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YSQ.7.76.1810151843100.1498@knanqh.ubzr>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 16 Oct 2018 02:50:11 -0400
+Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8F70113AEA2F2;
+        Mon, 15 Oct 2018 16:02:49 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 16:02:46 -0700 (PDT)
+Message-Id: <20181015.160246.58484704665215987.davem@davemloft.net>
+To:     acme@redhat.com
+Cc:     linux-kernel@vger.kernel.org, acme@kernel.org
+Subject: Re: perf's handling of unfindable user symbols...
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181015222546.GA2159@redhat.com>
+References: <20181014.004238.292485794143606801.davem@davemloft.net>
+        <20181015222546.GA2159@redhat.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 15 Oct 2018 16:02:49 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 06:54:49PM -0400, Nicolas Pitre wrote:
-> On Mon, 15 Oct 2018, Russell King - ARM Linux wrote:
-> 
-> > On Mon, Oct 15, 2018 at 06:35:33PM -0400, Nicolas Pitre wrote:
-> > > On Tue, 16 Oct 2018, Stefan Agner wrote:
-> > > 
-> > > > GCC documentation says naked functions should only use basic ASM
-> > > > syntax. The extended ASM or mixture of basic ASM and "C" code is
-> > > > not guaranteed. Currently it seems to work though.
-> > > > 
-> > > > Furthermore with Clang using parameters in extended asm in a
-> > > > naked function is not supported:
-> > > >   arch/arm/mm/copypage-v4wb.c:47:9: error: parameter references not
-> > > >   allowed in naked functions
-> > > >         : "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 64));
-> > > >                ^
-> > > > 
-> > > > Use a regular function to be more portable. Also use volatile asm
-> > > > to avoid unsolicited optimizations.
-> > > > 
-> > > > Tested with qemu versatileab machine and versatile_defconfig and
-> > > > qemu mainstone machine using pxa_defconfig compiled with GCC 7.2.1
-> > > > and Clang 7.0.
-> > > > 
-> > > > Link: https://github.com/ClangBuiltLinux/linux/issues/90
-> > > > Reported-by: Joel Stanley <joel@jms.id.au>
-> > > > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > > > ---
-> > > >  arch/arm/mm/copypage-fa.c       | 17 +++++++++++------
-> > > >  arch/arm/mm/copypage-feroceon.c | 17 +++++++++++------
-> > > >  arch/arm/mm/copypage-v4mc.c     | 14 +++++++++-----
-> > > >  arch/arm/mm/copypage-v4wb.c     | 17 +++++++++++------
-> > > >  arch/arm/mm/copypage-v4wt.c     | 17 +++++++++++------
-> > > >  arch/arm/mm/copypage-xsc3.c     | 17 +++++++++++------
-> > > >  arch/arm/mm/copypage-xscale.c   | 13 ++++++++-----
-> > > >  7 files changed, 72 insertions(+), 40 deletions(-)
-> > > > 
-> > > > diff --git a/arch/arm/mm/copypage-fa.c b/arch/arm/mm/copypage-fa.c
-> > > > index ec6501308c60..33ccd396bf99 100644
-> > > > --- a/arch/arm/mm/copypage-fa.c
-> > > > +++ b/arch/arm/mm/copypage-fa.c
-> > > > @@ -17,11 +17,16 @@
-> > > >  /*
-> > > >   * Faraday optimised copy_user_page
-> > > >   */
-> > > > -static void __naked
-> > > > -fa_copy_user_page(void *kto, const void *kfrom)
-> > > > +static void fa_copy_user_page(void *kto, const void *kfrom)
-> > > >  {
-> > > > -	asm("\
-> > > > -	stmfd	sp!, {r4, lr}			@ 2\n\
-> > > > +	register void *r0 asm("r0") = kto;
-> > > > +	register const void *r1 asm("r1") = kfrom;
-> > > > +
-> > > > +	asm(
-> > > > +	__asmeq("%0", "r0")
-> > > > +	__asmeq("%1", "r1")
-> > > > +	"\
-> > > > +	stmfd	sp!, {r4}			@ 2\n\
-> > > >  	mov	r2, %2				@ 1\n\
-> > > >  1:	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
-> > > >  	stmia	r0, {r3, r4, ip, lr}		@ 4\n\
-> > > > @@ -34,9 +39,9 @@ fa_copy_user_page(void *kto, const void *kfrom)
-> > > >  	subs	r2, r2, #1			@ 1\n\
-> > > >  	bne	1b				@ 1\n\
-> > > >  	mcr	p15, 0, r2, c7, c10, 4		@ 1   drain WB\n\
-> > > > -	ldmfd	sp!, {r4, pc}			@ 3"
-> > > > +	ldmfd	sp!, {r4}			@ 3"
-> > > >  	:
-> > > > -	: "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 32));
-> > > > +	: "r" (r0), "r" (r1), "I" (PAGE_SIZE / 32));
-> > > 
-> > > This is still wrong as you list r0 and r1 in the input operand list 
-> > > where they must remain constant but the code does modify them. You 
-> > > should list them in the output operand list with the "&" attribute. Also 
-> > > r2 should be listed in the clobbered list.
-> > 
-> > Either we keep these as naked functions (and, if Clang wants to
-> > try to inline naked functions which makes no sense, also mark them
-> > as noinline) or we make them proper functions and also add (eg) r4
-> > to the clobber list and get rid of the stacking of that register
-> > along with LR/PC.
-> 
-> Yes, indeed.
-> 
-> I'd say: remove the naked stuff, and let the compiler do the 
-> prologue/epilogue itself (or inline it for that matter). And don't force 
-> pointers and counter into particular registers. This way r0-r3 could be 
-> used as temporaries since they're probably already clobbered by the call 
-> to kmap_atomic() anyway. That is likely to be better than forcing ip/lr 
-> as temporaryes.
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Date: Mon, 15 Oct 2018 19:25:46 -0300
 
-That doesn't work for the general case - which is where the functions
-are called via function pointers, and so are never inlined.  For these,
-the current code is optimal, and I suspect the compiler will do worse
-with it.
+> But I think we should have it as a property of 'struct machine', because we may
+> be processing on, say, x86, a perf.data file recorded on a Sparc machine, so we
+> need to save this property on the perf.data file, humm, or we can derive that
+> from data already there, like the quick patch below. I'll cache that property
+> on machine->user_kernel_shared_address_space, to avoid having to do the
+> strcmp() lots of times.
+> 
+> Does that document the hack further? Defining the
+> machine__user_kernel_shared_address_space() function right besides the
+> machine__kernel_ip() inline should help as well?
 
-For the two instances (v4wb and mc) that don't follow that pattern,
-you may be right, but I'd want to see the result of the changes.
+Your patch looks fine.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+But, more deeply, the VDSO thing itself makes no sense to me.
+
+Why would we use the kernel map for something that is mapped into
+userspace and uses the user space virtual addresse range?
+
+As it is used by user applications, the VDSO isn't mapped into the
+kernel virtual address range, therefore no PC from userspace executing
+the VDSO will have a kernel range address.
+
+We will see normal userspace virtual addresses instead.  Test this
+assertion, if you like :-)
+
+So I am suggesting that we remove the hack, and don't try to use the
+kernel map for resolving the IP of user mode events.  If that is a
+valid change, we can toss all of this weird stuff that tries to
+interpret an address based upon what "range" it falls into.
+
