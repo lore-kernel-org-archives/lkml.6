@@ -2,220 +2,161 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C74EDC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32063C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D45121477
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:39:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D112D2089D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:41:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dpEUVPLG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D45121477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="P7ByBJty"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D112D2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbeJOXZZ (ORCPT
+        id S1726659AbeJOX1F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 19:25:25 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53178 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbeJOXZY (ORCPT
+        Mon, 15 Oct 2018 19:27:05 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40575 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726545AbeJOX1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 19:25:24 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181015153937euoutp02f623a3cf6da045d26542fda31b9c82b7~d0mSyYUWS1165411654euoutp02r
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 15:39:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181015153937euoutp02f623a3cf6da045d26542fda31b9c82b7~d0mSyYUWS1165411654euoutp02r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539617977;
-        bh=nPnYrQzAEptyv1avR9eK7vetpkCldz/Cfvy27G43UZo=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=dpEUVPLGOX6RjL0SsXIEURRBFz2hpeXTqPjXSv/Ljk2d4hwUz840xDidd8NxRjTjs
-         sE1VvbxGvivxZOokbJkVViG9pO0jTuOBCukHaEtvTB7HhU3qET2PPZHh1Y0DFHbUub
-         AA9Y8cdmcXz4C/7Spafty0mEwLxmLjJEqurRLddc=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181015153937eucas1p1029fb39791b7e4fd0dd75bcf27182b62~d0mSWqSc92718027180eucas1p1a;
-        Mon, 15 Oct 2018 15:39:37 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id A9.FD.04441.8B4B4CB5; Mon, 15
-        Oct 2018 16:39:36 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181015153936eucas1p10fc822d6161c3d95d5d0bdd98408e55f~d0mRowyUD3030630306eucas1p1K;
-        Mon, 15 Oct 2018 15:39:36 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181015153936eusmtrp2178c6a372a707b2581e15cdc2740a951~d0mRaa6ff3150331503eusmtrp2Q;
-        Mon, 15 Oct 2018 15:39:36 +0000 (GMT)
-X-AuditID: cbfec7f2-5e3ff70000001159-4a-5bc4b4b88c25
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 19.FA.04284.7B4B4CB5; Mon, 15
-        Oct 2018 16:39:36 +0100 (BST)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181015153935eusmtip1824b7f78eb2adaa76a15350cf0c90a89~d0mRHSxLO2965029650eusmtip1N;
-        Mon, 15 Oct 2018 15:39:35 +0000 (GMT)
-Subject: Re: [PATCH v2] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option
- to non-Exynos platforms
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     kgene@kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date:   Mon, 15 Oct 2018 17:39:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Mon, 15 Oct 2018 19:27:05 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n31-v6so9345128pgm.7
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 08:41:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qB94+A2LnG2Qk3a46B4voHq5yr4VlTDLtEy7xL559kg=;
+        b=P7ByBJty/o5iAyy5ykGxeWTRQF+KXH+KW9pwGrVAf0b/4sf6BTgfEBlnJQv29p9Vsn
+         VUtyt/liai8jN2hk+bAoWYlyRj/BLdmWlfu4FWe25Fo72lVmxT8jTWMdDhJdlD0/QSzi
+         W/trT5edJjdHxzwk/dt1m374KqaJfQHhCECSRwPtROgwZo0s9zuMvuwrYOzbyrStDqYS
+         6gxxKcYI/H7glCwCy4kr/9ULE+kLfo4Wu87WL1Kuvpb6AUkr4NEi9yPOeG3uZblXAbqn
+         jg5GTe2sTY7yEpkn2wVL4O+zZZIS0333o7Ha5Ua84cLrLRJFefJlh7wllVfenNusTjWq
+         Sn+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qB94+A2LnG2Qk3a46B4voHq5yr4VlTDLtEy7xL559kg=;
+        b=HiaDZ2avy7jP8YYjOPuRoa0h+nst0zLF2wJuXq9OJeAlLS1R+nOAvbTHDNifQ1Gb34
+         3Lk2B0zGsxyTE+CwRF8WvW7R26Ce2H7tQxQtY0CZ5v7uhgc/4m+2+C2b9i0aCvGyqItt
+         uMWy6cZuCp6AdtJXRBdq5h2d154hJnLqmlU1+hk+Np0zxt2QF3u14XPSLUKNwELOk4Gd
+         pbIdQFlkZsmQi/DqpMYK0cO4uOI7gUbGsP+d+AUfeANMP16cLWOPOsk05xizg+YFIipY
+         Y65qyfVXt8mRZTf+1hKEC1c27qWSCQcqYYz4P9r5dcueevA5p6QFEYp3sKEEFvlQI1Jq
+         Jqww==
+X-Gm-Message-State: ABuFfohb+/q0MMyWZVdaEk/eeUmLWqODUtpEgM0Fj56WqH05Xmo3U7vr
+        L1rfeVYqij45acncKKGp8t2iGw==
+X-Google-Smtp-Source: ACcGV61rXE0RRKuLTlTlADHcCXmhwYQSb6jO2KrX52JzHioUOZLQRCWkfLzRZzFtNEdHau1rg7xAyQ==
+X-Received: by 2002:a63:ef53:: with SMTP id c19-v6mr16554170pgk.386.1539618078408;
+        Mon, 15 Oct 2018 08:41:18 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([192.55.54.41])
+        by smtp.gmail.com with ESMTPSA id d2-v6sm17631283pfd.100.2018.10.15.08.41.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 08:41:17 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id E4AF1300030; Mon, 15 Oct 2018 18:41:12 +0300 (+03)
+Date:   Mon, 15 Oct 2018 18:41:12 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, mhocko@suse.com,
+        rppt@linux.vnet.ibm.com, imbrenda@linux.vnet.ibm.com,
+        corbet@lwn.net, ndesaulniers@google.com, dave.jiang@intel.com,
+        jglisse@redhat.com, jia.he@hxt-semitech.com,
+        paulmck@linux.vnet.ibm.com, colin.king@canonical.com,
+        jiang.biao2@zte.com.cn, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] ksm: Assist buddy allocator to assemble 1-order pages
+Message-ID: <20181015154112.6bj5p4zuxjtz43pd@kshutemo-mobl1>
+References: <153925511661.21256.9692370932417728663.stgit@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPdR0q_2DGbMrroqNcVfCPSkh0=ry=yyb9qmSDFf+TWbFg@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2znbjuLkcyp7sTIaZBdIM/qxMsJAcESF/eoiMWeevM7Ljpoa
-        klHmhWCZDEuWS7y2TO0oOkVFl9eShg7MijBR/DFvecnQcrbjUfLf8z7P+3zv88BHEVK90IeK
-        TUyltYnqBLnIlWzpX7eeMDf3hp9s+3pKoZuaJRRWa6NYwU6NCRW2doNI8dzaJVBY9J0oWKS0
-        jY0QStZUIFI2Vd5XrrC+YeRN13NRdEJsOq0NOB/hGlNlXxIls74ZxpEhIgctyAqRCwX4NPSN
-        dosLkSslxbUImurWRPywiqBqY1XADysI/pTPCHYt7d/fErxQg0D3ybBjWURQ3mpH3JYnjoKt
-        7lwxh73wMfi8+VvILRG4A8H4XDfBCSJ8ForyTNsGEh+GYnbVaaAob3wddMNHOFqCPWDoxTTJ
-        YRd8Fdg1+/abBD4IrfOG7RSAi8XwwDYh4A3pMFlfSvBRQ+Blz08hjz3BPtAs5vF+2GozCnhz
-        CYK5jSqSHxoQ1A337xQNgvcDI0IuEeGs0NAewNMXwDxThDgasDuMz3vwgdzhWUsJwdMSyH8s
-        5bf9oLG6UbR7trDt9U40JTyqKSGeokOle2qW7qlW+v/uK0SYkIxOYzTRNBOYSN/1Z9QaJi0x
-        2v92koZFzs/y0TGwbEa/RiMtCFNI7ibBbr3hUqE6ncnUWBBQhNxL8oR1UpIodWYWrU1SadMS
-        aMaC9lGkXCapLnsXLsXR6lQ6nqaTae2uKqBcfHJQF+oMHQ3wjys2DibcuuM7FCKUlomz647q
-        878sWbrzq1Uk7ljsu9ZmcDRNBhdU1OedibwcsxDq6J3PTf6go22aaUftpRQjjstYPWDqrBxc
-        6wjazEL6FYfZr2ThYXy57WJEtvc62WMI+6HaWp6V3SAqe1RXJlre3Ov6tvg3pUJOMjHqwOOE
-        llH/A7l3AkwoAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xu7o7thyJNlj7j9Gi//FrZovz5zew
-        W2x6fI3V4vKuOWwWM87vY7I4NHUvowObx+VrF5k9Nq3qZPPYvKTe4/MmuQCWKD2bovzSklSF
-        jPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2Mpa8+shVskquYf/Ek
-        cwPjO/EuRk4OCQETiV131zJ3MXJxCAksZZSY+fUeYxcjB1BCRuL4+jKIGmGJP9e62CBq3jJK
-        vLrVww6SEBZIkWh7upQFxBYR0JS4/vc7K0TRRCaJwx1fwDqYBfYxSpx4swqsik3ASmJi+ypG
-        EJtXwE6ivWUtmM0ioCoxedMXsKmiAhEStx52sEDUCEqcnPkEzOYUCJTY9O0VWA2zgLrEn3mX
-        mCFseYntb+cwT2AUnIWkZRaSsllIyhYwMq9iFEktLc5Nzy021CtOzC0uzUvXS87P3cQIjJht
-        x35u3sF4aWPwIUYBDkYlHl4BniPRQqyJZcWVuYcYJTiYlUR4ezYBhXhTEiurUovy44tKc1KL
-        DzGaAj0xkVlKNDkfGM15JfGGpobmFpaG5sbmxmYWSuK85w0qo4QE0hNLUrNTUwtSi2D6mDg4
-        pRoYyybva01w5EyTOHL+V6MQW6K07OL203YWslPfPl/aeGrdijUHZzWa58yK2fLoC1usQfSt
-        yfnFcSbGsk8fLNn150tjrnF8RGeQy6Ltylx/g288fFvG+PzAkS25r2Mjp5VHyak3zGk+UFUc
-        ucwwJFdp5xlJpcIW6TtN4d/qjCzMLvKeiHefze2uxFKckWioxVxUnAgACWK2oq4CAAA=
-Message-Id: <20181015153936eucas1p10fc822d6161c3d95d5d0bdd98408e55f~d0mRowyUD3030630306eucas1p1K@eucas1p1.samsung.com>
-X-CMS-MailID: 20181015153936eucas1p10fc822d6161c3d95d5d0bdd98408e55f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677
-References: <CGME20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677@eucas1p2.samsung.com>
-        <20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677~dzHYfFW2j0676906769eucas1p2c@eucas1p2.samsung.com>
-        <CAJKOXPdR0q_2DGbMrroqNcVfCPSkh0=ry=yyb9qmSDFf+TWbFg@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153925511661.21256.9692370932417728663.stgit@localhost.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 10/15/2018 05:22 PM, Krzysztof Kozlowski wrote:
-> On Mon, 15 Oct 2018 at 15:50, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
->>
->> "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
->> config option) is not working properly (debug messages are not
->> displayed after resume) on Exynos platforms because GPIOs restore
->> code is not implemented.
->>
->> Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
->> SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
->> Then convert Exynos code to not require <plat/pm-common.h>
->> header (use pr_debug() directly instead of S3C_PMDBG() macro and
->> remove redundant s3c_pm_*() calls).
->>
->> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->> ---
->> v2:
->> - convert Exynos code to not require <plat/pm-common.h> header
->>
->> Should by applied on top of "[PATCH] ARM: EXYNOS: remove no longer
->> needed s3c_pm_check_*() calls".
->>
->>  arch/arm/mach-exynos/suspend.c |   14 ++++----------
->>  arch/arm/plat-samsung/Kconfig  |    3 ++-
->>  2 files changed, 6 insertions(+), 11 deletions(-)
->>
->> Index: b/arch/arm/mach-exynos/suspend.c
->> ===================================================================
->> --- a/arch/arm/mach-exynos/suspend.c    2018-10-15 15:11:15.296187842 +0200
->> +++ b/arch/arm/mach-exynos/suspend.c    2018-10-15 15:22:54.656205454 +0200
->> @@ -30,8 +30,6 @@
->>  #include <asm/smp_scu.h>
->>  #include <asm/suspend.h>
->>
->> -#include <plat/pm-common.h>
->> -
->>  #include "common.h"
->>
->>  #define REG_TABLE_END (-1U)
->> @@ -490,11 +488,9 @@ static int exynos_suspend_enter(suspend_
->>  {
->>         int ret;
->>
->> -       s3c_pm_debug_init();
->> -
->> -       S3C_PMDBG("%s: suspending the system...\n", __func__);
->> +       pr_debug("%s: suspending the system...\n", __func__);
->>
->> -       S3C_PMDBG("%s: wakeup masks: %08x,%08x\n", __func__,
->> +       pr_debug("%s: wakeup masks: %08x,%08x\n", __func__,
->>                         exynos_irqwake_intmask, exynos_get_eint_wake_mask());
->>
->>         if (exynos_irqwake_intmask == -1U
->> @@ -504,7 +500,6 @@ static int exynos_suspend_enter(suspend_
->>                 return -EINVAL;
->>         }
->>
->> -       s3c_pm_save_uarts();
->>         if (pm_data->pm_prepare)
->>                 pm_data->pm_prepare();
->>         flush_cache_all();
->> @@ -517,12 +512,11 @@ static int exynos_suspend_enter(suspend_
->>
->>         if (pm_data->pm_resume_prepare)
->>                 pm_data->pm_resume_prepare();
->> -       s3c_pm_restore_uarts();
->>
->> -       S3C_PMDBG("%s: wakeup stat: %08x\n", __func__,
->> +       pr_debug("%s: wakeup stat: %08x\n", __func__,
->>                         pmu_raw_readl(S5P_WAKEUP_STAT));
->>
->> -       S3C_PMDBG("%s: resuming the system...\n", __func__);
->> +       pr_debug("%s: resuming the system...\n", __func__);
->>
->>         return 0;
->>  }
->> Index: b/arch/arm/plat-samsung/Kconfig
->> ===================================================================
->> --- a/arch/arm/plat-samsung/Kconfig     2018-10-15 15:16:22.804195586 +0200
->> +++ b/arch/arm/plat-samsung/Kconfig     2018-10-15 15:16:22.800195586 +0200
->> @@ -238,7 +238,8 @@ comment "Power management"
->>
->>  config SAMSUNG_PM_DEBUG
->>         bool "Samsung PM Suspend debug"
->> -       depends on PM && DEBUG_KERNEL
->> +       depends on DEBUG_KERNEL
+On Thu, Oct 11, 2018 at 01:52:22PM +0300, Kirill Tkhai wrote:
+> try_to_merge_two_pages() merges two pages, one of them
+> is a page of currently scanned mm, the second is a page
+> with identical hash from unstable tree. Currently, we
+> merge the page from unstable tree into the first one,
+> and then free it.
 > 
-> I don't get this change - why moving PM to line below?
+> The idea of this patch is to prefer freeing that page
+> of them, which has a free neighbour (i.e., neighbour
+> with zero page_count()). This allows buddy allocator
+> to assemble at least 1-order set from the freed page
+> and its neighbour; this is a kind of cheep passive
+> compaction.
+> 
+> AFAIK, 1-order pages set consists of pages with PFNs
+> [2n, 2n+1] (odd, even), so the neighbour's pfn is
+> calculated via XOR with 1. We check the result pfn
+> is valid and its page_count(), and prefer merging
+> into @tree_page if neighbour's usage count is zero.
+> 
+> There a is small difference with current behavior
+> in case of error path. In case of the second
+> try_to_merge_with_ksm_page() is failed, we return
+> from try_to_merge_two_pages() with @tree_page
+> removed from unstable tree. It does not seem to matter,
+> but if we do not want a change at all, it's not
+> a problem to move remove_rmap_item_from_tree() from
+> try_to_merge_with_ksm_page() to its callers.
+> 
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> ---
+>  mm/ksm.c |   15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 5b0894b45ee5..b83ca37e28f0 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -1321,6 +1321,21 @@ static struct page *try_to_merge_two_pages(struct rmap_item *rmap_item,
+>  {
+>  	int err;
+>  
+> +	if (IS_ENABLED(CONFIG_COMPACTION)) {
+> +		unsigned long pfn;
+> +		/*
+> +		 * Find neighbour of @page containing 1-order pair
+> +		 * in buddy-allocator and check whether it is free.
 
-My mistake, I will correct it in v3.
+You cannot really check if the page is free. There are some paths that
+makes the refcount zero temporarely, but doesn't free the page.
+See page_ref_freeze() for instance.
 
-[ The idea was to make SAMSUNG_PM_DEBUG consistent with other options
-  depending on DEBUG_KERNEL. However after I've checked them it turned
-  out that there is no such consistency. I intended to revert this
-  change but ultimately I forgot about it.. ]
+It should be fine for the use case, but comment should state that we
+speculate about page usage, not having definetive answer.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+[ I don't know enough about KSM to ack the patch in general, but it looks
+fine to me at the first glance.]
+
+> +		 * If it is so, try to use @tree_page as ksm page
+> +		 * and to free @page.
+> +		 */
+> +		pfn = (page_to_pfn(page) ^ 1);
+> +		if (pfn_valid(pfn) && page_count(pfn_to_page(pfn)) == 0) {
+> +			swap(rmap_item, tree_rmap_item);
+> +			swap(page, tree_page);
+> +		}
+> +	}
+> +
+>  	err = try_to_merge_with_ksm_page(rmap_item, page, NULL);
+>  	if (!err) {
+>  		err = try_to_merge_with_ksm_page(tree_rmap_item,
+> 
+
+-- 
+ Kirill A. Shutemov
