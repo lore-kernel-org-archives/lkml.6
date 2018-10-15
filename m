@@ -2,200 +2,171 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93992C7113E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F2AC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59587208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:01:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRo3ovJI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59587208B3
+	by mail.kernel.org (Postfix) with ESMTP id 6D8E5208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:04:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D8E5208B3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbeJPCs1 (ORCPT
+        id S1726904AbeJPCui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:48:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50312 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726654AbeJPCs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:48:26 -0400
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A06DA2145D;
-        Mon, 15 Oct 2018 19:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539630113;
-        bh=HZTikMm58VpHYYjCoXzcMq7g8Vxcno1d4W4fqZ5OWo0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GRo3ovJIp2jdatGOFaTllO16wLgJAhJFK5inzMHOGCWcQvhHqrDR+cmfn0V4HSbzy
-         rWdu6kTxFE0NR5gKkjxOmhToSKsUNjCEzaqzBAJmt94STfdU7yiQVnp+Ah7g4BrlWL
-         hLZZEJaDvNTzsmfo8qxRSu2coSUUw/uwPNry71Cs=
-Received: by mail-ed1-f41.google.com with SMTP id c26-v6so18905077edt.3;
-        Mon, 15 Oct 2018 12:01:53 -0700 (PDT)
-X-Gm-Message-State: ABuFfog4GAt4DoSxWFWXA63CgU0GUhHgFSqPmReT/lKsCBPcWYROh9ef
-        5D0NqlYiVCEGZl8RUgq9t2/f01G2tPHrBjgB8OA=
-X-Google-Smtp-Source: ACcGV6146qI+cOqdKHB+Qj+knr8+y8I0gxkOYol7MAfdqtRpsbM+R8Vnd3PAXY2mg54pDeTtTxji2N+fBPOWsFBHtN8=
-X-Received: by 2002:a17:906:7384:: with SMTP id f4-v6mr20302835ejl.8.1539630111956;
- Mon, 15 Oct 2018 12:01:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <1539563070-12969-1-git-send-email-frowand.list@gmail.com> <1539563070-12969-10-git-send-email-frowand.list@gmail.com>
-In-Reply-To: <1539563070-12969-10-git-send-email-frowand.list@gmail.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Mon, 15 Oct 2018 14:01:15 -0500
-X-Gmail-Original-Message-ID: <CANk1AXQNkYDA9hRCMR_MkOJiobPjmYoJN8Gv+3YN9ReV+q5XEw@mail.gmail.com>
-Message-ID: <CANk1AXQNkYDA9hRCMR_MkOJiobPjmYoJN8Gv+3YN9ReV+q5XEw@mail.gmail.com>
-Subject: Re: [PATCH v3 09/18] of: overlay: validate overlay properties
- #address-cells and #size-cells
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Moritz Fischer <mdf@kernel.org>,
+        Mon, 15 Oct 2018 22:50:38 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:41910 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbeJPCui (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 22:50:38 -0400
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 921473A2903;
+        Mon, 15 Oct 2018 20:51:18 +0200 (CEST)
+X-Originating-IP: 212.92.120.238
+Received: from localhost (unknown [212.92.120.238])
+        (Authenticated sender: amit@amitshah.net)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id E5E59FF802;
+        Mon, 15 Oct 2018 18:51:15 +0000 (UTC)
+Date:   Mon, 15 Oct 2018 20:51:15 +0200
+From:   Amit Shah <amit@kernel.org>
+To:     Feng Li <lifeng1519@gmail.com>
+Cc:     dgilbert@redhat.com, amit@kernel.org,
+        virtualization@lists.linux-foundation.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        qemu-discuss@nongnu.org, qemu-devel@nongnu.org,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Subject: Re: [Qemu-devel] virtio-console downgrade the virtio-pci-blk
+ performance
+Message-ID: <20181015185115.GA3247@grmbl.mre>
+References: <CAEK8JBDPNqTap-LnoBxUZh4Bj9b+VgrsPm53QAivfOsLG7wuGw@mail.gmail.com>
+ <20181001114146.GA2508@work-vm>
+ <CAEK8JBBDPxTe0k8Nf=7PQ6gjYv4xyqQu=bef5VXmgaLVGw3JUg@mail.gmail.com>
+ <CAEK8JBC-HKGb43UynWx69Lj-y48Em038eNMpOb7G72XfLF_mDg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEK8JBC-HKGb43UynWx69Lj-y48Em038eNMpOb7G72XfLF_mDg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 14, 2018 at 7:26 PM <frowand.list@gmail.com> wrote:
->
-> From: Frank Rowand <frank.rowand@sony.com>
->
-> If overlay properties #address-cells or #size-cells are already in
-> the live devicetree for any given node, then the values in the
-> overlay must match the values in the live tree.
->
-> If the properties are already in the live tree then there is no
-> need to create a changeset entry to add them since they must
-> have the same value.  This reduces the memory used by the
-> changeset and eliminates a possible memory leak.  This is
-> verified by 12 fewer warnings during the devicetree unittest,
-> as the possible memory leak warnings about #address-cells and
->
-> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-> ---
->  drivers/of/overlay.c | 38 +++++++++++++++++++++++++++++++++++---
->  1 file changed, 35 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-> index 272a0d1a5e18..ee66651db553 100644
-> --- a/drivers/of/overlay.c
-> +++ b/drivers/of/overlay.c
-> @@ -287,7 +287,12 @@ static struct property *dup_and_fixup_symbol_prop(
->   * @target may be either in the live devicetree or in a new subtree that
->   * is contained in the changeset.
->   *
-> - * Some special properties are not updated (no error returned).
-> + * Some special properties are not added or updated (no error returned):
-> + * "name", "phandle", "linux,phandle".
-> + *
-> + * Properties "#address-cells" and "#size-cells" are not updated if they
-> + * are already in the live tree, but if present in the live tree, the values
-> + * in the overlay must match the values in the live tree.
->   *
->   * Update of property in symbols node is not allowed.
->   *
-> @@ -300,6 +305,7 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
->  {
->         struct property *new_prop = NULL, *prop;
->         int ret = 0;
-> +       bool check_for_non_overlay_node = false;
->
->         if (!of_prop_cmp(overlay_prop->name, "name") ||
->             !of_prop_cmp(overlay_prop->name, "phandle") ||
-> @@ -322,13 +328,39 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
->         if (!new_prop)
->                 return -ENOMEM;
->
-> -       if (!prop)
-> +       if (!prop) {
-> +
-> +               check_for_non_overlay_node = true;
->                 ret = of_changeset_add_property(&ovcs->cset, target->np,
->                                                 new_prop);
-> -       else
-> +
-> +       } else if (!of_prop_cmp(prop->name, "#address-cells")) {
-> +
+On (Thu) 11 Oct 2018 [18:15:41], Feng Li wrote:
+> Add Amit Shah.
+> 
+> After some tests, we found:
+> - the virtio serial port number is inversely proportional to the iSCSI
+> virtio-blk-pci performance.
+> If we set the virio-serial ports to 2("<controller
+> type='virtio-serial' index='0' ports='2'/>), the performance downgrade
+> is minimal.
 
-Hi Frank,
+If you use multiple virtio-net (or blk) devices -- just register, not
+necessarily use -- does that also bring the performance down?  I
+suspect it's the number of interrupts that get allocated for the
+ports.  Also, could you check if MSI is enabled?  Can you try with and
+without?  Can you also reproduce if you have multiple virtio-serial
+controllers with 2 ports each (totalling up to whatever number that
+reproduces the issue).
 
-If we get these ERROR messages, I suggest that this function should
-return an error so the overlay will be rejected.
+		Amit
 
-> +               if (prop->length != 4 || new_prop->length != 4 ||
-> +                   *(u32 *)prop->value != *(u32 *)new_prop->value)
-
-                        *(u32 *)prop->value != *(u32 *)new_prop->value) {
-
-> +                       pr_err("ERROR: overlay and/or live tree #address-cells invalid in node %pOF\n",
-> +                              target->np);
-
-                       ret = -EINVAL;
-                }
-
-Otherwise there is an ERROR message, but it continues trying to apply
-the invalid overlay anyway and I get an oops.  By adding the ret =
--EINVAL, the overlay gets rejected and the oops is avoided.
-
-> +
-> +       } else if (!of_prop_cmp(prop->name, "#size-cells")) {
-> +
-> +               if (prop->length != 4 || new_prop->length != 4 ||
-> +                   *(u32 *)prop->value != *(u32 *)new_prop->value)
-> +                       pr_err("ERROR: overlay and/or live tree #size-cells invalid in node %pOF\n",
-> +                              target->np);
-
-Add the ret = -EINVAL here also.  This give me the following (if my
-overlay changes #address-cells):
-
-[   21.167551] OF: overlay: ERROR: overlay and/or live tree
-#address-cells invalid in node /soc/base_fpga_region
-[   21.177442] OF: overlay: add_changeset_property ret=-22
-[   21.182656] create_overlay: Failed to create overlay (err=-22)
-
-Also, I wonder if the ERROR message could be more direct.  Currently
-it says the #address-cells property is invalid but that doesn't say
-anything about why it's invalid.  How about something like:
-
- OF: overlay: ERROR: changing #address-cells not allowed (/soc/base_fpga_region)
-
-The 'OF: overlay' part still makes it clear it's overlay related.  The
-rest of it makes it clear *why* it's invalid.  This ERROR will be a
-surprise for people who have been using overlays, so that could be
-helpful to light the way a bit.
-
-Alan
-
-> +
-> +       } else {
-> +
-> +               check_for_non_overlay_node = true;
->                 ret = of_changeset_update_property(&ovcs->cset, target->np,
->                                                    new_prop);
->
-> +       }
-> +
-> +       if (check_for_non_overlay_node &&
-> +           !of_node_check_flag(target->np, OF_OVERLAY))
-> +               pr_err("WARNING: %s(), memory leak will occur if overlay removed.  Property: %pOF/%s\n",
-> +                      __func__, target->np, new_prop->name);
-> +
->         if (ret) {
->                 kfree(new_prop->name);
->                 kfree(new_prop->value);
+> 
+> - use local disk/ram disk as virtio-blk-pci disk, the performance
+> downgrade is still obvious.
+> 
+> 
+> Could anyone give some help about this issue?
+> 
+> Feng Li <lifeng1519@gmail.com> 于2018年10月1日周一 下午10:58写道：
+> >
+> > Hi Dave,
+> > My comments are in-line.
+> >
+> > Dr. David Alan Gilbert <dgilbert@redhat.com> 于2018年10月1日周一 下午7:41写道：
+> > >
+> > > * Feng Li (lifeng1519@gmail.com) wrote:
+> > > > Hi,
+> > > > I found an obvious performance downgrade when virtio-console combined
+> > > > with virtio-pci-blk.
+> > > >
+> > > > This phenomenon exists in nearly all Qemu versions and all Linux
+> > > > (CentOS7, Fedora 28, Ubuntu 18.04) distros.
+> > > >
+> > > > This is a disk cmd:
+> > > > -drive file=iscsi://127.0.0.1:3260/iqn.2016-02.com.test:system:fl-iscsi/1,format=raw,if=none,id=drive-virtio-disk0,cache=none,aio=native
+> > > > -device virtio-blk-pci,scsi=off,bus=pci.0,addr=0x6,drive=drive-virtio-disk0,id=virtio-disk0,bootindex=1,write-cache=on
+> > > >
+> > > > If I add "-device
+> > > > virtio-serial-pci,id=virtio-serial0,bus=pci.0,addr=0x5  ", the virtio
+> > > > disk 4k iops (randread/randwrite) would downgrade from 60k to 40k.
+> > > >
+> > > > In VM, if I rmmod virtio-console, the performance will back to normal.
+> > > >
+> > > > Any idea about this issue?
+> > > >
+> > > > I don't know this is a qemu issue or kernel issue.
+> > >
+> > > It sounds odd;  can you provide more details on:
+> > >   a) The benchmark you're using.
+> > I'm using fio, the config is:
+> > [global]
+> > ioengine=libaio
+> > iodepth=128
+> > runtime=120
+> > time_based
+> > direct=1
+> >
+> > [randread]
+> > stonewall
+> > bs=4k
+> > filename=/dev/vdb
+> > rw=randread
+> >
+> > >   b) the host and the guest config (number of cpus etc)
+> > The qemu cmd is : /usr/libexec/qemu-kvm --device virtio-balloon -m 16G
+> > --enable-kvm -cpu host -smp 8
+> > or qemu-system-x86_64 --device virtio-balloon -m 16G --enable-kvm -cpu
+> > host -smp 8
+> >
+> > The result is the same.
+> >
+> > >   c) Why are you running it with iscsi back to the same host - why not
+> > >      just simplify the test back to a simple file?
+> > >
+> >
+> > Because my ISCSI target could supply a high IOPS performance.
+> > If using a slow disk, the performance downgrade would be not so obvious.
+> > It's easy to be seen, you could try it.
+> >
+> >
+> > > Dave
+> > >
+> > > >
+> > > > Thanks in advance.
+> > > > --
+> > > > Thanks and Best Regards,
+> > > > Alex
+> > > >
+> > > --
+> > > Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+> >
+> >
+> >
+> > --
+> > Thanks and Best Regards,
+> > Feng Li(Alex)
+> 
+> 
+> 
 > --
-> Frank Rowand <frank.rowand@sony.com>
->
+> Thanks and Best Regards,
+> Feng Li(Alex)
+
+		Amit
+-- 
+http://amitshah.net/
