@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7C7C7112A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BF3C28CF8
 	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64AF92087D
+	by mail.kernel.org (Postfix) with ESMTP id 38148204FD
 	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:45:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64AF92087D
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38148204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726868AbeJON2t (ORCPT
+        id S1726784AbeJON2s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 09:28:49 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:57825 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726539AbeJON2s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 15 Oct 2018 09:28:48 -0400
-X-UUID: bbb1fb3ae658432ea6ce3861f86ff71b-20181015
-X-UUID: bbb1fb3ae658432ea6ce3861f86ff71b-20181015
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+Received: from mailgw01.mediatek.com ([210.61.82.183]:48703 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726553AbeJON2r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 09:28:47 -0400
+X-UUID: 5b197c3fc09b4f3fa1a0016a6fd96ed6-20181015
+X-UUID: 5b197c3fc09b4f3fa1a0016a6fd96ed6-20181015
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
         (envelope-from <honghui.zhang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 820911976; Mon, 15 Oct 2018 13:44:56 +0800
+        with ESMTP id 866280829; Mon, 15 Oct 2018 13:44:59 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 15 Oct 2018 13:44:55 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 15 Oct 2018 13:44:57 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 15 Oct 2018 13:44:54 +0800
+ Transport; Mon, 15 Oct 2018 13:44:56 +0800
 From:   <honghui.zhang@mediatek.com>
 To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
         <linux-arm-kernel@lists.infradead.org>,
@@ -45,9 +45,9 @@ CC:     <ulf.hansson@linaro.org>, <marc.zyngier@arm.com>,
         <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
         <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>,
         <yt.shen@mediatek.com>, <jianjun.wang@mediatek.com>
-Subject: [PATCH v7 6/9] PCI: mediatek: Fixup enable MSI logic by enable MSI after clock enabled
-Date:   Mon, 15 Oct 2018 13:44:44 +0800
-Message-ID: <1539582287-9171-7-git-send-email-honghui.zhang@mediatek.com>
+Subject: [PATCH v7 8/9] PCI: mediatek: Save the GIC IRQ in mtk_pcie_port
+Date:   Mon, 15 Oct 2018 13:44:46 +0800
+Message-ID: <1539582287-9171-9-git-send-email-honghui.zhang@mediatek.com>
 X-Mailer: git-send-email 2.6.4
 In-Reply-To: <1539582287-9171-1-git-send-email-honghui.zhang@mediatek.com>
 References: <1539582287-9171-1-git-send-email-honghui.zhang@mediatek.com>
@@ -61,40 +61,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-The commit 43e6409db64d ("PCI: mediatek: Add MSI support for MT2712 and
-MT7622") added MSI support but enable MSI in wrong place, clocks was not
-enabled when enable MSI. This patch fix this issue by calling
-mtk_pcie_enable_msi in mtk_pcie_startup_port_v2 since the clock was all
-enabled at that time.
+Need to save the PCIe's GIC IRQ for dispose_irq, this is a prepare
+patch for add mediatek PCIe module support to tear down the IRQ, no
+functional changed.
 
 Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
 ---
- drivers/pci/controller/pcie-mediatek.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/pci/controller/pcie-mediatek.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 654a63e..d3f4694 100644
+index 42cf2a4..daba78f 100644
 --- a/drivers/pci/controller/pcie-mediatek.c
 +++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -568,8 +568,6 @@ static int mtk_pcie_init_irq_domain(struct mtk_pcie_port *port,
- 		ret = mtk_pcie_allocate_msi_domains(port);
- 		if (ret)
- 			return ret;
--
--		mtk_pcie_enable_msi(port);
+@@ -162,6 +162,7 @@ struct mtk_pcie_soc {
+  * @phy: pointer to PHY control block
+  * @lane: lane count
+  * @slot: port slot
++ * @irq: GIC irq
+  * @irq_domain: legacy INTx IRQ domain
+  * @inner_domain: inner IRQ domain
+  * @msi_domain: MSI IRQ domain
+@@ -182,6 +183,7 @@ struct mtk_pcie_port {
+ 	struct phy *phy;
+ 	u32 lane;
+ 	u32 slot;
++	int irq;
+ 	struct irq_domain *irq_domain;
+ 	struct irq_domain *inner_domain;
+ 	struct irq_domain *msi_domain;
+@@ -620,7 +622,7 @@ static int mtk_pcie_setup_irq(struct mtk_pcie_port *port,
+ 	struct mtk_pcie *pcie = port->pcie;
+ 	struct device *dev = pcie->dev;
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	int err, irq;
++	int err;
+ 
+ 	err = mtk_pcie_init_irq_domain(port, node);
+ 	if (err) {
+@@ -628,8 +630,9 @@ static int mtk_pcie_setup_irq(struct mtk_pcie_port *port,
+ 		return err;
  	}
  
- 	return 0;
-@@ -690,6 +688,9 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
- 	val &= ~INTX_MASK;
- 	writel(val, port->base + PCIE_INT_MASK);
+-	irq = platform_get_irq(pdev, port->slot);
+-	irq_set_chained_handler_and_data(irq, mtk_pcie_intr_handler, port);
++	port->irq = platform_get_irq(pdev, port->slot);
++	irq_set_chained_handler_and_data(port->irq,
++					 mtk_pcie_intr_handler, port);
  
-+	if (IS_ENABLED(CONFIG_PCI_MSI))
-+		mtk_pcie_enable_msi(port);
-+
- 	/* Set AHB to PCIe translation windows */
- 	size = mem->end - mem->start;
- 	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
+ 	return 0;
+ }
 -- 
 2.6.4
 
