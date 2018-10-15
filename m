@@ -2,77 +2,89 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B7DC7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD053C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C817920644
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:56:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C817920644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 724D820644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:57:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724D820644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbeJOQkb (ORCPT
+        id S1726764AbeJOQmA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 12:40:31 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:48450 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJOQkb (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Mon, 15 Oct 2018 12:40:31 -0400
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Mon, 15 Oct 2018 10:56:09 +0200
-Received: from [192.168.1.2] (nwb-a10-snat.microfocus.com [10.120.13.201])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Mon, 15 Oct 2018 09:56:03 +0100
-Message-ID: <886d0f79d59d2d35ca75f9d2d79cdb45c1628c78.camel@suse.com>
-Subject: Re: [Xen-devel] [PATCH] xen/blkfront: avoid NULL blkfront_info
- dereference on device removal
-From:   Vasilis Liaskovitis <vliaskovitis@suse.com>
-To:     Roger Pau =?ISO-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-Cc:     axboe@kernel.dk, jgross@suse.com, konrad.wilk@oracle.com,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com
-Date:   Mon, 15 Oct 2018 10:55:54 +0200
-In-Reply-To: <20181011163427.ilpsl4hxb2y3hcfp@mac.bytemobile.com>
-References: <20181011162000.19191-1-vliaskovitis@suse.com>
-         <20181011163427.ilpsl4hxb2y3hcfp@mac.bytemobile.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 15 Oct 2018 12:42:00 -0400
+Received: from verein.lst.de ([213.95.11.211]:41038 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726273AbeJOQmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 12:42:00 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id EA52268C8E; Mon, 15 Oct 2018 10:57:37 +0200 (CEST)
+Date:   Mon, 15 Oct 2018 10:57:37 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Christoph Hellwig <hch@lst.de>, mporter@kernel.crashing.org,
+        alex.bou9@gmail.com,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH 4/8] pci: consolidate PCI config entry in drivers/pci
+Message-ID: <20181015085737.GC27159@lst.de>
+References: <20181013151016.31674-1-hch@lst.de> <20181013151016.31674-5-hch@lst.de> <CAK7LNAQy_NTu5=8R6C3Xc2VLrJo7tKOz-u1=3JfGtBa3Z+ZD9g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQy_NTu5=8R6C3Xc2VLrJo7tKOz-u1=3JfGtBa3Z+ZD9g@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-11 at 18:34 +0200, Roger Pau Monné wrote:
-> --- a/drivers/block/xen-blkfront.c
-> > +++ b/drivers/block/xen-blkfront.c
-> > @@ -2493,6 +2493,9 @@ static int blkfront_remove(struct
-> > xenbus_device *xbdev)
-> >  
-> >  	dev_dbg(&xbdev->dev, "%s removed", xbdev->nodename);
-> >  
-> > +	if (!info)
-> > +		goto out;
+On Mon, Oct 15, 2018 at 03:37:05PM +0900, Masahiro Yamada wrote:
+> I think HAVE_ is a preferred prefix in this case according to this doc:
+> https://github.com/masahir0y/linux/blob/v4.19-rc4/Documentation/kbuild/kconfig-language.txt#L448
+
+Ok, I'll switch everything to HAVE_*
+
+> If you do this for entire powerpc,
+> the other 'select HAS_PCI' addtions to
+> arch/powerpc/platforms/*/Kconfig look redundant.
+
+I'll drop them.
+
+> > -config PCI
+> > -       bool "PCI support"
+> > -       select PCI_MSI
 > 
-> I don't see the point in adding the 'out' label. Can you just return
-> 0
-> here?
-
-of course, I will send a second version.
- 
-thanks for the review,
-
-- Vasilis
-
 > 
-> Thanks, Roger.
-> 
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xenproject.org
-> https://lists.xenproject.org/mailman/listinfo/xen-devel
+> I think this 'select PCI_MSI' for riscv was lost.
 
+Indeed, fixed.
+
+> >  menu "Bus options (PCI etc.)"
+> >
+> > -config PCI
+> > -       bool "PCI support"
+> > -       default y
+> 
+> 
+> The default is y for x86 (and xtensa as well).
+> 
+> With this patch, the default will be flipped.
+> 
+> I think most of people want to use PCI for x86,
+> and this change will make people upset.
+> 
+> Will you update arch/{x86,xtensa}/configs/*_defconfig?
+
+Yes.  Alternatively we could add a new ARCH_PCI_DEFAULT symbol,
+that architectures could select if they want PCI by default.  Does
+anyone thing this is a good idea?
