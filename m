@@ -2,125 +2,126 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4BFC28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC014C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C1D120881
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:36:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76D882086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:37:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="zdZrATFA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C1D120881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MfmReQx9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D882086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbeJOOUT (ORCPT
+        id S1726567AbeJOOVd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 10:20:19 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:46203 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbeJOOUT (ORCPT
+        Mon, 15 Oct 2018 10:21:33 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41950 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbeJOOVd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 10:20:19 -0400
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id w9F6aIMV032480;
-        Mon, 15 Oct 2018 15:36:18 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w9F6aIMV032480
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1539585379;
-        bh=WTSQTIo6lZvTTDeUHanOaS24TqjvzaMlov8TsHwIzBs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zdZrATFANN/2Gsg0uxCwo3kTQxSkK2pKeslTA5wMSYlICoH3n2wlsZ+UnSPSf0b24
-         1K279Ng4QtuVZpRY+yuDhZPkbZorJlkQ+NJKyenJaSqIGLTrzjsf8/D1u1f8PvZyuF
-         2fcbqRfkc412xgfuJ1V2EwRQ0A13KcmkYSyh8xYCSdXDTMLUPBMk0D+8WImrLSFZG6
-         kJ2BXPXEJCEne20dotXU+EzcpSjTdWCQG6PJfzcb4hmC5mWKHw7PaV5bhnP/Xuob8p
-         3ibWeEmBhncPvwlCJdKXwrIhteucwJzqtoFFZS2Qe95aU84syH/vhCgxJmJEtkqXY7
-         /cxhZnYStcvfg==
-X-Nifty-SrcIP: [209.85.217.51]
-Received: by mail-vs1-f51.google.com with SMTP id c10so15628037vsk.2;
-        Sun, 14 Oct 2018 23:36:18 -0700 (PDT)
-X-Gm-Message-State: ABuFfoi+QcxjAERBO8dJ/Mi0b/HVT6wkKZGSNnboSh0KF2ZtSQOdvKCC
-        S7HJQV1d5g00XoW3OVBNJJUWFUaf/eDPPsTYcMk=
-X-Google-Smtp-Source: ACcGV61bTrA4Ownqel0P+8B+UG8xFSuByfdf/oRyq6iCpmZPeHKuZIcjxmqqkrLsL+9ptlTNIYcxYD0BF+5qpcMN5yc=
-X-Received: by 2002:a67:3793:: with SMTP id j19mr6061000vsi.215.1539585377442;
- Sun, 14 Oct 2018 23:36:17 -0700 (PDT)
+        Mon, 15 Oct 2018 10:21:33 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 23-v6so8666802pgc.8
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 23:37:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8BS5zb4g1oHpzkczXkEvEcwxoqFOGwG+SK0BxMMC0AA=;
+        b=MfmReQx9GaIQ6gX2o7JNuB2lX2CDY3xdQ+zTgodvIUG9IjwGpcH6xvTjWzppGC4zRf
+         VasqCEftW50kREgTub9+vqwIgCiSfi9FC1mMaq7ytkUx7434FnbA/T4Hje4oEunj+3KR
+         39792J6patU9zJclDVGsDwxCtOCeSBFS0XR3U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8BS5zb4g1oHpzkczXkEvEcwxoqFOGwG+SK0BxMMC0AA=;
+        b=f8nAfxygwIzWsUKJ41o+t8xEwZR6ZNg+R0Aw+FD5kyfsmWCAkQRVJ6IE66wlE+3+P1
+         wqzDY6DuBDiUz3uGhv2Zzfe2GHWWv3zfFjZ8YWm8VYIpg4xKag4CdN5u7dAs14FoMU8H
+         rCCprvd0eApzhesd6vVjK9UtYHSdFiT1vDVyiH2rTx/gBEBB9PGPGoNrnXxx/6hknzrs
+         2Q7Q25U/tf+HrpfcY2FTyTzYABrxJvRm6+vBZZvTfKrbrnSWdVKTRQwDvK3Z4vFqVCQ6
+         IlAZko7e8/aZNNlHoZOOGprnrb+j3xH2DyaVp+nq4ytT5f2NerOBuTvtnPMXe9FwawLZ
+         u/sA==
+X-Gm-Message-State: ABuFfogGUBrPZ4VnidFVAMNc3Bziy99H3NyqFdHb25ypIAFSqXw6cfhQ
+        zN2GSFUc5Zpwe0SMfFcfKX1LAw==
+X-Google-Smtp-Source: ACcGV60xzr3okc8lTbQ/6CPrs/0APrUT5WYtWlXLIpaq9OhhhVM/rbgbQDDrBrehchCNvsAfOs5PDA==
+X-Received: by 2002:a63:565d:: with SMTP id g29-v6mr14693980pgm.227.1539585459443;
+        Sun, 14 Oct 2018 23:37:39 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id d124-v6sm7559018pfa.163.2018.10.14.23.37.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 14 Oct 2018 23:37:38 -0700 (PDT)
+Date:   Sun, 14 Oct 2018 23:40:41 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Loic PALLARDY <loic.pallardy@st.com>
+Cc:     "ohad@wizery.com" <ohad@wizery.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "s-anna@ti.com" <s-anna@ti.com>
+Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation to rely on
+ centralized carveout allocator
+Message-ID: <20181015064040.GT12063@builder>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-13-git-send-email-loic.pallardy@st.com>
+ <20181010053206.GA20016@builder>
+ <89f3d4bbbc484c5fb5d85f03b1325103@SFHDAG7NODE2.st.com>
 MIME-Version: 1.0
-References: <20181013151016.31674-1-hch@lst.de> <20181013151016.31674-3-hch@lst.de>
-In-Reply-To: <20181013151016.31674-3-hch@lst.de>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 15 Oct 2018 15:35:41 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQxZcBNadLJhfrmxJGj-XJFVaya3Z1eexZp20vRPwrN7A@mail.gmail.com>
-Message-ID: <CAK7LNAQxZcBNadLJhfrmxJGj-XJFVaya3Z1eexZp20vRPwrN7A@mail.gmail.com>
-Subject: Re: [PATCH 2/8] powerpc: simplify CONFIG_PCI_QSPAN Kconfig magic
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     mporter@kernel.crashing.org, alex.bou9@gmail.com,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <89f3d4bbbc484c5fb5d85f03b1325103@SFHDAG7NODE2.st.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 14, 2018 at 12:11 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> The way how CONFIG_PCI_QSPAN selects the CONFIG_PCI default is highly
-> unusual and gets in the way of moving CONFIG_PCI into
-> drivers/pci/Kconfig.  Simplify it by just having it depend on
-> CONFIG_PCI.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/powerpc/Kconfig | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index a80669209155..6fa6f92edb7f 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -955,7 +955,6 @@ config PCI
->         bool "PCI support" if PPC_PCI_CHOICE
->         default y if !40x && !CPM2 && !PPC_8xx && !PPC_83xx \
->                 && !PPC_85xx && !PPC_86xx && !GAMECUBE_COMMON
-> -       default PCI_QSPAN if PPC_8xx
->         select GENERIC_PCI_IOMAP
->         help
->           Find out whether your system includes a PCI bus. PCI is the name of
-> @@ -971,7 +970,7 @@ config PCI_SYSCALL
->
->  config PCI_QSPAN
->         bool "QSpan PCI"
-> -       depends on PPC_8xx
-> +       depends on PPC_8xx && PCI
->         select PPC_I8259
->         help
->           Say Y here if you have a system based on a Motorola 8xx-series
-> --
-> 2.19.1
->
+On Wed 10 Oct 11:58 PDT 2018, Loic PALLARDY wrote:
 
+> 
+> 
+> > -----Original Message-----
+> > From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
+> > Sent: mercredi 10 octobre 2018 07:32
+> > To: Loic PALLARDY <loic.pallardy@st.com>
+> > Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+> > benjamin.gaignard@linaro.org; s-anna@ti.com
+> > Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation to rely on
+> > centralized carveout allocator
+> > 
+> > On Fri 27 Jul 06:14 PDT 2018, Loic Pallardy wrote:
+> > >  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+> > > diff --git a/drivers/remoteproc/remoteproc_virtio.c
+> > b/drivers/remoteproc/remoteproc_virtio.c
+> > [..]
+> > > @@ -114,6 +122,10 @@ static struct virtqueue *rp_find_vq(struct
+> > virtio_device *vdev,
+> > >  	rvring->vq = vq;
+> > >  	vq->priv = rvring;
+> > >
+> > > +	/* Update vring in resource table */
+> > > +	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
+> > > +	rsc->vring[id].da = mem->da;
+> > > +
+> > 
+> > This would now happen after we've started the remoteproc. Don't we need
+> > to do this in-between allocating the carveouts and booting the
+> > remoteproc?
+> 
+> Yes da is updated after coprocessor boot, but before vdev status in resource table is set to DRIVER_OK and kick.
+> Coprocessor should not parse this resource before as vrings not initialized yet.
+> If coprocessor needs to get some information about vring carveout at boot time, carveout resources named vdev"x"vring"y" should be added to firmware resource table.
+> In that case information will be filled before coprocessor boot.
+> 
 
+Makes sense, thanks for clarifying. Applied.
 
-'git grep' did not get any other hit.
-
-masahiro@pug:~/ref/linux$ git grep PCI_QSPAN
-arch/powerpc/Kconfig:   default PCI_QSPAN if PPC_8xx
-arch/powerpc/Kconfig:config PCI_QSPAN
-
-With your patch, PCI_QSPAN will become
-a dead config option.
-
-How about removing it entirely?
-
-
-
---
-Best Regards
-Masahiro Yamada
+Regards,
+Bjorn
