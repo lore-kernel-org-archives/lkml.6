@@ -2,106 +2,111 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F7CBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8A7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26F672089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:52:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26F672089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by mail.kernel.org (Postfix) with ESMTP id 837732089D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:52:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hGOOFobd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 837732089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbeJPHkC (ORCPT
+        id S1727184AbeJPHkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 03:40:02 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:54000 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbeJPHkB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 03:40:01 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 10BED23F5C;
-        Mon, 15 Oct 2018 19:52:25 -0400 (EDT)
-Date:   Tue, 16 Oct 2018 10:52:26 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Hannes Reinecke <hare@suse.de>
-cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        linux-scsi@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] esp_scsi: De-duplicate PIO routines
-In-Reply-To: <2b48c925-73f0-0ca0-2f3c-3c35d90010ba@suse.de>
-Message-ID: <alpine.LNX.2.21.1810161014080.10@nippy.intranet>
-References: <cover.1539497520.git.fthain@telegraphics.com.au> <d5fe773ea8c922631836dad2ef2dbb952672c7c7.1539497520.git.fthain@telegraphics.com.au> <35ac9f31-7068-ab93-4629-363ee0bb4c70@suse.de> <alpine.LNX.2.21.1810151717520.10@nippy.intranet>
- <2b48c925-73f0-0ca0-2f3c-3c35d90010ba@suse.de>
+        Tue, 16 Oct 2018 03:40:16 -0400
+Received: from ozlabs.org ([203.11.71.1]:32897 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726430AbeJPHkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 03:40:14 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42YwGw5Lfjz9s8F;
+        Tue, 16 Oct 2018 10:52:40 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539647560;
+        bh=btU8Uy9R7DaclMFysZ2Nrk6Rk1bPqxI8mS1r5SJHdHM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hGOOFobd/To9b8j8ki07ZLVhA/RKdzbH1nPay/Itzs5F+trOYxhUvw108bCiH74dc
+         /rkDdwMa+oxvX3Ldu2b+h4a4xw5i3BY+LIVAXUJx6+bHA/1BcmxD8hr1NyCEceex7h
+         oQP6SKuBTRGPoi94AGKNMq0NtHj/jJ/gVyQfdxUssIhHbHEiV44GO6lIhpehFsmyNp
+         AbqfWftFKC6IIiE9b0D+pO+UWs3CspV9movhlnpVT2+5Mxnl5PX07QaJPT7XM7O6jD
+         p/GOyp4tT79d+EL6bbO0P64+cdKgLQKRU0h74DDZjGgg2Vyik6ceRO8+pVY3KxD/Gg
+         mBM+nNjCRG43Q==
+Date:   Tue, 16 Oct 2018 10:52:40 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: qemu boot failures with today's linux-next
+Message-ID: <20181016105240.70369b98@canb.auug.org.au>
+In-Reply-To: <87murfz8dl.fsf@concordia.ellerman.id.au>
+References: <20181015191859.2f600de5@canb.auug.org.au>
+        <87murfz8dl.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ofMVVG.UGOBjDEohDHL+3SX"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Oct 2018, Hannes Reinecke wrote:
+--Sig_/ofMVVG.UGOBjDEohDHL+3SX
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> > 
-> > In the case of send_cmd_residual, that would mean a second #ifdef 
-> > added to esp_data_bytes_sent() where it gets used. I'm happy to comply 
-> > but I fear that all these #ifdefs may harm readability...
-> > 
-> > There are already other variables in struct esp that may go unused, 
-> > such as dma_regs, that don't have #ifdefs to elide them. Are these 
-> > also problematic in some way?
-> > 
-> The unused fields in the struct are not so much an issue; in fact, it 
-> rather complicated things when having individual fields in the struct 
-> surrounded by CONFIG_XXX, as then the order of the fields would change 
-> depending on the configuration. Which makes it really hard to debug ..
-> 
+Hi Michael,
 
-True enough. We agree that this #ifdef is undesirable. And yet when I 
-tried it, I found an unexpected readability benefit to your suggestion:
+On Mon, 15 Oct 2018 23:45:10 +1100 Michael Ellerman <mpe@ellerman.id.au> wr=
+ote:
+>
+> > Preparing to boot Linux version 4.19.0-rc7 (sfr@ash) (gcc version 8.2.0=
+ (Debian 8.2.0-4)) #2 SMP Mon Oct 15 18:53:28 AEDT 2018 =20
+>                                   ^^^^^^^^^^
+>                                   I assume that's wrong, this is actually=
+ linux-next you're booting?
 
-#ifdef CONFIG_SCSI_ESP_PIO
-        u8 __iomem              *fifo_reg;
-        int                     send_cmd_error;
-        u32                     send_cmd_residual;
-#endif
+Yes, it was just before -rc8 came out and I suppress the extra version
+information to save rebuilding things that depend on the version.
 
-This grouping does help convey the purpose of these struct members, even 
-though the #ifdef is meant for the compiler not for the human reader.
+> > Booting Linux via __start() @ 0x0000000000400000 ...
+>=20
+> If you git Ctrl-a-c you should get the qemu prompt. Then you can run
+> 'info registers' to print the regs and maybe see where it's stuck.
+>=20
+> And/or build with EARLY_DEBUG_LPAR to get early console output.
 
-So maybe it makes sense to group these definitions (they are all the same 
-size):
+That gave one more line:
 
-        /* These are used by esp_scsi_send_pio_cmd() */
-        u8 __iomem              *fifo_reg;
-        int                     send_cmd_error;
-        u32                     send_cmd_residual;
+[    0.000000] printk: bootconsole [udbg0] enabled
 
-> However, the function declaration really is a worry, as the actual 
-> function body only exists when the config option is enabled. So either 
-> add a dummy function or surround the function declaration by 
-> CONFIG_ESP_PIO.
-> Otherwise I think Dan Carpenter and the likes are guaranteed to send you 
-> a nice mail complaining about this ...
-> 
+--=20
+Cheers,
+Stephen Rothwell
 
-Do static checkers really complain about this? I think the validity of an 
-extern can't be known until the final linkage is done.
+--Sig_/ofMVVG.UGOBjDEohDHL+3SX
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-At that point the checker may complain that no compilation unit references 
-a symbol in a header.
+-----BEGIN PGP SIGNATURE-----
 
-But this would lead to false positives where a header file is shared by 
-separate programs which share library code but not macros.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFKEgACgkQAVBC80lX
+0GwexAf+MFS71cjMU/23VwEAs7GbNie6yHMgHEebYSJhw86kMKxjg9+Dg6Lqr8Ui
+7xsPfqKvAhX6NG9VFIL+BHZMZnR8qc3k12vcQ+Pgp37UlxfvV2z36TMVnnjn4vm9
+LXAtLM2SNwLcEDUTwvgx8LFZo2pQ4T5DbdOeJJKZMHJ/z0b4lTzOmlXMN+sJ4Y7x
+eIrjas6om+58MJBII554klUD2TBm/wqQE602j8ho+z2IdZqYy19WdX5Ea7n+O689
+U43s6uWLUlmD4LY3+XW6IW8z0okJMJuwy2BL5EoLDgdqal0iW17K1d/hKkskCZ18
+2ugto8inlzslS0vay9mBb35cE2pxnQ==
+=UqkH
+-----END PGP SIGNATURE-----
 
--- 
-
-> Cheers,
-> 
-> Hannes
-> 
+--Sig_/ofMVVG.UGOBjDEohDHL+3SX--
