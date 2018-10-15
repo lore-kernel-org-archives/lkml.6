@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A38C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 554E6C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D43920652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:51:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D43920652
+	by mail.kernel.org (Postfix) with ESMTP id 14B5D2089E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:52:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14B5D2089E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbeJOTgQ (ORCPT
+        id S1726620AbeJOThp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:36:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46278 "EHLO mx1.redhat.com"
+        Mon, 15 Oct 2018 15:37:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44904 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbeJOTgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:36:16 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726319AbeJOTho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 15:37:44 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 92C1C7F6C8;
-        Mon, 15 Oct 2018 11:51:20 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 69FAD31524DA;
+        Mon, 15 Oct 2018 11:52:48 +0000 (UTC)
 Received: from [10.36.117.209] (ovpn-117-209.ams2.redhat.com [10.36.117.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1ADC910018FB;
-        Mon, 15 Oct 2018 11:51:15 +0000 (UTC)
-Subject: Re: [PATCH V4 11/15] KVM/MMU: Replace tlb flush function with range
- list flush function
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D52265D76E;
+        Mon, 15 Oct 2018 11:52:43 +0000 (UTC)
+Subject: Re: [PATCH V4 6/15] KVM/MMU: Flush tlb directly in the
+ kvm_set_pte_rmapp()
 To:     lantianyu1986@gmail.com
 Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
         haiyangz@microsoft.com, sthemmin@microsoft.com, tglx@linutronix.de,
@@ -39,7 +39,7 @@ Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         michael.h.kelley@microsoft.com, vkuznets@redhat.com
 References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
- <20181013145406.4911-12-Tianyu.Lan@microsoft.com>
+ <20181013145406.4911-7-Tianyu.Lan@microsoft.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -77,69 +77,33 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <f23f0869-fd33-339a-4833-1249dd4c1670@redhat.com>
-Date:   Mon, 15 Oct 2018 13:51:13 +0200
+Message-ID: <09105529-2684-164c-1284-7d3d6245c177@redhat.com>
+Date:   Mon, 15 Oct 2018 13:52:42 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181013145406.4911-12-Tianyu.Lan@microsoft.com>
+In-Reply-To: <20181013145406.4911-7-Tianyu.Lan@microsoft.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 15 Oct 2018 11:51:20 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 15 Oct 2018 11:52:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/10/2018 16:54, lantianyu1986@gmail.com wrote:
->  	while (mmu_unsync_walk(parent, &pages)) {
->  		bool protected = false;
-> +		LIST_HEAD(flush_list);
->  
-> -		for_each_sp(pages, sp, parents, i)
-> +		for_each_sp(pages, sp, parents, i) {
->  			protected |= rmap_write_protect(vcpu, sp->gfn);
-> +			kvm_mmu_queue_flush_request(sp, &flush_list);
-> +		}
-
-Here you already know that the page has to be flushed, because you are
-dealing with shadow page tables and those always use 4K pages.  So the
-check on is_last_page is unnecessary.
-
-> 
->  					 pte_access, PT_PAGE_TABLE_LEVEL,
->  					 gfn, spte_to_pfn(sp->spt[i]),
->  					 true, false, host_writable);
-> +		if (set_spte_ret && kvm_available_flush_tlb_with_range())
-> +			kvm_mmu_queue_flush_request(sp, &flush_list);
+On 13/10/2018 16:53, lantianyu1986@gmail.com wrote:
+> @@ -1781,6 +1781,11 @@ static int kvm_set_pte_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
+>  		}
 >  	}
+>  
+> +	if (need_flush && kvm_available_flush_tlb_with_range()) {
+> +		kvm_flush_remote_tlbs_with_address(kvm, gfn, 1);
+> +		return 0;
+> +	}
+> +
 
-This is wrong, I think.  sp is always the same throughout the loop, so
-you are adding it multiple times to flush_list.
-
-Instead, you need to add a separate range for each virtual address (in
-this case L2 GPA) that is synced; but for each PTE that you call
-set_spte here for, you could be syncing multiple L2 GPAs if a single
-page is reused multiple times by the guest's EPT page tables.
-
-And actually I may be missing something, but doesn't this apply to all
-call sites?  For mmu_sync_children you can do the flush in
-__rmap_write_protect and return false, similar to the first part of the
-series, but not for kvm_mmu_commit_zap_page and sync_page.
-
-Can you simplify this series to only have hv_remote_flush_tlb_with_range
-and remove all the flush_list stuff?  That first part is safe and well
-understood, because it uses the rmap and so it's clear that you have L2
-GPAs at hand.  Most of the remarks I made on the Hyper-V API will still
-apply.
+Here you're passing an L1 GPA, not an L2 GPA.  Is it correct?
 
 Paolo
-
->  	if (set_spte_ret & SET_SPTE_NEED_REMOTE_TLB_FLUSH)
-> -		kvm_flush_remote_tlbs(vcpu->kvm);
-> +		kvm_flush_remote_tlbs_with_list(vcpu->kvm, &flush_list);
->  
->  	return nr_present;
-
