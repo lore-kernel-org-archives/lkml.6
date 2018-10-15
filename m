@@ -2,126 +2,221 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6F7C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31CCC71133
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43A3720881
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:43:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A3720881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id A2F8621480
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:56:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSOt8rDq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F8621480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbeJPBaH (ORCPT
+        id S1726790AbeJPBmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 21:30:07 -0400
-Received: from mailoutvs30.siol.net ([185.57.226.221]:49883 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726639AbeJPBaH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 21:30:07 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 6AEB7521577;
-        Mon, 15 Oct 2018 19:43:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id H68FphBlTTer; Mon, 15 Oct 2018 19:43:51 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id 048355208C1;
-        Mon, 15 Oct 2018 19:43:51 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPA id B6B72521577;
-        Mon, 15 Oct 2018 19:43:44 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     linux-sunxi@googlegroups.com, laurent.pinchart@ideasonboard.com
-Cc:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org,
-        sboyd@kernel.org, airlied@linux.ie, architt@codeaurora.org,
-        a.hajda@samsung.com, devicetree@vger.kernel.org,
+        Mon, 15 Oct 2018 21:42:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726639AbeJPBmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 21:42:46 -0400
+Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD431208E4;
+        Mon, 15 Oct 2018 17:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539626189;
+        bh=tsLRQd4M4HyH/QEkBjgZruFV3V6MZUczwkrDw6jra1E=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gSOt8rDqGmEesJjCvEVL+nhyF8DAj6Q/i/lsnjRRlzeUqPRo4TNTBisf/EXb4hHtV
+         cAVvalQt7xjf7G9SQoRfoCnAyc+KDiaB/zwVnQL+cgf9sATsrQWLcl9guC2Gv51CMP
+         YhKwKmCPGKO1XqIDMSx8Qk8DYHAAhzag7ogC8PcY=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-crypto@vger.kernel.org
+Cc:     linux-fscrypt@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [linux-sunxi] Re: [PATCH v2 15/29] drm/bridge/synopsys: dw-hdmi: Enable workaround for v2.12a
-Date:   Mon, 15 Oct 2018 19:43:44 +0200
-Message-ID: <1599508.L0GctDr0rS@jernej-laptop>
-In-Reply-To: <3616158.EzHeIcd69b@avalon>
-References: <20181007093905.11253-1-jernej.skrabec@siol.net> <20181007093905.11253-16-jernej.skrabec@siol.net> <3616158.EzHeIcd69b@avalon>
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Subject: [RFC PATCH v2 00/12] crypto: Adiantum support
+Date:   Mon, 15 Oct 2018 10:54:12 -0700
+Message-Id: <20181015175424.97147-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello,
 
-Dne torek, 09. oktober 2018 ob 19:40:44 CEST je Laurent Pinchart napisal(a):
-> Hi Jernej,
-> 
-> Thank you for the patch.
-> 
-> On Sunday, 7 October 2018 12:38:51 EEST Jernej Skrabec wrote:
-> > It turns out that even new DW HDMI controllers exhibits same magenta
-> > line issues as older versions.
-> > 
-> > Enable workaround for v2.12a.
-> 
-> This doesn't affect the platforms I maintain, so I can't really test this,
-> but I'm wondering whether there could be other platforms using a v2.12a DW
-> HDMI that wouldn't need the workaround.
-> 
-> My platforms use a previous version, namely v2.01a. The workaround for that
-> version has been enabled by
-> 
-> commit 9c305eb442f3b371fc722ade827bbf673514123e
-> Author: Neil Armstrong <narmstrong@baylibre.com>
-> Date:   Fri Feb 23 12:44:37 2018 +0100
-> 
->     drm: bridge: dw-hdmi: Fix overflow workaround for Amlogic Meson GX SoCs
-> 
-> I haven't paid too much attention to the patch back then, and have now
-> double- checked the HDMI output on R-Car Gen3. Enabling the workaround
-> doesn't cause any regression, and reverting the commit doesn't cause any
-> issue either. I thus wonder whether we shouldn't enable the workaround with
-> count = 1 in the default case instead of adding new IP core versions to the
-> list. It would be nice if someone from Synopsys could comment on this.
+We've been working to find a way to bring storage encryption to
+entry-level Android devices like the inexpensive "Android Go" devices
+sold in developing countries, and some smartwatches.  Unfortunately,
+often these devices still ship with no encryption, since for cost
+reasons they have to use older CPUs like ARM Cortex-A7; and these CPUs
+lack the ARMv8 Cryptography Extensions, making AES-XTS much too slow.
 
-I was thinking about that too, or even having parameter in dw_hdmi_plat_data 
-which would tell how many times to repeat workaround procedure for a specific 
-platform. But this might be an overkill.
+We're trying to change this, since we believe encryption is for
+everyone, not just those who can afford it.  And while it's unknown how
+long CPUs without AES support will be around, there will likely always
+be a "low end"; and in any case it's immensely valuable to provide a
+software-optimized cipher that doesn't depend on hardware support.
+Lack of hardware support should not be an excuse for no encryption.
 
-Best regards,
-Jernej
+But after an extensive search (e.g. see [1]) we were unable to find an
+existing cipher that simultaneously meets the very strict performance
+requirements on ARM processors, is secure (including having sufficient
+security parameters as well as sufficient cryptanalysis of any
+primitive(s) used), is suitable for practical use in dm-crypt and
+fscrypt, *and* avoids any particularly controversial primitive.
 
-> 
-> > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
-> > 5971976284bf..df1c7a2d6961 100644
-> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > @@ -1664,6 +1664,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi
-> > 
-> > *hdmi) case 0x131a:
-> >  	case 0x132a:
-> > 
-> >  	case 0x201a:
-> > +	case 0x212a:
-> >  		count = 1;
-> >  		break;
-> >  	
-> >  	default:
+Therefore, we (well, Paul Crowley did the real work) designed a new
+encryption mode, Adiantum.  In essence, Adiantum makes it secure to use
+the ChaCha stream cipher for disk encryption.  Adiantum is specified by
+our paper here: https://eprint.iacr.org/2018/720.pdf ("Adiantum:
+length-preserving encryption for entry-level processors").  Reference
+code and test vectors are here: https://github.com/google/adiantum.
+Most of the high-level concepts of Adiantum are not new; similar
+existing modes include XCB, HCTR, and HCH.  Adiantum and these modes are
+true wide-block modes (tweakable super-pseudorandom permutations), so
+they actually provide a stronger notion of security than XTS.
 
+Adiantum is an improved version of our previous algorithm, HPolyC [2].
+Like HPolyC, Adiantum uses XChaCha12, two passes of an
+ε-almost-∆-universal (εA∆U) hash function, and one AES-256 encryption of
+a single 16-byte block.  On ARM Cortex-A7, on 4096-byte messages
+Adiantum is about 4x faster than AES-256-XTS (about 5x for decryption),
+and about 30% faster than Speck128/256-XTS.
 
+Adiantum is a construction, not a primitive.  Its security is reducible
+to that of XChaCha12 and AES-256, subject to a security bound; the proof
+is in Section 5 of our paper.  Therefore, one need not "trust" Adiantum;
+they only need trust XChaCha12 and AES-256.  Note that of these two
+primitives, AES-256 currently has the lower security margin.
 
+Adiantum is ~20% faster than HPolyC, with no loss of security; in fact,
+Adiantum's security bound is slightly better than HPolyC's.  It does
+this by choosing a faster εA∆U hash function: it still uses Poly1305's
+εA∆U hash function, but now a hash function from the "NH" family of hash
+functions is used to "compress" the message by 32x first.  NH is εAU (as
+shown in the UMAC paper[3]) but is over twice as fast as Poly1305.  Key
+agility is reduced, but that's acceptable for disk encryption.
+
+NH is also very simple, and it's easy to implement in SIMD assembly,
+e.g. in ARM NEON.  Now, to get good performance only a SIMD
+implementation of NH is required, not Poly1305.  Therefore, Adiantum can
+be easier to port to new platforms than HPolyC, despite Adiantum's
+slightly increased complexity.  For now this patchset only includes an
+ARM32 NEON implementation of NH, but as a proof of concept I've also
+written SSE2, AVX2, and ARM64 NEON implementations of NH; see
+https://github.com/google/adiantum/tree/master/benchmark/src.
+
+This patchset adds Adiantum to Linux's crypto API, focusing on generic
+and ARM32 implementations.  Patches 1-7 add support for XChaCha20 and
+XChaCha12.  Patches 8-10 add NHPoly1305 support, needed for Adiantum
+hashing.  Patch 11 adds Adiantum support as a skcipher template.
+
+Patch 12 adds Adiantum support to fscrypt ("file-based encryption").
+In fscrypt, Adiantum is used for filenames encryption as well as
+contents encryption; since Adiantum is a SPRP, it fixes the information
+leak when filenames share a common prefix.  We also take advantage of
+Adiantum's support for long tweaks to include the per-inode nonce
+directly in the tweak, which allows providing an option to skip the
+per-file key derivation, providing even greater performance benefits.
+
+As before, some of these patches conflict with the new "Zinc" crypto
+library.  But I don't know when Zinc will be merged, so for now I've
+continued to base this patchset on the current 'cryptodev'.
+
+Again, for more details please read our paper:
+
+    Adiantum: length-preserving encryption for entry-level processors
+    (https://eprint.iacr.org/2018/720.pdf)
+
+This patchset can also be found in git at
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+branch "adiantum-v2".
+
+References:
+  [1] https://www.spinics.net/lists/linux-crypto/msg33000.html
+  [2] https://patchwork.kernel.org/cover/10558059/
+  [3] https://fastcrypto.org/umac/umac_proc.pdf
+
+Eric Biggers (12):
+  crypto: chacha20-generic - add HChaCha20 library function
+  crypto: chacha20-generic - add XChaCha20 support
+  crypto: chacha20-generic - refactor to allow varying number of rounds
+  crypto: chacha - add XChaCha12 support
+  crypto: arm/chacha20 - add XChaCha20 support
+  crypto: arm/chacha20 - refactor to allow varying number of rounds
+  crypto: arm/chacha - add XChaCha12 support
+  crypto: poly1305 - add Poly1305 core API
+  crypto: nhpoly1305 - add NHPoly1305 support
+  crypto: arm/nhpoly1305 - add NEON-accelerated NHPoly1305
+  crypto: adiantum - add Adiantum support
+  fscrypt: add Adiantum support
+
+ Documentation/filesystems/fscrypt.rst         |  183 +-
+ arch/arm/crypto/Kconfig                       |    7 +-
+ arch/arm/crypto/Makefile                      |    6 +-
+ ...hacha20-neon-core.S => chacha-neon-core.S} |   90 +-
+ arch/arm/crypto/chacha-neon-glue.c            |  207 ++
+ arch/arm/crypto/chacha20-neon-glue.c          |  127 -
+ arch/arm/crypto/nh-neon-core.S                |  116 +
+ arch/arm/crypto/nhpoly1305-neon-glue.c        |   78 +
+ arch/arm64/crypto/chacha20-neon-glue.c        |   40 +-
+ arch/x86/crypto/chacha20_glue.c               |   52 +-
+ arch/x86/crypto/poly1305_glue.c               |   20 +-
+ crypto/Kconfig                                |   46 +-
+ crypto/Makefile                               |    4 +-
+ crypto/adiantum.c                             |  648 ++++
+ crypto/chacha20_generic.c                     |  137 -
+ crypto/chacha20poly1305.c                     |   10 +-
+ crypto/chacha_generic.c                       |  217 ++
+ crypto/nhpoly1305.c                           |  288 ++
+ crypto/poly1305_generic.c                     |  174 +-
+ crypto/testmgr.c                              |   30 +
+ crypto/testmgr.h                              | 2856 ++++++++++++++++-
+ drivers/char/random.c                         |   51 +-
+ fs/crypto/crypto.c                            |   35 +-
+ fs/crypto/fname.c                             |   22 +-
+ fs/crypto/fscrypt_private.h                   |   66 +-
+ fs/crypto/keyinfo.c                           |  322 +-
+ fs/crypto/policy.c                            |    5 +-
+ include/crypto/chacha.h                       |   53 +
+ include/crypto/chacha20.h                     |   27 -
+ include/crypto/nhpoly1305.h                   |   74 +
+ include/crypto/poly1305.h                     |   28 +-
+ include/uapi/linux/fs.h                       |    4 +-
+ lib/Makefile                                  |    2 +-
+ lib/{chacha20.c => chacha.c}                  |   59 +-
+ 34 files changed, 5389 insertions(+), 695 deletions(-)
+ rename arch/arm/crypto/{chacha20-neon-core.S => chacha-neon-core.S} (92%)
+ create mode 100644 arch/arm/crypto/chacha-neon-glue.c
+ delete mode 100644 arch/arm/crypto/chacha20-neon-glue.c
+ create mode 100644 arch/arm/crypto/nh-neon-core.S
+ create mode 100644 arch/arm/crypto/nhpoly1305-neon-glue.c
+ create mode 100644 crypto/adiantum.c
+ delete mode 100644 crypto/chacha20_generic.c
+ create mode 100644 crypto/chacha_generic.c
+ create mode 100644 crypto/nhpoly1305.c
+ create mode 100644 include/crypto/chacha.h
+ delete mode 100644 include/crypto/chacha20.h
+ create mode 100644 include/crypto/nhpoly1305.h
+ rename lib/{chacha20.c => chacha.c} (59%)
+
+-- 
+2.19.0.605.g01d371f741-goog
 
