@@ -2,106 +2,97 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4405DC71133
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F15C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D3D6208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D75BD208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:40:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eG7AyAl4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D3D6208E4
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OMdbV+uc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75BD208B3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbeJPC1V (ORCPT
+        id S1726974AbeJPC1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:27:21 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33185 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726786AbeJPC1V (ORCPT
+        Mon, 15 Oct 2018 22:27:22 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43959 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbeJPC1V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 15 Oct 2018 22:27:21 -0400
-Received: by mail-pl1-f195.google.com with SMTP id s4-v6so9743444plp.0
+Received: by mail-pf1-f196.google.com with SMTP id p24-v6so10111532pff.10
         for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 11:40:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=YLsDhg5zmRoRd2nq9v4jijpwo9apn3dlm8tarNuMuio=;
-        b=eG7AyAl4mvM3K+g92MiM9uUWKlk4f3gpgxEDtc878UxFv09ypwwc7laEsEYU2dNAEx
-         xLlbJyQp1Q2+pQNua5/b7I8ujrdOUVhXZ5u6dQ9WkIJA2oWFJRXpMTEFBeA2SYyk9si1
-         UB8+AryDuYy7sC0nUNIAOVvVCKI40LQCVR/OE=
+        h=from:to:cc:subject:date:message-id;
+        bh=Qiu8Dvy3vDRSEHcPlzDNP8QsXRKz7bTKvoZBD63ZTNM=;
+        b=OMdbV+ucwIYZrixx6j5zsAk6BNjmMVOgtwlSY/rMQN2EkVL027+DtAnFvlSAF2Y+HZ
+         fRe9VaokeU6RVznlh3swyd/QtNzjSzDojMLjVLT/AWLTXz+QrZ6MdNNmCztjlkn0fOmw
+         5hES6M0K53+14zWiCt4HaOX2TCR7/ePswmKfk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=YLsDhg5zmRoRd2nq9v4jijpwo9apn3dlm8tarNuMuio=;
-        b=LnavWEsSzWeJ0qOyvDzwB+BuJVZU1ggyBqNDxaAewFW1xFBAqud2kPuj/iBZJGwhKY
-         UylNypu0+NlN2g0Tdk/UG5pZCUBeGpyi/lHaheGTGvO8yhewl1gkT+zOR7txGTeUuI4C
-         NKiU6fNUpgUQ271kROnCqaI2tYjfcn+30gOptS4B9UQbmBmdI6UznGRZmioJkO9cBNo+
-         Uw7RB5UDG7LbN9z1XjInYrSMHwLHYI2e/xoIT7D5/DTtlodhgqUJLXrxVUMuxiXiS5L5
-         ayn2fSg24rCUPR0+UdTWZf3V9rh2kd38MMK9XaQqJTe0onkOUOpMvqcuyrTXcTK92jz/
-         VBlQ==
-X-Gm-Message-State: ABuFfojL5laWACJ/yo1hszMgw3LnJCpXdoNOuadtOGuv5TuHnwZ+8bMs
-        RXnSSJ+b/mOgiDmO9VRNfmYS//lg0VE=
-X-Google-Smtp-Source: ACcGV63wUwSxE9C3wQDoIuAWDCmAFFczByTaoff+dto9NoSm77AsEuBpWlcS7Jh+gNbCuR9cMR388A==
-X-Received: by 2002:a17:902:a7:: with SMTP id a36-v6mr5207898pla.87.1539628853369;
-        Mon, 15 Oct 2018 11:40:53 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Qiu8Dvy3vDRSEHcPlzDNP8QsXRKz7bTKvoZBD63ZTNM=;
+        b=C90hd25nb7VnjJ4dAkaEtvvbHqEEamH8PTiqD2iiTTQY45o+9A6lrL51+X5vIP4Ayb
+         d/DibHVA8TfQFN5AUFIhPEyr9DtrO7CS+9JjfgnGVxl0pzBJCO35IZka0gg3KuOa5aSi
+         gL+VDdTcp8eOO38ZlgHHQ7fs1q2Ciirylube7jcr0WuQb0TBhDkisNd00jRNC0+NtS7n
+         RJRx2EHkeQulr5JfTRKhfPdmWQbU90pyp99GTbT1lknIRtK9XuZYsyM0HHPS8jbT54lx
+         S5bMLdsexUkzTBGQO2YQyXNQGXYNWB3lkwljtEYAdsNObzQ393E4P5osz4Ate9NR4MlI
+         qXrw==
+X-Gm-Message-State: ABuFfohv19oqcx7afsRFlypeo7w+YUmFINvxUYTvWjcSbKHGjq1JVcuV
+        5c3t3oCm40FdzaQClvTXkGfvI6Sf2/M=
+X-Google-Smtp-Source: ACcGV63p4jrBZzbmHjR4EhNvK5GGJY3qXOR400h6tsP/oKJOSnyHYlLfA78cELhur3wWC09Htb5Wqw==
+X-Received: by 2002:a63:2807:: with SMTP id o7-v6mr16877509pgo.155.1539628849449;
+        Mon, 15 Oct 2018 11:40:49 -0700 (PDT)
 Received: from localhost ([49.248.168.189])
-        by smtp.gmail.com with ESMTPSA id r73-v6sm18627774pfk.157.2018.10.15.11.40.52
+        by smtp.gmail.com with ESMTPSA id q24-v6sm19205427pfi.165.2018.10.15.11.40.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 11:40:52 -0700 (PDT)
+        Mon, 15 Oct 2018 11:40:48 -0700 (PDT)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
         edubezval@gmail.com, andy.gross@linaro.org, vkoul@kernel.org,
-        Zhang Rui <rui.zhang@intel.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v1 1/4] dt: thermal: tsens: Add bindings for qcs404
-Date:   Tue, 16 Oct 2018 00:10:40 +0530
-Message-Id: <102083e3ea93f48085b93f8df307967689ea18d6.1539627762.git.amit.kucheria@linaro.org>
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-soc@vger.kernel.org
+Subject: [PATCH v1 0/4] thermal: tsens: Add support for QCS404 platform
+Date:   Tue, 16 Oct 2018 00:10:39 +0530
+Message-Id: <cover.1539627762.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1539627762.git.amit.kucheria@linaro.org>
-References: <cover.1539627762.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1539627762.git.amit.kucheria@linaro.org>
-References: <cover.1539627762.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qcs404 uses v1 of the TSENS IP block. Create a fallback DT property
-"qcom,tsens-v1" to gather common code.
+Add support for the Qualcomm QCS404 platform that contains v1 of the TSENS
+IP. Introduce a fallback binding to handle "v1" functionality.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- Documentation/devicetree/bindings/thermal/qcom-tsens.txt | 3 +++
- 1 file changed, 3 insertions(+)
+These patches apply on top of previous tsens-related patches sent to the
+list pending merge along with various qcs404 patches under review
+(available in this branch[1] for convenience).
 
-diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-index 1d9e8cf61018..799de3062352 100644
---- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-+++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-@@ -8,9 +8,12 @@ Required properties:
-     - "qcom,msm8996-tsens" (MSM8996)
-     - "qcom,msm8998-tsens", "qcom,tsens-v2" (MSM8998)
-     - "qcom,sdm845-tsens", "qcom,tsens-v2" (SDM845)
-+    - "qcom,qcs404-tsens", "qcom,tsens-v1" (QCS404)
-   The generic "qcom,tsens-v2" property must be used as a fallback for any SoC
-   with version 2 of the TSENS IP. MSM8996 is the only exception because the
-   generic property did not exist when support was added.
-+  Similarly, the generic "qcom,tsens-v1" property must be used as a fallback for
-+  any SoC with version 1 of the TSENS IP.
- 
- - reg: Address range of the thermal registers.
-   New platforms containing v2.x.y of the TSENS IP must specify the SROT and TM
+[1] https://git.linaro.org/landing-teams/working/qualcomm/kernel.git/log/?h=integration-linux-qcomlt
+
+Amit Kucheria (4):
+  dt: thermal: tsens: Add bindings for qcs404
+  drivers: thermal: tsens: Add generic support for TSENS v1 IP
+  arm64: dts: qcom: qcs404: Add tsens controller
+  arm64: dts: qcom: qcs404: Add thermal zones for each sensor
+
+ .../bindings/thermal/qcom-tsens.txt           |   3 +
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          | 226 ++++++++++++++++++
+ drivers/thermal/qcom/Makefile                 |   2 +-
+ drivers/thermal/qcom/tsens-v1.c               | 196 +++++++++++++++
+ drivers/thermal/qcom/tsens.c                  |   3 +
+ drivers/thermal/qcom/tsens.h                  |   2 +-
+ 6 files changed, 430 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/thermal/qcom/tsens-v1.c
+
 -- 
 2.17.1
 
