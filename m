@@ -2,128 +2,143 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8B3C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A111C7112B
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7564E2087D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:08:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zuQX3WaE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7564E2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 27F152086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:09:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F152086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbeJOPwT (ORCPT
+        id S1726736AbeJOPxV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 11:52:19 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:39238 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726456AbeJOPwT (ORCPT
+        Mon, 15 Oct 2018 11:53:21 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:64028 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726456AbeJOPxV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 11:52:19 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9F849NZ061487;
-        Mon, 15 Oct 2018 08:07:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : subject : to :
- cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=Dg9XB6zUtoe7qqQI02MC6TtsPJn5zwmTVmE0wuD6rbw=;
- b=zuQX3WaERXkNKoWYzl2623IhHTB2GPOXrAD+iNg+9nUBcarI9LMaGqDJcJ9zHTe0N3mh
- B4sBLbEWGrvh4rj04H9SimXtsKMTzpnqNNRT5wYAquLn472V74ysViowRcUP1zYX44QO
- YFZXliHgsXHz3CorJPemRkF6s7yGlPC44Z2xpXkHT3lThJk9Np/s4Lr0tsjiTk8LABV/
- PByDBwR+2fjazJXAtJbSuIQJPh/ZM+5zj8BzuTwXaputCNqv1kX3TGH5DJpQQ/xiRhAS
- hSHWjNFegGS2WcxA0d8+dOnEAlhZMN8X4QIAN/+tGSClOPCCY7Q3Lilc61J3VHeSzI0z Yg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2n39br0ptr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 15 Oct 2018 08:07:35 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9F87Xct032230
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 15 Oct 2018 08:07:33 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9F87U3K013570;
-        Mon, 15 Oct 2018 08:07:31 GMT
-Received: from [10.191.235.38] (/10.191.235.38)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 15 Oct 2018 01:07:30 -0700
-From:   Khalid Aziz <khalid.aziz@oracle.com>
-Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
- in mind (for KVM to isolate its guests per CPU)
-To:     "Stecklina, Julian" <jsteckli@amazon.de>
-Cc:     "juerg.haefliger@hpe.com" <juerg.haefliger@hpe.com>,
-        "deepa.srinivasan@oracle.com" <deepa.srinivasan@oracle.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "pradeep.vincent@oracle.com" <pradeep.vincent@oracle.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kanth.ghatraju@oracle.com" <kanth.ghatraju@oracle.com>,
-        "joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
-        "liran.alon@oracle.com" <liran.alon@oracle.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "keescook@google.com" <keescook@google.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "chris.hyser@oracle.com" <chris.hyser@oracle.com>,
-        "tyhicks@canonical.com" <tyhicks@canonical.com>,
-        "john.haxby@oracle.com" <john.haxby@oracle.com>,
-        "jcm@redhat.com" <jcm@redhat.com>
-References: <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
- <ciirm8a7p3alos.fsf@u54ee758033e858cfa736.ant.amazon.com>
- <CA+55aFzHj_GNZWG4K2oDu4DPP9sZdTZ9PY7sBxGB6WoN9g8d=A@mail.gmail.com>
- <ciirm8zhwyiqh4.fsf@u54ee758033e858cfa736.ant.amazon.com>
- <ciirm8efdy916l.fsf@u54ee758033e858cfa736.ant.amazon.com>
- <5efc291c-b0ed-577e-02d1-285d080c293d@oracle.com>
- <ciirm8va743105.fsf@u54ee758033e858cfa736.ant.amazon.com>
- <7221975d-6b67-effa-2747-06c22c041e78@oracle.com>
- <1537800341.9745.20.camel@amazon.de>
-Organization: Oracle Corp
-Message-ID: <063f5efc-afb2-471f-eb4b-79bf90db22dd@oracle.com>
-Date:   Mon, 15 Oct 2018 02:07:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 15 Oct 2018 11:53:21 -0400
+X-UUID: 279db1602cd24af5baa51842a900fba5-20181015
+X-UUID: 279db1602cd24af5baa51842a900fba5-20181015
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1499027394; Mon, 15 Oct 2018 16:09:03 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 15 Oct 2018 16:09:02 +0800
+Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 15 Oct 2018 16:09:01 +0800
+From:   <honghui.zhang@mediatek.com>
+To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>
+CC:     <ulf.hansson@linaro.org>, <marc.zyngier@arm.com>,
+        <matthias.bgg@gmail.com>, <devicetree@vger.kernel.org>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>,
+        <yt.shen@mediatek.com>, <jianjun.wang@mediatek.com>,
+        <yong.wu@mediatek.com>
+Subject: [PATCH v8 0/9] PCI: mediatek: fixup find_port, enable_msi and add PM, module support
+Date:   Mon, 15 Oct 2018 16:08:51 +0800
+Message-ID: <1539590940-13355-1-git-send-email-honghui.zhang@mediatek.com>
+X-Mailer: git-send-email 2.6.4
 MIME-Version: 1.0
-In-Reply-To: <1537800341.9745.20.camel@amazon.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9046 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810150076
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 08:45 AM, Stecklina, Julian wrote:
-> I didn't test the version with TLB flushes, because it's clear that the
-> overhead is so bad that no one wants to use this.
+From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-I don't think we can ignore the vulnerability caused by not flushing 
-stale TLB entries. On a mostly idle system, TLB entries hang around long 
-enough to make it fairly easy to exploit this. I was able to use the 
-additional test in lkdtm module added by this patch series to 
-successfully read pages unmapped from physmap by just waiting for system 
-to become idle. A rogue program can simply monitor system load and mount 
-its attack using ret2dir exploit when system is mostly idle. This brings 
-us back to the prohibitive cost of TLB flushes. If we are unmapping a 
-page from physmap every time the page is allocated to userspace, we are 
-forced to incur the cost of TLB flushes in some way. Work Tycho was 
-doing to implement Dave's suggestion can help here. Once Tycho has 
-something working, I can measure overhead on my test machine. Tycho, I 
-can help with your implementation if you need.
+This patchset includes misc patchs:
 
---
-Khalid
+The patch 1 fixup the mtk_pcie_find_port logic which will cause system
+could not touch the EP's configuration space that connected to PCIe slot 1.
+
+The patch 2 fixup the class type for MT7622.
+The patch 6 fixup the enable msi logic, the operation to enable MSI
+should be after system clock is enabled. Call mtk_pcie_enable_msi in
+mtk_pcie_startup_port_v2 since the clock was all enabled at that time.
+
+The patch 7 was rebased and refactor of the v4 patch[1], changes are:
+ -Add PM support for MT7622.
+ -Using mtk_pcie_enable_port to re-establish the link when resumed.
+ -Rebased on this patchset.
+
+The patch 9 add loadable kernel module support.
+
+[1] https://patchwork.kernel.org/patch/10479079
+
+Change since v7:
+ - Add Acked-by tags from Ryder Lee.
+ - Add Fix tags for patch 2(Fix calss type for MT7622 as PCI_CLASS_BRIDGE_PCI)
+   and patch 6(Fixup enable MSI logic by enable MSI after clock enabled)
+
+Change since v6:
+ - Remove the pci_unmap_iospace when remove the device since the
+   devm_pci_remap_iospace is an devm_ version.
+ - Commit message changed for patch 2(Fix class type for MT7622 as PCI_CLASS_BRIDGE_PCI).
+ - Capitilizing "MSI" and "PM" in the patch title.
+
+Change since v5:
+ - A bit improvement of mtk_pcie_find_port suggest by Lorenzo.
+   MSI after clock enabled).
+ - Add Acked-by tags from Ryder.
+
+Change since v4:
+ - Add patch 2 to fixup class type for MT7622.
+ - Add patch 3 to remove the redundant dev->pm_domain check
+ - Add patch 4 to covert to use pci_host_probe
+ - Add patch 5 to re-arrange the function define, this is a prepare patch for
+   fixup the enable_msi logic, no functional changed have been made by this one.
+ - Add patch 8 to save the GIC IRQ in mtk_pcie_port as a prepare patch for tear
+   down the irq when remove the kernel module.
+ - Re-arrange the find_port flow suggest by Lorenzo to make the code parse easier
+   for the patch 1.
+ - Remove the .pm_support in mtk_pcie_soc in patch 7 since if system pm was not
+   supported, then those pm callbacks will never be executed for MT7622. So the
+   .pm_support is not needed.
+
+Change since v3:
+ - Remove pm_runtime_XXX ops in suspend and resume callbacks in the third patch.
+ - Rebase to 4.19-rc1.
+
+Change since v2:
+ - Fix the list_for_each_entry_safe parameter error.
+ - Add Ryder's Acked-by flag.
+
+Change since v1:
+ - A bit of code refact of the first patch suggested by Andy Shevchenko, and
+   commit message updated.
+
+Honghui Zhang (9):
+  PCI: mediatek: Using slot's devfn for compare to fix
+    mtk_pcie_find_port logic
+  PCI: mediatek: Fix class type for MT7622 as PCI_CLASS_BRIDGE_PCI
+  PCI: mediatek: Remove the redundant dev->pm_domain check
+  PCI: mediatek: Convert to use pci_host_probe()
+  PCI: mediatek: Move the mtk_pcie_startup_port_v2 function's define
+    after mtk_pcie_setup_irq
+  PCI: mediatek: Fixup enable MSI logic by enable MSI after clock
+    enabled
+  PCI: mediatek: Add system PM support for MT2712 and MT7622
+  PCI: mediatek: Save the GIC IRQ in mtk_pcie_port
+  PCI: mediatek: Add loadable kernel module support
+
+ drivers/pci/controller/Kconfig         |   2 +-
+ drivers/pci/controller/pcie-mediatek.c | 319 +++++++++++++++++++++------------
+ 2 files changed, 204 insertions(+), 117 deletions(-)
+
+-- 
+2.6.4
+
