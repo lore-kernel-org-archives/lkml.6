@@ -2,106 +2,170 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE2FC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFACCC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E8F62064A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:24:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Z4fD1ff9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E8F62064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AD6C92064A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:25:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD6C92064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726609AbeJOSJQ (ORCPT
+        id S1726778AbeJOSJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 14:09:16 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54368 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJOSJP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 14:09:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nrj+W0Mi6FpvxRGZ/zF9Dk5Sun48zVUP4hpf1kRkCnY=; b=Z4fD1ff9t/mqRNfFm2t1GKgo8
-        tauTONJ6Hd+s7j79eoRbvKevWYWieVB4W1zor6m7q0LAErKfmQD9BF/AcHZbmkL0umeKCjOeVAXme
-        XMu1YLz9XjCdxt5X2U9p3TqudR19yzbPphe/dtRUOKPPAym3beespXNyZdGsPws4ToGZ0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gC039-0002zd-0a; Mon, 15 Oct 2018 10:24:35 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B4A9611224A9; Mon, 15 Oct 2018 11:24:34 +0100 (BST)
-Date:   Mon, 15 Oct 2018 11:24:34 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: misc: bk4: Add device tree binding for
- Liebherr's BK4 SPI bus
-Message-ID: <20181015102434.GC6277@sirena.org.uk>
-References: <20180927222655.24482-1-lukma@denx.de>
- <20181008144350.GS3587@dragon>
- <20181009122114.39ff3553@jawa>
- <20181015121716.2362d286@jawa>
+        Mon, 15 Oct 2018 14:09:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54658 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726273AbeJOSJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 14:09:54 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 34A683082A46;
+        Mon, 15 Oct 2018 10:25:16 +0000 (UTC)
+Received: from redhat.com (ovpn-120-81.rdu2.redhat.com [10.10.120.81])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 37D131726D;
+        Mon, 15 Oct 2018 10:25:09 +0000 (UTC)
+Date:   Mon, 15 Oct 2018 06:25:08 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Tiwei Bie <tiwei.bie@intel.com>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com, maxime.coquelin@redhat.com
+Subject: Re: [PATCH net-next V2 6/8] vhost: packed ring support
+Message-ID: <20181015062241-mutt-send-email-mst@kernel.org>
+References: <1531711691-6769-1-git-send-email-jasowang@redhat.com>
+ <1531711691-6769-7-git-send-email-jasowang@redhat.com>
+ <20181012143244.GA28400@debian>
+ <20181012131812-mutt-send-email-mst@kernel.org>
+ <447f47fa-32dd-a408-dd81-13a9839e0748@redhat.com>
+ <20181014224208-mutt-send-email-mst@kernel.org>
+ <ee3785be-b309-c4ae-e959-737018c21464@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4jXrM3lyYWu4nBt5"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181015121716.2362d286@jawa>
-X-Cookie: Call for details.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ee3785be-b309-c4ae-e959-737018c21464@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 15 Oct 2018 10:25:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 15, 2018 at 10:51:06AM +0800, Jason Wang wrote:
+> 
+> 
+> On 2018年10月15日 10:43, Michael S. Tsirkin wrote:
+> > On Mon, Oct 15, 2018 at 10:22:33AM +0800, Jason Wang wrote:
+> > > 
+> > > On 2018年10月13日 01:23, Michael S. Tsirkin wrote:
+> > > > On Fri, Oct 12, 2018 at 10:32:44PM +0800, Tiwei Bie wrote:
+> > > > > On Mon, Jul 16, 2018 at 11:28:09AM +0800, Jason Wang wrote:
+> > > > > [...]
+> > > > > > @@ -1367,10 +1397,48 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
+> > > > > >    		vq->last_avail_idx = s.num;
+> > > > > >    		/* Forget the cached index value. */
+> > > > > >    		vq->avail_idx = vq->last_avail_idx;
+> > > > > > +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED)) {
+> > > > > > +			vq->last_avail_wrap_counter = wrap_counter;
+> > > > > > +			vq->avail_wrap_counter = vq->last_avail_wrap_counter;
+> > > > > > +		}
+> > > > > >    		break;
+> > > > > >    	case VHOST_GET_VRING_BASE:
+> > > > > >    		s.index = idx;
+> > > > > >    		s.num = vq->last_avail_idx;
+> > > > > > +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
+> > > > > > +			s.num |= vq->last_avail_wrap_counter << 31;
+> > > > > > +		if (copy_to_user(argp, &s, sizeof(s)))
+> > > > > > +			r = -EFAULT;
+> > > > > > +		break;
+> > > > > > +	case VHOST_SET_VRING_USED_BASE:
+> > > > > > +		/* Moving base with an active backend?
+> > > > > > +		 * You don't want to do that.
+> > > > > > +		 */
+> > > > > > +		if (vq->private_data) {
+> > > > > > +			r = -EBUSY;
+> > > > > > +			break;
+> > > > > > +		}
+> > > > > > +		if (copy_from_user(&s, argp, sizeof(s))) {
+> > > > > > +			r = -EFAULT;
+> > > > > > +			break;
+> > > > > > +		}
+> > > > > > +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED)) {
+> > > > > > +			wrap_counter = s.num >> 31;
+> > > > > > +			s.num &= ~(1 << 31);
+> > > > > > +		}
+> > > > > > +		if (s.num > 0xffff) {
+> > > > > > +			r = -EINVAL;
+> > > > > > +			break;
+> > > > > > +		}
+> > > > > Do we want to put wrap_counter at bit 15?
+> > > > I think I second that - seems to be consistent with
+> > > > e.g. event suppression structure and the proposed
+> > > > extension to driver notifications.
+> > > Ok, I assumes packed virtqueue support 64K but looks not. I can change it to
+> > > bit 15 and GET_VRING_BASE need to be changed as well.
+> > > 
+> > > > 
+> > > > > If put wrap_counter at bit 31, the check (s.num > 0xffff)
+> > > > > won't be able to catch the illegal index 0x8000~0xffff for
+> > > > > packed ring.
+> > > > > 
+> > > Do we need to clarify this in the spec?
+> > Isn't this all internal vhost stuff?
+> 
+> I meant the illegal index 0x8000-0xffff.
 
---4jXrM3lyYWu4nBt5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It does say packed virtqueues support up to 2 15 entries each.
 
-On Mon, Oct 15, 2018 at 12:17:16PM +0200, Lukasz Majewski wrote:
+But yes we can add a requirement that devices do not expose
+larger rings. Split does not support 2**16 either, right?
+With 2**16 enties avail index becomes 0 and ring looks empty.
 
-> Gentle ping on this patch (as corresponding DTS file has been already
-> pulled by Shawn).
-
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
-
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, so sending again is generally a better approach though there are
-some other maintainers who like them - if in doubt look at how patches
-for the subsystem are normally handled.
-
---4jXrM3lyYWu4nBt5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvEauEACgkQJNaLcl1U
-h9B2xQf9Gd/mUcN0Qee3PMMvp0q31F78mAEZGVZwkDuKstj5VgRZ6Cx9f48jjArX
-ZvbPnHfdkfTmgmGvCzLDBZ6hzI/cR/cqWbaKCgLJyTKOv8TD79psM+UQZKwjiIGq
-LncZ97JhomURxaHrskcG8nms1bl/bOJhoD0GwpO2zwM75L3crOZuMZN8vVJzQedb
-GShEh7Q0uPWq1Ix9dHjYhYz8jjYxPp8za1Yoxq2dBClrSzU/9F77Flm+8hzxLs8C
-tizlPjpPWydJ7kVxd67D6POPrEed6uw6SD0JopF2/llWsVMtmkb+bXkWRNmExivj
-80ji5VB9pfrB5rn+YdPNzkeYpINPiw==
-=uwsY
------END PGP SIGNATURE-----
-
---4jXrM3lyYWu4nBt5--
+> 
+> > 
+> > > > > > +		vq->last_used_idx = s.num;
+> > > > > > +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
+> > > > > > +			vq->last_used_wrap_counter = wrap_counter;
+> > > > > > +		break;
+> > > > > > +	case VHOST_GET_VRING_USED_BASE:
+> > > > > Do we need the new VHOST_GET_VRING_USED_BASE and
+> > > > > VHOST_SET_VRING_USED_BASE ops?
+> > > > > 
+> > > > > We are going to merge below series in DPDK:
+> > > > > 
+> > > > > http://patches.dpdk.org/patch/45874/
+> > > > > 
+> > > > > We may need to reach an agreement first.
+> > > If we agree that 64K virtqueue won't be supported, I'm ok with either.
+> > Well the spec says right at the beginning:
+> > 
+> > Packed virtqueues support up to 2 15 entries each.
+> 
+> Ok. I get it.
+> 
+> Then I can change vhost to match what dpdk did.
+> 
+> Thanks
+> 
+> > 
+> > 
+> > > Btw the code assumes used_wrap_counter is equal to avail_wrap_counter which
+> > > looks wrong?
+> > > 
+> > > Thanks
+> > > 
+> > > > > > +		s.index = idx;
+> > > > > > +		s.num = vq->last_used_idx;
+> > > > > > +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
+> > > > > > +			s.num |= vq->last_used_wrap_counter << 31;
+> > > > > >    		if (copy_to_user(argp, &s, sizeof s))
+> > > > > >    			r = -EFAULT;
+> > > > > >    		break;
+> > > > > [...]
