@@ -2,159 +2,109 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE315C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 538B2C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86505208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:43:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86505208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1BAA2208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:44:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGV1Rq2v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BAA2208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbeJPC35 (ORCPT
+        id S1726914AbeJPCa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:29:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58086 "EHLO mx1.redhat.com"
+        Mon, 15 Oct 2018 22:30:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726594AbeJPC35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:29:57 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726715AbeJPCa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 22:30:28 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 46C4D308626E;
-        Mon, 15 Oct 2018 18:43:29 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9544262480;
-        Mon, 15 Oct 2018 18:43:22 +0000 (UTC)
-Subject: Re: [PATCH v13 03/11] cpuset: Simply allocation and freeing of
- cpumasks
-To:     Tom Hromatka <tom.hromatka@oracle.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id E7EFE208B3;
+        Mon, 15 Oct 2018 18:43:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539629040;
+        bh=8XDJUbXpTg2M7Dr4P0K6ZfAKvt+GSII9Ce8iZapBiSE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iGV1Rq2vfgdYgzw3K53NPC7VWIIZ61qWYnzKiBhU2Cj+OhOvNiU9RiIwf8RBLjOSh
+         gKTgNA4TAOBEYEcAp0/YEWm3QJWw7OY4KgpF+c3zlionTGPU6zrH67sOYsvFL0oSOd
+         TWIOIPtGguxrBbEjKWOfuTcHWq2FfObD7CDv91OE=
+Date:   Mon, 15 Oct 2018 20:43:58 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Enke Chen <enkechen@cisco.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <1539366951-8498-1-git-send-email-longman@redhat.com>
- <1539366951-8498-4-git-send-email-longman@redhat.com>
- <fe132a9a-472d-22db-43ef-42c00b68c8dd@oracle.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <b5ec84fe-e9ed-7b82-7183-cb84f485dfc7@redhat.com>
-Date:   Mon, 15 Oct 2018 14:43:22 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
+Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
+Message-ID: <20181015184358.GA12153@kroah.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <20181013064023.GA28177@kroah.com>
+ <37401cea-5a37-2cd9-8595-8b07dfc4de7d@cisco.com>
 MIME-Version: 1.0
-In-Reply-To: <fe132a9a-472d-22db-43ef-42c00b68c8dd@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 15 Oct 2018 18:43:29 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37401cea-5a37-2cd9-8595-8b07dfc4de7d@cisco.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/15/2018 02:35 PM, Tom Hromatka wrote:
->
->
-> On 10/12/2018 11:55 AM, Waiman Long wrote:
->> The previous commit introduces a new subparts_cpus mask into the cpuset
->> data structure and a new tmpmasks structure.  Managing the allocation
->> and freeing of those cpumasks is becoming more complex.
->>
->> So a number of helper functions are added to simplify and streamline
->> the management of those cpumasks. To make it simple, all the cpumasks
->> are now pre-cleared on allocation.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>   kernel/cgroup/cpuset.c | 104
->> +++++++++++++++++++++++++++++++++----------------
->>   1 file changed, 71 insertions(+), 33 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index 29a2bdc..9ac5f94 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -456,6 +456,57 @@ static int is_cpuset_subset(const struct cpuset
->> *p, const struct cpuset *q)
->>   }
->>     /**
->> + * alloc_cpumasks - allocate three cpumasks for cpuset
->> + * @cs:  the cpuset that have cpumasks to be allocated.
->> + * @tmp: the tmpmasks structure pointer
->> + * Return: 0 if successful, -ENOMEM otherwise.
->> + *
->> + * Only one of the two input arguments should be non-NULL.
->> + */
->> +static inline int alloc_cpumasks(struct cpuset *cs, struct tmpmasks
->> *tmp)
->> +{
->> +    cpumask_var_t *pmask1, *pmask2, *pmask3;
->> +
->> +    if (cs) {
->> +        pmask1 = &cs->cpus_allowed;
->> +        pmask2 = &cs->effective_cpus;
->> +        pmask3 = &cs->subparts_cpus;
->> +    } else {
->> +        pmask1 = &tmp->new_cpus;
->> +        pmask2 = &tmp->addmask;
->> +        pmask3 = &tmp->delmask;
->> +    }
->> +
->> +    if (!zalloc_cpumask_var(pmask1, GFP_KERNEL))
->> +        return -ENOMEM;
->> +
->> +    if (!zalloc_cpumask_var(pmask2, GFP_KERNEL))
->> +        goto free_one;
->> +
->> +    if (!zalloc_cpumask_var(pmask3, GFP_KERNEL))
->> +        goto free_two;
->> +
->> +    return 0;
->> +
->> +free_two:
->> +    free_cpumask_var(*pmask2);
->> +free_one:
->> +    free_cpumask_var(*pmask1);
->> +    return -ENOMEM;
->> +}
->> +
->> +/**
->> + * free_cpumasks - free cpumasks in a tmpmasks structure
->> + * @tmp: the tmpmasks structure pointer
->> + */
->> +static inline void free_cpumasks(struct tmpmasks *tmp)
->> +{
->> +    free_cpumask_var(tmp->new_cpus);
->> +    free_cpumask_var(tmp->addmask);
->> +    free_cpumask_var(tmp->delmask);
->> +}
->> +
->
-> I hesitate to bring this up, but since you're respinning this
-> patch for a different bug...
->
-> Would it make sense to have free_cpumasks() have a similar
-> API and behavior to alloc_cpumasks()?  I could see this potentially
-> causing bugs/confusion in future patches.
->
-> Thanks.
->
-> Tom
->
->
-Thanks for the comment. Yes I will make the change.
+On Mon, Oct 15, 2018 at 11:16:36AM -0700, Enke Chen wrote:
+> Hi, Greg:
+> 
+> > Shouldn't there also be a manpage update, and a kselftest added for this
+> > new user/kernel api that is being created?
+> > 
+> 
+> I will submit a patch for manpage update once the code is accepted.
 
--Longman
+Writing a manpage update is key to see if what you are describing
+actually matches the code you have submitted.  You should do both at the
+same time so that they can be reviewed together.
 
+> Regarding the kselftest, I am not sure.  Once the prctl() is limited to
+> self (which I will do), the logic would be pretty straightforward. Not
+> sure if the selftest would add much value.
+
+If you do not have a test for this feature, how do you know it even
+works at all?  How will you know if it breaks in a future kernel
+release?  Have you tested this?  If so, how?
+
+thanks,
+
+greg k-h
