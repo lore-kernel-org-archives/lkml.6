@@ -2,169 +2,181 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C90AC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4CEC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 530962089E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:21:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 747B42089D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:28:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="E8P+KUnQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530962089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="RryKO4nX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 747B42089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbeJPAHI (ORCPT
+        id S1726715AbeJPAOY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:07:08 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:48236 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726576AbeJPAHI (ORCPT
+        Mon, 15 Oct 2018 20:14:24 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35243 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbeJPAOY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:07:08 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 9919910C04F7;
-        Mon, 15 Oct 2018 09:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1539620474; bh=1rpkrGKNclJObwrMn5TvdLkiiVbrUhLrjM008725t00=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=E8P+KUnQjiiOPlEJvMpgvyay3Bpo+jq+9R86WBi9UNX804d7D9BQCbhUB0YzIDDun
-         ex8f+WBzlkMjuTCLFtigLw7l2uE9kG1RZHWZ6RT+baGAWG+JnFOdGEwlKyveVscN+L
-         vdJdAxDmk8pa4g4I4cCwNQhQUJUjIEJ7lduShCk8s/6GsFfHSMaPyk+fTbiUcyg/VI
-         6FMfONGUGEa/0tYOWdRc1zdQpOQXauZZkfv2QQEEymdftzLwJIL8xaD6jaGmz031FU
-         X1Sg9ArQFcM0Dpo5Z0n8K//9ynO+X71qwnZBNQnia5G5xWt1zrNsQ/Ac9uMfcZy+2H
-         rbApbuu3H668A==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id CEAFB3253;
-        Mon, 15 Oct 2018 09:21:09 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 15 Oct 2018 09:21:09 -0700
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 15 Oct 2018 18:21:06 +0200
-Received: from [10.107.19.163] (10.107.19.163) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 15 Oct 2018 18:21:06 +0200
-Subject: Re: [V2, 2/5] Documentation: dt-bindings: Document the Synopsys MIPI
- DPHY Rx bindings
-To:     Rob Herring <robh@kernel.org>,
-        Luis Oliveira <Luis.Oliveira@synopsys.com>
-CC:     <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <Joao.Pinto@synopsys.com>, <festevam@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Hans Verkuil" <hans.verkuil@cisco.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        <devicetree@vger.kernel.org>
-References: <20180920111648.27000-1-lolivei@synopsys.com>
- <20180920111648.27000-3-lolivei@synopsys.com> <20181012164548.GA11873@bogus>
-From:   Luis Oliveira <luis.oliveira@synopsys.com>
-Message-ID: <5f3b530b-1869-2749-ef05-60fb272d56f8@synopsys.com>
-Date:   Mon, 15 Oct 2018 17:21:03 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 15 Oct 2018 20:14:24 -0400
+Received: by mail-wm1-f68.google.com with SMTP id e187-v6so20377336wmf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 09:28:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Jzks89GG/HNqn+253ROvUQ3oYQXN2Pef9gPwJyk99ok=;
+        b=RryKO4nXIVXfhPPF10goQNEmROlBsJuvqHZP32V2Flc8qSwLZje5qa57DxcDfCcUMg
+         gGBtkaedSv733zde7Z5mDmb+c5FpTbfE8UOvNSd5Ma/1WtPWt17VQGEsjz/5qHGyN2Cm
+         LMUitxEX8HkNEP9dYr0N3uLg2v9Ybsz53J66ubPciTqCXrGatEipPwb47DpN8xrCcajf
+         mwAJB0za4V1cr1Aia7MIgTN68tvpDBas7PyJlefwigvuNBeBiOfwPPEMi8GaTUf3l1LC
+         lrYXXvMLF+jxfDOhfZfTUJltlAG/L2bEae7LDjetY6oFoI1nvEAJyA+yhgpLkY1buK7P
+         2XhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Jzks89GG/HNqn+253ROvUQ3oYQXN2Pef9gPwJyk99ok=;
+        b=U0TVvhuj+9NYzbzmKN98N2A/ZoEIe+P0wr3uqYqszU92HybgYQP62LHuha8S5jYK10
+         7XRd9BPgkBjzbsKehcUKDrcShgjzO6mT2ayjodQhuWmze3Nmo2hkZ/fRKEW/TIPAjMqB
+         9zygjtz0QlYRrL0g2l3S86mpjc0lzfQRFCSmWuamPshkJvLkmGDYrponSa23lbDxJ9Yj
+         dFkJzsGV8j3EX0lwPCGoldOeZCpKhytwuW1YLAX1IR1GsLk02OVIB4UMaAnlWZNj/ur1
+         GRyRgOlpFkoMam1EeSqtyeefFgcUbYpFEaYXnngy9ABRRD47HPtJlVgRNlP6l4aTGPOQ
+         kh4Q==
+X-Gm-Message-State: ABuFfohCI8XYnL//ewkFudaHm0Cs5McjuJwPJccOWY4pgWyLPTVQhAFK
+        kFF7yAQbkgyhus1tgUiwB/9gyQ==
+X-Google-Smtp-Source: ACcGV60hol1CwtfAyti3qEUQBdUzlR+LtMZAtlcVtHZeUe1CT6ZV4jdo40sIciqhjdvOAuHpPGLxeA==
+X-Received: by 2002:a1c:607:: with SMTP id 7-v6mr13402838wmg.103.1539620905207;
+        Mon, 15 Oct 2018 09:28:25 -0700 (PDT)
+Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
+        by smtp.gmail.com with ESMTPSA id 130-v6sm10213527wmn.7.2018.10.15.09.28.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 09:28:24 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 18:28:18 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v1 2/2] sysctl: handle overflow for file-max
+Message-ID: <20181015162817.a7egfo4hutzi3cah@brauner.io>
+References: <20181015105544.4395-1-christian@brauner.io>
+ <20181015105544.4395-3-christian@brauner.io>
+ <CAGXu5jL2j+9ey4732XmTrU4ZJQwJvxmkHMCzwgar9FnVNZhjwg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181012164548.GA11873@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.19.163]
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jL2j+9ey4732XmTrU4ZJQwJvxmkHMCzwgar9FnVNZhjwg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On 12-Oct-18 17:45, Rob Herring wrote:
-> On Thu, Sep 20, 2018 at 01:16:40PM +0200, Luis Oliveira wrote:
->> Add device-tree bindings documentation for SNPS DesignWare MIPI D-PHY in
->> RX mode.
+On Mon, Oct 15, 2018 at 09:11:51AM -0700, Kees Cook wrote:
+> On Mon, Oct 15, 2018 at 3:55 AM, Christian Brauner <christian@brauner.io> wrote:
+> > Currently, when writing
+> >
+> > echo 18446744073709551616 > /proc/sys/fs/file-max
+> >
+> > /proc/sys/fs/file-max will overflow and be set to 0. That quickly
+> > crashes the system.
+> > This commit explicitly caps the value for file-max to ULONG_MAX.
+> >
+> > Note, this isn't technically necessary since proc_get_long() will already
+> > return ULONG_MAX. However, two reason why we still should do this:
+> > 1. it makes it explicit what the upper bound of file-max is instead of
+> >    making readers of the code infer it from proc_get_long() themselves
+> > 2. other tunebles than file-max may want to set a lower max value than
+> >    ULONG_MAX and we need to enable __do_proc_doulongvec_minmax() to handle
+> >    such cases too
+> >
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Signed-off-by: Christian Brauner <christian@brauner.io>
+> > ---
+> > v0->v1:
+> > - if max value is < than ULONG_MAX use max as upper bound
+> > - (Dominik) remove double "the" from commit message
+> > ---
+> >  kernel/sysctl.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> > index 97551eb42946..226d4eaf4b0e 100644
+> > --- a/kernel/sysctl.c
+> > +++ b/kernel/sysctl.c
+> > @@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
+> >  static int __maybe_unused two = 2;
+> >  static int __maybe_unused four = 4;
+> >  static unsigned long one_ul = 1;
+> > +static unsigned long ulong_max = ULONG_MAX;
+> >  static int one_hundred = 100;
+> >  static int one_thousand = 1000;
+> >  #ifdef CONFIG_PRINTK
+> > @@ -1696,6 +1697,7 @@ static struct ctl_table fs_table[] = {
+> >                 .maxlen         = sizeof(files_stat.max_files),
+> >                 .mode           = 0644,
+> >                 .proc_handler   = proc_doulongvec_minmax,
+> > +               .extra2         = &ulong_max,
 > 
-> "dt-bindings: phy: ..." for the subject.
+> Don't we want this capped lower? The percpu comparisons, for example,
+> are all signed long. And there is at least this test, which could
+> overflow:
 > 
-Yes, you are right.
+>         if (atomic_long_read(&unix_nr_socks) > 2 * get_max_files())
+>                 goto out;
 
->>
->> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
->> ---
->> Changelog
->> v2:
->> - no changes
->>
->>  .../devicetree/bindings/phy/snps,dphy-rx.txt       | 36 ++++++++++++++++++++++
->>  1 file changed, 36 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/phy/snps,dphy-rx.txt
->>
->> diff --git a/Documentation/devicetree/bindings/phy/snps,dphy-rx.txt b/Documentation/devicetree/bindings/phy/snps,dphy-rx.txt
->> new file mode 100644
->> index 0000000..9079f4a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/phy/snps,dphy-rx.txt
->> @@ -0,0 +1,36 @@
->> +Synopsys DesignWare MIPI Rx D-PHY block details
->> +
->> +Description
->> +-----------
->> +
->> +The Synopsys MIPI D-PHY controller supports MIPI-DPHY in receiver mode.
->> +Please refer to phy-bindings.txt for more information.
->> +
->> +Required properties:
->> +- compatible		: Shall be "snps,dphy-rx".
->> +- #phy-cells		: Must be 1.
->> +- snps,dphy-frequency	: Output frequency of the D-PHY.
->> +- snps,dphy-te-len	: Size of the communication interface (8 bits->8 or 12bits->12).
->> +- reg			: Physical base address and size of the device memory mapped
->> +		 	  registers;
->> +
->> +Optional properties:
->> +- snps,compat-mode	: Compatibility mode control
+Does that check even make sense? 
+Commit 518de9b39e854542de59bfb8b9f61c8f7ecf808b made get_max_files()
+return a long to bump the number of allowed files to more than 2^31.
+
+But assuming a platform where an unsigned long is 64bit which is what
+get_max_files() returns and atomic_long_read() is 64bit too this is
+guaranteed to overflow, no?  So I'm not clear what this is trying to do.
+Seems this should simply be:
+
+if (atomic_long_read(&unix_nr_socks) > get_max_files())
+        goto out;
+
+or am I missing a crucial point?
+
 > 
-> type? values?
+> Seems like max-files should be  SLONG_MAX / 2 or something instead?
+
+Hm. Isn't that a bit low? Iiuc, this would mean cutting the maximum
+number of open files in half? If at all shouldn't it be LONG_MAX?
+
 > 
-
-I will remove this in V3.
-
->> +
->> +The per-board settings:
->> +- gpios 		: Synopsys testchip used as reference uses this to change setup
->> +		  	  configurations.
+> >         },
+> >         {
+> >                 .procname       = "nr_open",
+> > @@ -2795,6 +2797,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+> >                                 break;
+> >                         if (neg)
+> >                                 continue;
+> > +                       if (max && val > *max)
+> > +                               val = *max;
+> >                         val = convmul * val / convdiv;
+> >                         if ((min && val < *min) || (max && val > *max))
+> >                                 continue;
+> > --
+> > 2.17.1
+> >
 > 
-> Preferred to be named (e.g. foo-gpios). How many? What are their 
-> functions?
+> -Kees
 > 
-
-Ok, thanks for reviewing this.
-
->> +
->> +Example:
->> +
->> +	mipi_dphy_rx1: dphy@3040 {
->> +		compatible = "snps,dphy-rx";
->> +		#phy-cells = <1>;
->> +		snps,dphy-frequency = <300000>;
->> +		snps,dphy-te-len = <12>;
->> +		snps,compat-mode = <1>;
->> +		reg = < 0x03040 0x20
->> +			0x08000 0x100
->> +			0x09000 0x100>;
->> +	};
->> +
->> -- 
->> 2.9.3
->>
-
+> -- 
+> Kees Cook
+> Pixel Security
