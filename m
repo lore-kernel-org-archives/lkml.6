@@ -2,132 +2,221 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86740C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F4CC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 442D6208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:21:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 442D6208D9
+	by mail.kernel.org (Postfix) with ESMTP id 9C8C1208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:22:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXssOpZP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C8C1208D9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbeJPDI3 (ORCPT
+        id S1726914AbeJPDIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 23:08:29 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:49954 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbeJPDI3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 23:08:29 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id BA4AE22556;
-        Mon, 15 Oct 2018 19:21:51 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id M8a9AREedb2u; Mon, 15 Oct 2018 19:21:51 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        Mon, 15 Oct 2018 23:08:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726681AbeJPDIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 23:08:54 -0400
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 9B3DA22559;
-        Mon, 15 Oct 2018 19:21:43 +0000 (UTC)
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>
-From:   Shuah Khan <shuah@kernel.org>
-Subject: [GIT PULL] cpupower update for Linux 4.20-rc1
-Message-ID: <88f95364-29a8-358e-356e-e62771e52c8e@kernel.org>
-Date:   Mon, 15 Oct 2018 13:21:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 14CF82145D;
+        Mon, 15 Oct 2018 19:22:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539631337;
+        bh=ZPil9R+QKO8poIw11LkPFCCgJT/t/NekTHonWAJibQ8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lXssOpZPf5eraYSYN/wXeykVTyEAcGr04qUm/1/L6+sSnJ0DGTr9suSHv/aJWpN+a
+         zsiltdMMv5luJxUkE0X1t2HhQE1VNSKNHHwt8pu/SwY+27hZDGVsYwxEshB09Lx3AF
+         S13Om4Gbc9hqh8s3d2sk1uvCQGfhyhH5CmiSSPqI=
+Received: by mail-ed1-f43.google.com with SMTP id w19-v6so18947309eds.1;
+        Mon, 15 Oct 2018 12:22:17 -0700 (PDT)
+X-Gm-Message-State: ABuFfohZeXHsnMFmWar8RWmTiyKoX5cstfU5sUlPVJMVGG7wucp0Txqg
+        27AxpxpD2YmyiHbTTp9cs/eFtdSvr3s/UWXYux4=
+X-Google-Smtp-Source: ACcGV61Qnys+eQd1yoQzFrVSX51ay/Zm2n8MJL7Ym6LqdOBIc72xmf2aOfNSCAnOvpozkGxWc3ElIs3yiSLGOFpDfMo=
+X-Received: by 2002:a50:fc06:: with SMTP id i6-v6mr22468551edr.153.1539631335410;
+ Mon, 15 Oct 2018 12:22:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------E7C80CE968FD9FC61062210A"
-Content-Language: en-US
+References: <1539563070-12969-1-git-send-email-frowand.list@gmail.com>
+In-Reply-To: <1539563070-12969-1-git-send-email-frowand.list@gmail.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Mon, 15 Oct 2018 14:21:39 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTmY7v03m7NNZHVtzyU1Mwm0GYtOJQzmObFLASs=PEfLA@mail.gmail.com>
+Message-ID: <CANk1AXTmY7v03m7NNZHVtzyU1Mwm0GYtOJQzmObFLASs=PEfLA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/18] of: overlay: validation checks, subsequent fixes
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------E7C80CE968FD9FC61062210A
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+On Sun, Oct 14, 2018 at 7:26 PM <frowand.list@gmail.com> wrote:
+>
+> From: Frank Rowand <frank.rowand@sony.com>
+>
+> Add checks to (1) overlay apply process and (2) memory freeing
+> triggered by overlay release.  The checks are intended to detect
+> possible memory leaks and invalid overlays.
+>
+> The checks revealed bugs in existing code.  Fixed the bugs.
+>
+> While fixing bugs, noted other issues, which are fixed in
+> separate patches.
+>
+> *****  Powerpc folks: I was not able to test the patches that
+> *****  directly impact Powerpc systems that use dynamic
+> *****  devicetree.  Please review that code carefully and
+> *****  test.  The specific patches are: 03/16, 04/16, 07/16
+>
+> FPGA folks:
+>
+>   I made the validation checks that should result in an
+>   invalid live devicetree report "ERROR" and cause the overlay apply
+>   to fail.
+>
+>   I made the memory leak validation tests report "WARNING" and allow
+>   the overlay apply to complete successfully.  Please let me know
+>   if you encounter the warnings.  There are at least two paths
+>   forward to deal with the cases that trigger the warning: (1) change
+>   the warning to an error and fail the overlay apply, or (2) find a
+>   way to detect the potential memory leaks and free the memory
+>   appropriately.
 
-Hi Rafael,
+I reran my FPGA testing.  The strings are fixed, no longer NULL.  I
+have functionality back, my test passes now.  I'm seeing the intended
+warnings about any properties added to existing nodes.  That includes
+warnings about added symbols.  Below is a simplified part to show some
+of what I'm seeing.
 
-Please pull the following cpupower update for Linux 4.20-rc1
+By the way my testing is all using Pantelis' DT overlay configfs interface.
 
-This cpupower update for Linux 4.20-rc1 consists of fixes for bugs and
-compile warnings from Prarit Bhargava and Anders Roxell.
+root@arria10:~# ./apply-static-region.sh
 
-diff is attached.
+Applying dtbo: socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
 
-thanks,
--- Shuah
+[ 1821.088640] OF: overlay: WARNING: add_changeset_property(), memory
+leak will occur if overlay removed.  Property:
+/soc/base_fpga_region/ranges
+[ 1821.103307] OF: overlay: WARNING: add_changeset_property(), memory
+leak will occur if overlay removed.  Property:
+/soc/base_fpga_region/external-fpga-config
+[ 1821.117359] OF: overlay: WARNING: add_changeset_property(), memory
+leak will occur if overlay removed.  Property:
+/soc/base_fpga_region/clocks
+[ 1821.130130] OF: overlay: WARNING: add_changeset_property(), memory
+leak will occur if overlay removed.  Property:
+/soc/base_fpga_region/clock-names
+[ 1821.143449] OF: overlay: WARNING: add_changeset_property(), memory
+leak will occur if overlay removed.  Property: /__symbols__/clk_0
+[ 1821.155357] OF: overlay: WARNING: add_changeset_property(), memory
+leak will occur if overlay removed.  Property: /__symbols__/ILC
+[ 1821.167074] OF: overlay: WARNING: add_changeset_property(), memory
+leak will occur if overlay removed.  Property:
+/__symbols__/freeze_controller_0
+[ 1821.180171] OF: overlay: WARNING: add_changeset_property(), memory
+leak will occur if overlay removed.  Property:
+/__symbols__/sysid_qsys_0
+[ 1821.192662] OF: overlay: WARNING: add_changeset_property(), memory
+leak will occur if overlay removed.  Property: /__symbols__/led_pio
+[ 1821.204720] OF: overlay: WARNING: add_changeset_property(), memory
+leak will occur if overlay removed.  Property: /__symbols__/button_pio
+[ 1821.217034] OF: overlay: WARNING: add_changeset_property(), memory
+leak will occur if overlay removed.  Property: /__symbols__/dipsw_pio
+[ 1821.231977] of-fpga-region soc:base_fpga_region:fpga_pr_region0:
+FPGA Region probed
+[ 1821.240144] altera_freeze_br ff200450.freeze_controller: fpga
+bridge [freeze] registered
 
-----------------------------------------------------------------
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+root@arria10:~# ./apply-static-region.sh root@arria10:~# rmdir
+/sys/kernel/config/device-tree/overlays/1-socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+[ 1823.805564] OF: ERROR: memory leak - destroy cset entry: attach
+overlay node /soc/base_fpga_region/clk_0 with refcount 2
 
-are available in the Git repository at:
+Alan
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-cpupower-4.20-rc1
 
-for you to fetch changes up to f69ffc5d3db8f1f03fd6d1df5930f9a1fbd787b6:
+Alan
 
-  cpupower: Fix coredump on VMWare (2018-10-08 09:19:15 -0600)
 
-----------------------------------------------------------------
-linux-cpupower-4.20-rc1
 
-This cpupower update for Linux 4.20-rc1 consists of fixes for bugs and
-compile warnings from Prarit Bhargava and Anders Roxell.
-
-----------------------------------------------------------------
-Anders Roxell (1):
-      cpupower: remove stringop-truncation waring
-
-Prarit Bhargava (2):
-      cpupower: Fix AMD Family 0x17 msr_pstate size
-      cpupower: Fix coredump on VMWare
-
- tools/power/cpupower/bench/parse.c        | 2 +-
- tools/power/cpupower/utils/cpufreq-info.c | 2 ++
- tools/power/cpupower/utils/helpers/amd.c  | 7 ++++++-
- 3 files changed, 9 insertions(+), 2 deletions(-)
-----------------------------------------------------------------
-
---------------E7C80CE968FD9FC61062210A
-Content-Type: text/plain; charset=UTF-8;
- name="linux-cpupower-4.20-rc1.txt"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="linux-cpupower-4.20-rc1.txt"
-
-VGhlIGZvbGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCA1YjM5NGIyZGRmMDM0N2JlZjU2
-ZTUwYzY5YTU4NzczYzk0MzQzZmYzOgoKICBMaW51eCA0LjE5LXJjMSAoMjAxOC0wOC0yNiAx
-NDoxMTo1OSAtMDcwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIEdpdCByZXBvc2l0b3J5IGF0
-OgoKICBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvc2h1
-YWgvbGludXggdGFncy9saW51eC1jcHVwb3dlci00LjIwLXJjMQoKZm9yIHlvdSB0byBmZXRj
-aCBjaGFuZ2VzIHVwIHRvIGY2OWZmYzVkM2RiOGYxZjAzZmQ2ZDFkZjU5MzBmOWExZmJkNzg3
-YjY6CgogIGNwdXBvd2VyOiBGaXggY29yZWR1bXAgb24gVk1XYXJlICgyMDE4LTEwLTA4IDA5
-OjE5OjE1IC0wNjAwKQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpsaW51eC1jcHVwb3dlci00LjIwLXJjMQoKVGhp
-cyBjcHVwb3dlciB1cGRhdGUgZm9yIExpbnV4IDQuMjAtcmMxIGNvbnNpc3RzIG9mIGZpeGVz
-IGZvciBidWdzIGFuZApjb21waWxlIHdhcm5pbmdzIGZyb20gUHJhcml0IEJoYXJnYXZhIGFu
-ZCBBbmRlcnMgUm94ZWxsLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpBbmRlcnMgUm94ZWxsICgxKToKICAgICAg
-Y3B1cG93ZXI6IHJlbW92ZSBzdHJpbmdvcC10cnVuY2F0aW9uIHdhcmluZwoKUHJhcml0IEJo
-YXJnYXZhICgyKToKICAgICAgY3B1cG93ZXI6IEZpeCBBTUQgRmFtaWx5IDB4MTcgbXNyX3Bz
-dGF0ZSBzaXplCiAgICAgIGNwdXBvd2VyOiBGaXggY29yZWR1bXAgb24gVk1XYXJlCgogdG9v
-bHMvcG93ZXIvY3B1cG93ZXIvYmVuY2gvcGFyc2UuYyAgICAgICAgfCAyICstCiB0b29scy9w
-b3dlci9jcHVwb3dlci91dGlscy9jcHVmcmVxLWluZm8uYyB8IDIgKysKIHRvb2xzL3Bvd2Vy
-L2NwdXBvd2VyL3V0aWxzL2hlbHBlcnMvYW1kLmMgIHwgNyArKysrKystCiAzIGZpbGVzIGNo
-YW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkK
---------------E7C80CE968FD9FC61062210A--
+>
+> ALL people:
+>
+>   The validations do _not_ address another major concern I have with
+>   releasing overlays, which is use after free errors.
+>
+> Changes since v2:
+>
+>   - 13/18: Use continue to reduce indentation in find_dup_cset_node_entry()
+>     and find_dup_cset_prop()
+>
+> Changes since v1:
+>
+>   - move patch 16/16 to 17/18
+>   - move patch 15/16 to 18/18
+>   - new patch 15/18
+>   - new patch 16/18
+>
+>   - 05/18: add_changeset_node() header comment: incorrect comment for @target
+>
+>   - 18/18: add same fix for of_parse_phandle_with_args()
+>   - 18/18: add same fix for of_parse_phandle_with_args_map()
+>
+> Frank Rowand (18):
+>   of: overlay: add tests to validate kfrees from overlay removal
+>   of: overlay: add missing of_node_put() after add new node to changeset
+>   of: overlay: add missing of_node_get() in __of_attach_node_sysfs
+>   powerpc/pseries: add of_node_put() in dlpar_detach_node()
+>   of: overlay: use prop add changeset entry for property in new nodes
+>   of: overlay: do not duplicate properties from overlay for new nodes
+>   of: dynamic: change type of of_{at,de}tach_node() to void
+>   of: overlay: reorder fields in struct fragment
+>   of: overlay: validate overlay properties #address-cells and
+>     #size-cells
+>   of: overlay: make all pr_debug() and pr_err() messages unique
+>   of: overlay: test case of two fragments adding same node
+>   of: overlay: check prevents multiple fragments add or delete same node
+>   of: overlay: check prevents multiple fragments touching same property
+>   of: unittest: remove unused of_unittest_apply_overlay() argument
+>   of: overlay: set node fields from properties when add new overlay node
+>   of: unittest: allow base devicetree to have symbol metadata
+>   of: unittest: find overlays[] entry by name instead of index
+>   of: unittest: initialize args before calling of_*parse_*()
+>
+>  arch/powerpc/platforms/pseries/dlpar.c             |  15 +-
+>  arch/powerpc/platforms/pseries/reconfig.c          |   6 +-
+>  drivers/of/dynamic.c                               |  68 +++--
+>  drivers/of/kobj.c                                  |   4 +-
+>  drivers/of/overlay.c                               | 298 ++++++++++++++++-----
+>  drivers/of/unittest-data/Makefile                  |   2 +
+>  .../of/unittest-data/overlay_bad_add_dup_node.dts  |  28 ++
+>  .../of/unittest-data/overlay_bad_add_dup_prop.dts  |  24 ++
+>  drivers/of/unittest-data/overlay_base.dts          |   1 +
+>  drivers/of/unittest.c                              |  96 +++++--
+>  include/linux/of.h                                 |  19 +-
+>  11 files changed, 439 insertions(+), 122 deletions(-)
+>  create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_node.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_prop.dts
+>
+> --
+> Frank Rowand <frank.rowand@sony.com>
+>
