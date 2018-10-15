@@ -2,92 +2,174 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C49FC7112B
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87312C7112A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FAC42054F
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:26:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FAC42054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 40D7920853
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:27:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/8WXKOl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D7920853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbeJORKa (ORCPT
+        id S1726605AbeJORMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 13:10:30 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:43247 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726593AbeJORK3 (ORCPT
+        Mon, 15 Oct 2018 13:12:08 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:40147 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbeJORMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 13:10:29 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-145-TY_yltWpMzSa0j3fDrgy7w-1; Mon, 15 Oct 2018 10:26:00 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 15 Oct 2018 10:26:02 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 15 Oct 2018 10:26:02 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'ndesaulniers@google.com'" <ndesaulniers@google.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>
-CC:     "natechancellor@gmail.com" <natechancellor@gmail.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] KEYS: trusted: fix -Wvarags warning
-Thread-Topic: [PATCH] KEYS: trusted: fix -Wvarags warning
-Thread-Index: AQHUYaFtz6yVKVwaakuhVxq6kXztuKUgDL3Q
-Date:   Mon, 15 Oct 2018 09:26:02 +0000
-Message-ID: <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
-References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
- <20181011203126.15338-1-ndesaulniers@google.com>
-In-Reply-To: <20181011203126.15338-1-ndesaulniers@google.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 15 Oct 2018 13:12:07 -0400
+Received: by mail-yw1-f66.google.com with SMTP id l79-v6so7269661ywc.7
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 02:27:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wi9OIUwCyaGNXr9RINhtczFfxD8zJ7w3UhFjmeFiBgM=;
+        b=K/8WXKOlN7aHIBzw1ueU3D6hefhJDo9Sd6mARBZmToOCgF2G7fc6vuDEAtvL76FnJi
+         miLOaKbmh4l/JdT8VD+hvuCfll2aaxrLnIPBdinIC5G9eGoUA+DJFXr0LgGscrDHr/+J
+         tgEIRcQQHXco41Fwrbz9fvrjN9/4986dKF1JEv1cOukEv06bSmVV1X5ojbreCEJTM7zD
+         Y6/vse/xc4mqo1FmamAhbRnKXEOlo3D7OmemrWUI/3eOuKoMbB1/dlAv7VOolYgg4H8y
+         yFGj+RUsX5KRMiXFRpaNBmxPvfMTVVYsOPFTcqDBb1onLXcCo9kRONQ2QJbcABqvjxmu
+         gNRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wi9OIUwCyaGNXr9RINhtczFfxD8zJ7w3UhFjmeFiBgM=;
+        b=XG0uS7QsaVh64t5gDyaGhBCHRtu6pqh/c4hKnkC+bX432lCGU1/j8eC6OTTGq7wBTg
+         1dyI0nbuM0UcciOtFwp/kJdaiLkgQnBEK1hS+sYmUfE9+YZ9yalxn01sHSgfSbUeZIFx
+         By8rocHz56nAEIRE9wTS0NF+IEkJBuMWavo1dblaWveCr3FRsa38XiDHJB8NH4FpkMok
+         v9is7+l0UBYlvYiHtqD8skAXp56NnU+RdURIGBHwOGB22LLVMuaSmjIR6V8cckN3JxOv
+         RGMte+8KH7Fa1iUVe+54Pv/AxOZ88S4ll3ovxstaeoUBbavedllBUif2AQ9Fd3b3TlDB
+         n9YQ==
+X-Gm-Message-State: ABuFfohOcrtQRnXOu4UiKy7vmKQeAmldBG0mkhAkgr30m9wHjvCM4WFH
+        iVkgg8WHCtTwhphGib8SUN22BPhMsZ3XZ83EYHWWK5z1
+X-Google-Smtp-Source: ACcGV60MBNhjDzYo3opM/KchljwUkZkXuMHn7fVxOT4uiCs8vrWd+TacxTEJEIy/y71ea1qoxatKA4jX4nSrVRfoFII=
+X-Received: by 2002:a0d:d4c9:: with SMTP id w192-v6mr8509848ywd.211.1539595660736;
+ Mon, 15 Oct 2018 02:27:40 -0700 (PDT)
 MIME-Version: 1.0
-X-MC-Unique: TY_yltWpMzSa0j3fDrgy7w-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20180930065100.GL15893@shao2-debian> <CAOQ4uxiHkufAtt87bMs9n-0sFxJSHsBxDX6jn8v28vkvy=a_qQ@mail.gmail.com>
+ <CAOQ4uxgqBgYiGpf_6zrZk=L2bAQsujzcFE0ZzUXFHu8AnHSk7g@mail.gmail.com>
+ <20181001092549.GC3913@quack2.suse.cz> <20181015075101.GE28215@shao2-debian>
+In-Reply-To: <20181015075101.GE28215@shao2-debian>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 15 Oct 2018 12:27:28 +0300
+Message-ID: <CAOQ4uxiNfeNaB-9ZNZki-cLK4ukMpJ6YL+R1Xe6Sm34efXX3qA@mail.gmail.com>
+Subject: Re: [LKP] [fsnotify] 60f7ed8c7c: will-it-scale.per_thread_ops -5.9% regression
+To:     rong.a.chen@intel.com
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, LKP <lkp@01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogbmRlc2F1bG5pZXJzQGdvb2dsZS5jb20NCj4gU2VudDogMTEgT2N0b2JlciAyMDE4IDIx
-OjMxDQouLi4NCj4gYnkgc3dhcHBpbmcgaDIgYW5kIGgzLg0KPiANCj4gc2VjdXJpdHkva2V5cy90
-cnVzdGVkLmM6MTQ2OjE3OiB3YXJuaW5nOiBwYXNzaW5nIGFuIG9iamVjdCB0aGF0DQo+IHVuZGVy
-Z29lcyBkZWZhdWx0DQo+ICAgICAgIGFyZ3VtZW50IHByb21vdGlvbiB0byAndmFfc3RhcnQnIGhh
-cyB1bmRlZmluZWQgYmVoYXZpb3IgWy1XdmFyYXJnc10NCj4gICAgICAgICB2YV9zdGFydChhcmdw
-LCBoMyk7DQo+ICAgICAgICAgICAgICAgICAgICAgICAgXg0KPiBzZWN1cml0eS9rZXlzL3RydXN0
-ZWQuYzoxMjY6Mzc6IG5vdGU6IHBhcmFtZXRlciBvZiB0eXBlICd1bnNpZ25lZA0KPiBjaGFyJyBp
-cyBkZWNsYXJlZCBoZXJlDQo+IHVuc2lnbmVkIGNoYXIgKmgyLCB1bnNpZ25lZCBjaGFyIGgzLCAu
-Li4pDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBeDQo+IFNwZWNpZmljYWxseSwg
-aXQgc2VlbXMgdGhhdCBib3RoIHRoZSBDOTAgKDQuOC4xLjEpIGFuZCBDMTEgKDcuMTYuMS40KQ0K
-PiBzdGFuZGFyZHMgZXhwbGljaXRseSBjYWxsIHRoaXMgb3V0IGFzIHVuZGVmaW5lZCBiZWhhdmlv
-cjoNCg0KSSBndWVzcyB0aGF0IHByb2JsZW1zIGFyaXNlIHdoZW4gYWxsIHRoZSBhcmd1bWVudHMg
-YXJlIHN0YWNrZWQNCmFuZCB2YV9zdGFydC92YV9hcmcgdXNlIG5haXZlIHBvaW50ZXIgbWFuaXB1
-bGF0aW9uLg0KSW4gdGhhdCBjYXNlICZoMyBtaWdodCBiZSA0biszIGFsaWduZWQgc28gdmFfYXJn
-KCkgd2lsbCBhY2Nlc3MNCm1pc2FsaWduZWQgc3RhY2sgbG9jYXRpb25zLg0KDQpJIGRvdWJ0IGFu
-eSBtb2Rlcm4gY29tcGlsZXJzICh3aGVyZSB2YV9zdGFydCBhbmQgdmFfYXJnIGFyZSBidWlsdGlu
-cykNCndpbGwgZ2V0IHRoaXMgJ3dyb25nJyBldmVuIHdoZW4gYWxsIGFyZ3VtZW50cyBhcmUgc3Rh
-Y2tlZC4NCg0KU2VlbXMgY2xhbmcgaXMgYmVpbmcgb3ZlciBjYXV0aW91cy4NCg0KCURhdmlkDQoN
-Ci0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJt
-LCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChX
-YWxlcykNCg==
+On Mon, Oct 15, 2018 at 10:50 AM Rong Chen <rong.a.chen@intel.com> wrote:
+[...]
+> the patch seems not work.
+>
+> tests: 1
+> testcase/path_params/tbox_group/run: will-it-scale/16-thread-unlink2-performance/lkp-bdw-ep3d
+>
+>  commit:
+>    1e6cb72399 ("fsnotify: add super block object type")
+>    298cd0b2f4 (the below patch)
+>
+> 1e6cb72399fd58b3  298cd0b2f481d9cc2e2cd5bfd3
+> ----------------  --------------------------
+>          %stddev      change         %stddev
+>              \          |                \
+>     103.21              -5%      98.54        will-it-scale.time.user_time
+>      46266              -6%      43516        will-it-scale.time.involuntary_context_switches
+>      54483              -7%      50610        will-it-scale.per_thread_ops
+>     871749              -7%     809765        will-it-scale.workload
 
+Thanks for testing my patch. As Jan commented, it is not surprising
+that the patch
+makes no difference.
+
+I would like to clarify a few things about how you ran the test before
+I continue to
+investigate:
+
+1. When I ran the workload I saw that it writes files to whatever filesystem is
+    mounted on /tmp. Can I assume you have tmpfs mounted at /tmp?
+
+2. Can you confirm that there is no fanotify mount mark on the /tmp mount?
+    for example:
+# ls -l /proc/*/fd/*|grep fanotify
+lrwx------ 1 root root 64 Oct 15 08:36 /proc/3927/fd/3 -> anon_inode:[fanotify]
+# grep fanotify.mnt_id /proc/3927/fdinfo/3
+fanotify mnt_id:33 mflags:0 mask:3b ignored_mask:0
+# grep ^$(( 0x33 )) /proc/3927/mountinfo
+51 16 0:27 / /tmp rw,relatime shared:18 - tmpfs tmpfs rw
+
+3. I saw that LKP caches the results for a specific commit
+    (i.e. 1e6cb72399 ("fsnotify: add super block object type")).
+Did you use cached results when comparing to patch or did you re-run the
+test with the "good" commit? The reason I am asking is because
+sometimes performance result may differ between boots even with no
+kernel code change.
+Where all the "good" bisect samples taken from the same boot/machine?
+or different boots/machines?
+
+4. If this regression is reliably reproduced, then our best bet is on the
+cost of access to s_fsnotify_{marks,mask} fields.
+The patch below moves those frequently accessed fields near the
+frequently accessed fields s_time_gran,s_writers and moves
+the seldom accessed fields s_id,s_uuid further away.
+Could you please try this patch?
+
+Thanks,
+Amir.
+
+---
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 25a449f37bb1..37c19c601979 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1393,9 +1393,6 @@ struct super_block {
+
+        struct sb_writers       s_writers;
+
+-       char                    s_id[32];       /* Informational name */
+-       uuid_t                  s_uuid;         /* UUID */
+-
+        void                    *s_fs_info;     /* Filesystem private info */
+        unsigned int            s_max_links;
+        fmode_t                 s_mode;
+@@ -1403,6 +1400,14 @@ struct super_block {
+        /* Granularity of c/m/atime in ns.
+           Cannot be worse than a second */
+        u32                     s_time_gran;
++#ifdef CONFIG_FSNOTIFY
++       __u32                   s_fsnotify_mask;
++       struct fsnotify_mark_connector __rcu    *s_fsnotify_marks;
++#endif
++
++       /* Seldom accessed fields: */
++       char                    s_id[32];       /* Informational name */
++       uuid_t                  s_uuid;         /* UUID */
+
+        /*
+         * The next field is for VFS *only*. No filesystems have any business
+@@ -1464,11 +1469,6 @@ struct super_block {
+
+        spinlock_t              s_inode_wblist_lock;
+        struct list_head        s_inodes_wb;    /* writeback inodes */
+-
+-#ifdef CONFIG_FSNOTIFY
+-       __u32                   s_fsnotify_mask;
+-       struct fsnotify_mark_connector __rcu    *s_fsnotify_marks;
+-#endif
+ } __randomize_layout;
