@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1561C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27674C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6315620989
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:12:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6315620989
+	by mail.kernel.org (Postfix) with ESMTP id E356420989
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:12:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E356420989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbeJPA6Q (ORCPT
+        id S1726944AbeJPA6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:58:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48982 "EHLO mx1.redhat.com"
+        Mon, 15 Oct 2018 20:58:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44212 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726654AbeJPA6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:58:16 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1726831AbeJPA6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 20:58:45 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 468CB7D0F2;
-        Mon, 15 Oct 2018 17:12:09 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 51117308FB99;
+        Mon, 15 Oct 2018 17:12:39 +0000 (UTC)
 Received: from [10.36.117.209] (ovpn-117-209.ams2.redhat.com [10.36.117.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C9E4A6836A;
-        Mon, 15 Oct 2018 17:12:05 +0000 (UTC)
-Subject: Re: [PATCH] kvm/x86 : fix some typo
-To:     Peng Hao <penghao122@sina.com.cn>, rkrcmar@redhat.com
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        Peng Hao <peng.hao2@zte.com.cn>
-References: <1538667900-25661-1-git-send-email-penghao122@sina.com.cn>
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2D0B662474;
+        Mon, 15 Oct 2018 17:12:35 +0000 (UTC)
+Subject: Re: [PATCH] kvm/x86 : avoid shifting signed 32-bit value by 31 bits
+To:     Wei Yang <richard.weiyang@gmail.com>, peng.hao2@zte.com.cn
+Cc:     penghao122@sina.com.cn, rkrcmar@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, joro@8bytes.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
+References: <20181006070849.psgrrhiysnrytbjr@master>
+ <201810080904344038939@zte.com.cn> <20181008022532.4ve2xww4yphk6f5d@master>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -72,54 +74,69 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <714cb48f-ffce-a606-e59b-b9543c8bf014@redhat.com>
-Date:   Mon, 15 Oct 2018 19:12:02 +0200
+Message-ID: <b5d38cfe-b617-835c-8444-9419f95bea1c@redhat.com>
+Date:   Mon, 15 Oct 2018 19:12:30 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <1538667900-25661-1-git-send-email-penghao122@sina.com.cn>
+In-Reply-To: <20181008022532.4ve2xww4yphk6f5d@master>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 15 Oct 2018 17:12:09 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 15 Oct 2018 17:12:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/10/2018 17:45, Peng Hao wrote:
-> From: Peng Hao <peng.hao2@zte.com.cn>
+On 08/10/2018 04:25, Wei Yang wrote:
+> On Mon, Oct 08, 2018 at 09:04:34AM +0800, peng.hao2@zte.com.cn wrote:
+>>> On Sat, Oct 06, 2018 at 11:31:04AM +0800, peng.hao2@zte.com.cn wrote:
+>>>>> On Thu, Oct 04, 2018 at 01:47:18PM -0400, Peng Hao wrote:
+>>>>>>
+>>>>>> From: Peng Hao <peng.hao2@zte.com.cn>
+>>>>>>
+>>>>>>  modify AVIC_LOGICAL_ID_ENTRY_VALID_MASK to unsigned
+>>>>>>
+>>>>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+>>>>>> ---
+>>>>>> arch/x86/kvm/svm.c | 2 +-
+>>>>>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+>>>>>> index d96092b..bf1ded4 100644
+>>>>>> --- a/arch/x86/kvm/svm.c
+>>>>>> +++ b/arch/x86/kvm/svm.c
+>>>>>> @@ -262,7 +262,7 @@ struct amd_svm_iommu_ir {
+>>>>>> };
+>>>>>>
+>>>>>> #define AVIC_LOGICAL_ID_ENTRY_GUEST_PHYSICAL_ID_MASK    (0xFF)
+>>>>>> -#define AVIC_LOGICAL_ID_ENTRY_VALID_MASK        (1 << 31)
+>>>>>> +#define AVIC_LOGICAL_ID_ENTRY_VALID_MASK        (1UL << 31)
+>>>>
+>>>>> It is reasonable to change to unsigned, while not necessary to unsigned
+>>>>> long?
+>>>> AVIC_LOGICAL_ID_ENTRY_VALID_MASK is used in function avic_ldr_write.
+>>>> here I think it doesn't matter if you use unsigned or unsigned long. Do you have any suggestions?
+>>
+>>> In current case, AVIC_LOGICAL_ID_ENTRY_VALID_MASK is used to calculate
+>>> the value of new_entry with type of u32. So the definition here is not
+>>> harmful.
+>>
+>>> Also, I did a quick grep and found similar definition (1 << 31) is popular
+>>> in the whole kernel tree.
+>>
+>>> The reason to make this change is not that strong to me. Would you
+>>> minding sharing more reason behind this change?
+>> oh, I'm just thinking logically, not more reason.
 > 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  arch/x86/kvm/mmu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> This definition may introduce problem when this value is used to
+> calculate a 64bit data.
 > 
-> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> index d7e9bce..281e20e 100644
-> --- a/arch/x86/kvm/mmu.c
-> +++ b/arch/x86/kvm/mmu.c
-> @@ -4546,7 +4546,7 @@ static void update_permission_bitmask(struct kvm_vcpu *vcpu,
->  			 * SMAP:kernel-mode data accesses from user-mode
->  			 * mappings should fault. A fault is considered
->  			 * as a SMAP violation if all of the following
-> -			 * conditions are ture:
-> +			 * conditions are true:
->  			 *   - X86_CR4_SMAP is set in CR4
->  			 *   - A user page is accessed
->  			 *   - The access is not a fetch
-> @@ -5891,7 +5891,7 @@ int kvm_mmu_module_init(void)
->  }
->  
->  /*
-> - * Caculate mmu pages needed for kvm.
-> + * Calculate mmu pages needed for kvm.
->   */
->  unsigned int kvm_mmu_calculate_mmu_pages(struct kvm *kvm)
->  {
-> 
+> Since current entry is 32bit, we may leave it as it is for now.
 
-Queued, thanks.
+I agree.
 
 Paolo
+
