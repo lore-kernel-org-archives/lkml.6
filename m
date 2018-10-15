@@ -2,221 +2,204 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F4CC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BA8C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C8C1208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:22:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13B91208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:24:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXssOpZP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C8C1208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="ASx5B3MF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13B91208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbeJPDIy (ORCPT
+        id S1726904AbeJPDKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 23:08:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54148 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726681AbeJPDIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 23:08:54 -0400
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14CF82145D;
-        Mon, 15 Oct 2018 19:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539631337;
-        bh=ZPil9R+QKO8poIw11LkPFCCgJT/t/NekTHonWAJibQ8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lXssOpZPf5eraYSYN/wXeykVTyEAcGr04qUm/1/L6+sSnJ0DGTr9suSHv/aJWpN+a
-         zsiltdMMv5luJxUkE0X1t2HhQE1VNSKNHHwt8pu/SwY+27hZDGVsYwxEshB09Lx3AF
-         S13Om4Gbc9hqh8s3d2sk1uvCQGfhyhH5CmiSSPqI=
-Received: by mail-ed1-f43.google.com with SMTP id w19-v6so18947309eds.1;
-        Mon, 15 Oct 2018 12:22:17 -0700 (PDT)
-X-Gm-Message-State: ABuFfohZeXHsnMFmWar8RWmTiyKoX5cstfU5sUlPVJMVGG7wucp0Txqg
-        27AxpxpD2YmyiHbTTp9cs/eFtdSvr3s/UWXYux4=
-X-Google-Smtp-Source: ACcGV61Qnys+eQd1yoQzFrVSX51ay/Zm2n8MJL7Ym6LqdOBIc72xmf2aOfNSCAnOvpozkGxWc3ElIs3yiSLGOFpDfMo=
-X-Received: by 2002:a50:fc06:: with SMTP id i6-v6mr22468551edr.153.1539631335410;
- Mon, 15 Oct 2018 12:22:15 -0700 (PDT)
+        Mon, 15 Oct 2018 23:10:40 -0400
+Received: from alln-iport-6.cisco.com ([173.37.142.93]:52546 "EHLO
+        alln-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726681AbeJPDKk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 23:10:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=4080; q=dns/txt; s=iport;
+  t=1539631442; x=1540841042;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=w9uNVnQfhuvnwKyGdheHU9+n3ba4ZUiSWgBBSFho/Sg=;
+  b=ASx5B3MFwlweW4Y7exB/guwBAWKHwgWECY3xb95aymR26kyurupPtVuj
+   /DHQEamKsIefeJuAn4KbQ7suLRkP5cnc42XHbBsYSKouiPaWfgLwYvTHv
+   ff5etRCT369/ZbzMXoKoYBVX3EEI0nuVEacvf/a97xYJb0D5dFzpPKYX4
+   c=;
+X-IronPort-AV: E=Sophos;i="5.54,385,1534809600"; 
+   d="scan'208";a="185767457"
+Received: from alln-core-7.cisco.com ([173.36.13.140])
+  by alln-iport-6.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 19:24:01 +0000
+Received: from [10.154.208.167] ([10.154.208.167])
+        by alln-core-7.cisco.com (8.15.2/8.15.2) with ESMTP id w9FJNjYQ011677;
+        Mon, 15 Oct 2018 19:23:47 GMT
+Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
+To:     Jann Horn <jannh@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>, deller@gmx.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        christian@brauner.io, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Dave.Martin@arm.com,
+        mchehab+samsung@kernel.org, Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        guro@fb.com, Marcos Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, linux@dominikbrodowski.net,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        yang.shi@linux.alibaba.com, Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Victor Kamensky <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, sstrogin@cisco.com,
+        Enke Chen <enkechen@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <CAG48ez2ZPhnxudqgU7nC2ORvLnS0Ja-qhLSE5WAY361jst7XNw@mail.gmail.com>
+ <c5a09a04-b4f2-876b-af83-30f7e527497e@cisco.com>
+ <CAG48ez2ZD=dovBApR07wi_DzYjJvEyO-Pm35eLv9AyXv1tcAFQ@mail.gmail.com>
+From:   Enke Chen <enkechen@cisco.com>
+Message-ID: <a8638ed9-1ca8-ef03-c988-c17ce9a6ed39@cisco.com>
+Date:   Mon, 15 Oct 2018 12:23:45 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1539563070-12969-1-git-send-email-frowand.list@gmail.com>
-In-Reply-To: <1539563070-12969-1-git-send-email-frowand.list@gmail.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Mon, 15 Oct 2018 14:21:39 -0500
-X-Gmail-Original-Message-ID: <CANk1AXTmY7v03m7NNZHVtzyU1Mwm0GYtOJQzmObFLASs=PEfLA@mail.gmail.com>
-Message-ID: <CANk1AXTmY7v03m7NNZHVtzyU1Mwm0GYtOJQzmObFLASs=PEfLA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/18] of: overlay: validation checks, subsequent fixes
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Moritz Fischer <mdf@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAG48ez2ZD=dovBApR07wi_DzYjJvEyO-Pm35eLv9AyXv1tcAFQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.154.208.167, [10.154.208.167]
+X-Outbound-Node: alln-core-7.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 14, 2018 at 7:26 PM <frowand.list@gmail.com> wrote:
->
-> From: Frank Rowand <frank.rowand@sony.com>
->
-> Add checks to (1) overlay apply process and (2) memory freeing
-> triggered by overlay release.  The checks are intended to detect
-> possible memory leaks and invalid overlays.
->
-> The checks revealed bugs in existing code.  Fixed the bugs.
->
-> While fixing bugs, noted other issues, which are fixed in
-> separate patches.
->
-> *****  Powerpc folks: I was not able to test the patches that
-> *****  directly impact Powerpc systems that use dynamic
-> *****  devicetree.  Please review that code carefully and
-> *****  test.  The specific patches are: 03/16, 04/16, 07/16
->
-> FPGA folks:
->
->   I made the validation checks that should result in an
->   invalid live devicetree report "ERROR" and cause the overlay apply
->   to fail.
->
->   I made the memory leak validation tests report "WARNING" and allow
->   the overlay apply to complete successfully.  Please let me know
->   if you encounter the warnings.  There are at least two paths
->   forward to deal with the cases that trigger the warning: (1) change
->   the warning to an error and fail the overlay apply, or (2) find a
->   way to detect the potential memory leaks and free the memory
->   appropriately.
+Hi, Jann:
 
-I reran my FPGA testing.  The strings are fixed, no longer NULL.  I
-have functionality back, my test passes now.  I'm seeing the intended
-warnings about any properties added to existing nodes.  That includes
-warnings about added symbols.  Below is a simplified part to show some
-of what I'm seeing.
+Thanks for your detail explanation. Will take care of it.
 
-By the way my testing is all using Pantelis' DT overlay configfs interface.
+-- Enke
 
-root@arria10:~# ./apply-static-region.sh
-
-Applying dtbo: socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
-
-[ 1821.088640] OF: overlay: WARNING: add_changeset_property(), memory
-leak will occur if overlay removed.  Property:
-/soc/base_fpga_region/ranges
-[ 1821.103307] OF: overlay: WARNING: add_changeset_property(), memory
-leak will occur if overlay removed.  Property:
-/soc/base_fpga_region/external-fpga-config
-[ 1821.117359] OF: overlay: WARNING: add_changeset_property(), memory
-leak will occur if overlay removed.  Property:
-/soc/base_fpga_region/clocks
-[ 1821.130130] OF: overlay: WARNING: add_changeset_property(), memory
-leak will occur if overlay removed.  Property:
-/soc/base_fpga_region/clock-names
-[ 1821.143449] OF: overlay: WARNING: add_changeset_property(), memory
-leak will occur if overlay removed.  Property: /__symbols__/clk_0
-[ 1821.155357] OF: overlay: WARNING: add_changeset_property(), memory
-leak will occur if overlay removed.  Property: /__symbols__/ILC
-[ 1821.167074] OF: overlay: WARNING: add_changeset_property(), memory
-leak will occur if overlay removed.  Property:
-/__symbols__/freeze_controller_0
-[ 1821.180171] OF: overlay: WARNING: add_changeset_property(), memory
-leak will occur if overlay removed.  Property:
-/__symbols__/sysid_qsys_0
-[ 1821.192662] OF: overlay: WARNING: add_changeset_property(), memory
-leak will occur if overlay removed.  Property: /__symbols__/led_pio
-[ 1821.204720] OF: overlay: WARNING: add_changeset_property(), memory
-leak will occur if overlay removed.  Property: /__symbols__/button_pio
-[ 1821.217034] OF: overlay: WARNING: add_changeset_property(), memory
-leak will occur if overlay removed.  Property: /__symbols__/dipsw_pio
-[ 1821.231977] of-fpga-region soc:base_fpga_region:fpga_pr_region0:
-FPGA Region probed
-[ 1821.240144] altera_freeze_br ff200450.freeze_controller: fpga
-bridge [freeze] registered
-
-root@arria10:~# ./apply-static-region.sh root@arria10:~# rmdir
-/sys/kernel/config/device-tree/overlays/1-socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
-
-[ 1823.805564] OF: ERROR: memory leak - destroy cset entry: attach
-overlay node /soc/base_fpga_region/clk_0 with refcount 2
-
-Alan
-
-
-Alan
-
-
-
->
-> ALL people:
->
->   The validations do _not_ address another major concern I have with
->   releasing overlays, which is use after free errors.
->
-> Changes since v2:
->
->   - 13/18: Use continue to reduce indentation in find_dup_cset_node_entry()
->     and find_dup_cset_prop()
->
-> Changes since v1:
->
->   - move patch 16/16 to 17/18
->   - move patch 15/16 to 18/18
->   - new patch 15/18
->   - new patch 16/18
->
->   - 05/18: add_changeset_node() header comment: incorrect comment for @target
->
->   - 18/18: add same fix for of_parse_phandle_with_args()
->   - 18/18: add same fix for of_parse_phandle_with_args_map()
->
-> Frank Rowand (18):
->   of: overlay: add tests to validate kfrees from overlay removal
->   of: overlay: add missing of_node_put() after add new node to changeset
->   of: overlay: add missing of_node_get() in __of_attach_node_sysfs
->   powerpc/pseries: add of_node_put() in dlpar_detach_node()
->   of: overlay: use prop add changeset entry for property in new nodes
->   of: overlay: do not duplicate properties from overlay for new nodes
->   of: dynamic: change type of of_{at,de}tach_node() to void
->   of: overlay: reorder fields in struct fragment
->   of: overlay: validate overlay properties #address-cells and
->     #size-cells
->   of: overlay: make all pr_debug() and pr_err() messages unique
->   of: overlay: test case of two fragments adding same node
->   of: overlay: check prevents multiple fragments add or delete same node
->   of: overlay: check prevents multiple fragments touching same property
->   of: unittest: remove unused of_unittest_apply_overlay() argument
->   of: overlay: set node fields from properties when add new overlay node
->   of: unittest: allow base devicetree to have symbol metadata
->   of: unittest: find overlays[] entry by name instead of index
->   of: unittest: initialize args before calling of_*parse_*()
->
->  arch/powerpc/platforms/pseries/dlpar.c             |  15 +-
->  arch/powerpc/platforms/pseries/reconfig.c          |   6 +-
->  drivers/of/dynamic.c                               |  68 +++--
->  drivers/of/kobj.c                                  |   4 +-
->  drivers/of/overlay.c                               | 298 ++++++++++++++++-----
->  drivers/of/unittest-data/Makefile                  |   2 +
->  .../of/unittest-data/overlay_bad_add_dup_node.dts  |  28 ++
->  .../of/unittest-data/overlay_bad_add_dup_prop.dts  |  24 ++
->  drivers/of/unittest-data/overlay_base.dts          |   1 +
->  drivers/of/unittest.c                              |  96 +++++--
->  include/linux/of.h                                 |  19 +-
->  11 files changed, 439 insertions(+), 122 deletions(-)
->  create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_node.dts
->  create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_prop.dts
->
-> --
-> Frank Rowand <frank.rowand@sony.com>
->
+On 10/15/18 11:54 AM, Jann Horn wrote:
+> On Mon, Oct 15, 2018 at 8:36 PM Enke Chen <enkechen@cisco.com> wrote:
+>> On 10/13/18 11:27 AM, Jann Horn wrote:
+>>> On Sat, Oct 13, 2018 at 2:33 AM Enke Chen <enkechen@cisco.com> wrote:
+>>>> For simplicity and consistency, this patch provides an implementation
+>>>> for signal-based fault notification prior to the coredump of a child
+>>>> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+>>>> be used by an application to express its interest and to specify the
+>>>> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
+>>>> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
+>>>
+>>> Your suggested API looks vaguely similar to PR_SET_PDEATHSIG, but with
+>>> some important differences:
+>>>
+>>>  - You don't reset the signal on setuid execution.
+> [...]
+>>>
+>>> For both of these: Are these differences actually necessary, and if
+>>> so, can you provide a specific rationale? From a security perspective,
+>>> I would very much prefer it if this API had semantics closer to
+>>> PR_SET_PDEATHSIG.
+>>
+> [...]
+>>
+>> Regarding the impact of "setuid", this property "PR_SET_PREDUMP_SIG" has to
+>> do with the application/process whether the signal handler is set for receiving
+>> such a notification.  If it is set, the "uid" should not matter.
+> 
+> If an attacker's process first calls PR_SET_PREDUMP_SIG, then forks
+> off a child, then calls execve() on a setuid binary, the setuid binary
+> calls setuid(0), and the attacker-controlled child then crashes, the
+> privileged process will receive an unexpected signal that the attacker
+> wouldn't have been allowed to send otherwise. For similar reasons, the
+> parent death signal is reset when a setuid binary is executed:
+> 
+> void setup_new_exec(struct linux_binprm * bprm)
+> {
+>         /*
+>          * Once here, prepare_binrpm() will not be called any more, so
+>          * the final state of setuid/setgid/fscaps can be merged into the
+>          * secureexec flag.
+>          */
+>         bprm->secureexec |= bprm->cap_elevated;
+> 
+>         if (bprm->secureexec) {
+>                 /* Make sure parent cannot signal privileged process. */
+>                 current->pdeath_signal = 0;
+> [...]
+>         }
+> [...]
+> }
+> 
+> int commit_creds(struct cred *new)
+> {
+> [...]
+>         /* dumpability changes */
+>         if (!uid_eq(old->euid, new->euid) ||
+>             !gid_eq(old->egid, new->egid) ||
+>             !uid_eq(old->fsuid, new->fsuid) ||
+>             !gid_eq(old->fsgid, new->fsgid) ||
+>             !cred_cap_issubset(old, new)) {
+>                 if (task->mm)
+>                         set_dumpable(task->mm, suid_dumpable);
+>                 task->pdeath_signal = 0;
+>                 smp_wmb();
+>         }
+> [...]
+> }
+> 
+> AppArmor and SELinux also do related changes:
+> 
+> static void apparmor_bprm_committing_creds(struct linux_binprm *bprm)
+> {
+> [...]
+>         /* bail out if unconfined or not changing profile */
+>         if ((new_label->proxy == label->proxy) ||
+>             (unconfined(new_label)))
+>                 return;
+> 
+>         aa_inherit_files(bprm->cred, current->files);
+> 
+>         current->pdeath_signal = 0;
+> [...]
+> }
+> 
+> static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
+> {
+> [...]
+>         new_tsec = bprm->cred->security;
+>         if (new_tsec->sid == new_tsec->osid)
+>                 return;
+> 
+>         /* Close files for which the new task SID is not authorized. */
+>         flush_unauthorized_files(bprm->cred, current->files);
+> 
+>         /* Always clear parent death signal on SID transitions. */
+>         current->pdeath_signal = 0;
+> [...]
+> }
+> 
+> You should probably reset the coredump signal in the same places - or
+> even better, add a new helper for resetting the parent death signal,
+> and then add code for resetting the coredump signal in there.
+> 
