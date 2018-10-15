@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98393C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977D7C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D4D82089E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:37:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4D82089E
+	by mail.kernel.org (Postfix) with ESMTP id 5D8242064A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D8242064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbeJOUWj (ORCPT
+        id S1726802AbeJOUWk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 16:22:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52286 "EHLO mx1.suse.de"
+        Mon, 15 Oct 2018 16:22:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52342 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726499AbeJOUWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 16:22:39 -0400
+        id S1726614AbeJOUWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 16:22:40 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2CA44AE19;
-        Mon, 15 Oct 2018 12:37:27 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 5AF39AE65;
+        Mon, 15 Oct 2018 12:37:31 +0000 (UTC)
 From:   Petr Mladek <pmladek@suse.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
@@ -34,10 +34,10 @@ Cc:     Jason Baron <jbaron@akamai.com>,
         Joe Lawrence <joe.lawrence@redhat.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v13 02/12] livepatch: Helper macros to define livepatch structures
-Date:   Mon, 15 Oct 2018 14:37:03 +0200
-Message-Id: <20181015123713.25868-3-pmladek@suse.com>
+        Petr Mladek <pmladek@suse.com>, Jessica Yu <jeyu@kernel.org>
+Subject: [PATCH v13 04/12] livepatch: Consolidate klp_free functions
+Date:   Mon, 15 Oct 2018 14:37:05 +0200
+Message-Id: <20181015123713.25868-5-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.7
 In-Reply-To: <20181015123713.25868-1-pmladek@suse.com>
 References: <20181015123713.25868-1-pmladek@suse.com>
@@ -46,288 +46,196 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The definition of struct klp_func might be a bit confusing.
-The original function is defined by name as a string.
-The new function is defined by name as a function pointer
-casted to unsigned long.
+The code for freeing livepatch structures is a bit scattered and tricky:
 
-This patch adds helper macros that hide the different types.
-The functions are defined just by the name. For example:
+  + direct calls to klp_free_*_limited() and kobject_put() are
+    used to release partially initialized objects
 
-static struct klp_func funcs[] = {
-	{
-		.old_name = "function_A",
-		.new_addr = (unsigned long)livepatch_function_A,
-	}, {
-		.old_name = "function_B",
-		.new_addr = (unsigned long)livepatch_function_B,
-	}, { }
-};
+  + klp_free_patch() removes the patch from the public list
+    and releases all objects except for patch->kobj
 
-can be defined as:
+  + object_put(&patch->kobj) and the related wait_for_completion()
+    are called directly outside klp_mutex; this code is duplicated;
 
-static struct klp_func funcs[] = {
-	KLP_FUNC(function_A,
-		 livepatch_function_A),
-	KLP_FUNC(function_B,
-		 livepatch_function_B),
-	KLP_FUNC_END
-};
+Now, we are going to remove the registration stage to simplify the API
+and the code. This would require handling more situations in
+klp_enable_patch() error paths.
 
-Just for completeness, this patch adds similar macros to define
-struct klp_object. For example,
+More importantly, we are going to add a feature called atomic replace.
+It will need to dynamically create func and object structures. We will
+want to reuse the existing init() and free() functions. This would
+create even more error path scenarios.
 
-static struct klp_object objs[] = {
-	{
-		/* name being NULL means vmlinux */
-		.funcs = funcs_vmlinux,
-	}, {
-		.name = "module_A",
-		.funcs = funcs_module_A,
-	}, {
-		.name = "module_B",
-		.funcs = funcs_module_B,
-	}, { }
-};
+This patch implements a more clever free functions:
 
-can be defined as:
+  + checks kobj.state_initialized instead of @limit
 
-static struct klp_object objs[] = {
-	KLP_VMLINUX(funcs_vmlinux),
-	KLP_OBJECT(module_A,
-		   funcs_module_A),
-	KLP_OBJECT(module_B,
-		   funcs_module_B),
-	KLP_OBJECT_END
-};
+  + initializes patch->list early so that the check for empty list
+    always works
+
+  + The action(s) that has to be done outside klp_mutex are done
+    in separate klp_free_patch_finish() function. It waits only
+    when patch->kobj was really released via the _start() part.
+
+This patch does not change the existing behavior.
 
 Signed-off-by: Petr Mladek <pmladek@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Miroslav Benes <mbenes@suse.cz>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Jason Baron <jbaron@akamai.com>
 ---
- include/linux/livepatch.h                    | 40 ++++++++++++++++++++
- samples/livepatch/livepatch-callbacks-demo.c | 55 +++++++++++-----------------
- samples/livepatch/livepatch-sample.c         | 13 +++----
- samples/livepatch/livepatch-shadow-fix1.c    | 20 ++++------
- samples/livepatch/livepatch-shadow-fix2.c    | 20 ++++------
- 5 files changed, 83 insertions(+), 65 deletions(-)
+ kernel/livepatch/core.c | 79 +++++++++++++++++++++++++++----------------------
+ 1 file changed, 44 insertions(+), 35 deletions(-)
 
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index 817a737b49e8..1163742b27c0 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -152,6 +152,46 @@ struct klp_patch {
- 	struct completion finish;
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index b3956cce239e..17cb974522d0 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -465,17 +465,15 @@ static struct kobj_type klp_ktype_func = {
+ 	.sysfs_ops = &kobj_sysfs_ops,
  };
  
-+#define KLP_FUNC(_old_func, _new_func) {			\
-+		.old_name = #_old_func,				\
-+		.new_addr = (unsigned long)(_new_func),		\
+-/*
+- * Free all functions' kobjects in the array up to some limit. When limit is
+- * NULL, all kobjects are freed.
+- */
+-static void klp_free_funcs_limited(struct klp_object *obj,
+-				   struct klp_func *limit)
++static void klp_free_funcs(struct klp_object *obj)
+ {
+ 	struct klp_func *func;
+ 
+-	for (func = obj->funcs; func->old_name && func != limit; func++)
+-		kobject_put(&func->kobj);
++	klp_for_each_func(obj, func) {
++		/* Might be called from klp_init_patch() error path. */
++		if (func->kobj.state_initialized)
++			kobject_put(&func->kobj);
 +	}
-+#define KLP_FUNC_POS(_old_func, _new_func, _sympos) {		\
-+		.old_name = #_old_func,				\
-+		.new_addr = (unsigned long)_new_func,		\
-+		.sympos = _sympos,				\
-+	}
-+#define KLP_FUNC_END { }
+ }
+ 
+ /* Clean up when a patched object is unloaded */
+@@ -489,26 +487,46 @@ static void klp_free_object_loaded(struct klp_object *obj)
+ 		func->old_addr = 0;
+ }
+ 
+-/*
+- * Free all objects' kobjects in the array up to some limit. When limit is
+- * NULL, all kobjects are freed.
+- */
+-static void klp_free_objects_limited(struct klp_patch *patch,
+-				     struct klp_object *limit)
++static void klp_free_objects(struct klp_patch *patch)
+ {
+ 	struct klp_object *obj;
+ 
+-	for (obj = patch->objs; obj->funcs && obj != limit; obj++) {
+-		klp_free_funcs_limited(obj, NULL);
+-		kobject_put(&obj->kobj);
++	klp_for_each_object(patch, obj) {
++		klp_free_funcs(obj);
 +
-+#define KLP_OBJECT(_obj, _funcs) {				\
-+		.name = #_obj,					\
-+		.funcs = _funcs,				\
-+	}
-+#define KLP_OBJECT_CALLBACKS(_obj, _funcs,			\
-+			     _pre_patch, _post_patch,		\
-+			     _pre_unpatch, _post_unpatch) {	\
-+		.name = #_obj,					\
-+		.funcs = _funcs,				\
-+		.callbacks.pre_patch = _pre_patch,		\
-+		.callbacks.post_patch = _post_patch,		\
-+		.callbacks.pre_unpatch = _pre_unpatch,		\
-+		.callbacks.post_unpatch = _post_unpatch,	\
-+	}
-+/* name being NULL means vmlinux */
-+#define KLP_VMLINUX(_funcs) {					\
-+		.funcs = _funcs,				\
-+	}
-+#define KLP_VMLINUX_CALLBACKS(_funcs,				\
-+			     _pre_patch, _post_patch,		\
-+			     _pre_unpatch, _post_unpatch) {	\
-+		.funcs = _funcs,				\
-+		.callbacks.pre_patch = _pre_patch,		\
-+		.callbacks.post_patch = _post_patch,		\
-+		.callbacks.pre_unpatch = _pre_unpatch,		\
-+		.callbacks.post_unpatch = _post_unpatch,	\
-+	}
-+#define KLP_OBJECT_END { }
++		/* Might be called from klp_init_patch() error path. */
++		if (obj->kobj.state_initialized)
++			kobject_put(&obj->kobj);
+ 	}
+ }
+ 
+-static void klp_free_patch(struct klp_patch *patch)
++/*
++ * Some operations are synchronized by klp_mutex, e.g. the access to
++ * klp_patches list. But the caller has to put patch->kobj outside
++ * the lock. Otherwise, there might be a deadlock with sysfs operations
++ * waiting on klp_mutex.
++ *
++ * This function implements the free part that has to be called under
++ * klp_mutex.
++ */
++static void klp_free_patch_start(struct klp_patch *patch)
+ {
+-	klp_free_objects_limited(patch, NULL);
+ 	if (!list_empty(&patch->list))
+ 		list_del(&patch->list);
 +
- #define klp_for_each_object(patch, obj) \
- 	for (obj = patch->objs; obj->funcs || obj->name; obj++)
- 
-diff --git a/samples/livepatch/livepatch-callbacks-demo.c b/samples/livepatch/livepatch-callbacks-demo.c
-index 4b1aec474bb7..001a0c672251 100644
---- a/samples/livepatch/livepatch-callbacks-demo.c
-+++ b/samples/livepatch/livepatch-callbacks-demo.c
-@@ -147,45 +147,34 @@ static void patched_work_func(struct work_struct *work)
++	klp_free_objects(patch);
++}
++
++/*
++ * This function implements the free part that must be called outside
++ * klp_mutex.
++ */
++static void klp_free_patch_finish(struct klp_patch *patch)
++{
++	if (patch->kobj.state_initialized) {
++		kobject_put(&patch->kobj);
++		wait_for_completion(&patch->finish);
++	}
  }
  
- static struct klp_func no_funcs[] = {
--	{ }
-+	KLP_FUNC_END
- };
+ static int klp_init_func(struct klp_object *obj, struct klp_func *func)
+@@ -609,20 +627,12 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
+ 	klp_for_each_func(obj, func) {
+ 		ret = klp_init_func(obj, func);
+ 		if (ret)
+-			goto free;
++			return ret;
+ 	}
  
- static struct klp_func busymod_funcs[] = {
--	{
--		.old_name = "busymod_work_func",
--		.new_addr = (unsigned long)patched_work_func,
--	}, { }
-+	KLP_FUNC(busymod_work_func,
-+		 patched_work_func),
-+	KLP_FUNC_END
- };
+-	if (klp_is_object_loaded(obj)) {
++	if (klp_is_object_loaded(obj))
+ 		ret = klp_init_object_loaded(patch, obj);
+-		if (ret)
+-			goto free;
+-	}
  
- static struct klp_object objs[] = {
--	{
--		.name = NULL,	/* vmlinux */
--		.funcs = no_funcs,
--		.callbacks = {
--			.pre_patch = pre_patch_callback,
--			.post_patch = post_patch_callback,
--			.pre_unpatch = pre_unpatch_callback,
--			.post_unpatch = post_unpatch_callback,
--		},
--	},	{
--		.name = "livepatch_callbacks_mod",
--		.funcs = no_funcs,
--		.callbacks = {
--			.pre_patch = pre_patch_callback,
--			.post_patch = post_patch_callback,
--			.pre_unpatch = pre_unpatch_callback,
--			.post_unpatch = post_unpatch_callback,
--		},
--	},	{
--		.name = "livepatch_callbacks_busymod",
--		.funcs = busymod_funcs,
--		.callbacks = {
--			.pre_patch = pre_patch_callback,
--			.post_patch = post_patch_callback,
--			.pre_unpatch = pre_unpatch_callback,
--			.post_unpatch = post_unpatch_callback,
--		},
--	}, { }
-+	KLP_VMLINUX_CALLBACKS(no_funcs,
-+			      pre_patch_callback,
-+			      post_patch_callback,
-+			      pre_unpatch_callback,
-+			      post_unpatch_callback),
-+	KLP_OBJECT_CALLBACKS(livepatch_callbacks_mod,
-+			     no_funcs,
-+			     pre_patch_callback,
-+			     post_patch_callback,
-+			     pre_unpatch_callback,
-+			     post_unpatch_callback),
-+	KLP_OBJECT_CALLBACKS(livepatch_callbacks_busymod,
-+			     busymod_funcs,
-+			     pre_patch_callback,
-+			     post_patch_callback,
-+			     pre_unpatch_callback,
-+			     post_unpatch_callback),
-+	KLP_OBJECT_END
- };
- 
- static struct klp_patch patch = {
-diff --git a/samples/livepatch/livepatch-sample.c b/samples/livepatch/livepatch-sample.c
-index e470a052fb77..de30d1ba4791 100644
---- a/samples/livepatch/livepatch-sample.c
-+++ b/samples/livepatch/livepatch-sample.c
-@@ -49,17 +49,14 @@ static int livepatch_cmdline_proc_show(struct seq_file *m, void *v)
+-	return 0;
+-
+-free:
+-	klp_free_funcs_limited(obj, func);
+-	kobject_put(&obj->kobj);
+ 	return ret;
  }
  
- static struct klp_func funcs[] = {
--	{
--		.old_name = "cmdline_proc_show",
--		.new_addr = (unsigned long)livepatch_cmdline_proc_show,
--	}, { }
-+	KLP_FUNC(cmdline_proc_show,
-+		 livepatch_cmdline_proc_show),
-+	KLP_FUNC_END
- };
+@@ -637,6 +647,7 @@ static int klp_init_patch(struct klp_patch *patch)
+ 	mutex_lock(&klp_mutex);
  
- static struct klp_object objs[] = {
--	{
--		/* name being NULL means vmlinux */
--		.funcs = funcs,
--	}, { }
-+	KLP_VMLINUX(funcs),
-+	KLP_OBJECT_END
- };
+ 	patch->enabled = false;
++	INIT_LIST_HEAD(&patch->list);
+ 	init_completion(&patch->finish);
  
- static struct klp_patch patch = {
-diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
-index ede0de7abe40..8f337b4a9108 100644
---- a/samples/livepatch/livepatch-shadow-fix1.c
-+++ b/samples/livepatch/livepatch-shadow-fix1.c
-@@ -128,21 +128,17 @@ void livepatch_fix1_dummy_free(struct dummy *d)
+ 	ret = kobject_init_and_add(&patch->kobj, &klp_ktype_patch,
+@@ -659,12 +670,11 @@ static int klp_init_patch(struct klp_patch *patch)
+ 	return 0;
+ 
+ free:
+-	klp_free_objects_limited(patch, obj);
++	klp_free_patch_start(patch);
+ 
+ 	mutex_unlock(&klp_mutex);
+ 
+-	kobject_put(&patch->kobj);
+-	wait_for_completion(&patch->finish);
++	klp_free_patch_finish(patch);
+ 
+ 	return ret;
  }
+@@ -693,12 +703,11 @@ int klp_unregister_patch(struct klp_patch *patch)
+ 		goto err;
+ 	}
  
- static struct klp_func funcs[] = {
--	{
--		.old_name = "dummy_alloc",
--		.new_addr = (unsigned long)livepatch_fix1_dummy_alloc,
--	},
--	{
--		.old_name = "dummy_free",
--		.new_addr = (unsigned long)livepatch_fix1_dummy_free,
--	}, { }
-+	KLP_FUNC(dummy_alloc,
-+		 livepatch_fix1_dummy_alloc),
-+	KLP_FUNC(dummy_free,
-+		 livepatch_fix1_dummy_free),
-+	KLP_FUNC_END
- };
+-	klp_free_patch(patch);
++	klp_free_patch_start(patch);
  
- static struct klp_object objs[] = {
--	{
--		.name = "livepatch_shadow_mod",
--		.funcs = funcs,
--	}, { }
-+	KLP_OBJECT(livepatch_shadow_mod,
-+		   funcs),
-+	KLP_OBJECT_END
- };
+ 	mutex_unlock(&klp_mutex);
  
- static struct klp_patch patch = {
-diff --git a/samples/livepatch/livepatch-shadow-fix2.c b/samples/livepatch/livepatch-shadow-fix2.c
-index 035ee0ef387f..e8c0c0467bc0 100644
---- a/samples/livepatch/livepatch-shadow-fix2.c
-+++ b/samples/livepatch/livepatch-shadow-fix2.c
-@@ -105,21 +105,17 @@ void livepatch_fix2_dummy_free(struct dummy *d)
- }
+-	kobject_put(&patch->kobj);
+-	wait_for_completion(&patch->finish);
++	klp_free_patch_finish(patch);
  
- static struct klp_func funcs[] = {
--	{
--		.old_name = "dummy_check",
--		.new_addr = (unsigned long)livepatch_fix2_dummy_check,
--	},
--	{
--		.old_name = "dummy_free",
--		.new_addr = (unsigned long)livepatch_fix2_dummy_free,
--	}, { }
-+	KLP_FUNC(dummy_check,
-+		 livepatch_fix2_dummy_check),
-+	KLP_FUNC(dummy_free,
-+		 livepatch_fix2_dummy_free),
-+	KLP_FUNC_END
- };
- 
- static struct klp_object objs[] = {
--	{
--		.name = "livepatch_shadow_mod",
--		.funcs = funcs,
--	}, { }
-+	KLP_OBJECT(livepatch_shadow_mod,
-+		   funcs),
-+	KLP_OBJECT_END
- };
- 
- static struct klp_patch patch = {
+ 	return 0;
+ err:
 -- 
 2.13.7
 
