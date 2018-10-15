@@ -2,147 +2,135 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8424C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD08C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6738B20644
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:34:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="v7VCPbMj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6738B20644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id D27EE20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:42:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D27EE20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbeJOWTs (ORCPT
+        id S1726762AbeJOW15 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 18:19:48 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42284 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726571AbeJOWTs (ORCPT
+        Mon, 15 Oct 2018 18:27:57 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56399 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726614AbeJOW15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 18:19:48 -0400
-Received: by mail-pl1-f196.google.com with SMTP id c8-v6so9395436plo.9
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 07:34:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=hpZkYp1Yf6YBX/Aa7c+FCQ2Rb3agjYTIhO0baQKGCDY=;
-        b=v7VCPbMjQgH/Vma5a8LLRjcJPzlcai9+lQisdF85II8koTl2IbBph0xYzr7/OqG0pX
-         ewpDIPuasF9rDpbs7qFT/zkVyUCo1gMJcBJLIL22pIRsT4wBDYUkDOYaZr5aLWNPX9gC
-         pq82HQZMCTF5uCPf/Dk4R/Cu5MA4HTVORKIsvqwIzOVxvF1VQA+6O+gFAuvPuOVXO39h
-         cythAaxngsaJURCet7aMeIvXB15nwG9+BFVj4ZmEdBzntZAT2EgCnaEvEspm+0FhqCLW
-         sCWUoONaKBMj9OdW5yh0mRuojGnr8b5GuSmBfW9qXSDaQFnvnwe2b0aTJnvz6/vzUMXe
-         3KOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=hpZkYp1Yf6YBX/Aa7c+FCQ2Rb3agjYTIhO0baQKGCDY=;
-        b=CLIUTuo+GV17N6fx0C1C0k3tAsWWBoTUsmbs8ZO1u2ySXpi9aPYJVVgDz94ErZ28HL
-         OJHocFwbNdAwybGg1OmIQNWymk40R704OEfhgEvUYbTTxIQFTMmFfrOLTRZi/HX+IrZh
-         lYTgy2K9z5syToFaQamNGUmw0hPf4daVkI5ov7xPlTW3aA65I+4w8S/dJjSJpSdIoNmH
-         vR77dc42HBWTeUw8P1SrR8OSvM/L277+uoNjUEPUZ3+z+XAkup/9XyVDfl9zT+4VPcfK
-         rS3kBCx5IQ1TqJH+FCnzTzhW0QFa8YRBPW5zyXAEKkwfDM369BPxMCxIaSpbs9K9ldiP
-         xqnw==
-X-Gm-Message-State: ABuFfojj+Nkx0Ej5eTP7Df+emdaziQsNVvWnxAwr+giMnE5/ew+vPfRo
-        3RBuUcapHrLamhXBG6MnXB7abA==
-X-Google-Smtp-Source: ACcGV611/wGQjWj6GlEAw1jZi9sGocDG+BKSVi375rD04LCym2tYbVUMVPvrSeJH1BtaN2IOoqDElA==
-X-Received: by 2002:a17:902:7142:: with SMTP id u2-v6mr17528297plm.154.1539614056020;
-        Mon, 15 Oct 2018 07:34:16 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:7429:256b:27ea:55f0:e526? ([2601:646:c200:7429:256b:27ea:55f0:e526])
-        by smtp.gmail.com with ESMTPSA id x73-v6sm15333631pfk.139.2018.10.15.07.34.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 07:34:14 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] x86/mm: annotate no_context with UNWIND_HINTS
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A366)
-In-Reply-To: <20181015051705.GA20687@flashbox>
-Date:   Mon, 15 Oct 2018 07:34:14 -0700
-Cc:     Andy Lutomirski <luto@kernel.org>, nick.desaulniers@gmail.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mon, 15 Oct 2018 18:27:57 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gC44X-0000EH-MV; Mon, 15 Oct 2018 16:42:17 +0200
+Date:   Mon, 15 Oct 2018 16:42:17 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        Boqun Feng <boqun.feng@gmail.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2CCAF5D3-1B11-43BF-93E4-72C2603A184F@amacapital.net>
-References: <20181015003726.29103-1-nick.desaulniers@gmail.com> <CALCETrUZoBtxoR9u=72CSmNa-793EZySMd7TjH_BmHcrNSvLZg@mail.gmail.com> <20181015051705.GA20687@flashbox>
-To:     Nathan Chancellor <natechancellor@gmail.com>
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        tglx@linutronix.de, Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [PATCH] rcu: Use cpus_read_lock() while looking at
+ cpu_online_mask
+Message-ID: <20181015144217.nu5cp5mxlboyjbre@linutronix.de>
+References: <20180910135615.tr3cvipwbhq6xug4@linutronix.de>
+ <20180911160532.GJ4225@linux.vnet.ibm.com>
+ <20180911162142.cc3vgook2gctus4c@linutronix.de>
+ <20180911170222.GO4225@linux.vnet.ibm.com>
+ <20180919205521.GE902964@devbig004.ftw2.facebook.com>
+ <20180919221140.GH4222@linux.ibm.com>
+ <20181012184114.w332lnkc34evd4sm@linutronix.de>
+ <20181013134813.GD2674@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181013134813.GD2674@linux.ibm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-10-13 06:48:13 [-0700], Paul E. McKenney wrote:
+> 
+> My concern would be that it would queue it by default for the current
+> CPU, which would serialize the processing, losing the concurrency of
+> grace-period initialization.  But that was a long time ago, and perhaps
+> workqueues have changed. 
 
+but the code here is always using the first CPU of a NUMA node or did I
+miss something?
 
-> On Oct 14, 2018, at 10:17 PM, Nathan Chancellor <natechancellor@gmail.com>=
- wrote:
->=20
->> On Sun, Oct 14, 2018 at 08:43:18PM -0700, Andy Lutomirski wrote:
->> On Sun, Oct 14, 2018 at 5:37 PM Nick Desaulniers
->> <nick.desaulniers@gmail.com> wrote:
->>>=20
->>> Fixes the objtool warning:
->>> arch/x86/mm/fault.o: warning: objtool: no_context()+0x220: unreachable
->>> instruction
->>>=20
->>> Link: https://github.com/ClangBuiltLinux/linux/issues/204
->>> Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
->>> ---
->>> arch/x86/mm/fault.c | 6 ++++--
->>> 1 file changed, 4 insertions(+), 2 deletions(-)
->>>=20
->>> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
->>> index 47bebfe6efa7..057d2178fa19 100644
->>> --- a/arch/x86/mm/fault.c
->>> +++ b/arch/x86/mm/fault.c
->>> @@ -760,9 +760,11 @@ no_context(struct pt_regs *regs, unsigned long erro=
-r_code,
->>>                 * and then double-fault, though, because we're likely to=
+> So, have you tried using rcuperf to test the
+> update performance on a large system?
 
->>>                 * break the console driver and lose most of the stack du=
-mp.
->>>                 */
->>> -               asm volatile ("movq %[stack], %%rsp\n\t"
->>> +               asm volatile (UNWIND_HINT_SAVE
->>> +                             "movq %[stack], %%rsp\n\t"
->>>                              "call handle_stack_overflow\n\t"
->>> -                             "1: jmp 1b"
->>> +                             "1: jmp 1b\n\t"
->>> +                             UNWIND_HINT_RESTORE
->>>                              : ASM_CALL_CONSTRAINT
->>>                              : "D" ("kernel stack overflow (page fault)"=
-),
->>>                                "S" (regs), "d" (address),
->>=20
->> NAK.  Just below this snippet is unreachable();
->>=20
->> Can you reply with objtool -dr output on a problematic fault.o?  Josh,
->> it *looks* like annotate_unreachable() should be doing the right
->> thing, but something is clearly busted.
->>=20
->> Also, shouldn't compiler-clang.h contain a reasonable definition of
->> unreachable()?
->>=20
->> --Andy
->=20
-> Hi Andy,
->=20
-> Did you mean 'objdump -dr'? If so, here you go (rather long, sorry if I
-> should have pasted it here instead):
-> https://gist.github.com/nathanchance/f038bb0a6653b975bb8a4e64fcd5503e
->=20
->=20
+Something like this:
+| tools/testing/selftests/rcutorture/bin/kvm.sh --torture rcuperf --configs TREE
+| ----Start batch 1: Mon Oct 15 12:46:13 CEST 2018
+| TREE 142: Starting build. …
+| …
+| Average grace-period duration: 19952.7 microseconds
+| Minimum grace-period duration: 9004.51
+| 50th percentile grace-period duration: 19998.3
+| 90th percentile grace-period duration: 24994.4
+| 99th percentile grace-period duration: 30002.1
+| Maximum grace-period duration: 42998.2
+| Grace periods: 6560 Batches: 209 Ratio: 31.3876
+| Computed from rcuperf printk output.
+| Completed in 27 vs. 1800
+| 
+| Average grace-period duration: 18700 microseconds
+| Minimum grace-period duration: 7069.2
+| 50th percentile grace-period duration: 18987.5
+| 90th percentile grace-period duration: 22997
+| 99th percentile grace-period duration: 28944.7
+| Maximum grace-period duration: 36994.5
+| Grace periods: 6551 Batches: 209 Ratio: 31.3445
+| Computed from rcuperf printk output.
+| Completed in 27 vs. 1800
 
-Hmm, -dr wasn=E2=80=99t quite enough to dump the .discard bits, assuming the=
-y=E2=80=99re there at all. Can you just put the whole .o file somewhere?=
+two runs patched followed by two runs without the patched:
+| Average grace-period duration: 19423.3 microseconds
+| Minimum grace-period duration: 8006.93
+| 50th percentile grace-period duration: 19002.8
+| 90th percentile grace-period duration: 23997.5
+| 99th percentile grace-period duration: 29995.7
+| Maximum grace-period duration: 37997.9
+| Grace periods: 6526 Batches: 208 Ratio: 31.375
+| Computed from rcuperf printk output.
+| Completed in 27 vs. 1800
+| 
+| Average grace-period duration: 18822.4 microseconds
+| Minimum grace-period duration: 8348.15
+| 50th percentile grace-period duration: 18996.9
+| 90th percentile grace-period duration: 23000
+| 99th percentile grace-period duration: 27999.5
+| Maximum grace-period duration: 39001.9
+| Grace periods: 6540 Batches: 209 Ratio: 31.2919
+| Computed from rcuperf printk output.
+| Completed in 27 vs. 1800
+
+I think difference might come from cpufreq on the host. But in general,
+this is what you have been asking for or did you want to see something
+on the host (or an additional argument to the script)?
+
+> If this change does not impact performance on an rcuperf test, why not
+> send me a formal patch with Signed-off-by and commit log (including
+> performance testing results)?  I will then apply it, it will be exposed
+> to 0day and eventually -next testing, and if no problems arise, it will go
+> to mainline, perhaps as soon as the merge window after the upcoming one.
+> 
+> Fair enough?
+sure.
+
+> 							Thanx, Paul
+> 
+
+Sebastian
