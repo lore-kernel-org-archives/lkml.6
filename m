@@ -2,145 +2,160 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D017C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03AAFC7113E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2F03208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91CD9208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:16:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="gUx7iYnA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2F03208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H0ES4DVH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91CD9208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbeJPECq (ORCPT
+        id S1726506AbeJPEDA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 00:02:46 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41933 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbeJPECq (ORCPT
+        Tue, 16 Oct 2018 00:03:00 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42369 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbeJPEDA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 00:02:46 -0400
-Received: by mail-pl1-f196.google.com with SMTP id q17-v6so9830709plr.8
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 13:15:59 -0700 (PDT)
+        Tue, 16 Oct 2018 00:03:00 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i4-v6so9674849pgq.9
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 13:16:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bCG56MnvqknkV8yWIM1urB4dfW5GfosWZ/Pr+b9aTc0=;
-        b=gUx7iYnAVk2aekhGq/1UAPgVIzD5v+C3MbNDeZ/fO+ulwk7tR8g1VJxPpmKGVG7DQl
-         q7xgY0SfDkCpoGWA3tBB7Kk8CD6riV3179robf/nMlVa8AkmhBRTqlydOY66AialCdlx
-         488un7mF0M0i8quXKybpYG30xobaLy+Zc7IaA=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KWo3sNcpzCKOCvpE525U6KK13zgDfyFF/M8Q+lhwibE=;
+        b=H0ES4DVH3hhYiWHSFHeMwN/93xuX6AeCp7iT6v8zGK5XWUmf70a3JZkxrScdsnxnNr
+         cvk/tRpT2MlZXI5aLxT+W4+mdvQtkWEKYPp3PiQJoemJvLMiaXZi6aUVvUbPxkL+mWHI
+         os3UKOvRm6sYqNJ5uDAZTEqVVdpR415EoKWh14XG6XIpItmAYVRB1I8W0q6ostcjUgBh
+         04TuGQE93w73U0hUSuM4m2M2Q3WMQ0EoC8zMYGXjw/9BIGLfqwsjwb02iINMyUQYdmzt
+         RRf7Fdn/MDM0Vqcd7ZyCkaqkO+h0/K0sJuqNqrkCMBXL6OuLyUacX5f5LebLnXhAPKzC
+         y5yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bCG56MnvqknkV8yWIM1urB4dfW5GfosWZ/Pr+b9aTc0=;
-        b=j44BEjmdMhW3v7GDH9NPgXt6Najk7F7edpMWNPbddNdOpC+DyicaCaUrdoyiac04yv
-         vb0QK2za0/+POEyCVTYR/ETDQ6Uuih8U6OluWr/RUjSgssOlsbaAflCwpxFuKH7WfQzT
-         wRUtHPGiobLYAtKaVItC384RKNvwInoO5kcD+/H4seTlp+AlgdamdZfTAaG1at7BdPcr
-         PW1qzBYZzLZ/GNe9ZNOjZ42qou92N0OmOPjM1TqGrQVFOAqLauEGIeVJVWYu/bJE1H7X
-         W42CQIw5kYh89ug/sRF95G+1bKp8xfzxMo/m9a291Of8OZgTNLkdAPDjDO7UnnUnWCzP
-         c9Tg==
-X-Gm-Message-State: ABuFfoiMIkKuvRmrsSoHmeUrj8Yzs18XGFOm2jZo6Kp5FxH9wDZmAfJs
-        9Nz7S+ZPyg+YIRh6nJ7OUNMS1w==
-X-Google-Smtp-Source: ACcGV61OnpFXUsG4YV2MK6nnPTIS9vHYx1oz1S+HXGjA/afo3d+u98ei8DHNwysKVGYsDRIDc4htyw==
-X-Received: by 2002:a17:902:7203:: with SMTP id ba3-v6mr8448519plb.321.1539634559171;
-        Mon, 15 Oct 2018 13:15:59 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id m10-v6sm18226446pfg.180.2018.10.15.13.15.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 13:15:57 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 13:15:56 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Nikolay Borisov <nborisov@suse.com>, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH RFC] doc: rcu: remove obsolete (non-)requirement about
- disabling preemption
-Message-ID: <20181015201556.GA43575@joelaf.mtv.corp.google.com>
-References: <20181014212955.95267-1-joel@joelfernandes.org>
- <20181014231731.GN2674@linux.ibm.com>
- <20181015020827.GA217384@joelaf.mtv.corp.google.com>
- <20181015021349.GB217384@joelaf.mtv.corp.google.com>
- <20181015023328.GP2674@linux.ibm.com>
- <20181015024758.GA227989@joelaf.mtv.corp.google.com>
- <5151da01-343b-bb37-353e-b6652ae530f5@suse.com>
- <20181015112112.GT2674@linux.ibm.com>
- <20181015193951.GA33528@joelaf.mtv.corp.google.com>
- <20181015195426.GD2674@linux.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KWo3sNcpzCKOCvpE525U6KK13zgDfyFF/M8Q+lhwibE=;
+        b=dECzNSDDdHX0OpAJT8e7Osz2+BIx32dBSEmBDIcZu843kmlnRWIxl/RaUKNHD3N+tV
+         x2o1cVljwzh8cqmj8Nr896nvgUmvjlrkuTqPIYcs07qfuRLdMx4gA8svt4Sx0K69n8Ep
+         k/93FHEhZbXwekPJCqeoVxthPCBvVdT3LGVEme4THF48jkGc78qChe0ehZxf+YM1u5AI
+         reTwMn2OC7RuRoqYzQRPhV39FcPzBNfdCnZ6hfPd8pCTgySAstof8OOF1hPIcNH8jipo
+         prAsSX4YfkTOJr1R4fVugMnnODIl6a1f111KyWYWN7sqPTHSWqLS4Xvt3K3z0DLerzgP
+         sdOg==
+X-Gm-Message-State: ABuFfogFstfCOkuT1K/oBKe3sj8cbo8LstwAkAQ+4AyVtXGVrcaeN+On
+        aJRf9dWeoS3RYnwDlekgjfKo+SXanARi6WrUCwqKNg==
+X-Google-Smtp-Source: ACcGV60fQVCR+y+FX9GstOfzVsLovwbreXV4hZ63dlSyPoV0DU5TeziIWWmtMa0VDe3GlgzsiddXZCfJn6jIidwLCw0=
+X-Received: by 2002:a62:d585:: with SMTP id d127-v6mr9143558pfg.174.1539634572670;
+ Mon, 15 Oct 2018 13:16:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181015195426.GD2674@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181013010348.6740-1-natechancellor@gmail.com>
+ <CAKwvOdk8HGTtQ=qb2THgRb3B6O=iErXFyrbKVoGDkMeFAdD3kA@mail.gmail.com> <20181015194650.GA11458@flashbox>
+In-Reply-To: <20181015194650.GA11458@flashbox>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 15 Oct 2018 13:16:00 -0700
+Message-ID: <CAKwvOdn-mZ8-w9+rFJ0tiYPdgbdQ_1DeO8w1MzHABtJ5ianBhQ@mail.gmail.com>
+Subject: Re: [PATCH] efi/libstub: Disable some warnings for x86{,_64}
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 12:54:26PM -0700, Paul E. McKenney wrote:
-[...]
-> > > In any case, please don't spin for milliseconds with preemption disabled.
-> > > The real-time guys are unlikely to be happy with you if you do this!
-> > 
-> > Well just to clarify, I was just running Oleg's test which did this. This
-> > test was mentioned in the original documentation that I deleted. Ofcourse I
-> > would not dare do such a thing in production code :-D. I guess to Oleg's
-> > defense, he did it to very that synchronize_rcu() was not blocked on
-> > preempt-disable sections which was a different test.
-> 
-> Understood!  Just pointing out that RCU's tolerating a given action does
-> not necessarily mean that it is a good idea to take that action.  ;-)
+On Mon, Oct 15, 2018 at 12:46 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Mon, Oct 15, 2018 at 12:40:36PM -0700, Nick Desaulniers wrote:
+> > On Fri, Oct 12, 2018 at 6:06 PM Nathan Chancellor
+> > <natechancellor@gmail.com> wrote:
+> > >
+> > > When building the kernel with Clang, some disabled warnings appear
+> > > because this Makefile overrides KBUILD_CFLAGS for x86{,_64}. Add them to
+> > > this list so that the build is clean again.
+> > >
+> > > -Wpointer-sign was disabled for the whole kernel before the beginning
+> > > of git history.
+> > >
+> > > -Waddress-of-packed-member was disabled for the whole kernel in
+> > > commit bfb38988c51e ("kbuild: clang: Disable 'address-of-packed-member'
+> > > warning") and for x86/boot/compressed in commit 20c6c1890455 ("x86/boot:
+> > > Disable the address-of-packed-member compiler warning").
+> > >
+> > > -Wgnu was disabled for the whole kernel in commit 61163efae020 ("kbuild:
+> > > LLVMLinux: Add Kbuild support for building kernel with Clang") and for
+> > > x86/boot/compressed in commit 6c3b56b19730 ("x86/boot: Disable Clang
+> > > warnings about GNU extensions").
+> > >
+> > > Link: https://github.com/ClangBuiltLinux/linux/issues/112
+> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > ---
+> > >
+> > > Nick expressed concern that this Makefile is overwriting KBUILD_CFLAGS
+> > > and suggested potentially rewriting the x86 portion of this Makefile to
+> > > behave like the arm/arm64 one where problematic flags are filtered out.
+> > > While that comes to fruition, it would be nice for this folder to behave
+> > > like the rest of the kernel when it comes to this warnings so that the
+> > > build is cleaner, thus this patch.
+> > >
+> > >  drivers/firmware/efi/libstub/Makefile | 5 ++++-
+> > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> > > index c51627660dbb..d9845099635e 100644
+> > > --- a/drivers/firmware/efi/libstub/Makefile
+> > > +++ b/drivers/firmware/efi/libstub/Makefile
+> > > @@ -9,7 +9,10 @@ cflags-$(CONFIG_X86_32)                := -march=i386
+> > >  cflags-$(CONFIG_X86_64)                := -mcmodel=small
+> > >  cflags-$(CONFIG_X86)           += -m$(BITS) -D__KERNEL__ -O2 \
+> > >                                    -fPIC -fno-strict-aliasing -mno-red-zone \
+> > > -                                  -mno-mmx -mno-sse -fshort-wchar
+> > > +                                  -mno-mmx -mno-sse -fshort-wchar \
+> > > +                                  -Wno-pointer-sign \
+> >
+> > Hi Nathan, thanks for this patch.
+> >
+> > Should this be:
+> > $(call cc-disable-warning, pointer-sign)
+> > as well?
+> >
+>
+> According to commit 1d6bf3a9a546 ("kbuild: add -Wno-pointer-sign flag
+> unconditionally") in -next, all supported compilers recognize the flag
+> so I don't think it's necessary.
 
-Makes sense :-) thanks.
+No problem.
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
 
-> > > > > +		pr_crit("SPIN done!\n");
-> > > > > +		preempt_enable();
-> > > > > +		break;
-> > > > > +	case 777:
-> > > > > +		pr_crit("SYNC start\n");
-> > > > > +		synchronize_rcu();
-> > > > > +		pr_crit("SYNC done!\n");
-> > > > 
-> > > > But you are using the console printing infrastructure which is rather
-> > > > heavyweight. Try replacing pr_* calls with trace_printk so that you
-> > > > write to the lock-free ring buffer, this will reduce the noise from the
-> > > > heavy console printing infrastructure.
-> > > 
-> > > And this might be a problem as well.
-> > 
-> > This was not the issue (or atleast not fully the issue) since I saw the same
-> > thing with trace_printk. It was exactly what you said - which is the
-> > excessively long preempt disabled times.
-> 
-> One approach would be to apply this patch against (say) v4.18, which
-> does not have consolidated grace periods.  You might then be able to
-> tell if the pr_crit() calls make any difference.
+>
+> > > +                                  $(call cc-disable-warning, address-of-packed-member) \
+> > > +                                  $(call cc-disable-warning, gnu)
+> > >
+> > >  # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
+> > >  # disable the stackleak plugin
+> > > --
+> > > 2.19.1
+> > >
+> >
+> >
+> > --
+> > Thanks,
+> > ~Nick Desaulniers
+>
+> Thanks for the review!
+> Nathan
 
-I could do that, yeah. But since the original problem went away due to
-disabling preempts for a short while, I will move on and continue to focus on
-updating other parts of the documenation. Just to mention I
-brought this up because I thought its better to do that than not to, just
-incase there is any lurking issue with the consolidation. Sorry if that ended
-up with me being noisy.
 
-Just curious, while I am going through the documentation, is there anything
-in particular that particularly sticks out to you that needs updating? I
-think I am around 50% there with the last several rounds of doc patches but I
-have lot more to go through. "Just keep doing what you're doing" is also a
-perfectly valid answer ;-)
 
-thanks,
-
- - Joel
-
+-- 
+Thanks,
+~Nick Desaulniers
