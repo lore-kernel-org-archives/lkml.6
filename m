@@ -2,118 +2,120 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D24C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C2CC28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE7A2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:12:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE7A2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id AD4242086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:14:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD4242086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbeJOP4i (ORCPT
+        id S1726713AbeJOP6c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 11:56:38 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:13844 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726590AbeJOP4i (ORCPT
+        Mon, 15 Oct 2018 11:58:32 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:49738 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726560AbeJOP6c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 11:56:38 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w9F88wkb029886;
-        Mon, 15 Oct 2018 10:09:51 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2n35u5a998-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 15 Oct 2018 10:09:51 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0B7783F;
-        Mon, 15 Oct 2018 08:09:50 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C16282587;
-        Mon, 15 Oct 2018 08:09:50 +0000 (GMT)
-Received: from [10.201.23.29] (10.75.127.49) by SFHDAG6NODE2.st.com
- (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 15 Oct
- 2018 10:09:49 +0200
-Subject: Re: [PATCH v2 2/3] mtd: rawnand: stm32_fmc2: add STM32 FMC2 NAND
- flash controller driver
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1538732520-2800-1-git-send-email-christophe.kerello@st.com>
- <1538732520-2800-3-git-send-email-christophe.kerello@st.com>
- <20181005115809.55356782@bbrezillon>
-From:   Christophe Kerello <christophe.kerello@st.com>
-Message-ID: <b10a3919-7b86-c177-2254-30d32ac6f25e@st.com>
-Date:   Mon, 15 Oct 2018 10:09:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 15 Oct 2018 11:58:32 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 42YWS95ZT6z1qwRL;
+        Mon, 15 Oct 2018 10:14:17 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 42YWS93nX2z1qr27;
+        Mon, 15 Oct 2018 10:14:17 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id 2mhmkdah7aHp; Mon, 15 Oct 2018 10:14:16 +0200 (CEST)
+X-Auth-Info: eLsoengL1YTwV1aboCtMYpz6we6Mk8X9c2H8L0bT8Tg=
+Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Mon, 15 Oct 2018 10:14:16 +0200 (CEST)
+Date:   Mon, 15 Oct 2018 10:14:04 +0200
+From:   Lukasz Majewski <lukma@denx.de>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Stefan Agner <stefan@agner.ch>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: Re: [PATCH v3] ARM: dts: Add support for Liebherr's BK4 device
+ (vf610 based)
+Message-ID: <20181015101404.52643184@jawa>
+In-Reply-To: <20181012004027.GB3587@dragon>
+References: <20180921152726.31742-1-lukma@denx.de>
+        <20181009105028.17971-1-lukma@denx.de>
+        <20181012004027.GB3587@dragon>
+Organization: denx.de
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181005115809.55356782@bbrezillon>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG6NODE2.st.com
- (10.75.127.17)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-15_05:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fbOpQnBhotqXKQP4ozRLJAw"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/fbOpQnBhotqXKQP4ozRLJAw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Shawn,
+
+> On Tue, Oct 09, 2018 at 12:50:28PM +0200, Lukasz Majewski wrote:
+> > This commit adds DTS support for BK4 device from Liebherr. It
+> > uses vf610 SoC from NXP.
+> >=20
+> > Signed-off-by: Lukasz Majewski <lukma@denx.de> =20
+>=20
+> As v3 just incorporates a few minor improvements over v2, Stefan's
+> review tag should really be carried.  I applied the patch with Stefan
+> and Fabio's review tag added.=20
+
+Thanks :-).
+
+>=20
+> Shawn
 
 
-On 10/05/2018 11:58 AM, Boris Brezillon wrote:
-> On Fri, 5 Oct 2018 11:41:59 +0200
-> <christophe.kerello@st.com> wrote:
-> 
->> +struct stm32_fmc2 {
-> 
-> You should inherit from nand_controller even if the nand_chip already
-> embeds a dummy nand controller object.
-> 
-> 	struct nand_controller base;
-> 
 
-Hi Boris,
 
-Ok, i will add and handle the nand controller structure.
+Best regards,
 
-Regards,
-Christophe Kerello.
+Lukasz Majewski
 
->> +	struct stm32_fmc2_nand nand;
->> +	struct device *dev;
->> +	void __iomem *io_base;
->> +	void __iomem *data_base[FMC2_MAX_CE];
->> +	void __iomem *cmd_base[FMC2_MAX_CE];
->> +	void __iomem *addr_base[FMC2_MAX_CE];
->> +	phys_addr_t io_phys_addr;
->> +	phys_addr_t data_phys_addr[FMC2_MAX_CE];
->> +	struct clk *clk;
->> +
->> +	struct dma_chan *dma_tx_ch;
->> +	struct dma_chan *dma_rx_ch;
->> +	struct dma_chan *dma_ecc_ch;
->> +	struct sg_table dma_data_sg;
->> +	struct sg_table dma_ecc_sg;
->> +	u8 *ecc_buf;
->> +	int dma_ecc_len;
->> +
->> +	struct completion complete;
->> +	struct completion dma_data_complete;
->> +	struct completion dma_ecc_complete;
->> +
->> +	u8 cs_assigned;
->> +	int cs_sel;
->> +};
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+--Sig_/fbOpQnBhotqXKQP4ozRLJAw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlvETEwACgkQAR8vZIA0
+zr0FCQgArh85P/37Uas5kQp4FPL8TmaEbbP0HxlTZtRXJvugcPKbsTGNp5oPXTIJ
+NPCMBGrxmQqF8d8h9tkgEtbSMjQAHBQRhKoACYz9vszQc8YlVPCpN+xcrur+Wa9G
+XwIp29SRz5KI5UrUsk561+BCSjchwOeWVcElMntgu/kGTbeWpugxyOKYs5NmexyN
+KozEL5iV5NDg8yjtCtsKJHUjMgML8zpz4pNEuGk+xxWlPjAxRgDb3Y8RyrufjT1T
+TYH8a7WD4zqWpbXYP6Qr3elFPQyzS9g0vPGd9XtK27AGN5KlZwice6ffEjP8nBpA
+JCAjNmd7ZZs473EAzsc6sRaRlP9mNg==
+=4/wT
+-----END PGP SIGNATURE-----
+
+--Sig_/fbOpQnBhotqXKQP4ozRLJAw--
