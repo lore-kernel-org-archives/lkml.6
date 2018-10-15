@@ -2,187 +2,123 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A10EC7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5FFC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE842064A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:16:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jhoK4P32"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BE842064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D0FED2064A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:18:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0FED2064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeJOTBF (ORCPT
+        id S1726581AbeJOTC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:01:05 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38092 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbeJOTBF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:01:05 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v7-v6so17121680ljg.5
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 04:16:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KapoO5oMlMVFKcdCw43NU78fcYlzzKItuvdaDSjvtEY=;
-        b=jhoK4P329uM4OgPNBuc+W4XSTNdyijGPQ7tYXpsRzwvnf5sOZn/JeUQlKJbUcBStJC
-         p/KX2drpls/0XTsbU1BTUYGyxuilNKYAC03yGhrOyAD34HGaFqh/sSi6WwkPghYr/IaU
-         kObhyOVBHUK8Wl3202Elwoa4wUyTLHttFT9S8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KapoO5oMlMVFKcdCw43NU78fcYlzzKItuvdaDSjvtEY=;
-        b=lZJFW3QzmrsUXTI5SSuEDxre7fVWMN4L/TnDRFZmCEAjF5pssW/4Zxsr+4QBNr2H7s
-         Z19Ne02YTEdQJBccAAtkXkjrYxzuj+lV4n9RkUfdnRfFKxxg+/8sd5GbqetOiExe1ctv
-         3ZQ1H3LaP0lSHjP/qKB2/ZL+sfHjSKyLjZ00u44KKyaQcHy5gvh5CQF7NB3d5bZcNHgV
-         JoKie3insVnXnjF5MNlYDXL9Ydq0cytQtLf4YdyQSYdAf/YsuB/aW0Xm8BvHXeJpw8/t
-         7Q99ByPLhUPmJqTXbFjj9Cs3zwGpQVUWUOiJNc/DihdXBJzsiiZhofrBd6lHXYxQ+Zm8
-         vRNg==
-X-Gm-Message-State: ABuFfohZc8Q+uyaYJlx7lrvl1nrEdqCetZcYfUIwsCwP7R5KkKYtCTFR
-        jj/D8pfNAMkZiQtqLlRbeHbpLzic17Q=
-X-Google-Smtp-Source: ACcGV62H04Q0o2Qc3YYrRBzFf9KX/YYxPs4WhluwQ8LWQ6bTZrj77XjSAR1Fcuy+bc+Hf0AgwIlLUQ==
-X-Received: by 2002:a2e:8606:: with SMTP id a6-v6mr9222957lji.43.1539602175125;
-        Mon, 15 Oct 2018 04:16:15 -0700 (PDT)
-Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
-        by smtp.gmail.com with ESMTPSA id l9-v6sm2277055ljb.70.2018.10.15.04.16.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 04:16:14 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     catalin.marinas@arm.com, will.deacon@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Laura Abbott <labbott@redhat.com>
-Subject: [PATCH] arm64: kprobe: make page to RO mode when allocate it
-Date:   Mon, 15 Oct 2018 13:16:00 +0200
-Message-Id: <20181015111600.5479-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.19.1
+        Mon, 15 Oct 2018 15:02:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13637 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726453AbeJOTC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 15:02:56 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 448E51DA1B201;
+        Mon, 15 Oct 2018 19:18:03 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Mon, 15 Oct 2018
+ 19:17:57 +0800
+From:   John Garry <john.garry@huawei.com>
+Subject: Re: [PATCH 1/1] iommu/arm-smmu-v3: eliminate a potential memory
+ corruption on Hi16xx soc
+To:     Zhen Lei <thunder.leizhen@huawei.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1539592576-24352-1-git-send-email-thunder.leizhen@huawei.com>
+CC:     LinuxArm <linuxarm@huawei.com>
+Message-ID: <4583617a-49ad-00b5-97fc-1ea35568c5cd@huawei.com>
+Date:   Mon, 15 Oct 2018 12:17:51 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1539592576-24352-1-git-send-email-thunder.leizhen@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 1404d6f13e47 ("arm64: dump: Add checking for writable and exectuable pages")
-has successfully identified code that leaves a page with W+X
-permissions.
+On 15/10/2018 09:36, Zhen Lei wrote:
+> ITS translation register map:
+> 0x0000-0x003C	Reserved
+> 0x0040		GITS_TRANSLATER
+> 0x0044-0xFFFC	Reserved
+>
 
-[    3.245140] arm64/mm: Found insecure W+X mapping at address (____ptrval____)/0xffff000000d90000
-[    3.245771] WARNING: CPU: 0 PID: 1 at ../arch/arm64/mm/dump.c:232 note_page+0x410/0x420
-[    3.246141] Modules linked in:
-[    3.246653] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc5-next-20180928-00001-ge70ae259b853-dirty #62
-[    3.247008] Hardware name: linux,dummy-virt (DT)
-[    3.247347] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    3.247623] pc : note_page+0x410/0x420
-[    3.247898] lr : note_page+0x410/0x420
-[    3.248071] sp : ffff00000804bcd0
-[    3.248254] x29: ffff00000804bcd0 x28: ffff000009274000
-[    3.248578] x27: ffff00000921a000 x26: ffff80007dfff000
-[    3.248845] x25: ffff0000093f5000 x24: ffff000009526f6a
-[    3.249109] x23: 0000000000000004 x22: ffff000000d91000
-[    3.249396] x21: ffff000000d90000 x20: 0000000000000000
-[    3.249661] x19: ffff00000804bde8 x18: 0000000000000400
-[    3.249924] x17: 0000000000000000 x16: 0000000000000000
-[    3.250271] x15: ffffffffffffffff x14: 295f5f5f5f6c6176
-[    3.250594] x13: 7274705f5f5f5f28 x12: 2073736572646461
-[    3.250941] x11: 20746120676e6970 x10: 70616d20582b5720
-[    3.251252] x9 : 6572756365736e69 x8 : 3039643030303030
-[    3.251519] x7 : 306666666678302f x6 : ffff0000095467b2
-[    3.251802] x5 : 0000000000000000 x4 : 0000000000000000
-[    3.252060] x3 : 0000000000000000 x2 : ffffffffffffffff
-[    3.252323] x1 : 4d151327adc50b00 x0 : 0000000000000000
-[    3.252664] Call trace:
-[    3.252953]  note_page+0x410/0x420
-[    3.253186]  walk_pgd+0x12c/0x238
-[    3.253417]  ptdump_check_wx+0x68/0xf8
-[    3.253637]  mark_rodata_ro+0x68/0x98
-[    3.253847]  kernel_init+0x38/0x160
-[    3.254103]  ret_from_fork+0x10/0x18
+Can you add a better opening than the ITS translation register map?
 
-Reworked to that when allocate a page it sets mode RO. Inspired by
-commit 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()").
+> The standard GITS_TRANSLATER register in ITS is only 4 bytes, but Hisilicon
+> expands the next 4 bytes to carry some IMPDEF information. That means, 8 bytes
+> data will be written to MSIAddress each time.
+>
+> MSIAddr: |----4bytes----|----4bytes----|
+> 	 |    MSIData   |    IMPDEF    |
+>
+> There is no problem for ITS, because the next 4 bytes space is reserved in ITS.
+> But it will overwrite the 4 bytes memory following "sync_count". It's very
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Co-developed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- arch/arm64/kernel/probes/kprobes.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+I think arm_smmu_device.sync_count is better, or "sync_count member in 
+the the smmu driver control struct".
 
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index 9b65132e789a..b842e908b423 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -23,7 +23,9 @@
- #include <linux/slab.h>
- #include <linux/stop_machine.h>
- #include <linux/sched/debug.h>
-+#include <linux/set_memory.h>
- #include <linux/stringify.h>
-+#include <linux/vmalloc.h>
- #include <asm/traps.h>
- #include <asm/ptrace.h>
- #include <asm/cacheflush.h>
-@@ -42,10 +44,21 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
- static void __kprobes
- post_kprobe_handler(struct kprobe_ctlblk *, struct pt_regs *);
- 
-+static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-+{
-+	void *addrs[1];
-+	u32 insns[1];
-+
-+	addrs[0] = (void *)addr;
-+	insns[0] = (u32)opcode;
-+
-+	return aarch64_insn_patch_text(addrs, insns, 1);
-+}
-+
- static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
- {
- 	/* prepare insn slot */
--	p->ainsn.api.insn[0] = cpu_to_le32(p->opcode);
-+	patch_text(p->ainsn.api.insn, p->opcode);
- 
- 	flush_icache_range((uintptr_t) (p->ainsn.api.insn),
- 			   (uintptr_t) (p->ainsn.api.insn) +
-@@ -118,15 +131,15 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
- 	return 0;
- }
- 
--static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-+void *alloc_insn_page(void)
- {
--	void *addrs[1];
--	u32 insns[1];
-+	void *page;
- 
--	addrs[0] = (void *)addr;
--	insns[0] = (u32)opcode;
-+	page = vmalloc_exec(PAGE_SIZE);
-+	if (page)
-+		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
- 
--	return aarch64_insn_patch_text(addrs, insns, 1);
-+	return page;
- }
- 
- /* arm kprobe: install breakpoint in text */
--- 
-2.19.1
+> luckly that the previous and the next neighbour of "sync_count" are both aligned
+
+/s/luckly/luckily or fortunately/
+
+> by 8 bytes, so no problem is met now.
+>
+> It's good to explicitly add a workaround:
+> 1. Add gcc __attribute__((aligned(8))) to make sure that "sync_count" is always
+>    aligned by 8 bytes.
+> 2. Add a "u64" union member to make sure the 4 bytes padding is always exist.
+>
+> There is no functional change.
+>
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> ---
+>  drivers/iommu/arm-smmu-v3.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 5059d09..a07bc0d 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -586,7 +586,10 @@ struct arm_smmu_device {
+>
+>  	struct arm_smmu_strtab_cfg	strtab_cfg;
+>
+> +	union {
+> +	u64				padding; /* workaround for Hisilicon */
+
+I think that a more detailed comment is required.
+
+>  	u32				sync_count;
+
+Can you indent these 2 members? However - as discussed internally - this 
+may have endian issue so better to declare full 64b struct.
+
+> +	} __attribute__((aligned(8)));
+>
+>  	/* IOMMU core code handle */
+>  	struct iommu_device		iommu;
+>
+Thanks
+
+
 
