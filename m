@@ -2,130 +2,158 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C835C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37114C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 244A4208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:39:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFDEF208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:39:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZiaRs2/x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 244A4208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="KO1Yk3zs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFDEF208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbeJPG0r (ORCPT
+        id S1727103AbeJPG1N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:26:47 -0400
-Received: from mail-pg1-f170.google.com ([209.85.215.170]:35679 "EHLO
-        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbeJPG0r (ORCPT
+        Tue, 16 Oct 2018 02:27:13 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:38672 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbeJPG1N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:26:47 -0400
-Received: by mail-pg1-f170.google.com with SMTP id v133-v6so9840185pgb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 15:39:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MuY8LAxSxS55zRD95DXrDh+Km3xdX2skhUgRR8XSkKI=;
-        b=ZiaRs2/xfxbh3Z028bjxcboNEtR7ODXlDQvCkTTeBTgLAw8xabjDoXdtlLlvl9ba3P
-         E/rYSMdqX7UsESJj4BeGEpX4TvlCvqffyyPXnf+vhdOq+x1sMdtL5Fz+mZdvNXASJq3w
-         HMjFViNH8MoB3A5s0X84msDUa9mgJKX96jl+I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MuY8LAxSxS55zRD95DXrDh+Km3xdX2skhUgRR8XSkKI=;
-        b=WW+DNyuhwaIUTY8OwUKyj4VQlxjIUq9kibE4l83SikuEGecKafaXEeVAPIo6tyIE09
-         nD+KX0j4BI8ZDOTQzF1qs+Mu60ozxcHsEVZ0IeFin/19nvuNsHqt/bqaoYLq6WXMY+82
-         cvinPkcAEWwpA490WdSfmOU2fEn1Ih5c/iIqxQCUnE1m8pnPxZsq9ImLaZOH+nxXr/JZ
-         gueQl9C+5woGNOxdEf+vYdXLNZI6Ss5lTL4P3iaPqKFR0l8v4Nbs+Q4bGs5a/sh56B5/
-         5RXfcOh0HEd5dD1Oynadj480vBwn5WDbjHb1zettu+QRlt+cpayJLxM6eMOSDk9d1ucJ
-         loRQ==
-X-Gm-Message-State: ABuFfoidEK+A2IxnobHABSS/XwrM6tCO0bC6zNZUTBF9G7mEP702ZB+v
-        7NdD+0DtMaB5CF0MWot3393BuA==
-X-Google-Smtp-Source: ACcGV62OQPn7nBG5elb/A8zvfgFdF0M2n1dhKx9o/79nEmZq8sX047Z4nMHrtRaEIjfCDqidg0nStw==
-X-Received: by 2002:a63:4952:: with SMTP id y18-v6mr17776728pgk.32.1539643170806;
-        Mon, 15 Oct 2018 15:39:30 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id r1-v6sm15379649pfb.41.2018.10.15.15.39.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 15:39:30 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dean Jenkins <Dean_Jenkins@mentor.com>
-Cc:     linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Dmitry Grinberg <dmitrygr@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] Bluetooth: Fix locking in bt_accept_enqueue() for BH context
-Date:   Mon, 15 Oct 2018 15:39:10 -0700
-Message-Id: <20181015223910.197729-1-mka@chromium.org>
-X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
+        Tue, 16 Oct 2018 02:27:13 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 77F135C0106;
+        Tue, 16 Oct 2018 00:39:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1539643195;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=a5fmKdPZv7n3sGIOkp3gYPF61JK0ZBvyuyKgIHMZoSg=;
+        b=KO1Yk3zsbLO1WnxUIC+u1rOZI8FereBrgLEbDdEo1DJKPOC+Op24eI/iL/sP5KGDyPucXz
+        Mm/B6R6KaoYoK+3MHcEtKQ5lgs1HNs9xtnHFtombc4YgyUEVZ6MP80WG9aFTB3ETsiMRAN
+        GIEYD9V4JjyTsS65XVUFnPJR0KY1sYU=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 16 Oct 2018 00:39:54 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     raj.khem@gmail.com, ulli.kroll@googlemail.com, joel@jms.id.au,
+        nico@linaro.org, arnd@arndb.de, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: copypage-fa: add kto and kfrom to input operands
+ list
+In-Reply-To: <20181015222302.GZ30658@n2100.armlinux.org.uk>
+References: <20181015221629.13924-1-stefan@agner.ch>
+ <20181015222302.GZ30658@n2100.armlinux.org.uk>
+Message-ID: <26d465580722c7f65b6916e96e283967@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With commit e16337622016 ("Bluetooth: Handle bt_accept_enqueue() socket
-atomically") lock_sock[_nested]() is used to acquire the socket lock
-before manipulating the socket. lock_sock[_nested]() may block, which
-is problematic since bt_accept_enqueue() can be called in bottom half
-context (e.g. from rfcomm_connect_ind()).
+On 16.10.2018 00:23, Russell King - ARM Linux wrote:
+> On Tue, Oct 16, 2018 at 12:16:29AM +0200, Stefan Agner wrote:
+>> When functions incoming parameters are not in input operands list gcc
+>> 4.5 does not load the parameters into registers before calling this
+>> function but the inline assembly assumes valid addresses inside this
+>> function. This breaks the code because r0 and r1 are invalid when
+>> execution enters v4wb_copy_user_page ()
+> 
+> NAK.  Naked functions must never be inlined.  Please add a "noinline"
+> attribute to the function rather than making things more complex.
+> 
 
-The socket API provides bh_lock_sock[_nested]() to acquire the socket
-lock in bottom half context. Check the context in bt_accept_enqueue()
-and use the appropriate locking mechanism for the context.
+To be honest, I did not put much thought into this commit since it is
+just doing to copypage-fa.c what 9a40ac86152c ("ARM: 6164/1: Add kto and
+kfrom to input operands list.") has been done to the other copypage
+implementations...
 
-Fixes: e16337622016 ("Bluetooth: Handle bt_accept_enqueue() socket atomically")
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-Not sure if this is the correct solution, it's certainly not elegant and
-checkpatch.pl complains that in_atomic() shouldn't be used outside of
-core kernel code. I'm open to other suggestions :)
+[adding Khem]
 
- net/bluetooth/af_bluetooth.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+> The GCC manual states:
+> 
+> `naked'
+>      Use this attribute on the ARM, AVR, MCORE, MSP430, NDS32, RL78, RX
+>      and SPU ports to indicate that the specified function does not
+>      need prologue/epilogue sequences generated by the compiler.  It is
+>      up to the programmer to provide these sequences. The only
+>                                                       ^^^^^^^^
+>      statements that can be safely included in naked functions are
+>      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      `asm' statements that do not have operands.  All other statements,
+>      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      including declarations of local variables, `if' statements, and so
+>      forth, should be avoided.  Naked functions should be used to
+>      implement the body of an assembly function, while allowing the
+>      compiler to construct the requisite function declaration for the
+>      assembler.
+> 
+> The 'I' attribute is fine here because it is a constant that is not
+> allowed to be in a register (and hence has no code generation side
+> effects.)
+> 
+> Adding operands for the input parameters, however, isn't going to
+> work around the fact that _this_ assembly is written to be out of
+> line and so it must never be inlined by the compiler.
 
-diff --git a/net/bluetooth/af_bluetooth.c b/net/bluetooth/af_bluetooth.c
-index deacc52d7ff1..0f0540dbb44a 100644
---- a/net/bluetooth/af_bluetooth.c
-+++ b/net/bluetooth/af_bluetooth.c
-@@ -159,10 +159,20 @@ void bt_accept_enqueue(struct sock *parent, struct sock *sk)
- 	BT_DBG("parent %p, sk %p", parent, sk);
- 
- 	sock_hold(sk);
--	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
-+
-+	if (in_atomic())
-+		bh_lock_sock_nested(sk);
-+	else
-+		lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
-+
- 	list_add_tail(&bt_sk(sk)->accept_q, &bt_sk(parent)->accept_q);
- 	bt_sk(sk)->parent = parent;
--	release_sock(sk);
-+
-+	if (in_atomic())
-+		bh_unlock_sock(sk);
-+	else
-+		release_sock(sk);
-+
- 	parent->sk_ack_backlog++;
- }
- EXPORT_SYMBOL(bt_accept_enqueue);
--- 
-2.19.1.331.ge82ca0e54c-goog
+I briefly looked at a disassembled version after applying both patches,
+it indeed leads to inlining. However, the code seems to be working
+(thanks to asm volatile?)...
 
+Anyway, my goal is actually what patch 2 ("ARM: copypage: do not use
+naked functions") is doing: Make Clang happy. As a matter of fact,
+reverting 9a40ac86152c actually fixes compilation for Clang too, and
+seems to lead to a working Kernel (tested with versatile_defconfig in
+Qemu), so maybe that is what we should do here?
+
+--
+Stefan
+
+> 
+>> Also the constant needs to be used as third input operand so account
+>> for that as well.
+>>
+>> This fixes copypage-fa.c what has previously done before for the other
+>> copypage implementations in commit 9a40ac86152c ("ARM: 6164/1: Add kto
+>> and kfrom to input operands list.").
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>>  arch/arm/mm/copypage-fa.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm/mm/copypage-fa.c b/arch/arm/mm/copypage-fa.c
+>> index d130a5ece5d5..ec6501308c60 100644
+>> --- a/arch/arm/mm/copypage-fa.c
+>> +++ b/arch/arm/mm/copypage-fa.c
+>> @@ -22,7 +22,7 @@ fa_copy_user_page(void *kto, const void *kfrom)
+>>  {
+>>  	asm("\
+>>  	stmfd	sp!, {r4, lr}			@ 2\n\
+>> -	mov	r2, %0				@ 1\n\
+>> +	mov	r2, %2				@ 1\n\
+>>  1:	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
+>>  	stmia	r0, {r3, r4, ip, lr}		@ 4\n\
+>>  	mcr	p15, 0, r0, c7, c14, 1		@ 1   clean and invalidate D line\n\
+>> @@ -36,7 +36,7 @@ fa_copy_user_page(void *kto, const void *kfrom)
+>>  	mcr	p15, 0, r2, c7, c10, 4		@ 1   drain WB\n\
+>>  	ldmfd	sp!, {r4, pc}			@ 3"
+>>  	:
+>> -	: "I" (PAGE_SIZE / 32));
+>> +	: "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 32));
+>>  }
+>>
+>>  void fa_copy_user_highpage(struct page *to, struct page *from,
+>> --
+>> 2.19.1
+>>
