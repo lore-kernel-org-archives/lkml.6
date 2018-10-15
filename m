@@ -4,38 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70039C71133
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF1BC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F36D2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCEE02148D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:56:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mjVs02jw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F36D2148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x0t/Cuuz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCEE02148D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbeJPBmv (ORCPT
+        id S1727008AbeJPBnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 21:42:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54118 "EHLO mail.kernel.org"
+        Mon, 15 Oct 2018 21:43:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbeJPBmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726870AbeJPBmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 15 Oct 2018 21:42:51 -0400
 Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBBBC21486;
-        Mon, 15 Oct 2018 17:56:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23DD421480;
+        Mon, 15 Oct 2018 17:56:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539626192;
-        bh=v598lnHPW4wVl2sYpTmvsJvWs4Hx5LXb2K5BzCL6Irc=;
+        s=default; t=1539626193;
+        bh=nOh2GvmwPQWQT+YCUkeUesJvOy9q9dpFC5DCztOY8h0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mjVs02jw8oZQZfzKfCkJxVuABARDVLNpXnovs/B2CcGC5dKnsXjWYVkgHkacQSM+L
-         yx5g46tYDgdPSpjJKl9Nd3bbKJSoUaDg+xaj/ft8dmRnW6XuPO1B/bLlaW+E8wSyn6
-         YodP+8C1qMwIYJNhqsl/CpEVH1M3CAaaMJA1xq7Q=
+        b=x0t/Cuuz6B/A4NBEFamD2RTZJwCy0GuPrVuEC0s4o2SOKOF03nVEn6UJdBt/Xk+Y+
+         Rp8GfMZrqs7F1HDFiSDLjx2eDlu1iktv2rknPw2qmhTBb50GYaqj/g8jtifWaxOiRX
+         4cVjpNjjkIM+zBlfmeREDVLlxXw5drWFDaxiYkM8=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org
 Cc:     linux-fscrypt@vger.kernel.org,
@@ -47,14 +48,13 @@ Cc:     linux-fscrypt@vger.kernel.org,
         "Jason A . Donenfeld" <Jason@zx2c4.com>,
         Samuel Neves <samuel.c.p.neves@gmail.com>,
         Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Subject: [RFC PATCH v2 10/12] crypto: arm/nhpoly1305 - add NEON-accelerated NHPoly1305
-Date:   Mon, 15 Oct 2018 10:54:22 -0700
-Message-Id: <20181015175424.97147-11-ebiggers@kernel.org>
+Subject: [RFC PATCH v2 12/12] fscrypt: add Adiantum support
+Date:   Mon, 15 Oct 2018 10:54:24 -0700
+Message-Id: <20181015175424.97147-13-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
 In-Reply-To: <20181015175424.97147-1-ebiggers@kernel.org>
 References: <20181015175424.97147-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -63,261 +63,967 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add an ARM NEON implementation of NHPoly1305, an ε-almost-∆-universal
-hash function used in the Adiantum encryption mode.  For now, only the
-NH portion is actually NEON-accelerated; the Poly1305 part is less
-performance-critical so is just implemented in C.
+Add support for the Adiantum encryption mode to fscrypt.  Adiantum is a
+tweakable, length-preserving encryption mode with security provably
+reducible to that of XChaCha12 and AES-256, subject to a security bound.
+It's also a true wide-block mode, unlike XTS.  See the paper
+"Adiantum: length-preserving encryption for entry-level processors"
+(https://eprint.iacr.org/2018/720.pdf) for full details;
+also see the crypto API patch which added Adiantum.
+
+On sufficiently long inputs, Adiantum's performance-critical parts are
+XChaCha12 and the NH hash function.  These algorithms are fast even on
+processors without dedicated crypto instructions.  Adiantum makes it
+feasible to enable storage encryption on low-end mobile devices that
+lack AES instructions; currently such devices are unencrypted.  On ARM
+Cortex-A7, on 4096-byte messages Adiantum encryption is about 4 times
+faster than AES-256-XTS encryption; decryption is about 5 times faster.
+
+Adiantum is also suitable to replace CTS-CBC for fscrypt's filenames
+encryption, fixing the information leakage in encrypted filenames when
+two filenames in a directory share a common prefix.
+
+Adiantum accepts long IVs, so in fscrypt we include the 16-byte
+per-inode nonce in the IVs too, and we allow userspace to choose to use
+the master key directly rather than deriving per-file keys.  This is
+especially desirable because each Adiantum tfm (crypto_skcipher) uses
+more memory than an AES-XTS tfm, since Adiantum has more sub-tfms as
+well as a long subkey for NH.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- arch/arm/crypto/Kconfig                |   5 ++
- arch/arm/crypto/Makefile               |   2 +
- arch/arm/crypto/nh-neon-core.S         | 116 +++++++++++++++++++++++++
- arch/arm/crypto/nhpoly1305-neon-glue.c |  78 +++++++++++++++++
- 4 files changed, 201 insertions(+)
- create mode 100644 arch/arm/crypto/nh-neon-core.S
- create mode 100644 arch/arm/crypto/nhpoly1305-neon-glue.c
+ Documentation/filesystems/fscrypt.rst | 183 ++++++++-------
+ fs/crypto/crypto.c                    |  35 +--
+ fs/crypto/fname.c                     |  22 +-
+ fs/crypto/fscrypt_private.h           |  66 +++++-
+ fs/crypto/keyinfo.c                   | 322 ++++++++++++++++++++------
+ fs/crypto/policy.c                    |   5 +-
+ include/uapi/linux/fs.h               |   4 +-
+ 7 files changed, 450 insertions(+), 187 deletions(-)
 
-diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
-index cc932d9bba561..458562a34aabe 100644
---- a/arch/arm/crypto/Kconfig
-+++ b/arch/arm/crypto/Kconfig
-@@ -122,4 +122,9 @@ config CRYPTO_CHACHA20_NEON
- 	select CRYPTO_BLKCIPHER
- 	select CRYPTO_CHACHA20
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index cfbc18f0d9c98..63e949b1c2ee6 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -132,47 +132,31 @@ designed for this purpose be used, such as scrypt, PBKDF2, or Argon2.
+ Per-file keys
+ -------------
  
-+config CRYPTO_NHPOLY1305_NEON
-+	tristate "NEON accelerated NHPoly1305 hash function (for Adiantum)"
-+	depends on KERNEL_MODE_NEON
-+	select CRYPTO_NHPOLY1305
+-Master keys are not used to encrypt file contents or names directly.
+-Instead, a unique key is derived for each encrypted file, including
+-each regular file, directory, and symbolic link.  This has several
+-advantages:
+-
+-- In cryptosystems, the same key material should never be used for
+-  different purposes.  Using the master key as both an XTS key for
+-  contents encryption and as a CTS-CBC key for filenames encryption
+-  would violate this rule.
+-- Per-file keys simplify the choice of IVs (Initialization Vectors)
+-  for contents encryption.  Without per-file keys, to ensure IV
+-  uniqueness both the inode and logical block number would need to be
+-  encoded in the IVs.  This would make it impossible to renumber
+-  inodes, which e.g. ``resize2fs`` can do when resizing an ext4
+-  filesystem.  With per-file keys, it is sufficient to encode just the
+-  logical block number in the IVs.
+-- Per-file keys strengthen the encryption of filenames, where IVs are
+-  reused out of necessity.  With a unique key per directory, IV reuse
+-  is limited to within a single directory.
+-- Per-file keys allow individual files to be securely erased simply by
+-  securely erasing their keys.  (Not yet implemented.)
+-
+-A KDF (Key Derivation Function) is used to derive per-file keys from
+-the master key.  This is done instead of wrapping a randomly-generated
+-key for each file because it reduces the size of the encryption xattr,
+-which for some filesystems makes the xattr more likely to fit in-line
+-in the filesystem's inode table.  With a KDF, only a 16-byte nonce is
+-required --- long enough to make key reuse extremely unlikely.  A
+-wrapped key, on the other hand, would need to be up to 64 bytes ---
+-the length of an AES-256-XTS key.  Furthermore, currently there is no
+-requirement to support unlocking a file with multiple alternative
+-master keys or to support rotating master keys.  Instead, the master
+-keys may be wrapped in userspace, e.g. as done by the `fscrypt
+-<https://github.com/google/fscrypt>`_ tool.
+-
+-The current KDF encrypts the master key using the 16-byte nonce as an
+-AES-128-ECB key.  The output is used as the derived key.  If the
+-output is longer than needed, then it is truncated to the needed
+-length.  Truncation is the norm for directories and symlinks, since
+-those use the CTS-CBC encryption mode which requires a key half as
+-long as that required by the XTS encryption mode.
++Since each master key can protect many files, it is necessary to
++"tweak" the encryption of each file, so that the same plaintext in two
++files doesn't map to the same ciphertext, or vice versa.
 +
- endif
-diff --git a/arch/arm/crypto/Makefile b/arch/arm/crypto/Makefile
-index 005482ff95047..b65d6bfab8e6b 100644
---- a/arch/arm/crypto/Makefile
-+++ b/arch/arm/crypto/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_CRYPTO_SHA1_ARM_NEON) += sha1-arm-neon.o
- obj-$(CONFIG_CRYPTO_SHA256_ARM) += sha256-arm.o
- obj-$(CONFIG_CRYPTO_SHA512_ARM) += sha512-arm.o
- obj-$(CONFIG_CRYPTO_CHACHA20_NEON) += chacha-neon.o
-+obj-$(CONFIG_CRYPTO_NHPOLY1305_NEON) += nhpoly1305-neon.o
++In most cases, fscrypt solves this problem by deriving per-file keys.
++When a new encrypted inode (regular file, directory, or symlink) is
++created, fscrypt generates a 16-byte nonce uniformly at random and
++stores it in the inode's encryption xattr.  Then, a KDF (Key
++Derivation Function) is used to derive an inode-specific encryption
++key from the master key and nonce.
++
++The Adiantum encryption mode (see `Encryption modes and usage`_) is
++special, since it accepts long IVs and is suited for both contents and
++filenames encryption.  For it, fscrypt includes the 16-byte nonce in
++the IVs, and users can choose to use the master key for Adiantum
++encryption directly, for added efficiency.  In this configuration, no
++per-file keys are derived.  However, when doing this, users must take
++care not to reuse the same master key for any other modes.
++
++Below, the KDF and design considerations are described in more detail.
++
++The current KDF works by encrypting the master key with AES-128-ECB,
++using the 16-byte nonce as the AES key.  The output is used as the
++derived key.  If the output is longer than needed, then it is
++truncated to the needed length.
  
- ce-obj-$(CONFIG_CRYPTO_AES_ARM_CE) += aes-arm-ce.o
- ce-obj-$(CONFIG_CRYPTO_SHA1_ARM_CE) += sha1-arm-ce.o
-@@ -53,6 +54,7 @@ ghash-arm-ce-y	:= ghash-ce-core.o ghash-ce-glue.o
- crct10dif-arm-ce-y	:= crct10dif-ce-core.o crct10dif-ce-glue.o
- crc32-arm-ce-y:= crc32-ce-core.o crc32-ce-glue.o
- chacha-neon-y := chacha-neon-core.o chacha-neon-glue.o
-+nhpoly1305-neon-y := nh-neon-core.o nhpoly1305-neon-glue.o
+ Note: this KDF meets the primary security requirement, which is to
+ produce unique derived keys that preserve the entropy of the master
+@@ -181,6 +165,28 @@ However, it is nonstandard and has some problems such as being
+ reversible, so it is generally considered to be a mistake!  It may be
+ replaced with HKDF or another more standard KDF in the future.
  
- ifdef REGENERATE_ARM_CRYPTO
- quiet_cmd_perl = PERL    $@
-diff --git a/arch/arm/crypto/nh-neon-core.S b/arch/arm/crypto/nh-neon-core.S
-new file mode 100644
-index 0000000000000..434d80ab531c2
---- /dev/null
-+++ b/arch/arm/crypto/nh-neon-core.S
-@@ -0,0 +1,116 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * NH - ε-almost-universal hash function, NEON accelerated version
-+ *
-+ * Copyright 2018 Google LLC
-+ *
-+ * Author: Eric Biggers <ebiggers@google.com>
-+ */
++Key derivation was chosen over key wrapping because wrapped keys would
++require larger xattrs which would be less likely to fit in-line in the
++filesystem's inode table, and there didn't appear to be any
++significant advantages to key wrapping.  In particular, currently
++there is no requirement to support unlocking a file with multiple
++alternative master keys or to support rotating master keys.  Instead,
++the master keys may be wrapped in userspace, e.g. as done by the
++`fscrypt <https://github.com/google/fscrypt>`_ tool.
 +
-+#include <linux/linkage.h>
++Including the inode number in the IVs was considered.  However, it was
++rejected as it would have prevented ext4 filesystems from being
++resized, and by itself still wouldn't have been sufficient to prevent
++the same key from being directly reused for both XTS and CTS-CBC.
 +
-+	.text
-+	.fpu		neon
++Including the per-inode nonce in the IVs would allow filesystem
++resizing, but it wouldn't allow key reuse between two different modes,
++nor would it be compatible with XTS and CTS-CBC since a 16-byte IV
++isn't long enough to contain both a collision-resistant nonce and a
++block offset.  However, this method works well for Adiantum, which
++accepts longer IVs and is suited for both contents and filenames
++encryption.
 +
-+	KEY		.req	r0
-+	MESSAGE		.req	r1
-+	MESSAGE_LEN	.req	r2
-+	HASH		.req	r3
+ Encryption modes and usage
+ ==========================
+ 
+@@ -191,54 +197,72 @@ Currently, the following pairs of encryption modes are supported:
+ 
+ - AES-256-XTS for contents and AES-256-CTS-CBC for filenames
+ - AES-128-CBC for contents and AES-128-CTS-CBC for filenames
++- Adiantum for both contents and filenames
 +
-+	PASS0_SUMS	.req	q0
-+	PASS0_SUM_A	.req	d0
-+	PASS0_SUM_B	.req	d1
-+	PASS1_SUMS	.req	q1
-+	PASS1_SUM_A	.req	d2
-+	PASS1_SUM_B	.req	d3
-+	PASS2_SUMS	.req	q2
-+	PASS2_SUM_A	.req	d4
-+	PASS2_SUM_B	.req	d5
-+	PASS3_SUMS	.req	q3
-+	PASS3_SUM_A	.req	d6
-+	PASS3_SUM_B	.req	d7
-+	K0		.req	q4
-+	K1		.req	q5
-+	K2		.req	q6
-+	K3		.req	q7
-+	T0		.req	q8
-+	T0_L		.req	d16
-+	T0_H		.req	d17
-+	T1		.req	q9
-+	T1_L		.req	d18
-+	T1_H		.req	d19
-+	T2		.req	q10
-+	T2_L		.req	d20
-+	T2_H		.req	d21
-+	T3		.req	q11
-+	T3_L		.req	d22
-+	T3_H		.req	d23
++If unsure, you should use the (AES-256-XTS, AES-256-CTS-CBC) pair.
+ 
+-It is strongly recommended to use AES-256-XTS for contents encryption.
+ AES-128-CBC was added only for low-powered embedded devices with
+ crypto accelerators such as CAAM or CESA that do not support XTS.
+ 
++Adiantum is a (primarily) stream cipher-based mode that was designed
++primarily for CPUs that don't support AES instructions.  Though
++Adiantum actually provides a stronger formal notion of security than
++XTS and CTS-CBC (since it's a true wide-block mode), it's also newer
++and depends on the security of XChaCha12 in addition to AES-256.
 +
-+.macro _nh_stride	k0, k1, k2, k3
+ New encryption modes can be added relatively easily, without changes
+ to individual filesystems.  However, authenticated encryption (AE)
+ modes are not currently supported because of the difficulty of dealing
+ with ciphertext expansion.
+ 
++Contents encryption
++-------------------
 +
-+	// Load next message stride
-+	vld1.8		{T3}, [MESSAGE]!
+ For file contents, each filesystem block is encrypted independently.
+ Currently, only the case where the filesystem block size is equal to
+-the system's page size (usually 4096 bytes) is supported.  With the
+-XTS mode of operation (recommended), the logical block number within
+-the file is used as the IV.  With the CBC mode of operation (not
+-recommended), ESSIV is used; specifically, the IV for CBC is the
+-logical block number encrypted with AES-256, where the AES-256 key is
+-the SHA-256 hash of the inode's data encryption key.
+-
+-For filenames, the full filename is encrypted at once.  Because of the
+-requirements to retain support for efficient directory lookups and
+-filenames of up to 255 bytes, a constant initialization vector (IV) is
+-used.  However, each encrypted directory uses a unique key, which
+-limits IV reuse to within a single directory.  Note that IV reuse in
+-the context of CTS-CBC encryption means that when the original
+-filenames share a common prefix at least as long as the cipher block
+-size (16 bytes for AES), the corresponding encrypted filenames will
+-also share a common prefix.  This is undesirable; it may be fixed in
+-the future by switching to an encryption mode that is a strong
+-pseudorandom permutation on arbitrary-length messages, e.g. the HEH
+-(Hash-Encrypt-Hash) mode.
+-
+-Since filenames are encrypted with the CTS-CBC mode of operation, the
+-plaintext and ciphertext filenames need not be multiples of the AES
+-block size, i.e. 16 bytes.  However, the minimum size that can be
+-encrypted is 16 bytes, so shorter filenames are NUL-padded to 16 bytes
+-before being encrypted.  In addition, to reduce leakage of filename
+-lengths via their ciphertexts, all filenames are NUL-padded to the
+-next 4, 8, 16, or 32-byte boundary (configurable).  32 is recommended
+-since this provides the best confidentiality, at the cost of making
+-directory entries consume slightly more space.  Note that since NUL
+-(``\0``) is not otherwise a valid character in filenames, the padding
+-will never produce duplicate plaintexts.
++the system's page size (usually 4096 bytes) is supported.  IVs are
++chosen as follows, depending on the contents encryption mode:
 +
-+	// Load next key stride
-+	vld1.32		{\k3}, [KEY]!
++- XTS: the logical block number within the file.
++- CBC: ESSIV, specifically the logical block number within the file
++  encrypted with AES-256, where the AES-256 key is the SHA-256 hash of
++  the inode's data encryption key.
++- Adiantum: the logical block number within the file concatenated with
++  the per-file nonce.  (As noted earlier, including the nonce makes it
++  safe to use the same key for many files.)
 +
-+	// Add message words to key words
-+	vadd.u32	T0, T3, \k0
-+	vadd.u32	T1, T3, \k1
-+	vadd.u32	T2, T3, \k2
-+	vadd.u32	T3, T3, \k3
++Filenames encryption
++--------------------
 +
-+	// Multiply 32x32 => 64 and accumulate
-+	vmlal.u32	PASS0_SUMS, T0_L, T0_H
-+	vmlal.u32	PASS1_SUMS, T1_L, T1_H
-+	vmlal.u32	PASS2_SUMS, T2_L, T2_H
-+	vmlal.u32	PASS3_SUMS, T3_L, T3_H
-+.endm
++For filenames, each full filename is encrypted at once.  Because of
++the requirements to retain support for efficient directory lookups and
++filenames of up to 255 bytes, the same IV is used for every filename
++in a directory.
 +
-+/*
-+ * void nh_neon(const u32 *key, const u8 *message, size_t message_len,
-+ *		u8 hash[NH_HASH_BYTES])
-+ *
-+ * It's guaranteed that message_len % 16 == 0.
-+ */
-+ENTRY(nh_neon)
++However, each encrypted directory still uses a unique key; or
++alternatively has the inode's nonce included in the IV (for Adiantum).
++Thus, IV reuse is limited to within a single directory.
 +
-+	vld1.32		{K0,K1}, [KEY]!
-+	  vmov.u64	PASS0_SUMS, #0
-+	  vmov.u64	PASS1_SUMS, #0
-+	vld1.32		{K2}, [KEY]!
-+	  vmov.u64	PASS2_SUMS, #0
-+	  vmov.u64	PASS3_SUMS, #0
++With CTS-CBC, the IV reuse means that when the plaintext filenames
++share a common prefix at least as long as the cipher block size (16
++bytes for AES), the corresponding encrypted filenames will also share
++a common prefix.  This is undesirable.  Adiantum does not have this
++weakness, as it is a super-pseudorandom permutation.
 +
-+	subs		MESSAGE_LEN, MESSAGE_LEN, #64
-+	blt		.Lloop4_done
-+.Lloop4:
-+	_nh_stride	K0, K1, K2, K3
-+	_nh_stride	K1, K2, K3, K0
-+	_nh_stride	K2, K3, K0, K1
-+	_nh_stride	K3, K0, K1, K2
-+	subs		MESSAGE_LEN, MESSAGE_LEN, #64
-+	bge		.Lloop4
-+
-+.Lloop4_done:
-+	ands		MESSAGE_LEN, MESSAGE_LEN, #63
-+	beq		.Ldone
-+	_nh_stride	K0, K1, K2, K3
-+
-+	subs		MESSAGE_LEN, MESSAGE_LEN, #16
-+	beq		.Ldone
-+	_nh_stride	K1, K2, K3, K0
-+
-+	subs		MESSAGE_LEN, MESSAGE_LEN, #16
-+	beq		.Ldone
-+	_nh_stride	K2, K3, K0, K1
-+
-+.Ldone:
-+	// Sum the accumulators for each pass, then store the sums to 'hash'
-+	vadd.u64	T0_L, PASS0_SUM_A, PASS0_SUM_B
-+	vadd.u64	T0_H, PASS1_SUM_A, PASS1_SUM_B
-+	vadd.u64	T1_L, PASS2_SUM_A, PASS2_SUM_B
-+	vadd.u64	T1_H, PASS3_SUM_A, PASS3_SUM_B
-+	vst1.8		{T0-T1}, [HASH]
-+	bx		lr
-+ENDPROC(nh_neon)
-diff --git a/arch/arm/crypto/nhpoly1305-neon-glue.c b/arch/arm/crypto/nhpoly1305-neon-glue.c
-new file mode 100644
-index 0000000000000..df48a00f4c50f
---- /dev/null
-+++ b/arch/arm/crypto/nhpoly1305-neon-glue.c
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * NHPoly1305 - ε-almost-∆-universal hash function for Adiantum
-+ * (NEON accelerated version)
-+ *
-+ * Copyright 2018 Google LLC
-+ */
-+
-+#include <asm/neon.h>
-+#include <asm/simd.h>
-+#include <crypto/internal/hash.h>
-+#include <crypto/nhpoly1305.h>
-+#include <linux/module.h>
-+
-+asmlinkage void nh_neon(const u32 *key, const u8 *message, size_t message_len,
-+			u8 hash[NH_HASH_BYTES]);
-+
-+static void _nh_neon(const u32 *key, const u8 *message, size_t message_len,
-+		     __le64 hash[NH_NUM_PASSES])
++All supported filenames encryption modes accept any plaintext length
++>= 16 bytes; cipher block alignment is not required.  However,
++filenames shorter than 16 bytes are NUL-padded to 16 bytes before
++being encrypted.  In addition, to reduce leakage of filename lengths
++via their ciphertexts, all filenames are NUL-padded to the next 4, 8,
++16, or 32-byte boundary (configurable).  32 is recommended since this
++provides the best confidentiality, at the cost of making directory
++entries consume slightly more space.  Note that since NUL (``\0``) is
++not otherwise a valid character in filenames, the padding will never
++produce duplicate plaintexts.
+ 
+ Symbolic link targets are considered a type of filename and are
+-encrypted in the same way as filenames in directory entries.  Each
+-symlink also uses a unique key; hence, the hardcoded IV is not a
+-problem for symlinks.
++encrypted in the same way as filenames in directory entries, except
++that IV reuse is not a problem as each symlink has its own inode.
+ 
+ User API
+ ========
+@@ -272,9 +296,12 @@ This structure must be initialized as follows:
+   and FS_ENCRYPTION_MODE_AES_256_CTS (4) for
+   ``filenames_encryption_mode``.
+ 
+-- ``flags`` must be set to a value from ``<linux/fs.h>`` which
++- ``flags`` must contain a value from ``<linux/fs.h>`` which
+   identifies the amount of NUL-padding to use when encrypting
+-  filenames.  If unsure, use FS_POLICY_FLAGS_PAD_32 (0x3).
++  filenames.  In addition, if the chosen encryption modes are both
++  FS_ENCRYPTION_MODE_ADIANTUM, this can contain FS_POLICY_FLAGS_DIRECT
++  to specify that the master key should be used directly, without key
++  derivation.  If unsure, use FS_POLICY_FLAGS_PAD_32 (0x3).
+ 
+ - ``master_key_descriptor`` specifies how to find the master key in
+   the keyring; see `Adding keys`_.  It is up to userspace to choose a
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index 0f46cf550907f..5dd59e790ad31 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -133,15 +133,32 @@ struct fscrypt_ctx *fscrypt_get_ctx(const struct inode *inode, gfp_t gfp_flags)
+ }
+ EXPORT_SYMBOL(fscrypt_get_ctx);
+ 
++void fscrypt_prepare_iv(union fscrypt_iv *iv, u64 lblk_num,
++			const struct fscrypt_info *ci)
 +{
-+	nh_neon(key, message, message_len, (u8 *)hash);
++	if (ci->ci_mode->uses_long_ivs) {
++		/* Using lblk_num and nonce as tweak */
++		iv->long_iv.index = cpu_to_le64(lblk_num);
++		memcpy(iv->long_iv.nonce, ci->ci_nonce,
++		       FS_KEY_DERIVATION_NONCE_SIZE);
++		iv->long_iv.unused = 0;
++	} else {
++		/* Using only lblk_num as tweak (key was derived from nonce) */
++		iv->short_iv.index = cpu_to_le64(lblk_num);
++		iv->short_iv.unused = 0;
++		if (ci->ci_essiv_tfm != NULL) {
++			crypto_cipher_encrypt_one(ci->ci_essiv_tfm, (u8 *)iv,
++						  (const u8 *)iv);
++		}
++	}
 +}
 +
-+static int nhpoly1305_neon_update(struct shash_desc *desc,
-+				  const u8 *src, unsigned int srclen)
+ int fscrypt_do_page_crypto(const struct inode *inode, fscrypt_direction_t rw,
+ 			   u64 lblk_num, struct page *src_page,
+ 			   struct page *dest_page, unsigned int len,
+ 			   unsigned int offs, gfp_t gfp_flags)
+ {
+-	struct {
+-		__le64 index;
+-		u8 padding[FS_IV_SIZE - sizeof(__le64)];
+-	} iv;
++	union fscrypt_iv iv;
+ 	struct skcipher_request *req = NULL;
+ 	DECLARE_CRYPTO_WAIT(wait);
+ 	struct scatterlist dst, src;
+@@ -151,15 +168,7 @@ int fscrypt_do_page_crypto(const struct inode *inode, fscrypt_direction_t rw,
+ 
+ 	BUG_ON(len == 0);
+ 
+-	BUILD_BUG_ON(sizeof(iv) != FS_IV_SIZE);
+-	BUILD_BUG_ON(AES_BLOCK_SIZE != FS_IV_SIZE);
+-	iv.index = cpu_to_le64(lblk_num);
+-	memset(iv.padding, 0, sizeof(iv.padding));
+-
+-	if (ci->ci_essiv_tfm != NULL) {
+-		crypto_cipher_encrypt_one(ci->ci_essiv_tfm, (u8 *)&iv,
+-					  (u8 *)&iv);
+-	}
++	fscrypt_prepare_iv(&iv, lblk_num, ci);
+ 
+ 	req = skcipher_request_alloc(tfm, gfp_flags);
+ 	if (!req)
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index d7a0f682ca122..c60ae8f70395f 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -40,10 +40,11 @@ int fname_encrypt(struct inode *inode, const struct qstr *iname,
+ {
+ 	struct skcipher_request *req = NULL;
+ 	DECLARE_CRYPTO_WAIT(wait);
+-	struct crypto_skcipher *tfm = inode->i_crypt_info->ci_ctfm;
+-	int res = 0;
+-	char iv[FS_CRYPTO_BLOCK_SIZE];
++	struct fscrypt_info *ci = inode->i_crypt_info;
++	struct crypto_skcipher *tfm = ci->ci_ctfm;
++	union fscrypt_iv iv;
+ 	struct scatterlist sg;
++	int res;
+ 
+ 	/*
+ 	 * Copy the filename to the output buffer for encrypting in-place and
+@@ -55,7 +56,7 @@ int fname_encrypt(struct inode *inode, const struct qstr *iname,
+ 	memset(out + iname->len, 0, olen - iname->len);
+ 
+ 	/* Initialize the IV */
+-	memset(iv, 0, FS_CRYPTO_BLOCK_SIZE);
++	fscrypt_prepare_iv(&iv, 0, ci);
+ 
+ 	/* Set up the encryption request */
+ 	req = skcipher_request_alloc(tfm, GFP_NOFS);
+@@ -65,7 +66,7 @@ int fname_encrypt(struct inode *inode, const struct qstr *iname,
+ 			CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
+ 			crypto_req_done, &wait);
+ 	sg_init_one(&sg, out, olen);
+-	skcipher_request_set_crypt(req, &sg, &sg, olen, iv);
++	skcipher_request_set_crypt(req, &sg, &sg, olen, &iv);
+ 
+ 	/* Do the encryption */
+ 	res = crypto_wait_req(crypto_skcipher_encrypt(req), &wait);
+@@ -94,9 +95,10 @@ static int fname_decrypt(struct inode *inode,
+ 	struct skcipher_request *req = NULL;
+ 	DECLARE_CRYPTO_WAIT(wait);
+ 	struct scatterlist src_sg, dst_sg;
+-	struct crypto_skcipher *tfm = inode->i_crypt_info->ci_ctfm;
+-	int res = 0;
+-	char iv[FS_CRYPTO_BLOCK_SIZE];
++	struct fscrypt_info *ci = inode->i_crypt_info;
++	struct crypto_skcipher *tfm = ci->ci_ctfm;
++	union fscrypt_iv iv;
++	int res;
+ 
+ 	/* Allocate request */
+ 	req = skcipher_request_alloc(tfm, GFP_NOFS);
+@@ -107,12 +109,12 @@ static int fname_decrypt(struct inode *inode,
+ 		crypto_req_done, &wait);
+ 
+ 	/* Initialize IV */
+-	memset(iv, 0, FS_CRYPTO_BLOCK_SIZE);
++	fscrypt_prepare_iv(&iv, 0, ci);
+ 
+ 	/* Create decryption request */
+ 	sg_init_one(&src_sg, iname->name, iname->len);
+ 	sg_init_one(&dst_sg, oname->name, oname->len);
+-	skcipher_request_set_crypt(req, &src_sg, &dst_sg, iname->len, iv);
++	skcipher_request_set_crypt(req, &src_sg, &dst_sg, iname->len, &iv);
+ 	res = crypto_wait_req(crypto_skcipher_decrypt(req), &wait);
+ 	skcipher_request_free(req);
+ 	if (res < 0) {
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index 79debfc9cef91..a3ec179051dc2 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -17,7 +17,6 @@
+ #include <crypto/hash.h>
+ 
+ /* Encryption parameters */
+-#define FS_IV_SIZE			16
+ #define FS_KEY_DERIVATION_NONCE_SIZE	16
+ 
+ /**
+@@ -52,16 +51,42 @@ struct fscrypt_symlink_data {
+ } __packed;
+ 
+ /*
+- * A pointer to this structure is stored in the file system's in-core
+- * representation of an inode.
++ * fscrypt_info - the "encryption key" for an inode
++ *
++ * When an encrypted file's key is made available, an instance of this struct is
++ * allocated and stored in ->i_crypt_info.  Once created, it remains until the
++ * inode is evicted.
+  */
+ struct fscrypt_info {
++
++	/* The actual crypto transform used for encryption and decryption */
++	struct crypto_skcipher *ci_ctfm;
++
++	/*
++	 * Cipher for ESSIV IV generation.  Only set for CBC contents
++	 * encryption, otherwise is NULL.
++	 */
++	struct crypto_cipher *ci_essiv_tfm;
++
++	/*
++	 * Encryption mode used for this inode.  It corresponds to either
++	 * ci_data_mode or ci_filename_mode, depending on the inode type.
++	 */
++	struct fscrypt_mode *ci_mode;
++
++	/*
++	 * If non-NULL, then this inode uses a master key directly rather than a
++	 * derived key, and ci_ctfm will equal ci_master_key->mk_ctfm.
++	 * Otherwise, this inode uses a derived key.
++	 */
++	struct fscrypt_master_key *ci_master_key;
++
++	/* fields from the fscrypt_context */
+ 	u8 ci_data_mode;
+ 	u8 ci_filename_mode;
+ 	u8 ci_flags;
+-	struct crypto_skcipher *ci_ctfm;
+-	struct crypto_cipher *ci_essiv_tfm;
+-	u8 ci_master_key[FS_KEY_DESCRIPTOR_SIZE];
++	u8 ci_master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
++	u8 ci_nonce[FS_KEY_DERIVATION_NONCE_SIZE];
+ };
+ 
+ typedef enum {
+@@ -83,6 +108,10 @@ static inline bool fscrypt_valid_enc_modes(u32 contents_mode,
+ 	    filenames_mode == FS_ENCRYPTION_MODE_AES_256_CTS)
+ 		return true;
+ 
++	if (contents_mode == FS_ENCRYPTION_MODE_ADIANTUM &&
++	    filenames_mode == FS_ENCRYPTION_MODE_ADIANTUM)
++		return true;
++
+ 	return false;
+ }
+ 
+@@ -107,6 +136,21 @@ fscrypt_msg(struct super_block *sb, const char *level, const char *fmt, ...);
+ #define fscrypt_err(sb, fmt, ...)		\
+ 	fscrypt_msg(sb, KERN_ERR, fmt, ##__VA_ARGS__)
+ 
++union fscrypt_iv {
++	struct {
++		__le64 index;
++		__le64 unused;
++	} short_iv;
++	struct {
++		__le64 index;
++		u8 nonce[FS_KEY_DERIVATION_NONCE_SIZE];
++		__le64 unused;
++	} long_iv;
++};
++
++void fscrypt_prepare_iv(union fscrypt_iv *iv, u64 lblk_num,
++			const struct fscrypt_info *ci);
++
+ /* fname.c */
+ extern int fname_encrypt(struct inode *inode, const struct qstr *iname,
+ 			 u8 *out, unsigned int olen);
+@@ -115,6 +159,16 @@ extern bool fscrypt_fname_encrypted_size(const struct inode *inode,
+ 					 u32 *encrypted_len_ret);
+ 
+ /* keyinfo.c */
++
++struct fscrypt_mode {
++	const char *friendly_name;
++	const char *cipher_str;
++	int keysize;
++	bool logged_impl_name;
++	bool uses_essiv;
++	bool uses_long_ivs;
++};
++
+ extern void __exit fscrypt_essiv_cleanup(void);
+ 
+ #endif /* _FSCRYPT_PRIVATE_H */
+diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
+index 7874c9bb2fc53..49bfbe8c15cd4 100644
+--- a/fs/crypto/keyinfo.c
++++ b/fs/crypto/keyinfo.c
+@@ -10,15 +10,20 @@
+  */
+ 
+ #include <keys/user-type.h>
++#include <linux/hashtable.h>
+ #include <linux/scatterlist.h>
+ #include <linux/ratelimit.h>
+ #include <crypto/aes.h>
++#include <crypto/algapi.h>
+ #include <crypto/sha.h>
+ #include <crypto/skcipher.h>
+ #include "fscrypt_private.h"
+ 
+ static struct crypto_shash *essiv_hash_tfm;
+ 
++static DEFINE_HASHTABLE(fscrypt_master_keys, 6); /* 6 bits = 64 buckets */
++static DEFINE_SPINLOCK(fscrypt_master_keys_lock);
++
+ /*
+  * Key derivation function.  This generates the derived key by encrypting the
+  * master key with AES-128-ECB using the inode's nonce as the AES key.
+@@ -123,37 +128,7 @@ find_and_lock_process_key(const char *prefix,
+ 	return ERR_PTR(-ENOKEY);
+ }
+ 
+-/* Find the master key, then derive the inode's actual encryption key */
+-static int find_and_derive_key(const struct inode *inode,
+-			       const struct fscrypt_context *ctx,
+-			       u8 *derived_key, unsigned int derived_keysize)
+-{
+-	struct key *key;
+-	const struct fscrypt_key *payload;
+-	int err;
+-
+-	key = find_and_lock_process_key(FS_KEY_DESC_PREFIX,
+-					ctx->master_key_descriptor,
+-					derived_keysize, &payload);
+-	if (key == ERR_PTR(-ENOKEY) && inode->i_sb->s_cop->key_prefix) {
+-		key = find_and_lock_process_key(inode->i_sb->s_cop->key_prefix,
+-						ctx->master_key_descriptor,
+-						derived_keysize, &payload);
+-	}
+-	if (IS_ERR(key))
+-		return PTR_ERR(key);
+-	err = derive_key_aes(payload->raw, ctx, derived_key, derived_keysize);
+-	up_read(&key->sem);
+-	key_put(key);
+-	return err;
+-}
+-
+-static struct fscrypt_mode {
+-	const char *friendly_name;
+-	const char *cipher_str;
+-	int keysize;
+-	bool logged_impl_name;
+-} available_modes[] = {
++static struct fscrypt_mode available_modes[] = {
+ 	[FS_ENCRYPTION_MODE_AES_256_XTS] = {
+ 		.friendly_name = "AES-256-XTS",
+ 		.cipher_str = "xts(aes)",
+@@ -168,12 +143,19 @@ static struct fscrypt_mode {
+ 		.friendly_name = "AES-128-CBC",
+ 		.cipher_str = "cbc(aes)",
+ 		.keysize = 16,
++		.uses_essiv = true,
+ 	},
+ 	[FS_ENCRYPTION_MODE_AES_128_CTS] = {
+ 		.friendly_name = "AES-128-CTS-CBC",
+ 		.cipher_str = "cts(cbc(aes))",
+ 		.keysize = 16,
+ 	},
++	[FS_ENCRYPTION_MODE_ADIANTUM] = {
++		.friendly_name = "Adiantum",
++		.cipher_str = "adiantum(xchacha12,aes)",
++		.keysize = 32,
++		.uses_long_ivs = true,
++	},
+ };
+ 
+ static struct fscrypt_mode *
+@@ -198,14 +180,178 @@ select_encryption_mode(const struct fscrypt_info *ci, const struct inode *inode)
+ 	return ERR_PTR(-EINVAL);
+ }
+ 
+-static void put_crypt_info(struct fscrypt_info *ci)
++/* Find the master key, then derive the inode's actual encryption key */
++static int find_and_derive_key(const struct inode *inode,
++			       const struct fscrypt_context *ctx,
++			       u8 *derived_key, const struct fscrypt_mode *mode)
+ {
+-	if (!ci)
++	struct key *key;
++	const struct fscrypt_key *payload;
++	int err;
++
++	key = find_and_lock_process_key(FS_KEY_DESC_PREFIX,
++					ctx->master_key_descriptor,
++					mode->keysize, &payload);
++	if (key == ERR_PTR(-ENOKEY) && inode->i_sb->s_cop->key_prefix) {
++		key = find_and_lock_process_key(inode->i_sb->s_cop->key_prefix,
++						ctx->master_key_descriptor,
++						mode->keysize, &payload);
++	}
++	if (IS_ERR(key))
++		return PTR_ERR(key);
++
++	if (ctx->flags & FS_POLICY_FLAGS_DIRECT) {
++		if (mode->uses_long_ivs) {
++			memcpy(derived_key, payload->raw, mode->keysize);
++			err = 0;
++		} else {
++			fscrypt_warn(inode->i_sb,
++				     "direct key mode not allowed with %s\n",
++				     mode->friendly_name);
++			err = -EINVAL;
++		}
++	} else {
++		err = derive_key_aes(payload->raw, ctx, derived_key,
++				     mode->keysize);
++	}
++	up_read(&key->sem);
++	key_put(key);
++	return err;
++}
++
++/* Allocate and key a symmetric cipher object for the given encryption mode */
++static struct crypto_skcipher *
++allocate_skcipher_for_mode(struct fscrypt_mode *mode, const u8 *raw_key,
++			   const struct inode *inode)
 +{
-+	if (srclen < 64 || !may_use_simd())
-+		return crypto_nhpoly1305_update(desc, src, srclen);
++	struct crypto_skcipher *tfm;
++	int err;
 +
-+	do {
-+		unsigned int n = min_t(unsigned int, srclen, PAGE_SIZE);
++	tfm = crypto_alloc_skcipher(mode->cipher_str, 0, 0);
++	if (IS_ERR(tfm)) {
++		fscrypt_warn(inode->i_sb,
++			     "error allocating '%s' transform for inode %lu: %ld",
++			     mode->cipher_str, inode->i_ino, PTR_ERR(tfm));
++		return tfm;
++	}
++	if (unlikely(!mode->logged_impl_name)) {
++		/*
++		 * fscrypt performance can vary greatly depending on which
++		 * crypto algorithm implementation is used.  Help people debug
++		 * performance problems by logging the ->cra_driver_name the
++		 * first time a mode is used.  Note that multiple threads can
++		 * race here, but it doesn't really matter.
++		 */
++		mode->logged_impl_name = true;
++		pr_info("fscrypt: %s using implementation \"%s\"\n",
++			mode->friendly_name,
++			crypto_skcipher_alg(tfm)->base.cra_driver_name);
++	}
++	crypto_skcipher_set_flags(tfm, CRYPTO_TFM_REQ_WEAK_KEY);
++	err = crypto_skcipher_setkey(tfm, raw_key, mode->keysize);
++	if (err)
++		goto err_free_tfm;
 +
-+		kernel_neon_begin();
-+		crypto_nhpoly1305_update_helper(desc, src, n, _nh_neon);
-+		kernel_neon_end();
-+		src += n;
-+		srclen -= n;
-+	} while (srclen);
++	return tfm;
++
++err_free_tfm:
++	crypto_free_skcipher(tfm);
++	return ERR_PTR(err);
++}
++
++/* Master key referenced by FS_POLICY_FLAGS_DIRECT policy */
++struct fscrypt_master_key {
++	struct hlist_node mk_node;
++	refcount_t mk_refcount;
++	const struct fscrypt_mode *mk_mode;
++	struct crypto_skcipher *mk_ctfm;
++	u8 mk_descriptor[FS_KEY_DESCRIPTOR_SIZE];
++	u8 mk_raw[FS_MAX_KEY_SIZE];
++};
++
++static void free_master_key(struct fscrypt_master_key *mk)
++{
++	if (mk) {
++		crypto_free_skcipher(mk->mk_ctfm);
++		kzfree(mk);
++	}
++}
++
++static void put_master_key(struct fscrypt_master_key *mk)
++{
++	if (!refcount_dec_and_lock(&mk->mk_refcount, &fscrypt_master_keys_lock))
+ 		return;
++	hash_del(&mk->mk_node);
++	spin_unlock(&fscrypt_master_keys_lock);
+ 
+-	crypto_free_skcipher(ci->ci_ctfm);
+-	crypto_free_cipher(ci->ci_essiv_tfm);
+-	kmem_cache_free(fscrypt_info_cachep, ci);
++	free_master_key(mk);
++}
++
++static struct fscrypt_master_key *
++find_or_insert_master_key(struct fscrypt_master_key *to_insert,
++			  const u8 *raw_key, const struct fscrypt_mode *mode,
++			  const struct fscrypt_info *ci)
++{
++	unsigned long hash_key;
++	struct fscrypt_master_key *mk;
++
++	BUILD_BUG_ON(sizeof(hash_key) > FS_KEY_DESCRIPTOR_SIZE);
++	memcpy(&hash_key, ci->ci_master_key_descriptor, sizeof(hash_key));
++
++	spin_lock(&fscrypt_master_keys_lock);
++	hash_for_each_possible(fscrypt_master_keys, mk, mk_node, hash_key) {
++		if (memcmp(mk->mk_descriptor, ci->ci_master_key_descriptor,
++			   FS_KEY_DESCRIPTOR_SIZE) != 0)
++			continue;
++		if (mode != mk->mk_mode ||
++		    crypto_memneq(raw_key, mk->mk_raw, mode->keysize))
++			continue;
++		/* using existing tfm with same (descriptor, mode, raw_key) */
++		refcount_inc(&mk->mk_refcount);
++		spin_unlock(&fscrypt_master_keys_lock);
++		free_master_key(to_insert);
++		return mk;
++	}
++	if (to_insert)
++		hash_add(fscrypt_master_keys, &to_insert->mk_node, hash_key);
++	spin_unlock(&fscrypt_master_keys_lock);
++	return to_insert;
++}
++
++/* Prepare to encrypt directly using the master key in the given mode */
++static struct fscrypt_master_key *
++fscrypt_get_master_key(const struct fscrypt_info *ci, struct fscrypt_mode *mode,
++		       const u8 *raw_key, const struct inode *inode)
++{
++	struct fscrypt_master_key *mk;
++	int err;
++
++	/* Is there already a tfm for this key? */
++	mk = find_or_insert_master_key(NULL, raw_key, mode, ci);
++	if (mk)
++		return mk;
++
++	/* Nope, allocate one. */
++	mk = kzalloc(sizeof(*mk), GFP_NOFS);
++	if (!mk)
++		return ERR_PTR(-ENOMEM);
++	refcount_set(&mk->mk_refcount, 1);
++	mk->mk_mode = mode;
++	mk->mk_ctfm = allocate_skcipher_for_mode(mode, raw_key, inode);
++	if (IS_ERR(mk->mk_ctfm)) {
++		err = PTR_ERR(mk->mk_ctfm);
++		mk->mk_ctfm = NULL;
++		goto err_free_mk;
++	}
++	memcpy(mk->mk_descriptor, ci->ci_master_key_descriptor,
++	       FS_KEY_DESCRIPTOR_SIZE);
++	memcpy(mk->mk_raw, raw_key, mode->keysize);
++
++	return find_or_insert_master_key(mk, raw_key, mode, ci);
++
++err_free_mk:
++	free_master_key(mk);
++	return ERR_PTR(err);
+ }
+ 
+ static int derive_essiv_salt(const u8 *key, int keysize, u8 *salt)
+@@ -275,11 +421,66 @@ void __exit fscrypt_essiv_cleanup(void)
+ 	crypto_free_shash(essiv_hash_tfm);
+ }
+ 
++/*
++ * Given the encryption mode and key (normally the derived key, but for
++ * FS_POLICY_FLAGS_DIRECT mode it's the master key), set up the inode's
++ * symmetric cipher transform object(s).
++ */
++static int setup_crypto_transform(struct fscrypt_info *ci,
++				  struct fscrypt_mode *mode,
++				  const u8 *raw_key, const struct inode *inode)
++{
++	struct fscrypt_master_key *mk;
++	struct crypto_skcipher *ctfm;
++	int err;
++
++	if (ci->ci_flags & FS_POLICY_FLAGS_DIRECT) {
++		mk = fscrypt_get_master_key(ci, mode, raw_key, inode);
++		if (IS_ERR(mk))
++			return PTR_ERR(mk);
++		ctfm = mk->mk_ctfm;
++	} else {
++		mk = NULL;
++		ctfm = allocate_skcipher_for_mode(mode, raw_key, inode);
++		if (IS_ERR(ctfm))
++			return PTR_ERR(ctfm);
++	}
++	ci->ci_master_key = mk;
++	ci->ci_ctfm = ctfm;
++
++	if (mode->uses_essiv && S_ISREG(inode->i_mode)) {
++		WARN_ON(mode->uses_long_ivs);
++		BUILD_BUG_ON(FIELD_SIZEOF(union fscrypt_iv, short_iv) !=
++			     AES_BLOCK_SIZE);
++		err = init_essiv_generator(ci, raw_key, mode->keysize);
++		if (err) {
++			fscrypt_warn(inode->i_sb,
++				     "error initializing ESSIV generator for inode %lu: %d",
++				     inode->i_ino, err);
++			return err;
++		}
++	}
 +	return 0;
 +}
 +
-+static struct shash_alg nhpoly1305_alg = {
-+	.digestsize	= POLY1305_DIGEST_SIZE,
-+	.init		= crypto_nhpoly1305_init,
-+	.update		= nhpoly1305_neon_update,
-+	.final		= crypto_nhpoly1305_final,
-+	.setkey		= crypto_nhpoly1305_setkey,
-+	.descsize	= sizeof(struct nhpoly1305_state),
-+	.base		= {
-+		.cra_name		= "nhpoly1305",
-+		.cra_driver_name	= "nhpoly1305-neon",
-+		.cra_priority		= 200,
-+		.cra_ctxsize		= sizeof(struct nhpoly1305_key),
-+		.cra_module		= THIS_MODULE,
-+	},
-+};
-+
-+static int __init nhpoly1305_mod_init(void)
++static void put_crypt_info(struct fscrypt_info *ci)
 +{
-+	if (!(elf_hwcap & HWCAP_NEON))
-+		return -ENODEV;
++	if (!ci)
++		return;
 +
-+	return crypto_register_shash(&nhpoly1305_alg);
++	if (ci->ci_master_key) {
++		put_master_key(ci->ci_master_key);
++	} else {
++		crypto_free_skcipher(ci->ci_ctfm);
++		crypto_free_cipher(ci->ci_essiv_tfm);
++	}
++	kmem_cache_free(fscrypt_info_cachep, ci);
 +}
 +
-+static void __exit nhpoly1305_mod_exit(void)
-+{
-+	crypto_unregister_shash(&nhpoly1305_alg);
-+}
-+
-+module_init(nhpoly1305_mod_init);
-+module_exit(nhpoly1305_mod_exit);
-+
-+MODULE_DESCRIPTION("NHPoly1305 ε-almost-∆-universal hash function (NEON-accelerated)");
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Eric Biggers <ebiggers@google.com>");
-+MODULE_ALIAS_CRYPTO("nhpoly1305");
-+MODULE_ALIAS_CRYPTO("nhpoly1305-neon");
+ int fscrypt_get_encryption_info(struct inode *inode)
+ {
+ 	struct fscrypt_info *crypt_info;
+ 	struct fscrypt_context ctx;
+-	struct crypto_skcipher *ctfm;
+ 	struct fscrypt_mode *mode;
+ 	u8 *raw_key = NULL;
+ 	int res;
+@@ -312,23 +513,23 @@ int fscrypt_get_encryption_info(struct inode *inode)
+ 	if (ctx.flags & ~FS_POLICY_FLAGS_VALID)
+ 		return -EINVAL;
+ 
+-	crypt_info = kmem_cache_alloc(fscrypt_info_cachep, GFP_NOFS);
++	crypt_info = kmem_cache_zalloc(fscrypt_info_cachep, GFP_NOFS);
+ 	if (!crypt_info)
+ 		return -ENOMEM;
+ 
+ 	crypt_info->ci_flags = ctx.flags;
+ 	crypt_info->ci_data_mode = ctx.contents_encryption_mode;
+ 	crypt_info->ci_filename_mode = ctx.filenames_encryption_mode;
+-	crypt_info->ci_ctfm = NULL;
+-	crypt_info->ci_essiv_tfm = NULL;
+-	memcpy(crypt_info->ci_master_key, ctx.master_key_descriptor,
+-				sizeof(crypt_info->ci_master_key));
++	memcpy(crypt_info->ci_master_key_descriptor, ctx.master_key_descriptor,
++	       FS_KEY_DESCRIPTOR_SIZE);
++	memcpy(crypt_info->ci_nonce, ctx.nonce, FS_KEY_DERIVATION_NONCE_SIZE);
+ 
+ 	mode = select_encryption_mode(crypt_info, inode);
+ 	if (IS_ERR(mode)) {
+ 		res = PTR_ERR(mode);
+ 		goto out;
+ 	}
++	crypt_info->ci_mode = mode;
+ 
+ 	/*
+ 	 * This cannot be a stack buffer because it is passed to the scatterlist
+@@ -339,47 +540,14 @@ int fscrypt_get_encryption_info(struct inode *inode)
+ 	if (!raw_key)
+ 		goto out;
+ 
+-	res = find_and_derive_key(inode, &ctx, raw_key, mode->keysize);
++	res = find_and_derive_key(inode, &ctx, raw_key, mode);
+ 	if (res)
+ 		goto out;
+ 
+-	ctfm = crypto_alloc_skcipher(mode->cipher_str, 0, 0);
+-	if (IS_ERR(ctfm)) {
+-		res = PTR_ERR(ctfm);
+-		fscrypt_warn(inode->i_sb,
+-			     "error allocating '%s' transform for inode %lu: %d",
+-			     mode->cipher_str, inode->i_ino, res);
+-		goto out;
+-	}
+-	if (unlikely(!mode->logged_impl_name)) {
+-		/*
+-		 * fscrypt performance can vary greatly depending on which
+-		 * crypto algorithm implementation is used.  Help people debug
+-		 * performance problems by logging the ->cra_driver_name the
+-		 * first time a mode is used.  Note that multiple threads can
+-		 * race here, but it doesn't really matter.
+-		 */
+-		mode->logged_impl_name = true;
+-		pr_info("fscrypt: %s using implementation \"%s\"\n",
+-			mode->friendly_name,
+-			crypto_skcipher_alg(ctfm)->base.cra_driver_name);
+-	}
+-	crypt_info->ci_ctfm = ctfm;
+-	crypto_skcipher_set_flags(ctfm, CRYPTO_TFM_REQ_WEAK_KEY);
+-	res = crypto_skcipher_setkey(ctfm, raw_key, mode->keysize);
++	res = setup_crypto_transform(crypt_info, mode, raw_key, inode);
+ 	if (res)
+ 		goto out;
+ 
+-	if (S_ISREG(inode->i_mode) &&
+-	    crypt_info->ci_data_mode == FS_ENCRYPTION_MODE_AES_128_CBC) {
+-		res = init_essiv_generator(crypt_info, raw_key, mode->keysize);
+-		if (res) {
+-			fscrypt_warn(inode->i_sb,
+-				     "error initializing ESSIV generator for inode %lu: %d",
+-				     inode->i_ino, res);
+-			goto out;
+-		}
+-	}
+ 	if (cmpxchg(&inode->i_crypt_info, NULL, crypt_info) == NULL)
+ 		crypt_info = NULL;
+ out:
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index c6d431a5cce93..f490de921ce82 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -199,7 +199,8 @@ int fscrypt_has_permitted_context(struct inode *parent, struct inode *child)
+ 	child_ci = child->i_crypt_info;
+ 
+ 	if (parent_ci && child_ci) {
+-		return memcmp(parent_ci->ci_master_key, child_ci->ci_master_key,
++		return memcmp(parent_ci->ci_master_key_descriptor,
++			      child_ci->ci_master_key_descriptor,
+ 			      FS_KEY_DESCRIPTOR_SIZE) == 0 &&
+ 			(parent_ci->ci_data_mode == child_ci->ci_data_mode) &&
+ 			(parent_ci->ci_filename_mode ==
+@@ -254,7 +255,7 @@ int fscrypt_inherit_context(struct inode *parent, struct inode *child,
+ 	ctx.contents_encryption_mode = ci->ci_data_mode;
+ 	ctx.filenames_encryption_mode = ci->ci_filename_mode;
+ 	ctx.flags = ci->ci_flags;
+-	memcpy(ctx.master_key_descriptor, ci->ci_master_key,
++	memcpy(ctx.master_key_descriptor, ci->ci_master_key_descriptor,
+ 	       FS_KEY_DESCRIPTOR_SIZE);
+ 	get_random_bytes(ctx.nonce, FS_KEY_DERIVATION_NONCE_SIZE);
+ 	BUILD_BUG_ON(sizeof(ctx) != FSCRYPT_SET_CONTEXT_MAX_SIZE);
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index a441ea1bfe6d9..8a49e971146d5 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -269,7 +269,8 @@ struct fsxattr {
+ #define FS_POLICY_FLAGS_PAD_16		0x02
+ #define FS_POLICY_FLAGS_PAD_32		0x03
+ #define FS_POLICY_FLAGS_PAD_MASK	0x03
+-#define FS_POLICY_FLAGS_VALID		0x03
++#define FS_POLICY_FLAGS_DIRECT		0x04	/* use master key directly */
++#define FS_POLICY_FLAGS_VALID		0x07
+ 
+ /* Encryption algorithms */
+ #define FS_ENCRYPTION_MODE_INVALID		0
+@@ -281,6 +282,7 @@ struct fsxattr {
+ #define FS_ENCRYPTION_MODE_AES_128_CTS		6
+ #define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7 /* Removed, do not use. */
+ #define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8 /* Removed, do not use. */
++#define FS_ENCRYPTION_MODE_ADIANTUM		9
+ 
+ struct fscrypt_policy {
+ 	__u8 version;
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
