@@ -2,190 +2,175 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE4EC7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFDBC28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 528EA2064E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:26:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 528EA2064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0568F2064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:28:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0568F2064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbeJOOKG (ORCPT
+        id S1726583AbeJOOL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 10:10:06 -0400
-Received: from mga04.intel.com ([192.55.52.120]:43856 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726164AbeJOOKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 10:10:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2018 23:26:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,383,1534834800"; 
-   d="scan'208";a="271361657"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga005.fm.intel.com with ESMTP; 14 Oct 2018 23:26:14 -0700
-Received: from [10.125.251.255] (unknown [10.125.251.255])
-        by linux.intel.com (Postfix) with ESMTP id B2057580113;
-        Sun, 14 Oct 2018 23:26:11 -0700 (PDT)
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v14 0/3]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-Organization: Intel Corp.
-Message-ID: <d6bd3626-8c7c-ca12-8adf-31fe15726446@linux.intel.com>
-Date:   Mon, 15 Oct 2018 09:26:09 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 15 Oct 2018 10:11:56 -0400
+Received: from mail-it1-f199.google.com ([209.85.166.199]:36699 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbeJOOLz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 10:11:55 -0400
+Received: by mail-it1-f199.google.com with SMTP id p125-v6so21366397itg.1
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 23:28:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=SCTu81GXEUVkIi/frBFGEd38d5XKwoHWUKa1JSBj6Rs=;
+        b=i3ydLcdFOYSDEY1iQixf/f2rT5uiXhsPAZkiSYZC6omRcpr2UbOPYL8MZxy5t5qT+O
+         xkzHnD+WvjXjLMMTtgmboBBdX8lp4rauvEaj7j/MvVik3g3bmjIio/sxgStJyWWhx32h
+         llOEGdEFMh8LAjrQUvdzdxtzvEz6ZupKM8v+iLAp3VuA188EHGllsmJL4rcApPlm+Vo3
+         MNGumJkBtAtJVd6DMVrl2mTmnhcrXCZHUkwrvuiwx47LBbfYeYCLntoNNa+0qy63lume
+         md7dTvhXM3L/tpVlnYld4qxvBCelfajK6Rk6ksPXpYM5tkxaaWvnujOxSl/Avf+Cstoi
+         3lCQ==
+X-Gm-Message-State: ABuFfojwRwpwri+P06K6UD8q9wgIjgooXGsDHMQeamPYEjfDyg2tQwSU
+        P8Ho6NA/TB4lo47gnwH/25UwrdMTmJWa+8HCbRmsyxiobrBc
+X-Google-Smtp-Source: ACcGV61kRXPfZCYxNSK32Lf4PtFXJtmuyvaEXuMUWGWI5qE3t229jYkqcx/ACAoCrwYTMxSq37CPSXdyuzwrVZ67BrKFaTT3jjMp
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:4919:: with SMTP id u25-v6mr12410377iob.0.1539584884047;
+ Sun, 14 Oct 2018 23:28:04 -0700 (PDT)
+Date:   Sun, 14 Oct 2018 23:28:04 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001d985405783e8aee@google.com>
+Subject: KASAN: use-after-free Read in bpf_prog_kallsyms_del
+From:   syzbot <syzbot+10cffda23c81a3ff1088@syzkaller.appspotmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-Currently in record mode the tool implements trace writing serially. 
-The algorithm loops over mapped per-cpu data buffers and stores 
-ready data chunks into a trace file using write() system call.
+syzbot found the following crash on:
 
-At some circumstances the kernel may lack free space in a buffer 
-because the other buffer's half is not yet written to disk due to 
-some other buffer's data writing by the tool at the moment.
+HEAD commit:    67e89ac32828 bpf: Fix dev pointer dereference from sk_skb
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11381531400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7e7e2279c0020d5f
+dashboard link: https://syzkaller.appspot.com/bug?extid=10cffda23c81a3ff1088
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Thus serial trace writing implementation may cause the kernel 
-to loose profiling data and that is what observed when profiling 
-highly parallel CPU bound workloads on machines with big number 
-of cores.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Experiment with profiling matrix multiplication code executing 128 
-threads on Intel Xeon Phi (KNM) with 272 cores, like below,
-demonstrates data loss metrics value of 98%:
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+10cffda23c81a3ff1088@syzkaller.appspotmail.com
 
-/usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
-    --call-graph dwarf,1024 --user-regs=IP,SP,BP --switch-events \
-    -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
-    matrix.gcc
+==================================================================
+BUG: KASAN: use-after-free in __list_del_entry_valid+0xf1/0xf3  
+lib/list_debug.c:51
+Read of size 8 at addr ffff8801d18fd820 by task syz-executor1/1917
 
-Data loss metrics is the ratio lost_time/elapsed_time where 
-lost_time is the sum of time intervals containing PERF_RECORD_LOST 
-records and elapsed_time is the elapsed application run time 
-under profiling.
+CPU: 0 PID: 1917 Comm: syz-executor1 Not tainted 4.19.0-rc6+ #120
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  __list_del_entry_valid+0xf1/0xf3 lib/list_debug.c:51
+  __list_del_entry include/linux/list.h:117 [inline]
+  list_del_rcu include/linux/rculist.h:130 [inline]
+  bpf_prog_ksym_node_del kernel/bpf/core.c:467 [inline]
+  bpf_prog_kallsyms_del+0x1e7/0x410 kernel/bpf/core.c:498
+  bpf_prog_kallsyms_del_all+0x1d/0x20 kernel/bpf/core.c:364
+  __bpf_prog_put+0xd7/0x150 kernel/bpf/syscall.c:1135
+  bpf_prog_put kernel/bpf/syscall.c:1143 [inline]
+  bpf_prog_release+0x3c/0x50 kernel/bpf/syscall.c:1151
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x411021
+Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 34 19 00 00 c3 48  
+83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
+89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007fff25880b30 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000411021
+RDX: 0000000000000000 RSI: 0000000000732b80 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 00007fff25880a60 R11: 0000000000000293 R12: 0000000000000000
+R13: 0000000000000001 R14: 0000000000000311 R15: 0000000000000001
 
-Applying asynchronous trace streaming thru Posix AIO API [1] lowers 
-data loss metrics value providing 2x improvement (from 98% to ~1%)
+Allocated by task 1907:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:513 [inline]
+  kzalloc include/linux/slab.h:707 [inline]
+  bpf_prog_alloc+0x328/0x3e0 kernel/bpf/core.c:89
+  bpf_prog_load+0x435/0x1cb0 kernel/bpf/syscall.c:1402
+  __do_sys_bpf kernel/bpf/syscall.c:2409 [inline]
+  __se_sys_bpf kernel/bpf/syscall.c:2371 [inline]
+  __x64_sys_bpf+0x36c/0x510 kernel/bpf/syscall.c:2371
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Asynchronous trace streaming is currently limited to glibc linkage.
-musl libc [5] also provides Posix AIO API implementation, however 
-the patchkit is not tested with it. There may be other libc libraries 
-linked by Perf tool that currently lack Posix AIO API support [2], 
-[3], [4] so NO_AIO define may be used to limit Perf tool binary to 
-serial streaming only.
+Freed by task 2682:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3813
+  __bpf_prog_free kernel/bpf/core.c:146 [inline]
+  bpf_prog_unlock_free include/linux/filter.h:740 [inline]
+  bpf_prog_free_deferred+0x2a4/0x420 kernel/bpf/core.c:1740
+  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
+  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+  kthread+0x35a/0x420 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
 
----
- Alexey Budankov (3):
-	perf util: map data buffer for preserving collected data
-	perf record: enable asynchronous trace writing
-	perf record: extend trace writing to multi AIO
+The buggy address belongs to the object at ffff8801d18fd7c0
+  which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 96 bytes inside of
+  512-byte region [ffff8801d18fd7c0, ffff8801d18fd9c0)
+The buggy address belongs to the page:
+page:ffffea0007463f40 count:1 mapcount:0 mapping:ffff8801da800940 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea000706cf08 ffffea00075d1b88 ffff8801da800940
+raw: 0000000000000000 ffff8801d18fd040 0000000100000006 0000000000000000
+page dumped because: kasan: bad access detected
 
- tools/perf/Documentation/perf-record.txt |   5 +
- tools/perf/Makefile.config               |   5 +
- tools/perf/Makefile.perf                 |   7 +-
- tools/perf/builtin-record.c              | 252 ++++++++++++++++++++++++++++++-
- tools/perf/perf.h                        |   1 +
- tools/perf/util/evlist.c                 |   6 +-
- tools/perf/util/evlist.h                 |   2 +-
- tools/perf/util/mmap.c                   | 146 +++++++++++++++++-
- tools/perf/util/mmap.h                   |  26 +++-
- 9 files changed, 439 insertions(+), 11 deletions(-)
+Memory state around the buggy address:
+  ffff8801d18fd700: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff8801d18fd780: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+> ffff8801d18fd800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                ^
+  ffff8801d18fd880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801d18fd900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
----
- Changes in v14:
- - implement default nr_cblocks_default variable
- - fix --aio option handling
- Changes in v13:
- - named new functions with _aio_ word
- - grouped aio functions under single #ifdef HAVE_AIO_SUPPORT
- - moved perf_mmap__aio_push() stub into header
- - removed trailed white space
- Changes in v12:
- - applied stub functions design for the whole patch kit
- - grouped AIO related data into a struct under struct perf_mmap
- - implemented record__aio_get/set_pos(), record__aio_enabled()
- - implemented simple --aio option
- - extended --aio option to --aio-cblocks=<n>
- Changes in v11:
- - replacing the both lseek() syscalls in every loop iteration by the only 
-   two syscalls just before and after the loop at record__mmap_read_evlist() 
-   and advancing *in-flight* off file pos value at perf_mmap__aio_push()
- Changes in v10:
- - moved specific code to perf_mmap__aio_mmap(), perf_mmap__aio_munmap();
- - adjusted error reporting by using %m
- - avoided lseek() setting file pos back in case of record__aio_write() failure
- - compacted code selecting between serial and AIO streaming
- - optimized call places of record__mmap_read_sync()
- - added description of aio-cblocks option into perf-record.txt
- Changes in v9:
- - enable AIO streaming only when --aio-cblocks option is specified explicitly
- - enable AIO based implementation when linking with glibc only
- - define NO_AIO to limit Perf binary to serial implementation
- Changes in v8:
- - run the whole thing thru checkpatch.pl and corrected found issues except
-   lines longer than 80 symbols
- - corrected comments alignment and formatting
- - moved multi AIO implementation into 3rd patch in the series
- - implemented explicit cblocks array allocation
- - split AIO completion check into separate record__aio_complete()
- - set nr_cblocks default to 1 and max allowed value to 4
- Changes in v7:
- - implemented handling record.aio setting from perfconfig file
- Changes in v6:
- - adjusted setting of priorities for cblocks;
- - handled errno == EAGAIN case from aio_write() return;
- Changes in v5:
- - resolved livelock on perf record -e intel_pt// -- dd if=/dev/zero of=/dev/null count=100000
- - data loss metrics decreased from 25% to 2x in trialed configuration;
- - reshaped layout of data structures;
- - implemented --aio option;
- - avoided nanosleep() prior calling aio_suspend();
- - switched to per-cpu aio multi buffer record__aio_sync();
- - record_mmap_read_sync() now does global sync just before 
-   switching trace file or collection stop;
- Changes in v4:
- - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management
- - converted void *bf to struct perf_mmap *md in signatures
- - written comment in perf_mmap__push() just before perf_mmap__get();
- - written comment in record__mmap_read_sync() on possible restarting 
-   of aio_write() operation and releasing perf_mmap object after all;
- - added perf_mmap__put() for the cases of failed aio_write();
- Changes in v3:
- - written comments about nanosleep(0.5ms) call prior aio_suspend()
-   to cope with intrusiveness of its implementation in glibc;
- - written comments about rationale behind coping profiling data 
-   into mmap->data buffer;
- Changes in v2:
- - converted zalloc() to calloc() for allocation of mmap_aio array,
- - cleared typo and adjusted fallback branch code;
 
 ---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-[1] http://man7.org/linux/man-pages/man7/aio.7.html
-[2] https://android.googlesource.com/platform/bionic/+/master/docs/status.md
-[3] https://www.uclibc.org/
-[4] https://uclibc-ng.org/
-[5] https://www.musl-libc.org/
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
