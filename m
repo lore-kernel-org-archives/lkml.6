@@ -2,191 +2,101 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B96C71130
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5748AC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 900702083C
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:22:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i1ky1Gvr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 900702083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1026920881
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:24:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1026920881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbeJOTHE (ORCPT
+        id S1726571AbeJOTJW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:07:04 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35741 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726639AbeJOTHD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:07:03 -0400
-Received: by mail-io1-f67.google.com with SMTP id w11-v6so13952723iob.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 04:22:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=dbAK2nN07D4ZfcKAxWHght6LvVbwH9bGhkb//otxtHg=;
-        b=i1ky1GvremtWB3x6EvpTmQSLrH0gFItZBUScWc9U8RTJEnLkpQ+lmebhzQKpMN/IXf
-         dYd3BUJ3XQ/qtOTUHTz81qX3a8F9rNAMWscf8X6MjBs0z1mdAIIFVTPiGdc1VEVbn2In
-         IoWQV/fIonWiqj/fcIfGPGvOBxjgStltalm0g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=dbAK2nN07D4ZfcKAxWHght6LvVbwH9bGhkb//otxtHg=;
-        b=ujOlshYFHmRYEzLBya5YNMNDzxqzX9TfG4qMeQVmHwuCCnDEbBPsymt8z4FRoiQnz9
-         rZxvsys3RJhuj47VD0m6mZHQ+u9g1z3z/Z/xz/6bXU99Rya9LFIYnSNKj6t/mHVDARzg
-         hJfwT+iRCUQ0uUf9sph1IyKSjGAgRdeXxXrr5hEKq9Xk9Oc8rb3H1nYnKyr+VfYG9qLk
-         fp299SHugeQItbT1uDhRhqp/oAp8HNQXJzy3BT/+8bXgJg6TSv0kzgLnCuhVEV8nFSvD
-         A62b9E+8tUNb26/UeTTiU7IVzYIBiX2YuUrTprFsaNhG1RNxC+Kji7uL9ldz6HY96KYw
-         wyeQ==
-X-Gm-Message-State: ABuFfojCofEyXX2+8qQhyaMuZqAQuq6eX0YcPbWEYn5OCZBVemEkalJc
-        nhZ+CbFPbnqrlRLSyRo/mP/iFe/i1taVF0QLWZohnQ==
-X-Google-Smtp-Source: ACcGV61Kyxei3RbRvcY59S1dGjBH2QHnk8/x+WHC7twVKoQyy9+9E/at1+u/x0jSOGQ9e86mfI8Y9BAEn8824Ifb2v4=
-X-Received: by 2002:a6b:be83:: with SMTP id o125-v6mr11269994iof.173.1539602533408;
- Mon, 15 Oct 2018 04:22:13 -0700 (PDT)
+        Mon, 15 Oct 2018 15:09:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39596 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726357AbeJOTJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 15:09:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 367D7AD49;
+        Mon, 15 Oct 2018 11:24:30 +0000 (UTC)
+Date:   Mon, 15 Oct 2018 13:24:27 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, guro@fb.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        rientjes@google.com, yang.s@alibaba-inc.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms
+ without eligible tasks
+Message-ID: <20181015112427.GI18839@dhcp22.suse.cz>
+References: <20181012112008.GA27955@cmpxchg.org>
+ <20181012120858.GX5873@dhcp22.suse.cz>
+ <9174f087-3f6f-f0ed-6009-509d4436a47a@i-love.sakura.ne.jp>
+ <20181012124137.GA29330@cmpxchg.org>
+ <0417c888-d74e-b6ae-a8f0-234cbde03d38@i-love.sakura.ne.jp>
+ <bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp>
+ <20181013112238.GA762@cmpxchg.org>
+ <b61b2e60-d899-90c6-579a-587815cebff6@i-love.sakura.ne.jp>
+ <20181015081934.GD18839@dhcp22.suse.cz>
+ <ea637f9a-5dd0-f927-d26d-d0b4fd8ccb6f@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 04:22:12
- -0700 (PDT)
-In-Reply-To: <20181015111600.5479-1-anders.roxell@linaro.org>
-References: <20181015111600.5479-1-anders.roxell@linaro.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 15 Oct 2018 13:22:12 +0200
-Message-ID: <CAKv+Gu8gHxeb-XUBUhnni4YEEKEO+Fy-AKr+DHgbL96VvR8RoQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: kprobe: make page to RO mode when allocate it
-To:     Anders Roxell <anders.roxell@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Laura Abbott <labbott@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea637f9a-5dd0-f927-d26d-d0b4fd8ccb6f@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(+ Masami)
+On Mon 15-10-18 19:57:35, Tetsuo Handa wrote:
+> On 2018/10/15 17:19, Michal Hocko wrote:
+> > As so many dozens of times before, I will point you to an incremental
+> > nature of changes we really prefer in the mm land. We are also after a
+> > simplicity which your proposal lacks in many aspects. You seem to ignore
+> > that general approach and I have hard time to consider your NAK as a
+> > relevant feedback. Going to an extreme and basing a complex solution on
+> > it is not going to fly. No killable process should be a rare event which
+> > requires a seriously misconfigured memcg to happen so wildly. If you can
+> > trigger it with a normal user privileges then it would be a clear bug to
+> > address rather than work around with printk throttling.
+> > 
+> 
+> I can trigger 200+ times / 900+ lines / 69KB+ of needless OOM messages
+> with a normal user privileges. This is a lot of needless noise/delay.
 
-On 15 October 2018 at 13:16, Anders Roxell <anders.roxell@linaro.org> wrote:
-> Commit 1404d6f13e47 ("arm64: dump: Add checking for writable and exectuable pages")
-> has successfully identified code that leaves a page with W+X
-> permissions.
+I am pretty sure you have understood the part of my message you have
+chosen to not quote where I have said that the specific rate limitting
+decisions can be changed based on reasonable configurations. There is
+absolutely zero reason to NAK a natural decision to unify the throttling
+and cook a per-memcg way for a very specific path instead.
+
+> No killable process is not a rare event, even without root privileges.
 >
-> [    3.245140] arm64/mm: Found insecure W+X mapping at address (____ptrval____)/0xffff000000d90000
-> [    3.245771] WARNING: CPU: 0 PID: 1 at ../arch/arm64/mm/dump.c:232 note_page+0x410/0x420
-> [    3.246141] Modules linked in:
-> [    3.246653] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc5-next-20180928-00001-ge70ae259b853-dirty #62
-> [    3.247008] Hardware name: linux,dummy-virt (DT)
-> [    3.247347] pstate: 80000005 (Nzcv daif -PAN -UAO)
-> [    3.247623] pc : note_page+0x410/0x420
-> [    3.247898] lr : note_page+0x410/0x420
-> [    3.248071] sp : ffff00000804bcd0
-> [    3.248254] x29: ffff00000804bcd0 x28: ffff000009274000
-> [    3.248578] x27: ffff00000921a000 x26: ffff80007dfff000
-> [    3.248845] x25: ffff0000093f5000 x24: ffff000009526f6a
-> [    3.249109] x23: 0000000000000004 x22: ffff000000d91000
-> [    3.249396] x21: ffff000000d90000 x20: 0000000000000000
-> [    3.249661] x19: ffff00000804bde8 x18: 0000000000000400
-> [    3.249924] x17: 0000000000000000 x16: 0000000000000000
-> [    3.250271] x15: ffffffffffffffff x14: 295f5f5f5f6c6176
-> [    3.250594] x13: 7274705f5f5f5f28 x12: 2073736572646461
-> [    3.250941] x11: 20746120676e6970 x10: 70616d20582b5720
-> [    3.251252] x9 : 6572756365736e69 x8 : 3039643030303030
-> [    3.251519] x7 : 306666666678302f x6 : ffff0000095467b2
-> [    3.251802] x5 : 0000000000000000 x4 : 0000000000000000
-> [    3.252060] x3 : 0000000000000000 x2 : ffffffffffffffff
-> [    3.252323] x1 : 4d151327adc50b00 x0 : 0000000000000000
-> [    3.252664] Call trace:
-> [    3.252953]  note_page+0x410/0x420
-> [    3.253186]  walk_pgd+0x12c/0x238
-> [    3.253417]  ptdump_check_wx+0x68/0xf8
-> [    3.253637]  mark_rodata_ro+0x68/0x98
-> [    3.253847]  kernel_init+0x38/0x160
-> [    3.254103]  ret_from_fork+0x10/0x18
->
-> Reworked to that when allocate a page it sets mode RO. Inspired by
-> commit 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()").
->
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Laura Abbott <labbott@redhat.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-> Co-developed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  arch/arm64/kernel/probes/kprobes.c | 27 ++++++++++++++++++++-------
->  1 file changed, 20 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-> index 9b65132e789a..b842e908b423 100644
-> --- a/arch/arm64/kernel/probes/kprobes.c
-> +++ b/arch/arm64/kernel/probes/kprobes.c
-> @@ -23,7 +23,9 @@
->  #include <linux/slab.h>
->  #include <linux/stop_machine.h>
->  #include <linux/sched/debug.h>
-> +#include <linux/set_memory.h>
->  #include <linux/stringify.h>
-> +#include <linux/vmalloc.h>
->  #include <asm/traps.h>
->  #include <asm/ptrace.h>
->  #include <asm/cacheflush.h>
-> @@ -42,10 +44,21 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
->  static void __kprobes
->  post_kprobe_handler(struct kprobe_ctlblk *, struct pt_regs *);
->
-> +static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-> +{
-> +       void *addrs[1];
-> +       u32 insns[1];
-> +
-> +       addrs[0] = (void *)addr;
-> +       insns[0] = (u32)opcode;
-> +
-> +       return aarch64_insn_patch_text(addrs, insns, 1);
-> +}
-> +
->  static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
->  {
->         /* prepare insn slot */
-> -       p->ainsn.api.insn[0] = cpu_to_le32(p->opcode);
-> +       patch_text(p->ainsn.api.insn, p->opcode);
->
->         flush_icache_range((uintptr_t) (p->ainsn.api.insn),
->                            (uintptr_t) (p->ainsn.api.insn) +
-> @@ -118,15 +131,15 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
->         return 0;
->  }
->
-> -static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-> +void *alloc_insn_page(void)
->  {
-> -       void *addrs[1];
-> -       u32 insns[1];
-> +       void *page;
->
-> -       addrs[0] = (void *)addr;
-> -       insns[0] = (u32)opcode;
-> +       page = vmalloc_exec(PAGE_SIZE);
-> +       if (page)
-> +               set_memory_ro((unsigned long)page & PAGE_MASK, 1);
->
-> -       return aarch64_insn_patch_text(addrs, insns, 1);
-> +       return page;
->  }
->
->  /* arm kprobe: install breakpoint in text */
-> --
-> 2.19.1
->
+> [root@ccsecurity kumaneko]# time ./a.out
+> Killed
+> 
+> real    0m2.396s
+> user    0m0.000s
+> sys     0m2.970s
+> [root@ccsecurity ~]# dmesg | grep 'no killable' | wc -l
+> 202
+> [root@ccsecurity ~]# dmesg | wc
+>     942    7335   70716
+
+OK, so this is 70kB worth of data pushed throug the console. Is this
+really killing any machine?
+-- 
+Michal Hocko
+SUSE Labs
