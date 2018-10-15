@@ -3,64 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC28C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC759C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B3D32064A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:41:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B3D32064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=piap.pl
+	by mail.kernel.org (Postfix) with ESMTP id 9923220881
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:45:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9923220881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbeJOU04 (ORCPT
+        id S1726567AbeJOUa0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 16:26:56 -0400
-Received: from ni.piap.pl ([195.187.100.4]:43086 "EHLO ni.piap.pl"
+        Mon, 15 Oct 2018 16:30:26 -0400
+Received: from ozlabs.org ([203.11.71.1]:35471 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbeJOU04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 16:26:56 -0400
-Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
-        by ni.piap.pl (Postfix) with ESMTP id B8A64440E08;
-        Mon, 15 Oct 2018 14:41:45 +0200 (CEST)
-From:   khalasa@piap.pl (Krzysztof =?utf-8?Q?Ha=C5=82asa?=)
-To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: net/wan: hostess_sv11 + z85230 problems
-References: <1468d110-4f92-da7a-21b5-36afcec3c94e@infradead.org>
-        <m34ldnd3ju.fsf@t19.piap.pl> <20181015112910.4504cd3a@alans-desktop>
-Date:   Mon, 15 Oct 2018 14:41:44 +0200
-In-Reply-To: <20181015112910.4504cd3a@alans-desktop> (Alan Cox's message of
-        "Mon, 15 Oct 2018 11:29:10 +0100")
-Message-ID: <m3zhvfbcvr.fsf@t19.piap.pl>
+        id S1726319AbeJOUa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 16:30:26 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42YdSp5JQFz9s3T;
+        Mon, 15 Oct 2018 23:45:14 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: qemu boot failures with today's linux-next
+In-Reply-To: <20181015191859.2f600de5@canb.auug.org.au>
+References: <20181015191859.2f600de5@canb.auug.org.au>
+Date:   Mon, 15 Oct 2018 23:45:10 +1100
+Message-ID: <87murfz8dl.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-KLMS-Rule-ID: 4
-X-KLMS-Message-Action: skipped
-X-KLMS-AntiSpam-Status: not scanned, whitelist
-X-KLMS-AntiPhishing: not scanned, whitelist
-X-KLMS-AntiVirus: Kaspersky Security 8.0 for Linux Mail Server, version 8.0.1.721, not scanned, whitelist
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alan Cox <gnomes@lxorguk.ukuu.org.uk> writes:
-
->> BTW Hostess SV11 is apparently an ISA card, with all those problems.
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> Hi all,
 >
-> Actually it worked perfectly well of old but people kept changing it
-> who didn't have hardware.
+> Today's linux-next tree does not boot in qemu (with kvm or without).
+> Here is the (non-kvm) boot log (the kvm one is basically the same):
+>
+> ------------------------------------------------------
+...
+>   Welcome to Open Firmware
+>
+>   Copyright (c) 2004, 2017 IBM Corporation All rights reserved.
+>   This program and the accompanying materials are made available
+>   under the terms of the BSD License available at
+>   http://www.opensource.org/licenses/bsd-license.php
+>
+> Booting from memory...
+> OF stdout device is: /vdevice/vty@71000000
+> Preparing to boot Linux version 4.19.0-rc7 (sfr@ash) (gcc version 8.2.0 (Debian 8.2.0-4)) #2 SMP Mon Oct 15 18:53:28 AEDT 2018
+                                  ^^^^^^^^^^
+                                  I assume that's wrong, this is actually linux-next you're booting?
 
-Right, that's the same with all of this hardware.
 
-In fact I meant all the ISA problems (in comparison to e.g. PCI),
-not of any particular design.
--- 
-Krzysztof Halasa
+> Detected machine type: 0000000000000101
+> command line: 
+> Max number of cores passed to firmware: 2048 (NR_CPUS = 2048)
+> Calling ibm,client-architecture-support... done
+> memory layout at init:
+>   memory_limit : 0000000000000000 (16 MB aligned)
+>   alloc_bottom : 0000000001640000
+>   alloc_top    : 0000000030000000
+>   alloc_top_hi : 0000000080000000
+>   rmo_top      : 0000000030000000
+>   ram_top      : 0000000080000000
+> instantiating rtas at 0x000000002fff0000... done
+> prom_hold_cpus: skipped
+> copying OF device tree...
+> Building dt strings...
+> Building dt structure...
+> Device tree strings 0x0000000001850000 -> 0x0000000001850a02
+> Device tree struct  0x0000000001860000 -> 0x0000000001870000
+> Quiescing Open Firmware ...
+> Booting Linux via __start() @ 0x0000000000400000 ...
+> ------------------------------------------------------
+>
+> I have no idea what may have caused this.
 
-Industrial Research Institute for Automation and Measurements PIAP
-Al. Jerozolimskie 202, 02-486 Warsaw, Poland
+If you git Ctrl-a-c you should get the qemu prompt. Then you can run
+'info registers' to print the regs and maybe see where it's stuck.
+
+And/or build with EARLY_DEBUG_LPAR to get early console output.
+
+cheers
