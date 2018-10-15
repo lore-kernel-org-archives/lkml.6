@@ -2,168 +2,122 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E99DBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A19BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 946272054F
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5D5A2054F
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:56:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R3BVFCnR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 946272054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OAEj49SY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5D5A2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbeJPGmM (ORCPT
+        id S1727079AbeJPGnv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:42:12 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33303 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbeJPGmL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:42:11 -0400
-Received: by mail-qt1-f195.google.com with SMTP id q40-v6so23544455qte.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 15:54:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=E4FQiwSJmBc7kyShqXZBk91wjEehqaL5rHhd/tM2fBA=;
-        b=R3BVFCnRcP5v9gq8xPygT5YNc7a0kL2yTAvc7IpC/RMtnsOPwnutshp9OdGFfB8M0t
-         YHsOjrq1oozH2RKkKVfqI0mU9gQH+juxMgLi1i7mwKzRpVzoH69WzM9LYxB5rP30ES7m
-         89Z0+GCxIdXPJyeqx1SOs5xiDoh+9PkrI9E64=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=E4FQiwSJmBc7kyShqXZBk91wjEehqaL5rHhd/tM2fBA=;
-        b=mc10sY+KrfSCv+l1fOv3hN7/bTf7GS1evZttmW2Zr9pwWutQjeHN+lu9I5pEa6CAa3
-         +U2a4w47hCXCCgWHbV3TlNPm5Lhy7XMJIwjIzAun09Gy5eZFEST2vljxzvhVQtRhClaR
-         VwNsltRH6O+SzAOGLbX1PLrVOxhZA/tym5ErFDknh7oVfvXCx+kI805Np3NwwD05r8FA
-         DcmxTw65mga+bdYmwBsyTevRcUBL2JvUelc0LUBkCEk0FGcYvoXkrgwsVDvtug0vYbSb
-         nMrkbV5Sl87zDbZ5Pfzf4bf9UKl8CIVjbqrq4RbdyPHcMI4JIA5LehkStDm5NWpiS6YQ
-         K5LA==
-X-Gm-Message-State: ABuFfogwp/LFDh9H5KVAJpYF4nWi3ae4qqBWPNQ4gd4/16qhKkpL/7Zj
-        FVYxGb7WG4SMEy4/P6NrLKmSYw==
-X-Google-Smtp-Source: ACcGV62AerW4zD9WOR95SWiX25+Ppop4/7tYZBBEDaGXI7syilDhexRCKd2oSyXUGWYAUl8JNhxyfA==
-X-Received: by 2002:aed:3807:: with SMTP id j7-v6mr18635028qte.140.1539644091229;
-        Mon, 15 Oct 2018 15:54:51 -0700 (PDT)
-Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
-        by smtp.gmail.com with ESMTPSA id h66-v6sm6457901qkc.53.2018.10.15.15.54.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 15:54:50 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 18:54:49 -0400 (EDT)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-cc:     Stefan Agner <stefan@agner.ch>, ulli.kroll@googlemail.com,
-        joel@jms.id.au, arnd@arndb.de, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: copypage: do not use naked functions
-In-Reply-To: <20181015224152.GA30658@n2100.armlinux.org.uk>
-Message-ID: <nycvar.YSQ.7.76.1810151843100.1498@knanqh.ubzr>
-References: <20181015222621.14673-1-stefan@agner.ch> <nycvar.YSQ.7.76.1810151831040.1498@knanqh.ubzr> <20181015224152.GA30658@n2100.armlinux.org.uk>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Tue, 16 Oct 2018 02:43:51 -0400
+Received: from ozlabs.org ([203.11.71.1]:49159 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726877AbeJPGnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 02:43:50 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42Yv242bRRz9s1x;
+        Tue, 16 Oct 2018 09:56:28 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539644188;
+        bh=8h+jYTVvMYkLhjI1qv9haok84gasRanz1+ihMfLDfmM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=OAEj49SYClwQZgOyI8yU/vBAg0GwkhT9+0068t8Dba4rc8YMhsyn7GcryGEnHYKEy
+         hgaDm7OnsQhwBdUiYf6SUVf8UOY+ukgB3khnRDhkAPb4Dv9UWL1vesLf0rhpMktQxx
+         rpI7jREYJYz2kqhQmMsT0A9gkTYJ67brPzTTlZXGOv8IUkAw3wS+WHpbtc6avUtmkw
+         Ggqq5710Cw3efwy4TkuodMJiDIUMpqu3BYdl6u0phTwHfPYKXQu3hxk4tbLwio3wpU
+         wujP4gZZYwFS5LNoqDls33NVVa3IcIxD/cDBj3UUYFMBy4ju6f6VkwAKPU7VXYyRis
+         GRH96zvPY8Q5Q==
+Date:   Tue, 16 Oct 2018 09:56:12 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: linux-next: manual merge of the jc_docs tree with the pci tree
+Message-ID: <20181016095612.36b5e7bb@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/h/26W0fuzPBTdFRLUBNkVJm"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Oct 2018, Russell King - ARM Linux wrote:
+--Sig_/h/26W0fuzPBTdFRLUBNkVJm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, Oct 15, 2018 at 06:35:33PM -0400, Nicolas Pitre wrote:
-> > On Tue, 16 Oct 2018, Stefan Agner wrote:
-> > 
-> > > GCC documentation says naked functions should only use basic ASM
-> > > syntax. The extended ASM or mixture of basic ASM and "C" code is
-> > > not guaranteed. Currently it seems to work though.
-> > > 
-> > > Furthermore with Clang using parameters in extended asm in a
-> > > naked function is not supported:
-> > >   arch/arm/mm/copypage-v4wb.c:47:9: error: parameter references not
-> > >   allowed in naked functions
-> > >         : "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 64));
-> > >                ^
-> > > 
-> > > Use a regular function to be more portable. Also use volatile asm
-> > > to avoid unsolicited optimizations.
-> > > 
-> > > Tested with qemu versatileab machine and versatile_defconfig and
-> > > qemu mainstone machine using pxa_defconfig compiled with GCC 7.2.1
-> > > and Clang 7.0.
-> > > 
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/90
-> > > Reported-by: Joel Stanley <joel@jms.id.au>
-> > > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > > ---
-> > >  arch/arm/mm/copypage-fa.c       | 17 +++++++++++------
-> > >  arch/arm/mm/copypage-feroceon.c | 17 +++++++++++------
-> > >  arch/arm/mm/copypage-v4mc.c     | 14 +++++++++-----
-> > >  arch/arm/mm/copypage-v4wb.c     | 17 +++++++++++------
-> > >  arch/arm/mm/copypage-v4wt.c     | 17 +++++++++++------
-> > >  arch/arm/mm/copypage-xsc3.c     | 17 +++++++++++------
-> > >  arch/arm/mm/copypage-xscale.c   | 13 ++++++++-----
-> > >  7 files changed, 72 insertions(+), 40 deletions(-)
-> > > 
-> > > diff --git a/arch/arm/mm/copypage-fa.c b/arch/arm/mm/copypage-fa.c
-> > > index ec6501308c60..33ccd396bf99 100644
-> > > --- a/arch/arm/mm/copypage-fa.c
-> > > +++ b/arch/arm/mm/copypage-fa.c
-> > > @@ -17,11 +17,16 @@
-> > >  /*
-> > >   * Faraday optimised copy_user_page
-> > >   */
-> > > -static void __naked
-> > > -fa_copy_user_page(void *kto, const void *kfrom)
-> > > +static void fa_copy_user_page(void *kto, const void *kfrom)
-> > >  {
-> > > -	asm("\
-> > > -	stmfd	sp!, {r4, lr}			@ 2\n\
-> > > +	register void *r0 asm("r0") = kto;
-> > > +	register const void *r1 asm("r1") = kfrom;
-> > > +
-> > > +	asm(
-> > > +	__asmeq("%0", "r0")
-> > > +	__asmeq("%1", "r1")
-> > > +	"\
-> > > +	stmfd	sp!, {r4}			@ 2\n\
-> > >  	mov	r2, %2				@ 1\n\
-> > >  1:	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
-> > >  	stmia	r0, {r3, r4, ip, lr}		@ 4\n\
-> > > @@ -34,9 +39,9 @@ fa_copy_user_page(void *kto, const void *kfrom)
-> > >  	subs	r2, r2, #1			@ 1\n\
-> > >  	bne	1b				@ 1\n\
-> > >  	mcr	p15, 0, r2, c7, c10, 4		@ 1   drain WB\n\
-> > > -	ldmfd	sp!, {r4, pc}			@ 3"
-> > > +	ldmfd	sp!, {r4}			@ 3"
-> > >  	:
-> > > -	: "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 32));
-> > > +	: "r" (r0), "r" (r1), "I" (PAGE_SIZE / 32));
-> > 
-> > This is still wrong as you list r0 and r1 in the input operand list 
-> > where they must remain constant but the code does modify them. You 
-> > should list them in the output operand list with the "&" attribute. Also 
-> > r2 should be listed in the clobbered list.
-> 
-> Either we keep these as naked functions (and, if Clang wants to
-> try to inline naked functions which makes no sense, also mark them
-> as noinline) or we make them proper functions and also add (eg) r4
-> to the clobber list and get rid of the stacking of that register
-> along with LR/PC.
+Hi Jonathan,
 
-Yes, indeed.
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-I'd say: remove the naked stuff, and let the compiler do the 
-prologue/epilogue itself (or inline it for that matter). And don't force 
-pointers and counter into particular registers. This way r0-r3 could be 
-used as temporaries since they're probably already clobbered by the call 
-to kmap_atomic() anyway. That is likely to be better than forcing ip/lr 
-as temporaryes.
+  Documentation/driver-api/index.rst
 
+between commit:
 
-Nicolas
+  7618a41f1a25 ("docs-rst: Add a new directory for PCI documentation")
+
+from the pci tree and commit:
+
+  ea2ae0ecc9ad ("FireWire: add a Documentation driver-api chapter")
+
+from the jc_docs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/driver-api/index.rst
+index e9e7d24169cf,1f0cdba2b2bf..000000000000
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@@ -29,7 -29,8 +29,8 @@@ available subsections can be seen below
+     iio/index
+     input
+     usb/index
++    firewire
+ -   pci
+ +   pci/index
+     spi
+     i2c
+     hsi
+
+--Sig_/h/26W0fuzPBTdFRLUBNkVJm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFGwwACgkQAVBC80lX
+0GxWYwf+N+0E8MBZaAMYtf2UIoUGlDW28VykzexxXw8mQSt+CkJzZAotCJzPPNa8
+k/IPFiG2tkSVS2olPJ742reoGxx8VDzyu2vSyPanOrjG3v92HTdI8GmwAr1zFHwd
+rsFQnPM5t7qGU+2V2AakPICZrAe5Hzvd7RWX0EDwYil+U/woENAQ5srsHrfdPFlu
+3UmBTNnnVWqsRHVh32nH1b+ew5OArj78+S6HyPnAe4MWl2jliDjIJr1f39XPLJXc
+V/kt5Yof20nYm7B4RdX2TwscSdTLPAdn7scp/d35MHrMVm34WF3hqjYgaMkSaaA8
+G1pdFKd70StStt0xz1gZ0Co+aHJJzw==
+=vqYC
+-----END PGP SIGNATURE-----
+
+--Sig_/h/26W0fuzPBTdFRLUBNkVJm--
