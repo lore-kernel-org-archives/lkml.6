@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58DB4C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07541C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DEAC208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1482208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:40:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mxX6Icv5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DEAC208E4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u7tUSrR4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1482208B3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbeJPD0p (ORCPT
+        id S1727010AbeJPD0r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 23:26:45 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36069 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbeJPD0p (ORCPT
+        Mon, 15 Oct 2018 23:26:47 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39483 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726791AbeJPD0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 23:26:45 -0400
-Received: by mail-lj1-f193.google.com with SMTP id p89-v6so18624289ljb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 12:40:04 -0700 (PDT)
+        Mon, 15 Oct 2018 23:26:46 -0400
+Received: by mail-lf1-f67.google.com with SMTP id n14-v6so3146605lfe.6
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 12:40:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/9NWfrU4yyCrkQpP563ooDYYnrLgUrU0Qz4OZakKBuY=;
-        b=mxX6Icv5oBLfOKQswoyZSRq4tPAm3cvvcaxSHIfl6T9q7GS0NlQJgbwvb7ouIBlbMp
-         /yt86LKjzt92gQMgZuIN9dgcUqhxlejRByRKSOwT1Gq5v+Uk3Ec0RE73/qL1I1efNszl
-         TSPd38Ep/rqBehziGdHF+hbnlSXWyBi24NfczpdK/KIdYj4PmqGRazqwazmbHRfjzcfP
-         rF3JB3xJBnHm8304gh43RopFdaHekjENO00jzxy5zrHU3bxzhkP3NukIWmJWJrUuFslG
-         a+4JHCHcQpKwe8yjTO8TVhMQDV/fVf7R4Xcxjvkg0orbqhA2Ir0EY2nuZzVQHSaOCkDa
-         phAA==
+        bh=Dibga34hLMVCgSOfwDffM77KybhlXTCzc0Iv6FEvork=;
+        b=u7tUSrR4MWoM+BUWJL1qj07MLVVOQ+OzJT7ZLic7c/lghchr8s/3KqzPSna+AYW30P
+         FEDGc07Igc1R12MT5mRiPEvAr1QHT6u2LemtevGbqYeFLGUEJzlHNJX75sXrhPq9H1Tf
+         O4uDd31WY9AknqOoILabYDrNTW4fYRl41HLgKCrgQiU40VGdzOMN1E9B2QAiQfOZ8j7F
+         B8DU5ffbssVLMKp7G7QjJ5pKsJf4N4FfSf0upkwn/WPCmUs+EfHT+18GQZYn53cW4QKO
+         MxkSXJT0aYjMqTfjHWOKw48kQksSeoeKdsp4tFwVklFYhshs+q2INC5WPfKktOPLHcrS
+         4T3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/9NWfrU4yyCrkQpP563ooDYYnrLgUrU0Qz4OZakKBuY=;
-        b=ofowdOG10CXl3XlKFdIFH5yNhvHUiDRNMP617xCz4r6KHxtHWjw/YMvR5edC74PI5H
-         yoEeRCV01YpkzrtYe6a7Ph/4eZEus+5Em9M8t5OAfSA3H3e6a26iGG01J6oWZJ0AJTV/
-         1HtjYT/5pcH88s5JxOJ4NJuHdQ8A3B4KkrBar178rFSimH2b3M5LQUipgpfhQVEhcgll
-         9/laYYgN0OWly0wB/s4zp+R2CU71JJkjSmo71Tikg1DzmbYydpeKH0+qeyAKW8wqL7XM
-         A1WEp2+i/k43Siy65rNaeCe/zaLwq8z/jEpJO0800g9ew3eOnM7QGXjRD8Dcv2LU6+dI
-         CViQ==
-X-Gm-Message-State: ABuFfogWAGc5IFMJ7ArIzZrKltBK0/x3HgdKA3kiYgVl/xpgNZIkrIFm
-        V1iGO/XvJ6Yi/M8tCEb9Odk=
-X-Google-Smtp-Source: ACcGV62l5AS+u+dbvkYcJHinUuo55+Z8uQUDv6G5Qt8ogaYYdwUt3DETTHDdKNug4nSA4nuavKIzPA==
-X-Received: by 2002:a2e:92ca:: with SMTP id k10-v6mr11742168ljh.103.1539632403957;
-        Mon, 15 Oct 2018 12:40:03 -0700 (PDT)
+        bh=Dibga34hLMVCgSOfwDffM77KybhlXTCzc0Iv6FEvork=;
+        b=G/9v1FGYQT9K5ZSMP9ZacxvKW/76o25cmjtP21xpekIB2fMHqz/mwX7rcfhJVrEYSO
+         geaX9zlLscMnZBm4vS1mqAcIUO5ODnNLSAiD1nlemb4qDnl0Fj3o66Ppr9SGOfaHXYwV
+         paf3aEhnPeLrBfp3S2C1fYS3YX2PBQw6FYNyYziMBiQVbCCVJX8PWEY2aCoyJUvDpDPB
+         JwiHLDvLteqEJzDmavsnw3wLgWAe46e15nRsXDy6Bfm3eK+oymb6xjeR/JFopn551sq+
+         8AiE0RXUEXJgLf7C9TkMdB9viDUA2qvBvitHFzSSg2ESbWwWCLyFfZFEdPhdYW0oL4pA
+         2dEg==
+X-Gm-Message-State: ABuFfohZg/uSKVcN2SSO+nh/E/u3dq8Aj0x0zTzFLFSGKH/PlB9MWvVI
+        4Y1ubl87gltmoDRby060An4=
+X-Google-Smtp-Source: ACcGV61b9bn1nMW9RBTGCwX7rjTc8onV90pa1+NQ1dqJRnIMLlFD6xs82emi+q943UygoLMkfG8ydw==
+X-Received: by 2002:a19:d155:: with SMTP id i82-v6mr10417870lfg.127.1539632405294;
+        Mon, 15 Oct 2018 12:40:05 -0700 (PDT)
 Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm2658830lji.60.2018.10.15.12.40.02
+        by smtp.gmail.com with ESMTPSA id l3-v6sm2658830lji.60.2018.10.15.12.40.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 12:40:03 -0700 (PDT)
+        Mon, 15 Oct 2018 12:40:04 -0700 (PDT)
 From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To:     Boris Brezillon <boris.brezillon@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
@@ -67,19 +67,20 @@ Cc:     Richard Weinberger <richard@nod.at>,
         Marek Vasut <marek.vasut@gmail.com>,
         linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH v3 1/3] mtd: rawnand: Provide helper for polling GPIO R/B pin
-Date:   Mon, 15 Oct 2018 21:41:28 +0200
-Message-Id: <20181015194130.21764-1-jmkrzyszt@gmail.com>
+Subject: [PATCH v3 2/3] mtd: rawnand: ams-delta: Stop using legacy .IOADDR_R/W
+Date:   Mon, 15 Oct 2018 21:41:29 +0200
+Message-Id: <20181015194130.21764-2-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20181012204101.26274-1-jmkrzyszt@gmail.com>
+In-Reply-To: <20181015194130.21764-1-jmkrzyszt@gmail.com>
 References: <20181012204101.26274-1-jmkrzyszt@gmail.com>
+ <20181015194130.21764-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each controller driver having access to NAND R/B pin over GPIO would
-have to reimplement the polling loop otherwise.
+Replace use of legacy .IOADDR_R/W with runtime calculations based on
+priv->io_base.
 
 Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
@@ -87,82 +88,42 @@ Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 ---
 Changelog:
 v3:
-- don't surround added code with #ifdef CONFIG_GPIOLIB - sugeested by
-  Boris Brezillon - thanks,
-- drop inadequate comment on calling ->exec_op() recursively - catched
-  by Boris Brezillon, thanks,
-- drop redundant commend from header file - suggensted by Boris
-  Brezillon - thanks,
-- update comment on waiting for R/B pin rather than command completion
-v2:
-New patch - v1 consisted of only one patch reusing legacy helper
+New patch, split out from former PATCH 2/2 on Boris request - thanks
 
- drivers/mtd/nand/raw/nand_base.c | 31 +++++++++++++++++++++++++++++++
- include/linux/mtd/rawnand.h      |  4 ++++
- 2 files changed, 35 insertions(+)
+ drivers/mtd/nand/raw/ams-delta.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 05bd0779fe9b..0d5a2dc59b8d 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -45,6 +45,7 @@
- #include <linux/io.h>
- #include <linux/mtd/partitions.h>
- #include <linux/of.h>
-+#include <linux/gpio/consumer.h>
+diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+index 5ba180a291eb..46193db6d368 100644
+--- a/drivers/mtd/nand/raw/ams-delta.c
++++ b/drivers/mtd/nand/raw/ams-delta.c
+@@ -75,7 +75,7 @@ static const struct mtd_partition partition_info[] = {
  
- #include "internals.h"
+ static void ams_delta_io_write(struct ams_delta_nand *priv, u_char byte)
+ {
+-	writew(byte, priv->nand_chip.legacy.IO_ADDR_W);
++	writew(byte, priv->io_base + OMAP_MPUIO_OUTPUT);
+ 	gpiod_set_value(priv->gpiod_nwe, 0);
+ 	ndelay(40);
+ 	gpiod_set_value(priv->gpiod_nwe, 1);
+@@ -87,7 +87,7 @@ static u_char ams_delta_io_read(struct ams_delta_nand *priv)
  
-@@ -531,6 +532,36 @@ int nand_soft_waitrdy(struct nand_chip *chip, unsigned long timeout_ms)
- };
- EXPORT_SYMBOL_GPL(nand_soft_waitrdy);
+ 	gpiod_set_value(priv->gpiod_nre, 0);
+ 	ndelay(40);
+-	res = readw(priv->nand_chip.legacy.IO_ADDR_R);
++	res = readw(priv->io_base + OMAP_MPUIO_INPUT_LATCH);
+ 	gpiod_set_value(priv->gpiod_nre, 1);
  
-+/**
-+ * nand_gpio_waitrdy - Poll R/B GPIO pin until ready
-+ * @chip: NAND chip structure
-+ * @gpiod: GPIO descriptor of R/B pin
-+ * @timeout_ms: Timeout in ms
-+ *
-+ * Poll the R/B GPIO pin until it becomes ready. If that does not happen
-+ * whitin the specified timeout, -ETIMEDOUT is returned.
-+ *
-+ * This helper is intended to be used when the controller has access to the
-+ * NAND R/B pin over GPIO.
-+ *
-+ * Return 0 if the R/B pin indicates chip is ready, a negative error otherwise.
-+ */
-+int nand_gpio_waitrdy(struct nand_chip *chip, struct gpio_desc *gpiod,
-+		      unsigned long timeout_ms)
-+{
-+	/* Wait until R/B pin indicates chip is ready or timeout occurs */
-+	timeout_ms = jiffies + msecs_to_jiffies(timeout_ms);
-+	do {
-+		if (gpiod_get_value_cansleep(gpiod))
-+			return 0;
-+
-+		cond_resched();
-+	} while	(time_before(jiffies, timeout_ms));
-+
-+	return gpiod_get_value_cansleep(gpiod) ? 0 : -ETIMEDOUT;
-+};
-+EXPORT_SYMBOL_GPL(nand_gpio_waitrdy);
-+
- /**
-  * panic_nand_get_device - [GENERIC] Get chip for selected access
-  * @chip: the nand chip descriptor
-diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index e10b126e148f..4e91a70ede10 100644
---- a/include/linux/mtd/rawnand.h
-+++ b/include/linux/mtd/rawnand.h
-@@ -1346,4 +1346,8 @@ void nand_release(struct nand_chip *chip);
-  */
- int nand_soft_waitrdy(struct nand_chip *chip, unsigned long timeout_ms);
+ 	return res;
+@@ -211,8 +211,6 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	nand_set_controller_data(this, priv);
  
-+struct gpio_desc;
-+int nand_gpio_waitrdy(struct nand_chip *chip, struct gpio_desc *gpiod,
-+		      unsigned long timeout_ms);
-+
- #endif /* __LINUX_MTD_RAWNAND_H */
+ 	/* Set address of NAND IO lines */
+-	this->legacy.IO_ADDR_R = io_base + OMAP_MPUIO_INPUT_LATCH;
+-	this->legacy.IO_ADDR_W = io_base + OMAP_MPUIO_OUTPUT;
+ 	this->legacy.read_byte = ams_delta_read_byte;
+ 	this->legacy.write_buf = ams_delta_write_buf;
+ 	this->legacy.read_buf = ams_delta_read_buf;
 -- 
 2.16.4
 
