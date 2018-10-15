@@ -2,125 +2,212 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 279B3C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32EBFC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC58B208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:39:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE328208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:39:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlTWK/Bd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC58B208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="E/TWy8I3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE328208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbeJPDZ5 (ORCPT
+        id S1726962AbeJPD0e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 23:25:57 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38025 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726906AbeJPDZ4 (ORCPT
+        Mon, 15 Oct 2018 23:26:34 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44310 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbeJPD0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 23:25:56 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f8-v6so9642128pgq.5;
-        Mon, 15 Oct 2018 12:39:17 -0700 (PDT)
+        Mon, 15 Oct 2018 23:26:34 -0400
+Received: by mail-pg1-f193.google.com with SMTP id g2-v6so9632039pgu.11
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 12:39:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Qt1jXD7vfnfj8dmCX1h/qLhs3nEov44MG+ws6vTvbjs=;
-        b=BlTWK/BdSaND+ARMyzpBNfGd439wN0Smm6nJ19KBL9DWR+4+fPwNveBbhzX483aBTH
-         4VIYDyP8S1vQ6slO8VyCveLOqHhLFcmfcl0eCvRNK5/UivzebPrMXTnpuUYD7VNdPjaO
-         Zs+dajnUVg7d55T8OSj4dAzpcI9QVQc6L+lPIXQoGM61RrWj+M3pHC3wDX+oP2+PIIWl
-         8O5zFb05lm796ASoL0jg2WjsDCLVSkpSzBy8pUbgpKvEe+uExzmhSrLK9CveUHnD1ZO2
-         j7Yxrgz8UuH+VvEKzT7pQHCB/inIbTByiD190grQXgNLI//D/RKjkzCn9sghoVP1JD0S
-         hH6A==
+        bh=/SmIcgBVAk6gZKsas40nJsrIcVKBBO6iOo1aR6JLto4=;
+        b=E/TWy8I3HZE2MbvHdUDiwROhdCIT0lcnA8GMvYiDwCcqg/EUuUvoKciZChTQHhoHZr
+         roPACIDv6uCHAvCGYNAhBfkbxMezMVzgRsDrhYbD7o7YRVhX5+ILd2kmRDzzeTY7UyLR
+         H8a2WvZNBm4V0gNzjoHhY+SaGxd5zQ+IBQNMs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Qt1jXD7vfnfj8dmCX1h/qLhs3nEov44MG+ws6vTvbjs=;
-        b=sdoBKyK02xM5xpoXt0OTWgcIDAFXL3ydhgJ90DCRkehKrEwOR0VlHkfxC56gchFk0I
-         sU2Lgombqi/jVtjsEbLnLnW4012Fye88jyuIDI5TFahKhgvfYKN65h+1TSfwaSDeCV6c
-         ER7jaM6hPdXN4L3erGskAPempYOCLSFdk0vDKSXt+YwlyCuSUwdf9zduQmnisLoiSmla
-         wteA3ncaGqD2gC/ykKbc9VOSvMM9i9B0Mv8asT8Txy6MQxhJ5asBRRWNuWiTK4ATcWuh
-         RQy7k6EcFZoew6G2pw90YiAPoJzlHkrvwVjqEcGPJTlB/J6+pDtNr4g5Xo0kJnwih+ni
-         nYIg==
-X-Gm-Message-State: ABuFfogDTBJt/SwB//9fKgM+Ug3qzQI4UjgAqOeafhBTd0XBHnrZdgdo
-        M7CL5/5o50H2U/8zaw/mpurotLyu
-X-Google-Smtp-Source: ACcGV60idkpmrSUiAJgsMG+67LZ5brxONgs4pbj73tngYLSQQQoSYCQl+nd5QvYTPtWP3HW9XS82lw==
-X-Received: by 2002:a62:241a:: with SMTP id r26-v6mr14399277pfj.74.1539632356806;
-        Mon, 15 Oct 2018 12:39:16 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id r65-v6sm15486901pfj.5.2018.10.15.12.39.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 12:39:15 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 12:39:14 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for Oct 15
-Message-ID: <20181015193914.GA9881@roeck-us.net>
-References: <20181015192546.15faf3a1@canb.auug.org.au>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/SmIcgBVAk6gZKsas40nJsrIcVKBBO6iOo1aR6JLto4=;
+        b=Cs/khCzIuCg7KzT8AZnEpdAt7EfZfWiXb+RXEJRTlojijv1Nu/FsholrF1ym00S21Y
+         0P/1B5aUPrRY8novTuyoQc7galJ9VNGNEv2Ot0q1VDY3bF0L3d1kt3UmWfKugyQAxleQ
+         uTP5am/5amgY+Rl7Gh7UFjHBVtaJ2wlquVq4L9+/j2VOjhI3zMJNFTKoRmLz9RRpqcCz
+         3AXA7vWrHuA5EytOqR4StPbNU/JBPsEicsW+rYxo+RWMbGYCmS4EzqDZft94TASwhapE
+         +e6jV4p++hwROm9zqUkuYe9GBXFZG8CtD1TuOIfHBMWlKBL2cqtwoTdKK0q/RiyRvGaq
+         lVYA==
+X-Gm-Message-State: ABuFfojageca7TeKKXi7jSok4NsQHmMTioB2aHTI6nEcC1BjohaXgTS3
+        ze99Xt0Vt6IlhtFl/yISvFysEA==
+X-Google-Smtp-Source: ACcGV62q46z4qTbFNJb9oMTyKTj7sjaRermm5mSaSkdv/mviftNoCZfPi5OTPTyvne0dJgEugI+S8g==
+X-Received: by 2002:a63:26c4:: with SMTP id m187-v6mr17450023pgm.268.1539632394274;
+        Mon, 15 Oct 2018 12:39:54 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id z15-v6sm14344370pfn.170.2018.10.15.12.39.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 12:39:53 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 12:39:51 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Nikolay Borisov <nborisov@suse.com>, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC] doc: rcu: remove obsolete (non-)requirement about
+ disabling preemption
+Message-ID: <20181015193951.GA33528@joelaf.mtv.corp.google.com>
+References: <20181014212955.95267-1-joel@joelfernandes.org>
+ <20181014231731.GN2674@linux.ibm.com>
+ <20181015020827.GA217384@joelaf.mtv.corp.google.com>
+ <20181015021349.GB217384@joelaf.mtv.corp.google.com>
+ <20181015023328.GP2674@linux.ibm.com>
+ <20181015024758.GA227989@joelaf.mtv.corp.google.com>
+ <5151da01-343b-bb37-353e-b6652ae530f5@suse.com>
+ <20181015112112.GT2674@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181015192546.15faf3a1@canb.auug.org.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181015112112.GT2674@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Oct 15, 2018 at 04:21:12AM -0700, Paul E. McKenney wrote:
+> On Mon, Oct 15, 2018 at 09:05:22AM +0300, Nikolay Borisov wrote:
+> > On 15.10.2018 05:47, Joel Fernandes wrote:
+> > > On Sun, Oct 14, 2018 at 07:33:28PM -0700, Paul E. McKenney wrote:
+> > >> On Sun, Oct 14, 2018 at 07:13:49PM -0700, Joel Fernandes wrote:
+> > >>> On Sun, Oct 14, 2018 at 07:08:27PM -0700, Joel Fernandes wrote:
+> > >>>> On Sun, Oct 14, 2018 at 04:17:31PM -0700, Paul E. McKenney wrote:
+> > >>>>> On Sun, Oct 14, 2018 at 02:29:55PM -0700, Joel Fernandes (Google) wrote:
+> > >>>>>> The Requirements.html document says "Disabling Preemption Does Not Block
+> > >>>>>> Grace Periods". However this is no longer true with the RCU
+> > >>>>>> consolidation. Lets remove the obsolete (non-)requirement entirely.
+> > >>>>>>
+> > >>>>>> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > >>>>>
+> > >>>>> Good catch, queued, thank you!
+> > >>>>
+> > >>>> Thanks! By the way after I sent the patch, I also tried Oleg's experiment to
+> > >>>> confirm that this is indeed obsolete.  :)
+> > >>>>
+> > >>>> One thing interesting came up when I tried synchronize_rcu_expedited()
+> > >>>> instead of synchronize_rcu() in Oleg's experiment, I still saw a multiple
+> > >>>> millisecond delay between when the rcu read section completely and the
+> > >>>> synchronize_rcu_expedited returns:
+> > >>>>
+> > >>>> For example, with synchronize_rcu_expedited, the 'SPIN done' and the 'SYNC
+> > >>>> done' are about 3 millisecond apart:
+> > >>>> [   77.599142] SPIN start
+> > >>>> [   77.601595] SYNC start
+> > >>>> [   82.604950] SPIN done!
+> > >>>> [   82.607836] SYNC done!
+> > >>>>  I saw anywhere from 2-6 milliseconds.
+> > >>>>
+> > >>>> The reason I bring this up is according to Requirements.html: In some cases,
+> > >>>> the multi-millisecond synchronize_rcu() latencies are unacceptable. In these
+> > >>>> cases, synchronize_rcu_expedited() may be used instead,.. so either I messed
+> > >>>> something up in the experiment, or I need to update this part of the document ;-)
+> > >>
+> > >> In normal testing, 2-6 milliseconds is indeed excessive.  Could you please
+> > >> point me at Oleg's experiment?  Also, what CONFIG_PREEMPT setting were
+> > >> you using?  (My guess is CONFIG_PREEMPT=y.)
+> > > 
+> > > The CONFIG_PREEMPT config I am using is CONFIG_PREEMPT=y.
+> > > 
+> > >>> So I realized I'm running in Qemu so it could also be a scheduling delay of
+> > >>> the vcpu thread. So apologies about the noise if the experiment works fine
+> > >>> for you.
+> > >>
+> > >> I used rcuperf, which might not be doing the same thing as Oleg's
+> > >> experiment.
+> > > 
+> > > The experiment is mentioned at:
+> > > https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg912055.html
+> > > 
+> > > If you apply the below diff, it applies cleanly on rcu/dev. And then run:
+> > > taskset 2 perl -e 'syscall 157, 666, 5000' &
+> > > taskset 1 perl -e 'syscall 157, 777'
+> > > 
+> > > diff --git a/kernel/sys.c b/kernel/sys.c
+> > > index cf5c67533ff1..b654b7566ca3 100644
+> > > --- a/kernel/sys.c
+> > > +++ b/kernel/sys.c
+> > > @@ -2261,6 +2261,9 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
+> > >  	return -EINVAL;
+> > >  }
+> > >  
+> > > +#include <linux/delay.h>
+> > > +
+> > > +
+> > >  SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+> > >  		unsigned long, arg4, unsigned long, arg5)
+> > >  {
+> > > @@ -2274,6 +2277,19 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+> > >  
+> > >  	error = 0;
+> > >  	switch (option) {
+> > > +	case 666:
+> > > +		preempt_disable();
+> > > +		pr_crit("SPIN start\n");
+> > > +		while (arg2--)
+> > > +			mdelay(1);
 > 
-> Changes since 20181012:
+> OK, this is the problem.  When you spin in the kernel for several
+> milliseconds with preemption disabled, the consolidated grace period
+> is -required- to wait for this preemption-disabled reader to complete,
+> whether expedited or not.
 > 
-> My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
+> So, expected behavior.  ;-)
+
+Cool. Thanks for confirming. I ran some tests too and if I reduce the
+preempt_disabled section's duration, then the delay for
+synchronize_rcu_expedited is much lesser indeed.
+
+> In any case, please don't spin for milliseconds with preemption disabled.
+> The real-time guys are unlikely to be happy with you if you do this!
+
+Well just to clarify, I was just running Oleg's test which did this. This
+test was mentioned in the original documentation that I deleted. Ofcourse I
+would not dare do such a thing in production code :-D. I guess to Oleg's
+defense, he did it to very that synchronize_rcu() was not blocked on
+preempt-disable sections which was a different test.
+
+> > > +		pr_crit("SPIN done!\n");
+> > > +		preempt_enable();
+> > > +		break;
+> > > +	case 777:
+> > > +		pr_crit("SYNC start\n");
+> > > +		synchronize_rcu();
+> > > +		pr_crit("SYNC done!\n");
+> > 
+> > But you are using the console printing infrastructure which is rather
+> > heavyweight. Try replacing pr_* calls with trace_printk so that you
+> > write to the lock-free ring buffer, this will reduce the noise from the
+> > heavy console printing infrastructure.
 > 
+> And this might be a problem as well.
 
-Bisect log:
+This was not the issue (or atleast not fully the issue) since I saw the same
+thing with trace_printk. It was exactly what you said - which is the
+excessively long preempt disabled times.
 
-# bad: [774ea0551a2966c8fc29a6f675c3e28c5c6fa586] Add linux-next specific files for 20181012
-# good: [0238df646e6224016a45505d2c111a24669ebe21] Linux 4.19-rc7
-git bisect start 'HEAD' 'v4.19-rc7'
-# good: [dfbf78faefa3c26d94208398e62bf25ea798e7f2] Merge remote-tracking branch 'spi-nor/spi-nor/next'
-git bisect good dfbf78faefa3c26d94208398e62bf25ea798e7f2
-# good: [3f296bb430327676912966c56d2f078f74e6b4ab] Merge remote-tracking branch 'tip/auto-latest'
-git bisect good 3f296bb430327676912966c56d2f078f74e6b4ab
-# good: [056ff0c45d1780f7bac1b54bd4160647efc500ad] Merge remote-tracking branch 'staging/staging-next'
-git bisect good 056ff0c45d1780f7bac1b54bd4160647efc500ad
-# good: [d7946b50c21a7d88af6c8e88d976ba3dfca651cc] Merge remote-tracking branch 'pinctrl/for-next'
-git bisect good d7946b50c21a7d88af6c8e88d976ba3dfca651cc
-# good: [72b5ca3121d5352fbb8fe3e1abaa86748205c0cb] Merge remote-tracking branch 'xarray/xarray'
-git bisect good 72b5ca3121d5352fbb8fe3e1abaa86748205c0cb
-# good: [e3895cf23a25da6dea2c8e986d4f6c24fafe5448] hugetlb: introduce generic version of prepare_hugepage_range
-git bisect good e3895cf23a25da6dea2c8e986d4f6c24fafe5448
-# good: [627f8833ac26e66d4b50676a0251499474bb4ee4] reiserfs: propagate errors from fill_with_dentries() properly
-git bisect good 627f8833ac26e66d4b50676a0251499474bb4ee4
-# good: [e38910adf47ba1d0b5a5a573cc26bde1ec533147] memblock: replace alloc_bootmem_pages_node with memblock_alloc_node
-git bisect good e38910adf47ba1d0b5a5a573cc26bde1ec533147
-# bad: [f89bdd2c52666d9da4bf4ef3a97a7188586ba0fb] dma-direct: fix up for the removal of linux/bootmem.h
-git bisect bad f89bdd2c52666d9da4bf4ef3a97a7188586ba0fb
-# good: [3108d998dfc36eb7f6b7f2917fc561258f742094] mm: nobootmem: remove bootmem allocation APIs
-git bisect good 3108d998dfc36eb7f6b7f2917fc561258f742094
-# good: [1f94dacb1d0ed0d1068b89ad867a198d3eca7bf2] memblock: rename __free_pages_bootmem to memblock_free_pages
-git bisect good 1f94dacb1d0ed0d1068b89ad867a198d3eca7bf2
-# good: [c3954ade0c1b499ae587f3edb813876216212836] memblock: replace BOOTMEM_ALLOC_* with MEMBLOCK variants
-git bisect good c3954ade0c1b499ae587f3edb813876216212836
-# bad: [cde1c7f7e92aef241f1c1a09a4d1f1f06fd565b6] mm: remove include/linux/bootmem.h
-git bisect bad cde1c7f7e92aef241f1c1a09a4d1f1f06fd565b6
-# first bad commit: [cde1c7f7e92aef241f1c1a09a4d1f1f06fd565b6] mm: remove include/linux/bootmem.h
+thanks!
 
-Reverting this patch together with its fix-up "powerpc: fix up for removal of
-linux/bootmem.h" fixes the problem. This also fixes the traceback seen with all
-other ppc64 images.
+ - Joel
 
-Guenter
