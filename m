@@ -2,147 +2,134 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D76C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A43ADC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64CB42064A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5054D20869
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:37:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RY50ghsx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64CB42064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="byGwsKfG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5054D20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726938AbeJPFXE (ORCPT
+        id S1726978AbeJPFYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 01:23:04 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45131 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbeJPFXE (ORCPT
+        Tue, 16 Oct 2018 01:24:11 -0400
+Received: from rcdn-iport-8.cisco.com ([173.37.86.79]:35624 "EHLO
+        rcdn-iport-8.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbeJPFYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 01:23:04 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y15-v6so9905335plr.12;
-        Mon, 15 Oct 2018 14:36:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bDjrAoUpXFo6BGFoyEt5TRYalMYDfkiGz3Z0CU2hn4I=;
-        b=RY50ghsxGXWnkCBURVulnAECoZ0eZ4GsQauGKXOBRI9p1KdJlThLiYihNT5HUwgJrp
-         OQGvyUPPi3YteoFLYRTzROnMRyy95rClR197lxJOWQ/SjKuya/ruSwl/0nAKd8wrRctt
-         zRHEjb8/5t3CBzuHmUHSUXN3ZN3kdmyLFY8sPJbCJa5QowxvuQxNeAYQeu747rMKLyVi
-         cXupxrZduxQbFICT6zcF6A30zbW5/pEdHo9vAX7r0ya5XpnVqJUR7e1K3NNSH59/x1Lh
-         sN0Z72xcJ1kPLOn5RN8dt18GXbyqMDoUpLd44dLzfEFAou9QXh84MUQbI6hzEhiv/3Pb
-         LJGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bDjrAoUpXFo6BGFoyEt5TRYalMYDfkiGz3Z0CU2hn4I=;
-        b=evzKL9vlXPohway+cxtU9xeRio9J3WnihH/L3i7hd5dgD5ZCaIkTrTIAqYrbtsWFYs
-         wUBqOWzbr4lL+60SlG+iqU9j2Ix3g2pP0XSG4t9GLBc4ZlH25VPhm7nSPcb76HSLo4uf
-         g0427UpU8p6PQDoCbtSF+buvEhSDcWsrUY6edDlxkLnYj1N6tE4l9gP99fx3Ap2izrX1
-         bYq4MFnyUSJtVTtwPfi+ljW5bvqbigbeWVq6GLu7ydsjz1lAA8sUgZG4BJGNUEKa9wOT
-         dZ0Os4POsx11dUbHaIAAQrL5PfpnstFM2r0dZypbCtViGnJ1PfnABWEP/XYD7up6wgZE
-         PieQ==
-X-Gm-Message-State: ABuFfoh1GZz9Pfo196R3q0m+N6dKZsfkMcpkL142RoH9uJYq/bB3DeyV
-        I7Ra60Ud5o+vdXNNczwPjOEJ34um
-X-Google-Smtp-Source: ACcGV62gmT1qWSh98m4bT1c91ESUVze3pk9p691kIB2YKoHOVzTkxlzN977v0lIxUJLKCYkclv8kig==
-X-Received: by 2002:a17:902:70c3:: with SMTP id l3-v6mr19361448plt.125.1539639360981;
-        Mon, 15 Oct 2018 14:36:00 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id j19-v6sm13213842pfi.137.2018.10.15.14.35.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 14:36:00 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 14:35:59 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Tue, 16 Oct 2018 01:24:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=1166; q=dns/txt; s=iport;
+  t=1539639428; x=1540849028;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=yYprDjdedaZWsXdo4vmP4D1jqM77QeIZ0LgnnTH1BR0=;
+  b=byGwsKfGsnOdZLo8Cx4pB0fG7eWXDjE7J+KwPD9TKvcFBeIxuxiV3TJX
+   Rm7oJg08OURCdgkhvCZibk/h4U5gnsMGD5imZJ6J9u8WZGNc7PAfT3kV/
+   jCPCW5CNwcMpx44GwnQWnsXeuwfQEAUAOiNQ0014Ps2qQhtnwNRPuDTey
+   M=;
+X-IronPort-AV: E=Sophos;i="5.54,385,1534809600"; 
+   d="scan'208";a="464813567"
+Received: from alln-core-7.cisco.com ([173.36.13.140])
+  by rcdn-iport-8.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 21:37:08 +0000
+Received: from [10.154.208.167] ([10.154.208.167])
+        by alln-core-7.cisco.com (8.15.2/8.15.2) with ESMTP id w9FLVvGL032210;
+        Mon, 15 Oct 2018 21:31:59 GMT
+Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: linux-next: Tree for Oct 15
-Message-ID: <20181015213559.GA7976@roeck-us.net>
-References: <20181015192546.15faf3a1@canb.auug.org.au>
- <20181015193914.GA9881@roeck-us.net>
- <20181016073359.3fa7bb32@canb.auug.org.au>
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
+        Enke Chen <enkechen@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <20181015222144.27fdafc3@alans-desktop>
+From:   Enke Chen <enkechen@cisco.com>
+Message-ID: <3e3728f7-1370-586c-c5ac-4ba0604976a5@cisco.com>
+Date:   Mon, 15 Oct 2018 14:31:57 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016073359.3fa7bb32@canb.auug.org.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181015222144.27fdafc3@alans-desktop>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.154.208.167, [10.154.208.167]
+X-Outbound-Node: alln-core-7.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 07:33:59AM +1100, Stephen Rothwell wrote:
-> Hi Guenter,
-> 
-> [Again, just cc'ing the PPC folks]
-> 
-> On Mon, 15 Oct 2018 12:39:14 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
-> >
-> > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > Changes since 20181012:
-> > > 
-> > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
-> > >   
-> > 
-> > Bisect log:
-> > 
-> > # bad: [774ea0551a2966c8fc29a6f675c3e28c5c6fa586] Add linux-next specific files for 20181012
-> > # good: [0238df646e6224016a45505d2c111a24669ebe21] Linux 4.19-rc7
-> > git bisect start 'HEAD' 'v4.19-rc7'
-> > # good: [dfbf78faefa3c26d94208398e62bf25ea798e7f2] Merge remote-tracking branch 'spi-nor/spi-nor/next'
-> > git bisect good dfbf78faefa3c26d94208398e62bf25ea798e7f2
-> > # good: [3f296bb430327676912966c56d2f078f74e6b4ab] Merge remote-tracking branch 'tip/auto-latest'
-> > git bisect good 3f296bb430327676912966c56d2f078f74e6b4ab
-> > # good: [056ff0c45d1780f7bac1b54bd4160647efc500ad] Merge remote-tracking branch 'staging/staging-next'
-> > git bisect good 056ff0c45d1780f7bac1b54bd4160647efc500ad
-> > # good: [d7946b50c21a7d88af6c8e88d976ba3dfca651cc] Merge remote-tracking branch 'pinctrl/for-next'
-> > git bisect good d7946b50c21a7d88af6c8e88d976ba3dfca651cc
-> > # good: [72b5ca3121d5352fbb8fe3e1abaa86748205c0cb] Merge remote-tracking branch 'xarray/xarray'
-> > git bisect good 72b5ca3121d5352fbb8fe3e1abaa86748205c0cb
-> > # good: [e3895cf23a25da6dea2c8e986d4f6c24fafe5448] hugetlb: introduce generic version of prepare_hugepage_range
-> > git bisect good e3895cf23a25da6dea2c8e986d4f6c24fafe5448
-> > # good: [627f8833ac26e66d4b50676a0251499474bb4ee4] reiserfs: propagate errors from fill_with_dentries() properly
-> > git bisect good 627f8833ac26e66d4b50676a0251499474bb4ee4
-> > # good: [e38910adf47ba1d0b5a5a573cc26bde1ec533147] memblock: replace alloc_bootmem_pages_node with memblock_alloc_node
-> > git bisect good e38910adf47ba1d0b5a5a573cc26bde1ec533147
-> > # bad: [f89bdd2c52666d9da4bf4ef3a97a7188586ba0fb] dma-direct: fix up for the removal of linux/bootmem.h
-> > git bisect bad f89bdd2c52666d9da4bf4ef3a97a7188586ba0fb
-> > # good: [3108d998dfc36eb7f6b7f2917fc561258f742094] mm: nobootmem: remove bootmem allocation APIs
-> > git bisect good 3108d998dfc36eb7f6b7f2917fc561258f742094
-> > # good: [1f94dacb1d0ed0d1068b89ad867a198d3eca7bf2] memblock: rename __free_pages_bootmem to memblock_free_pages
-> > git bisect good 1f94dacb1d0ed0d1068b89ad867a198d3eca7bf2
-> > # good: [c3954ade0c1b499ae587f3edb813876216212836] memblock: replace BOOTMEM_ALLOC_* with MEMBLOCK variants
-> > git bisect good c3954ade0c1b499ae587f3edb813876216212836
-> > # bad: [cde1c7f7e92aef241f1c1a09a4d1f1f06fd565b6] mm: remove include/linux/bootmem.h
-> > git bisect bad cde1c7f7e92aef241f1c1a09a4d1f1f06fd565b6
-> > # first bad commit: [cde1c7f7e92aef241f1c1a09a4d1f1f06fd565b6] mm: remove include/linux/bootmem.h
-> > 
-> > Reverting this patch together with its fix-up "powerpc: fix up for removal of
-> > linux/bootmem.h" fixes the problem. This also fixes the traceback seen with all
-> > other ppc64 images.
-> > 
-> > Guenter
-> 
-> Thanks for this ... though a strange result as those patches were in
-> next-20181012 as well, so I wonder what else changed.
-> 
-Quite simple - the bisect is wrong. For some reason I started with
-next-20181012 (which was fine), not 20181015 (which is broken).
-Repeating it now. Sorry for the confusion.
+Hi, Alan:
 
-Guenter
+As I replied earlier, I will remove the logic that allows setting on others.
+This function "set_predump_signal_perm()" will be gone too.
+
+Thanks.  -- Enke
+
+On 10/15/18 2:21 PM, Alan Cox wrote:
+>> +/*
+>> + * Returns true if current's euid is same as p's uid or euid,
+>> + * or has CAP_SYS_ADMIN.
+>> + *
+>> + * Called with rcu_read_lock, creds are safe.
+>> + *
+>> + * Adapted from set_one_prio_perm().
+>> + */
+>> +static bool set_predump_signal_perm(struct task_struct *p)
+>> +{
+>> +	const struct cred *cred = current_cred(), *pcred = __task_cred(p);
+>> +
+>> +	return uid_eq(pcred->uid, cred->euid) ||
+>> +	       uid_eq(pcred->euid, cred->euid) ||
+>> +	       capable(CAP_SYS_ADMIN);
+>> +}
+> 
+> This makes absolutely no security sense whatsoever. The uid and euid of
+> the parent and child can both change between the test and the signal
+> delivery.
+> 
+> There are reasons that the child signal control code is incredibly
+> careful about either the parent or child using execve or doing a
+> privilege change that might pose a risk.
+> 
+> Until this code gets the same protections I don't believe it's safe.
+> 
+> Alan
+> 
