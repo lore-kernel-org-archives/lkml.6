@@ -2,92 +2,105 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E64C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD37C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0597720652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:51:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0597720652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 31B0020652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:00:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOAFMJvK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31B0020652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbeJOMfW (ORCPT
+        id S1726614AbeJOMna (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 08:35:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44002 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726262AbeJOMfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 08:35:22 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7ADC93082A21;
-        Mon, 15 Oct 2018 04:51:50 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-24.pek2.redhat.com [10.72.12.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 93242868CA;
-        Mon, 15 Oct 2018 04:51:42 +0000 (UTC)
-Date:   Mon, 15 Oct 2018 12:51:38 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>, bp@suse.de
-Cc:     thomas.lendacky@amd.com, brijesh.singh@amd.com,
-        Lianbo Jiang <lijiang@redhat.com>, bhe@redhat.com,
-        tiwai@suse.de, x86@kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        mingo@redhat.com, baiyaowei@cmss.chinamobile.com, hpa@zytor.com,
-        dan.j.williams@intel.com, bp@suse.de, tglx@linutronix.de,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH 1/3] x86/kexec: Correct KEXEC_BACKUP_SRC_END off-by-one
- error
-Message-ID: <20181015045138.GA9719@dhcp-128-65.nay.redhat.com>
-References: <153805773703.1157.14773321497580233478.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <153805811578.1157.6948388946904655969.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20180930092110.GB6950@dhcp-128-65.nay.redhat.com>
- <20180930092741.GC6950@dhcp-128-65.nay.redhat.com>
+        Mon, 15 Oct 2018 08:43:30 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42181 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbeJOMn3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 08:43:29 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i4-v6so8552576pgq.9
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 21:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Buny1gAW+O5WKIrF3yuE/KrqBggfVPH1nvuy0QICbRE=;
+        b=IOAFMJvKipE87YR17y/83Z6bOvlmqc9PhyFcSIWCMaoiBBgX1kaa5S10ld4uBXRbTG
+         AfUb4vYnm6l4sDp60q0ncKjsR1xN7HImM1ofTWJVM0qXpOMkOo1DRhwU5V/8YyjekXHH
+         jdG9Crw2Lt2rdOhh7WaqwTE/K8vuvfY4l2oEsBWjtVOxusJhFc1jwwEkKUsX+aUGxvUE
+         yewjrf3tKFDntL5ZLBIV+U1ocQePc+Rqj3LW/i4tRtaeLnu7ZssZU1//SgEKLvw5Y1an
+         66s5wcsp1QSX+DwMsvRoXqv26bDAAywp/Xadf3bWXM0A85TfhNfvbglwNnCg0/0hJxxD
+         Iksg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Buny1gAW+O5WKIrF3yuE/KrqBggfVPH1nvuy0QICbRE=;
+        b=KzTiwnPUe90VIQP3ul326v5Qe0a7OyY+Hpo0YrkjR08KK/+QO4iU0wElIT8K0mEh5D
+         lB07K8JeyQt7qHY3lXyqs/FTx3K3C+9SAtpkMNXbQ1hanWex2GK5Vk//W9O6gVd/7xgs
+         ZD/Gl9MpBQie8lDeXpJGYk2YAbSmAwoZ2JwRt1Zx4cnDoCJ2X77aqpPDz56Cd75NCx2l
+         kamxNYoftrYqQM4gRU3JfCxL6tbbwgvVmAcVBn7nOGrBg9uIIj+omG5Tc1FCi98Ul9wh
+         UcTMFQPnEHNZ5P/R/farhjir1WE0Zx3aessETd8Nqk6TLxviUNrzq6+L2e4Ilk4SJrZL
+         rrGw==
+X-Gm-Message-State: ABuFfoiXrAJeXbzjHEbavHdTOd9ALYEESGZvmUIy1haQ3Z/UrqQuEIJj
+        9huTfDseoJjso4dP7WG3dDk=
+X-Google-Smtp-Source: ACcGV61c1depBN9OAcGAPGMpNyucXDlDPr4pfSVzS9TEMxxVMlq4nomZpx4FK+5cBAc1L7YvSIJSRA==
+X-Received: by 2002:a63:6342:: with SMTP id x63-v6mr13816764pgb.83.1539579596143;
+        Sun, 14 Oct 2018 21:59:56 -0700 (PDT)
+Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
+        by smtp.gmail.com with ESMTPSA id p62-v6sm12244698pfp.111.2018.10.14.21.59.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 14 Oct 2018 21:59:55 -0700 (PDT)
+From:   Todd Poynor <toddpoynor@gmail.com>
+To:     Rob Springer <rspringer@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Todd Poynor <toddpoynor@google.com>
+Subject: [PATCH 00/11] staging: gasket: fixes
+Date:   Sun, 14 Oct 2018 21:59:16 -0700
+Message-Id: <20181015045927.156790-1-toddpoynor@gmail.com>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180930092741.GC6950@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 15 Oct 2018 04:51:51 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/30/18 at 05:27pm, Dave Young wrote:
-> On 09/30/18 at 05:21pm, Dave Young wrote:
-> > Hi Bjorn,
-> > 
-> > On 09/27/18 at 09:21am, Bjorn Helgaas wrote:
-> > > From: Bjorn Helgaas <bhelgaas@google.com>
-> > > 
-> > > The only use of KEXEC_BACKUP_SRC_END is as an argument to
-> > > walk_system_ram_res():
-> > > 
-> > >   int crash_load_segments(struct kimage *image)
-> > >   {
-> > >     ...
-> > >     walk_system_ram_res(KEXEC_BACKUP_SRC_START, KEXEC_BACKUP_SRC_END,
-> > >                         image, determine_backup_region);
-> > > 
-> > > walk_system_ram_res() expects "start, end" arguments that are inclusive,
-> > > i.e., the range to be walked includes both the start and end addresses.
-> > 
-> > Looking at the function comment of find_next_iomem_res,  the res->end
-> > should be exclusive, am I missing something?
-> 
-> Oops,  you fix it in 2nd patch, I apparently miss that.
-> 
-> Since the fix of checking the end is in another patch, probably merge
-> these two patches so that they are in one patch to avoid break bisect. 
+From: Todd Poynor <toddpoynor@google.com>
 
-Not sure if above comment was missed, Boris, would you mind to fold the
-patch 1 and 2?
+Various fixes for gasket/apex drivers.
 
-Thanks
-Dave
+Nick Ewalt (8):
+  staging: gasket: page_table: remove unnecessary PTE status set to free
+  staging: gasket: page_table: rearrange gasket_page_table_entry
+  staging: gasket: page table: fixup error path allocating coherent mem
+  staging: gasket: page_table: fix comment in components_to_dev_address
+  staging: gasket: page_table: simplify gasket_components_to_dev_address
+  staging: gasket: apex: fix sysfs_show
+  staging: gasket: sysfs: fix attribute release comment
+  staging: gasket: Update device virtual address comment
+
+Todd Poynor (3):
+  staging: gasket: core: debug log updates
+  staging: gasket: page table: return valid error code on map fail
+  staging: gasket: page table: remove dead code in coherent mem alloc
+
+ drivers/staging/gasket/apex_driver.c       |  2 +-
+ drivers/staging/gasket/gasket_core.c       |  9 +--
+ drivers/staging/gasket/gasket_page_table.c | 65 +++++++++-------------
+ drivers/staging/gasket/gasket_sysfs.h      |  4 +-
+ 4 files changed, 33 insertions(+), 47 deletions(-)
+
+-- 
+2.19.0.605.g01d371f741-goog
+
