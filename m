@@ -2,90 +2,82 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DA0C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFECC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7026B208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:47:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56D4F208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:48:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YPlBMoyZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7026B208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UU+gt1r7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56D4F208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbeJPCeD (ORCPT
+        id S1726924AbeJPCfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:34:03 -0400
-Received: from ozlabs.org ([203.11.71.1]:60111 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726707AbeJPCeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:34:03 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42YnVr2fP1z9sBj;
-        Tue, 16 Oct 2018 05:47:32 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539629252;
-        bh=nfiEzyQdxXDbSlWeQzm5l5tKMD5uXE9F5sJ/IDYSzr8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YPlBMoyZxONx+tZ55kMj+zaHYv8U/376gL2AoE8SlEHZMbErmuSn75nAwkp/YdRZc
-         tTAzL6r991ICgSZqipaCcG45Z4DEOT6Kr7vUtjAR+jFbWNStX1wxQXhyyip1MFuz68
-         h7/rlVvrSGfCbpVj12R6KGiUjQoeEhvuxgpJVQJgfRueYGPwCI+ftR9KvtQu4brHNA
-         5Pll8+0jE3EbsJptcPhGVSTKe+a46G/v1Va46rpkV8SpAEbIqVaSC1hZhtW0Km0UQT
-         k8K7BmI1S0U8Nzf1d/dGoIk+FNHVc3zJGFwMNGkPEhN0HJ6CQ/GYrFgNWevSnpWOiR
-         ByMa3xxlrPMVg==
-Date:   Tue, 16 Oct 2018 05:47:23 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dan Schatzberg <dschatzberg@fb.com>
-Subject: linux-next: Signed-off-by missing for commit in the fuse tree
-Message-ID: <20181016054723.4dfb83f6@canb.auug.org.au>
+        Mon, 15 Oct 2018 22:35:11 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42268 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbeJPCfL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 22:35:11 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y71-v6so18478533lje.9
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 11:48:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xRvcjnh4JTfyOJjTUNxFpr2FULfnmHqOt/18Y6SXcDg=;
+        b=UU+gt1r7eKsHgKHocUsAqseEtyNK9R2PoP3kaUauKB4/uRtarx2Z764JFmgai4FY3l
+         xhjN9/j3tLMlaLqpoqu4pL8vOl93bUpFnAldtxPS6SUTtUNLugdKHj2uOpcojOyBTixO
+         IQT86L5xOSJWvw90OQ6DjJO6AZyVrUkMt6utFfx02LLmEpx7hXz1ws7Ojw7cKcdxiicp
+         uL9OWxaeViTlRm5xfGjF8rA7RPJbkmScate1CyIu+1Q/avZRHTqYedTe5OxaTAutheD/
+         OSThaDNkTR3EZ6xeyk6xBujHUOn5ve7cIy7jkdydQNitOtcN9ZcjgUu1ItMjx4SxWUiN
+         EMfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xRvcjnh4JTfyOJjTUNxFpr2FULfnmHqOt/18Y6SXcDg=;
+        b=jYiAlLKULxE/ThRP5wfs5vHtM7uPqOV+/lk0RCM4WqlptsK7YcbPlVFk2sd5fBBOFr
+         y+zUYXESlxQXDNHNiIBWR1HN+yVwJm9Wlg/wVD+KCjwPU6fCwzGgiLi6woUMRZXvcTFv
+         rEp6Sdyz2gfFXbxwDpOwuUYApklCpJIPZyvIjVyTCx1+zjOeKaG1iE/8dbhERV4BcH2Y
+         pCBvJK/5D6HoaoEyzhMK3cI+EKGf1c5Vw5aK8xb/Lu79Eky4K/eZTudsUwoqQ1e3Fw45
+         mTBqYGH795aQ9e80nJ4zm/zXyrk8OqMoahiu9Z2xg55J86q8ybjHqLkB3Jcwx51y0LBD
+         9Dqw==
+X-Gm-Message-State: ABuFfogxsgyOsUxCDvxw48LsEyWtGfTeih8vzKmVeKkCsNB980COhDpM
+        2dHCTvGGjD/hsmnZjBR2FYpFxNIibFKpOrevLxnZ8Kal
+X-Google-Smtp-Source: ACcGV61Mm5qR4C4rxf3jtafXgxdoJ66Ufsa+YPenJcyhneadlIQfUbB8HjVQGPYmUGRgs6FHs7WW3vcGahETdElNWo0=
+X-Received: by 2002:a2e:6d0a:: with SMTP id i10-v6mr12746935ljc.14.1539629320760;
+ Mon, 15 Oct 2018 11:48:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/S=9TE4XGR7tbJl=uSNg9tR_"; protocol="application/pgp-signature"
+References: <20181003171720.169953-1-rkir@google.com> <20181003171720.169953-6-rkir@google.com>
+ <20181015183458.GA28454@kroah.com>
+In-Reply-To: <20181015183458.GA28454@kroah.com>
+From:   Roman Kiryanov <rkir@google.com>
+Date:   Mon, 15 Oct 2018 11:48:28 -0700
+Message-ID: <CAOGAQerzTxLEcFjqCqjGvFDaK79LWw7kuGqprw4mEj6gmcm6tA@mail.gmail.com>
+Subject: Re: [PATCH v3 06/15] platform: goldfish: pipe: Move memory allocation
+ from probe to init
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, Todd Kjos <tkjos@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/S=9TE4XGR7tbJl=uSNg9tR_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+> You should only allocate memory at probe time
 
-Hi Miklos,
+probe does not know what memory to allocate. We have several versions
+of the driver (with different init) and different versions allocate
+different state.
 
-Commit
+>, not init time as what
+> happens if the hardware is not present yet your driver is loaded?
 
-  5571f1e65486 ("fuse: enable caching of symlinks")
-
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/S=9TE4XGR7tbJl=uSNg9tR_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvE4LsACgkQAVBC80lX
-0GyaEAgAiYD4xrM/7Zt+wPi89D7ZTAPTggrPsT37gf5ZTl4p1FGv2gdcOLDzKBbw
-/gASdUGGim9eDD/Jx09l6G2rCeckz/FgbI16xyuSlBHlf0+LIU0vLzUhHidf3BNF
-4gBlQwK1BgEJNlSXnQNZdvDIJSWTEcohbQd6zrglfy7YZlmasJemQ0C7PCs0N0M0
-1B6+sBETOeOt3p0oUH/tQDkJx96K4LkiNiYZqo6pVwg5Uk2LJS+l8My8FKBWlfPY
-qYYUhRS7xHqK6hqoQHgxODN1HGSHwln5cTcGo5nSW4EZtX7X3TK9ZZfta82og+ws
-5EH/YrRWUc5bbmcR8QZ3rQVMQ2jWgA==
-=+Niy
------END PGP SIGNATURE-----
-
---Sig_/S=9TE4XGR7tbJl=uSNg9tR_--
+init will have to rollback what it allocated.
