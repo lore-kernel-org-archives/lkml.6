@@ -2,121 +2,187 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E1DC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 723BDC71133
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA61A208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:23:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA61A208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D88C208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:23:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hkeIVIjK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D88C208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbeJPBJd (ORCPT
+        id S1727003AbeJPBJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 21:09:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42740 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726651AbeJPBJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 21:09:32 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C45DA3082E03;
-        Mon, 15 Oct 2018 17:23:23 +0000 (UTC)
-Received: from [10.36.117.209] (ovpn-117-209.ams2.redhat.com [10.36.117.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 892B768384;
-        Mon, 15 Oct 2018 17:23:19 +0000 (UTC)
-Subject: Re: [PATCH] kvm/x86 : avoid shifting signed 32-bit value by 31 bits
-To:     "H. Peter Anvin" <hpa@zytor.com>, peng.hao2@zte.com.cn,
-        richard.weiyang@gmail.com
-Cc:     penghao122@sina.com.cn, rkrcmar@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, joro@8bytes.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org
-References: <201810080904344038939@zte.com.cn>
- <717c02f3-bb36-33c4-a463-f5759fde30fd@zytor.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <08fd066f-e6c5-f82c-544f-536e9f29e6f3@redhat.com>
-Date:   Mon, 15 Oct 2018 19:23:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 15 Oct 2018 21:09:43 -0400
+Received: from mail-vs1-f46.google.com ([209.85.217.46]:46642 "EHLO
+        mail-vs1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726928AbeJPBJm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 21:09:42 -0400
+Received: by mail-vs1-f46.google.com with SMTP id i10so16688578vsm.13
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 10:23:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kgMXBdhtP3xM/XDCfAU2l7yKlvKhT6Oo9lrhmaWrqKU=;
+        b=hkeIVIjKq5RiU8ImyT+03pl+oi68/nGZVQmF4/HxXZXUXSELPfpYajCpDaryZgKrKm
+         +eBJdgWNZsg9OJX0bqC+tHgedPSFb/zQZzdtWX+9sJS4mEFn/LBreuengvFFavi9DZG3
+         Wz11OqJJ69DDmxrta3h13OW3huQzeyoO5vLzc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kgMXBdhtP3xM/XDCfAU2l7yKlvKhT6Oo9lrhmaWrqKU=;
+        b=nPa85LNAcfyWlt634Hx3ZMOas+jLzZx4asaB2NoqC1kopaLhdVFXgLCgjekpxVsetn
+         /ZEtddLNWw0zaz0rP9cQJ+UJrWiNmIRNcmUnDQxE+xVuLwv4V5cAtlOD6CfjHGwYdoD8
+         /zgNamU3c0FwyJM1r8kxzfdZKY+Nl1Il6inGlOD+4creWwcir9oN0LuWIpwqSY7oOSeY
+         Pu2Itu7MXep1WaYcMe526qYLZos2kZVgeVTgqeZXQE1C39HHoMcIdkO4wnTDlNXLx7tQ
+         +PJd2wc5+QnwCblDFfUD7lwala8Xe8YF6WhAGWgXNjEvVKGj8b5E3UpHgfQ9XOqBubH7
+         VZaA==
+X-Gm-Message-State: ABuFfohVyx2zf5FYMWaQChzkD88dgw1yVzys2KeWqWZwAYmm67WfjkDL
+        oblO0s6S8MxV43d3esR5k8XSLXEBWtY=
+X-Google-Smtp-Source: ACcGV62X2u18VV/7zPFgIqysy3nnCBkvzkWHCEBr40WnTSbIKCUUwR0YIU2bi1C6nQx8aiaCOB92/A==
+X-Received: by 2002:a67:3f0f:: with SMTP id m15mr6793801vsa.37.1539624212538;
+        Mon, 15 Oct 2018 10:23:32 -0700 (PDT)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id s22-v6sm2214403vke.56.2018.10.15.10.23.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 10:23:32 -0700 (PDT)
+Received: by mail-vk1-f180.google.com with SMTP id x78-v6so2037686vke.11
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 10:23:32 -0700 (PDT)
+X-Received: by 2002:a1f:4c86:: with SMTP id z128-v6mr7219328vka.73.1539624211655;
+ Mon, 15 Oct 2018 10:23:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <717c02f3-bb36-33c4-a463-f5759fde30fd@zytor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 15 Oct 2018 17:23:24 +0000 (UTC)
+References: <20181012213926.253765-1-dianders@chromium.org> <CAFp+6iFy8V34cs6pEOie_tBX5wJqM7teUnH_XLLZ7cioPrX_hA@mail.gmail.com>
+In-Reply-To: <CAFp+6iFy8V34cs6pEOie_tBX5wJqM7teUnH_XLLZ7cioPrX_hA@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 15 Oct 2018 10:23:19 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WYM5OOigy+81cVzPtAJXhvrhB1znr9zHzMf3q5iFOtFw@mail.gmail.com>
+Message-ID: <CAD=FV=WYM5OOigy+81cVzPtAJXhvrhB1znr9zHzMf3q5iFOtFw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: ufs: Fix the compatible string definition
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        cang@codeaurora.org, Evan Green <evgreen@chromium.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        sayalil@codeaurora.org, Asutosh Das <asutoshd@codeaurora.org>,
+        devicetree@vger.kernel.org, liwei213@huawei.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/10/2018 19:16, H. Peter Anvin wrote:
-> On 10/7/18 6:04 PM, peng.hao2@zte.com.cn wrote:
-> \>>>>>
->>>>>> #define AVIC_LOGICAL_ID_ENTRY_GUEST_PHYSICAL_ID_MASK    (0xFF)
->>>>>> -#define AVIC_LOGICAL_ID_ENTRY_VALID_MASK        (1 << 31)
->>>>>> +#define AVIC_LOGICAL_ID_ENTRY_VALID_MASK        (1UL << 31)
->>>>
->>>>> It is reasonable to change to unsigned, while not necessary to unsigned
->>>>> long?
->>>> AVIC_LOGICAL_ID_ENTRY_VALID_MASK is used in function avic_ldr_write.
->>>> here I think it doesn't matter if you use unsigned or unsigned long. Do you have any suggestions?
->>
->>> In current case, AVIC_LOGICAL_ID_ENTRY_VALID_MASK is used to calculate
->>> the value of new_entry with type of u32. So the definition here is not
->>> harmful.
->>
->>> Also, I did a quick grep and found similar definition (1 << 31) is popular
->>> in the whole kernel tree.
->>
->>> The reason to make this change is not that strong to me. Would you
->>> minding sharing more reason behind this change?
->> oh, I'm just thinking logically, not more reason.
-> 
-> The right way to do this would be to use the _BITUL() (or _BITULL()) macro.
+Vivek,
 
-Even for a value from a 32-bit register?  That would be _BIT, which
-doesn't exist.
+On Mon, Oct 15, 2018 at 8:23 AM Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+>
+> Hi Doug,
+>
+> On Sat, Oct 13, 2018 at 3:09 AM Douglas Anderson <dianders@chromium.org> wrote:
+> >
+> > If you look at the bindings for the UFS Host Controller it says:
+> >
+> > - compatible: must contain "jedec,ufs-1.1" or "jedec,ufs-2.0", may
+> >               also list one or more of the following:
+> >                  "qcom,msm8994-ufshc"
+> >                  "qcom,msm8996-ufshc"
+> >                  "qcom,ufshc"
+> >
+> > My reading of that is that it's fine to just have either of these:
+> > 1. "qcom,msm8996-ufshc", "jedec,ufs-2.0"
+> > 2. "qcom,ufshc", "jedec,ufs-2.0"
+> >
+> > As far as I can tell neither of the above is actually a good idea.
+> >
+> > For #1 it turns out that the driver currently only keys off the
+> > compatible string "qcom,ufshc" so it won't actually probe.
+> >
+> > For #2 the driver won't probe but it's not a good idea to keep the SoC
+> > name out of the compatible string.
+> >
+> > Let's update the compatible string to make it really explicit.  We'll
+> > include a nod to the existing driver and the old binding and say that
+> > we should always include the "qcom,ufshc" string in addition to the
+> > SoC compatible string.
+> >
+> > While we're at it we'll also include another example SoC known to have
+> > UFS: sdm845.
+> >
+> > Fixes: 47555a5c8a11 ("scsi: ufs: make the UFS variant a platform device")
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+> >
+> >  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt       | 13 ++++++++-----
+> >  1 file changed, 8 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> > index 2df00524bd21..69a06a1b732e 100644
+> > --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> > +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> > @@ -4,11 +4,14 @@ UFSHC nodes are defined to describe on-chip UFS host controllers.
+> >  Each UFS controller instance should have its own node.
+> >
+> >  Required properties:
+> > -- compatible           : must contain "jedec,ufs-1.1" or "jedec,ufs-2.0", may
+> > -                         also list one or more of the following:
+> > -                                         "qcom,msm8994-ufshc"
+> > -                                         "qcom,msm8996-ufshc"
+> > -                                         "qcom,ufshc"
+> > +- compatible           : must contain "jedec,ufs-1.1" or "jedec,ufs-2.0"
+> > +
+> > +                         For Qualcomm SoCs must contain, as below, an
+> > +                         SoC-specific compatible along with "qcom,ufshc" and
+> > +                         the appropriate jedec string:
+> > +                           "qcom,msm8994-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
+> > +                           "qcom,msm8996-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
+> > +                           "qcom,sdm845-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
+>
+> Thanks for the patch. It looks good to me.
+> Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-Paolo
+Thanks for the review!
+
+
+> P.S.: While you are at it, can you please move 'ufs-qcom.txt'
+> to Documentation/devicetree/bindings/phy/qcom,ufs-phy.txt.
+> The current name and file location is misleading.
+
+I'd rather someone at Qualcomm do this.  Do you have a suggested
+person?  The reason I feel that Qualcomm needs to get involved is that
+I see that when I look at the file you refer to says it's for:
+
+  "qcom,ufs-phy-qmp-20nm" for 20nm ufs phy,
+  "qcom,ufs-phy-qmp-14nm" for legacy 14nm ufs phy,
+  "qcom,msm8996-ufs-phy-qmp-14nm" for 14nm ufs phy
+  present on MSM8996 chipset.
+
+...but there's another Qualcomm file, 'qcom-qmp-phy.txt'.  That
+handles the compatible string:
+
+       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845.
+
+So I'm a little confused.  Should the SDM845 UFS PHY been handled by
+the older UFS PHY driver?  ...or should all the older UFS PHYs be
+moved to be handled by the newer QMP PHY driver?  ...or are they
+really different hardware blocks, in which case how would you describe
+the difference (both are described as UFS QMP PHYs I think).
+
+BTW: I have a patch attempting to fixup the QMP PHY bindings at
+<https://lkml.kernel.org/r/20181012213632.252346-1-dianders@chromium.org>.
+
+
+-Doug
