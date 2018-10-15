@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_SBL,
 	URIBL_SBL_A,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E877FC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2549BC71133
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:58:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE9E52150F
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:58:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE9E52150F
+	by mail.kernel.org (Postfix) with ESMTP id D90F8214C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D90F8214C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeJPBof (ORCPT
+        id S1727467AbeJPBoh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 21:44:35 -0400
-Received: from mga18.intel.com ([134.134.136.126]:61673 "EHLO mga18.intel.com"
+        Mon, 15 Oct 2018 21:44:37 -0400
+Received: from mga18.intel.com ([134.134.136.126]:61679 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726707AbeJPBof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 21:44:35 -0400
+        id S1726707AbeJPBog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 21:44:36 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 10:58:07 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 10:58:13 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,385,1534834800"; 
-   d="scan'208";a="78200133"
+   d="scan'208";a="78200148"
 Received: from maru.jf.intel.com ([10.54.51.77])
-  by fmsmga007.fm.intel.com with ESMTP; 15 Oct 2018 10:58:06 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 15 Oct 2018 10:58:13 -0700
 From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Jean Delvare <jdelvare@suse.com>,
@@ -67,10 +67,15 @@ Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         openbmc@lists.ozlabs.org,
         Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>
-Subject: [RESEND PATCH v8 09/12] Documentation: hwmon: Add documents for PECI hwmon client drivers
-Date:   Mon, 15 Oct 2018 10:57:09 -0700
-Message-Id: <20181015175712.1500-10-jae.hyun.yoo@linux.intel.com>
+        Alan Cox <alan@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jason M Biils <jason.m.bills@linux.intel.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Stef van Os <stef.van.os@prodrive-technologies.com>
+Subject: [RESEND PATCH v8 11/12] hwmon: Add PECI dimmtemp driver
+Date:   Mon, 15 Oct 2018 10:57:11 -0700
+Message-Id: <20181015175712.1500-12-jae.hyun.yoo@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181015175712.1500-1-jae.hyun.yoo@linux.intel.com>
 References: <20181015175712.1500-1-jae.hyun.yoo@linux.intel.com>
@@ -81,165 +86,360 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds hwmon documents for PECI cputemp and dimmtemp drivers.
+This commit adds PECI dimmtemp hwmon driver.
 
 Cc: Guenter Roeck <linux@roeck-us.net>
 Cc: Jean Delvare <jdelvare@suse.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Alan Cox <alan@linux.intel.com>
+Cc: Andrew Jeffery <andrew@aj.id.au>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Jason M Biils <jason.m.bills@linux.intel.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Joel Stanley <joel@jms.id.au>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Stef van Os <stef.van.os@prodrive-technologies.com>
 Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
 Reviewed-by: James Feist <james.feist@linux.intel.com>
 Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
 Acked-by: Guenter Roeck <linux@roeck-us.net>
 ---
- Documentation/hwmon/peci-cputemp  | 78 +++++++++++++++++++++++++++++++
- Documentation/hwmon/peci-dimmtemp | 50 ++++++++++++++++++++
- 2 files changed, 128 insertions(+)
- create mode 100644 Documentation/hwmon/peci-cputemp
- create mode 100644 Documentation/hwmon/peci-dimmtemp
+ drivers/hwmon/Kconfig         |  14 ++
+ drivers/hwmon/Makefile        |   1 +
+ drivers/hwmon/peci-dimmtemp.c | 286 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 301 insertions(+)
+ create mode 100644 drivers/hwmon/peci-dimmtemp.c
 
-diff --git a/Documentation/hwmon/peci-cputemp b/Documentation/hwmon/peci-cputemp
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index f08b4a670ac5..d2299d850508 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -1320,6 +1320,20 @@ config SENSORS_PECI_CPUTEMP
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called peci-cputemp.
+ 
++config SENSORS_PECI_DIMMTEMP
++	tristate "PECI DIMM temperature monitoring support"
++	depends on PECI
++	select MFD_INTEL_PECI_CLIENT
++	help
++	  If you say yes here you get support for the generic Intel PECI hwmon
++	  driver which provides Digital Thermal Sensor (DTS) thermal readings of
++	  DIMM components that are accessible using the PECI Client Command
++	  Suite via the processor PECI client.
++	  Check Documentation/hwmon/peci-dimmtemp for details.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called peci-dimmtemp.
++
+ source drivers/hwmon/pmbus/Kconfig
+ 
+ config SENSORS_PWM_FAN
+diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+index 13ebde089ad5..b7cf35bcfbaf 100644
+--- a/drivers/hwmon/Makefile
++++ b/drivers/hwmon/Makefile
+@@ -142,6 +142,7 @@ obj-$(CONFIG_SENSORS_PC87360)	+= pc87360.o
+ obj-$(CONFIG_SENSORS_PC87427)	+= pc87427.o
+ obj-$(CONFIG_SENSORS_PCF8591)	+= pcf8591.o
+ obj-$(CONFIG_SENSORS_PECI_CPUTEMP)	+= peci-cputemp.o
++obj-$(CONFIG_SENSORS_PECI_DIMMTEMP)	+= peci-dimmtemp.o
+ obj-$(CONFIG_SENSORS_POWR1220)  += powr1220.o
+ obj-$(CONFIG_SENSORS_PWM_FAN)	+= pwm-fan.o
+ obj-$(CONFIG_SENSORS_RASPBERRYPI_HWMON)	+= raspberrypi-hwmon.o
+diff --git a/drivers/hwmon/peci-dimmtemp.c b/drivers/hwmon/peci-dimmtemp.c
 new file mode 100644
-index 000000000000..821a9258f2e6
+index 000000000000..0b0155fa627b
 --- /dev/null
-+++ b/Documentation/hwmon/peci-cputemp
-@@ -0,0 +1,78 @@
-+Kernel driver peci-cputemp
-+==========================
++++ b/drivers/hwmon/peci-dimmtemp.c
+@@ -0,0 +1,286 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018 Intel Corporation
 +
-+Supported chips:
-+	One of Intel server CPUs listed below which is connected to a PECI bus.
-+		* Intel Xeon E5/E7 v3 server processors
-+			Intel Xeon E5-14xx v3 family
-+			Intel Xeon E5-24xx v3 family
-+			Intel Xeon E5-16xx v3 family
-+			Intel Xeon E5-26xx v3 family
-+			Intel Xeon E5-46xx v3 family
-+			Intel Xeon E7-48xx v3 family
-+			Intel Xeon E7-88xx v3 family
-+		* Intel Xeon E5/E7 v4 server processors
-+			Intel Xeon E5-16xx v4 family
-+			Intel Xeon E5-26xx v4 family
-+			Intel Xeon E5-46xx v4 family
-+			Intel Xeon E7-48xx v4 family
-+			Intel Xeon E7-88xx v4 family
-+		* Intel Xeon Scalable server processors
-+			Intel Xeon Bronze family
-+			Intel Xeon Silver family
-+			Intel Xeon Gold family
-+			Intel Xeon Platinum family
-+	Addresses scanned: PECI client address 0x30 - 0x37
-+	Datasheet: Available from http://www.intel.com/design/literature.htm
++#include <linux/hwmon.h>
++#include <linux/jiffies.h>
++#include <linux/mfd/intel-peci-client.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/workqueue.h>
 +
-+Author:
-+	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
++#define DIMM_MASK_CHECK_DELAY_JIFFIES msecs_to_jiffies(5000)
++#define DIMM_MASK_CHECK_RETRY_MAX     60 /* 60 x 5 secs = 5 minutes */
 +
-+Description
-+-----------
++struct peci_dimmtemp {
++	struct peci_mfd *mfd;
++	struct device *dev;
++	char name[PECI_NAME_SIZE];
++	u8 addr;
++	const struct cpu_gen_info *gen_info;
++	struct workqueue_struct *work_queue;
++	struct delayed_work work_handler;
++	struct temp_data temp[DIMM_NUMS_MAX];
++	u32 dimm_mask;
++	int retry_count;
++	u32 temp_config[DIMM_NUMS_MAX + 1];
++	struct hwmon_channel_info temp_info;
++	const struct hwmon_channel_info *info[2];
++	struct hwmon_chip_info chip;
++};
 +
-+This driver implements a generic PECI hwmon feature which provides Digital
-+Thermal Sensor (DTS) thermal readings of the CPU package and CPU cores that are
-+accessible using the PECI Client Command Suite via the processor PECI client.
++static const char *dimmtemp_label[CHAN_RANK_MAX][DIMM_IDX_MAX] = {
++	{ "DIMM A1", "DIMM A2", "DIMM A3" },
++	{ "DIMM B1", "DIMM B2", "DIMM B3" },
++	{ "DIMM C1", "DIMM C2", "DIMM C3" },
++	{ "DIMM D1", "DIMM D2", "DIMM D3" },
++	{ "DIMM E1", "DIMM E2", "DIMM E3" },
++	{ "DIMM F1", "DIMM F2", "DIMM F3" },
++	{ "DIMM G1", "DIMM G2", "DIMM G3" },
++	{ "DIMM H1", "DIMM H2", "DIMM H3" },
++};
 +
-+All temperature values are given in millidegree Celsius and will be measurable
-+only when the target CPU is powered on.
++static int get_dimm_temp(struct peci_dimmtemp *priv, int dimm_no)
++{
++	int dimm_order = dimm_no % priv->gen_info->dimm_idx_max;
++	int chan_rank = dimm_no / priv->gen_info->dimm_idx_max;
++	u8  cfg_data[4];
++	int rc;
 +
-+sysfs attributes
-+----------------
++	if (!peci_temp_need_update(&priv->temp[dimm_no]))
++		return 0;
 +
-+temp1_label		"Die"
-+temp1_input		Provides current die temperature of the CPU package.
-+temp1_max		Provides thermal control temperature of the CPU package
-+			which is also known as Tcontrol.
-+temp1_crit		Provides shutdown temperature of the CPU package which
-+			is also known as the maximum processor junction
-+			temperature, Tjmax or Tprochot.
-+temp1_crit_hyst		Provides the hysteresis value from Tcontrol to Tjmax of
-+			the CPU package.
++	rc = peci_client_rd_pkg_cfg_cmd(priv->mfd, MBX_INDEX_DDR_DIMM_TEMP,
++					chan_rank, cfg_data);
++	if (rc)
++		return rc;
 +
-+temp2_label		"Tcontrol"
-+temp2_input		Provides current Tcontrol temperature of the CPU
-+			package which is also known as Fan Temperature target.
-+			Indicates the relative value from thermal monitor trip
-+			temperature at which fans should be engaged.
-+temp2_crit		Provides Tcontrol critical value of the CPU package
-+			which is same to Tjmax.
++	priv->temp[dimm_no].value = cfg_data[dimm_order] * 1000;
 +
-+temp3_label		"Tthrottle"
-+temp3_input		Provides current Tthrottle temperature of the CPU
-+			package. Used for throttling temperature. If this value
-+			is allowed and lower than Tjmax - the throttle will
-+			occur and reported at lower than Tjmax.
++	peci_temp_mark_updated(&priv->temp[dimm_no]);
 +
-+temp4_label		"Tjmax"
-+temp4_input		Provides the maximum junction temperature, Tjmax of the
-+			CPU package.
++	return 0;
++}
 +
-+temp[5-*]_label		Provides string "Core X", where X is resolved core
-+			number.
-+temp[5-*]_input		Provides current temperature of each core.
-+temp[5-*]_max		Provides thermal control temperature of the core.
-+temp[5-*]_crit		Provides shutdown temperature of the core.
-+temp[5-*]_crit_hyst	Provides the hysteresis value from Tcontrol to Tjmax of
-+			the core.
-diff --git a/Documentation/hwmon/peci-dimmtemp b/Documentation/hwmon/peci-dimmtemp
-new file mode 100644
-index 000000000000..c54f2526188c
---- /dev/null
-+++ b/Documentation/hwmon/peci-dimmtemp
-@@ -0,0 +1,50 @@
-+Kernel driver peci-dimmtemp
-+===========================
++static int dimmtemp_read_string(struct device *dev,
++				enum hwmon_sensor_types type,
++				u32 attr, int channel, const char **str)
++{
++	struct peci_dimmtemp *priv = dev_get_drvdata(dev);
++	u32 dimm_idx_max = priv->gen_info->dimm_idx_max;
++	int chan_rank, dimm_idx;
 +
-+Supported chips:
-+	One of Intel server CPUs listed below which is connected to a PECI bus.
-+		* Intel Xeon E5/E7 v3 server processors
-+			Intel Xeon E5-14xx v3 family
-+			Intel Xeon E5-24xx v3 family
-+			Intel Xeon E5-16xx v3 family
-+			Intel Xeon E5-26xx v3 family
-+			Intel Xeon E5-46xx v3 family
-+			Intel Xeon E7-48xx v3 family
-+			Intel Xeon E7-88xx v3 family
-+		* Intel Xeon E5/E7 v4 server processors
-+			Intel Xeon E5-16xx v4 family
-+			Intel Xeon E5-26xx v4 family
-+			Intel Xeon E5-46xx v4 family
-+			Intel Xeon E7-48xx v4 family
-+			Intel Xeon E7-88xx v4 family
-+		* Intel Xeon Scalable server processors
-+			Intel Xeon Bronze family
-+			Intel Xeon Silver family
-+			Intel Xeon Gold family
-+			Intel Xeon Platinum family
-+	Addresses scanned: PECI client address 0x30 - 0x37
-+	Datasheet: Available from http://www.intel.com/design/literature.htm
++	if (attr != hwmon_temp_label)
++		return -EOPNOTSUPP;
 +
-+Author:
-+	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
++	chan_rank = channel / dimm_idx_max;
++	dimm_idx = channel % dimm_idx_max;
++	*str = dimmtemp_label[chan_rank][dimm_idx];
++	return 0;
++}
 +
-+Description
-+-----------
++static int dimmtemp_read(struct device *dev, enum hwmon_sensor_types type,
++			 u32 attr, int channel, long *val)
++{
++	struct peci_dimmtemp *priv = dev_get_drvdata(dev);
++	int rc;
 +
-+This driver implements a generic PECI hwmon feature which provides Digital
-+Thermal Sensor (DTS) thermal readings of DIMM components that are accessible
-+using the PECI Client Command Suite via the processor PECI client.
++	if (attr != hwmon_temp_input)
++		return -EOPNOTSUPP;
 +
-+All temperature values are given in millidegree Celsius and will be measurable
-+only when the target CPU is powered on.
++	rc = get_dimm_temp(priv, channel);
++	if (rc)
++		return rc;
 +
-+sysfs attributes
-+----------------
++	*val = priv->temp[channel].value;
++	return 0;
++}
 +
-+temp[N]_label		Provides string "DIMM CI", where C is DIMM channel and
-+			I is DIMM index of the populated DIMM.
-+temp[N]_input		Provides current temperature of the populated DIMM.
++static umode_t dimmtemp_is_visible(const void *data,
++				   enum hwmon_sensor_types type,
++				   u32 attr, int channel)
++{
++	const struct peci_dimmtemp *priv = data;
 +
-+Note:
-+	DIMM temperature attributes will appear when the client CPU's BIOS
-+	completes memory training and testing.
++	if (priv->temp_config[channel] & BIT(attr) &&
++	    priv->dimm_mask & BIT(channel))
++		return 0444;
++
++	return 0;
++}
++
++static const struct hwmon_ops dimmtemp_ops = {
++	.is_visible = dimmtemp_is_visible,
++	.read_string = dimmtemp_read_string,
++	.read = dimmtemp_read,
++};
++
++static int check_populated_dimms(struct peci_dimmtemp *priv)
++{
++	u32 chan_rank_max = priv->gen_info->chan_rank_max;
++	u32 dimm_idx_max = priv->gen_info->dimm_idx_max;
++	int chan_rank, dimm_idx, rc;
++	u8  cfg_data[4];
++
++	for (chan_rank = 0; chan_rank < chan_rank_max; chan_rank++) {
++		rc = peci_client_rd_pkg_cfg_cmd(priv->mfd,
++						MBX_INDEX_DDR_DIMM_TEMP,
++						chan_rank, cfg_data);
++		if (rc) {
++			priv->dimm_mask = 0;
++			return rc;
++		}
++
++		for (dimm_idx = 0; dimm_idx < dimm_idx_max; dimm_idx++)
++			if (cfg_data[dimm_idx])
++				priv->dimm_mask |= BIT(chan_rank *
++						       dimm_idx_max +
++						       dimm_idx);
++	}
++
++	if (!priv->dimm_mask)
++		return -EAGAIN;
++
++	dev_dbg(priv->dev, "Scanned populated DIMMs: 0x%x\n", priv->dimm_mask);
++	return 0;
++}
++
++static int create_dimm_temp_info(struct peci_dimmtemp *priv)
++{
++	int rc, i, config_idx, channels;
++	struct device *hwmon_dev;
++
++	rc = check_populated_dimms(priv);
++	if (rc) {
++		if (rc == -EAGAIN) {
++			if (priv->retry_count < DIMM_MASK_CHECK_RETRY_MAX) {
++				queue_delayed_work(priv->work_queue,
++						   &priv->work_handler,
++						 DIMM_MASK_CHECK_DELAY_JIFFIES);
++				priv->retry_count++;
++				dev_dbg(priv->dev,
++					"Deferred DIMM temp info creation\n");
++			} else {
++				dev_err(priv->dev,
++					"Timeout DIMM temp info creation\n");
++				rc = -ETIMEDOUT;
++			}
++		}
++
++		return rc;
++	}
++
++	channels = priv->gen_info->chan_rank_max *
++		   priv->gen_info->dimm_idx_max;
++	for (i = 0, config_idx = 0; i < channels; i++)
++		if (priv->dimm_mask & BIT(i))
++			while (i >= config_idx)
++				priv->temp_config[config_idx++] =
++					HWMON_T_LABEL | HWMON_T_INPUT;
++
++	priv->chip.ops = &dimmtemp_ops;
++	priv->chip.info = priv->info;
++
++	priv->info[0] = &priv->temp_info;
++
++	priv->temp_info.type = hwmon_temp;
++	priv->temp_info.config = priv->temp_config;
++
++	hwmon_dev = devm_hwmon_device_register_with_info(priv->dev,
++							 priv->name,
++							 priv,
++							 &priv->chip,
++							 NULL);
++	rc = PTR_ERR_OR_ZERO(hwmon_dev);
++	if (!rc)
++		dev_dbg(priv->dev, "%s: sensor '%s'\n",
++			dev_name(hwmon_dev), priv->name);
++
++	return rc;
++}
++
++static void create_dimm_temp_info_delayed(struct work_struct *work)
++{
++	struct delayed_work *dwork = to_delayed_work(work);
++	struct peci_dimmtemp *priv = container_of(dwork, struct peci_dimmtemp,
++						  work_handler);
++	int rc;
++
++	rc = create_dimm_temp_info(priv);
++	if (rc && rc != -EAGAIN)
++		dev_dbg(priv->dev, "Failed to create DIMM temp info\n");
++}
++
++static int peci_dimmtemp_probe(struct platform_device *pdev)
++{
++	struct peci_mfd *mfd = dev_get_drvdata(pdev->dev.parent);
++	struct device *dev = &pdev->dev;
++	struct peci_dimmtemp *priv;
++	int rc;
++
++	if ((mfd->adapter->cmd_mask &
++	    (BIT(PECI_CMD_GET_TEMP) | BIT(PECI_CMD_RD_PKG_CFG))) !=
++	    (BIT(PECI_CMD_GET_TEMP) | BIT(PECI_CMD_RD_PKG_CFG)))
++		return -ENODEV;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	dev_set_drvdata(dev, priv);
++	priv->mfd = mfd;
++	priv->dev = dev;
++	priv->addr = mfd->addr;
++	priv->gen_info = mfd->gen_info;
++
++	snprintf(priv->name, PECI_NAME_SIZE, "peci_dimmtemp.cpu%d",
++		 priv->mfd->cpu_no);
++
++	priv->work_queue = alloc_ordered_workqueue(priv->name, 0);
++	if (!priv->work_queue)
++		return -ENOMEM;
++
++	INIT_DELAYED_WORK(&priv->work_handler, create_dimm_temp_info_delayed);
++
++	rc = create_dimm_temp_info(priv);
++	if (rc && rc != -EAGAIN) {
++		dev_err(dev, "Failed to create DIMM temp info\n");
++		goto err_free_wq;
++	}
++
++	return 0;
++
++err_free_wq:
++	destroy_workqueue(priv->work_queue);
++	return rc;
++}
++
++static int peci_dimmtemp_remove(struct platform_device *pdev)
++{
++	struct peci_dimmtemp *priv = dev_get_drvdata(&pdev->dev);
++
++	cancel_delayed_work_sync(&priv->work_handler);
++	destroy_workqueue(priv->work_queue);
++
++	return 0;
++}
++
++static const struct platform_device_id peci_dimmtemp_ids[] = {
++	{ .name = "peci-dimmtemp", .driver_data = 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(platform, peci_dimmtemp_ids);
++
++static struct platform_driver peci_dimmtemp_driver = {
++	.probe    = peci_dimmtemp_probe,
++	.remove   = peci_dimmtemp_remove,
++	.id_table = peci_dimmtemp_ids,
++	.driver   = {
++			.name           = "peci-dimmtemp",
++	},
++};
++module_platform_driver(peci_dimmtemp_driver);
++
++MODULE_AUTHOR("Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>");
++MODULE_DESCRIPTION("PECI dimmtemp driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.19.1
 
