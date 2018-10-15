@@ -2,75 +2,104 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79045C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32333C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40E112089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:06:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40E112089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E44D420644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:09:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E44D420644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbeJOWv7 (ORCPT
+        id S1726691AbeJOWym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 18:51:59 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:39880 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbeJOWv7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 18:51:59 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 03235C076A;
-        Mon, 15 Oct 2018 15:06:20 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 0zaQAv9WTsmt; Mon, 15 Oct 2018 15:06:19 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id DB65BC0748;
-        Mon, 15 Oct 2018 15:06:12 +0000 (UTC)
-Subject: Re: [PATCH] selftests/ftrace: Add color to the PASS / FAIL results
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Shuah Khan <shuah@kernel.org>
-References: <CGME20181013022112epcas3p239547464b27b1d750b5628900a89f857@epcas3p2.samsung.com>
- <20181012222106.7f38b667@vmware.local.home>
- <b7525282-b27a-a34c-d503-61fe99673c9f@kernel.org>
- <20181015104700.1d530944@gandalf.local.home>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <ae20f738-d133-86ab-40bd-589ec9b4d1ca@kernel.org>
-Date:   Mon, 15 Oct 2018 09:06:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 15 Oct 2018 18:54:42 -0400
+Received: from mga18.intel.com ([134.134.136.126]:40543 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726499AbeJOWym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 18:54:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 08:09:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,384,1534834800"; 
+   d="scan'208";a="100389569"
+Received: from jhli-desk1.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
+  by orsmga002.jf.intel.com with ESMTP; 15 Oct 2018 08:09:01 -0700
+Subject: [driver-core PATCH v4 0/6] Add NUMA aware async_schedule calls
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Cc:     len.brown@intel.com, rafael@kernel.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org,
+        tj@kernel.org, akpm@linux-foundation.org,
+        alexander.h.duyck@linux.intel.com
+Date:   Mon, 15 Oct 2018 08:09:01 -0700
+Message-ID: <20181015150305.29520.86363.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20181015104700.1d530944@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/15/2018 08:47 AM, Steven Rostedt wrote:
-> On Mon, 15 Oct 2018 07:39:13 -0600
-> Shuah Khan <shuah@kernel.org> wrote:
-> 
->  
->> FYI. Please don't use shuah@kernel.org address for sending patches.
->> shuahkh@osg.samsung.com will become absolete due Samsung IT changes.
-> 
-> I think you meant "please use shuah@kernel.org".
+This patch set provides functionality that will help to improve the
+locality of the async_schedule calls used to provide deferred
+initialization.
 
-Yes. Thanks for catching this. 
+This patch set originally started out with me focused on just the one call
+to async_schedule_domain in the nvdimm tree that was being used to
+defer the device_add call however after doing some digging I realized the
+scope of this was much broader than I had originally planned. As such I
+went through and reworked the underlying infrastructure down to replacing
+the queue_work call itself with a function of my own and opted to try and
+provide a NUMA aware solution that would work for a broader audience.
 
-Please use shuah@kernel.org which is in the address in MAINTAINERS file.
+RFC->v1:
+    Dropped nvdimm patch to submit later
+        It relies on code in libnvdimm development tree
+    Simplified queue_work_near to just convert node into a CPU
+    Split up drivers core and PM core patches
+v1->v2:
+    Renamed queue_work_near to queue_work_node
+    Added WARN_ON_ONCE if we use queue_work_node with per-cpu workqueue
+v2->v3:
+    Added Acked-by for queue_work_node patch
+    Continued rename from _near to _node to be consistent with queue_work_node
+        Renamed async_schedule_near_domain to async_schedule_node_domain
+        Renamed async_schedule_near to async_schedule_node
+    Added kerneldoc for new async_schedule_XXX functions
+    Updated patch description for patch 4 to include data on potential gains
+v3->v4
+    Added patch to consolidate use of need_parent_lock
+    Make asynchronous driver probing explicit about use of drvdata
+    Added Acked-by for PM core patch
 
-thanks,
--- Shuah
+---
+
+Alexander Duyck (6):
+      workqueue: Provide queue_work_node to queue work near a given NUMA node
+      async: Add support for queueing on specific NUMA node
+      device core: Consolidate locking and unlocking of parent and device
+      driver core: Probe devices asynchronously instead of the driver
+      driver core: Attach devices on CPU local to device node
+      PM core: Use new async_schedule_dev command
+
+
+ drivers/base/base.h       |    2 +
+ drivers/base/bus.c        |   46 ++--------------
+ drivers/base/dd.c         |  130 ++++++++++++++++++++++++++++++++++++++++-----
+ drivers/base/power/main.c |   12 ++--
+ include/linux/async.h     |   84 ++++++++++++++++++++++++++++-
+ include/linux/device.h    |    4 +
+ include/linux/workqueue.h |    2 +
+ kernel/async.c            |   53 ++++++++++--------
+ kernel/workqueue.c        |   84 +++++++++++++++++++++++++++++
+ 9 files changed, 329 insertions(+), 88 deletions(-)
+
+--
