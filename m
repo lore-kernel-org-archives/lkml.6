@@ -2,98 +2,109 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B63C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A51DC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CE7A20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:35:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CE7A20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 21ADA20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:35:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="an6fWqOy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21ADA20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbeJOUUY (ORCPT
+        id S1726790AbeJOUUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 16:20:24 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13655 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726400AbeJOUUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 16:20:23 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 86041D112B84F;
-        Mon, 15 Oct 2018 20:35:14 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.399.0; Mon, 15 Oct 2018
- 20:35:08 +0800
-Subject: Re: [PATCH] f2fs: fix count of seg_freed to make sec_freed correct
-To:     Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
-        <chao@kernel.org>, <yunlong.song@icloud.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <2d4c379a-77c2-4408-2f23-36753afb95bd@huawei.com>
-Date:   Mon, 15 Oct 2018 20:35:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 15 Oct 2018 16:20:45 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40091 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbeJOUUo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 16:20:44 -0400
+Received: by mail-lj1-f195.google.com with SMTP id r83-v6so17319364ljr.7;
+        Mon, 15 Oct 2018 05:35:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=og9UmACM5DrLcUxc+moRoO36LXCrLbcPoFuNce2qZh8=;
+        b=an6fWqOy4fU8BCaPA9NF3EZyuuVQZAdwLcONLJBAj5Bi9OxIOekRFa4cM0bjC2RdnY
+         IJgpcl4snfQNpItrZWaFy/XuDGOYktUEs3NCRT/6OUVppHQ07UWv7WW2mT+PY9ye6XuI
+         XTszyRCaxC6F2Us3iF57OOe+JfMRKec6mH3OvITEY+4DdE3Cranr8btJ6vi22Gynp+m+
+         bAl/r0iltO4faBC+uv2KeCyVfG1EFWsZne0v5ovhi4Hn0wsChq6MZtbHqyj4pwN3HhJI
+         ArwkqVA3arEJ1j0FsyBtC0RO31t0RJxrDrEhxrQusRmHPoXr7MRAMGQ//4Inw0kJ3WXu
+         fPJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=og9UmACM5DrLcUxc+moRoO36LXCrLbcPoFuNce2qZh8=;
+        b=I5rmeldqwOT1QBbl1JkkB/5AVLIVBZpHtoars9KyyfE/rEW1/7B1gwrNB+f1og2e9f
+         FjjPHKPDn3IBRtshAH3C/acMyBsE44uUq1d0ctA6NlrLdrmw2TKjegzL+aPAHvRruf44
+         Bqbiv8r8bzY1Xr84+6KLFLrrrobFHDW++KJPj2LbyyykI3aW49/e+53xxcVyXDs46iP6
+         ABC4Z+rhUJtbTy28Cljat4pbk0/27vCpMjJ1UkrYiVv3UodvZLQctHnT4dcC9t25ob8u
+         2nd2cMljaITb57rS1bzIT/Gqg8hzh+ATkU/s1xhTpOM5VE8Py5Goplo/Ys94u7G2Bfus
+         uH3w==
+X-Gm-Message-State: ABuFfojBQJFH2m03di9eBvKavHVd2LkZlnZi3hxFg5efVWcWYx7GTBoo
+        3pa6yMacw8+Tawg8JPd+ET20w+Wi
+X-Google-Smtp-Source: ACcGV62Dp/Sy77ToltNJLZ+RSlhX0HrU6AuyGDwXBWvdxi7fru0ELyfy1OBJ+p4y435zYiiJdq9slg==
+X-Received: by 2002:a2e:83d7:: with SMTP id s23-v6mr11626164ljh.0.1539606936160;
+        Mon, 15 Oct 2018 05:35:36 -0700 (PDT)
+Received: from [192.168.2.145] ([109.252.91.118])
+        by smtp.googlemail.com with ESMTPSA id j13-v6sm2363474ljh.42.2018.10.15.05.35.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 05:35:35 -0700 (PDT)
+Subject: Re: [PATCH v1 1/2] soc/tegra: pmc: Turn powergates_lock into spinlock
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180830183635.4474-1-digetx@gmail.com>
+Message-ID: <b888a206-0970-01a8-e039-920c03c00c06@gmail.com>
+Date:   Mon, 15 Oct 2018 15:35:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20180830183635.4474-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/10 18:52, Yunlong Song wrote:
-> When sbi->segs_per_sec > 1, and if some segno has 0 valid blocks before
-> gc starts, do_garbage_collect will skip counting seg_freed++, and this
-> will cause seg_freed < sbi->segs_per_sec and finally skip sec_freed++.
+On 8/30/18 9:36 PM, Dmitry Osipenko wrote:
+> This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
+> and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
+> offline.
 > 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fs/f2fs/gc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
+>  in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
+>  CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
+>  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>  [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
+>  [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
+>  [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
+>  [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
+>  [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
+>  [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
+>  [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
+>  [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
+>  [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
+>  [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
+>  [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
+>  [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
+>  [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
+>  [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
+>  [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
 > 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index a07241f..dc63cd5 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1160,10 +1160,10 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->  
->  		stat_inc_seg_count(sbi, type, gc_type);
->  
-> +next:
->  		if (gc_type == FG_GC &&
->  				get_valid_blocks(sbi, segno, false) == 0)
->  			seg_freed++;
-> -next:
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-How about:
-
-if (get_valid_blocks(sbi, segno, false) == 0)
-	goto freed;
-
-if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi))
-	goto next;
-
-
-freed:
-	if (gc_type == FG_GC &&
-			get_valid_blocks(sbi, segno, false) == 0)
-		seg_freed++;
-next:
-
->  		f2fs_put_page(sum_page, 0);
->  	}
->  
-> 
-
+ping
