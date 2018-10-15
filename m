@@ -2,201 +2,100 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A0FC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81213C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D41620652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:17:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D41620652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1ABB320881
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:20:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqOlZsGh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ABB320881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbeJOSC1 (ORCPT
+        id S1726848AbeJOSEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 14:02:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43076 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726273AbeJOSC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 14:02:26 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 770F967EC2;
-        Mon, 15 Oct 2018 10:17:50 +0000 (UTC)
-Received: from krava (unknown [10.43.17.150])
-        by smtp.corp.redhat.com (Postfix) with SMTP id CC9D67B5C2;
-        Mon, 15 Oct 2018 10:17:48 +0000 (UTC)
-Date:   Mon, 15 Oct 2018 12:17:48 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 0/3]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-Message-ID: <20181015101748.GB29504@krava>
-References: <d6bd3626-8c7c-ca12-8adf-31fe15726446@linux.intel.com>
+        Mon, 15 Oct 2018 14:04:34 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:42731 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeJOSEe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 14:04:34 -0400
+Received: by mail-io1-f65.google.com with SMTP id n18-v6so13824759ioa.9
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 03:19:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mi3C+KuSj5f477ub1b5sS7wleOfjYxeL5Yey+r/4aHM=;
+        b=YqOlZsGhEjQF8YJq98DTACUVliRX6lNoLhCh+e2QOCmrcprhhfv8+/ciRjxGtE6V5C
+         PxZDjD1sKeKDag/wTQ9t0C0vG4QV1nGJ/NKfJrOw5rI/g2eGE/RD5+hoqu2L3E5k3K5T
+         X/ft1VKWZtnKgSZBvEIcXABTFWMPM9TWH2sapLJN3+seivHKF7KF7zsIvjwgpLMMfvuC
+         FlHZpZx04epYllYiFMHmVviGAUUP0DBZwxSI/25o5wt1h2l8mdiGQPepj3Y0Ig+qJUKM
+         OSIAOLlbFTEH+tz744f/GdRERkPRddqVbVwOdwgA3RWHvIdhripqM1xQ7LFyHTaZ+Q6n
+         GBvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mi3C+KuSj5f477ub1b5sS7wleOfjYxeL5Yey+r/4aHM=;
+        b=VR303A8oLPXK0bFJY4lfFm23mIYa+I+UbDw3bXUOk7ZcH/zLTR/Pcn98kNTtnmM4tw
+         Cjj9+Rcshv7Mx3ClYQ0sG/ewpS0mLizXNX+XNQ+WUEl8gXHQjpZ3XEZ6OZCDIDRpqgrd
+         vY5UjTxSvrI7ccgzu2o9C1E+oZbwI8/k9+C/5qyxn68bcHD2ax2o083FxcB7XXU2j/Ln
+         1m72FL5xM671UaErbp85CLoyQnBAxvSyIZblfJf8V3Kp+9MN/n+PRu2U0MJxJkfkJ57T
+         7l74gUodKky4a53+4G1I7VX4F5bdXG+OqgKF+y0b9ley98ZjJTXj86OBLl+K8CwRvkK8
+         dgKw==
+X-Gm-Message-State: ABuFfojoJzHWi4B5Dqsn4wJ4XiJ/4JoxNr77IaCuPVoo7iqdrGmxUdbb
+        ZTM4tguo4eA900GZFURXpxgN53oAEIUFoPylrK8=
+X-Google-Smtp-Source: ACcGV60pqcu1i4kBYrIi2dTwUZATq/+JjBRvYLYUiGg+6arWaU4VczwQE5Nb+MFctW92Io1eBf5TrI1HiETR0yV+tJ0=
+X-Received: by 2002:a6b:f408:: with SMTP id i8-v6mr11106429iog.278.1539598797203;
+ Mon, 15 Oct 2018 03:19:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6bd3626-8c7c-ca12-8adf-31fe15726446@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 15 Oct 2018 10:17:50 +0000 (UTC)
+References: <20181015045927.156790-1-toddpoynor@gmail.com> <20181015073318.GB14476@kroah.com>
+In-Reply-To: <20181015073318.GB14476@kroah.com>
+From:   Todd Poynor <toddpoynor@gmail.com>
+Date:   Mon, 15 Oct 2018 03:19:45 -0700
+Message-ID: <CAO3upoYRgCxaF7_NG7J+p+PgLn+yBfnWPkM87TK75DauJOodBw@mail.gmail.com>
+Subject: Re: [PATCH 00/11] staging: gasket: fixes
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Rob Springer <rspringer@google.com>,
+        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Todd Poynor <toddpoynor@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 09:26:09AM +0300, Alexey Budankov wrote:
-> 
-> Currently in record mode the tool implements trace writing serially. 
-> The algorithm loops over mapped per-cpu data buffers and stores 
-> ready data chunks into a trace file using write() system call.
-> 
-> At some circumstances the kernel may lack free space in a buffer 
-> because the other buffer's half is not yet written to disk due to 
-> some other buffer's data writing by the tool at the moment.
-> 
-> Thus serial trace writing implementation may cause the kernel 
-> to loose profiling data and that is what observed when profiling 
-> highly parallel CPU bound workloads on machines with big number 
-> of cores.
-> 
-> Experiment with profiling matrix multiplication code executing 128 
-> threads on Intel Xeon Phi (KNM) with 272 cores, like below,
-> demonstrates data loss metrics value of 98%:
-> 
-> /usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
->     --call-graph dwarf,1024 --user-regs=IP,SP,BP --switch-events \
->     -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
->     matrix.gcc
+On Mon, Oct 15, 2018 at 12:33 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Sun, Oct 14, 2018 at 09:59:16PM -0700, Todd Poynor wrote:
+> > From: Todd Poynor <toddpoynor@google.com>
+> >
+> > Various fixes for gasket/apex drivers.
+>
+> For some reason you seem to have ignored/missed this patch:
+>         Subject: [PATCH v3] staging: gasket: Fix sparse "incorrect type in assignment" warnings.
+> that was sent last week.
+>
+> Any specific reason?
 
-I ran above on 24 cpu server and could not see the gain,
-but I guess I'd need much bigger server to see that
+Coming off a 2 week vacation, I'm behind on everything.  I saw you had
+commented already, but I'll take a look as well, sure.
 
-anyway, the code is now nicely separated, and given the
-advertised results below I have no objections
-
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-
-thanks,
-jirka
+>
+> thanks,
+>
+> greg k-h
 
 
-> 
-> Data loss metrics is the ratio lost_time/elapsed_time where 
-> lost_time is the sum of time intervals containing PERF_RECORD_LOST 
-> records and elapsed_time is the elapsed application run time 
-> under profiling.
-> 
-> Applying asynchronous trace streaming thru Posix AIO API [1] lowers 
-> data loss metrics value providing 2x improvement (from 98% to ~1%)
-> 
-> Asynchronous trace streaming is currently limited to glibc linkage.
-> musl libc [5] also provides Posix AIO API implementation, however 
-> the patchkit is not tested with it. There may be other libc libraries 
-> linked by Perf tool that currently lack Posix AIO API support [2], 
-> [3], [4] so NO_AIO define may be used to limit Perf tool binary to 
-> serial streaming only.
-> 
-> ---
->  Alexey Budankov (3):
-> 	perf util: map data buffer for preserving collected data
-> 	perf record: enable asynchronous trace writing
-> 	perf record: extend trace writing to multi AIO
-> 
->  tools/perf/Documentation/perf-record.txt |   5 +
->  tools/perf/Makefile.config               |   5 +
->  tools/perf/Makefile.perf                 |   7 +-
->  tools/perf/builtin-record.c              | 252 ++++++++++++++++++++++++++++++-
->  tools/perf/perf.h                        |   1 +
->  tools/perf/util/evlist.c                 |   6 +-
->  tools/perf/util/evlist.h                 |   2 +-
->  tools/perf/util/mmap.c                   | 146 +++++++++++++++++-
->  tools/perf/util/mmap.h                   |  26 +++-
->  9 files changed, 439 insertions(+), 11 deletions(-)
-> 
-> ---
->  Changes in v14:
->  - implement default nr_cblocks_default variable
->  - fix --aio option handling
->  Changes in v13:
->  - named new functions with _aio_ word
->  - grouped aio functions under single #ifdef HAVE_AIO_SUPPORT
->  - moved perf_mmap__aio_push() stub into header
->  - removed trailed white space
->  Changes in v12:
->  - applied stub functions design for the whole patch kit
->  - grouped AIO related data into a struct under struct perf_mmap
->  - implemented record__aio_get/set_pos(), record__aio_enabled()
->  - implemented simple --aio option
->  - extended --aio option to --aio-cblocks=<n>
->  Changes in v11:
->  - replacing the both lseek() syscalls in every loop iteration by the only 
->    two syscalls just before and after the loop at record__mmap_read_evlist() 
->    and advancing *in-flight* off file pos value at perf_mmap__aio_push()
->  Changes in v10:
->  - moved specific code to perf_mmap__aio_mmap(), perf_mmap__aio_munmap();
->  - adjusted error reporting by using %m
->  - avoided lseek() setting file pos back in case of record__aio_write() failure
->  - compacted code selecting between serial and AIO streaming
->  - optimized call places of record__mmap_read_sync()
->  - added description of aio-cblocks option into perf-record.txt
->  Changes in v9:
->  - enable AIO streaming only when --aio-cblocks option is specified explicitly
->  - enable AIO based implementation when linking with glibc only
->  - define NO_AIO to limit Perf binary to serial implementation
->  Changes in v8:
->  - run the whole thing thru checkpatch.pl and corrected found issues except
->    lines longer than 80 symbols
->  - corrected comments alignment and formatting
->  - moved multi AIO implementation into 3rd patch in the series
->  - implemented explicit cblocks array allocation
->  - split AIO completion check into separate record__aio_complete()
->  - set nr_cblocks default to 1 and max allowed value to 4
->  Changes in v7:
->  - implemented handling record.aio setting from perfconfig file
->  Changes in v6:
->  - adjusted setting of priorities for cblocks;
->  - handled errno == EAGAIN case from aio_write() return;
->  Changes in v5:
->  - resolved livelock on perf record -e intel_pt// -- dd if=/dev/zero of=/dev/null count=100000
->  - data loss metrics decreased from 25% to 2x in trialed configuration;
->  - reshaped layout of data structures;
->  - implemented --aio option;
->  - avoided nanosleep() prior calling aio_suspend();
->  - switched to per-cpu aio multi buffer record__aio_sync();
->  - record_mmap_read_sync() now does global sync just before 
->    switching trace file or collection stop;
->  Changes in v4:
->  - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management
->  - converted void *bf to struct perf_mmap *md in signatures
->  - written comment in perf_mmap__push() just before perf_mmap__get();
->  - written comment in record__mmap_read_sync() on possible restarting 
->    of aio_write() operation and releasing perf_mmap object after all;
->  - added perf_mmap__put() for the cases of failed aio_write();
->  Changes in v3:
->  - written comments about nanosleep(0.5ms) call prior aio_suspend()
->    to cope with intrusiveness of its implementation in glibc;
->  - written comments about rationale behind coping profiling data 
->    into mmap->data buffer;
->  Changes in v2:
->  - converted zalloc() to calloc() for allocation of mmap_aio array,
->  - cleared typo and adjusted fallback branch code;
-> 
-> ---
-> 
-> [1] http://man7.org/linux/man-pages/man7/aio.7.html
-> [2] https://android.googlesource.com/platform/bionic/+/master/docs/status.md
-> [3] https://www.uclibc.org/
-> [4] https://uclibc-ng.org/
-> [5] https://www.musl-libc.org/
+
+-- 
+Todd
