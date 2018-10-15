@@ -2,120 +2,266 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF05C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21889C7112A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC16B2087D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:00:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kguWpSZS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC16B2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DD42B2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:08:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD42B2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbeJOMoV (ORCPT
+        id S1726641AbeJOMvt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 08:44:21 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46734 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbeJOMnb (ORCPT
+        Mon, 15 Oct 2018 08:51:49 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:56467 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726397AbeJOMvt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 08:43:31 -0400
-Received: by mail-pg1-f195.google.com with SMTP id a5-v6so8543995pgv.13
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 21:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=T6Rq4xP+dxlt44CHmwm3Ik+qH8WbttItwOGLnRNudN8=;
-        b=kguWpSZS0VfEGYVTaH+7ZAKRws+fpHFmhTznZnifpYSw4vRTOyc35gcV0FOyAPwcbS
-         WHUoQ2TfJ2LUwFVp9JwF+UYAQkzH2vDZjZ+3TpEORsWC+GJ/cbQ9iRfhcRLeSejGEoJP
-         WPzWPNk57mxB24XTCf49SweaF2IH8Vgvxi9luC+KR+wNgOEBur3fsATzvhR6x7HbuCjP
-         cCWjPZKtKpNyDV6AoBJflvpr4caHb6XDJ0318CEFCZ2seU57NyXid6PV8dkDONseOv1X
-         u0/zdmmQf5KCs9vd7+SoUsPUL89SsWeOq2JvVhzpWXHQodOaF+IQzB/ZZpj5kanr1bYy
-         /tMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=T6Rq4xP+dxlt44CHmwm3Ik+qH8WbttItwOGLnRNudN8=;
-        b=SRi9SJ8kT4pUjZaqGe9m+Ch9JrrB8ncH+FYwmzytc0406R8OXLkzIPpb6AXZyw66Y6
-         wDhg+cMON00Ag5oZg3JZV6RTn/ao8bw/zdhx5oW0uvTUKVXGVEKlnGmbPTP7LR+pzu6/
-         kWpZdZ0kR7f0Y+jmj/w46vMoGgQZIhwKe2e81ppelloObPEC1Mq+pHCBWeoLjAjZepgO
-         LJPdwsuRaxfkn1MSEeGhOyvlBo+9kv4VazWznG6ZLZg6Dd2NLnvV8ZPVThSyeLu1DdkW
-         Vzn7fysIzDVgWJIpY417WOepwsor5FLGwUs4vJBmU3TKFdR3tJO2PmSwv9ypnyJHN9/l
-         3r7Q==
-X-Gm-Message-State: ABuFfoi1fUVKdp6ENx+sVm4A+xSThLpmmBIFH2BuIEbe+Nzz6yo3wArv
-        wj3/B8u8FjNlURhT4LEfWKM=
-X-Google-Smtp-Source: ACcGV63Qq8oDBRdRh1eLc4Rhf5hwLAILTa6BrxM7c9qBORrvm2MbzU3PxHfaJVl58FJgjwzzKdYqag==
-X-Received: by 2002:aa7:8195:: with SMTP id g21-v6mr4396449pfi.71.1539579597608;
-        Sun, 14 Oct 2018 21:59:57 -0700 (PDT)
-Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id p62-v6sm12244698pfp.111.2018.10.14.21.59.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 14 Oct 2018 21:59:57 -0700 (PDT)
-From:   Todd Poynor <toddpoynor@gmail.com>
-To:     Rob Springer <rspringer@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 02/11] staging: gasket: page table: return valid error code on map fail
-Date:   Sun, 14 Oct 2018 21:59:18 -0700
-Message-Id: <20181015045927.156790-3-toddpoynor@gmail.com>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-In-Reply-To: <20181015045927.156790-1-toddpoynor@gmail.com>
-References: <20181015045927.156790-1-toddpoynor@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 15 Oct 2018 08:51:49 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437667|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03307;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.D2CEZZb_1539580083;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D2CEZZb_1539580083)
+          by smtp.aliyun-inc.com(10.147.41.187);
+          Mon, 15 Oct 2018 13:08:03 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        daniel.lezcano@linaro.org, will.deacon@arm.com, jhogan@kernel.org,
+        paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH V13 3/4] clocksource: add gx6605s SOC system timer
+Date:   Mon, 15 Oct 2018 13:07:43 +0800
+Message-Id: <6a090f24194b7cfff807ecad7f7c2f1cf3b737c0.1539579760.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
+References: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
+In-Reply-To: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
+References: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Todd Poynor <toddpoynor@google.com>
+The driver is for gx6605s SOC system timer and there are two
+same timers in gx6605s. We use one for clkevt and another one for
+clksrc.
 
-Return -EINVAL on mapping failures, instead of -1, which triggers a
-checkpatch error.
+The timer is mmio map to access, so we need give mmio address in dts.
 
-Signed-off-by: Todd Poynor <toddpoynor@google.com>
+The counter at 0x0  offset is clock event.
+The counter at 0x40 offset is clock source.
+
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/staging/gasket/gasket_page_table.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Changelog:
+ - pass checkpatch.pl
+ - Add COMIPLE_TEST in Kconfig
+ - no cast is needed for "struct clock_event_device *ce = dev"
+ - remove: extra space after (u64)
+ - Add License and Copyright
+ - Use timer-of framework
+ - Change name with upstream feedback
+ - Use clksource_mmio framework
+---
+---
+ drivers/clocksource/Kconfig         |   8 ++
+ drivers/clocksource/Makefile        |   1 +
+ drivers/clocksource/timer-gx6605s.c | 154 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 163 insertions(+)
+ create mode 100644 drivers/clocksource/timer-gx6605s.c
 
-diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index 964146f0df526..2e1de8ad4a2c6 100644
---- a/drivers/staging/gasket/gasket_page_table.c
-+++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -514,13 +514,12 @@ static int gasket_perform_mapping(struct gasket_page_table *pg_tbl,
- 					(void *)page_to_pfn(page),
- 					(void *)page_to_phys(page));
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 591c9a8..55c77e4 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -630,4 +630,12 @@ config CSKY_MP_TIMER
+ 	  csky,mptimer is not only used in SMP system, it also could be used
+ 	  single core system. It's not a mmio reg and it use mtcr/mfcr instruction.
  
--				/* clean up */
- 				if (gasket_release_page(ptes[i].page))
- 					--pg_tbl->num_active_pages;
- 
- 				memset(&ptes[i], 0,
- 				       sizeof(struct gasket_page_table_entry));
--				return -1;
-+				return -EINVAL;
- 			}
- 		}
- 
-@@ -1165,7 +1164,7 @@ int gasket_page_table_lookup_page(
- 	*ppage = NULL;
- 	*poffset = 0;
- 	mutex_unlock(&pg_tbl->mutex);
--	return -1;
-+	return -EINVAL;
- }
- 
- /* See gasket_page_table.h for description. */
++config GX6605S_TIMER
++	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
++	depends on CSKY
++	select CLKSRC_MMIO
++	select TIMER_OF
++	help
++	  This option enables support for gx6605s SOC's timer.
++
+ endmenu
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index 5ce82d3..9196331 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -80,3 +80,4 @@ obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
+ obj-$(CONFIG_ATCPIT100_TIMER)		+= timer-atcpit100.o
+ obj-$(CONFIG_RISCV_TIMER)		+= riscv_timer.o
+ obj-$(CONFIG_CSKY_MP_TIMER)		+= timer-mp-csky.o
++obj-$(CONFIG_GX6605S_TIMER)		+= timer-gx6605s.o
+diff --git a/drivers/clocksource/timer-gx6605s.c b/drivers/clocksource/timer-gx6605s.c
+new file mode 100644
+index 0000000..80d0939
+--- /dev/null
++++ b/drivers/clocksource/timer-gx6605s.c
+@@ -0,0 +1,154 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/sched_clock.h>
++
++#include "timer-of.h"
++
++#define CLKSRC_OFFSET	0x40
++
++#define TIMER_STATUS	0x00
++#define TIMER_VALUE	0x04
++#define TIMER_CONTRL	0x10
++#define TIMER_CONFIG	0x20
++#define TIMER_DIV	0x24
++#define TIMER_INI	0x28
++
++#define GX6605S_STATUS_CLR	BIT(0)
++#define GX6605S_CONTRL_RST	BIT(0)
++#define GX6605S_CONTRL_START	BIT(1)
++#define GX6605S_CONFIG_EN	BIT(0)
++#define GX6605S_CONFIG_IRQ_EN	BIT(1)
++
++static irqreturn_t gx6605s_timer_interrupt(int irq, void *dev)
++{
++	struct clock_event_device *ce = dev;
++	void __iomem *base = timer_of_base(to_timer_of(ce));
++
++	writel_relaxed(GX6605S_STATUS_CLR, base + TIMER_STATUS);
++
++	ce->event_handler(ce);
++
++	return IRQ_HANDLED;
++}
++
++static int gx6605s_timer_set_oneshot(struct clock_event_device *ce)
++{
++	void __iomem *base = timer_of_base(to_timer_of(ce));
++
++	/* reset and stop counter */
++	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
++
++	/* enable with irq and start */
++	writel_relaxed(GX6605S_CONFIG_EN | GX6605S_CONFIG_IRQ_EN,
++		       base + TIMER_CONFIG);
++
++	return 0;
++}
++
++static int gx6605s_timer_set_next_event(unsigned long delta,
++					struct clock_event_device *ce)
++{
++	void __iomem *base = timer_of_base(to_timer_of(ce));
++
++	/* use reset to pause timer */
++	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
++
++	/* config next timeout value */
++	writel_relaxed(ULONG_MAX - delta, base + TIMER_INI);
++	writel_relaxed(GX6605S_CONTRL_START, base + TIMER_CONTRL);
++
++	return 0;
++}
++
++static int gx6605s_timer_shutdown(struct clock_event_device *ce)
++{
++	void __iomem *base = timer_of_base(to_timer_of(ce));
++
++	writel_relaxed(0, base + TIMER_CONTRL);
++	writel_relaxed(0, base + TIMER_CONFIG);
++
++	return 0;
++}
++
++static struct timer_of to = {
++	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
++	.clkevt = {
++		.rating			= 300,
++		.features		= CLOCK_EVT_FEAT_DYNIRQ |
++					  CLOCK_EVT_FEAT_ONESHOT,
++		.set_state_shutdown	= gx6605s_timer_shutdown,
++		.set_state_oneshot	= gx6605s_timer_set_oneshot,
++		.set_next_event		= gx6605s_timer_set_next_event,
++		.cpumask		= cpu_possible_mask,
++	},
++	.of_irq = {
++		.handler		= gx6605s_timer_interrupt,
++		.flags			= IRQF_TIMER | IRQF_IRQPOLL,
++	},
++};
++
++static u64 notrace gx6605s_sched_clock_read(void)
++{
++	void __iomem *base;
++
++	base = timer_of_base(&to) + CLKSRC_OFFSET;
++
++	return (u64)readl_relaxed(base + TIMER_VALUE);
++}
++
++static void gx6605s_clkevt_init(void __iomem *base)
++{
++	writel_relaxed(0, base + TIMER_DIV);
++	writel_relaxed(0, base + TIMER_CONFIG);
++
++	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to), 2,
++					ULONG_MAX);
++}
++
++static int gx6605s_clksrc_init(void __iomem *base)
++{
++	writel_relaxed(0, base + TIMER_DIV);
++	writel_relaxed(0, base + TIMER_INI);
++
++	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
++
++	writel_relaxed(GX6605S_CONFIG_EN, base + TIMER_CONFIG);
++
++	writel_relaxed(GX6605S_CONTRL_START, base + TIMER_CONTRL);
++
++	sched_clock_register(gx6605s_sched_clock_read, 32, timer_of_rate(&to));
++
++	return clocksource_mmio_init(base + TIMER_VALUE, "gx6605s",
++			timer_of_rate(&to), 200, 32, clocksource_mmio_readl_up);
++}
++
++static int __init gx6605s_timer_init(struct device_node *np)
++{
++	int ret;
++
++	/*
++	 * The timer driver is for nationalchip gx6605s SOC and there are two
++	 * same timer in gx6605s. We use one for clkevt and another for clksrc.
++	 *
++	 * The timer is mmio map to access, so we need give mmio address in dts.
++	 *
++	 * It provides a 32bit countup timer and interrupt will be caused by
++	 * count-overflow.
++	 * So we need set-next-event by ULONG_MAX - delta in TIMER_INI reg.
++	 *
++	 * The counter at 0x0  offset is clock event.
++	 * The counter at 0x40 offset is clock source.
++	 * They are the same in hardware, just different used by driver.
++	 */
++	ret = timer_of_init(np, &to);
++	if (ret)
++		return ret;
++
++	gx6605s_clkevt_init(timer_of_base(&to));
++
++	return gx6605s_clksrc_init(timer_of_base(&to) + CLKSRC_OFFSET);
++}
++TIMER_OF_DECLARE(csky_gx6605s_timer, "csky,gx6605s-timer", gx6605s_timer_init);
 -- 
-2.19.0.605.g01d371f741-goog
+2.7.4
 
