@@ -3,81 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4373DC28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB83FC7112A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02B3A20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:01:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02B3A20881
+	by mail.kernel.org (Postfix) with ESMTP id ADB6220842
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:01:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADB6220842
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbeJOLof (ORCPT
+        id S1726831AbeJOLoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 07:44:35 -0400
-Received: from ozlabs.org ([203.11.71.1]:54989 "EHLO ozlabs.org"
+        Mon, 15 Oct 2018 07:44:39 -0400
+Received: from ozlabs.org ([203.11.71.1]:33917 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726584AbeJOLoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 07:44:34 -0400
+        id S1726584AbeJOLoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 07:44:38 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 42YPr562wDzB2xb; Mon, 15 Oct 2018 15:01:09 +1100 (AEDT)
+        id 42YPr96Hhwz9s5c; Mon, 15 Oct 2018 15:01:11 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 425752c63b6f3fed7b5a9cba2b8101a92cf36995
-In-Reply-To: <1539235983-25259-2-git-send-email-ego@linux.vnet.ibm.com>
-To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+X-powerpc-patch-commit: 7241d26e8175e95290a6549a470c330dbfc63442
+In-Reply-To: <a2694b8ffeb6c52d1c755d8a7bfaac689c4e1c6d.1539423893.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Anton Blanchard <anton@samba.org>
+        Paul Mackerras <paulus@samba.org>, abdhalee@linux.vnet.ibm.com
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [v10, 1/3] powerpc: Detect the presence of big-cores via "ibm, thread-groups"
-Message-Id: <42YPr562wDzB2xb@ozlabs.org>
-Date:   Mon, 15 Oct 2018 15:01:09 +1100 (AEDT)
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: powerpc/64: properly initialise the stackprotector canary on SMP.
+Message-Id: <42YPr96Hhwz9s5c@ozlabs.org>
+Date:   Mon, 15 Oct 2018 15:01:11 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-11 at 05:33:01 UTC, "Gautham R. Shenoy" wrote:
-> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+On Sat, 2018-10-13 at 09:45:12 UTC, Christophe Leroy wrote:
+> commit 06ec27aea9fc ("powerpc/64: add stack protector support")
+> doesn't initialise the stack canary on SMP secondary CPU's paca,
+> leading to the following false positive report from the
+> stack protector.
 > 
-> On IBM POWER9, the device tree exposes a property array identifed by
-> "ibm,thread-groups" which will indicate which groups of threads share
-> a particular set of resources.
+> smp: Bringing up secondary CPUs ...
+> Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: __schedule+0x978/0xa80
+> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.19.0-rc7-next-20181010-autotest-autotest #1
+> Call Trace:
+> [c000001fed5b3bf0] [c000000000a0ef3c] dump_stack+0xb0/0xf4 (unreliable)
+> [c000001fed5b3c30] [c0000000000f9d68] panic+0x140/0x308
+> [c000001fed5b3cc0] [c0000000000f9844] __stack_chk_fail+0x24/0x30
+> [c000001fed5b3d20] [c000000000a2c3a8] __schedule+0x978/0xa80
+> [c000001fed5b3e00] [c000000000a2c9b4] schedule_idle+0x34/0x60
+> [c000001fed5b3e30] [c00000000013d344] do_idle+0x224/0x3d0
+> [c000001fed5b3ec0] [c00000000013d6e0] cpu_startup_entry+0x30/0x50
+> [c000001fed5b3ef0] [c000000000047f34] start_secondary+0x4d4/0x520
+> [c000001fed5b3f90] [c00000000000b370] start_secondary_prolog+0x10/0x14
 > 
-> As of today we only have one form of grouping identifying the group of
-> threads in the core that share the L1 cache, translation cache and
-> instruction data flow.
+> This patch properly initialises the stack_canary of the secondary
+> idle tasks.
 > 
-> This patch adds helper functions to parse the contents of
-> "ibm,thread-groups" and populate a per-cpu variable to cache
-> information about siblings of each CPU that share the L1, traslation
-> cache and instruction data-flow.
-> 
-> It also defines a new global variable named "has_big_cores" which
-> indicates if the cores on this configuration have multiple groups of
-> threads that share L1 cache.
-> 
-> For each online CPU, it maintains a cpu_smallcore_mask, which
-> indicates the online siblings which share the L1-cache with it.
-> 
-> Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+> Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+> Fixes: 06ec27aea9fc ("powerpc/64: add stack protector support")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Series applied to powerpc next, thanks.
+Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/425752c63b6f3fed7b5a9cba2b8101
+https://git.kernel.org/powerpc/c/7241d26e8175e95290a6549a470c33
 
 cheers
