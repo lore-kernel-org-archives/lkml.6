@@ -2,98 +2,117 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E47C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CABC71132
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6215B20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:04:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fc8VvMPU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6215B20842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 28F7420652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:04:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28F7420652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbeJOVtY (ORCPT
+        id S1726821AbeJOVto (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 17:49:24 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41519 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbeJOVtY (ORCPT
+        Mon, 15 Oct 2018 17:49:44 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39743 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726576AbeJOVto (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 17:49:24 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c32so18983019otb.8;
-        Mon, 15 Oct 2018 07:03:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Po7VE+5iLeu9HaINSuQBH26SMou1uRVrwVYXxQfTSlk=;
-        b=Fc8VvMPU7jzyCSGvw4gzw+Pez1ffkHM79oyv/I4ueXExE7RoyFU9hBzycEd/SjzLLz
-         mdwHTGm5LWZqE384mTRZWWyUu3xmwqwcwyQ9sF2LXijOaWNgnBWejFQUrzQahsLF4E3C
-         7crmrxG5Aq7K4JtzXVRJ9gcWr5tYH/cp9qgOFTTWGjDNhpSTsmSSoQnvsjLq/fz2WT+6
-         jTB6Y8zvdc5f6Phtkj4KtIYjTRhjRWyiWmOKIt28mRpnH0ujCSsmOX27wrz1I11JTEOo
-         PQDxv0+6XQ+CQMP7K64iO9kkfyeKKkgG0UJ8B5s6NxmxaRpFq1hNoAsNeE1DnsCxdTVz
-         giAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Po7VE+5iLeu9HaINSuQBH26SMou1uRVrwVYXxQfTSlk=;
-        b=l5Gq/FKCvWCZOkkoyIeja4yLgA7TQCNkQ8rnrWT3OoWWdWcVbN4Hg6LlYiPgfvVA+p
-         6shJk2ew/X9+q+dNFE2XkUO11G0geqsCW8auBxMwD8knpRPYl9MTq1TQLNovTxwkpSza
-         1klj6LlhRSOYcbNsjQgPQksFDH6ibSbyhm7u1Va+Y1d0aVwoehI17/K8B0JqgBzu6YsD
-         TxaKLLlIvZrLQsuJU3iPXcRAsoUIw7OIGY3oRBE5LOQdiKlmc+KWhRGshixEjTSxhFb2
-         KHXCjyI0S18ZuAnOxIuc6904W0rz8at4/rszFwqBiY6KFW25JJx23o7MaRAeBHGB2rKv
-         Or4w==
-X-Gm-Message-State: ABuFfoi55fVw1rGs98775glW/Q6TOd2YXMCCxeYeUROkcwz44AyQW5+m
-        bsAhjHUGv3A1Yey65lCAlGdv74hnRKwE6t6dNus=
-X-Google-Smtp-Source: ACcGV613dNpQCnCXkxWXbkTMXysJmpBe66aYVR/KhkLwkOYvY/CkD5HtBZyfD+ZHOMp1tClz4a0ThYsGHMTK31Z+l7Q=
-X-Received: by 2002:a9d:2a67:: with SMTP id t94mr11619960ota.203.1539612238705;
- Mon, 15 Oct 2018 07:03:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1539609921.git.leonard.crestez@nxp.com> <275ca8850bd5863f79bcafdb11cf9544318a691f.1539609921.git.leonard.crestez@nxp.com>
-In-Reply-To: <275ca8850bd5863f79bcafdb11cf9544318a691f.1539609921.git.leonard.crestez@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 15 Oct 2018 11:04:05 -0300
-Message-ID: <CAOMZO5Br5fXGKQAUJ3jPJWzwmXNtb-9NCZEdfhrayYJ1iXZVuA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] ARM: imx_v6_v7_defconfig: Enable CRYPTO_DEV_MXS_DCP
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Horia Geanta Neag <horia.geanta@nxp.com>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        Mon, 15 Oct 2018 17:49:44 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w9FDxVfa007068;
+        Mon, 15 Oct 2018 16:03:42 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2n37kfbrrd-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 15 Oct 2018 16:03:42 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BEDBE31;
+        Mon, 15 Oct 2018 14:03:41 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A0BDD4E65;
+        Mon, 15 Oct 2018 14:03:41 +0000 (GMT)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.44) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 15 Oct
+ 2018 16:03:41 +0200
+Received: from localhost (10.201.23.16) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 15 Oct 2018 16:03:41
+ +0200
+From:   Olivier Moysan <olivier.moysan@st.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
+        <robh@kernel.org>, <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>,
+        <arnaud.pouliquen@st.com>, <benjamin.gaignard@st.com>
+Subject: [PATCH 2/4] ASoC: dt-bindings: add mclk support to cs42l51
+Date:   Mon, 15 Oct 2018 16:03:34 +0200
+Message-ID: <1539612216-12602-3-git-send-email-olivier.moysan@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1539612216-12602-1-git-send-email-olivier.moysan@st.com>
+References: <1539612216-12602-1-git-send-email-olivier.moysan@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.16]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-15_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 10:28 AM Leonard Crestez
-<leonard.crestez@nxp.com> wrote:
->
-> This block is present in 6sl, 6sll and 6ull so it should be enabled in
-> the default imx kernel config.
->
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Add clocks properties to cs42l51 Cirrus codec,
+to support master clock provider.
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+---
+ Documentation/devicetree/bindings/sound/cs42l51.txt   | 17 +++++++++++++++++
+ Documentation/devicetree/bindings/trivial-devices.txt |  1 -
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/cs42l51.txt
+
+diff --git a/Documentation/devicetree/bindings/sound/cs42l51.txt b/Documentation/devicetree/bindings/sound/cs42l51.txt
+new file mode 100644
+index 000000000000..4b5de33ce377
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/cs42l51.txt
+@@ -0,0 +1,17 @@
++CS42L51 audio CODEC
++
++Optional properties:
++
++  - clocks : a list of phandles + clock-specifiers, one for each entry in
++    clock-names
++
++  - clock-names : must contain "MCLK"
++
++Example:
++
++cs42l51: cs42l51@4a {
++	compatible = "cirrus,cs42l51";
++	reg = <0x4a>;
++	clocks = <&mclk_prov>;
++	clock-names = "MCLK";
++};
+diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Documentation/devicetree/bindings/trivial-devices.txt
+index 763a2808a95c..69c934aec13b 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.txt
++++ b/Documentation/devicetree/bindings/trivial-devices.txt
+@@ -35,7 +35,6 @@ at,24c08		i2c serial eeprom  (24cxx)
+ atmel,at97sc3204t	i2c trusted platform module (TPM)
+ capella,cm32181		CM32181: Ambient Light Sensor
+ capella,cm3232		CM3232: Ambient Light Sensor
+-cirrus,cs42l51		Cirrus Logic CS42L51 audio codec
+ dallas,ds1374		I2C, 32-Bit Binary Counter Watchdog RTC with Trickle Charger and Reset Input/Output
+ dallas,ds1631		High-Precision Digital Thermometer
+ dallas,ds1672		Dallas DS1672 Real-time Clock
+-- 
+2.7.4
+
