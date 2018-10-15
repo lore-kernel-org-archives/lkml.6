@@ -2,125 +2,152 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2F7C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E47C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2B9F205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AAB0205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:29:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqjkdS/B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2B9F205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=capella.pro
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bjV0CiIl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AAB0205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbeJPFMO (ORCPT
+        id S1726917AbeJPFQy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 01:12:14 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37125 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbeJPFMO (ORCPT
+        Tue, 16 Oct 2018 01:16:54 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:44032 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbeJPFQx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 01:12:14 -0400
-Received: by mail-qt1-f196.google.com with SMTP id d14-v6so23276911qto.4;
-        Mon, 15 Oct 2018 14:25:13 -0700 (PDT)
+        Tue, 16 Oct 2018 01:16:53 -0400
+Received: by mail-yb1-f196.google.com with SMTP id x5-v6so8070895ybl.11
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 14:29:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=hQEEb1+TIVT56xFyAAdPNqT9LH77Lbs2CjpqQTLNZBw=;
-        b=XqjkdS/BVWhkCNGkJ/wSNzH1zHMzBleykq94J9Z6FgzNC90WeaJfCc+sJH9optoZBV
-         +519+AmDYPDABwfjuYqai4CEv5hZA/TXnRJzQgSvCH7lAfVXU7Q6O15oYT7N1+kBWQiV
-         rhsN1ZaqZ2a66KCIRxEjMjcYwkzGuZKklw/KtWROb7mUSPaOlSIxtEchsoWzkBoqfo+G
-         80aky2QtEZOzVYp5ZC2PvHoC82sa9vUIirewpWXPQYkvreS39GnbT6QeXiq6qvmPMpYN
-         Ez4LEm9jcJNVSlYNk0dILZvTpQg+Rql5fGgZ+VXfMxL8JQDE/X23DFu8iFSv2NB2dZWd
-         Knmg==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=8JsxQyrD35YmcDL4dadNfCIv9g+QpGQPlYAQrEKiZBI=;
+        b=bjV0CiIlwfaNBY/KsYVRIx2OxD7MPUkfogoiV2SwIendvPWKsA/WGrPAHUj7K6T4om
+         Mig8jdKR1X6b1OYtNAsE9p3KAVR0yQ5qjWe2AOYowQhVfNOBEjKRbGjwdAUmKF0maKi4
+         SinpZ4HbzDyvz7On+Os8Y2mbAQuTnGjDV257w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=hQEEb1+TIVT56xFyAAdPNqT9LH77Lbs2CjpqQTLNZBw=;
-        b=BVwtEeqHkHboBJGAqgT9x0nU/YpvxCrFqkZxNMFNMoBrKT6Rg3lu+rJ3TNljl3liCr
-         W4W1kvGAmMjLAtvqGHttVNI+FfJk6dEFLciRQecrpbOJGIkUpR/CmQWsMiL94U2TD1ip
-         HaZ+Zb9eqoBbnSz68EiZ9erU0WlTMCExhXjVg3Cm14wRKbw/c6ICJB7N9WnElSBTeZ6K
-         ZoU6f6dW2iKI3Tu4BXZfGcupakM6QxyAbIWYjzrD7Cnbrpu9ZtswFIhvTZxEkxdv1tQ4
-         U2yPAgjr4iPNBGjOU8EFDc9qSMU6FP2n3/G4+Fhm0QwHCOL28xIqwrOQEUKXqwcEi1wB
-         uxVA==
-X-Gm-Message-State: ABuFfohH9csmMNzAUesjZEkduyxuJtkcHPJUvm1IlEU4IJYVyYBSu8aP
-        TgwTV8d+LMm95KP6MC+70kQ=
-X-Google-Smtp-Source: ACcGV61jIZDTwZNVZ8wDvApj2kqMtZOXdVanEh/TbD4mYMxYImPjvNdO9DG6Cw03gop/15dkydnjYw==
-X-Received: by 2002:ac8:7119:: with SMTP id z25-v6mr17917686qto.270.1539638712630;
-        Mon, 15 Oct 2018 14:25:12 -0700 (PDT)
-Received: from localhost ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id z3-v6sm5958638qkl.23.2018.10.15.14.25.11
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=8JsxQyrD35YmcDL4dadNfCIv9g+QpGQPlYAQrEKiZBI=;
+        b=QhQfqrWmSasIBVE5xk6Is/nKbInOub/YxGwFyX1w45lTXfFEE3RNEgqEu/YILLxxGQ
+         M2aSdn6V0xDiGeE/hDFRFCJVCxguKxx7Pop7LMr7jDPQ1LMb+vaeBHB2oolvo5KjVmyD
+         Ci4QXIheANJfrP5V3onkc3c0iIdCDCIhEHWG9zBD5rufa2fWXtmjCYEzZzpqcPefWfyJ
+         i/SJCVtjXvQLTkgaezGMYfI0KSdBefum/ZnWBOqubU9jLufMt6Gy9AOh+zAdiwIYXJc9
+         ccbH8h2apOeFd2XDsTkzQVYcbRJooH7f2xG2JsmyHNum7++PcAzBMYYHRpX6lyJ0grHv
+         zhYg==
+X-Gm-Message-State: ABuFfoiEVt3FfEDgDEEVyLwwlL+l3TNAe8P9wvHy6V4ezMCo64Ewg1Jy
+        ezBZZbtEcDcXesf/End1Y0jvAulvOVM=
+X-Google-Smtp-Source: ACcGV60nHca4pZJR4/dFvx1/vOW8UPKbdbzLY2PGk2U/yezqc0wp1Ow/bJUdfSMqisZjG84Vv+WpDA==
+X-Received: by 2002:a25:e6d7:: with SMTP id d206-v6mr10174131ybh.258.1539638991345;
+        Mon, 15 Oct 2018 14:29:51 -0700 (PDT)
+Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
+        by smtp.gmail.com with ESMTPSA id q2-v6sm2912163ywg.87.2018.10.15.14.29.49
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 14:25:11 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 18:25:21 -0300
-From:   Gabriel Capella <gabriel@capella.pro>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH] staging: iio: adc: Add comments to prevent checks corrections
-Message-ID: <20181015212521.GA24512@mantaray>
+        Mon, 15 Oct 2018 14:29:49 -0700 (PDT)
+Received: by mail-yw1-f44.google.com with SMTP id v1-v6so8104995ywv.6
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 14:29:49 -0700 (PDT)
+X-Received: by 2002:a81:9b83:: with SMTP id s125-v6mr10119988ywg.47.1539638988663;
+ Mon, 15 Oct 2018 14:29:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 14:29:47
+ -0700 (PDT)
+In-Reply-To: <20181013114847.GA3160@embeddedor.com>
+References: <20181013114847.GA3160@embeddedor.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 15 Oct 2018 14:29:47 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jK-1DYcU3Aij9=spJa9d7ch2-mjXDZVEhmcWCVhWtE8NQ@mail.gmail.com>
+Message-ID: <CAGXu5jK-1DYcU3Aij9=spJa9d7ch2-mjXDZVEhmcWCVhWtE8NQ@mail.gmail.com>
+Subject: Re: [PATCH] signal: Mark expected switch fall-throughs
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds 3 comments in 2 different files.
-These comments warn to don't correct the checks of type:
-"CHECK: spaces preferred around that '-'"
+On Sat, Oct 13, 2018 at 4:48 AM, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Signed-off-by: Gabriel Capella <gabriel@capella.pro>
----
- drivers/staging/iio/adc/ad7192.c  | 1 +
- drivers/staging/iio/adc/ad7280a.c | 2 ++
- 2 files changed, 3 insertions(+)
+Yes, please. :) I love every step closer we get to being able to use
+-Wimplicit-fallthrough.
 
-diff --git a/drivers/staging/iio/adc/ad7192.c b/drivers/staging/iio/adc/ad7192.c
-index acdbc07fd259..786ace19c240 100644
---- a/drivers/staging/iio/adc/ad7192.c
-+++ b/drivers/staging/iio/adc/ad7192.c
-@@ -354,6 +354,7 @@ ad7192_show_scale_available(struct device *dev,
- 	return len;
- }
- 
-+/* Do not put spaces around the hyphen. #checkpatch.pl */
- static IIO_DEVICE_ATTR_NAMED(in_v_m_v_scale_available,
- 			     in_voltage-voltage_scale_available,
- 			     0444, ad7192_show_scale_available, NULL, 0);
-diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
-index 58420dcb406d..4927116a046c 100644
---- a/drivers/staging/iio/adc/ad7280a.c
-+++ b/drivers/staging/iio/adc/ad7280a.c
-@@ -749,6 +749,7 @@ static irqreturn_t ad7280_event_handler(int irq, void *private)
- 	return IRQ_HANDLED;
- }
- 
-+/* Do not put spaces around the hyphen. #checkpatch.pl */
- static IIO_DEVICE_ATTR_NAMED(in_thresh_low_value,
- 		in_voltage-voltage_thresh_low_value,
- 		0644,
-@@ -756,6 +757,7 @@ static IIO_DEVICE_ATTR_NAMED(in_thresh_low_value,
- 		ad7280_write_channel_config,
- 		AD7280A_CELL_UNDERVOLTAGE);
- 
-+/* Do not put spaces around the hyphen. #checkpatch.pl */
- static IIO_DEVICE_ATTR_NAMED(in_thresh_high_value,
- 		in_voltage-voltage_thresh_high_value,
- 		0644,
---
+Acked-by: Kees Cook <keescook@chromium.org>
 
- 
+-Kees
+
+
+> ---
+>  include/linux/signal.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/include/linux/signal.h b/include/linux/signal.h
+> index 200ed96..f428e86 100644
+> --- a/include/linux/signal.h
+> +++ b/include/linux/signal.h
+> @@ -129,9 +129,11 @@ static inline void name(sigset_t *r, const sigset_t *a, const sigset_t *b) \
+>                 b3 = b->sig[3]; b2 = b->sig[2];                         \
+>                 r->sig[3] = op(a3, b3);                                 \
+>                 r->sig[2] = op(a2, b2);                                 \
+> +               /* fall through */                                      \
+>         case 2:                                                         \
+>                 a1 = a->sig[1]; b1 = b->sig[1];                         \
+>                 r->sig[1] = op(a1, b1);                                 \
+> +               /* fall through */                                      \
+>         case 1:                                                         \
+>                 a0 = a->sig[0]; b0 = b->sig[0];                         \
+>                 r->sig[0] = op(a0, b0);                                 \
+> @@ -161,7 +163,9 @@ static inline void name(sigset_t *set)                                      \
+>         switch (_NSIG_WORDS) {                                          \
+>         case 4: set->sig[3] = op(set->sig[3]);                          \
+>                 set->sig[2] = op(set->sig[2]);                          \
+> +               /* fall through */                                      \
+>         case 2: set->sig[1] = op(set->sig[1]);                          \
+> +               /* fall through */                                      \
+>         case 1: set->sig[0] = op(set->sig[0]);                          \
+>                     break;                                              \
+>         default:                                                        \
+> @@ -182,6 +186,7 @@ static inline void sigemptyset(sigset_t *set)
+>                 memset(set, 0, sizeof(sigset_t));
+>                 break;
+>         case 2: set->sig[1] = 0;
+> +               /* fall through */
+>         case 1: set->sig[0] = 0;
+>                 break;
+>         }
+> @@ -194,6 +199,7 @@ static inline void sigfillset(sigset_t *set)
+>                 memset(set, -1, sizeof(sigset_t));
+>                 break;
+>         case 2: set->sig[1] = -1;
+> +               /* fall through */
+>         case 1: set->sig[0] = -1;
+>                 break;
+>         }
+> --
+> 2.7.4
+>
+
+
+
+-- 
+Kees Cook
+Pixel Security
