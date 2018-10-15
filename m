@@ -4,149 +4,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 478C1C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E07C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F16C208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C81E2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:42:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v255xtDu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F16C208B3
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mR82q3S+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C81E2098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbeJPC2r (ORCPT
+        id S1726994AbeJPC3D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:28:47 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45546 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbeJPC2r (ORCPT
+        Mon, 15 Oct 2018 22:29:03 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40311 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbeJPC3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:28:47 -0400
-Received: by mail-oi1-f196.google.com with SMTP id e17-v6so15902689oig.12
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 11:42:19 -0700 (PDT)
+        Mon, 15 Oct 2018 22:29:03 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d2-v6so22544506wro.7
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 11:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ECbZabpTWBi5U8iQOEAyv+gwu6PoqzYbBAs5iD63fwo=;
-        b=v255xtDuzxjy6o81wRgpT6Nb1kQ/D7aHu/kEV55+rYZRij/54kVItxKWpTJ0SAj8G9
-         6g86lojOuc7YvKUApOi0zukpKP+O5tWkkPVcR1vVeI/yR75rDPRmvnM2QTaGxRzpmYQ7
-         POwqelLBiWIZOQtTwbowXSkj7bg9TRGftDdvcSBQ9rOU5mOoZm68DhQnGQ90amyincXr
-         dkZUrNK1NN/nwhZsyYNdCCQ/g/Ww2RSzJKFEwBwb9oOhRU9ldEm5cKqDfBxKoqW3iI/F
-         UYWqUYipf+F44uCkCLqjbEhFMKnQa4jjvHo6iuNsMJhizsLkpu2GqUG+R8TBogr+Up+/
-         Q+BQ==
+        bh=AzzDb02wcMiUpjOGmy+dVj43H0l+RcMs0T3YRHxEV2w=;
+        b=mR82q3S+9tPdHDEiUKqg0DLGKvo1LBTDWym/CPoBs5Un6hz3xN38vtljGn2JNmjAIc
+         xwvnfdpxAZlAP1w2Gsck1kY6Az8b4zO/ErazdqWYJt8WyKtg4tSOo/JSmyA4fX1qXDeW
+         iFbE4YPg7QzVht1JLpB7/thGGl3Ua89QLQjoiOyuRe4lbwDXCjN8Mml4jF2NKfkmAgV8
+         HCSWk6tQ7D6KftkoKI/C2nfAhqSrRRHZp8WcKSQVWvQvLg3ec6TCFghjwe/9y1YjbJc8
+         cY4HWJQR6A0jTRygzuxg59eE4P1+GgD0KKcNwLsTeFB0lW7jPEbgt6k+dO89AwIoP1xa
+         fUYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ECbZabpTWBi5U8iQOEAyv+gwu6PoqzYbBAs5iD63fwo=;
-        b=Sgp8rysd1TgPp6aONeTik5EjUaXQ+2C3DdmsUqMovWqPc79cFCsPLLgYwss2mxvwcU
-         YEMehomTyJ3EJ80IBJptQmo2o1tVtoNrfubdZRB3PwcW6jhOevCQNiu9paYI4F2Ey/xr
-         pqwSBEwzkogM4qXKJn6rgH4OphjTXaW7ZgusYGJAbav9CwjH1cDL80P9hyg2Y/y/JvVl
-         INAiHntnNxiYz5UYk2ItIjO+km9ouQ6w1j7IDl2d0uGbtZi0WmXnx1c8MSHbkvcjWPBW
-         BJ1RlInlb4LoM909tbj0V2fLE0xWXFhT/jVZESB8XdLeL+CYcfvdL2b2qW9+1SqGFvj1
-         843g==
-X-Gm-Message-State: ABuFfohY+l5qiJ/JxSERIHHh12l6jZ0zBDiSqKWIFPt9DbAGrXPisN1u
-        ns6fMOaj0GxIdxVQfGynaQgNx+hfAztEr9+WpGU1Sg==
-X-Google-Smtp-Source: ACcGV63iQ+LcHl7EnWfIUonLEUuB1UhQAkvGlSM9917rdzzKW8lW5N1pRYnfLssuBYGXNoTZoI6PV+wQr12DnPjU0XE=
-X-Received: by 2002:aca:efd6:: with SMTP id n205-v6mr9370144oih.3.1539628939304;
- Mon, 15 Oct 2018 11:42:19 -0700 (PDT)
+        bh=AzzDb02wcMiUpjOGmy+dVj43H0l+RcMs0T3YRHxEV2w=;
+        b=CuOJRoA/kImZXczPxp70cgNvz+KY6ayUzEFbDee5cN/ieJRvXkSEP2QgQHYZsxd+mM
+         1IM9m+xjKJw9wcYpm2kk3WsHa+XBpUGFgvzeo6vkGL3FQCxVQSALOKFJbHJHDNu+LF0m
+         +dP5C/fykhUGuyO+7hdZUGaDZikN455jZadJw8yhCQ/AK+FV1qOGtTJORfw7+KHUAmms
+         KqRxTJfw6O9ggAshWfPuaBXyoSE/mJpzqhVdXMTHQh1CxrheLaWa1CRTvyrLEVn3cmhA
+         gmgu3UQ94e1GBfOEqkgDkvUAUQvLubzO50hmmFChSpMTqZaRX1HzvmkXZQUrFlaeq7wp
+         mgOg==
+X-Gm-Message-State: ABuFfojloe78W9+8K4MCNRRB4KHAttao7p0JhrSZ0Rv9Rfnaz8wiB5eX
+        6ROXC+ML5/FeZLoCLhNCnHLPEP+jO2O3FS8GL8kG8g==
+X-Google-Smtp-Source: ACcGV62hZNpzZZUS1jTUnKWbl6z483zYZdyL2IGPqtpRIVS5C5YZtiNuDy49g4sAzgSLKgKcG0LWy81+xOVfvz4ub3E=
+X-Received: by 2002:adf:82e3:: with SMTP id 90-v6mr14878835wrc.131.1539628954043;
+ Mon, 15 Oct 2018 11:42:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181015183841.114341-1-yuzhao@google.com>
-In-Reply-To: <20181015183841.114341-1-yuzhao@google.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 15 Oct 2018 20:41:52 +0200
-Message-ID: <CAG48ez1AEpYx_nDCaNUbw7RdtsCBvAR8=SKSgyaoeSrhqRZ27w@mail.gmail.com>
-Subject: Re: [PATCH] mm: detect numbers of vmstat keys/values mismatch
-To:     yuzhao@google.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, jack@suse.cz,
-        David Rientjes <rientjes@google.com>, kemi.wang@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>, guro@fb.com,
-        Kees Cook <keescook@chromium.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        bigeasy@linutronix.de, kernel list <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
+References: <20181010142548.GB4071@kroah.com> <20181010212426.3167-1-laurence.rochfort@gmail.com>
+In-Reply-To: <20181010212426.3167-1-laurence.rochfort@gmail.com>
+From:   Todd Poynor <toddpoynor@google.com>
+Date:   Mon, 15 Oct 2018 11:42:21 -0700
+Message-ID: <CAAW3YpbLUSicJS788rMTnBJTiKHJy_hW-EOS7s05+V-09zTbrQ@mail.gmail.com>
+Subject: Re: [PATCH v3] staging: gasket: Fix sparse "incorrect type in
+ assignment" warnings.
+To:     laurence.rochfort@gmail.com
+Cc:     Rob Springer <rspringer@google.com>, benchan@chromium.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 8:38 PM Yu Zhao <yuzhao@google.com> wrote:
-> There were mismatches between number of vmstat keys and number of
-> vmstat values. They were fixed recently by:
->   commit 58bc4c34d249 ("mm/vmstat.c: skip NR_TLB_REMOTE_FLUSH* properly")
->   commit 28e2c4bb99aa ("mm/vmstat.c: fix outdated vmstat_text")
+On Wed, Oct 10, 2018 at 2:14 PM Laurence Rochfort
+<laurence.rochfort@gmail.com> wrote:
 >
-> Add a BUILD_BUG_ON to detect such mismatch and hopefully prevent
-> it from happening again.
-
-A BUILD_BUG_ON() like this is already in the mm tree:
-https://ozlabs.org/~akpm/mmotm/broken-out/mm-vmstat-assert-that-vmstat_text-is-in-sync-with-stat_items_size.patch
-
-> Signed-off-by: Yu Zhao <yuzhao@google.com>
+> Remove the coherent buffer __iomem cookie because the buffer is
+> allocated from dma_alloc_coherent().
+>
+> warning: incorrect type in assignment (different address spaces)
+>    expected unsigned char [noderef] [usertype] <asn:2>*virt_base
+>    got void *[assigned] mem
+> warning: incorrect type in argument 3 (different address spaces)
+>    expected void *cpu_addr
+>    got unsigned char [noderef] [usertype] <asn:2>*virt_base
+>
+> Signed-off-by: Laurence Rochfort <laurence.rochfort@gmail.com>
 > ---
->  include/linux/vmstat.h |  4 ++++
->  mm/vmstat.c            | 18 ++++++++----------
->  2 files changed, 12 insertions(+), 10 deletions(-)
+> Changes in v3:
+>  - Just remove the __iommem cookie, don't alter type.
 >
-> diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-> index f25cef84b41d..33fdd37124cb 100644
-> --- a/include/linux/vmstat.h
-> +++ b/include/linux/vmstat.h
-> @@ -78,6 +78,10 @@ extern void vm_events_fold_cpu(int cpu);
+>  drivers/staging/gasket/gasket_core.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
->  #else
+> diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
+> index 275fd0b..e62adcd 100644
+> --- a/drivers/staging/gasket/gasket_core.h
+> +++ b/drivers/staging/gasket/gasket_core.h
+> @@ -231,7 +231,7 @@ struct gasket_coherent_buffer_desc {
+>  /* Coherent buffer structure. */
+>  struct gasket_coherent_buffer {
+>         /* Virtual base address. */
+> -       u8 __iomem *virt_base;
+> +       u8 *virt_base;
 >
-> +struct vm_event_state {
-> +       unsigned long event[0];
-> +};
-> +
->  /* Disable counters */
->  static inline void count_vm_event(enum vm_event_item item)
->  {
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 7878da76abf2..7ebf871b4cc9 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1647,23 +1647,21 @@ enum writeback_stat_item {
->         NR_VM_WRITEBACK_STAT_ITEMS,
->  };
->
-> +#define NR_VM_STAT_ITEMS (NR_VM_ZONE_STAT_ITEMS + NR_VM_NUMA_STAT_ITEMS + \
-> +                         NR_VM_NODE_STAT_ITEMS + NR_VM_WRITEBACK_STAT_ITEMS + \
-> +                         ARRAY_SIZE(((struct vm_event_state *)0)->event))
-> +
->  static void *vmstat_start(struct seq_file *m, loff_t *pos)
->  {
-> +       int i;
->         unsigned long *v;
-> -       int i, stat_items_size;
-> +
-> +       BUILD_BUG_ON(ARRAY_SIZE(vmstat_text) != NR_VM_STAT_ITEMS);
->
->         if (*pos >= ARRAY_SIZE(vmstat_text))
->                 return NULL;
-> -       stat_items_size = NR_VM_ZONE_STAT_ITEMS * sizeof(unsigned long) +
-> -                         NR_VM_NUMA_STAT_ITEMS * sizeof(unsigned long) +
-> -                         NR_VM_NODE_STAT_ITEMS * sizeof(unsigned long) +
-> -                         NR_VM_WRITEBACK_STAT_ITEMS * sizeof(unsigned long);
-> -
-> -#ifdef CONFIG_VM_EVENT_COUNTERS
-> -       stat_items_size += sizeof(struct vm_event_state);
-> -#endif
->
-> -       v = kmalloc(stat_items_size, GFP_KERNEL);
-> +       v = kmalloc_array(NR_VM_STAT_ITEMS, sizeof(unsigned long), GFP_KERNEL);
->         m->private = v;
->         if (!v)
->                 return ERR_PTR(-ENOMEM);
+>         /* Physical base address. */
+>         ulong phys_base;
 > --
-> 2.19.1.331.ge82ca0e54c-goog
->
+> 2.9.5
+
+Reviewed-by: Todd Poynor <toddpoynor@google.com>
+
+Thanks!
