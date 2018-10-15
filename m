@@ -2,85 +2,101 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CF0C71144
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD406C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8351205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:22:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eECz1377"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8351205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 78504205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:23:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78504205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbeJPFJE (ORCPT
+        id S1726954AbeJPFKM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 01:09:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56782 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 01:10:12 -0400
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:35432 "EHLO fuzix.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725974AbeJPFJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 01:09:04 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1F5B205F4;
-        Mon, 15 Oct 2018 21:22:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539638524;
-        bh=hzgYdSJSoUR9uLuQfnmTAwOh7QaSjFFZoyjV0lzNYcM=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=eECz1377SGfZlrsomxiIZonOmWew3/i2gGl7uBEsNUZSLf7GB7OvMP1DoInYSU3TY
-         WuWWtn+keb/QTZOIFIHwpUQwrjz6g32W95g+mi8d5hi77EmtZ1yy+7Wku6gQK2/ZGy
-         GNN//TigLpSo2yetIbWRldysQOpmzHpE3zxxTDOk=
-Content-Type: text/plain; charset="utf-8"
+        id S1725974AbeJPFKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 01:10:12 -0400
+Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
+        by fuzix.org (8.15.2/8.15.2) with ESMTP id w9FLLiqJ025498;
+        Mon, 15 Oct 2018 22:21:45 +0100
+Date:   Mon, 15 Oct 2018 22:21:44 +0100
+From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To:     Enke Chen <enkechen@cisco.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
+Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
+Message-ID: <20181015222144.27fdafc3@alans-desktop>
+In-Reply-To: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <9cf68fe8-73cf-4ee9-6ad4-d6b7ba8f02f8@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-References: <9cf68fe8-73cf-4ee9-6ad4-d6b7ba8f02f8@kernel.org>
-Message-ID: <153963852324.5275.14467434252596945402@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [GIT PULL] clk/samsung updates for 4.20-rc1
-Date:   Mon, 15 Oct 2018 14:22:03 -0700
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Sylwester Nawrocki (2018-10-05 04:49:14)
-> Hi Stephen, Mike,
-> =
+> +/*
+> + * Returns true if current's euid is same as p's uid or euid,
+> + * or has CAP_SYS_ADMIN.
+> + *
+> + * Called with rcu_read_lock, creds are safe.
+> + *
+> + * Adapted from set_one_prio_perm().
+> + */
+> +static bool set_predump_signal_perm(struct task_struct *p)
+> +{
+> +	const struct cred *cred = current_cred(), *pcred = __task_cred(p);
+> +
+> +	return uid_eq(pcred->uid, cred->euid) ||
+> +	       uid_eq(pcred->euid, cred->euid) ||
+> +	       capable(CAP_SYS_ADMIN);
+> +}
 
-> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343f=
-f3:
-> =
+This makes absolutely no security sense whatsoever. The uid and euid of
+the parent and child can both change between the test and the signal
+delivery.
 
->   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-> =
+There are reasons that the child signal control code is incredibly
+careful about either the parent or child using execve or doing a
+privilege change that might pose a risk.
 
-> are available in the git repository at:
-> =
+Until this code gets the same protections I don't believe it's safe.
 
->   git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/cl=
-k-v4.20-samsung
-> =
-
-> for you to fetch changes up to 9dbcfe1ace4e9c57b819df1054eaeceb9bfd34f5:
-> =
-
->   dt-bindings: clock: samsung: Add SPDX license identifiers (2018-10-05 1=
-3:36:40 +0200)
-> =
-
-
-Thanks. Pulled into clk-next.
+Alan
