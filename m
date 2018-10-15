@@ -2,114 +2,133 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D01C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D3CC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB6772089E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:14:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB6772089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id D2928208AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:18:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QyzqXENy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2928208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbeJPAAa (ORCPT
+        id S1726704AbeJPAEj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:00:30 -0400
-Received: from anholt.net ([50.246.234.109]:35042 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbeJPAAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:00:30 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id CA15710A1218;
-        Mon, 15 Oct 2018 09:14:36 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id KL83Lz81Pikl; Mon, 15 Oct 2018 09:14:35 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 8514E10A0A02;
-        Mon, 15 Oct 2018 09:14:35 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id E489A2FE1B6A; Mon, 15 Oct 2018 09:14:34 -0700 (PDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
-        phil@raspberrypi.org
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-rpi-kernel@lists.infradead.org, devel@driverdev.osuosl.org
-Subject: Re: [PATCH 0/7] staging: vc04_services: Some dead code removal
-In-Reply-To: <1715113043.52878.1538821118324@email.1und1.de>
-References: <20181004093747.21750-1-tuomas.tynkkynen@iki.fi> <1715113043.52878.1538821118324@email.1und1.de>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Mon, 15 Oct 2018 09:14:34 -0700
-Message-ID: <87a7nf5gr9.fsf@anholt.net>
+        Mon, 15 Oct 2018 20:04:39 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:37810 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbeJPAEj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 20:04:39 -0400
+Received: by mail-yb1-f193.google.com with SMTP id h1-v6so7710050ybm.4
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 09:18:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=T/sC+eYmGpk6wkvDCQkhcjIHQAX7Gl/+p+UJKaLtP2A=;
+        b=QyzqXENy2HRdjeG/AX3jrKF5oDgqEuLPQXs4kYLSR9f6FzdZ2Y6dK/lDdb6oarijjE
+         bwPNxaEjgzz8YTR11kXYxkZI1SC5nutPZ4bslrJOGjU3hI4v7pO2wED1TIXxg192EblI
+         O6YJCb0nUyYGV23wXaISP+J4dCJXACFsykpMg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=T/sC+eYmGpk6wkvDCQkhcjIHQAX7Gl/+p+UJKaLtP2A=;
+        b=pXUs/urXWDvsAnX8UEGU1UO3hBlWRUO6YcwdyV40YXzbc2eihtdheJ+XKnXNaiEtYx
+         23UgZYm1UXtCbobjIeUOkB53dQPzwvpJ9JAuc7mKjoiEN017AqYpthsGWkZ8OOHkqIkP
+         Nu7G4eQoBEg5eLLNY8HsX+VL9vqcqtCaGCaLxVPT7GDx2mz0fxOVBjRb9GeaQwcvb3Di
+         vbNvN2hoshRJdE1ZHQvRrQjJiG+4v0FfKYg5mMKwYvzajj+9MFI7oxuXnTdTk7D9nI0G
+         MJFznbI7khWHKYh5b/Gposanu8SKiYhEmAEjrhlzfAx0VJ1Chvj+sl0G6UB7Nlam8ION
+         hiMg==
+X-Gm-Message-State: ABuFfoiUXnfBiWaN/G1JqDb3KmFuZGcnb28fJQ5imfn7lNadQSLvVHQV
+        AGXmdCE65MywmMNqR0qHFLu0FG2WTXM=
+X-Google-Smtp-Source: ACcGV62H/Oh4YgzgOYWx9UVem+ztco9ZsXMdkBehIGaiD81SKTK1C8x3B+A+o5EBV+2H/IEcUVM4Pg==
+X-Received: by 2002:a25:bb87:: with SMTP id y7-v6mr9042461ybg.382.1539620325052;
+        Mon, 15 Oct 2018 09:18:45 -0700 (PDT)
+Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
+        by smtp.gmail.com with ESMTPSA id p185-v6sm3216142ywc.14.2018.10.15.09.18.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 09:18:42 -0700 (PDT)
+Received: by mail-yw1-f53.google.com with SMTP id a197-v6so7724452ywh.9
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 09:18:41 -0700 (PDT)
+X-Received: by 2002:a0d:d302:: with SMTP id v2-v6mr10186636ywd.124.1539620321174;
+ Mon, 15 Oct 2018 09:18:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 09:18:40
+ -0700 (PDT)
+In-Reply-To: <20181015105544.4395-2-christian@brauner.io>
+References: <20181015105544.4395-1-christian@brauner.io> <20181015105544.4395-2-christian@brauner.io>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 15 Oct 2018 09:18:40 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+BZsmRXwXfXk1YcyuSRNMmre=K55e1CXaLJDUZ07rmvQ@mail.gmail.com>
+Message-ID: <CAGXu5j+BZsmRXwXfXk1YcyuSRNMmre=K55e1CXaLJDUZ07rmvQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] sysctl: cap to ULONG_MAX in proc_get_long()
+To:     Christian Brauner <christian@brauner.io>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Mon, Oct 15, 2018 at 3:55 AM, Christian Brauner <christian@brauner.io> wrote:
+> proc_get_long() is a funny function. It uses simple_strtoul() and for a
+> good reason. proc_get_long() wants to always succeed the parse and return
+> the maybe incorrect value and the trailing characters to check against a
+> pre-defined list of acceptable trailing values.
+> However, simple_strtoul() explicitly ignores overflows which can cause
 
-Stefan Wahren <stefan.wahren@i2se.com> writes:
+What depends on simple_strtoul() ignoring overflows? Can we just cap
+it to ULONG_MAX instead?
 
-> Hi Tuomas,
+I note that both simple_strtoul() and simple_strtoull() are marked as
+obsolete (more below).
+
+> funny things like the following to happen:
 >
->> Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi> hat am 4. Oktober 2018 um 11:=
-37 geschrieben:
->>=20
->>=20
->> Drop various pieces of dead code from here and there to get rid of
->> the remaining users of VCHI_CONNECTION_T. After that we get to drop
->> entire header files worth of unused code.
->>=20
->> I've tested on a Raspberry Pi Model B (bcm2835_defconfig) that
->> snd-bcm2835 can still play analog audio just fine.
->>=20
+> echo 18446744073709551616 > /proc/sys/fs/file-max
+> cat /proc/sys/fs/file-max
+> 0
 >
-> thanks and i'm fine with your patch series:
+> (Which will cause your system to silently die behind your back.)
 >
-> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
->
-> Unfortunately this would break compilation of the downstream vchi
-> drivers like vcsm [1]. Personally i don't want to maintain another
-> one, because i cannot see the gain of the resulting effort.
->
-> [1] - https://github.com/raspberrypi/linux/tree/rpi-4.14.y/drivers/char/b=
-roadcom/vc_sm
+> On the other hand kstrtoul() does do overflow detection but fails the parse
+> in this case, does not return the trailing characters, and also fails the
+> parse when anything other than '\n' is a trailing character whereas
+> proc_get_long() wants to be more lenient.
 
-I think the main concern would be if we removed things necessary for
-6by9's new vcsm (the one that will let us do dma-buf sharing between
-media decode and DRM).
+This parsing strictness difference makes it seem like the simple_*()
+shouldn't be considered obsolete...
 
-On the other hand, git revert is a thing, so it's not like we actually
-lose anything.
+and it's still very heavily used:
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+$ git grep -E 'simple_strtoull?\(' | wc -l
+745
 
------BEGIN PGP SIGNATURE-----
+> Now, before adding another kstrtoul() function let's simply add a static
+> parse strtoul_cap_erange() which does:
+> - returns ULONG_MAX on ERANGE
+> - returns the trailing characters to the caller
+> This guarantees that we don't regress userspace in any way but also caps
+> any parsed value to ULONG_MAX and prevents things like file-max to become 0
+> on overflow.
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlvEvOoACgkQtdYpNtH8
-nujIzA/9H7tZqvMJ5d3G9UNFSfE/y1x0Abd8+K3HxMM5ywJ2Xwfc1153310dYv/Y
-ey/DCIpSHdF+QX8A/e7qu0W5FGKIhw0GKzKdDk/Tqi4DAHvq5DKNkDN7q78DkNk4
-ER461j8EohBSPkuByi9M60AQMgWcgmakQyeS0Qs3epI8H1VwjFBuaccaYhsLR4I2
-gZzm1pTqjhDu+c3qTCNQyL/mpFRJjVfSdUNd+zIKYPTaVIT2JNgPA4DAEVkHxV02
-OOBw/CV7ih/yXqx6AvmHiVRSCVIgXHtQ1U2FEpa4fcjrsbgjvWmqnJcm2NucoL/c
-VPWZPS/Cjq9UxhBunK+XWbTISR2xr97j6UGLw5TOvNjYMD/J+T6g+vGJ5Qt8CtmX
-b5E9bNwak78BALt3thhE3hMCzpnIepeDZLnN41KdLeJHnTmBBtkxXsdEQkggCnvF
-8b5flze24JQ2OM3SJJE133usqA8pIf5BuWucQId19eEdQh6ZoxVJQtYVIcVv7qH3
-q+j4HS4crEOvP+vGBo+hw++l7sxwI99iTVlNRyBT0yO7Sii3zQVKX0z0AJFhGGLz
-oDjK4Rj931YH4l8Qsf/XsVbkY4e4cnHXH+ponmZ+uy1UaJZFSd99pVmd5EjT0wh6
-L+VjFuU9LZCxXK7N7gSCUrD16xHXD65GmUI59foazP8L1nqdcvs=
-=zzIW
------END PGP SIGNATURE-----
---=-=-=--
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
