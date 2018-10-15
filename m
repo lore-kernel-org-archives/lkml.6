@@ -2,97 +2,116 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BCDC7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D96C7112A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70A9E2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:10:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 789E42087D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:10:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=sendgrid.net header.i=@sendgrid.net header.b="k074nSHo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70A9E2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korte.land
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ftQgyFOo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 789E42087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeJOPyX (ORCPT
+        id S1727033AbeJOPys (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 11:54:23 -0400
-Received: from o4.31pqt.s2shared.sendgrid.net ([167.89.55.65]:36515 "EHLO
-        o4.31pqt.s2shared.sendgrid.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726524AbeJOPyW (ORCPT
+        Mon, 15 Oct 2018 11:54:48 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45227 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726571AbeJOPys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 11:54:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sendgrid.net;
-        h=mime-version:content-type:content-transfer-encoding:from:to:cc:
-        subject;
-        s=smtpapi; bh=eQZWbOh8GjQh4bMQVjuRDaS9Cc2VSGl4JDV/ayYO8/c=;
-        b=k074nSHoUD8AH34BwvzFimNpjI46Nc7oNbqjnpXbvpu33nKiMINfzgVcHiD6dQXaw4zV
-        8WXFpVh8OZcJBBAQK5irpsoV2ahkylEkqvQqCwn9zJ4JVSD3qwot9YL+4Hkq0TaOhbt3ip
-        ynXMH70LbY/pZVHz1J25Zgv41SSfZUg4k=
-Received: by filter0008p2mdw1.sendgrid.net with SMTP id filter0008p2mdw1-16878-5BC44B63-6
-        2018-10-15 08:10:11.233043945 +0000 UTC m=+219838.982025439
-Received: from korte.land (unknown [146.185.150.169])
-        by ismtpd0005p1lon1.sendgrid.net (SG) with ESMTP id YRV2371FSWKZqSfINFPi3A
-        Mon, 15 Oct 2018 08:10:10.908 +0000 (UTC)
-Received: from mail.korte.land (localhost [127.0.0.1])
-        by korte.land (Postfix) with ESMTP id 5FB3C6026E;
-        Mon, 15 Oct 2018 08:10:10 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 15 Oct 2018 08:10:11 +0000 (UTC)
-From:   Will Korteland <will@korte.land>
-To:     corbet@lwn.net, linux-doc@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] docs/uio: fix a grammar nitpick
-Message-ID: <f4edbcfab23ae1a53499dcdc1db32f1b@korte.land>
-X-Sender: will@korte.land
-User-Agent: Roundcube Webmail/1.3.6
-X-SG-EID: =?us-ascii?Q?cUnx5NqAuhUbAHG4iZ9Vx1BO6oMeAW3Kqk+xSEzhkR48c1futjyLp2=2Fwp8OUBt?=
- =?us-ascii?Q?=2F5X+h1tdyY33lVKbOQVGXUFVojZs8F0c+m=2FUDu6?=
- =?us-ascii?Q?NYw+qodTJDKr4h330FTpaIyvyA30x99D6+4cvZm?=
- =?us-ascii?Q?ksw83VrIuJuAlXRgPWvatm58ehBqMXFczWiOwsq?=
- =?us-ascii?Q?U82YzjooAiVaL0lrXWMDD0GcLxkOTnY+=2FHQ21U9?=
- =?us-ascii?Q?IEfvYAxStXzyS3HaYx+wA1aTXyGQteNR33hBCm?=
+        Mon, 15 Oct 2018 11:54:48 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u12-v6so9257591pfn.12
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 01:10:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=qHyP6TsbxwsK1CWpa8UGFv4TSz40JyDBtFelVTbFr7I=;
+        b=ftQgyFOo5C0d/7+jFBQZD2G+oul+jXzsiTdvXYmVE6J5cWMwQfXS5Nz6LAxwF/Py9S
+         GiGCyO+Zz6AJ9XK5tMyKt8AsMIgKGIxDZ5Xm9RilBApC8ABgjV6VvKcRfkmFKxKI7AFx
+         xIz0N04MGPGvP4KfnDRMqCd3G74K2zamCMvBU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qHyP6TsbxwsK1CWpa8UGFv4TSz40JyDBtFelVTbFr7I=;
+        b=KdVgJE3F7ftwQLF2iuMhElKdC9SZ3vq7OTJ3aNZv2FfEbszgRFdXGqFYyq+VXbxluS
+         BY7Ba0aZiimjyaQhTyMn0vNNQBxkSitOSyKfts2lr16ubpCX+1H+KZ9Ot7hwqjK0iBWC
+         /l+wzHNqBQEGskk7855AbXK7syixL846sc8YSLcIwB8sILRfi4aEHznUnEFI7NcbYpgN
+         iE6NdLLU4/L4mhrrWOK/NzoDg/sr1LPNha2irRL5a1gTLEc+HAW1vxKe8BiAIM+oTSRY
+         Wo1naRIDHg7waLHKITu5OHS+8CvrecAyLZfVwY17gDQxLHbXyYK6UwlX5PAB/lxCG4LN
+         zdAQ==
+X-Gm-Message-State: ABuFfog9NVGz6ugzrCMhyUF1lg9CHAl3IRS67AiI6n78+0m0tAh/UtEN
+        ZMGt783EDhB9osZFzWI0qy23EP6knhflmycg
+X-Google-Smtp-Source: ACcGV60otx7WOlnyvvg+5g4QhYxTH+8sJeKtEMlL27ATsKoLXUNqbHzoDqP1eJ4fYO3okrI5mOU2JQ==
+X-Received: by 2002:a63:1c1b:: with SMTP id c27-v6mr15233801pgc.351.1539591037343;
+        Mon, 15 Oct 2018 01:10:37 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id m27-v6sm16375855pff.187.2018.10.15.01.10.33
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 15 Oct 2018 01:10:36 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yuanjiang.yu@unisoc.com,
+        baolin.wang@linaro.org, broonie@kernel.org, ctatlor97@gmail.com,
+        linus.walleij@linaro.org
+Subject: [PATCH v4 1/6] dt-bindings: power: Introduce one property to present the battery internal resistance
+Date:   Mon, 15 Oct 2018 16:09:20 +0800
+Message-Id: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1539587217.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a minor, incorrect piece of grammar in the UIO howto.
+The internal resistance of a battery is not a constant in its life cycle,
+this varies over the age of the battery or temperature and so on. But we
+just want use one constant battery internal resistance to estimate the
+battery capacity. Thus this patch introduces one property to present
+the battery factory internal resistance for battery information.
 
-Signed-off-by: Will Korteland <will@korte.land>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-This is my first attempt at a kernel patch, so please let me know if
-I've done something silly.  I sent a copy of this a few days ago, but
-I can't find it on the public archives - apologies if I've now posted
-this twice.
+Changes from v3:
+ - Split binding into one separate patch.
+ - Add LinusW reviewed tag.
 
-  Documentation/driver-api/uio-howto.rst | 4 ++--
-  1 file changed, 2 insertions(+), 2 deletions(-)
+Changes from v2:
+ - Rename the property.
+ - Improve the commit message.
 
-diff --git a/Documentation/driver-api/uio-howto.rst 
-b/Documentation/driver-api/uio-howto.rst
-index fb2eb73be4a3..25f50eace28b 100644
---- a/Documentation/driver-api/uio-howto.rst
-+++ b/Documentation/driver-api/uio-howto.rst
-@@ -463,8 +463,8 @@ Getting information about your UIO device
+Changes from v1:
+ - New patch in v2.
+---
+ .../devicetree/bindings/power/supply/battery.txt   |    2 ++
+ 1 file changed, 2 insertions(+)
 
-  Information about all UIO devices is available in sysfs. The first 
-thing
-  you should do in your driver is check ``name`` and ``version`` to make
--sure your talking to the right device and that its kernel driver has 
-the
--version you expect.
-+sure you're talking to the right device and that its kernel driver has
-+the version you expect.
-
-  You should also make sure that the memory mapping you need exists and
-  has the size you expect.
+diff --git a/Documentation/devicetree/bindings/power/supply/battery.txt b/Documentation/devicetree/bindings/power/supply/battery.txt
+index f4d3b4a..938d027 100644
+--- a/Documentation/devicetree/bindings/power/supply/battery.txt
++++ b/Documentation/devicetree/bindings/power/supply/battery.txt
+@@ -22,6 +22,7 @@ Optional Properties:
+  - charge-term-current-microamp: current for charge termination phase
+  - constant-charge-current-max-microamp: maximum constant input current
+  - constant-charge-voltage-max-microvolt: maximum constant input voltage
++ - factory-internal-resistance-micro-ohms: battery factory internal resistance
+ 
+ Battery properties are named, where possible, for the corresponding
+ elements in enum power_supply_property, defined in
+@@ -42,6 +43,7 @@ Example:
+ 		charge-term-current-microamp = <128000>;
+ 		constant-charge-current-max-microamp = <900000>;
+ 		constant-charge-voltage-max-microvolt = <4200000>;
++		factory-internal-resistance-micro-ohms = <250000>;
+ 	};
+ 
+ 	charger: charger@11 {
 -- 
-2.19.1
+1.7.9.5
 
