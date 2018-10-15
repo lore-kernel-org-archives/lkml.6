@@ -2,119 +2,125 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C0DC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3134DC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BB502064A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:47:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BB502064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id DE3442064A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:48:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BMKivcKb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3442064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbeJOUc2 (ORCPT
+        id S1726681AbeJOUdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 16:32:28 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:33551 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbeJOUc2 (ORCPT
+        Mon, 15 Oct 2018 16:33:32 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43460 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbeJOUdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 16:32:28 -0400
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9FClEhF091008;
-        Mon, 15 Oct 2018 21:47:14 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Mon, 15 Oct 2018 21:47:14 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9FClAgN090934
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 15 Oct 2018 21:47:14 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms
- without eligible tasks
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-References: <20181012112008.GA27955@cmpxchg.org>
- <20181012120858.GX5873@dhcp22.suse.cz>
- <9174f087-3f6f-f0ed-6009-509d4436a47a@i-love.sakura.ne.jp>
- <20181012124137.GA29330@cmpxchg.org>
- <0417c888-d74e-b6ae-a8f0-234cbde03d38@i-love.sakura.ne.jp>
- <bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp>
- <20181013112238.GA762@cmpxchg.org>
- <b61b2e60-d899-90c6-579a-587815cebff6@i-love.sakura.ne.jp>
- <20181015081934.GD18839@dhcp22.suse.cz>
- <ea637f9a-5dd0-f927-d26d-d0b4fd8ccb6f@i-love.sakura.ne.jp>
- <20181015112427.GI18839@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <6c0a57b3-bfd4-d832-b0bd-5dd3bcae460e@i-love.sakura.ne.jp>
-Date:   Mon, 15 Oct 2018 21:47:08 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181015112427.GI18839@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 15 Oct 2018 16:33:31 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r8-v6so17352301ljc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 05:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=/PR/U/AX2RhoMph28nvtYnU8rTDBHHGBQ0O/iaGYqvc=;
+        b=BMKivcKbI+x0Y4sWpJHyolHUxOS9s69ieyfa99V458mPoNYUMIuroBbEwPbJbmHDg6
+         8PM68u5UTeeu/idBG7+XcKuk0ePD7PYE/HU+b2w+4OWS2EL1bQ9RhQKz6p8iIa6ImrJu
+         BNTpxn/9m0Qgq+lP8aXALxw3TIdIHLEIN2aZ8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=/PR/U/AX2RhoMph28nvtYnU8rTDBHHGBQ0O/iaGYqvc=;
+        b=YLPIBwpQhjLb7HXr5OSZ88LAYqM6QSOTiTnETuXjIEk9v+GfWzwg9x6h8ZgvFaejQ+
+         kS0w/ohaQUZYXnYKYt957FRSfkqA8d8IkC4w3hzvcCI9dfGHDhay16Jz/SCbIY6D1Pxh
+         XYjANyWGeSr/VCEjL6qriexB/PjDUINTHjpNqOlMRVe/dx6RgZ4SpXYvRm3QpJDIgOUK
+         BAxdqMWjpPKMjFLuJNK+Sh6/y2vZDI9oGjPAx2pY07WTslCLQyC+pWd5hEKKgp9eVL0a
+         o5tnkfx++3dmEM1QP0KuDmZqNa9XLkDr3XoD04gYHkwN5ldynzsnVmAgkYdTC5MU7kDk
+         6CfQ==
+X-Gm-Message-State: ABuFfojIfSA+SBCO1nyKVPP2+pIDZ+FFnBVQNYdAvJshdFLFyv/FNcHa
+        w8fcd51y9paY0QLdrXxSIpxxC4/6MKk=
+X-Google-Smtp-Source: ACcGV63nATLtJnR/+LKQNNBhTAtjx5cN+8M4024GUJXOenZlN6yUfsm0tNlNXF3aXMiw6W1+CaiQjQ==
+X-Received: by 2002:a2e:8589:: with SMTP id b9-v6mr10900340lji.122.1539607700587;
+        Mon, 15 Oct 2018 05:48:20 -0700 (PDT)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id h87-v6sm2440966lji.9.2018.10.15.05.48.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 05:48:19 -0700 (PDT)
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
+        ulf.hansson@linaro.org, collinsd@codeaurora.org, mka@chromium.org,
+        robh@kernel.org, rnayak@codeaurora.org
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Niklas Cassel <niklas.cassel@linaro.org>
+Subject: [RFC PATCH] dt-bindings: opp: Extend qcom-opp bindings with properties needed for CPR
+Date:   Mon, 15 Oct 2018 14:47:49 +0200
+Message-Id: <20181015124749.27276-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20180627045234.27403-3-rnayak@codeaurora.org>
+References: <20180627045234.27403-3-rnayak@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/15 20:24, Michal Hocko wrote:
-> On Mon 15-10-18 19:57:35, Tetsuo Handa wrote:
->> On 2018/10/15 17:19, Michal Hocko wrote:
->>> As so many dozens of times before, I will point you to an incremental
->>> nature of changes we really prefer in the mm land. We are also after a
->>> simplicity which your proposal lacks in many aspects. You seem to ignore
->>> that general approach and I have hard time to consider your NAK as a
->>> relevant feedback. Going to an extreme and basing a complex solution on
->>> it is not going to fly. No killable process should be a rare event which
->>> requires a seriously misconfigured memcg to happen so wildly. If you can
->>> trigger it with a normal user privileges then it would be a clear bug to
->>> address rather than work around with printk throttling.
->>>
->>
->> I can trigger 200+ times / 900+ lines / 69KB+ of needless OOM messages
->> with a normal user privileges. This is a lot of needless noise/delay.
-> 
-> I am pretty sure you have understood the part of my message you have
-> chosen to not quote where I have said that the specific rate limitting
-> decisions can be changed based on reasonable configurations. There is
-> absolutely zero reason to NAK a natural decision to unify the throttling
-> and cook a per-memcg way for a very specific path instead.
-> 
->> No killable process is not a rare event, even without root privileges.
->>
->> [root@ccsecurity kumaneko]# time ./a.out
->> Killed
->>
->> real    0m2.396s
->> user    0m0.000s
->> sys     0m2.970s
->> [root@ccsecurity ~]# dmesg | grep 'no killable' | wc -l
->> 202
->> [root@ccsecurity ~]# dmesg | wc
->>     942    7335   70716
-> 
-> OK, so this is 70kB worth of data pushed throug the console. Is this
-> really killing any machine?
-> 
+Extend qcom-opp bindings with properties needed for Core Power Reduction
+(CPR).
 
-Nobody can prove that it never kills some machine. This is just one example result of
-one example stress tried in my environment. Since I am secure programming man from security
-subsystem, I really hate your "Can you trigger it?" resistance. Since this is OOM path
-where nobody tests, starting from being prepared for the worst case keeps things simple.
+CPR is included in a great variety of Qualcomm SoC, e.g. msm8916 and
+msm8996, and was first introduced in msm8974.
+
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+---
+Hello Rob, Rajendra,
+
+Sorry for not replying sooner.
+Since Rob wanted the binding to be complete before merging,
+this is my proposal to extend the OPP binding with properties
+needed to support CPR (both for msm8916 and msm8996).
+I've discussed the proposal with Viresh, and this proposal
+seems better than what I previously suggested here:
+https://lore.kernel.org/lkml/20181005204424.GA29500@centauri.lan/
+
+ .../devicetree/bindings/opp/qcom-opp.txt      | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/opp/qcom-opp.txt b/Documentation/devicetree/bindings/opp/qcom-opp.txt
+index db4d970c7ec7..3ab5dd84de86 100644
+--- a/Documentation/devicetree/bindings/opp/qcom-opp.txt
++++ b/Documentation/devicetree/bindings/opp/qcom-opp.txt
+@@ -23,3 +23,22 @@ Required properties:
+ representing a corner/level that's communicated with a remote microprocessor
+ (usually called the RPM) which then translates it into a certain voltage on
+ a voltage rail.
++
++Optional properties:
++- opp-hz: Frequency in Hz, expressed as a 64-bit big-endian integer. Even
++  though a power domain doesn't need a opp-hz, there can be devices in the
++  power domain that need to know the highest supported frequency for each
++  corner/level (e.g. CPR), in order to properly initialize the hardware.
++
++- qcom,fuse-level: A positive value representing the fuse corner/level
++  associated with this OPP node. Sometimes several corners/levels shares
++  a certain fuse corner/level. A fuse corner/level contains e.g. ref uV,
++  min uV, and max uV.
++
++- qcom,fuse-level-<name>: Named qcom,fuse-level property. This is exactly
++  similar to the above qcom,fuse-level property, but allows multiple
++  fuse corners/levels to be provided for the same OPP. At runtime, the
++  platform can pick a <name> and matching qcom,fuse-level-<name> property
++  will be enabled for all OPPs. If the platform doesn't pick a specific
++  <name> or the <name> doesn't match with any qcom,fuse-level-<name>
++  properties, then qcom,fuse-level property shall be used, if present.
+-- 
+2.17.2
+
