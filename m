@@ -2,151 +2,115 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D642C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34879C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3BCD208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:42:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC2DA208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:42:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="mm8AbrUF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3BCD208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BaSRR06A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC2DA208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbeJPG3W (ORCPT
+        id S1727119AbeJPG3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:29:22 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:48222 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbeJPG3V (ORCPT
+        Tue, 16 Oct 2018 02:29:53 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:42332 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbeJPG3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:29:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/xN8gvolZSt9XZH/fTRxQwXggm0vjh7GSB6UdPyIbqg=; b=mm8AbrUFrR3RNMqtR0nbjKVkJ
-        Mv1bj06WopPXu9VKRK3VLaayxLrINb0VBszD+vTemd/jMMHPTVQPN6IP6yAxquLpuzuXkB3378H7K
-        6r57O0tf5/GiYKvArpTYLe9nD61TXNGoT9eWubLP9UoQSapzW/sLXnRhs2W85NVVTOLLs=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:44238)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gCBYi-00036J-RP; Mon, 15 Oct 2018 23:41:57 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gCBYf-0007x0-Qx; Mon, 15 Oct 2018 23:41:53 +0100
-Date:   Mon, 15 Oct 2018 23:41:52 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc:     Stefan Agner <stefan@agner.ch>, ulli.kroll@googlemail.com,
-        joel@jms.id.au, arnd@arndb.de, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: copypage: do not use naked functions
-Message-ID: <20181015224152.GA30658@n2100.armlinux.org.uk>
-References: <20181015222621.14673-1-stefan@agner.ch>
- <nycvar.YSQ.7.76.1810151831040.1498@knanqh.ubzr>
+        Tue, 16 Oct 2018 02:29:53 -0400
+Received: by mail-yw1-f67.google.com with SMTP id a197-v6so8163421ywh.9
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 15:42:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=JlaMNNLZrRMcmPipXvj1MaffeFHJzKl11I1sInu5gCg=;
+        b=BaSRR06AmgkkvNJPCSEbCGNGzOwshYKfXZmAzg/CYB2hgUxzpUmROD21/qqVD2CsX7
+         qGXVJF3lsGXiPBkG3S+7GWHJPexOvtz5fQ9AY6iXUMTiWQWAqkFQyJiIN3ytN2jVdwAa
+         kcYkyOiM0IKZKe3YHYe0dcU00snUiY1Kn/INA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=JlaMNNLZrRMcmPipXvj1MaffeFHJzKl11I1sInu5gCg=;
+        b=DVQJx3DeuoVwwxMrYMqhkGzeAfvCY/dzQZFUeiPrjmNApEszvvglgjdhFnDQDrzlGN
+         peuwSKqdOiVgTueZUJzJ/7NJqBXTq+IKaQtEGbeWp4VTPwnq9JeSqAIGN59RnDDIPnIw
+         KxuDhu4TNqdO/8yjVM6stTzhA2IE9IzMgk6IzA+ewZa5BoZNe4BLBoylC2o87LNSyhum
+         RAUEv+v7SZACGNWFypRVtIOOAAMMBTEco8MRhd6yA+ZmRuTHD3Wj/t/H21buIE2CBDzT
+         m8yKa6X2NduYG/igWZCgd2/baC01GtfWrjFSmNXAcHGJSD06zER/CrqRqKMDcUUI9eqh
+         GNuQ==
+X-Gm-Message-State: ABuFfoiF5oLl7GDjYEjqKWU2M2VUFCSxxLSle+u+IWxq37bBzsI4VLKj
+        aSXfPA0w52uI+I+LzhlFMdxw4P8OscI=
+X-Google-Smtp-Source: ACcGV63LNTl9Ms9Uk9mHSFTku3+47SS+DdarIg1cuEYsDT3K/mSZR7EaBl8prLDiA8bquoIvrpd0XA==
+X-Received: by 2002:a0d:f385:: with SMTP id c127-v6mr10294265ywf.10.1539643354698;
+        Mon, 15 Oct 2018 15:42:34 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id j202-v6sm3075114ywb.69.2018.10.15.15.42.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 15:42:33 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id o8-v6so8140668ybk.13
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 15:42:32 -0700 (PDT)
+X-Received: by 2002:a25:8091:: with SMTP id n17-v6mr10381772ybk.209.1539643352452;
+ Mon, 15 Oct 2018 15:42:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YSQ.7.76.1810151831040.1498@knanqh.ubzr>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 15:42:31
+ -0700 (PDT)
+In-Reply-To: <20181005084754.20950-1-kristina.martsenko@arm.com>
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 15 Oct 2018 15:42:31 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLtxRitee143FE37PYkPCs0UArGgNEsiU8fzsQL9N8S-Q@mail.gmail.com>
+Message-ID: <CAGXu5jLtxRitee143FE37PYkPCs0UArGgNEsiU8fzsQL9N8S-Q@mail.gmail.com>
+Subject: Re: [PATCH 00/17] ARMv8.3 pointer authentication support
+To:     Kristina Martsenko <kristina.martsenko@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Adam Wallis <awallis@codeaurora.org>,
+        Amit Kachhap <Amit.Kachhap@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 06:35:33PM -0400, Nicolas Pitre wrote:
-> On Tue, 16 Oct 2018, Stefan Agner wrote:
-> 
-> > GCC documentation says naked functions should only use basic ASM
-> > syntax. The extended ASM or mixture of basic ASM and "C" code is
-> > not guaranteed. Currently it seems to work though.
-> > 
-> > Furthermore with Clang using parameters in extended asm in a
-> > naked function is not supported:
-> >   arch/arm/mm/copypage-v4wb.c:47:9: error: parameter references not
-> >   allowed in naked functions
-> >         : "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 64));
-> >                ^
-> > 
-> > Use a regular function to be more portable. Also use volatile asm
-> > to avoid unsolicited optimizations.
-> > 
-> > Tested with qemu versatileab machine and versatile_defconfig and
-> > qemu mainstone machine using pxa_defconfig compiled with GCC 7.2.1
-> > and Clang 7.0.
-> > 
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/90
-> > Reported-by: Joel Stanley <joel@jms.id.au>
-> > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > ---
-> >  arch/arm/mm/copypage-fa.c       | 17 +++++++++++------
-> >  arch/arm/mm/copypage-feroceon.c | 17 +++++++++++------
-> >  arch/arm/mm/copypage-v4mc.c     | 14 +++++++++-----
-> >  arch/arm/mm/copypage-v4wb.c     | 17 +++++++++++------
-> >  arch/arm/mm/copypage-v4wt.c     | 17 +++++++++++------
-> >  arch/arm/mm/copypage-xsc3.c     | 17 +++++++++++------
-> >  arch/arm/mm/copypage-xscale.c   | 13 ++++++++-----
-> >  7 files changed, 72 insertions(+), 40 deletions(-)
-> > 
-> > diff --git a/arch/arm/mm/copypage-fa.c b/arch/arm/mm/copypage-fa.c
-> > index ec6501308c60..33ccd396bf99 100644
-> > --- a/arch/arm/mm/copypage-fa.c
-> > +++ b/arch/arm/mm/copypage-fa.c
-> > @@ -17,11 +17,16 @@
-> >  /*
-> >   * Faraday optimised copy_user_page
-> >   */
-> > -static void __naked
-> > -fa_copy_user_page(void *kto, const void *kfrom)
-> > +static void fa_copy_user_page(void *kto, const void *kfrom)
-> >  {
-> > -	asm("\
-> > -	stmfd	sp!, {r4, lr}			@ 2\n\
-> > +	register void *r0 asm("r0") = kto;
-> > +	register const void *r1 asm("r1") = kfrom;
-> > +
-> > +	asm(
-> > +	__asmeq("%0", "r0")
-> > +	__asmeq("%1", "r1")
-> > +	"\
-> > +	stmfd	sp!, {r4}			@ 2\n\
-> >  	mov	r2, %2				@ 1\n\
-> >  1:	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
-> >  	stmia	r0, {r3, r4, ip, lr}		@ 4\n\
-> > @@ -34,9 +39,9 @@ fa_copy_user_page(void *kto, const void *kfrom)
-> >  	subs	r2, r2, #1			@ 1\n\
-> >  	bne	1b				@ 1\n\
-> >  	mcr	p15, 0, r2, c7, c10, 4		@ 1   drain WB\n\
-> > -	ldmfd	sp!, {r4, pc}			@ 3"
-> > +	ldmfd	sp!, {r4}			@ 3"
-> >  	:
-> > -	: "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 32));
-> > +	: "r" (r0), "r" (r1), "I" (PAGE_SIZE / 32));
-> 
-> This is still wrong as you list r0 and r1 in the input operand list 
-> where they must remain constant but the code does modify them. You 
-> should list them in the output operand list with the "&" attribute. Also 
-> r2 should be listed in the clobbered list.
+On Fri, Oct 5, 2018 at 1:47 AM, Kristina Martsenko
+<kristina.martsenko@arm.com> wrote:
+> This series adds support for the ARMv8.3 pointer authentication
+> extension. The series contains Mark's original patches to enable pointer
+> authentication for userspace [1], followed by early RFC patches using
+> pointer authentication in the kernel.
 
-Either we keep these as naked functions (and, if Clang wants to
-try to inline naked functions which makes no sense, also mark them
-as noinline) or we make them proper functions and also add (eg) r4
-to the clobber list and get rid of the stacking of that register
-along with LR/PC.
+It wasn't obvious to me where the PAC mismatch exceptions will be
+caught. I'm mainly curious to compare the PAC exception handling to
+the existing stack-protector panic(). Can you point me to which
+routines manage that? (Perhaps I just missed it in the series...)
 
-Having this half-way house which will generate worse code is not
-acceptable.
+Thanks for the series! I'm quite excited for ARMv8.3 hardware. :)
+
+-Kees
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Kees Cook
+Pixel Security
