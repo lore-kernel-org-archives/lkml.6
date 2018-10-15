@@ -2,134 +2,118 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A75FAC71133
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A58FC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F040208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D36B6204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:55:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqj8iPOm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F040208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DOD7ILB8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D36B6204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbeJPAeg (ORCPT
+        id S1726786AbeJPAlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:34:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726684AbeJPAeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:34:36 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C1E62064A;
-        Mon, 15 Oct 2018 16:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539622114;
-        bh=znxwo/KkYuHQ7BZTi+VB2plhm/XsXVWQ2KyC/W+QbvM=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=cqj8iPOmE0KwFpKdbX+XPS0iIcDG2F7RmFYwZnmFdWHEv2canwwM0bYQk7OAqdWgW
-         tfNy6Xzn3VcFhdN1j7pB1p9YDeuPrlkh/XVNdObILkeArwMQEQqxBce/C42ZypoCQ4
-         YmW7nuNfDVUq6uBl1ynceoY1bGkrDANf+PyLHZ+E=
-Content-Type: text/plain; charset="utf-8"
+        Mon, 15 Oct 2018 20:41:23 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34953 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbeJPAlW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 20:41:22 -0400
+Received: by mail-qt1-f193.google.com with SMTP id d21-v6so9871978qtq.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 09:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=E/kai5hXvl/b/6vy2puO8eZlPGRzhrfWJRrl1PLnPy0=;
+        b=DOD7ILB89TLUSAlgwXOnR4P4z49JwigeOLcDofWvATAY5DSmOf2V9aFmNxtdyy/Q7S
+         0B9YnvTSSyH1GVX7Et8Tzz1PdheHMWe8ci15StOe5TNGwpHlUgSRysGPnn1CMm8MPAJZ
+         gRAdhx5h9vC2tFfXjbQEFsP8TcBgwUmPgqsys=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=E/kai5hXvl/b/6vy2puO8eZlPGRzhrfWJRrl1PLnPy0=;
+        b=ReCkf0ZrKCY+a/Q7S8R2pzFHHoVCfVg7KlQ6XF6VOvdLmBvnW+68ypBpoaAMw+jKce
+         +VPb6eF+wmzwa/+/dH/b++mzmaND522o1+UxvbyZI4qRah3zzzd7tdEDWfY0KstZzF4R
+         d3ERcrdpcVNnbPQI0EtBAz4cID1IFm6tTjSqfEDRfJoISr2Bx8tFaxH5txfQ2BXV6pFi
+         hFayjelJJq1Xrhw9rFBlNSEte2jMswRfJ65rg0D25q24yHiiAyQqh0libQ6IzMq7Zgma
+         jAJguTFrgqSBkJ3+pL4yDhjPwMC0hpUQBd9CUIjPnDrsAYbmWd+HH22RkLXsVmtIFTOP
+         Vr/A==
+X-Gm-Message-State: ABuFfoiZrRxqByPCLUcC3weeWdUl6IRO7RmLUfAPmhDi/kbT70BEYySM
+        zaHnInbjsMJ+8NGA26TDmCo0rA==
+X-Google-Smtp-Source: ACcGV61j8O+MIXtZR582D+jZ3Xag+6qlLydg6Zz9bPnWQkgDDGGylU3f//XmUyhtU8ZizuqX8rnS3Q==
+X-Received: by 2002:ac8:1207:: with SMTP id x7-v6mr16772612qti.317.1539622519094;
+        Mon, 15 Oct 2018 09:55:19 -0700 (PDT)
+Received: from [192.168.48.13] ([168.194.163.81])
+        by smtp.gmail.com with ESMTPSA id j57-v6sm7885921qtj.96.2018.10.15.09.55.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 09:55:17 -0700 (PDT)
+Subject: Re: [PATCH] proc: fix proc-self-map-files selftest for arm
+To:     Cyrill Gorcunov <gorcunov@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        shuah@kernel.org
+References: <20181011184359.15627-1-rafael.tinoco@linaro.org>
+ <20181011205601.GA32757@avx2> <20181011210256.GE2401@uranus.lan>
+ <20181011213006.GA13485@avx2> <20181011220009.GF2401@uranus.lan>
+From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
+Message-ID: <52504bd5-b4ed-518b-f748-c634172c6c68@linaro.org>
+Date:   Mon, 15 Oct 2018 13:55:14 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <VI1PR04MB4800C0AB214B258793AF9ABAF3FD0@VI1PR04MB4800.eurprd04.prod.outlook.com>
-Cc:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel-owner@vger.kernel.org" 
-        <linux-kernel-owner@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        Varun Sethi <V.Sethi@nxp.com>, Udit Kumar <udit.kumar@nxp.com>,
-        Pankaj Bansal <pankaj.bansal@nxp.com>,
-        Ramneek Mehresh <ramneek.mehresh@nxp.com>,
-        Ying Zhang <ying.zhang22455@nxp.com>,
-        Nipun Gupta <nipun.gupta@nxp.com>,
-        Priyanka Jain <priyanka.jain@nxp.com>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Sriram Dash <sriram.dash@nxp.com>
-References: <1538615031-7507-1-git-send-email-vabhav.sharma@nxp.com>
- <1538615031-7507-6-git-send-email-vabhav.sharma@nxp.com>
- <20181008054510.GG3587@dragon>
- <VI1PR04MB4800C0AB214B258793AF9ABAF3FD0@VI1PR04MB4800.eurprd04.prod.outlook.com>
-Message-ID: <153962211360.5275.18031876744546062419@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: RE: [PATCH v4 5/6] arm64: dts: add QorIQ LX2160A SoC support
-Date:   Mon, 15 Oct 2018 09:48:33 -0700
+In-Reply-To: <20181011220009.GF2401@uranus.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vabhav Sharma (2018-10-14 19:58:15)
-> > > +
-> > > +   pmu {
-> > > +           compatible =3D "arm,cortex-a72-pmu";
-> > > +           interrupts =3D <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-> > > +   };
-> > > +
-> > > +   psci {
-> > > +           compatible =3D "arm,psci-0.2";
-> > > +           method =3D "smc";
-> > > +   };
-> > > +
-> > > +   memory@80000000 {
-> > > +           // DRAM space - 1, size : 2 GB DRAM
-> > > +           device_type =3D "memory";
-> > > +           reg =3D <0x00000000 0x80000000 0 0x80000000>;
-> > > +   };
-> > > +
-> > > +   ddr1: memory-controller@1080000 {
-> > > +           compatible =3D "fsl,qoriq-memory-controller";
-> > > +           reg =3D <0x0 0x1080000 0x0 0x1000>;
-> > > +           interrupts =3D <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-> > > +           little-endian;
-> > > +   };
-> > > +
-> > > +   ddr2: memory-controller@1090000 {
-> > > +           compatible =3D "fsl,qoriq-memory-controller";
-> > > +           reg =3D <0x0 0x1090000 0x0 0x1000>;
-> > > +           interrupts =3D <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
-> > > +           little-endian;
-> > > +   };
-> > > +
-> > > +   sysclk: sysclk {
-> > =
+On 10/11/18 7:00 PM, Cyrill Gorcunov wrote:
+> On Fri, Oct 12, 2018 at 12:30:06AM +0300, Alexey Dobriyan wrote:
+>> On Fri, Oct 12, 2018 at 12:02:56AM +0300, Cyrill Gorcunov wrote:
+>>> On Thu, Oct 11, 2018 at 11:56:01PM +0300, Alexey Dobriyan wrote:
+>>>>
+>>>> As the comment in the beginning says this test is specifically for addresss 0.
+>>>> Maybe it should be ifdeffed with __arm__ then.
+>>>
+>>> Is there some other reason than allocating non-mergable VMA?
+>>
+>> IIRC the reason is to test address 0 as it is effectively banned
+>> for userspace so if it will be broken, it will be broken silently
+>> for a long time.
+> 
+> This is rather a side effect of the test because the primary reason
+> was to check procfs numbers conversion, right? Don't get me wrong,
+> I don't mind about __arm__ define or similar, this is fine for
+> one architecture, but if there comes more we will get a number
+> of #ifdefs which is unrelated to procfs numeric routines at all.
 
-> > Name the node a bit generic like clock-xxx.
-> There is only one clock-unit, Bootloader(U-boot) require sysclk node duri=
-ng device tree fix-up as different platform support varied platform frequen=
-cy as per reset configuration word used.
-> Referred other ARM based platform with one clock using name as x: x
+That is what I also had in mind, thus the patch. I just realized we had 
+another issue on LKFT (our functional tests tool) for 
+proc-self-map-files-001.c. Test 001 does pretty much the same as 002, 
+but without the MAP_FIXED mmap flag.
 
-Please add a comment above this node with this information. Newcomers
-reading this DTS file won't have any idea why this node is specially
-named and a comment will help tremendously here.
+Is it okay to consolidate both tests into just 1, and focus in checking 
+procfs numbers conversion only, rather than if mapping 0 is allowed or 
+not ? Can I send a v2 with that in mind ?
+
+> 
+>> As for "unmergeable" libc here doesn't map /dev/zero. I know how to
+>> avoid even theoretical breakage by creating binaries by hand but it
+>> will be probably too much.
+> 
+> Sure.
+> 
 
