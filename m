@@ -2,120 +2,121 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C2CC28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D32DC28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD4242086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:14:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD4242086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 1398420644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:17:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1398420644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbeJOP6c (ORCPT
+        id S1726557AbeJOQCD convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 11:58:32 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:49738 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726560AbeJOP6c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 11:58:32 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42YWS95ZT6z1qwRL;
-        Mon, 15 Oct 2018 10:14:17 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42YWS93nX2z1qr27;
-        Mon, 15 Oct 2018 10:14:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 2mhmkdah7aHp; Mon, 15 Oct 2018 10:14:16 +0200 (CEST)
-X-Auth-Info: eLsoengL1YTwV1aboCtMYpz6we6Mk8X9c2H8L0bT8Tg=
-Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon, 15 Oct 2018 10:14:16 +0200 (CEST)
-Date:   Mon, 15 Oct 2018 10:14:04 +0200
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>,
-        Fabio Estevam <festevam@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [PATCH v3] ARM: dts: Add support for Liebherr's BK4 device
- (vf610 based)
-Message-ID: <20181015101404.52643184@jawa>
-In-Reply-To: <20181012004027.GB3587@dragon>
-References: <20180921152726.31742-1-lukma@denx.de>
-        <20181009105028.17971-1-lukma@denx.de>
-        <20181012004027.GB3587@dragon>
-Organization: denx.de
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 15 Oct 2018 12:02:03 -0400
+Received: from mga14.intel.com ([192.55.52.115]:41363 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726400AbeJOQCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 12:02:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 01:17:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,384,1534834800"; 
+   d="scan'208";a="82648099"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga006.jf.intel.com with ESMTP; 15 Oct 2018 01:17:50 -0700
+Received: from fmsmsx124.amr.corp.intel.com (10.18.125.39) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 15 Oct 2018 01:17:49 -0700
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ fmsmsx124.amr.corp.intel.com (10.18.125.39) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 15 Oct 2018 01:17:50 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.48]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.245]) with mapi id 14.03.0319.002;
+ Mon, 15 Oct 2018 16:16:26 +0800
+From:   "Jin, Zhi" <zhi.jin@intel.com>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] stm class: increase pos if no free channels found
+Thread-Topic: [PATCH] stm class: increase pos if no free channels found
+Thread-Index: AQHURbKpgeGbhBBNZUWI+1TOC4KxRKUfo8eAgACGtRA=
+Date:   Mon, 15 Oct 2018 08:16:26 +0000
+Message-ID: <11D2FE4DB4B8114EA7D818424F28D1414289C3B9@SHSMSX104.ccr.corp.intel.com>
+References: <1536218530-18601-1-git-send-email-zhi.jin@intel.com>
+ <87h8hn64gi.fsf@ashishki-desk.ger.corp.intel.com>
+In-Reply-To: <87h8hn64gi.fsf@ashishki-desk.ger.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzM4NGEzODMtNzk4NS00Mjc1LWEzMTctNTkwMTVjNTNjYTE3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiK01xOVJTdlNacmhlN2pYd3BkSGRKTDFHaHpmWXJuY1ZwWStaZ2d6S3ZxTlkrSDk5M3I4S2RpR1NYUVpOc24wUiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fbOpQnBhotqXKQP4ozRLJAw"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/fbOpQnBhotqXKQP4ozRLJAw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Shawn,
-
-> On Tue, Oct 09, 2018 at 12:50:28PM +0200, Lukasz Majewski wrote:
-> > This commit adds DTS support for BK4 device from Liebherr. It
-> > uses vf610 SoC from NXP.
-> >=20
-> > Signed-off-by: Lukasz Majewski <lukma@denx.de> =20
->=20
-> As v3 just incorporates a few minor improvements over v2, Stefan's
-> review tag should really be carried.  I applied the patch with Stefan
-> and Fabio's review tag added.=20
-
-Thanks :-).
-
->=20
-> Shawn
 
 
+> -----Original Message-----
+> From: Alexander Shishkin [mailto:alexander.shishkin@linux.intel.com]
+> Sent: Monday, October 15, 2018 3:43 PM
+> To: Jin, Zhi <zhi.jin@intel.com>
+> Cc: linux-kernel@vger.kernel.org; Jin, Zhi <zhi.jin@intel.com>
+> Subject: Re: [PATCH] stm class: increase pos if no free channels found
+> 
+> Zhi Jin <zhi.jin@intel.com> writes:
+> 
+> > Considering this case in find_free_channels():
+> >
+> > bitmap:
+> >        +------------------+-+-+-+-+-+-+-+-+-+-+
+> >        |     ......       |0|0|0|0|0|0|0|1|0|0|
+> >        +------------------+-+-+-+-+-+-+-+-+-+-+
+> >
+> > 1. Channel #2 has been occupied, so bit #2 is 1, and the others
+> >    are all 0.
+> > 2. Another thread tries to find 4 free channels from #0.
+> > 3. In the 1st loop, pos starts from 0, and then it checks if the
+> >    following 4 bits are all 0, but fails, as bit#2 is 1.
+> > 4. In the 2st loop, pos is not updated, and still starts from 0,
+> >    so nothing changes against loop #1.
+> > 5. Dead loop ...
+> >
+> > This patch is to update the pos in step #3 to avoid the issue.
+> 
+> The description is slightly confusing, but the patch looks correct and
+> the original code is clearly wrong. Thank you for finding this!
+> 
+> Basically, if you request 1 channel 3 times, release the first two and
+> then request 4 channels, you'll be stuck, right?
 
+Yes, you are right.
+But the real case that I reproduced the issue is a little different:
+I have 2 stp-policy:
+"console": masters "256 259"  channels "7 10"
+"user"   : masters "256 1024" channels "0 127"
+I understand the policies should not be overlapped, which is caused by some
+other issues.
+So if someone uses "console" to request a channel (who will get Channel #7)
+and then another uses "user" to request more than 8 channels, it will be stuck.
+The commit message is what I trying to abstract the above case, sorry for the
+confusion.
 
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
-
---Sig_/fbOpQnBhotqXKQP4ozRLJAw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlvETEwACgkQAR8vZIA0
-zr0FCQgArh85P/37Uas5kQp4FPL8TmaEbbP0HxlTZtRXJvugcPKbsTGNp5oPXTIJ
-NPCMBGrxmQqF8d8h9tkgEtbSMjQAHBQRhKoACYz9vszQc8YlVPCpN+xcrur+Wa9G
-XwIp29SRz5KI5UrUsk561+BCSjchwOeWVcElMntgu/kGTbeWpugxyOKYs5NmexyN
-KozEL5iV5NDg8yjtCtsKJHUjMgML8zpz4pNEuGk+xxWlPjAxRgDb3Y8RyrufjT1T
-TYH8a7WD4zqWpbXYP6Qr3elFPQyzS9g0vPGd9XtK27AGN5KlZwice6ffEjP8nBpA
-JCAjNmd7ZZs473EAzsc6sRaRlP9mNg==
-=4/wT
------END PGP SIGNATURE-----
-
---Sig_/fbOpQnBhotqXKQP4ozRLJAw--
+> 
+> Thanks,
+> --
+> Alex
