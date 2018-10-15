@@ -2,331 +2,110 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E955C71133
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1ED9C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A0A208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:41:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ACYsj79Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A0A208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 764B5208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:42:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 764B5208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbeJPC1f (ORCPT
+        id S1726944AbeJPC2Z convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:27:35 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41482 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727028AbeJPC1f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:27:35 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 23-v6so9569743pgc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 11:41:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=bFmpkKZBQAbbZS/QFSkahIqwskTA5OAWzb+7WJWC4Ak=;
-        b=ACYsj79ZN7/1tmPHStu1S/GzpFncJaRgzF2auSIcWuMe4YTEXTXXu3+oUpkuAFcOOC
-         GFvh5L1x8ywdDGWGBOOKe4tcnLTg7JIlZP9M7EDyqlzI3n89+u8XUnmRC3iTzJae2fJx
-         94Zu4PSWORdx7VeQCfRmWZXRro4J3jqD5APS0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=bFmpkKZBQAbbZS/QFSkahIqwskTA5OAWzb+7WJWC4Ak=;
-        b=bMauz+lmG0reIx15S+uCurQslvhWvOGz7R6S5fNdar45i2EC7fwXF38gswRsBJTi/2
-         Hxt/MgJ/4OjWIKHTKG1/ADPr2NIgLHJftF22De1FgUWLVDUS2agy9NDoQs+vimIszVAE
-         DsYyymQ6xGq6hOplNSbwq2ixnc9mCDGi4dZtal1go6XRkwKhMyLth2YbsG2sUT6eUEQa
-         VvlyGSYndWPyTGu8OIAKBuNz3C5DS/Kwr75SEzagmSLzkFzbmfG5GKa/zn5fNRkKfL9m
-         ZVxKa2ge3XB51S3KQbUVPnMnRGOGelDdGdqYRiZ4j1585HpwxUwUm+h6yLjxz42MBp+o
-         +Ujg==
-X-Gm-Message-State: ABuFfoiKACxJH7M2lszVCvIJWMwBgkN4/6Ch7GPcImMd3350Onx5x8Da
-        ws37e0MVkd0TOqw5a+d4evtLe6ghnhs=
-X-Google-Smtp-Source: ACcGV61doTAgPAcfpYsvw+p47Nzl4Xw+FAqg8lEzswxY6VQz9s9eo83n8r1IJ4gnPXl2B+2QqG1ujA==
-X-Received: by 2002:a62:8a91:: with SMTP id o17-v6mr18843627pfk.184.1539628867423;
-        Mon, 15 Oct 2018 11:41:07 -0700 (PDT)
-Received: from localhost ([49.248.168.189])
-        by smtp.gmail.com with ESMTPSA id m11-v6sm13170474pgn.39.2018.10.15.11.41.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 11:41:06 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        edubezval@gmail.com, andy.gross@linaro.org, vkoul@kernel.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v1 4/4] arm64: dts: qcom: qcs404: Add thermal zones for each sensor
-Date:   Tue, 16 Oct 2018 00:10:43 +0530
-Message-Id: <7a0c3d8b7a751d6549b063efee718cdb1741f473.1539627762.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1539627762.git.amit.kucheria@linaro.org>
-References: <cover.1539627762.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1539627762.git.amit.kucheria@linaro.org>
-References: <cover.1539627762.git.amit.kucheria@linaro.org>
+        Mon, 15 Oct 2018 22:28:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34905 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726777AbeJPC2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 22:28:25 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 483F030832D8;
+        Mon, 15 Oct 2018 18:41:58 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 12CB5413C;
+        Mon, 15 Oct 2018 18:41:55 +0000 (UTC)
+Subject: Re: [PATCH v13 01/11] cpuset: Enable cpuset controller in default
+ hierarchy
+To:     Tom Hromatka <tom.hromatka@oracle.com>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+References: <1539366951-8498-1-git-send-email-longman@redhat.com>
+ <1539366951-8498-2-git-send-email-longman@redhat.com>
+ <bfa8d0a2-ce78-8a0b-2a2e-45b02d6a8239@oracle.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <ebff503c-291c-345c-a0ab-e2a4ceb6ad0c@redhat.com>
+Date:   Mon, 15 Oct 2018 14:41:55 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <bfa8d0a2-ce78-8a0b-2a2e-45b02d6a8239@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 15 Oct 2018 18:41:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qcs404 has 10 sensors connected to the single TSENS IP. Define a thermal
-zone for each of those sensors to expose the temperature of each zone.
+On 10/15/2018 02:31 PM, Tom Hromatka wrote:
+>
+>
+> On 10/12/2018 11:55 AM, Waiman Long wrote:
+>> Given the fact that thread mode had been merged into 4.14, it is now
+>> time to enable cpuset to be used in the default hierarchy (cgroup v2)
+>> as it is clearly threaded.
+>>
+>> The cpuset controller had experienced feature creep since its
+>> introduction more than a decade ago. Besides the core cpus and mems
+>> control files to limit cpus and memory nodes, there are a bunch of
+>> additional features that can be controlled from the userspace. Some of
+>> the features are of doubtful usefulness and may not be actively used.
+>>
+>> This patch enables cpuset controller in the default hierarchy with
+>> a minimal set of features, namely just the cpus and mems and their
+>> effective_* counterparts.  We can certainly add more features to the
+>> default hierarchy in the future if there is a real user need for them
+>> later on.
+>
+> I really appreciate this simplification of the cpuset controller.
+>
+> I currently have an in-house customer that is unhappy with the
+> way cgroups cpuset v1 handles offlined CPUs.  This patchset makes two
+> significant improvements over current cpuset v1 behavior.  1) It allows
+> for offlined CPUs to be added to a cpuset (even though the CPU is
+> offline) and 2) it restores CPUs back to the requested cpuset when they
+> come back online.  This is more intuitive and secure for my customers.
+> Thank you!
+>
+> In part because of this patchset, I plan on proposing similar behavior
+> for offlined CPUs to cpuset v1.
+>
+> Thanks.
+>
+> Tom
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 206 +++++++++++++++++++++++++++
- 1 file changed, 206 insertions(+)
+If you are just talking about the ability for cpuset to revert back to
+its original state when an offlined CPU becomes online again, that
+capability can be activated in v1 using the "cpuset_v2_mode" mount
+option when mounting the cpuset cgroup. However, that is not the default
+for v1.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index dfd65c53cf5f..ea882a9ce6e3 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -69,6 +69,7 @@
- 			reg = <0x100>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			#cooling-cells= <2>;
- 		};
- 
- 		CPU1: cpu@1 {
-@@ -77,6 +78,7 @@
- 			reg = <0x101>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			#cooling-cells= <2>;
- 		};
- 
- 		CPU2: cpu@2 {
-@@ -85,6 +87,7 @@
- 			reg = <0x102>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			#cooling-cells= <2>;
- 		};
- 
- 		CPU3: cpu@3 {
-@@ -93,6 +96,7 @@
- 			reg = <0x100>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			#cooling-cells= <2>;
- 		};
- 
- 		L2_0: l2-cache {
-@@ -484,4 +488,206 @@
- 			label = "wcss";
- 		};
- 	};
-+
-+	thermal-zones {
-+		aoss-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 0>;
-+
-+			trips {
-+				aoss_alert: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				aoss_crit: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		dsp-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 1>;
-+
-+			trips {
-+				dsp_alert: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				dsp_crit: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		lpass-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 2>;
-+
-+			trips {
-+				lpass_alert: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				lpass_crit: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		wlan-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 3>;
-+
-+			trips {
-+				wlan_alert: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				wlan_crit: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cluster-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 4>;
-+
-+			trips {
-+				cluster_alert: cluster_alert {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				cluster_crit: cluster_crit {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-thermal0 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 5>;
-+
-+			trips {
-+				cpu_alert0: cpu_alert0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				cpu_crit0: cpu_crit0 {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-thermal1 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 6>;
-+
-+			trips {
-+				cpu_alert1: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				cpu_crit1: trip1 {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-thermal2 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 7>;
-+
-+			trips {
-+				cpu_alert2: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				cpu_crit2: trip1 {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-thermal3 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 8>;
-+
-+			trips {
-+				cpu_alert3: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				cpu_crit3: trip1 {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		gpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 9>;
-+
-+			trips {
-+				gpu_alert: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				gpu_crit: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
- };
--- 
-2.17.1
+-Longman
+
 
