@@ -2,196 +2,175 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B098C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5BAC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0C0120881
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:12:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 010A92083C
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:14:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TR4WCod1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C0120881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rURGY39d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 010A92083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbeJOT5s (ORCPT
+        id S1726623AbeJOT7E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:57:48 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43748 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbeJOT5s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:57:48 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181015121245euoutp01f3858dc8dd88ac3f8c92004bef233fd9~dxxrGY8vn2788027880euoutp01N
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 12:12:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181015121245euoutp01f3858dc8dd88ac3f8c92004bef233fd9~dxxrGY8vn2788027880euoutp01N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539605565;
-        bh=qIoVvshBpDvAPVjeR5wjrq1h8rc54kcaWzvaBPUm6V8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=TR4WCod15LEhRqCpSD5vlE5ZYAroUYs97NKuYTV60Eg6imS3/Bf0+seMd46seXQcY
-         L+j7oTrp9EkHluylZSfU1RNXNOCfitjvcn1jsgDu6YLDtmRx2E2zuOWHfU8RTlRF1A
-         fWxO+Z0btlcTGsYN95WoRykd3ZdXUJ2PlcNqMN0Q=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181015121244eucas1p167d7bceb476223a616cbce784f26a66b~dxxqSpPAU0210602106eucas1p12;
-        Mon, 15 Oct 2018 12:12:44 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 94.FE.04441.C3484CB5; Mon, 15
-        Oct 2018 13:12:44 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181015121243eucas1p1dd6093945310db315fc28092e2c91b6e~dxxpPrR4A1710517105eucas1p1W;
-        Mon, 15 Oct 2018 12:12:43 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181015121243eusmtrp1d3a82b581b3d581814ce754fa16c3523~dxxpAdeou0126901269eusmtrp1P;
-        Mon, 15 Oct 2018 12:12:43 +0000 (GMT)
-X-AuditID: cbfec7f2-a1ae89c000001159-ef-5bc4843cdd49
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 94.AB.04284.B3484CB5; Mon, 15
-        Oct 2018 13:12:43 +0100 (BST)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181015121242eusmtip2821e4748adb269940dbf4334f8877522~dxxoeSwwa0474704747eusmtip2q;
-        Mon, 15 Oct 2018 12:12:42 +0000 (GMT)
-Subject: Re: [PATCH 4/7] clocksource: arch_timer: Add support for
- not-fw-configured timer on ARM64
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Mark Rutland <Mark.Rutland@arm.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Date:   Mon, 15 Oct 2018 14:12:42 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
-        Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <e9624612-4a94-b9bc-f5ec-0f16d5b12323@arm.com>
-Content-Transfer-Encoding: 8bit
+        Mon, 15 Oct 2018 15:59:04 -0400
+Received: from mail-db5eur01on0043.outbound.protection.outlook.com ([104.47.2.43]:35328
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726400AbeJOT7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 15:59:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ApW3JgH1cQeKpQc8S24f1+jlufOPuPnSH9dAmZJov7w=;
+ b=rURGY39d1R3noZFmy9m3/a5H8oxWguuQ81VvTKqm9F+yrdxJmraO+GZNR9TdgjQIUDofAc964C4xPGVzYAMojifktSGWru2YckdOZei/iXe3TvFW7TpcM4V6VaCneCf/qI5nbNBGZI0sMsOjX75MfuY2XB2vInZlMTiTouCCo3E=
+Received: from VI1PR04MB1038.eurprd04.prod.outlook.com (10.161.109.144) by
+ VI1PR04MB4240.eurprd04.prod.outlook.com (52.134.31.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.24; Mon, 15 Oct 2018 12:13:57 +0000
+Received: from VI1PR04MB1038.eurprd04.prod.outlook.com
+ ([fe80::d887:3c96:479a:4123]) by VI1PR04MB1038.eurprd04.prod.outlook.com
+ ([fe80::d887:3c96:479a:4123%3]) with mapi id 15.20.1228.027; Mon, 15 Oct 2018
+ 12:13:57 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Subject: [PATCH v2 0/7] spi: add support for octal mode
+Thread-Topic: [PATCH v2 0/7] spi: add support for octal mode
+Thread-Index: AQHUZICMj9na8RY3aESpiAu8NFV+KQ==
+Date:   Mon, 15 Oct 2018 12:13:57 +0000
+Message-ID: <1539605534-22302-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SazBUYRieb8/Zs8ey+izlHV1MO9WoCZnpx2mo6Tq2f5XSZJthy3GZWOy6
-        /yhixM5OpAltkplcyijZtZLIWGoZY91CjPLDCpVMYbqIah3Kv+d5vuf53uf95qMJcR/fhQ5X
-        xLJKhTxCQgnJ2lc/zO4+6a2yPYYKG6a6oIrPzJRpEDM4N8FnimY3M7mjOSTT1fVEwOjGBvhM
-        X30hxRR0veAxiyNLFFM62MNj9LpbBDP1pY08KJJWFlUiqa4ii5KODDRQ0s9ms0CqL7kivV5T
-        gaSzui0nBAFCn2A2IjyeVXoeCBKGdTVNUtGVGxJLS7p5KahGrEY2NOC9kL4wIVAjIS3GDxC8
-        Lh6kODKHoMw0RHBkFsHDZgtvNfL+t2YlUo4g962e5MgMgsVvjaTV5YiDYS4/HVkPnHAOgvbS
-        1GVC4HkedFiqll0U9gL1tJqyYhJvh6stk38xTa/H52Gh3tsqi7ADtN+2LNttsDc0akqXaxDY
-        FdIMdwgOO8Ow5R7Pej/gaQG0Z6bwuXA8NC5yjQAfhcmhrBXsCB9MNQIOb4KOmxqSC6chuFag
-        FXBEg8BQWEdxLm9oMfXwre0IvBOq6j05+RD0f3+HrDJge3gz7cAVsofc2nyCk0WQmbHy2jtA
-        a3r8b2xzdy+RgyTaNWtq16ymXbOa9v/cYkRWIGc2ThUZyqq8FGyCh0oeqYpThHpcjIrUob9f
-        rWPJ9LUOzfdeMCJMI4mdCNu1ysR8ebwqKdKIgCYkTiI4bZSJRcHypGRWGRWojItgVUa0kSYl
-        zqKyomqZGIfKY9lLLBvNKldPebSNSwrKOPbS1r5YMe4f75a8zW/8V0LD3bjdI/3DRxw6zyQf
-        P7cu1ZD97LKxP+LsXKCbaKv/x7wbrT9PHgzxPbUv526LsSpoV8gY5ee/f6q6c6fmrDkGq/P0
-        5X6jU9mHscPz30Ft4UeEY02zQ/ayR65uvlLD6NSnxJj7iXa2ymxzg7vj0wcBElIVJvfaRShV
-        8j+yXGJ2ZgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsVy+t/xe7rWLUeiDc4e57LYOGM9q8X7ZT2M
-        Fte/PGe1mPdZ1mLS/QksFufPb2C32PT4GqvF5V1z2CxmnN/HZPH3zj82i6XXLzJZbN40ldni
-        5ccTLA68HmvmrWH02LSqk83jzrU9bB7vzp1j99i8pN6jb8sqRo/Pm+QC2KP0bIryS0tSFTLy
-        i0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Ms7vf8FWsEasYumSC0wN
-        jFuEuhg5OSQETCSe/e9h72Lk4hASWMoo8eTDanaIhIzEyWkNrBC2sMSfa11sILaQwFtGiZkv
-        uEBsYYEUiS/TWxhBmkUEJjBKnGw/xgLiMAt8Z5K4938OC0THF0aJpz0KIDabgKFE11uISbwC
-        dhL9f76D1bAIqEo0HX4BFhcViJE4OrkFqkZQ4uTMJ2A1nALWEnt7ljKB2MwC6hJ/5l1ihrDl
-        JZq3zoayxSVuPZnPNIFRaBaS9llIWmYhaZmFpGUBI8sqRpHU0uLc9NxiQ73ixNzi0rx0veT8
-        3E2MwBjeduzn5h2MlzYGH2IU4GBU4uEV4DkSLcSaWFZcmXuIUYKDWUmEVyLkULQQb0piZVVq
-        UX58UWlOavEhRlOg5yYyS4km5wPTS15JvKGpobmFpaG5sbmxmYWSOO95g8ooIYH0xJLU7NTU
-        gtQimD4mDk6pBsaZE0+tPvtk8bYk7s4vO5rsEzKfKog83Jrh7V/2RbdxSvDnmooNte66c56J
-        Ceyq2RL684qB98wW1/rMhR+UZizaWh52RHv3SVX+R/38/AfK29d/fHzmWW6P0loL0dOOh8L4
-        C+WOJBcs3TBhWZazCxPzkUPT1xnEcC5+Y39a85Cs4ms70/gtATeUWIozEg21mIuKEwHcsLo+
-        9wIAAA==
-Message-Id: <20181015121243eucas1p1dd6093945310db315fc28092e2c91b6e~dxxpPrR4A1710517105eucas1p1W@eucas1p1.samsung.com>
-X-CMS-MailID: 20181015121243eucas1p1dd6093945310db315fc28092e2c91b6e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181008125048eucas1p229a94c202596ddd0a65009c15d9e3001
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181008125048eucas1p229a94c202596ddd0a65009c15d9e3001
-References: <20181008125009.3721-1-m.szyprowski@samsung.com>
-        <CGME20181008125048eucas1p229a94c202596ddd0a65009c15d9e3001@eucas1p2.samsung.com>
-        <20181008125009.3721-5-m.szyprowski@samsung.com>
-        <e9624612-4a94-b9bc-f5ec-0f16d5b12323@arm.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SG2PR02CA0054.apcprd02.prod.outlook.com
+ (2603:1096:4:54::18) To VI1PR04MB1038.eurprd04.prod.outlook.com
+ (2a01:111:e400:5092::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [14.143.30.134]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB4240;6:ZgIPHCHdIE8a8Kfbk+x0McyoTgPpDyBQq+rtxFQlQMTYjcmUuH5kYaVFm2z4Emd2ZjN2gds/pFBjPDjKrIvJPgl7UL7eM7M932Iw+7I5Kw5ovv0bQ0tcJGLLaPww0kPTC3OS3csGdINziUhodr/V7IeuMYGBx3MUpX7rb73j/TZm7idXvVb9vaAY0fjtIz451jkcuYUAU4KJ7Aqg6TlDtEYC4KhyFddhEpHMB+uZqOaWkkwg1Dkzn5l0ADOXppVQPwTBPLYFCDr76yN7F2dOpkzDjLW/4Wgcw1y9X7+Y7XP41UKhYO7yFmEfhedIO19884NRev3loPiiSsrpdnl2mx4Nvhd2QF29GeHmeHwvFIVnlNO3/BZqFArqBEFW0RHy26i9h94Cq0XdLLGpuT68udTxma0tMPebDF390yhQfOAj1ueJ9qeNDooLwl2m0Xmv+/mBg38sAd1T0MquYIOkfQ==;5:q+NLubKDuTA4t5SkF4eUlJLWHlMaMkqXh2rhhmoNlwJ87sfO710qNmRQzw09YcSUOkgfBOR3gO1fbr1oGLf2lm1AwFQs7bac0VKX6dUV89oEl3XuwnhimoVVqx9ucgCeFs85kGWkr88yGLahfk1tcPXskL6Ug2Jp7kXWTnnvzf4=;7:RKbnwZYM5Wl0LjPHpslUaNkclZnINrAO6XX7StR6jTORzK7y7eDauMmrr5ms6dXRCKqXCBLH4ivaoq50EXE8V65T5vhYi+3n5GUxW0jglO/DE0w2M85P99cw0ZjAqNHMWPF0M6oZ4Xi7KF9xPsyPQbWIkOKahfKuQ/VGPUo9leD58CC6n6UKNj/yJFLF/ZdrrtDk/aMLHmMOyYDpIsDWWM+RJjgCDGweidpAO2nZsDLFkkdp/5ilfFot46F39kui
+x-ms-office365-filtering-correlation-id: 73c79c08-e4ad-487d-de31-08d63297ae67
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4240;
+x-ms-traffictypediagnostic: VI1PR04MB4240:
+x-microsoft-antispam-prvs: <VI1PR04MB4240B52C4CCB7244B5A2CF2D99FD0@VI1PR04MB4240.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(84791874153150);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:VI1PR04MB4240;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4240;
+x-forefront-prvs: 0826B2F01B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(366004)(396003)(346002)(199004)(189003)(86362001)(102836004)(106356001)(99286004)(105586002)(6486002)(39060400002)(26005)(6436002)(476003)(71190400001)(71200400001)(2201001)(186003)(5660300001)(66066001)(486006)(2616005)(14454004)(97736004)(305945005)(55236004)(52116002)(478600001)(6306002)(4326008)(5250100002)(36756003)(966005)(81156014)(81166006)(54906003)(7736002)(53936002)(6512007)(68736007)(2501003)(8676002)(8936002)(6506007)(386003)(14444005)(256004)(2906002)(110136005)(7416002)(316002)(2900100001)(25786009)(6116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4240;H:VI1PR04MB1038.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 7MlgGYKV5HzGRlauAaNiMR03uy3x3Z/g3NUftbxZwy6fazh3VHNk9qBiTV9O+emOIRthXBpAtCqCKpgcgI8DRBxnsbZJtPg3491l4tZ0VUsrXeuoZGGoDXGRy4apvjlQeThsn7gDnXXY3Kw4Y/oTV0HhyKUD3aLXRXFT2vFydyRezKGCCkhqnIwTRiDlnTeoqFLcW5BtBM4kK8Wf+hrJae3hHCVxcP2BMisDUzvzBPkmw8aApHD/GFbWgYS//K8UbkPxPB2iFHcIeBgwzU//oq6uS6KaGdU5nsMax9mR9RDbo63Ou+Tp/8ONMQvRlHRh1Sr/3EH/M2iphmJ7mXwzOu/1n7P3c98ImtL1CWaW7g0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73c79c08-e4ad-487d-de31-08d63297ae67
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2018 12:13:57.5663
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4240
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Add support for octal mode IO data transfer.
+Micron flash, mt35xu512aba, supports octal mode data transfer and
+NXP FlexSPI controller supports 8 data lines for data transfer (Rx/Tx).
 
-On 2018-10-08 15:17, Marc Zyngier wrote:
-> + Mark Rutland
->
-> Hi Marek,
->
-> On 08/10/18 13:50, Marek Szyprowski wrote:
->> Use common infrastructure for ARM Architected Timers erratum to enable
->> support for systems with broken CPU firmware (timer registers not
->> properly configured). This mode has been already availabled on ARM
->> (32bits) architecture. This enables to run Linux kernel on ARM64 boards
->> using physical architected timers instead of the virtual ones. Examples
->> of such system with broken firmware are Samsung Exynos5433 SoC based
->> TM2(e) boards, which is already deployed for years and updating firmware
->> is not possible.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/clocksource/Kconfig          | 11 +++++++++++
->>   drivers/clocksource/arm_arch_timer.c | 15 ++++++++++++---
->>   2 files changed, 23 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index a11f4ba98b05..a30752579b03 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -364,6 +364,17 @@ config ARM64_ERRATUM_858921
->>         The workaround will be dynamically enabled when an affected
->>         core is detected.
->>   +config ARCH_TIMER_REGISTERS_NOT_FW_CONFIGURED
->> +    bool "Workaround for arch timer registers not configured by
->> firmware"
->> +    default y
->> +    select ARM_ARCH_TIMER_OOL_WORKAROUND
->> +    depends on ARM_ARCH_TIMER && ARM64
->> +    help
->> +      This option enables a workaround for boards, on which arch timer
->> +      registers are not properly configured by the board firmware.
->> +      The workaround will be dynamically enabled when an affected
->> +      board is detected.
->> +
->
-> I'm sorry, but I'm strongly pushing back on this.
->
-> This horrible hack was accepted with the express condition that it
-> would be limited to ARMv7 platforms (on the ground that we never
-> really documented the arch timer boot requirements on that version of
-> the architecture), and would never proliferate on arm64. From day 1,
-> we established what the boot protocol was, and we mandated that either:
->
-> - kernel is entered at EL2 on all CPUs
-> - cntvoff_el2 is zeroed on all CPUs
->
-> and we've got most people to fix their firmware, or live with the
-> consequences. If these machines cannot receive a non-broken firmware,
-> what are the odds that they will receive a mainline kernel?
+Patch series
+* Add support for octal mode flags and parsing of same in spi driver.
+* Add parsing logic for spi-mem framework and m25p80.c device file.
+* Add opcodes for octal I/O commands in spi-nor framework, Read and Write p=
+roto for (1-1-8/1-8-8) mode.
+  Opcodes are added as per octal data IO commands required for mt35xu512aba=
+ [1] flash.
+* Add mode bit required for octal mode in nxp-fspi driver [2].
+* Define binding property 'spi-rx/tx-bus-width' for LX2160ARDB target [2].
 
-Well, I know that the firmware is broken, but I cannot do anything about it.
-On the other hand updating kernel is still possible and mainline runs fine
-on TM2(e) boards. I will send v2 without this patch then.
+Cherry pick below 2 patches (from: https://git.kernel.org/pub/scm/linux/ker=
+nel/git/broonie/spi.git):
+    c639f871febe6667d9afce28108c634e5636c735 spi: spi-mem: Fix inverted log=
+ic in op sanity check
+    db122eb8a749a1eff038f9a282c620ab16c4be1d spi: spi-mem: Add extra sanity=
+ checks on the op param
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Tested on LX2160ARDB target with nxp-fspi driver, below are
+Read performance number of 1-1-1 and 1-1-8 read protocol.
+
+ root@lxxx:~# cat /proc/mtd
+ dev:    size   erasesize  name
+ mtd0: 04000000 00001000 "spi0.0"
+ mtd1: 04000000 00001000 "spi0.1"
+ root@lxxx:~# time mtd_debug read /dev/mtd0 0x0 0x1000000 0read
+ Copied 16777216 bytes from address 0x00000000 in flash to 0read
+
+ real    0m2.792s
+ user    0m0.000s
+ sys     0m2.790s
+ root@lxxx:~# time mtd_debug read /dev/mtd1 0x0 0x1000000 0read
+ Copied 16777216 bytes from address 0x00000000 in flash to 0read
+
+ real    0m0.441s
+ user    0m0.000s
+ sys     0m0.440s
+ root@ls1012ardb:~#
+
+ Flash device MTD0 configured in 1-1-1 protocol.
+ Flash device MTD1 configured in 1-1-8 protocol.
+
+[1] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D70384
+[2] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D70210
+
+Yogesh Gaur (7):
+  spi: add support for octal I/O data transfer
+  spi: spi-mem: add support for octal I/O data transfer
+  mtd: spi-nor: add opcodes for octal Read/Write commands
+  mtd: spi-nor: add octal read flag for flash mt35xu512aba
+  mtd: m25p80: add support of octal I/O transfer
+  spi: nxp-fspi: add mode flag bit for octal support
+  arm64: dts: lx2160a: update fspi node
+
+Changes for v2:
+ Incorporated review comments of Boris and Vignesh.
+
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts |  4 ++++
+ drivers/mtd/devices/m25p80.c                      |  9 ++++++++-
+ drivers/mtd/spi-nor/spi-nor.c                     | 15 ++++++++++++++-
+ drivers/spi/spi-mem.c                             |  9 ++++++++-
+ drivers/spi/spi-nxp-fspi.c                        |  4 ++--
+ drivers/spi/spi.c                                 |  6 ++++++
+ include/linux/mtd/spi-nor.h                       |  8 ++++++++
+ include/linux/spi/spi.h                           |  2 ++
+ 8 files changed, 52 insertions(+), 5 deletions(-)
+
+--=20
+2.7.4
 
