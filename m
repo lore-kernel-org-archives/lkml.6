@@ -2,105 +2,98 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F01C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B63C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F31E20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F31E20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CE7A20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:35:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CE7A20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbeJOUUQ (ORCPT
+        id S1726778AbeJOUUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 16:20:16 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42884 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbeJOUUQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 16:20:16 -0400
-Received: by mail-lf1-f68.google.com with SMTP id s10-v6so13926271lfc.9
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 05:35:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xqMmcV840/cNqMlqPiYyrfsdbtEHwFxf8zEG1orL+ns=;
-        b=am7DEKuLK36HN4KbMKkMHCkKZWzy4hCeFwsfYA6mwAUYpBeACvKdAcoEMHC6Uyn0kP
-         PEzHOn5to/3oV30eRHi4LTJd+ivdo7DwfdtQFvWe2AeGK3k1AF5llVhNiLebfuvNH6T0
-         c5uPEsyF1ma4KCB30edz/a8DygFI9T4Ce6FPkCcjFe358KJmnk/7Ah+AWP/VnFhnYc2D
-         B6E1VlNRCqud1M3HEbKQ1o/3EtNsqQ/bZFMrMcRFyljkPY/0KzFH7NJPxctOx5LcN7j5
-         Uf+o/JrXwBYlDJbdW+ldRsNPfiOOlm7c7p+43qUBV4lF16JMB3fRU9QDQu5xVc2bQRuB
-         6lhQ==
-X-Gm-Message-State: ABuFfojq68rHmtt/2dy0NSCnS7HzvfUPxx5zWpaG4h15SIYe6GMwqAbw
-        5Oorg363P/3G4/959UBrs9i0xTQ/g6fwcJ+CYC137g==
-X-Google-Smtp-Source: ACcGV62KxQiKOoV+ESwhjCcV1GIAKxDWIkVjGrX9IagFGBFNZbnMPoPeLncZsjtBQtjuzbaCaqi7utAlrHfJ84ZF+tA=
-X-Received: by 2002:a19:9150:: with SMTP id y16-v6mr2685154lfj.98.1539606908295;
- Mon, 15 Oct 2018 05:35:08 -0700 (PDT)
+        Mon, 15 Oct 2018 16:20:24 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13655 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726400AbeJOUUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 16:20:23 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 86041D112B84F;
+        Mon, 15 Oct 2018 20:35:14 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.399.0; Mon, 15 Oct 2018
+ 20:35:08 +0800
+Subject: Re: [PATCH] f2fs: fix count of seg_freed to make sec_freed correct
+To:     Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <2d4c379a-77c2-4408-2f23-36753afb95bd@huawei.com>
+Date:   Mon, 15 Oct 2018 20:35:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180907103450.13890-1-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180907103450.13890-1-benjamin.tissoires@redhat.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Mon, 15 Oct 2018 14:34:56 +0200
-Message-ID: <CAO-hwJJ8D6E3wMCAy4m2AX6AF9C=-S+iNi1uUM=MjQmAY-DQ8A@mail.gmail.com>
-Subject: Re: [PATCH 0/7] HID: logitech-hidpp: support non DJ devices
-To:     Jiri Kosina <jikos@kernel.org>,
-        Nestor Lopez Casado <nlopezcasad@logitech.com>,
-        simon@mungewell.org, ogay@logitech.com
-Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 2018/10/10 18:52, Yunlong Song wrote:
+> When sbi->segs_per_sec > 1, and if some segno has 0 valid blocks before
+> gc starts, do_garbage_collect will skip counting seg_freed++, and this
+> will cause seg_freed < sbi->segs_per_sec and finally skip sec_freed++.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/gc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index a07241f..dc63cd5 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -1160,10 +1160,10 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>  
+>  		stat_inc_seg_count(sbi, type, gc_type);
+>  
+> +next:
+>  		if (gc_type == FG_GC &&
+>  				get_valid_blocks(sbi, segno, false) == 0)
+>  			seg_freed++;
+> -next:
 
-On Fri, Sep 7, 2018 at 12:34 PM Benjamin Tissoires
-<benjamin.tissoires@redhat.com> wrote:
->
-> Hi Jiri, Nestor,
->
-> I have this series in my tree for a while now (first commit was in January).
-> I never sent it (as far as I can remember*) because I was requesting
-> feedback regarding the G920 wheel. I think I haven't break it, but
-> mistakes can happen.
->
-> Anyway, I think it's been too long, so I am just sending it now, as
-> it will fix the names of the non-dj devices that share the same USB receiver
-> (G900 and G403 for instance). Also, rebasing on top of new code is a pain
-> I'd rather not do every 3 months.
->
+How about:
 
-Can anyone review this series?
-It's been in my local tree for too long and feels too lonely there :)
+if (get_valid_blocks(sbi, segno, false) == 0)
+	goto freed;
 
-Cheers,
-Benjamin
+if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi))
+	goto next;
 
->
-> * looking into my archives, I actually sent those as a part of the
-> battery support in hid-logitech-hidpp. Consider it as a fresh start though :)
->
-> Benjamin Tissoires (7):
->   HID: logitech-hidpp: allow non HID++ devices to be handled by this
->     module
->   HID: logitech-hidpp: make .probe usbhid capable
->   HID: logitech-hidpp: support non-DJ receivers
->   HID: logitech-hidpp: get the name and serial of the other non-HID++
->     node
->   HID: logitech-hidpp: create a name based on the type if non available
->   HID: logitech-hidpp: support the G700 over wireless
->   HID: logitech-hidpp: support the G900 over wireless
->
->  drivers/hid/hid-ids.h            |   4 +
->  drivers/hid/hid-logitech-hidpp.c | 470 +++++++++++++++++++++++++++++++++------
->  2 files changed, 407 insertions(+), 67 deletions(-)
->
-> --
-> 2.14.3
->
+
+freed:
+	if (gc_type == FG_GC &&
+			get_valid_blocks(sbi, segno, false) == 0)
+		seg_freed++;
+next:
+
+>  		f2fs_put_page(sum_page, 0);
+>  	}
+>  
+> 
+
