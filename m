@@ -2,89 +2,121 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6BEC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E1DC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 972B92064A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:23:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="miVzJyKU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972B92064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CA61A208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:23:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA61A208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbeJPBJZ (ORCPT
+        id S1726974AbeJPBJd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 21:09:25 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:37167 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbeJPBJZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 21:09:25 -0400
-Received: by mail-oi1-f195.google.com with SMTP id e17-v6so15712180oib.4
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 10:23:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iFIKRAWJ16+TpQPKqu1yB08222QfG8MR8RlKCAAding=;
-        b=miVzJyKUVDvwKHnHG7A6X6tYCtpy38v8Gecp258m0UKs5x4OR9RHkkeqjr0YwvLhkZ
-         5mDLu75claoV/orwOQGFNnGYWyZS/i7gzTXEu907u/IPwTK6C8WnDNiEqxRA6nmeMFd2
-         G+Z7vLn0XjWaLLqTPf0ZaeUvRD+vVohddMyUUQQktnokdHEyHfQuSnQZj/7ny8fMq4tV
-         XWy+CEfXHG9pfVW9SHyqG7GaJ1LMGcFP2Xab19QpSeU4rgr1v5crTCjFstE9Dbb/m1r5
-         TiZqak07dmcyM9Yth7bizJTxdZI7TwLfg0y1zqlAafwDCoXYSx07dZceCgBdyiaLIaxD
-         qWLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iFIKRAWJ16+TpQPKqu1yB08222QfG8MR8RlKCAAding=;
-        b=UJnGdSBUhyb+ufM+u8dbm8aKvYqJW8aKdP3Jj5JH0LYeXrnC8Kb/w5ttNg7QafykbP
-         BWWyXKQKdJvnyZ6qxE7DhYsJaT2a6692Y/wCQRTOvfUEjyNr+IdqDXbx/1/HipDD1Skf
-         +9DLAW/vEkwBnxoj3EzBVeF/HS7EY3SwNOh+7yI4X/D+VgVYPpxdu9A7o33vwCXtuoOp
-         7pY913L7YQ2oeo5Lo+uDFam2JnylT3O0csE1aeLNCS7nrBNwYpMprtvH3UxrNMwPJh15
-         5GgkHrdxuiyxxmVCm7cMSZxpkIcQVEZVxGAzSu7qM2C+i6w8cYfWs3LYON9s483S86Yp
-         tTXQ==
-X-Gm-Message-State: ABuFfohPc6DUNZ8V065+ryoIyL1Kk/ScnC+o9XQSU5gvvphHg5LWiEv1
-        nf1GrKYyFk07laz+tz56lVwUcwaGv3RqKX3TvfM=
-X-Google-Smtp-Source: ACcGV60BdARqF9d6DDYysxKTf1eUB1QSR3JKoN1la78G6tfKt/c3tnVbxdyWpK96Wextzjk6+oMKWde002UD3yIfmBE=
-X-Received: by 2002:aca:6b45:: with SMTP id g66-v6mr10164011oic.273.1539624195650;
- Mon, 15 Oct 2018 10:23:15 -0700 (PDT)
+        Mon, 15 Oct 2018 21:09:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42740 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726651AbeJPBJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 21:09:32 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C45DA3082E03;
+        Mon, 15 Oct 2018 17:23:23 +0000 (UTC)
+Received: from [10.36.117.209] (ovpn-117-209.ams2.redhat.com [10.36.117.209])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 892B768384;
+        Mon, 15 Oct 2018 17:23:19 +0000 (UTC)
+Subject: Re: [PATCH] kvm/x86 : avoid shifting signed 32-bit value by 31 bits
+To:     "H. Peter Anvin" <hpa@zytor.com>, peng.hao2@zte.com.cn,
+        richard.weiyang@gmail.com
+Cc:     penghao122@sina.com.cn, rkrcmar@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, joro@8bytes.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org
+References: <201810080904344038939@zte.com.cn>
+ <717c02f3-bb36-33c4-a463-f5759fde30fd@zytor.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <08fd066f-e6c5-f82c-544f-536e9f29e6f3@redhat.com>
+Date:   Mon, 15 Oct 2018 19:23:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20181015003726.29103-1-nick.desaulniers@gmail.com>
- <CALCETrUZoBtxoR9u=72CSmNa-793EZySMd7TjH_BmHcrNSvLZg@mail.gmail.com>
- <20181015051705.GA20687@flashbox> <2CCAF5D3-1B11-43BF-93E4-72C2603A184F@amacapital.net>
- <20181015152221.GA16375@flashbox> <20181015153144.buuow3yof2njjzjm@treble>
- <CALCETrWtgjxSZOg=hqGe3hDDvpuBDZtjptHFDAuHYOaxs1CO_w@mail.gmail.com> <CAH7mPvhgVgt+N=5pi-tGNWbitzcteSp5JOvNuMYoKFgxyrqRTQ@mail.gmail.com>
-In-Reply-To: <CAH7mPvhgVgt+N=5pi-tGNWbitzcteSp5JOvNuMYoKFgxyrqRTQ@mail.gmail.com>
-From:   Nick Desaulniers <nick.desaulniers@gmail.com>
-Date:   Mon, 15 Oct 2018 10:23:04 -0700
-Message-ID: <CAH7mPvhxULvsw=4rSkq14nPk2e4Kirh4O3bxw61RDrqXiB2WvQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/mm: annotate no_context with UNWIND_HINTS
-To:     luto@amacapital.net
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>, luto@kernel.org,
-        dave.hansen@linux.intel.com, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <717c02f3-bb36-33c4-a463-f5759fde30fd@zytor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 15 Oct 2018 17:23:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 9:57 AM Nick Desaulniers
-<nick.desaulniers@gmail.com> wrote:
-> I broke this myself in commit 815f0ddb346c
-> ("include/linux/compiler*.h: make compiler-*.h mutually exclusive").
-> Thanks for the suggestion, will verify then send a patch with your
-> suggested by tag.  Thanks everyone for helping us sort this out!
+On 15/10/2018 19:16, H. Peter Anvin wrote:
+> On 10/7/18 6:04 PM, peng.hao2@zte.com.cn wrote:
+> \>>>>>
+>>>>>> #define AVIC_LOGICAL_ID_ENTRY_GUEST_PHYSICAL_ID_MASK    (0xFF)
+>>>>>> -#define AVIC_LOGICAL_ID_ENTRY_VALID_MASK        (1 << 31)
+>>>>>> +#define AVIC_LOGICAL_ID_ENTRY_VALID_MASK        (1UL << 31)
+>>>>
+>>>>> It is reasonable to change to unsigned, while not necessary to unsigned
+>>>>> long?
+>>>> AVIC_LOGICAL_ID_ENTRY_VALID_MASK is used in function avic_ldr_write.
+>>>> here I think it doesn't matter if you use unsigned or unsigned long. Do you have any suggestions?
+>>
+>>> In current case, AVIC_LOGICAL_ID_ENTRY_VALID_MASK is used to calculate
+>>> the value of new_entry with type of u32. So the definition here is not
+>>> harmful.
+>>
+>>> Also, I did a quick grep and found similar definition (1 << 31) is popular
+>>> in the whole kernel tree.
+>>
+>>> The reason to make this change is not that strong to me. Would you
+>>> minding sharing more reason behind this change?
+>> oh, I'm just thinking logically, not more reason.
+> 
+> The right way to do this would be to use the _BITUL() (or _BITULL()) macro.
 
-https://lkml.org/lkml/2018/10/15/626
+Even for a value from a 32-bit register?  That would be _BIT, which
+doesn't exist.
+
+Paolo
