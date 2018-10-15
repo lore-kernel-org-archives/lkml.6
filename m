@@ -2,119 +2,132 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFFB8C7113E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A8CC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B201E208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:34:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7AE6204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:35:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g6EVVIja"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B201E208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TM70C+jD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7AE6204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbeJPEVE (ORCPT
+        id S1726836AbeJPEWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 00:21:04 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45677 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725917AbeJPEVD (ORCPT
+        Tue, 16 Oct 2018 00:22:18 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39907 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbeJPEWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 00:21:03 -0400
-Received: by mail-pf1-f195.google.com with SMTP id u12-v6so10238630pfn.12
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 13:34:12 -0700 (PDT)
+        Tue, 16 Oct 2018 00:22:18 -0400
+Received: by mail-qt1-f196.google.com with SMTP id e22-v6so23113291qto.6;
+        Mon, 15 Oct 2018 13:35:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mR/nT5nCH8r3TvWFMt9H5xUCBQQEUFMwnxIrguxIQ9I=;
-        b=g6EVVIjapTI5b5L3/qLj8K2l+oVt7Gtszlp1WrYt0FKfZjD+AXHDiXZ5AKmNMIB/Gt
-         O9gxbNiIRGBSnuvVFzVajfbrmKviQunsrpfxnQWSIN+R6ZkrwFnJtctIthVI2rKgZANs
-         Z6B+gB10TRvmMLyeRrLvT/9+VA7EKsHBs/svw=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TAtnSjVe5Oy8huocfAyz3IfRC4sqlvNBpftSm57vUu0=;
+        b=TM70C+jDJ9tR8DEdCXsoToUI5XyS9nR3UBV0Y8TQfu0aTVq6tOaV1grUXSLkSaRd09
+         S+roWn7spaXm+1IBsFwZ+v8nTf8ELK5DtTGf/FEwd0geIWi+5FxqM/2XfMAi3BXlPSbE
+         K0r/wpjX824+674Dvrpmw6gEZSKTzpjj8yx55hDoOGat39UPIbT9hKAdQxSCdQJqVvsg
+         JK3C8P4VKw5KJCUQ07Ca2zRLS6vAREz9EMt4ikiGga0EADWsvD23HhBQADlP123xSsVK
+         pvpNLgZ08IOcZ8wh/zhrx7Hdj+M6uM8XcBe3GMGrLSocIIvX11YS60UilAoIqOA/BVOX
+         vrPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mR/nT5nCH8r3TvWFMt9H5xUCBQQEUFMwnxIrguxIQ9I=;
-        b=RhGR1x5Toznt41CkWM8AlQsV0Wige4XgGPYRIeQOzqIT65cCY8QukMgilwyBbed3CZ
-         48w+dAsK+SWUG/mUM5mqurKLaalwNCFD0EwkbhaeTOvrgQhE/nGF1LkS3C3KYfj5/XWa
-         LMqHNm10+sa9gfC3mzHbtBgYSGEIGDU5s6HYrZG33j6IOZReeARvuT0jaZCy5I5vBuN0
-         yYwk4Hu8QKJDZhv6Abo63yY5xT9VoIi8trPW9oRZi9HFXRFYLXAssZ/Vth6Fru+8uEs9
-         a1J65RIFPqF5inQPhZE32LPzm96pw2vUKJoz4CbNiQAWpmroWPorbXdUgLkXf2hk9QC4
-         Xkhw==
-X-Gm-Message-State: ABuFfohNBnRG964WuhobBY0ZJWpLBE8R8zuuqqBazUkxOZwZQBTnYk1y
-        08ho0Aq8+h2nERMi0L9Hpc8rxw==
-X-Google-Smtp-Source: ACcGV61MlM8NEJUHupS9dc3+5rBJfHhgf6100fL48kR0c7MkFoxnUI8fS8nXOMXMje/SON0BKMIQNA==
-X-Received: by 2002:a63:5a54:: with SMTP id k20-v6mr17566147pgm.297.1539635652175;
-        Mon, 15 Oct 2018 13:34:12 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id j2-v6sm16011954pfj.91.2018.10.15.13.34.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 13:34:11 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: [PATCH] drm/i915: Silence build error with UBSAN
-Date:   Mon, 15 Oct 2018 13:34:10 -0700
-Message-Id: <20181015203410.155997-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TAtnSjVe5Oy8huocfAyz3IfRC4sqlvNBpftSm57vUu0=;
+        b=uSbCvRjOmOF3xoqBoXdo07oTYIhJn+J7V40p3XJ/Plf7oNVyl7MbUDk+R2XvINPoM/
+         w830GP6HyWnMdU22gIMori9xeavK1LLLpqZFf3v77QJGAn7dwSU7VIltS8QTSvtZP1ql
+         eI1kYSrTfM4lMBhzIoCm53H59vxl/2x+cKBhigzYoIw9sftJ/2ZWLyrzwieg1q1g98x0
+         MwAXJdiIUQXmCiIX5Tg1P2ZiGYdAiBcefbujidUdh7sFBTJ8SGdFevw92sTGdOw5dqSg
+         RSal0zJJxHnedTcRz1frGKmEf5j4D9AtMN8YIFZKJRivVcM1roGPvwNw/RCd5J+0E/gP
+         5m9g==
+X-Gm-Message-State: ABuFfogn4Of8Ri/m6j7MApzHYLWW+zdSeR4OZ+/HKHnfbU8GYJGYK7p3
+        IoVXNGHGMbLt0C3XtkKjW0QtOwYtM6nO3eYPIBJv
+X-Google-Smtp-Source: ACcGV62DWIcbOKxUfy8fn6CAQBDlWxCdNzBLfEG12UAAd1z6B6vY10IaKW0xnVVNhf+YRBzIW2bPqz24B3vkD7cKv+Y=
+X-Received: by 2002:a0c:bd15:: with SMTP id m21mr18950066qvg.77.1539635725276;
+ Mon, 15 Oct 2018 13:35:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181015192546.15faf3a1@canb.auug.org.au> <20181015182637.GA16445@roeck-us.net>
+ <20181016071240.3f62816d@canb.auug.org.au>
+In-Reply-To: <20181016071240.3f62816d@canb.auug.org.au>
+From:   Rob Herring <robherring2@gmail.com>
+Date:   Mon, 15 Oct 2018 15:35:12 -0500
+Message-ID: <CAL_Jsq+DAEEa6i9xb-9MMSxu-znc9tZLZwFRADqE+kcxQYXrTg@mail.gmail.com>
+Subject: Re: linux-next: Tree for Oct 15
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        linux-next <linux-next@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When I enable UBSAN and compile this driver with clang I get the
-following build error:
+On Mon, Oct 15, 2018 at 3:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Guenter,
+>
+> [Just cc'ing the PPC and devicetree folks]
+>
+> On Mon, 15 Oct 2018 11:26:37 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+> >
+> > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
+> > >
+> > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
+> >
+> > Same here. Interestingly, this only affects little endian pseries
+> > boots; big endian works fine. I'll try to bisect later.
+> >
+> > ALl ppc qemu tests (including big endian pseries) also generate a warning.
+> >
+> > WARNING: CPU: 0 PID: 0 at mm/memblock.c:1301 .memblock_alloc_range_nid+0x20/0x68
+> > Modules linked in:
+> > CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc7-next-20181015 #1
+> > NIP:  c000000000f99198 LR: c000000000f99490 CTR: c000000000bb8364
+> > REGS: c000000001217a78 TRAP: 0700   Not tainted  (4.19.0-rc7-next-20181015)
+> > MSR:  0000000080021000 <CE,ME>  CR: 24000422  XER: 20000000
+> > IRQMASK: 1
+> > GPR00: c000000000f99490 c000000001217d00 c00000000121a500 00000000000000c0
+> > GPR04: 0000000000000000 0000000000000000 0000000000000000 ffffffffffffffff
+> > GPR08: 0000000000000000 00000000000000c0 0000000000000018 00000000000000b7
+> > GPR12: 0000000000000040 c000000000fe7840 0000000000000000 0000000000000000
+> > GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > GPR28: c000000000000304 c000000001262088 00000000000000c0 c000000000fea500
+> > NIP [c000000000f99198] .memblock_alloc_range_nid+0x20/0x68
+> > LR [c000000000f99490] .memblock_alloc_base+0x18/0x48
+> > Call Trace:
+> > [c000000001217d00] [c000000002a00000] 0xc000000002a00000 (unreliable)
+> > [c000000001217d80] [c000000000f99490] .memblock_alloc_base+0x18/0x48
+> > [c000000001217df0] [c000000000f7a274] .allocate_paca_ptrs+0x3c/0x74
+> > [c000000001217e70] [c000000000f78bf0] .early_init_devtree+0x288/0x320
+> > [c000000001217f10] [c000000000f79b6c] .early_setup+0x80/0x130
+> > [c000000001217f90] [c000000000000528] start_here_multiplatform+0x68/0x80
+> >
+> >
+> > sparc images crash, starting with next-20181009. Bisect with
+> > next-201810112 points to the merge of devicetree/for-next, though
+> > devicetree/for-next itself does not have the problem (bisect log
+> > attached below). The crash is in devicetree code.
+> >
+> > Crash logs:
+> > https://kerneltests.org/builders/qemu-sparc64-next/builds/981/steps/qemubuildcommand_1/logs/stdio
+> > https://kerneltests.org/builders/qemu-sparc-next/builds/975/steps/qemubuildcommand_1/logs/stdio
 
-drivers/gpu/drm/i915/intel_engine_cs.o: In function `intel_engine_init_execlist':
-drivers/gpu/drm/i915/intel_engine_cs.c:411: undefined reference to `__compiletime_assert_411'
+The sparc crash appears to be related to changes I made. Looking into it.
 
-from what I can figure out, the compiler can't optimize
-execlists_num_ports() sufficiently enough at compile time to figure out
-that the 'execlists->port_mask = 1' assignment one line above the
-BUILD_BUG_ON_NOT_POWER_OF_2 check will make execlists_num_ports() return
-2. Most likely that's because UBSAN is going to check the load inside
-execlists_num_ports() and that check isn't omitted so the optimizer
-can't optimize away the whole function.
-
-So let's just change this check to cause a build error when the maximum
-number of ports isn't a power of two. It looks like this is similar to
-what's being checked here so this might work well enough.
-
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/gpu/drm/i915/intel_engine_cs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/intel_engine_cs.c b/drivers/gpu/drm/i915/intel_engine_cs.c
-index 217ed3ee1cab..bdf75628ed83 100644
---- a/drivers/gpu/drm/i915/intel_engine_cs.c
-+++ b/drivers/gpu/drm/i915/intel_engine_cs.c
-@@ -463,7 +463,7 @@ static void intel_engine_init_execlist(struct intel_engine_cs *engine)
- 	struct intel_engine_execlists * const execlists = &engine->execlists;
- 
- 	execlists->port_mask = 1;
--	BUILD_BUG_ON_NOT_POWER_OF_2(execlists_num_ports(execlists));
-+	BUILD_BUG_ON_NOT_POWER_OF_2(EXECLIST_MAX_PORTS);
- 	GEM_BUG_ON(execlists_num_ports(execlists) > EXECLIST_MAX_PORTS);
- 
- 	execlists->queue_priority = INT_MIN;
--- 
-Sent by a computer through tubes
-
+Rob
