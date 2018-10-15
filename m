@@ -2,144 +2,138 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B955C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2595C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 275D02086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:34:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77A1D2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:35:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="kiZbH61G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 275D02086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lSMTgtZg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77A1D2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbeJOQSX (ORCPT
+        id S1726744AbeJOQTY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 12:18:23 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:24045 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbeJOQSX (ORCPT
+        Mon, 15 Oct 2018 12:19:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:57158 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbeJOQTY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 12:18:23 -0400
-X-IronPort-AV: E=Sophos;i="5.54,384,1534834800"; 
-   d="scan'208";a="21244466"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 15 Oct 2018 01:34:07 -0700
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Mon, 15 Oct 2018 01:34:06 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OfAvf4G31pbiphghC1QwLrzHiXgGtGRd8gQ0jljldi4=;
- b=kiZbH61GTJZCLeHSkJBmhkZJpIFiY6066tXIhYtBwyj+dq7NB1cKcdm+qJTyMmanidN2sxF2SSjPIBgFzWCa7tjz8DhxmCdDE8898y8BMSOVjIOzE+iE7Z0ATgslJEHeH1qXzePVp3cS2mujoZxGiWtjdaRd3Ht8KYhyaC/DNao=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1538.namprd11.prod.outlook.com (10.172.22.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.23; Mon, 15 Oct 2018 08:34:05 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::c157:ea7:fc3d:f9a4]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::c157:ea7:fc3d:f9a4%10]) with mapi id 15.20.1228.027; Mon, 15 Oct 2018
- 08:34:05 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <stern@rowland.harvard.edu>, <gregkh@linuxfoundation.org>,
-        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <Cristian.Birsan@microchip.com>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <Tudor.Ambarus@microchip.com>
-Subject: [PATCH] usb: host: ohci-at91: fix request of irq for optional gpio
-Thread-Topic: [PATCH] usb: host: ohci-at91: fix request of irq for optional
- gpio
-Thread-Index: AQHUZGHU492iK0z130O7y5BmMTMr0g==
-Date:   Mon, 15 Oct 2018 08:34:04 +0000
-Message-ID: <20181015083344.4157-1-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1P195CA0026.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:802:5a::15) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1538;6:WYPzMbTLe6jj0sMFLavwaaakm5oetZykrRT83tHLf/IK8+TeeuxL4kCqMfHUhsI8o+Nk0+vEmQH5f8bmJ1IepKbc3igXMG1sZKNs02RzKIHT+LqfkN1IvF8XA6kxTukSs1rrxHa3cA8JUgzVdmrs17itituHRBj3XGZwG4NC7J6D9BxkA47SB0J4sfJQtWEeEzNounantwvI14qWbj22xa6+5BaM6PUTwUMivViiNuBqYCJfyYRyovS8hD4RruLZSQLkTq49RnvrAuboDl9horUERken6WG5cLborz4aU1mIxRb+P+1u3/qEmKCYx+nBtkuvvsdoIZvcw4HIu1MdcxT+q+AaCd33Z9ihaiOY+exd4s1g9YTqD6Wz1geFGe93emRWpRXYNNM5B1/aLSUJtTScE8R914ZD4oNSjP6YCPONWe5sCmlLU0Y0zUNNssHtnWRYB3E19hzNDq2831cgZg==;5:rQer1DBKLkXzFKL2cJOLfOJWkTLG02koVk7sAG0+ERlW3HvrgO3L7KVN/6dRkmx3zZ221Fikv12rMLYdPEjm0jMM4SBGG9XXYGUTQA6eTIXiGaYRQvreMqjjwwQ+O8DjAubuoKrY9MOseqAnNOlPKCWiv+NkSoL86r0LAkfzDqc=;7:OqVd1fPRRtlltanLta6Uoh2LHjGD5V2iDYTFhax9cTnF5DF7dFYbFeiOqupM8zem9m3h08b44JFaU3r3qqCVTRS6oVGdqp/SFuaEPQn+JuGqXT9zuDdznaPULYl8paiBVgaH788XhRxKRFPUw1QuJVb0B68Mkvx6YwzsAWYWJKL6HDtc5mMfuNAnnaMq1UsQW3Ti/9YZ2+6yQt4jeUPbzpQzXViPrtKjV1cVhxLZPdP4UC17eU3mYRQhVaJCHqbX
-x-ms-office365-filtering-correlation-id: 8621d44b-3085-4dd6-dfbd-08d63278f717
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1538;
-x-ms-traffictypediagnostic: BN6PR11MB1538:
-x-microsoft-antispam-prvs: <BN6PR11MB1538BBBA05C6F9C62FA1D564F0FD0@BN6PR11MB1538.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(84791874153150);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:BN6PR11MB1538;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1538;
-x-forefront-prvs: 0826B2F01B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(346002)(39860400002)(366004)(199004)(189003)(107886003)(36756003)(97736004)(1857600001)(53936002)(14454004)(966005)(6512007)(102836004)(6306002)(81156014)(6486002)(8676002)(478600001)(106356001)(2616005)(486006)(2171002)(186003)(26005)(81166006)(476003)(105586002)(7736002)(316002)(305945005)(2906002)(72206003)(8936002)(6436002)(68736007)(71190400001)(71200400001)(25786009)(5250100002)(2501003)(2201001)(6116002)(110136005)(2900100001)(66066001)(14444005)(5660300001)(3846002)(4326008)(1076002)(99286004)(52116002)(256004)(86362001)(6506007)(386003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1538;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: pwpbqqM0xNKiV4LkIquKdqaTwTIE1bwC7GmFHS5yjwUmSVUQCd5xAwpzfhL76QKaMH5rnQXvq1+hu5x5wXdsbEBeM3lv/4mBZql73l3nTTEf30X0eTnzI8wFckn+qt3fqLGw5mgKF4giWA2tI29MJ9Qr0cOj3BfefX3Bv7xHD9Ypun4WTPoozHXVcjnHJIXoMQayGSHhrKAxa3fvfk+GnRIaqBL1Lwk7gcbplHU7S/w73speR6TVyH7MI35Jz1Aw2IZaDqgrQlM7+HGme1qTxUl2EDuybJNxQHhbc3fS7fvY+8iBNPQWqUih7qEF8yxdKwG34nr+NdZjg36Zq8noXXQCwYn8z7eIYqhiH+45yx4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 15 Oct 2018 12:19:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KAQMG3TAPiKKrIORE6lRzu0XUDiibetv0f30TGiPYbk=; b=lSMTgtZg2H95NyN78jCOuVx6r
+        x40i/5XJTeQgcAFItWlP2bSK2fR00vUIfEHFZpdUrhjnVyOMIYkOL/H0pYizAdMe10mCEJr1WLhDz
+        l31yyiNDs3vhUs5DrW534HbyAr30QhNXKaFcYBlW4VhEUxlpRmgrndSLjM8j3ZSKQ2Jkg8zFITOil
+        OXo2fjatYNzZ9Upx2ZE5Jm8yezTIlk3dkNg2NkX3sWT4iigA6RkLw4Ped1KF0XI+6/x1FL7agWVbZ
+        GjBbHT3Km95FwOhc6ggpVS7fh/nGj+MtQYXcrkYGeoqy7om/golsccrGVsej8ZZWQGc0dZ8yXfwPy
+        wc5NB1DAw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gByKx-0006SS-Cs; Mon, 15 Oct 2018 08:34:51 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E2E8920158F79; Mon, 15 Oct 2018 10:34:48 +0200 (CEST)
+Date:   Mon, 15 Oct 2018 10:34:48 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        songliubraving@fb.com, eranian@google.com, tglx@linutronix.de,
+        mark.rutland@arm.com, megha.dey@intel.com, frederic@kernel.org
+Subject: Re: [RFC][PATCH] perf: Rewrite core context handling
+Message-ID: <20181015083448.GN9867@hirez.programming.kicks-ass.net>
+References: <20181010104559.GO5728@hirez.programming.kicks-ass.net>
+ <3a738a08-2295-a4e9-dce7-a3e2b2ad794e@linux.intel.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8621d44b-3085-4dd6-dfbd-08d63278f717
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2018 08:34:05.0031
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1538
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3a738a08-2295-a4e9-dce7-a3e2b2ad794e@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-atmel,oc-gpio is optional. Request it's irq only when atmel,oc is set
-in device tree.
+On Mon, Oct 15, 2018 at 10:26:06AM +0300, Alexey Budankov wrote:
+> Hi,
+> 
+> On 10.10.2018 13:45, Peter Zijlstra wrote:
+> > Hi all,
+> > 
+> > There have been various issues and limitations with the way perf uses
+> > (task) contexts to track events. Most notable is the single hardware PMU
+> > task context, which has resulted in a number of yucky things (both
+> > proposed and merged).
+> > 
+> > Notably:
+> > 
+> >  - HW breakpoint PMU
+> >  - ARM big.little PMU
+> >  - Intel Branch Monitoring PMU
+> > 
+> > Since we now track the events in RB trees, we can 'simply' add a pmu
+> > order to them and have them grouped that way, reducing to a single
+> > context. Of course, reality never quite works out that simple, and below
+> > ends up adding an intermediate data structure to bridge the context ->
+> > pmu mapping.
+> > 
+> > Something a little like:
+> > 
+> >               ,------------------------[1:n]---------------------.
+> >               V                                                  V
+> >     perf_event_context <-[1:n]-> perf_event_pmu_context <--- perf_event
+> >               ^                      ^     |                     |
+> >               `--------[1:n]---------'     `-[n:1]-> pmu <-[1:n]-'
+> > 
+> > This patch builds (provided you disable CGROUP_PERF), boots and survives
+> > perf-top without the machine catching fire.
+> > 
+> > There's still a fair bit of loose ends (look for XXX), but I think this
+> > is the direction we should be going.
+> > 
+> > Comments?
+> > 
+> > Not-Quite-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  arch/powerpc/perf/core-book3s.c |    4 
+> >  arch/x86/events/core.c          |    4 
+> >  arch/x86/events/intel/core.c    |    6 
+> >  arch/x86/events/intel/ds.c      |    6 
+> >  arch/x86/events/intel/lbr.c     |   16 
+> >  arch/x86/events/perf_event.h    |    6 
+> >  include/linux/perf_event.h      |   80 +-
+> >  include/linux/sched.h           |    2 
+> >  kernel/events/core.c            | 1412 ++++++++++++++++++++--------------------
+> >  9 files changed, 815 insertions(+), 721 deletions(-)
+> 
+> Rewrite is impressive however it doesn't result in code base reduction as it is.
 
-devm_gpiod_get_index_optional returns NULL if -ENOENT. Check its
-return value for NULL before error, because it is more probably that
-atmel,oc is not set.
+Yeah.. that seems to be nature of these things ..
 
-This fixes the following errors on boards where atmel,oc is not set in
-device tree:
-[    0.960000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" =
-IRQ
-[    0.960000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" =
-IRQ
-[    0.970000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" =
-IRQ
+> Nonetheless there is a clear demand for per pmu events groups tracking and rotation 
+> in single cpu context (HW breakpoints, ARM big.little, Intel LBRs) and there is 
+> a supply thru groups ordering on RB-tree.
+> 
+> This might be driven into the kernel by some new Perf features that would base on 
+> that RB-tree groups ordering or by refactoring of existing code but in the way it 
+> would result in overall code base reduction thus lowering support cost.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
----
-Based on https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git,
-usb-next branch.
+If you have a concrete suggestion on how to reduce complexity? I tried,
+but couldn't find any (without breaking something).
 
- drivers/usb/host/ohci-at91.c | 2 ++
- 1 file changed, 2 insertions(+)
+The active lists and pmu_ctx_list could arguably be replaced with
+(slower) iteratons over the RB tree, but you'll still need the per pmu
+nr_events/nr_active counts to determine if rotation is required at all.
 
-diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
-index e98673954020..ec6739ef3129 100644
---- a/drivers/usb/host/ohci-at91.c
-+++ b/drivers/usb/host/ohci-at91.c
-@@ -551,6 +551,8 @@ static int ohci_hcd_at91_drv_probe(struct platform_devi=
-ce *pdev)
- 		pdata->overcurrent_pin[i] =3D
- 			devm_gpiod_get_index_optional(&pdev->dev, "atmel,oc",
- 						      i, GPIOD_IN);
-+		if (!pdata->overcurrent_pin[i])
-+			continue;
- 		if (IS_ERR(pdata->overcurrent_pin[i])) {
- 			err =3D PTR_ERR(pdata->overcurrent_pin[i]);
- 			dev_err(&pdev->dev, "unable to claim gpio \"overcurrent\": %d\n", err);
---=20
-2.9.4
-
+And like you know, performance is quite important here too. I'd love to
+reduce complexity while maintaining or improve performance, but that
+rarely if ever happens :/
