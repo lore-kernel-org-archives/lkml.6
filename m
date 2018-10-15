@@ -2,174 +2,161 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87312C7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D88BC7112B
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:33:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40D7920853
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:27:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/8WXKOl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D7920853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F3633205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:33:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3633205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbeJORMI (ORCPT
+        id S1726602AbeJORR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 13:12:08 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:40147 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbeJORMH (ORCPT
+        Mon, 15 Oct 2018 13:17:57 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49608 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726273AbeJORR4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 13:12:07 -0400
-Received: by mail-yw1-f66.google.com with SMTP id l79-v6so7269661ywc.7
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 02:27:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wi9OIUwCyaGNXr9RINhtczFfxD8zJ7w3UhFjmeFiBgM=;
-        b=K/8WXKOlN7aHIBzw1ueU3D6hefhJDo9Sd6mARBZmToOCgF2G7fc6vuDEAtvL76FnJi
-         miLOaKbmh4l/JdT8VD+hvuCfll2aaxrLnIPBdinIC5G9eGoUA+DJFXr0LgGscrDHr/+J
-         tgEIRcQQHXco41Fwrbz9fvrjN9/4986dKF1JEv1cOukEv06bSmVV1X5ojbreCEJTM7zD
-         Y6/vse/xc4mqo1FmamAhbRnKXEOlo3D7OmemrWUI/3eOuKoMbB1/dlAv7VOolYgg4H8y
-         yFGj+RUsX5KRMiXFRpaNBmxPvfMTVVYsOPFTcqDBb1onLXcCo9kRONQ2QJbcABqvjxmu
-         gNRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wi9OIUwCyaGNXr9RINhtczFfxD8zJ7w3UhFjmeFiBgM=;
-        b=XG0uS7QsaVh64t5gDyaGhBCHRtu6pqh/c4hKnkC+bX432lCGU1/j8eC6OTTGq7wBTg
-         1dyI0nbuM0UcciOtFwp/kJdaiLkgQnBEK1hS+sYmUfE9+YZ9yalxn01sHSgfSbUeZIFx
-         By8rocHz56nAEIRE9wTS0NF+IEkJBuMWavo1dblaWveCr3FRsa38XiDHJB8NH4FpkMok
-         v9is7+l0UBYlvYiHtqD8skAXp56NnU+RdURIGBHwOGB22LLVMuaSmjIR6V8cckN3JxOv
-         RGMte+8KH7Fa1iUVe+54Pv/AxOZ88S4ll3ovxstaeoUBbavedllBUif2AQ9Fd3b3TlDB
-         n9YQ==
-X-Gm-Message-State: ABuFfohOcrtQRnXOu4UiKy7vmKQeAmldBG0mkhAkgr30m9wHjvCM4WFH
-        iVkgg8WHCtTwhphGib8SUN22BPhMsZ3XZ83EYHWWK5z1
-X-Google-Smtp-Source: ACcGV60MBNhjDzYo3opM/KchljwUkZkXuMHn7fVxOT4uiCs8vrWd+TacxTEJEIy/y71ea1qoxatKA4jX4nSrVRfoFII=
-X-Received: by 2002:a0d:d4c9:: with SMTP id w192-v6mr8509848ywd.211.1539595660736;
- Mon, 15 Oct 2018 02:27:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180930065100.GL15893@shao2-debian> <CAOQ4uxiHkufAtt87bMs9n-0sFxJSHsBxDX6jn8v28vkvy=a_qQ@mail.gmail.com>
- <CAOQ4uxgqBgYiGpf_6zrZk=L2bAQsujzcFE0ZzUXFHu8AnHSk7g@mail.gmail.com>
- <20181001092549.GC3913@quack2.suse.cz> <20181015075101.GE28215@shao2-debian>
-In-Reply-To: <20181015075101.GE28215@shao2-debian>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 15 Oct 2018 12:27:28 +0300
-Message-ID: <CAOQ4uxiNfeNaB-9ZNZki-cLK4ukMpJ6YL+R1Xe6Sm34efXX3qA@mail.gmail.com>
-Subject: Re: [LKP] [fsnotify] 60f7ed8c7c: will-it-scale.per_thread_ops -5.9% regression
-To:     rong.a.chen@intel.com
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, LKP <lkp@01.org>
+        Mon, 15 Oct 2018 13:17:56 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9F9IhiK059878
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 05:33:28 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n4ny0pb44-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 05:33:28 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <abdhalee@linux.vnet.ibm.com>;
+        Mon, 15 Oct 2018 03:33:27 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 15 Oct 2018 03:33:25 -0600
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9F9XO3G25690154
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 15 Oct 2018 02:33:24 -0700
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C20166E04E;
+        Mon, 15 Oct 2018 03:33:24 -0600 (MDT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CCD6D6E04C;
+        Mon, 15 Oct 2018 03:33:22 -0600 (MDT)
+Received: from [9.124.35.84] (unknown [9.124.35.84])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 15 Oct 2018 03:33:22 -0600 (MDT)
+Subject: Re: [PATCH] powerpc/64: properly initialise the stackprotector
+ canary on SMP.
+From:   Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Mon, 15 Oct 2018 15:03:21 +0530
+In-Reply-To: <a2694b8ffeb6c52d1c755d8a7bfaac689c4e1c6d.1539423893.git.christophe.leroy@c-s.fr>
+References: <a2694b8ffeb6c52d1c755d8a7bfaac689c4e1c6d.1539423893.git.christophe.leroy@c-s.fr>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18101509-0012-0000-0000-000016C8A148
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009879; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01102946; UDB=6.00570861; IPR=6.00882998;
+ MB=3.00023760; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-15 09:33:27
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101509-0013-0000-0000-000054C321CA
+Message-Id: <1539596001.28358.1.camel@abdul.in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-15_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810150088
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 10:50 AM Rong Chen <rong.a.chen@intel.com> wrote:
-[...]
-> the patch seems not work.
->
-> tests: 1
-> testcase/path_params/tbox_group/run: will-it-scale/16-thread-unlink2-performance/lkp-bdw-ep3d
->
->  commit:
->    1e6cb72399 ("fsnotify: add super block object type")
->    298cd0b2f4 (the below patch)
->
-> 1e6cb72399fd58b3  298cd0b2f481d9cc2e2cd5bfd3
-> ----------------  --------------------------
->          %stddev      change         %stddev
->              \          |                \
->     103.21              -5%      98.54        will-it-scale.time.user_time
->      46266              -6%      43516        will-it-scale.time.involuntary_context_switches
->      54483              -7%      50610        will-it-scale.per_thread_ops
->     871749              -7%     809765        will-it-scale.workload
+On Sat, 2018-10-13 at 09:45 +0000, Christophe Leroy wrote:
+> commit 06ec27aea9fc ("powerpc/64: add stack protector support")
+> doesn't initialise the stack canary on SMP secondary CPU's paca,
+> leading to the following false positive report from the
+> stack protector.
+> 
+> smp: Bringing up secondary CPUs ...
+> Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: __schedule+0x978/0xa80
+> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.19.0-rc7-next-20181010-autotest-autotest #1
+> Call Trace:
+> [c000001fed5b3bf0] [c000000000a0ef3c] dump_stack+0xb0/0xf4 (unreliable)
+> [c000001fed5b3c30] [c0000000000f9d68] panic+0x140/0x308
+> [c000001fed5b3cc0] [c0000000000f9844] __stack_chk_fail+0x24/0x30
+> [c000001fed5b3d20] [c000000000a2c3a8] __schedule+0x978/0xa80
+> [c000001fed5b3e00] [c000000000a2c9b4] schedule_idle+0x34/0x60
+> [c000001fed5b3e30] [c00000000013d344] do_idle+0x224/0x3d0
+> [c000001fed5b3ec0] [c00000000013d6e0] cpu_startup_entry+0x30/0x50
+> [c000001fed5b3ef0] [c000000000047f34] start_secondary+0x4d4/0x520
+> [c000001fed5b3f90] [c00000000000b370] start_secondary_prolog+0x10/0x14
+> 
+> This patch properly initialises the stack_canary of the secondary
+> idle tasks.
+> 
+> Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+> Fixes: 06ec27aea9fc ("powerpc/64: add stack protector support")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/kernel/smp.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+> index 61c1fadbc644..e774d3bf3a03 100644
+> --- a/arch/powerpc/kernel/smp.c
+> +++ b/arch/powerpc/kernel/smp.c
+> @@ -34,6 +34,7 @@
+>  #include <linux/topology.h>
+>  #include <linux/profile.h>
+>  #include <linux/processor.h>
+> +#include <linux/random.h>
+> 
+>  #include <asm/ptrace.h>
+>  #include <linux/atomic.h>
+> @@ -810,9 +811,16 @@ static void cpu_idle_thread_init(unsigned int cpu, struct task_struct *idle)
+>  {
+>  	struct thread_info *ti = task_thread_info(idle);
+> 
+> +#ifdef CONFIG_STACKPROTECTOR
+> +	idle->stack_canary = get_random_canary();
+> +#endif
+> +
+>  #ifdef CONFIG_PPC64
+>  	paca_ptrs[cpu]->__current = idle;
+>  	paca_ptrs[cpu]->kstack = (unsigned long)ti + THREAD_SIZE - STACK_FRAME_OVERHEAD;
+> +#ifdef CONFIG_STACKPROTECTOR
+> +	paca_ptrs[cpu]->canary = idle->stack_canary;
+> +#endif
+>  #endif
+>  	ti->cpu = cpu;
+>  	secondary_ti = current_set[cpu] = ti;
 
-Thanks for testing my patch. As Jan commented, it is not surprising
-that the patch
-makes no difference.
+Thank you Christophe for the fix, Machine boots fine with above patch.
 
-I would like to clarify a few things about how you ran the test before
-I continue to
-investigate:
+Reported-and-tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
 
-1. When I ran the workload I saw that it writes files to whatever filesystem is
-    mounted on /tmp. Can I assume you have tmpfs mounted at /tmp?
 
-2. Can you confirm that there is no fanotify mount mark on the /tmp mount?
-    for example:
-# ls -l /proc/*/fd/*|grep fanotify
-lrwx------ 1 root root 64 Oct 15 08:36 /proc/3927/fd/3 -> anon_inode:[fanotify]
-# grep fanotify.mnt_id /proc/3927/fdinfo/3
-fanotify mnt_id:33 mflags:0 mask:3b ignored_mask:0
-# grep ^$(( 0x33 )) /proc/3927/mountinfo
-51 16 0:27 / /tmp rw,relatime shared:18 - tmpfs tmpfs rw
+-- 
+Regard's
 
-3. I saw that LKP caches the results for a specific commit
-    (i.e. 1e6cb72399 ("fsnotify: add super block object type")).
-Did you use cached results when comparing to patch or did you re-run the
-test with the "good" commit? The reason I am asking is because
-sometimes performance result may differ between boots even with no
-kernel code change.
-Where all the "good" bisect samples taken from the same boot/machine?
-or different boots/machines?
+Abdul Haleem
+IBM Linux Technology Centre
 
-4. If this regression is reliably reproduced, then our best bet is on the
-cost of access to s_fsnotify_{marks,mask} fields.
-The patch below moves those frequently accessed fields near the
-frequently accessed fields s_time_gran,s_writers and moves
-the seldom accessed fields s_id,s_uuid further away.
-Could you please try this patch?
 
-Thanks,
-Amir.
 
----
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 25a449f37bb1..37c19c601979 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1393,9 +1393,6 @@ struct super_block {
-
-        struct sb_writers       s_writers;
-
--       char                    s_id[32];       /* Informational name */
--       uuid_t                  s_uuid;         /* UUID */
--
-        void                    *s_fs_info;     /* Filesystem private info */
-        unsigned int            s_max_links;
-        fmode_t                 s_mode;
-@@ -1403,6 +1400,14 @@ struct super_block {
-        /* Granularity of c/m/atime in ns.
-           Cannot be worse than a second */
-        u32                     s_time_gran;
-+#ifdef CONFIG_FSNOTIFY
-+       __u32                   s_fsnotify_mask;
-+       struct fsnotify_mark_connector __rcu    *s_fsnotify_marks;
-+#endif
-+
-+       /* Seldom accessed fields: */
-+       char                    s_id[32];       /* Informational name */
-+       uuid_t                  s_uuid;         /* UUID */
-
-        /*
-         * The next field is for VFS *only*. No filesystems have any business
-@@ -1464,11 +1469,6 @@ struct super_block {
-
-        spinlock_t              s_inode_wblist_lock;
-        struct list_head        s_inodes_wb;    /* writeback inodes */
--
--#ifdef CONFIG_FSNOTIFY
--       __u32                   s_fsnotify_mask;
--       struct fsnotify_mark_connector __rcu    *s_fsnotify_marks;
--#endif
- } __randomize_layout;
