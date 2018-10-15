@@ -2,137 +2,105 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69832C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDC4C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 285B12083C
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:49:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 285B12083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 957AE20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:56:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="MfhUptbA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957AE20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbeJOSd4 (ORCPT
+        id S1726553AbeJOSk4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 14:33:56 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:44912 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726273AbeJOSd4 (ORCPT
+        Mon, 15 Oct 2018 14:40:56 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46607 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeJOSkz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 14:33:56 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9FAn7Hn028178;
-        Mon, 15 Oct 2018 05:49:07 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail3.cirrus.com ([87.246.76.56])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2n3es3t35e-1;
-        Mon, 15 Oct 2018 05:49:07 -0500
-Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
-        by mail3.cirrus.com (Postfix) with ESMTP id A8096611C8B0;
-        Mon, 15 Oct 2018 05:51:22 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 15 Oct 2018
- 11:49:06 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9FAn5qk011136; Mon,
- 15 Oct 2018 11:49:05 +0100
-Date:   Mon, 15 Oct 2018 11:49:05 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     <broonie@kernel.org>, <lee.jones@linaro.org>,
-        <linus.walleij@linaro.org>, <mturquette@baylibre.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v2 3/5] clk: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181015104905.GF1653@imbe.wolfsonmicro.main>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-3-ckeepax@opensource.cirrus.com>
- <153924124658.207691.10370075148426001371@swboyd.mtv.corp.google.com>
- <20181011132602.GD1653@imbe.wolfsonmicro.main>
- <153935999691.5275.1587207165396958375@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <153935999691.5275.1587207165396958375@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1810150100
+        Mon, 15 Oct 2018 14:40:55 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n11-v6so20668578wru.13
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 03:56:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=58QXr0x2Lx+3XU5gGU63UorfWKmPJJyb27d/xXFwcJM=;
+        b=MfhUptbASzjUKecBsOF3qXjEGyl4MgL1vKGbVrg7mpUawEseRKkC9vmyEUItW2vOS9
+         8zmBe35S9fwkep0a/GT/mObmQBAODFR/Km0Qjz2psqSJZhxIN6w+JVA73PoAHu7I6lYB
+         DzJPMlwSxT9oefFtKkH/W40rnbg0XMCba9ul7B54K3qEWQt22ePjC74UdeaOxh6IA/aY
+         Kp7dASXF03MSQSW2V8hXtDwRBiX4vFtwbSlY17Z9rkF9YFHr35aL4e9dJoLDU3eBbTit
+         ws4go9VqblFFZWeAUZQExpUJuCRcVMGWDMUdRjyrg9xLeKLP+kxaYt12nZdMejgqrwkY
+         JKrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=58QXr0x2Lx+3XU5gGU63UorfWKmPJJyb27d/xXFwcJM=;
+        b=cYtccbQfyNa40RATBY9PduK2YaJOsQOV0qpiZYJ0p/5dV96pITL25BQeztKjxhWCcF
+         LFA+khxi+SvuowjY07vXc3+mJPId2dZcYkiJMAvqva3vVrVxqilZ6xUmxAmD5YjY/n3+
+         u3TGncGJbJnBrINY338ZAtxsI9TzASUT771Aye6YS5+D6tgI/LvEk29/2Mm+Q+HcChkh
+         tGqLaCpx0hcjOm+lbgZB7JJBOY/e+6uWo85fRILvFj7tUh8nNuXT4VjDGNcvedndNv0H
+         Cv+DvUTB6oTUx8cngp6EpaLQj+n9ZD6+DCfpi5D+1RtwFy8hl9Mnp/SfGDzOtNyz4Op6
+         OUig==
+X-Gm-Message-State: ABuFfoiJEeyZyJxQoMU470tVh4IGVl/0dmbqp1Myitky4HziFD6h7qBy
+        pt9HhqliCWt0hMC0jEyMlz/fIw==
+X-Google-Smtp-Source: ACcGV60F7Ek+XyZMikpcKveXj30V9BHTmCDNoMi2YfLR54iXPHFNhxBg9fb8zozTUVOfltKkiqolBw==
+X-Received: by 2002:adf:db45:: with SMTP id f5-v6mr14252318wrj.237.1539600970484;
+        Mon, 15 Oct 2018 03:56:10 -0700 (PDT)
+Received: from localhost.localdomain (u-086-c100.eap.uni-tuebingen.de. [134.2.86.100])
+        by smtp.gmail.com with ESMTPSA id a11-v6sm14236484wrp.3.2018.10.15.03.56.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 03:56:09 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     keescook@chromium.org, linux-kernel@vger.kernel.org
+Cc:     ebiederm@xmission.com, mcgrof@kernel.org,
+        akpm@linux-foundation.org, joe.lawrence@redhat.com,
+        longman@redhat.com, linux@dominikbrodowski.net,
+        viro@zeniv.linux.org.uk, Christian Brauner <christian@brauner.io>
+Subject: [PATCH v1 0/2] sysctl: cap file-max value at ULONG_MAX
+Date:   Mon, 15 Oct 2018 12:55:42 +0200
+Message-Id: <20181015105544.4395-1-christian@brauner.io>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 08:59:56AM -0700, Stephen Boyd wrote:
-> Quoting Charles Keepax (2018-10-11 06:26:02)
-> > On Thu, Oct 11, 2018 at 12:00:46AM -0700, Stephen Boyd wrote:
-> > > Quoting Charles Keepax (2018-10-08 06:25:40)
-> > > > +struct lochnagar_clk_priv {
-> > > > +       struct device *dev;
-> > > > +       struct lochnagar *lochnagar;
-> > > 
-> > > Is this used for anything besides getting the regmap? Can you get the
-> > > pointer to the parent in probe and use that to get the regmap pointer
-> > > from dev_get_remap() and also use the of_node of the parent to register
-> > > a clk provider? It would be nice to avoid including the mfd header file
-> > > unless it's providing something useful.
-> > > 
-> > 
-> > It is also used to find out which type of Lochnagar we have
-> > connected, which determines which clocks we should register. I
-> 
-> Can that be done through some device ID? So the driver can be untangled
-> from the MFD part.
-> 
-> > could perhaps pass that using another mechanism but we would
-> > still want to include the MFD stuff to get the register
-> > definitions. So this approach seems simplest.
-> 
-> Can the register definitions be moved to this clk driver?
-> 
-> Maybe you now get the hint, but I'd really like to be able to merge and
-> compile the clk driver all by itself without relying on the parent MFD
-> device to provide anything at compile time.
-> 
+Hey,
 
-If you feel strongly but since the MFD needs to hold the regmap
-(which needs to define the read/volatile regs and defaults)
-these will need to be duplicate defines and personally i would
-rather only have one copy as it makes updating things much less
-error prone.
+Here is v1 of this patchset. Changelogs are in the individual commits.
 
-> > > > +       if (lclk->regmap.dir_mask) {
-> > > > +               ret = regmap_update_bits(regmap, lclk->regmap.cfg_reg,
-> > > > +                                        lclk->regmap.dir_mask,
-> > > > +                                        lclk->regmap.dir_mask);
-> > > > +               if (ret < 0) {
-> > > > +                       dev_err(priv->dev, "Failed to set %s direction: %d\n",
-> > > 
-> > > What does direction mean?
-> > > 
-> > 
-> > Some of the clocks can both generate and receive a clock. For
-> > example the PSIA (external audio interface) MCLKs, the attached
-> > device could be expecting or providing a master audio clock. If
-> > the user assigns a parent to the clock we assume the attached
-> > device is providing a clock to us, otherwise we assume we are
-> > providing the clock.
-> 
-> And this directionality is determined by dir_mask? It would be great if
-> this sort of information was in the commit text or in a comment in the
-> driver so we know what's going on here.
-> 
+Currently, when writing
 
-No problem will make this more clear.
+echo 18446744073709551616 > /proc/sys/fs/file-max
 
-Thanks,
-Charles
+/proc/sys/fs/file-max will overflow and be set to 0. That quickly
+crashes the system. Let's detect the overflow and set to ULONG_MAX in
+this case effectively capping the value.
+
+The patch tries to ensure that there is no other user visible change in
+behavior for other values. Only when a maximum value is set for a
+specific sysctl will it be capped on overflow. The details are outlined
+in the commit message of the first commit.
+
+(This patchset is in reference to https://lkml.org/lkml/2018/10/11/585.)
+
+Thanks!
+Christian
+
+
+Christian Brauner (2):
+  sysctl: cap to ULONG_MAX in proc_get_long()
+  sysctl: handle overflow for file-max
+
+ kernel/sysctl.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
+
+-- 
+2.17.1
+
