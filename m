@@ -2,234 +2,233 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 759E9C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12218C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EAB02064E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:52:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EAB02064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 969432064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:00:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Sz4PGOw/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 969432064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbeJOPg0 (ORCPT
+        id S1726636AbeJOPov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 11:36:26 -0400
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:38316 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726456AbeJOPg0 (ORCPT
+        Mon, 15 Oct 2018 11:44:51 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45232 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbeJOPou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 11:36:26 -0400
-Received: by mail-ot1-f44.google.com with SMTP id l1so18000523otj.5;
-        Mon, 15 Oct 2018 00:52:18 -0700 (PDT)
+        Mon, 15 Oct 2018 11:44:50 -0400
+Received: by mail-ed1-f65.google.com with SMTP id v18-v6so16901821edq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 01:00:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XZYQIu5KjBiYApMiSsuPuMTLKZpS99gpw0CkoqA95eg=;
+        b=Sz4PGOw/aoB+adXZXEf7MOPH+7RtvLNAkkMrDFDAGx+KexQDuWYgktprbPn8vm4NkW
+         7/ngp0dW9dkeqhfXBik74IpMsaTUslwk/w4Tb4WjleZKs7OIkChb3poqfRCHLqI9P/rY
+         5QFjj1xuJRCzC0H6WON3LrCTiJa6eWu94xk44=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=851BLYopi0B5hF5DLdZYQjBsFAeBNpr5HpY1/QerRmY=;
-        b=TDJXOsgpI18Qn0ZuZH7oaA4m0C5ZgFkxaJOvmc2VcYEx9eKf6rlta5rlXRKELdim05
-         3e8uufYARd+PmiixehbgwDlUFEVPkT5nYWBUBlrgRPl6j79/IdNrwsFoUqg31iQX12EW
-         CNZdY8jEqocJ0/nLT1jxhaJ4pUaCyrvr2amfvfHyiQh8818hO8SlnKaP2R+bBXJQLd83
-         UoStTUmj0wZwvlfIiuATlavQOSq1zoun/BMDnrsC05iqVj7vrRV5c9gyBvKI4d2Jt1Ox
-         JCowjL0eJVKeQclRnA8X1px392qDzxCGEeOgatspyGGyr+JFMVgdCu1LuX2QYE12Szn+
-         Qt2w==
-X-Gm-Message-State: ABuFfojMVOTWPm6XtAwoUEt88Q5bF/RjjbVF2p3SOrIG9SzLiRA3Um3k
-        WvMAUYmSL663RFrcCpLWq/jRwCzqL8nf8ePw3fU=
-X-Google-Smtp-Source: ACcGV61yaHzRxlREA6Wcc8j/72ApNvSCWUheMdoPGGCfpxeg2LAJ8+CedD60s8yXkpto7QdlKwgjLYeO1p9eIUewNS0=
-X-Received: by 2002:a9d:63:: with SMTP id 90-v6mr539311ota.244.1539589938061;
- Mon, 15 Oct 2018 00:52:18 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=XZYQIu5KjBiYApMiSsuPuMTLKZpS99gpw0CkoqA95eg=;
+        b=taYf0VV0eRW/GbLsEefcFn5Ocl+t5OE0g2tFRgDme6vTNkDMEq04YKD5gv/Sez4Eks
+         RuvqkFE/me31D4R0iNlt2P2cwoXxcHTn7FJMNBV15FBTGOKRXKVMpX6j3+p185DmdZ5Y
+         ufLVFfTm7MayWMPvE1D+OSSFdhloYS7f+FZkfyOp3EKmSxIjZT2OZ1ypFK5FnQb91aIr
+         38T2N7YoGg+CULr9IX5y42tuVEMJ1+UsY1zJP7pPAcDOK9eXBl9b+VkU0OlQ3CuZULmY
+         FhNmJW+DFWtcUAkAPvW31pnlf5vkIkcoXcYWxwtmSWAbFt0+gHhJt63SOhLkadTOCJNR
+         QBhg==
+X-Gm-Message-State: ABuFfogXcC1mzo7kwoUEiP84L1NuXD+fiP4KyCvl4NTHEzI5MkYTHcAL
+        5s55509gXe9U55III6JLjpCnFg==
+X-Google-Smtp-Source: ACcGV63zIkgTn0bTVk3sgiNlU9CI/3O87oa+dPIsl33hYfb5WiIzUoOeSJP7CXT6MPuQ4lspGpokfg==
+X-Received: by 2002:a05:6402:6d8:: with SMTP id n24mr21887071edy.99.1539590440479;
+        Mon, 15 Oct 2018 01:00:40 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id m14-v6sm3276832edr.19.2018.10.15.01.00.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 01:00:35 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 10:00:33 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/sti: clean up after drm_atomic_helper_shutdown rework
+Message-ID: <20181015080033.GQ31561@phenom.ffwll.local>
+Mail-Followup-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20181012094639.1585-1-benjamin.gaignard@linaro.org>
+ <20181012094639.1585-2-benjamin.gaignard@linaro.org>
 MIME-Version: 1.0
-References: <000e01d4638a$91a20c60$b4e62520$@net>
-In-Reply-To: <000e01d4638a$91a20c60$b4e62520$@net>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 15 Oct 2018 09:52:02 +0200
-Message-ID: <CAJZ5v0jieqjQXdYaP4qKhyv5gFm5tEREyxfgrxGhgiAxg5Pf0g@mail.gmail.com>
-Subject: Re: [RFC/RFT/[PATCH] cpuidle: New timer events oriented governor for
- tickless systems
-To:     Doug Smythies <dsmythies@telus.net>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012094639.1585-2-benjamin.gaignard@linaro.org>
+X-Operating-System: Linux phenom 4.14.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
+On Fri, Oct 12, 2018 at 11:46:39AM +0200, Benjamin Gaignard wrote:
+> Since drm_atomic_helper_shutdown() rework it is possible to do additional
+> clean up in sti driver: custom plane destroy functions become useless and
+> clean up encoder is no more needed.
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+> ---
+>  drivers/gpu/drm/sti/sti_cursor.c |  9 +--------
+>  drivers/gpu/drm/sti/sti_gdp.c    |  9 +--------
+>  drivers/gpu/drm/sti/sti_hqvdp.c  |  9 +--------
+>  drivers/gpu/drm/sti/sti_tvout.c  | 24 ------------------------
+>  4 files changed, 3 insertions(+), 48 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/sti/sti_cursor.c b/drivers/gpu/drm/sti/sti_cursor.c
+> index bc908453ffb3..e1ba253055c7 100644
+> --- a/drivers/gpu/drm/sti/sti_cursor.c
+> +++ b/drivers/gpu/drm/sti/sti_cursor.c
+> @@ -328,13 +328,6 @@ static const struct drm_plane_helper_funcs sti_cursor_helpers_funcs = {
+>  	.atomic_disable = sti_cursor_atomic_disable,
+>  };
+>  
+> -static void sti_cursor_destroy(struct drm_plane *drm_plane)
+> -{
+> -	DRM_DEBUG_DRIVER("\n");
+> -
+> -	drm_plane_cleanup(drm_plane);
+> -}
+> -
+>  static int sti_cursor_late_register(struct drm_plane *drm_plane)
+>  {
+>  	struct sti_plane *plane = to_sti_plane(drm_plane);
+> @@ -346,7 +339,7 @@ static int sti_cursor_late_register(struct drm_plane *drm_plane)
+>  static const struct drm_plane_funcs sti_cursor_plane_helpers_funcs = {
+>  	.update_plane = drm_atomic_helper_update_plane,
+>  	.disable_plane = drm_atomic_helper_disable_plane,
+> -	.destroy = sti_cursor_destroy,
+> +	.destroy = drm_plane_cleanup,
+>  	.reset = sti_plane_reset,
+>  	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+>  	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+> diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gdp.c
+> index 3c19614d3f75..87b50451afd7 100644
+> --- a/drivers/gpu/drm/sti/sti_gdp.c
+> +++ b/drivers/gpu/drm/sti/sti_gdp.c
+> @@ -879,13 +879,6 @@ static const struct drm_plane_helper_funcs sti_gdp_helpers_funcs = {
+>  	.atomic_disable = sti_gdp_atomic_disable,
+>  };
+>  
+> -static void sti_gdp_destroy(struct drm_plane *drm_plane)
+> -{
+> -	DRM_DEBUG_DRIVER("\n");
+> -
+> -	drm_plane_cleanup(drm_plane);
+> -}
+> -
+>  static int sti_gdp_late_register(struct drm_plane *drm_plane)
+>  {
+>  	struct sti_plane *plane = to_sti_plane(drm_plane);
+> @@ -897,7 +890,7 @@ static int sti_gdp_late_register(struct drm_plane *drm_plane)
+>  static const struct drm_plane_funcs sti_gdp_plane_helpers_funcs = {
+>  	.update_plane = drm_atomic_helper_update_plane,
+>  	.disable_plane = drm_atomic_helper_disable_plane,
+> -	.destroy = sti_gdp_destroy,
+> +	.destroy = drm_plane_cleanup,
+>  	.reset = sti_plane_reset,
+>  	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+>  	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+> diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
+> index 23565f52dd71..065a5b08a702 100644
+> --- a/drivers/gpu/drm/sti/sti_hqvdp.c
+> +++ b/drivers/gpu/drm/sti/sti_hqvdp.c
+> @@ -1256,13 +1256,6 @@ static const struct drm_plane_helper_funcs sti_hqvdp_helpers_funcs = {
+>  	.atomic_disable = sti_hqvdp_atomic_disable,
+>  };
+>  
+> -static void sti_hqvdp_destroy(struct drm_plane *drm_plane)
+> -{
+> -	DRM_DEBUG_DRIVER("\n");
+> -
+> -	drm_plane_cleanup(drm_plane);
+> -}
+> -
+>  static int sti_hqvdp_late_register(struct drm_plane *drm_plane)
+>  {
+>  	struct sti_plane *plane = to_sti_plane(drm_plane);
+> @@ -1274,7 +1267,7 @@ static int sti_hqvdp_late_register(struct drm_plane *drm_plane)
+>  static const struct drm_plane_funcs sti_hqvdp_plane_helpers_funcs = {
+>  	.update_plane = drm_atomic_helper_update_plane,
+>  	.disable_plane = drm_atomic_helper_disable_plane,
+> -	.destroy = sti_hqvdp_destroy,
+> +	.destroy = drm_plane_cleanup,
+>  	.reset = sti_plane_reset,
+>  	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+>  	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+> diff --git a/drivers/gpu/drm/sti/sti_tvout.c b/drivers/gpu/drm/sti/sti_tvout.c
+> index ea4a3b87fa55..4dc3b2ec40eb 100644
+> --- a/drivers/gpu/drm/sti/sti_tvout.c
+> +++ b/drivers/gpu/drm/sti/sti_tvout.c
+> @@ -788,21 +788,6 @@ static void sti_tvout_create_encoders(struct drm_device *dev,
+>  	tvout->dvo = sti_tvout_create_dvo_encoder(dev, tvout);
+>  }
+>  
+> -static void sti_tvout_destroy_encoders(struct sti_tvout *tvout)
+> -{
+> -	if (tvout->hdmi)
+> -		drm_encoder_cleanup(tvout->hdmi);
+> -	tvout->hdmi = NULL;
+> -
+> -	if (tvout->hda)
+> -		drm_encoder_cleanup(tvout->hda);
+> -	tvout->hda = NULL;
+> -
+> -	if (tvout->dvo)
+> -		drm_encoder_cleanup(tvout->dvo);
+> -	tvout->dvo = NULL;
+> -}
+> -
+>  static int sti_tvout_bind(struct device *dev, struct device *master, void *data)
+>  {
+>  	struct sti_tvout *tvout = dev_get_drvdata(dev);
+> @@ -815,17 +800,8 @@ static int sti_tvout_bind(struct device *dev, struct device *master, void *data)
+>  	return 0;
+>  }
+>  
+> -static void sti_tvout_unbind(struct device *dev, struct device *master,
+> -	void *data)
+> -{
+> -	struct sti_tvout *tvout = dev_get_drvdata(dev);
+> -
+> -	sti_tvout_destroy_encoders(tvout);
+> -}
+> -
+>  static const struct component_ops sti_tvout_ops = {
+>  	.bind	= sti_tvout_bind,
+> -	.unbind	= sti_tvout_unbind,
 
-On Sun, Oct 14, 2018 at 8:53 AM Doug Smythies <dsmythies@telus.net> wrote:
->
-> Hi Rafael,
->
-> I tried your TEO idle governor.
+Hm, this here looks strange now. I'd put a comment somewhere that
+master_ops->unbind cleans up everything. Either way:
 
-Thanks!
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-> On 2018.10.11 14:02 Rafael J. Wysocki wrote:
->
-> ...[cut]...
->
-> > It has been tested on a few different systems with a number of
-> > different workloads and compared with the menu governor.  In the
-> > majority of cases the workloads performed similarly regardless of
-> > the cpuidle governor in use, but in one case the TEO governor
-> > allowed the workload to perform 75% better, which is a clear
-> > indication that some workloads may benefit from using it quite
-> > a bit depending on the hardware they run on.
->
-> Could you supply more detail for the 75% better case, so that
-> I can try to repeat the results on my system?
+>  };
+>  
+>  static int sti_tvout_probe(struct platform_device *pdev)
+> -- 
+> 2.15.0
+> 
 
-This was encryption on Skylake X, but I'll get more details on that later.
-
-> ...[cut]...
->
-> > It is likely to select the "polling" state less often than menu
-> > due to the lack of the extra latency limit derived from the
-> > predicted idle duration, so the workloads depending on that
-> > behavior may be worse off (but less energy should be used
-> > while running them at the same time).
->
-> Yes, and I see exactly that with the 1 core pipe test: Less
-> performance (~10%), but also less processor package power
-> (~3%), compared to the 8 patch set results from the other day.
->
-> The iperf test (running 3 clients at once) results were similar
-> for both power and throughput.
->
-> > Overall, it selects deeper idle states than menu more often, but
-> > that doesn't seem to make a significant difference in the majority
-> > of cases.
->
-> Not always, that viscous powernightmare sweep test that I run used
-> way way more processor package power and spent a staggering amount
-> of time in idle state 0. [1].
-
-Can you please remind me what exactly the workload is in that test?
-
->
-> ... [cut]...
->
-> > + * The sleep length is the maximum duration of the upcoming idle time of the
-> > + * CPU and it is always known to the kernel.  Using it alone for selecting an
-> > + * idle state for the CPU every time is a viable option in principle, but that
-> > + * might lead to suboptimal results if the other wakeup sources are more active
-> > + * for some reason.  Thus this governor estimates whether or not the CPU idle
-> > + * time is likely to be significantly shorter than the sleep length and selects
-> > + * an idle state for it in accordance with that, as follows:
->
-> There is something wrong here, in my opinion, but I have not isolated exactly where
-> by staring at the code.
-> Read on.
->
-> ... [cut]...
->
-> > + * Assuming an idle interval every second tick, take the maximum number of CPU
-> > + * wakeups regarded as recent to rougly correspond to 10 minutes.
-> > + *
-> > + * When the total number of CPU wakeups goes above this value, all of the
-> > + * counters corresponding to the given CPU undergo a "decay" and the counting
-> > + * of recent events stars over.
-> > + */
-> > +#define TEO_MAX_RECENT_WAKEUPS       (300 * HZ)
->
-> In my opinion, there are problems with this is approach:
->
-> First, the huge huge range of possible times between decay events,
-> anywhere from ~ a second to approximately a week.
->         In an idle 1000 HZ system, at 2 idle entries per 4 second watchdog event:
->         time = 300,000 wakes * 2 seconds/wake = 6.9 days
->         Note: The longest single idle time I measured was 3.5 seconds, but that is
->         always combined with a shorter one. Even using a more realistic, and
->         just now measured, average value of 0.7 idles/second would be 2.4 days.
->
-> Second: It leads to unpredictable behaviour, sometimes for a long time, until
-> the effects of some previous work are completely flushed. And from the first
-> point above, that previous work might have been days ago. In my case, and while
-> doing this work, it resulted in non-repeatability of tests and confusion
-> for awhile. Decay events are basically asynchronous to the actual tasks being
-> executed. For data to support what I am saying I did the following:
->         Do a bunch of times {
->                 Start the powernightmare sweep test.
->                 Abort after several seconds (enough time to flush filters
->                         and prefer idle state 0)
->                 Wait a random amount of time
->                 Start a very light work load, but such that the sleep time
->                         per work cycle is less than one tick
->                 Observe varying times until idle state 0 is not excessively selected.
->                         Anywhere from 0 to 17 minutes (the maximum length of test) was observed.
->         }
->
-> Additional information:
->
-> Periodic workflow: I am having difficulty understanding an unexpected high
-> number of idle entries/exits in steady state (i.e. once things have settled
-> down and the filters have finally flushed) For example, a 60% work / 40% sleep
-> at 500 hertz workflow seems to have an extra idle entry exit. Trace excerpt
-> (edited, the first column is uSeconds since previous):
->
->      140 cpu_idle: state=4294967295 cpu_id=7
->     1152 cpu_idle: state=4 cpu_id=7    <<<< The expected ~1200 uSecs of work
->      690 cpu_idle: state=4294967295 cpu_id=7  <<<< Unexpected, Expected ~800 uSecs
->       18 cpu_idle: state=2 cpu_id=7           <<<< So this extra idle makes up the difference
->      138 cpu_idle: state=4294967295 cpu_id=7  <<<< But why is it there?
->     1152 cpu_idle: state=4 cpu_id=7     <<<< Repeat
->      690 cpu_idle: state=4294967295 cpu_id=7
->       13 cpu_idle: state=2 cpu_id=7
->      143 cpu_idle: state=4294967295 cpu_id=7
->     1152 cpu_idle: state=4 cpu_id=7      <<<< Repeat
->      689 cpu_idle: state=4294967295 cpu_id=7
->       19 cpu_idle: state=2 cpu_id=7
->
-> Now compare with trace data for kernel 4.16-rc6 with the 9 patches
-> from the other day (which is what I expect to see):
->
->      846 cpu_idle: state=4294967295 cpu_id=7
->     1150 cpu_idle: state=4 cpu_id=7    <<<< The expected ~1200 uSecs of work
->      848 cpu_idle: state=4294967295 cpu_id=7 <<<< The expected ~800 uSecs of idle
->     1152 cpu_idle: state=4 cpu_id=7    <<<< Repeat
->      848 cpu_idle: state=4294967295 cpu_id=7
->     1151 cpu_idle: state=4 cpu_id=7    <<<< Repeat
->      848 cpu_idle: state=4294967295 cpu_id=7
->     1152 cpu_idle: state=4 cpu_id=7    <<<< Repeat
->      848 cpu_idle: state=4294967295 cpu_id=7
->     1152 cpu_idle: state=4 cpu_id=7    <<<< Repeat
->
-> Anyway, in the end we really only care about power. So for this test:
-> Kernel 4.19-rc6 + 9 patches: 9.133 watts
-> TEO (on top of 4.19-rc7):
-> At start, high number of idle state 0 entries: 11.33 watts (+24%)
-> After awhile, it shifted to idle state 1: 10.00 watts (+9.5%)
-> After awhile, it shifted to idle state 2: 9.67 watts (+5.9%)
-> That seemed to finally be a steady state scenario (at least for over 2 hours).
-> Note: it was always using idle state 4 also.
->
-> ...[snip]...
->
-> > +     /* Decay past events information. */
-> > +     for (i = 0; i < drv->state_count; i++) {
-> > +             cpu_data->states[i].early_wakeups_old += cpu_data->states[i].early_wakeups;
-> > +             cpu_data->states[i].early_wakeups_old /= 2;
-> > +             cpu_data->states[i].early_wakeups = 0;
-> > +
-> > +             cpu_data->states[i].hits_old += cpu_data->states[i].hits;
-> > +             cpu_data->states[i].hits_old /= 2;
-> > +             cpu_data->states[i].hits = 0;
->
-> I wonder if this decay rate is strong enough.
->
-> Hope this helps.
-
-Yes, it does, thank you!
-
-Cheers,
-Rafael
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
