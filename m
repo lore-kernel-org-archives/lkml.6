@@ -2,148 +2,136 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED31C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1ADC28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3FE52086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:19:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sVFxkujm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3FE52086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id BD52C20644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:19:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD52C20644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbeJOQDQ (ORCPT
+        id S1726647AbeJOQDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 12:03:16 -0400
-Received: from ozlabs.org ([203.11.71.1]:41671 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726560AbeJOQDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 12:03:15 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42YWYc6Dk8z9s3l;
-        Mon, 15 Oct 2018 19:19:00 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539591541;
-        bh=C/vmY84Pl7gHKNMmv1m76M142WtEx3AhlvyPGHuuTOw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=sVFxkujmk5GmqYEaZEtn5tIROvGM4Ly3pMv87sHmOlkZCqh7dz5Ie3jPRIfmJG9+a
-         6fFpQNgIW/gpzmaQM9kDx5ERjdah9w2O7LiGyvuk34LTOwr3R8+dvRjLr4bR4mCW8I
-         j+o774w6S+1i1VTTbJJ/mBRE1osx16B5To67MeejQQ0YblM9JAAkBCcFwYIzDnzRUO
-         TBaRRPa1DtGtPFHKSB+xxrfrbKEUtfJvaHeXz31ripIEokeI3Mmw9t9DIZzs5uRnMf
-         Lw7b+Ws9PmKBuNablvWHA5vgmuv38Sr7mR9ppKTz2F2NVxY1niguQLxTZSIM4mRdPl
-         k69QEHdx6RaCg==
-Date:   Mon, 15 Oct 2018 19:18:59 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: qemu boot failures with today's linux-next
-Message-ID: <20181015191859.2f600de5@canb.auug.org.au>
+        Mon, 15 Oct 2018 12:03:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32956 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726477AbeJOQDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 12:03:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5319CAE4F;
+        Mon, 15 Oct 2018 08:19:36 +0000 (UTC)
+Date:   Mon, 15 Oct 2018 10:19:34 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, guro@fb.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        rientjes@google.com, yang.s@alibaba-inc.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms
+ without eligible tasks
+Message-ID: <20181015081934.GD18839@dhcp22.suse.cz>
+References: <000000000000dc48d40577d4a587@google.com>
+ <20181010151135.25766-1-mhocko@kernel.org>
+ <20181012112008.GA27955@cmpxchg.org>
+ <20181012120858.GX5873@dhcp22.suse.cz>
+ <9174f087-3f6f-f0ed-6009-509d4436a47a@i-love.sakura.ne.jp>
+ <20181012124137.GA29330@cmpxchg.org>
+ <0417c888-d74e-b6ae-a8f0-234cbde03d38@i-love.sakura.ne.jp>
+ <bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp>
+ <20181013112238.GA762@cmpxchg.org>
+ <b61b2e60-d899-90c6-579a-587815cebff6@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wkS07L+gQGLSeyWewVybqj7"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b61b2e60-d899-90c6-579a-587815cebff6@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/wkS07L+gQGLSeyWewVybqj7
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Sat 13-10-18 20:28:38, Tetsuo Handa wrote:
+> On 2018/10/13 20:22, Johannes Weiner wrote:
+> > On Sat, Oct 13, 2018 at 08:09:30PM +0900, Tetsuo Handa wrote:
+> >> ---------- Michal's patch ----------
+> >>
+> >> 73133 lines (5.79MB) of kernel messages per one run
+> >>
+> >> [root@ccsecurity ~]# time ./a.out
+> >>
+> >> real    3m44.389s
+> >> user    0m0.000s
+> >> sys     3m42.334s
+> >>
+> >> [root@ccsecurity ~]# time ./a.out
+> >>
+> >> real    3m41.767s
+> >> user    0m0.004s
+> >> sys     3m39.779s
+> >>
+> >> ---------- My v2 patch ----------
+> >>
+> >> 50 lines (3.40 KB) of kernel messages per one run
+> >>
+> >> [root@ccsecurity ~]# time ./a.out
+> >>
+> >> real    0m5.227s
+> >> user    0m0.000s
+> >> sys     0m4.950s
+> >>
+> >> [root@ccsecurity ~]# time ./a.out
+> >>
+> >> real    0m5.249s
+> >> user    0m0.000s
+> >> sys     0m4.956s
+> > 
+> > Your patch is suppressing information that I want to have and my
+> > console can handle, just because your console is slow, even though
+> > there is no need to use that console at that log level.
+> 
+> My patch is not suppressing information you want to have.
+> My patch is mainly suppressing
+> 
+> [   52.393146] Out of memory and no killable processes...
+> [   52.395195] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+> [   52.398623] Out of memory and no killable processes...
+> [   52.401195] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+> [   52.404356] Out of memory and no killable processes...
+> [   52.406492] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+> [   52.409595] Out of memory and no killable processes...
+> [   52.411745] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+> [   52.415588] Out of memory and no killable processes...
+> [   52.418484] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+> [   52.421904] Out of memory and no killable processes...
+> [   52.424273] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+> 
+> lines which Michal's patch cannot suppress.
 
-Hi all,
+This was a deliberate decision because the allocation failure context is
+usually a useful information to get. If this is killing a reasonably
+configured machine then we can move the ratelimit up and suppress that
+information. This will always be cost vs. benefit decision. And as such
+it should be argued in the changelog.
 
-Today's linux-next tree does not boot in qemu (with kvm or without).
-Here is the (non-kvm) boot log (the kvm one is basically the same):
-
-------------------------------------------------------
-SLOF=1B[0m=1B[?25l ********************************************************=
-**************=0D
-=1B[1mQEMU Starting=0D
-=1B[0m Build Date =3D Sep 24 2017 12:23:07=0D
- FW Version =3D buildd@ release 20170724=0D
- Press "s" to enter Open Firmware.=0D=0D
-=0D=0D
-=1B[0m=1B[?25hC0000=0DC0100=0DC0120=0DC0140=0DC0200=0DC0240=0DC0260=0DC02E0=
-=0DC0300=0DC0320=0DC0340=0DC0360=0DC0370=0DC0380=0DC0371=0DC0372=0DC0373=0D=
-C0374=0DC03F0=0DC0400=0DC0480=0DC04C0=0DC04D0=0DC0500=0DPopulating /vdevice=
- methods=0D
-Populating /vdevice/vty@71000000=0D
-Populating /vdevice/nvram@71000001=0D
-Populating /vdevice/l-lan@71000002=0D
-Populating /vdevice/v-scsi@71000003=0D
-       SCSI: Looking for devices=0D
-          8200000000000000 CD-ROM   : "QEMU     QEMU CD-ROM      2.5+"=0D
-C05A0=0DPopulating /pci@800000020000000=0D
-C0600=0DC06C0=0DC0700=0DC0800=0DC0880=0DNo NVRAM common partition, re-initi=
-alizing...=0D
-C0890=0DC08A0=0DC08A8=0DC08B0=0DScanning USB =0D
-C08C0=0DC08D0=0DUsing default console: /vdevice/vty@71000000=0D
-C08E0=0DC08E8=0DDetected RAM kernel at 400000 (122a850 bytes) =0D
-C08FF=0D     =0D
-  Welcome to Open Firmware=0D
-=0D
-  Copyright (c) 2004, 2017 IBM Corporation All rights reserved.=0D
-  This program and the accompanying materials are made available=0D
-  under the terms of the BSD License available at=0D
-  http://www.opensource.org/licenses/bsd-license.php=0D
-=0D
-Booting from memory...=0D
-OF stdout device is: /vdevice/vty@71000000=0D
-Preparing to boot Linux version 4.19.0-rc7 (sfr@ash) (gcc version 8.2.0 (De=
-bian 8.2.0-4)) #2 SMP Mon Oct 15 18:53:28 AEDT 2018=0D
-Detected machine type: 0000000000000101=0D
-command line: =0D
-Max number of cores passed to firmware: 2048 (NR_CPUS =3D 2048)=0D
-Calling ibm,client-architecture-support... done=0D
-memory layout at init:=0D
-  memory_limit : 0000000000000000 (16 MB aligned)=0D
-  alloc_bottom : 0000000001640000=0D
-  alloc_top    : 0000000030000000=0D
-  alloc_top_hi : 0000000080000000=0D
-  rmo_top      : 0000000030000000=0D
-  ram_top      : 0000000080000000=0D
-instantiating rtas at 0x000000002fff0000... done=0D
-prom_hold_cpus: skipped=0D
-copying OF device tree...=0D
-Building dt strings...=0D
-Building dt structure...=0D
-Device tree strings 0x0000000001850000 -> 0x0000000001850a02=0D
-Device tree struct  0x0000000001860000 -> 0x0000000001870000=0D
-Quiescing Open Firmware ...=0D
-Booting Linux via __start() @ 0x0000000000400000 ...=0D
-------------------------------------------------------
-
-I have no idea what may have caused this.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/wkS07L+gQGLSeyWewVybqj7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvETXMACgkQAVBC80lX
-0Gyzewf7BtjO16MLB1LL3Td+HEidA4l7bQb8GmPKvCnb5JayVKcYYkYSypXyT2B1
-wgeawciRKcRlwhtdWH3NVD/MC65/IctQ4nTvrKLHCqLWkmNJoSTBstlc2E+P2rTr
-vODtTdmLEHVodfV3WDIIVMlHyOhyh43hmIOqfcSkqqYIjYkC7cbtevAh9ruWCUn7
-LS91771bXv23Ckftr07RucbbCD++H/liinsWm2Tupys4Uvu1eupb2Y1sdgOCKcub
-L1f55kRrmpefpgRuTIa2Ug9P2B8ThqNmkhBQb41v+sl3MtQuE4uyO0hxWHdGVgk+
-TgrT22hCERgFMxvtckHi7bb+jtppYw==
-=fy5B
------END PGP SIGNATURE-----
-
---Sig_/wkS07L+gQGLSeyWewVybqj7--
+As so many dozens of times before, I will point you to an incremental
+nature of changes we really prefer in the mm land. We are also after a
+simplicity which your proposal lacks in many aspects. You seem to ignore
+that general approach and I have hard time to consider your NAK as a
+relevant feedback. Going to an extreme and basing a complex solution on
+it is not going to fly. No killable process should be a rare event which
+requires a seriously misconfigured memcg to happen so wildly. If you can
+trigger it with a normal user privileges then it would be a clear bug to
+address rather than work around with printk throttling.
+-- 
+Michal Hocko
+SUSE Labs
