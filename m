@@ -2,41 +2,42 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E22C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 606D9C71130
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E18D20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:48:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16A8120881
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:48:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="xcU/TzIr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E18D20881
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="uIKT6Thw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16A8120881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeJOTc5 (ORCPT
+        id S1726641AbeJOTc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:32:57 -0400
+        Mon, 15 Oct 2018 15:32:59 -0400
 Received: from mail-he1eur01on0057.outbound.protection.outlook.com ([104.47.0.57]:40576
         "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726319AbeJOTc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:32:57 -0400
+        id S1726588AbeJOTc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 15:32:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xV0hiycAJLMmVlHjez8yxY34FbT306UqT/ayqdK6mDU=;
- b=xcU/TzIrFQCQ/zKvIAkaegWSoYCIrK3YmrwCGrCfkF0d7jXbNZuiSKKwh5fmaT3fQLg1fes5yupshQvNhWSTNdiCAWI19FPvG9UF2cj5z8CGVk0471/v+T7ILOQwoefmsaX4eE5iD/DkGw2tT3radP03Bcdy+2BY487RpH4r7hY=
+ bh=GcWVntAi4IsR1DyHqW4HMz12ZIYgg87aIYfzgghftaE=;
+ b=uIKT6ThwKBC0CDbZltnksfA6FeVtCl6XQ2VJdx0K/hEksXoESksgdII3wNGoV0IS1Vp3dcX9rmp2CAOj9TdRe5cxWGGSX9oPWBQkIwp9LBqPU8mfuxHDlWpxfS7F5aq/rzNTcIvSvku+H7FHdUmH/Aiz1zajoIevo8Umc8AxG3c=
 Received: from VI1PR04MB1038.eurprd04.prod.outlook.com (10.161.109.144) by
  VI1PR04MB1616.eurprd04.prod.outlook.com (10.164.84.150) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.23; Mon, 15 Oct 2018 11:47:55 +0000
+ 15.20.1228.23; Mon, 15 Oct 2018 11:48:01 +0000
 Received: from VI1PR04MB1038.eurprd04.prod.outlook.com
  ([fe80::d887:3c96:479a:4123]) by VI1PR04MB1038.eurprd04.prod.outlook.com
  ([fe80::d887:3c96:479a:4123%3]) with mapi id 15.20.1228.027; Mon, 15 Oct 2018
- 11:47:55 +0000
+ 11:48:01 +0000
 From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
 To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
         "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
@@ -53,11 +54,13 @@ CC:     "robh@kernel.org" <robh@kernel.org>,
         "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Subject: [PATCH v2 0/7] spi: add support for octal mode
-Thread-Topic: [PATCH v2 0/7] spi: add support for octal mode
-Thread-Index: AQHUZHzpgtbBSuVUOUKx5snYaQA8Fg==
-Date:   Mon, 15 Oct 2018 11:47:55 +0000
-Message-ID: <1539603969-21076-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+Subject: [PATCH v2 1/7] spi: add support for octal I/O data transfer
+Thread-Topic: [PATCH v2 1/7] spi: add support for octal I/O data transfer
+Thread-Index: AQHUZHzsiV0kUSLvEEOUFn0AqcywiQ==
+Date:   Mon, 15 Oct 2018 11:48:01 +0000
+Message-ID: <1539603969-21076-2-git-send-email-yogeshnarayan.gaur@nxp.com>
+References: <1539603969-21076-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+In-Reply-To: <1539603969-21076-1-git-send-email-yogeshnarayan.gaur@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -70,28 +73,28 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [14.143.30.134]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB1616;6:RrsOPx7cdngomF9BpIn9BetVY1yHMLyHB26vN3D+gOkhbdQnUvRq5GxfdCeegioTYeEupvKz31IZuaasVTQhKSsU/xTr63HjZtnpoOW8PrnvwwiG01zsu4Zol9M6IPcWS0pw8ffKJqWR0KqHYOtJ4il5N07r9zvKEmndqyuLevjWBQFIY4PzOOGUd1MF7g3egx7MV2Lvf3wjRsyJMyb3c0nh6GVKwWI88Jq32ydRGUPwTODI2RlK7YvYKe+GBXMRrFSfwaCF6nUXH1b3cIGRiaGltWqKYVGxXAHOuX1AytAdapyP5YP/cVjkfB4b40PWlP79CwmUPAuJTIbscEelfdgmS3+ZFLD53kEF5oWkkml/4Z5jIFZmJRnzZrxIyl4HS2IiSDgkZv4SIR1OpXZ+lfy2w5KY0rULL5hUXD8E/3bxXoa/T63uwg83xwrmUQOZE4zxhjbLSXxlwEFS3QpwduTCtWJIIqhJcIQWfkB3DEk=;5:tLygWeqLci63U7upBpXLkC8kFVJEH23/NqUxo2NwATyLlXlmXs/NN/YsFEbP8hMWsx4QBES5jup9Y2JZo4x9qdgjneN50Co3hSB5kf+oc1IgEeQjKIWrtyHtevhY/JQ1/yogd8B30jS2isgivP5Vus9iAAgJ6aNjq3/JxSl+Xq8=;7:HHhiiJiBcPY9PQeI++WLehapFBUgVkZyn3I6MX+k5zF6z/4Siy3wciPX8RoQyuJu7b3RFzgtpfWDMPeCZqLa1oFm8LS1rxsFFOxM0X3zHlwDSLMNOvpooCsmFgKPOM0290qXUvQeJT6D1HCGWu6TKPv5XDYdku3A14Q/n9kYGol6XmADvUT8S6qrt92LeYt2ebSRy0lLfYmwOTirbqTqb9NJUFHxMw9Xd/Va/BtDUd7viBHdR+7IzfSbU7q5v8kX
-x-ms-office365-filtering-correlation-id: c71f47cf-df28-443a-9e71-08d632940b57
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB1616;6:if8rNo0SB8TP19X/T4UDkYWua+xKHtFuSX/03R2/kxzsW2iy5sa+QHiJA1BgA0Mh5VQqjAghMWfYcHRp83OJl13KsoqPm37xlIOpnN5gkqH548lnIpEjNi5E5DFeQvIxz9ZgfmF8nMNnf1cJGRc0kLhVUbRvbCh2IwOGXVk9Q2G9nrehZzC2+n0upDfzS8aH3BE2tfQ9Nig9MaIM8wHXlTC+7StatS0n2dlY4LH4pO33mUHTB/6cpU4neDRZNdC1mTHJTceiKdVQgT2ix1oOFTpXAhFX6u2BrrhZbDEq5CnqnEXbKY7JCnC/iEd4y+E/XbB1tC2AP1U3E3LJAsmHuXecdqwENGjU4uz9W/nhybX2I6Q7jMcZqDkm3gbR6cro4lAdGVXhMVLSxYq24r5hRY268hjY7vd2NfgP/w12ws9K4YaiPIK/XqX5/ASu24/gm8Yms2rgHLn5PYPLdzNR5goiy7cV5yAzPjjIhxFb7eI=;5:UMvPD49wg/QH5/dOgM6sJidEIyqGJHrI4qPQ2ovS8pry6aQtOFMfVcnMYQ+nEKH/2L8gppSs7dm7yTSxRkfHJrbH6i+agESCCvj3ayT/M9zvTPlB5RYzZhAMrwYlk5YcHXTeHpsXzcqNz4HiroL2LXBlvUCfNlDhXgbgrLn4XeE=;7:CRHlhgv6U4MoTQYhPe0AG9VKdEMN6u0uRSJqe4CjFGD19xS/P7wiMTT46Ip9wbVbo+eiUsK4MswEhYN7f7jy5M+EugeX69HJUBrmnxfV2POb5oAMHepmNEmvHcjkDesF5x21R2t/BXbvVVcsdQmdao8eKDEfxvUx0c17W4kuJHyvqMwbW5hMCnNaIypMGUhNNfigfsXij7HrnR9q50nfuFS4UmBnGycbO43b3ZaF+5rMjCFYRA22BKa6KlP9fh+S
+x-ms-office365-filtering-correlation-id: b76c6f14-65cf-4051-b0c5-08d632940f01
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1616;
 x-ms-traffictypediagnostic: VI1PR04MB1616:
-x-microsoft-antispam-prvs: <VI1PR04MB1616C3B0DA37CB038153E7E899FD0@VI1PR04MB1616.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(84791874153150);
+x-microsoft-antispam-prvs: <VI1PR04MB16161F405C2ADA830822F1BF99FD0@VI1PR04MB1616.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991067);SRVR:VI1PR04MB1616;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1616;
 x-forefront-prvs: 0826B2F01B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(346002)(39860400002)(136003)(396003)(199004)(189003)(81166006)(81156014)(8676002)(7416002)(8936002)(4326008)(2501003)(316002)(66066001)(5250100002)(2201001)(53936002)(7736002)(256004)(14444005)(6512007)(25786009)(6486002)(6436002)(86362001)(6306002)(68736007)(5660300001)(305945005)(52116002)(2906002)(6116002)(3846002)(54906003)(110136005)(99286004)(39060400002)(2900100001)(478600001)(476003)(2616005)(486006)(14454004)(106356001)(36756003)(186003)(26005)(55236004)(71200400001)(102836004)(966005)(386003)(71190400001)(6506007)(105586002)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1616;H:VI1PR04MB1038.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(376002)(366004)(346002)(39860400002)(136003)(396003)(199004)(189003)(81166006)(81156014)(8676002)(7416002)(8936002)(4326008)(2501003)(316002)(66066001)(5250100002)(2201001)(53936002)(7736002)(256004)(6512007)(25786009)(6486002)(6436002)(575784001)(86362001)(68736007)(5660300001)(305945005)(52116002)(2906002)(6116002)(3846002)(54906003)(110136005)(76176011)(99286004)(39060400002)(2900100001)(478600001)(476003)(11346002)(2616005)(486006)(446003)(14454004)(106356001)(36756003)(186003)(26005)(55236004)(71200400001)(102836004)(386003)(71190400001)(6506007)(105586002)(97736004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1616;H:VI1PR04MB1038.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: QjeHX10OV7Mc+HZUj4rv172b7SdKulhu/cci39iYaOlwAyBt3Hj4WubAxF9xTd7SquIcZJkwW8FRCQX9YjvjHE7BxvOGJDyDZMB7EbrC0WNjCj99APb/hs5Tl3xPXclZ0EOSIgU1Bw4+Deqp5tr2pqg8oqJCWcjUcBPxW6LN1fa2JA24LEszzuU/OfFzc6+ofPXnOsj2Kr3KYKTTMWiWDrnE6djCsatQAs+QOR2nDUh5ZR+x+t2wug5sC79VfdyteGNFEvr/G2/a11a2rTCz9sdCRaIc/9FJGwIasDNOeDTQriQ8utJw7jwxexloZ4dxiM9c9v5G3SHimeF0YOMjyLSaiPA7jiI/Ihs8atvD8dc=
+x-microsoft-antispam-message-info: qzbwPBTaBBRcf3LrbBie6l8vdk9xO6L5tucFhRJL4hiODNwZo09tS7qGpSr3WFvXqmpFTdJX/77vbR/fiFOVIxo8xwaucmAYDuUvPMAFyx4jovXae2t9CGxJLENzfsqe0lXC67h+ceyN3aPphGvBs5+FIM2EApoN33HXidMDmX2v5Z0gz7YFWWPKegjpbnrazNtqJaJdHI9ptfPg3vRJPg9AYDVb3P5ldx/WrjLa45YLPTcf+UMd+emlzsz6DxYipsx2BkbCTVIxOxuJ1tjOWIYlOnkOj/N4qD0AjpdUKTxL9IzXoLcF3s3jS0u7mTlgX8EKQZ0R792XbbOfOMf3Md53X8/4ppJq5hpMLG/k0i0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c71f47cf-df28-443a-9e71-08d632940b57
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2018 11:47:55.5391
+X-MS-Exchange-CrossTenant-Network-Message-Id: b76c6f14-65cf-4051-b0c5-08d632940f01
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2018 11:48:01.4226
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -101,76 +104,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for octal mode IO data transfer.
-Micron flash, mt35xu512aba, supports octal mode data transfer and
-NXP FlexSPI controller supports 8 data lines for data transfer (Rx/Tx).
+Add flags for Octal I/O data transfer
+Required for the SPI controller which can do the data transfer (TX/RX)
+on 8 data lines e.g. NXP FlexSPI controller.
+ SPI_TX_OCTAL: transmit with 8 wires
+ SPI_RX_OCTAL: receive with 8 wires
 
-Patch series
-* Add support for octal mode flags and parsing of same in spi driver.
-* Add opcodes for octal I/O commands in spi-nor framework, Read and Write p=
-roto for (1-1-8/1-8-8) mode.
-  Opcodes are added as per octal data IO commands required for mt35xu512aba=
- [1] flash.
-* Add parsing logic for spi-mem framework and m25p80.c device file.
-* Add mode bit required for octal mode in nxp-fspi driver [2].
-* Define binding property 'spi-rx/tx-bus-width' for LX2160ARDB target [2].
-
-Cherry pick below 2 patches (from: https://git.kernel.org/pub/scm/linux/ker=
-nel/git/broonie/spi.git):
-    c639f871febe6667d9afce28108c634e5636c735 spi: spi-mem: Fix inverted log=
-ic in op sanity check
-    db122eb8a749a1eff038f9a282c620ab16c4be1d spi: spi-mem: Add extra sanity=
- checks on the op param
-
-Tested on LX2160ARDB target with nxp-fspi driver, below are
-Read performance number of 1-1-1 and 1-1-8 read protocol.
-
- root@lxxx:~# cat /proc/mtd
- dev:    size   erasesize  name
- mtd0: 04000000 00001000 "spi0.0"
- mtd1: 04000000 00001000 "spi0.1"
- root@lxxx:~# time mtd_debug read /dev/mtd0 0x0 0x1000000 0read
- Copied 16777216 bytes from address 0x00000000 in flash to 0read
-
- real    0m2.792s
- user    0m0.000s
- sys     0m2.790s
- root@lxxx:~# time mtd_debug read /dev/mtd1 0x0 0x1000000 0read
- Copied 16777216 bytes from address 0x00000000 in flash to 0read
-
- real    0m0.441s
- user    0m0.000s
- sys     0m0.440s
- root@ls1012ardb:~#
-
- Flash device MTD0 configured in 1-1-1 protocol.
- Flash device MTD1 configured in 1-1-8 protocol.
-
-[1] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D70384
-[2] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D70210
-
-Yogesh Gaur (7):
-  spi: add support for octal I/O data transfer
-  mtd: spi-nor: add opcodes for octal Read/Write commands
-  mtd: spi-nor: add octal read flag for flash mt35xu512aba
-  mtd: m25p80: add support of octal I/O transfer
-  spi: spi-mem: add support for octal I/O data transfer
-  spi: nxp-fspi: add mode flag bit for octal support
-  arm64: dts: lx2160a: update fspi node
-
+Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+---
 Changes for v2:
- Incorporated review comments of Boris and Vignesh.
+ Incorporated review comments of Boris.
 
- arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts |  4 ++++
- drivers/mtd/devices/m25p80.c                      |  9 ++++++++-
- drivers/mtd/spi-nor/spi-nor.c                     | 15 ++++++++++++++-
- drivers/spi/spi-mem.c                             |  9 ++++++++-
- drivers/spi/spi-nxp-fspi.c                        |  4 ++--
- drivers/spi/spi.c                                 |  6 ++++++
- include/linux/mtd/spi-nor.h                       |  8 ++++++++
- include/linux/spi/spi.h                           |  2 ++
- 8 files changed, 52 insertions(+), 5 deletions(-)
+ drivers/spi/spi.c       | 6 ++++++
+ include/linux/spi/spi.h | 2 ++
+ 2 files changed, 8 insertions(+)
 
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index ec395a6..80f672f 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1573,6 +1573,9 @@ static int of_spi_parse_dt(struct spi_controller *ctl=
+r, struct spi_device *spi,
+ 		case 4:
+ 			spi->mode |=3D SPI_TX_QUAD;
+ 			break;
++		case 8:
++			spi->mode |=3D SPI_TX_OCTAL;
++			break;
+ 		default:
+ 			dev_warn(&ctlr->dev,
+ 				"spi-tx-bus-width %d not supported\n",
+@@ -1591,6 +1594,9 @@ static int of_spi_parse_dt(struct spi_controller *ctl=
+r, struct spi_device *spi,
+ 		case 4:
+ 			spi->mode |=3D SPI_RX_QUAD;
+ 			break;
++		case 8:
++			spi->mode |=3D SPI_RX_OCTAL;
++			break;
+ 		default:
+ 			dev_warn(&ctlr->dev,
+ 				"spi-rx-bus-width %d not supported\n",
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index a64235e..2d21307 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -163,6 +163,8 @@ struct spi_device {
+ #define	SPI_TX_QUAD	0x200			/* transmit with 4 wires */
+ #define	SPI_RX_DUAL	0x400			/* receive with 2 wires */
+ #define	SPI_RX_QUAD	0x800			/* receive with 4 wires */
++#define	SPI_TX_OCTAL	0x1000			/* transmit with 8 wires */
++#define	SPI_RX_OCTAL	0x2000			/* receive with 8 wires */
+ 	int			irq;
+ 	void			*controller_state;
+ 	void			*controller_data;
 --=20
 2.7.4
 
