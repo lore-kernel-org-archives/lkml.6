@@ -2,65 +2,68 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C1FC070C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBF7C070C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5F2020876
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 264E420652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:29:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CVujcNsM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5F2020876
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/hxWOO8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 264E420652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbeJOIJ4 (ORCPT
+        id S1726778AbeJOIMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 04:09:56 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36247 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbeJOIJB (ORCPT
+        Mon, 15 Oct 2018 04:12:06 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41368 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726447AbeJOIMG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 04:09:01 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f18-v6so8308992pgv.3;
-        Sun, 14 Oct 2018 17:26:12 -0700 (PDT)
+        Mon, 15 Oct 2018 04:12:06 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 23-v6so8294223pgc.8;
+        Sun, 14 Oct 2018 17:29:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7GuCPMc1W5/wwPeXRUqL1/hLo5USFMzrx8T5Pgg4dsU=;
-        b=CVujcNsMF1oqGxEW1W1tfddklDnHVfzOi38qrQ3lUc5o3ttgoO9iNa2L7imWUWNycv
-         1isqsO/ojbuG70hnPatC/o+JeHQ9U4Y42vKuGZ/LXdFnyjPyfpG+hUS5CiTzxHF+hoFq
-         fz1TZ0y+TGXMANkhae02ElLmKKNKNDVN/LHtq4dg8tfpHUssBD8eULAVbIxoR2yqhRcI
-         AiA4mC8WmDVSt9srxnfHnr7LPjlHeGdHRFErKSiobJs4G84O9Y4PH6TCx2ACPoLK3Tzd
-         aE3olzk7wjLgkkEQqryGLJW8Uhcf48UCEUe7Hp97AHHQUxJE7+qc4ASNOHe8l+aYmH2r
-         i8rg==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5o/wKl0UtRTrSQOwevxWhjE/eXwm/pLu6WI0xVrkfhU=;
+        b=T/hxWOO8E5u3HVWvvdtbdRbYnHWDdh4TV+5oPFRxr24Wvrbqfg1XJzsyg+PW4G02QE
+         tG/M0J9pucc3+j0xhf9Lrc5Zi+HxHuxW8jdOxne5avJZUlhWHa+bymPp0WTVnMpGpaL1
+         QrHAivmzf71YK4hlq5U+1vMk/yefOzCGIScke7DqdQ2oEZ92ujL6cU/2YLfge8gFrRSv
+         apTvCDb9g4r1hpkqIiXiy1MUgTAOwbk/+qJ9VTAL62GiyPLTg5S3q2B7uxvd291aqxFL
+         jk5LOeNiM85fFlJQhwrEn4G6cV2mM0cgYpal0cJCMUhPe+Z+B+IlpGCHo7KIYvYv+M7p
+         0XAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7GuCPMc1W5/wwPeXRUqL1/hLo5USFMzrx8T5Pgg4dsU=;
-        b=bvqhmHZvOZs0DQK9sDa51RAFpSw/vGvxA+ksBwIr1iyRovg7JERmImv0l2UjyiGa8y
-         dWq9rHbtNRC5F0UC4vvpZukZnThQDIMoCLRTqrf20KZGOUK4BQ0XcMaxBnZt10wNMZs4
-         Sjp9akeUhuyM2GF4+f1dRO97H0YmNy1JhOrWV5GaK2EJ7sM+tCXx3n7+hyIJdSvlzhrX
-         LFVxECxpShsd9cR9oBpWOjSBfm1t+/hSSLC2L/QHZq4lS1UU/wACArxWowpGkKZ/u25F
-         /F5upIjCq1hONQwuim2s1mnDm72wrux4aNES/i2XSMa/wBy5H0yAF65+tkOsxRjUFa7l
-         Dadw==
-X-Gm-Message-State: ABuFfoh4ZiAdT0TitUymEOq3VMqf3ibozlMNhfAURmDvqpAe/xtivLpL
-        QZG0LAWJR3irKiH/m5eGIDo=
-X-Google-Smtp-Source: ACcGV63ssYWjlCFHwaaVc/eCX8YJpLLwgSEzwk0hms7zkMjTKVEzZMXoD/HSgCRvYE9InqS2HNOYng==
-X-Received: by 2002:a62:7885:: with SMTP id t127-v6mr15196324pfc.259.1539563172417;
-        Sun, 14 Oct 2018 17:26:12 -0700 (PDT)
-Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id j14-v6sm11387110pgh.52.2018.10.14.17.26.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 14 Oct 2018 17:26:11 -0700 (PDT)
-From:   frowand.list@gmail.com
-To:     Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5o/wKl0UtRTrSQOwevxWhjE/eXwm/pLu6WI0xVrkfhU=;
+        b=OuutfeHjGH0QRB3DFhw0dezWb0/WJ3lhSp/zVspmlIfaiqBHutjcLpNVd9BJkQPEKN
+         IoFFnlknt+Fa7luYnJupjAVt+u19KI7e5kMRibirHKfwR/+Sz2pAvMSzh2Vj4JE6eotn
+         niSh6eXVrfZmYGJMKy4UPUR3j5CHRzT4oBLt64TjLidacAgG97cqG+erKMG1xt1AQSSP
+         6eLvriIHSi48wx0MXXwFtmw+BownRl+3o6bf7DznBloujTGqRiZs9kBCdLd41/bJ6PiB
+         VjU4ObXuLNfEultVy2or1T82DSzKGSoKyg6F5pbca7uySqGrzC9PSv0XU4Cst1X1Mgzk
+         IOrw==
+X-Gm-Message-State: ABuFfogHIMseU17xuCoEk9Shagj1eoAgD4/WLVCAoYudBOvwPAReSRrV
+        Ec5zVIY41pMcD8Zqt6MeZ+4cwnUi
+X-Google-Smtp-Source: ACcGV604mIqkHeaB14gcPNus6R31NLhilnJ9cIc5Q7XE83z/1r3tFRmkByauVV1eES7kTpDLBn+L1g==
+X-Received: by 2002:a63:214d:: with SMTP id s13-v6mr14112721pgm.148.1539563356354;
+        Sun, 14 Oct 2018 17:29:16 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id f1-v6sm14901470pgc.4.2018.10.14.17.29.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 14 Oct 2018 17:29:15 -0700 (PDT)
+Subject: Re: [PATCH v2 12/18] of: overlay: check prevents multiple fragments
+ add or delete same node
+From:   Frank Rowand <frowand.list@gmail.com>
+To:     Joe Perches <joe@perches.com>, Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
@@ -68,78 +71,167 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v3 10/18] of: overlay: make all pr_debug() and pr_err() messages unique
-Date:   Sun, 14 Oct 2018 17:24:22 -0700
-Message-Id: <1539563070-12969-11-git-send-email-frowand.list@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1539563070-12969-1-git-send-email-frowand.list@gmail.com>
-References: <1539563070-12969-1-git-send-email-frowand.list@gmail.com>
+References: <1539406418-18162-1-git-send-email-frowand.list@gmail.com>
+ <1539406418-18162-13-git-send-email-frowand.list@gmail.com>
+ <97b26203e6792795bdc0a66ce4cdb47571ff16c1.camel@perches.com>
+ <651a8488-caec-b153-43c7-1fb81f641f1a@gmail.com>
+Message-ID: <06898888-59dc-c37f-5013-a58fc73df2e1@gmail.com>
+Date:   Sun, 14 Oct 2018 17:29:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <651a8488-caec-b153-43c7-1fb81f641f1a@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+On 10/13/18 11:21, Frank Rowand wrote:
+> On 10/13/18 05:51, Joe Perches wrote:
+>> On Fri, 2018-10-12 at 21:53 -0700, frowand.list@gmail.com wrote:
+>>> From: Frank Rowand <frank.rowand@sony.com>
+>>>
+>>> Multiple overlay fragments adding or deleting the same node is not
+>>> supported.  Replace code comment of such, with check to detect the
+>>> attempt and fail the overlay apply.
+>>>
+>>> Devicetree unittest where multiple fragments added the same node was
+>>> added in the previous patch in the series.  After applying this patch
+>>> the unittest messages will no longer include:
+>>>
+>>>    Duplicate name in motor-1, renamed to "controller#1"
+>>>    OF: overlay: of_overlay_apply() err=0
+>>>    ### dt-test ### of_overlay_fdt_apply() expected -22, ret=0, overlay_bad_add_dup_node
+>>>    ### dt-test ### FAIL of_unittest_overlay_high_level():2419 Adding overlay 'overlay_bad_add_dup_node' failed
+>>>
+>>>    ...
+>>>
+>>>    ### dt-test ### end of unittest - 210 passed, 1 failed
+>>>
+>>> but will instead include:
+>>>
+>>>    OF: overlay: ERROR: multiple overlay fragments add and/or delete node /testcase-data-2/substation@100/motor-1/controller
+>>>
+>>>    ...
+>>>
+>>>    ### dt-test ### end of unittest - 211 passed, 0 failed
+>> []
+>>> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+>> []
+>>> @@ -523,6 +515,54 @@ static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
+>>>  }
+>>>  
+>>>  /**
+>>> + * check_changeset_dup_add_node() - changeset validation: duplicate add node
+>>> + * @ovcs:	Overlay changeset
+>>> + *
+>>> + * Check changeset @ovcs->cset for multiple add node entries for the same
+>>> + * node.
+>>> + *
+>>> + * Returns 0 on success, -ENOMEM if memory allocation failure, or -EINVAL if
+>>> + * invalid overlay in @ovcs->fragments[].
+>>> + */
+>>> +static int check_changeset_dup_add_node(struct overlay_changeset *ovcs)
+>>> +{
+>>> +	struct of_changeset_entry *ce_1, *ce_2;
+>>> +	char *fn_1, *fn_2;
+>>> +	int name_match;
+>>> +
+>>> +	list_for_each_entry(ce_1, &ovcs->cset.entries, node) {
+>>> +
+>>> +		if (ce_1->action == OF_RECONFIG_ATTACH_NODE ||
+>>> +		    ce_1->action == OF_RECONFIG_DETACH_NODE) {
+>>> +
+>>> +			ce_2 = ce_1;
+>>> +			list_for_each_entry_continue(ce_2, &ovcs->cset.entries, node) {
+>>> +				if (ce_2->action == OF_RECONFIG_ATTACH_NODE ||
+>>> +				    ce_2->action == OF_RECONFIG_DETACH_NODE) {
+>>> +					/* inexpensive name compare */
+>>> +					if (!of_node_cmp(ce_1->np->full_name,
+>>> +					    ce_2->np->full_name)) {
+>>
+>> A bit of odd indentation here.
+>> This line is normally aligned to the second ( on the line above.
+> 
+> Yes, thanks.
 
-Make overlay.c debug and error messages unique so that they can be
-unambiguously found by grep.
+This line gets joined into a single line in version 3, so I will leave
+the bad formatting in patch 12 to make my life easier when moving
+to version 3.
 
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
----
- drivers/of/overlay.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index ee66651db553..a3990c20e210 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -513,7 +513,7 @@ static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
- 	for_each_property_of_node(overlay_symbols_node, prop) {
- 		ret = add_changeset_property(ovcs, target, prop, 1);
- 		if (ret) {
--			pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
-+			pr_debug("Failed to apply symbols prop @%pOF/%s, err=%d\n",
- 				 target->np, prop->name, ret);
- 			return ret;
- 		}
-@@ -557,7 +557,8 @@ static int build_changeset(struct overlay_changeset *ovcs)
- 		ret = build_changeset_next_level(ovcs, &target,
- 						 fragment->overlay);
- 		if (ret) {
--			pr_debug("apply failed '%pOF'\n", fragment->target);
-+			pr_debug("fragment apply failed '%pOF'\n",
-+				 fragment->target);
- 			return ret;
- 		}
- 	}
-@@ -570,7 +571,8 @@ static int build_changeset(struct overlay_changeset *ovcs)
- 		ret = build_changeset_symbols_node(ovcs, &target,
- 						   fragment->overlay);
- 		if (ret) {
--			pr_debug("apply failed '%pOF'\n", fragment->target);
-+			pr_debug("symbols fragment apply failed '%pOF'\n",
-+				 fragment->target);
- 			return ret;
- 		}
- 	}
-@@ -879,7 +881,7 @@ static int of_overlay_apply(const void *fdt, struct device_node *tree,
- 
- 	ret = __of_changeset_apply_notify(&ovcs->cset);
- 	if (ret)
--		pr_err("overlay changeset entry notify error %d\n", ret);
-+		pr_err("overlay apply changeset entry notify error %d\n", ret);
- 	/* notify failure is not fatal, continue */
- 
- 	list_add_tail(&ovcs->ovcs_list, &ovcs_list);
-@@ -1138,7 +1140,7 @@ int of_overlay_remove(int *ovcs_id)
- 
- 	ret = __of_changeset_revert_notify(&ovcs->cset);
- 	if (ret)
--		pr_err("overlay changeset entry notify error %d\n", ret);
-+		pr_err("overlay remove changeset entry notify error %d\n", ret);
- 	/* notify failure is not fatal, continue */
- 
- 	*ovcs_id = 0;
--- 
-Frank Rowand <frank.rowand@sony.com>
+>>
+>>> +						/* expensive full path name compare */
+>>> +						fn_1 = kasprintf(GFP_KERNEL, "%pOF", ce_1->np);
+>>> +						fn_2 = kasprintf(GFP_KERNEL, "%pOF", ce_2->np);
+>>> +						name_match = !strcmp(fn_1, fn_2);
+>>> +						kfree(fn_1);
+>>> +						kfree(fn_2);
+>>> +						if (name_match) {
+>>> +							pr_err("ERROR: multiple overlay fragments add and/or delete node %pOF\n",
+>>> +							       ce_1->np);
+>>> +							return -EINVAL;
+>>> +						}
+>>> +					}
+>>> +				}
+>>> +			}
+>>> +		}
+>>> +	}
+>>> +
+>>> +	return 0;
+>>> +}
+>>
+>> Style trivia:
+>>
+>> Using inverted tests and continue would reduce indentation.
+> 
+> Yes, thanks.
+
+In version 3, fixed in patch 13/18 instead of 12/18, where this pattern
+has been split into two functions.
+
+-Frank
+
+
+> 
+> -Frank
+> 
+> 
+>>
+>> 	list_for_each_entry(ce_1, &ovcs->cset.entries, node) {
+>> 		if (ce_1->action != OF_RECONFIG_ATTACH_NODE &&
+>> 		    ce_1->action != OF_RECONFIG_DETACH_NODE)
+>> 			continue;
+>>
+>> 		ce_2 = ce_1;
+>> 		list_for_each_entry_continue(ce_2, &ovcs->cset.entries, node) {
+>> 			if (ce_2->action != OF_RECONFIG_ATTACH_NODE &&
+>> 			    ce_2->action != OF_RECONFIG_DETACH_NODE)
+>> 				continue;
+>>
+>> 			/* inexpensive name compare */
+>> 			if (of_node_cmp(ce_1->np->full_name, ce_2->np->full_name))
+>> 				continue;
+>>
+>> 			/* expensive full path name compare */
+>> 			fn_1 = kasprintf(GFP_KERNEL, "%pOF", ce_1->np);
+>> 			fn_2 = kasprintf(GFP_KERNEL, "%pOF", ce_2->np);
+>> 			name_match = !strcmp(fn_1, fn_2);
+>> 			kfree(fn_1);
+>> 			kfree(fn_2);
+>> 			if (name_match) {
+>> 				pr_err("ERROR: multiple overlay fragments add and/or delete node %pOF\n",
+>> 				       ce_1->np);
+>> 				return -EINVAL;
+>> 			}
+>> 		}
+>> 	}
+>>
+>>
+>>
+> 
+> 
 
