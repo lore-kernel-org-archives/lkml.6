@@ -2,114 +2,159 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E07C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE315C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C81E2098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:42:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mR82q3S+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C81E2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 86505208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:43:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86505208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbeJPC3D (ORCPT
+        id S1727003AbeJPC35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:29:03 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40311 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbeJPC3D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:29:03 -0400
-Received: by mail-wr1-f66.google.com with SMTP id d2-v6so22544506wro.7
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 11:42:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AzzDb02wcMiUpjOGmy+dVj43H0l+RcMs0T3YRHxEV2w=;
-        b=mR82q3S+9tPdHDEiUKqg0DLGKvo1LBTDWym/CPoBs5Un6hz3xN38vtljGn2JNmjAIc
-         xwvnfdpxAZlAP1w2Gsck1kY6Az8b4zO/ErazdqWYJt8WyKtg4tSOo/JSmyA4fX1qXDeW
-         iFbE4YPg7QzVht1JLpB7/thGGl3Ua89QLQjoiOyuRe4lbwDXCjN8Mml4jF2NKfkmAgV8
-         HCSWk6tQ7D6KftkoKI/C2nfAhqSrRRHZp8WcKSQVWvQvLg3ec6TCFghjwe/9y1YjbJc8
-         cY4HWJQR6A0jTRygzuxg59eE4P1+GgD0KKcNwLsTeFB0lW7jPEbgt6k+dO89AwIoP1xa
-         fUYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AzzDb02wcMiUpjOGmy+dVj43H0l+RcMs0T3YRHxEV2w=;
-        b=CuOJRoA/kImZXczPxp70cgNvz+KY6ayUzEFbDee5cN/ieJRvXkSEP2QgQHYZsxd+mM
-         1IM9m+xjKJw9wcYpm2kk3WsHa+XBpUGFgvzeo6vkGL3FQCxVQSALOKFJbHJHDNu+LF0m
-         +dP5C/fykhUGuyO+7hdZUGaDZikN455jZadJw8yhCQ/AK+FV1qOGtTJORfw7+KHUAmms
-         KqRxTJfw6O9ggAshWfPuaBXyoSE/mJpzqhVdXMTHQh1CxrheLaWa1CRTvyrLEVn3cmhA
-         gmgu3UQ94e1GBfOEqkgDkvUAUQvLubzO50hmmFChSpMTqZaRX1HzvmkXZQUrFlaeq7wp
-         mgOg==
-X-Gm-Message-State: ABuFfojloe78W9+8K4MCNRRB4KHAttao7p0JhrSZ0Rv9Rfnaz8wiB5eX
-        6ROXC+ML5/FeZLoCLhNCnHLPEP+jO2O3FS8GL8kG8g==
-X-Google-Smtp-Source: ACcGV62hZNpzZZUS1jTUnKWbl6z483zYZdyL2IGPqtpRIVS5C5YZtiNuDy49g4sAzgSLKgKcG0LWy81+xOVfvz4ub3E=
-X-Received: by 2002:adf:82e3:: with SMTP id 90-v6mr14878835wrc.131.1539628954043;
- Mon, 15 Oct 2018 11:42:34 -0700 (PDT)
+        Mon, 15 Oct 2018 22:29:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58086 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726594AbeJPC35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 22:29:57 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 46C4D308626E;
+        Mon, 15 Oct 2018 18:43:29 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9544262480;
+        Mon, 15 Oct 2018 18:43:22 +0000 (UTC)
+Subject: Re: [PATCH v13 03/11] cpuset: Simply allocation and freeing of
+ cpumasks
+To:     Tom Hromatka <tom.hromatka@oracle.com>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+References: <1539366951-8498-1-git-send-email-longman@redhat.com>
+ <1539366951-8498-4-git-send-email-longman@redhat.com>
+ <fe132a9a-472d-22db-43ef-42c00b68c8dd@oracle.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <b5ec84fe-e9ed-7b82-7183-cb84f485dfc7@redhat.com>
+Date:   Mon, 15 Oct 2018 14:43:22 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-References: <20181010142548.GB4071@kroah.com> <20181010212426.3167-1-laurence.rochfort@gmail.com>
-In-Reply-To: <20181010212426.3167-1-laurence.rochfort@gmail.com>
-From:   Todd Poynor <toddpoynor@google.com>
-Date:   Mon, 15 Oct 2018 11:42:21 -0700
-Message-ID: <CAAW3YpbLUSicJS788rMTnBJTiKHJy_hW-EOS7s05+V-09zTbrQ@mail.gmail.com>
-Subject: Re: [PATCH v3] staging: gasket: Fix sparse "incorrect type in
- assignment" warnings.
-To:     laurence.rochfort@gmail.com
-Cc:     Rob Springer <rspringer@google.com>, benchan@chromium.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <fe132a9a-472d-22db-43ef-42c00b68c8dd@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 15 Oct 2018 18:43:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 2:14 PM Laurence Rochfort
-<laurence.rochfort@gmail.com> wrote:
+On 10/15/2018 02:35 PM, Tom Hromatka wrote:
 >
-> Remove the coherent buffer __iomem cookie because the buffer is
-> allocated from dma_alloc_coherent().
 >
-> warning: incorrect type in assignment (different address spaces)
->    expected unsigned char [noderef] [usertype] <asn:2>*virt_base
->    got void *[assigned] mem
-> warning: incorrect type in argument 3 (different address spaces)
->    expected void *cpu_addr
->    got unsigned char [noderef] [usertype] <asn:2>*virt_base
+> On 10/12/2018 11:55 AM, Waiman Long wrote:
+>> The previous commit introduces a new subparts_cpus mask into the cpuset
+>> data structure and a new tmpmasks structure.  Managing the allocation
+>> and freeing of those cpumasks is becoming more complex.
+>>
+>> So a number of helper functions are added to simplify and streamline
+>> the management of those cpumasks. To make it simple, all the cpumasks
+>> are now pre-cleared on allocation.
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 104
+>> +++++++++++++++++++++++++++++++++----------------
+>>   1 file changed, 71 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 29a2bdc..9ac5f94 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -456,6 +456,57 @@ static int is_cpuset_subset(const struct cpuset
+>> *p, const struct cpuset *q)
+>>   }
+>>     /**
+>> + * alloc_cpumasks - allocate three cpumasks for cpuset
+>> + * @cs:  the cpuset that have cpumasks to be allocated.
+>> + * @tmp: the tmpmasks structure pointer
+>> + * Return: 0 if successful, -ENOMEM otherwise.
+>> + *
+>> + * Only one of the two input arguments should be non-NULL.
+>> + */
+>> +static inline int alloc_cpumasks(struct cpuset *cs, struct tmpmasks
+>> *tmp)
+>> +{
+>> +    cpumask_var_t *pmask1, *pmask2, *pmask3;
+>> +
+>> +    if (cs) {
+>> +        pmask1 = &cs->cpus_allowed;
+>> +        pmask2 = &cs->effective_cpus;
+>> +        pmask3 = &cs->subparts_cpus;
+>> +    } else {
+>> +        pmask1 = &tmp->new_cpus;
+>> +        pmask2 = &tmp->addmask;
+>> +        pmask3 = &tmp->delmask;
+>> +    }
+>> +
+>> +    if (!zalloc_cpumask_var(pmask1, GFP_KERNEL))
+>> +        return -ENOMEM;
+>> +
+>> +    if (!zalloc_cpumask_var(pmask2, GFP_KERNEL))
+>> +        goto free_one;
+>> +
+>> +    if (!zalloc_cpumask_var(pmask3, GFP_KERNEL))
+>> +        goto free_two;
+>> +
+>> +    return 0;
+>> +
+>> +free_two:
+>> +    free_cpumask_var(*pmask2);
+>> +free_one:
+>> +    free_cpumask_var(*pmask1);
+>> +    return -ENOMEM;
+>> +}
+>> +
+>> +/**
+>> + * free_cpumasks - free cpumasks in a tmpmasks structure
+>> + * @tmp: the tmpmasks structure pointer
+>> + */
+>> +static inline void free_cpumasks(struct tmpmasks *tmp)
+>> +{
+>> +    free_cpumask_var(tmp->new_cpus);
+>> +    free_cpumask_var(tmp->addmask);
+>> +    free_cpumask_var(tmp->delmask);
+>> +}
+>> +
 >
-> Signed-off-by: Laurence Rochfort <laurence.rochfort@gmail.com>
-> ---
-> Changes in v3:
->  - Just remove the __iommem cookie, don't alter type.
+> I hesitate to bring this up, but since you're respinning this
+> patch for a different bug...
 >
->  drivers/staging/gasket/gasket_core.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Would it make sense to have free_cpumasks() have a similar
+> API and behavior to alloc_cpumasks()?  I could see this potentially
+> causing bugs/confusion in future patches.
 >
-> diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
-> index 275fd0b..e62adcd 100644
-> --- a/drivers/staging/gasket/gasket_core.h
-> +++ b/drivers/staging/gasket/gasket_core.h
-> @@ -231,7 +231,7 @@ struct gasket_coherent_buffer_desc {
->  /* Coherent buffer structure. */
->  struct gasket_coherent_buffer {
->         /* Virtual base address. */
-> -       u8 __iomem *virt_base;
-> +       u8 *virt_base;
+> Thanks.
 >
->         /* Physical base address. */
->         ulong phys_base;
-> --
-> 2.9.5
+> Tom
+>
+>
+Thanks for the comment. Yes I will make the change.
 
-Reviewed-by: Todd Poynor <toddpoynor@google.com>
+-Longman
 
-Thanks!
