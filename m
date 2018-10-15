@@ -2,133 +2,111 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7717BC070C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AF7C070C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C7B920659
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:56:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQFw+XPx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C7B920659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1721E20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:06:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1721E20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbeJOIjY (ORCPT
+        id S1726507AbeJOItk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 04:39:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40228 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbeJOIjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 04:39:24 -0400
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B33A20890;
-        Mon, 15 Oct 2018 00:56:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539564989;
-        bh=EBd2uKWsVOvQ2Lnz5TJfkhJ7bntO2B4pon8qGdgZCgs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vQFw+XPxfDkYwC2zMpFRayqkTflASgJwLXtA7sjBFi2c/bQFugAr0WJf1QW4e1nq7
-         ZuHq47EexVeC2KzmOXiFGLVdwJOUkPKKuBJ8iG1IFRvDHSCxF5xkem3aY7NBOF8Im3
-         PFNx6Hm4kVFtqZGuzooYUlRsuKZpONpd0Bkwf9hU=
-Received: by mail-qk1-f174.google.com with SMTP id v68-v6so10910433qka.2;
-        Sun, 14 Oct 2018 17:56:29 -0700 (PDT)
-X-Gm-Message-State: ABuFfohmHzuJ4LnuNrfSJrWycGZliCsRpU1Z1rt8WPGDICawssVmr+vb
-        G6B5B1pxIX2AFlwL5kN6MK+oFgoIbOEtiNjjNQ==
-X-Google-Smtp-Source: ACcGV616xO0bosyogGjVU/51byCl+UJyaqYPEom9K9uRm3hV93j2XyXW6xTSTMI7vzb5+KiHA3qsTaBvvlotO2PNRSY=
-X-Received: by 2002:a37:6904:: with SMTP id e4-v6mr14254642qkc.79.1539564988431;
- Sun, 14 Oct 2018 17:56:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181011165123.32198-1-dmurphy@ti.com> <20181011165123.32198-3-dmurphy@ti.com>
- <20181011182734.GA7973@amd> <4fcb91c7-b2b2-798d-8a41-fa1b475086e0@ti.com>
- <8c1559e1-b703-4c98-8bd9-7c9993bd59f5@gmail.com> <20181012162619.GA28573@bogus>
- <20181012180312.GB5565@amd> <60cc9238-aba2-aa6a-64a4-2b5e20835549@gmail.com>
-In-Reply-To: <60cc9238-aba2-aa6a-64a4-2b5e20835549@gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Sun, 14 Oct 2018 19:56:16 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+Yspr_iNP1eYanvtmiuMf-xNEZ0suDH3tQayV=V5r5=g@mail.gmail.com>
-Message-ID: <CAL_Jsq+Yspr_iNP1eYanvtmiuMf-xNEZ0suDH3tQayV=V5r5=g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/9] dt-bindings: ti-lmu: Remove LM3697
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 15 Oct 2018 04:49:40 -0400
+Received: from smtprelay0235.hostedemail.com ([216.40.44.235]:58313 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726357AbeJOItk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 04:49:40 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id B6F8C83777EE;
+        Mon, 15 Oct 2018 01:06:43 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: home21_5785f54ad7d03
+X-Filterd-Recvd-Size: 3091
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 15 Oct 2018 01:06:41 +0000 (UTC)
+Message-ID: <b6ee53f7e02cc3ea52713ae82402e97d7050cb3e.camel@perches.com>
+Subject: Re: [PATCH v3 13/18] of: overlay: check prevents multiple fragments
+ touching same property
+From:   Joe Perches <joe@perches.com>
+To:     frowand.list@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
+Date:   Sun, 14 Oct 2018 18:06:40 -0700
+In-Reply-To: <1539563070-12969-14-git-send-email-frowand.list@gmail.com>
+References: <1539563070-12969-1-git-send-email-frowand.list@gmail.com>
+         <1539563070-12969-14-git-send-email-frowand.list@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 1:46 PM Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
->
-> On 10/12/2018 08:03 PM, Pavel Machek wrote:
-> > Hi!
-> >
-> >>>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> >>>>>
-> >>>>> NAK.
-> >>>>
-> >>>> Thanks for the NAK.
-> >>>>
-> >>>> This NAK was NAK'd by other maintainer in the V2 RFC patchset
-> >>>>
-> >>>> https://lore.kernel.org/patchwork/patch/993171/
-> >>>
-> >>> I confirm. LM3697 is a standalone device and not a cell of any
-> >>> MFD device.
-> >>>
-> >>> Waiting for DT maintainer's ack.
-> >>
-> >> You all sort out what you want... I can't follow it all, and I'm not
-> >> going to spend the time trying to figure out what is going on here.
-> >
-> > This is what I want:
-> >
-> >> As this is worded, changing the driver is a Linux problem and irrelevant
-> >> to the binding. Now if you want to move documentation to a location that
-> >> makes more sense, then fine. But structure patches that way and make it
-> >> clear that from an binding ABI perspective, nothing is changing.
-> >
-> > ...but apparently I did not have enough authority to get it.
-> >
-> > (I'm ok with move, and it is possible that binding does need some
-> > fixups besides the move; still it should be done as fixup not as a new
-> > binding).
->
-> There is a fundamental question - should the bindings be considered
-> an ABI, even though there is no mainline "*.dts" implementation basing
-> on these bindings?
+On Sun, 2018-10-14 at 17:24 -0700, frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
+> 
+> Add test case of two fragments updating the same property.  After
+> adding the test case, the system hangs at end of boot, after
+> after slub stack dumps from kfree() in crypto modprobe code.
+[]
+> -static int check_changeset_dup_add_node(struct overlay_changeset *ovcs)
+> +static int changeset_dup_entry_check(struct overlay_changeset *ovcs)
+>  {
+> -	struct of_changeset_entry *ce_1, *ce_2;
+> -	char *fn_1, *fn_2;
+> -	int name_match;
+> +	struct of_changeset_entry *ce_1;
+> +	int dup_entry = 0;
+>  
+>  	list_for_each_entry(ce_1, &ovcs->cset.entries, node) {
+> -
+> -		if (ce_1->action == OF_RECONFIG_ATTACH_NODE ||
+> -		    ce_1->action == OF_RECONFIG_DETACH_NODE) {
+> -
+> -			ce_2 = ce_1;
+> -			list_for_each_entry_continue(ce_2, &ovcs->cset.entries, node) {
+> -				if (ce_2->action == OF_RECONFIG_ATTACH_NODE ||
+> -				    ce_2->action == OF_RECONFIG_DETACH_NODE) {
+> -					/* inexpensive name compare */
+> -					if (!of_node_cmp(ce_1->np->full_name,
+> -					    ce_2->np->full_name)) {
+> -						/* expensive full path name compare */
+> -						fn_1 = kasprintf(GFP_KERNEL, "%pOF", ce_1->np);
+> -						fn_2 = kasprintf(GFP_KERNEL, "%pOF", ce_2->np);
+> -						name_match = !strcmp(fn_1, fn_2);
+> -						kfree(fn_1);
+> -						kfree(fn_2);
+> -						if (name_match) {
+> -							pr_err("ERROR: multiple overlay fragments add and/or delete node %pOF\n",
+> -							       ce_1->np);
+> -							return -EINVAL;
+> -						}
+> -					}
+> -				}
+> -			}
+> -		}
+> +		dup_entry |= find_dup_cset_node_entry(ovcs, ce_1);
+> +		dup_entry |= find_dup_cset_prop(ovcs, ce_1);
 
-In theory there could be out of tree users. Having a dts file using it
-in tree shouldn't be a requirement to maintain the ABI IMO. However, a
-lack of dts is one piece of determining whether this is in use or not.
+I think this is worse performance than before.
 
-> This patch fixes the issues of bindings in a way that would change
-> the ABI, if only it existed. But it apparently doesn't exist in
-> mainline. Unless a DT documentation itself constitutes an ABI.
->
-> I'd like to have it clarified at this occasion, and that's why
-> I kindly ask for DT maintainer's ack or NACK for this modification
-> of bindings.
->
-> For a reference we have a nice summary of the MFD driver and related
-> bindings' flaws in [0] and [1].
->
-> [0] https://lkml.org/lkml/2018/9/7/774
-> [1] https://lkml.org/lkml/2018/9/11/984
+This now walks all entries when before it would
+return -EINVAL directly when it found a match.
 
-Given this one seems to have not really been finished, it's probably
-okay to make changes in this case. Still, it would be good to see
-patches structured so that it's obvious we're breaking things. But how
-the patches are structured doesn't matter until there's some agreement
-on the end result.
 
-Rob
