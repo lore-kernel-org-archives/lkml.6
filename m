@@ -2,71 +2,73 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2017BC070C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CCBC070C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E82A20876
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:09:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E82A20876
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id A6B102086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:34:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6B102086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbeJOIwH (ORCPT
+        id S1726530AbeJOJOk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 04:52:07 -0400
-Received: from gate.crashing.org ([63.228.1.57]:45629 "EHLO gate.crashing.org"
+        Mon, 15 Oct 2018 05:14:40 -0400
+Received: from mx.socionext.com ([202.248.49.38]:12481 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbeJOIwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 04:52:07 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w9F0lDBk027228;
-        Sun, 14 Oct 2018 19:47:15 -0500
-Message-ID: <9cfe508c687068853a6e5e030962a78467a8d313.camel@kernel.crashing.org>
-Subject: Re: [PATCH 01/33] powerpc: use mm zones more sensibly
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Christoph Hellwig <hch@lst.de>, Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 15 Oct 2018 11:47:13 +1100
-In-Reply-To: <20181009132500.17643-2-hch@lst.de>
-References: <20181009132500.17643-1-hch@lst.de>
-         <20181009132500.17643-2-hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726453AbeJOJOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 05:14:40 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 15 Oct 2018 10:31:40 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 7E9921800B2;
+        Mon, 15 Oct 2018 10:31:40 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Mon, 15 Oct 2018 10:31:40 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 2219E1A1210;
+        Mon, 15 Oct 2018 10:31:40 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH] phy: uniphier-pcie: Depend on HAS_IOMEM
+Date:   Mon, 15 Oct 2018 10:31:30 +0900
+Message-Id: <1539567090-10498-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-09 at 15:24 +0200, Christoph Hellwig wrote:
->   * Find the least restrictive zone that is entirely below the
-> @@ -324,11 +305,14 @@ void __init paging_init(void)
->         printk(KERN_DEBUG "Memory hole size: %ldMB\n",
->                (long int)((top_of_ram - total_ram) >> 20));
->  
-> +#ifdef CONFIG_ZONE_DMA
-> +       max_zone_pfns[ZONE_DMA] = min(max_low_pfn, 0x7fffffffUL >> PAGE_SHIFT);
-> +#endif
-> +       max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
->  #ifdef CONFIG_HIGHMEM
-> -       limit_zone_pfn(ZONE_NORMAL, lowmem_end_addr >> PAGE_SHIFT);
-> +       max_zone_pfns[ZONE_HIGHMEM] = max_pfn
-                                               ^
-Missing a  ";" here  --------------------------|
+The driver uses devm_ioremap_resource() which is only available when
+CONFIG_HAS_IOMEM is set, so the driver depends on this option.
 
-Sorry ... works with that fix on an old laptop with highmem.
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+---
+ drivers/phy/socionext/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->  #endif
-> -       limit_zone_pfn(TOP_ZONE, top_of_ram >> PAGE_SHIFT);
-> -       zone_limits_final = true;
-> +
->         free_area_init_nodes(max_zone_pfns);
->  
+diff --git a/drivers/phy/socionext/Kconfig b/drivers/phy/socionext/Kconfig
+index 467e814..9c85231 100644
+--- a/drivers/phy/socionext/Kconfig
++++ b/drivers/phy/socionext/Kconfig
+@@ -26,7 +26,8 @@ config PHY_UNIPHIER_USB3
+ 
+ config PHY_UNIPHIER_PCIE
+ 	tristate "Uniphier PHY driver for PCIe controller"
+-	depends on (ARCH_UNIPHIER || COMPILE_TEST) && OF
++	depends on ARCH_UNIPHIER || COMPILE_TEST
++	depends on OF && HAS_IOMEM
+ 	default PCIE_UNIPHIER
+ 	select GENERIC_PHY
+ 	help
+-- 
+2.7.4
 
