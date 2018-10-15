@@ -2,158 +2,97 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37114C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D736EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFDEF208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:39:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73D34208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:41:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="KO1Yk3zs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFDEF208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="J5k3y8Ju"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D34208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbeJPG1N (ORCPT
+        id S1727045AbeJPG2U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:27:13 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:38672 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbeJPG1N (ORCPT
+        Tue, 16 Oct 2018 02:28:20 -0400
+Received: from a9-54.smtp-out.amazonses.com ([54.240.9.54]:47404 "EHLO
+        a9-54.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726877AbeJPG2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:27:13 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 77F135C0106;
-        Tue, 16 Oct 2018 00:39:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1539643195;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=a5fmKdPZv7n3sGIOkp3gYPF61JK0ZBvyuyKgIHMZoSg=;
-        b=KO1Yk3zsbLO1WnxUIC+u1rOZI8FereBrgLEbDdEo1DJKPOC+Op24eI/iL/sP5KGDyPucXz
-        Mm/B6R6KaoYoK+3MHcEtKQ5lgs1HNs9xtnHFtombc4YgyUEVZ6MP80WG9aFTB3ETsiMRAN
-        GIEYD9V4JjyTsS65XVUFnPJR0KY1sYU=
+        Tue, 16 Oct 2018 02:28:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1539643263;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=/NWRkm6PUxqN230FlS/SDuydCxSv361vgdrxuJLoTLQ=;
+        b=J5k3y8JuzcKDs+XcVtidq0Aam+O6U/NajDXWOX6m/XJjfSLPZAEMbgDE6InTlh0j
+        ZdttSP9wTwHe8/9FEb69kc3GUTAYBGHimRGPzogeFfJUZYVWFA2SoaL1IK6hnUf7QUF
+        xSDkSmZxc8ArLbE6d7asPB5lu79MSz/W7upxWm2M=
+Date:   Mon, 15 Oct 2018 22:41:03 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     David Rientjes <rientjes@google.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [patch] mm, slab: avoid high-order slab pages when it does not
+ reduce waste
+In-Reply-To: <20181012151341.286cd91321cdda9b6bde4de9@linux-foundation.org>
+Message-ID: <0100016679e3c96f-c78df4e2-9ab8-48db-8796-271c4b439f16-000000@email.amazonses.com>
+References: <alpine.DEB.2.21.1810121424420.116562@chino.kir.corp.google.com> <20181012151341.286cd91321cdda9b6bde4de9@linux-foundation.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 16 Oct 2018 00:39:54 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     raj.khem@gmail.com, ulli.kroll@googlemail.com, joel@jms.id.au,
-        nico@linaro.org, arnd@arndb.de, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ARM: copypage-fa: add kto and kfrom to input operands
- list
-In-Reply-To: <20181015222302.GZ30658@n2100.armlinux.org.uk>
-References: <20181015221629.13924-1-stefan@agner.ch>
- <20181015222302.GZ30658@n2100.armlinux.org.uk>
-Message-ID: <26d465580722c7f65b6916e96e283967@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+X-SES-Outgoing: 2018.10.15-54.240.9.54
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.10.2018 00:23, Russell King - ARM Linux wrote:
-> On Tue, Oct 16, 2018 at 12:16:29AM +0200, Stefan Agner wrote:
->> When functions incoming parameters are not in input operands list gcc
->> 4.5 does not load the parameters into registers before calling this
->> function but the inline assembly assumes valid addresses inside this
->> function. This breaks the code because r0 and r1 are invalid when
->> execution enters v4wb_copy_user_page ()
-> 
-> NAK.  Naked functions must never be inlined.  Please add a "noinline"
-> attribute to the function rather than making things more complex.
-> 
+On Fri, 12 Oct 2018, Andrew Morton wrote:
 
-To be honest, I did not put much thought into this commit since it is
-just doing to copypage-fa.c what 9a40ac86152c ("ARM: 6164/1: Add kto and
-kfrom to input operands list.") has been done to the other copypage
-implementations...
+> > If the amount of waste is the same at higher cachep->gfporder values,
+> > there is no significant benefit to allocating higher order memory.  There
+> > will be fewer calls to the page allocator, but each call will require
+> > zone->lock and finding the page of best fit from the per-zone free areas.
 
-[adding Khem]
+There is a benefit because the management overhead is halved.
 
-> The GCC manual states:
-> 
-> `naked'
->      Use this attribute on the ARM, AVR, MCORE, MSP430, NDS32, RL78, RX
->      and SPU ports to indicate that the specified function does not
->      need prologue/epilogue sequences generated by the compiler.  It is
->      up to the programmer to provide these sequences. The only
->                                                       ^^^^^^^^
->      statements that can be safely included in naked functions are
->      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->      `asm' statements that do not have operands.  All other statements,
->      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->      including declarations of local variables, `if' statements, and so
->      forth, should be avoided.  Naked functions should be used to
->      implement the body of an assembly function, while allowing the
->      compiler to construct the requisite function declaration for the
->      assembler.
-> 
-> The 'I' attribute is fine here because it is a constant that is not
-> allowed to be in a register (and hence has no code generation side
-> effects.)
-> 
-> Adding operands for the input parameters, however, isn't going to
-> work around the fact that _this_ assembly is written to be out of
-> line and so it must never be inlined by the compiler.
+> > Instead, it is better to allocate order-0 memory if possible so that pages
+> > can be returned from the per-cpu pagesets (pcp).
 
-I briefly looked at a disassembled version after applying both patches,
-it indeed leads to inlining. However, the code seems to be working
-(thanks to asm volatile?)...
+Have a benchmark that shows this?
 
-Anyway, my goal is actually what patch 2 ("ARM: copypage: do not use
-naked functions") is doing: Make Clang happy. As a matter of fact,
-reverting 9a40ac86152c actually fixes compilation for Clang too, and
-seems to lead to a working Kernel (tested with versatile_defconfig in
-Qemu), so maybe that is what we should do here?
+>
+> > There are two reasons to prefer this over allocating high order memory:
+> >
+> >  - allocating from the pcp lists does not require a per-zone lock, and
+> >
+> >  - this reduces stranding of MIGRATE_UNMOVABLE pageblocks on pcp lists
+> >    that increases slab fragmentation across a zone.
 
---
-Stefan
+The slab allocators generally buffer pages from the page allocator to
+avoid this effect given the slowness of page allocator operations anyways.
 
-> 
->> Also the constant needs to be used as third input operand so account
->> for that as well.
->>
->> This fixes copypage-fa.c what has previously done before for the other
->> copypage implementations in commit 9a40ac86152c ("ARM: 6164/1: Add kto
->> and kfrom to input operands list.").
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>  arch/arm/mm/copypage-fa.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/mm/copypage-fa.c b/arch/arm/mm/copypage-fa.c
->> index d130a5ece5d5..ec6501308c60 100644
->> --- a/arch/arm/mm/copypage-fa.c
->> +++ b/arch/arm/mm/copypage-fa.c
->> @@ -22,7 +22,7 @@ fa_copy_user_page(void *kto, const void *kfrom)
->>  {
->>  	asm("\
->>  	stmfd	sp!, {r4, lr}			@ 2\n\
->> -	mov	r2, %0				@ 1\n\
->> +	mov	r2, %2				@ 1\n\
->>  1:	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
->>  	stmia	r0, {r3, r4, ip, lr}		@ 4\n\
->>  	mcr	p15, 0, r0, c7, c14, 1		@ 1   clean and invalidate D line\n\
->> @@ -36,7 +36,7 @@ fa_copy_user_page(void *kto, const void *kfrom)
->>  	mcr	p15, 0, r2, c7, c10, 4		@ 1   drain WB\n\
->>  	ldmfd	sp!, {r4, pc}			@ 3"
->>  	:
->> -	: "I" (PAGE_SIZE / 32));
->> +	: "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 32));
->>  }
->>
->>  void fa_copy_user_highpage(struct page *to, struct page *from,
->> --
->> 2.19.1
->>
+
+> Confused.  Higher-order slab pages never go through the pcp lists, do
+> they?  I'd have thought that by tending to increase the amount of
+> order-0 pages which are used by slab, such stranding would be
+> *increased*?
+
+Potentially.
+
+
+> > We are particularly interested in the second point to eliminate cases
+> > where all other pages on a pageblock are movable (or free) and fallback to
+> > pageblocks of other migratetypes from the per-zone free areas causes
+> > high-order slab memory to be allocated from them rather than from free
+> > MIGRATE_UNMOVABLE pages on the pcp.
+
+Well does this actually do some good?
