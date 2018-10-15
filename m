@@ -2,97 +2,101 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 636C1C070C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 02:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1A7C7112A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 02:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E3E320659
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 02:29:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Mlwn5C7/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E3E320659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 5DEE420659
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 02:32:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DEE420659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbeJOKNG (ORCPT
+        id S1726571AbeJOKP5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 06:13:06 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35436 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbeJOKNF (ORCPT
+        Mon, 15 Oct 2018 06:15:57 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:32804 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726498AbeJOKP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 06:13:05 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f8-v6so8527430plb.2
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 19:29:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FW952t4pDVRIR40MRoaiZ9nrLOWRH704jVPjM3WmWxs=;
-        b=Mlwn5C7/wrQJVd+UiURagcyJO5cpPhr55BJM7UxHL6NOw3OymACNYp4c2gA0YJZu6j
-         LiXx7b0BPNrB4h7lxWOE+QxhnNYiUxCS/vbwgGYJLNHQRd+wdmKFI+L/65HZLYOIVPHd
-         k9rq/tdMyc5n/XSYtCTSuEVrFFG2+l3XvXF9o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FW952t4pDVRIR40MRoaiZ9nrLOWRH704jVPjM3WmWxs=;
-        b=M1BYu7NrJjwctCju58QXFDpGRFXAAOY4E24JBtXMENz8bh/g1r1/T4oGlNKbLKMv9E
-         NvWQlVeNc9q8YtyhFkAQJo8NZpJW6AfQFEWHnQ6K7U8GwAMQte3FSrFzLLBf1q8jNPKz
-         CUyCbd+sAg8V7tfUP2gZ0cx7ppyXScVuJIaUEWrQ4g8F7PrAiS/Fsbf8utjaOb7sVEtv
-         TQ1q5EIDwp3zRtlSQjEVqIahMm8kFNWg5xsf4hryhhnrwg9aoxWYvEVyRvje2CE+AwqC
-         aAhc+aCrBNkwAzEVkOosuJOL/6ujh+y+dasegt0axo4jndQCuHaZL7KbuENMq07dLsp0
-         KZSA==
-X-Gm-Message-State: ABuFfoiZg3HbhD11mVeIVgxwa9O2klPGrLh3H3SE/1cZbb6AyOeAu0xg
-        euvAO092rPKvJgq53vmxi+IHuH/6oqc=
-X-Google-Smtp-Source: ACcGV60w/su0bS0yurvCMClHGo+ROY50bplM0uiTJbN2U5YpPTJ4rylcLZ0AiNx38iztvCCExBgdsg==
-X-Received: by 2002:a17:902:9004:: with SMTP id a4-v6mr15003989plp.166.1539570596075;
-        Sun, 14 Oct 2018 19:29:56 -0700 (PDT)
-Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id z11-v6sm15302474pfd.99.2018.10.14.19.29.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 14 Oct 2018 19:29:54 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH] doc: rcu: Fix code listing in performance and scalability requirements
-Date:   Sun, 14 Oct 2018 19:29:42 -0700
-Message-Id: <20181015022942.224250-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        Mon, 15 Oct 2018 06:15:56 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07707593|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03298;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.D28d4N6_1539570755;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D28d4N6_1539570755)
+          by smtp.aliyun-inc.com(10.147.44.145);
+          Mon, 15 Oct 2018 10:32:36 +0800
+Date:   Mon, 15 Oct 2018 10:32:34 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, will.deacon@arm.com,
+        jhogan@kernel.org, paul.burton@mips.com, peterz@infradead.org,
+        arnd@arndb.de, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH V12 0/8] C-SKY(csky) Linux Kernel Driver
+Message-ID: <20181015023234.GA24121@guoren-Inspiron-7460>
+References: <cover.1539315341.git.ren_guo@c-sky.com>
+ <dfe56d38-cfa5-2be1-114e-c6721d6c92a3@linaro.org>
+ <20181014162631.GA13374@guoren-Inspiron-7460>
+ <36e2cb6d-6d9e-4764-a6dd-a5f74cab5a09@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36e2cb6d-6d9e-4764-a6dd-a5f74cab5a09@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code listing under this section has a quick quiz that says line 19
-uses rcu_access_pointer, but the code listing itself does not. Fix this.
+Hi Daniel,
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- .../RCU/Design/Requirements/Requirements.html    |  2 +-
- kernel/sys.c                                     | 16 ++++++++++++++++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+On Sun, Oct 14, 2018 at 10:38:36PM +0200, Daniel Lezcano wrote:
+> On 14/10/2018 18:26, Guo Ren wrote:
+> Thanks Guo,
+> 
+> the descriptions look ok for the timer part. Can you resend the DT
+> bindings + timers patches separately with the commit log updated ?
+Ok, immediately.
 
-diff --git a/Documentation/RCU/Design/Requirements/Requirements.html b/Documentation/RCU/Design/Requirements/Requirements.html
-index 4fae55056c1d..f74a2233865c 100644
---- a/Documentation/RCU/Design/Requirements/Requirements.html
-+++ b/Documentation/RCU/Design/Requirements/Requirements.html
-@@ -1596,7 +1596,7 @@ used in place of <tt>synchronize_rcu()</tt> as follows:
- 16   struct foo *p;
- 17
- 18   spin_lock(&amp;gp_lock);
--19   p = rcu_dereference(gp);
-+19   p = rcu_access_pointer(gp);
- 20   if (!p) {
- 21     spin_unlock(&amp;gp_lock);
- 22     return false;
--- 
-2.19.0.605.g01d371f741-goog
+> 
+> When you add the Changelog you have to insert it *after* the first
+> '---', so when the patch is git applied, the change log will be
+> discarded and won't appear in git.
+Ok, thx for the tips.
 
+> 
+> eg.
+> 
+> commit 6b465856936cb8f7eda31b20eb59fb5c8a19d468
+> Author: Guo Ren <ren_guo@c-sky.com>
+> Date:   Tue Oct 2 16:43:18 2018 +0800
+> 
+> clocksource: add gx6605s SOC system timer
+> 
+> The driver is for gx6605s SOC system timer and there are two
+> same timers in gx6605s. We use one for clkevt and another one for
+> clksrc.
+> 
+> The timer is mmio map to access, so we need give mmio address in dts.
+> The counter at 0x0  offset is clock event. The counter at 0x40 offset is
+> clock source.
+> 
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+> Changelog:
+>      - pass checkpatch.pl
+>      - Add COMIPLE_TEST in Kconfig
+>      - no cast is needed for "struct clock_event_device *ce = dev"
+>      - remove: extra space after (u64)
+>      - Add License and Copyright
+>      - Use timer-of framework
+>      - Change name with upstream feedback
+>      - Use clksource_mmio framework
+> ---
+
+Best Regards
+ Guo Ren
