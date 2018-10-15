@@ -2,294 +2,286 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5704C7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE33C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D46120881
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:08:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D46120881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id C6DBB2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:12:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MUc4MMci"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6DBB2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbeJOMwL (ORCPT
+        id S1726659AbeJOM4Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 08:52:11 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:36537 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726400AbeJOMwL (ORCPT
+        Mon, 15 Oct 2018 08:56:16 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:37211 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbeJOM4P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 08:52:11 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437336|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03294;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.D2CJ4pV_1539580082;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D2CJ4pV_1539580082)
-          by smtp.aliyun-inc.com(10.147.44.118);
-          Mon, 15 Oct 2018 13:08:02 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        daniel.lezcano@linaro.org, will.deacon@arm.com, jhogan@kernel.org,
-        paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V13 1/4] clocksource: add C-SKY SMP timer
-Date:   Mon, 15 Oct 2018 13:07:41 +0800
-Message-Id: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 15 Oct 2018 08:56:15 -0400
+Received: by mail-yb1-f193.google.com with SMTP id h1-v6so7034573ybm.4
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 22:12:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OzLx9svj9e+xo59LjiZy1h2emoOjD0YaaRGDH5d9hAk=;
+        b=MUc4MMciRN2E4RqNwbFVtr84p9iEhatfgTuhzEhczEJZOhM9AzWKKSDtqTtmrx9us1
+         BVw3QIHb/eTGT2hTvOiZNVQivdfZZZqNwUT17Vq8PvCnm89ki796AbLledBnH6QfhWvL
+         RcYFE+zcnhLLo7yHE1ng5djtdTkBhCeCun28o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OzLx9svj9e+xo59LjiZy1h2emoOjD0YaaRGDH5d9hAk=;
+        b=C1lcidXddqHLRdVd1l4yADmNv27xizZYAnyYCCdovbxvB+C5sItuFCPK57JmEXCXL8
+         XCTmOHj+bDJF/LoLHnHiCngJ2iPNGVx3qTW9jfhV4CuOYTyfmCKPh0Mjik3T62qdzttC
+         OFByZNmKASeBE02rd2AwIsHNTVAS3GwxzciUsgWfYsorX+t1GpMgcPvreF3EsieHfqDQ
+         Ubvwa9aY26v7apVP6UrPFikEHG2RZ0EraT/JyJIwjoAF3CoT8bH3XNZgNjVcOweFFAt1
+         WZYovs3BqYA4N7boK4uBxKpUXmp7Ic/+4PfBns94WityxLBuebZBLXdaeXaVAjo1dDq0
+         cGkQ==
+X-Gm-Message-State: ABuFfohbYcT+OXI9964jx/N8cl4c8yE3xbnNWXtm9Sdc3UrXEFOM7CCr
+        dc2MwDihQlXObfoVyy0IsWdafocOcF442dxlCsz2xw==
+X-Google-Smtp-Source: ACcGV61qMPaSWHPBvyi2V7pYGawUFNE3pFYXXAdHYQ/mVJIp6ZvRwdPgzWbdQnhV2XT+7SdLfrDUVdKVuKJAcA5lOE4=
+X-Received: by 2002:a25:a063:: with SMTP id x90-v6mr8796156ybh.174.1539580358614;
+ Sun, 14 Oct 2018 22:12:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <1539337442-3676-1-git-send-email-firoz.khan@linaro.org>
+ <1539337442-3676-4-git-send-email-firoz.khan@linaro.org> <20181014010658.GB717@asgard.redhat.com>
+In-Reply-To: <20181014010658.GB717@asgard.redhat.com>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Mon, 15 Oct 2018 10:42:27 +0530
+Message-ID: <CALxhOnhLQooctntdD69BsSmwzsx692QbMmHVTcemKFHr2a1SPQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] parisc: add system call table generation support
+To:     esyr@redhat.com
+Cc:     linux-parisc@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver is for C-SKY SMP timer. It only support oneshot event
-and 32bit overflow for clocksource. Per cpu core has one timer and
-all timers share one clock-counter-input the same clocksource.
+Hi Eugene,
 
-This use mfcr&mtcr instructions to access the regs.
+On Sun, 14 Oct 2018 at 06:36, Eugene Syromiatnikov <esyr@redhat.com> wrote:
+>
+> On Fri, Oct 12, 2018 at 03:13:59PM +0530, Firoz Khan wrote:
+> > diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+> > new file mode 100644
+> > index 0000000..7c9f268
+>
+> > +86      common  uselib                          sys_ni_syscall
+>
+> Again, why is this definition left, while others have been removed?
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
----
-Changelog:
- - Add COMPILE_TEST
- - Fixup smp boot error, cpuhp_setup_state must after timer_of_init()
- - Add rollback for timer_of_cleanup.
- - Use request_percpu_irq separate from time_of.
- - Remove #define CPUHP_AP_CSKY_TIMER_STARTING.
- - Add CPUHP_AP_CSKY_TIMER_STARTING in cpuhotplug.h.
- - Support csky mp timer alpha version.
- - Just use low-counter with 32bit width as clocksource.
- - Coding convention with upstream feed-back.
----
----
- drivers/clocksource/Kconfig         |  10 +++
- drivers/clocksource/Makefile        |   1 +
- drivers/clocksource/timer-mp-csky.c | 173 ++++++++++++++++++++++++++++++++++++
- include/linux/cpuhotplug.h          |   1 +
- 4 files changed, 185 insertions(+)
- create mode 100644 drivers/clocksource/timer-mp-csky.c
+The system call generation script will generate new uapi and syscall
+table files and replace the existed one. We'll make sure the generated
+file against replaced one will be identical.
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index a11f4ba..591c9a8 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -620,4 +620,14 @@ config RISCV_TIMER
- 	  is accessed via both the SBI and the rdcycle instruction.  This is
- 	  required for all RISC-V systems.
- 
-+config CSKY_MP_TIMER
-+	bool "SMP Timer for the C-SKY platform" if COMPILE_TEST
-+	depends on CSKY
-+	select TIMER_OF
-+	help
-+	  Say yes here to enable C-SKY SMP timer driver used for C-SKY SMP
-+	  system.
-+	  csky,mptimer is not only used in SMP system, it also could be used
-+	  single core system. It's not a mmio reg and it use mtcr/mfcr instruction.
-+
- endmenu
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index db51b24..5ce82d3 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -79,3 +79,4 @@ obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
- obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
- obj-$(CONFIG_ATCPIT100_TIMER)		+= timer-atcpit100.o
- obj-$(CONFIG_RISCV_TIMER)		+= riscv_timer.o
-+obj-$(CONFIG_CSKY_MP_TIMER)		+= timer-mp-csky.o
-diff --git a/drivers/clocksource/timer-mp-csky.c b/drivers/clocksource/timer-mp-csky.c
-new file mode 100644
-index 0000000..a8acc43
---- /dev/null
-+++ b/drivers/clocksource/timer-mp-csky.c
-@@ -0,0 +1,173 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/sched_clock.h>
-+#include <linux/cpu.h>
-+#include <linux/of_irq.h>
-+#include <asm/reg_ops.h>
-+
-+#include "timer-of.h"
-+
-+#define PTIM_CCVR	"cr<3, 14>"
-+#define PTIM_CTLR	"cr<0, 14>"
-+#define PTIM_LVR	"cr<6, 14>"
-+#define PTIM_TSR	"cr<1, 14>"
-+
-+static int csky_mptimer_irq;
-+
-+static int csky_mptimer_set_next_event(unsigned long delta,
-+				       struct clock_event_device *ce)
-+{
-+	mtcr(PTIM_LVR, delta);
-+
-+	return 0;
-+}
-+
-+static int csky_mptimer_shutdown(struct clock_event_device *ce)
-+{
-+	mtcr(PTIM_CTLR, 0);
-+
-+	return 0;
-+}
-+
-+static int csky_mptimer_oneshot(struct clock_event_device *ce)
-+{
-+	mtcr(PTIM_CTLR, 1);
-+
-+	return 0;
-+}
-+
-+static int csky_mptimer_oneshot_stopped(struct clock_event_device *ce)
-+{
-+	mtcr(PTIM_CTLR, 0);
-+
-+	return 0;
-+}
-+
-+static DEFINE_PER_CPU(struct timer_of, csky_to) = {
-+	.flags					= TIMER_OF_CLOCK,
-+	.clkevt = {
-+		.rating				= 300,
-+		.features			= CLOCK_EVT_FEAT_PERCPU |
-+						  CLOCK_EVT_FEAT_ONESHOT,
-+		.set_state_shutdown		= csky_mptimer_shutdown,
-+		.set_state_oneshot		= csky_mptimer_oneshot,
-+		.set_state_oneshot_stopped	= csky_mptimer_oneshot_stopped,
-+		.set_next_event			= csky_mptimer_set_next_event,
-+	},
-+};
-+
-+static irqreturn_t csky_timer_interrupt(int irq, void *dev)
-+{
-+	struct timer_of *to = this_cpu_ptr(&csky_to);
-+
-+	mtcr(PTIM_TSR, 0);
-+
-+	to->clkevt.event_handler(&to->clkevt);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/*
-+ * clock event for percpu
-+ */
-+static int csky_mptimer_starting_cpu(unsigned int cpu)
-+{
-+	struct timer_of *to = per_cpu_ptr(&csky_to, cpu);
-+
-+	to->clkevt.cpumask = cpumask_of(cpu);
-+
-+	clockevents_config_and_register(&to->clkevt, timer_of_rate(to),
-+					2, ULONG_MAX);
-+
-+	enable_percpu_irq(csky_mptimer_irq, 0);
-+
-+	return 0;
-+}
-+
-+static int csky_mptimer_dying_cpu(unsigned int cpu)
-+{
-+	disable_percpu_irq(csky_mptimer_irq);
-+
-+	return 0;
-+}
-+
-+/*
-+ * clock source
-+ */
-+static u64 sched_clock_read(void)
-+{
-+	return (u64)mfcr(PTIM_CCVR);
-+}
-+
-+static u64 clksrc_read(struct clocksource *c)
-+{
-+	return (u64)mfcr(PTIM_CCVR);
-+}
-+
-+struct clocksource csky_clocksource = {
-+	.name	= "csky",
-+	.rating	= 400,
-+	.mask	= CLOCKSOURCE_MASK(32),
-+	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
-+	.read	= clksrc_read,
-+};
-+
-+static int __init csky_mptimer_init(struct device_node *np)
-+{
-+	int ret, cpu, cpu_rollback;
-+	struct timer_of *to = NULL;
-+
-+	/*
-+	 * Csky_mptimer is designed for C-SKY SMP multi-processors and
-+	 * every core has it's own private irq and regs for clkevt and
-+	 * clksrc.
-+	 *
-+	 * The regs is accessed by cpu instruction: mfcr/mtcr instead of
-+	 * mmio map style. So we needn't mmio-address in dts, but we still
-+	 * need to give clk and irq number.
-+	 *
-+	 * We use private irq for the mptimer and irq number is the same
-+	 * for every core. So we use request_percpu_irq() in timer_of_init.
-+	 */
-+	csky_mptimer_irq = irq_of_parse_and_map(np, 0);
-+	if (csky_mptimer_irq <= 0)
-+		return -EINVAL;
-+
-+	ret = request_percpu_irq(csky_mptimer_irq, csky_timer_interrupt,
-+				 "csky_mp_timer", &csky_to);
-+	if (ret)
-+		return -EINVAL;
-+
-+	for_each_possible_cpu(cpu) {
-+		to = per_cpu_ptr(&csky_to, cpu);
-+		ret = timer_of_init(np, to);
-+		if (ret)
-+			goto rollback;
-+	}
-+
-+	clocksource_register_hz(&csky_clocksource, timer_of_rate(to));
-+	sched_clock_register(sched_clock_read, 32, timer_of_rate(to));
-+
-+	ret = cpuhp_setup_state(CPUHP_AP_CSKY_TIMER_STARTING,
-+				"clockevents/csky/timer:starting",
-+				csky_mptimer_starting_cpu,
-+				csky_mptimer_dying_cpu);
-+	if (ret)
-+		return -EINVAL;
-+
-+	return 0;
-+
-+rollback:
-+	for_each_possible_cpu(cpu_rollback) {
-+		if (cpu_rollback == cpu)
-+			break;
-+
-+		to = per_cpu_ptr(&csky_to, cpu_rollback);
-+		timer_of_cleanup(to);
-+	}
-+	return -EINVAL;
-+}
-+TIMER_OF_DECLARE(csky_mptimer, "csky,mptimer", csky_mptimer_init);
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index caf40ad..e0cd2ba 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -126,6 +126,7 @@ enum cpuhp_state {
- 	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
- 	CPUHP_AP_ARC_TIMER_STARTING,
- 	CPUHP_AP_RISCV_TIMER_STARTING,
-+	CPUHP_AP_CSKY_TIMER_STARTING,
- 	CPUHP_AP_KVM_STARTING,
- 	CPUHP_AP_KVM_ARM_VGIC_INIT_STARTING,
- 	CPUHP_AP_KVM_ARM_VGIC_STARTING,
--- 
-2.7.4
+uselib is declared in uapi header:
+https://github.com/torvalds/linux/blob/master/arch/parisc/include/uapi/asm/unistd.h#L103
+So I have to make sure this entry is present in the generated uapi header.
 
+>
+> > +348     common  pwritev2                        sys_pwritev2                    compat_sys_pwritev2
+> > +349     common  statx                           sys_statx
+> > +350  common  io_pgetevents                   sys_io_pgetevents               compat_sys_io_pgetevents
+>
+> Tab instead of spaces.
+
+I'm using emacs editor with default settings. In the actual file, there is no
+indentation problem which I find but if I get patch using git format-patch,
+it has inconsistent indentation.
+
+No idea. I could find the same problem in other patches also.
+Let me use the vi editor to save the file and get the patch.
+
+>
+> > diff --git a/arch/parisc/kernel/syscalls/syscallhdr.sh b/arch/parisc/kernel/syscalls/syscallhdr.sh
+> > new file mode 100644
+> > index 0000000..607d4ca
+> > --- /dev/null
+> > +++ b/arch/parisc/kernel/syscalls/syscallhdr.sh
+> > @@ -0,0 +1,35 @@
+> > +#!/bin/sh
+>
+> /bin/sh -efu
+>
+> > +# SPDX-License-Identifier: GPL-2.0
+>
+> "export LANG=C", due to usage of sed/grep/sort.
+
+I got this frame work from x86/entry/syscalls;
+https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscallhdr.sh
+I haven't modified the script but I tune this script to meet my requirements.
+
+Sure, I'll look into this.
+
+>
+> > +
+> > +in="$1"
+> > +out="$2"
+> > +my_abis=`echo "($3)" | tr ',' '|'`
+> > +prefix="$4"
+> > +offset="$5"
+> > +
+> > +fileguard=_UAPI_ASM_PARISC_`basename "$out" | sed \
+> > +    -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
+> > +    -e 's/[^A-Z0-9_]/_/g' -e 's/__/_/g'`
+> > +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
+>
+> grep -E '^[[:xdigit:]Xx]+[[:space:]]+'"${my_abis}" "$in"
+> sort -n -k1,1
+>
+> > +    echo "#ifndef ${fileguard}"
+> > +    echo "#define ${fileguard}"
+> > +    echo ""
+>
+>         cat <<-EOF
+>                 #ifndef ${fileguard}
+>                 #define ${fileguard}
+>
+>         EOF
+>
+> > +
+> > +    nxt=0
+> > +    while read nr abi name entry compat ; do
+> > +     if [ -z "$offset" ]; then
+> > +         echo -e "#define __NR_${prefix}${name}\t$nr"
+> > +     else
+> > +         echo -e "#define __NR_${prefix}${name}\t($offset + $nr)"
+> > +     fi
+>
+> echo options are not portable; something like
+>
+>         printf "#define __NR_%s%s\t(%s + %s)" "${prefix}" "${name}" "${offset}" "${nr}"
+
+x86/armhas similar echo implementation.
+https://github.com/torvalds/linux/blob/master/arch/arm/tools/syscallhdr.sh
+
+s390 has this printf implemenation.
+https://github.com/torvalds/linux/blob/master/arch/s390/kernel/syscalls/syscalltbl
+
+I chose echo one. but it is easy to change to printf :)
+
+>
+> > +     nxt=$nr
+> > +     let nxt=nxt+1
+>
+> "let" is a bash extension, posix-conformant expression would be
+>
+>         nxt=$((nr + 1))
+>
+> (I would also check that nr >= nxt, however)
+
+Sure.
+
+>
+> > +    done
+> > +
+> > +    echo ""
+> > +    echo "#ifdef __KERNEL__"
+> > +    echo -e "#define __NR_syscalls\t$nxt"
+> > +    echo "#endif"
+> > +    echo ""
+> > +    echo "#endif /* ${fileguard} */"
+>
+>         cat <<-EOF
+>
+>                 #ifdef __KERNEL__
+>                 # define __NR_syscalls\t${nxt}
+>                 #endif
+>
+>                 #endif /* ${fileguard} */
+>         EOF
+>
+> > +) > "$out"
+> > diff --git a/arch/parisc/kernel/syscalls/syscalltbl.sh b/arch/parisc/kernel/syscalls/syscalltbl.sh
+> > new file mode 100644
+> > index 0000000..04abde7
+> > --- /dev/null
+> > +++ b/arch/parisc/kernel/syscalls/syscalltbl.sh
+> > @@ -0,0 +1,46 @@
+> > +#!/bin/sh
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +in="$1"
+> > +out="$2"
+> > +my_abis=`echo "($3)" | tr ',' '|'`
+> > +offset="$4"
+> > +
+> > +emit() {
+> > +    nxt="$1"
+> > +    if [ -z "$offset" ]; then
+> > +     nr="$2"
+> > +    else
+> > +     nr="$2"
+> > +     nr=$((nr+offset))
+> > +    fi
+> > +    entry="$3"
+> > +
+> > +    while [ $nxt -lt $nr ]; do
+>
+> It would break nicely if nxt="-n x -o 1" or something like that.
+>
+> > +     echo "__SYSCALL($nxt, sys_ni_syscall, )"
+> > +        let nxt=nxt+1
+> > +    done
+> > +    echo "__SYSCALL($nxt, $entry, )"
+> > +}
+> > +
+> > +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
+> > +    if [ -z "$offset" ]; then
+> > +     nxt=0
+> > +    else
+> > +     nxt=$offset
+> > +    fi
+> > +
+> > +    my_abi="$(cut -d'|' -f2 <<< $my_abis)"
+>
+>         my_abi="${my_abis#*|}"
+>
+> But it looks like that $my_abis includes parentheses and this code
+> is broken.
+
+I may planned to have some different implementation for the same.
+
+>
+> > +    while read nr abi name entry compat ; do
+> > +     if [ $my_abi = "compat" ]; then
+> > +         if [ -z "$compat" ]; then
+> > +             emit $nxt $nr $entry
+> > +         else
+> > +             emit $nxt $nr $compat
+> > +         fi
+> > +     else
+> > +         emit $nxt $nr $entry
+> > +     fi
+> > +        let nxt=nxt+1
+> > +    done
+> > +) > "$out"
+
+Thanks
+Firoz
+
+> > --
+> > 1.9.1
+> >
