@@ -2,143 +2,172 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC09EC7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42053C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89C6E20644
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:53:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89C6E20644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id E3CF920644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:54:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3CF920644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbeJOQiI (ORCPT
+        id S1726827AbeJOQjI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 12:38:08 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13636 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726273AbeJOQiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 12:38:08 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 79FA6F999506F;
-        Mon, 15 Oct 2018 16:53:44 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Mon, 15 Oct 2018
- 16:53:40 +0800
-Subject: Re: [PATCH] bitfield: add constant field preparation macros
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        <linux-wireless@vger.kernel.org>
-References: <20181012194556.31004-1-johannes@sipsolutions.net>
-CC:     <linux-kernel@vger.kernel.org>, <nbd@nbd.name>,
-        Johannes Berg <johannes.berg@intel.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <d250e401-e939-c521-8e66-d9f6648db986@huawei.com>
-Date:   Mon, 15 Oct 2018 09:53:36 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Mon, 15 Oct 2018 12:39:08 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60977 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726273AbeJOQjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 12:39:08 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 07A5E20728; Mon, 15 Oct 2018 10:54:45 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-7-245.w90-88.abo.wanadoo.fr [90.88.129.245])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B0BC720703;
+        Mon, 15 Oct 2018 10:54:34 +0200 (CEST)
+Date:   Mon, 15 Oct 2018 10:54:35 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     masonccyang@mxic.com.tw
+Cc:     broonie@kernel.org, tpiepho@impinj.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        juliensu@mxic.com.tw, zhengxunli@mxic.com.tw
+Subject: Re: [PATCH v5 1/2] spi: Add MXIC controller driver
+Message-ID: <20181015105435.6c869a56@bbrezillon>
+In-Reply-To: <1539591976-30430-2-git-send-email-masonccyang@mxic.com.tw>
+References: <1539591976-30430-1-git-send-email-masonccyang@mxic.com.tw>
+        <1539591976-30430-2-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181012194556.31004-1-johannes@sipsolutions.net>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/2018 20:45, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
->
-> John Garry requested to be able to use FIELD_PREP() and friends
-> in constant initializers, but we cannot completely switch all of
-> the current assertions to BUILD_BUG_ON_ZERO().
->
+Hi Mason,
 
-Thanks for this.
+On Mon, 15 Oct 2018 16:26:15 +0800
+masonccyang@mxic.com.tw wrote:
 
-> So instead of this, add __FIELD_PREP() which is suitable in such
-> contexts, and also add __{u,le,be}{16,32,64}encode_bits() like
-> the existing versions without underscores, but again suitable in
-> constant contexts.
->
-> Requested-by: John Garry <john.garry@huawei.com>
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->  include/linux/bitfield.h | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->
-> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
-> index 3f1ef4450a7c..245dfb47d201 100644
-> --- a/include/linux/bitfield.h
-> +++ b/include/linux/bitfield.h
-> @@ -63,6 +63,14 @@
->  					      (1ULL << __bf_shf(_mask))); \
->  	})
->
-> +#define __BF_CHECK_POW2(n)	BUILD_BUG_ON_ZERO(((n) & ((n) - 1)) != 0)
+
 > +
-> +#define __BF_FIELD_CHECK_CONST(_mask, _reg, _val)			\
-> +	(BUILD_BUG_ON_ZERO((_mask) == 0) +				\
-> +	 BUILD_BUG_ON_ZERO(~((_mask) >> __bf_shf(_mask)) & (_val)) +	\
-> +	 BUILD_BUG_ON_ZERO((_mask) > (typeof(_reg))~0ull) +		\
-> +	 __BF_CHECK_POW2((_mask) + (1ULL << __bf_shf(_mask))))
+> +static int mxic_spi_setup(struct spi_device *spi)
+> +{
+> +	return 0;
+> +}
+
+Drop this empty function and leave ->setup to NULL.
+
 > +
->  /**
->   * FIELD_FIT() - check if value fits in the field
->   * @_mask: shifted mask defining the field's length and position
-> @@ -90,6 +98,21 @@
->  		((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);	\
->  	})
->
-> +/**
-> + * __FIELD_PREP() - prepare a constant bitfield element
-
-My impression is that the name prefix - '__' - tells little about the 
-function. If you agree, how about even CFIELD_PREP() or 
-FIELD_PREP_CONST() or similar? I preper the latter, but becomes rather long.
-
-> + * @_mask: shifted mask defining the field's length and position
-> + * @_val:  value to put in the field
-> + *
-> + * __FIELD_PREP() masks and shifts up the value.  The result should
-> + * be combined with other fields of the bitfield using local OR.
-
-should this be 'logical OR', or indeed 'bitwise OR'?
-
-> + *
-> + * This version is suitable for use in a pure constant context, e.g.
-> + * a constant initializer.
-> + */
-> +#define __FIELD_PREP(_mask, _val)					\
-> +	((typeof(_mask))__BF_FIELD_CHECK_CONST(_mask, 0ULL, _val) +	\
-> +	 (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask)))
+> +static int mxic_spi_probe(struct platform_device *pdev)
+> +{
+> +	struct spi_master *master;
+> +	struct resource *res;
+> +	struct mxic_spi *mxic;
+> +	int ret;
 > +
->  /**
->   * FIELD_GET() - extract a bitfield element
->   * @_mask: shifted mask defining the field's length and position
-> @@ -150,4 +173,15 @@ __MAKE_OP(64)
->  #undef __MAKE_OP
->  #undef ____MAKE_OP
->
-> +#define __encode_bits(w, v, field)	__FIELD_PREP((u##w)(field), v)
-> +#define __u16_encode_bits(v, field)	__encode_bits(16, v, field)
-> +#define __le16_encode_bits(v, field)	cpu_to_le16(__encode_bits(16, v, field))
-> +#define __be16_encode_bits(v, field)	cpu_to_be16(__encode_bits(16, v, field))
-> +#define __u32_encode_bits(v, field)	__encode_bits(32, v, field)
-> +#define __le32_encode_bits(v, field)	cpu_to_le32(__encode_bits(32, v, field))
-> +#define __be32_encode_bits(v, field)	cpu_to_be32(__encode_bits(32, v, field))
-> +#define __u64_encode_bits(v, field)	__encode_bits(64, v, field)
-> +#define __le64_encode_bits(v, field)	cpu_to_le64(__encode_bits(64, v, field))
-> +#define __be64_encode_bits(v, field)	cpu_to_be64(__encode_bits(64, v, field))
+> +	master = spi_alloc_master(&pdev->dev, sizeof(struct mxic_spi));
+> +	if (!master)
+> +		return -ENOMEM;
 > +
->  #endif
->
+> +	platform_set_drvdata(pdev, master);
+> +
+> +	mxic = spi_master_get_devdata(master);
+> +
+> +	master->dev.of_node = pdev->dev.of_node;
+> +
+> +	mxic->ps_clk = devm_clk_get(&pdev->dev, "ps_clk");
+> +	if (IS_ERR(mxic->ps_clk))
+> +		return PTR_ERR(mxic->ps_clk);
+> +
+> +	mxic->send_clk = devm_clk_get(&pdev->dev, "send_clk");
+> +	if (IS_ERR(mxic->send_clk))
+> +		return PTR_ERR(mxic->send_clk);
+> +
+> +	mxic->send_dly_clk = devm_clk_get(&pdev->dev, "send_dly_clk");
+> +	if (IS_ERR(mxic->send_dly_clk))
+> +		return PTR_ERR(mxic->send_dly_clk);
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
+> +	mxic->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(mxic->regs))
+> +		return PTR_ERR(mxic->regs);
+> +
+> +	pm_runtime_enable(&pdev->dev);
+> +	master->auto_runtime_pm = true;
+> +
+> +	master->num_chipselect = 1;
+> +	master->setup = mxic_spi_setup;
+> +	master->mem_ops = &mxic_spi_mem_ops;
+> +
+> +	master->set_cs = mxic_spi_set_cs;
+> +	master->transfer_one = mxic_spi_transfer_one;
+> +	master->bits_per_word_mask = SPI_BPW_MASK(8);
+> +	master->mode_bits = SPI_CPOL | SPI_CPHA |
+> +			SPI_RX_DUAL | SPI_TX_DUAL |
+> +			SPI_RX_QUAD | SPI_TX_QUAD;
+> +
+> +	mxic_spi_hw_init(mxic);
 
-Thanks again,
-John
+Don't you need at least the ps_clk to be enabled to write to the MXIC
+regs? Also, what happens when the ps_clk is disabled? Is reg content
+preserved? If not, then you should probably move the mxic_spi_hw_init()
+in the mxic_spi_runtime_resume() function so that you always start from
+a known state.
 
+> +
+> +	ret = spi_register_master(master);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "spi_register_master failed\n");
+> +		goto err_put_master;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_put_master:
+> +	spi_master_put(master);
+> +	pm_runtime_disable(&pdev->dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static int mxic_spi_remove(struct platform_device *pdev)
+> +{
+> +	struct spi_master *master = platform_get_drvdata(pdev);
+> +
+> +	pm_runtime_disable(&pdev->dev);
+> +	spi_unregister_master(master);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id mxic_spi_of_ids[] = {
+> +	{ .compatible = "mxicy,mx25f0a-spi", },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, mxic_spi_of_ids);
+> +
+> +static struct platform_driver mxic_spi_driver = {
+> +	.probe = mxic_spi_probe,
+> +	.remove = mxic_spi_remove,
+> +	.driver = {
+> +		.name = "mxic-spi",
+> +		.of_match_table = mxic_spi_of_ids,
+> +		.pm = &mxic_spi_dev_pm_ops,
+> +	},
+> +};
+> +module_platform_driver(mxic_spi_driver);
+> +
+> +MODULE_AUTHOR("Mason Yang <masonccyang@mxic.com.tw>");
+> +MODULE_DESCRIPTION("MX25F0A SPI controller driver");
+> +MODULE_LICENSE("GPL v2");
+> +
 
+Drop this blank line.
+
+Regards,
+
+Boris
