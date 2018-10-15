@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEDCC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FE2C7112A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90D0620652
+	by mail.kernel.org (Postfix) with ESMTP id D3B0C20652
 	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:56:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="LqGmUUUi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90D0620652
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="gaahaj+o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3B0C20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbeJOSk5 (ORCPT
+        id S1726627AbeJOSk7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 14:40:57 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39535 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeJOSk5 (ORCPT
+        Mon, 15 Oct 2018 14:40:59 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35948 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeJOSk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 14:40:57 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 61-v6so20759080wrb.6
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 03:56:12 -0700 (PDT)
+        Mon, 15 Oct 2018 14:40:58 -0400
+Received: by mail-wm1-f66.google.com with SMTP id a8-v6so19076231wmf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 03:56:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CVmx7Ut+0e/8zX/9p6SV4r6HN9NiAub+K+s0wdKcmPk=;
-        b=LqGmUUUiprVbj18u3q19Af2O6Oj5JXeefJR/hUp+2NZ8jAIOGLlB2JzNpOFHBzpv3j
-         ZPaVJRhM4E6N2HI/RS2ZkTeKn9XlqDDE30aXJKhGrhl6wIOG0cEg6P9FIoKp26fRJH6B
-         37ktwUPa3n+it0eyhf3c2RwOwXkqjExzx2cA0lnBnT8NzR0l8YnbpIyJyQDaWiUAeA9O
-         FpEEf6vvRfA8zh235YPJxm4h9f36eik2aQ8t1DxvBhsmYiEOHlvX+bCJ1QU55tOudhrY
-         2Ge8aXO1drflq8o4H43dfiCXbW7DG9kzSCkG9nwy5h2iljWGdMTlnQhl5oYCYpWqkjcw
-         eQng==
+        bh=9E3KlbbmhrZCJqeW3BNIwEFLtNJAFvWE+qZnx/vsam4=;
+        b=gaahaj+ovbTRns+vDRcJ4hiMIMRbjs0kwHnQ65PLi8Hw0S2/EWtNpXXWX1iDiL5ZrH
+         DG3+k1o7xPpsU5fwvVFI9tTGt7WwiUOKiDCyZswpJB01/izlc67j3nv2FZ68hFsHcRgc
+         88Q9vISYiFsMMEfVnIRrMeZI2k9oo+sG3cB+ZTdJaOofv6msU/sIVCMvNbMNV/11IC1J
+         k5ZVER1jsi4NPDR6migkWy7l8o7gyCiMzTeQ71hZ37vjCvCy5LOXl7arcy/Jrg8Q3pmU
+         2QrpFt9EOpkUhIhHMCuv4uKUz7VGl1U1TRID0E1ROLf62mQ85v57EM9rpYrdpJs5xoK+
+         r00g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=CVmx7Ut+0e/8zX/9p6SV4r6HN9NiAub+K+s0wdKcmPk=;
-        b=szDjkZG+ZRY6iT5EyaLd+3D6tf7faNVOse8SHZVd28lKc/S0asF//LNPcJO2cc4YR/
-         sfqNleluDg3lw8aej6ttp3RVuu9o4XhF6g+A+IRMttbhUR5IxgdcGZpplp32yz0Ps0sS
-         K5NgLc2fnZbN0OEzQweVLTAf608AO6akLkNKcURKf0jtAhvpVcbMEec5xlXoTT+sC6Hi
-         +3MRzVz/PhkSATnifnF86hSFFsI1gepeVuLXPtx7qS+fSa1w1dH8V6WEtaIXE6CE3nFg
-         OSIbGHjOGr7Fxme1j4tvXUtTFPYsZlF6S1DGZ+MO/jI42eBT3LvkqxAC6Skq86+ySZau
-         XmLA==
-X-Gm-Message-State: ABuFfoj9qCDpHf5UHMYDt7BpRA12xp2mhJ5LahJXa9METZYvtP3e4aqC
-        uRjacFrDdmNNShXPX/J5qKULGQ==
-X-Google-Smtp-Source: ACcGV60CydaQHQPfGDdDD1izRxDx/aoUBO7nsFruXfvT3rCJZrgzAYIztZZidfFU3FLFiyp0xwrwGA==
-X-Received: by 2002:adf:bc13:: with SMTP id s19-v6mr14893252wrg.255.1539600971732;
-        Mon, 15 Oct 2018 03:56:11 -0700 (PDT)
+        bh=9E3KlbbmhrZCJqeW3BNIwEFLtNJAFvWE+qZnx/vsam4=;
+        b=Y3PXfUannMKA3qela6gIsTsJDsiDu9WfbU8D+Xw99aQovaoay9eMU/oCIBSRxmMflV
+         ItlXHmo7HPzoKZRB3MncC385U1pfoBH2zebIsgY9IAkziIsMbSjlipDvOrPPN1VAuOuR
+         PAXnRdk3N3GifEYHbiCFISm4hbCO6ARSjtpzkX7HHZnx7HspetdfKhUPYfYNny3W+m7T
+         EdltDFcKHRIDaM9hVzLpi/UHhBZngKdVkeTpyVG6o0Sjb7KdRfCQoN+9iLnu8einatue
+         esk2c+ofuZQVpvJkA8LpNPkwoVojg7u1gTGZvZLNsY7awFCbZu/o8l7HS1GGjr0YRWip
+         SC0g==
+X-Gm-Message-State: ABuFfohiv5UvKMzDof3/wBU00UIJMr6CdNYyfiC1Bflh+Z9obYrXZqoJ
+        Xc9w5hVGIqj4LIfIM88ORuGZAoJCBuVJIg==
+X-Google-Smtp-Source: ACcGV60ibD0rR8j23OaLk/tP2SoHR2oa2yK2r7nutUbRbPup3kQ73uqVe2hsbgoV79xBWozs2gJwsg==
+X-Received: by 2002:a1c:e15:: with SMTP id 21-v6mr13251531wmo.35.1539600973200;
+        Mon, 15 Oct 2018 03:56:13 -0700 (PDT)
 Received: from localhost.localdomain (u-086-c100.eap.uni-tuebingen.de. [134.2.86.100])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm14236484wrp.3.2018.10.15.03.56.10
+        by smtp.gmail.com with ESMTPSA id a11-v6sm14236484wrp.3.2018.10.15.03.56.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 03:56:10 -0700 (PDT)
+        Mon, 15 Oct 2018 03:56:12 -0700 (PDT)
 From:   Christian Brauner <christian@brauner.io>
 To:     keescook@chromium.org, linux-kernel@vger.kernel.org
 Cc:     ebiederm@xmission.com, mcgrof@kernel.org,
         akpm@linux-foundation.org, joe.lawrence@redhat.com,
         longman@redhat.com, linux@dominikbrodowski.net,
         viro@zeniv.linux.org.uk, Christian Brauner <christian@brauner.io>
-Subject: [PATCH v1 1/2] sysctl: cap to ULONG_MAX in proc_get_long()
-Date:   Mon, 15 Oct 2018 12:55:43 +0200
-Message-Id: <20181015105544.4395-2-christian@brauner.io>
+Subject: [PATCH v1 2/2] sysctl: handle overflow for file-max
+Date:   Mon, 15 Oct 2018 12:55:44 +0200
+Message-Id: <20181015105544.4395-3-christian@brauner.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181015105544.4395-1-christian@brauner.io>
 References: <20181015105544.4395-1-christian@brauner.io>
@@ -75,91 +75,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-proc_get_long() is a funny function. It uses simple_strtoul() and for a
-good reason. proc_get_long() wants to always succeed the parse and return
-the maybe incorrect value and the trailing characters to check against a
-pre-defined list of acceptable trailing values.
-However, simple_strtoul() explicitly ignores overflows which can cause
-funny things like the following to happen:
+Currently, when writing
 
 echo 18446744073709551616 > /proc/sys/fs/file-max
-cat /proc/sys/fs/file-max
-0
 
-(Which will cause your system to silently die behind your back.)
+/proc/sys/fs/file-max will overflow and be set to 0. That quickly
+crashes the system.
+This commit explicitly caps the value for file-max to ULONG_MAX.
 
-On the other hand kstrtoul() does do overflow detection but fails the parse
-in this case, does not return the trailing characters, and also fails the
-parse when anything other than '\n' is a trailing character whereas
-proc_get_long() wants to be more lenient.
-
-Now, before adding another kstrtoul() function let's simply add a static
-parse strtoul_cap_erange() which does:
-- returns ULONG_MAX on ERANGE
-- returns the trailing characters to the caller
-This guarantees that we don't regress userspace in any way but also caps
-any parsed value to ULONG_MAX and prevents things like file-max to become 0
-on overflow.
+Note, this isn't technically necessary since proc_get_long() will already
+return ULONG_MAX. However, two reason why we still should do this:
+1. it makes it explicit what the upper bound of file-max is instead of
+   making readers of the code infer it from proc_get_long() themselves
+2. other tunebles than file-max may want to set a lower max value than
+   ULONG_MAX and we need to enable __do_proc_doulongvec_minmax() to handle
+   such cases too
 
 Cc: Kees Cook <keescook@chromium.org>
 Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
 v0->v1:
-- s/sysctl_strtoul_lenient/strtoul_cap_erange/g
-- (Al) remove bool overflow return argument from strtoul_cap_erange
-- (Al) return ULONG_MAX on ERANGE from strtoul_cap_erange
-- (Dominik) fix spelling in commit message
+- if max value is < than ULONG_MAX use max as upper bound
+- (Dominik) remove double "the" from commit message
 ---
- kernel/sysctl.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ kernel/sysctl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cc02050fd0c4..97551eb42946 100644
+index 97551eb42946..226d4eaf4b0e 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -67,6 +67,7 @@
- #include <linux/bpf.h>
- #include <linux/mount.h>
- #include <linux/pipe_fs_i.h>
-+#include <../lib/kstrtox.h>
- 
- #include <linux/uaccess.h>
- #include <asm/processor.h>
-@@ -2065,6 +2066,25 @@ static void proc_skip_char(char **buf, size_t *size, const char v)
- 	}
- }
- 
-+static unsigned long strtoul_cap_erange(const char *cp, char **endp,
-+					unsigned int base)
-+{
-+	unsigned long long result;
-+	unsigned int rv;
-+
-+	cp = _parse_integer_fixup_radix(cp, &base);
-+	rv = _parse_integer(cp, base, &result);
-+	if ((rv & KSTRTOX_OVERFLOW) || (result != (unsigned long)result))
-+		result = ULONG_MAX;
-+
-+	cp += (rv & ~KSTRTOX_OVERFLOW);
-+
-+	if (endp)
-+		*endp = (char *)cp;
-+
-+	return result;
-+}
-+
- #define TMPBUFLEN 22
- /**
-  * proc_get_long - reads an ASCII formatted integer from a user buffer
-@@ -2108,7 +2128,7 @@ static int proc_get_long(char **buf, size_t *size,
- 	if (!isdigit(*p))
- 		return -EINVAL;
- 
--	*val = simple_strtoul(p, &p, 0);
-+	*val = strtoul_cap_erange(p, &p, 0);
- 
- 	len = p - tmp;
- 
+@@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
+ static int __maybe_unused two = 2;
+ static int __maybe_unused four = 4;
+ static unsigned long one_ul = 1;
++static unsigned long ulong_max = ULONG_MAX;
+ static int one_hundred = 100;
+ static int one_thousand = 1000;
+ #ifdef CONFIG_PRINTK
+@@ -1696,6 +1697,7 @@ static struct ctl_table fs_table[] = {
+ 		.maxlen		= sizeof(files_stat.max_files),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_doulongvec_minmax,
++		.extra2		= &ulong_max,
+ 	},
+ 	{
+ 		.procname	= "nr_open",
+@@ -2795,6 +2797,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+ 				break;
+ 			if (neg)
+ 				continue;
++			if (max && val > *max)
++				val = *max;
+ 			val = convmul * val / convdiv;
+ 			if ((min && val < *min) || (max && val > *max))
+ 				continue;
 -- 
 2.17.1
 
