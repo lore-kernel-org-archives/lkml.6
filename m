@@ -2,123 +2,95 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AEB7C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 930EAC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B314F20644
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:23:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B314F20644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4132E20644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:24:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M/mmGVte"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4132E20644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbeJOWIb (ORCPT
+        id S1726821AbeJOWKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 18:08:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37468 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726561AbeJOWIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 18:08:31 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 501FAA82C;
-        Mon, 15 Oct 2018 14:23:01 +0000 (UTC)
-Received: from treble (ovpn-125-6.rdu2.redhat.com [10.10.125.6])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DF3CB1057075;
-        Mon, 15 Oct 2018 14:22:58 +0000 (UTC)
-Date:   Mon, 15 Oct 2018 09:22:52 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, nick.desaulniers@gmail.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/mm: annotate no_context with UNWIND_HINTS
-Message-ID: <20181015142252.6p2zgkznj26jzdwl@treble>
-References: <20181015003726.29103-1-nick.desaulniers@gmail.com>
- <CALCETrUZoBtxoR9u=72CSmNa-793EZySMd7TjH_BmHcrNSvLZg@mail.gmail.com>
- <20181015051705.GA20687@flashbox>
+        Mon, 15 Oct 2018 18:10:21 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:35085 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbeJOWKV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 18:10:21 -0400
+Received: by mail-it1-f193.google.com with SMTP id p64-v6so27935962itp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 07:24:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u7G7Op1EcZSBMYBHVx12DGDonIG9x/fcT7AAkIA1kRY=;
+        b=M/mmGVtew9knGzeEZ3kGtUvYVqdDWlSFRFtDdreYqSWYbti7Q2vM7IQ/MfovqxlGLC
+         5da653L9ytLblETn/z+tidSKmIm2Ed5rhC9KK87zenX0KZe7CoNMwHaVxaQcUzSgVTrq
+         5v3qx//oysaUh0ExPwgpC5CwUdy/vJcaiKiDs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u7G7Op1EcZSBMYBHVx12DGDonIG9x/fcT7AAkIA1kRY=;
+        b=jVRjY4jHON5FQkPvkgy31IhFmLZ3QGBSfYGCKUO9xEperxQvs7L/yAC5SGir51552D
+         eyg9TQMAdUvECTwSdP+efGXmKI86c62q1vdR1kzPM7ZWNFtIBXGhFcw53IYdks6U2Kd1
+         a7Mvrwc+ngCh3NzcUySX6nNE4T17sF3qR0IswTqCdiYlgNz05pXRaEk5J0bHbazg19it
+         RtBCKBRvJrlW/HisX1hlxrss2NoJzrsCExZGk8EDmxoJSO8G1EX1qP0JxbxK5lWkVwqA
+         yGLP+vOopdumeYP/oFVHNhT+9E75OLTLOr1+n7atJL5espRLJubuZkC+bzR8WqcBL31y
+         8K+A==
+X-Gm-Message-State: ABuFfoivo8k8E1zXCmbBAvjlNh0kKvxRa19ZNAZl+n2mVZ+65fSG127U
+        LsSQzQRh6XYusmgcdeyYgjRpJ70VD7nC02MAGq3PGg==
+X-Google-Smtp-Source: ACcGV61AVpzlI5pAyf2MXsresOc9auvoXZUR2Br8mAzh1B7wAnq6a+TvjD0btpaAfIz014HpvJHMMyzcHUq+JwZhC1Q=
+X-Received: by 2002:a24:7b50:: with SMTP id q77-v6mr11267559itc.154.1539613491081;
+ Mon, 15 Oct 2018 07:24:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181015051705.GA20687@flashbox>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 15 Oct 2018 14:23:01 +0000 (UTC)
+References: <8bfd2cd6-702a-878c-ac41-b61698835f1a@infradead.org>
+In-Reply-To: <8bfd2cd6-702a-878c-ac41-b61698835f1a@infradead.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 15 Oct 2018 16:24:31 +0200
+Message-ID: <CACRpkdYMfvPAsfvJ2UyXXt-M9goyUfXumF=0suzGHqVZO=k2Kg@mail.gmail.com>
+Subject: Re: [PATCH -next] gpio: fix SNPS_CREG kconfig dependency warning
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Eugeniy.Paltsev@synopsys.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 14, 2018 at 10:17:05PM -0700, Nathan Chancellor wrote:
-> On Sun, Oct 14, 2018 at 08:43:18PM -0700, Andy Lutomirski wrote:
-> > On Sun, Oct 14, 2018 at 5:37 PM Nick Desaulniers
-> > <nick.desaulniers@gmail.com> wrote:
-> > >
-> > > Fixes the objtool warning:
-> > > arch/x86/mm/fault.o: warning: objtool: no_context()+0x220: unreachable
-> > > instruction
-> > >
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/204
-> > > Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-> > > ---
-> > >  arch/x86/mm/fault.c | 6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> > > index 47bebfe6efa7..057d2178fa19 100644
-> > > --- a/arch/x86/mm/fault.c
-> > > +++ b/arch/x86/mm/fault.c
-> > > @@ -760,9 +760,11 @@ no_context(struct pt_regs *regs, unsigned long error_code,
-> > >                  * and then double-fault, though, because we're likely to
-> > >                  * break the console driver and lose most of the stack dump.
-> > >                  */
-> > > -               asm volatile ("movq %[stack], %%rsp\n\t"
-> > > +               asm volatile (UNWIND_HINT_SAVE
-> > > +                             "movq %[stack], %%rsp\n\t"
-> > >                               "call handle_stack_overflow\n\t"
-> > > -                             "1: jmp 1b"
-> > > +                             "1: jmp 1b\n\t"
-> > > +                             UNWIND_HINT_RESTORE
-> > >                               : ASM_CALL_CONSTRAINT
-> > >                               : "D" ("kernel stack overflow (page fault)"),
-> > >                                 "S" (regs), "d" (address),
-> > 
-> > NAK.  Just below this snippet is unreachable();
-> > 
-> > Can you reply with objtool -dr output on a problematic fault.o?  Josh,
-> > it *looks* like annotate_unreachable() should be doing the right
-> > thing, but something is clearly busted.
-> > 
-> > Also, shouldn't compiler-clang.h contain a reasonable definition of
-> > unreachable()?
-> > 
-> > --Andy
-> 
-> Hi Andy,
-> 
-> Did you mean 'objdump -dr'? If so, here you go (rather long, sorry if I
-> should have pasted it here instead):
-> https://gist.github.com/nathanchance/f038bb0a6653b975bb8a4e64fcd5503e
+On Sat, Oct 13, 2018 at 5:46 AM Randy Dunlap <rdunlap@infradead.org> wrote:
 
-As Andy said, I think compiler-clang.h needs an unreachable()
-definition.  Without that, I'm guessing you're getting this:
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix kconfig warning for GPIO_SNPS_CREG:
+>
+> WARNING: unmet direct dependencies detected for OF_GPIO
+>   Depends on [n]: GPIOLIB [=y] && OF [=n] && HAS_IOMEM [=y]
+>   Selected by [y]:
+>   - GPIO_SNPS_CREG [=y] && GPIOLIB [=y] && HAS_IOMEM [=y] && (ARC || COMPILE_TEST [=y])
+>
+> Drivers in drivers/gpio/Kconfig depend on OF_GPIO, not select it.
+> This prevents attempting to build when OF is not enabled.
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> ---
+> Found in mmotm but comes from/applies to linux-next.
 
-  #ifndef unreachable
-  # define unreachable() do { annotate_reachable(); do { } while (1); } while (0)
-  #endif
+Patch applied, thanks!
 
-which converts "unreachable" to "reachable".  That used to be needed for
-pre-4.5 versions of GCC when we supported them, but it's the wrong
-behavior for this piece of code (and I should remove all those old GCC
-hacks soon...)
-
--- 
-Josh
+Yours,
+Linus Walleij
