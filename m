@@ -4,37 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 431CDC7112B
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA21C7112C
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 142CC204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:45:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142CC204FD
+	by mail.kernel.org (Postfix) with ESMTP id D56EA2087D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:45:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D56EA2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbeJON2u (ORCPT
+        id S1727011AbeJON2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 09:28:50 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:63418 "EHLO
+        Mon, 15 Oct 2018 09:28:52 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:15915 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726663AbeJON2t (ORCPT
+        with ESMTP id S1726663AbeJON2v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 09:28:49 -0400
-X-UUID: 9c58ef8206e941b0b949adb4317dab09-20181015
-X-UUID: 9c58ef8206e941b0b949adb4317dab09-20181015
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        Mon, 15 Oct 2018 09:28:51 -0400
+X-UUID: f457e6d1e0234f75a2ca186a799dc132-20181015
+X-UUID: f457e6d1e0234f75a2ca186a799dc132-20181015
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <honghui.zhang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1223071847; Mon, 15 Oct 2018 13:44:54 +0800
+        with ESMTP id 1005407080; Mon, 15 Oct 2018 13:44:52 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 15 Oct 2018 13:44:52 +0800
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 15 Oct 2018 13:44:50 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 15 Oct 2018 13:44:51 +0800
+ Transport; Mon, 15 Oct 2018 13:44:50 +0800
 From:   <honghui.zhang@mediatek.com>
 To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
         <linux-arm-kernel@lists.infradead.org>,
@@ -45,15 +46,14 @@ CC:     <ulf.hansson@linaro.org>, <marc.zyngier@arm.com>,
         <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
         <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>,
         <yt.shen@mediatek.com>, <jianjun.wang@mediatek.com>
-Subject: [PATCH v7 3/9] PCI: mediatek: Remove the redundant dev->pm_domain check
-Date:   Mon, 15 Oct 2018 13:44:41 +0800
-Message-ID: <1539582287-9171-4-git-send-email-honghui.zhang@mediatek.com>
+Subject: [PATCH v7 1/9] PCI: mediatek: Using slot's devfn for compare to fix mtk_pcie_find_port logic
+Date:   Mon, 15 Oct 2018 13:44:39 +0800
+Message-ID: <1539582287-9171-2-git-send-email-honghui.zhang@mediatek.com>
 X-Mailer: git-send-email 2.6.4
 In-Reply-To: <1539582287-9171-1-git-send-email-honghui.zhang@mediatek.com>
 References: <1539582287-9171-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: FE23C49215FE18E4F16D0340076F0E992963C6CB812C3083ADF82C3D2BAD23552000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,57 +62,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-It's no needed to check whether device have pm_domain attached before
-calling the pm_runtime_XXX interface, remove it.
+The Mediatek's host controller has two slots, each with it's own control
+registers. The host driver need to identify which slot was connected
+in order to access the device's configuration space. There's problem
+for current host driver to find out which slot was connected to for
+a given EP device.
+
+Assuming each slot have connect with one EP device as below:
+
+                host bridge
+  bus 0 --> __________|_______
+           |                  |
+           |                  |
+         slot 0             slot 1
+  bus 1 -->|        bus 2 --> |
+           |                  |
+         EP 0               EP 1
+
+During PCI enumeration, system software will scan all the PCI device
+starting from devfn 0. So it will get the proper port for slot0 and
+slot1 device when using PCI_SLOT(devfn) for match. But it will get
+the wrong slot for EP1: The devfn will be start from 0 when scanning
+EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
+for port0's slot value. So the host driver should not using EP's devfn
+but the slot's devfn(the slot which EP was connected to) for match.
+
+This patch fix the mtk_pcie_find_port's logic by using the slot's
+devfn for match if finding device connected to the subordinate bus.
 
 Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
 ---
- drivers/pci/controller/pcie-mediatek.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ drivers/pci/controller/pcie-mediatek.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index bcdac9b..59fdb60 100644
+index 9999dae..288b8e2 100644
 --- a/drivers/pci/controller/pcie-mediatek.c
 +++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -225,10 +225,8 @@ static void mtk_pcie_subsys_powerdown(struct mtk_pcie *pcie)
+@@ -337,6 +337,17 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+ {
+ 	struct mtk_pcie *pcie = bus->sysdata;
+ 	struct mtk_pcie_port *port;
++	struct pci_dev *dev = NULL;
++
++	/*
++	 * Walk the bus hierarchy to get the devfn value
++	 * of the port in the root bus.
++	 */
++	while (bus && bus->number) {
++		dev = bus->self;
++		bus = dev->bus;
++		devfn = dev->devfn;
++	}
  
- 	clk_disable_unprepare(pcie->free_ck);
- 
--	if (dev->pm_domain) {
--		pm_runtime_put_sync(dev);
--		pm_runtime_disable(dev);
--	}
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
- }
- 
- static void mtk_pcie_port_free(struct mtk_pcie_port *port)
-@@ -998,10 +996,8 @@ static int mtk_pcie_subsys_powerup(struct mtk_pcie *pcie)
- 		pcie->free_ck = NULL;
- 	}
- 
--	if (dev->pm_domain) {
--		pm_runtime_enable(dev);
--		pm_runtime_get_sync(dev);
--	}
-+	pm_runtime_enable(dev);
-+	pm_runtime_get_sync(dev);
- 
- 	/* enable top level clock */
- 	err = clk_prepare_enable(pcie->free_ck);
-@@ -1013,10 +1009,8 @@ static int mtk_pcie_subsys_powerup(struct mtk_pcie *pcie)
- 	return 0;
- 
- err_free_ck:
--	if (dev->pm_domain) {
--		pm_runtime_put_sync(dev);
--		pm_runtime_disable(dev);
--	}
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
- 
- 	return err;
- }
+ 	list_for_each_entry(port, &pcie->ports, list)
+ 		if (port->slot == PCI_SLOT(devfn))
 -- 
 2.6.4
 
