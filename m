@@ -2,127 +2,108 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D03C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16619C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0C592089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:16:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD121208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:19:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="afw/VZD3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C592089D
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="hbGIrbOt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD121208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbeJPHEE (ORCPT
+        id S1727057AbeJPHG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 03:04:04 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44127 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbeJPHED (ORCPT
+        Tue, 16 Oct 2018 03:06:58 -0400
+Received: from mail-yb1-f172.google.com ([209.85.219.172]:46573 "EHLO
+        mail-yb1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbeJPHG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 03:04:03 -0400
-Received: by mail-pl1-f196.google.com with SMTP id p25-v6so10003189pli.11
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 16:16:38 -0700 (PDT)
+        Tue, 16 Oct 2018 03:06:57 -0400
+Received: by mail-yb1-f172.google.com with SMTP id o8-v6so8169034ybk.13
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 16:19:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zY5FRFGJ1x+0u/V5mm5L6gboapti4teFd3k5CuR3lYA=;
-        b=afw/VZD3n/lVtV9SV2RTXfAcuuZiK/C3lzJa7Yyar09LteLgZHDnw8mJXPSm3dxOo1
-         RbFqJHtz5PUWT8ZxTH16C061i1grp8bJD2EriKxetMboEwPgYMa59si5UEFu3/8cYREN
-         owS+O2OFgwfmi2DJiLZOb89g4cICP9kWyizmYS3zVRkM5ZxTtzl8FQk2bAGiaQlSa/X5
-         2bnSmza3zY5wBaNT1njlN/hUO3CQpxBfo/eWMPBOCAoOJTR/eqHJRVdcgHVoW2LevK5P
-         pA/K0RpN5EQ2iGl9zInUWKUOUO4N7s9CVQv9Q/k4fCPWUYo/ZW4asBdn0nfJ15e1FeTo
-         gezQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sfgvSs63g/h45RD9rTLDUMJIpOacz1g63SGkw+GTkTo=;
+        b=hbGIrbOti+zWYy9rq/oXHCiNRqhWLt8AI7qGGdBhY+qHKwh+MVG6+EwnLtzUsB09RH
+         +hWBRTmQ0GKOi9aZ28dOsEWakdbiM9YjBytj6z9Nm+2nzymAfpe7B9LBzGglw0GRfi7t
+         Jwn8LGEihzgXlpnPd1P93IkWfsbdatemPLOWJA8jgRqySH8/veQPaYm4OxJkUA0Hf4hJ
+         bfvwOVvgPmUKe4F951PtMEWTbZqSpdfpGGAB2J+GUPNfkTA3eYhR/eG8KPlCv64ZnSbr
+         EHCaKheg2Cvo5VJOBFEvDPm1omuuVnkwcTKSoSKVeBMJM8mmsPInI63UTuKMrwkIWr1e
+         oqIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=zY5FRFGJ1x+0u/V5mm5L6gboapti4teFd3k5CuR3lYA=;
-        b=krrPJ/r8SI5LtuNeZG9S6UI+OA7juifN/fnneK61eH2L2vDBLcFzLLqOABIKZfKY5O
-         ZonuL79hNtEMdupWuIf5ZCHohOF/vCOBfgfaKRjJtu9MoJCoeClwRuxk1me7fu1VbVjw
-         y2x2xl2ks4l0AuVSmhs436Ly3+rEeuSUVMxLybov1lR34xitll1Pt4gflEnu5BcdKf/y
-         D2YRmpecZ3TIRMZ4pI4ikcH1utOBWrh4iOhTfKsRZdrY8+ozxXM2RPnWYFqTW+YSdtko
-         JSeMXe+LMqvuHt0WrCRhnKfigB6SGLy/KPTYMwSTLai0Mq0N3cXtnCVOOKuYzqiKM9mD
-         aZ4A==
-X-Gm-Message-State: ABuFfojpFC7flQhYHx+8o2Leub4q+ac/63o+QlQTWI7T+qKFUwuJIyn7
-        5FlsYaiNulDKPgu7k8S5THDU5M5wEJc=
-X-Google-Smtp-Source: ACcGV61fuQQ0iW5aZeqcft2ermAFW27Wr/C+O6CPP7Vp30IhvtlV2VWS798LYnIlRwfhU2zx8xTnOw==
-X-Received: by 2002:a17:902:b403:: with SMTP id x3-v6mr19232609plr.237.1539645398172;
-        Mon, 15 Oct 2018 16:16:38 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id x20-v6sm20505698pfe.131.2018.10.15.16.16.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 16:16:37 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 16:16:37 -0700 (PDT)
-X-Google-Original-Date: Mon, 15 Oct 2018 15:51:51 PDT (-0700)
-Subject:     Re: [PATCH v4 0/5] Fix some bugs on RV32 build fail and issue
-In-Reply-To: <CA+ZOyaig6dwzfhUn5CQ92P__yay2-aAgA4Nh+VxTs50FCbECwQ@mail.gmail.com>
-CC:     aou@eecs.berkeley.edu, Christoph Hellwig <hch@infradead.org>,
-        zong@andestech.com, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     zongbox@gmail.com
-Message-ID: <mhng-4a97b34b-cb44-42cb-9fd8-d62b95edfa7e@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sfgvSs63g/h45RD9rTLDUMJIpOacz1g63SGkw+GTkTo=;
+        b=cvy1ks9GXs0ZP6gISpYdNxlzVhctrg8Aw953dX0x+CJLHuBeq2yc/lmdEMRuEmXa/l
+         /shdO3dcIZP4SBgLIUydP6AEbKXOud6lOQ7RVjt53ajiqxfSrJUK4tivx6+2ZKKd2vsK
+         dzSx8gx/AKR85Vd68ABBfG9AuKySf7fCpeuU4uYXwRlg2fH68WK1IM2KRnBiql8cUItn
+         mjzJ9wNJELHF8uCzYbxsYy9H03ZZ6Z2WF0sJemtVWIfJ9eP1BDWyqLrsN21A+hHMfZE9
+         M+llfMPsPJ27FP2cbZqCQ3dX9Vv+rHnFUV7UGBE+RKDLGZJJGmkS4lxMqbpZy/ae9nVY
+         CYOA==
+X-Gm-Message-State: ABuFfohZeDg4Hrr8ZPt3BFWjDsIOxzNDu8nuiPF8oWFs6sX+uzSOmFXw
+        7Me4OmskQJ4k0HzrRxWLKH1xe9md5pJFyGpxGoAYJw==
+X-Google-Smtp-Source: ACcGV60EGFWVy2RlcWyHlaeM8RRzXKerazWPsZlW5KwxzYC73n6TL48lHcZSrvB5WsdbO3w4okjQr9XqPuzSray/hEI=
+X-Received: by 2002:a25:abc1:: with SMTP id v59-v6mr5905098ybi.321.1539645571320;
+ Mon, 15 Oct 2018 16:19:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
+ <1539111085-25502-2-git-send-email-atish.patra@wdc.com> <20181010134926.GD21134@ulmo>
+ <25758ab9-eb36-741b-6264-42412b3ddd8e@wdc.com>
+In-Reply-To: <25758ab9-eb36-741b-6264-42412b3ddd8e@wdc.com>
+From:   Wesley Terpstra <wesley@sifive.com>
+Date:   Mon, 15 Oct 2018 16:19:20 -0700
+Message-ID: <CAMgXwTieXNa13_xGp2mkw99+VJm-R1xrxMHSmRLZV-hG5oSdzA@mail.gmail.com>
+Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM Controller.
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Christoph Hellwig <hch@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Oct 2018 05:33:17 PDT (-0700), zongbox@gmail.com wrote:
-> Zong Li <zongbox@gmail.com> 於 2018年10月3日 週三 上午11:12寫道：
->>
->> This patches contain the modificaion as follows:
->> 1. Fix up the building fail on RV32.
->> 2. Add umoddi3 and udivmoddi4 functions for RV32.
->> 3. Fix ioremap problem on RV32.
->>
->> Thanks all for review these code and modify the copyright description.
->>
->> Changes in v4:
->>  - Retain the complete copyright description.
->>  - Modify commit message.
->>  - Rebase upstream code.
->>
->> Changes in v3:
->>  - Change the copyright notices to GPLv2 from  gcc 4.2.1.
->>
->> Changes in v2:
->>  - Retain the copyright notices from libgcc in umoddi3.c and udivmoddi4.c.
->>
->> Vincent Chen (1):
->>   RISC-V: Avoid corrupting the upper 32-bit of phys_addr_t in ioremap
->>
->> Zong Li (4):
->>   RISC-V: Build tishift only on 64-bit
->>   RISC-V: Add preprocessor directive for swiotlb
->>   lib: Add umoddi3 and udivmoddi4 of GCC library routines
->>   RISC-V: Select GENERIC_LIB_UMODDI3 on RV32
->>
->>  arch/riscv/Kconfig        |   1 +
->>  arch/riscv/kernel/setup.c |   3 +
->>  arch/riscv/lib/Makefile   |   3 +-
->>  arch/riscv/mm/ioremap.c   |   2 +-
->>  lib/Kconfig               |   3 +
->>  lib/Makefile              |   1 +
->>  lib/udivmoddi4.c          | 326 ++++++++++++++++++++++++++++++++++++++++++++++
->>  lib/umoddi3.c             |  48 +++++++
->>  8 files changed, 385 insertions(+), 2 deletions(-)
->>  create mode 100644 lib/udivmoddi4.c
->>  create mode 100644 lib/umoddi3.c
->>
->> --
->> 2.7.4
->>
+On Mon, Oct 15, 2018 at 3:57 PM Atish Patra <atish.patra@wdc.com> wrote:
+> >> +SiFive PWM controller
+> >> +
+> >> +Unlike most other PWM controllers, the SiFive PWM controller currently only
+> >> +supports one period for all channels in the PWM. This is set globally in DTS.
+> >> +The period also has significant restrictions on the values it can achieve,
+> >> +which the driver rounds to the nearest achievable frequency.
+> >
+> > What restrictions are these? If "nearest achievable" is too far off the
+> > target period it might be preferable to error out.
+> >
 >
-> ping
+> @Wes: Any comments?
 
-Oh, sorry about that -- I took them into my local tree but they didn't make it 
-to kernel.org.  They should be in for-next now.
+When I last looked at this driver and hardware, I briefly considered
+throwing up my hands and pretending that this PWM device had no period
+control at all, only duty-cycle. There are several examples of PWM
+controllers in linux already that behave that way.
+
+Most of the uses of this PWM are only going to care about the
+duty-cycle, not the period. So failing when the period is unachievable
+seems worse to me than just completely eliminating access to period
+control.
+
+> I think yes. Since fu540 is the first Linux capable RISC-V core, SiFive
+> Guys decided mark it as version 0.
+>
+> @Wesly: Please correct me if I am wrong.
+
+Correct.
