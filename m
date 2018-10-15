@@ -2,243 +2,227 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA137C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B9AC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:51:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8395A205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:48:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E82C205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:51:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcpbrFWy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8395A205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="nzsctgUI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E82C205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726345AbeJPEfC (ORCPT
+        id S1726506AbeJPEim (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 00:35:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50274 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 00:38:42 -0400
+Received: from mail.kdab.com ([176.9.126.58]:32355 "EHLO mail.kdab.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbeJPEfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 00:35:01 -0400
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A13102098A;
-        Mon, 15 Oct 2018 20:48:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539636486;
-        bh=JXM4dTHOeob3RWc/nUgVLdTN5k61sK2Xqt0+vocWjyU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fcpbrFWytcih/ceC/To6wIqAduOxgtr+dupTvWj0/OCSQPw25XUlzNwsRUubpFb0W
-         ECH5fLFWAk2v2goaY/m2wkC9AbLkz1wy4f0/tVHGWn573ZX0bI4W9qmtRTFufgO6C6
-         mNsjxkDmEw/hjvOuA+h2DvX+39WVAij/NXUr4Gd4=
-Received: by mail-ed1-f53.google.com with SMTP id c26-v6so19186879edt.3;
-        Mon, 15 Oct 2018 13:48:06 -0700 (PDT)
-X-Gm-Message-State: ABuFfogFHIVOWTh+S/pI1qZY0ZyedThICC+u2ydQk36uVL3sevixPUk2
-        G7adMe27x89+0p/2/hMSXYRqdfklarTaGtx6Y8U=
-X-Google-Smtp-Source: ACcGV63r2Etnz5wNhGt7WdeMTaPua3FdIM3fJl3V5qM49W7Ku9fXyKuGXm9ekxqT+1vFW+WrfGmnUzfFqhROsjj8ies=
-X-Received: by 2002:a17:906:7384:: with SMTP id f4-v6mr20598685ejl.8.1539636484958;
- Mon, 15 Oct 2018 13:48:04 -0700 (PDT)
+        id S1725924AbeJPEim (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 00:38:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
+ content-type:content-type:mime-version:references:in-reply-to
+ :organization:message-id:date:date:subject:subject:from:from; s=
+ dkim; t=1539636702; x=1540500703; bh=KbbzsUvjOtyArmSR7nGExZ6GK9s
+ ziaFkDS0PPx3A3JI=; b=nzsctgUIv5D5AuMxDC68AyGdiSLWeHA4Gv5jjIwROEe
+ s5HA7L4sGo+EK3+meGR2OYda7ujGzeNDbZPWnktHBC7hieVvJBY5CZp3c1axwcIy
+ yex9eb1btbu3pDL29Jgk9tBZ/PoAYUJU4+cysB5REOlQaccTOHPcgbvSJSVn49dM
+ =
+X-Virus-Scanned: amavisd-new at kdab.com
+From:   Milian Wolff <milian.wolff@kdab.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     jolsa@kernel.org, yao.jin@linux.intel.com, namhyung@kernel.org,
+        Linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 3/3] perf report: don't crash on invalid inline debug
+ information
+Date:   Mon, 15 Oct 2018 22:51:36 +0200
+Message-ID: <4772069.7eSvdiorvC@agathebauer>
+Organization: KDAB
+In-Reply-To: <20181011193920.GA393@kernel.org>
+References: <20180926135207.30263-1-milian.wolff@kdab.com>
+ <1768601.Weh5pZyhPy@agathebauer> <20181011193920.GA393@kernel.org>
 MIME-Version: 1.0
-References: <1539563070-12969-1-git-send-email-frowand.list@gmail.com>
- <CANk1AXTmY7v03m7NNZHVtzyU1Mwm0GYtOJQzmObFLASs=PEfLA@mail.gmail.com> <34775737-d82b-b766-16d7-ac2de3231948@gmail.com>
-In-Reply-To: <34775737-d82b-b766-16d7-ac2de3231948@gmail.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Mon, 15 Oct 2018 15:47:28 -0500
-X-Gmail-Original-Message-ID: <CANk1AXRmF8ANrz-aBcmbYA_uJM-iEX7vbGWONFbr5pQBa_9VEQ@mail.gmail.com>
-Message-ID: <CANk1AXRmF8ANrz-aBcmbYA_uJM-iEX7vbGWONFbr5pQBa_9VEQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/18] of: overlay: validation checks, subsequent fixes
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Moritz Fischer <mdf@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="nextPart6315378.hE6lbSLKzD";
+ micalg="sha256"; protocol="application/pkcs7-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 3:24 PM Frank Rowand <frowand.list@gmail.com> wrote:
->
-> On 10/15/18 12:21, Alan Tull wrote:
-> > On Sun, Oct 14, 2018 at 7:26 PM <frowand.list@gmail.com> wrote:
-> >>
-> >> From: Frank Rowand <frank.rowand@sony.com>
-> >>
-> >> Add checks to (1) overlay apply process and (2) memory freeing
-> >> triggered by overlay release.  The checks are intended to detect
-> >> possible memory leaks and invalid overlays.
-> >>
-> >> The checks revealed bugs in existing code.  Fixed the bugs.
-> >>
-> >> While fixing bugs, noted other issues, which are fixed in
-> >> separate patches.
-> >>
-> >> *****  Powerpc folks: I was not able to test the patches that
-> >> *****  directly impact Powerpc systems that use dynamic
-> >> *****  devicetree.  Please review that code carefully and
-> >> *****  test.  The specific patches are: 03/16, 04/16, 07/16
-> >>
-> >> FPGA folks:
-> >>
-> >>   I made the validation checks that should result in an
-> >>   invalid live devicetree report "ERROR" and cause the overlay apply
-> >>   to fail.
-> >>
-> >>   I made the memory leak validation tests report "WARNING" and allow
-> >>   the overlay apply to complete successfully.  Please let me know
-> >>   if you encounter the warnings.  There are at least two paths
-> >>   forward to deal with the cases that trigger the warning: (1) change
-> >>   the warning to an error and fail the overlay apply, or (2) find a
-> >>   way to detect the potential memory leaks and free the memory
-> >>   appropriately.
-> >
-> > I reran my FPGA testing.  The strings are fixed, no longer NULL.  I
->
-> Thanks for the further testing!
->
->
-> > have functionality back, my test passes now.  I'm seeing the intended
-> > warnings about any properties added to existing nodes.  That includes
-> > warnings about added symbols.  Below is a simplified part to show some
-> > of what I'm seeing.
-> >
-> > By the way my testing is all using Pantelis' DT overlay configfs interface.
-> >
-> > root@arria10:~# ./apply-static-region.sh
-> >
-> > Applying dtbo: socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
-> >
-> > [ 1821.088640] OF: overlay: WARNING: add_changeset_property(), memory
-> > leak will occur if overlay removed.  Property:
-> > /soc/base_fpga_region/ranges
-> > [ 1821.103307] OF: overlay: WARNING: add_changeset_property(), memory
-> > leak will occur if overlay removed.  Property:
-> > /soc/base_fpga_region/external-fpga-config
-> > [ 1821.117359] OF: overlay: WARNING: add_changeset_property(), memory
-> > leak will occur if overlay removed.  Property:
-> > /soc/base_fpga_region/clocks
-> > [ 1821.130130] OF: overlay: WARNING: add_changeset_property(), memory
-> > leak will occur if overlay removed.  Property:
-> > /soc/base_fpga_region/clock-names
-> > [ 1821.143449] OF: overlay: WARNING: add_changeset_property(), memory
-> > leak will occur if overlay removed.  Property: /__symbols__/clk_0
-> > [ 1821.155357] OF: overlay: WARNING: add_changeset_property(), memory
-> > leak will occur if overlay removed.  Property: /__symbols__/ILC
-> > [ 1821.167074] OF: overlay: WARNING: add_changeset_property(), memory
-> > leak will occur if overlay removed.  Property:
-> > /__symbols__/freeze_controller_0
-> > [ 1821.180171] OF: overlay: WARNING: add_changeset_property(), memory
-> > leak will occur if overlay removed.  Property:
-> > /__symbols__/sysid_qsys_0
-> > [ 1821.192662] OF: overlay: WARNING: add_changeset_property(), memory
-> > leak will occur if overlay removed.  Property: /__symbols__/led_pio
-> > [ 1821.204720] OF: overlay: WARNING: add_changeset_property(), memory
-> > leak will occur if overlay removed.  Property: /__symbols__/button_pio
-> > [ 1821.217034] OF: overlay: WARNING: add_changeset_property(), memory
-> > leak will occur if overlay removed.  Property: /__symbols__/dipsw_pio
-> > [ 1821.231977] of-fpga-region soc:base_fpga_region:fpga_pr_region0:
-> > FPGA Region probed
-> > [ 1821.240144] altera_freeze_br ff200450.freeze_controller: fpga
-> > bridge [freeze] registered
-> >
-> > root@arria10:~# ./apply-static-region.sh root@arria10:~# rmdir
-> > /sys/kernel/config/device-tree/overlays/1-socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
-> >
->
->
-> > [ 1823.805564] OF: ERROR: memory leak - destroy cset entry: attach
-> > overlay node /soc/base_fpga_region/clk_0 with refcount 2
->
-> That is indicating that an unbalanced of_node_get() / of_node_put()
-> exists for that node.  I'll have to update that message to be more
-> explicit about that.
+--nextPart6315378.hE6lbSLKzD
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Yes, that sounds good
+On Donnerstag, 11. Oktober 2018 21:39:20 CEST Arnaldo Carvalho de Melo wrote:
+> Em Thu, Oct 11, 2018 at 08:23:31PM +0200, Milian Wolff escreveu:
+> > On Donnerstag, 27. September 2018 21:10:37 CEST Arnaldo Carvalho de Melo
+> > 
+> > wrote:
+> > > Em Wed, Sep 26, 2018 at 03:52:07PM +0200, Milian Wolff escreveu:
+> > > > When the function name for an inline frame is invalid, we must
+> > > > not try to demangle this symbol, otherwise we crash with:
+> > > > 
+> > > > #0  0x0000555555895c01 in bfd_demangle ()
+> > > > #1  0x0000555555823262 in demangle_sym (dso=0x555555d92b90,
+> > > > elf_name=0x0,
+> > > > kmodule=0) at util/symbol-elf.c:215 #2  dso__demangle_sym
+> > > > (dso=dso@entry=0x555555d92b90, kmodule=<optimized out>,
+> > > > kmodule@entry=0,
+> > > > elf_name=elf_name@entry=0x0) at util/symbol-elf.c:400 #3
+> > > > 0x00005555557fef4b in new_inline_sym (funcname=0x0,
+> > > > base_sym=0x555555d92b90, dso=0x555555d92b90) at util/srcline.c:89 #4
+> > > > inline_list__append_dso_a2l (dso=dso@entry=0x555555c7bb00,
+> > > > node=node@entry=0x555555e31810, sym=sym@entry=0x555555d92b90) at
+> > > > util/srcline.c:264 #5  0x00005555557ff27f in addr2line
+> > > > (dso_name=dso_name@entry=0x555555d92430
+> > > > "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fc
+> > > > e5/
+> > > > elf", addr=addr@entry=2888, file=file@entry=0x0,>
+> > > > 
+> > > >     line=line@entry=0x0, dso=dso@entry=0x555555c7bb00,
+> > > >     unwind_inlines=unwind_inlines@entry=true, node=0x555555e31810,
+> > > >     sym=0x555555d92b90) at util/srcline.c:313>
+> > > > 
+> > > > #6  0x00005555557ffe7c in addr2inlines (sym=0x555555d92b90,
+> > > > dso=0x555555c7bb00, addr=2888, dso_name=0x555555d92430
+> > > > "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fc
+> > > > e5/
+> > > > elf")>
+> > > > 
+> > > >     at util/srcline.c:358
+> > > > 
+> > > > So instead handle the case where we get invalid function names
+> > > > for inlined frames and use a fallback '??' function name instead.
+> > > > 
+> > > > While this crash was originally reported by Hadrien for rust code,
+> > > > I can now also reproduce it with trivial C++ code. Indeed, it seems
+> > > > like libbfd fails to interpret the debug information for the inline
+> > > > frame symbol name:
+> > > > 
+> > > > $ addr2line -e
+> > > > /home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce
+> > > > 5/e
+> > > > lf -if b48 main
+> > > > /usr/include/c++/8.2.1/complex:610
+> > > > ??
+> > > > /usr/include/c++/8.2.1/complex:618
+> > > > ??
+> > > > /usr/include/c++/8.2.1/complex:675
+> > > > ??
+> > > > /usr/include/c++/8.2.1/complex:685
+> > > > main
+> > > > /home/milian/projects/kdab/rnd/hotspot/tests/test-clients/cpp-inlining
+> > > > /mai
+> > > > n.cpp:39
+> > > > 
+> > > > I've reported this bug upstream and also attached a patch there
+> > > > which should fix this issue:
+> > > > https://sourceware.org/bugzilla/show_bug.cgi?id=23715
+> > > 
+> > > Millian, what about this one, which is the cset it is fixing?
+> > 
+> > Hey Arnaldo,
+> > 
+> > just noticed this email and that the corresponding patch hasn't landed in
+> > perf/core yet. The patch set which introduced this is a64489c56c307 ("perf
+> > report: Find the inline stack for a given address"). Note that the code
+> > was
+> > introduced by this patch, but then subsequently touched and moved by
+> > follow up patches. So, is this the patch you want to see referenced?
+> > Otherwise, the latest patch which gets fixed is afaik: 7285cf3325b4a
+> > ("perf srcline: Show correct function name for srcline of callchains").
+> > 
+> > Can you please pick either of these patches and amend the commit message
+> > of my patch and push it to perf/urgent and perf/core?
+> 
+> I'll reread all this later or tomorrow and continue, going AFK now.
 
->
-> -Frank
->
-> >
-> > Alan
-> >
-> >
-> > Alan
-> >
-> >
-> >
-> >>
-> >> ALL people:
-> >>
-> >>   The validations do _not_ address another major concern I have with
-> >>   releasing overlays, which is use after free errors.
-> >>
-> >> Changes since v2:
-> >>
-> >>   - 13/18: Use continue to reduce indentation in find_dup_cset_node_entry()
-> >>     and find_dup_cset_prop()
-> >>
-> >> Changes since v1:
-> >>
-> >>   - move patch 16/16 to 17/18
-> >>   - move patch 15/16 to 18/18
-> >>   - new patch 15/18
-> >>   - new patch 16/18
-> >>
-> >>   - 05/18: add_changeset_node() header comment: incorrect comment for @target
-> >>
-> >>   - 18/18: add same fix for of_parse_phandle_with_args()
-> >>   - 18/18: add same fix for of_parse_phandle_with_args_map()
-> >>
-> >> Frank Rowand (18):
-> >>   of: overlay: add tests to validate kfrees from overlay removal
-> >>   of: overlay: add missing of_node_put() after add new node to changeset
-> >>   of: overlay: add missing of_node_get() in __of_attach_node_sysfs
-> >>   powerpc/pseries: add of_node_put() in dlpar_detach_node()
-> >>   of: overlay: use prop add changeset entry for property in new nodes
-> >>   of: overlay: do not duplicate properties from overlay for new nodes
-> >>   of: dynamic: change type of of_{at,de}tach_node() to void
-> >>   of: overlay: reorder fields in struct fragment
-> >>   of: overlay: validate overlay properties #address-cells and
-> >>     #size-cells
-> >>   of: overlay: make all pr_debug() and pr_err() messages unique
-> >>   of: overlay: test case of two fragments adding same node
-> >>   of: overlay: check prevents multiple fragments add or delete same node
-> >>   of: overlay: check prevents multiple fragments touching same property
-> >>   of: unittest: remove unused of_unittest_apply_overlay() argument
-> >>   of: overlay: set node fields from properties when add new overlay node
-> >>   of: unittest: allow base devicetree to have symbol metadata
-> >>   of: unittest: find overlays[] entry by name instead of index
-> >>   of: unittest: initialize args before calling of_*parse_*()
-> >>
-> >>  arch/powerpc/platforms/pseries/dlpar.c             |  15 +-
-> >>  arch/powerpc/platforms/pseries/reconfig.c          |   6 +-
-> >>  drivers/of/dynamic.c                               |  68 +++--
-> >>  drivers/of/kobj.c                                  |   4 +-
-> >>  drivers/of/overlay.c                               | 298 ++++++++++++++++-----
-> >>  drivers/of/unittest-data/Makefile                  |   2 +
-> >>  .../of/unittest-data/overlay_bad_add_dup_node.dts  |  28 ++
-> >>  .../of/unittest-data/overlay_bad_add_dup_prop.dts  |  24 ++
-> >>  drivers/of/unittest-data/overlay_base.dts          |   1 +
-> >>  drivers/of/unittest.c                              |  96 +++++--
-> >>  include/linux/of.h                                 |  19 +-
-> >>  11 files changed, 439 insertions(+), 122 deletions(-)
-> >>  create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_node.dts
-> >>  create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_prop.dts
-> >>
-> >> --
-> >> Frank Rowand <frank.rowand@sony.com>
-> >>
-> >
->
+Ping?
+
+-- 
+Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
+KDAB (Deutschland) GmbH, a KDAB Group company
+Tel: +49-30-521325470
+KDAB - The Qt, C++ and OpenGL Experts
+--nextPart6315378.hE6lbSLKzD
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
+ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
+IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
+QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
+ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
+YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
+gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
+/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
+RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
+8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
+fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
+Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
+QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
+dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
+b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
+Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
+BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
+AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
+lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
+bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
+XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
+SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
+dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
+4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
+1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
+OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
+bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
+OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
+IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
+A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
+BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
+bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
+BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
+bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
+b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
+lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
+G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
+iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
+pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
+AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
+6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
+BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
+dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
+LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
+Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
+Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
+ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
+68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
+3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
+LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
+y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
+cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
+c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
+BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
+EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMDE1MjA1MTM2WjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQgvXMelNdS+caaKE9tkFbSL5W22U/4
+Vqd3qh824fgiGwowDQYJKoZIhvcNAQEBBQAEggEAnzs9L4/MuFF9JGKvpArsDgL1fZfEXwmv/sgH
++Ef40qJC8cFwxY2IM0Ehpt7sGZuQybvA51wuWGfL/pnIjfOJopP3gUbWJyeyJwbNnQPfi0fRtQhE
+EuNMYdTks2JvAA4fuxf4nOjJ6KxLZza3HQJyl/O5uuZrsqq2kfmhaFwoWbMmjZ1RstubYtNsU6YR
+rQWQ5WtG0njaw9MojvfiewPw5C6LOwGAx36TMYXkQkdsWY7sKWRYcKaRDG0I6vsyHqtubXbm+Ozq
+Vx5lRMptbvwVKPkzGuXfxtywdOVDfg5bx4SQMx4otDwqfteri6mbt5RpQRk3r5YGhLBb5+x2DZr9
+OAAAAAAAAA==
+
+
+--nextPart6315378.hE6lbSLKzD--
+
+
