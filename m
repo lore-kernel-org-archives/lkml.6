@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADC8C7113E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B01C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4E4F208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:30:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E4F208E4
+	by mail.kernel.org (Postfix) with ESMTP id 17C04208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:30:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C04208B3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbeJPERM (ORCPT
+        id S1726977AbeJPERP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 00:17:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44870 "EHLO mx1.redhat.com"
+        Tue, 16 Oct 2018 00:17:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49200 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725917AbeJPERM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 00:17:12 -0400
+        id S1726921AbeJPERP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 00:17:15 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 54AB0C0AF7A1;
-        Mon, 15 Oct 2018 20:30:21 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id EA5C367465;
+        Mon, 15 Oct 2018 20:30:24 +0000 (UTC)
 Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EDAE86247A;
-        Mon, 15 Oct 2018 20:30:16 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 48E456247A;
+        Mon, 15 Oct 2018 20:30:23 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -43,250 +43,211 @@ Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Patrick Bellasi <patrick.bellasi@arm.com>,
         Tom Hromatka <tom.hromatka@oracle.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v14 01/12] cpuset: Enable cpuset controller in default hierarchy
-Date:   Mon, 15 Oct 2018 16:29:26 -0400
-Message-Id: <1539635377-22335-2-git-send-email-longman@redhat.com>
+Subject: [PATCH v14 03/12] cpuset: Simply allocation and freeing of cpumasks
+Date:   Mon, 15 Oct 2018 16:29:28 -0400
+Message-Id: <1539635377-22335-4-git-send-email-longman@redhat.com>
 In-Reply-To: <1539635377-22335-1-git-send-email-longman@redhat.com>
 References: <1539635377-22335-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 15 Oct 2018 20:30:21 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 15 Oct 2018 20:30:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given the fact that thread mode had been merged into 4.14, it is now
-time to enable cpuset to be used in the default hierarchy (cgroup v2)
-as it is clearly threaded.
+The previous commit introduces a new subparts_cpus mask into the cpuset
+data structure and a new tmpmasks structure.  Managing the allocation
+and freeing of those cpumasks is becoming more complex.
 
-The cpuset controller had experienced feature creep since its
-introduction more than a decade ago. Besides the core cpus and mems
-control files to limit cpus and memory nodes, there are a bunch of
-additional features that can be controlled from the userspace. Some of
-the features are of doubtful usefulness and may not be actively used.
-
-This patch enables cpuset controller in the default hierarchy with
-a minimal set of features, namely just the cpus and mems and their
-effective_* counterparts.  We can certainly add more features to the
-default hierarchy in the future if there is a real user need for them
-later on.
-
-Alternatively, with the unified hiearachy, it may make more sense
-to move some of those additional cpuset features, if desired, to
-memory controller or may be to the cpu controller instead of staying
-with cpuset.
+So a number of helper functions are added to simplify and streamline
+the management of those cpumasks. To make it simple, all the cpumasks
+are now pre-cleared on allocation.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- Documentation/admin-guide/cgroup-v2.rst | 109 ++++++++++++++++++++++--
- kernel/cgroup/cpuset.c                  |  48 ++++++++++-
- 2 files changed, 149 insertions(+), 8 deletions(-)
+ kernel/cgroup/cpuset.c | 110 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 77 insertions(+), 33 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 184193bcb262..0465c231e2fb 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -56,11 +56,13 @@ v1 is available under Documentation/cgroup-v1/.
-          5-3-3-2. IO Latency Interface Files
-      5-4. PID
-        5-4-1. PID Interface Files
--     5-5. Device
--     5-6. RDMA
--       5-6-1. RDMA Interface Files
--     5-7. Misc
--       5-7-1. perf_event
-+     5-5. Cpuset
-+       5.5-1. Cpuset Interface Files
-+     5-6. Device
-+     5-7. RDMA
-+       5-7-1. RDMA Interface Files
-+     5-8. Misc
-+       5-8-1. perf_event
-      5-N. Non-normative information
-        5-N-1. CPU controller root cgroup process behaviour
-        5-N-2. IO controller root cgroup process behaviour
-@@ -1588,6 +1590,103 @@ through fork() or clone(). These will return -EAGAIN if the creation
- of a new process would cause a cgroup policy to be violated.
- 
- 
-+Cpuset
-+------
-+
-+The "cpuset" controller provides a mechanism for constraining
-+the CPU and memory node placement of tasks to only the resources
-+specified in the cpuset interface files in a task's current cgroup.
-+This is especially valuable on large NUMA systems where placing jobs
-+on properly sized subsets of the systems with careful processor and
-+memory placement to reduce cross-node memory access and contention
-+can improve overall system performance.
-+
-+The "cpuset" controller is hierarchical.  That means the controller
-+cannot use CPUs or memory nodes not allowed in its parent.
-+
-+
-+Cpuset Interface Files
-+~~~~~~~~~~~~~~~~~~~~~~
-+
-+  cpuset.cpus
-+	A read-write multiple values file which exists on non-root
-+	cpuset-enabled cgroups.
-+
-+	It lists the requested CPUs to be used by tasks within this
-+	cgroup.  The actual list of CPUs to be granted, however, is
-+	subjected to constraints imposed by its parent and can differ
-+	from the requested CPUs.
-+
-+	The CPU numbers are comma-separated numbers or ranges.
-+	For example:
-+
-+	  # cat cpuset.cpus
-+	  0-4,6,8-10
-+
-+	An empty value indicates that the cgroup is using the same
-+	setting as the nearest cgroup ancestor with a non-empty
-+	"cpuset.cpus" or all the available CPUs if none is found.
-+
-+	The value of "cpuset.cpus" stays constant until the next update
-+	and won't be affected by any CPU hotplug events.
-+
-+  cpuset.cpus.effective
-+	A read-only multiple values file which exists on non-root
-+	cpuset-enabled cgroups.
-+
-+	It lists the onlined CPUs that are actually granted to this
-+	cgroup by its parent.  These CPUs are allowed to be used by
-+	tasks within the current cgroup.
-+
-+	If "cpuset.cpus" is empty, the "cpuset.cpus.effective" file shows
-+	all the CPUs from the parent cgroup that can be available to
-+	be used by this cgroup.  Otherwise, it should be a subset of
-+	"cpuset.cpus" unless none of the CPUs listed in "cpuset.cpus"
-+	can be granted.  In this case, it will be treated just like an
-+	empty "cpuset.cpus".
-+
-+	Its value will be affected by CPU hotplug events.
-+
-+  cpuset.mems
-+	A read-write multiple values file which exists on non-root
-+	cpuset-enabled cgroups.
-+
-+	It lists the requested memory nodes to be used by tasks within
-+	this cgroup.  The actual list of memory nodes granted, however,
-+	is subjected to constraints imposed by its parent and can differ
-+	from the requested memory nodes.
-+
-+	The memory node numbers are comma-separated numbers or ranges.
-+	For example:
-+
-+	  # cat cpuset.mems
-+	  0-1,3
-+
-+	An empty value indicates that the cgroup is using the same
-+	setting as the nearest cgroup ancestor with a non-empty
-+	"cpuset.mems" or all the available memory nodes if none
-+	is found.
-+
-+	The value of "cpuset.mems" stays constant until the next update
-+	and won't be affected by any memory nodes hotplug events.
-+
-+  cpuset.mems.effective
-+	A read-only multiple values file which exists on non-root
-+	cpuset-enabled cgroups.
-+
-+	It lists the onlined memory nodes that are actually granted to
-+	this cgroup by its parent. These memory nodes are allowed to
-+	be used by tasks within the current cgroup.
-+
-+	If "cpuset.mems" is empty, it shows all the memory nodes from the
-+	parent cgroup that will be available to be used by this cgroup.
-+	Otherwise, it should be a subset of "cpuset.mems" unless none of
-+	the memory nodes listed in "cpuset.mems" can be granted.  In this
-+	case, it will be treated just like an empty "cpuset.mems".
-+
-+	Its value will be affected by memory nodes hotplug events.
-+
-+
- Device controller
- -----------------
- 
 diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 266f10cb7222..2b5c4477d969 100644
+index 29a2bdc671fd..2ac9437ce8f1 100644
 --- a/kernel/cgroup/cpuset.c
 +++ b/kernel/cgroup/cpuset.c
-@@ -1824,12 +1824,11 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
- 	return 0;
+@@ -455,6 +455,65 @@ static int is_cpuset_subset(const struct cpuset *p, const struct cpuset *q)
+ 		is_mem_exclusive(p) <= is_mem_exclusive(q);
  }
  
--
- /*
-  * for the common functions, 'private' gives the type of file
-  */
- 
--static struct cftype files[] = {
-+static struct cftype legacy_files[] = {
- 	{
- 		.name = "cpus",
- 		.seq_show = cpuset_common_seq_show,
-@@ -1931,6 +1930,47 @@ static struct cftype files[] = {
- 	{ }	/* terminate */
- };
- 
-+/*
-+ * This is currently a minimal set for the default hierarchy. It can be
-+ * expanded later on by migrating more features and control files from v1.
++/**
++ * alloc_cpumasks - allocate three cpumasks for cpuset
++ * @cs:  the cpuset that have cpumasks to be allocated.
++ * @tmp: the tmpmasks structure pointer
++ * Return: 0 if successful, -ENOMEM otherwise.
++ *
++ * Only one of the two input arguments should be non-NULL.
 + */
-+static struct cftype dfl_files[] = {
-+	{
-+		.name = "cpus",
-+		.seq_show = cpuset_common_seq_show,
-+		.write = cpuset_write_resmask,
-+		.max_write_len = (100U + 6 * NR_CPUS),
-+		.private = FILE_CPULIST,
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+	},
++static inline int alloc_cpumasks(struct cpuset *cs, struct tmpmasks *tmp)
++{
++	cpumask_var_t *pmask1, *pmask2, *pmask3;
 +
-+	{
-+		.name = "mems",
-+		.seq_show = cpuset_common_seq_show,
-+		.write = cpuset_write_resmask,
-+		.max_write_len = (100U + 6 * MAX_NUMNODES),
-+		.private = FILE_MEMLIST,
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+	},
++	if (cs) {
++		pmask1 = &cs->cpus_allowed;
++		pmask2 = &cs->effective_cpus;
++		pmask3 = &cs->subparts_cpus;
++	} else {
++		pmask1 = &tmp->new_cpus;
++		pmask2 = &tmp->addmask;
++		pmask3 = &tmp->delmask;
++	}
 +
-+	{
-+		.name = "cpus.effective",
-+		.seq_show = cpuset_common_seq_show,
-+		.private = FILE_EFFECTIVE_CPULIST,
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+	},
++	if (!zalloc_cpumask_var(pmask1, GFP_KERNEL))
++		return -ENOMEM;
 +
-+	{
-+		.name = "mems.effective",
-+		.seq_show = cpuset_common_seq_show,
-+		.private = FILE_EFFECTIVE_MEMLIST,
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+	},
++	if (!zalloc_cpumask_var(pmask2, GFP_KERNEL))
++		goto free_one;
 +
-+	{ }	/* terminate */
-+};
++	if (!zalloc_cpumask_var(pmask3, GFP_KERNEL))
++		goto free_two;
 +
++	return 0;
 +
- /*
-  *	cpuset_css_alloc - allocate a cpuset css
-  *	cgrp:	control group that the new cpuset will be part of
-@@ -2105,8 +2145,10 @@ struct cgroup_subsys cpuset_cgrp_subsys = {
- 	.post_attach	= cpuset_post_attach,
- 	.bind		= cpuset_bind,
- 	.fork		= cpuset_fork,
--	.legacy_cftypes	= files,
-+	.legacy_cftypes	= legacy_files,
-+	.dfl_cftypes	= dfl_files,
- 	.early_init	= true,
-+	.threaded	= true,
- };
++free_two:
++	free_cpumask_var(*pmask2);
++free_one:
++	free_cpumask_var(*pmask1);
++	return -ENOMEM;
++}
++
++/**
++ * free_cpumasks - free cpumasks in a tmpmasks structure
++ * @cs:  the cpuset that have cpumasks to be free.
++ * @tmp: the tmpmasks structure pointer
++ */
++static inline void free_cpumasks(struct cpuset *cs, struct tmpmasks *tmp)
++{
++	if (cs) {
++		free_cpumask_var(cs->cpus_allowed);
++		free_cpumask_var(cs->effective_cpus);
++		free_cpumask_var(cs->subparts_cpus);
++	}
++	if (tmp) {
++		free_cpumask_var(tmp->new_cpus);
++		free_cpumask_var(tmp->addmask);
++		free_cpumask_var(tmp->delmask);
++	}
++}
++
+ /**
+  * alloc_trial_cpuset - allocate a trial cpuset
+  * @cs: the cpuset that the trial cpuset duplicates
+@@ -467,31 +526,24 @@ static struct cpuset *alloc_trial_cpuset(struct cpuset *cs)
+ 	if (!trial)
+ 		return NULL;
+ 
+-	if (!alloc_cpumask_var(&trial->cpus_allowed, GFP_KERNEL))
+-		goto free_cs;
+-	if (!alloc_cpumask_var(&trial->effective_cpus, GFP_KERNEL))
+-		goto free_cpus;
++	if (alloc_cpumasks(trial, NULL)) {
++		kfree(trial);
++		return NULL;
++	}
+ 
+ 	cpumask_copy(trial->cpus_allowed, cs->cpus_allowed);
+ 	cpumask_copy(trial->effective_cpus, cs->effective_cpus);
+ 	return trial;
+-
+-free_cpus:
+-	free_cpumask_var(trial->cpus_allowed);
+-free_cs:
+-	kfree(trial);
+-	return NULL;
+ }
  
  /**
+- * free_trial_cpuset - free the trial cpuset
+- * @trial: the trial cpuset to be freed
++ * free_cpuset - free the cpuset
++ * @cs: the cpuset to be freed
+  */
+-static void free_trial_cpuset(struct cpuset *trial)
++static inline void free_cpuset(struct cpuset *cs)
+ {
+-	free_cpumask_var(trial->effective_cpus);
+-	free_cpumask_var(trial->cpus_allowed);
+-	kfree(trial);
++	free_cpumasks(cs, NULL);
++	kfree(cs);
+ }
+ 
+ /*
+@@ -1385,7 +1437,7 @@ static int update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
+ 	if (spread_flag_changed)
+ 		update_tasks_flags(cs);
+ out:
+-	free_trial_cpuset(trialcs);
++	free_cpuset(trialcs);
+ 	return err;
+ }
+ 
+@@ -1769,7 +1821,7 @@ static ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
+ 		break;
+ 	}
+ 
+-	free_trial_cpuset(trialcs);
++	free_cpuset(trialcs);
+ out_unlock:
+ 	mutex_unlock(&cpuset_mutex);
+ 	kernfs_unbreak_active_protection(of->kn);
+@@ -2024,26 +2076,19 @@ cpuset_css_alloc(struct cgroup_subsys_state *parent_css)
+ 	cs = kzalloc(sizeof(*cs), GFP_KERNEL);
+ 	if (!cs)
+ 		return ERR_PTR(-ENOMEM);
+-	if (!alloc_cpumask_var(&cs->cpus_allowed, GFP_KERNEL))
+-		goto free_cs;
+-	if (!alloc_cpumask_var(&cs->effective_cpus, GFP_KERNEL))
+-		goto free_cpus;
++
++	if (alloc_cpumasks(cs, NULL)) {
++		kfree(cs);
++		return ERR_PTR(-ENOMEM);
++	}
+ 
+ 	set_bit(CS_SCHED_LOAD_BALANCE, &cs->flags);
+-	cpumask_clear(cs->cpus_allowed);
+ 	nodes_clear(cs->mems_allowed);
+-	cpumask_clear(cs->effective_cpus);
+ 	nodes_clear(cs->effective_mems);
+ 	fmeter_init(&cs->fmeter);
+ 	cs->relax_domain_level = -1;
+ 
+ 	return &cs->css;
+-
+-free_cpus:
+-	free_cpumask_var(cs->cpus_allowed);
+-free_cs:
+-	kfree(cs);
+-	return ERR_PTR(-ENOMEM);
+ }
+ 
+ static int cpuset_css_online(struct cgroup_subsys_state *css)
+@@ -2134,9 +2179,7 @@ static void cpuset_css_free(struct cgroup_subsys_state *css)
+ {
+ 	struct cpuset *cs = css_cs(css);
+ 
+-	free_cpumask_var(cs->effective_cpus);
+-	free_cpumask_var(cs->cpus_allowed);
+-	kfree(cs);
++	free_cpuset(cs);
+ }
+ 
+ static void cpuset_bind(struct cgroup_subsys_state *root_css)
+@@ -2200,6 +2243,7 @@ int __init cpuset_init(void)
+ 
+ 	BUG_ON(!alloc_cpumask_var(&top_cpuset.cpus_allowed, GFP_KERNEL));
+ 	BUG_ON(!alloc_cpumask_var(&top_cpuset.effective_cpus, GFP_KERNEL));
++	BUG_ON(!zalloc_cpumask_var(&top_cpuset.subparts_cpus, GFP_KERNEL));
+ 
+ 	cpumask_setall(top_cpuset.cpus_allowed);
+ 	nodes_setall(top_cpuset.mems_allowed);
 -- 
 2.18.0
 
