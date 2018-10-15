@@ -2,147 +2,124 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FECC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F24C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5287C2054F
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:57:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="llhyG5yh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5287C2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id E99162054F
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:57:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E99162054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbeJPGo5 (ORCPT
+        id S1727164AbeJPGpF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:44:57 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:44070 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbeJPGo4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:44:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1539644266; x=1571180266;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=TNWsDsrY0+1IONRcBFghvNkJcTRtv8K90Rbf9IJ+PFU=;
-  b=llhyG5yhwEdBrUDKs7kaZBrTIqXbCfYvvvIEzvTckqcvfttkpppKbxPt
-   qG+ZgKpXXzaWCHVTSTZgFGqsAMq6gTtPbR28KaqHzKVerFJY+utW3pO30
-   /1ryrZP8G2EzMIP3bwcOWjrOtJQK5tqa8HaUpnrHGcoL2rg/T/C16iBFQ
-   R8INjZQWcbl+htsmFyNiUP4DOHSipwQQTxURImlb1Sga+jQPgofFkRYFE
-   GlD9bTwDamguUN2fBjOvPbJK0nWW7JZTmUi+tFm2WOHPG7QalT8QClhvZ
-   kxDCfOPZZylsrmTRZf14wWwBSE81bfcYPK4hLladEpEiZKEdTfkYdBoxN
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.54,386,1534780800"; 
-   d="scan'208";a="189691623"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Oct 2018 06:57:45 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 15 Oct 2018 15:42:10 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.73.114]) ([10.111.73.114])
-  by uls-op-cesaip02.wdc.com with ESMTP; 15 Oct 2018 15:57:36 -0700
-Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM
- Controller.
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Wesley Terpstra <wesley@sifive.com>
-Cc:     palmer@sifive.com, linux-riscv@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, hch@infradead.org
-References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
- <1539111085-25502-2-git-send-email-atish.patra@wdc.com>
- <20181010134926.GD21134@ulmo>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <25758ab9-eb36-741b-6264-42412b3ddd8e@wdc.com>
-Date:   Mon, 15 Oct 2018 15:57:35 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 16 Oct 2018 02:45:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47510 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726964AbeJPGpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 02:45:05 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 684238553D;
+        Mon, 15 Oct 2018 22:57:44 +0000 (UTC)
+Received: from sky.random (ovpn-120-12.rdu2.redhat.com [10.10.120.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2923027093;
+        Mon, 15 Oct 2018 22:57:44 +0000 (UTC)
+Date:   Mon, 15 Oct 2018 18:57:43 -0400
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
+ mappings
+Message-ID: <20181015225743.GB30832@redhat.com>
+References: <alpine.DEB.2.21.1810051320270.202739@chino.kir.corp.google.com>
+ <20181005232155.GA2298@redhat.com>
+ <alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com>
+ <20181009094825.GC6931@suse.de>
+ <20181009122745.GN8528@dhcp22.suse.cz>
+ <20181009130034.GD6931@suse.de>
+ <20181009142510.GU8528@dhcp22.suse.cz>
+ <20181009230352.GE9307@redhat.com>
+ <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20181010134926.GD21134@ulmo>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 15 Oct 2018 22:57:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/18 6:49 AM, Thierry Reding wrote:
-> On Tue, Oct 09, 2018 at 11:51:22AM -0700, Atish Patra wrote:
->> From: "Wesley W. Terpstra" <wesley@sifive.com>
->>
->> DT documentation for PWM controller added with updated compatible
->> string.
->>
->> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
->> [Atish: Compatible string update]
->> Signed-off-by: Atish Patra <atish.patra@wdc.com>
->> ---
->>   .../devicetree/bindings/pwm/pwm-sifive.txt         | 32 ++++++++++++++++++++++
->>   1 file changed, 32 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
->>
->> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
->> new file mode 100644
->> index 00000000..532b10fc
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
->> @@ -0,0 +1,32 @@
->> +SiFive PWM controller
->> +
->> +Unlike most other PWM controllers, the SiFive PWM controller currently only
->> +supports one period for all channels in the PWM. This is set globally in DTS.
->> +The period also has significant restrictions on the values it can achieve,
->> +which the driver rounds to the nearest achievable frequency.
+On Mon, Oct 15, 2018 at 03:30:17PM -0700, David Rientjes wrote:
+> At the risk of beating a dead horse that has already been beaten, what are 
+> the plans for this patch when the merge window opens?  It would be rather 
+> unfortunate for us to start incurring a 14% increase in access latency and 
+> 40% increase in fault latency.  Would it be possible to test with my 
+> patch[*] that does not try reclaim to address the thrashing issue?  If 
+> that is satisfactory, I don't have a strong preference if it is done with 
+> a hardcoded pageblock_order and __GFP_NORETRY check or a new 
+> __GFP_COMPACT_ONLY flag.
+
+I don't like the pageblock size hardcoding inside the page
+allocator. __GFP_COMPACT_ONLY is fully runtime equivalent, but it at
+least let the caller choose the behavior, so it looks more flexible.
+
+To fix your 40% fault latency concern in the short term we could use
+__GFP_COMPACT_ONLY, but I think we should get rid of
+__GFP_COMPACT_ONLY later: we need more statistical data in the zone
+structure to track remote compaction failures triggering because the
+zone is fully fragmented.
+
+Once the zone is fully fragmented we need to do a special exponential
+backoff on that zone when the zone is from a remote node.
+
+Furthermore at the first remote NUMA node zone failure caused by full
+fragmentation we need to interrupt compaction and stop trying with all
+remote nodes.
+
+As long as compaction returns COMPACT_SKIPPED it's ok to keep doing
+reclaim and keep doing compaction, as long as compaction succeeds.
+
+What is causing the higher latency is the fact we try all zones from
+all remote nodes even if there's a failure caused by full
+fragmentation of all remote zone, and we're unable to skip (skip with
+exponential backoff) only those zones where compaction cannot succeed
+because of fragmentation.
+
+Once we achieve the above deleting __GFP_COMPACT_ONLY will be a
+trivial patch.
+
+> I think the second issue of faulting remote thp by removing __GFP_THISNODE 
+> needs supporting evidence that shows some platforms benefit from this (and 
+> not with numa=fake on the command line :).
 > 
-> What restrictions are these? If "nearest achievable" is too far off the
-> target period it might be preferable to error out.
-> 
+>  [*] https://marc.info/?l=linux-kernel&m=153903127717471
 
-@Wes: Any comments?
+That is needed to compare the current one liner fix with
+__GFP_COMPACT_ONLY, but I don't think it's needed to compare v4.18
+with the current fix. The badness of v4.18 was too bad keep, getting
+local PAGE_SIZEd memory or remote THPs is a secondary issue.
 
->> +Required properties:
->> +- compatible: should be one of
->> +	"sifive,fu540-c000-pwm0","sifive,pwm0".
-> 
-> What's the '0' in here? A version number?
->
+In fact the main reason for __GFP_COMPACT_ONLY is not anymore such
+tradeoff, but not to spend too much CPU in compaction when all nodes
+are fragmented to avoid increasing the allocation latency too much.
 
-I think yes. Since fu540 is the first Linux capable RISC-V core, SiFive 
-Guys decided mark it as version 0.
-
-@Wesly: Please correct me if I am wrong.
-
->> +	PWM controller is HiFive Unleashed specific chip which warrants a
->> +	specific compatible string. The second string is kept for backward
->> +	compatibility until a firmware update with latest compatible string.
->> +- reg: physical base address and length of the controller's registers
->> +- clocks: The frequency the controller runs at
->> +- #pwm-cells: Should be 2.
->> +  The first cell is the PWM channel number
->> +  The second cell is the PWM polarity
->> +- sifive,approx-period: the driver will get as close to this period as it can
-> 
-> Given the above comment, maybe "sifive,period"?
-> 
-
-ok.
-In Unleashed board, the DT is loaded by FSBL (first stage boot loader). 
-Thus, changing device tree entries requires a FSBL update. If we update 
-this string, we need to update the driver to parse both properties so 
-that existing devices with older firmware continue to work.
-
-This is probably ok as we anyways do that for compatible strings. Just 
-wanted to update that here for the record.
-
-Regards,
-Atish
-> Thierry
-> 
-
+Thanks,
+Andrea
