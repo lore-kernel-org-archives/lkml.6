@@ -2,123 +2,225 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB86EC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3859CC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ABCF2064A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:30:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ABCF2064A
+	by mail.kernel.org (Postfix) with ESMTP id F39792064A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39792064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbeJOSOz (ORCPT
+        id S1726890AbeJOSPp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 14:14:55 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47184 "EHLO mx1.redhat.com"
+        Mon, 15 Oct 2018 14:15:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38034 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726400AbeJOSOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 14:14:55 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1726469AbeJOSPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 14:15:44 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 50407BCD39;
-        Mon, 15 Oct 2018 10:30:16 +0000 (UTC)
-Received: from [10.36.117.209] (ovpn-117-209.ams2.redhat.com [10.36.117.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 22B062B3AD;
-        Mon, 15 Oct 2018 10:30:10 +0000 (UTC)
-Subject: Re: [PATCH V4 12/15] x86/hyper-v: Add HvFlushGuestAddressList
- hypercall support
-To:     lantianyu1986@gmail.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        rkrcmar@redhat.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        michael.h.kelley@microsoft.com, vkuznets@redhat.com
-References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
- <20181013145406.4911-13-Tianyu.Lan@microsoft.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <1fece0bb-ca24-5f4d-2215-93e9705144fd@redhat.com>
-Date:   Mon, 15 Oct 2018 12:30:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        by mx1.redhat.com (Postfix) with ESMTPS id 00358313C24D;
+        Mon, 15 Oct 2018 10:31:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CFB447C594;
+        Mon, 15 Oct 2018 10:31:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH net-next] rxrpc: Add /proc/net/rxrpc/peers to display peer
+ list
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 15 Oct 2018 11:31:03 +0100
+Message-ID: <153959946389.27408.16748794272430961849.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <20181013145406.4911-13-Tianyu.Lan@microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 15 Oct 2018 10:30:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 15 Oct 2018 10:31:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/10/2018 16:54, lantianyu1986@gmail.com wrote:
-> 
-> +static int fill_flush_list(union hv_gpa_page_range gpa_list[],
-> +		int offset, u64 start_gfn, u64 pages)
+Add /proc/net/rxrpc/peers to display the list of peers currently active.
 
-Pass the entire struct hv_guest_mapping_flush_list to this function,
-it's simpler and it hides the gpa_list argument from
-range->parse_flush_list_func.
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-> +	if (!range->flush_list)
-> +		gpa_n = fill_flush_list(flush->gpa_list, gpa_n,
-> +				range->start_gfn, range->pages);
-> +	else if (range->parse_flush_list_func)
-> +		gpa_n = range->parse_flush_list_func(flush->gpa_list, gpa_n,
-> +				range->flush_list, fill_flush_list);
-> +	else
+ net/rxrpc/ar-internal.h |    1 
+ net/rxrpc/net_ns.c      |    3 +
+ net/rxrpc/proc.c        |  126 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 130 insertions(+)
 
-You are making the code more complicated in order to avoid making
-fill_flush_list public.  Just make it public and always go through the
-parse_flush_list_func case.  In fact:
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index 8cee7644965c..0a7c49e8e053 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -1062,6 +1062,7 @@ void rxrpc_put_peer(struct rxrpc_peer *);
+  */
+ extern const struct seq_operations rxrpc_call_seq_ops;
+ extern const struct seq_operations rxrpc_connection_seq_ops;
++extern const struct seq_operations rxrpc_peer_seq_ops;
+ 
+ /*
+  * recvmsg.c
+diff --git a/net/rxrpc/net_ns.c b/net/rxrpc/net_ns.c
+index 417d80867c4f..fd7eba8467fa 100644
+--- a/net/rxrpc/net_ns.c
++++ b/net/rxrpc/net_ns.c
+@@ -102,6 +102,9 @@ static __net_init int rxrpc_init_net(struct net *net)
+ 	proc_create_net("conns", 0444, rxnet->proc_net,
+ 			&rxrpc_connection_seq_ops,
+ 			sizeof(struct seq_net_private));
++	proc_create_net("peers", 0444, rxnet->proc_net,
++			&rxrpc_peer_seq_ops,
++			sizeof(struct seq_net_private));
+ 	return 0;
+ 
+ err_proc:
+diff --git a/net/rxrpc/proc.c b/net/rxrpc/proc.c
+index 9805e3b85c36..c7d976859d40 100644
+--- a/net/rxrpc/proc.c
++++ b/net/rxrpc/proc.c
+@@ -212,3 +212,129 @@ const struct seq_operations rxrpc_connection_seq_ops = {
+ 	.stop   = rxrpc_connection_seq_stop,
+ 	.show   = rxrpc_connection_seq_show,
+ };
++
++/*
++ * generate a list of extant virtual peers in /proc/net/rxrpc/peers
++ */
++static int rxrpc_peer_seq_show(struct seq_file *seq, void *v)
++{
++	struct rxrpc_peer *peer;
++	time64_t now;
++	char lbuff[50], rbuff[50];
++
++	if (v == SEQ_START_TOKEN) {
++		seq_puts(seq,
++			 "Proto Local                                          "
++			 " Remote                                         "
++			 " Use CW  MTU   LastUse          RTT Rc\n"
++			 );
++		return 0;
++	}
++
++	peer = list_entry(v, struct rxrpc_peer, hash_link);
++
++	sprintf(lbuff, "%pISpc", &peer->local->srx.transport);
++
++	sprintf(rbuff, "%pISpc", &peer->srx.transport);
++
++	now = ktime_get_seconds();
++	seq_printf(seq,
++		   "UDP   %-47.47s %-47.47s %3u"
++		   " %3u %5u %6llus %12llu %2u\n",
++		   lbuff,
++		   rbuff,
++		   atomic_read(&peer->usage),
++		   peer->cong_cwnd,
++		   peer->mtu,
++		   now - peer->last_tx_at,
++		   peer->rtt,
++		   peer->rtt_cursor);
++
++	return 0;
++}
++
++static void *rxrpc_peer_seq_start(struct seq_file *seq, loff_t *_pos)
++	__acquires(rcu)
++{
++	struct rxrpc_net *rxnet = rxrpc_net(seq_file_net(seq));
++	unsigned int bucket, n;
++	unsigned int shift = 32 - HASH_BITS(rxnet->peer_hash);
++	void *p;
++
++	rcu_read_lock();
++
++	if (*_pos >= UINT_MAX)
++		return NULL;
++
++	n = *_pos & ((1U << shift) - 1);
++	bucket = *_pos >> shift;
++	for (;;) {
++		if (bucket >= HASH_SIZE(rxnet->peer_hash)) {
++			*_pos = UINT_MAX;
++			return NULL;
++		}
++		if (n == 0) {
++			if (bucket == 0)
++				return SEQ_START_TOKEN;
++			*_pos += 1;
++			n++;
++		}
++
++		p = seq_hlist_start_rcu(&rxnet->peer_hash[bucket], n - 1);
++		if (p)
++			return p;
++		bucket++;
++		n = 1;
++		*_pos = (bucket << shift) | n;
++	}
++}
++
++static void *rxrpc_peer_seq_next(struct seq_file *seq, void *v, loff_t *_pos)
++{
++	struct rxrpc_net *rxnet = rxrpc_net(seq_file_net(seq));
++	unsigned int bucket, n;
++	unsigned int shift = 32 - HASH_BITS(rxnet->peer_hash);
++	void *p;
++
++	if (*_pos >= UINT_MAX)
++		return NULL;
++
++	bucket = *_pos >> shift;
++
++	p = seq_hlist_next_rcu(v, &rxnet->peer_hash[bucket], _pos);
++	if (p)
++		return p;
++
++	for (;;) {
++		bucket++;
++		n = 1;
++		*_pos = (bucket << shift) | n;
++
++		if (bucket >= HASH_SIZE(rxnet->peer_hash)) {
++			*_pos = UINT_MAX;
++			return NULL;
++		}
++		if (n == 0) {
++			*_pos += 1;
++			n++;
++		}
++
++		p = seq_hlist_start_rcu(&rxnet->peer_hash[bucket], n - 1);
++		if (p)
++			return p;
++	}
++}
++
++static void rxrpc_peer_seq_stop(struct seq_file *seq, void *v)
++	__releases(rcu)
++{
++	rcu_read_unlock();
++}
++
++
++const struct seq_operations rxrpc_peer_seq_ops = {
++	.start  = rxrpc_peer_seq_start,
++	.next   = rxrpc_peer_seq_next,
++	.stop   = rxrpc_peer_seq_stop,
++	.show   = rxrpc_peer_seq_show,
++};
 
-- make parse_flush_list_func an argument of hyperv_flush_guest_mapping_range
-
-- drop struct hyperv_tlb_range completely, instead just pass a void* to
-hyperv_flush_guest_mapping_range and pass it back to the callback.  The
-void * can point to the start_gfn/pages pair, it can be the flush_list,
-or anything else.
-
-Paolo
