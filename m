@@ -2,88 +2,99 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA31C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE7EC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B81D220881
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:35:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B81D220881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 771642098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:36:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8w5vgLx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771642098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbeJPCWF (ORCPT
+        id S1727024AbeJPCWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:22:05 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40677 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbeJPCWF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:22:05 -0400
-Received: by mail-oi1-f194.google.com with SMTP id j68-v6so15901008oib.7;
-        Mon, 15 Oct 2018 11:35:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t6NOvulP2dY9k2uyzb+m7OUqtBOg8vYasQH270pWY7o=;
-        b=sN1d8rjtRVzVkl7iT0J0I8l1fdHQXDSkmzU8C9q6Zy1/ODUtuTYPGSaR8JYEJNKmb+
-         0F67AlwkZTK4K2ehRqY4YV68cg5Vznu5S/y10LfnRDsfok3qcmsmIdXDORqnsb0CXBxB
-         tj43x4KVBgyR7O+KOSHh8uxeZgxbEMh+riWLz11yK72AofvMRZesqVxvZKc62r+wL4va
-         fSLFfaP66uU5oS2njWeD9cOCETwOxiRE5LBsE/SrPkGSfP+PC3yqZk0b9pt7wvKpi7No
-         pW7HyMlwWsnYHVkQKqWz7ULIJmYDPZDbnchT7NlOpYgudVpWJ7Is2A0TMJGpzQIlg/bq
-         6Y3A==
-X-Gm-Message-State: ABuFfogwki2N4S0nXesyRIGwUpwNjXfzE7KCrTTkiGT4LusrNM7+S0ap
-        EW/5YGS3qqdHQMxNQ5E35A==
-X-Google-Smtp-Source: ACcGV6279EkfRp5Y+GZ7ki5SeboqigKlPNvxf9SFVYGUIAA6PwcgAN0Bt+CV0fymgNQpeyafJoRb5w==
-X-Received: by 2002:aca:b945:: with SMTP id j66-v6mr148149oif.86.1539628538940;
-        Mon, 15 Oct 2018 11:35:38 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u6-v6sm3228566otk.29.2018.10.15.11.35.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 11:35:38 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 13:35:37 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [RESEND] dt-bindings: thermal: samsung: Add SPDX license
- identifier
-Message-ID: <20181015183537.GB19458@bogus>
-References: <20180927170440.12985-1-krzk@kernel.org>
+        Mon, 15 Oct 2018 22:22:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38854 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726594AbeJPCWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 22:22:33 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A494020881;
+        Mon, 15 Oct 2018 18:36:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539628568;
+        bh=W9jTNov0Zydk0CK4fau7/ZXACI/7cGhgJLVwaxMP97Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P8w5vgLxVv7CVJzwmQcYs1EGuO2l4DNjMJs/8EdmexFC5SG3+G5MewUhNsoUoq+75
+         8MPK0SF2AeavMM9UhVXCUfDUEsDhf7KECytP9aSs1i7kS0kffazyMrSpWaoWH+AICk
+         1ps2NMx9oUwwsFTWBo1L3+3IXKZC6AwXMPrw75kU=
+Date:   Mon, 15 Oct 2018 20:36:05 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     rkir@google.com
+Cc:     linux-kernel@vger.kernel.org, tkjos@google.com
+Subject: Re: [PATCH v3 07/15] platform: goldfish: pipe: Return status from
+ "deinit" since "remove" does not do much
+Message-ID: <20181015183605.GB28454@kroah.com>
+References: <20181003171720.169953-1-rkir@google.com>
+ <20181003171720.169953-7-rkir@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180927170440.12985-1-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181003171720.169953-7-rkir@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 07:04:40PM +0200, Krzysztof Kozlowski wrote:
-> Replace GPL license statement with SPDX license identifier (GPL-2.0+).
+On Wed, Oct 03, 2018 at 10:17:12AM -0700, rkir@google.com wrote:
+> From: Roman Kiryanov <rkir@google.com>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> This way deinit will have a chance to report an error.
 > 
+> Signed-off-by: Roman Kiryanov <rkir@google.com>
 > ---
+> Changes in v3:
+>  - No change.
+> Changes in v2:
+>  - No change.
 > 
-> We postponed this patch because in previous discussion [1] Bartlomiej
-> expressed willingness to change the license... which did not happen
-> since July 2018.  In such case let's take this.
+>  drivers/platform/goldfish/goldfish_pipe.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> [1] https://patchwork.kernel.org/patch/10533191/
-> ---
->  include/dt-bindings/thermal/thermal_exynos.h | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
+> diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
+> index 445c0c0c66c4..1822d4146778 100644
+> --- a/drivers/platform/goldfish/goldfish_pipe.c
+> +++ b/drivers/platform/goldfish/goldfish_pipe.c
+> @@ -888,13 +888,15 @@ static int goldfish_pipe_device_init(struct platform_device *pdev,
+>  	return 0;
+>  }
+>  
+> -static void goldfish_pipe_device_deinit(struct platform_device *pdev,
+> -					struct goldfish_pipe_dev *dev)
+> +static int goldfish_pipe_device_deinit(struct platform_device *pdev,
+> +				       struct goldfish_pipe_dev *dev)
+>  {
+>  	misc_deregister(&dev->miscdev);
+>  	tasklet_kill(&dev->irq_tasklet);
+>  	kfree(dev->pipes);
+>  	free_page((unsigned long)dev->buffers);
+> +
+> +	return 0;
+>  }
 
-Applied.
+This function can not fail, why are you returning 0 always?  That
+doesn't make sense.
+
+thanks,
+
+greg k-h
