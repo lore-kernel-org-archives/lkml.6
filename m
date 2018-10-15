@@ -2,283 +2,124 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B660AC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7894DC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F5D220881
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:34:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwah55Xc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F5D220881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3454F20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:43:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3454F20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbeJOTTi (ORCPT
+        id S1726561AbeJOT16 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:19:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46218 "EHLO mail.kernel.org"
+        Mon, 15 Oct 2018 15:27:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54554 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbeJOTTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:19:38 -0400
-Received: from linux-8ccs (charybdis-ext.suse.de [195.135.221.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726319AbeJOT16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 15:27:58 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACA342083C;
-        Mon, 15 Oct 2018 11:34:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539603284;
-        bh=qgdB0XPRUkX0cKhtI4QT7mBfWVT9n1+sjiDUKfudttI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pwah55Xc8huoH28Y9Rq1tzlQJ4xdFO2P04Sk82IjKAt5tkVvI/feR10uOzAOkauR+
-         9ZiuLhieKamFjv6uVu+iePs/VmsuMVENDgLeS53GGJMru9m/La0361PNKC2DTqa5S6
-         oPKVroFXDwPCOg405HO+adgaHp2Cp4QW3FTFI3yc=
-Date:   Mon, 15 Oct 2018 13:34:33 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Ingo Molnar <mingo@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morris <james.morris@microsoft.com>,
-        James Morris <jmorris@namei.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Nicolas Pitre <nico@linaro.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH for 4.19] tracepoint: Fix: out-of-bound tracepoint array
- iteration
-Message-ID: <20181015113433.m52e2xwnda2p4yhw@linux-8ccs>
-References: <20181012200523.23731-1-mathieu.desnoyers@efficios.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 7168D308FB97;
+        Mon, 15 Oct 2018 11:43:04 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 258575D76E;
+        Mon, 15 Oct 2018 11:43:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix clearance of reply
+From:   David Howells <dhowells@redhat.com>
+To:     gregkh@linuxfoundation.org, torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date:   Mon, 15 Oct 2018 12:43:02 +0100
+Message-ID: <153960378222.7221.8576360303007809015.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181012200523.23731-1-mathieu.desnoyers@efficios.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.16-default x86_64
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 15 Oct 2018 11:43:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Mathieu Desnoyers [12/10/18 16:05 -0400]:
->commit 46e0c9be206f ("kernel: tracepoints: add support for relative
->references") changes the layout of the __tracepoint_ptrs section on
->architectures supporting relative references. However, it does so
->without turning struct tracepoint * const into const int * elsewhere in
->the tracepoint code, which has the following side-effect:
->
->tracepoint_module_{coming,going} invoke
->tp_module_going_check_quiescent() with mod->tracepoints_ptrs
->as first argument, and computes the end address of the array
->for the second argument with:
->
->  mod->tracepoints_ptrs + mod->num_tracepoints
->
->However, because the type of mod->tracepoint_ptrs in module.h
->has not been changed from pointer to int, it passes an end
->pointer which is twice larger than the array, causing out-of-bound
->array accesses.
->
->Fix this by introducing a new typedef: tracepoint_ptr_t, which
->is either "const int" on architectures that have PREL32 relocations,
->or "struct tracepoint * const" on architectures that does not have
->this feature.
->
->Also provide a new tracepoint_ptr_defer() static inline to
->encapsulate deferencing this type rather than duplicate code and
->ugly idefs within the for_each_tracepoint_range() implementation.
->
->This issue appears in 4.19-rc kernels, and should ideally be fixed
->before the end of the rc cycle.
->
->Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->Link: http://lkml.kernel.org/r/20180704083651.24360-7-ard.biesheuvel@linaro.org
->Cc: Michael Ellerman <mpe@ellerman.id.au>
->Cc: Ingo Molnar <mingo@kernel.org>
->Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
->Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->Cc: Arnd Bergmann <arnd@arndb.de>
->Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->Cc: Bjorn Helgaas <bhelgaas@google.com>
->Cc: Catalin Marinas <catalin.marinas@arm.com>
->Cc: James Morris <james.morris@microsoft.com>
->Cc: James Morris <jmorris@namei.org>
->Cc: Jessica Yu <jeyu@kernel.org>
->Cc: Josh Poimboeuf <jpoimboe@redhat.com>
->Cc: Kees Cook <keescook@chromium.org>
->Cc: Nicolas Pitre <nico@linaro.org>
->Cc: Paul Mackerras <paulus@samba.org>
->Cc: Petr Mladek <pmladek@suse.com>
->Cc: Russell King <linux@armlinux.org.uk>
->Cc: "Serge E. Hallyn" <serge@hallyn.com>
->Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
->Cc: Thomas Garnier <thgarnie@google.com>
->Cc: Thomas Gleixner <tglx@linutronix.de>
->Cc: Will Deacon <will.deacon@arm.com>
->Cc: Andrew Morton <akpm@linux-foundation.org>
->Cc: Linus Torvalds <torvalds@linux-foundation.org>
->Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The recent patch to fix the afs_server struct leak didn't actually fix the
+bug, but rather fixed some of the symptoms.  The problem is that an
+asynchronous call that holds a resource pointed to by call->reply[0] will
+find the pointer cleared in the call destructor, thereby preventing the
+resource from being cleaned up.
 
-For module parts:
+In the case of the server record leak, the afs_fs_get_capabilities()
+function in devel code sets up a call with reply[0] pointing at the server
+record that should be altered when the result is obtained, but this was
+being cleared before the destructor was called, so the put in the
+destructor does nothing and the record is leaked.
 
-Acked-by: Jessica Yu <jeyu@kernel.org>
+Commit f014ffb025c1 removed the additional ref obtained by
+afs_install_server(), but the removal of this ref is actually used by the
+garbage collector to mark a server record as being defunct after the record
+has expired through lack of use.
 
->---
-> include/linux/module.h          |  2 +-
-> include/linux/tracepoint-defs.h |  6 ++++++
-> include/linux/tracepoint.h      | 36 +++++++++++++++++++++------------
-> kernel/tracepoint.c             | 24 ++++++++--------------
-> 4 files changed, 38 insertions(+), 30 deletions(-)
->
->diff --git a/include/linux/module.h b/include/linux/module.h
->index f807f15bebbe..cdab2451d6be 100644
->--- a/include/linux/module.h
->+++ b/include/linux/module.h
->@@ -430,7 +430,7 @@ struct module {
->
-> #ifdef CONFIG_TRACEPOINTS
-> 	unsigned int num_tracepoints;
->-	struct tracepoint * const *tracepoints_ptrs;
->+	tracepoint_ptr_t *tracepoints_ptrs;
-> #endif
-> #ifdef HAVE_JUMP_LABEL
-> 	struct jump_entry *jump_entries;
->diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
->index 22c5a46e9693..49ba9cde7e4b 100644
->--- a/include/linux/tracepoint-defs.h
->+++ b/include/linux/tracepoint-defs.h
->@@ -35,6 +35,12 @@ struct tracepoint {
-> 	struct tracepoint_func __rcu *funcs;
-> };
->
->+#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
->+typedef const int tracepoint_ptr_t;
->+#else
->+typedef struct tracepoint * const tracepoint_ptr_t;
->+#endif
->+
-> struct bpf_raw_event_map {
-> 	struct tracepoint	*tp;
-> 	void			*bpf_func;
->diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
->index 041f7e56a289..538ba1a58f5b 100644
->--- a/include/linux/tracepoint.h
->+++ b/include/linux/tracepoint.h
->@@ -99,6 +99,29 @@ extern void syscall_unregfunc(void);
-> #define TRACE_DEFINE_ENUM(x)
-> #define TRACE_DEFINE_SIZEOF(x)
->
->+#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
->+static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->+{
->+	return offset_to_ptr(p);
->+}
->+
->+#define __TRACEPOINT_ENTRY(name)					\
->+	asm("	.section \"__tracepoints_ptrs\", \"a\"		\n"	\
->+	    "	.balign 4					\n"	\
->+	    "	.long 	__tracepoint_" #name " - .		\n"	\
->+	    "	.previous					\n")
->+#else
->+static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->+{
->+	return *p;
->+}
->+
->+#define __TRACEPOINT_ENTRY(name)					 \
->+	static tracepoint_ptr_t __tracepoint_ptr_##name __used		 \
->+	__attribute__((section("__tracepoints_ptrs"))) =		 \
->+		&__tracepoint_##name
->+#endif
->+
-> #endif /* _LINUX_TRACEPOINT_H */
->
-> /*
->@@ -253,19 +276,6 @@ extern void syscall_unregfunc(void);
-> 		return static_key_false(&__tracepoint_##name.key);	\
-> 	}
->
->-#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
->-#define __TRACEPOINT_ENTRY(name)					\
->-	asm("	.section \"__tracepoints_ptrs\", \"a\"		\n"	\
->-	    "	.balign 4					\n"	\
->-	    "	.long 	__tracepoint_" #name " - .		\n"	\
->-	    "	.previous					\n")
->-#else
->-#define __TRACEPOINT_ENTRY(name)					 \
->-	static struct tracepoint * const __tracepoint_ptr_##name __used	 \
->-	__attribute__((section("__tracepoints_ptrs"))) =		 \
->-		&__tracepoint_##name
->-#endif
->-
-> /*
->  * We have no guarantee that gcc and the linker won't up-align the tracepoint
->  * structures, so we create an array of pointers that will be used for iteration
->diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
->index bf2c06ef9afc..a3be42304485 100644
->--- a/kernel/tracepoint.c
->+++ b/kernel/tracepoint.c
->@@ -28,8 +28,8 @@
-> #include <linux/sched/task.h>
-> #include <linux/static_key.h>
->
->-extern struct tracepoint * const __start___tracepoints_ptrs[];
->-extern struct tracepoint * const __stop___tracepoints_ptrs[];
->+extern tracepoint_ptr_t __start___tracepoints_ptrs[];
->+extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
->
-> DEFINE_SRCU(tracepoint_srcu);
-> EXPORT_SYMBOL_GPL(tracepoint_srcu);
->@@ -371,25 +371,17 @@ int tracepoint_probe_unregister(struct tracepoint *tp, void *probe, void *data)
-> }
-> EXPORT_SYMBOL_GPL(tracepoint_probe_unregister);
->
->-static void for_each_tracepoint_range(struct tracepoint * const *begin,
->-		struct tracepoint * const *end,
->+static void for_each_tracepoint_range(
->+		tracepoint_ptr_t *begin, tracepoint_ptr_t *end,
-> 		void (*fct)(struct tracepoint *tp, void *priv),
-> 		void *priv)
-> {
->+	tracepoint_ptr_t *iter;
->+
-> 	if (!begin)
-> 		return;
->-
->-	if (IS_ENABLED(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)) {
->-		const int *iter;
->-
->-		for (iter = (const int *)begin; iter < (const int *)end; iter++)
->-			fct(offset_to_ptr(iter), priv);
->-	} else {
->-		struct tracepoint * const *iter;
->-
->-		for (iter = begin; iter < end; iter++)
->-			fct(*iter, priv);
->-	}
->+	for (iter = begin; iter < end; iter++)
->+		fct(tracepoint_ptr_deref(iter), priv);
-> }
->
-> #ifdef CONFIG_MODULES
->-- 
->2.17.1
->
+The offending clearance of call->reply[0] upon completion in
+afs_process_async_call() has been there from the origin of the code, but
+none of the asynchronous calls actually use that pointer currently, so it
+should be safe to remove (note that synchronous calls don't involve this
+function).
+
+Fix this by the following means:
+
+ (1) Revert commit f014ffb025c1.
+
+ (2) Remove the clearance of reply[0] from afs_process_async_call().
+
+Without this, afs_manage_servers() will suffer an assertion failure if it
+sees a server record that didn't get used because the usage count is not 1.
+
+Fixes: f014ffb025c1 ("afs: Fix afs_server struct leak")
+Fixes: 08e0e7c82eea ("[AF_RXRPC]: Make the in-kernel AFS filesystem use AF_RXRPC.")
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ fs/afs/rxrpc.c  |    2 --
+ fs/afs/server.c |    2 --
+ 2 files changed, 4 deletions(-)
+
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index 748b37b130a2..9bbb8af000b4 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -620,8 +620,6 @@ static void afs_process_async_call(struct work_struct *work)
+ 	}
+ 
+ 	if (call->state == AFS_CALL_COMPLETE) {
+-		call->reply[0] = NULL;
+-
+ 		/* We have two refs to release - one from the alloc and one
+ 		 * queued with the work item - and we can't just deallocate the
+ 		 * call because the work item may be queued again.
+diff --git a/fs/afs/server.c b/fs/afs/server.c
+index d5ef05e24e18..1a087eb8f2d7 100644
+--- a/fs/afs/server.c
++++ b/fs/afs/server.c
+@@ -199,11 +199,9 @@ static struct afs_server *afs_install_server(struct afs_net *net,
+ 
+ 	write_sequnlock(&net->fs_addr_lock);
+ 	ret = 0;
+-	goto out;
+ 
+ exists:
+ 	afs_get_server(server);
+-out:
+ 	write_sequnlock(&net->fs_lock);
+ 	return server;
+ }
+
