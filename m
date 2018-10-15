@@ -2,108 +2,112 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16619C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B6CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD121208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:19:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="hbGIrbOt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD121208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id 1150C2089D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:19:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1150C2089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbeJPHG6 (ORCPT
+        id S1727097AbeJPHHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 03:06:58 -0400
-Received: from mail-yb1-f172.google.com ([209.85.219.172]:46573 "EHLO
-        mail-yb1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbeJPHG5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 03:06:57 -0400
-Received: by mail-yb1-f172.google.com with SMTP id o8-v6so8169034ybk.13
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 16:19:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sfgvSs63g/h45RD9rTLDUMJIpOacz1g63SGkw+GTkTo=;
-        b=hbGIrbOti+zWYy9rq/oXHCiNRqhWLt8AI7qGGdBhY+qHKwh+MVG6+EwnLtzUsB09RH
-         +hWBRTmQ0GKOi9aZ28dOsEWakdbiM9YjBytj6z9Nm+2nzymAfpe7B9LBzGglw0GRfi7t
-         Jwn8LGEihzgXlpnPd1P93IkWfsbdatemPLOWJA8jgRqySH8/veQPaYm4OxJkUA0Hf4hJ
-         bfvwOVvgPmUKe4F951PtMEWTbZqSpdfpGGAB2J+GUPNfkTA3eYhR/eG8KPlCv64ZnSbr
-         EHCaKheg2Cvo5VJOBFEvDPm1omuuVnkwcTKSoSKVeBMJM8mmsPInI63UTuKMrwkIWr1e
-         oqIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sfgvSs63g/h45RD9rTLDUMJIpOacz1g63SGkw+GTkTo=;
-        b=cvy1ks9GXs0ZP6gISpYdNxlzVhctrg8Aw953dX0x+CJLHuBeq2yc/lmdEMRuEmXa/l
-         /shdO3dcIZP4SBgLIUydP6AEbKXOud6lOQ7RVjt53ajiqxfSrJUK4tivx6+2ZKKd2vsK
-         dzSx8gx/AKR85Vd68ABBfG9AuKySf7fCpeuU4uYXwRlg2fH68WK1IM2KRnBiql8cUItn
-         mjzJ9wNJELHF8uCzYbxsYy9H03ZZ6Z2WF0sJemtVWIfJ9eP1BDWyqLrsN21A+hHMfZE9
-         M+llfMPsPJ27FP2cbZqCQ3dX9Vv+rHnFUV7UGBE+RKDLGZJJGmkS4lxMqbpZy/ae9nVY
-         CYOA==
-X-Gm-Message-State: ABuFfohZeDg4Hrr8ZPt3BFWjDsIOxzNDu8nuiPF8oWFs6sX+uzSOmFXw
-        7Me4OmskQJ4k0HzrRxWLKH1xe9md5pJFyGpxGoAYJw==
-X-Google-Smtp-Source: ACcGV60EGFWVy2RlcWyHlaeM8RRzXKerazWPsZlW5KwxzYC73n6TL48lHcZSrvB5WsdbO3w4okjQr9XqPuzSray/hEI=
-X-Received: by 2002:a25:abc1:: with SMTP id v59-v6mr5905098ybi.321.1539645571320;
- Mon, 15 Oct 2018 16:19:31 -0700 (PDT)
+        Tue, 16 Oct 2018 03:07:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55674 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726917AbeJPHHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 03:07:20 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3E47A308A94E;
+        Mon, 15 Oct 2018 23:19:54 +0000 (UTC)
+Received: from sky.random (ovpn-120-12.rdu2.redhat.com [10.10.120.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F368967C64;
+        Mon, 15 Oct 2018 23:19:53 +0000 (UTC)
+Date:   Mon, 15 Oct 2018 19:19:53 -0400
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
+ mappings
+Message-ID: <20181015231953.GC30832@redhat.com>
+References: <20181005232155.GA2298@redhat.com>
+ <alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com>
+ <20181009094825.GC6931@suse.de>
+ <20181009122745.GN8528@dhcp22.suse.cz>
+ <20181009130034.GD6931@suse.de>
+ <20181009142510.GU8528@dhcp22.suse.cz>
+ <20181009230352.GE9307@redhat.com>
+ <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
+ <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
 MIME-Version: 1.0
-References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
- <1539111085-25502-2-git-send-email-atish.patra@wdc.com> <20181010134926.GD21134@ulmo>
- <25758ab9-eb36-741b-6264-42412b3ddd8e@wdc.com>
-In-Reply-To: <25758ab9-eb36-741b-6264-42412b3ddd8e@wdc.com>
-From:   Wesley Terpstra <wesley@sifive.com>
-Date:   Mon, 15 Oct 2018 16:19:20 -0700
-Message-ID: <CAMgXwTieXNa13_xGp2mkw99+VJm-R1xrxMHSmRLZV-hG5oSdzA@mail.gmail.com>
-Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM Controller.
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Christoph Hellwig <hch@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 15 Oct 2018 23:19:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 3:57 PM Atish Patra <atish.patra@wdc.com> wrote:
-> >> +SiFive PWM controller
-> >> +
-> >> +Unlike most other PWM controllers, the SiFive PWM controller currently only
-> >> +supports one period for all channels in the PWM. This is set globally in DTS.
-> >> +The period also has significant restrictions on the values it can achieve,
-> >> +which the driver rounds to the nearest achievable frequency.
-> >
-> > What restrictions are these? If "nearest achievable" is too far off the
-> > target period it might be preferable to error out.
-> >
->
-> @Wes: Any comments?
+Hello Andrew,
 
-When I last looked at this driver and hardware, I briefly considered
-throwing up my hands and pretending that this PWM device had no period
-control at all, only duty-cycle. There are several examples of PWM
-controllers in linux already that behave that way.
+On Mon, Oct 15, 2018 at 03:44:59PM -0700, Andrew Morton wrote:
+> On Mon, 15 Oct 2018 15:30:17 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
+> >  Would it be possible to test with my 
+> > patch[*] that does not try reclaim to address the thrashing issue?
+> 
+> Yes please.
 
-Most of the uses of this PWM are only going to care about the
-duty-cycle, not the period. So failing when the period is unachievable
-seems worse to me than just completely eliminating access to period
-control.
+It'd also be great if a testcase reproducing the 40% higher access
+latency (with the one liner original fix) was available.
 
-> I think yes. Since fu540 is the first Linux capable RISC-V core, SiFive
-> Guys decided mark it as version 0.
->
-> @Wesly: Please correct me if I am wrong.
+We don't have a testcase for David's 40% latency increase problem, but
+that's likely to only happen when the system is somewhat low on memory
+globally. So the measurement must be done when compaction starts
+failing globally on all zones, but before the system starts
+swapping. The more global fragmentation the larger will be the window
+between "compaction fails because all zones are too fragmented" and
+"there is still free PAGE_SIZEd memory available to reclaim without
+swapping it out". If I understood correctly, that is precisely the
+window where the 40% higher latency should materialize.
 
-Correct.
+The workload that shows the badness in the upstream code is fairly
+trivial. Mel and Zi reproduced it too and I have two testcases that
+can reproduce it, one with device assignment and the other is just
+memhog. That's a massively larger window than the one where the 40%
+higher latency materializes.
+
+When there's 75% or more of the RAM free (not even allocated as easily
+reclaimable pagecache) globally, you don't expect to hit heavy
+swapping.
+
+The 40% THP allocation latency increase if you use MADV_HUGEPAGE in
+such window where all remote zones are fully fragmented is somehow
+lesser of a concern in my view (plus there's the compact deferred
+logic that should mitigate that scenario). Furthermore it is only a
+concern for page faults in MADV_HUGEPAGE ranges. If MADV_HUGEPAGE is
+set the userland allocation is long lived, so such higher allocation
+latency won't risk to hit short lived allocations that don't set
+MADV_HUGEPAGE (unless madvise=always, but that's not the default
+precisely because not all allocations are long lived).
+
+If the MADV_HUGEPAGE using library was freely available it'd also be
+nice.
