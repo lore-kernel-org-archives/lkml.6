@@ -2,104 +2,118 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F16C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F412C7112A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA9120853
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:10:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FA9120853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 1ED3C2064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:10:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="aog6ggTp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED3C2064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbeJOQyY (ORCPT
+        id S1726814AbeJOQy0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 12:54:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52023 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJOQyY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 12:54:24 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9F99oDY3561559
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 15 Oct 2018 02:09:50 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9F99opm3561556;
-        Mon, 15 Oct 2018 02:09:50 -0700
-Date:   Mon, 15 Oct 2018 02:09:50 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Christoph Hellwig <tipbot@zytor.com>
-Message-ID: <tip-6f3bc8028570e4c326030e8795dbcd57c561b723@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, hch@lst.de, mingo@kernel.org,
-        tglx@linutronix.de, tedheadster@gmail.com, hpa@zytor.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, tedheadster@gmail.com,
-          hch@lst.de, linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <20181014075208.2715-1-hch@lst.de>
-References: <20181014075208.2715-1-hch@lst.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/swiotlb: Enable swiotlb for > 4GiG ram on
- 32-bit kernels
-Git-Commit-ID: 6f3bc8028570e4c326030e8795dbcd57c561b723
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 15 Oct 2018 12:54:26 -0400
+Received: from 8bytes.org ([81.169.241.247]:40254 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726273AbeJOQyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 12:54:25 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id D45F22DF; Mon, 15 Oct 2018 11:10:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1539594600; bh=6YZA1WFNwAxNdRfyyePlBap+fBSdXZLhSy/IVLc1kbo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aog6ggTp0/j57+7oJWnz8gEcWQJsTiHBGUlMJ2siBIqHSnsLLaQyINRmaVhsyk/wt
+         Ouk8KLQQHdu+8I4q/kVHzzT+AzETisvbOyq6Dfu4+Ur+6kQck59I+RTsQs9Sy5AvuX
+         WAQc/Crt9TZPdYPgKsvGgj/faueZ1YdpR1eQmBH41aJEre2qK3lQ1TMAml+Zck1EgJ
+         wBHY8GwN21/3+QzChVJBpg71R6OM6iyGHCdr+sP8uZIIS94J1aIHUSI85p17ETrABi
+         SYImgNkNid9xDP1g/Z7iHfSN4qfp/ITPm9mbciQDx2yCTnTsvF7dQPxgTidyBqcZU5
+         W53Ao6qj8ZcUg==
+Date:   Mon, 15 Oct 2018 11:10:00 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Jan Kiszka <jan.kiszka@web.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [PATCH] x86/entry/32: Fix setup of CS high bits
+Message-ID: <20181015091000.GE3630@8bytes.org>
+References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
+ <1531906876-13451-11-git-send-email-joro@8bytes.org>
+ <97421241-2bc4-c3f1-4128-95b3e8a230d1@siemens.com>
+ <35a24feb-5970-aa03-acbf-53428a159ace@web.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <35a24feb-5970-aa03-acbf-53428a159ace@web.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6f3bc8028570e4c326030e8795dbcd57c561b723
-Gitweb:     https://git.kernel.org/tip/6f3bc8028570e4c326030e8795dbcd57c561b723
-Author:     Christoph Hellwig <hch@lst.de>
-AuthorDate: Sun, 14 Oct 2018 09:52:08 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 15 Oct 2018 10:55:03 +0200
+Hey Jan,
 
-x86/swiotlb: Enable swiotlb for > 4GiG ram on 32-bit kernels
+thanks for tracking this down and sending the fix! So your hardware
+probably doesn't zero out the CS high bits, so that the code wrongly
+detects that it came from the entry stack on return. Clearing the bits
+earlier before the entry-stack check makes sense.
 
-We already build the swiotlb code for 32b-t kernels with PAE support,
-but the code to actually use swiotlb has only been enabled for 64-bit
-kernel for an unknown reason.
+Acked-by: Joerg Roedel <jroedel@suse.de>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
 
-Before Linux 4.18 we paper over this fact because the networking code,
-the scsi layer and some random block drivers implemented their own
-bounce buffering scheme.
-
-Fixes: 21e07dba9fb1 ("scsi: reduce use of block bounce buffers")
-Fixes: ab74cfebafa3 ("net: remove the PCI_DMA_BUS_IS_PHYS check in illegal_highdma")
-Reported-by: Matthew Whitehead <tedheadster@gmail.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Matthew Whitehead <tedheadster@gmail.com>
-Cc: konrad.wilk@oracle.com
-Cc: iommu@lists.linux-foundation.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181014075208.2715-1-hch@lst.de
----
- arch/x86/kernel/pci-swiotlb.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
-index 661583662430..71c0b01d93b1 100644
---- a/arch/x86/kernel/pci-swiotlb.c
-+++ b/arch/x86/kernel/pci-swiotlb.c
-@@ -42,10 +42,8 @@ IOMMU_INIT_FINISH(pci_swiotlb_detect_override,
- int __init pci_swiotlb_detect_4gb(void)
- {
- 	/* don't initialize swiotlb if iommu=off (no_iommu=1) */
--#ifdef CONFIG_X86_64
- 	if (!no_iommu && max_possible_pfn > MAX_DMA32_PFN)
- 		swiotlb = 1;
--#endif
- 
- 	/*
- 	 * If SME is active then swiotlb will be set to 1 so that bounce
+On Sat, Oct 13, 2018 at 11:54:54AM +0200, Jan Kiszka wrote:
+> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+> index 2767c625a52c..95c94d48ecd2 100644
+> --- a/arch/x86/entry/entry_32.S
+> +++ b/arch/x86/entry/entry_32.S
+> @@ -389,6 +389,12 @@
+>  	 * that register for the time this macro runs
+>  	 */
+>  
+> +	/*
+> +	 * Clear unused upper bits of the dword containing the word-sized CS
+> +	 * slot in pt_regs in case hardware didn't clear it for us.
+> +	 */
+> +	andl	$(0x0000ffff), PT_CS(%esp)
+> +
+>  	/* Are we on the entry stack? Bail out if not! */
+>  	movl	PER_CPU_VAR(cpu_entry_area), %ecx
+>  	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
+> @@ -407,12 +413,6 @@
+>  	/* Load top of task-stack into %edi */
+>  	movl	TSS_entry2task_stack(%edi), %edi
+>  
+> -	/*
+> -	 * Clear unused upper bits of the dword containing the word-sized CS
+> -	 * slot in pt_regs in case hardware didn't clear it for us.
+> -	 */
+> -	andl	$(0x0000ffff), PT_CS(%esp)
+> -
+>  	/* Special case - entry from kernel mode via entry stack */
+>  #ifdef CONFIG_VM86
+>  	movl	PT_EFLAGS(%esp), %ecx		# mix EFLAGS and CS
+> -- 
+> 2.16.4
