@@ -2,306 +2,85 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7160C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6178BC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CE6F208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:45:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="TD6+JAct"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE6F208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	by mail.kernel.org (Postfix) with ESMTP id 330D7208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:46:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 330D7208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbeJPCcZ (ORCPT
+        id S1726933AbeJPCc6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:32:25 -0400
-Received: from rcdn-iport-5.cisco.com ([173.37.86.76]:42806 "EHLO
-        rcdn-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbeJPCcZ (ORCPT
+        Mon, 15 Oct 2018 22:32:58 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37710 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbeJPCc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:32:25 -0400
-X-Greylist: delayed 574 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Oct 2018 22:32:24 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=8275; q=dns/txt; s=iport;
-  t=1539629157; x=1540838757;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=0No/hpWKflZ5alnCVm7wCsMvL6Umj7oJdX9ccgSpWGs=;
-  b=TD6+JAct4Wdsowc2Z2YNjlbFckgfLseWyzb9L9FghELLjAuE6wFa3wPV
-   IzIuMdNU16MooSuHjCNsoDNXmY5sWK2XMvKI/RX0ed+Tt272wuGQnxSzX
-   kBFZqkKMg2jSsHxpaNXSsNVTJ9qdBrvnUVOub4IznTtQ4zMPzPH4i3cKj
-   A=;
-X-IronPort-AV: E=Sophos;i="5.54,385,1534809600"; 
-   d="scan'208";a="248599199"
-Received: from alln-core-5.cisco.com ([173.36.13.138])
-  by rcdn-iport-5.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 18:36:24 +0000
-Received: from [10.154.208.167] ([10.154.208.167])
-        by alln-core-5.cisco.com (8.15.2/8.15.2) with ESMTP id w9FIaK4H024403;
-        Mon, 15 Oct 2018 18:36:20 GMT
-Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
-To:     Jann Horn <jannh@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, deller@gmx.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        christian@brauner.io, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Dave.Martin@arm.com,
-        mchehab+samsung@kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        guro@fb.com, marcos.souza.org@gmail.com,
-        Oleg Nesterov <oleg@redhat.com>, linux@dominikbrodowski.net,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        yang.shi@linux.alibaba.com, Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>, kamensky@cisco.com,
-        xe-linux-external@cisco.com, sstrogin@cisco.com,
-        Enke Chen <enkechen@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <CAG48ez2ZPhnxudqgU7nC2ORvLnS0Ja-qhLSE5WAY361jst7XNw@mail.gmail.com>
-From:   Enke Chen <enkechen@cisco.com>
-Message-ID: <c5a09a04-b4f2-876b-af83-30f7e527497e@cisco.com>
-Date:   Mon, 15 Oct 2018 11:36:19 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Mon, 15 Oct 2018 22:32:58 -0400
+Received: by mail-ot1-f67.google.com with SMTP id o14so19959950oth.4;
+        Mon, 15 Oct 2018 11:46:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZiA1YMFNvIHfLSz3fDElIhcbArF0l9+L56XKUBdDyMI=;
+        b=Bqvr8RzL2Kn3xwCxbHesH+G+yEC5+1wpy6DFM3cPQ6CRq/Rcfvx6p3Mg/dV3RhYF9N
+         5Wqx/7nRS9OUn9d9BBPBEFr6wO7JxsdFiK+EnQInQHxqb8AAVCJgLSwwgJjbFZopZL63
+         8DMnllndiZgDJtqM3vRVMCk6IZi42olcExUzM7dczh0WLFGNVSLhO1q+SQtwv+tQL9oF
+         qtWz64zsUU4I9glgDZDijQTOakePnZcOPSVxKWsniF2NX32UqKFFE2FB5g22ocBUK7ZF
+         bLyD89/l7Vf67K55E98bj5ZlVqQbYdkE5jQMCpz/woFS+wYcOkwUi2N2DsHwryrKiqY5
+         ccDg==
+X-Gm-Message-State: ABuFfoiNrj5lL/zqukoKqCVRPsOqA4BPlhciCAKKszWmE2Z28jqsok8z
+        eOvQYt62O3Nm7GFP688jKS9GHi8=
+X-Google-Smtp-Source: ACcGV60Vv5fgLB8qAbsKoVphfIkT4BXrMea/PJf1NK+SSnmLKG80tso8mgcIrbkVgKxI0zNz12RvwQ==
+X-Received: by 2002:a9d:7581:: with SMTP id s1mr12697519otk.39.1539629189365;
+        Mon, 15 Oct 2018 11:46:29 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s5sm3651384otc.40.2018.10.15.11.46.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 11:46:28 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 13:46:27 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Lukasz Majewski <lukma@denx.de>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: misc: bk4: Add device tree binding for
+ Liebherr's BK4 SPI bus
+Message-ID: <20181015184627.GA23207@bogus>
+References: <20180927222655.24482-1-lukma@denx.de>
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez2ZPhnxudqgU7nC2ORvLnS0Ja-qhLSE5WAY361jst7XNw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.154.208.167, [10.154.208.167]
-X-Outbound-Node: alln-core-5.cisco.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927222655.24482-1-lukma@denx.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Jann:
-
-Thanks a lot for you detailed review. Please see my replied/comments inline.
-
-On 10/13/18 11:27 AM, Jann Horn wrote:
-> On Sat, Oct 13, 2018 at 2:33 AM Enke Chen <enkechen@cisco.com> wrote:
->> For simplicity and consistency, this patch provides an implementation
->> for signal-based fault notification prior to the coredump of a child
->> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
->> be used by an application to express its interest and to specify the
->> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
->> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
+On Fri, Sep 28, 2018 at 12:26:55AM +0200, Lukasz Majewski wrote:
+> Add Device Tree binding document for Liebherr's BK4 external SPI bus.
 > 
-> Your suggested API looks vaguely similar to PR_SET_PDEATHSIG, but with
-> some important differences:
-> 
->  - You don't reset the signal on setuid execution.
->  - You permit setting this not just on the current process, but also on others.
-> 
-> For both of these: Are these differences actually necessary, and if
-> so, can you provide a specific rationale? From a security perspective,
-> I would very much prefer it if this API had semantics closer to
-> PR_SET_PDEATHSIG.
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> ---
+>  Documentation/devicetree/bindings/misc/lwn-bk4.txt | 26 ++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/lwn-bk4.txt
 
-Regarding setting on others, I started with setting for self. But there is
-a requirement for supporting the feature for a process manager written in
-bash script. That's the reason for allowing the setting on others.
+Applied.
 
-Given the feedback from you and others, I agree that it would be simpler and
-more secure to remove the setting on others. We can submit a patch for bash
-to support the setting natively.
+To add to Mark's comments, the status of binding patches can be checked 
+on patchwork[1]. There's no reason for pings to me. If it is in the 
+"New" state, I will get to it and you can see where you are in the 
+queue. ATM, I'm rather backed up.
 
-Regarding the impact of "setuid", this property "PR_SET_PREDUMP_SIG" has to
-do with the application/process whether the signal handler is set for receiving
-such a notification.  If it is set, the "uid" should not matter.
+Rob
 
-> 
-> [...]
->> diff --git a/kernel/signal.c b/kernel/signal.c
->> index 312b43e..eb4a483 100644
->> --- a/kernel/signal.c
->> +++ b/kernel/signal.c
->> @@ -2337,6 +2337,44 @@ static int ptrace_signal(int signr, kernel_siginfo_t *info)
->>         return signr;
->>  }
->>
->> +/*
->> + * Let the parent, if so desired, know about the imminent death of a child
->> + * prior to its coredump.
->> + *
->> + * Locking logic is similar to do_notify_parent_cldstop().
->> + */
->> +static void do_notify_parent_predump(struct task_struct *tsk)
->> +{
->> +       struct sighand_struct *sighand;
->> +       struct task_struct *parent;
->> +       struct kernel_siginfo info;
->> +       unsigned long flags;
->> +       int sig;
->> +
->> +       parent = tsk->real_parent;
->> +       sig = parent->predump_signal;
->> +
->> +       /* Check again with "tasklist_lock" locked by the caller */
->> +       if (!valid_predump_signal(sig))
->> +               return;
->> +
->> +       clear_siginfo(&info);
->> +       info.si_signo = sig;
->> +       if (sig == SIGCHLD)
->> +               info.si_code = CLD_PREDUMP;
->> +
->> +       rcu_read_lock();
->> +       info.si_pid = task_pid_nr_ns(tsk, task_active_pid_ns(parent));
->> +       info.si_uid = from_kuid_munged(task_cred_xxx(parent, user_ns),
->> +                                      task_uid(tsk));
-> 
-> You're sending a signal from the current namespaces, but with IDs that
-> have been mapped into the parent's namespaces? That looks wrong to me.
-
-I am following the example "do_notify_parent_cldstop()" called in the same
-routine "get_signal()". If there is a better way, sure I will use it.
-
-> 
->> +       rcu_read_unlock();
->> +
->> +       sighand = parent->sighand;
->> +       spin_lock_irqsave(&sighand->siglock, flags);
->> +       __group_send_sig_info(sig, &info, parent);
->> +       spin_unlock_irqrestore(&sighand->siglock, flags);
->> +}
->> +
->>  bool get_signal(struct ksignal *ksig)
->>  {
->>         struct sighand_struct *sighand = current->sighand;
->> @@ -2497,6 +2535,19 @@ bool get_signal(struct ksignal *ksig)
->>                 current->flags |= PF_SIGNALED;
->>
->>                 if (sig_kernel_coredump(signr)) {
->> +                       /*
->> +                        * Notify the parent prior to the coredump if the
->> +                        * parent is interested in such a notificaiton.
->> +                        */
->> +                       int p_sig = current->real_parent->predump_signal;
-> 
-> current->real_parent is an __rcu member. I think if you run the sparse
-> checker against this patch, it's going to complain. Are you allowed to
-> access current->real_parent in this context?
-
-Let me check, and get back to you on this one.
-
-> 
->> +                       if (valid_predump_signal(p_sig)) {
->> +                               read_lock(&tasklist_lock);
->> +                               do_notify_parent_predump(current);
->> +                               read_unlock(&tasklist_lock);
->> +                               cond_resched();
->> +                       }
->> +
->>                         if (print_fatal_signals)
->>                                 print_fatal_signal(ksig->info.si_signo);
->>                         proc_coredump_connector(current);
->> diff --git a/kernel/sys.c b/kernel/sys.c
->> index 123bd73..43eb250d 100644
->> --- a/kernel/sys.c
->> +++ b/kernel/sys.c
->> @@ -2258,6 +2258,76 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
->>         return -EINVAL;
->>  }
->>
->> +static int prctl_get_predump_signal(struct task_struct *tsk, pid_t pid,
->> +                                   int __user *addr)
->> +{
->> +       struct task_struct *p;
->> +       int error;
->> +
->> +       /* For the current task, the common case */
->> +       if (pid == 0) {
->> +               put_user(tsk->predump_signal, addr);
->> +               return 0;
->> +       }
->> +
->> +       error = -ESRCH;
->> +       rcu_read_lock();
->> +       p = find_task_by_vpid(pid);
->> +       if (p) {
->> +               error = 0;
->> +               put_user(p->predump_signal, addr);
-> 
-> This is wrong. You can't call put_user() while you're in an RCU
-> read-side critical section.
-> 
-> As below, I would like it if you could just get rid of this branch,
-> and restrict this prctl to operating on the current process.
-
-My bad. The code will be removed.
-
-> 
->> +       }
->> +       rcu_read_unlock();
->> +       return error;
->> +}
->> +
->> +/*
->> + * Returns true if current's euid is same as p's uid or euid,
->> + * or has CAP_SYS_ADMIN.
->> + *
->> + * Called with rcu_read_lock, creds are safe.
->> + *
->> + * Adapted from set_one_prio_perm().
->> + */
->> +static bool set_predump_signal_perm(struct task_struct *p)
->> +{
->> +       const struct cred *cred = current_cred(), *pcred = __task_cred(p);
->> +
->> +       return uid_eq(pcred->uid, cred->euid) ||
->> +              uid_eq(pcred->euid, cred->euid) ||
->> +              capable(CAP_SYS_ADMIN);
->> +}
-> 
-> This permission check permits fiddling with other processes in
-> scenarios where kill() wouldn't let you send signals (specifically, if
-> you control the EUID of the target task). That worries me. Also,
-> kill() is subject to LSM checks (see check_kill_permission()), but
-> this interface isn't. I would really prefer it if you could amend this
-> so that you can only operate on the current task, and get rid of this
-> permission check.
-
-It is gone.
-
-> 
-> [...]
->>  SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->>                 unsigned long, arg4, unsigned long, arg5)
->>  {
->> @@ -2476,6 +2546,13 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
->>                         return -EINVAL;
->>                 error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
->>                 break;
->> +       case PR_SET_PREDUMP_SIG:
->> +               error = prctl_set_predump_signal(me, (pid_t)arg2, (int)arg3);
->> +               break;
->> +       case PR_GET_PREDUMP_SIG:
->> +               error = prctl_get_predump_signal(me, (pid_t)arg2,
->> +                                                (int __user *)arg3);
->> +               break;
-> 
-> New prctl() calls should check that the unused arguments are zero, in
-> order to make it possible to safely add more flags in the future.
-
-Will do.
-
-Thanks again.  -- Enke
-
+[1] https://patchwork.ozlabs.org/project/devicetree-bindings/list/
