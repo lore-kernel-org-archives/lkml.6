@@ -2,140 +2,137 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C276C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C177C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04CFB2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:34:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F34F20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:47:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QTSbCsqI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04CFB2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="cKMNfX7y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F34F20842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726581AbeJOMSL (ORCPT
+        id S1726515AbeJOMbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 08:18:11 -0400
-Received: from ozlabs.org ([203.11.71.1]:35621 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbeJOMSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 08:18:10 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42YQZk1djXz9s3Z;
-        Mon, 15 Oct 2018 15:34:38 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539578078;
-        bh=81BVPoVjivVx1Xx8lZw0ONstoW6k9vcwU1UGvQStXBw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=QTSbCsqIFWaeIELQ+rZkXRGtDcpNIwwOKOJe2q9Rw4rVu8Ya2/XLgK/ZpEtWQeuh3
-         Dm01eM87iburuV5g7GIg9CAwJXqOqqNKMbLXwGaBtpC2jTl1GK8iTM49BL/21l/c+l
-         F5Y7eJzk7oKBDpmHI4n+BrmVO9OMtBkY+mkB90SHRSJFx6hAGJ2lHLseLl2WkzmMy+
-         q13SXNN0FmT49bGG286tiYL6EOa+JDC4Eev5+YMvukpHQCTXah4LPgkNuwihDmHI8y
-         WP2Kn/2X8v7XNf+5D1FUoJzm1P93O83dWEU5X2PEMAO4gMbH2fyLE9n25MRbvGj6G0
-         MNNvB2AgJpoSw==
-Date:   Mon, 15 Oct 2018 15:34:37 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: linux-next: manual merge of the userns tree with the tip tree
-Message-ID: <20181015153437.70179aaf@canb.auug.org.au>
-In-Reply-To: <20181015151159.5ce4faa5@canb.auug.org.au>
-References: <20181015151159.5ce4faa5@canb.auug.org.au>
+        Mon, 15 Oct 2018 08:31:21 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40719 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbeJOMbU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 08:31:20 -0400
+Received: by mail-wm1-f68.google.com with SMTP id z204-v6so18185106wmc.5
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 21:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=/9lxciINDX88fH/9J5BZq5qgIoY6YTMx4c34oaO8upc=;
+        b=cKMNfX7yr+e9wRclpgAwKH/aJxT/6RAFAX6YVLsoctbDeZHExu1hWDHQOOyVL/KSDy
+         /VoNUctaKaVOjnCEZ4m7nn2XACepqTPOeA3tK6BjUHzskbobWOFsZKBeJ0WfJzlqZ0tn
+         RLBeru3ONS4VOBPyIRGvW+29yHwN+/Jkbb/uo3LlSpoSvq5vlDbZnmD8vRu8G6+s64om
+         uam4SB3ZYEQiqbfOZCdrObJxwIJ9oAibyp2tw1ZafVZaGfQrv6kPpwio/yjTgB0dK3DD
+         uYkz2RwkNtESYNmwP3QKl8dCumybr1OP6aEMLYpKQ/GD3jxOJ9cX4wYviBsvGSUU06H9
+         cFIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=/9lxciINDX88fH/9J5BZq5qgIoY6YTMx4c34oaO8upc=;
+        b=F0/lPiH8nuOaMFTowORyTCOhRc84xv7EE1/vC9Ir6pE0OROvhHzN/tNpIEZ4AcolcP
+         hsFqoTe0nGKYxh5J+0MfeYp3c9nwpgL3Pj0iaa+1seVtr/pfLD1kQqY3oAt0csstGFK7
+         l2sbhXPcowFk2fxpxhOeKNKbQ16jE16uoqBFh1Wpe+XkK/dSTIr38HMYwOzrzbyR0Vbs
+         XVBT9Uvs48iqiOeSKQRGfKjHXz3XkLXM8bd1FPB3qwVdY7W9tq3dH8F3tGiv9gbnrVMh
+         wkiPuKnn7LiQx2CtpSReqe2aBL7pkcbeAovuB4J5cKJ1dz2SP8sJTv7gyjWbPIwmfqup
+         GUwg==
+X-Gm-Message-State: ABuFfojKAUoaBxFs9OZEpAgD8O5HeXS6io2BirP4DtUD7YaiE2LvLG5u
+        N3Wn0DulshpRvtZKX/QrnyRz2A==
+X-Google-Smtp-Source: ACcGV62DUbZKrnjzPJKvsUET+8Fy5tlAg0YSG+n1ccWdyoUqRYQbLrg/pN5x38zZQzDYY6QabnbiPw==
+X-Received: by 2002:a1c:5f54:: with SMTP id t81-v6mr12561016wmb.67.1539578867887;
+        Sun, 14 Oct 2018 21:47:47 -0700 (PDT)
+Received: from ?IPv6:2a02:8070:8895:9700:5890:9a92:fdcf:6ccd? ([2a02:8070:8895:9700:5890:9a92:fdcf:6ccd])
+        by smtp.gmail.com with ESMTPSA id 64-v6sm7746746wrr.64.2018.10.14.21.47.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 14 Oct 2018 21:47:47 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 06:47:44 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20181015000310.GX32577@ZenIV.linux.org.uk>
+References: <20181014132510.25943-1-christian@brauner.io> <20181014132510.25943-2-christian@brauner.io> <20181014171855.GW32577@ZenIV.linux.org.uk> <20181014185345.o6uokigiytqugg6v@brauner.io> <20181015000310.GX32577@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//uPbGZ1o=3dWRqpA95cLJTb"; protocol="application/pgp-signature"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] sysctl: add overflow detection to proc_get_long()
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+CC:     keescook@chromium.org, linux-kernel@vger.kernel.org,
+        ebiederm@xmission.com, mcgrof@kernel.org,
+        akpm@linux-foundation.org, joe.lawrence@redhat.com,
+        longman@redhat.com
+From:   Christian Brauner <christian@brauner.io>
+Message-ID: <81C57381-F8F8-467B-84DF-8948F44B242F@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_//uPbGZ1o=3dWRqpA95cLJTb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Mon, 15 Oct 2018 15:11:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On October 15, 2018 2:03:10 AM GMT+02:00, Al Viro <viro@ZenIV=2Elinux=2Eorg=
+=2Euk> wrote:
+>On Sun, Oct 14, 2018 at 08:53:46PM +0200, Christian Brauner wrote:
 >
-> Today's linux-next merge of the userns tree got a conflict in:
->=20
->   arch/x86/mm/fault.c
->=20
-> between commit:
->=20
->   164477c2331b ("x86/mm: Clarify hardware vs. software "error_code"")
-> (and others from that series)
->=20
-> from the tip tree and commits:
->=20
->   768fd9c69bb5 ("signal/x86: Remove pkey parameter from bad_area_nosemaph=
-ore")
->   25c102d803ea ("signal/x86: Remove pkey parameter from mm_fault_error")
->=20
-> from the userns tree.
->=20
-> I fixed it up (I think - see below) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc arch/x86/mm/fault.c
-> index c2e3e5127ebc,8d77700a7883..000000000000
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
->  +/* Handle faults in the user portion of the address space */
->  +static inline
->  +void do_user_addr_fault(struct pt_regs *regs,
->  +			unsigned long hw_error_code,
->  +			unsigned long address)
->  +{
->  +	unsigned long sw_error_code;
->  +	struct vm_area_struct *vma;
->  +	struct task_struct *tsk;
->  +	struct mm_struct *mm;
->  +	vm_fault_t fault, major =3D 0;
->  +	unsigned int flags =3D FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
->  +	u32 pkey;
+>> > Yecchh=2E=2E=2E  First of all, the cast back to unsigned long long is
+>completely
+>> > pointless=2E  What's more,
+>>=20
+>> Sorry, seriously asking: why? This was meant to handle the case where
+>> sizeof(unsigned long long) !=3D sizeof(unsigned long) and I just looked
+>at
+>> _kstrtoul() which does the same:
+>>=20
+>> int _kstrtoul(const char *s, unsigned int base, unsigned long *res)
+>> {
+>> 	unsigned long long tmp;
+>> 	int rv;
+>>=20
+>> 	rv =3D kstrtoull(s, base, &tmp);
+>> 	if (rv < 0)
+>> 		return rv;
+>> 	if (tmp !=3D (unsigned long long)(unsigned long)tmp)
+>> 		return -ERANGE;
+>> 	*res =3D tmp;
+>> 	return 0;
+>> }
+>>=20
+>> Sorry, if I'm being dense here=2E
+>
+>C quiz:
+>	given that type of e1 is unsigned long long and type of e2 -
+>unsigned long, what conversions are going to happen in e1 =3D=3D e2?
 
-I missed removing the above line.
+Yeah, I know that=2E
+As I said in my reply to Alexey before: I=20
+thought you were saying the whole right=20
+side of the disjunction was not needed=2E
 
---=20
-Cheers,
-Stephen Rothwell
+I also do like the explicit recast and
+followed what all of the other kstr*()
+functions are doing=2E
+Alexey sent a fix for all of them just
+a few hours ago [1] which - imho - is=20
+really not necessary=2E There's no harm=20
+done by this and it's a fairly widely used
+pattern=2E
 
---Sig_//uPbGZ1o=3dWRqpA95cLJTb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+That being said, happy to remove the
+second explicit cast=2E
 
------BEGIN PGP SIGNATURE-----
+[1]: https://lkml=2Eorg/lkml/2018/10/15/22
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvEGN0ACgkQAVBC80lX
-0GxieQf/aeK0x25reZH22JcQ6z0FnNQzrBZP+N5NAuDPmnfbZXYmD5znKX+ssN9Q
-beel1mQ1k8Ks4mM7VXSUdgQeP8z1VFxoEgRm+oSr3Z1igmmMDoXpdOF0AAkzaCTP
-Lxnb9mCC1tuKpeVyiNlgNcXwJgwtQhL8w1Wdkrd6dfqMFohQ53/F7nD2LXPwPCLb
-e1jCj8YNeFoSM+0fA52lU/7XZBz+1Try7/3+br46aahhxZPiFeRxrYfZbdFWdJxH
-tmzpDe4lxB9HdxXF/hNaHZoD9jEJwSXV2RQqdtIqT419cOP02YSF6WNCSjw3j2S9
-uDQClDB5G/BF5b7V7LXsqBIRCCHgaQ==
-=NDmc
------END PGP SIGNATURE-----
+>
+>[relevant part of C standard: 6=2E5=2E9 (Equality operators),
+>6=2E3=2E1=2E8 (Usual arithmetic conversions)]
 
---Sig_//uPbGZ1o=3dWRqpA95cLJTb--
