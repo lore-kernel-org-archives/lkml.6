@@ -2,81 +2,157 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24A4C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F1DC28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA8F62064E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:48:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA8F62064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 44C832064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:50:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C832064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbeJOQcY (ORCPT
+        id S1726614AbeJOQfC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 12:32:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38520 "EHLO mx1.suse.de"
+        Mon, 15 Oct 2018 12:35:02 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13635 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726273AbeJOQcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 12:32:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ADD70AFD9;
-        Mon, 15 Oct 2018 08:48:04 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org
-Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        Juergen Gross <jgross@suse.com>
-Subject: [PATCH] x86: modify inline asm constraints in __cmpxchg_double()
-Date:   Mon, 15 Oct 2018 10:48:02 +0200
-Message-Id: <20181015084802.30934-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        id S1726319AbeJOQfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 12:35:02 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 74DC114452CD8;
+        Mon, 15 Oct 2018 16:50:39 +0800 (CST)
+Received: from [127.0.0.1] (10.57.77.109) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Mon, 15 Oct 2018
+ 16:50:40 +0800
+Subject: Re: [PATCH v3 0/8] vfio/mdev: IOMMU aware mediated device
+To:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+References: <20181012051632.26064-1-baolu.lu@linux.intel.com>
+ <5BC1AC09.1060507@huawei.com>
+ <f3ffd1a3-be4b-f041-e4da-2bbf065aa065@linux.intel.com>
+CC:     <kevin.tian@intel.com>, <ashok.raj@intel.com>,
+        <tiwei.bie@intel.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        <sanjay.k.kumar@intel.com>, <iommu@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <yi.y.sun@intel.com>,
+        <jacob.jun.pan@intel.com>, <kvm@vger.kernel.org>
+From:   Xu Zaibo <xuzaibo@huawei.com>
+Message-ID: <5BC454DF.6010109@huawei.com>
+Date:   Mon, 15 Oct 2018 16:50:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
+MIME-Version: 1.0
+In-Reply-To: <f3ffd1a3-be4b-f041-e4da-2bbf065aa065@linux.intel.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.77.109]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some gcc versions seem to have problems with the constraints in
-__cmpxchg_double() as they suddenly issue a build error when random
-parts of sources calling __cmpxchg_double() are modified, like e.g.
-slub.c. This has been observed on Debian systems only so far.
+Hi,
 
-Using "0" instead of "a" in the input constraints has the same
-semantics while avoiding that build error.
+On 2018/10/15 10:48, Lu Baolu wrote:
+> Hi,
+>
+> On 10/13/2018 04:25 PM, Xu Zaibo wrote:
+>> Hi,
+>>
+>> On 2018/10/12 13:16, Lu Baolu wrote:
+>>> Hi,
+>>>
+>>> The Mediate Device is a framework for fine-grained physical device
+>>> sharing across the isolated domains. Currently the mdev framework
+>>> is designed to be independent of the platform IOMMU support. As the
+>>> result, the DMA isolation relies on the mdev parent device in a
+>>> vendor specific way.
+>>>
+>>> There are several cases where a mediated device could be protected
+>>> and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
+>>> [1] introduces a new translation mode called 'scalable mode', which
+>>> enables PASID-granular translations. The vt-d scalable mode is the
+>>> key ingredient for Scalable I/O Virtualization [2] [3] which allows
+>>> sharing a device in minimal possible granularity (ADI - Assignable
+>>> Device Interface).
+>>>
+>>> A mediated device backed by an ADI could be protected and isolated
+>>> by the IOMMU since 1) the parent device supports tagging an unique
+>>> PASID to all DMA traffic out of the mediated device; and 2) the DMA
+>>> translation unit (IOMMU) supports the PASID granular translation.
+>>> We can apply IOMMU protection and isolation to this kind of devices
+>>> just as what we are doing with an assignable PCI device.
+>>>
+>>> In order to distinguish the IOMMU-capable mediated devices from those
+>>> which still need to rely on parent devices, this patch set adds two
+>>> new members in struct mdev_device.
+>>>
+>>> * iommu_device
+>>>    - This, if set, indicates that the mediated device could
+>>>      be fully isolated and protected by IOMMU via attaching
+>>>      an iommu domain to this device. If empty, it indicates
+>>>      using vendor defined isolation.
+>>>
+>>> * iommu_domain
+>>>    - This is a place holder for an iommu domain. A domain
+>>>      could be store here for later use once it has been
+>>>      attached to the iommu_device of this mdev.
+>>>
+>>> Below helpers are added to set and get above iommu device
+>>> and iommu domain pointers in mdev core implementation.
+>>>
+>>> * mdev_set/get_iommu_device(dev, iommu_device)
+>>>    - Set or get the iommu device which represents this mdev
+>>>      in IOMMU's device scope. Drivers don't need to set the
+>>>      iommu device if it uses vendor defined isolation.
+>>>
+>>> * mdev_set/get_iommu_domain(domain)
+>>>    - A iommu domain which has been attached to the iommu
+>>>      device in order to protect and isolate the mediated
+>>>      device will be kept in the mdev data structure and
+>>>      could be retrieved later.
+>>>
+>>> The mdev parent device driver could opt-in that the mdev could be
+>>> fully isolated and protected by the IOMMU when the mdev is being
+>>> created by invoking mdev_set_iommu_device() in its @create().
+>> I just cannot understand here, how to get an iommu_device while I 
+>> create mediated
+>> device in my parent device driver?
+>
+> When you are creating an mdev in your parent driver, you should know
+> which PCI device this mdev belonging to.
+>
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
-I should note that I have observed gcc hangs instead sometimes. Not
-taking any patches modifying users of __cmpxchg_double() due to a gcc
-bug which seems to be distro-specific is a bad move IMO.
+So, generally, I can set the parent device as mdev's iommu_device?
+If that, however, Mdev already holds its parent device. So, I just 
+figure what
+differences between Mdev's parent device and iommu_device are.
+>>
+>> And why not reuse the device of MDEV instread of adding a new device 
+>> here?
+>
+> iommu_device in the mdev_device structure represents the PCI device
+> that represents this mdev in iommu's device scope. IOMMU is only aware
+> of pci devices, it's not aware of mdev device.
 
-I'd rather make it clear from build behavior that this is a bug in gcc
-by letting the build hang instead of throwing error warnings not in any
-way related to changes in the code.
+Could I understand like that: IOMMU can be aware of the parent device of 
+Mdev?
+And more, I am doubting the necessary of iommu_device in Mdev.
 
-The gcc bug is filed under:
+Thanks,
+Zaibo
 
-https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=908154
----
- arch/x86/include/asm/cmpxchg.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+.
 
-diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
-index a55d79b233d3..b3b4d61a8969 100644
---- a/arch/x86/include/asm/cmpxchg.h
-+++ b/arch/x86/include/asm/cmpxchg.h
-@@ -245,7 +245,7 @@ extern void __add_wrong_size(void)
- 	asm volatile(pfx "cmpxchg%c4b %2; sete %0"			\
- 		     : "=a" (__ret), "+d" (__old2),			\
- 		       "+m" (*(p1)), "+m" (*(p2))			\
--		     : "i" (2 * sizeof(long)), "a" (__old1),		\
-+		     : "i" (2 * sizeof(long)), "0" (__old1),		\
- 		       "b" (__new1), "c" (__new2));			\
- 	__ret;								\
- })
--- 
-2.16.4
+
+
+
+
 
