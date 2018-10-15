@@ -6,120 +6,150 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A68C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E87C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5AD7208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:09:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5AD7208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D39020644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:18:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D39020644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbeJOWzU (ORCPT
+        id S1726802AbeJOXD4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 18:55:20 -0400
-Received: from mga17.intel.com ([192.55.52.151]:54823 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbeJOWzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 18:55:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 08:09:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,384,1534834800"; 
-   d="scan'208";a="100389964"
-Received: from jhli-desk1.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
-  by orsmga002.jf.intel.com with ESMTP; 15 Oct 2018 08:09:39 -0700
-Subject: [driver-core PATCH v4 6/6] PM core: Use new async_schedule_dev
- command
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc:     len.brown@intel.com, rafael@kernel.org, linux-pm@vger.kernel.org,
-        jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org,
-        tj@kernel.org, akpm@linux-foundation.org,
-        alexander.h.duyck@linux.intel.com
-Date:   Mon, 15 Oct 2018 08:09:38 -0700
-Message-ID: <20181015150938.29520.30034.stgit@localhost.localdomain>
-In-Reply-To: <20181015150305.29520.86363.stgit@localhost.localdomain>
-References: <20181015150305.29520.86363.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
+        Mon, 15 Oct 2018 19:03:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41087 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbeJOXD4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 19:03:56 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9FF9tYh3671981
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 15 Oct 2018 08:09:55 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9FF9rkr3671975;
+        Mon, 15 Oct 2018 08:09:53 -0700
+Date:   Mon, 15 Oct 2018 08:09:53 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jan Kiszka <tipbot@zytor.com>
+Message-ID: <tip-8cad6c58c9effb59b830bcf0103d8267ad2e312d@git.kernel.org>
+Cc:     jpoimboe@redhat.com, dave.hansen@intel.com,
+        torvalds@linux-foundation.org, jan.kiszka@siemens.com,
+        dvlasenk@redhat.com, bp@suse.de, linux-mm@kvack.org,
+        David.Laight@aculab.com, linux-kernel@vger.kernel.org,
+        luto@kernel.org, jgross@suse.com, hpa@zytor.com, brgerst@gmail.com,
+        eduval@amazon.com, gregkh@linuxfoundation.org, jroedel@suse.de,
+        tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org,
+        will.deacon@arm.com, x86@kernel.org, jkosina@suse.cz,
+        boris.ostrovsky@oracle.com, aarcange@redhat.com
+Reply-To: aarcange@redhat.com, x86@kernel.org, jkosina@suse.cz,
+          boris.ostrovsky@oracle.com, mingo@kernel.org,
+          peterz@infradead.org, will.deacon@arm.com,
+          gregkh@linuxfoundation.org, jroedel@suse.de, tglx@linutronix.de,
+          luto@kernel.org, jgross@suse.com, brgerst@gmail.com,
+          eduval@amazon.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          dvlasenk@redhat.com, bp@suse.de, jan.kiszka@siemens.com,
+          David.Laight@aculab.com, linux-mm@kvack.org,
+          dave.hansen@intel.com, jpoimboe@redhat.com,
+          torvalds@linux-foundation.org
+In-Reply-To: <f271c747-1714-5a5b-a71f-ae189a093b8d@siemens.com>
+References: <f271c747-1714-5a5b-a71f-ae189a093b8d@siemens.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/entry/32: Clear the CS high bits
+Git-Commit-ID: 8cad6c58c9effb59b830bcf0103d8267ad2e312d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change makes it so that we use the device specific version of the
-async_schedule commands to defer various tasks related to power management.
-By doing this we should see a slight improvement in performance as any
-device that is sensitive to latency/locality in the setup will now be
-initializing on the node closest to the device.
+Commit-ID:  8cad6c58c9effb59b830bcf0103d8267ad2e312d
+Gitweb:     https://git.kernel.org/tip/8cad6c58c9effb59b830bcf0103d8267ad2e312d
+Author:     Jan Kiszka <jan.kiszka@siemens.com>
+AuthorDate: Mon, 15 Oct 2018 16:09:29 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Mon, 15 Oct 2018 16:54:28 +0200
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+x86/entry/32: Clear the CS high bits
+
+Even if not on an entry stack, the CS's high bits must be
+initialized because they are unconditionally evaluated in
+PARANOID_EXIT_TO_KERNEL_MODE.
+
+Failing to do so broke the boot on Galileo Gen2 and IOT2000 boards.
+
+ [ bp: Make the commit message tone passive and impartial. ]
+
+Fixes: b92a165df17e ("x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack")
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Acked-by: Joerg Roedel <jroedel@suse.de>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Andrea Arcangeli <aarcange@redhat.com>
+CC: Andy Lutomirski <luto@kernel.org>
+CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: Brian Gerst <brgerst@gmail.com>
+CC: Dave Hansen <dave.hansen@intel.com>
+CC: David Laight <David.Laight@aculab.com>
+CC: Denys Vlasenko <dvlasenk@redhat.com>
+CC: Eduardo Valentin <eduval@amazon.com>
+CC: Greg KH <gregkh@linuxfoundation.org>
+CC: Ingo Molnar <mingo@kernel.org>
+CC: Jiri Kosina <jkosina@suse.cz>
+CC: Josh Poimboeuf <jpoimboe@redhat.com>
+CC: Juergen Gross <jgross@suse.com>
+CC: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Will Deacon <will.deacon@arm.com>
+CC: aliguori@amazon.com
+CC: daniel.gruss@iaik.tugraz.at
+CC: hughd@google.com
+CC: keescook@google.com
+CC: linux-mm <linux-mm@kvack.org>
+CC: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/f271c747-1714-5a5b-a71f-ae189a093b8d@siemens.com
 ---
- drivers/base/power/main.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/entry/entry_32.S | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index a690fd400260..ebb8b61b52e9 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -726,7 +726,7 @@ void dpm_noirq_resume_devices(pm_message_t state)
- 		reinit_completion(&dev->power.completion);
- 		if (is_async(dev)) {
- 			get_device(dev);
--			async_schedule(async_resume_noirq, dev);
-+			async_schedule_dev(async_resume_noirq, dev);
- 		}
- 	}
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 2767c625a52c..fbbf1ba57ec6 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -389,6 +389,13 @@
+ 	 * that register for the time this macro runs
+ 	 */
  
-@@ -883,7 +883,7 @@ void dpm_resume_early(pm_message_t state)
- 		reinit_completion(&dev->power.completion);
- 		if (is_async(dev)) {
- 			get_device(dev);
--			async_schedule(async_resume_early, dev);
-+			async_schedule_dev(async_resume_early, dev);
- 		}
- 	}
++	/*
++	 * The high bits of the CS dword (__csh) are used for
++	 * CS_FROM_ENTRY_STACK and CS_FROM_USER_CR3. Clear them in case
++	 * hardware didn't do this for us.
++	 */
++	andl	$(0x0000ffff), PT_CS(%esp)
++
+ 	/* Are we on the entry stack? Bail out if not! */
+ 	movl	PER_CPU_VAR(cpu_entry_area), %ecx
+ 	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
+@@ -407,12 +414,6 @@
+ 	/* Load top of task-stack into %edi */
+ 	movl	TSS_entry2task_stack(%edi), %edi
  
-@@ -1047,7 +1047,7 @@ void dpm_resume(pm_message_t state)
- 		reinit_completion(&dev->power.completion);
- 		if (is_async(dev)) {
- 			get_device(dev);
--			async_schedule(async_resume, dev);
-+			async_schedule_dev(async_resume, dev);
- 		}
- 	}
- 
-@@ -1366,7 +1366,7 @@ static int device_suspend_noirq(struct device *dev)
- 
- 	if (is_async(dev)) {
- 		get_device(dev);
--		async_schedule(async_suspend_noirq, dev);
-+		async_schedule_dev(async_suspend_noirq, dev);
- 		return 0;
- 	}
- 	return __device_suspend_noirq(dev, pm_transition, false);
-@@ -1569,7 +1569,7 @@ static int device_suspend_late(struct device *dev)
- 
- 	if (is_async(dev)) {
- 		get_device(dev);
--		async_schedule(async_suspend_late, dev);
-+		async_schedule_dev(async_suspend_late, dev);
- 		return 0;
- 	}
- 
-@@ -1833,7 +1833,7 @@ static int device_suspend(struct device *dev)
- 
- 	if (is_async(dev)) {
- 		get_device(dev);
--		async_schedule(async_suspend, dev);
-+		async_schedule_dev(async_suspend, dev);
- 		return 0;
- 	}
- 
-
+-	/*
+-	 * Clear unused upper bits of the dword containing the word-sized CS
+-	 * slot in pt_regs in case hardware didn't clear it for us.
+-	 */
+-	andl	$(0x0000ffff), PT_CS(%esp)
+-
+ 	/* Special case - entry from kernel mode via entry stack */
+ #ifdef CONFIG_VM86
+ 	movl	PT_EFLAGS(%esp), %ecx		# mix EFLAGS and CS
