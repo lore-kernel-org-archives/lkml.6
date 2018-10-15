@@ -2,214 +2,240 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80352C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2A3C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 323A42064A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:21:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 323A42064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 975A32083C
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:22:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Z6qaBA8g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975A32083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbeJOTGF (ORCPT
+        id S1726599AbeJOTGu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:06:05 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40744 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726469AbeJOTGE (ORCPT
+        Mon, 15 Oct 2018 15:06:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37740 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbeJOTGu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:06:04 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9FBK54I110963
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 07:21:14 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n4ss30cq1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 07:21:14 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 15 Oct 2018 07:21:13 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 15 Oct 2018 07:21:10 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9FBL9ek29032548
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 15 Oct 2018 11:21:09 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE53CB2064;
-        Mon, 15 Oct 2018 07:19:04 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 933DAB2065;
-        Mon, 15 Oct 2018 07:19:04 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.131.128])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 15 Oct 2018 07:19:04 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id ABB2716C0B33; Mon, 15 Oct 2018 04:21:12 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 04:21:12 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH RFC] doc: rcu: remove obsolete (non-)requirement about
- disabling preemption
-Reply-To: paulmck@linux.ibm.com
-References: <20181014212955.95267-1-joel@joelfernandes.org>
- <20181014231731.GN2674@linux.ibm.com>
- <20181015020827.GA217384@joelaf.mtv.corp.google.com>
- <20181015021349.GB217384@joelaf.mtv.corp.google.com>
- <20181015023328.GP2674@linux.ibm.com>
- <20181015024758.GA227989@joelaf.mtv.corp.google.com>
- <5151da01-343b-bb37-353e-b6652ae530f5@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5151da01-343b-bb37-353e-b6652ae530f5@suse.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18101511-0068-0000-0000-0000034D4692
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009879; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01102982; UDB=6.00570882; IPR=6.00883033;
- MB=3.00023760; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-15 11:21:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101511-0069-0000-0000-00004613B833
-Message-Id: <20181015112112.GT2674@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-15_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810150105
+        Mon, 15 Oct 2018 15:06:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=uCMAcOkRIsElJa3yg0fHtOf0NE95quodMcAh2++lY1s=; b=Z6qaBA8gmgp7
+        0B1WQurpstIfySuYip3YJuM1e6h3gl0YgruobZjoPXNkw1iH4iAaK+1coFDT0EGvZKko6UIaZtQtJ
+        E1XuhjZCjG62QnO0PtcqtBtTOxbibJCW3mWnjV6sG2o2IYJ3B+6EKPTg/FO41WaHxvlEa1HknI04U
+        DSmNw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gC0wh-000368-92; Mon, 15 Oct 2018 11:21:59 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 041F911224A9; Mon, 15 Oct 2018 12:21:59 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: Fetch enable gpiods nonexclusive" to the regulator tree
+In-Reply-To: 
+Message-Id: <20181015112159.041F911224A9@debutante.sirena.org.uk>
+Date:   Mon, 15 Oct 2018 12:21:59 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 09:05:22AM +0300, Nikolay Borisov wrote:
-> On 15.10.2018 05:47, Joel Fernandes wrote:
-> > On Sun, Oct 14, 2018 at 07:33:28PM -0700, Paul E. McKenney wrote:
-> >> On Sun, Oct 14, 2018 at 07:13:49PM -0700, Joel Fernandes wrote:
-> >>> On Sun, Oct 14, 2018 at 07:08:27PM -0700, Joel Fernandes wrote:
-> >>>> On Sun, Oct 14, 2018 at 04:17:31PM -0700, Paul E. McKenney wrote:
-> >>>>> On Sun, Oct 14, 2018 at 02:29:55PM -0700, Joel Fernandes (Google) wrote:
-> >>>>>> The Requirements.html document says "Disabling Preemption Does Not Block
-> >>>>>> Grace Periods". However this is no longer true with the RCU
-> >>>>>> consolidation. Lets remove the obsolete (non-)requirement entirely.
-> >>>>>>
-> >>>>>> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> >>>>>
-> >>>>> Good catch, queued, thank you!
-> >>>>
-> >>>> Thanks! By the way after I sent the patch, I also tried Oleg's experiment to
-> >>>> confirm that this is indeed obsolete.  :)
-> >>>>
-> >>>> One thing interesting came up when I tried synchronize_rcu_expedited()
-> >>>> instead of synchronize_rcu() in Oleg's experiment, I still saw a multiple
-> >>>> millisecond delay between when the rcu read section completely and the
-> >>>> synchronize_rcu_expedited returns:
-> >>>>
-> >>>> For example, with synchronize_rcu_expedited, the 'SPIN done' and the 'SYNC
-> >>>> done' are about 3 millisecond apart:
-> >>>> [   77.599142] SPIN start
-> >>>> [   77.601595] SYNC start
-> >>>> [   82.604950] SPIN done!
-> >>>> [   82.607836] SYNC done!
-> >>>>  I saw anywhere from 2-6 milliseconds.
-> >>>>
-> >>>> The reason I bring this up is according to Requirements.html: In some cases,
-> >>>> the multi-millisecond synchronize_rcu() latencies are unacceptable. In these
-> >>>> cases, synchronize_rcu_expedited() may be used instead,.. so either I messed
-> >>>> something up in the experiment, or I need to update this part of the document ;-)
-> >>
-> >> In normal testing, 2-6 milliseconds is indeed excessive.  Could you please
-> >> point me at Oleg's experiment?  Also, what CONFIG_PREEMPT setting were
-> >> you using?  (My guess is CONFIG_PREEMPT=y.)
-> > 
-> > The CONFIG_PREEMPT config I am using is CONFIG_PREEMPT=y.
-> > 
-> >>> So I realized I'm running in Qemu so it could also be a scheduling delay of
-> >>> the vcpu thread. So apologies about the noise if the experiment works fine
-> >>> for you.
-> >>
-> >> I used rcuperf, which might not be doing the same thing as Oleg's
-> >> experiment.
-> > 
-> > The experiment is mentioned at:
-> > https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg912055.html
-> > 
-> > If you apply the below diff, it applies cleanly on rcu/dev. And then run:
-> > taskset 2 perl -e 'syscall 157, 666, 5000' &
-> > taskset 1 perl -e 'syscall 157, 777'
-> > 
-> > diff --git a/kernel/sys.c b/kernel/sys.c
-> > index cf5c67533ff1..b654b7566ca3 100644
-> > --- a/kernel/sys.c
-> > +++ b/kernel/sys.c
-> > @@ -2261,6 +2261,9 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
-> >  	return -EINVAL;
-> >  }
-> >  
-> > +#include <linux/delay.h>
-> > +
-> > +
-> >  SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
-> >  		unsigned long, arg4, unsigned long, arg5)
-> >  {
-> > @@ -2274,6 +2277,19 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
-> >  
-> >  	error = 0;
-> >  	switch (option) {
-> > +	case 666:
-> > +		preempt_disable();
-> > +		pr_crit("SPIN start\n");
-> > +		while (arg2--)
-> > +			mdelay(1);
+The patch
 
-OK, this is the problem.  When you spin in the kernel for several
-milliseconds with preemption disabled, the consolidated grace period
-is -required- to wait for this preemption-disabled reader to complete,
-whether expedited or not.
+   regulator: Fetch enable gpiods nonexclusive
 
-So, expected behavior.  ;-)
+has been applied to the regulator tree at
 
-In any case, please don't spin for milliseconds with preemption disabled.
-The real-time guys are unlikely to be happy with you if you do this!
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-> > +		pr_crit("SPIN done!\n");
-> > +		preempt_enable();
-> > +		break;
-> > +	case 777:
-> > +		pr_crit("SYNC start\n");
-> > +		synchronize_rcu();
-> > +		pr_crit("SYNC done!\n");
-> 
-> But you are using the console printing infrastructure which is rather
-> heavyweight. Try replacing pr_* calls with trace_printk so that you
-> write to the lock-free ring buffer, this will reduce the noise from the
-> heavy console printing infrastructure.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-And this might be a problem as well.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-							Thanx, Paul
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> > +		break;
-> >  	case PR_SET_PDEATHSIG:
-> >  		if (!valid_signal(arg2)) {
-> >  			error = -EINVAL;
-> > 
-> 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 63239e4bf7eff394d2bcba95999d6e3eae2be6a6 Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 15 Oct 2018 11:02:40 +0200
+Subject: [PATCH] regulator: Fetch enable gpiods nonexclusive
+
+Since the core regulator code is treating GPIO descriptors as
+nonexclusive, i.e. it assumes that the enable GPIO line may be
+shared with several regulators, let's add the flag introduced
+for fixing this problem on fixed regulators to all drivers
+fetching GPIO descriptors to avoid possible regressions.
+
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/arizona-ldo1.c       |  2 +-
+ drivers/regulator/da9211-regulator.c   | 10 +++++-----
+ drivers/regulator/lm363x-regulator.c   |  6 ++++--
+ drivers/regulator/lp8788-ldo.c         |  7 ++++---
+ drivers/regulator/max8952.c            |  1 +
+ drivers/regulator/max8973-regulator.c  |  1 +
+ drivers/regulator/s5m8767.c            | 13 +++++++------
+ drivers/regulator/tps65090-regulator.c |  1 +
+ 8 files changed, 24 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
+index e976d073f28d..9a72eae4926d 100644
+--- a/drivers/regulator/arizona-ldo1.c
++++ b/drivers/regulator/arizona-ldo1.c
+@@ -260,7 +260,7 @@ static int arizona_ldo1_common_init(struct platform_device *pdev,
+ 	 * so clean up would happen at the wrong time
+ 	 */
+ 	config.ena_gpiod = gpiod_get_optional(parent_dev, "wlf,ldoena",
+-					      GPIOD_OUT_LOW);
++				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	if (IS_ERR(config.ena_gpiod))
+ 		return PTR_ERR(config.ena_gpiod);
+ 
+diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
+index 6c122b3df5d0..8f68c7a05d27 100644
+--- a/drivers/regulator/da9211-regulator.c
++++ b/drivers/regulator/da9211-regulator.c
+@@ -294,11 +294,11 @@ static struct da9211_pdata *da9211_parse_regulators_dt(
+ 		pdata->init_data[n] = da9211_matches[i].init_data;
+ 		pdata->reg_node[n] = da9211_matches[i].of_node;
+ 		pdata->gpiod_ren[n] = devm_gpiod_get_from_of_node(dev,
+-								  da9211_matches[i].of_node,
+-								  "enable",
+-								  0,
+-								  GPIOD_OUT_HIGH,
+-								  "da9211-enable");
++				  da9211_matches[i].of_node,
++				  "enable",
++				  0,
++				  GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
++				  "da9211-enable");
+ 		n++;
+ 	}
+ 
+diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
+index b615a413ca9f..bbedb08d257b 100644
+--- a/drivers/regulator/lm363x-regulator.c
++++ b/drivers/regulator/lm363x-regulator.c
+@@ -227,9 +227,11 @@ static struct gpio_desc *lm363x_regulator_of_get_enable_gpio(struct device *dev,
+ 	 */
+ 	switch (id) {
+ 	case LM3632_LDO_POS:
+-		return devm_gpiod_get_index_optional(dev, "enable", 0, GPIOD_OUT_LOW);
++		return devm_gpiod_get_index_optional(dev, "enable", 0,
++				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	case LM3632_LDO_NEG:
+-		return devm_gpiod_get_index_optional(dev, "enable", 1, GPIOD_OUT_LOW);
++		return devm_gpiod_get_index_optional(dev, "enable", 1,
++				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	default:
+ 		return NULL;
+ 	}
+diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
+index f2347474a106..553b4790050f 100644
+--- a/drivers/regulator/lp8788-ldo.c
++++ b/drivers/regulator/lp8788-ldo.c
+@@ -503,9 +503,10 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
+ 
+ 	/* FIXME: check default mode for GPIO here: high or low? */
+ 	ldo->ena_gpiod = devm_gpiod_get_index_optional(&pdev->dev,
+-						       "enable",
+-						       enable_id,
+-						       GPIOD_OUT_HIGH);
++					       "enable",
++					       enable_id,
++					       GPIOD_OUT_HIGH |
++					       GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	if (IS_ERR(ldo->ena_gpiod))
+ 		return PTR_ERR(ldo->ena_gpiod);
+ 
+diff --git a/drivers/regulator/max8952.c b/drivers/regulator/max8952.c
+index f1e77ed5dfec..6c39fff73b8a 100644
+--- a/drivers/regulator/max8952.c
++++ b/drivers/regulator/max8952.c
+@@ -230,6 +230,7 @@ static int max8952_pmic_probe(struct i2c_client *client,
+ 		gflags = GPIOD_OUT_HIGH;
+ 	else
+ 		gflags = GPIOD_OUT_LOW;
++	gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
+ 	gpiod = devm_gpiod_get_optional(&client->dev,
+ 					"max8952,en",
+ 					gflags);
+diff --git a/drivers/regulator/max8973-regulator.c b/drivers/regulator/max8973-regulator.c
+index 7cd493ec6315..e7a58b509032 100644
+--- a/drivers/regulator/max8973-regulator.c
++++ b/drivers/regulator/max8973-regulator.c
+@@ -758,6 +758,7 @@ static int max8973_probe(struct i2c_client *client,
+ 			gflags = GPIOD_OUT_HIGH;
+ 		else
+ 			gflags = GPIOD_OUT_LOW;
++		gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
+ 		gpiod = devm_gpiod_get_optional(&client->dev,
+ 						"maxim,enable",
+ 						gflags);
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 09a97a7093e8..219b9afda0cb 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -571,12 +571,13 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 			continue;
+ 		}
+ 
+-		rdata->ext_control_gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
+-								       reg_np,
+-								       "s5m8767,pmic-ext-control-gpios",
+-								       0,
+-								       GPIOD_OUT_HIGH,
+-								       "s5m8767");
++		rdata->ext_control_gpiod = devm_gpiod_get_from_of_node(
++			&pdev->dev,
++			reg_np,
++			"s5m8767,pmic-ext-control-gpios",
++			0,
++			GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
++			"s5m8767");
+ 		if (IS_ERR(rdata->ext_control_gpiod))
+ 			return PTR_ERR(rdata->ext_control_gpiod);
+ 
+diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
+index edaef9e4dc74..db714d5edafc 100644
+--- a/drivers/regulator/tps65090-regulator.c
++++ b/drivers/regulator/tps65090-regulator.c
+@@ -374,6 +374,7 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+ 				gflags = GPIOD_OUT_HIGH;
+ 			else
+ 				gflags = GPIOD_OUT_LOW;
++			gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
+ 
+ 			rpdata->gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
+ 								    tps65090_matches[idx].of_node,
+-- 
+2.19.0.rc2
 
