@@ -2,139 +2,191 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F2DC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1903BC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F80208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:27:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F80208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D1FB7208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:30:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1FB7208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbeJPEOV (ORCPT
+        id S1726719AbeJPERI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 00:14:21 -0400
-Received: from mga07.intel.com ([134.134.136.100]:61961 "EHLO mga07.intel.com"
+        Tue, 16 Oct 2018 00:17:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51130 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725917AbeJPEOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 00:14:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 13:27:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,385,1534834800"; 
-   d="scan'208";a="92202560"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
-  by orsmga003.jf.intel.com with ESMTP; 15 Oct 2018 13:27:30 -0700
-Subject: [mm PATCH v3 6/6] mm: Add reserved flag setting to set_page_links
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     linux-mm@kvack.org, akpm@linux-foundation.org
-Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.jiang@intel.com, alexander.h.duyck@linux.intel.com,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        davem@davemloft.net, yi.z.zhang@linux.intel.com,
-        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
-        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-Date:   Mon, 15 Oct 2018 13:27:30 -0700
-Message-ID: <20181015202730.2171.53682.stgit@localhost.localdomain>
-In-Reply-To: <20181015202456.2171.88406.stgit@localhost.localdomain>
-References: <20181015202456.2171.88406.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1725917AbeJPERH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 00:17:07 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CAE273082B06;
+        Mon, 15 Oct 2018 20:30:16 +0000 (UTC)
+Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 40AFD768B2;
+        Mon, 15 Oct 2018 20:30:04 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tom Hromatka <tom.hromatka@oracle.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v14 00/12] Enable cpuset controller in default hierarchy
+Date:   Mon, 15 Oct 2018 16:29:25 -0400
+Message-Id: <1539635377-22335-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 15 Oct 2018 20:30:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch modifies the set_page_links function to include the setting of
-the reserved flag via a simple AND and OR operation. The motivation for
-this is the fact that the existing __set_bit call still seems to have
-effects on performance as replacing the call with the AND and OR can reduce
-initialization time by as much as 4 seconds, ~26s down to ~22s, per NUMA
-node on a 4 socket system with 3TB of persistent memory per node.
+v14:
+ - Fix a bug about cpumask handling in patch 4 by using
+   CONFIG_CPUMASK_OFFSTACK #ifdef block.
+ - Add patch 12 to show descriptive name when reading
+   cpuset.sched.partition (suggested by Tejun).
+ - Change the function prototype of free_cpumasks() to match that of
+   alloc_cpumasks() (suggested by Tom Hromatka).
 
-Looking over the assembly code before and after the change the main
-difference between the two is that the reserved bit is stored in a value
-that is generated outside of the main initialization loop and is then
-written with the other flags field values in one write to the page->flags
-value. Previously the generated value was written and then then btsq
-instruction was issued after testing the is_reserved value.
+v13:
+ - A major rewrite of the partition code so that there will be no
+   auto-turning off anymore. Instead, the partition root can enter into
+   an error state that can be restored back to a partition root later on.
+ - Patches 1 and 9 are the same as previous version, the rests are
+   either new or substantially revised.
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
----
- include/linux/mm.h |    9 ++++++++-
- mm/page_alloc.c    |   14 +++++---------
- 2 files changed, 13 insertions(+), 10 deletions(-)
+v12:
+ - Take out the debugging patch to print partitions.
+ - Add a patch to force turning off partition flag if newly modified CPU
+   list doesn't meet the requirement of being a partition root.
+ - Remove some unneeded checking code in update_reserved_cpumask().
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ec6e57a0c14e..31d374279b90 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1152,11 +1152,18 @@ static inline void set_page_node(struct page *page, unsigned long node)
- 	page->flags |= (node & NODES_MASK) << NODES_PGSHIFT;
- }
- 
-+static inline void set_page_reserved(struct page *page, bool reserved)
-+{
-+	page->flags &= ~(1ul << PG_reserved);
-+	page->flags |= (unsigned long)(!!reserved) << PG_reserved;
-+}
-+
- static inline void set_page_links(struct page *page, enum zone_type zone,
--	unsigned long node, unsigned long pfn)
-+	unsigned long node, unsigned long pfn, bool reserved)
- {
- 	set_page_zone(page, zone);
- 	set_page_node(page, node);
-+	set_page_reserved(page, reserved);
- #ifdef SECTION_IN_PAGE_FLAGS
- 	set_page_section(page, pfn_to_section_nr(pfn));
- #endif
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index f145063615a7..5c2f545c7669 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1179,7 +1179,7 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
- 				unsigned long zone, int nid)
- {
- 	mm_zero_struct_page(page);
--	set_page_links(page, zone, nid, pfn);
-+	set_page_links(page, zone, nid, pfn, false);
- 	init_page_count(page);
- 	page_mapcount_reset(page);
- 	page_cpupid_reset_last(page);
-@@ -1232,20 +1232,16 @@ static void __meminit __init_pageblock(unsigned long start_pfn,
- 		 * call because of the fact that the pfn number is used to
- 		 * get the section_nr and this function should not be
- 		 * spanning more than a single section.
-+		 *
-+		 * We can use a non-atomic operation for setting the
-+		 * PG_reserved flag as we are still initializing the pages.
- 		 */
--		set_page_links(page, zone, nid, start_pfn);
-+		set_page_links(page, zone, nid, start_pfn, is_reserved);
- 		init_page_count(page);
- 		page_mapcount_reset(page);
- 		page_cpupid_reset_last(page);
- 
- 		/*
--		 * We can use the non-atomic __set_bit operation for setting
--		 * the flag as we are still initializing the pages.
--		 */
--		if (is_reserved)
--			__SetPageReserved(page);
--
--		/*
- 		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
- 		 * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
- 		 * page is ever freed or placed on a driver-private list.
+v11:
+ - Change the "domain_root" name to "partition" as suggested by Peter and
+   update the documentation and code accordingly.
+ - Remove the dying cgroup check in update_reserved_cpus() as the check
+   may not be needed after all.
+ - Document the effect of losing CPU affinity after offling all the cpus
+   in a partition.
+ - There is no other major code changes in this version.
+
+v11 patch: https://lkml.org/lkml/2018/6/24/30
+v12 patch: https://lkml.org/lkml/2018/8/27/423
+v13 patch: https://lkml.org/lkml/2018/10/12/861
+
+The purpose of this patchset is to provide a basic set of cpuset control
+files for cgroup v2. This basic set includes the non-root "cpus",
+"mems" and "sched.partition". The "cpus.effective" and "mems.effective"
+will appear in all cpuset-enabled cgroups.
+
+The new control file that is unique to v2 is "sched.partition". It is
+a tristate flag file that designates if a cgroup is the root of a new
+scheduling domain or partition with its own set of unique list of CPUs
+from scheduling perspective disjointed from other partitions. An user
+can write only "1" or "0" into this file to turn on and off partition root.
+Depending on circumstances, a partition root may become erroneous and has
+a flag value of -1. However, if condition becomes favorable again, it can
+be changed back to a partition root automatically.
+
+The root cgroup is always a partition root. Multiple levels of partitions
+are supported with some limitations. So a container partition root can
+behave like a real root.
+
+When a partition root cgroup is removed, its list of exclusive CPUs
+will be returned back to the parent's cpus.effective automatically.
+
+A container root can be a partition root with sub-partitions
+created underneath it. One difference from the real root is that the
+"cpuset.sched.partition" flag isn't present in the real root, but is
+present in a container root. This is also true for other cpuset control
+files as well as those from the other controllers. This is a general
+issue that is not going to be addressed here in this patchset.
+
+This patchset does not exclude the possibility of adding more features
+in the future after careful consideration.
+
+Patch 1 enables cpuset in cgroup v2 with cpus, mems and their effective
+counterparts.
+
+Patch 2 defines new data structures to support partitioning.
+
+Patch 3 simplifies the allocation and freeing of cpumasks in the cpuset
+code and prepares for use by subsequent patches.
+
+Patch 4 adds a new "sched.partition" control file for setting up multiple
+scheduling domains or partitions. A partition root implies cpu_exclusive.
+
+Patch 5 makes new "sched.partition" file to have a new error value of -1
+which indicates that the partition root enters into an erroneous state
+where some of the constraints of a partition root (like cpu_exclusive)
+will still hold but it is not a real partition root anymore. This allows
+the cpuset to change back to a partition root later on automatically
+if the conditions become favorable again.
+
+Patch 6 adds tracking of the number of cpusets that use the parent's
+effective_cpus in order to make sure that those cpusets will be properly
+updated if their parents effective cpus changes because of changes in
+sibling partitions.
+
+Patch 7 makes the hotplug code deal with partition root properly.
+
+Patch 8 updates the scheduling domain genaration code to work with
+the new partition feature.
+
+Patch 9 exposes cpus.effective and mems.effective to the root cgroup
+as enabling child partitions will take CPUs away from the root cgroup.
+So it will be nice to monitor what CPUs are left there.
+
+Patch 10 updates the cgroup v2 documentation file with information
+about the new "sched.partition" file.
+
+Patch 11 adds a new read-only "cpus.subpartitions" file that list the
+CPUs in the subparts_cpus mask in the cpuset data structure when the
+command line option "cgroup_debug" is specified. This is mostly used
+for debugging and verification purposes.
+
+Patch 12 changes the output of reading cpuset.sched.partition from
+integer to a descriptive text similar to what cgroup.type is doing.
+
+A test script with various cpuset configurations was run on both regular
+and debug kernels with this patchset applied to verify that the cpusets
+behaved appropriate without unexpected error.
+
+Waiman Long (12):
+  cpuset: Enable cpuset controller in default hierarchy
+  cpuset: Define data structures to support scheduling partition
+  cpuset: Simply allocation and freeing of cpumasks
+  cpuset: Add new v2 cpuset.sched.partition flag
+  cpuset: Add an error state to cpuset.sched.partition
+  cpuset: Track cpusets that use parent's effective_cpus
+  cpuset: Make CPU hotplug work with partition
+  cpuset: Make generate_sched_domains() work with partition
+  cpuset: Expose cpus.effective and mems.effective on cgroup v2 root
+  cpuset: Add documentation about the new "cpuset.sched.partition" flag
+  cpuset: Expose cpuset.cpus.subpartitions with cgroup_debug
+  cpuset: Show descriptive text when reading cpuset.sched.partition
+
+ Documentation/admin-guide/cgroup-v2.rst | 175 ++++-
+ include/linux/cgroup-defs.h             |   1 +
+ kernel/cgroup/cgroup-internal.h         |   2 +
+ kernel/cgroup/cgroup.c                  |  14 +-
+ kernel/cgroup/cpuset.c                  | 909 ++++++++++++++++++++++--
+ kernel/cgroup/debug.c                   |   4 +-
+ 6 files changed, 1030 insertions(+), 75 deletions(-)
+
+-- 
+2.18.0
 
