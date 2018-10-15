@@ -2,348 +2,108 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E956C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3707C04EBC
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 060362089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:25:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 060362089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9209D208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:25:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X31WJ5iW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9209D208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbeJPGNC (ORCPT
+        id S1727130AbeJPGNE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:13:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41138 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726440AbeJPGNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:13:01 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7142988311;
-        Mon, 15 Oct 2018 22:25:49 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-3.gru2.redhat.com [10.97.112.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D47AC85686;
-        Mon, 15 Oct 2018 22:25:48 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id 6098D295E; Mon, 15 Oct 2018 19:25:46 -0300 (BRT)
-Date:   Mon, 15 Oct 2018 19:25:46 -0300
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, acme@kernel.org
-Subject: Re: perf's handling of unfindable user symbols...
-Message-ID: <20181015222546.GA2159@redhat.com>
-References: <20181014.004238.292485794143606801.davem@davemloft.net>
+        Tue, 16 Oct 2018 02:13:04 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:38677 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbeJPGND (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 02:13:03 -0400
+Received: by mail-yb1-f195.google.com with SMTP id e190-v6so8130439ybb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 15:25:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=tGQTXa6yqh0YUXaEj9WFxwmA0DYHjWfa/FO75TlyDeQ=;
+        b=X31WJ5iW/B8k7G2uE6kLvAnFJMt/6w6ZHI2mZTqaYwPYulojA3gS0WrKXrgdT9nFfX
+         7Vcofv4PvCldOr9AHka3eHO6B0MtkRFMMkWNxdik3sldo+suOGoM/nrK6nGlKRzQbNK8
+         faMwDIxy5PGc4x4VMOWdqeTaNuVKlnkvkpmAE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=tGQTXa6yqh0YUXaEj9WFxwmA0DYHjWfa/FO75TlyDeQ=;
+        b=Q8EwGk/chz6uzAIzpbvKDwcyUAy4Cowksd40IltRhcBXYySsvfuQHri7P+Adsg7cZU
+         ux6HAgojx2zXpYDnja444wYQKm/S/Brs5KM5lZP8kuEBC87Te6qZ/sK5qioMWtSaBtyl
+         M6uDy3sEtQX5fOciNTpQ4Lv1lEs+3glERc+bV51PwaQLlYkznnS3POu4BY45Jj3zFvug
+         CPTNIKFvxnu1Oawo5eJ6JqtAqUtBZdeRwvU0Mmp3Gk9W/IjbnOUplWtqEZNzxPSmSnBj
+         ITPQY8qjGWaW0Y11NBBZte3DzmmgNIViOU11yMsTvgT3D9KjARh6e4lYfO7r0Qlu3A48
+         VBDw==
+X-Gm-Message-State: ABuFfoh2G6kBw01TU4vjYHPy5bwHyZCR/g/tWmYaXrq0x5ygtRhvGA6F
+        pJVEz3rHy04HyIOZXwvdyFRRaNTMGtA=
+X-Google-Smtp-Source: ACcGV61rU8BIQ7CYC/4UkxoEm6skfioMxrEhRciZ2+5I7FN9iFKRasJKIPp2JTpadOpjumxlEIEcVg==
+X-Received: by 2002:a25:7811:: with SMTP id t17-v6mr10347419ybc.436.1539642350057;
+        Mon, 15 Oct 2018 15:25:50 -0700 (PDT)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id 1-v6sm3438205ywm.3.2018.10.15.15.25.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 15:25:48 -0700 (PDT)
+Received: by mail-yw1-f52.google.com with SMTP id j75-v6so8148318ywj.10
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 15:25:48 -0700 (PDT)
+X-Received: by 2002:a81:2908:: with SMTP id p8-v6mr10737345ywp.407.1539642347982;
+ Mon, 15 Oct 2018 15:25:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181014.004238.292485794143606801.davem@davemloft.net>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 15 Oct 2018 22:25:49 +0000 (UTC)
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 15:25:47
+ -0700 (PDT)
+In-Reply-To: <153922180696.838512.12621709717839260874.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <153922180166.838512.8260339805733812034.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <153922180696.838512.12621709717839260874.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 15 Oct 2018 15:25:47 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+PStxYhiJaWM-mt4+WWbS_WAfvyHoyZYD5ndDLN2SY6w@mail.gmail.com>
+Message-ID: <CAGXu5j+PStxYhiJaWM-mt4+WWbS_WAfvyHoyZYD5ndDLN2SY6w@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] mm: Shuffle initial free memory
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sun, Oct 14, 2018 at 12:42:38AM -0700, David Miller escreveu:
-> 
-> Perf has this hack where it uses the kernel symbol map as a backup
-> when a symbol can't be found in the user's symbol table(s).
+On Wed, Oct 10, 2018 at 6:36 PM, Dan Williams <dan.j.williams@intel.com> wrote:
+> While SLAB_FREELIST_RANDOM reduces the predictability of some local slab
+> caches it leaves vast bulk of memory to be predictably in order
+> allocated. That ordering can be detected by a memory side-cache.
+>
+> The shuffling is done in terms of CONFIG_SHUFFLE_PAGE_ORDER sized free
+> pages where the default CONFIG_SHUFFLE_PAGE_ORDER is MAX_ORDER-1 i.e.
+> 10, 4MB this trades off randomization granularity for time spent
+> shuffling.  MAX_ORDER-1 was chosen to be minimally invasive to the page
+> allocator while still showing memory-side cache behavior improvements,
+> and the expectation that the security implications of finer granularity
+> randomization is mitigated by CONFIG_SLAB_FREELIST_RANDOM.
 
-Right, I recall that, lemme find where this got introduced... there,
-Ingo added it while perf lived in Documentation/:
+Perhaps it would help some of the detractors of this feature to make
+this a runtime choice? Some benchmarks show improvements, some show
+regressions. It could just be up to the admin to turn this on/off
+given their paranoia levels? (i.e. the shuffling could become a no-op
+with a given specific boot param?)
 
-commit ed966aac335a63083d3125198479447248637d9e
-Author: Ingo Molnar <mingo@elte.hu>
-Date:   Wed Jun 3 10:39:26 2009 +0200
+-Kees
 
-    perf report: Handle vDSO symbols properly
-    
-    We were not looking up vDSO symbols properly, because they
-    are in the kallsyms but are user-mode entries.
-    
-    Pass negative addresses to the kernel dso object, this
-    way we resolve them properly:
-    
-         0.05%  [kernel]: vread_tsc
-    
-    Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-    Cc: Mike Galbraith <efault@gmx.de>
-    Cc: Paul Mackerras <paulus@samba.org>
-    Cc: Corey Ashford <cjashfor@linux.vnet.ibm.com>
-    Cc: Marcelo Tosatti <mtosatti@redhat.com>
-    Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-    Cc: Thomas Gleixner <tglx@linutronix.de>
-    Cc: John Kacur <jkacur@redhat.com>
-    LKML-Reference: <new-submission>
-    Signed-off-by: Ingo Molnar <mingo@elte.hu>
-
-diff --git a/Documentation/perf_counter/builtin-report.c b/Documentation/perf_counter/builtin-report.c
-index a8d390596d8d..0f88d9ebb34a 100644
---- a/Documentation/perf_counter/builtin-report.c
-+++ b/Documentation/perf_counter/builtin-report.c
-@@ -728,6 +728,8 @@ static int __cmd_report(void)
-                        event->ip.pid,
-                        (void *)(long)ip);
- 
-+               dprintf(" ... thread: %s:%d\n", thread->comm, thread->pid);
-+
-                if (thread == NULL) {
-                        fprintf(stderr, "problem processing %d event, skipping it.\n",
-                                event->header.type);
-@@ -740,6 +742,8 @@ static int __cmd_report(void)
- 
-                        dso = kernel_dso;
- 
-+                       dprintf(" ...... dso: %s\n", dso->name);
-+
-                } else if (event->header.misc & PERF_EVENT_MISC_USER) {
- 
-                        show = SHOW_USER;
-@@ -749,11 +753,22 @@ static int __cmd_report(void)
-                        if (map != NULL) {
-                                dso = map->dso;
-                                ip -= map->start + map->pgoff;
-+                       } else {
-+                               /*
-+                                * If this is outside of all known maps,
-+                                * and is a negative address, try to look it
-+                                * up in the kernel dso, as it might be a
-+                                * vsyscall (which executes in user-mode):
-+                                */
-+                               if ((long long)ip < 0)
-+                                       dso = kernel_dso;
-                        }
-+                       dprintf(" ...... dso: %s\n", dso ? dso->name : "<not found>");
- 
-                }
-
- 
-> This causes problems because the tests driving this code path use
-> machine__kernel_ip(), and that is completely meaningless on Sparc.  On
-
-This machine__kernel_ip() got added later:
-
-commit fbe2af45f6bd27ee69fd775303c936c3af4a4807
-Author: Adrian Hunter <adrian.hunter@intel.com>
-Date:   Fri Aug 15 22:08:39 2014 +0300
-
-    perf tools: Add machine__kernel_ip()
-    
-    Add a function to determine if an address is in the kernel.  This is
-    based on the kernel function kernel_ip().
-    
-    Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-    Cc: David Ahern <dsahern@gmail.com>
-    Cc: Frederic Weisbecker <fweisbec@gmail.com>
-    Cc: Jiri Olsa <jolsa@redhat.com>
-    Cc: Namhyung Kim <namhyung@gmail.com>
-    Cc: Paul Mackerras <paulus@samba.org>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Cc: Stephane Eranian <eranian@google.com>
-    Link: http://lkml.kernel.org/r/1408129739-17368-5-git-send-email-adrian.hunter@intel.com
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-static inline bool kernel_ip(unsigned long ip)
-{
-#ifdef CONFIG_X86_32
-        return ip > PAGE_OFFSET;
-#else
-        return (long)ip < 0;
-#endif
-}
-
-But this is in:
-
-arch/x86/events/perf_event.h
-
-totally x86 specific:
-
-[acme@jouet perf]$ find . -name "*.[ch]" | xargs grep -w kernel_ip
-./arch/x86/events/perf_event.h:static inline bool kernel_ip(unsigned long ip)
-./arch/x86/events/perf_event.h:	regs->cs = kernel_ip(ip) ? __KERNEL_CS : __USER_CS;
-./arch/x86/events/intel/pt.c:	return virt_addr_valid(ip) && kernel_ip(ip);
-./arch/x86/events/intel/ds.c:		    (kernel_ip(at->from) || kernel_ip(at->to)))
-./arch/x86/events/intel/ds.c:		    (kernel_ip(at->from) || kernel_ip(at->to)))
-./arch/x86/events/intel/ds.c:	if (kernel_ip(ip) != kernel_ip(to))
-./arch/x86/events/intel/ds.c:	if (!kernel_ip(ip)) {
-./arch/x86/events/intel/ds.c:		is_64bit = kernel_ip(to) || !test_thread_flag(TIF_IA32);
-./arch/x86/events/intel/lbr.c:	to_plm = kernel_ip(to) ? X86_BR_KERNEL : X86_BR_USER;
-./arch/x86/events/intel/lbr.c:	from_plm = kernel_ip(from) ? X86_BR_KERNEL : X86_BR_USER;
-./arch/x86/events/intel/lbr.c:	is64 = kernel_ip((unsigned long)addr) || !test_thread_flag(TIF_IA32);
-[acme@jouet perf]$
-
-> sparc64 the kernel and user live in physically separate virtual
-> address spaces, rather than a shared one.  And the kernel lives at a
-> virtual address that overlaps common userspace addresses.  So this
-> test passes almost all the time when a user symbol lookup fails.
-> 
-> The consequence of this is that, if the unfound user virtual address
-> in the sample doesn't match up to a kernel symbol either, we trigger
-> things like this code in builtin-top.c:
-> 
-> 	if (al.sym == NULL && al.map != NULL) {
-> 		const char *msg = "Kernel samples will not be resolved.\n";
-> 		/*
-> 		 * As we do lazy loading of symtabs we only will know if the
-> 		 * specified vmlinux file is invalid when we actually have a
-> 		 * hit in kernel space and then try to load it. So if we get
-> 		 * here and there are _no_ symbols in the DSO backing the
-> 		 * kernel map, bail out.
-> 		 *
-> 		 * We may never get here, for instance, if we use -K/
-> 		 * --hide-kernel-symbols, even if the user specifies an
-> 		 * invalid --vmlinux ;-)
-> 		 */
-> 		if (!machine->kptr_restrict_warned && !top->vmlinux_warned &&
-> 		    __map__is_kernel(al.map) && map__has_symbols(al.map)) {
-> 			if (symbol_conf.vmlinux_name) {
-> 				char serr[256];
-> 				dso__strerror_load(al.map->dso, serr, sizeof(serr));
-> 				ui__warning("The %s file can't be used: %s\n%s",
-> 					    symbol_conf.vmlinux_name, serr, msg);
-> 			} else {
-> 				ui__warning("A vmlinux file was not found.\n%s",
-> 					    msg);
-> 			}
-> 
-> 			if (use_browser <= 0)
-> 				sleep(5);
-> 			top->vmlinux_warned = true;
-> 		}
-> 	}
-> 
-> When I fire up a compilation on sparc, this triggers immediately.
-> 
-> I'm trying to figure out what the "backup to kernel map" code is
-> accomplishing.
- 
-> I see some language in the current code and in the changes that have
-> happened in this area talking about vdso.  Does that really happen?
-> 
-> The vdso is mapped into userspace virtual addresses, not kernel ones.
-> 
-> More history.  This didn't cause problems on sparc some time ago,
-> because the kernel IP check used to be "ip < 0" :-) Sparc kernel
-> addresses are not negative.  But now with machine__kernel_ip(), which
-> works using the symbol table determined kernel address range, it does
-> trigger.
-> 
-> What it all boils down to is that on architectures like sparc,
-> machine__kernel_ip() should always return false in this scenerio, and
-> therefore this kind of logic:
-> 
-> 		if (cpumode == PERF_RECORD_MISC_USER && machine &&
-> 		    mg != &machine->kmaps &&
-> 		    machine__kernel_ip(machine, al->addr)) {
-> 
-> is basically invalid.  PERF_RECORD_MISC_USER implies no kernel address
-> can possibly match for the sample/event in question (no matter how
-> hard you try!) :-)
-> 
-> At the very least there should be an arch way to disable this logic,
-> or even formalize in some way the situation.  Have some kind of
-> "user_kernel_shared_address_space" boolean, and then
-> machine__kernel_ip() can take a cpumode parameter and it can thus say:
-> 
-> 	if (cpumode == PERF_RECORD_MISC_USER &&
-> 	    !user_kernel_shared_address_space)
-> 		return false;
-> 
-> Comments?
-
-I think your solution is valid and fixes the problem for architectures with
-this property, but we need some way of saying hey, I know I'm not in sparc, check
-that like on x86 to cope with things like:
-
-        kernel = machine__kernel_ip(machine, start);
-        if (kernel)
-                *cpumode = PERF_RECORD_MISC_KERNEL;
-        else
-                *cpumode = PERF_RECORD_MISC_USER;
-
-That we have in builtin-script.c to handle addresses in branch stacks where
-cpumode isn't available and is being derived from the address itself. I have to
-look at this deeper to see how much change would be needed to do this in some
-other fashion, i.e. is the cpumode really only derivable from looking just at
-the address in the branch stack?
-
-tools/perf/util/intel-bts.c does the same trick:
-
-static int intel_bts_get_next_insn(struct intel_bts_queue *btsq, u64 ip)
-{
-        struct machine *machine = btsq->bts->machine;
-        struct thread *thread;
-        struct addr_location al;
-        unsigned char buf[INTEL_PT_INSN_BUF_SZ];
-        ssize_t len;
-        int x86_64;
-        uint8_t cpumode;
-        int err = -1;
-
-        if (machine__kernel_ip(machine, ip))
-                cpumode = PERF_RECORD_MISC_KERNEL;
-        else
-                cpumode = PERF_RECORD_MISC_USER;
-
-
-
-------------------------------------------------------------------------------------------
-
-But I think we should have it as a property of 'struct machine', because we may
-be processing on, say, x86, a perf.data file recorded on a Sparc machine, so we
-need to save this property on the perf.data file, humm, or we can derive that
-from data already there, like the quick patch below. I'll cache that property
-on machine->user_kernel_shared_address_space, to avoid having to do the
-strcmp() lots of times.
-
-Does that document the hack further? Defining the
-machine__user_kernel_shared_address_space() function right besides the
-machine__kernel_ip() inline should help as well?
-
-- Arnaldo
-
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 0cd42150f712..243dd9241339 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1573,6 +1573,7 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
- 		 * in the whole kernel symbol list.
- 		 */
- 		if (cpumode == PERF_RECORD_MISC_USER && machine &&
-+		    !machine__user_kernel_shared_address_space(machine) &&
- 		    mg != &machine->kmaps &&
- 		    machine__kernel_ip(machine, al->addr)) {
- 			mg = &machine->kmaps;
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index d856b85862e2..b8645f16710b 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -6,6 +6,7 @@
- #include <linux/rbtree.h>
- #include "map.h"
- #include "dso.h"
-+#include "env.h"
- #include "event.h"
- #include "rwsem.h"
- 
-@@ -99,6 +100,12 @@ static inline bool machine__kernel_ip(struct machine *machine, u64 ip)
- 	return ip >= kernel_start;
- }
- 
-+static inline bool machine__user_kernel_shared_address_space(struct machine *machine)
-+{
-+	const char *arch = perf_env__arch(machine->env);
-+	return arch && strcmp(arch, "sparc") == 0;
-+}
-+
- struct thread *machine__find_thread(struct machine *machine, pid_t pid,
- 				    pid_t tid);
- struct comm *machine__thread_exec_comm(struct machine *machine,
+-- 
+Kees Cook
+Pixel Security
