@@ -2,162 +2,111 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41560C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D481EC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE602098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:30:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FE602098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 978BB208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:33:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PWKG5jVZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978BB208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbeJPERp (ORCPT
+        id S1726896AbeJPEUl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 00:17:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42618 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727192AbeJPERo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 00:17:44 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6C7EB307D943;
-        Mon, 15 Oct 2018 20:30:53 +0000 (UTC)
-Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B2B0C768A1;
-        Mon, 15 Oct 2018 20:30:51 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Tom Hromatka <tom.hromatka@oracle.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v14 12/12] cpuset: Show descriptive text when reading cpuset.sched.partition
-Date:   Mon, 15 Oct 2018 16:29:37 -0400
-Message-Id: <1539635377-22335-13-git-send-email-longman@redhat.com>
-In-Reply-To: <1539635377-22335-1-git-send-email-longman@redhat.com>
-References: <1539635377-22335-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 15 Oct 2018 20:30:53 +0000 (UTC)
+        Tue, 16 Oct 2018 00:20:41 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38564 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbeJPEUl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 00:20:41 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 193-v6so20918859wme.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 13:33:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kRilpkKxdy6EsiloWAQteo136yREEzdz1jb351bL4GM=;
+        b=PWKG5jVZb6O/MHoCeGdv9ebrr8lq6gMoa4V3ugTgKuUb8ZGsZ2dh6R3l9XzM/eE10J
+         1A6pbjfjNX8roJqhEPZBPMER+kuBrBhQg84R+2p0iEMNieYWfOq5PLJCmh68+cFFf1V3
+         PY/zBJuFFPo21V0Jd2z1aEO/L3j8XfIe423DWjck+9t3cieqWmhu85lknRpeDKEUTgvQ
+         0ZIumKzZNCQkpA7qlcOhx6sAVEd7QE5X8VjjI6rRySZi9U55Zs+/IMB34axuaUzxuQIU
+         G/4Qy8GuEZCKxF2G9os8n5+642SAHdRvMo6oiEYJ1fcgCyiCV/2yCESgC1FeZTuwhrcu
+         yOJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kRilpkKxdy6EsiloWAQteo136yREEzdz1jb351bL4GM=;
+        b=AVa1rkkpDEpNoKMYwVloa7YQI1Fr2e2lopmYQS2X0LMpkGouHCsMqtTH0s9hznNSz0
+         tzc5PqyldEHhqTxPIRvH6kJis9wwoO7uNbPnIA5PoloTRzQukKdrmOpjngJpXo1vAd8g
+         k4SSWlz8yhDBGBZ9BjNWp8bTUnsApzxHLbVMlgmodZx+JLod0zs08OOBNtm6tTduzWNp
+         zzuvqxYPLtOQa/E5bKUbDDjz+mu20DB9TjL4+wm/bgkZqK8MIeT47XDGLscrnXusDVh+
+         LC86vvHr+u6C79VFk3S5Mki/3oz0P//0FBq7JFuXev7IFsNa2MitdpC7orHMvdm1o7LU
+         0YSA==
+X-Gm-Message-State: ABuFfohvsvgI7UZIg6O3L7HvVHsLal7/xFG8R3Ii+XV2EGSwrZR2w9Tz
+        htNL/ouJPxmztYRuUVTuNUBz0aVoCJg6qjlUze8CMQ==
+X-Google-Smtp-Source: ACcGV63nuq/m8D+DClvBkEIQEydVhDfw5HvkfNcvBtpcCrofeOlc9pTNLPuRxQinPppJRGVSWOIMBfHFc054desU5Bg=
+X-Received: by 2002:a1c:58f:: with SMTP id 137-v6mr14732077wmf.37.1539635628175;
+ Mon, 15 Oct 2018 13:33:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181015045927.156790-1-toddpoynor@gmail.com> <20181015045927.156790-2-toddpoynor@gmail.com>
+ <20181015073436.GC14476@kroah.com>
+In-Reply-To: <20181015073436.GC14476@kroah.com>
+From:   Todd Poynor <toddpoynor@google.com>
+Date:   Mon, 15 Oct 2018 13:33:35 -0700
+Message-ID: <CAAW3YpYHo=PZk_AHVD8O6E+D+Ky=LSQpWQ6gBPYCt5rRGEMXXQ@mail.gmail.com>
+Subject: Re: [PATCH 01/11] staging: gasket: core: debug log updates
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "toddpoynor@gmail.com" <toddpoynor@gmail.com>,
+        Rob Springer <rspringer@google.com>, benchan@chromium.org,
+        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, cpuset.sched.partition returns the values, 0, 1 or -1 on
-read. A person who is not familiar with the partition code may not
-understand what they mean.
+On Mon, Oct 15, 2018 at 12:34 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Sun, Oct 14, 2018 at 09:59:17PM -0700, Todd Poynor wrote:
+> > From: Todd Poynor <toddpoynor@google.com>
+> >
+> > Add debug logs for device enable/disable events,
+>
+> Why?
+>
+> What is going to need this?
 
-In order to make cpuset.sched.partition more user-friendly, it will
-now display the following descriptive text on read:
+As one of the few people actually developing for Apex chips (but this
+may be more soon), I ran into a situation where I cared about this.
+But I usually cobble together custom debugging for development
+situations, and generally don't get debug logs for
+released-in-the-wild drivers, so I'm fine not including these or any
+other debug logs.
 
-  "normal" - A normal cpuset, not a partition root
-  "partition" - A partition root
-  "partition invalid" - An invalid partition root
+It sounds like debug logs face a pretty high bar for acceptance.  I'm
+happy to send a patch removing all of 'em from gasket/apex if that's
+preferred.
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- Documentation/admin-guide/cgroup-v2.rst | 12 ++++++------
- kernel/cgroup/cpuset.c                  | 22 +++++++++++++++++++---
- 2 files changed, 25 insertions(+), 9 deletions(-)
+> > remove logs for
+> > callbacks (the called functions can generate their own logs if needed).
+>
+> That's a different thing than "adding" them, so shouldn't this really be
+> 2 patches?  If it was, I could have accepted this patch already, and
+> ignored the "add new logs" one :)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 178cda473a26..d9cc79ceb9aa 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1729,15 +1729,15 @@ Cpuset Interface Files
- 	root to change.  On read, the "cpuset.sched.partition" file
- 	can show the following values.
- 
--	"0"  Not a partition root
--	"1"  Partition root
--	"-1" Erroneous partition root
-+	"normal" - Normal cpuset, not a partition root
-+	"partition" - Partition root
-+	"partition invalid" - Invalid partition root
- 
- 	It is a partition root if the first 2 partition root conditions
- 	above are true and at least one CPU from "cpuset.cpus" is
- 	granted by the parent cgroup.
- 
--	A partition root can become an erroneous partition root if none
-+	A partition root can become an invalid partition root if none
- 	of CPUs requested in "cpuset.cpus" can be granted by the parent
- 	cgroup or the parent cgroup is no longer a partition root.
- 	In this case, it is not a real partition even though the
-@@ -1745,11 +1745,11 @@ Cpuset Interface Files
- 	still apply.  All the tasks in the cgroup will be migrated to
- 	the nearest ancestor partition.
- 
--	An erroneous partition root can be transitioned back to a real
-+	An invalid partition root can be transitioned back to a real
- 	partition root if at least one of the requested CPUs can now be
- 	granted by its parent.	In this case, the tasks will be migrated
- 	back to the newly created partition.  Clearing the partition
--	flag of an erroneous partition root is always allowed even if
-+	flag of an invalid partition root is always allowed even if
- 	child cpusets are present.
- 
- 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 34d47e43c98a..fe6d6366bfa7 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -2430,8 +2430,6 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
- 	switch (type) {
- 	case FILE_SCHED_RELAX_DOMAIN_LEVEL:
- 		return cs->relax_domain_level;
--	case FILE_PARTITION_ROOT:
--		return cs->partition_root_state;
- 	default:
- 		BUG();
- 	}
-@@ -2440,6 +2438,24 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
- 	return 0;
- }
- 
-+static int sched_partition_show(struct seq_file *seq, void *v)
-+{
-+	struct cpuset *cs = css_cs(seq_css(seq));
-+
-+	switch (cs->partition_root_state) {
-+	case PRS_ENABLED:
-+		seq_puts(seq, "partition\n");
-+		break;
-+	case PRS_DISABLED:
-+		seq_puts(seq, "normal\n");
-+		break;
-+	case PRS_ERROR:
-+		seq_puts(seq, "partition invalid\n");
-+		break;
-+	}
-+	return 0;
-+}
-+
- /*
-  * for the common functions, 'private' gives the type of file
-  */
-@@ -2583,7 +2599,7 @@ static struct cftype dfl_files[] = {
- 
- 	{
- 		.name = "sched.partition",
--		.read_s64 = cpuset_read_s64,
-+		.seq_show = sched_partition_show,
- 		.write_s64 = cpuset_write_s64,
- 		.private = FILE_PARTITION_ROOT,
- 		.flags = CFTYPE_NOT_ON_ROOT,
--- 
-2.18.0
+Sure, the callbacks most frequently occur during disable/enable events
+and were linked in my brain, but will send a new patch to just remove
+the useless callback logs.
 
+>
+> thanks,
+>
+> greg k-h
