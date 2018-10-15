@@ -2,120 +2,133 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9358EC28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F4AC28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 543BD2064E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:13:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B14F2064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 09:18:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ncdcai9d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 543BD2064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="gY76bZ24"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B14F2064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbeJOQ5a (ORCPT
+        id S1726802AbeJORC0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 12:57:30 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34989 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbeJOQ53 (ORCPT
+        Mon, 15 Oct 2018 13:02:26 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:22797 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeJORC0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 12:57:29 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 14so14199575oth.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 02:13:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=rRrE5CHurdkeOx8wfUBHmstmIPcG68F2WjhHReGNFM0=;
-        b=Ncdcai9djgHQu9REvHqnt1UFU62rDMzZ3QaAKkih5Ca+IM+zf0ysNOs+zH/JzVc81O
-         VSoqAvkifEqgsX4JLnFi0pJxkV/G3ntFjgDpN/zZtj8febRoMTJhTIGTN47Qt4PedCwz
-         mhijawyXZEzlYq7ERDZ/RjA50S8hg9YhUmwiQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=rRrE5CHurdkeOx8wfUBHmstmIPcG68F2WjhHReGNFM0=;
-        b=FTsuoeTMyyu9yfWFwTdJCkp3tQI/Pwo0dsSkaegJzjwEwlfVbVcieb+uRkSBrjYfsG
-         vWALFaR50hhnbahIqweJwK+l+meQ1iYxfiQPxmD1+5NfdSHtkxNWF6yn7oF7y4TKvx76
-         V4n2Hufknt8yrJZsmwE8+oYI9CuYZfVcDdnYnmRLwi2xn+gAWN34ZzmSoDn7vcXN/eu2
-         XCews6XknokM2vQCHJpTVNGYiYixlptmbRhHOmTSIxbHFRAI5OY9Sf/etuYPIWD4TTqp
-         eHYuqfRwwRwv4bM9j4LVesWPT2aLwGyb0mKkF5E3VBqvb9ubKj9921EV2RUjUYzRljN5
-         L08A==
-X-Gm-Message-State: ABuFfoilPkIuDKAT5hRMJ13pYCOv9TTiK340YdcTszTdgWbwM/BSx201
-        qZ/OUsraHvMCEyRPlEtriBX9oK0BjOYQumEjxVuHwA==
-X-Google-Smtp-Source: ACcGV610/+zaJi5E12mjjKcotQfH/RQcg67RIg3Puc+vMZPiN6P6LbbSBBQUUmyobwefdEXR1B/t19qmde/iRQ83WiM=
-X-Received: by 2002:a9d:cd4:: with SMTP id o20mr10965740otd.207.1539594785847;
- Mon, 15 Oct 2018 02:13:05 -0700 (PDT)
+        Mon, 15 Oct 2018 13:02:26 -0400
+X-Greylist: delayed 9728 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Oct 2018 13:02:25 EDT
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w9F9Ho2s017372;
+        Mon, 15 Oct 2018 18:17:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w9F9Ho2s017372
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539595071;
+        bh=uoMJsd1TMhHqhCJuIipgIP5V4I4WH9bU9cBtVDfn1UI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gY76bZ24pDlA8u2OLob2OYZq9kOJ4xT61NYdlhA/4YpITOegJ+jhbj23pfHP3aQ7B
+         brvfqGc53lo8aMEJiDHm2qm6sZcpKCPGU52/CmG2c+4ujoEM06LHiNeuQP19wFAKr/
+         lUVXPjv7jmgg9a5MhyYu5OyKryNQFoek6WemSDs8HInC/wlP+47BJnOd56Sq/yygJd
+         t8QUH6e7vDeTJv/2L2EBluZMI/+K2gKE5Jim9OzKRmRL6azsysCqaeZhE4FhTQg5TH
+         vf4ChWgWFLeXd4o93QFJndh5OTUa8MtubQFTd/rRB2AC/6cvZK8U7LvXe316yDv4u1
+         XZRKjgoJ0xFBg==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id r83so15842080vsc.4;
+        Mon, 15 Oct 2018 02:17:50 -0700 (PDT)
+X-Gm-Message-State: ABuFfoiLKx9Fo4Zr1Rc/i5xdPTgsjmb801Lt5pKRkQaKMF2PxmpuT9g6
+        a7niCQbBe6r85TQ18FpmLMkabn7KGf78NqFp36g=
+X-Google-Smtp-Source: ACcGV62sbBk1X3cOASnSTccR6Hp7nPkhT2EGMVkrmWla4johvZoop9rlDs1h4E7d2rMwg39fAEqefKOk/faVZO0ESks=
+X-Received: by 2002:a67:5fc7:: with SMTP id t190mr6437461vsb.155.1539595069491;
+ Mon, 15 Oct 2018 02:17:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181013151707.32210-1-hch@lst.de> <20181013151707.32210-8-hch@lst.de>
-In-Reply-To: <20181013151707.32210-8-hch@lst.de>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Mon, 15 Oct 2018 11:12:55 +0200
-Message-ID: <CA+M3ks5KO-Yr_PEczaENhTfirthFz2gW1uv4bwZe5mjy3-jZyg@mail.gmail.com>
-Subject: Re: [PATCH 7/8] media: sti/bdisp: don't pass GFP_DMA32 to dma_alloc_attrs
+References: <20181013151016.31674-1-hch@lst.de> <20181013151016.31674-5-hch@lst.de>
+ <CAK7LNAQy_NTu5=8R6C3Xc2VLrJo7tKOz-u1=3JfGtBa3Z+ZD9g@mail.gmail.com> <20181015085737.GC27159@lst.de>
+In-Reply-To: <20181015085737.GC27159@lst.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 15 Oct 2018 18:17:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARbkmZ-Lq7W1R6r21dw0RTTyfGYNr5MLuufOVB2rqy2uQ@mail.gmail.com>
+Message-ID: <CAK7LNARbkmZ-Lq7W1R6r21dw0RTTyfGYNr5MLuufOVB2rqy2uQ@mail.gmail.com>
+Subject: Re: [PATCH 4/8] pci: consolidate PCI config entry in drivers/pci
 To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-media@vger.kernel.org, linux-spi@vger.kernel.org,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        alsa-devel@alsa-project.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     mporter@kernel.crashing.org, Alex Bounine <alex.bou9@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le sam. 13 oct. 2018 =C3=A0 17:18, Christoph Hellwig <hch@lst.de> a =C3=A9c=
-rit :
+On Mon, Oct 15, 2018 at 5:57 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> The DMA API does its own zone decisions based on the coherent_dma_mask.
+> On Mon, Oct 15, 2018 at 03:37:05PM +0900, Masahiro Yamada wrote:
+> > I think HAVE_ is a preferred prefix in this case according to this doc:
+> > https://github.com/masahir0y/linux/blob/v4.19-rc4/Documentation/kbuild/kconfig-language.txt#L448
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-
-> ---
->  drivers/media/platform/sti/bdisp/bdisp-hw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Ok, I'll switch everything to HAVE_*
 >
-> diff --git a/drivers/media/platform/sti/bdisp/bdisp-hw.c b/drivers/media/=
-platform/sti/bdisp/bdisp-hw.c
-> index 26d9fa7aeb5f..4372abbb5950 100644
-> --- a/drivers/media/platform/sti/bdisp/bdisp-hw.c
-> +++ b/drivers/media/platform/sti/bdisp/bdisp-hw.c
-> @@ -510,7 +510,7 @@ int bdisp_hw_alloc_filters(struct device *dev)
+> > If you do this for entire powerpc,
+> > the other 'select HAS_PCI' addtions to
+> > arch/powerpc/platforms/*/Kconfig look redundant.
 >
->         /* Allocate all the filters within a single memory page */
->         size =3D (BDISP_HF_NB * NB_H_FILTER) + (BDISP_VF_NB * NB_V_FILTER=
-);
-> -       base =3D dma_alloc_attrs(dev, size, &paddr, GFP_KERNEL | GFP_DMA,
-> +       base =3D dma_alloc_attrs(dev, size, &paddr, GFP_KERNEL,
->                                DMA_ATTR_WRITE_COMBINE);
->         if (!base)
->                 return -ENOMEM;
-> --
-> 2.19.1
+> I'll drop them.
 >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > > -config PCI
+> > > -       bool "PCI support"
+> > > -       select PCI_MSI
+> >
+> >
+> > I think this 'select PCI_MSI' for riscv was lost.
+>
+> Indeed, fixed.
+>
+> > >  menu "Bus options (PCI etc.)"
+> > >
+> > > -config PCI
+> > > -       bool "PCI support"
+> > > -       default y
+> >
+> >
+> > The default is y for x86 (and xtensa as well).
+> >
+> > With this patch, the default will be flipped.
+> >
+> > I think most of people want to use PCI for x86,
+> > and this change will make people upset.
+> >
+> > Will you update arch/{x86,xtensa}/configs/*_defconfig?
+>
+> Yes.  Alternatively we could add a new ARCH_PCI_DEFAULT symbol,
+> that architectures could select if they want PCI by default.  Does
+> anyone thing this is a good idea?
+
+
+No, I do not want to see such an ugly config option.
+
+Instead, you can use 'imply' keyword to set the default y.
+
+config X86
+       ...
+       imply    PCI
 
 
 
---=20
-Benjamin Gaignard
+But, personally, I'd like the defconfig files updated.
 
-Graphic Study Group
 
-Linaro.org =E2=94=82 Open source software for ARM SoCs
 
-Follow Linaro: Facebook | Twitter | Blog
+-- 
+Best Regards
+Masahiro Yamada
