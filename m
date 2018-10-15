@@ -2,40 +2,40 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31CCC71133
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F736C71133
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F8621480
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:56:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 269072148D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:56:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSOt8rDq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F8621480
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sh5E56Wy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 269072148D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbeJPBmq (ORCPT
+        id S1726893AbeJPBmu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 21:42:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53970 "EHLO mail.kernel.org"
+        Mon, 15 Oct 2018 21:42:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726639AbeJPBmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 21:42:46 -0400
+        id S1726639AbeJPBms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 21:42:48 -0400
 Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD431208E4;
-        Mon, 15 Oct 2018 17:56:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07E212098A;
+        Mon, 15 Oct 2018 17:56:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539626189;
-        bh=tsLRQd4M4HyH/QEkBjgZruFV3V6MZUczwkrDw6jra1E=;
-        h=From:To:Cc:Subject:Date:From;
-        b=gSOt8rDqGmEesJjCvEVL+nhyF8DAj6Q/i/lsnjRRlzeUqPRo4TNTBisf/EXb4hHtV
-         cAVvalQt7xjf7G9SQoRfoCnAyc+KDiaB/zwVnQL+cgf9sATsrQWLcl9guC2Gv51CMP
-         YhKwKmCPGKO1XqIDMSx8Qk8DYHAAhzag7ogC8PcY=
+        s=default; t=1539626191;
+        bh=D5K2lHx5K5PQr1tQVLKd66kDu429TKVPMAQy+hRTjuc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sh5E56WyZP7+JABCQD2Kc50AEFa9cp79vcBz4VujLo5rvjaizcGkJXmeczX1OqyxK
+         7noXKiu489XZQZp8XArC9cdAE2+DaK2SCXTcWxZIjwJ8Wq49LsQK6r0FyXn1tqf/jq
+         EqpysLzr9gsSd17awF2toj23cU3jWwy0u+5IdWJU=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org
 Cc:     linux-fscrypt@vger.kernel.org,
@@ -47,176 +47,127 @@ Cc:     linux-fscrypt@vger.kernel.org,
         "Jason A . Donenfeld" <Jason@zx2c4.com>,
         Samuel Neves <samuel.c.p.neves@gmail.com>,
         Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Subject: [RFC PATCH v2 00/12] crypto: Adiantum support
-Date:   Mon, 15 Oct 2018 10:54:12 -0700
-Message-Id: <20181015175424.97147-1-ebiggers@kernel.org>
+Subject: [RFC PATCH v2 01/12] crypto: chacha20-generic - add HChaCha20 library function
+Date:   Mon, 15 Oct 2018 10:54:13 -0700
+Message-Id: <20181015175424.97147-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
+In-Reply-To: <20181015175424.97147-1-ebiggers@kernel.org>
+References: <20181015175424.97147-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Eric Biggers <ebiggers@google.com>
 
-We've been working to find a way to bring storage encryption to
-entry-level Android devices like the inexpensive "Android Go" devices
-sold in developing countries, and some smartwatches.  Unfortunately,
-often these devices still ship with no encryption, since for cost
-reasons they have to use older CPUs like ARM Cortex-A7; and these CPUs
-lack the ARMv8 Cryptography Extensions, making AES-XTS much too slow.
+Refactor the unkeyed permutation part of chacha20_block() into its own
+function, then add hchacha20_block() which is the ChaCha equivalent of
+HSalsa20 and is an intermediate step towards XChaCha20 (see
+https://cr.yp.to/snuffle/xsalsa-20081128.pdf).  HChaCha20 skips the
+final addition of the initial state, and outputs only certain words of
+the state.  It should not be used for streaming directly.
 
-We're trying to change this, since we believe encryption is for
-everyone, not just those who can afford it.  And while it's unknown how
-long CPUs without AES support will be around, there will likely always
-be a "low end"; and in any case it's immensely valuable to provide a
-software-optimized cipher that doesn't depend on hardware support.
-Lack of hardware support should not be an excuse for no encryption.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ include/crypto/chacha20.h |  2 ++
+ lib/chacha20.c            | 50 ++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 46 insertions(+), 6 deletions(-)
 
-But after an extensive search (e.g. see [1]) we were unable to find an
-existing cipher that simultaneously meets the very strict performance
-requirements on ARM processors, is secure (including having sufficient
-security parameters as well as sufficient cryptanalysis of any
-primitive(s) used), is suitable for practical use in dm-crypt and
-fscrypt, *and* avoids any particularly controversial primitive.
-
-Therefore, we (well, Paul Crowley did the real work) designed a new
-encryption mode, Adiantum.  In essence, Adiantum makes it secure to use
-the ChaCha stream cipher for disk encryption.  Adiantum is specified by
-our paper here: https://eprint.iacr.org/2018/720.pdf ("Adiantum:
-length-preserving encryption for entry-level processors").  Reference
-code and test vectors are here: https://github.com/google/adiantum.
-Most of the high-level concepts of Adiantum are not new; similar
-existing modes include XCB, HCTR, and HCH.  Adiantum and these modes are
-true wide-block modes (tweakable super-pseudorandom permutations), so
-they actually provide a stronger notion of security than XTS.
-
-Adiantum is an improved version of our previous algorithm, HPolyC [2].
-Like HPolyC, Adiantum uses XChaCha12, two passes of an
-ε-almost-∆-universal (εA∆U) hash function, and one AES-256 encryption of
-a single 16-byte block.  On ARM Cortex-A7, on 4096-byte messages
-Adiantum is about 4x faster than AES-256-XTS (about 5x for decryption),
-and about 30% faster than Speck128/256-XTS.
-
-Adiantum is a construction, not a primitive.  Its security is reducible
-to that of XChaCha12 and AES-256, subject to a security bound; the proof
-is in Section 5 of our paper.  Therefore, one need not "trust" Adiantum;
-they only need trust XChaCha12 and AES-256.  Note that of these two
-primitives, AES-256 currently has the lower security margin.
-
-Adiantum is ~20% faster than HPolyC, with no loss of security; in fact,
-Adiantum's security bound is slightly better than HPolyC's.  It does
-this by choosing a faster εA∆U hash function: it still uses Poly1305's
-εA∆U hash function, but now a hash function from the "NH" family of hash
-functions is used to "compress" the message by 32x first.  NH is εAU (as
-shown in the UMAC paper[3]) but is over twice as fast as Poly1305.  Key
-agility is reduced, but that's acceptable for disk encryption.
-
-NH is also very simple, and it's easy to implement in SIMD assembly,
-e.g. in ARM NEON.  Now, to get good performance only a SIMD
-implementation of NH is required, not Poly1305.  Therefore, Adiantum can
-be easier to port to new platforms than HPolyC, despite Adiantum's
-slightly increased complexity.  For now this patchset only includes an
-ARM32 NEON implementation of NH, but as a proof of concept I've also
-written SSE2, AVX2, and ARM64 NEON implementations of NH; see
-https://github.com/google/adiantum/tree/master/benchmark/src.
-
-This patchset adds Adiantum to Linux's crypto API, focusing on generic
-and ARM32 implementations.  Patches 1-7 add support for XChaCha20 and
-XChaCha12.  Patches 8-10 add NHPoly1305 support, needed for Adiantum
-hashing.  Patch 11 adds Adiantum support as a skcipher template.
-
-Patch 12 adds Adiantum support to fscrypt ("file-based encryption").
-In fscrypt, Adiantum is used for filenames encryption as well as
-contents encryption; since Adiantum is a SPRP, it fixes the information
-leak when filenames share a common prefix.  We also take advantage of
-Adiantum's support for long tweaks to include the per-inode nonce
-directly in the tweak, which allows providing an option to skip the
-per-file key derivation, providing even greater performance benefits.
-
-As before, some of these patches conflict with the new "Zinc" crypto
-library.  But I don't know when Zinc will be merged, so for now I've
-continued to base this patchset on the current 'cryptodev'.
-
-Again, for more details please read our paper:
-
-    Adiantum: length-preserving encryption for entry-level processors
-    (https://eprint.iacr.org/2018/720.pdf)
-
-This patchset can also be found in git at
-https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
-branch "adiantum-v2".
-
-References:
-  [1] https://www.spinics.net/lists/linux-crypto/msg33000.html
-  [2] https://patchwork.kernel.org/cover/10558059/
-  [3] https://fastcrypto.org/umac/umac_proc.pdf
-
-Eric Biggers (12):
-  crypto: chacha20-generic - add HChaCha20 library function
-  crypto: chacha20-generic - add XChaCha20 support
-  crypto: chacha20-generic - refactor to allow varying number of rounds
-  crypto: chacha - add XChaCha12 support
-  crypto: arm/chacha20 - add XChaCha20 support
-  crypto: arm/chacha20 - refactor to allow varying number of rounds
-  crypto: arm/chacha - add XChaCha12 support
-  crypto: poly1305 - add Poly1305 core API
-  crypto: nhpoly1305 - add NHPoly1305 support
-  crypto: arm/nhpoly1305 - add NEON-accelerated NHPoly1305
-  crypto: adiantum - add Adiantum support
-  fscrypt: add Adiantum support
-
- Documentation/filesystems/fscrypt.rst         |  183 +-
- arch/arm/crypto/Kconfig                       |    7 +-
- arch/arm/crypto/Makefile                      |    6 +-
- ...hacha20-neon-core.S => chacha-neon-core.S} |   90 +-
- arch/arm/crypto/chacha-neon-glue.c            |  207 ++
- arch/arm/crypto/chacha20-neon-glue.c          |  127 -
- arch/arm/crypto/nh-neon-core.S                |  116 +
- arch/arm/crypto/nhpoly1305-neon-glue.c        |   78 +
- arch/arm64/crypto/chacha20-neon-glue.c        |   40 +-
- arch/x86/crypto/chacha20_glue.c               |   52 +-
- arch/x86/crypto/poly1305_glue.c               |   20 +-
- crypto/Kconfig                                |   46 +-
- crypto/Makefile                               |    4 +-
- crypto/adiantum.c                             |  648 ++++
- crypto/chacha20_generic.c                     |  137 -
- crypto/chacha20poly1305.c                     |   10 +-
- crypto/chacha_generic.c                       |  217 ++
- crypto/nhpoly1305.c                           |  288 ++
- crypto/poly1305_generic.c                     |  174 +-
- crypto/testmgr.c                              |   30 +
- crypto/testmgr.h                              | 2856 ++++++++++++++++-
- drivers/char/random.c                         |   51 +-
- fs/crypto/crypto.c                            |   35 +-
- fs/crypto/fname.c                             |   22 +-
- fs/crypto/fscrypt_private.h                   |   66 +-
- fs/crypto/keyinfo.c                           |  322 +-
- fs/crypto/policy.c                            |    5 +-
- include/crypto/chacha.h                       |   53 +
- include/crypto/chacha20.h                     |   27 -
- include/crypto/nhpoly1305.h                   |   74 +
- include/crypto/poly1305.h                     |   28 +-
- include/uapi/linux/fs.h                       |    4 +-
- lib/Makefile                                  |    2 +-
- lib/{chacha20.c => chacha.c}                  |   59 +-
- 34 files changed, 5389 insertions(+), 695 deletions(-)
- rename arch/arm/crypto/{chacha20-neon-core.S => chacha-neon-core.S} (92%)
- create mode 100644 arch/arm/crypto/chacha-neon-glue.c
- delete mode 100644 arch/arm/crypto/chacha20-neon-glue.c
- create mode 100644 arch/arm/crypto/nh-neon-core.S
- create mode 100644 arch/arm/crypto/nhpoly1305-neon-glue.c
- create mode 100644 crypto/adiantum.c
- delete mode 100644 crypto/chacha20_generic.c
- create mode 100644 crypto/chacha_generic.c
- create mode 100644 crypto/nhpoly1305.c
- create mode 100644 include/crypto/chacha.h
- delete mode 100644 include/crypto/chacha20.h
- create mode 100644 include/crypto/nhpoly1305.h
- rename lib/{chacha20.c => chacha.c} (59%)
-
+diff --git a/include/crypto/chacha20.h b/include/crypto/chacha20.h
+index f76302d99e2be..fbec4e6a87890 100644
+--- a/include/crypto/chacha20.h
++++ b/include/crypto/chacha20.h
+@@ -19,6 +19,8 @@ struct chacha20_ctx {
+ };
+ 
+ void chacha20_block(u32 *state, u8 *stream);
++void hchacha20_block(const u32 *in, u32 *out);
++
+ void crypto_chacha20_init(u32 *state, struct chacha20_ctx *ctx, u8 *iv);
+ int crypto_chacha20_setkey(struct crypto_skcipher *tfm, const u8 *key,
+ 			   unsigned int keysize);
+diff --git a/lib/chacha20.c b/lib/chacha20.c
+index d907fec6a9ed1..6a484e16171d1 100644
+--- a/lib/chacha20.c
++++ b/lib/chacha20.c
+@@ -1,5 +1,5 @@
+ /*
+- * ChaCha20 256-bit cipher algorithm, RFC7539
++ * The "hash function" used as the core of the ChaCha20 stream cipher (RFC7539)
+  *
+  * Copyright (C) 2015 Martin Willi
+  *
+@@ -16,14 +16,10 @@
+ #include <asm/unaligned.h>
+ #include <crypto/chacha20.h>
+ 
+-void chacha20_block(u32 *state, u8 *stream)
++static void chacha20_permute(u32 *x)
+ {
+-	u32 x[16];
+ 	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(x); i++)
+-		x[i] = state[i];
+-
+ 	for (i = 0; i < 20; i += 2) {
+ 		x[0]  += x[4];    x[12] = rol32(x[12] ^ x[0],  16);
+ 		x[1]  += x[5];    x[13] = rol32(x[13] ^ x[1],  16);
+@@ -65,6 +61,25 @@ void chacha20_block(u32 *state, u8 *stream)
+ 		x[8]  += x[13];   x[7]  = rol32(x[7]  ^ x[8],   7);
+ 		x[9]  += x[14];   x[4]  = rol32(x[4]  ^ x[9],   7);
+ 	}
++}
++
++/**
++ * chacha20_block - generate one keystream block and increment block counter
++ * @state: input state matrix (16 32-bit words)
++ * @stream: output keystream block (64 bytes)
++ *
++ * This is the ChaCha20 core, a function from 64-byte strings to 64-byte
++ * strings.  The caller has already converted the endianness of the input.  This
++ * function also handles incrementing the block counter in the input matrix.
++ */
++void chacha20_block(u32 *state, u8 *stream)
++{
++	u32 x[16];
++	int i;
++
++	memcpy(x, state, 64);
++
++	chacha20_permute(x);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(x); i++)
+ 		put_unaligned_le32(x[i] + state[i], &stream[i * sizeof(u32)]);
+@@ -72,3 +87,26 @@ void chacha20_block(u32 *state, u8 *stream)
+ 	state[12]++;
+ }
+ EXPORT_SYMBOL(chacha20_block);
++
++/**
++ * hchacha20_block - abbreviated ChaCha20 core, for XChaCha20
++ * @in: input state matrix (16 32-bit words)
++ * @out: output (8 32-bit words)
++ *
++ * HChaCha20 is the ChaCha equivalent of HSalsa20 and is an intermediate step
++ * towards XChaCha20 (see https://cr.yp.to/snuffle/xsalsa-20081128.pdf).
++ * HChaCha20 skips the final addition of the initial state, and outputs only
++ * certain words of the state.  It should not be used for streaming directly.
++ */
++void hchacha20_block(const u32 *in, u32 *out)
++{
++	u32 x[16];
++
++	memcpy(x, in, 64);
++
++	chacha20_permute(x);
++
++	memcpy(&out[0], &x[0], 16);
++	memcpy(&out[4], &x[12], 16);
++}
++EXPORT_SYMBOL(hchacha20_block);
 -- 
-2.19.0.605.g01d371f741-goog
+2.19.1.331.ge82ca0e54c-goog
 
