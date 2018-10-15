@@ -2,92 +2,114 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7193DC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E0AC7113E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30ED52089E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:15:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01A4E205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:15:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="INJGOQyA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30ED52089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G+B5YUF5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01A4E205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbeJPFCJ (ORCPT
+        id S1727082AbeJPFCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 01:02:09 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42059 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbeJPFCI (ORCPT
+        Tue, 16 Oct 2018 01:02:25 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:37790 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726024AbeJPFCZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 01:02:08 -0400
-Received: by mail-lf1-f67.google.com with SMTP id s10-v6so15179397lfc.9;
-        Mon, 15 Oct 2018 14:15:09 -0700 (PDT)
+        Tue, 16 Oct 2018 01:02:25 -0400
+Received: by mail-yb1-f195.google.com with SMTP id h1-v6so8073497ybm.4
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 14:15:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=H6Z6RVy0ITbco0ghS71evfgCoO/mUd6T7wdJjxH9kt4=;
-        b=INJGOQyAwbz7OONzqlt6AAVo0m0JD7IqF8019ZA3HugZTJn/lADba5yDzBjeOOsmW9
-         Ovso4nzx+cty4QqDjvJ7Mv71zncw3sMxbXlsTFPhJBMHs8GX/A63FgK0i0JNdgbbXaC+
-         37ee/SYK/WPyjWij6Z1XIHq3UJllCVQzNTw5UoUYZxFSlb4WJ0tz7HwTm9yC9GyNDjxc
-         j4OTtzdoIcopVrIjDXBAOhAFz/VpsaNuKsAanWtcGzhCaoguM6Q39cD3M99kSL3a1OO4
-         XtvYewwINUUpvYEIf9oenDL+Aw2bel+N8aEmJCxC6bDgqKF6PtV6ipeTHrRor6836JwF
-         UoVg==
+        bh=Q7DCRXHEMau44GgTgT9U9Gyw18D4AVyK4HnNw+Y7ztA=;
+        b=G+B5YUF5fxeIjIgWm0SLF1c2nozgNVIzvQQvAk2H/QitZBQIbNIAbPML5Dx5tMR1jT
+         EmI0ZJS7eBFaYUgaWKhx3o8MqZQOtia9l6KO3ItTmN7QLOmvDaWxTMzUi7oBFEARtj/Y
+         CGBaYZEsxW4MsQ486fjjtljiqkF+x1G1fTMIs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=H6Z6RVy0ITbco0ghS71evfgCoO/mUd6T7wdJjxH9kt4=;
-        b=tCa02x3qWK0XhaaLl8pHS7wZOgd25uY/I1hRTuH8Uw+UQYqFgbel6RhPeBFVEMMmzJ
-         hrcXAnWkmxXdvPxwtumM/GNVeBs/xbYJXYletr3jof5roFIZcLyhpnQ+hZYJjoK+0Z+k
-         tU0b3J+sP6/67yQlis3x/MgHgofMbnNrWzsND623uhUVD3XhUe5dp3DI1kO5c00VzWkT
-         3j+0OGkF+GhigVbhnCpZ91g85wx+CzQE/mI1pD+yzyPptIIznRTB2FKFLKwdEm15LiWC
-         qWPIAUrg++DCdqDwRkC+IOtAN4fIttZsocnzBzo30lhNDzGjJmjhUWLFHpXUzjWl19H/
-         7T6A==
-X-Gm-Message-State: ABuFfoh595JJ7gaN0VWo2ruJnFK7IyDw+6xUZLmX2yz7y/udjOiDdDQo
-        k8hGLkb1Sh64Ts7uDcJT+h5mf9vBFHV+5YZT4KA=
-X-Google-Smtp-Source: ACcGV63rDrT8AmrfYY4S8rqnRJyXpV8Wj0SKV/COCpLU53gJ78+VxE/0l3Q4cfgRO806t+GzwzR+E4ClPt+Lo2z2wYc=
-X-Received: by 2002:a19:1090:: with SMTP id 16-v6mr3722219lfq.131.1539638108432;
- Mon, 15 Oct 2018 14:15:08 -0700 (PDT)
+        bh=Q7DCRXHEMau44GgTgT9U9Gyw18D4AVyK4HnNw+Y7ztA=;
+        b=laQ0SNv6o0EKE6VkRF5lQsV9UCODrZjUvuCnu8Wv73F6TkwCc5rIeV9yRUROixdPBD
+         dqVBwk6M0C3uqfTnOvagnROxtkjZSiz+K1gHAp9xLDSMbbf0iCIEAY3x5ZMLmoEBj6Yh
+         3gCEZsOap+bGLm7z3kq+PQrh+TklNPjmKM+Q5rEZPP71orFeDeOVU9gqNSsnDgP+khBt
+         70UyjLgxVoSHBHHJBYser/bw5YMjRXMUPkzYHBG+SIWSGT8RASSefLtji1YZ4M/OZscv
+         I2tgUcoK0Uw5AbFLhyKkbtXS02GNozdiNIZ+8Uf6fc+qU0Q5lZZsiGPOX9SBuQyAs1fB
+         Ui2A==
+X-Gm-Message-State: ABuFfogYwVBtaicyExGX6esCVz8fFH/6zEFTfEwY/zcqL8cDeuIOZy6z
+        QWeju0m+no1hRdu2OHeRrLAuacEGqeI=
+X-Google-Smtp-Source: ACcGV62ImNNv6YN6kkd4IwUCUvDHywSdgPa9cTYWk2zi1j489M5Axym6LIH5H/dwNrtjNL06C1upcw==
+X-Received: by 2002:a25:2a05:: with SMTP id q5-v6mr10418995ybq.63.1539638125582;
+        Mon, 15 Oct 2018 14:15:25 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id z20-v6sm4212652ywz.75.2018.10.15.14.15.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 14:15:24 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id e190-v6so8065937ybb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 14:15:24 -0700 (PDT)
+X-Received: by 2002:a25:640a:: with SMTP id y10-v6mr10267332ybb.421.1539638123708;
+ Mon, 15 Oct 2018 14:15:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181015172221.35709-1-ndesaulniers@google.com>
- <CANiq72kLs-Z=ZDdWU_1JV-NG+D5yPEfgREny+nXQgPioyOB=mg@mail.gmail.com> <CAKwvOdnwfXSdBw_Y2zpAEdcn3aWRqUq9Fh8uk8EnkxPMC+c2Sw@mail.gmail.com>
-In-Reply-To: <CAKwvOdnwfXSdBw_Y2zpAEdcn3aWRqUq9Fh8uk8EnkxPMC+c2Sw@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Mon, 15 Oct 2018 23:14:57 +0200
-Message-ID: <CANiq72=PMEqu__HjQ-Y7DmzbWMRQPY6gQ5MF0cd9gF6vbCj=8Q@mail.gmail.com>
-Subject: Re: [PATCH] compiler.h: update definition of unreachable()
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     luto@amacapital.net, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        linux-sparse@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 14:15:22
+ -0700 (PDT)
+In-Reply-To: <CAHrFyr7nXUPxysMNv-HHRVSCB3UUmSb60qwFM8zg3Zv41NC1RQ@mail.gmail.com>
+References: <20181015192710.GA18693@avx2> <CAHrFyr7nXUPxysMNv-HHRVSCB3UUmSb60qwFM8zg3Zv41NC1RQ@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 15 Oct 2018 14:15:22 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+S8fByq56DBrV3xQsoPmM9tXMa+Jm+ViuUcoTL3jM1OA@mail.gmail.com>
+Message-ID: <CAGXu5j+S8fByq56DBrV3xQsoPmM9tXMa+Jm+ViuUcoTL3jM1OA@mail.gmail.com>
+Subject: Re: Re: [PATCH v1 1/2] sysctl: cap to ULONG_MAX in proc_get_long()
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 10:13 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
+On Mon, Oct 15, 2018 at 12:32 PM, Christian Brauner
+<christian@brauner.io> wrote:
+> On Mon, Oct 15, 2018 at 9:27 PM Alexey Dobriyan <adobriyan@gmail.com> wrote:
+>>
+>> > int kstrtoul_bounded(const char *s, unsigned int base,
+>> > char **trailing, unsigned long long *res)
+>>
+>> NO! The whole point is not have million variants of slightly different
+>> integer parsing functions.
+>> Cap it in the sysctl -- noone would care.
 >
-> Looking at commit cb984d101b30 ("compiler-gcc: integrate the various
-> compiler-gcc[345].h files") it seems that the comment is referring to
-> gcc 4.4 not supporting __builtin_unreachable().  Looks like it was
-> added in 4.5 timeframe: https://godbolt.org/z/ugv5QO, so the comment
-> can be deleted.  Would you prefer a v2 (single patch), or an
-> additional patch on top?
+> (Please keep the CC list when replying.)
+>
+> Whatever works; I prefer the local strtoul_cap_erange() in kernel/sysctl.c as
+> well.
 
-Split would be better, I think, since the changes can be applied
-independetly even if related. If you are busy, I can do it myself, so
-don't worry too much. :)
+This does match the standard of "evolution" for the kernel: there is
+only one user currently, so keep it a static in sysctl.c. If we grow a
+greater need, we can move it into lib/.
 
-Cheers,
-Miguel
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
