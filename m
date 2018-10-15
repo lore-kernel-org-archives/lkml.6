@@ -2,112 +2,147 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A80C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8424C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B090120644
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:27:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6738B20644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:34:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PSRD+GZo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B090120644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="v7VCPbMj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6738B20644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbeJOWMy (ORCPT
+        id S1726682AbeJOWTs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 18:12:54 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:36891 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbeJOWMy (ORCPT
+        Mon, 15 Oct 2018 18:19:48 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42284 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726571AbeJOWTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 18:12:54 -0400
-Received: by mail-it1-f194.google.com with SMTP id e74-v6so27935735ita.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 07:27:23 -0700 (PDT)
+        Mon, 15 Oct 2018 18:19:48 -0400
+Received: by mail-pl1-f196.google.com with SMTP id c8-v6so9395436plo.9
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 07:34:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LfddvKoGgUO3/lAd4OGoNcdxRS2hnNj3Nk48LH4Xv5w=;
-        b=PSRD+GZoOicTy86en3epiE390tyCkTriBsXPpyf/nt69WE+8+nw2ePa3kxZU7hsa5H
-         l126ybSDgJhh8hYmTt+a/Bjby0QAH1+t0SGGB7lTr5Hvi33CxcL/U7SW0kVv7zLsABr7
-         cZt8bqiNcCM8HlQQl+5fZaiyd2EHTHpGXk3G8=
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=hpZkYp1Yf6YBX/Aa7c+FCQ2Rb3agjYTIhO0baQKGCDY=;
+        b=v7VCPbMjQgH/Vma5a8LLRjcJPzlcai9+lQisdF85II8koTl2IbBph0xYzr7/OqG0pX
+         ewpDIPuasF9rDpbs7qFT/zkVyUCo1gMJcBJLIL22pIRsT4wBDYUkDOYaZr5aLWNPX9gC
+         pq82HQZMCTF5uCPf/Dk4R/Cu5MA4HTVORKIsvqwIzOVxvF1VQA+6O+gFAuvPuOVXO39h
+         cythAaxngsaJURCet7aMeIvXB15nwG9+BFVj4ZmEdBzntZAT2EgCnaEvEspm+0FhqCLW
+         sCWUoONaKBMj9OdW5yh0mRuojGnr8b5GuSmBfW9qXSDaQFnvnwe2b0aTJnvz6/vzUMXe
+         3KOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LfddvKoGgUO3/lAd4OGoNcdxRS2hnNj3Nk48LH4Xv5w=;
-        b=H/25ZoVxEa7QiOidVevB74bKtdAxHSGllE2b0gBMP0YmU58e9TU1cndKIUaTiKKot9
-         +b+KXj5HeLRp2XxLJHZIghxMSIcMsoNdVfjSevRi/d7obexLtzEqHLpxzPZkW6rkARs8
-         2m0kYIF5THaPY2QwvGH87ZNZh1VP5ENvM11HctCQ2bUb5BYbamGMKS5XPnRZzz4S/j4L
-         9H4ZGzLbBTwHT7Bb1j5EJEq2HHTiU5EZseDUepMZOSHR3zHrEfxZwNyoakhEBTQ8K35S
-         YDHZGtPmLbzXwcLD2eCSav03WScV8doK1QG3aKNC7+ukDtckKGyznbLvkaslpUNYpxSP
-         iz8g==
-X-Gm-Message-State: ABuFfogtQah4pxcP6wmwQD8NEWGWtP1DRCyLwlqU155MJslLDK9jmikW
-        CVQg428XMx6mN+OZP2hCSI+xVSnUXqLLpwEx9Ct4GQ==
-X-Google-Smtp-Source: ACcGV61mJE/DvncpkuVPBaZiacpX2bCro3PGUYNmoktP+W+iBSB1z+vxWG/dz1Q3VTqKmuvNuaKisHOfv/JU8882Dl4=
-X-Received: by 2002:a02:7789:: with SMTP id g131-v6mr13507174jac.66.1539613643206;
- Mon, 15 Oct 2018 07:27:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180925192433.1377-1-jmkrzyszt@gmail.com> <20181012190901.1243-1-jmkrzyszt@gmail.com>
-In-Reply-To: <20181012190901.1243-1-jmkrzyszt@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 15 Oct 2018 16:27:10 +0200
-Message-ID: <CACRpkdYB1Wz8VC3aDpB_4KQcdbE-_Fy48zF_idKDM0pqiOEnXg@mail.gmail.com>
-Subject: Re: [RFT PATCH] mmc: pwrseq_simple: Fix incorrect handling of GPIO bitmap
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Enric Balletbo i Serra <eballetbo@gmail.com>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=hpZkYp1Yf6YBX/Aa7c+FCQ2Rb3agjYTIhO0baQKGCDY=;
+        b=CLIUTuo+GV17N6fx0C1C0k3tAsWWBoTUsmbs8ZO1u2ySXpi9aPYJVVgDz94ErZ28HL
+         OJHocFwbNdAwybGg1OmIQNWymk40R704OEfhgEvUYbTTxIQFTMmFfrOLTRZi/HX+IrZh
+         lYTgy2K9z5syToFaQamNGUmw0hPf4daVkI5ov7xPlTW3aA65I+4w8S/dJjSJpSdIoNmH
+         vR77dc42HBWTeUw8P1SrR8OSvM/L277+uoNjUEPUZ3+z+XAkup/9XyVDfl9zT+4VPcfK
+         rS3kBCx5IQ1TqJH+FCnzTzhW0QFa8YRBPW5zyXAEKkwfDM369BPxMCxIaSpbs9K9ldiP
+         xqnw==
+X-Gm-Message-State: ABuFfojj+Nkx0Ej5eTP7Df+emdaziQsNVvWnxAwr+giMnE5/ew+vPfRo
+        3RBuUcapHrLamhXBG6MnXB7abA==
+X-Google-Smtp-Source: ACcGV611/wGQjWj6GlEAw1jZi9sGocDG+BKSVi375rD04LCym2tYbVUMVPvrSeJH1BtaN2IOoqDElA==
+X-Received: by 2002:a17:902:7142:: with SMTP id u2-v6mr17528297plm.154.1539614056020;
+        Mon, 15 Oct 2018 07:34:16 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:256b:27ea:55f0:e526? ([2601:646:c200:7429:256b:27ea:55f0:e526])
+        by smtp.gmail.com with ESMTPSA id x73-v6sm15333631pfk.139.2018.10.15.07.34.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 07:34:14 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] x86/mm: annotate no_context with UNWIND_HINTS
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A366)
+In-Reply-To: <20181015051705.GA20687@flashbox>
+Date:   Mon, 15 Oct 2018 07:34:14 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>, nick.desaulniers@gmail.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2CCAF5D3-1B11-43BF-93E4-72C2603A184F@amacapital.net>
+References: <20181015003726.29103-1-nick.desaulniers@gmail.com> <CALCETrUZoBtxoR9u=72CSmNa-793EZySMd7TjH_BmHcrNSvLZg@mail.gmail.com> <20181015051705.GA20687@flashbox>
+To:     Nathan Chancellor <natechancellor@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 9:07 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-> Commit b9762bebc633 ("gpiolib: Pass bitmaps, not integer arrays, to
-> get/set array") changed the way GPIO values are passed to
-> gpiod_get/set_array_value() and friends.  The new code introduced into
-> mmc_pwrseq_simple_set_gpios_value() incorrectly interpretes the 'value'
-> argument as a bitmap of GPIO values and assigns it directly to the
-> 'values' bitmap variable passed to gpiod_set_array_value_cansleep()
-> instead of filling that bitmap with bits equal to the 'value' argument.
-> As a result, only member 0 of the array is handled correctly.
->
-> Moreover, wrong assumption is taken about the 'values' bitmap size not
-> exceding the number of bits of the 'value' argument type.
->
-> Fix it.
->
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Patch applied with Ulf's and Marek's tags!
+> On Oct 14, 2018, at 10:17 PM, Nathan Chancellor <natechancellor@gmail.com>=
+ wrote:
+>=20
+>> On Sun, Oct 14, 2018 at 08:43:18PM -0700, Andy Lutomirski wrote:
+>> On Sun, Oct 14, 2018 at 5:37 PM Nick Desaulniers
+>> <nick.desaulniers@gmail.com> wrote:
+>>>=20
+>>> Fixes the objtool warning:
+>>> arch/x86/mm/fault.o: warning: objtool: no_context()+0x220: unreachable
+>>> instruction
+>>>=20
+>>> Link: https://github.com/ClangBuiltLinux/linux/issues/204
+>>> Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+>>> ---
+>>> arch/x86/mm/fault.c | 6 ++++--
+>>> 1 file changed, 4 insertions(+), 2 deletions(-)
+>>>=20
+>>> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+>>> index 47bebfe6efa7..057d2178fa19 100644
+>>> --- a/arch/x86/mm/fault.c
+>>> +++ b/arch/x86/mm/fault.c
+>>> @@ -760,9 +760,11 @@ no_context(struct pt_regs *regs, unsigned long erro=
+r_code,
+>>>                 * and then double-fault, though, because we're likely to=
 
-Yours,
-Linus Walleij
+>>>                 * break the console driver and lose most of the stack du=
+mp.
+>>>                 */
+>>> -               asm volatile ("movq %[stack], %%rsp\n\t"
+>>> +               asm volatile (UNWIND_HINT_SAVE
+>>> +                             "movq %[stack], %%rsp\n\t"
+>>>                              "call handle_stack_overflow\n\t"
+>>> -                             "1: jmp 1b"
+>>> +                             "1: jmp 1b\n\t"
+>>> +                             UNWIND_HINT_RESTORE
+>>>                              : ASM_CALL_CONSTRAINT
+>>>                              : "D" ("kernel stack overflow (page fault)"=
+),
+>>>                                "S" (regs), "d" (address),
+>>=20
+>> NAK.  Just below this snippet is unreachable();
+>>=20
+>> Can you reply with objtool -dr output on a problematic fault.o?  Josh,
+>> it *looks* like annotate_unreachable() should be doing the right
+>> thing, but something is clearly busted.
+>>=20
+>> Also, shouldn't compiler-clang.h contain a reasonable definition of
+>> unreachable()?
+>>=20
+>> --Andy
+>=20
+> Hi Andy,
+>=20
+> Did you mean 'objdump -dr'? If so, here you go (rather long, sorry if I
+> should have pasted it here instead):
+> https://gist.github.com/nathanchance/f038bb0a6653b975bb8a4e64fcd5503e
+>=20
+>=20
+
+Hmm, -dr wasn=E2=80=99t quite enough to dump the .discard bits, assuming the=
+y=E2=80=99re there at all. Can you just put the whole .o file somewhere?=
