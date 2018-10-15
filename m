@@ -2,151 +2,133 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B29BEC070C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89475C070C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395B0205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:05:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D1D920876
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 00:14:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dbn3jR9/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395B0205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8/aTHeY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1D920876
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbeJOHsk (ORCPT
+        id S1726469AbeJOH5I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 03:48:40 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53205 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725792AbeJOHsj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 03:48:39 -0400
-Received: by mail-it1-f196.google.com with SMTP id 134-v6so26328325itz.2
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 17:05:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y+SURIXrgCllyAoswgdbR8qczhLpaio0wewJrHEIJtc=;
-        b=Dbn3jR9/P3SN+ChigwT7lRyo0IBXgFwgoUIsEsGa8ODqEyl1EIVS76dCUfWUxWqgHc
-         1fc+4Bq0cm7uj38EkGN20Iqa2QkPiTn1gBUWrwRNA+cS+Rde7xlSX4cy4c9viHRRukjS
-         Nd9fV6iKeG2yPOczL0axspUqFdiW3J6lLVGiz363HqEVW0QuQgGvYXFSLvoXq3QiIEwa
-         XG/SuzMvy9DOlZYFurnOuB4tvscY/KroideG4iKHgEtRRdVQ7pnk3KjsVdWvNqiuJllt
-         183Qn0TgPDOxYye9XNYHRD5XHd8/ylt1rxdAO+R0pE8gifC97CyWVjK/ow/FC4ebQPXp
-         m0cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y+SURIXrgCllyAoswgdbR8qczhLpaio0wewJrHEIJtc=;
-        b=shShO51JxEwMcq+tc6YIixzFtLHBbdr7j2/EFdQbh9mBBxjkJWrA4k6FJtc4ePlVaL
-         jWNquPTXUofeaDf8lBHoFY4zz5LlWxX38ToNVNGBFBGmAmXhRxCGMxzY6JHYkLHDuYnB
-         t0bwjTTf8DfCtDIxx4jOOThDrtfxmXXG5ONOBj6mIvdlXNklUqruu6/3KmYkaiZcuhTm
-         E9CH4ttUj4mjFEoF9xvJMuFPmi6Wr+GwbhPJnIKytKf9E1aBHMF9oeP2lHpGYze1NZi0
-         vjHZXrIckli8WjwLQgxFIkri6rA+y2EyvJEaPS5vj2Sg7kFvQWa0PL3K7FhCrX95k3p9
-         n3vQ==
-X-Gm-Message-State: ABuFfojF86Ed/dIxjCU4cJPea0kDEEXss8ClKqHmBf5LzWOUugtgWyFs
-        9zSMi+o4otzQec+ezVKgaxkI4KtpZ/iabfWA3DA=
-X-Google-Smtp-Source: ACcGV60yiIpF6/9kpZjxeZDxtsD536NgRpNZ6vDMYjLV48kg5BOIkjMXFuc4YrEy1ttbYDZ3Gb8yu687Mxy5ILAibk8=
-X-Received: by 2002:a24:3d12:: with SMTP id n18-v6mr10417690itn.131.1539561955092;
- Sun, 14 Oct 2018 17:05:55 -0700 (PDT)
+        Mon, 15 Oct 2018 03:57:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55714 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726262AbeJOH5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 03:57:08 -0400
+Received: from kernel.org (c-71-202-33-127.hsd1.ca.comcast.net [71.202.33.127])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C01A20659;
+        Mon, 15 Oct 2018 00:14:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539562461;
+        bh=5i4/Vgs2FpMuxvC0w7QqAKciorXc1vwVVx5VL6qfxJ8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=R8/aTHeYezGvjjy4NUapke3boWBOwi9eIutClzldctIPWt0d9H5OKEPuQKpL9K5qd
+         /tGAhdHNEcVekHTthLouuK5zYm8z/NmSTKZpii2qWCm1RjzWkAb8ju25M0thkMtKE5
+         eN1MjINKpwPvMkfehBa8fcB3RWgizVCMl/ec94/Q=
+Date:   Sun, 14 Oct 2018 17:14:19 -0700
+From:   Shaohua Li <shli@kernel.org>
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     Shaohua Li <shli@fb.com>, Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Guoqing Jiang <gqjiang@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
+Subject: Re: [LKP] [MD]  d595567dc4: mdadm-selftests.02lineargrow.fail
+Message-ID: <20181015001419.GA12053@kernel.org>
+References: <20181012085844.GN13396@shao2-debian>
 MIME-Version: 1.0
-References: <153944784534.1508664.6365625408163933467.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <153944784534.1508664.6365625408163933467.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Oliver <oohall@gmail.com>
-Date:   Mon, 15 Oct 2018 11:05:44 +1100
-Message-ID: <CAOSf1CF5zn3SJJm7J38qMcsdVhxWi_SPoHOBHt-YBg+RzjS8Bg@mail.gmail.com>
-Subject: Re: [PATCH] libnvdimm: Provide a simplified nvdimm_create() for
- non-security enabled DIMMs
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012085844.GN13396@shao2-debian>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 14, 2018 at 3:35 AM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> Do not require libnvdimm provider implementations to include security
-> parameters if the bus / dimm-devices do not have that support.
->
-> Cc: Oliver O'Halloran <oohall@gmail.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  drivers/acpi/nfit/core.c   |    2 +-
->  drivers/nvdimm/dimm_devs.c |    4 ++--
->  include/linux/libnvdimm.h  |   11 ++++++++++-
->  3 files changed, 13 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> index a287a773012b..a0dfbcf8220d 100644
-> --- a/drivers/acpi/nfit/core.c
-> +++ b/drivers/acpi/nfit/core.c
-> @@ -1992,7 +1992,7 @@ static int acpi_nfit_register_dimms(struct acpi_nfit_desc *acpi_desc)
->
->                 flush = nfit_mem->nfit_flush ? nfit_mem->nfit_flush->flush
->                         : NULL;
-> -               nvdimm = nvdimm_create(acpi_desc->nvdimm_bus, nfit_mem,
-> +               nvdimm = __nvdimm_create(acpi_desc->nvdimm_bus, nfit_mem,
->                                 acpi_nfit_dimm_attribute_groups,
->                                 flags, cmd_mask, flush ? flush->hint_count : 0,
->                                 nfit_mem->flush_wpq, &nfit_mem->id[0],
-> diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
-> index d1bfb8975b07..5d34251c4f3b 100644
-> --- a/drivers/nvdimm/dimm_devs.c
-> +++ b/drivers/nvdimm/dimm_devs.c
-> @@ -459,7 +459,7 @@ struct attribute_group nvdimm_attribute_group = {
->  };
->  EXPORT_SYMBOL_GPL(nvdimm_attribute_group);
->
-> -struct nvdimm *nvdimm_create(struct nvdimm_bus *nvdimm_bus, void *provider_data,
-> +struct nvdimm *__nvdimm_create(struct nvdimm_bus *nvdimm_bus, void *provider_data,
->                 const struct attribute_group **groups, unsigned long flags,
->                 unsigned long cmd_mask, int num_flush,
->                 struct resource *flush_wpq, const char *dimm_id,
-> @@ -496,7 +496,7 @@ struct nvdimm *nvdimm_create(struct nvdimm_bus *nvdimm_bus, void *provider_data,
->
->         return nvdimm;
->  }
-> -EXPORT_SYMBOL_GPL(nvdimm_create);
-> +EXPORT_SYMBOL_GPL(__nvdimm_create);
->
->  int alias_dpa_busy(struct device *dev, void *data)
->  {
-> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-> index c352b8195675..1071fe12081b 100644
-> --- a/include/linux/libnvdimm.h
-> +++ b/include/linux/libnvdimm.h
-> @@ -207,11 +207,20 @@ const char *nvdimm_name(struct nvdimm *nvdimm);
->  struct kobject *nvdimm_kobj(struct nvdimm *nvdimm);
->  unsigned long nvdimm_cmd_mask(struct nvdimm *nvdimm);
->  void *nvdimm_provider_data(struct nvdimm *nvdimm);
-> -struct nvdimm *nvdimm_create(struct nvdimm_bus *nvdimm_bus, void *provider_data,
-> +struct nvdimm *__nvdimm_create(struct nvdimm_bus *nvdimm_bus, void *provider_data,
->                 const struct attribute_group **groups, unsigned long flags,
->                 unsigned long cmd_mask, int num_flush,
->                 struct resource *flush_wpq, const char *dimm_id,
->                 const struct nvdimm_security_ops *sec_ops);
-> +static inline struct nvdimm *nvdimm_create(struct nvdimm_bus *nvdimm_bus,
-> +               void *provider_data, const struct attribute_group **groups,
-> +               unsigned long flags, unsigned long cmd_mask, int num_flush,
-> +               struct resource *flush_wpq)
-> +{
-> +       return __nvdimm_create(nvdimm_bus, provider_data, groups, flags,
-> +                       cmd_mask, num_flush, flush_wpq, NULL, NULL);
-> +}
-> +
->  const struct nd_cmd_desc *nd_cmd_dimm_desc(int cmd);
->  const struct nd_cmd_desc *nd_cmd_bus_desc(int cmd);
->  u32 nd_cmd_in_size(struct nvdimm *nvdimm, int cmd,
+On Fri, Oct 12, 2018 at 04:58:44PM +0800, kernel test robot wrote:
+> FYI, we noticed the following commit (built with gcc-7):
+> 
+> commit: d595567dc4f0c1d90685ec1e2e296e2cad2643ac ("MD: fix invalid stored role for a disk")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+> in testcase: mdadm-selftests
+> with following parameters:
+> 
+> 	disk: 1HDD
+> 	test_prefix: 02
+> 
+> 
+> 
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu host -smp 2 -m 4G
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> 
+> 
+> 
+> Welcome to fdisk (util-linux 2.29.2).
+> Changes will remain in memory only, until you decide to write them.
+> Be careful before using the write command.
+> 
+> Device does not contain a recognized partition table.
+> Created a new DOS disklabel with disk identifier 0xd50ae9f0.
+> 
+> Command (m for help): Partition type
+>    p   primary (0 primary, 0 extended, 4 free)
+>    e   extended (container for logical partitions)
+> Select (default p): Partition number (1-4, default 1): First sector (2048-536870911, default 2048): Last sector, +sectors or +size{K,M,G,T,P} (2048-536870911, default 536870911): 
+> Created a new partition 1 of type 'Linux' and of size 5 GiB.
+> 
+> Command (m for help): The partition table has been altered.
+> Calling ioctl() to re-read partition table.
+> Syncing disks.
+> 
+> 2018-10-12 11:05:55 mkdir -p /var/tmp
+> 2018-10-12 11:05:55 mke2fs -t ext3 -b 1024 -J size=1 -q /dev/vda1
+> 2018-10-12 11:06:00 mount -t ext3 /dev/vda1 /var/tmp
+> sed -e 's/{DEFAULT_METADATA}/1.2/g' \
+> -e 's,{MAP_PATH},/run/mdadm/map,g'  mdadm.8.in > mdadm.8
+> /usr/bin/install -D -m 644 mdadm.8 /usr/share/man/man8/mdadm.8
+> /usr/bin/install -D -m 644 mdmon.8 /usr/share/man/man8/mdmon.8
+> /usr/bin/install -D -m 644 md.4 /usr/share/man/man4/md.4
+> /usr/bin/install -D -m 644 mdadm.conf.5 /usr/share/man/man5/mdadm.conf.5
+> /usr/bin/install -D -m 644 udev-md-raid-arrays.rules /lib/udev/rules.d/63-md-raid-arrays.rules
+> /usr/bin/install -D -m 644 udev-md-raid-assembly.rules /lib/udev/rules.d/64-md-raid-assembly.rules
+> /usr/bin/install -D  -m 755 mdadm /sbin/mdadm
+> /usr/bin/install -D  -m 755 mdmon /sbin/mdmon
+> Testing on linux-4.19.0-rc5-00182-gd595567 kernel
+> tests/02lineargrow... FAILED - see /var/tmp/log for details
+> Testing on linux-4.19.0-rc5-00182-gd595567 kernel
+> tests/02r1add... succeeded
+> Testing on linux-4.19.0-rc5-00182-gd595567 kernel
+> tests/02r1grow... succeeded
+> Testing on linux-4.19.0-rc5-00182-gd595567 kernel
+> tests/02r5grow... succeeded
+> Testing on linux-4.19.0-rc5-00182-gd595567 kernel
+> tests/02r6grow... succeeded
+> 
+> 
+> 
+> To reproduce:
+> 
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         find lib/ | cpio -o -H newc --quiet | gzip > modules.cgz
+> 	bin/lkp qemu -k <bzImage> -m modules.cgz job-script # job-script is attached in this email
 
-Acked-by: Oliver O'Halloran <oohall@gmail.com>
+Thanks for reporting, I fixed it in md-next tree.
+
+Thanks,
+Shaohua
