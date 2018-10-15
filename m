@@ -2,162 +2,157 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B725DC71132
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE6DC71134
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD4A208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CC8F2089E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:23:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGleGMmz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD4A208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jSyR0joi";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Y/I0ulsv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC8F2089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbeJOXIe (ORCPT
+        id S1726907AbeJOXJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 19:08:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46296 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726545AbeJOXId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 19:08:33 -0400
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+        Mon, 15 Oct 2018 19:09:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55828 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726499AbeJOXJK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 19:09:10 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B67B160B11; Mon, 15 Oct 2018 15:23:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539617007;
+        bh=nyjN7qq1PvtguNg4Y6PxoqcBtH3pcL+JZC3w707cLGU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=jSyR0joislUEfxn4CXToS9t/MeRRoRlirAmevnt91yZw/nkNL5/PlcBR1S+YnAAgL
+         SJrL4qA0t6EgY38ANZRjedWgcAOIOzzaDADYVxupB77Vzb71W/BOF9fvxeX8wN7Grx
+         /8JyyBAQSfV/z3tTOze9F6g+un+IARB6Jzt9OQPA=
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B674F208AE;
-        Mon, 15 Oct 2018 15:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539616971;
-        bh=JFFJ8ptDPJR6I3XgjHYDRIMU6BbqInkY5Dd8yIUyqho=;
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2038F60B11;
+        Mon, 15 Oct 2018 15:23:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539617005;
+        bh=nyjN7qq1PvtguNg4Y6PxoqcBtH3pcL+JZC3w707cLGU=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dGleGMmzHakHtBFCiw9AytWY+cGngS6d5EkhiczRfKd0q4dS/bA898HN+hIjNiWQb
-         M3DuSS4vfmQ+rU5nrhykD0/oHqZYxVikGpAlhOxWHIlAale4Q63BxyAX3E/5pjmA0Y
-         jWbssJ4tzzOmdOEXnEzvGU7vU1AdUDAcxY9/O5Vs=
-Received: by mail-wr1-f48.google.com with SMTP id a13-v6so21832530wrt.5;
-        Mon, 15 Oct 2018 08:22:50 -0700 (PDT)
-X-Gm-Message-State: ABuFfoiVbYSRHv+599P83lCNFNvzgfpN2P5haPc/sl1DrGUBHqM2geF+
-        adkgUaqJiqeIz3uDffX9h66hLDMgRxVqbjyg8FM=
-X-Google-Smtp-Source: ACcGV61pbntDtM1G+9DKxQH6/YEKGHdugHAht44vElCohK+hJie5rf4/ZkBxiqx66zqNclf+0Q4da2CAB6mRblRKZn0=
-X-Received: by 2002:adf:e152:: with SMTP id f18-v6mr14171502wri.42.1539616969124;
- Mon, 15 Oct 2018 08:22:49 -0700 (PDT)
+        b=Y/I0ulsv92+J6FyJNyhdBw+BkBslCnYAdblaCKwnb71lYcV/MHiNw7jnrkHkw1Y2y
+         dm+OaJHwGLG47kBC5qPhXyY2cxUqvxadVjeRRQz4nENHcjIS4XHf+Ry2w1hGDZfMQC
+         RXl8VAvFBK9SAxGT8SsX1yiSQ5NwukqSwoaA9gv4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2038F60B11
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qk1-f169.google.com with SMTP id p6-v6so12075390qkg.1;
+        Mon, 15 Oct 2018 08:23:25 -0700 (PDT)
+X-Gm-Message-State: ABuFfoh24pd4RCVkt6rSKnG2ZViZdxHulKudFLOqp0m+rHR1ryP8Zcd0
+        cY79Xt3YSFXKOpmyP/wAFNuJUaarhl024HCrtYE=
+X-Google-Smtp-Source: ACcGV60BSWPVdmquTX0WJHaZe+qe7nooFtH0O77n/YKHZsiGMC+zeeyV/0RErhuCYOd8XX2xQxw2PYty3LG0/fLIx3w=
+X-Received: by 2002:a37:6388:: with SMTP id x130-v6mr16052393qkb.118.1539617004202;
+ Mon, 15 Oct 2018 08:23:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677@eucas1p2.samsung.com>
- <20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677~dzHYfFW2j0676906769eucas1p2c@eucas1p2.samsung.com>
-In-Reply-To: <20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677~dzHYfFW2j0676906769eucas1p2c@eucas1p2.samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 15 Oct 2018 17:22:37 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdR0q_2DGbMrroqNcVfCPSkh0=ry=yyb9qmSDFf+TWbFg@mail.gmail.com>
-Message-ID: <CAJKOXPdR0q_2DGbMrroqNcVfCPSkh0=ry=yyb9qmSDFf+TWbFg@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
- non-Exynos platforms
-To:     =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>
-Cc:     kgene@kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+References: <20181012213926.253765-1-dianders@chromium.org>
+In-Reply-To: <20181012213926.253765-1-dianders@chromium.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Mon, 15 Oct 2018 20:53:12 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iFy8V34cs6pEOie_tBX5wJqM7teUnH_XLLZ7cioPrX_hA@mail.gmail.com>
+Message-ID: <CAFp+6iFy8V34cs6pEOie_tBX5wJqM7teUnH_XLLZ7cioPrX_hA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: ufs: Fix the compatible string definition
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     "robh+dt" <robh+dt@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Can Guo <cang@codeaurora.org>, evgreen@chromium.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        sayalil@codeaurora.org, asutoshd@codeaurora.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, liwei213@huawei.com,
+        open list <linux-kernel@vger.kernel.org>, malat@debian.org,
+        Mark Rutland <mark.rutland@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Oct 2018 at 15:50, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
+Hi Doug,
+
+On Sat, Oct 13, 2018 at 3:09 AM Douglas Anderson <dianders@chromium.org> wrote:
 >
-> "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
-> config option) is not working properly (debug messages are not
-> displayed after resume) on Exynos platforms because GPIOs restore
-> code is not implemented.
+> If you look at the bindings for the UFS Host Controller it says:
 >
-> Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
-> SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
-> Then convert Exynos code to not require <plat/pm-common.h>
-> header (use pr_debug() directly instead of S3C_PMDBG() macro and
-> remove redundant s3c_pm_*() calls).
+> - compatible: must contain "jedec,ufs-1.1" or "jedec,ufs-2.0", may
+>               also list one or more of the following:
+>                  "qcom,msm8994-ufshc"
+>                  "qcom,msm8996-ufshc"
+>                  "qcom,ufshc"
 >
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> My reading of that is that it's fine to just have either of these:
+> 1. "qcom,msm8996-ufshc", "jedec,ufs-2.0"
+> 2. "qcom,ufshc", "jedec,ufs-2.0"
+>
+> As far as I can tell neither of the above is actually a good idea.
+>
+> For #1 it turns out that the driver currently only keys off the
+> compatible string "qcom,ufshc" so it won't actually probe.
+>
+> For #2 the driver won't probe but it's not a good idea to keep the SoC
+> name out of the compatible string.
+>
+> Let's update the compatible string to make it really explicit.  We'll
+> include a nod to the existing driver and the old binding and say that
+> we should always include the "qcom,ufshc" string in addition to the
+> SoC compatible string.
+>
+> While we're at it we'll also include another example SoC known to have
+> UFS: sdm845.
+>
+> Fixes: 47555a5c8a11 ("scsi: ufs: make the UFS variant a platform device")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
-> v2:
-> - convert Exynos code to not require <plat/pm-common.h> header
 >
-> Should by applied on top of "[PATCH] ARM: EXYNOS: remove no longer
-> needed s3c_pm_check_*() calls".
+>  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt       | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
 >
->  arch/arm/mach-exynos/suspend.c |   14 ++++----------
->  arch/arm/plat-samsung/Kconfig  |    3 ++-
->  2 files changed, 6 insertions(+), 11 deletions(-)
+> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> index 2df00524bd21..69a06a1b732e 100644
+> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> @@ -4,11 +4,14 @@ UFSHC nodes are defined to describe on-chip UFS host controllers.
+>  Each UFS controller instance should have its own node.
 >
-> Index: b/arch/arm/mach-exynos/suspend.c
-> ===================================================================
-> --- a/arch/arm/mach-exynos/suspend.c    2018-10-15 15:11:15.296187842 +0200
-> +++ b/arch/arm/mach-exynos/suspend.c    2018-10-15 15:22:54.656205454 +0200
-> @@ -30,8 +30,6 @@
->  #include <asm/smp_scu.h>
->  #include <asm/suspend.h>
->
-> -#include <plat/pm-common.h>
-> -
->  #include "common.h"
->
->  #define REG_TABLE_END (-1U)
-> @@ -490,11 +488,9 @@ static int exynos_suspend_enter(suspend_
->  {
->         int ret;
->
-> -       s3c_pm_debug_init();
-> -
-> -       S3C_PMDBG("%s: suspending the system...\n", __func__);
-> +       pr_debug("%s: suspending the system...\n", __func__);
->
-> -       S3C_PMDBG("%s: wakeup masks: %08x,%08x\n", __func__,
-> +       pr_debug("%s: wakeup masks: %08x,%08x\n", __func__,
->                         exynos_irqwake_intmask, exynos_get_eint_wake_mask());
->
->         if (exynos_irqwake_intmask == -1U
-> @@ -504,7 +500,6 @@ static int exynos_suspend_enter(suspend_
->                 return -EINVAL;
->         }
->
-> -       s3c_pm_save_uarts();
->         if (pm_data->pm_prepare)
->                 pm_data->pm_prepare();
->         flush_cache_all();
-> @@ -517,12 +512,11 @@ static int exynos_suspend_enter(suspend_
->
->         if (pm_data->pm_resume_prepare)
->                 pm_data->pm_resume_prepare();
-> -       s3c_pm_restore_uarts();
->
-> -       S3C_PMDBG("%s: wakeup stat: %08x\n", __func__,
-> +       pr_debug("%s: wakeup stat: %08x\n", __func__,
->                         pmu_raw_readl(S5P_WAKEUP_STAT));
->
-> -       S3C_PMDBG("%s: resuming the system...\n", __func__);
-> +       pr_debug("%s: resuming the system...\n", __func__);
->
->         return 0;
->  }
-> Index: b/arch/arm/plat-samsung/Kconfig
-> ===================================================================
-> --- a/arch/arm/plat-samsung/Kconfig     2018-10-15 15:16:22.804195586 +0200
-> +++ b/arch/arm/plat-samsung/Kconfig     2018-10-15 15:16:22.800195586 +0200
-> @@ -238,7 +238,8 @@ comment "Power management"
->
->  config SAMSUNG_PM_DEBUG
->         bool "Samsung PM Suspend debug"
-> -       depends on PM && DEBUG_KERNEL
-> +       depends on DEBUG_KERNEL
+>  Required properties:
+> -- compatible           : must contain "jedec,ufs-1.1" or "jedec,ufs-2.0", may
+> -                         also list one or more of the following:
+> -                                         "qcom,msm8994-ufshc"
+> -                                         "qcom,msm8996-ufshc"
+> -                                         "qcom,ufshc"
+> +- compatible           : must contain "jedec,ufs-1.1" or "jedec,ufs-2.0"
+> +
+> +                         For Qualcomm SoCs must contain, as below, an
+> +                         SoC-specific compatible along with "qcom,ufshc" and
+> +                         the appropriate jedec string:
+> +                           "qcom,msm8994-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
+> +                           "qcom,msm8996-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
+> +                           "qcom,sdm845-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
 
-I don't get this change - why moving PM to line below?
+Thanks for the patch. It looks good to me.
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-Best regards,
-Krzysztof
+P.S.: While you are at it, can you please move 'ufs-qcom.txt'
+to Documentation/devicetree/bindings/phy/qcom,ufs-phy.txt.
+The current name and file location is misleading.
 
-> +       depends on PM && (PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210)
->         depends on DEBUG_EXYNOS_UART || DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
->         help
->           Say Y here if you want verbose debugging from the PM Suspend and
+Thanks & Regards
+Vivek
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
