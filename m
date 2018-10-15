@@ -2,66 +2,66 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BDBC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C54C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFAD020652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 439D92083C
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:02:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CnvALjWi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFAD020652
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RM7jq/59"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439D92083C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbeJOVrR (ORCPT
+        id S1726698AbeJOVr7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 17:47:17 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40819 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbeJOVrR (ORCPT
+        Mon, 15 Oct 2018 17:47:59 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40004 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbeJOVr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 17:47:17 -0400
-Received: by mail-ot1-f68.google.com with SMTP id w67so18970180ota.7;
-        Mon, 15 Oct 2018 07:01:52 -0700 (PDT)
+        Mon, 15 Oct 2018 17:47:59 -0400
+Received: by mail-oi1-f193.google.com with SMTP id j68-v6so15131577oib.7;
+        Mon, 15 Oct 2018 07:02:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Bb8P+H4dJaP7OsaLaoqw7yL6kxhvV4jwhSeN0ofkutc=;
-        b=CnvALjWi4i6jWH3VHlNIXEzzmWUHqq597Hw+vk5aVHlQzi8/Z7hw6OSBPSpgFlcvBr
-         cW9WMv77KiMDYvytWvQWjYpEb1n6SJ2dvvjGoa7fw2N/4siMUTLNkbV1NX63tKvfhZOh
-         XfaesngBeZO8J1FDcIsgc7P+d84e41wSgj/Egod1wWbVQGKuIm+zelHw3C5cvdVVD7x5
-         f/eOQbC+q7vt/9WowpjiAwiX/jZ6orrRdlYcHBuAsj8so8nwJhO0aT8hE8qfmN9TEh0U
-         27phwbpJT+IiCFzAcp4Vc2gP4jQwMTrY8OL4MGqFf/FoXacoGYxHEXldLMzluGwNFZqZ
-         tMdQ==
+        bh=pfCXLvoXKxc3ObP5wqSTlT8v4ogbnl9QSOSoX8UHkjw=;
+        b=RM7jq/59RTVbI0qFo8nC3yRfbd89LP5OKweslXGtVlTE6Ms3+GlcFJE1tx7rPZBXCO
+         M/3ZF+A24D+5b9rNSaMsWeBHApDDBoBX/tSULzmtd31+hFafPRdly5Z7KFaAQZQ02Hi9
+         aX3JQbUBBYYVsMUqExD6PQ4F+yrbjZXh1jLXP5kgxKVXmlRwG1xH/YppYP1qeepwBPZm
+         dC3t4IqpRkvb4roq/aeFUPcAw0G6JOhBn/icXHnidIjhAPmdBLraBhbrLI8ac1Ul3Qsr
+         2mBj0ufww3zph5vZTtE+PZyj+BJ7W+iciwOB5gQruvF7CxDdZGijUKQdBeIGz2t/Ru2W
+         CcMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Bb8P+H4dJaP7OsaLaoqw7yL6kxhvV4jwhSeN0ofkutc=;
-        b=ZH1x5Fhf6oy94KHouY3Lu36JCw1nCNaAFxqBoRK+aoPshk0d6szq1ndOpq6pG99xwV
-         9l+JDj4tnRCyzbPoBE4PZdrXjibxwOxQ9Y18vC0qE8+WE4brLt0R135B+d3tOpwF/hF6
-         1BwKu/Y3JRa+qzvUl5pohf4X9uIrpajA9eDH6jGxrll1Vdqg1XwBVXt9ul0iGtupesOJ
-         EryoN3S/LJCF/YVD4YMbV5Flq5VDHsLUz9jcATyhxbciMTnQZOLZ2j271gP/XK21QVn6
-         K5CxAmltt9I0XlVlM8ZiumdgJLMp+k4k5WAHRnjmGmE3YLRaxmikoOstphTJBkIbeopf
-         KuzQ==
-X-Gm-Message-State: ABuFfogHNwI8BBHov3sL0cyjkILsc9ZR0AywyNzBb1k99gkXqRafgBUQ
-        kHsEO/yrtq8peMmAlTyrwi9lXLVqr00yQqa3VTE=
-X-Google-Smtp-Source: ACcGV62ZhUehMm7M1GbIlK1NLRMyT3zq7ZWayN5KmB8OWmnBEY620Ge9sELml+XmsfZds4YUNNClEhnUVRNnZd8fChM=
-X-Received: by 2002:a9d:477:: with SMTP id 110mr10772667otc.78.1539612111903;
- Mon, 15 Oct 2018 07:01:51 -0700 (PDT)
+        bh=pfCXLvoXKxc3ObP5wqSTlT8v4ogbnl9QSOSoX8UHkjw=;
+        b=iTicPdOTajrh7V3A0s0u5lvUKUWCXrUY3tcTJp53j875/4glpeT2vUk8MZFaSX2H/O
+         qteACU2p4nYCfdwEoxJE6A/n8xM5WCyPhj32X2k7PPLaA/zfj/fbnlJdC3A+bkcSL3km
+         e1DIf/KLyKCieReaDE/+5c66EiVkgQiOSCckwSGbcbLxznTwXUaQYus4ph4k3MYVQ/tW
+         wAUx4BkfDK8Hn2tC3cgm1BZEQMS/0/FQ18NKmMJkOEp6RJp1EqZurgGnZVuIhmUdokNc
+         eui3lZFbFfUxDgHiIlQWO1CxCrfQgFRnO+zJL4EyGqa8dZ9Tu2OJmZKioYdeoAhFTiGD
+         2e0g==
+X-Gm-Message-State: ABuFfogUR02i/YWFsaGH0T7kIry51jBSkmXBckLGYeCHQCRLDU6aktTu
+        H6qaZphfBPlzqkUwPV3MMOcGavLFitf6+eln0XA=
+X-Google-Smtp-Source: ACcGV602DMStHADXZkiVkMkbenKqn++b4FrOLGLo8BXo2btbAvMh+BU4Psf2x8zo+0gDxpEvork+2hkXSG12EJS/yjQ=
+X-Received: by 2002:aca:470f:: with SMTP id u15-v6mr9501387oia.259.1539612153300;
+ Mon, 15 Oct 2018 07:02:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1539609921.git.leonard.crestez@nxp.com> <cc337772e1b7ed0c0884b5035c1d0bd4adfee10f.1539609921.git.leonard.crestez@nxp.com>
-In-Reply-To: <cc337772e1b7ed0c0884b5035c1d0bd4adfee10f.1539609921.git.leonard.crestez@nxp.com>
+References: <cover.1539609921.git.leonard.crestez@nxp.com> <fda62f939da082d640a27e506e7a3defac4f123f.1539609921.git.leonard.crestez@nxp.com>
+In-Reply-To: <fda62f939da082d640a27e506e7a3defac4f123f.1539609921.git.leonard.crestez@nxp.com>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 15 Oct 2018 11:01:58 -0300
-Message-ID: <CAOMZO5BAhsyr_aDL3DSi2qNh17kNFLfrOYetDt-gKhNe3z4jGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: crypto: Mention clocks for mxs-dcp
+Date:   Mon, 15 Oct 2018 11:02:39 -0300
+Message-ID: <CAOMZO5DcBbr7THgCCGtsymYVj_fPFQ9WH7XO5bbQHZLtjOL3Ag@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] crypto: mxs-dcp - Add support for dcp clk
 To:     Leonard Crestez <leonard.crestez@nxp.com>
 Cc:     Shawn Guo <shawnguo@kernel.org>,
         Fabio Estevam <fabio.estevam@nxp.com>,
@@ -90,10 +90,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Oct 15, 2018 at 10:28 AM Leonard Crestez
 <leonard.crestez@nxp.com> wrote:
->
-> Explicit clock enabling is required on 6sll and 6ull so mention that
-> standard clock bindings are used.
->
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+> +       /* DCP clock is optional, only used on some SOCs */
+> +       sdcp->dcp_clk = devm_clk_get(dev, "dcp");
+> +       if (IS_ERR(sdcp->dcp_clk)) {
+> +               if (sdcp->dcp_clk != ERR_PTR(-ENOENT))
+> +                       return PTR_ERR(sdcp->dcp_clk);
+> +               sdcp->dcp_clk = NULL;
+> +       }
+> +
+> +       ret = clk_prepare(sdcp->dcp_clk);
+> +       if (ret)
+> +               return ret;
+> +       ret = clk_enable(sdcp->dcp_clk);
+> +       if (ret)
+> +               return ret;
+
+Couldn't you use clk_prepare_enable() instead?
