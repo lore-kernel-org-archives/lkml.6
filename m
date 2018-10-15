@@ -2,155 +2,131 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0F9C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CECD4C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06F2020881
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:57:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06F2020881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 26BD320652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:58:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26BD320652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbeJOSmb (ORCPT
+        id S1726654AbeJOSn2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 14:42:31 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:46819 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJOSmb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 14:42:31 -0400
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9FAvfBI011280;
-        Mon, 15 Oct 2018 19:57:41 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
- Mon, 15 Oct 2018 19:57:40 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9FAvaPI011264
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 15 Oct 2018 19:57:40 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms
- without eligible tasks
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-References: <000000000000dc48d40577d4a587@google.com>
- <20181010151135.25766-1-mhocko@kernel.org>
- <20181012112008.GA27955@cmpxchg.org> <20181012120858.GX5873@dhcp22.suse.cz>
- <9174f087-3f6f-f0ed-6009-509d4436a47a@i-love.sakura.ne.jp>
- <20181012124137.GA29330@cmpxchg.org>
- <0417c888-d74e-b6ae-a8f0-234cbde03d38@i-love.sakura.ne.jp>
- <bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp>
- <20181013112238.GA762@cmpxchg.org>
- <b61b2e60-d899-90c6-579a-587815cebff6@i-love.sakura.ne.jp>
- <20181015081934.GD18839@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <ea637f9a-5dd0-f927-d26d-d0b4fd8ccb6f@i-love.sakura.ne.jp>
-Date:   Mon, 15 Oct 2018 19:57:35 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 15 Oct 2018 14:43:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33208 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726525AbeJOSn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 14:43:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7F661B034;
+        Mon, 15 Oct 2018 10:58:42 +0000 (UTC)
+Subject: Re: [PATCH v2 5/6] esp_scsi: De-duplicate PIO routines
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        linux-scsi@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1539497520.git.fthain@telegraphics.com.au>
+ <d5fe773ea8c922631836dad2ef2dbb952672c7c7.1539497520.git.fthain@telegraphics.com.au>
+ <35ac9f31-7068-ab93-4629-363ee0bb4c70@suse.de>
+ <alpine.LNX.2.21.1810151717520.10@nippy.intranet>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <2b48c925-73f0-0ca0-2f3c-3c35d90010ba@suse.de>
+Date:   Mon, 15 Oct 2018 12:58:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181015081934.GD18839@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <alpine.LNX.2.21.1810151717520.10@nippy.intranet>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/15 17:19, Michal Hocko wrote:
-> As so many dozens of times before, I will point you to an incremental
-> nature of changes we really prefer in the mm land. We are also after a
-> simplicity which your proposal lacks in many aspects. You seem to ignore
-> that general approach and I have hard time to consider your NAK as a
-> relevant feedback. Going to an extreme and basing a complex solution on
-> it is not going to fly. No killable process should be a rare event which
-> requires a seriously misconfigured memcg to happen so wildly. If you can
-> trigger it with a normal user privileges then it would be a clear bug to
-> address rather than work around with printk throttling.
+On 10/15/18 8:25 AM, Finn Thain wrote:
+> On Mon, 15 Oct 2018, Hannes Reinecke wrote:
 > 
+>> On 10/14/18 8:12 AM, Finn Thain wrote:
+>>> As a temporary measure, the code to implement PIO transfers was
+>>> duplicated in zorro_esp and mac_esp. Now that it has stabilized
+>>> move the common code into the core driver but don't build it unless
+>>> needed.
+>>>
+>>> This replaces the inline assembler with more portable writesb() calls.
+>>> Optimizing the m68k writesb() implementation is a separate patch.
+>>>
+>>> Tested-by: Stan Johnson <userm57@yahoo.com>
+>>> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+>>> Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+>>> ---
+>>> Changed since v1:
+>>>    - Use shost_printk() instead of pr_err().
+>>>    - Add new symbol CONFIG_SCSI_ESP_PIO to Kconfig.
+>>> ---
+>>>    drivers/scsi/Kconfig     |   6 +
+>>>    drivers/scsi/esp_scsi.c  | 128 +++++++++++++++++++++
+>>>    drivers/scsi/esp_scsi.h  |   5 +
+>>>    drivers/scsi/mac_esp.c   | 173 +----------------------------
+>>>    drivers/scsi/zorro_esp.c | 232 ++++++---------------------------------
+>>>    5 files changed, 179 insertions(+), 365 deletions(-)
+>>>
+[ .. ]
+>>> diff --git a/drivers/scsi/esp_scsi.h b/drivers/scsi/esp_scsi.h
+>>> index d0c032803749..2590e5eda595 100644
+>>> --- a/drivers/scsi/esp_scsi.h
+>>> +++ b/drivers/scsi/esp_scsi.h
+>>> @@ -431,6 +431,7 @@ struct esp_driver_ops {
+>>>    struct esp {
+>>>    	void __iomem		*regs;
+>>>    	void __iomem		*dma_regs;
+>>> +	u8 __iomem		*fifo_reg;
+>>>      	const struct esp_driver_ops *ops;
+>>>    @@ -540,6 +541,7 @@ struct esp {
+>>>    	void			*dma;
+>>>    	int			dmarev;
+>>>    +	int			send_cmd_error;
+>>>    	int			send_cmd_residual;
+>>>    };
+>>>    
+>> These variables are only used within esp_send_pio_cmd(); consider making them
+>> conditional based on the config option.
+>>
+> 
+> In the case of send_cmd_residual, that would mean a second #ifdef added to
+> esp_data_bytes_sent() where it gets used. I'm happy to comply but I fear
+> that all these #ifdefs may harm readability...
+> 
+> There are already other variables in struct esp that may go unused, such
+> as dma_regs, that don't have #ifdefs to elide them. Are these also
+> problematic in some way?
+> 
+The unused fields in the struct are not so much an issue; in fact, it 
+rather complicated things when having individual fields in the struct
+surrounded by CONFIG_XXX, as then the order of the fields would change
+depending on the configuration. Which makes it really hard to debug ..
 
-I can trigger 200+ times / 900+ lines / 69KB+ of needless OOM messages
-with a normal user privileges. This is a lot of needless noise/delay.
-No killable process is not a rare event, even without root privileges.
+However, the function declaration really is a worry, as the actual 
+function body only exists when the config option is enabled.
+So either add a dummy function or surround the function declaration by 
+CONFIG_ESP_PIO.
+Otherwise I think Dan Carpenter and the likes are guaranteed to send you 
+a nice mail complaining about this ...
 
-[root@ccsecurity kumaneko]# time ./a.out
-Killed
+Cheers,
 
-real    0m2.396s
-user    0m0.000s
-sys     0m2.970s
-[root@ccsecurity ~]# dmesg | grep 'no killable' | wc -l
-202
-[root@ccsecurity ~]# dmesg | wc
-    942    7335   70716
-[root@ccsecurity ~]#
-
-----------------------------------------
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sched.h>
-#include <sys/mman.h>
-
-#define NUMTHREADS 256
-#define MMAPSIZE 4 * 10485760
-#define STACKSIZE 4096
-static int pipe_fd[2] = { EOF, EOF };
-static int memory_eater(void *unused)
-{
-        int fd = open("/dev/zero", O_RDONLY);
-        char *buf = mmap(NULL, MMAPSIZE, PROT_WRITE | PROT_READ,
-                         MAP_ANONYMOUS | MAP_SHARED, EOF, 0);
-        read(pipe_fd[0], buf, 1);
-        read(fd, buf, MMAPSIZE);
-        pause();
-        return 0;
-}
-int main(int argc, char *argv[])
-{
-        int i;
-        char *stack;
-        FILE *fp;
-        const unsigned long size = 1048576 * 200;
-        mkdir("/sys/fs/cgroup/memory/test1", 0755);
-        fp = fopen("/sys/fs/cgroup/memory/test1/memory.limit_in_bytes", "w");
-        fprintf(fp, "%lu\n", size);
-        fclose(fp);
-        fp = fopen("/sys/fs/cgroup/memory/test1/tasks", "w");
-        fprintf(fp, "%u\n", getpid());
-        fclose(fp);
-        if (setgid(-2) || setuid(-2))
-                return 1;
-        stack = mmap(NULL, STACKSIZE * NUMTHREADS, PROT_WRITE | PROT_READ,
-                     MAP_ANONYMOUS | MAP_SHARED, EOF, 0);
-        for (i = 0; i < NUMTHREADS; i++)
-                if (clone(memory_eater, stack + (i + 1) * STACKSIZE,
-                          CLONE_SIGHAND | CLONE_THREAD | CLONE_VM | CLONE_FS | CLONE_FILES, NULL) == -1)
-                        break;
-        sleep(1);
-        close(pipe_fd[1]);
-        pause();
-        return 0;
-}
-----------------------------------------
-
+Hannes
+-- 
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
+HRB 21284 (AG Nürnberg)
