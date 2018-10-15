@@ -2,148 +2,187 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8764C7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A10EC7112A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA0DB205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:16:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA0DB205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1BE842064A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:16:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jhoK4P32"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BE842064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbeJOTAq (ORCPT
+        id S1726649AbeJOTBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:00:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60922 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbeJOTAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:00:46 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 487992DF94;
-        Mon, 15 Oct 2018 11:15:58 +0000 (UTC)
-Received: from [10.36.117.209] (ovpn-117-209.ams2.redhat.com [10.36.117.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ECA8D78DA0;
-        Mon, 15 Oct 2018 11:15:52 +0000 (UTC)
-Subject: Re: [PATCH V4 14/15] KVM/VMX: Change hv flush logic when ept tables
- are mismatched.
-To:     lantianyu1986@gmail.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, rkrcmar@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        michael.h.kelley@microsoft.com, kys@microsoft.com,
-        vkuznets@redhat.com
-References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
- <20181013145406.4911-15-Tianyu.Lan@microsoft.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <829117f9-350e-239b-f9f5-da5b7f33a5dd@redhat.com>
-Date:   Mon, 15 Oct 2018 13:15:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 15 Oct 2018 15:01:05 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38092 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbeJOTBF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 15:01:05 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v7-v6so17121680ljg.5
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 04:16:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KapoO5oMlMVFKcdCw43NU78fcYlzzKItuvdaDSjvtEY=;
+        b=jhoK4P329uM4OgPNBuc+W4XSTNdyijGPQ7tYXpsRzwvnf5sOZn/JeUQlKJbUcBStJC
+         p/KX2drpls/0XTsbU1BTUYGyxuilNKYAC03yGhrOyAD34HGaFqh/sSi6WwkPghYr/IaU
+         kObhyOVBHUK8Wl3202Elwoa4wUyTLHttFT9S8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KapoO5oMlMVFKcdCw43NU78fcYlzzKItuvdaDSjvtEY=;
+        b=lZJFW3QzmrsUXTI5SSuEDxre7fVWMN4L/TnDRFZmCEAjF5pssW/4Zxsr+4QBNr2H7s
+         Z19Ne02YTEdQJBccAAtkXkjrYxzuj+lV4n9RkUfdnRfFKxxg+/8sd5GbqetOiExe1ctv
+         3ZQ1H3LaP0lSHjP/qKB2/ZL+sfHjSKyLjZ00u44KKyaQcHy5gvh5CQF7NB3d5bZcNHgV
+         JoKie3insVnXnjF5MNlYDXL9Ydq0cytQtLf4YdyQSYdAf/YsuB/aW0Xm8BvHXeJpw8/t
+         7Q99ByPLhUPmJqTXbFjj9Cs3zwGpQVUWUOiJNc/DihdXBJzsiiZhofrBd6lHXYxQ+Zm8
+         vRNg==
+X-Gm-Message-State: ABuFfohZc8Q+uyaYJlx7lrvl1nrEdqCetZcYfUIwsCwP7R5KkKYtCTFR
+        jj/D8pfNAMkZiQtqLlRbeHbpLzic17Q=
+X-Google-Smtp-Source: ACcGV62H04Q0o2Qc3YYrRBzFf9KX/YYxPs4WhluwQ8LWQ6bTZrj77XjSAR1Fcuy+bc+Hf0AgwIlLUQ==
+X-Received: by 2002:a2e:8606:: with SMTP id a6-v6mr9222957lji.43.1539602175125;
+        Mon, 15 Oct 2018 04:16:15 -0700 (PDT)
+Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
+        by smtp.gmail.com with ESMTPSA id l9-v6sm2277055ljb.70.2018.10.15.04.16.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 04:16:14 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     catalin.marinas@arm.com, will.deacon@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Laura Abbott <labbott@redhat.com>
+Subject: [PATCH] arm64: kprobe: make page to RO mode when allocate it
+Date:   Mon, 15 Oct 2018 13:16:00 +0200
+Message-Id: <20181015111600.5479-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181013145406.4911-15-Tianyu.Lan@microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 15 Oct 2018 11:15:58 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/10/2018 16:54, lantianyu1986@gmail.com wrote:
-> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> 
-> If ept table pointers are mismatched, flushing tlb for each vcpus via
-> hv flush interface still helps to reduce vmexits which are triggered
-> by IPI and INEPT emulation.
-> 
-> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> ---
->  arch/x86/kvm/vmx.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 6f44d3a63434..8ff13f3aed11 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -1571,7 +1571,8 @@ static void check_ept_pointer_match(struct kvm *kvm)
->  
->  static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
->  {
-> -	int ret;
-> +	struct kvm_vcpu *vcpu;
-> +	int ret = -ENOTSUPP, i;
->  
->  	spin_lock(&to_kvm_vmx(kvm)->ept_pointer_lock);
->  
-> @@ -1579,14 +1580,14 @@ static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
->  		check_ept_pointer_match(kvm);
->  
->  	if (to_kvm_vmx(kvm)->ept_pointers_match != EPT_POINTERS_MATCH) {
-> -		ret = -ENOTSUPP;
-> -		goto out;
-> +		kvm_for_each_vcpu(i, vcpu, kvm)
-> +			ret |= hyperv_flush_guest_mapping(
-> +				to_vmx(kvm_get_vcpu(kvm, i))->ept_pointer);
-> +	} else {
-> +		ret = hyperv_flush_guest_mapping(
-> +				to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
->  	}
->  
-> -	ret = hyperv_flush_guest_mapping(
-> -			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
-> -
-> -out:
->  	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
->  	return ret;
->  }
-> 
+Commit 1404d6f13e47 ("arm64: dump: Add checking for writable and exectuable pages")
+has successfully identified code that leaves a page with W+X
+permissions.
 
-I think this is an independent change that can be applied separately?
+[    3.245140] arm64/mm: Found insecure W+X mapping at address (____ptrval____)/0xffff000000d90000
+[    3.245771] WARNING: CPU: 0 PID: 1 at ../arch/arm64/mm/dump.c:232 note_page+0x410/0x420
+[    3.246141] Modules linked in:
+[    3.246653] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc5-next-20180928-00001-ge70ae259b853-dirty #62
+[    3.247008] Hardware name: linux,dummy-virt (DT)
+[    3.247347] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[    3.247623] pc : note_page+0x410/0x420
+[    3.247898] lr : note_page+0x410/0x420
+[    3.248071] sp : ffff00000804bcd0
+[    3.248254] x29: ffff00000804bcd0 x28: ffff000009274000
+[    3.248578] x27: ffff00000921a000 x26: ffff80007dfff000
+[    3.248845] x25: ffff0000093f5000 x24: ffff000009526f6a
+[    3.249109] x23: 0000000000000004 x22: ffff000000d91000
+[    3.249396] x21: ffff000000d90000 x20: 0000000000000000
+[    3.249661] x19: ffff00000804bde8 x18: 0000000000000400
+[    3.249924] x17: 0000000000000000 x16: 0000000000000000
+[    3.250271] x15: ffffffffffffffff x14: 295f5f5f5f6c6176
+[    3.250594] x13: 7274705f5f5f5f28 x12: 2073736572646461
+[    3.250941] x11: 20746120676e6970 x10: 70616d20582b5720
+[    3.251252] x9 : 6572756365736e69 x8 : 3039643030303030
+[    3.251519] x7 : 306666666678302f x6 : ffff0000095467b2
+[    3.251802] x5 : 0000000000000000 x4 : 0000000000000000
+[    3.252060] x3 : 0000000000000000 x2 : ffffffffffffffff
+[    3.252323] x1 : 4d151327adc50b00 x0 : 0000000000000000
+[    3.252664] Call trace:
+[    3.252953]  note_page+0x410/0x420
+[    3.253186]  walk_pgd+0x12c/0x238
+[    3.253417]  ptdump_check_wx+0x68/0xf8
+[    3.253637]  mark_rodata_ro+0x68/0x98
+[    3.253847]  kernel_init+0x38/0x160
+[    3.254103]  ret_from_fork+0x10/0x18
 
-Thanks,
+Reworked to that when allocate a page it sets mode RO. Inspired by
+commit 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()").
 
-Paolo
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Co-developed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ arch/arm64/kernel/probes/kprobes.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+index 9b65132e789a..b842e908b423 100644
+--- a/arch/arm64/kernel/probes/kprobes.c
++++ b/arch/arm64/kernel/probes/kprobes.c
+@@ -23,7 +23,9 @@
+ #include <linux/slab.h>
+ #include <linux/stop_machine.h>
+ #include <linux/sched/debug.h>
++#include <linux/set_memory.h>
+ #include <linux/stringify.h>
++#include <linux/vmalloc.h>
+ #include <asm/traps.h>
+ #include <asm/ptrace.h>
+ #include <asm/cacheflush.h>
+@@ -42,10 +44,21 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+ static void __kprobes
+ post_kprobe_handler(struct kprobe_ctlblk *, struct pt_regs *);
+ 
++static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
++{
++	void *addrs[1];
++	u32 insns[1];
++
++	addrs[0] = (void *)addr;
++	insns[0] = (u32)opcode;
++
++	return aarch64_insn_patch_text(addrs, insns, 1);
++}
++
+ static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
+ {
+ 	/* prepare insn slot */
+-	p->ainsn.api.insn[0] = cpu_to_le32(p->opcode);
++	patch_text(p->ainsn.api.insn, p->opcode);
+ 
+ 	flush_icache_range((uintptr_t) (p->ainsn.api.insn),
+ 			   (uintptr_t) (p->ainsn.api.insn) +
+@@ -118,15 +131,15 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
+ 	return 0;
+ }
+ 
+-static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
++void *alloc_insn_page(void)
+ {
+-	void *addrs[1];
+-	u32 insns[1];
++	void *page;
+ 
+-	addrs[0] = (void *)addr;
+-	insns[0] = (u32)opcode;
++	page = vmalloc_exec(PAGE_SIZE);
++	if (page)
++		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
+ 
+-	return aarch64_insn_patch_text(addrs, insns, 1);
++	return page;
+ }
+ 
+ /* arm kprobe: install breakpoint in text */
+-- 
+2.19.1
+
