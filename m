@@ -2,137 +2,252 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C177C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A313EC28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F34F20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:47:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64D6220842
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 04:48:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="cKMNfX7y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F34F20842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MIUx1o8C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D6220842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbeJOMbV (ORCPT
+        id S1726635AbeJOMbv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 08:31:21 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40719 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbeJOMbU (ORCPT
+        Mon, 15 Oct 2018 08:31:51 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:33379 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbeJOMbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 08:31:20 -0400
-Received: by mail-wm1-f68.google.com with SMTP id z204-v6so18185106wmc.5
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 21:47:48 -0700 (PDT)
+        Mon, 15 Oct 2018 08:31:51 -0400
+Received: by mail-yb1-f193.google.com with SMTP id u88-v6so7026172ybi.0
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 21:48:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=/9lxciINDX88fH/9J5BZq5qgIoY6YTMx4c34oaO8upc=;
-        b=cKMNfX7yr+e9wRclpgAwKH/aJxT/6RAFAX6YVLsoctbDeZHExu1hWDHQOOyVL/KSDy
-         /VoNUctaKaVOjnCEZ4m7nn2XACepqTPOeA3tK6BjUHzskbobWOFsZKBeJ0WfJzlqZ0tn
-         RLBeru3ONS4VOBPyIRGvW+29yHwN+/Jkbb/uo3LlSpoSvq5vlDbZnmD8vRu8G6+s64om
-         uam4SB3ZYEQiqbfOZCdrObJxwIJ9oAibyp2tw1ZafVZaGfQrv6kPpwio/yjTgB0dK3DD
-         uYkz2RwkNtESYNmwP3QKl8dCumybr1OP6aEMLYpKQ/GD3jxOJ9cX4wYviBsvGSUU06H9
-         cFIA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=urTikZOFC/xFyAZBVpc/2F4KrKfhCiBOGIIT9NNjgt8=;
+        b=MIUx1o8CV9bAFvr3xxRfpeHsi59P7DkV1MkqUUi/yH7H6S5vbc3LTrW458jpb9ijOw
+         DpIqa76bbE77AdyIRyBjpHPqFHDrquxGb2dMnscAH/VMJiHCdijdvn2wMp6LyNVhxZpE
+         B5OPd6NOAi1z2VgXWZ3Y64akP/E0DZXaVIv4A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=/9lxciINDX88fH/9J5BZq5qgIoY6YTMx4c34oaO8upc=;
-        b=F0/lPiH8nuOaMFTowORyTCOhRc84xv7EE1/vC9Ir6pE0OROvhHzN/tNpIEZ4AcolcP
-         hsFqoTe0nGKYxh5J+0MfeYp3c9nwpgL3Pj0iaa+1seVtr/pfLD1kQqY3oAt0csstGFK7
-         l2sbhXPcowFk2fxpxhOeKNKbQ16jE16uoqBFh1Wpe+XkK/dSTIr38HMYwOzrzbyR0Vbs
-         XVBT9Uvs48iqiOeSKQRGfKjHXz3XkLXM8bd1FPB3qwVdY7W9tq3dH8F3tGiv9gbnrVMh
-         wkiPuKnn7LiQx2CtpSReqe2aBL7pkcbeAovuB4J5cKJ1dz2SP8sJTv7gyjWbPIwmfqup
-         GUwg==
-X-Gm-Message-State: ABuFfojKAUoaBxFs9OZEpAgD8O5HeXS6io2BirP4DtUD7YaiE2LvLG5u
-        N3Wn0DulshpRvtZKX/QrnyRz2A==
-X-Google-Smtp-Source: ACcGV62DUbZKrnjzPJKvsUET+8Fy5tlAg0YSG+n1ccWdyoUqRYQbLrg/pN5x38zZQzDYY6QabnbiPw==
-X-Received: by 2002:a1c:5f54:: with SMTP id t81-v6mr12561016wmb.67.1539578867887;
-        Sun, 14 Oct 2018 21:47:47 -0700 (PDT)
-Received: from ?IPv6:2a02:8070:8895:9700:5890:9a92:fdcf:6ccd? ([2a02:8070:8895:9700:5890:9a92:fdcf:6ccd])
-        by smtp.gmail.com with ESMTPSA id 64-v6sm7746746wrr.64.2018.10.14.21.47.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 14 Oct 2018 21:47:47 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 06:47:44 +0200
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20181015000310.GX32577@ZenIV.linux.org.uk>
-References: <20181014132510.25943-1-christian@brauner.io> <20181014132510.25943-2-christian@brauner.io> <20181014171855.GW32577@ZenIV.linux.org.uk> <20181014185345.o6uokigiytqugg6v@brauner.io> <20181015000310.GX32577@ZenIV.linux.org.uk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=urTikZOFC/xFyAZBVpc/2F4KrKfhCiBOGIIT9NNjgt8=;
+        b=kvASgEJQyKq6YBLrS3UNJYHQsHVPg7Sc7Fv9jK5Hhi9sY7kNA4t2LuHbtKAbKUZffI
+         7gTCpN7KIzYpjX5S82RQ4JZ9mlz9jYVRoYn3lSYQQwk59ZpNOCrV3nRZiBM/mXwn05OL
+         vHvp7g2rNBj9IIlOIIJwnn0XU9YDoVL3sbc3z2tUe6rGVbGAUCaciiJQvfog1+FiBNV2
+         +qvZf7J16pKARU5uUuYnCIL2nu1VH/uUeuU6QkpjdzQjcHs0geks+NczkeFgYW75djmr
+         cX31QtDkToFtsuPD7qkmMLjKf/woOs5VANyhAYxYXPRHjx0rfQlJ6tnS1xGbgXTAZGng
+         vHLg==
+X-Gm-Message-State: ABuFfogVxeWmlY4bi2/9M1y0yln54eZCv6ebGZhJYy+h9zqi7MkE+JWb
+        iycdikog2YubS32rfP9VaPumnbzdmySr3NbnBvXQlg==
+X-Google-Smtp-Source: ACcGV636xAmQtxcqDeKVKSY/1HNxSD4I3SbrwuLXK/E2kT+Wlc9IlXtFS0wIT9+HozbVCzkgrSet2BPCqmnP7cNY6A0=
+X-Received: by 2002:a25:b127:: with SMTP id g39-v6mr8047966ybj.483.1539578899252;
+ Sun, 14 Oct 2018 21:48:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] sysctl: add overflow detection to proc_get_long()
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-CC:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, mcgrof@kernel.org,
-        akpm@linux-foundation.org, joe.lawrence@redhat.com,
-        longman@redhat.com
-From:   Christian Brauner <christian@brauner.io>
-Message-ID: <81C57381-F8F8-467B-84DF-8948F44B242F@brauner.io>
+References: <1539337442-3676-1-git-send-email-firoz.khan@linaro.org>
+ <1539337442-3676-4-git-send-email-firoz.khan@linaro.org> <c6280818c999449646ec216984f2df9e@sf-tec.de>
+In-Reply-To: <c6280818c999449646ec216984f2df9e@sf-tec.de>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Mon, 15 Oct 2018 10:18:07 +0530
+Message-ID: <CALxhOngwHfFzCGXknF4_CHjD=4LeM8BnrZ+s-p6ZRcJ3G8i_RA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] parisc: add system call table generation support
+To:     Rolf Eike Beer <eike-kernel@sf-tec.de>
+Cc:     linux-parisc@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        linux-parisc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On October 15, 2018 2:03:10 AM GMT+02:00, Al Viro <viro@ZenIV=2Elinux=2Eorg=
-=2Euk> wrote:
->On Sun, Oct 14, 2018 at 08:53:46PM +0200, Christian Brauner wrote:
+Hi Rolf,
+
+On Fri, 12 Oct 2018 at 17:37, Rolf Eike Beer <eike-kernel@sf-tec.de> wrote:
 >
->> > Yecchh=2E=2E=2E  First of all, the cast back to unsigned long long is
->completely
->> > pointless=2E  What's more,
->>=20
->> Sorry, seriously asking: why? This was meant to handle the case where
->> sizeof(unsigned long long) !=3D sizeof(unsigned long) and I just looked
->at
->> _kstrtoul() which does the same:
->>=20
->> int _kstrtoul(const char *s, unsigned int base, unsigned long *res)
->> {
->> 	unsigned long long tmp;
->> 	int rv;
->>=20
->> 	rv =3D kstrtoull(s, base, &tmp);
->> 	if (rv < 0)
->> 		return rv;
->> 	if (tmp !=3D (unsigned long long)(unsigned long)tmp)
->> 		return -ERANGE;
->> 	*res =3D tmp;
->> 	return 0;
->> }
->>=20
->> Sorry, if I'm being dense here=2E
+> Firoz Khan wrote:
 >
->C quiz:
->	given that type of e1 is unsigned long long and type of e2 -
->unsigned long, what conversions are going to happen in e1 =3D=3D e2?
+> > diff --git a/arch/parisc/kernel/syscalls/syscallhdr.sh
+> > b/arch/parisc/kernel/syscalls/syscallhdr.sh
+> > new file mode 100644
+> > index 0000000..607d4ca
+> > --- /dev/null
+> > +++ b/arch/parisc/kernel/syscalls/syscallhdr.sh
+> > @@ -0,0 +1,35 @@
+> > +#!/bin/sh
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +in="$1"
+> > +out="$2"
+> > +my_abis=`echo "($3)" | tr ',' '|'`
+>
+> Any reason not to use $() instead of backticks?
 
-Yeah, I know that=2E
-As I said in my reply to Alexey before: I=20
-thought you were saying the whole right=20
-side of the disjunction was not needed=2E
+I got this frame work from x86/entry/syscalls;
+https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscallhdr.sh
+I haven't modified the script but I tune this script to meet my requirements.
 
-I also do like the explicit recast and
-followed what all of the other kstr*()
-functions are doing=2E
-Alexey sent a fix for all of them just
-a few hours ago [1] which - imho - is=20
-really not necessary=2E There's no harm=20
-done by this and it's a fairly widely used
-pattern=2E
-
-That being said, happy to remove the
-second explicit cast=2E
-
-[1]: https://lkml=2Eorg/lkml/2018/10/15/22
+Sure, I'll look into this.
 
 >
->[relevant part of C standard: 6=2E5=2E9 (Equality operators),
->6=2E3=2E1=2E8 (Usual arithmetic conversions)]
+> > +prefix="$4"
+> > +offset="$5"
+> > +
+> > +fileguard=_UAPI_ASM_PARISC_`basename "$out" | sed \
+> > +    -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
+> > +    -e 's/[^A-Z0-9_]/_/g' -e 's/__/_/g'`
+> > +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
+> > +    echo "#ifndef ${fileguard}"
+> > +    echo "#define ${fileguard}"
+> > +    echo ""
+> > +
+> > +    nxt=0
+> > +    while read nr abi name entry compat ; do
+> > +     if [ -z "$offset" ]; then
+> > +         echo -e "#define __NR_${prefix}${name}\t$nr"
+>
+> This mixed indentation with both tabs and spaces is a bit messy.
 
+Is this what you suggested?
+-           echo -e "#define __NR_${prefix}${name}\t$nr"
++           echo "#define __NR_${prefix}${name} $nr"
+
+>
+> > +     else
+> > +         echo -e "#define __NR_${prefix}${name}\t($offset + $nr)"
+> > +     fi
+> > +     nxt=$nr
+> > +     let nxt=nxt+1
+>
+> Why do you use let here when you do $(()) calculations at other places?
+
+Yes, will do this.
+-        nxt=$nr
+-        let nxt=nxt+1
++        nxt=$((nxt+1))
+
+>
+> > +    done
+> > +
+> > +    echo ""
+> > +    echo "#ifdef __KERNEL__"
+> > +    echo -e "#define __NR_syscalls\t$nxt"
+> > +    echo "#endif"
+> > +    echo ""
+> > +    echo "#endif /* ${fileguard} */"
+> > +) > "$out"
+> > diff --git a/arch/parisc/kernel/syscalls/syscalltbl.sh
+> > b/arch/parisc/kernel/syscalls/syscalltbl.sh
+> > new file mode 100644
+> > index 0000000..04abde7
+> > --- /dev/null
+> > +++ b/arch/parisc/kernel/syscalls/syscalltbl.sh
+> > @@ -0,0 +1,46 @@
+> > +#!/bin/sh
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +in="$1"
+> > +out="$2"
+> > +my_abis=`echo "($3)" | tr ',' '|'`
+> > +offset="$4"
+> > +
+> > +emit() {
+> > +    nxt="$1"
+> > +    if [ -z "$offset" ]; then
+> > +     nr="$2"
+> > +    else
+> > +     nr="$2"
+> > +     nr=$((nr+offset))
+>
+> This could be one line, no? Or just set offset to 0 if it is empty and
+> avoid that if alltogether.
+
+Sure!
+
+>
+> > +    fi
+> > +    entry="$3"
+> > +
+> > +    while [ $nxt -lt $nr ]; do
+> > +     echo "__SYSCALL($nxt, sys_ni_syscall, )"
+> > +        let nxt=nxt+1
+> > +    done
+> > +    echo "__SYSCALL($nxt, $entry, )"
+> > +}
+> > +
+> > +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
+> > +    if [ -z "$offset" ]; then
+> > +     nxt=0
+> > +    else
+> > +     nxt=$offset
+> > +    fi
+>
+> Another argument for offset=0 as default.
+
+Sure.
+
+>
+> > +
+> > +    my_abi="$(cut -d'|' -f2 <<< $my_abis)"
+>
+> "<<<" is a bash extension and will not work with /bin/sh.
+
+Ohh, ok
+
+>
+> > +    while read nr abi name entry compat ; do
+> > +     if [ $my_abi = "compat" ]; then
+> > +         if [ -z "$compat" ]; then
+> > +             emit $nxt $nr $entry
+> > +         else
+> > +             emit $nxt $nr $compat
+> > +         fi
+> > +     else
+> > +         emit $nxt $nr $entry
+> > +     fi
+>
+> I would go for a local variable being set to $compat or $entry and
+> calling emit at only one place. And there should be only one if with 2
+> expressions, no need for 3 branches.
+
+Sure.
+
+>
+> > +        let nxt=nxt+1
+>
+> Inconsistent indentation.
+
+I'm using emacs editor with default settings. In the actual file, there is no
+indentation problem which I found but if I get patch using git format-patch,
+it has inconsistent indentation.
+
+No idea. I could find the same problem in other patches also.
+Let me use the vi editor to save the file and get the patch.
+
+Thanks
+Firoz
+
+>
+> > +    done
+> > +) > "$out"
+>
+> Eike
