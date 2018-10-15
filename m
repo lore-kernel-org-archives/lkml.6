@@ -2,108 +2,170 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B78BC070C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 03:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3879EC28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 03:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1916F2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 03:43:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B6642086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 03:51:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0BIArQ4c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1916F2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=mendozajonas.com header.i=@mendozajonas.com header.b="oca8wH07";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZXwvSzhc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B6642086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mendozajonas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbeJOL0x (ORCPT
+        id S1726597AbeJOLeh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 07:26:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49116 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726262AbeJOL0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 07:26:52 -0400
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 476B320895
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 03:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539575011;
-        bh=eXlhtT/0yW/EpHseOYQMo5PoWvMH6BDErrGmYMeqKKA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0BIArQ4ccTwJRjHQCGOWdIKWxT2gX3B330dbRrVyIBvNEsKK5gVmp4hKt/ppwGwe8
-         MDpqrSM/u04FkOP5Wpfx2jpEsKoI9UpKlTp93zJ8NSb5C9aMXi0km+/kmUWvTjAj5o
-         7E43YbF0+a1MBbexbsS2grNu9yg9DoHV82mmcvnc=
-Received: by mail-wm1-f51.google.com with SMTP id 193-v6so18005457wme.3
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Oct 2018 20:43:31 -0700 (PDT)
-X-Gm-Message-State: ABuFfohe0KFVyyAWD0ZQplwbiwHsyB7B/9J6AWUVf+udyo9Fs26z1Zzh
-        oOHVgom3k7B6QvRggpD5v71XFQT+Klp5Q85pv24Vvg==
-X-Google-Smtp-Source: ACcGV62hlwQGoI87QIbKTMs47KI1pZUyzT5iCb1ffhg8L8URKoFvkTcsOxnTCEEO4EDBHhuvYiutgrh5s7uTvmNv2qI=
-X-Received: by 2002:a1c:f312:: with SMTP id q18-v6mr11544011wmq.14.1539575009617;
- Sun, 14 Oct 2018 20:43:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181015003726.29103-1-nick.desaulniers@gmail.com>
-In-Reply-To: <20181015003726.29103-1-nick.desaulniers@gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 14 Oct 2018 20:43:18 -0700
-X-Gmail-Original-Message-ID: <CALCETrUZoBtxoR9u=72CSmNa-793EZySMd7TjH_BmHcrNSvLZg@mail.gmail.com>
-Message-ID: <CALCETrUZoBtxoR9u=72CSmNa-793EZySMd7TjH_BmHcrNSvLZg@mail.gmail.com>
-Subject: Re: [PATCH] x86/mm: annotate no_context with UNWIND_HINTS
-To:     nick.desaulniers@gmail.com, Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, natechancellor@gmail.com,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+        Mon, 15 Oct 2018 07:34:37 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:44625 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726262AbeJOLeg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 07:34:36 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4B4B821F37;
+        Sun, 14 Oct 2018 23:51:14 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Sun, 14 Oct 2018 23:51:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        mendozajonas.com; h=message-id:subject:from:to:cc:date
+        :in-reply-to:references:content-type:mime-version
+        :content-transfer-encoding; s=fm1; bh=g5z8t9HAs2ttRojnp65adMD8iv
+        VtWcHMldGBdkA39lY=; b=oca8wH076Oynds/WoIajhltDxZSE2uyfdpsmLv2e5M
+        JEj39MCE3Mm7dqho9bz83if7RJl/+dM6jL6r9N10QvgX4AeRzlkWttaUBbwQGa9j
+        zysh1GhzH8+4CPSz1YUYNbNyKPMyinCwm1jsr5s6JaCE60K5y4M8DfHn3RhDZsD/
+        3r9kodXGtT0d/6nmc7TQFe+zFWas/wo5EexIZywkM9dCSon45paqMqeuT51V97Hp
+        bC5W59HcSXyj6Cfel7nQxkhPeu60HF/mKQVHTnYlKpSY2/XSUVPg72z8wDC1vWi1
+        3MWi6yEeU0ShOaUkXRyWaMF/i8m3eHiV1G61Www01ypA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=g5z8t9HAs2ttRojnp65adMD8ivVtWcHMldGBdkA39
+        lY=; b=ZXwvSzhcUdYvzaC+QP+XNOiGWqrdV/6p4qPDJAfV2UTYJthfha7eePonk
+        j1fEo+mSygNAmja1qr7+syCiS6+z5xXcIOlc2Hisd324VDzTADLHZIYFLjS7SjBr
+        Ar1fOb5Xmuhc6/cVjydWYHbkEqVQS1ZYDT753l05WPg86pRgXEmgy+PcRX291HiJ
+        2oHzNuJlbngGDUal6q1zULy6pg19kKrmlzVIBMTly1wZV/KZaWC0p0Vy9zpDTMW+
+        LxjJyJ/9swxLQ34g5vNV0+cw/+hywqgLbXHT5T9o2tUTS4hp8DIeHKwgwZ+xv5Aq
+        aYnnl4R/5O3O3N/boSmAI03rwVQ6w==
+X-ME-Sender: <xms:sQ7EW8fYHJjQTVFy7l5YlUQd2i4dSBVtKxg40zQrqSNKPNGnLCL-hQ>
+X-ME-Proxy: <xmx:sQ7EWybo6WeWM6e6_14htZW2sxGpSzV97y62Iiw8GTmO2Uf6CyFIsQ>
+    <xmx:sQ7EW8y8Hqr_K-bW3qDpK2Bgql265zbKOqIQFYQ04BxLNqC4Aw9bCw>
+    <xmx:sQ7EW3TStSfRI257p20mwsq4CNHQpAgRTF2BpUkKymoDLqaKjdzl3A>
+    <xmx:sQ7EW6oQ2_vOs13JQx604lVOTumDL2-Dml4EjPCXM7dOV6rxo2d9WQ>
+    <xmx:sQ7EWxZrdLQ5y2tlw5dNxZ7gQFOg3WLwAEpj6r246ZGKdnOoAX8fOw>
+    <xmx:sg7EW4CA86YcBrtwHj2zWNlKBYVCcfnXB5R8F_jvhheMCiLdmFl-Ew>
+Received: from v4 (unknown [122.99.82.10])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 36F0F102E9;
+        Sun, 14 Oct 2018 23:51:10 -0400 (EDT)
+Message-ID: <9c82f52a7ce3fb9052600709a10783b23ef88457.camel@mendozajonas.com>
+Subject: Re: [PATCH net-next v4] net/ncsi: Add NCSI Broadcom OEM command
+From:   Samuel Mendoza-Jonas <sam@mendozajonas.com>
+To:     Vijay Khemka <vijaykhemka@fb.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org
+Date:   Mon, 15 Oct 2018 14:51:01 +1100
+In-Reply-To: <69cae9d44cbebb2cd4f468dc710d6a97210af835.camel@mendozajonas.com>
+References: <20181012182008.1665690-1-vijaykhemka@fb.com>
+         <69cae9d44cbebb2cd4f468dc710d6a97210af835.camel@mendozajonas.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 14, 2018 at 5:37 PM Nick Desaulniers
-<nick.desaulniers@gmail.com> wrote:
->
-> Fixes the objtool warning:
-> arch/x86/mm/fault.o: warning: objtool: no_context()+0x220: unreachable
-> instruction
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/204
-> Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-> ---
->  arch/x86/mm/fault.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 47bebfe6efa7..057d2178fa19 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -760,9 +760,11 @@ no_context(struct pt_regs *regs, unsigned long error_code,
->                  * and then double-fault, though, because we're likely to
->                  * break the console driver and lose most of the stack dump.
->                  */
-> -               asm volatile ("movq %[stack], %%rsp\n\t"
-> +               asm volatile (UNWIND_HINT_SAVE
-> +                             "movq %[stack], %%rsp\n\t"
->                               "call handle_stack_overflow\n\t"
-> -                             "1: jmp 1b"
-> +                             "1: jmp 1b\n\t"
-> +                             UNWIND_HINT_RESTORE
->                               : ASM_CALL_CONSTRAINT
->                               : "D" ("kernel stack overflow (page fault)"),
->                                 "S" (regs), "d" (address),
+On Mon, 2018-10-15 at 13:08 +1100, Samuel Mendoza-Jonas wrote:
+> On Fri, 2018-10-12 at 11:20 -0700, Vijay Khemka wrote:
+> > This patch adds OEM Broadcom commands and response handling. It also
+> > defines OEM Get MAC Address handler to get and configure the device.
+> > 
+> > ncsi_oem_gma_handler_bcm: This handler send NCSI broadcom command for
+> > getting mac address.
+> > ncsi_rsp_handler_oem_bcm: This handles response received for all
+> > broadcom OEM commands.
+> > ncsi_rsp_handler_oem_bcm_gma: This handles get mac address response and
+> > set it to device.
+> > 
+> > Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+> > ---
+> >  v4: updated as per comment from Sam, I was just wondering if I can remove
+> >  NCSI_OEM_CMD_GET_MAC config option and let this code be valid always and
+> >  it will configure mac address if there is get mac address handler for given 
+> >  manufacture id.
+> 
+> Hi Vijay,
+> 
+> We can look at handling this a different way, but I don't think we want
+> to unconditionally set the system's MAC address based on the OEM GMA
+> command. If the user wants to set a custom MAC address, or in the case of
+> OpenBMC for example who have their MAC address saved in flash, this will
+> override that value with whatever the Network Controller has saved. In
+> particular as it is set up it will override any MAC address every time a
+> channel is configured, such as during a failover event.
+> 
+> We *could* always send the GMA command if it is available and move the
+> decision whether to use the resulting address or not into the response
+> handler. That would simplify the ncsi_configure_channel() logic a bit.
+> Another idea may be to have a Netlink command to tell NCSI to ignore the
+> GMA result; then we could drop the config option and the system can
+> safely change the address if desired.
+> 
+> Any thoughts? I'll also ping some of the OpenBMC people and see what
+> their expectations are.
 
-NAK.  Just below this snippet is unreachable();
+After a bit of a think and an ask around, to quote a colleague:
+> I think we'd want it handled (overall) like any other net device; the MAC
+> address in the device's ROM provides a default, and is overridden by anything
+> specified by userspace 
 
-Can you reply with objtool -dr output on a problematic fault.o?  Josh,
-it *looks* like annotate_unreachable() should be doing the right
-thing, but something is clearly busted.
+Which describes what I was thinking pretty well.
+So if we can have it such that the NCSI driver only sets the MAC address
+_once_, and then after then does not update it again, we should be able to call
+the OEM GMA command without hiding it behind a config option. So the first time
+a channel was configured we store and set the MAC address given, but then on
+later configure events we don't continue to update it. What do you think?
 
-Also, shouldn't compiler-clang.h contain a reasonable definition of
-unreachable()?
+Cheers,
+Sam
 
---Andy
+> 
+> > +#if IS_ENABLED(CONFIG_NCSI_OEM_CMD_GET_MAC)
+> > +
+> > +/* NCSI OEM Command APIs */
+> > +static void ncsi_oem_gma_handler_bcm(struct ncsi_cmd_arg *nca)
+> > +{
+> > +	unsigned char data[NCSI_OEM_BCM_CMD_GMA_LEN];
+> > +	int ret = 0;
+> > +
+> > +	nca->payload = NCSI_OEM_BCM_CMD_GMA_LEN;
+> > +
+> > +	memset(data, 0, NCSI_OEM_BCM_CMD_GMA_LEN);
+> > +	*(unsigned int *)data = ntohl(NCSI_OEM_MFR_BCM_ID);
+> > +	data[5] = NCSI_OEM_BCM_CMD_GMA;
+> > +
+> > +	nca->data = data;
+> > +
+> > +	ret = ncsi_xmit_cmd(nca);
+> > +	if (ret)
+> > +		netdev_err(nca->ndp->ndev.dev,
+> > +			   "NCSI: Failed to transmit cmd 0x%x during configure\n",
+> > +			   nca->type);
+> > +}
+> 
+> As a side note while unlikely we probably want to propagate the return
+> value of ncsi_xmit_cmd() from here; otherwise we'll miss a failure and
+> the configure process will stall.
+> 
+> Regards,
+> Sam
+> 
+
+
