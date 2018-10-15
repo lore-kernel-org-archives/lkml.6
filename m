@@ -2,128 +2,187 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44898C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29421C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C08E2064A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:05:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C08E2064A
+	by mail.kernel.org (Postfix) with ESMTP id E6C442064A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:05:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6C442064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbeJOTuD (ORCPT
+        id S1726627AbeJOTud (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:50:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35992 "EHLO mx1.redhat.com"
+        Mon, 15 Oct 2018 15:50:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33992 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbeJOTuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:50:03 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1726319AbeJOTud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 15:50:33 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD6E33082143;
-        Mon, 15 Oct 2018 12:05:02 +0000 (UTC)
-Received: from [10.36.117.209] (ovpn-117-209.ams2.redhat.com [10.36.117.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 54B8867C70;
-        Mon, 15 Oct 2018 12:04:48 +0000 (UTC)
-Subject: Re: [PATCH V4 00/15] x86/KVM/Hyper-v: Add HV ept tlb range flush
- hypercall support in KVM
-To:     lantianyu1986@gmail.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, benh@kernel.crashing.org,
-        catalin.marinas@arm.com, christoffer.dall@arm.com,
-        devel@linuxdriverproject.org, haiyangz@microsoft.com,
-        hpa@zytor.com, jhogan@kernel.org, kvmarm@lists.cs.columbia.edu,
-        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, kys@microsoft.com,
-        linux-arm-kernel@lists.infradead.org, linux@armlinux.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linuxppc-dev@lists.ozlabs.org, marc.zyngier@arm.com,
-        mingo@redhat.com, mpe@ellerman.id.au, paul.burton@mips.com,
-        paulus@ozlabs.org, ralf@linux-mips.org, rkrcmar@redhat.com,
-        sthemmin@microsoft.com, tglx@linutronix.de, will.deacon@arm.com,
-        x86@kernel.org, michael.h.kelley@microsoft.com, vkuznets@redhat.com
-References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <d9414a38-ca5c-4273-30dc-1fecd0f9268e@redhat.com>
-Date:   Mon, 15 Oct 2018 14:04:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        by mx1.redhat.com (Postfix) with ESMTPS id B1A35CF21;
+        Mon, 15 Oct 2018 12:05:32 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 9E24B45A5;
+        Mon, 15 Oct 2018 12:05:22 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 15 Oct 2018 14:05:32 +0200 (CEST)
+Date:   Mon, 15 Oct 2018 14:05:21 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Enke Chen <enkechen@cisco.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>
+Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
+Message-ID: <20181015120521.GA10146@redhat.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
 MIME-Version: 1.0
-In-Reply-To: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 15 Oct 2018 12:05:03 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 15 Oct 2018 12:05:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/10/2018 16:53, lantianyu1986@gmail.com wrote:
-> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> 
-> For nested memory virtualization, Hyper-v doesn't set write-protect
-> L1 hypervisor EPT page directory and page table node to track changes 
-> while it relies on guest to tell it changes via HvFlushGuestAddressLlist
-> hypercall. HvFlushGuestAddressLlist hypercall provides a way to flush
-> EPT page table with ranges which are specified by L1 hypervisor.
-> 
-> If L1 hypervisor uses INVEPT or HvFlushGuestAddressSpace hypercall to
-> flush EPT tlb, Hyper-V will invalidate associated EPT shadow page table
-> and sync L1's EPT table when next EPT page fault is triggered.
-> HvFlushGuestAddressLlist hypercall helps to avoid such redundant EPT
-> page fault and synchronization of shadow page table.
+On 10/12, Enke Chen wrote:
+>
+> For simplicity and consistency, this patch provides an implementation
+> for signal-based fault notification prior to the coredump of a child
+> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+> be used by an application to express its interest and to specify the
+> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
+> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
 
-So I just told you that the first part is well understood but I must
-retract that; after carefully reviewing the whole series, I think one of
-us is actually very confused.
+To be honest, I can't say I like this new feature...
 
-I am not afraid to say it can be me, but my understanding is that you're
-passing L1 GPAs to the hypercall and instead the spec says it expects L2
-GPAs.  (Consider that, because KVM's shadow paging code is shared
-between nested EPT and !EPT cases, every time you see gpa/gfn in the
-code it is for L1, while nested EPT GPAs are really what the code calls
-gva.)
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -696,6 +696,10 @@ struct task_struct {
+>  	int				exit_signal;
+>  	/* The signal sent when the parent dies: */
+>  	int				pdeath_signal;
+> +
+> +	/* The signal sent prior to a child's coredump: */
+> +	int				predump_signal;
+> +
 
-What's going on?
+At least, I think predump_signal should live in signal_struct, not
+task_struct.
 
-Paolo
+(pdeath_signal too, but it is too late to change (fix) this awkward API).
+
+> +static void do_notify_parent_predump(struct task_struct *tsk)
+> +{
+> +	struct sighand_struct *sighand;
+> +	struct task_struct *parent;
+> +	struct kernel_siginfo info;
+> +	unsigned long flags;
+> +	int sig;
+> +
+> +	parent = tsk->real_parent;
+
+So, debuggere won't be notified, only real_parent...
+
+> +	sig = parent->predump_signal;
+
+probably ->predump_signal should be cleared on exec?
+
+> +	/* Check again with tasklist_lock" locked by the caller */
+> +	if (!valid_predump_signal(sig))
+> +		return;
+
+I don't understand why we need valid_predump_signal() at all.
+
+>  bool get_signal(struct ksignal *ksig)
+>  {
+>  	struct sighand_struct *sighand = current->sighand;
+> @@ -2497,6 +2535,19 @@ bool get_signal(struct ksignal *ksig)
+>  		current->flags |= PF_SIGNALED;
+>  
+>  		if (sig_kernel_coredump(signr)) {
+> +			/*
+> +			 * Notify the parent prior to the coredump if the
+> +			 * parent is interested in such a notificaiton.
+> +			 */
+> +			int p_sig = current->real_parent->predump_signal;
+> +
+> +			if (valid_predump_signal(p_sig)) {
+> +				read_lock(&tasklist_lock);
+> +				do_notify_parent_predump(current);
+> +				read_unlock(&tasklist_lock);
+> +				cond_resched();
+
+perhaps this should be called by do_coredump() after coredump_wait() kills
+all the sub-threads?
+
+> +static int prctl_set_predump_signal(struct task_struct *tsk, pid_t pid, int sig)
+> +{
+> +	struct task_struct *p;
+> +	int error;
+> +
+> +	/* 0 is valid for disabling the feature */
+> +	if (sig && !valid_predump_signal(sig))
+> +		return -EINVAL;
+> +
+> +	/* For the current task, the common case */
+> +	if (pid == 0) {
+> +		tsk->predump_signal = sig;
+> +		return 0;
+> +	}
+> +
+> +	error = -ESRCH;
+> +	rcu_read_lock();
+> +	p = find_task_by_vpid(pid);
+> +	if (p) {
+> +		if (!set_predump_signal_perm(p))
+> +			error = -EPERM;
+> +		else {
+> +			error = 0;
+> +			p->predump_signal = sig;
+> +		}
+> +	}
+> +	rcu_read_unlock();
+> +	return error;
+> +}
+
+Why? I mean, why do we really want to support the pid != 0 case?
+
+Oleg.
+
