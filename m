@@ -2,110 +2,76 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBB4C7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD55C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FF5D20853
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:40:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FF5D20853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id DD24120853
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:42:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD24120853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbeJOPY4 (ORCPT
+        id S1726585AbeJOP0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 11:24:56 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:24934 "EHLO pegase1.c-s.fr"
+        Mon, 15 Oct 2018 11:26:45 -0400
+Received: from mga17.intel.com ([192.55.52.151]:6120 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbeJOPY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 11:24:56 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42YVjQ0ZCTz9ttC9;
-        Mon, 15 Oct 2018 09:40:42 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id CIRxqfhijdlL; Mon, 15 Oct 2018 09:40:42 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42YVjQ04btz9ttC7;
-        Mon, 15 Oct 2018 09:40:42 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2B8898B788;
-        Mon, 15 Oct 2018 09:40:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id X8TwBg0NVB6w; Mon, 15 Oct 2018 09:40:51 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id EF36E8B786;
-        Mon, 15 Oct 2018 09:40:50 +0200 (CEST)
-Subject: Re: [PATCH] powerpc/traps: restore recoverability of machine_check
- interrupts
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <f79824d5da910441ede885fa32a25083c4cc9359.1539422122.git.christophe.leroy@c-s.fr>
-Message-ID: <ab520cc1-11b7-ddc6-2393-8f1315db4db3@c-s.fr>
-Date:   Mon, 15 Oct 2018 09:40:50 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726098AbeJOP0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 11:26:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 00:42:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,383,1534834800"; 
+   d="scan'208";a="82640236"
+Received: from um.fi.intel.com (HELO localhost) ([10.237.72.212])
+  by orsmga006.jf.intel.com with ESMTP; 15 Oct 2018 00:42:38 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Zhi Jin <zhi.jin@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Zhi Jin <zhi.jin@intel.com>
+Subject: Re: [PATCH] stm class: increase pos if no free channels found
+In-Reply-To: <1536218530-18601-1-git-send-email-zhi.jin@intel.com>
+References: <1536218530-18601-1-git-send-email-zhi.jin@intel.com>
+Date:   Mon, 15 Oct 2018 10:42:37 +0300
+Message-ID: <87h8hn64gi.fsf@ashishki-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <f79824d5da910441ede885fa32a25083c4cc9359.1539422122.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc: stable@vger.kernel.org <stable@vger.kernel.org>
+Zhi Jin <zhi.jin@intel.com> writes:
 
-Le 13/10/2018 à 11:16, Christophe Leroy a écrit :
-> commit b96672dd840f ("powerpc: Machine check interrupt is a non-
-> maskable interrupt") added a call to nmi_enter() at the beginning of
-> machine check restart exception handler. Due to that, in_interrupt()
-> always returns true regardless of the state before entering the
-> exception, and die() panics even when the system was not already in
-> interrupt.
-> 
-> This patch calls nmi_exit() before calling die() in order to restore
-> the interrupt state we had before calling nmi_enter()
-> 
-> Fixes: b96672dd840f ("powerpc: Machine check interrupt is a non-maskable interrupt")
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->   arch/powerpc/kernel/traps.c | 9 +++++++--
->   1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-> index fd58749b4d6b..4f880c2a6e4c 100644
-> --- a/arch/powerpc/kernel/traps.c
-> +++ b/arch/powerpc/kernel/traps.c
-> @@ -765,12 +765,17 @@ void machine_check_exception(struct pt_regs *regs)
->   	if (check_io_access(regs))
->   		goto bail;
->   
-> -	die("Machine check", regs, SIGBUS);
-> -
->   	/* Must die if the interrupt is not recoverable */
->   	if (!(regs->msr & MSR_RI))
->   		nmi_panic(regs, "Unrecoverable Machine check");
->   
-> +	if (!nested)
-> +		nmi_exit();
-> +
-> +	die("Machine check", regs, SIGBUS);
-> +
-> +	return;
-> +
->   bail:
->   	if (!nested)
->   		nmi_exit();
-> 
+> Considering this case in find_free_channels():
+>
+> bitmap:
+>        +------------------+-+-+-+-+-+-+-+-+-+-+
+>        |     ......       |0|0|0|0|0|0|0|1|0|0|
+>        +------------------+-+-+-+-+-+-+-+-+-+-+
+>
+> 1. Channel #2 has been occupied, so bit #2 is 1, and the others
+>    are all 0.
+> 2. Another thread tries to find 4 free channels from #0.
+> 3. In the 1st loop, pos starts from 0, and then it checks if the
+>    following 4 bits are all 0, but fails, as bit#2 is 1.
+> 4. In the 2st loop, pos is not updated, and still starts from 0,
+>    so nothing changes against loop #1.
+> 5. Dead loop ...
+>
+> This patch is to update the pos in step #3 to avoid the issue.
+
+The description is slightly confusing, but the patch looks correct and
+the original code is clearly wrong. Thank you for finding this!
+
+Basically, if you request 1 channel 3 times, release the first two and
+then request 4 channels, you'll be stuck, right?
+
+Thanks,
+--
+Alex
