@@ -2,81 +2,78 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A799BC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 567FCC71133
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D6ED208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:31:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3nhdXIy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D6ED208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2136B20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:31:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2136B20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbeJPCRY (ORCPT
+        id S1726920AbeJPCR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:17:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37608 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbeJPCRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:17:24 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4E8720881;
-        Mon, 15 Oct 2018 18:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539628260;
-        bh=g/vQCRJJcuZHh2bDJjhSKORadK3fCszgnRDhB39/a2c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G3nhdXIyaxedgU5PBtH4BFC33E7mwBoGNxHaqtE3lHUv0RGaJhXyy5J57uSRBaqtw
-         DKEt88yqLnQMyC2cPgxL8KzuZISOKefXxKc4nVYv/CPvQCBD/4Kyd1Osn9puejOQAh
-         8u7JNSonb0pIQZlxoDt/gGR4Ugp2voEoSSQVdxoc=
-Date:   Mon, 15 Oct 2018 20:30:57 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <groeck@google.com>
-Cc:     Ross Zwisler <zwisler@google.com>,
-        Duncan Laurie <dlaurie@chromium.org>, furquan@chromium.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] gsmi: Google specific firmware patches
-Message-ID: <20181015183057.GA11514@kroah.com>
-References: <20181012160448.79018-1-zwisler@google.com>
- <CABXOdTfUKWejqTxvtcH_O6SKaWDRGcu5qCVafTstm-r8y7ke1Q@mail.gmail.com>
+        Mon, 15 Oct 2018 22:17:28 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:54501 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbeJPCR1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 22:17:27 -0400
+Received: by mail-io1-f72.google.com with SMTP id l21-v6so5419848ioc.21
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 11:31:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=s/S7HWnua8pUWFb1yVLV6oa5zlYJ6LpVOP3Ble4F9Js=;
+        b=XGgk7zGm4U36Oe7w0UsLqtU2+r27czdza8qkVrFJoI5qAlJr0GqeSMXjcpDa5Z0kMD
+         GlBm0K3uDLzdiMw0rQAYAs+yMFZ2498gxvJerjzIviW5mNsieVWYBEjzt1JZXNRtFcdP
+         n4pti2+9XckAM3hAcpipRR7RoWGrbNYzYIPJGljo73wvlJiEnjyz/dOunrcJ2ToKG/WP
+         6RcF4V1XykF686b2EzmTG/ffOLOD715eTWBEZW7WanFH6J+ZEV6N/3XCpUEUdQttAUc4
+         vzx4rMJ6ERGR0gbUrt2oEyyMZaO6A4Zgjo2AHU0cyJLY0SDTgavOHA6BjkOVhfP6hFVk
+         8irA==
+X-Gm-Message-State: ABuFfoicZSukQiJ10U5NMP71Wa2JGirXLsMi3kU6kKLbbG4qwETFYxon
+        pEkKs4dP6wl1krzs/Q0ku0DDp5Q4JOlA262CaANsYt5FWniL
+X-Google-Smtp-Source: ACcGV60BcG5cBVDoPvgfwzdgtQWn+Sr0AiVHiWo7KU6WupxF0vYU2xwhtECaBMtzzD2boHd0mEAPqfRpqlWGmG+4NC8lbzoKryXr
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABXOdTfUKWejqTxvtcH_O6SKaWDRGcu5qCVafTstm-r8y7ke1Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a24:17c5:: with SMTP id 188-v6mr14450744ith.19.1539628262509;
+ Mon, 15 Oct 2018 11:31:02 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 11:31:02 -0700
+In-Reply-To: <CAAeHK+wJVFv-8AHFG3V3tOdkzw9D63Ztot_tb=oR-QVNXWPoXw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ac561a057848a358@google.com>
+Subject: Re: WARNING in usb_submit_urb (3)
+From:   syzbot <syzbot+24a30223a4b609bb802e@syzkaller.appspotmail.com>
+To:     Thinh.Nguyen@synopsys.com, andreyknvl@google.com,
+        felipe.balbi@linux.intel.com, garsilva@embeddedor.com,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, oneukum@suse.com,
+        stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 03:44:45PM -0700, Guenter Roeck wrote:
-> On Fri, Oct 12, 2018 at 9:04 AM Ross Zwisler <zwisler@google.com> wrote:
-> 
-> > This series contains some Google specific firmware patches that we've
-> > been carrying out of tree.  I've updated the changelog for each so that
-> > it is suitable for upstream, and I've retested them to make sure I know
-> > what the patches are doing.
-> >
-> > Duncan Laurie (3):
-> >   gsmi: Fix bug in append_to_eventlog sysfs handler
-> >   gsmi: Add coreboot to list of matching BIOS vendors
-> >   gsmi: Remove autoselected dependency on EFI and EFI_VARS
-> >
-> > Furquan Shaikh (1):
-> >   gsmi: Add GSMI commands to log S0ix info
-> >
-> >
-> For the series: Reviewed-by: Guenter Roeck <groeck@chromium.org>
-> 
-> Greg, please let me know if I should send this for every patch.
+Hello,
 
-Nope, this works.
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
-greg k-h
+Reported-and-tested-by:  
+syzbot+24a30223a4b609bb802e@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         f0a7d1883d9f afs: Fix clearance of reply
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b3f55cb3dfcc6c33
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=164eab91400000
+
+Note: testing is done by a robot and is best-effort only.
