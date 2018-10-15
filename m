@@ -2,134 +2,276 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FE2C7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0933C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3B0C20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:56:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92B4C20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:57:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="gaahaj+o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3B0C20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E8DJjl63";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d9vB84Pk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92B4C20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbeJOSk7 (ORCPT
+        id S1726649AbeJOSmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 14:40:59 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35948 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJOSk6 (ORCPT
+        Mon, 15 Oct 2018 14:42:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59584 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeJOSmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 14:40:58 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a8-v6so19076231wmf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 03:56:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9E3KlbbmhrZCJqeW3BNIwEFLtNJAFvWE+qZnx/vsam4=;
-        b=gaahaj+ovbTRns+vDRcJ4hiMIMRbjs0kwHnQ65PLi8Hw0S2/EWtNpXXWX1iDiL5ZrH
-         DG3+k1o7xPpsU5fwvVFI9tTGt7WwiUOKiDCyZswpJB01/izlc67j3nv2FZ68hFsHcRgc
-         88Q9vISYiFsMMEfVnIRrMeZI2k9oo+sG3cB+ZTdJaOofv6msU/sIVCMvNbMNV/11IC1J
-         k5ZVER1jsi4NPDR6migkWy7l8o7gyCiMzTeQ71hZ37vjCvCy5LOXl7arcy/Jrg8Q3pmU
-         2QrpFt9EOpkUhIhHMCuv4uKUz7VGl1U1TRID0E1ROLf62mQ85v57EM9rpYrdpJs5xoK+
-         r00g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9E3KlbbmhrZCJqeW3BNIwEFLtNJAFvWE+qZnx/vsam4=;
-        b=Y3PXfUannMKA3qela6gIsTsJDsiDu9WfbU8D+Xw99aQovaoay9eMU/oCIBSRxmMflV
-         ItlXHmo7HPzoKZRB3MncC385U1pfoBH2zebIsgY9IAkziIsMbSjlipDvOrPPN1VAuOuR
-         PAXnRdk3N3GifEYHbiCFISm4hbCO6ARSjtpzkX7HHZnx7HspetdfKhUPYfYNny3W+m7T
-         EdltDFcKHRIDaM9hVzLpi/UHhBZngKdVkeTpyVG6o0Sjb7KdRfCQoN+9iLnu8einatue
-         esk2c+ofuZQVpvJkA8LpNPkwoVojg7u1gTGZvZLNsY7awFCbZu/o8l7HS1GGjr0YRWip
-         SC0g==
-X-Gm-Message-State: ABuFfohiv5UvKMzDof3/wBU00UIJMr6CdNYyfiC1Bflh+Z9obYrXZqoJ
-        Xc9w5hVGIqj4LIfIM88ORuGZAoJCBuVJIg==
-X-Google-Smtp-Source: ACcGV60ibD0rR8j23OaLk/tP2SoHR2oa2yK2r7nutUbRbPup3kQ73uqVe2hsbgoV79xBWozs2gJwsg==
-X-Received: by 2002:a1c:e15:: with SMTP id 21-v6mr13251531wmo.35.1539600973200;
-        Mon, 15 Oct 2018 03:56:13 -0700 (PDT)
-Received: from localhost.localdomain (u-086-c100.eap.uni-tuebingen.de. [134.2.86.100])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm14236484wrp.3.2018.10.15.03.56.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 03:56:12 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     keescook@chromium.org, linux-kernel@vger.kernel.org
-Cc:     ebiederm@xmission.com, mcgrof@kernel.org,
-        akpm@linux-foundation.org, joe.lawrence@redhat.com,
-        longman@redhat.com, linux@dominikbrodowski.net,
-        viro@zeniv.linux.org.uk, Christian Brauner <christian@brauner.io>
-Subject: [PATCH v1 2/2] sysctl: handle overflow for file-max
-Date:   Mon, 15 Oct 2018 12:55:44 +0200
-Message-Id: <20181015105544.4395-3-christian@brauner.io>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181015105544.4395-1-christian@brauner.io>
-References: <20181015105544.4395-1-christian@brauner.io>
+        Mon, 15 Oct 2018 14:42:02 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7A109612F6; Mon, 15 Oct 2018 10:57:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539601037;
+        bh=TWfSBoQ0mxq8cg7ulnTwJYxl89tQRs/UpCsUSkomiRg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=E8DJjl63iNyq6ow2wzeb3RUiIeqGIXGIg+MMCeTdC1SllacSf2WHHaoMnYq9eai4P
+         3MPE9+5r70SobsHn+on1B7rciO+fkgZ1xF31tJtD7Z2X2LAB38BhZsqf8kD3EBsiho
+         N0FnlhRFMKWcVtJ1gwLwjkUqupfaEPWYjgzYn3eE=
+Received: from [10.206.24.177] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2CEAC604BE;
+        Mon, 15 Oct 2018 10:57:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539601036;
+        bh=TWfSBoQ0mxq8cg7ulnTwJYxl89tQRs/UpCsUSkomiRg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=d9vB84PkKqeZ1utzqjv6hih0i5bse7FokizGKAiRJN1Mg6/D83RsoGL1cf0+bMJT/
+         3wnbBTnZVeYfsX9rou6027gItYZv/YtJg+3K09r2Yx4mcmm5hbAsERQV4bfMB8STsT
+         48n4IxZ07owcFIKtDGLtZ5kKHph6hLOWOReUCNdU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2CEAC604BE
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+Subject: Re: [PATCH V14 1/2] scsi: ufs: set the device reference clock setting
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>, riteshh@codeaurora.org,
+        stummala@codeaurora.org, Adrian Hunter <adrian.hunter@intel.com>,
+        jlbec@evilplan.org, linux-scsi@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1537770516-28410-1-git-send-email-sayalil@codeaurora.org>
+ <1537770516-28410-2-git-send-email-sayalil@codeaurora.org>
+ <CAD=FV=UrHF0Bp8DMKz_FjeGT_px6MJpkheF7RcmDxNC3=RPG9w@mail.gmail.com>
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+Message-ID: <5c08dcb3-f5e2-47f3-a75d-46802643250a@codeaurora.org>
+Date:   Mon, 15 Oct 2018 16:27:08 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAD=FV=UrHF0Bp8DMKz_FjeGT_px6MJpkheF7RcmDxNC3=RPG9w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, when writing
+Hi
 
-echo 18446744073709551616 > /proc/sys/fs/file-max
-
-/proc/sys/fs/file-max will overflow and be set to 0. That quickly
-crashes the system.
-This commit explicitly caps the value for file-max to ULONG_MAX.
-
-Note, this isn't technically necessary since proc_get_long() will already
-return ULONG_MAX. However, two reason why we still should do this:
-1. it makes it explicit what the upper bound of file-max is instead of
-   making readers of the code infer it from proc_get_long() themselves
-2. other tunebles than file-max may want to set a lower max value than
-   ULONG_MAX and we need to enable __do_proc_doulongvec_minmax() to handle
-   such cases too
-
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Christian Brauner <christian@brauner.io>
----
-v0->v1:
-- if max value is < than ULONG_MAX use max as upper bound
-- (Dominik) remove double "the" from commit message
----
- kernel/sysctl.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 97551eb42946..226d4eaf4b0e 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
- static int __maybe_unused two = 2;
- static int __maybe_unused four = 4;
- static unsigned long one_ul = 1;
-+static unsigned long ulong_max = ULONG_MAX;
- static int one_hundred = 100;
- static int one_thousand = 1000;
- #ifdef CONFIG_PRINTK
-@@ -1696,6 +1697,7 @@ static struct ctl_table fs_table[] = {
- 		.maxlen		= sizeof(files_stat.max_files),
- 		.mode		= 0644,
- 		.proc_handler	= proc_doulongvec_minmax,
-+		.extra2		= &ulong_max,
- 	},
- 	{
- 		.procname	= "nr_open",
-@@ -2795,6 +2797,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
- 				break;
- 			if (neg)
- 				continue;
-+			if (max && val > *max)
-+				val = *max;
- 			val = convmul * val / convdiv;
- 			if ((min && val < *min) || (max && val > *max))
- 				continue;
--- 
-2.17.1
-
+On 10/13/2018 4:20 AM, Doug Anderson wrote:
+> Hi,
+>
+> On Sun, Sep 23, 2018 at 11:29 PM Sayali Lokhande <sayalil@codeaurora.org> wrote:
+>> +static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
+>> +       {19200000, REF_CLK_FREQ_19_2_MHZ},
+>> +       {26000000, REF_CLK_FREQ_26_MHZ},
+>> +       {38400000, REF_CLK_FREQ_38_4_MHZ},
+>> +       {52000000, REF_CLK_FREQ_52_MHZ},
+>> +       {0, REF_CLK_FREQ_INVAL},
+>> +};
+>> +
+>> +static inline enum ufs_ref_clk_freq
+> Please don't specify inline.  Let the compiler decide whether inline is better.
+Done
+>
+>> +ufs_get_bref_clk_from_hz(u32 freq)
+>> +{
+>> +       int i = 0;
+>> +
+>> +       while (ufs_ref_clk_freqs[i].freq_hz != freq) {
+>> +               if (!ufs_ref_clk_freqs[i].freq_hz)
+>> +                       return REF_CLK_FREQ_INVAL;
+>> +               i++;
+>> +       }
+>> +
+>> +       return ufs_ref_clk_freqs[i].val;
+> I think you'll have less confusion if you write the above as this (untested):
+>
+> for (i = 0; ufs_ref_clk_freqs[i].freq_hz; i++) {
+>    if (ufs_ref_clk_freqs[i].freq_hz == freq)
+>      return ufs_ref_clk_freqs[i].val;
+> }
+>
+> return REF_CLK_FREQ_INVAL;
+>
+> Now it looks like a normal iteration till a normal stop condition
+> (NULL term array).
+>
+Will update.
+>> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
+> Shouldn't this return an error code so that if there's a problem it
+> can return back to the caller?  Right now you print error messages but
+> ufshcd_pltfrm_init() will plow merrily along after.
+We need not return error if no specific device ref clk was found via DT 
+parsing. Device reference clock will be already set(bRefClkFreq MDV : 
+26MHz).
+So no need to fail if we find invalid/no ref clk passed.
+>
+>> +{
+>> +       struct device *dev = hba->dev;
+>> +       struct device_node *np = dev->of_node;
+>> +       struct clk *refclk = NULL;
+>> +       u32 freq = 0;
+> "freq" should be "unsigned long" to match clk_get_rate(), not u32.
+> Similarly all the places you pass it to and store it in should be
+> "unsigned long" too.  Save "u32" for values which are being programmed
+> into 32-bit hardware registers.
+>
+Will update.
+>> +       if (!np)
+>> +               return;
+> You don't need to check for (!np).  If you do clk_get() and there's no
+> np you'll get get an error back.  Handle it there.
+>
+Will update.
+>> +
+>> +       refclk = of_clk_get_by_name(np, "ref_clk");
+>> +       if (!refclk)
+>> +               return;
+> I can't quickly tell.  Are you intending "ref_clk" to be optional or
+> required?  You check against "NULL" and return with no error message,
+> so I'm kinda assuming it's optional.  ...but:
+Explicit setting of device reference clock is not mandatory. It will be 
+already set (MDV: 26Hz).
+We first read the current ref clk setting in device and if host is 
+passing different (but valid) ref clk freq then we go ahead and update 
+it, otherwise we just return.
+> 1. of_clk_get_by_name() doesn't return NULL when the clock wasn't
+> specified.  It returns "-ENOENT".  That means that (right now) anyone
+> who doesn't specify a "ref_clk" will get a crash when you try calling
+> clk_get_rate() on the error-code-clk.
+>
+> 2. It seems like it would be good to add a comment that
+> "dev_ref_clk_freq" was already initted to "REF_CLK_FREQ_INVAL in
+> ufshcd_alloc_host() to make it obvious how people are working that
+> didn't specify "ref_clk".
+Will add comment to clarify that dev_ref_clk_freq is default set as 
+REF_CLK_FREQ_INVA.
+>
+> One note is that regardless of whether "ref_clk" is optional or
+> required, something about "ref_clk" should be mentioned in
+> "Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt" so people
+> know that's an important clock name.
+>
+Will check and add required documentation.
+> Yet another note here is that I'm confused why you'd want to use
+> of_clk_get_by_name().  Why not use clk_get()?  You've already got the
+> "dev" node and clk_get() should be preferred since not everyone uses
+> device tree.
+Will update.
+>
+> OK, one last note is that clk_get() could return -EPROBE_DEFER.  In
+> such a case you need to basically cancel your whole probe and
+> propagate the -EPROBE_DEFER.  Make sure you think about that when
+> you're coding things up.
+>
+>
+> OK, I lied about the previous one being the last note.  Why don't you
+> just add a bit of code in the ufshcd_init_clocks() loop.  If you
+> notice that the clock name is "ref_clk" (similar to how
+> __ufshcd_setup_clocks() checks) then you can grab the frequency.  Then
+> you can avoid dealing with all my comments above about
+> of_clk_get_by_name() and errors and -EPROBE_DEFER...
+>
+Will consider above suggestion and update.
+May be I can just call ufshcd_parse_dev_ref_clk_freq (hba, ref_clk) from 
+ufshcd_init_clocks() loop and pass ref_clk to it.
+>> +       freq = clk_get_rate(refclk);
+>> +
+>> +       hba->dev_ref_clk_freq =
+>> +               ufs_get_bref_clk_from_hz(freq);
+>> +
+>> +       if (hba->dev_ref_clk_freq == REF_CLK_FREQ_INVAL)
+>> +               dev_err(hba->dev,
+>> +               "%s: invalid ref_clk setting = %d\n",
+>> +               __func__, freq);
+> nit: including "__func__" in dev_xxx() calls is discouraged.  The
+> "dev_xxx" calls already print the device name and the string within a
+> given device driver should be unique enough so __func__ just adds crap
+> to the logs.  If you really feel that __func__ adds something for you,
+> try posting up a patch to make all "dev_err" functions include
+> __func__.  ...but I think you'd probably be rejected.
+will remove __func__ .
+>
+> Also (more important): You're missing a clk_put().  Thus you're
+> leaking a reference to "ref_clk".
+>
+>
+>> +}
+>> +
+>> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
+>> +{
+>> +       int err, ref_clk = -1;
+>> +       u32 freq = hba->dev_ref_clk_freq;
+> Ugh, this is ugly.  hba->dev_ref_clk_freq could be -1 but you're
+> jamming it into a u32 here.  That doesn't seem so ideal.  Are you sure
+> -1 was the best choice for REF_CLK_FREQ_INVAL?
+ufshcd_set_dev_ref_clk() is only called if  (dev_ref_clk_freq != 
+REF_CLK_FREQ_INVAL).
+So we only set freq if we get a valid parsed ref clk freq (0/1/2/3h).
+>
+>> +
+>> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+>> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
+> It's not so wonderful to be passing a pointer to an "int" to a
+> function expecting a pointer to a "u32".  Change "ref_clk" to "u32".
+done
+>
+>> +
+>> +       if (err) {
+>> +               dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
+>> +                        __func__, err);
+> Again, no __func__.
+>
+Will remove __func__
+>> +               goto out;
+>> +       }
+>> +
+>> +       if (ref_clk == hba->dev_ref_clk_freq)
+> nit: you already cached "hba->dev_ref_clk_freq in "freq".  Use it.
+Will update
+>
+>> +               goto out; /* nothing to update */
+>> +
+>> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+>> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &freq);
+>> +
+>> +       if (err) {
+>> +               dev_err(hba->dev, "%s: bRefClkFreq setting to %u Hz failed\n",
+>> +               __func__, ufs_ref_clk_freqs[freq].freq_hz);
+> Again, no __func__.
+>
+Will remove __func__
+>> +               goto out;
+>> +       }
+>> +
+>> +       dev_dbg(hba->dev, "%s: bRefClkFreq setting to %u Hz succeeded\n",
+>> +               __func__, ufs_ref_clk_freqs[freq].freq_hz);
+> Again, no __func__.
+Will remove __func__
