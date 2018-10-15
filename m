@@ -2,202 +2,165 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 689A1C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 13:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4792C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 13:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E77B520644
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 13:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B32120652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 13:52:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mwDARhWW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E77B520644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AeYr1QRf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B32120652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeJOVgU (ORCPT
+        id S1726636AbeJOVhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 17:36:20 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57395 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbeJOVgU (ORCPT
+        Mon, 15 Oct 2018 17:37:43 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33133 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbeJOVhn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 17:36:20 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181015135056euoutp0184f0ae1723bb7867f4a00f28af3af0e9~dzHZ05Ow51779517795euoutp01Y
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 13:50:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181015135056euoutp0184f0ae1723bb7867f4a00f28af3af0e9~dzHZ05Ow51779517795euoutp01Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539611456;
-        bh=Gm0C69trxVMoJDON1Jonkjlvfh9C+/oiS8Qkx4Fi+B8=;
-        h=To:Cc:From:Subject:Date:References:From;
-        b=mwDARhWWW1LMCDDRNP4mFHRHsOxS7FlmYtpo9GWh8Uum6d5a5kkryM3s1cymnnnLW
-         1RTnbPyZ+B5rNjwsPJ5TYdSTdhQ5Lagrd2ed3fVj+Q3D4KV+u3dQhlfVsoJBy3pOAv
-         1CCmlYeWQWXbQIiWCTm21BBUu6vFVhpdvG3BrI9o=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181015135056eucas1p23b4dc7c6425e1abd16f52a303d03bd2b~dzHZOOlQC0056600566eucas1p2V;
-        Mon, 15 Oct 2018 13:50:56 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id C5.6C.04294.F3B94CB5; Mon, 15
-        Oct 2018 14:50:55 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677~dzHYfFW2j0676906769eucas1p2c;
-        Mon, 15 Oct 2018 13:50:55 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181015135055eusmtrp27dd002fe3df5e2f4bcc03a6f388b04c5~dzHYQpVDJ0360603606eusmtrp2s;
-        Mon, 15 Oct 2018 13:50:55 +0000 (GMT)
-X-AuditID: cbfec7f4-835ff700000010c6-4f-5bc49b3f5cca
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 59.1C.04128.E3B94CB5; Mon, 15
-        Oct 2018 14:50:55 +0100 (BST)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181015135054eusmtip1da44b949469a0afdf338c5a8aa8c1f1d~dzHX5o-lG0081300813eusmtip1l;
-        Mon, 15 Oct 2018 13:50:54 +0000 (GMT)
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
- non-Exynos platforms
-Date:   Mon, 15 Oct 2018 15:50:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Mon, 15 Oct 2018 17:37:43 -0400
+Received: by mail-lf1-f68.google.com with SMTP id o21-v6so14152548lfe.0;
+        Mon, 15 Oct 2018 06:52:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=q5KcVXr/HgUC8Tyi2cxaNInVgZyiRHKga0JdOgpNIOw=;
+        b=AeYr1QRfXbkYBt1KJ4sssXgzPlqXL61b9mryORRa5jSaqcBrTk+lRZKVeUA6q4+FgU
+         78ijvhlLUAtiGIQ0fMkXGpMM1irVf47ueSe9AgmVYetWFD1Od2NXrFVhgvug9zAQO7L4
+         hsh8Q5cLnh0C/MKHpFZxgdrHaKXMfVbKLfEerWK+y++eci9Q00emh9cjZFuyprRMMGUN
+         1difZiXBFsNKeBhVKcsPewd6QJWRPA61u1pklUVw8goN6NjDikRwptrn+1cqWy04Qn8m
+         1yAJU3XkmStQ7nfTHJTB1lD6I1v0J0j/3sLuZ1VAzZFwy8iXK5/ad6dLFUBxsmj1uJoJ
+         Lx8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=q5KcVXr/HgUC8Tyi2cxaNInVgZyiRHKga0JdOgpNIOw=;
+        b=Pr5HeS/vTg2oUE40eFrUFzu2sOVWWI2jFl7dai4UqmSCkOKHUYDYIVozqxF7ElnYpX
+         nZBseQw277tEuK9c+HdL6P7FVoq4yh2DW+GLQcoBFVfxa/vPS3bRwdSRpemEL2rIZdz4
+         PCVLvIqALmGKePoJhAvV13Nsg2r/wZ+D4ZqoK93ILZZHbP4HfuT0SMwtuXLHzifxmrs8
+         XwNlOc+ntg1pOp0eYMZv8nLIYyjrGY3r+oHC/S7yMXvf08YE7PdWUAqSWwERMMsLoAnH
+         furISPk5xTB+yVpmWXkew2ljXuiN+A8IFmdg8AseetfNkss9dURqh9rqVbogX2TXOB/6
+         agrg==
+X-Gm-Message-State: ABuFfojpvjpy5305963Dcki0tKXwjfM1FFwRmiLChODQF4U9xeq4nfJL
+        aESwL4XxmQGPHuzauCrlos8skGGB
+X-Google-Smtp-Source: ACcGV63AKkVtPvh6ursIZ9l4jPCCw9WU1NNG95mvJiseJ0B1lvATH3++EkJlLNhFvvZFJ11MNpHjNw==
+X-Received: by 2002:a19:480c:: with SMTP id v12-v6mr9802502lfa.46.1539611537512;
+        Mon, 15 Oct 2018 06:52:17 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-91-118.nat.spd-mgts.ru. [109.252.91.118])
+        by smtp.googlemail.com with ESMTPSA id h2-v6sm2202707lfb.27.2018.10.15.06.52.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 06:52:16 -0700 (PDT)
+Subject: Re: [PATCH v1 1/2] soc/tegra: pmc: Turn powergates_lock into spinlock
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180830183635.4474-1-digetx@gmail.com>
+ <7369869e-e58f-3760-d428-b00fb9cd28d9@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <57c3b1a6-0a60-613e-a4e7-5d66c199b860@gmail.com>
+Date:   Mon, 15 Oct 2018 16:52:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
+In-Reply-To: <7369869e-e58f-3760-d428-b00fb9cd28d9@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7djP87r2s49EG3w5YmSxccZ6Vov+x6+Z
-        Lc6f38BusenxNVaLy7vmsFnMOL+PyeLQ1L2MDuwel69dZPbYtKqTzWPzknqPvi2rGD0+b5IL
-        YI3isklJzcksSy3St0vgypgw4TdzwUfxik/7nzE2ME4U6WLk5JAQMJHo3PuGtYuRi0NIYAWj
-        xKbDa1kgnC+MEm1/VzNCOJ+BMtMWMncxcoC1fL5TAxFfzihx4d8CZgjnPaPEgfN7WUHmigho
-        Slz/+x1sLrPAK0aJhtl7mUASbAJWEhPbVzGC2MICCRKz731mA7FZBFQlpm7sYAHZICoQIdF/
-        Rh0kzCsgKHFy5hMWEJtZQF5i+9s5YMskBLrZJU4f+8AMUVQmsWXLVUaI61wkFj/gg/hNWOLV
-        8S3sELaMxP+d85kgeqczSrz5tZQFwlnPKLHmzDEmiCpricPHL7KCDGIG+mD9Ln2IsKPEjmcT
-        oebzSdx4KwhxD5/EpG3ToYHCK9HRJgRRrSaxYdkGNpi1XTtXMkPYHhIty6eD2UICsRIrDq1h
-        nsCoMAvJl7OQfDkL4YYFjMyrGMVTS4tz01OLjfJSy/WKE3OLS/PS9ZLzczcxAhPN6X/Hv+xg
-        3PUn6RCjAAejEg+vAM+RaCHWxLLiytxDjBIczEoivBIhh6KFeFMSK6tSi/Lji0pzUosPMUpz
-        sCiJ8y6btzFaSCA9sSQ1OzW1ILUIJsvEwSnVwDhlRsLjVKMJhzKW+VZelZJjYxC+4nBd7cbW
-        cLeYrp55zMEWRtsPXHYSSuWcvXJX0FGuC/ffmbPcNp8pmu995drBhVdCd6/VD9GI/lhQvTM1
-        IUpEU2oJV7et2oeu/gPGrrx7mDm+ORl7mCsvO+/33Ej1tULlXMF0sV+f10UbHG79PuVm/WZ/
-        VyWW4oxEQy3mouJEAFd0TJkwAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42I5/e/4XV372UeiDXpdLTbOWM9q0f/4NbPF
-        +fMb2C02Pb7GanF51xw2ixnn9zFZHJq6l9GB3ePytYvMHptWdbJ5bF5S79G3ZRWjx+dNcgGs
-        UXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZEyb8
-        Zi74KF7xaf8zxgbGiSJdjBwcEgImEp/v1HQxcnEICSxllNi1qZMFIi4jcXx9WRcjJ5ApLPHn
-        WhcbRM1bRonjHz+xgSREBDQlrv/9zgqSYBZ4xSixZ+J5RpAEm4CVxMT2VWC2sECCxOx7n8Ea
-        eAXsJB4fO8UEYrMIqEpM3djBAmKLCkRI3HoIYfMKCEqcnPkEzGYWUJf4M+8SM4QtL7H97Rzm
-        CYz8s5CUzUJSNgtJ2QJG5lWMIqmlxbnpucVGesWJucWleel6yfm5mxiB8bDt2M8tOxi73gUf
-        YhTgYFTi4RXgORItxJpYVlyZe4hRgoNZSYRXIuRQtBBvSmJlVWpRfnxRaU5q8SFGU6DDJzJL
-        iSbnA2M1ryTe0NTQ3MLS0NzY3NjMQkmc97xBZZSQQHpiSWp2ampBahFMHxMHp1QDo/g/IaGy
-        f9vOP7b1mGAjeFn33dW9p7Uy+i/lOJ9NN+nZcql3ucf6OfpKp3n0FVOYYmP/xzXHl89gsT3d
-        /2d9iPJWvnL9X7rPH9ad8wmy27T/xwrppyceB3N3BEyPL/gVxde7KnHZgfQLWlev6v252bb5
-        jtQrk6dmj398+H7uj1m/zH71wx8mayixFGckGmoxFxUnAgA1ay4WnQIAAA==
-Message-Id: <20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677~dzHYfFW2j0676906769eucas1p2c@eucas1p2.samsung.com>
-X-CMS-MailID: 20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677
-References: <CGME20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
-config option) is not working properly (debug messages are not
-displayed after resume) on Exynos platforms because GPIOs restore
-code is not implemented.
+On 10/15/18 3:52 PM, Jon Hunter wrote:
+> 
+> On 30/08/18 19:36, Dmitry Osipenko wrote:
+>> This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
+>> and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
+>> offline.
+>>
+>>  BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
+>>  in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
+>>  CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
+>>  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>>  [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
+>>  [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
+>>  [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
+>>  [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
+>>  [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
+>>  [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
+>>  [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
+>>  [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
+>>  [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
+>>  [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
+>>  [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
+>>  [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
+>>  [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
+>>  [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
+>>  [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
+> 
+> Given the above, rather than converting to a spinlock I wonder if we are
+> just better off dropping the mutex completely from
+> tegra_powergate_is_powered()? Otherwise ...
+> 
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/soc/tegra/pmc.c | 36 ++++++++++++++++++------------------
+>>  1 file changed, 18 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>> index 2d6f3fcf3211..d6bc9f66f1cd 100644
+>> --- a/drivers/soc/tegra/pmc.c
+>> +++ b/drivers/soc/tegra/pmc.c
+>> @@ -186,7 +186,7 @@ struct tegra_pmc_soc {
+>>   * @lp0_vec_phys: physical base address of the LP0 warm boot code
+>>   * @lp0_vec_size: size of the LP0 warm boot code
+>>   * @powergates_available: Bitmap of available power gates
+>> - * @powergates_lock: mutex for power gate register access
+>> + * @powergates_lock: lock for power gate register access
+>>   */
+>>  struct tegra_pmc {
+>>  	struct device *dev;
+>> @@ -215,7 +215,7 @@ struct tegra_pmc {
+>>  	u32 lp0_vec_size;
+>>  	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
+>>  
+>> -	struct mutex powergates_lock;
+>> +	spinlock_t powergates_lock;
+>>  };
+>>  
+>>  static struct tegra_pmc *pmc = &(struct tegra_pmc) {
+>> @@ -288,10 +288,10 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
+>>  	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
+>>  		return -EINVAL;
+>>  
+>> -	mutex_lock(&pmc->powergates_lock);
+>> +	spin_lock(&pmc->powergates_lock);
+>>  
+>>  	if (tegra_powergate_state(id) == new_state) {
+>> -		mutex_unlock(&pmc->powergates_lock);
+>> +		spin_unlock(&pmc->powergates_lock);
+>>  		return 0;
+>>  	}
+>>  
+>> @@ -300,7 +300,7 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
+>>  	err = readx_poll_timeout(tegra_powergate_state, id, status,
+>>  				 status == new_state, 10, 100000);
+>>  
+>> -	mutex_unlock(&pmc->powergates_lock);
+>> +	spin_unlock(&pmc->powergates_lock);
+> 
+> ... the above readx_poll_timeout needs to be converted to the atomic
+> version. Furthermore, the above 100ms timeout is probably not suited to
+> spinlock.
 
-Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
-SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
-Then convert Exynos code to not require <plat/pm-common.h>
-header (use pr_debug() directly instead of S3C_PMDBG() macro and
-remove redundant s3c_pm_*() calls).
-
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-v2:
-- convert Exynos code to not require <plat/pm-common.h> header
-
-Should by applied on top of "[PATCH] ARM: EXYNOS: remove no longer
-needed s3c_pm_check_*() calls".
-
- arch/arm/mach-exynos/suspend.c |   14 ++++----------
- arch/arm/plat-samsung/Kconfig  |    3 ++-
- 2 files changed, 6 insertions(+), 11 deletions(-)
-
-Index: b/arch/arm/mach-exynos/suspend.c
-===================================================================
---- a/arch/arm/mach-exynos/suspend.c	2018-10-15 15:11:15.296187842 +0200
-+++ b/arch/arm/mach-exynos/suspend.c	2018-10-15 15:22:54.656205454 +0200
-@@ -30,8 +30,6 @@
- #include <asm/smp_scu.h>
- #include <asm/suspend.h>
- 
--#include <plat/pm-common.h>
--
- #include "common.h"
- 
- #define REG_TABLE_END (-1U)
-@@ -490,11 +488,9 @@ static int exynos_suspend_enter(suspend_
- {
- 	int ret;
- 
--	s3c_pm_debug_init();
--
--	S3C_PMDBG("%s: suspending the system...\n", __func__);
-+	pr_debug("%s: suspending the system...\n", __func__);
- 
--	S3C_PMDBG("%s: wakeup masks: %08x,%08x\n", __func__,
-+	pr_debug("%s: wakeup masks: %08x,%08x\n", __func__,
- 			exynos_irqwake_intmask, exynos_get_eint_wake_mask());
- 
- 	if (exynos_irqwake_intmask == -1U
-@@ -504,7 +500,6 @@ static int exynos_suspend_enter(suspend_
- 		return -EINVAL;
- 	}
- 
--	s3c_pm_save_uarts();
- 	if (pm_data->pm_prepare)
- 		pm_data->pm_prepare();
- 	flush_cache_all();
-@@ -517,12 +512,11 @@ static int exynos_suspend_enter(suspend_
- 
- 	if (pm_data->pm_resume_prepare)
- 		pm_data->pm_resume_prepare();
--	s3c_pm_restore_uarts();
- 
--	S3C_PMDBG("%s: wakeup stat: %08x\n", __func__,
-+	pr_debug("%s: wakeup stat: %08x\n", __func__,
- 			pmu_raw_readl(S5P_WAKEUP_STAT));
- 
--	S3C_PMDBG("%s: resuming the system...\n", __func__);
-+	pr_debug("%s: resuming the system...\n", __func__);
- 
- 	return 0;
- }
-Index: b/arch/arm/plat-samsung/Kconfig
-===================================================================
---- a/arch/arm/plat-samsung/Kconfig	2018-10-15 15:16:22.804195586 +0200
-+++ b/arch/arm/plat-samsung/Kconfig	2018-10-15 15:16:22.800195586 +0200
-@@ -238,7 +238,8 @@ comment "Power management"
- 
- config SAMSUNG_PM_DEBUG
- 	bool "Samsung PM Suspend debug"
--	depends on PM && DEBUG_KERNEL
-+	depends on DEBUG_KERNEL
-+	depends on PM && (PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210)
- 	depends on DEBUG_EXYNOS_UART || DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
- 	help
- 	  Say Y here if you want verbose debugging from the PM Suspend and
+It's converted in the second patch. Seems mutex indeed could be dropped from tegra_powergate_is_powered, at least for now I can't recall why decided to keep the locking. Thank you for the review, I'll try to drop the mutex and come back with v2 if it will be fine.
