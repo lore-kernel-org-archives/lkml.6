@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7600BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFFFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C30D2064A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:19:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90530208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:20:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qiXygIFU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C30D2064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGI68gOW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90530208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbeJPGGu (ORCPT
+        id S1727045AbeJPGHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:06:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38116 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 02:07:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbeJPGGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:06:50 -0400
+        id S1726771AbeJPGHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 02:07:32 -0400
 Received: from localhost.localdomain (user-0ccsrjt.cable.mindspring.com [24.206.110.125])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE13A2064A;
-        Mon, 15 Oct 2018 22:19:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AF122054F;
+        Mon, 15 Oct 2018 22:20:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539641979;
+        s=default; t=1539642021;
         bh=oOys1xQ7g8DgQ8xHWOiWf0OAEO6cN+1XJp0XSar3ooo=;
         h=From:To:Cc:Subject:Date:From;
-        b=qiXygIFU4uaiLc304Pc9gpfFsy/2u8iq/mhbjBzb2u3/ANYS0XT0MbRXs4b1oaRA1
-         71eSLqsNl/rfxD4JELB/0hgpeR7uVKEP3HA3MWwHzkbmypKo1L1ohta2PCADH8RxPo
-         rNmaW0Pr2NDdP1FPJvI8AIAfmOMgpttNymAmEct4=
+        b=TGI68gOWA2jf0slyFBYG2vAwpyV2IRjtJB9BAzI1HcCwIBWQ5svBbjNkuCk/3aSU/
+         kHl4+QPn9kWULeQxJvKPKJKhmdbqbBrzNDqcQj6hrzGa/Gqrpb4X8uwkTU0vSz9mVv
+         Mu5+mBTgGnDLK+6etVNv4zOHL41e7zkHGZXO0COc=
 From:   Alan Tull <atull@kernel.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Moritz Fischer <mdf@kernel.org>, Alan Tull <atull@kernel.org>,
         linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
 Subject: [PATCH 0/4] fpga: add managed create functions
-Date:   Mon, 15 Oct 2018 17:19:29 -0500
-Message-Id: <1539641973-18387-1-git-send-email-atull@kernel.org>
+Date:   Mon, 15 Oct 2018 17:20:00 -0500
+Message-Id: <1539642004-18473-1-git-send-email-atull@kernel.org>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
