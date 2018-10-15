@@ -2,62 +2,81 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88324C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E24A4C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 455C92064E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:47:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 455C92064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id AA8F62064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:48:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA8F62064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726626AbeJOQbl (ORCPT
+        id S1726670AbeJOQcY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 12:31:41 -0400
-Received: from verein.lst.de ([213.95.11.211]:40956 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726273AbeJOQbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 12:31:41 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 88D1068C8E; Mon, 15 Oct 2018 10:47:21 +0200 (CEST)
-Date:   Mon, 15 Oct 2018 10:47:21 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Christoph Hellwig <hch@lst.de>, mporter@kernel.crashing.org,
-        alex.bou9@gmail.com,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 2/8] powerpc: simplify CONFIG_PCI_QSPAN Kconfig magic
-Message-ID: <20181015084721.GB27159@lst.de>
-References: <20181013151016.31674-1-hch@lst.de> <20181013151016.31674-3-hch@lst.de> <CAK7LNAQxZcBNadLJhfrmxJGj-XJFVaya3Z1eexZp20vRPwrN7A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQxZcBNadLJhfrmxJGj-XJFVaya3Z1eexZp20vRPwrN7A@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Mon, 15 Oct 2018 12:32:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38520 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726273AbeJOQcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 12:32:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ADD70AFD9;
+        Mon, 15 Oct 2018 08:48:04 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org
+Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH] x86: modify inline asm constraints in __cmpxchg_double()
+Date:   Mon, 15 Oct 2018 10:48:02 +0200
+Message-Id: <20181015084802.30934-1-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 03:35:41PM +0900, Masahiro Yamada wrote:
-> 'git grep' did not get any other hit.
-> 
-> masahiro@pug:~/ref/linux$ git grep PCI_QSPAN
-> arch/powerpc/Kconfig:   default PCI_QSPAN if PPC_8xx
-> arch/powerpc/Kconfig:config PCI_QSPAN
-> 
-> With your patch, PCI_QSPAN will become
-> a dead config option.
-> 
-> How about removing it entirely?
+Some gcc versions seem to have problems with the constraints in
+__cmpxchg_double() as they suddenly issue a build error when random
+parts of sources calling __cmpxchg_double() are modified, like e.g.
+slub.c. This has been observed on Debian systems only so far.
 
-Yes, it should just go away.  Thanks!
+Using "0" instead of "a" in the input constraints has the same
+semantics while avoiding that build error.
+
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+I should note that I have observed gcc hangs instead sometimes. Not
+taking any patches modifying users of __cmpxchg_double() due to a gcc
+bug which seems to be distro-specific is a bad move IMO.
+
+I'd rather make it clear from build behavior that this is a bug in gcc
+by letting the build hang instead of throwing error warnings not in any
+way related to changes in the code.
+
+The gcc bug is filed under:
+
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=908154
+---
+ arch/x86/include/asm/cmpxchg.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
+index a55d79b233d3..b3b4d61a8969 100644
+--- a/arch/x86/include/asm/cmpxchg.h
++++ b/arch/x86/include/asm/cmpxchg.h
+@@ -245,7 +245,7 @@ extern void __add_wrong_size(void)
+ 	asm volatile(pfx "cmpxchg%c4b %2; sete %0"			\
+ 		     : "=a" (__ret), "+d" (__old2),			\
+ 		       "+m" (*(p1)), "+m" (*(p2))			\
+-		     : "i" (2 * sizeof(long)), "a" (__old1),		\
++		     : "i" (2 * sizeof(long)), "0" (__old1),		\
+ 		       "b" (__new1), "c" (__new2));			\
+ 	__ret;								\
+ })
+-- 
+2.16.4
+
