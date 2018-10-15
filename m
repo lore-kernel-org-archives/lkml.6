@@ -2,157 +2,103 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F1DC28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C8AC28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C832064E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:50:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C832064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1ADDA20644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:51:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="zwb0Lx1D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ADDA20644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbeJOQfC (ORCPT
+        id S1726758AbeJOQgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 12:35:02 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13635 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726319AbeJOQfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 12:35:02 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 74DC114452CD8;
-        Mon, 15 Oct 2018 16:50:39 +0800 (CST)
-Received: from [127.0.0.1] (10.57.77.109) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Mon, 15 Oct 2018
- 16:50:40 +0800
-Subject: Re: [PATCH v3 0/8] vfio/mdev: IOMMU aware mediated device
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-References: <20181012051632.26064-1-baolu.lu@linux.intel.com>
- <5BC1AC09.1060507@huawei.com>
- <f3ffd1a3-be4b-f041-e4da-2bbf065aa065@linux.intel.com>
-CC:     <kevin.tian@intel.com>, <ashok.raj@intel.com>,
-        <tiwei.bie@intel.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        <sanjay.k.kumar@intel.com>, <iommu@lists.linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <yi.y.sun@intel.com>,
-        <jacob.jun.pan@intel.com>, <kvm@vger.kernel.org>
-From:   Xu Zaibo <xuzaibo@huawei.com>
-Message-ID: <5BC454DF.6010109@huawei.com>
-Date:   Mon, 15 Oct 2018 16:50:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.0
+        Mon, 15 Oct 2018 12:36:12 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52742 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbeJOQgM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 12:36:12 -0400
+Received: by mail-it1-f193.google.com with SMTP id 134-v6so27574213itz.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 01:51:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Pvt+ZRHbeCT11x8+PeJiwM6cHUKb0KvV6/BQAJZ4+ec=;
+        b=zwb0Lx1DwFkHBVeEIAN6arkA8xrGTglqImGCTKC3olj1i8yQqr3xKJ+q+BplJsvq5Z
+         AW/iw+dvHuH+hQPbb5f28WDHzrBKcAISf93mubJ+l7Sw2Z6p3Ftnl6uwtniiT0p7FUlP
+         hsxfu8rKTi37uyNWsf2LyavcQxCIGV7wFrptczxICwK9jEFoRqTLG3wfKv5qW/PZQIGB
+         xU2aJTkU2J7Q9tMFHmyN02jsiPQ1X1tFeyzYabdk6z5aCo7QAHD306au8Y68/hEUbLeP
+         WDkhNcjmFQpdO6ndYnbgSVikWMsqzRFXo9yCFv822OzOviBg18Y/XyZ/AZcDLdNhN3Du
+         OhWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Pvt+ZRHbeCT11x8+PeJiwM6cHUKb0KvV6/BQAJZ4+ec=;
+        b=jzgW7irXs+BCWBSfe/avvLo39VK7XRtaL7cY2n/tUNtOq/pE0vQjEOQq24azzwkU7/
+         KKd78qcIWTeL1qEy/dlyXRKS+5sqYcNNvNp6gAVHh34eddgxYzCUXre+jgKHXsacTaM2
+         DsGq+mZW/B6lhiFUaEbSjnaHxxZtlp4dmwdPhC3vkMXvMEgynoFxAJFqsRDujBki/Kvy
+         qCYLpuNN5wV6siXax2gd2iuVrVAKAMvLDJPm6hEsyeY7MXyTjZHlBaXyFipFoLNPaPSd
+         /maPESHAm/BZL9A1w+JB7rDAgMCQvhY4h95yOyExgZiBERgly6ln63ILvaqJ/AVZuTLk
+         Z54A==
+X-Gm-Message-State: ABuFfohWkUTao0I88ajqkoP0cJPjBLxanivj2BIqJve+cf1zrdTSuljm
+        2DlCVoBRz+5NYo8vzoVQEM0ZlmLucSudM4sYbqtQ2A==
+X-Google-Smtp-Source: ACcGV61vuHg0K9e2IIBckEf2Kn6IcGW1dpmFHWzDkUjgRMrH9OOGjYaOAEe7p7s5kx6OCfmG2PeDFmEErG2lZpvwAD0=
+X-Received: by 2002:a24:e187:: with SMTP id n129-v6mr11896876ith.47.1539593512844;
+ Mon, 15 Oct 2018 01:51:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <f3ffd1a3-be4b-f041-e4da-2bbf065aa065@linux.intel.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.77.109]
-X-CFilter-Loop: Reflected
+Received: by 2002:a4f:d1b1:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 01:51:12
+ -0700 (PDT)
+In-Reply-To: <CAPpJ_eduPv5RDNgUOw3K+XprZBfUVn_sSOLbDWjNtaGRssUgLA@mail.gmail.com>
+References: <20180927040948.11891-1-jian-hong@endlessm.com>
+ <20181001.225140.1939583158282424865.davem@davemloft.net> <CAPpJ_eduPv5RDNgUOw3K+XprZBfUVn_sSOLbDWjNtaGRssUgLA@mail.gmail.com>
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+Date:   Mon, 15 Oct 2018 16:51:12 +0800
+Message-ID: <CAPpJ_ecr-tMNcpe=--MYyK3OWJiYEAoX7AnDBN63XO1OGZ4v_w@mail.gmail.com>
+Subject: Re: [PATCH net] r8169: Enable MSI-X on RTL8106e
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 2018/10/15 10:48, Lu Baolu wrote:
-> Hi,
->
-> On 10/13/2018 04:25 PM, Xu Zaibo wrote:
->> Hi,
+2018-10-02 13:57 GMT+08:00 Jian-Hong Pan <jian-hong@endlessm.com>:
+> David Miller <davem@davemloft.net> =E6=96=BC 2018=E5=B9=B410=E6=9C=882=E6=
+=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=881:51=E5=AF=AB=E9=81=93=EF=BC=9A
 >>
->> On 2018/10/12 13:16, Lu Baolu wrote:
->>> Hi,
->>>
->>> The Mediate Device is a framework for fine-grained physical device
->>> sharing across the isolated domains. Currently the mdev framework
->>> is designed to be independent of the platform IOMMU support. As the
->>> result, the DMA isolation relies on the mdev parent device in a
->>> vendor specific way.
->>>
->>> There are several cases where a mediated device could be protected
->>> and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
->>> [1] introduces a new translation mode called 'scalable mode', which
->>> enables PASID-granular translations. The vt-d scalable mode is the
->>> key ingredient for Scalable I/O Virtualization [2] [3] which allows
->>> sharing a device in minimal possible granularity (ADI - Assignable
->>> Device Interface).
->>>
->>> A mediated device backed by an ADI could be protected and isolated
->>> by the IOMMU since 1) the parent device supports tagging an unique
->>> PASID to all DMA traffic out of the mediated device; and 2) the DMA
->>> translation unit (IOMMU) supports the PASID granular translation.
->>> We can apply IOMMU protection and isolation to this kind of devices
->>> just as what we are doing with an assignable PCI device.
->>>
->>> In order to distinguish the IOMMU-capable mediated devices from those
->>> which still need to rely on parent devices, this patch set adds two
->>> new members in struct mdev_device.
->>>
->>> * iommu_device
->>>    - This, if set, indicates that the mediated device could
->>>      be fully isolated and protected by IOMMU via attaching
->>>      an iommu domain to this device. If empty, it indicates
->>>      using vendor defined isolation.
->>>
->>> * iommu_domain
->>>    - This is a place holder for an iommu domain. A domain
->>>      could be store here for later use once it has been
->>>      attached to the iommu_device of this mdev.
->>>
->>> Below helpers are added to set and get above iommu device
->>> and iommu domain pointers in mdev core implementation.
->>>
->>> * mdev_set/get_iommu_device(dev, iommu_device)
->>>    - Set or get the iommu device which represents this mdev
->>>      in IOMMU's device scope. Drivers don't need to set the
->>>      iommu device if it uses vendor defined isolation.
->>>
->>> * mdev_set/get_iommu_domain(domain)
->>>    - A iommu domain which has been attached to the iommu
->>>      device in order to protect and isolate the mediated
->>>      device will be kept in the mdev data structure and
->>>      could be retrieved later.
->>>
->>> The mdev parent device driver could opt-in that the mdev could be
->>> fully isolated and protected by the IOMMU when the mdev is being
->>> created by invoking mdev_set_iommu_device() in its @create().
->> I just cannot understand here, how to get an iommu_device while I 
->> create mediated
->> device in my parent device driver?
->
-> When you are creating an mdev in your parent driver, you should know
-> which PCI device this mdev belonging to.
->
-
-So, generally, I can set the parent device as mdev's iommu_device?
-If that, however, Mdev already holds its parent device. So, I just 
-figure what
-differences between Mdev's parent device and iommu_device are.
+>> From: Jian-Hong Pan <jian-hong@endlessm.com>
+>> Date: Thu, 27 Sep 2018 12:09:48 +0800
 >>
->> And why not reuse the device of MDEV instread of adding a new device 
->> here?
+>> > However, there is a commit which resolves the drivers getting nothing =
+in
+>> > PCI BAR=3D4 after system resumes.  It is 04cb3ae895d7 "PCI: Reprogram
+>> > bridge prefetch registers on resume" by Daniel Drake.
+>>
+>> I don't see this upstream yet.
 >
-> iommu_device in the mdev_device structure represents the PCI device
-> that represents this mdev in iommu's device scope. IOMMU is only aware
-> of pci devices, it's not aware of mdev device.
+> It is in linux-next repository:
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commi=
+t/?id=3D04cb3ae895d7efdc60f0fe17182b200a3da20f09
 
-Could I understand like that: IOMMU can be aware of the parent device of 
-Mdev?
-And more, I am doubting the necessary of iommu_device in Mdev.
+The commit is also back ported into Linux kernel 4.19-rc7 now.
+https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=3D=
+083874549fdfefa629dfa752785e20427dde1511
 
-Thanks,
-Zaibo
-
-.
-
-
-
-
-
-
+Regrads,
+Jian-Hong Pan
