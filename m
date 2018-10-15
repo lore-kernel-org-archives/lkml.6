@@ -4,64 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1159CC71132
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E47C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6AFC2083C
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6215B20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:04:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULfMny1R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6AFC2083C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fc8VvMPU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6215B20842
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbeJOVsx (ORCPT
+        id S1726786AbeJOVtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 17:48:53 -0400
-Received: from mail-ot1-f43.google.com ([209.85.210.43]:41667 "EHLO
-        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbeJOVsw (ORCPT
+        Mon, 15 Oct 2018 17:49:24 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41519 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbeJOVtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 17:48:52 -0400
-Received: by mail-ot1-f43.google.com with SMTP id c32so18981214otb.8;
-        Mon, 15 Oct 2018 07:03:27 -0700 (PDT)
+        Mon, 15 Oct 2018 17:49:24 -0400
+Received: by mail-ot1-f67.google.com with SMTP id c32so18983019otb.8;
+        Mon, 15 Oct 2018 07:03:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DAuCb8LhCBrnxc5LNvtoylHSFjTFe5IA8gnh2qblrJ8=;
-        b=ULfMny1RAwm6k1cTiKr6kwW6SjEBLjsEFFuFaxrN/gD0m7VSLKUuWeUk6NVFgwDBao
-         ROf8mNWpb2iTQwKQe60ZGKbO9d/8e487BIlALMNZt5JOk3ZvKFMhyS/+vtYElJ2GzTy0
-         /5KnLaItDAorVVN9BBgGMJi1cuFBvtjOJ1QQWcTkSJH6hOndAzvo7Ggl4/jzN6IPkEII
-         ur5mHxJhhqrqQ8nRhffXn0MUcUBtOT1A84X6mnR+vf4Wk6wZe2ZT473MlZn3KochjWwQ
-         5CsDeLtlFmr1g6gYjBGseSxsDwWXGUm1vtH/fJ67mLeV8X7G0M+U4R/+ENHcJdI1F6/K
-         DkKA==
+        bh=Po7VE+5iLeu9HaINSuQBH26SMou1uRVrwVYXxQfTSlk=;
+        b=Fc8VvMPU7jzyCSGvw4gzw+Pez1ffkHM79oyv/I4ueXExE7RoyFU9hBzycEd/SjzLLz
+         mdwHTGm5LWZqE384mTRZWWyUu3xmwqwcwyQ9sF2LXijOaWNgnBWejFQUrzQahsLF4E3C
+         7crmrxG5Aq7K4JtzXVRJ9gcWr5tYH/cp9qgOFTTWGjDNhpSTsmSSoQnvsjLq/fz2WT+6
+         jTB6Y8zvdc5f6Phtkj4KtIYjTRhjRWyiWmOKIt28mRpnH0ujCSsmOX27wrz1I11JTEOo
+         PQDxv0+6XQ+CQMP7K64iO9kkfyeKKkgG0UJ8B5s6NxmxaRpFq1hNoAsNeE1DnsCxdTVz
+         giAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DAuCb8LhCBrnxc5LNvtoylHSFjTFe5IA8gnh2qblrJ8=;
-        b=OwIH4VX90PRmNwAy0+2euma8ZdXrzdM+a3BxZMpH9/3FBCUMh1goo9G5BskDVtmEyE
-         hFTZXF5OT/oy9Ery/+QiUuUSbCAnEHaFYiv7WLIy1Jzvv0IwZNoegwHW7fb/nXKpUOhn
-         d5/55k19dMXBaqpNoiLJMyOvYiJAE8qFrkUDFbORVoPOrAMccaOg/j3LeF25LdSQsktz
-         5V3JoXhGgUXZiv8281GSmxSNljYsgeOSVkBUOTsj9uzgwwqcYB1U5IbBqYu3RWHgbH3S
-         SZ8AsZFQ7EQonosOCYN+oFh3EzJi6Q1qzb14M759m346Vgnzmslwqyd3GMHNmiCM9TiM
-         8OHg==
-X-Gm-Message-State: ABuFfohFQFef1J7coIZrLdlYUzSyaej0A4jt0ga4nPw1eOf/wD9ygkD5
-        0bKMvJVIlUleN4ASevT/gGnEjc73YbK3HeO6yK0=
-X-Google-Smtp-Source: ACcGV61mThRn5/6agSnSxwC3Rld4ljdRqEt/xZZcOaUhm1bzCb//ewk1Cbn4J7txTmgXXeYMNZbwCZyXydUs5dzoWkg=
-X-Received: by 2002:a9d:f9b:: with SMTP id d27mr12093709otd.225.1539612206768;
- Mon, 15 Oct 2018 07:03:26 -0700 (PDT)
+        bh=Po7VE+5iLeu9HaINSuQBH26SMou1uRVrwVYXxQfTSlk=;
+        b=l5Gq/FKCvWCZOkkoyIeja4yLgA7TQCNkQ8rnrWT3OoWWdWcVbN4Hg6LlYiPgfvVA+p
+         6shJk2ew/X9+q+dNFE2XkUO11G0geqsCW8auBxMwD8knpRPYl9MTq1TQLNovTxwkpSza
+         1klj6LlhRSOYcbNsjQgPQksFDH6ibSbyhm7u1Va+Y1d0aVwoehI17/K8B0JqgBzu6YsD
+         TxaKLLlIvZrLQsuJU3iPXcRAsoUIw7OIGY3oRBE5LOQdiKlmc+KWhRGshixEjTSxhFb2
+         KHXCjyI0S18ZuAnOxIuc6904W0rz8at4/rszFwqBiY6KFW25JJx23o7MaRAeBHGB2rKv
+         Or4w==
+X-Gm-Message-State: ABuFfoi55fVw1rGs98775glW/Q6TOd2YXMCCxeYeUROkcwz44AyQW5+m
+        bsAhjHUGv3A1Yey65lCAlGdv74hnRKwE6t6dNus=
+X-Google-Smtp-Source: ACcGV613dNpQCnCXkxWXbkTMXysJmpBe66aYVR/KhkLwkOYvY/CkD5HtBZyfD+ZHOMp1tClz4a0ThYsGHMTK31Z+l7Q=
+X-Received: by 2002:a9d:2a67:: with SMTP id t94mr11619960ota.203.1539612238705;
+ Mon, 15 Oct 2018 07:03:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1539609921.git.leonard.crestez@nxp.com> <9365e24504896e58294fd8786acb3c3d4a1a264d.1539609921.git.leonard.crestez@nxp.com>
-In-Reply-To: <9365e24504896e58294fd8786acb3c3d4a1a264d.1539609921.git.leonard.crestez@nxp.com>
+References: <cover.1539609921.git.leonard.crestez@nxp.com> <275ca8850bd5863f79bcafdb11cf9544318a691f.1539609921.git.leonard.crestez@nxp.com>
+In-Reply-To: <275ca8850bd5863f79bcafdb11cf9544318a691f.1539609921.git.leonard.crestez@nxp.com>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 15 Oct 2018 11:03:33 -0300
-Message-ID: <CAOMZO5AMwGakygMT=O9CjN8jyL-FAox3-452C1vpGc9sPCXBHw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] ARM: dts: imx6ull: Add dcp node
+Date:   Mon, 15 Oct 2018 11:04:05 -0300
+Message-ID: <CAOMZO5Br5fXGKQAUJ3jPJWzwmXNtb-9NCZEdfhrayYJ1iXZVuA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] ARM: imx_v6_v7_defconfig: Enable CRYPTO_DEV_MXS_DCP
 To:     Leonard Crestez <leonard.crestez@nxp.com>
 Cc:     Shawn Guo <shawnguo@kernel.org>,
         Fabio Estevam <fabio.estevam@nxp.com>,
@@ -90,19 +90,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Oct 15, 2018 at 10:28 AM Leonard Crestez
 <leonard.crestez@nxp.com> wrote:
-
-> diff --git a/arch/arm/boot/dts/imx6ull.dtsi b/arch/arm/boot/dts/imx6ull.dtsi
-> index 796ed35d4ac9..be610339e933 100644
-> --- a/arch/arm/boot/dts/imx6ull.dtsi
-> +++ b/arch/arm/boot/dts/imx6ull.dtsi
-> @@ -37,10 +37,20 @@
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         reg = <0x02200000 0x100000>;
->                         ranges;
 >
-> +                       dcp: dcp@2280000 {
+> This block is present in 6sl, 6sll and 6ull so it should be enabled in
+> the default imx kernel config.
+>
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-Node names should be generic, so it would be better to use:
-
-dcp: crypto@2280000 {
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
