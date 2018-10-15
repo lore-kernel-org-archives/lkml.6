@@ -2,113 +2,129 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C4CC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C75C7113E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:45:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46516208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:45:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A29F8208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:45:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IeuAxScY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46516208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MLAarC5k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A29F8208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbeJPDbk (ORCPT
+        id S1726976AbeJPDcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 23:31:40 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36515 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbeJPDbk (ORCPT
+        Mon, 15 Oct 2018 23:32:02 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34063 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbeJPDcC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 23:31:40 -0400
-Received: by mail-lf1-f66.google.com with SMTP id d4-v6so15027514lfa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 12:44:59 -0700 (PDT)
+        Mon, 15 Oct 2018 23:32:02 -0400
+Received: by mail-pl1-f194.google.com with SMTP id f18-v6so9805003plr.1;
+        Mon, 15 Oct 2018 12:45:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=i3xUaXG+1kGQsQJJ9XMptJa94waHMLew9MuT9BmQ3i0=;
-        b=IeuAxScYsl04F4M+pL1LvkyVleWMqK/SraVIfjAYsTGHYqTEdYN8q+GBDRa206pdF7
-         xwOu4xIzcfh4qrdVIfTs3RTctLsOEOIPHTY8uGt9TCNCOFUZu146FCTT9Seks0Wv53g+
-         1MKeIF6tp+6bDj5rxZNrOAl3PJyCtnuqnexuE=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=m00JvX+YttERde0a06pOFir8Ow1RCNvUFAr2CQNCH7Y=;
+        b=MLAarC5kTk+1wFLtaodG7pYC8a/JGZm60iUuPEgVVb2FVG+f/ISltg8/pW8AxuIh1j
+         xWYbtaikciIz4LQoVrmRnHu0B3F5ZyBb6ulKK/hJwHih9lEqq/WE/MRPbJatLyOkuMDI
+         hXFsyyTFOjcdIhNiynPedGBWHS6k5pVbPGLxXrxVnw+lcFWJjaiuSJB/HxdvhBTPZH59
+         BFtfMd9ZzlVJw+YNMm3wXtLxEHeyvLgNurgFNCQ8CK4gSRmbbqKzXCP4kyd6//xjif5q
+         f+w/dqpzrRz5RZww6zPNUyI2yOp9p7fJws3rURFYa8uQT3VmFJhRCbTrZTEsUv7uUvwR
+         7X8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=i3xUaXG+1kGQsQJJ9XMptJa94waHMLew9MuT9BmQ3i0=;
-        b=kgmNNTIOBqhhZ2L/UOAahdPNHpANhR0ESgf8+CHxTeZu/qLNMkHhNUA0Grx91gKNqP
-         HfjXEnoUZxq9VqQVIn0OU9YbvkjFcs9GzctG7fzfg/CXkspKJ/GRtMtU4Il3sIoJzlAx
-         Ga//IuG2ipf55zJ3lo4lK0FGu4zdZboVaWrBQqelPjueYlKTTSPkG7FFSG0CsQ8YFIVU
-         52nu/eJ6hJTOoZLyn2zrzBEVM6TTJOyYhQukxgXZGhc4g2xaPZXCcdarnVWFhVYN2WjV
-         NW700dHGDEzfiq/jE1/v0+OeAkHAnNYk6Y9xBwga9kPfWaWa9ExoOJMAgGklcNzYKnmq
-         m+hg==
-X-Gm-Message-State: ABuFfohi0gxx/RTtSjthw0e1QH1oG2It9XAZu4sxDdpCfa+bCQHAQCVf
-        rVoXrHLuTdEPOZKuPpwgGdTXNCZqi+E=
-X-Google-Smtp-Source: ACcGV62mAfPb6whGiqma7LJdVuQe0sQinfBqSAOzUPSgR0xQX3VEurDUwLggS34x8afTMK26/LEl+A==
-X-Received: by 2002:a19:a686:: with SMTP id p128-v6mr10323260lfe.42.1539632698114;
-        Mon, 15 Oct 2018 12:44:58 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id i16-v6sm999681lfj.18.2018.10.15.12.44.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 12:44:57 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     srinivas.kandagatla@linaro.org, gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Subject: [PATCH v2] slimbus: ngd: QCOM_QMI_HELPERS has to be selected
-Date:   Mon, 15 Oct 2018 21:44:41 +0200
-Message-Id: <20181015194441.10475-1-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20181015183218.GA16900@kroah.com>
-References: <20181015183218.GA16900@kroah.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m00JvX+YttERde0a06pOFir8Ow1RCNvUFAr2CQNCH7Y=;
+        b=YLjtC+iBSnVxvjf6fg7BfWr+vf31qw+DQKID6e+rb+EjWFKy6jjrX8ufKJimX3r0oU
+         KxqiM624SR5S2o8Va8gHc1mZdPDunNRMN+rH0KYRad5APvy2hFqHeX0facYP4BM0279X
+         FmHCjDp/3qtynxhcTZBTDVSJaMkDWSm2hSVxYEnTTcBtkRAlSEgLOPDSnSOwZRHztYkK
+         cPd7gQ4gkVACB212L1QSblQwHipeHEokk6VpQrxqaPAeXk26C/cM1v2KrxBPk/7HeJQu
+         eU7kot+b6zV7z/cePKst3jJ166lonK6XCPJzGpeMn0/ceZKeaJlq/LLCymCZ/xW1M45P
+         ffww==
+X-Gm-Message-State: ABuFfoiWyUluA+uotD7BaXL8l6ullY98DnNvPsnNC+t+va97jqdNgvOB
+        uofltlrXbV2sst0whjA5X14=
+X-Google-Smtp-Source: ACcGV60b7slSQHzDXTC1p1Tg0FMkoaZL3ImexJ7vx+7a2t3/cWepZPrF7hg7asAYG2bWorz+J1fQjA==
+X-Received: by 2002:a17:902:d01:: with SMTP id 1-v6mr18632068plu.88.1539632721166;
+        Mon, 15 Oct 2018 12:45:21 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id z70-v6sm14941449pgd.64.2018.10.15.12.45.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 12:45:20 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 12:45:19 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Dmitry Bazhenov <bazhenov.dn@gmail.com>
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (pmbus) Fix page count auto-detection.
+Message-ID: <20181015194519.GA21672@roeck-us.net>
+References: <20181015092122.10533-1-bazhenov.dn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181015092122.10533-1-bazhenov.dn@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QCOM_QMI_HELPERS is a hidden kconfig, so the proper usage is
-to select it, not depend upon it.
+On Mon, Oct 15, 2018 at 02:21:22PM +0500, Dmitry Bazhenov wrote:
+> Devices with compatible="pmbus" field have zero initial page count,
+> and pmbus_clear_faults() being called before the page count auto-
+> detection does not actually clear faults because it depends on the
+> page count. Non-cleared faults in its turn may fail the subsequent
+> page count auto-detection.
+> 
+> This patch fixes this problem by calling pmbus_clear_fault_page()
+> for currently set page and calling pmbus_clear_faults() after the
+> page count was detected.
+> 
+> Signed-off-by: Dmitry Bazhenov <bazhenov.dn@gmail.com>
 
-Because of this change, we now also need to depend on the same
-Kconfigs as QCOM_QMI_HELPERS depends on.
+Applied.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
-Hello Greg, Srini,
+Thanks,
+Guenter
 
-I'm sorry for this.
-(Although I'm a bit curious why 0-day test bot didn't catch this.)
-
-Considering that I've just changed QCOM_QMI_HELPERS in:
-ccfb464cd106 ("soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs")
-which is currently in linux-next, and that this Kconfig should
-depend on the same Kconfigs as QCOM_QMI_HELPERS depends on,
-I chose to have this Kconfig match the QCOM_QMI_HELPERS that is
-currently in linux-next.
-
- drivers/slimbus/Kconfig | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/slimbus/Kconfig b/drivers/slimbus/Kconfig
-index 9d73ad806698..8cd595148d17 100644
---- a/drivers/slimbus/Kconfig
-+++ b/drivers/slimbus/Kconfig
-@@ -22,8 +22,9 @@ config SLIM_QCOM_CTRL
- 
- config SLIM_QCOM_NGD_CTRL
- 	tristate "Qualcomm SLIMbus Satellite Non-Generic Device Component"
--	depends on QCOM_QMI_HELPERS
--	depends on HAS_IOMEM && DMA_ENGINE
-+	depends on HAS_IOMEM && DMA_ENGINE && NET
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	select QCOM_QMI_HELPERS
- 	help
- 	  Select driver if Qualcomm's SLIMbus Satellite Non-Generic Device
- 	  Component is programmed using Linux kernel.
--- 
-2.17.2
-
+> ---
+>  drivers/hwmon/pmbus/pmbus.c      | 2 ++
+>  drivers/hwmon/pmbus/pmbus_core.c | 5 ++++-
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/pmbus/pmbus.c b/drivers/hwmon/pmbus/pmbus.c
+> index 7718e58dbda5..7688dab32f6e 100644
+> --- a/drivers/hwmon/pmbus/pmbus.c
+> +++ b/drivers/hwmon/pmbus/pmbus.c
+> @@ -118,6 +118,8 @@ static int pmbus_identify(struct i2c_client *client,
+>  		} else {
+>  			info->pages = 1;
+>  		}
+> +
+> +		pmbus_clear_faults(client);
+>  	}
+>  
+>  	if (pmbus_check_byte_register(client, 0, PMBUS_VOUT_MODE)) {
+> diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
+> index 82c3754e21e3..2e2b5851139c 100644
+> --- a/drivers/hwmon/pmbus/pmbus_core.c
+> +++ b/drivers/hwmon/pmbus/pmbus_core.c
+> @@ -2015,7 +2015,10 @@ static int pmbus_init_common(struct i2c_client *client, struct pmbus_data *data,
+>  	if (ret >= 0 && (ret & PB_CAPABILITY_ERROR_CHECK))
+>  		client->flags |= I2C_CLIENT_PEC;
+>  
+> -	pmbus_clear_faults(client);
+> +	if (data->info->pages)
+> +		pmbus_clear_faults(client);
+> +	else
+> +		pmbus_clear_fault_page(client, -1);
+>  
+>  	if (info->identify) {
+>  		ret = (*info->identify)(client, info);
