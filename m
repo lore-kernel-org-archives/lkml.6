@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21889C7112A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B5EC28CF8
 	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD42B2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:08:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD42B2086A
+	by mail.kernel.org (Postfix) with ESMTP id 216222087D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 05:08:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 216222087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbeJOMvt (ORCPT
+        id S1726698AbeJOMvv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 08:51:49 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:56467 "EHLO
+        Mon, 15 Oct 2018 08:51:51 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:35645 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726397AbeJOMvt (ORCPT
+        by vger.kernel.org with ESMTP id S1726098AbeJOMvt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 15 Oct 2018 08:51:49 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437667|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03307;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.D2CEZZb_1539580083;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D2CEZZb_1539580083)
-          by smtp.aliyun-inc.com(10.147.41.187);
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1514162|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03291;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.D2CJ4qP_1539580082;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D2CJ4qP_1539580082)
+          by smtp.aliyun-inc.com(10.147.44.118);
           Mon, 15 Oct 2018 13:08:03 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
@@ -34,9 +34,9 @@ To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
         paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V13 3/4] clocksource: add gx6605s SOC system timer
-Date:   Mon, 15 Oct 2018 13:07:43 +0800
-Message-Id: <6a090f24194b7cfff807ecad7f7c2f1cf3b737c0.1539579760.git.ren_guo@c-sky.com>
+Subject: [PATCH V13 2/4] dt-bindings: timer: C-SKY Multi-processor timer
+Date:   Mon, 15 Oct 2018 13:07:42 +0800
+Message-Id: <0f7cbde6462150c6ddb058d89d59ce35c3d6da9f.1539579760.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
 References: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
@@ -47,221 +47,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver is for gx6605s SOC system timer and there are two
-same timers in gx6605s. We use one for clkevt and another one for
-clksrc.
-
-The timer is mmio map to access, so we need give mmio address in dts.
-
-The counter at 0x0  offset is clock event.
-The counter at 0x40 offset is clock source.
+Dt-bingdings doc for C-SKY SMP system setting.
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 Changelog:
- - pass checkpatch.pl
- - Add COMIPLE_TEST in Kconfig
- - no cast is needed for "struct clock_event_device *ce = dev"
- - remove: extra space after (u64)
- - Add License and Copyright
- - Use timer-of framework
- - Change name with upstream feedback
- - Use clksource_mmio framework
+ - Drop the interrupt-parent.
 ---
 ---
- drivers/clocksource/Kconfig         |   8 ++
- drivers/clocksource/Makefile        |   1 +
- drivers/clocksource/timer-gx6605s.c | 154 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 163 insertions(+)
- create mode 100644 drivers/clocksource/timer-gx6605s.c
+ .../devicetree/bindings/timer/csky,mptimer.txt     | 42 ++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/csky,mptimer.txt
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 591c9a8..55c77e4 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -630,4 +630,12 @@ config CSKY_MP_TIMER
- 	  csky,mptimer is not only used in SMP system, it also could be used
- 	  single core system. It's not a mmio reg and it use mtcr/mfcr instruction.
- 
-+config GX6605S_TIMER
-+	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
-+	depends on CSKY
-+	select CLKSRC_MMIO
-+	select TIMER_OF
-+	help
-+	  This option enables support for gx6605s SOC's timer.
-+
- endmenu
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index 5ce82d3..9196331 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -80,3 +80,4 @@ obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
- obj-$(CONFIG_ATCPIT100_TIMER)		+= timer-atcpit100.o
- obj-$(CONFIG_RISCV_TIMER)		+= riscv_timer.o
- obj-$(CONFIG_CSKY_MP_TIMER)		+= timer-mp-csky.o
-+obj-$(CONFIG_GX6605S_TIMER)		+= timer-gx6605s.o
-diff --git a/drivers/clocksource/timer-gx6605s.c b/drivers/clocksource/timer-gx6605s.c
+diff --git a/Documentation/devicetree/bindings/timer/csky,mptimer.txt b/Documentation/devicetree/bindings/timer/csky,mptimer.txt
 new file mode 100644
-index 0000000..80d0939
+index 0000000..15cfec0
 --- /dev/null
-+++ b/drivers/clocksource/timer-gx6605s.c
-@@ -0,0 +1,154 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++++ b/Documentation/devicetree/bindings/timer/csky,mptimer.txt
+@@ -0,0 +1,42 @@
++============================
++C-SKY Multi-processors Timer
++============================
 +
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/sched_clock.h>
++C-SKY multi-processors timer is designed for C-SKY SMP system and the
++regs is accessed by cpu co-processor 4 registers with mtcr/mfcr.
 +
-+#include "timer-of.h"
++ - PTIM_CTLR "cr<0, 14>" Control reg to start reset timer.
++ - PTIM_TSR  "cr<1, 14>" Interrupt cleanup status reg.
++ - PTIM_CCVR "cr<3, 14>" Current counter value reg.
++ - PTIM_LVR  "cr<6, 14>" Window value reg to triger next event.
 +
-+#define CLKSRC_OFFSET	0x40
++==============================
++timer node bindings definition
++==============================
 +
-+#define TIMER_STATUS	0x00
-+#define TIMER_VALUE	0x04
-+#define TIMER_CONTRL	0x10
-+#define TIMER_CONFIG	0x20
-+#define TIMER_DIV	0x24
-+#define TIMER_INI	0x28
++	Description: Describes SMP timer
 +
-+#define GX6605S_STATUS_CLR	BIT(0)
-+#define GX6605S_CONTRL_RST	BIT(0)
-+#define GX6605S_CONTRL_START	BIT(1)
-+#define GX6605S_CONFIG_EN	BIT(0)
-+#define GX6605S_CONFIG_IRQ_EN	BIT(1)
++	PROPERTIES
 +
-+static irqreturn_t gx6605s_timer_interrupt(int irq, void *dev)
-+{
-+	struct clock_event_device *ce = dev;
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
++	- compatible
++		Usage: required
++		Value type: <string>
++		Definition: must be "csky,mptimer"
++	- clocks
++		Usage: required
++		Value type: <node>
++		Definition: must be input clk node
++	- interrupts
++		Usage: required
++		Value type: <u32>
++		Definition: must be timer irq num defined by soc
 +
-+	writel_relaxed(GX6605S_STATUS_CLR, base + TIMER_STATUS);
++Examples:
++---------
 +
-+	ce->event_handler(ce);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int gx6605s_timer_set_oneshot(struct clock_event_device *ce)
-+{
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
-+
-+	/* reset and stop counter */
-+	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
-+
-+	/* enable with irq and start */
-+	writel_relaxed(GX6605S_CONFIG_EN | GX6605S_CONFIG_IRQ_EN,
-+		       base + TIMER_CONFIG);
-+
-+	return 0;
-+}
-+
-+static int gx6605s_timer_set_next_event(unsigned long delta,
-+					struct clock_event_device *ce)
-+{
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
-+
-+	/* use reset to pause timer */
-+	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
-+
-+	/* config next timeout value */
-+	writel_relaxed(ULONG_MAX - delta, base + TIMER_INI);
-+	writel_relaxed(GX6605S_CONTRL_START, base + TIMER_CONTRL);
-+
-+	return 0;
-+}
-+
-+static int gx6605s_timer_shutdown(struct clock_event_device *ce)
-+{
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
-+
-+	writel_relaxed(0, base + TIMER_CONTRL);
-+	writel_relaxed(0, base + TIMER_CONFIG);
-+
-+	return 0;
-+}
-+
-+static struct timer_of to = {
-+	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
-+	.clkevt = {
-+		.rating			= 300,
-+		.features		= CLOCK_EVT_FEAT_DYNIRQ |
-+					  CLOCK_EVT_FEAT_ONESHOT,
-+		.set_state_shutdown	= gx6605s_timer_shutdown,
-+		.set_state_oneshot	= gx6605s_timer_set_oneshot,
-+		.set_next_event		= gx6605s_timer_set_next_event,
-+		.cpumask		= cpu_possible_mask,
-+	},
-+	.of_irq = {
-+		.handler		= gx6605s_timer_interrupt,
-+		.flags			= IRQF_TIMER | IRQF_IRQPOLL,
-+	},
-+};
-+
-+static u64 notrace gx6605s_sched_clock_read(void)
-+{
-+	void __iomem *base;
-+
-+	base = timer_of_base(&to) + CLKSRC_OFFSET;
-+
-+	return (u64)readl_relaxed(base + TIMER_VALUE);
-+}
-+
-+static void gx6605s_clkevt_init(void __iomem *base)
-+{
-+	writel_relaxed(0, base + TIMER_DIV);
-+	writel_relaxed(0, base + TIMER_CONFIG);
-+
-+	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to), 2,
-+					ULONG_MAX);
-+}
-+
-+static int gx6605s_clksrc_init(void __iomem *base)
-+{
-+	writel_relaxed(0, base + TIMER_DIV);
-+	writel_relaxed(0, base + TIMER_INI);
-+
-+	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
-+
-+	writel_relaxed(GX6605S_CONFIG_EN, base + TIMER_CONFIG);
-+
-+	writel_relaxed(GX6605S_CONTRL_START, base + TIMER_CONTRL);
-+
-+	sched_clock_register(gx6605s_sched_clock_read, 32, timer_of_rate(&to));
-+
-+	return clocksource_mmio_init(base + TIMER_VALUE, "gx6605s",
-+			timer_of_rate(&to), 200, 32, clocksource_mmio_readl_up);
-+}
-+
-+static int __init gx6605s_timer_init(struct device_node *np)
-+{
-+	int ret;
-+
-+	/*
-+	 * The timer driver is for nationalchip gx6605s SOC and there are two
-+	 * same timer in gx6605s. We use one for clkevt and another for clksrc.
-+	 *
-+	 * The timer is mmio map to access, so we need give mmio address in dts.
-+	 *
-+	 * It provides a 32bit countup timer and interrupt will be caused by
-+	 * count-overflow.
-+	 * So we need set-next-event by ULONG_MAX - delta in TIMER_INI reg.
-+	 *
-+	 * The counter at 0x0  offset is clock event.
-+	 * The counter at 0x40 offset is clock source.
-+	 * They are the same in hardware, just different used by driver.
-+	 */
-+	ret = timer_of_init(np, &to);
-+	if (ret)
-+		return ret;
-+
-+	gx6605s_clkevt_init(timer_of_base(&to));
-+
-+	return gx6605s_clksrc_init(timer_of_base(&to) + CLKSRC_OFFSET);
-+}
-+TIMER_OF_DECLARE(csky_gx6605s_timer, "csky,gx6605s-timer", gx6605s_timer_init);
++	timer: timer {
++		compatible = "csky,mptimer";
++		clocks = <&dummy_apb_clk>;
++		interrupts = <16>;
++		interrupt-parent = <&intc>;
++	};
 -- 
 2.7.4
 
