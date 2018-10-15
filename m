@@ -2,531 +2,142 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 793FBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6B4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 270342054F
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:20:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BD012089D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:22:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+fHb9uz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 270342054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIagEI/a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD012089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbeJPGHh (ORCPT
+        id S1727086AbeJPGJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:07:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbeJPGHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:07:36 -0400
-Received: from localhost.localdomain (user-0ccsrjt.cable.mindspring.com [24.206.110.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76916208E4;
-        Mon, 15 Oct 2018 22:20:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539642025;
-        bh=omTmS3Py1CL8Bed7yMH/kS2Grfg7hYG3TYYfE/CEZXA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V+fHb9uzm4BmtfpAAB6LQ2xWj828JFxnnRmlgLNA41R873Ch+a+lZsQ4Y0qFsbZhF
-         59Wd9YjvWNqNmsXUkAKivCJ4EP7UD2lmiIEyRsCtx+dxCvSf0Kpn/c95JCVwJYvCCe
-         jvEZoZawMljIRnayEes74+p3tWNbD0HPGOr2UC2g=
-From:   Alan Tull <atull@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Moritz Fischer <mdf@kernel.org>, Alan Tull <atull@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH 4/4] docs: fpga: document programming fpgas using regions
-Date:   Mon, 15 Oct 2018 17:20:04 -0500
-Message-Id: <1539642004-18473-5-git-send-email-atull@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539642004-18473-1-git-send-email-atull@kernel.org>
-References: <1539642004-18473-1-git-send-email-atull@kernel.org>
+        Tue, 16 Oct 2018 02:09:27 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45548 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726771AbeJPGJ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 02:09:26 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t70-v6so9807804pgd.12;
+        Mon, 15 Oct 2018 15:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=idVPqMTWnPvxBijvXlg2fqOnfCoxVCmgtyviF8N53kc=;
+        b=GIagEI/aodGYY6t77UWsjU2UaAG1VTxCuI8qwS/eHVxYuCoMAb//s9Md3Hbgd4sMzQ
+         FpKT0vnIeNu8crTTRYeu6aV0Ek4vFTP3GO3yNTZQqGHkbJFGGMzSupnq2sT+iVZC4hzq
+         xtw0yPfdKFRCyjLtv6M4NvVQFFWmnqIEUXqz7Uw2msmX2EYAuZ9U1gqVSwy9oAlzZbHa
+         6xhBEMpjPN3qybaWfbmCqmsGNmiV/HWmHTRQG/IrKCw0aHvAsPtrCrLsC7flxfanwSrc
+         dNRQYtLYeksP0j5PGCMuEyV5irdZhYV4kfyuS3Dm+au3ZJEwPX3RiGy7FO3/4IsbqwT/
+         5QIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=idVPqMTWnPvxBijvXlg2fqOnfCoxVCmgtyviF8N53kc=;
+        b=sOji+70eeYhCEjpGEUfnj/ezzuNFoqOyjTFuVhgD7lbgwczX2u2n9o0J9u04PwBF4X
+         XDm/fYeBK5NSecS5Q3E9LtTmiKQ7E0B+ehe7qG7ySAvGwUN3/B3XsDVycUB+yUDipVJV
+         pa9HbI7MPtQ7pBxnrQ/7FAD04ng6KyJOS2JdRIofbrnqFTIRiz5IKk4lu9TsWEt3MqNz
+         jhpYKei10SIR0V8NRnO5gvHwOclbU9N8XkBqMn7VY4AqIaRKua2tGbE28N03rsvu/0yc
+         zx4jUllxpIN7pXjF1HPrXgHCxmKVkPdLrrVynkmR9wvEXP2kHGx5XlFCVWjG9wEgEA93
+         o9mA==
+X-Gm-Message-State: ABuFfoiIfxU7dzXlJeAR5RzEI4HsVzx7/Gs4vP22tZeG5uEs0d9C9s5m
+        y0+oUxh3iicpJBkjl0mayZgywhEF
+X-Google-Smtp-Source: ACcGV608YX+dmEzvd4xuzRBip+CAKD7WG91TZg7l8Jf/VKkyb5tfoM8qmqyInCnctvpNb+JO/iHI4A==
+X-Received: by 2002:a63:bd41:: with SMTP id d1-v6mr16819671pgp.367.1539642135083;
+        Mon, 15 Oct 2018 15:22:15 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id r65-v6sm15768554pfj.5.2018.10.15.15.22.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 15:22:14 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 15:22:13 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: linux-next: Tree for Oct 15
+Message-ID: <20181015222213.GA31415@roeck-us.net>
+References: <20181015192546.15faf3a1@canb.auug.org.au>
+ <20181015193914.GA9881@roeck-us.net>
+ <20181016073359.3fa7bb32@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016073359.3fa7bb32@canb.auug.org.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clarify the intention that interfaces and upper layers use
-regions rather than managers directly.
+On Tue, Oct 16, 2018 at 07:33:59AM +1100, Stephen Rothwell wrote:
+> Hi Guenter,
+> 
+> [Again, just cc'ing the PPC folks]
+> 
+> On Mon, 15 Oct 2018 12:39:14 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+> >
+> > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Changes since 20181012:
+> > > 
+> > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
+> > >   
+> > 
+> > Bisect log:
+> > 
 
-Rearrange API documentation to better group the API functions
-used to create FPGA mgr/bridge/regions and the API used for
-programming FPGAs.
+Trying again. Not very useful since some of the steps fail with compile errors.
+The problem does seem to be related to the bootmem changes, though.
 
-Signed-off-by: Alan Tull <atull@kernel.org>
-Suggested-by: Federico Vaga <federico.vaga@cern.ch>
-Acked-by: Moritz Fischer <mdf@kernel.org>
----
- Documentation/driver-api/fpga/fpga-bridge.rst      |  38 ++-----
- Documentation/driver-api/fpga/fpga-mgr.rst         | 117 ++-------------------
- Documentation/driver-api/fpga/fpga-programming.rst | 107 +++++++++++++++++++
- Documentation/driver-api/fpga/fpga-region.rst      |  92 ++++++++--------
- Documentation/driver-api/fpga/index.rst            |   2 +
- Documentation/driver-api/fpga/intro.rst            |   2 +-
- 6 files changed, 171 insertions(+), 187 deletions(-)
- create mode 100644 Documentation/driver-api/fpga/fpga-programming.rst
+I might try again tonight if I find the time.
 
-diff --git a/Documentation/driver-api/fpga/fpga-bridge.rst b/Documentation/driver-api/fpga/fpga-bridge.rst
-index ebbcbde..71c5a40 100644
---- a/Documentation/driver-api/fpga/fpga-bridge.rst
-+++ b/Documentation/driver-api/fpga/fpga-bridge.rst
-@@ -4,6 +4,12 @@ FPGA Bridge
- API to implement a new FPGA bridge
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
-+* struct :c:type:`fpga_bridge` — The FPGA Bridge structure
-+* struct :c:type:`fpga_bridge_ops` — Low level Bridge driver ops
-+* :c:func:`devm_fpga_bridge_create()` — Allocate and init a bridge struct
-+* :c:func:`fpga_bridge_register()` — Register a bridge
-+* :c:func:`fpga_bridge_unregister()` — Unregister a bridge
-+
- .. kernel-doc:: include/linux/fpga/fpga-bridge.h
-    :functions: fpga_bridge
- 
-@@ -14,39 +20,7 @@ API to implement a new FPGA bridge
-    :functions: devm_fpga_bridge_create
- 
- .. kernel-doc:: drivers/fpga/fpga-bridge.c
--   :functions: fpga_bridge_create
--
--.. kernel-doc:: drivers/fpga/fpga-bridge.c
--   :functions: fpga_bridge_free
--
--.. kernel-doc:: drivers/fpga/fpga-bridge.c
-    :functions: fpga_bridge_register
- 
- .. kernel-doc:: drivers/fpga/fpga-bridge.c
-    :functions: fpga_bridge_unregister
--
--API to control an FPGA bridge
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--
--You probably won't need these directly.  FPGA regions should handle this.
--
--.. kernel-doc:: drivers/fpga/fpga-bridge.c
--   :functions: of_fpga_bridge_get
--
--.. kernel-doc:: drivers/fpga/fpga-bridge.c
--   :functions: fpga_bridge_get
--
--.. kernel-doc:: drivers/fpga/fpga-bridge.c
--   :functions: fpga_bridge_put
--
--.. kernel-doc:: drivers/fpga/fpga-bridge.c
--   :functions: fpga_bridge_get_to_list
--
--.. kernel-doc:: drivers/fpga/fpga-bridge.c
--   :functions: of_fpga_bridge_get_to_list
--
--.. kernel-doc:: drivers/fpga/fpga-bridge.c
--   :functions: fpga_bridge_enable
--
--.. kernel-doc:: drivers/fpga/fpga-bridge.c
--   :functions: fpga_bridge_disable
-diff --git a/Documentation/driver-api/fpga/fpga-mgr.rst b/Documentation/driver-api/fpga/fpga-mgr.rst
-index db8885e..576f194 100644
---- a/Documentation/driver-api/fpga/fpga-mgr.rst
-+++ b/Documentation/driver-api/fpga/fpga-mgr.rst
-@@ -98,67 +98,19 @@ The ops include a .state function which will determine the state the FPGA is in
- and return a code of type enum fpga_mgr_states.  It doesn't result in a change
- in state.
- 
--How to write an image buffer to a supported FPGA
--------------------------------------------------
--
--Some sample code::
--
--	#include <linux/fpga/fpga-mgr.h>
--
--	struct fpga_manager *mgr;
--	struct fpga_image_info *info;
--	int ret;
--
--	/*
--	 * Get a reference to FPGA manager.  The manager is not locked, so you can
--	 * hold onto this reference without it preventing programming.
--	 *
--	 * This example uses the device node of the manager.  Alternatively, use
--	 * fpga_mgr_get(dev) instead if you have the device.
--	 */
--	mgr = of_fpga_mgr_get(mgr_node);
--
--	/* struct with information about the FPGA image to program. */
--	info = fpga_image_info_alloc(dev);
--
--	/* flags indicates whether to do full or partial reconfiguration */
--	info->flags = FPGA_MGR_PARTIAL_RECONFIG;
--
--	/*
--	 * At this point, indicate where the image is. This is pseudo-code; you're
--	 * going to use one of these three.
--	 */
--	if (image is in a scatter gather table) {
--
--		info->sgt = [your scatter gather table]
--
--	} else if (image is in a buffer) {
--
--		info->buf = [your image buffer]
--		info->count = [image buffer size]
--
--	} else if (image is in a firmware file) {
--
--		info->firmware_name = devm_kstrdup(dev, firmware_name, GFP_KERNEL);
--
--	}
--
--	/* Get exclusive control of FPGA manager */
--	ret = fpga_mgr_lock(mgr);
--
--	/* Load the buffer to the FPGA */
--	ret = fpga_mgr_buf_load(mgr, &info, buf, count);
--
--	/* Release the FPGA manager */
--	fpga_mgr_unlock(mgr);
--	fpga_mgr_put(mgr);
--
--	/* Deallocate the image info if you're done with it */
--	fpga_image_info_free(info);
--
- API for implementing a new FPGA Manager driver
- ----------------------------------------------
- 
-+* ``fpga_mgr_states`` —  Values for :c:member:`fpga_manager->state`.
-+* struct :c:type:`fpga_manager` —  the FPGA manager struct
-+* struct :c:type:`fpga_manager_ops` —  Low level FPGA manager driver ops
-+* :c:func:`devm_fpga_mgr_create` —  Allocate and init a manager struct
-+* :c:func:`fpga_mgr_register` —  Register an FPGA manager
-+* :c:func:`fpga_mgr_unregister` —  Unregister an FPGA manager
-+
-+.. kernel-doc:: include/linux/fpga/fpga-mgr.h
-+   :functions: fpga_mgr_states
-+
- .. kernel-doc:: include/linux/fpga/fpga-mgr.h
-    :functions: fpga_manager
- 
-@@ -169,56 +121,7 @@ API for implementing a new FPGA Manager driver
-    :functions: devm_fpga_mgr_create
- 
- .. kernel-doc:: drivers/fpga/fpga-mgr.c
--   :functions: fpga_mgr_create
--
--.. kernel-doc:: drivers/fpga/fpga-mgr.c
--   :functions: fpga_mgr_free
--
--.. kernel-doc:: drivers/fpga/fpga-mgr.c
-    :functions: fpga_mgr_register
- 
- .. kernel-doc:: drivers/fpga/fpga-mgr.c
-    :functions: fpga_mgr_unregister
--
--API for programming an FPGA
-----------------------------
--
--FPGA Manager flags
--
--.. kernel-doc:: include/linux/fpga/fpga-mgr.h
--   :doc: FPGA Manager flags
--
--.. kernel-doc:: include/linux/fpga/fpga-mgr.h
--   :functions: fpga_image_info
--
--.. kernel-doc:: include/linux/fpga/fpga-mgr.h
--   :functions: fpga_mgr_states
--
--.. kernel-doc:: drivers/fpga/fpga-mgr.c
--   :functions: fpga_image_info_alloc
--
--.. kernel-doc:: drivers/fpga/fpga-mgr.c
--   :functions: fpga_image_info_free
--
--.. kernel-doc:: drivers/fpga/fpga-mgr.c
--   :functions: of_fpga_mgr_get
--
--.. kernel-doc:: drivers/fpga/fpga-mgr.c
--   :functions: fpga_mgr_get
--
--.. kernel-doc:: drivers/fpga/fpga-mgr.c
--   :functions: fpga_mgr_put
--
--.. kernel-doc:: drivers/fpga/fpga-mgr.c
--   :functions: fpga_mgr_lock
--
--.. kernel-doc:: drivers/fpga/fpga-mgr.c
--   :functions: fpga_mgr_unlock
--
--.. kernel-doc:: include/linux/fpga/fpga-mgr.h
--   :functions: fpga_mgr_states
--
--Note - use :c:func:`fpga_region_program_fpga()` instead of :c:func:`fpga_mgr_load()`
--
--.. kernel-doc:: drivers/fpga/fpga-mgr.c
--   :functions: fpga_mgr_load
-diff --git a/Documentation/driver-api/fpga/fpga-programming.rst b/Documentation/driver-api/fpga/fpga-programming.rst
-new file mode 100644
-index 0000000..b5484df
---- /dev/null
-+++ b/Documentation/driver-api/fpga/fpga-programming.rst
-@@ -0,0 +1,107 @@
-+In-kernel API for FPGA Programming
-+==================================
-+
-+Overview
-+--------
-+
-+The in-kernel API for FPGA programming is a combination of APIs from
-+FPGA manager, bridge, and regions.  The actual function used to
-+trigger FPGA programming is :c:func:`fpga_region_program_fpga()`.
-+
-+:c:func:`fpga_region_program_fpga()` uses functionality supplied by
-+the FPGA manager and bridges.  It will:
-+
-+ * lock the region's mutex
-+ * lock the mutex of the region's FPGA manager
-+ * build a list of FPGA bridges if a method has been specified to do so
-+ * disable the bridges
-+ * program the FPGA using info passed in :c:member:`fpga_region->info`.
-+ * re-enable the bridges
-+ * release the locks
-+
-+The struct fpga_image_info specifies what FPGA image to program.  It is
-+allocated/freed by :c:func:`fpga_image_info_alloc()` and freed with
-+:c:func:`fpga_image_info_free()`
-+
-+How to program an FPGA using a region
-+-------------------------------------
-+
-+When the FPGA region driver probed, it was given a pointer to an FPGA manager
-+driver so it knows which manager to use.  The region also either has a list of
-+bridges to control during programming or it has a pointer to a function that
-+will generate that list.  Here's some sample code of what to do next::
-+
-+	#include <linux/fpga/fpga-mgr.h>
-+	#include <linux/fpga/fpga-region.h>
-+
-+	struct fpga_image_info *info;
-+	int ret;
-+
-+	/*
-+	 * First, alloc the struct with information about the FPGA image to
-+	 * program.
-+	 */
-+	info = fpga_image_info_alloc(dev);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	/* Set flags as needed, such as: */
-+	info->flags = FPGA_MGR_PARTIAL_RECONFIG;
-+
-+	/*
-+	 * Indicate where the FPGA image is. This is pseudo-code; you're
-+	 * going to use one of these three.
-+	 */
-+	if (image is in a scatter gather table) {
-+
-+		info->sgt = [your scatter gather table]
-+
-+	} else if (image is in a buffer) {
-+
-+		info->buf = [your image buffer]
-+		info->count = [image buffer size]
-+
-+	} else if (image is in a firmware file) {
-+
-+		info->firmware_name = devm_kstrdup(dev, firmware_name,
-+						   GFP_KERNEL);
-+
-+	}
-+
-+	/* Add info to region and do the programming */
-+	region->info = info;
-+	ret = fpga_region_program_fpga(region);
-+
-+	/* Deallocate the image info if you're done with it */
-+	region->info = NULL;
-+	fpga_image_info_free(info);
-+
-+	if (ret)
-+		return ret;
-+
-+	/* Now enumerate whatever hardware has appeared in the FPGA. */
-+
-+API for programming an FPGA
-+---------------------------
-+
-+* :c:func:`fpga_region_program_fpga` —  Program an FPGA
-+* :c:type:`fpga_image_info` —  Specifies what FPGA image to program
-+* :c:func:`fpga_image_info_alloc()` —  Allocate an FPGA image info struct
-+* :c:func:`fpga_image_info_free()` —  Free an FPGA image info struct
-+
-+.. kernel-doc:: drivers/fpga/fpga-region.c
-+   :functions: fpga_region_program_fpga
-+
-+FPGA Manager flags
-+
-+.. kernel-doc:: include/linux/fpga/fpga-mgr.h
-+   :doc: FPGA Manager flags
-+
-+.. kernel-doc:: include/linux/fpga/fpga-mgr.h
-+   :functions: fpga_image_info
-+
-+.. kernel-doc:: drivers/fpga/fpga-mgr.c
-+   :functions: fpga_image_info_alloc
-+
-+.. kernel-doc:: drivers/fpga/fpga-mgr.c
-+   :functions: fpga_image_info_free
-diff --git a/Documentation/driver-api/fpga/fpga-region.rst b/Documentation/driver-api/fpga/fpga-region.rst
-index dc9f75c..0529b2d 100644
---- a/Documentation/driver-api/fpga/fpga-region.rst
-+++ b/Documentation/driver-api/fpga/fpga-region.rst
-@@ -34,41 +34,6 @@ fpga_image_info including:
-  * flags indicating specifics such as whether the image is for partial
-    reconfiguration.
- 
--How to program an FPGA using a region
---------------------------------------
--
--First, allocate the info struct::
--
--	info = fpga_image_info_alloc(dev);
--	if (!info)
--		return -ENOMEM;
--
--Set flags as needed, i.e.::
--
--	info->flags |= FPGA_MGR_PARTIAL_RECONFIG;
--
--Point to your FPGA image, such as::
--
--	info->sgt = &sgt;
--
--Add info to region and do the programming::
--
--	region->info = info;
--	ret = fpga_region_program_fpga(region);
--
--:c:func:`fpga_region_program_fpga()` operates on info passed in the
--fpga_image_info (region->info).  This function will attempt to:
--
-- * lock the region's mutex
-- * lock the region's FPGA manager
-- * build a list of FPGA bridges if a method has been specified to do so
-- * disable the bridges
-- * program the FPGA
-- * re-enable the bridges
-- * release the locks
--
--Then you will want to enumerate whatever hardware has appeared in the FPGA.
--
- How to add a new FPGA region
- ----------------------------
- 
-@@ -77,15 +42,36 @@ An example of usage can be seen in the probe function of [#f2]_.
- .. [#f1] ../devicetree/bindings/fpga/fpga-region.txt
- .. [#f2] ../../drivers/fpga/of-fpga-region.c
- 
--API to program an FPGA
------------------------
--
--.. kernel-doc:: drivers/fpga/fpga-region.c
--   :functions: fpga_region_program_fpga
--
- API to add a new FPGA region
- ----------------------------
- 
-+* struct :c:type:`fpga_region` — The FPGA region struct
-+* :c:func:`devm_fpga_region_create` — Allocate and init a region struct
-+* :c:func:`fpga_region_register` —  Register an FPGA region
-+* :c:func:`fpga_region_unregister` —  Unregister an FPGA region
-+
-+The FPGA region's probe function will need to get a reference to the FPGA
-+Manager it will be using to do the programming.  This usually would happen
-+during the region's probe function.
-+
-+* :c:func:`fpga_mgr_get` — Get a reference to an FPGA manager, raise ref count
-+* :c:func:`of_fpga_mgr_get` —  Get a reference to an FPGA manager, raise ref count,
-+  given a device node.
-+* :c:func:`fpga_mgr_put` — Put an FPGA manager
-+
-+The FPGA region will need to specify which bridges to control while programming
-+the FPGA.  The region driver can build a list of bridges during probe time
-+(:c:member:`fpga_region->bridge_list`) or it can have a function that creates
-+the list of bridges to program just before programming
-+(:c:member:`fpga_region->get_bridges`).  The FPGA bridge framework supplies the
-+following APIs to handle building or tearing down that list.
-+
-+* :c:func:`fpga_bridge_get_to_list` — Get a ref of an FPGA bridge, add it to a
-+  list
-+* :c:func:`of_fpga_bridge_get_to_list` — Get a ref of an FPGA bridge, add it to a
-+  list, given a device node
-+* :c:func:`fpga_bridges_put` — Given a list of bridges, put them
-+
- .. kernel-doc:: include/linux/fpga/fpga-region.h
-    :functions: fpga_region
- 
-@@ -93,13 +79,25 @@ API to add a new FPGA region
-    :functions: devm_fpga_region_create
- 
- .. kernel-doc:: drivers/fpga/fpga-region.c
--   :functions: fpga_region_create
--
--.. kernel-doc:: drivers/fpga/fpga-region.c
--   :functions: fpga_region_free
--
--.. kernel-doc:: drivers/fpga/fpga-region.c
-    :functions: fpga_region_register
- 
- .. kernel-doc:: drivers/fpga/fpga-region.c
-    :functions: fpga_region_unregister
-+
-+.. kernel-doc:: drivers/fpga/fpga-mgr.c
-+   :functions: fpga_mgr_get
-+
-+.. kernel-doc:: drivers/fpga/fpga-mgr.c
-+   :functions: of_fpga_mgr_get
-+
-+.. kernel-doc:: drivers/fpga/fpga-mgr.c
-+   :functions: fpga_mgr_put
-+
-+.. kernel-doc:: drivers/fpga/fpga-bridge.c
-+   :functions: fpga_bridge_get_to_list
-+
-+.. kernel-doc:: drivers/fpga/fpga-bridge.c
-+   :functions: of_fpga_bridge_get_to_list
-+
-+.. kernel-doc:: drivers/fpga/fpga-bridge.c
-+   :functions: fpga_bridges_put
-diff --git a/Documentation/driver-api/fpga/index.rst b/Documentation/driver-api/fpga/index.rst
-index c51e5eb..31a4773 100644
---- a/Documentation/driver-api/fpga/index.rst
-+++ b/Documentation/driver-api/fpga/index.rst
-@@ -11,3 +11,5 @@ FPGA Subsystem
-    fpga-mgr
-    fpga-bridge
-    fpga-region
-+   fpga-programming
-+
-diff --git a/Documentation/driver-api/fpga/intro.rst b/Documentation/driver-api/fpga/intro.rst
-index 50d1cab..f54c7da 100644
---- a/Documentation/driver-api/fpga/intro.rst
-+++ b/Documentation/driver-api/fpga/intro.rst
-@@ -44,7 +44,7 @@ FPGA Region
- -----------
- 
- If you are adding a new interface to the FPGA framework, add it on top
--of an FPGA region to allow the most reuse of your interface.
-+of an FPGA region.
- 
- The FPGA Region framework (fpga-region.c) associates managers and
- bridges as reconfigurable regions.  A region may refer to the whole
--- 
-2.7.4
+Guenter
 
+# bad: [ca0591d03a2d373e0019ad357fbbee69c8272381] Add linux-next specific files for 20181015
+# good: [0238df646e6224016a45505d2c111a24669ebe21] Linux 4.19-rc7
+git bisect start 'HEAD' 'v4.19-rc7'
+# good: [2fc8fb4c02a0f7b9d5e5b4de80cbcef7c808068b] Merge remote-tracking branch 'spi-nor/spi-nor/next'
+git bisect good 2fc8fb4c02a0f7b9d5e5b4de80cbcef7c808068b
+# good: [a54eefdf4d208f6904da9e836ff32d7dde0c9516] Merge remote-tracking branch 'tip/auto-latest'
+git bisect good a54eefdf4d208f6904da9e836ff32d7dde0c9516
+# good: [d71e0d25be750d02a3d04500aeb151bb94465811] Merge remote-tracking branch 'staging/staging-next'
+git bisect good d71e0d25be750d02a3d04500aeb151bb94465811
+# good: [7961c8ea9d81f927a78e30bb7c194310ed6b7c1d] Merge remote-tracking branch 'pinctrl/for-next'
+git bisect good 7961c8ea9d81f927a78e30bb7c194310ed6b7c1d
+# good: [c3d392e6aae57d54fdc683f7432c3e248602bebb] Merge remote-tracking branch 'xarray/xarray'
+git bisect good c3d392e6aae57d54fdc683f7432c3e248602bebb
+# good: [880c1034475c873963d6250eb95ebbbf5604a281] userfaultfd: selftest: cleanup help messages
+git bisect good 880c1034475c873963d6250eb95ebbbf5604a281
+# good: [9f1fa0ab60f7b09d335bbaf33db9116241059708] reiserfs: propagate errors from fill_with_dentries() properly
+git bisect good 9f1fa0ab60f7b09d335bbaf33db9116241059708
+# good: [596046ffd571f32fa3d3e7ffdf7861b71a258552] memblock: replace alloc_bootmem_low with memblock_alloc_low (2)
+git bisect good 596046ffd571f32fa3d3e7ffdf7861b71a258552
+# bad: [ef07e25e5bb02b420cb66004420cea3e0d65d107] dma-direct: fix up for the removal of linux/bootmem.h
+git bisect bad ef07e25e5bb02b420cb66004420cea3e0d65d107
+# good: [ddaa897c9ab76969a74d67a65b6616895f349644] memblock: replace alloc_bootmem with memblock_alloc
+git bisect good ddaa897c9ab76969a74d67a65b6616895f349644
+# good: [3b79243c2ef23d829a2f01f8c9526f17b80a7a32] memblock: rename free_all_bootmem to memblock_free_all
+git bisect good 3b79243c2ef23d829a2f01f8c9526f17b80a7a32
+# good: [d5fa9634892df2bc6bab6101f18df6ba5a2490c5] mm: remove nobootmem
+git bisect good d5fa9634892df2bc6bab6101f18df6ba5a2490c5
+# bad: [75fd637c22bc9bb5c959b7f93c2c5e5f0495992c] mm: remove include/linux/bootmem.h
+git bisect bad 75fd637c22bc9bb5c959b7f93c2c5e5f0495992c
+# good: [979961b3058df1a6d24ab423dd6fa6f20982f591] memblock: replace BOOTMEM_ALLOC_* with MEMBLOCK variants
+git bisect good 979961b3058df1a6d24ab423dd6fa6f20982f591
+# first bad commit: [75fd637c22bc9bb5c959b7f93c2c5e5f0495992c] mm: remove include/linux/bootmem.h
