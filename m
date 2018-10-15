@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0205AC71136
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEEBC71132
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDE202147E
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:31:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDE202147E
+	by mail.kernel.org (Postfix) with ESMTP id 8A09E2089E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 15:31:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A09E2089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbeJOXQo (ORCPT
+        id S1726931AbeJOXQ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 19:16:44 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33888 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbeJOXQn (ORCPT
+        Mon, 15 Oct 2018 19:16:58 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33031 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbeJOXQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 19:16:43 -0400
-Received: by mail-wm1-f68.google.com with SMTP id z25-v6so23304257wmf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 08:30:57 -0700 (PDT)
+        Mon, 15 Oct 2018 19:16:40 -0400
+Received: by mail-wr1-f66.google.com with SMTP id e4-v6so21873431wrs.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 08:30:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=3g9o7Nt8+lLup8PtXVUtBhddDfaQmR8XNXgLSCW+34w=;
-        b=kFpdI9T3a4M0AXMk54oRAlz9YwUTcLBczfPm3srQ97QjWAJ9quA9v4rMXnfKae8zsB
-         33ba/kH66w/wTtl4mOWrtB9tOyKONSP+KEJ7WgKqxi7x8+FJlvDblf6ZV04jhJqrmB3R
-         5tcvZ9tBY3yvjIhaFXthLvwzq+46X/Fcue0XW0WJjA9q4BggsazMKMbLI7EhHZY9RSTu
-         dN+gF/2MA7VFu03TiWnL8bdQloCOxpfFJ9lPRi0A76Q+PUwnUMNG5+9+T5eNJOwd6bL2
-         XqRu3CJU1ARpOA0gJ+/cZ7yWZb6FQZSn4AF+XnKWp1gM7VyaRpGGzZwBOsJMW085gufc
-         aAcg==
-X-Gm-Message-State: ABuFfojzNJ+BIDPXcpBvXfU1Zzz1ApgNfAYBHoEZP2tf6ZKD+0rWu1Dj
-        QzSxoVQ7QEZZS3VT+u2109E=
-X-Google-Smtp-Source: ACcGV61EIJTVWGdHuBwbNe7i0Ly+frUOWJgDGXTNEMhQRToVw0j2DrRR2la1ckBZVexNQqV2ckKkSg==
-X-Received: by 2002:a1c:a9d4:: with SMTP id s203-v6mr13138375wme.58.1539617456135;
-        Mon, 15 Oct 2018 08:30:56 -0700 (PDT)
+        bh=JKE318wIKCFxCuunfg2WJB1Hno/yv4pQr9QRB3MB9UE=;
+        b=B3ebfcTER+wrpidmSmsgn2t9Q3G0Sct1Q21/NIxho7LKn5Y9dtVIvtZa3Tt18lAuCK
+         ayCOyFa2Dir5c4Adl7cDYMjTzEt66869H+hxLl1EFqNNO8bNrotvN6YeKmQ2J4emggp5
+         8dC3grUApVy2BxK7ynpt6NGvuTQn2epJ8VE1NH4Jh+FUw0mVxjzrRMvh8VOfl4agNs9k
+         VTzo/8sAPbSffBJbX6nDdCHZ1YKmxBTCBjqg5/X6tegPY7FFc6euyvMpbP3qjHO2Lw4S
+         0EfxKOY3ULxbRjwO0l5pLTgJLpltyhpQgLt5ABqwsFQFZKg9fDa/trUZuZZebHb08aZ9
+         opBA==
+X-Gm-Message-State: ABuFfoiPPr9hjZgS/gKp/vWATcEWbUuzSo/JctIPnJ3DteV2oFXAut0K
+        IKQDQTiHxiqzHYlnNd91+Po=
+X-Google-Smtp-Source: ACcGV60wvEZ8JvfJapnVl+qBRKKwzhci+rtNmrhU40OZeeKHlRQJvUMi6foPtmo15PHXMVJtGnwGVw==
+X-Received: by 2002:adf:a352:: with SMTP id d18-v6mr14941988wrb.31.1539617455156;
+        Mon, 15 Oct 2018 08:30:55 -0700 (PDT)
 Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id e21-v6sm11992704wma.8.2018.10.15.08.30.53
+        by smtp.gmail.com with ESMTPSA id a1-v6sm8859580wrt.79.2018.10.15.08.30.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Mon, 15 Oct 2018 08:30:54 -0700 (PDT)
 Received: from d104.suse.de (charybdis-ext.suse.de [195.135.221.2])
-        by techadventures.net (Postfix) with ESMTPA id 96AC71259A9;
+        by techadventures.net (Postfix) with ESMTPA id 4B1191259A8;
         Mon, 15 Oct 2018 17:30:52 +0200 (CEST)
 From:   Oscar Salvador <osalvador@techadventures.net>
 To:     akpm@linux-foundation.org
@@ -57,9 +57,9 @@ Cc:     mhocko@suse.com, dan.j.williams@intel.com, yasu.isimatu@gmail.com,
         david@redhat.com, dave.jiang@intel.com, linux-mm@kvack.org,
         alexander.h.duyck@linux.intel.com,
         Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH 4/5] mm/memory_hotplug: Move zone/pages handling to offline stage
-Date:   Mon, 15 Oct 2018 17:30:33 +0200
-Message-Id: <20181015153034.32203-5-osalvador@techadventures.net>
+Subject: [PATCH 3/5] mm/memory_hotplug: Check for IORESOURCE_SYSRAM in release_mem_region_adjustable
+Date:   Mon, 15 Oct 2018 17:30:32 +0200
+Message-Id: <20181015153034.32203-4-osalvador@techadventures.net>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20181015153034.32203-1-osalvador@techadventures.net>
 References: <20181015153034.32203-1-osalvador@techadventures.net>
@@ -70,449 +70,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oscar Salvador <osalvador@suse.de>
 
-Currently, we decrement zone/node spanned_pages during the
-hot-remove path.
+This is a preparation for the next patch.
 
-The picture we have now is:
+Currently, we only call release_mem_region_adjustable() in __remove_pages
+if the zone is not ZONE_DEVICE, because resources that belong to
+HMM/devm are being released by themselves with devm_release_mem_region.
 
-- hot-add memory:
-  a) Allocate a new resource based on the hot-added memory
-  b) Add memory sections for the hot-added memory
+Since we do not want to touch any zone/page stuff during the removing
+of the memory (but during the offlining), we do not want to check for
+the zone here.
+So we need another way to tell release_mem_region_adjustable() to not
+realease the resource in case it belongs to HMM/devm.
 
-- online memory:
-  c) Re-adjust zone/pgdat nr of pages (managed, spanned, present)
-  d) Initialize the pages from the new memory-range
-  e) Online memory sections
+HMM/devm acquires/releases a resource through
+devm_request_mem_region/devm_release_mem_region.
 
-- offline memory:
-  f) Offline memory sections
-  g) Re-adjust zone/pgdat nr of managed/present pages
+These resources have the flag IORESOURCE_MEM, while resources acquired by
+hot-add memory path (register_memory_resource()) contain
+IORESOURCE_SYSTEM_RAM.
 
-- hot-remove memory:
-  i) Re-adjust zone/pgdat nr of spanned pages
-  j) Remove memory sections
-  k) Release resource
-
-This, besides of not being consistent with the current code,
-implies that we can access steal pages if we never get to online
-that memory.
-So we should move i) to the offline stage.
-
-Hot-remove path should only care about memory sections and memory
-blocks.
-
-There is a particularity and that is HMM/devm.
-When the memory is being handled by HMM/devm, this memory is moved to
-ZONE_DEVICE by means of move_pfn_range_to_zone, but since this memory
-does not get "online", the sections do not get online either.
-This is a problem because shrink_zone_pgdat_pages will now look for
-online sections, so we need to explicitly offline the sections
-before calling in.
-add_device_memory takes care of online them, and del_device_memory offlines
-them.
-
-Finally, shrink_zone_pgdat_pages() is moved to offline_pages(), so now,
-all pages/zone handling is being taken care in online/offline stage.
-
-So now we will have:
-
-- hot-add memory:
-  a) Allocate a new resource based on the hot-added memory
-  b) Add memory sections for the hot-added memory
-
-- online memory:
-  c) Re-adjust zone/pgdat nr of pages (managed, spanned, present)
-  d) Initialize the pages from the new memory-range
-  e) Online memory sections
-
-- offline memory:
-  f) Offline memory sections
-  g) Re-adjust zone/pgdat nr of managed/present/spanned pages
-
-- hot-remove memory:
-  i) Remove memory sections
-  j) Release resource
+So, we can check for this flag in release_mem_region_adjustable, and if
+the resource does not contain such flag, we know that we are dealing with
+a HMM/devm resource, so we can back off.
 
 Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
- arch/ia64/mm/init.c            |  4 +-
- arch/powerpc/mm/mem.c          | 11 +----
- arch/sh/mm/init.c              |  4 +-
- arch/x86/mm/init_32.c          |  4 +-
- arch/x86/mm/init_64.c          |  8 +---
- include/linux/memory_hotplug.h |  8 ++--
- mm/memory_hotplug.c            | 99 ++++++++++++++++++++----------------------
- mm/sparse.c                    |  6 +--
- 8 files changed, 58 insertions(+), 86 deletions(-)
+ kernel/resource.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/ia64/mm/init.c b/arch/ia64/mm/init.c
-index 904fe55e10fc..a6b5f351620c 100644
---- a/arch/ia64/mm/init.c
-+++ b/arch/ia64/mm/init.c
-@@ -665,11 +665,9 @@ int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
- {
- 	unsigned long start_pfn = start >> PAGE_SHIFT;
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
--	struct zone *zone;
- 	int ret;
- 
--	zone = page_zone(pfn_to_page(start_pfn));
--	ret = __remove_pages(zone, start_pfn, nr_pages, altmap);
-+	ret = __remove_pages(nid, start_pfn, nr_pages, altmap);
- 	if (ret)
- 		pr_warn("%s: Problem encountered in __remove_pages() as"
- 			" ret=%d\n", __func__,  ret);
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index 6db8f527babb..14b6c859bc04 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -144,18 +144,9 @@ int __meminit arch_remove_memory(int nid, u64 start, u64 size,
- {
- 	unsigned long start_pfn = start >> PAGE_SHIFT;
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
--	struct page *page;
- 	int ret;
- 
--	/*
--	 * If we have an altmap then we need to skip over any reserved PFNs
--	 * when querying the zone.
--	 */
--	page = pfn_to_page(start_pfn);
--	if (altmap)
--		page += vmem_altmap_offset(altmap);
--
--	ret = __remove_pages(page_zone(page), start_pfn, nr_pages, altmap);
-+	ret = __remove_pages(nid, start_pfn, nr_pages, altmap);
- 	if (ret)
- 		return ret;
- 
-diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
-index a8e5c0e00fca..6e80a7a50f8b 100644
---- a/arch/sh/mm/init.c
-+++ b/arch/sh/mm/init.c
-@@ -447,11 +447,9 @@ int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
- {
- 	unsigned long start_pfn = PFN_DOWN(start);
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
--	struct zone *zone;
- 	int ret;
- 
--	zone = page_zone(pfn_to_page(start_pfn));
--	ret = __remove_pages(zone, start_pfn, nr_pages, altmap);
-+	ret = __remove_pages(nid, start_pfn, nr_pages, altmap);
- 	if (unlikely(ret))
- 		pr_warn("%s: Failed, __remove_pages() == %d\n", __func__,
- 			ret);
-diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
-index 85c94f9a87f8..4719af142c10 100644
---- a/arch/x86/mm/init_32.c
-+++ b/arch/x86/mm/init_32.c
-@@ -864,10 +864,8 @@ int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
- {
- 	unsigned long start_pfn = start >> PAGE_SHIFT;
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
--	struct zone *zone;
- 
--	zone = page_zone(pfn_to_page(start_pfn));
--	return __remove_pages(zone, start_pfn, nr_pages, altmap);
-+	return __remove_pages(nid, start_pfn, nr_pages, altmap);
- }
- #endif
- #endif
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 449958da97a4..5f73b6deb794 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1152,15 +1152,9 @@ int __ref arch_remove_memory(int nid, u64 start, u64 size,
- {
- 	unsigned long start_pfn = start >> PAGE_SHIFT;
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
--	struct page *page = pfn_to_page(start_pfn);
--	struct zone *zone;
- 	int ret;
- 
--	/* With altmap the first mapped page is offset from @start */
--	if (altmap)
--		page += vmem_altmap_offset(altmap);
--	zone = page_zone(page);
--	ret = __remove_pages(zone, start_pfn, nr_pages, altmap);
-+	ret = __remove_pages(nid, start_pfn, nr_pages, altmap);
- 	WARN_ON_ONCE(ret);
- 	kernel_physical_mapping_remove(start, start + size);
- 
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index cf014d5edbb2..a1be5e76be14 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -109,8 +109,8 @@ static inline bool movable_node_is_enabled(void)
- #ifdef CONFIG_MEMORY_HOTREMOVE
- extern int arch_remove_memory(int nid, u64 start, u64 size,
- 		struct vmem_altmap *altmap);
--extern int __remove_pages(struct zone *zone, unsigned long start_pfn,
--	unsigned long nr_pages, struct vmem_altmap *altmap);
-+extern int __remove_pages(int nid, unsigned long start_pfn,
-+			unsigned long nr_pages, struct vmem_altmap *altmap);
- 
- #ifdef CONFIG_ZONE_DEVICE
- extern int del_device_memory(int nid, unsigned long start, unsigned long size,
-@@ -346,8 +346,8 @@ extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages);
- extern bool is_memblock_offlined(struct memory_block *mem);
- extern int sparse_add_one_section(struct pglist_data *pgdat,
- 		unsigned long start_pfn, struct vmem_altmap *altmap);
--extern void sparse_remove_one_section(struct zone *zone, struct mem_section *ms,
--		unsigned long map_offset, struct vmem_altmap *altmap);
-+extern void sparse_remove_one_section(int nid, struct mem_section *ms,
-+			unsigned long map_offset, struct vmem_altmap *altmap);
- extern struct page *sparse_decode_mem_map(unsigned long coded_mem_map,
- 					  unsigned long pnum);
- extern bool allow_online_pfn_range(int nid, unsigned long pfn, unsigned long nr_pages,
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 5874aceb81ac..6b98321aa52f 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -319,12 +319,10 @@ static unsigned long find_smallest_section_pfn(int nid, struct zone *zone,
- 				     unsigned long start_pfn,
- 				     unsigned long end_pfn)
- {
--	struct mem_section *ms;
--
- 	for (; start_pfn < end_pfn; start_pfn += PAGES_PER_SECTION) {
--		ms = __pfn_to_section(start_pfn);
-+		struct mem_section *ms = __pfn_to_section(start_pfn);
- 
--		if (unlikely(!valid_section(ms)))
-+		if (unlikely(!online_section(ms)))
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 81937830a42f..c45decd7d6af 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1272,6 +1272,22 @@ int release_mem_region_adjustable(struct resource *parent,
  			continue;
+ 		}
  
- 		if (unlikely(pfn_to_nid(start_pfn) != nid))
-@@ -344,15 +342,14 @@ static unsigned long find_biggest_section_pfn(int nid, struct zone *zone,
- 				    unsigned long start_pfn,
- 				    unsigned long end_pfn)
- {
--	struct mem_section *ms;
- 	unsigned long pfn;
- 
- 	/* pfn is the end pfn of a memory section. */
- 	pfn = end_pfn - 1;
- 	for (; pfn >= start_pfn; pfn -= PAGES_PER_SECTION) {
--		ms = __pfn_to_section(pfn);
-+		struct mem_section *ms = __pfn_to_section(pfn);
- 
--		if (unlikely(!valid_section(ms)))
-+		if (unlikely(!online_section(ms)))
- 			continue;
- 
- 		if (unlikely(pfn_to_nid(pfn) != nid))
-@@ -414,7 +411,7 @@ static void shrink_zone_span(struct zone *zone, unsigned long start_pfn,
- 	for (; pfn < zone_end_pfn; pfn += PAGES_PER_SECTION) {
- 		ms = __pfn_to_section(pfn);
- 
--		if (unlikely(!valid_section(ms)))
-+		if (unlikely(!online_section(ms)))
- 			continue;
- 
- 		if (page_zone(pfn_to_page(pfn)) != zone)
-@@ -482,7 +479,7 @@ static void shrink_pgdat_span(struct pglist_data *pgdat,
- 	for (; pfn < pgdat_end_pfn; pfn += PAGES_PER_SECTION) {
- 		ms = __pfn_to_section(pfn);
- 
--		if (unlikely(!valid_section(ms)))
-+		if (unlikely(!online_section(ms)))
- 			continue;
- 
- 		if (pfn_to_nid(pfn) != nid)
-@@ -501,23 +498,31 @@ static void shrink_pgdat_span(struct pglist_data *pgdat,
- 	pgdat->node_spanned_pages = 0;
- }
- 
--static void __remove_zone(struct zone *zone, unsigned long start_pfn)
-+static void shrink_zone_pgdat_pages(struct zone *zone, unsigned long start_pfn,
-+			unsigned long end_pfn, unsigned long offlined_pages)
- {
- 	struct pglist_data *pgdat = zone->zone_pgdat;
- 	int nr_pages = PAGES_PER_SECTION;
- 	unsigned long flags;
-+	unsigned long pfn;
- 
--	pgdat_resize_lock(zone->zone_pgdat, &flags);
--	shrink_zone_span(zone, start_pfn, start_pfn + nr_pages);
--	shrink_pgdat_span(pgdat, start_pfn, start_pfn + nr_pages);
--	pgdat_resize_unlock(zone->zone_pgdat, &flags);
-+	zone->present_pages -= offlined_pages;
-+	clear_zone_contiguous(zone);
++		/*
++		 * All memory regions added from memory-hotplug path
++		 * have the flag IORESOURCE_SYSTEM_RAM.
++		 * If the resource does not have this flag, we know that
++		 * we are dealing with a resource coming from HMM/devm.
++		 * HMM/devm use another mechanism to add/release a resource.
++		 * This goes via devm_request_mem_region and
++		 * devm_release_mem_region.
++		 * HMM/devm take care to release their resources when they want,
++		 * so if we are dealing with them, let us just back off here.
++		 */
++		if (!(res->flags & IORESOURCE_SYSRAM)) {
++			ret = 0;
++			break;
++		}
 +
-+	pgdat_resize_lock(pgdat, &flags);
-+	pgdat->node_present_pages -= offlined_pages;
-+	for (pfn = start_pfn; pfn < end_pfn; pfn += nr_pages) {
-+		shrink_zone_span(zone, pfn, pfn + nr_pages);
-+		shrink_pgdat_span(pgdat, pfn, pfn + nr_pages);
-+	}
-+	pgdat_resize_unlock(pgdat, &flags);
-+
-+	set_zone_contiguous(zone);
- }
- 
--static int __remove_section(struct zone *zone, struct mem_section *ms,
--		unsigned long map_offset, struct vmem_altmap *altmap)
-+static int __remove_section(int nid, struct mem_section *ms,
-+			unsigned long map_offset, struct vmem_altmap *altmap)
- {
--	unsigned long start_pfn;
--	int scn_nr;
- 	int ret = -EINVAL;
- 
- 	if (!valid_section(ms))
-@@ -527,17 +532,13 @@ static int __remove_section(struct zone *zone, struct mem_section *ms,
- 	if (ret)
- 		return ret;
- 
--	scn_nr = __section_nr(ms);
--	start_pfn = section_nr_to_pfn((unsigned long)scn_nr);
--	__remove_zone(zone, start_pfn);
--
--	sparse_remove_one_section(zone, ms, map_offset, altmap);
-+	sparse_remove_one_section(nid, ms, map_offset, altmap);
- 	return 0;
- }
- 
- /**
-  * __remove_pages() - remove sections of pages from a zone
-- * @zone: zone from which pages need to be removed
-+ * @nid: nid from which pages belong to
-  * @phys_start_pfn: starting pageframe (must be aligned to start of a section)
-  * @nr_pages: number of pages to remove (must be multiple of section size)
-  * @altmap: alternative device page map or %NULL if default memmap is used
-@@ -547,35 +548,28 @@ static int __remove_section(struct zone *zone, struct mem_section *ms,
-  * sure that pages are marked reserved and zones are adjust properly by
-  * calling offline_pages().
-  */
--int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
--		 unsigned long nr_pages, struct vmem_altmap *altmap)
-+int __remove_pages(int nid, unsigned long phys_start_pfn,
-+			 unsigned long nr_pages, struct vmem_altmap *altmap)
- {
- 	unsigned long i;
- 	unsigned long map_offset = 0;
- 	int sections_to_remove, ret = 0;
-+	resource_size_t start, size;
- 
--	/* In the ZONE_DEVICE case device driver owns the memory region */
--	if (is_dev_zone(zone)) {
--		if (altmap)
--			map_offset = vmem_altmap_offset(altmap);
--	} else {
--		resource_size_t start, size;
-+	start = phys_start_pfn << PAGE_SHIFT;
-+	size = nr_pages * PAGE_SIZE;
- 
--		start = phys_start_pfn << PAGE_SHIFT;
--		size = nr_pages * PAGE_SIZE;
-+	if (altmap)
-+		map_offset = vmem_altmap_offset(altmap);
- 
--		ret = release_mem_region_adjustable(&iomem_resource, start,
--					size);
--		if (ret) {
--			resource_size_t endres = start + size - 1;
-+	ret = release_mem_region_adjustable(&iomem_resource, start, size);
-+	if (ret) {
-+		resource_size_t endres = start + size - 1;
- 
--			pr_warn("Unable to release resource <%pa-%pa> (%d)\n",
--					&start, &endres, ret);
--		}
-+		pr_warn("Unable to release resource <%pa-%pa> (%d)\n",
-+						&start, &endres, ret);
- 	}
- 
--	clear_zone_contiguous(zone);
--
- 	/*
- 	 * We can only remove entire sections
- 	 */
-@@ -586,15 +580,13 @@ int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
- 	for (i = 0; i < sections_to_remove; i++) {
- 		unsigned long pfn = phys_start_pfn + i*PAGES_PER_SECTION;
- 
--		ret = __remove_section(zone, __pfn_to_section(pfn), map_offset,
--				altmap);
-+		ret = __remove_section(nid, __pfn_to_section(pfn), map_offset,
-+									altmap);
- 		map_offset = 0;
- 		if (ret)
+ 		if (!(res->flags & IORESOURCE_MEM))
  			break;
- 	}
  
--	set_zone_contiguous(zone);
--
- 	return ret;
- }
- #endif /* CONFIG_MEMORY_HOTREMOVE */
-@@ -1566,7 +1558,6 @@ static int __ref __offline_pages(unsigned long start_pfn,
- 	unsigned long pfn, nr_pages;
- 	long offlined_pages;
- 	int ret, node;
--	unsigned long flags;
- 	unsigned long valid_start, valid_end;
- 	struct zone *zone;
- 	struct memory_notify arg;
-@@ -1644,11 +1635,9 @@ static int __ref __offline_pages(unsigned long start_pfn,
- 	undo_isolate_page_range(start_pfn, end_pfn, MIGRATE_MOVABLE);
- 	/* removal success */
- 	adjust_managed_page_count(pfn_to_page(start_pfn), -offlined_pages);
--	zone->present_pages -= offlined_pages;
- 
--	pgdat_resize_lock(zone->zone_pgdat, &flags);
--	zone->zone_pgdat->node_present_pages -= offlined_pages;
--	pgdat_resize_unlock(zone->zone_pgdat, &flags);
-+	/* Here we will shrink zone/node's spanned/present_pages */
-+	shrink_zone_pgdat_pages(zone, valid_start, valid_end, offlined_pages);
- 
- 	init_per_zone_wmark_min();
- 
-@@ -1899,10 +1888,13 @@ int del_device_memory(int nid, unsigned long start, unsigned long size,
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
- 	struct zone *zone = page_zone(pfn_to_page(pfn));
- 
-+	offline_mem_sections(start_pfn, start_pfn + nr_pages);
-+	shrink_zone_pgdat_pages(zone, start_pfn, start_pfn + nr_pages, 0);
-+
- 	if (mapping)
- 		ret = arch_remove_memory(nid, start, size, altmap);
- 	else
--		ret = __remove_pages(zone, start_pfn, nr_pages, altmap);
-+		ret = __remove_pages(nid, start_pfn, nr_pages, altmap);
- 
- 	return ret;
- }
-@@ -1925,6 +1917,7 @@ int add_device_memory(int nid, unsigned long start, unsigned long size,
- 	if (!ret) {
- 		struct zone *zone = &NODE_DATA(nid)->node_zones[ZONE_DEVICE];
- 
-+		online_mem_sections(start_pfn, start_pfn + nr_pages);
- 		move_pfn_range_to_zone(zone, start_pfn, nr_pages, altmap);
- 	}
- 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 33307fc05c4d..76974479a14b 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -765,12 +765,12 @@ static void free_section_usemap(struct page *memmap, unsigned long *usemap,
- 		free_map_bootmem(memmap);
- }
- 
--void sparse_remove_one_section(struct zone *zone, struct mem_section *ms,
--		unsigned long map_offset, struct vmem_altmap *altmap)
-+void sparse_remove_one_section(int nid, struct mem_section *ms,
-+			unsigned long map_offset, struct vmem_altmap *altmap)
- {
- 	struct page *memmap = NULL;
- 	unsigned long *usemap = NULL, flags;
--	struct pglist_data *pgdat = zone->zone_pgdat;
-+	struct pglist_data *pgdat = NODE_DATA(nid);
- 
- 	pgdat_resize_lock(pgdat, &flags);
- 	if (ms->section_mem_map) {
 -- 
 2.13.6
 
