@@ -2,96 +2,82 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CF6C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0603C71132
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 974C52083C
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:03:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxlGoIY7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 974C52083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7016020842
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 14:03:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7016020842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbeJOVsX (ORCPT
+        id S1726758AbeJOVsg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 17:48:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53922 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbeJOVsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 17:48:23 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75C3220652;
-        Mon, 15 Oct 2018 14:02:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539612178;
-        bh=eGcfEcYNIdpGnz670Qxd9ffA2o+pWyCd5RUjWu3ve0M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MxlGoIY7L8isuyIcol4IPPdfd936smGYUI+v0xhEKBKxu96c0q3ws1DbQumnNDcjK
-         ++hvUUYJZpa4L6xz6smcYxyWORnANSmTA814HryyP6Iq69wLBHYiGIWYxF8nrsZ9+H
-         WVuavhM6qnN9ginjLpnfpXdIv7pNEHfNlx+DHqmE=
-Date:   Mon, 15 Oct 2018 16:02:55 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] afs: Fix clearance of reply
-Message-ID: <20181015140255.GA3510@kroah.com>
-References: <153960378222.7221.8576360303007809015.stgit@warthog.procyon.org.uk>
+        Mon, 15 Oct 2018 17:48:36 -0400
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:6549 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbeJOVsg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 17:48:36 -0400
+X-IronPort-AV: E=Sophos;i="5.54,384,1534809600"; 
+   d="scan'208";a="80446795"
+Date:   Mon, 15 Oct 2018 16:02:01 +0200
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Vasilis Liaskovitis <vliaskovitis@suse.com>
+CC:     <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <jgross@suse.com>,
+        <boris.ostrovsky@oracle.com>, <konrad.wilk@oracle.com>,
+        <axboe@kernel.dk>
+Subject: Re: [PATCH v2] xen/blkfront: avoid NULL blkfront_info dereference on
+ device removal
+Message-ID: <20181015140201.elir7ettk7sz4aix@mac.bytemobile.com>
+References: <20181015132508.23293-1-vliaskovitis@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-In-Reply-To: <153960378222.7221.8576360303007809015.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181015132508.23293-1-vliaskovitis@suse.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 12:43:02PM +0100, David Howells wrote:
-> The recent patch to fix the afs_server struct leak didn't actually fix the
-> bug, but rather fixed some of the symptoms.  The problem is that an
-> asynchronous call that holds a resource pointed to by call->reply[0] will
-> find the pointer cleared in the call destructor, thereby preventing the
-> resource from being cleaned up.
+On Mon, Oct 15, 2018 at 03:25:08PM +0200, Vasilis Liaskovitis wrote:
+> If a block device is hot-added when we are out of grants,
+> gnttab_grant_foreign_access fails with -ENOSPC (log message "28
+> granting access to ring page") in this code path:
 > 
-> In the case of the server record leak, the afs_fs_get_capabilities()
-> function in devel code sets up a call with reply[0] pointing at the server
-> record that should be altered when the result is obtained, but this was
-> being cleared before the destructor was called, so the put in the
-> destructor does nothing and the record is leaked.
+>   talk_to_blkback ->
+> 	setup_blkring ->
+> 		xenbus_grant_ring ->
+> 			gnttab_grant_foreign_access
 > 
-> Commit f014ffb025c1 removed the additional ref obtained by
-> afs_install_server(), but the removal of this ref is actually used by the
-> garbage collector to mark a server record as being defunct after the record
-> has expired through lack of use.
+> and the failing path in talk_to_blkback sets the driver_data to NULL:
 > 
-> The offending clearance of call->reply[0] upon completion in
-> afs_process_async_call() has been there from the origin of the code, but
-> none of the asynchronous calls actually use that pointer currently, so it
-> should be safe to remove (note that synchronous calls don't involve this
-> function).
+>  destroy_blkring:
+>         blkif_free(info, 0);
 > 
-> Fix this by the following means:
+>         mutex_lock(&blkfront_mutex);
+>         free_info(info);
+>         mutex_unlock(&blkfront_mutex);
 > 
->  (1) Revert commit f014ffb025c1.
+>         dev_set_drvdata(&dev->dev, NULL);
 > 
->  (2) Remove the clearance of reply[0] from afs_process_async_call().
+> This results in a NULL pointer BUG when blkfront_remove and blkif_free
+> try to access the failing device's NULL struct blkfront_info.
 > 
-> Without this, afs_manage_servers() will suffer an assertion failure if it
-> sees a server record that didn't get used because the usage count is not 1.
-> 
-> Fixes: f014ffb025c1 ("afs: Fix afs_server struct leak")
-> Fixes: 08e0e7c82eea ("[AF_RXRPC]: Make the in-kernel AFS filesystem use AF_RXRPC.")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
+> Signed-off-by: Vasilis Liaskovitis <vliaskovitis@suse.com>
 
-Now applied, thanks.
+Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
 
-greg k-h
+Thanks.
+
+I guess this is a candidate for backporting?
