@@ -2,122 +2,147 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A19BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FECC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5D5A2054F
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:56:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5287C2054F
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:57:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OAEj49SY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5D5A2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="llhyG5yh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5287C2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbeJPGnv (ORCPT
+        id S1727136AbeJPGo5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:43:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:49159 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726877AbeJPGnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:43:50 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42Yv242bRRz9s1x;
-        Tue, 16 Oct 2018 09:56:28 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539644188;
-        bh=8h+jYTVvMYkLhjI1qv9haok84gasRanz1+ihMfLDfmM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=OAEj49SYClwQZgOyI8yU/vBAg0GwkhT9+0068t8Dba4rc8YMhsyn7GcryGEnHYKEy
-         hgaDm7OnsQhwBdUiYf6SUVf8UOY+ukgB3khnRDhkAPb4Dv9UWL1vesLf0rhpMktQxx
-         rpI7jREYJYz2kqhQmMsT0A9gkTYJ67brPzTTlZXGOv8IUkAw3wS+WHpbtc6avUtmkw
-         Ggqq5710Cw3efwy4TkuodMJiDIUMpqu3BYdl6u0phTwHfPYKXQu3hxk4tbLwio3wpU
-         wujP4gZZYwFS5LNoqDls33NVVa3IcIxD/cDBj3UUYFMBy4ju6f6VkwAKPU7VXYyRis
-         GRH96zvPY8Q5Q==
-Date:   Tue, 16 Oct 2018 09:56:12 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: linux-next: manual merge of the jc_docs tree with the pci tree
-Message-ID: <20181016095612.36b5e7bb@canb.auug.org.au>
+        Tue, 16 Oct 2018 02:44:57 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:44070 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbeJPGo4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 02:44:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1539644266; x=1571180266;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=TNWsDsrY0+1IONRcBFghvNkJcTRtv8K90Rbf9IJ+PFU=;
+  b=llhyG5yhwEdBrUDKs7kaZBrTIqXbCfYvvvIEzvTckqcvfttkpppKbxPt
+   qG+ZgKpXXzaWCHVTSTZgFGqsAMq6gTtPbR28KaqHzKVerFJY+utW3pO30
+   /1ryrZP8G2EzMIP3bwcOWjrOtJQK5tqa8HaUpnrHGcoL2rg/T/C16iBFQ
+   R8INjZQWcbl+htsmFyNiUP4DOHSipwQQTxURImlb1Sga+jQPgofFkRYFE
+   GlD9bTwDamguUN2fBjOvPbJK0nWW7JZTmUi+tFm2WOHPG7QalT8QClhvZ
+   kxDCfOPZZylsrmTRZf14wWwBSE81bfcYPK4hLladEpEiZKEdTfkYdBoxN
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.54,386,1534780800"; 
+   d="scan'208";a="189691623"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 16 Oct 2018 06:57:45 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 15 Oct 2018 15:42:10 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.73.114]) ([10.111.73.114])
+  by uls-op-cesaip02.wdc.com with ESMTP; 15 Oct 2018 15:57:36 -0700
+Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM
+ Controller.
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Wesley Terpstra <wesley@sifive.com>
+Cc:     palmer@sifive.com, linux-riscv@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, hch@infradead.org
+References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
+ <1539111085-25502-2-git-send-email-atish.patra@wdc.com>
+ <20181010134926.GD21134@ulmo>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <25758ab9-eb36-741b-6264-42412b3ddd8e@wdc.com>
+Date:   Mon, 15 Oct 2018 15:57:35 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/h/26W0fuzPBTdFRLUBNkVJm"; protocol="application/pgp-signature"
+In-Reply-To: <20181010134926.GD21134@ulmo>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/h/26W0fuzPBTdFRLUBNkVJm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 10/10/18 6:49 AM, Thierry Reding wrote:
+> On Tue, Oct 09, 2018 at 11:51:22AM -0700, Atish Patra wrote:
+>> From: "Wesley W. Terpstra" <wesley@sifive.com>
+>>
+>> DT documentation for PWM controller added with updated compatible
+>> string.
+>>
+>> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+>> [Atish: Compatible string update]
+>> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+>> ---
+>>   .../devicetree/bindings/pwm/pwm-sifive.txt         | 32 ++++++++++++++++++++++
+>>   1 file changed, 32 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+>> new file mode 100644
+>> index 00000000..532b10fc
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+>> @@ -0,0 +1,32 @@
+>> +SiFive PWM controller
+>> +
+>> +Unlike most other PWM controllers, the SiFive PWM controller currently only
+>> +supports one period for all channels in the PWM. This is set globally in DTS.
+>> +The period also has significant restrictions on the values it can achieve,
+>> +which the driver rounds to the nearest achievable frequency.
+> 
+> What restrictions are these? If "nearest achievable" is too far off the
+> target period it might be preferable to error out.
+> 
 
-Hi Jonathan,
+@Wes: Any comments?
 
-Today's linux-next merge of the jc_docs tree got a conflict in:
+>> +Required properties:
+>> +- compatible: should be one of
+>> +	"sifive,fu540-c000-pwm0","sifive,pwm0".
+> 
+> What's the '0' in here? A version number?
+>
 
-  Documentation/driver-api/index.rst
+I think yes. Since fu540 is the first Linux capable RISC-V core, SiFive 
+Guys decided mark it as version 0.
 
-between commit:
+@Wesly: Please correct me if I am wrong.
 
-  7618a41f1a25 ("docs-rst: Add a new directory for PCI documentation")
+>> +	PWM controller is HiFive Unleashed specific chip which warrants a
+>> +	specific compatible string. The second string is kept for backward
+>> +	compatibility until a firmware update with latest compatible string.
+>> +- reg: physical base address and length of the controller's registers
+>> +- clocks: The frequency the controller runs at
+>> +- #pwm-cells: Should be 2.
+>> +  The first cell is the PWM channel number
+>> +  The second cell is the PWM polarity
+>> +- sifive,approx-period: the driver will get as close to this period as it can
+> 
+> Given the above comment, maybe "sifive,period"?
+> 
 
-from the pci tree and commit:
+ok.
+In Unleashed board, the DT is loaded by FSBL (first stage boot loader). 
+Thus, changing device tree entries requires a FSBL update. If we update 
+this string, we need to update the driver to parse both properties so 
+that existing devices with older firmware continue to work.
 
-  ea2ae0ecc9ad ("FireWire: add a Documentation driver-api chapter")
+This is probably ok as we anyways do that for compatible strings. Just 
+wanted to update that here for the record.
 
-from the jc_docs tree.
+Regards,
+Atish
+> Thierry
+> 
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc Documentation/driver-api/index.rst
-index e9e7d24169cf,1f0cdba2b2bf..000000000000
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@@ -29,7 -29,8 +29,8 @@@ available subsections can be seen below
-     iio/index
-     input
-     usb/index
-+    firewire
- -   pci
- +   pci/index
-     spi
-     i2c
-     hsi
-
---Sig_/h/26W0fuzPBTdFRLUBNkVJm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFGwwACgkQAVBC80lX
-0GxWYwf+N+0E8MBZaAMYtf2UIoUGlDW28VykzexxXw8mQSt+CkJzZAotCJzPPNa8
-k/IPFiG2tkSVS2olPJ742reoGxx8VDzyu2vSyPanOrjG3v92HTdI8GmwAr1zFHwd
-rsFQnPM5t7qGU+2V2AakPICZrAe5Hzvd7RWX0EDwYil+U/woENAQ5srsHrfdPFlu
-3UmBTNnnVWqsRHVh32nH1b+ew5OArj78+S6HyPnAe4MWl2jliDjIJr1f39XPLJXc
-V/kt5Yof20nYm7B4RdX2TwscSdTLPAdn7scp/d35MHrMVm34WF3hqjYgaMkSaaA8
-G1pdFKd70StStt0xz1gZ0Co+aHJJzw==
-=vqYC
------END PGP SIGNATURE-----
-
---Sig_/h/26W0fuzPBTdFRLUBNkVJm--
