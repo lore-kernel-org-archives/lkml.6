@@ -2,191 +2,238 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A5EC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C6CC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02E272083C
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:15:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02E272083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id A88492083C
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:17:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A88492083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbeJOUAq (ORCPT
+        id S1726636AbeJOUCS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 16:00:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48594 "EHLO mx1.suse.de"
+        Mon, 15 Oct 2018 16:02:18 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:50673 "EHLO mx1.molgen.mpg.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726512AbeJOUAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 16:00:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D44D1ADC0;
-        Mon, 15 Oct 2018 12:15:41 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 777301E3616; Mon, 15 Oct 2018 14:15:41 +0200 (CEST)
-Date:   Mon, 15 Oct 2018 14:15:41 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     syzbot <syzbot+29143581b0ded3213e99@syzkaller.appspotmail.com>
-Cc:     amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: INFO: task hung in fanotify_handle_event
-Message-ID: <20181015121541.GC30927@quack2.suse.cz>
-References: <00000000000036c76a057842c97f@google.com>
+        id S1726400AbeJOUCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 16:02:17 -0400
+Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 2945B2012D0DC1;
+        Mon, 15 Oct 2018 14:17:12 +0200 (CEST)
+Subject: Re: [PATCH] Revert "genirq/affinity: assign vectors to all possible
+ CPUs"
+To:     Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Ming Lei <ming.lei@redhat.com>, stable@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        it+linux-scsi@molgen.mpg.de,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        linux-scsi@vger.kernel.org,
+        Raghava Aditya Renukunta 
+        <RaghavaAditya.Renukunta@microsemi.com>,
+        Dave Carroll <david.carroll@microsemi.com>
+References: <06ee23fe-ec9e-d67b-b533-d5151be74a11@molgen.mpg.de>
+ <20180810133628.GA4131@kroah.com>
+ <29b5f3ce-2c23-bf5e-fe50-29bedd4833e1@molgen.mpg.de>
+ <20180810155511.GA17092@kroah.com>
+ <f5c57bf7-b8c1-a560-d13a-d74e0f27adbb@molgen.mpg.de>
+ <20180811135021.GA2186@kroah.com> <20180813033157.GA18254@ming.t460p>
+ <89f2b622-3d2a-04ce-a6d1-ffb5d9612763@molgen.mpg.de>
+ <cbd7cb64-dbfe-e085-e80b-67dad4084d69@molgen.mpg.de>
+ <7c51fe1d-d591-90f2-8fb5-81990f8db0fe@molgen.mpg.de>
+ <20181001123508.GA3415@lst.de>
+ <f5dde120-2d14-a7e5-8402-401f117b8c38@molgen.mpg.de>
+ <3480086a-1a3e-adc2-e127-8e34178da101@molgen.mpg.de>
+From:   Paul Menzel <pmenzel+linux-scsi@molgen.mpg.de>
+Message-ID: <6b7555c7-8796-eae9-6bd2-b698ccf9559d@molgen.mpg.de>
+Date:   Mon, 15 Oct 2018 14:17:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000036c76a057842c97f@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3480086a-1a3e-adc2-e127-8e34178da101@molgen.mpg.de>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms000009010302030600030306"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This is a cryptographically signed message in MIME format.
 
-On Mon 15-10-18 04:32:02, syzbot wrote:
-> syzbot found the following crash on:
-> 
-> HEAD commit:    90ad18418c2d Merge git://git.kernel.org/pub/scm/linux/kern..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17f1776e400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=88e9a8a39dc0be2d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=29143581b0ded3213e99
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=123459d6400000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+29143581b0ded3213e99@syzkaller.appspotmail.com
+--------------ms000009010302030600030306
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Syzbot has apparently generated fanotify watch for FAN_OPEN_PERM event and
-then the process got stuck waiting for userspace to respond to that event -
-which never happened. So everything works as designed here - the process
-placing FAN_OPEN_PERM mark is responsible for replying to the generated
-events as all opens hang waiting for responses. That's why the
-functionality is behind CAP_SYS_ADMIN after all... Could we fix syzbot to
-actually generate replies for these events?
+Dear Greg, dear Linux folks,
 
-								Honza
-> 
-> INFO: task syz-executor3:23598 blocked for more than 140 seconds.
->       Not tainted 4.19.0-rc7+ #59
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> syz-executor3   D24888 23598   5550 0x00000004
-> Call Trace:
->  context_switch kernel/sched/core.c:2825 [inline]
->  __schedule+0x86c/0x1ed0 kernel/sched/core.c:3473
->  schedule+0xfe/0x460 kernel/sched/core.c:3517
->  fanotify_get_response fs/notify/fanotify/fanotify.c:68 [inline]
->  fanotify_handle_event+0x7fb/0x9a0 fs/notify/fanotify/fanotify.c:245
->  send_to_group fs/notify/fsnotify.c:234 [inline]
->  fsnotify+0x87f/0x12f0 fs/notify/fsnotify.c:367
->  fsnotify_perm include/linux/fsnotify.h:52 [inline]
->  security_file_open+0x16f/0x1b0 security/security.c:986
->  do_dentry_open+0x331/0x1250 fs/open.c:758
->  vfs_open+0xa0/0xd0 fs/open.c:880
->  do_last fs/namei.c:3418 [inline]
->  path_openat+0x12bf/0x5160 fs/namei.c:3534
->  do_filp_open+0x255/0x380 fs/namei.c:3564
->  do_sys_open+0x568/0x700 fs/open.c:1063
->  ksys_open include/linux/syscalls.h:1276 [inline]
->  __do_sys_creat fs/open.c:1121 [inline]
->  __se_sys_creat fs/open.c:1119 [inline]
->  __x64_sys_creat+0x61/0x80 fs/open.c:1119
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457569
-> Code: Bad RIP value.
-> RSP: 002b:00007efe2663bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-> RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 0000000000457569
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000180
-> RBP: 000000000072bfa0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007efe2663c6d4
-> R13: 00000000004bdb2f R14: 00000000004cc688 R15: 00000000ffffffff
-> 
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/984:
->  #0: 0000000045bbc556 (rcu_read_lock){....}, at:
-> debug_show_all_locks+0xd0/0x424 kernel/locking/lockdep.c:4435
-> 1 lock held by rsyslogd/5369:
->  #0: 00000000c6b46b4b (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200
-> fs/file.c:766
-> 2 locks held by getty/5491:
->  #0: 000000007c8f39bf (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
-> drivers/tty/tty_ldsem.c:353
->  #1: 00000000ab767e83 (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/5492:
->  #0: 000000005a020001 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
-> drivers/tty/tty_ldsem.c:353
->  #1: 000000001a016d07 (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/5493:
->  #0: 00000000317a902c (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
-> drivers/tty/tty_ldsem.c:353
->  #1: 00000000de804861 (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/5494:
->  #0: 00000000bd67aa3a (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
-> drivers/tty/tty_ldsem.c:353
->  #1: 00000000c6fa2e6f (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/5495:
->  #0: 00000000d69ad6b3 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
-> drivers/tty/tty_ldsem.c:353
->  #1: 00000000b28afab5 (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/5496:
->  #0: 00000000f21d8abe (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
-> drivers/tty/tty_ldsem.c:353
->  #1: 00000000ed3e038f (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/5497:
->  #0: 000000005843227c (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
-> drivers/tty/tty_ldsem.c:353
->  #1: 000000005ec4a201 (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 1 lock held by syz-executor3/23598:
->  #0: 0000000008161dc8 (sb_writers#4){.+.+}, at: sb_start_write
-> include/linux/fs.h:1566 [inline]
->  #0: 0000000008161dc8 (sb_writers#4){.+.+}, at: mnt_want_write+0x3f/0xc0
-> fs/namespace.c:360
-> 
-> =============================================
-> 
-> NMI backtrace for cpu 0
-> CPU: 0 PID: 984 Comm: khungtaskd Not tainted 4.19.0-rc7+ #59
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->  nmi_cpu_backtrace.cold.3+0x63/0xa2 lib/nmi_backtrace.c:101
->  nmi_trigger_cpumask_backtrace+0x1b3/0x1ed lib/nmi_backtrace.c:62
->  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->  trigger_all_cpu_backtrace include/linux/nmi.h:144 [inline]
->  check_hung_uninterruptible_tasks kernel/hung_task.c:204 [inline]
->  watchdog+0xb3e/0x1050 kernel/hung_task.c:265
->  kthread+0x35a/0x420 kernel/kthread.c:246
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-> Sending NMI from CPU 0 to CPUs 1:
-> NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0x6/0x10
-> arch/x86/include/asm/irqflags.h:57
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+On 10/01/18 17:59, Paul Menzel wrote:
+
+> On 10/01/18 14:43, Paul Menzel wrote:
+>=20
+>> On 10/01/18 14:35, Christoph Hellwig wrote:
+>>> On Mon, Oct 01, 2018 at 02:33:07PM +0200, Paul Menzel wrote:
+>>>> Date: Wed, 29 Aug 2018 17:28:45 +0200
+>>>>
+>>>> This reverts commit ef86f3a72adb8a7931f67335560740a7ad696d1d.
+>>>
+>>> This seems rather odd.  If at all you'd revert the patch adding the
+>>> PCI_IRQ_AFFINITY to aacraid, not core infrastructure.
+>>
+>> Thank you for the suggestion, but that flag was added in 2016
+>> to the aacraid driver.
+>>
+>>> commit 0910d8bbdd99856af1394d3d8830955abdefee4a
+>>> Author: Hannes Reinecke <hare@suse.de>
+>>> Date:   Tue Nov 8 08:11:30 2016 +0100
+>>>
+>>>     scsi: aacraid: switch to pci_alloc_irq_vectors
+>>>    =20
+>>>     Use pci_alloc_irq_vectors and drop the hand-crafted interrupt aff=
+inity
+>>>     routines.
+>>
+>> So what would happen, if `PCI_IRQ_AFFINITY` was removed? Will the
+>> system still work with the same performance?
+>>
+>> As far as I understood, the no regression policy is there for
+>> exactly that reason, and it shouldn=E2=80=99t matter if it=E2=80=99s c=
+ore
+>> infrastructure or not. As written, I have no idea, and just know
+>> reverting the commit in question fixes the problem here. So I=E2=80=99=
+ll
+>> gladly test other solutions to fix this issue.
+>=20
+> Just as another datapoint, with `PCI_IRQ_AFFINITY` removed from
+> `drivers/scsi/aacraid/comminit.c` in Linux 4.14.73, the driver
+> initializes correctly. I have no idea regarding the performance.
+
+This commit has not been picked up yet. I guess, you are busy, but
+in case there are still objections, it=E2=80=99d be great if the two
+questions below were answered.
+
+1.  What bug is fixed in the LTS series by backporting the commit
+    causing the regression?
+
+2.  Why does the *no regression* policy *not* apply in this case?
+
+
+Kind regards,
+
+Paul
+
+
+[1]: Documentation/process/stable-kernel-rules.rst
+
+
+--------------ms000009010302030600030306
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
+AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
+VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
+Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
+BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
+IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
+Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
+FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
+eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
+WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
+xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
+AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
+4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
+/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
+AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
+ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
+MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
+Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
+ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
+eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
+MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
+PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
+2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
+ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
+CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
+dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
+BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
+NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
+BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
+A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
+59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
+G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
+rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
+OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
+Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
+VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
+IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
+BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
+dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
+Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
+Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
+L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
+Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
+dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
+YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
+/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
+jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
+dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
+wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
+qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
+/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
+A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
+VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
+MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
+DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
+DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
+enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
+peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
+6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
++2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
+ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
+AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
+FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
+ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
+dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
+Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
+dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
+dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
+BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
+dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
+AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
+Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
+aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
+GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
+fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
+1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
+EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
+LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
+RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
+SIb3DQEJBTEPFw0xODEwMTUxMjE3MTFaMC8GCSqGSIb3DQEJBDEiBCBI6/e59E0ae68TlO7A
+p52gMDLhBE4RQ7DrRys6GOTi3jBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
+BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
+MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
+bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
+gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
+DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
+BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAK4B
+OrGwbEIjI9urmeV4cseuLh4UxMAlBUu5vJjBjZGd3Umtxi5hVcxrRuckgrWHlPb92g+5Y8s0
+kwODu/XyieXraW4H+GlvmuOt5nLjrktEjdqEgXxwP51bgHU38LMjysSwANh7F3hQe5ES/NBm
+RXKwMBboU+LalsD9lkXxHpEdM5YPLp+BeZaFu+4MblrgKkHNG2Uxcv8J/xXzPzdgi5nS2iyV
+Ek6df45riawzePJv+a4Si/4wPY1s20wpMY/baHTcQbh7wNQpbowNZM/h9aUasNywQZDpI8Rl
+QmKLRgAal/IksplEnCERWEOftN3Dmyta3hgZ40vnaJZXMxVpkzwAAAAAAAA=
+--------------ms000009010302030600030306--
