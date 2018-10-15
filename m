@@ -2,101 +2,95 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5748AC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD5DC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1026920881
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:24:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1026920881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 27EC82083C
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:27:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27EC82083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbeJOTJW (ORCPT
+        id S1726588AbeJOTMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:09:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39596 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726357AbeJOTJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:09:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 367D7AD49;
-        Mon, 15 Oct 2018 11:24:30 +0000 (UTC)
-Date:   Mon, 15 Oct 2018 13:24:27 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms
- without eligible tasks
-Message-ID: <20181015112427.GI18839@dhcp22.suse.cz>
-References: <20181012112008.GA27955@cmpxchg.org>
- <20181012120858.GX5873@dhcp22.suse.cz>
- <9174f087-3f6f-f0ed-6009-509d4436a47a@i-love.sakura.ne.jp>
- <20181012124137.GA29330@cmpxchg.org>
- <0417c888-d74e-b6ae-a8f0-234cbde03d38@i-love.sakura.ne.jp>
- <bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp>
- <20181013112238.GA762@cmpxchg.org>
- <b61b2e60-d899-90c6-579a-587815cebff6@i-love.sakura.ne.jp>
- <20181015081934.GD18839@dhcp22.suse.cz>
- <ea637f9a-5dd0-f927-d26d-d0b4fd8ccb6f@i-love.sakura.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea637f9a-5dd0-f927-d26d-d0b4fd8ccb6f@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 15 Oct 2018 15:12:22 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:47444 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726499AbeJOTMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 15:12:21 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 72D726948C4C192D9943;
+        Mon, 15 Oct 2018 19:27:29 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w9FBRO9v008270;
+        Mon, 15 Oct 2018 19:27:24 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018101519273189-4614478 ;
+          Mon, 15 Oct 2018 19:27:31 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     mingo@redhat.com, peterz@infradead.org
+Cc:     rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH v4] sched/rt : Reduce push_rt_task() retries
+Date:   Tue, 16 Oct 2018 03:39:02 +0800
+Message-Id: <1539632342-4339-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-10-15 19:27:31,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-10-15 19:27:23,
+        Serialize complete at 2018-10-15 19:27:23
+X-MAIL: mse01.zte.com.cn w9FBRO9v008270
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 15-10-18 19:57:35, Tetsuo Handa wrote:
-> On 2018/10/15 17:19, Michal Hocko wrote:
-> > As so many dozens of times before, I will point you to an incremental
-> > nature of changes we really prefer in the mm land. We are also after a
-> > simplicity which your proposal lacks in many aspects. You seem to ignore
-> > that general approach and I have hard time to consider your NAK as a
-> > relevant feedback. Going to an extreme and basing a complex solution on
-> > it is not going to fly. No killable process should be a rare event which
-> > requires a seriously misconfigured memcg to happen so wildly. If you can
-> > trigger it with a normal user privileges then it would be a clear bug to
-> > address rather than work around with printk throttling.
-> > 
-> 
-> I can trigger 200+ times / 900+ lines / 69KB+ of needless OOM messages
-> with a normal user privileges. This is a lot of needless noise/delay.
+Improve push_rt_task() by propagating the double_lock_balance() 
+usage from find_lock_lowest_rq(), thereby reducing the number 
+of cases where we have to assume rq->lock was dropped.
+When CONFIG_PREEMPT=n, Unnecessary retries frequently happens
+in a simple test case:
+Four different rt priority tasks are restricted to run on two 
+cpus.
 
-I am pretty sure you have understood the part of my message you have
-chosen to not quote where I have said that the specific rate limitting
-decisions can be changed based on reasonable configurations. There is
-absolutely zero reason to NAK a natural decision to unify the throttling
-and cook a per-memcg way for a very specific path instead.
+Thanks for Steven Rostedt's advice.
 
-> No killable process is not a rare event, even without root privileges.
->
-> [root@ccsecurity kumaneko]# time ./a.out
-> Killed
-> 
-> real    0m2.396s
-> user    0m0.000s
-> sys     0m2.970s
-> [root@ccsecurity ~]# dmesg | grep 'no killable' | wc -l
-> 202
-> [root@ccsecurity ~]# dmesg | wc
->     942    7335   70716
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ kernel/sched/rt.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-OK, so this is 70kB worth of data pushed throug the console. Is this
-really killing any machine?
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 2e2955a..be0fc43 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -1754,7 +1754,7 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
+ 				     !task_on_rq_queued(task))) {
+ 
+ 				double_unlock_balance(rq, lowest_rq);
+-				lowest_rq = NULL;
++				lowest_rq = RETRY_TASK;
+ 				break;
+ 			}
+ 		}
+@@ -1830,7 +1830,9 @@ static int push_rt_task(struct rq *rq)
+ 
+ 	/* find_lock_lowest_rq locks the rq if found */
+ 	lowest_rq = find_lock_lowest_rq(next_task, rq);
+-	if (!lowest_rq) {
++	if (!lowest_rq)
++		goto out;
++	if (lowest_rq == RETRY_TASK) {
+ 		struct task_struct *task;
+ 		/*
+ 		 * find_lock_lowest_rq releases rq->lock
 -- 
-Michal Hocko
-SUSE Labs
+1.8.3.1
+
