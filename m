@@ -2,70 +2,99 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53213C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F43C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13EE9208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:20:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13EE9208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E24E208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:21:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSy4TRVF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E24E208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbeJPBHE (ORCPT
+        id S1726848AbeJPBHx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 21:07:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbeJPBHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 21:07:04 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40FDA2098A;
-        Mon, 15 Oct 2018 17:20:55 +0000 (UTC)
-Date:   Mon, 15 Oct 2018 13:20:53 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     <peng.hao2@zte.com.cn>
-Cc:     <peterz@infradead.org>, <mingo@redhat.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] sched/rt : return accurate release rq lock info
-Message-ID: <20181015132053.7122c4af@gandalf.local.home>
-In-Reply-To: <201810160009439217654@zte.com.cn>
-References: <20181015114220.70c3598d@gandalf.local.home>
-        <201810160009439217654@zte.com.cn>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 15 Oct 2018 21:07:53 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46087 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726708AbeJPBHx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 21:07:53 -0400
+Received: by mail-lf1-f68.google.com with SMTP id p143-v6so3645611lfp.13;
+        Mon, 15 Oct 2018 10:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=n2MIXJzYhjB0nYYFlnw0K1ypobP188j8IQ/KhKuHXu0=;
+        b=BSy4TRVFXP5ZFNBkpPcOa/7ZcLXS0WLgMwj/0eCZTJMC1NfOi6PyJjFXQkSI8oGEB6
+         F6uVEtlbkqWaLSMnpFfk71JDwJu/PappTN6Vs3c6RH+GcNEwOQGofBC7PKb1yDkoFs6U
+         jtBaOVj0MFYMkx34pmi0ulbtr1EZnz38EIimUbDp/5VK0PIKJfyndY0Vwu6Rdwyghees
+         kaf58MDYY8ABK10BQlY+nua+hgSwPnQ8wSu+lEwNLdKMbxDmbi+LAQpSC73bIs6+My0D
+         oKH744UPzCr9WlFpNKInMyYK7YI8N7JdQPE+TtMae2N+LCrEshITF6+0SH1eE1tZnL1y
+         VyuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=n2MIXJzYhjB0nYYFlnw0K1ypobP188j8IQ/KhKuHXu0=;
+        b=eleBP3fyINU6VqhHoUdqTB++jm0ihsSS960mJiIy0aKELZSRWcew69P+GJRWQXV3U3
+         QxY0Cst5JUNcxqMVXEYtW94Y/I+I50/NrXWnglusXClxtkXQs7TEpeyfVFcfdcQ/pxLM
+         mKm57rej0LUMFZIbMEKdD4w/MrE3RxoL6ZyNeotQN4lausehgps6d5mlaxn2HuIxSuQU
+         PInbyKs2Y1XbP7ZO9TFEccHJ+IpQZHslbUsMCv6bs9gUbO/Z3cvPmUJUEgNU21pc1PWw
+         oZPgkwE8gVf0wqWXHFs1e+/BgU7puCxXbQPmiJ1WjtPkOvOYph5V1Eis29/T1huvKfBe
+         tysQ==
+X-Gm-Message-State: ABuFfogXiYjoCXUakkjRQLRKYnvpobZ5ae0HDlOihKj5EPmJMhbsTFLT
+        M4d7YwdJsXPxEUuy0m+l23M=
+X-Google-Smtp-Source: ACcGV63pFwGs7tz7G8JFHkulm/vdRmFrFFuBPV5nkDoD/XQtO/MlHWx1/OaSbwlMIckM82kx+Plh/w==
+X-Received: by 2002:a19:6e0b:: with SMTP id j11-v6mr10192445lfc.118.1539624102378;
+        Mon, 15 Oct 2018 10:21:42 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.102.224])
+        by smtp.gmail.com with ESMTPSA id o22-v6sm2567876ljc.79.2018.10.15.10.21.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 10:21:41 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 9D58846065E; Mon, 15 Oct 2018 20:21:40 +0300 (MSK)
+Date:   Mon, 15 Oct 2018 20:21:40 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        shuah@kernel.org
+Subject: Re: [PATCH] proc: fix proc-self-map-files selftest for arm
+Message-ID: <20181015172140.GJ2401@uranus.lan>
+References: <20181011184359.15627-1-rafael.tinoco@linaro.org>
+ <20181011205601.GA32757@avx2>
+ <20181011210256.GE2401@uranus.lan>
+ <20181011213006.GA13485@avx2>
+ <20181011220009.GF2401@uranus.lan>
+ <52504bd5-b4ed-518b-f748-c634172c6c68@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <52504bd5-b4ed-518b-f748-c634172c6c68@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Oct 2018 00:09:43 +0800 (CST)
-<peng.hao2@zte.com.cn> wrote:
+On Mon, Oct 15, 2018 at 01:55:14PM -0300, Rafael David Tinoco wrote:
+> That is what I also had in mind, thus the patch. I just realized we had
+> another issue on LKFT (our functional tests tool) for
+> proc-self-map-files-001.c. Test 001 does pretty much the same as 002, but
+> without the MAP_FIXED mmap flag.
+> 
+> Is it okay to consolidate both tests into just 1, and focus in checking
+> procfs numbers conversion only, rather than if mapping 0 is allowed or not ?
+> Can I send a v2 with that in mind ?
 
-> >We only do the check if the immediate double_lock_balance() released
-> >the current task rq lock, but we don't take into account if it was
-> >released earlier, which means it could have migrated and we never
-> >noticed!
-> >  
-> double_lock_balance may release current rq's lock,but it just for get the locks of the two rq's in order
-> and it immediately reacquire the current rq's lock before double_lock_balance returns.
-> >I believe the code should look like this:
-> >
-
-Bah, I didn't even compile it. And thought it was
-"double_lock_balance", and didn't notice it was double_unlock_balance()
-(this is what I get for trying to do too much at once).
-
-Sad part is, I noticed this back when I added reviewed-by, but then
-looking at it again, I did the same mistake :-/
-
-Yeah, never mind, it's fine, my original reviewed-by stands.
-
--- Steve
+As to me -- yes, I would move zero page testing to a separate memory testcase.
+But since Alexey is the former author of the tests better wait for his opinion.
