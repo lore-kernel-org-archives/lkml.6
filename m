@@ -2,112 +2,73 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5B7C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AEFC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:33:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE5AE2089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:31:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AhWrG6Mc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE5AE2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AAAB62089D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:33:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAAB62089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbeJPARc (ORCPT
+        id S1726770AbeJPAT2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:17:32 -0400
-Received: from mail-wm1-f48.google.com ([209.85.128.48]:53089 "EHLO
-        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbeJPARc (ORCPT
+        Mon, 15 Oct 2018 20:19:28 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:52883 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbeJPAT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:17:32 -0400
-Received: by mail-wm1-f48.google.com with SMTP id 189-v6so19577972wmw.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 09:31:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=KeUgfrRpWE72zBPh4Kygg+VGy+NEqZUncQZ0Fk0rFm0=;
-        b=AhWrG6McY7FU1bo66+AhpG/raP+asDFfc7wxmvwtRTg+M+T1xJlKSV+Nes8Oyo2TrX
-         W33nP+LjVSkElhDRun3yNSPkb4ZHizLfXJEqIyodEv4UT0iQIKjoYu8jDwOs6rCtuyzg
-         UBDREibVuviIxXNoMreI/hIlr9hQY17Fc+s0Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=KeUgfrRpWE72zBPh4Kygg+VGy+NEqZUncQZ0Fk0rFm0=;
-        b=K1QA3oOsFeuS4N6/qPCN/A/631aJbHv2vrsssQrkP4pSjivuYMrq1u1OXhOOTb8RMY
-         XWSlZXkMQzaXQh2zvBbaN8txokzfu98vwlQAZv1c56Cke0dfzPwGCIEcryKvE7J9Wo75
-         5hzCleGmrIc0Hf5+7Yr6gyBXsS+QbyS3wXW8CPrw3t9I71+qL5RRnmIT8UafvkEVpzBI
-         n5PQUc4TagQHmwiOnisuLKlYeoFKabWRCS48lHcES7ltvSznz/3UBpmdHJv566uuAEYP
-         lNM4OfrOuGckArPcCpnfax09XcgnkYZMw4UJiWWdpjdChs0STEuwbeAqo5rcEQkQu83l
-         f7BA==
-X-Gm-Message-State: ABuFfoitS7TgS59V/4GfzJiCqxNYgJg64IHZ826rvqF9UM8Il5J1WsuM
-        +mJOpkFYhvOgiB77EVa4txRl7oLBiDn9KZSR7V3Qyw==
-X-Google-Smtp-Source: ACcGV62Pgam8nWJe/+LLKu4CMEdvEXqyzs2KpmuOEDX+LiSLL/STTT+Qz7p2j2fsp8sR+LTqgdy0m0ZXVz7z0l4f/YQ=
-X-Received: by 2002:a1c:1452:: with SMTP id 79-v6mr13341058wmu.31.1539621093761;
- Mon, 15 Oct 2018 09:31:33 -0700 (PDT)
+        Mon, 15 Oct 2018 20:19:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 02C5440C8B;
+        Mon, 15 Oct 2018 16:33:30 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Ig7f8xMcI83i; Mon, 15 Oct 2018 16:33:29 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 4523740C7B;
+        Mon, 15 Oct 2018 16:33:17 +0000 (UTC)
+Subject: Re: usbip_vudc: BUG kmalloc-2048 (Not tainted): Poison overwritten
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>
+Cc:     Valentina Manea <valentina.manea.m@gmail.com>,
+        Karol Kosik <karo9@interia.eu>,
+        Igor Kotrasinski <i.kotrasinsk@samsung.com>,
+        Krzysztof Opasiak <k.opasiak@samsung.com>,
+        Shuah Khan <shuah@kernel.org>
+References: <d70534ec-85a7-6249-449e-2fb3401e1d48@infradead.org>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <5d3f9d79-f633-2455-6191-49bb53e9c22f@kernel.org>
+Date:   Mon, 15 Oct 2018 10:33:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a1c:b485:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 09:31:32
- -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.10.1810132256240.4908@lmark-linux.qualcomm.com>
-References: <1539214413-26173-1-git-send-email-john.stultz@linaro.org>
- <7534ca1d-f874-7809-6125-d9fc72f70e39@redhat.com> <alpine.DEB.2.10.1810132256240.4908@lmark-linux.qualcomm.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Mon, 15 Oct 2018 09:31:32 -0700
-Message-ID: <CALAqxLWw0k7_cB2hY=2gPbYX7omKob7eV9HJizxYCVc=n=K9EA@mail.gmail.com>
-Subject: Re: [PATCH] staging: ion: Rework ion_map_dma_buf() to minimize re-mapping
-To:     Liam Mark <lmark@codeaurora.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Beata Michalska <Beata.Michalska@arm.com>,
-        Matt Szczesiak <matt.szczesiak@arm.com>,
-        Anders Pedersen <Anders.Pedersen@arm.com>,
-        John Reitan <John.Reitan@arm.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d70534ec-85a7-6249-449e-2fb3401e1d48@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 11:01 PM, Liam Mark <lmark@codeaurora.org> wrote:
-> On Fri, 12 Oct 2018, Laura Abbott wrote:
->> I thought there might have been some Qualcomm
->> stuff that did that (Liam? Todd?)
->
-> Yes we have a form of "lazy mapping", which clients can opt into using,
-> which results in iommu page table mapping not being unmaped on dma-unamp.
-> Instead they are unmapped when the buffer is destroyed.
->
-> It is important to note that in our "lazy mapping" implementation cache
-> maintenance is still applied on dma-map and dma-unmap.
-> If you need a full description of this feature I can provide it.
->
->>
->> I suspect most of the cost of the dma_map/dma_unmap is from the
->> cache flushing and not the actual mapping operations. If this
->> is the case, another option might be to figure out how to
->> incorporate dma_attrs so drivers can use DMA_ATTR_SKIP_CPU_SYNC
->> to decide when they actually want to sync.
->
-> We have support for this locally on our 4.14 branch.
->
-> We have added a dma_map_attrs field to the dma_buf_attachment struct,
-> clients can then specify dma-attributes here such as
-> DMA_ATTR_SKIP_CPU_SYNC before dma-mapping the buffer, then we ensure that
-> these dma attributes are passed to dma_map_sg_attrs when ion_map_dma_buf
-> is called (same for ion_unmap_dma_buf).
+On 10/13/2018 11:37 AM, Randy Dunlap wrote:
+> Kernel 4.19-rc7, on x86_64:
+> 
+> Load usbip_vudc module, then unload (rmmod) it.
+> Load it again:
+> 
 
-Do you happen to have a pointer to the tree if its public?
+Thanks Randy. I am debugging another problem in this path and I will
+take a look at this one as well. Just quick ack that I saw this.
 
-thanks
--john
+Thanks for reporting the problem.
+
+-- Shuah
+
