@@ -2,169 +2,162 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD07C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 13:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A49AEC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 13:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F237720842
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 13:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EF542083C
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 13:48:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwZjxeq+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F237720842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XZTCprIk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EF542083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbeJOV33 (ORCPT
+        id S1726581AbeJOVdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 17:29:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49724 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbeJOV33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 17:29:29 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BFF620644;
-        Mon, 15 Oct 2018 13:44:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539611046;
-        bh=j72JDwspvCT720xgfxzSRFTHkvQpa8+mtonWbWz1Ay4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uwZjxeq+0KXzEkkjcaJ4pDpKJvxekZDX5rt3sUwwQHeiagLgzNdnl3af/JR79CT83
-         0+HY7HElVuSPvWeDUPYi1JChjTy14Z42lv55cmJbC14CCiKasjC809dUM0eMWpMnXw
-         nIGUXs+vc9+O9ZArhYwGdBwRh6pNgVzchG4IFXj8=
-Date:   Mon, 15 Oct 2018 08:44:04 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Dave Young <dyoung@redhat.com>
-Cc:     bp@suse.de, thomas.lendacky@amd.com, brijesh.singh@amd.com,
-        Lianbo Jiang <lijiang@redhat.com>, bhe@redhat.com,
-        tiwai@suse.de, x86@kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        mingo@redhat.com, baiyaowei@cmss.chinamobile.com, hpa@zytor.com,
-        dan.j.williams@intel.com, tglx@linutronix.de,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH 1/3] x86/kexec: Correct KEXEC_BACKUP_SRC_END off-by-one
- error
-Message-ID: <20181015134404.GA5906@bhelgaas-glaptop.roam.corp.google.com>
-References: <153805773703.1157.14773321497580233478.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <153805811578.1157.6948388946904655969.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20180930092110.GB6950@dhcp-128-65.nay.redhat.com>
- <20180930092741.GC6950@dhcp-128-65.nay.redhat.com>
- <20181015045138.GA9719@dhcp-128-65.nay.redhat.com>
+        Mon, 15 Oct 2018 17:33:54 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:56461 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726499AbeJOVdx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 17:33:53 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181015134830euoutp01ce0c4354ca3bdee8f7d6d72e09570eb0~dzFRVzneN1678016780euoutp01W
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 13:48:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181015134830euoutp01ce0c4354ca3bdee8f7d6d72e09570eb0~dzFRVzneN1678016780euoutp01W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539611310;
+        bh=o+UJwnEGSVj5nDvDcq/nUsBmyU8g+sKDDuEq8AWJp0k=;
+        h=To:Cc:From:Subject:Date:References:From;
+        b=XZTCprIkQ3wFr6uJDb/uNVlYIZFrmyley8KYOAfTB52LWT1X3DsT3sxYTJ0SlTRkg
+         dhNS9pVV9XZfnKP8NYKjaCyStd0PT4cKxUT1LHzY4p2AF0c3CE8E9y0pQD9AT+8KlB
+         6e7eu4jKCWYk13UHSDlOAi75UTaWLs+M9zesN3eA=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181015134829eucas1p2966e79f9a8bffc21e110a7ac3c333261~dzFQujqeJ0728507285eucas1p22;
+        Mon, 15 Oct 2018 13:48:29 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 13.0F.04441.DAA94CB5; Mon, 15
+        Oct 2018 14:48:29 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11~dzFPt-ZL_1531815318eucas1p1t;
+        Mon, 15 Oct 2018 13:48:28 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181015134828eusmtrp2158118e35eae721c4662dba60302fccb~dzFPtBNnD0288802888eusmtrp2b;
+        Mon, 15 Oct 2018 13:48:28 +0000 (GMT)
+X-AuditID: cbfec7f2-5c9ff70000001159-ac-5bc49aad836b
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 07.BB.04128.CAA94CB5; Mon, 15
+        Oct 2018 14:48:28 +0100 (BST)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20181015134828eusmtip1ede1a4b2699a704378ad1a3e0003e65b~dzFPYHdlW0055300553eusmtip1m;
+        Mon, 15 Oct 2018 13:48:28 +0000 (GMT)
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: remove no longer needed s3c_pm_check_*() calls
+Date:   Mon, 15 Oct 2018 15:48:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181015045138.GA9719@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTmt3vvdl1euU7Fk1nKKKPCFwSNih4gtMA/JArDkXXLy9R0yq5a
+        RpAYvvEJpi6zmq8SY75QZ5i2nCt8jKloED5Si7C08IFY2dr1Jvnfd77zfb/zncOPxGSPCC8y
+        RpPEajVMnFwsxdv7N4b9X+j6VEE5JZSiudxAKArnvmIKq7VJomiZGycUo12VYkW59ZVIYSrt
+        RmckytFxG6ZsacgRK1tr7ikL2hqQcqVlXxgRIT0ZxcbFpLDawFPXpNEdbb0osWTXbbv+PpGG
+        apxykRMJ9FGY/JUl4rGMfoagfdojF0kdeBXBqGWCEIoVBGN5NvG2Y2nTQgiOegRpxQGC6DuC
+        LxUDGN9wpw/BxOb6lhujFxyih91bM8T0cSjOakA8dqNDYWp1aMuA0wegsOg1notI0oO+DIWD
+        B3maol3hXcU8zmOM9oGOxUqMfxPoPAnYPxSIBFEKDJfmIyFdCAw2l0oE7AYLlrZ/2Bvsxsci
+        wVyG4NvPWlwoDAgaB/tFguoEvLHYCD4F5ljB0BUo0GdBt96FeBpoF3i/6CoEcoGS9jJMoCnI
+        zpQJaj9oqmsSb4/NNT7HBKyEt2NmiXC4K2DNaEZFyFe3Y03djjV1/zM8QVgD8mSTuXg1ywVr
+        2FsBHBPPJWvUATcS4luQ49MM/LEsd6K1kesmRJNI7kzRzn0qGcGkcKnxJgQkJnen4KJJJaOi
+        mNQ7rDbhqjY5juVMaA+Jyz2puqpmlYxWM0nsTZZNZLXbXRHp5JWGMqoj2s4F+YeGZWLeSQ/M
+        nbuL8I9BzDIVWxt+d3993V6DlGmt1vkZfeI+pTcaomLV1IhIZn/q7SaeDdb0qLp/z1+o0cs+
+        zywNmaRH8pf1Y1WTdr1XU2SP+2zvMWQMt5pnYTF76odP5SXzS19OZ5uZIrHI9A31+ZC10/pp
+        ixznopngw5iWY/4Caxc0QDADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42I5/e/4Xd01s45EG2y/ImmxccZ6Vov+x6+Z
+        Lc6f38BusenxNVaLy7vmsFnMOL+PyeLQ1L2MDuwel69dZPbYtKqTzWPzknqPvi2rGD0+b5IL
+        YI3SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy9i+
+        5QBjwSTuiv+LmlkbGJdwdjFyckgImEi8+3uctYuRi0NIYCmjxL/OdYxdjBxACRmJ4+vLIGqE
+        Jf5c62KDqHnLKLGiawsjSEJEQFPi+t/vYM3MAq8YJfZMPA+WYBOwkpjYvgrMFhbwkbj35Swz
+        iM0rYCdx6OwLsDiLgKpE/4SDLCC2qECExK2HHSwQNYISJ2c+AbOZBdQl/sy7xAxhy0tsfzuH
+        eQIj/ywkZbOQlM1CUraAkXkVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYExsO/Zzyw7GrnfB
+        hxgFOBiVeHgFeI5EC7EmlhVX5h5ilOBgVhLhlQg5FC3Em5JYWZValB9fVJqTWnyI0RTo8InM
+        UqLJ+cB4zSuJNzQ1NLewNDQ3Njc2s1AS5z1vUBklJJCeWJKanZpakFoE08fEwSnVwGi042Hh
+        +p+CvXv0Xqut3Wyw+5bJxWXObwSqhCQnbvnnseNAod9X5eN+/K6XvzYLCDk25dTcO/HrrPq9
+        0w6Fs6P63+xoTpy4lpNd9UGTAbM42/m7BWevcgdPOC6quU0kUH6Hx8rMEwnzbMrFOFYfXqIb
+        f3wR+2brD/ZS/+6ZHvO8cjwo95lScqcSS3FGoqEWc1FxIgC6z77MnwIAAA==
+Message-Id: <20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11~dzFPt-ZL_1531815318eucas1p1t@eucas1p1.samsung.com>
+X-CMS-MailID: 20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11
+References: <CGME20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 12:51:38PM +0800, Dave Young wrote:
-> On 09/30/18 at 05:27pm, Dave Young wrote:
-> > On 09/30/18 at 05:21pm, Dave Young wrote:
-> > > On 09/27/18 at 09:21am, Bjorn Helgaas wrote:
-> > > > From: Bjorn Helgaas <bhelgaas@google.com>
-> > > > 
-> > > > The only use of KEXEC_BACKUP_SRC_END is as an argument to
-> > > > walk_system_ram_res():
-> > > > 
-> > > >   int crash_load_segments(struct kimage *image)
-> > > >   {
-> > > >     ...
-> > > >     walk_system_ram_res(KEXEC_BACKUP_SRC_START, KEXEC_BACKUP_SRC_END,
-> > > >                         image, determine_backup_region);
-> > > > 
-> > > > walk_system_ram_res() expects "start, end" arguments that are inclusive,
-> > > > i.e., the range to be walked includes both the start and end addresses.
-> > > 
-> > > Looking at the function comment of find_next_iomem_res,  the res->end
-> > > should be exclusive, am I missing something?
-> > 
-> > Oops,  you fix it in 2nd patch, I apparently miss that.
-> > 
-> > Since the fix of checking the end is in another patch, probably merge
-> > these two patches so that they are in one patch to avoid break bisect. 
-> 
-> Not sure if above comment was missed, Boris, would you mind to fold the
-> patch 1 and 2?
+Since commit 6862fdf2201a ("ARM: samsung: Limit SAMSUNG_PM_CHECK
+config option to non-Exynos platforms") s3c_pm_check_*() calls
+are redundant and can be removed.
 
-Sorry, I did miss this comment.
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/mach-exynos/suspend.c |    7 -------
+ 1 file changed, 7 deletions(-)
 
-Patch 2 was for the very specific case of a single-byte resource at
-the end address, which we probably never see in practice.
-
-For patch 1, the find_next_iomem_res() function comment had
-"[res->start.res->end)", but I think the code actually treated it as
-"[res->start.res->end]", so the comment was inaccurate.
-
-Before my patches we had:
-
-  #define KEXEC_BACKUP_SRC_START  (0UL)
-  #define KEXEC_BACKUP_SRC_END    (640 * 1024UL)    # 0xa0000
-
-The intention is to search for system RAM resources that intersect
-this region:
-
-  [mem 0x0-0x9ffff]
-
-The call is:
-
-  walk_system_ram_res(KEXEC_BACKUP_SRC_START, KEXEC_BACKUP_SRC_END,
-                      ..., determine_backup_region);
-  walk_system_ram_res(0, 0xa0000, ..., determine_backup_region);
-
-Assume iomem_resource contains this system RAM resource:
-
-  [mem 0x90000-0xaffff]
-
-In find_next_iomem_res(), the "res" input parameter is the region to
-search:
-
-  res->start = 0;                          # KEXEC_BACKUP_SRC_START
-  res->end   = 0xa0000;                    # KEXEC_BACKUP_SRC_END
-
-In one of the loop iterations we find the [mem 0x90000-0xaffff]
-resource (p):
-
-  p->start = 0x90000;
-  p->end   = 0xaffff;
-
-  if (p->start > end)                      # 0x90000 > 0xa0000? false
-  if (p->end >= start && p->start < end)   # 0xaffff >= 0 ? true
-                                           # 0x90000 < 0xa0000 ? true
-    break;                                 # so we'll return part of "p"
-
-  if (res->start < p->start)               # 0x0 < 0x90000 ? true
-    res->start = 0x90000;                  # trim beginning to p->start
-  if (res->end > p->end)                   # 0xa0000 > 0xaffff ? false
-
-So find_next_iomem_res() returns with this:
-
-  res->start = 0x90000;                    # trimmed to p->start
-  res->end   = 0xa0000;                    # unchanged from input
-
-  [mem 0x90000-0xa0000]                    # returned resource (res)
-
-and we call determine_backup_region(res), which sets:
-
-  image->arch.backup_src_start = 0x90000;
-  image->arch.backup_src_sz = resource_size(res)  # 0xa0000 - 0x90000 + 1
-                                                  # (0x10001)
-
-This is incorrect.  What we wanted was the part of [mem 0x90000-0xaffff]
-that intersects the first 640K, i.e., [mem 0x90000-0x9ffff], but what
-we got was [mem 0x90000-0xa0000], which is one byte too long.
-
-The resource returned find_next_iomem_res() always ends at the
-"res->end" supplied as an input parameter *unless* the input res->end
-is strictly greater than the p->end, when it is truncated to p->end.
-
-Bottom line, I don't think patches 1 and 2 need to be folded together
-because they fix different problems.
-
-Bjorn
+Index: b/arch/arm/mach-exynos/suspend.c
+===================================================================
+--- a/arch/arm/mach-exynos/suspend.c	2018-10-09 15:58:35.495122851 +0200
++++ b/arch/arm/mach-exynos/suspend.c	2018-10-15 15:08:52.420184244 +0200
+@@ -508,7 +508,6 @@ static int exynos_suspend_enter(suspend_
+ 	if (pm_data->pm_prepare)
+ 		pm_data->pm_prepare();
+ 	flush_cache_all();
+-	s3c_pm_check_store();
+ 
+ 	ret = call_firmware_op(suspend);
+ 	if (ret == -ENOSYS)
+@@ -523,8 +522,6 @@ static int exynos_suspend_enter(suspend_
+ 	S3C_PMDBG("%s: wakeup stat: %08x\n", __func__,
+ 			pmu_raw_readl(S5P_WAKEUP_STAT));
+ 
+-	s3c_pm_check_restore();
+-
+ 	S3C_PMDBG("%s: resuming the system...\n", __func__);
+ 
+ 	return 0;
+@@ -548,8 +545,6 @@ static int exynos_suspend_prepare(void)
+ 		return ret;
+ 	}
+ 
+-	s3c_pm_check_prepare();
+-
+ 	return 0;
+ }
+ 
+@@ -557,8 +552,6 @@ static void exynos_suspend_finish(void)
+ {
+ 	int ret;
+ 
+-	s3c_pm_check_cleanup();
+-
+ 	ret = regulator_suspend_finish();
+ 	if (ret)
+ 		pr_warn("Failed to resume regulators from suspend (%d)\n", ret);
