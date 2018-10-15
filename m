@@ -3,54 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AF7C070C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2017BC070C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:09:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1721E20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:06:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1721E20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E82A20876
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 01:09:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E82A20876
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbeJOItk (ORCPT
+        id S1726545AbeJOIwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 04:49:40 -0400
-Received: from smtprelay0235.hostedemail.com ([216.40.44.235]:58313 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726357AbeJOItk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 04:49:40 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id B6F8C83777EE;
-        Mon, 15 Oct 2018 01:06:43 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: home21_5785f54ad7d03
-X-Filterd-Recvd-Size: 3091
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 15 Oct 2018 01:06:41 +0000 (UTC)
-Message-ID: <b6ee53f7e02cc3ea52713ae82402e97d7050cb3e.camel@perches.com>
-Subject: Re: [PATCH v3 13/18] of: overlay: check prevents multiple fragments
- touching same property
-From:   Joe Perches <joe@perches.com>
-To:     frowand.list@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Date:   Sun, 14 Oct 2018 18:06:40 -0700
-In-Reply-To: <1539563070-12969-14-git-send-email-frowand.list@gmail.com>
-References: <1539563070-12969-1-git-send-email-frowand.list@gmail.com>
-         <1539563070-12969-14-git-send-email-frowand.list@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
+        Mon, 15 Oct 2018 04:52:07 -0400
+Received: from gate.crashing.org ([63.228.1.57]:45629 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726186AbeJOIwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 04:52:07 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w9F0lDBk027228;
+        Sun, 14 Oct 2018 19:47:15 -0500
+Message-ID: <9cfe508c687068853a6e5e030962a78467a8d313.camel@kernel.crashing.org>
+Subject: Re: [PATCH 01/33] powerpc: use mm zones more sensibly
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christoph Hellwig <hch@lst.de>, Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 15 Oct 2018 11:47:13 +1100
+In-Reply-To: <20181009132500.17643-2-hch@lst.de>
+References: <20181009132500.17643-1-hch@lst.de>
+         <20181009132500.17643-2-hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,55 +45,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-10-14 at 17:24 -0700, frowand.list@gmail.com wrote:
-> From: Frank Rowand <frank.rowand@sony.com>
-> 
-> Add test case of two fragments updating the same property.  After
-> adding the test case, the system hangs at end of boot, after
-> after slub stack dumps from kfree() in crypto modprobe code.
-[]
-> -static int check_changeset_dup_add_node(struct overlay_changeset *ovcs)
-> +static int changeset_dup_entry_check(struct overlay_changeset *ovcs)
->  {
-> -	struct of_changeset_entry *ce_1, *ce_2;
-> -	char *fn_1, *fn_2;
-> -	int name_match;
-> +	struct of_changeset_entry *ce_1;
-> +	int dup_entry = 0;
+On Tue, 2018-10-09 at 15:24 +0200, Christoph Hellwig wrote:
+>   * Find the least restrictive zone that is entirely below the
+> @@ -324,11 +305,14 @@ void __init paging_init(void)
+>         printk(KERN_DEBUG "Memory hole size: %ldMB\n",
+>                (long int)((top_of_ram - total_ram) >> 20));
 >  
->  	list_for_each_entry(ce_1, &ovcs->cset.entries, node) {
-> -
-> -		if (ce_1->action == OF_RECONFIG_ATTACH_NODE ||
-> -		    ce_1->action == OF_RECONFIG_DETACH_NODE) {
-> -
-> -			ce_2 = ce_1;
-> -			list_for_each_entry_continue(ce_2, &ovcs->cset.entries, node) {
-> -				if (ce_2->action == OF_RECONFIG_ATTACH_NODE ||
-> -				    ce_2->action == OF_RECONFIG_DETACH_NODE) {
-> -					/* inexpensive name compare */
-> -					if (!of_node_cmp(ce_1->np->full_name,
-> -					    ce_2->np->full_name)) {
-> -						/* expensive full path name compare */
-> -						fn_1 = kasprintf(GFP_KERNEL, "%pOF", ce_1->np);
-> -						fn_2 = kasprintf(GFP_KERNEL, "%pOF", ce_2->np);
-> -						name_match = !strcmp(fn_1, fn_2);
-> -						kfree(fn_1);
-> -						kfree(fn_2);
-> -						if (name_match) {
-> -							pr_err("ERROR: multiple overlay fragments add and/or delete node %pOF\n",
-> -							       ce_1->np);
-> -							return -EINVAL;
-> -						}
-> -					}
-> -				}
-> -			}
-> -		}
-> +		dup_entry |= find_dup_cset_node_entry(ovcs, ce_1);
-> +		dup_entry |= find_dup_cset_prop(ovcs, ce_1);
+> +#ifdef CONFIG_ZONE_DMA
+> +       max_zone_pfns[ZONE_DMA] = min(max_low_pfn, 0x7fffffffUL >> PAGE_SHIFT);
+> +#endif
+> +       max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+>  #ifdef CONFIG_HIGHMEM
+> -       limit_zone_pfn(ZONE_NORMAL, lowmem_end_addr >> PAGE_SHIFT);
+> +       max_zone_pfns[ZONE_HIGHMEM] = max_pfn
+                                               ^
+Missing a  ";" here  --------------------------|
 
-I think this is worse performance than before.
+Sorry ... works with that fix on an old laptop with highmem.
 
-This now walks all entries when before it would
-return -EINVAL directly when it found a match.
-
+>  #endif
+> -       limit_zone_pfn(TOP_ZONE, top_of_ram >> PAGE_SHIFT);
+> -       zone_limits_final = true;
+> +
+>         free_area_init_nodes(max_zone_pfns);
+>  
 
