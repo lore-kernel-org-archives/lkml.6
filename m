@@ -2,125 +2,88 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3134DC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 022C4C71130
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE3442064A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:48:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B67EF2064A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:48:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BMKivcKb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3442064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="DPPbqanN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B67EF2064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mork.no
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbeJOUdc (ORCPT
+        id S1726727AbeJOUdl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 16:33:32 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43460 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbeJOUdb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 16:33:31 -0400
-Received: by mail-lj1-f194.google.com with SMTP id r8-v6so17352301ljc.10
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 05:48:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/PR/U/AX2RhoMph28nvtYnU8rTDBHHGBQ0O/iaGYqvc=;
-        b=BMKivcKbI+x0Y4sWpJHyolHUxOS9s69ieyfa99V458mPoNYUMIuroBbEwPbJbmHDg6
-         8PM68u5UTeeu/idBG7+XcKuk0ePD7PYE/HU+b2w+4OWS2EL1bQ9RhQKz6p8iIa6ImrJu
-         BNTpxn/9m0Qgq+lP8aXALxw3TIdIHLEIN2aZ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/PR/U/AX2RhoMph28nvtYnU8rTDBHHGBQ0O/iaGYqvc=;
-        b=YLPIBwpQhjLb7HXr5OSZ88LAYqM6QSOTiTnETuXjIEk9v+GfWzwg9x6h8ZgvFaejQ+
-         kS0w/ohaQUZYXnYKYt957FRSfkqA8d8IkC4w3hzvcCI9dfGHDhay16Jz/SCbIY6D1Pxh
-         XYjANyWGeSr/VCEjL6qriexB/PjDUINTHjpNqOlMRVe/dx6RgZ4SpXYvRm3QpJDIgOUK
-         BAxdqMWjpPKMjFLuJNK+Sh6/y2vZDI9oGjPAx2pY07WTslCLQyC+pWd5hEKKgp9eVL0a
-         o5tnkfx++3dmEM1QP0KuDmZqNa9XLkDr3XoD04gYHkwN5ldynzsnVmAgkYdTC5MU7kDk
-         6CfQ==
-X-Gm-Message-State: ABuFfojIfSA+SBCO1nyKVPP2+pIDZ+FFnBVQNYdAvJshdFLFyv/FNcHa
-        w8fcd51y9paY0QLdrXxSIpxxC4/6MKk=
-X-Google-Smtp-Source: ACcGV63nATLtJnR/+LKQNNBhTAtjx5cN+8M4024GUJXOenZlN6yUfsm0tNlNXF3aXMiw6W1+CaiQjQ==
-X-Received: by 2002:a2e:8589:: with SMTP id b9-v6mr10900340lji.122.1539607700587;
-        Mon, 15 Oct 2018 05:48:20 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id h87-v6sm2440966lji.9.2018.10.15.05.48.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 05:48:19 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
-        ulf.hansson@linaro.org, collinsd@codeaurora.org, mka@chromium.org,
-        robh@kernel.org, rnayak@codeaurora.org
-Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Subject: [RFC PATCH] dt-bindings: opp: Extend qcom-opp bindings with properties needed for CPR
-Date:   Mon, 15 Oct 2018 14:47:49 +0200
-Message-Id: <20181015124749.27276-1-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20180627045234.27403-3-rnayak@codeaurora.org>
-References: <20180627045234.27403-3-rnayak@codeaurora.org>
+        Mon, 15 Oct 2018 16:33:41 -0400
+Received: from canardo.mork.no ([148.122.252.1]:57913 "EHLO canardo.mork.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726319AbeJOUdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 16:33:41 -0400
+Received: from miraculix.mork.no ([IPv6:2a02:2121:2c7:70e5:c8fa:53ff:fe7c:53d8])
+        (authenticated bits=0)
+        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id w9FCmCYW024287
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 15 Oct 2018 14:48:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
+        t=1539607694; bh=+qzCWwwjFNSVHyH2HitQ0ucenqmwM+Q4JD6uedsWU1s=;
+        h=From:To:Cc:Subject:References:Date:Message-ID:From;
+        b=DPPbqanN0tns6J3Sr+DSCOrhqMApAY6+U5awPq27ksC2yBZ19/VZW3U8mcNJzsc1h
+         7QK0EAHC4K50l6btObXE4vAoGuCE16sbBBjgoiDihaFp9jcavStn+4lsE8S1UgTWL+
+         rz6xDrisnOrKx0ywBiA4OF9wkm5w2DqAymNzjhkY=
+Received: from bjorn by miraculix.mork.no with local (Exim 4.89)
+        (envelope-from <bjorn@mork.no>)
+        id 1gC2I3-0006VN-Cb; Mon, 15 Oct 2018 14:48:07 +0200
+From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+To:     Ben Dooks <ben.dooks@codethink.co.uk>
+Cc:     netdev@vger.kernel.org, oneukum@suse.com, davem@davemloft.net,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel@lists.codethink.co.uk
+Subject: Re: [PATCH 2/8] usbnet: smsc95xx: add kconfig for turbo mode
+Organization: m
+References: <20181012083405.19246-1-ben.dooks@codethink.co.uk>
+        <20181012083405.19246-3-ben.dooks@codethink.co.uk>
+Date:   Mon, 15 Oct 2018 14:48:05 +0200
+In-Reply-To: <20181012083405.19246-3-ben.dooks@codethink.co.uk> (Ben Dooks's
+        message of "Fri, 12 Oct 2018 09:33:59 +0100")
+Message-ID: <87d0sbz88q.fsf@miraculix.mork.no>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Virus-Scanned: clamav-milter 0.100.1 at canardo
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extend qcom-opp bindings with properties needed for Core Power Reduction
-(CPR).
+Ben Dooks <ben.dooks@codethink.co.uk> writes:
 
-CPR is included in a great variety of Qualcomm SoC, e.g. msm8916 and
-msm8996, and was first introduced in msm8974.
+> Add a configuration option for the default state of turbo mode
+> on the smsc95xx networking driver. Some systems it is better
+> to default this to off as it causes significant increases in
+> soft-irq load.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
-Hello Rob, Rajendra,
 
-Sorry for not replying sooner.
-Since Rob wanted the binding to be complete before merging,
-this is my proposal to extend the OPP binding with properties
-needed to support CPR (both for msm8916 and msm8996).
-I've discussed the proposal with Viresh, and this proposal
-seems better than what I previously suggested here:
-https://lore.kernel.org/lkml/20181005204424.GA29500@centauri.lan/
+So there is already a module option allowing you to change this, using
+e.g kernel command line or kmod config files.  It's even writable,
+taking effect on the next netdev open, so you can change it at runtime
+without reloading the module.
 
- .../devicetree/bindings/opp/qcom-opp.txt      | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+What good does this new build-time setting do, except causing confusion
+wrt driver defaults?
 
-diff --git a/Documentation/devicetree/bindings/opp/qcom-opp.txt b/Documentation/devicetree/bindings/opp/qcom-opp.txt
-index db4d970c7ec7..3ab5dd84de86 100644
---- a/Documentation/devicetree/bindings/opp/qcom-opp.txt
-+++ b/Documentation/devicetree/bindings/opp/qcom-opp.txt
-@@ -23,3 +23,22 @@ Required properties:
- representing a corner/level that's communicated with a remote microprocessor
- (usually called the RPM) which then translates it into a certain voltage on
- a voltage rail.
-+
-+Optional properties:
-+- opp-hz: Frequency in Hz, expressed as a 64-bit big-endian integer. Even
-+  though a power domain doesn't need a opp-hz, there can be devices in the
-+  power domain that need to know the highest supported frequency for each
-+  corner/level (e.g. CPR), in order to properly initialize the hardware.
-+
-+- qcom,fuse-level: A positive value representing the fuse corner/level
-+  associated with this OPP node. Sometimes several corners/levels shares
-+  a certain fuse corner/level. A fuse corner/level contains e.g. ref uV,
-+  min uV, and max uV.
-+
-+- qcom,fuse-level-<name>: Named qcom,fuse-level property. This is exactly
-+  similar to the above qcom,fuse-level property, but allows multiple
-+  fuse corners/levels to be provided for the same OPP. At runtime, the
-+  platform can pick a <name> and matching qcom,fuse-level-<name> property
-+  will be enabled for all OPPs. If the platform doesn't pick a specific
-+  <name> or the <name> doesn't match with any qcom,fuse-level-<name>
-+  properties, then qcom,fuse-level property shall be used, if present.
--- 
-2.17.2
+Note also that the smsc95xx and smsc75xx drivers are pretty similar.
+Both have the same turbo_mode setting.  If you change the defaults, then
+they should at least be kept in sync to cause as little confusion as
+possible..
 
+
+
+
+Bj=C3=B8rn
