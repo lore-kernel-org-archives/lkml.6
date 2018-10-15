@@ -2,234 +2,173 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6FF5C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3516DC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72CFD2089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BACB52089D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:16:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0ikXfwc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72CFD2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="Ys0cKFhr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BACB52089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbeJPB4N (ORCPT
+        id S1726883AbeJPCDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 21:56:13 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45769 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbeJPB4M (ORCPT
+        Mon, 15 Oct 2018 22:03:02 -0400
+Received: from alln-iport-5.cisco.com ([173.37.142.92]:9115 "EHLO
+        alln-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbeJPCDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 21:56:12 -0400
-Received: by mail-pl1-f193.google.com with SMTP id y15-v6so9677342plr.12;
-        Mon, 15 Oct 2018 11:09:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kgNzcXSE3VovdIBrnHgZsjxTfG62YSLhfS1xeIL9JRI=;
-        b=Y0ikXfwc5bOt/n2Fk5wKYdZtjgPgsckAiLNlrEHHocKi1PSFx6RshXK2h056S84PuB
-         mhdanChSlxNVhcdTCMtX27ThsPoCOM/5ubvk8ptWZLzVLgQow5B3Uv89Pq1N9NkYI4D1
-         5cqe60/2rEt4kIHRxXzAU95Ni2JgQbB+sPoQE1Az1OoOUKhMu1Pv7PrGfiGqKjl+tgQW
-         ZhF1vC5K1FeewHhflvt6Derbvg+Itu6h4XIbLCfZPUEPsyW0aM5VxYXluDvLAojE4acm
-         Vmrlxnn4TXtIJmCXO4dC4ac+SxHPT+OzGsjKDqsUuqtv6g9Qtc8+TECP56YsF8s2YGwZ
-         XHPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kgNzcXSE3VovdIBrnHgZsjxTfG62YSLhfS1xeIL9JRI=;
-        b=Xn5aojN37QDnwo7gpzF/dvGquLwGTFEnspLRxXcflqgWMcX6468m2uv2KcPxxJpVeV
-         RFSeW8/BgNXiyRcVcAmeU/xNZV8HXHdKGIyXzA8jwFppu69H2fM7a91Qi69IZm2mJcci
-         t0Hw3G4Y1XQo1sW+fpZXwUe3KlHfrLspLR0gaB8NL7mLHLWIZVTCDU0qMvz9Z75HM/Q0
-         tn1JicC+Jgq8cVcYeOD2PX+s2Y8yjrga8JjNXuK6QCSoTm3k+dHcUuHYL4MVpAJUhtnz
-         Gg3lA4UjKjKAABJwe3UbkaR2CetPZ8laspsN9EmcOW/Gwx22DXKGJG78SMSNlfi2vfnX
-         8sBQ==
-X-Gm-Message-State: ABuFfoiIyNx0C0BTKuhkrnJHrIbnOitwIhMX66HE7H5G3M+FqQAD9GN0
-        ruYmuTUgPcuta9sxqjcdI8w=
-X-Google-Smtp-Source: ACcGV61iEPICuZKQGK7GcNa1xCIH5/W0mPvh/9o7vQAwTOnw4e9tQi2vsk0gdNoXW2LT1d4htXosBA==
-X-Received: by 2002:a17:902:b092:: with SMTP id p18-v6mr17226982plr.124.1539626992584;
-        Mon, 15 Oct 2018 11:09:52 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id 3-v6sm13402036pga.12.2018.10.15.11.09.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 11:09:51 -0700 (PDT)
-Subject: Re: [PATCH] of: overlay: user space synchronization
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alan Tull <atull@kernel.org>
-References: <1539567282-1326-1-git-send-email-frowand.list@gmail.com>
- <CAMuHMdXad2g5zEZ8=XzzVgfijcatKYj5AjwVQg=W-by_rHfcAQ@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <e69685d5-e09f-5f7d-2ff0-7ead12500371@gmail.com>
-Date:   Mon, 15 Oct 2018 11:09:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 15 Oct 2018 22:03:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=3381; q=dns/txt; s=iport;
+  t=1539627401; x=1540837001;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=3VyR/4dAXHv7RqKXiqhrTdYn7PXBE5hOvQG7GeJZHrI=;
+  b=Ys0cKFhrjxYur9HuccFJbTRyKSVXTU1KMBe7pflU8JrI0UYE405v3eP9
+   drps2TBl1gJg46kaSoKPcnpGXP+NOpmuorWHf24dQOj4CZn3ao4QxDPJz
+   xqOArjOL8kfLW3cX0jtGErmDCHn7GfcYFC2/6OjdKZC2OYJJ9NWrnTj6L
+   M=;
+X-IronPort-AV: E=Sophos;i="5.54,385,1534809600"; 
+   d="scan'208";a="185684398"
+Received: from alln-core-10.cisco.com ([173.36.13.132])
+  by alln-iport-5.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 18:16:40 +0000
+Received: from [10.154.208.167] ([10.154.208.167])
+        by alln-core-10.cisco.com (8.15.2/8.15.2) with ESMTP id w9FIGbt9018701;
+        Mon, 15 Oct 2018 18:16:37 GMT
+Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
+        Enke Chen <enkechen@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <20181013064023.GA28177@kroah.com>
+From:   Enke Chen <enkechen@cisco.com>
+Message-ID: <37401cea-5a37-2cd9-8595-8b07dfc4de7d@cisco.com>
+Date:   Mon, 15 Oct 2018 11:16:36 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXad2g5zEZ8=XzzVgfijcatKYj5AjwVQg=W-by_rHfcAQ@mail.gmail.com>
+In-Reply-To: <20181013064023.GA28177@kroah.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.154.208.167, [10.154.208.167]
+X-Outbound-Node: alln-core-10.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/15/18 01:24, Geert Uytterhoeven wrote:
-> Hi Frank,
+Hi, Greg:
+
+> Shouldn't there also be a manpage update, and a kselftest added for this
+> new user/kernel api that is being created?
 > 
-> On Mon, Oct 15, 2018 at 3:36 AM <frowand.list@gmail.com> wrote:
->> From: Frank Rowand <frank.rowand@sony.com>
+
+I will submit a patch for manpage update once the code is accepted.
+
+Regarding the kselftest, I am not sure.  Once the prctl() is limited to
+self (which I will do), the logic would be pretty straightforward. Not
+sure if the selftest would add much value.
+
+Thanks.  -- Enke
+
+On 10/12/18 11:40 PM, Greg Kroah-Hartman wrote:
+> On Fri, Oct 12, 2018 at 05:33:35PM -0700, Enke Chen wrote:
+>> For simplicity and consistency, this patch provides an implementation
+>> for signal-based fault notification prior to the coredump of a child
+>> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+>> be used by an application to express its interest and to specify the
+>> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
+>> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
 >>
->> When an overlay is applied or removed, the live devicetree visible in
->> /proc/device-tree/, aka /sys/firmware/devicetree/base/, reflects the
->> changes.  There is no method for user space to determine whether the
->> live devicetree was modified by overlay actions.
+>> Background:
 >>
->> Provide a sysfs file, /sys/firmware/devicetree/tree_version,  to allow
->> user space to determine if the live devicetree has remained unchanged
->> while a series of one or more accesses of /proc/device-tree/ occur.
-> 
-> Thanks for your patch!
-> 
->> The use of both dynamic devicetree modifications and overlay apply and
->> removal are not supported during the same boot cycle.  Thus non-overlay
->> dynamic modifications are not reflected in the value of tree_version.
-> 
-> What does this mean exactly, for users?
-> I am used to applying and removing overlays at run time (still
-> carrying Pantelis'
-> overlay configfs patches), but when would I use non-overlay dynamic
-> modifications?
-
-To find some examples, 'git grep of_add_property'.  (This is not a
-comprehensive list, there are other similar functions.)
-
-Some Powerpc systems use dynamic modifications of device trees, for
-example adding and removing cpus.
-
-Kexec uses dynamic modifications just before booting a new
-kernel (so no interference with overlays).  Devicetree
-unittest uses it, with no interference with overlays.
-
-There are also a few places platform code or a driver uses dynamic
-modification.  Possible conflicts with overlays are:
-   arch/arm/mach-mvebu/coherency.c
-   arch/arm/mach-omap2/timer.c
-
-rcar_du_of.c is a known use that is grandfathered in.  It currently
-is not compatible with overlays.
-
-drivers/macintosh/smu.c should not be an issue because I don't
-expect any macintosh overlay.
-
-Some of the reasons for not supporting both overlays and other
-dynamic modifications on the same system might be possible to
-resolve with additional code, but some might be difficult or
-impossible to resolve.  So that restriction might be loosened
-or removed in the future.  Some of the reasons are:
-
-  - dynamic modifications do not use the same locking mechanism
-    as overlay apply and removal, thus the devicetree could be
-    corrupted
-
-  - dynamic modifications of portions of the devicetree that
-    are the result of applying an overlay will (may?) cause
-    removal of the overlay to fail (or devicetree corruption?)
-
-  - (future concern: ) static validation of an overlay (or set
-    of overlays) against a specific base devicetree would not
-    be valid if the base devicetree is further modified by
-    dynamic modifications - this is theoretical since validation
-    is a currently under development feature and we do not know
-    what the final feature will look like
-
-The plan for overlays has been to add specific use models (or
-functionality or features) in a limited fashion initially, to
-ensure that each feature is implemented to a sufficient degree
-(in other words is not a hack that only works in limited
-circumstances, such as the correct phase of the moon), works
-robustly and is maintainable.  Then as each feature or set
-of features is found to be good enough, add more features.
-
-I suspect that dynamic modification in general will remain not
-compatible with overlays, with limited exceptions.  Possible
-exceptions would require stringent review and auditing, and
-could incude devicetree unittest (even this one makes me
-nervous) and some platform code (especially early boot code).
-
-
->> --- a/Documentation/ABI/testing/sysfs-firmware-ofw
->> +++ b/Documentation/ABI/testing/sysfs-firmware-ofw
+>> As the coredump of a process may take time, in certain time-sensitive
+>> applications it is necessary for a parent process (e.g., a process
+>> manager) to be notified of a child's imminent death before the coredump
+>> so that the parent process can act sooner, such as re-spawning an
+>> application process, or initiating a control-plane fail-over.
 >>
->> +What:          /sys/firmware/devicetree/tree_version
->> +Date:          October 2018
->> +KernelVersion: 4.20
->> +Contact:       Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org
->> +Description:
->> +               When an overlay is applied or removed, the live devicetree
->> +               visible in /proc/device-tree/, aka
->> +               /sys/firmware/devicetree/base/, reflects the changes.
->> +
->> +               tree_version provides a way for user space to determine if the
->> +               live devicetree has remained unchanged while a series of one
->> +               or more accesses of /proc/device-tree/ occur.
->> +
->> +               The use of both dynamic devicetree modifications and overlay
->> +               apply and removal are not supported during the same boot
->> +               cycle.  Thus non-overlay dynamic modifications are not
->> +               reflected in the value of tree_version.
->> +
->> +               Example shell use of tree_version:
->> +
->> +               done=1
->> +
->> +               while [ $done = 1 ] ; do
->> +
->> +                  pre_version=$(cat /sys/firmware/devicetree/tree_version)
->> +                  version=$pre_version
->> +                  while [ $(( ${version} & 1 )) != 0 ] ; do
->> +                     # echo is optional, sleep value can be tuned
->> +                     echo "${version}  sleeping"
->> +                     sleep 2;
->> +                     pre_version=$(cat /sys/firmware/devicetree/tree_version)
->> +                     version=${pre_version}
->> +                  done
->> +
->> +                  # 'critical region'
->> +                  # access /proc/device-tree/ one or more times
->> +
->> +                  post_version=$(cat /sys/firmware/devicetree/tree_version)
->> +
->> +                  if [ ${post_version} = ${pre_version} ] ; then
->> +                     done=0
->> +                  fi
->> +
->> +               done
+>> Currently there are two ways for a parent process to be notified of a
+>> child process's state change. One is to use the POSIX signal, and
+>> another is to use the kernel connector module. The specific events and
+>> actions are summarized as follows:
+>>
+>> Process Event    POSIX Signal                Connector-based
+>> ----------------------------------------------------------------------
+>> ptrace_attach()  do_notify_parent_cldstop()  proc_ptrace_connector()
+>>                  SIGCHLD / CLD_STOPPED
+>>
+>> ptrace_detach()  do_notify_parent_cldstop()  proc_ptrace_connector()
+>>                  SIGCHLD / CLD_CONTINUED
+>>
+>> pre_coredump/    N/A                         proc_coredump_connector()
+>> get_signal()
+>>
+>> post_coredump/   do_notify_parent()          proc_exit_connector()
+>> do_exit()        SIGCHLD / exit_signal
+>> ----------------------------------------------------------------------
+>>
+>> As shown in the table, the signal-based pre-coredump notification is not
+>> currently available. In some cases using a connector-based notification
+>> can be quite complicated (e.g., when a process manager is written in shell
+>> scripts and thus is subject to certain inherent limitations), and a
+>> signal-based notification would be simpler and better suited.
+>>
+>> Signed-off-by: Enke Chen <enkechen@cisco.com>
+>> ---
+>>  arch/x86/kernel/signal_compat.c    |  2 +-
+>>  include/linux/sched.h              |  4 ++
+>>  include/linux/signal.h             |  5 +++
+>>  include/uapi/asm-generic/siginfo.h |  3 +-
+>>  include/uapi/linux/prctl.h         |  4 ++
+>>  kernel/fork.c                      |  1 +
+>>  kernel/signal.c                    | 51 +++++++++++++++++++++++++
+>>  kernel/sys.c                       | 77 ++++++++++++++++++++++++++++++++++++++
+>>  8 files changed, 145 insertions(+), 2 deletions(-)
 > 
-> Please say explicitly that tree_version contains a 32-bit unsigned
-> decimal number, which is incremented before and after every change.
-> I had to deduce that from the code.
-
-Good point.  I'll add that.
-
-
+> Shouldn't there also be a manpage update, and a kselftest added for this
+> new user/kernel api that is being created?
 > 
-> IMHO that is more important than having the sample script here.
+> thanks,
 > 
-> Gr{oetje,eeting}s,
+> greg k-h
 > 
->                         Geert
-> 
-
