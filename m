@@ -2,85 +2,99 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C43C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF3CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E5A0208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:45:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E5A0208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3338C208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:45:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="oLdAvSq8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3338C208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbeJPGcT (ORCPT
+        id S1727082AbeJPGdE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:32:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34470 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbeJPGcS (ORCPT
+        Tue, 16 Oct 2018 02:33:04 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:56976 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726836AbeJPGdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:32:18 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C42C11B95;
-        Mon, 15 Oct 2018 22:45:00 +0000 (UTC)
-Date:   Mon, 15 Oct 2018 15:44:59 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Argangeli <andrea@kernel.org>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
- mappings
-Message-Id: <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
-In-Reply-To: <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
-References: <20180925120326.24392-2-mhocko@kernel.org>
-        <alpine.DEB.2.21.1810041302330.16935@chino.kir.corp.google.com>
-        <20181005073854.GB6931@suse.de>
-        <alpine.DEB.2.21.1810051320270.202739@chino.kir.corp.google.com>
-        <20181005232155.GA2298@redhat.com>
-        <alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com>
-        <20181009094825.GC6931@suse.de>
-        <20181009122745.GN8528@dhcp22.suse.cz>
-        <20181009130034.GD6931@suse.de>
-        <20181009142510.GU8528@dhcp22.suse.cz>
-        <20181009230352.GE9307@redhat.com>
-        <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com>
-        <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 16 Oct 2018 02:33:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1539643548; x=1571179548;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=0kqf4lYkvDyufTbLog7W6BaQxp+WNMo095AGVKAKpQo=;
+  b=oLdAvSq8/Msg85wAkr2Tir/RN+1qEXTAYL7pC9K5KlEnF3gjijhNgsX8
+   B24XijPD8dFaBJ8WboBMG/wVtyuoJHR5t5ne9DShavsRG52oFblZHTv3w
+   bgvkpVxTBdSRcB8Lgr9dduZAPM3I4+0XSIwXHNIi5+R1s8mNSnPdFDt3a
+   b2Jaji/OLU5kDvrmO6f9TqNmIrpWv9TMegteiKbuCmKF/30XuHCemOV24
+   6mlHjNQCJkrYjwenOExfDHvIEWNTkolAJrSdIzqC6syb5nuq+mt9D8qJD
+   apxyE3Wkiot/boYV9alb0B4l1AU827cGJWmrmXmrmkEeSLGMbHZo3swdJ
+   w==;
+X-IronPort-AV: E=Sophos;i="5.54,386,1534780800"; 
+   d="scan'208";a="96610859"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 16 Oct 2018 06:45:47 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP; 15 Oct 2018 15:30:22 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.73.114]) ([10.111.73.114])
+  by uls-op-cesaip01.wdc.com with ESMTP; 15 Oct 2018 15:45:47 -0700
+Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM
+ Controller.
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Wesley Terpstra <wesley@sifive.com>
+Cc:     palmer@sifive.com, linux-riscv@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, hch@infradead.org
+References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
+ <1539111085-25502-2-git-send-email-atish.patra@wdc.com>
+ <20181010135109.GE21134@ulmo>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <ef19e79a-d975-bde4-1692-65389ead7c15@wdc.com>
+Date:   Mon, 15 Oct 2018 15:45:46 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181010135109.GE21134@ulmo>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Oct 2018 15:30:17 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
+On 10/10/18 6:51 AM, Thierry Reding wrote:
+> On Tue, Oct 09, 2018 at 11:51:22AM -0700, Atish Patra wrote:
+> [...]
+>> +- interrupts: one interrupt per PWM channel (currently unused in the driver)
+> 
+> This should probably say what the interrupt is used for. And once you
+> have that, remove the comment about it being unused in the driver. DT
+> is OS agnostic, so "driver" is very unspecific and your claim may
+> actually be false.
+> 
+> Thierry
+> 
+As per my understanding, they are generated by hardware but no usage of 
+pwm interrupts as of now.
 
-> At the risk of beating a dead horse that has already been beaten, what are 
-> the plans for this patch when the merge window opens?
+I am not sure if removing the entire entry is a good idea.
+What would be the best way to represent that information ?
 
-I'll hold onto it until we've settled on something.  Worst case,
-Andrea's original is easily backportable.
+May be this ?
 
->  It would be rather 
-> unfortunate for us to start incurring a 14% increase in access latency and 
-> 40% increase in fault latency.
++-interrupts: one interrupt per PWM channel. No usage in HiFive 
+Unleashed SoC.
 
-Yes.
-
->  Would it be possible to test with my 
-> patch[*] that does not try reclaim to address the thrashing issue?
-
-Yes please.
-
-And have you been able to test it with the sort of workloads which
-Andrea is attempting to address?
+Regards,
+Atish
