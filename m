@@ -2,134 +2,197 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64689C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 530E8C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 380712145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:53:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 380712145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 04A8B208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 18:54:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dfbVhEAD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04A8B208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbeJPCkQ (ORCPT
+        id S1726962AbeJPClY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:40:16 -0400
-Received: from gateway36.websitewelcome.com ([192.185.194.2]:21394 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726713AbeJPCkQ (ORCPT
+        Mon, 15 Oct 2018 22:41:24 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42416 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbeJPClY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 22:40:16 -0400
-X-Greylist: delayed 1364 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Oct 2018 22:40:15 EDT
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 7C8A640127CF7
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 12:38:03 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id C7dngsrmGtz4jC7dtg0m8J; Mon, 15 Oct 2018 13:31:05 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:56538 helo=[192.168.1.41])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gC7dm-001SSk-PI; Mon, 15 Oct 2018 13:30:54 -0500
-Subject: Re: [PATCH] Input: atmel_mxt_ts - mark expected switch fall-through
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Nick Dyer <nick@shmanahar.org>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181008170355.GA18107@embeddedor.com>
- <20181015182156.GD127224@dtor-ws>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <40e247eb-1654-461b-d189-37163e456acb@embeddedor.com>
-Date:   Mon, 15 Oct 2018 20:30:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 15 Oct 2018 22:41:24 -0400
+Received: by mail-ot1-f65.google.com with SMTP id c23so18181467otl.9
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 11:54:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SewQawAmj+EZqMjulO0LEqEqnYNfVyw1tR+CIzBPmsU=;
+        b=dfbVhEADRohmWZmESrS8bCbWoqDzIvu951p2ue03E+/OMMSAPM4bAGxu/L0M1OdQvG
+         0oWDp1c/vja681jNSVwyzeexeG8hc+aOjETI2eTnzHHVhuIgOEXtsqpTlFHbxTqr5Idf
+         6sQ8B6FLNJ0KeTuCLgqeFDpYoVe02f/xPr6z0Hb+c9FhhMgqPhELI2CAVkUzSMeZOrdB
+         yLf9eTXfbvOMUDE57pySkqo27F9AMOujSCXEdRKYYsyGW6caHUir/KLRapWjuI30o5lG
+         m5dyS2bLr2hy5anOgPNlqIx4H4JC9ijo7UXouZ46dPq8udlQmY3I3f2V+YeKnVny553b
+         tiXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SewQawAmj+EZqMjulO0LEqEqnYNfVyw1tR+CIzBPmsU=;
+        b=ClPJEXDHDczbOv1JloWq9sW6eSIeQbD2KNa67bCv0jt9ef6FiudvIjPcY1gISpFa7Q
+         s0+uZQNk0Q2u4+kRdx17KzCEU8csnbvnW8pi0gdcri239krH6ytg+g02f9+bg4rBCuhA
+         i/z6dsVNWA8YB6po/2/E59B7uthKyoWo7mzygkLffgNBV61LH30t9wU6KQdJsof71u80
+         7wRjIA7/RxW5ORZ5rbTPt3tf7W5d/D2zGqYUuD9uWKx0VLVkks/J+p36sFqx/RC3n8tg
+         1MXWAWaGzrE6IIKLPJF1X5Rsulb4iPlO2ip1axdjbMWqoeZ38NLUxyVl/l4LVXudorPh
+         t9ig==
+X-Gm-Message-State: ABuFfohHDx2z9P8LWf94wvy4sFLl1+iOBm9Chqdv747jvZekAFnH9qYb
+        f9ifqbi+QpkLEuYM7SeXz9ThT9+4GlIr58xH33Gauw==
+X-Google-Smtp-Source: ACcGV63SbbRA9sJwmsYPvJaHIFAL1+umr9aLy5g2ge9L/ybOlCmh4irSLcIX18tGZTTakQ1gq8xvxBYC2GejUzZKm+c=
+X-Received: by 2002:a9d:5122:: with SMTP id c31mr1272290oth.255.1539629693303;
+ Mon, 15 Oct 2018 11:54:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181015182156.GD127224@dtor-ws>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gC7dm-001SSk-PI
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:56538
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <CAG48ez2ZPhnxudqgU7nC2ORvLnS0Ja-qhLSE5WAY361jst7XNw@mail.gmail.com> <c5a09a04-b4f2-876b-af83-30f7e527497e@cisco.com>
+In-Reply-To: <c5a09a04-b4f2-876b-af83-30f7e527497e@cisco.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 15 Oct 2018 20:54:27 +0200
+Message-ID: <CAG48ez2ZD=dovBApR07wi_DzYjJvEyO-Pm35eLv9AyXv1tcAFQ@mail.gmail.com>
+Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
+To:     enkechen@cisco.com
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>, deller@gmx.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        christian@brauner.io, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Dave.Martin@arm.com,
+        mchehab+samsung@kernel.org, Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        guro@fb.com, Marcos Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, linux@dominikbrodowski.net,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        yang.shi@linux.alibaba.com, Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Victor Kamensky <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, sstrogin@cisco.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 15, 2018 at 8:36 PM Enke Chen <enkechen@cisco.com> wrote:
+> On 10/13/18 11:27 AM, Jann Horn wrote:
+> > On Sat, Oct 13, 2018 at 2:33 AM Enke Chen <enkechen@cisco.com> wrote:
+> >> For simplicity and consistency, this patch provides an implementation
+> >> for signal-based fault notification prior to the coredump of a child
+> >> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+> >> be used by an application to express its interest and to specify the
+> >> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
+> >> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
+> >
+> > Your suggested API looks vaguely similar to PR_SET_PDEATHSIG, but with
+> > some important differences:
+> >
+> >  - You don't reset the signal on setuid execution.
+[...]
+> >
+> > For both of these: Are these differences actually necessary, and if
+> > so, can you provide a specific rationale? From a security perspective,
+> > I would very much prefer it if this API had semantics closer to
+> > PR_SET_PDEATHSIG.
+>
+[...]
+>
+> Regarding the impact of "setuid", this property "PR_SET_PREDUMP_SIG" has to
+> do with the application/process whether the signal handler is set for receiving
+> such a notification.  If it is set, the "uid" should not matter.
 
+If an attacker's process first calls PR_SET_PREDUMP_SIG, then forks
+off a child, then calls execve() on a setuid binary, the setuid binary
+calls setuid(0), and the attacker-controlled child then crashes, the
+privileged process will receive an unexpected signal that the attacker
+wouldn't have been allowed to send otherwise. For similar reasons, the
+parent death signal is reset when a setuid binary is executed:
 
-On 10/15/18 8:21 PM, Dmitry Torokhov wrote:
-> On Mon, Oct 08, 2018 at 07:03:55PM +0200, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Applied, thank you.
-> 
+void setup_new_exec(struct linux_binprm * bprm)
+{
+        /*
+         * Once here, prepare_binrpm() will not be called any more, so
+         * the final state of setuid/setgid/fscaps can be merged into the
+         * secureexec flag.
+         */
+        bprm->secureexec |= bprm->cap_elevated;
 
-Thanks, Dmitry.
---
-Gustavo
+        if (bprm->secureexec) {
+                /* Make sure parent cannot signal privileged process. */
+                current->pdeath_signal = 0;
+[...]
+        }
+[...]
+}
+
+int commit_creds(struct cred *new)
+{
+[...]
+        /* dumpability changes */
+        if (!uid_eq(old->euid, new->euid) ||
+            !gid_eq(old->egid, new->egid) ||
+            !uid_eq(old->fsuid, new->fsuid) ||
+            !gid_eq(old->fsgid, new->fsgid) ||
+            !cred_cap_issubset(old, new)) {
+                if (task->mm)
+                        set_dumpable(task->mm, suid_dumpable);
+                task->pdeath_signal = 0;
+                smp_wmb();
+        }
+[...]
+}
+
+AppArmor and SELinux also do related changes:
+
+static void apparmor_bprm_committing_creds(struct linux_binprm *bprm)
+{
+[...]
+        /* bail out if unconfined or not changing profile */
+        if ((new_label->proxy == label->proxy) ||
+            (unconfined(new_label)))
+                return;
+
+        aa_inherit_files(bprm->cred, current->files);
+
+        current->pdeath_signal = 0;
+[...]
+}
+
+static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
+{
+[...]
+        new_tsec = bprm->cred->security;
+        if (new_tsec->sid == new_tsec->osid)
+                return;
+
+        /* Close files for which the new task SID is not authorized. */
+        flush_unauthorized_files(bprm->cred, current->files);
+
+        /* Always clear parent death signal on SID transitions. */
+        current->pdeath_signal = 0;
+[...]
+}
+
+You should probably reset the coredump signal in the same places - or
+even better, add a new helper for resetting the parent death signal,
+and then add code for resetting the coredump signal in there.
