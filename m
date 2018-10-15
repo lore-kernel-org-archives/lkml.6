@@ -2,201 +2,196 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF0BC71130
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B098C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8783D20892
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0C0120881
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:12:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="SxZ0ewUK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8783D20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=marvell.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TR4WCod1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C0120881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbeJOTxW (ORCPT
+        id S1726591AbeJOT5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:53:22 -0400
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:43412 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726635AbeJOTxV (ORCPT
+        Mon, 15 Oct 2018 15:57:48 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43748 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbeJOT5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:53:21 -0400
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-        by mx0a-0016f401.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9FC4wsJ015463;
-        Mon, 15 Oct 2018 05:05:45 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=pfpt0818; bh=+nwO/4QFTWXLl7XD6vk6gQQ4qXOSizwRgvMrEpCa4w8=;
- b=SxZ0ewUKUXS/nJF1mCS2tqntQTghTQl9uQ2uZRvz7aBXVWiLDHE3P9aSPjBiy/mZ2XX2
- c7gbCjTClsB3VcEYrrn/aGjlWEpWE+yocPENgWfZMlVzEAxIhF8dJ4HA10HmjotqMbMa
- GKanFA25uSVYBV4wu//qs7Mz3g8zC/dl5hkpfAmm5wbRjDa3zRV4WcJs8qZXQkcigT8T
- LVcJK7DStniFLWuxERyib/QjLKinlWSzB5oZoPDe83QYEWdkgcl5/ErD9dfB62KlDIYS
- roIfRtABcUU8JhJX6+7poDlAr0eRKKdOZTEhIG7q7fpuqaWq2mFN2ywFy9ExFtFLRce9 jg== 
-Received: from sc-exch02.marvell.com ([199.233.58.182])
-        by mx0a-0016f401.pphosted.com with ESMTP id 2n4pmqgrf0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 15 Oct 2018 05:05:45 -0700
-Received: from IL-EXCH03.marvell.com (10.5.102.220) by SC-EXCH02.marvell.com
- (10.93.176.82) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Mon, 15 Oct
- 2018 05:05:43 -0700
-Received: from SC-EXCH02.marvell.com (10.93.176.82) by IL-EXCH03.marvell.com
- (10.5.102.220) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 15 Oct
- 2018 15:05:26 +0300
-Received: from maili.marvell.com (10.93.176.43) by SC-EXCH02.marvell.com
- (10.93.176.82) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 15 Oct 2018 05:05:25 -0700
-Received: from hannah.il.marvell.com (unknown [10.4.50.2])
-        by maili.marvell.com (Postfix) with ESMTP id 94B293F703F;
-        Mon, 15 Oct 2018 05:05:21 -0700 (PDT)
-From:   <hannah@marvell.com>
-To:     <catalin.marinas@arm.com>, <will.deacon@arm.com>, <corbet@lwn.net>,
-        <joro@8bytes.org>, <robh+dt@kernel.org>,
-        <gregory.clement@bootlin.com>, <mark.rutland@arm.com>,
-        <jason@lakedaemon.net>, <andrew@lunn.ch>,
-        <sebastian.hesselbarth@gmail.com>, <robin.murphy@arm.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <iommu@lists.linux-foundation.org>, <devicetree@vger.kernel.org>,
-        <thomas.petazzoni@bootlin.com>, <nadavh@marvell.com>,
-        <omrii@marvell.com>, Hanna Hawa <hannah@marvell.com>
-Subject: [PATCH 2/4] iommu/arm-smmu: Workaround for Marvell Armada-AP806 SoC erratum #582743
-Date:   Mon, 15 Oct 2018 15:00:44 +0300
-Message-ID: <1539604846-21151-3-git-send-email-hannah@marvell.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1539604846-21151-1-git-send-email-hannah@marvell.com>
-References: <1539604846-21151-1-git-send-email-hannah@marvell.com>
+        Mon, 15 Oct 2018 15:57:48 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181015121245euoutp01f3858dc8dd88ac3f8c92004bef233fd9~dxxrGY8vn2788027880euoutp01N
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 12:12:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181015121245euoutp01f3858dc8dd88ac3f8c92004bef233fd9~dxxrGY8vn2788027880euoutp01N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539605565;
+        bh=qIoVvshBpDvAPVjeR5wjrq1h8rc54kcaWzvaBPUm6V8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=TR4WCod15LEhRqCpSD5vlE5ZYAroUYs97NKuYTV60Eg6imS3/Bf0+seMd46seXQcY
+         L+j7oTrp9EkHluylZSfU1RNXNOCfitjvcn1jsgDu6YLDtmRx2E2zuOWHfU8RTlRF1A
+         fWxO+Z0btlcTGsYN95WoRykd3ZdXUJ2PlcNqMN0Q=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181015121244eucas1p167d7bceb476223a616cbce784f26a66b~dxxqSpPAU0210602106eucas1p12;
+        Mon, 15 Oct 2018 12:12:44 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 94.FE.04441.C3484CB5; Mon, 15
+        Oct 2018 13:12:44 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181015121243eucas1p1dd6093945310db315fc28092e2c91b6e~dxxpPrR4A1710517105eucas1p1W;
+        Mon, 15 Oct 2018 12:12:43 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181015121243eusmtrp1d3a82b581b3d581814ce754fa16c3523~dxxpAdeou0126901269eusmtrp1P;
+        Mon, 15 Oct 2018 12:12:43 +0000 (GMT)
+X-AuditID: cbfec7f2-a1ae89c000001159-ef-5bc4843cdd49
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 94.AB.04284.B3484CB5; Mon, 15
+        Oct 2018 13:12:43 +0100 (BST)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181015121242eusmtip2821e4748adb269940dbf4334f8877522~dxxoeSwwa0474704747eusmtip2q;
+        Mon, 15 Oct 2018 12:12:42 +0000 (GMT)
+Subject: Re: [PATCH 4/7] clocksource: arch_timer: Add support for
+ not-fw-configured timer on ARM64
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Mark Rutland <Mark.Rutland@arm.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Mon, 15 Oct 2018 14:12:42 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-15_08:,,
- signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810150111
+In-Reply-To: <e9624612-4a94-b9bc-f5ec-0f16d5b12323@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SazBUYRieb8/Zs8ey+izlHV1MO9WoCZnpx2mo6Tq2f5XSZJthy3GZWOy6
+        /yhixM5OpAltkplcyijZtZLIWGoZY91CjPLDCpVMYbqIah3Kv+d5vuf53uf95qMJcR/fhQ5X
+        xLJKhTxCQgnJ2lc/zO4+6a2yPYYKG6a6oIrPzJRpEDM4N8FnimY3M7mjOSTT1fVEwOjGBvhM
+        X30hxRR0veAxiyNLFFM62MNj9LpbBDP1pY08KJJWFlUiqa4ii5KODDRQ0s9ms0CqL7kivV5T
+        gaSzui0nBAFCn2A2IjyeVXoeCBKGdTVNUtGVGxJLS7p5KahGrEY2NOC9kL4wIVAjIS3GDxC8
+        Lh6kODKHoMw0RHBkFsHDZgtvNfL+t2YlUo4g962e5MgMgsVvjaTV5YiDYS4/HVkPnHAOgvbS
+        1GVC4HkedFiqll0U9gL1tJqyYhJvh6stk38xTa/H52Gh3tsqi7ADtN+2LNttsDc0akqXaxDY
+        FdIMdwgOO8Ow5R7Pej/gaQG0Z6bwuXA8NC5yjQAfhcmhrBXsCB9MNQIOb4KOmxqSC6chuFag
+        FXBEg8BQWEdxLm9oMfXwre0IvBOq6j05+RD0f3+HrDJge3gz7cAVsofc2nyCk0WQmbHy2jtA
+        a3r8b2xzdy+RgyTaNWtq16ymXbOa9v/cYkRWIGc2ThUZyqq8FGyCh0oeqYpThHpcjIrUob9f
+        rWPJ9LUOzfdeMCJMI4mdCNu1ysR8ebwqKdKIgCYkTiI4bZSJRcHypGRWGRWojItgVUa0kSYl
+        zqKyomqZGIfKY9lLLBvNKldPebSNSwrKOPbS1r5YMe4f75a8zW/8V0LD3bjdI/3DRxw6zyQf
+        P7cu1ZD97LKxP+LsXKCbaKv/x7wbrT9PHgzxPbUv526LsSpoV8gY5ee/f6q6c6fmrDkGq/P0
+        5X6jU9mHscPz30Ft4UeEY02zQ/ayR65uvlLD6NSnxJj7iXa2ymxzg7vj0wcBElIVJvfaRShV
+        8j+yXGJ2ZgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsVy+t/xe7rWLUeiDc4e57LYOGM9q8X7ZT2M
+        Fte/PGe1mPdZ1mLS/QksFufPb2C32PT4GqvF5V1z2CxmnN/HZPH3zj82i6XXLzJZbN40ldni
+        5ccTLA68HmvmrWH02LSqk83jzrU9bB7vzp1j99i8pN6jb8sqRo/Pm+QC2KP0bIryS0tSFTLy
+        i0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Ms7vf8FWsEasYumSC0wN
+        jFuEuhg5OSQETCSe/e9h72Lk4hASWMoo8eTDanaIhIzEyWkNrBC2sMSfa11sILaQwFtGiZkv
+        uEBsYYEUiS/TWxhBmkUEJjBKnGw/xgLiMAt8Z5K4938OC0THF0aJpz0KIDabgKFE11uISbwC
+        dhL9f76D1bAIqEo0HX4BFhcViJE4OrkFqkZQ4uTMJ2A1nALWEnt7ljKB2MwC6hJ/5l1ihrDl
+        JZq3zoayxSVuPZnPNIFRaBaS9llIWmYhaZmFpGUBI8sqRpHU0uLc9NxiQ73ixNzi0rx0veT8
+        3E2MwBjeduzn5h2MlzYGH2IU4GBU4uEV4DkSLcSaWFZcmXuIUYKDWUmEVyLkULQQb0piZVVq
+        UX58UWlOavEhRlOg5yYyS4km5wPTS15JvKGpobmFpaG5sbmxmYWSOO95g8ooIYH0xJLU7NTU
+        gtQimD4mDk6pBsaZE0+tPvtk8bYk7s4vO5rsEzKfKog83Jrh7V/2RbdxSvDnmooNte66c56J
+        Ceyq2RL684qB98wW1/rMhR+UZizaWh52RHv3SVX+R/38/AfK29d/fHzmWW6P0loL0dOOh8L4
+        C+WOJBcs3TBhWZazCxPzkUPT1xnEcC5+Y39a85Cs4ms70/gtATeUWIozEg21mIuKEwHcsLo+
+        9wIAAA==
+Message-Id: <20181015121243eucas1p1dd6093945310db315fc28092e2c91b6e~dxxpPrR4A1710517105eucas1p1W@eucas1p1.samsung.com>
+X-CMS-MailID: 20181015121243eucas1p1dd6093945310db315fc28092e2c91b6e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181008125048eucas1p229a94c202596ddd0a65009c15d9e3001
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181008125048eucas1p229a94c202596ddd0a65009c15d9e3001
+References: <20181008125009.3721-1-m.szyprowski@samsung.com>
+        <CGME20181008125048eucas1p229a94c202596ddd0a65009c15d9e3001@eucas1p2.samsung.com>
+        <20181008125009.3721-5-m.szyprowski@samsung.com>
+        <e9624612-4a94-b9bc-f5ec-0f16d5b12323@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hanna Hawa <hannah@marvell.com>
+Hi All,
 
-Due to erratum #582743, the Marvell Armada-AP806 can't access 64bit
-to ARM SMMUv2 registers.
-This patch split the writeq/readq to two accesses of writel/readl.
+On 2018-10-08 15:17, Marc Zyngier wrote:
+> + Mark Rutland
+>
+> Hi Marek,
+>
+> On 08/10/18 13:50, Marek Szyprowski wrote:
+>> Use common infrastructure for ARM Architected Timers erratum to enable
+>> support for systems with broken CPU firmware (timer registers not
+>> properly configured). This mode has been already availabled on ARM
+>> (32bits) architecture. This enables to run Linux kernel on ARM64 boards
+>> using physical architected timers instead of the virtual ones. Examples
+>> of such system with broken firmware are Samsung Exynos5433 SoC based
+>> TM2(e) boards, which is already deployed for years and updating firmware
+>> is not possible.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   drivers/clocksource/Kconfig          | 11 +++++++++++
+>>   drivers/clocksource/arm_arch_timer.c | 15 ++++++++++++---
+>>   2 files changed, 23 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+>> index a11f4ba98b05..a30752579b03 100644
+>> --- a/drivers/clocksource/Kconfig
+>> +++ b/drivers/clocksource/Kconfig
+>> @@ -364,6 +364,17 @@ config ARM64_ERRATUM_858921
+>>         The workaround will be dynamically enabled when an affected
+>>         core is detected.
+>>   +config ARCH_TIMER_REGISTERS_NOT_FW_CONFIGURED
+>> +    bool "Workaround for arch timer registers not configured by
+>> firmware"
+>> +    default y
+>> +    select ARM_ARCH_TIMER_OOL_WORKAROUND
+>> +    depends on ARM_ARCH_TIMER && ARM64
+>> +    help
+>> +      This option enables a workaround for boards, on which arch timer
+>> +      registers are not properly configured by the board firmware.
+>> +      The workaround will be dynamically enabled when an affected
+>> +      board is detected.
+>> +
+>
+> I'm sorry, but I'm strongly pushing back on this.
+>
+> This horrible hack was accepted with the express condition that it
+> would be limited to ARMv7 platforms (on the ground that we never
+> really documented the arch timer boot requirements on that version of
+> the architecture), and would never proliferate on arm64. From day 1,
+> we established what the boot protocol was, and we mandated that either:
+>
+> - kernel is entered at EL2 on all CPUs
+> - cntvoff_el2 is zeroed on all CPUs
+>
+> and we've got most people to fix their firmware, or live with the
+> consequences. If these machines cannot receive a non-broken firmware,
+> what are the odds that they will receive a mainline kernel?
 
-Note that separate writes/reads to 2 is not problem regards to atomicity,
-because the driver use the readq/writeq while initialize the SMMU, report
-for SMMU fault, and use spinlock in one case (iova_to_phys).
+Well, I know that the firmware is broken, but I cannot do anything about it.
+On the other hand updating kernel is still possible and mainline runs fine
+on TM2(e) boards. I will send v2 without this patch then.
 
-Signed-off-by: Hanna Hawa <hannah@marvell.com>
----
- Documentation/arm64/silicon-errata.txt |  2 ++
- drivers/iommu/arm-smmu.c               | 33 +++++++++++++++++++++++++++++----
- 2 files changed, 31 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/arm64/silicon-errata.txt b/Documentation/arm64/silicon-errata.txt
-index 3b2f2dd..fc3f2a0 100644
---- a/Documentation/arm64/silicon-errata.txt
-+++ b/Documentation/arm64/silicon-errata.txt
-@@ -67,6 +67,8 @@ stable kernels.
- | Cavium         | ThunderX2 SMMUv3| #74             | N/A                         |
- | Cavium         | ThunderX2 SMMUv3| #126            | N/A                         |
- |                |                 |                 |                             |
-+| Marvell        | ARM-MMU-500     | #582743         | N/A                         |
-+|                |                 |                 |                             |
- | Freescale/NXP  | LS2080A/LS1043A | A-008585        | FSL_ERRATUM_A008585         |
- |                |                 |                 |                             |
- | Hisilicon      | Hip0{5,6,7}     | #161010101      | HISILICON_ERRATUM_161010101 |
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index fccb1d4..d64f892 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -119,6 +119,7 @@ enum arm_smmu_arch_version {
- enum arm_smmu_implementation {
- 	GENERIC_SMMU,
- 	ARM_MMU500,
-+	MRVL_MMU500,
- 	CAVIUM_SMMUV2,
- };
- 
-@@ -276,13 +277,35 @@ static inline void smmu_writeq_relaxed(struct arm_smmu_device *smmu,
- 				       u64 val,
- 				       void __iomem *addr)
- {
--	writeq_relaxed(val, addr);
-+	/*
-+	 * Marvell Armada-AP806 erratum #582743.
-+	 * Split all the writeq to double writel
-+	 */
-+	if (smmu->model != MRVL_MMU500) {
-+		writeq_relaxed(val, addr);
-+		return;
-+	}
-+
-+	writel_relaxed(upper_32_bits(val), addr + 4);
-+	writel_relaxed(lower_32_bits(val), addr);
- }
- 
- static inline u64 smmu_readq_relaxed(struct arm_smmu_device *smmu,
- 				     void __iomem *addr)
- {
--	return readq_relaxed(addr);
-+	u64 val;
-+
-+	/*
-+	 * Marvell Armada-AP806 erratum #582743.
-+	 * Split all the readq to double readl
-+	 */
-+	if (smmu->model != MRVL_MMU500)
-+		return readq_relaxed(addr);
-+
-+	val = (u64)readl_relaxed(addr + 4) << 32;
-+	val |= readl_relaxed(addr);
-+
-+	return val;
- }
- 
- static void parse_driver_options(struct arm_smmu_device *smmu)
-@@ -1611,7 +1634,7 @@ static void arm_smmu_device_reset(struct arm_smmu_device *smmu)
- 	for (i = 0; i < smmu->num_mapping_groups; ++i)
- 		arm_smmu_write_sme(smmu, i);
- 
--	if (smmu->model == ARM_MMU500) {
-+	if (smmu->model == ARM_MMU500 || smmu->model == MRVL_MMU500) {
- 		/*
- 		 * Before clearing ARM_MMU500_ACTLR_CPRE, need to
- 		 * clear CACHE_LOCK bit of ACR first. And, CACHE_LOCK
-@@ -1640,7 +1663,7 @@ static void arm_smmu_device_reset(struct arm_smmu_device *smmu)
- 		 * Disable MMU-500's not-particularly-beneficial next-page
- 		 * prefetcher for the sake of errata #841119 and #826419.
- 		 */
--		if (smmu->model == ARM_MMU500) {
-+		if (smmu->model == ARM_MMU500 || smmu->model == MRVL_MMU500) {
- 			reg = readl_relaxed(cb_base + ARM_SMMU_CB_ACTLR);
- 			reg &= ~ARM_MMU500_ACTLR_CPRE;
- 			writel_relaxed(reg, cb_base + ARM_SMMU_CB_ACTLR);
-@@ -1923,6 +1946,7 @@ struct arm_smmu_match_data {
- ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
-+ARM_SMMU_MATCH_DATA(mrvl_mmu500, ARM_SMMU_V2, MRVL_MMU500);
- ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
- 
- static const struct of_device_id arm_smmu_of_match[] = {
-@@ -1931,6 +1955,7 @@ struct arm_smmu_match_data {
- 	{ .compatible = "arm,mmu-400", .data = &smmu_generic_v1 },
- 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
- 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
-+	{ .compatible = "marvell,mmu-500", .data = &mrvl_mmu500 },
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
- 	{ },
- };
+Best regards
 -- 
-1.9.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
