@@ -2,393 +2,349 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C781C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F37C28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3432D2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:46:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3432D2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5AE902086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:49:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViArx3uZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AE902086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbeJOOa3 (ORCPT
+        id S1726667AbeJOOdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 10:30:29 -0400
-Received: from mga09.intel.com ([134.134.136.24]:2479 "EHLO mga09.intel.com"
+        Mon, 15 Oct 2018 10:33:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726498AbeJOOa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 10:30:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2018 23:46:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,383,1534834800"; 
-   d="scan'208";a="265722702"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 14 Oct 2018 23:46:33 -0700
-Received: from [10.125.251.255] (abudanko-mobl.ccr.corp.intel.com [10.125.251.255])
-        by linux.intel.com (Postfix) with ESMTP id 95BE3580113;
-        Sun, 14 Oct 2018 23:46:31 -0700 (PDT)
-Subject: [PATCH v14 3/3]: perf record: extend trace writing to multi AIO
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <d6bd3626-8c7c-ca12-8adf-31fe15726446@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <6295b798-f710-0251-3122-bbb5c694f00e@linux.intel.com>
-Date:   Mon, 15 Oct 2018 09:46:30 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726397AbeJOOdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 10:33:14 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D2122086A;
+        Mon, 15 Oct 2018 06:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539586157;
+        bh=ptYhKDL7kEC8D+XKgvYXxyRJJoprg4uGIWnzWkTQxrU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ViArx3uZ7UMA1Jz6yCH0LiQqakYhd4+U6scmBGlNTHcCIGdFTajjTXidBR9SiY8HU
+         kJzzXodZ/VrKC0PuQr4FqX1jS24y0+g6o4zHY1hEmj/+pIrPI6nmXaGEgTAHZph2rm
+         NJURD1lH8aDeO7ETUx6/OQnzTxaN2Wzi/Vm07S+E=
+Date:   Mon, 15 Oct 2018 08:49:15 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Linux 4.19-rc8
+Message-ID: <20181015064915.GA10710@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <d6bd3626-8c7c-ca12-8adf-31fe15726446@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
-Multi AIO trace writing allows caching more kernel data into userspace 
-memory postponing trace writing for the sake of overall profiling data 
-thruput increase. It could be seen as kernel data buffer extension into
-userspace memory.
+As mentioned last week, here's a -rc8 release as it seems needed.
 
-With aio option value different from 0, default value is 1, 
-tool has capability to cache more and more data into user space
-along with delegating spill to AIO.
+There were a lot of "little" pull requests this week, semi-normal for
+this late in the cycle, but a lot of them were "fix up the previous fix
+I just sent" which implies that people are having a few issues still.
 
-That allows avoiding suspend at record__aio_sync() between calls of 
-record__mmap_read_evlist() and increase profiling data thruput for 
-the cost of userspace memory.
+I also know of at least one "bad" bug that finally has a proposed fix,
+so that should hopefully get merged this week.  And there are some
+outstanding USB fixes I know of that have not yet landed in the tree (I
+blame me for that...)
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v14:
-- fix --aio option handling
-Changes in v13:
-- preserved --aio option name avoiding complication
-Changes in v12:
-- extended --aio option to --aio-cblocks=<n>
-Changes in v10:
-- added description of aio-cblocks option into perf-record.tx
----
- tools/perf/Documentation/perf-record.txt |  4 +-
- tools/perf/builtin-record.c              | 64 ++++++++++++++++++++++++--------
- tools/perf/util/mmap.c                   | 64 +++++++++++++++++++++-----------
- tools/perf/util/mmap.h                   |  9 +++--
- 4 files changed, 99 insertions(+), 42 deletions(-)
+Anyway, the full shortlog is below, lots of tiny things all over the
+tree.  Please go and test and ensure that all works well for you.
+Hopefully this should be the last -rc release.
 
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index 7efb4af88a68..d232b13ea713 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -435,8 +435,8 @@ Specify vmlinux path which has debuginfo.
- --buildid-all::
- Record build-id of all DSOs regardless whether it's actually hit or not.
- 
----aio::
--Enable asynchronous (Posix AIO) trace writing mode.
-+--aio[=n]::
-+Use <n> control blocks in asynchronous (Posix AIO) trace writing mode (default: 1, max: 4).
- Asynchronous mode is supported only when linking Perf tool with libc library
- providing implementation for Posix AIO API.
- 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 0c6105860123..c5d9288b8670 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -196,16 +196,35 @@ static int record__aio_complete(struct perf_mmap *md, struct aiocb *cblock)
- 	return rc;
- }
- 
--static void record__aio_sync(struct perf_mmap *md)
-+static int record__aio_sync(struct perf_mmap *md, bool sync_all)
- {
--	struct aiocb *cblock = &md->aio.cblock;
-+	struct aiocb **aiocb = md->aio.aiocb;
-+	struct aiocb *cblocks = md->aio.cblocks;
- 	struct timespec timeout = { 0, 1000 * 1000  * 1 }; /* 1ms */
-+	int i, do_suspend;
- 
- 	do {
--		if (cblock->aio_fildes == -1 || record__aio_complete(md, cblock))
--			return;
-+		do_suspend = 0;
-+		for (i = 0; i < md->aio.nr_cblocks; ++i) {
-+			if (cblocks[i].aio_fildes == -1 || record__aio_complete(md, &cblocks[i])) {
-+				if (sync_all)
-+					aiocb[i] = NULL;
-+				else
-+					return i;
-+			} else {
-+				/*
-+				 * Started aio write is not complete yet
-+				 * so it has to be waited before the
-+				 * next allocation.
-+				 */
-+				aiocb[i] = &cblocks[i];
-+				do_suspend = 1;
-+			}
-+		}
-+		if (!do_suspend)
-+			return -1;
- 
--		while (aio_suspend((const struct aiocb**)&cblock, 1, &timeout)) {
-+		while (aio_suspend((const struct aiocb **)aiocb, md->aio.nr_cblocks, &timeout)) {
- 			if (!(errno == EAGAIN || errno == EINTR))
- 				pr_err("failed to sync perf data, error: %m\n");
- 		}
-@@ -252,28 +271,33 @@ static void record__aio_mmap_read_sync(struct record *rec)
- 		struct perf_mmap *map = &maps[i];
- 
- 		if (map->base)
--			record__aio_sync(map);
-+			record__aio_sync(map, true);
- 	}
- }
- 
- static int nr_cblocks_default = 1;
- 
- static int record__aio_parse(const struct option *opt,
--			     const char *str __maybe_unused,
-+			     const char *str,
- 			     int unset)
- {
- 	struct record_opts *opts = (struct record_opts *)opt->value;
- 
--	if (unset)
-+	if (unset) {
- 		opts->nr_cblocks = 0;
--	else
--		opts->nr_cblocks = nr_cblocks_default;
-+	} else {
-+		if (str)
-+			opts->nr_cblocks = strtol(str, NULL, 0);
-+		if (!opts->nr_cblocks)
-+			opts->nr_cblocks = nr_cblocks_default;
-+	}
- 
- 	return 0;
- }
- #else /* HAVE_AIO_SUPPORT */
--static void record__aio_sync(struct perf_mmap *md __maybe_unused)
-+static int record__aio_sync(struct perf_mmap *md __maybe_unused, bool sync_all __maybe_unused)
- {
-+	return -1;
- }
- 
- static int record__aio_pushfn(void *to __maybe_unused, struct aiocb *cblock __maybe_unused,
-@@ -723,12 +747,13 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
- 					goto out;
- 				}
- 			} else {
-+				int idx;
- 				/*
- 				 * Call record__aio_sync() to wait till map->data buffer
- 				 * becomes available after previous aio write request.
- 				 */
--				record__aio_sync(map);
--				if (perf_mmap__aio_push(map, rec, record__aio_pushfn, &off) != 0) {
-+				idx = record__aio_sync(map, false);
-+				if (perf_mmap__aio_push(map, rec, idx, record__aio_pushfn, &off) != 0) {
- 					record__aio_set_pos(trace_fd, off);
- 					rc = -1;
- 					goto out;
-@@ -1492,6 +1517,13 @@ static int perf_record_config(const char *var, const char *value, void *cb)
- 		var = "call-graph.record-mode";
- 		return perf_default_config(var, value, cb);
- 	}
-+#ifdef HAVE_AIO_SUPPORT
-+	if (!strcmp(var, "record.aio")) {
-+		rec->opts.nr_cblocks = strtol(value, NULL, 0);
-+		if (!rec->opts.nr_cblocks)
-+			rec->opts.nr_cblocks = nr_cblocks_default;
-+	}
-+#endif
- 
- 	return 0;
- }
-@@ -1884,8 +1916,8 @@ static struct option __record_options[] = {
- 	OPT_BOOLEAN(0, "dry-run", &dry_run,
- 		    "Parse options then exit"),
- #ifdef HAVE_AIO_SUPPORT
--	OPT_CALLBACK_NOOPT(0, "aio", &record.opts,
--		     NULL, "Enable asynchronous trace writing mode",
-+	OPT_CALLBACK_OPTARG(0, "aio", &record.opts,
-+		     &nr_cblocks_default, "n", "Use <n> control blocks in asynchronous trace writing mode (default: 1, max: 4)",
- 		     record__aio_parse),
- #endif
- 	OPT_END()
-@@ -2080,6 +2112,8 @@ int cmd_record(int argc, const char **argv)
- 		goto out;
- 	}
- 
-+	if (rec->opts.nr_cblocks > 4)
-+		rec->opts.nr_cblocks = 4;
- 	if (verbose > 0)
- 		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
- 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 61aa381d05d0..ab30555d2afc 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -156,28 +156,50 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
- #ifdef HAVE_AIO_SUPPORT
- static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
- {
--	int delta_max;
-+	int delta_max, i, prio;
- 
- 	map->aio.nr_cblocks = mp->nr_cblocks;
- 	if (map->aio.nr_cblocks) {
--		map->aio.data = malloc(perf_mmap__mmap_len(map));
-+		map->aio.aiocb = calloc(map->aio.nr_cblocks, sizeof(struct aiocb *));
-+		if (!map->aio.aiocb) {
-+			pr_debug2("failed to allocate aiocb for data buffer, error %m\n");
-+			return -1;
-+		}
-+		map->aio.cblocks = calloc(map->aio.nr_cblocks, sizeof(struct aiocb));
-+		if (!map->aio.cblocks) {
-+			pr_debug2("failed to allocate cblocks for data buffer, error %m\n");
-+			return -1;
-+		}
-+		map->aio.data = calloc(map->aio.nr_cblocks, sizeof(void *));
- 		if (!map->aio.data) {
- 			pr_debug2("failed to allocate data buffer, error %m\n");
- 			return -1;
- 		}
--		/*
--		 * Use cblock.aio_fildes value different from -1
--		 * to denote started aio write operation on the
--		 * cblock so it requires explicit record__aio_sync()
--		 * call prior the cblock may be reused again.
--		 */
--		map->aio.cblock.aio_fildes = -1;
--		/*
--		 * Allocate cblock with max priority delta to
--		 * have faster aio write system calls.
--		 */
- 		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
--		map->aio.cblock.aio_reqprio = delta_max;
-+		for (i = 0; i < map->aio.nr_cblocks; ++i) {
-+			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
-+			if (!map->aio.data[i]) {
-+				pr_debug2("failed to allocate data buffer area, error %m");
-+				return -1;
-+			}
-+			/*
-+			 * Use cblock.aio_fildes value different from -1
-+			 * to denote started aio write operation on the
-+			 * cblock so it requires explicit record__aio_sync()
-+			 * call prior the cblock may be reused again.
-+			 */
-+			map->aio.cblocks[i].aio_fildes = -1;
-+			/*
-+			 * Allocate cblocks with priority delta to have
-+			 * faster aio write system calls because queued requests
-+			 * are kept in separate per-prio queues and adding
-+			 * a new request will iterate thru shorter per-prio
-+			 * list. Blocks with numbers higher than
-+			 *  _SC_AIO_PRIO_DELTA_MAX go with priority 0.
-+			 */
-+			prio = delta_max - i;
-+			map->aio.cblocks[i].aio_reqprio = prio >= 0 ? prio : 0;
-+		}
- 	}
- 
- 	return 0;
-@@ -189,7 +211,7 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
- 		zfree(&map->aio.data);
- }
- 
--int perf_mmap__aio_push(struct perf_mmap *md, void *to,
-+int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
- 			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
- 			off_t *off)
- {
-@@ -204,7 +226,7 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to,
- 		return (rc == -EAGAIN) ? 0 : -1;
- 
- 	/*
--	 * md->base data is copied into md->data buffer to
-+	 * md->base data is copied into md->data[idx] buffer to
- 	 * release space in the kernel buffer as fast as possible,
- 	 * thru perf_mmap__consume() below.
- 	 *
-@@ -226,20 +248,20 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to,
- 		buf = &data[md->start & md->mask];
- 		size = md->mask + 1 - (md->start & md->mask);
- 		md->start += size;
--		memcpy(md->aio.data, buf, size);
-+		memcpy(md->aio.data[idx], buf, size);
- 		size0 = size;
- 	}
- 
- 	buf = &data[md->start & md->mask];
- 	size = md->end - md->start;
- 	md->start += size;
--	memcpy(md->aio.data + size0, buf, size);
-+	memcpy(md->aio.data[idx] + size0, buf, size);
- 
- 	/*
--	 * Increment md->refcount to guard md->data buffer
-+	 * Increment md->refcount to guard md->data[idx] buffer
- 	 * from premature deallocation because md object can be
- 	 * released earlier than aio write request started
--	 * on mmap->data is complete.
-+	 * on mmap->data[idx] is complete.
- 	 *
- 	 * perf_mmap__put() is done at record__aio_complete()
- 	 * after started request completion.
-@@ -249,7 +271,7 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to,
- 	md->prev = head;
- 	perf_mmap__consume(md);
- 
--	rc = push(to, &md->aio.cblock, md->aio.data, size0 + size, *off);
-+	rc = push(to, &md->aio.cblocks[idx], md->aio.data[idx], size0 + size, *off);
- 	if (!rc) {
- 		*off += size0 + size;
- 	} else {
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index 9be06f18f17a..cb63d357a248 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -32,8 +32,9 @@ struct perf_mmap {
- 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
- #ifdef HAVE_AIO_SUPPORT
- 	struct {
--		void 		 *data;
--		struct aiocb	 cblock;
-+		void		 **data;
-+		struct aiocb	 *cblocks;
-+		struct aiocb	 **aiocb;
- 		int		 nr_cblocks;
- 	} aio;
- #endif
-@@ -106,11 +107,11 @@ union perf_event *perf_mmap__read_event(struct perf_mmap *map);
- int perf_mmap__push(struct perf_mmap *md, void *to,
- 		    int push(struct perf_mmap *map, void *to, void *buf, size_t size));
- #ifdef HAVE_AIO_SUPPORT
--int perf_mmap__aio_push(struct perf_mmap *md, void *to,
-+int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
- 			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
- 			off_t *off);
- #else
--static inline int perf_mmap__aio_push(struct perf_mmap *md __maybe_unused, void *to __maybe_unused,
-+static inline int perf_mmap__aio_push(struct perf_mmap *md __maybe_unused, void *to __maybe_unused, int idx __maybe_unused,
- 	int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off) __maybe_unused,
- 	off_t *off __maybe_unused)
- {
+thanks,
+
+greg k-h
+
+Adrian Hunter (2):
+      perf script python: Fix export-to-postgresql.py occasional failure
+      perf script python: Fix export-to-sqlite.py sample columns
+
+Al Viro (1):
+      net: sched: cls_u32: fix hnode refcounting
+
+Alexey Brodkin (2):
+      ARC: build: Get rid of toolchain check
+      ARC: build: Don't set CROSS_COMPILE in arch's Makefile
+
+Andreas Gruenbacher (2):
+      gfs2: Fix iomap buffered write support for journaled files
+      gfs2: Fix iomap buffered write support for journaled files (2)
+
+Arnaldo Carvalho de Melo (1):
+      perf python: Use -Wno-redundant-decls to build with PYTHON=python3
+
+Arnd Bergmann (1):
+      lib/bch: fix possible stack overrun
+
+Arthur Kiyanovski (4):
+      net: ena: fix warning in rmmod caused by double iounmap
+      net: ena: fix rare bug when failed restart/resume is followed by driver removal
+      net: ena: fix NULL dereference due to untimely napi initialization
+      net: ena: fix auto casting to boolean
+
+Chris Boot (1):
+      mmc: block: avoid multiblock reads for the last sector in SPI mode
+
+Colin Ian King (2):
+      ARC: fix spelling mistake "entires" -> "entries"
+      oradax: remove redundant null check before kfree
+
+Damien Le Moal (2):
+      dm: fix report zone remapping to account for partition offset
+      dm linear: fix linear_end_io conditional definition
+
+Dan Williams (1):
+      filesystem-dax: Fix dax_layout_busy_page() livelock
+
+Daniel Drake (1):
+      Input: i8042 - enable keyboard wakeups by default when s2idle is used
+
+Daniel Mack (1):
+      libertas: call into generic suspend code before turning off power
+
+Darrick J. Wong (3):
+      xfs: refactor clonerange preparation into a separate helper
+      xfs: zero posteof blocks when cloning above eof
+      xfs: update ctime and remove suid before cloning files
+
+Dave Chinner (2):
+      xfs: fix data corruption w/ unaligned dedupe ranges
+      xfs: fix data corruption w/ unaligned reflink ranges
+
+David Howells (12):
+      rxrpc: Fix some missed refs to init_net
+      rxrpc: Fix the data_ready handler
+      rxrpc: Use the UDP encap_rcv hook
+      rxrpc: Don't need to take the RCU read lock in the packet receiver
+      rxrpc: Don't check RXRPC_CALL_TX_LAST after calling rxrpc_rotate_tx_window()
+      rxrpc: Carry call state out of locked section in rxrpc_rotate_tx_window()
+      rxrpc: Only take the rwind and mtu values from latest ACK
+      rxrpc: Fix connection-level abort handling
+      rxrpc: Fix the rxrpc_tx_packet trace line
+      rxrpc: Fix the packet reception routine
+      afs: Fix cell proc list
+      afs: Fix afs_server struct leak
+
+Dmitry Torokhov (2):
+      Input: evdev - add a schedule point in evdev_write()
+      Input: uinput - add a schedule point in uinput_inject_events()
+
+Emil Karlson (1):
+      mfd: cros-ec: copy the whole event in get_next_event_xfer
+
+Eric Dumazet (2):
+      Input: mousedev - add a schedule point in mousedev_write()
+      net: make skb_partial_csum_set() more robust against overflows
+
+Eric Farman (3):
+      s390/cio: Convert ccw_io_region to pointer
+      s390/cio: Refactor alloc of ccw_io_region
+      s390/cio: Fix how vfio-ccw checks pinned pages
+
+Eugene Syromiatnikov (2):
+      net/smc: use __aligned_u64 for 64-bit smc_diag fields
+      net/smc: retain old name for diag_mode field
+
+Florian Fainelli (2):
+      net: dsa: bcm_sf2: Fix unbind ordering
+      net: dsa: bcm_sf2: Call setup during switch resume
+
+Gerald Schaefer (1):
+      s390/hibernate: fix error handling when suspend cpu != resume cpu
+
+Giacinto Cifelli (1):
+      qmi_wwan: Added support for Gemalto's Cinterion ALASxx WWAN interface
+
+Greg Kroah-Hartman (1):
+      Linux 4.19-rc8
+
+Guenter Roeck (1):
+      of: unittest: Disable interrupt node tests for old world MAC systems
+
+Gustavo A. R. Silva (2):
+      sparc32: fix fall-through annotation
+      sparc64: fix fall-through annotation
+
+Ilias Apalodimas (1):
+      net: socionext: clear rx irq correctly
+
+Jan Kara (1):
+      mm: Preserve _PAGE_DEVMAP across mprotect() calls
+
+Jann Horn (1):
+      mm/mmap.c: don't clobber partially overlapping VMA with MAP_FIXED_NOREPLACE
+
+Jiri Kosina (1):
+      udp: Unbreak modules that rely on external __skb_recv_udp() availability
+
+Joe Perches (1):
+      MAINTAINERS: MIPS/LOONGSON2 ARCHITECTURE - Use the normal wildcard style
+
+Joel Stanley (1):
+      ftrace: Build with CPPFLAGS to get -Qunused-arguments
+
+Jon Maloy (1):
+      tipc: set link tolerance correctly in broadcast link
+
+Josef Bacik (1):
+      blk-wbt: wake up all when we scale up, not down
+
+Jérôme Glisse (1):
+      mm/thp: fix call to mmu_notifier in set_pmd_migration_entry() v2
+
+Ka-Cheong Poon (1):
+      rds: RDS (tcp) hangs on sendto() to unresponding address
+
+Kees Cook (3):
+      treewide: Replace more open-coded allocation size multiplications
+      sparc64: viohs: Remove VLA usage
+      x86/mm: Avoid VLA in pgd_alloc()
+
+Khazhismel Kumykov (1):
+      fs/fat/fatent.c: add cond_resched() to fat_count_free_clusters()
+
+Laurentiu Tudor (2):
+      soc: fsl: qbman: add APIs to retrieve the probing status
+      soc: fsl: qman_portals: defer probe after qman's probe
+
+Lyude Paul (1):
+      drm/nouveau/drm/nouveau: Grab runtime PM ref in nv50_mstc_detect()
+
+Maciej S. Szmigiero (1):
+      r8169: set RX_MULTI_EN bit in RxConfig for 8168F-family chips
+
+Maciej W. Rozycki (1):
+      MIPS: memset: Fix CPU_DADDI_WORKAROUNDS `small_fixup' regression
+
+Marc Zyngier (1):
+      ARM: KVM: Correctly order SGI register entries in the cp15 array
+
+Marco Felsch (1):
+      pinctrl: mcp23s08: fix irq and irqchip setup order
+
+Masahiro Yamada (2):
+      sparc: vdso: clean-up vdso Makefile
+      samples: disable CONFIG_SAMPLES for UML
+
+Mike Rapoport (2):
+      percpu: stop leaking bitmap metadata blocks
+      net/ipv6: stop leaking percpu memory in fib6 info
+
+Mike Snitzer (1):
+      dm linear: eliminate linear_end_io call if CONFIG_DM_ZONED disabled
+
+Mikulas Patocka (1):
+      mach64: detect the dot clock divider correctly on sparc
+
+Milian Wolff (2):
+      perf report: Don't try to map ip to invalid map
+      perf record: Use unmapped IP for inline callchain cursors
+
+Moshe Shemesh (4):
+      devlink: Fix param set handling for string type
+      devlink: Fix param cmode driverinit for string type
+      devlink: Add helper function for safely copy string param
+      net/mlx4_core: Fix warnings during boot on driverinit param set failures
+
+Paolo Abeni (2):
+      selftests: rtnetlink.sh explicitly requires bash.
+      selftests: udpgso_bench.sh explicitly requires bash
+
+Paolo Bonzini (1):
+      KVM: x86: support CONFIG_KVM_AMD=y with CONFIG_CRYPTO_DEV_CCP_DD=m
+
+Parthasarathy Bhuvaragan (1):
+      tipc: queue socket protocol error messages into socket receive buffer
+
+Paul Burton (2):
+      MIPS: VDSO: Always map near top of user memory
+      MIPS: Fix CONFIG_CMDLINE handling
+
+Peter Oberparleiter (2):
+      vmlinux.lds.h: Fix incomplete .text.exit discards
+      vmlinux.lds.h: Fix linker warnings about orphan .LPBX sections
+
+Peter Rosin (2):
+      mux: adgs1408: use the correct MODULE_LICENSE
+      MAINTAINERS: use the correct location for dt-bindings includes for mux
+
+Ramses Ramírez (1):
+      Input: xpad - add support for Xbox1 PDP Camo series gamepad
+
+Reinette Chatre (1):
+      x86/intel_rdt: Fix out-of-bounds memory access in CBM tests
+
+Richard Weinberger (1):
+      ubifs: Fix WARN_ON logic in exit path
+
+Rob Herring (2):
+      sparc: Convert to using %pOFn instead of device_node.name
+      sbus: Use of_get_child_by_name helper
+
+Sabrina Dubroca (2):
+      net: ipv4: update fnhe_pmtu when first hop's MTU changes
+      net: ipv4: don't let PMTU updates increase route MTU
+
+Sascha Hauer (1):
+      ARM: dts: imx53-qsb: disable 1.2GHz OPP
+
+Sebastian Andrzej Siewior (1):
+      net: phy: sfp: remove sfp_mutex's definition
+
+Shenghui Wang (1):
+      dm cache: destroy migration_cache if cache target registration failed
+
+Srikar Dronamraju (1):
+      mm, sched/numa: Remove remaining traces of NUMA rate-limiting
+
+Stefan Agner (1):
+      kbuild: allow to use GCC toolchain not in Clang search path
+
+Stephen Boyd (2):
+      gpio: Assign gpio_irq_chip::parents to non-stack pointer
+      i2c: Fix kerneldoc for renamed i2c dma put function
+
+Steven Rostedt (VMware) (1):
+      vsprintf: Fix off-by-one bug in bstr_printf() processing dereferenced pointers
+
+Tejun Heo (1):
+      cgroup: Fix dom_cgrp propagation when enabling threaded mode
+
+Valentine Fatiev (1):
+      IB/mlx5: Unmap DMA addr from HCA before IOMMU
+
+Vineet Gupta (2):
+      ARCv2: build: use mcpu=hs38 iso generic mcpu=archs
+      ARC: clone syscall to setp r25 as thread pointer
+
+Vitaly Kuznetsov (1):
+      KVM: vmx: hyper-v: don't pass EPT configuration info to vmx_hv_remote_flush_tlb()
+
+Will Deacon (2):
+      arm64: Fix /proc/iomem for reserved but not memory regions
+      arm64: perf: Reject stand-alone CHAIN events for PMUv3
+
+Ying Xue (1):
+      tipc: eliminate possible recursive locking detected by LOCKDEP
+
+zhong jiang (1):
+      ocfs2: fix a GCC warning
+
