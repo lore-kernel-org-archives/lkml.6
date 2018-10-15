@@ -2,110 +2,75 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 210D1C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AA5C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBBAB20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:14:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDjYj0zH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBBAB20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E7F402089D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:17:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F402089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbeJPBAS (ORCPT
+        id S1726831AbeJPBDU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 21:00:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44736 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbeJPBAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 21:00:18 -0400
-Received: from localhost (unknown [106.201.39.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4FBD2089D;
-        Mon, 15 Oct 2018 17:14:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539623651;
-        bh=ziaF83HHu2Ndnu1v4cAuw7mFSIcHfl3leYCwe2xKgX8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LDjYj0zHLkZE7eeyw3XgqSaXZTZAEgJ61MWg+zwm1jb0QpWeabf2YjH2gUN7XAlc8
-         qrZgDFGgR8Q20giFSO9MNbPv3q5GFntHD1TUuGuIe2nfz/AqNQcPqEqJITWKhNYESY
-         i+G/DdQQx6UuSsQNTrPkSzIrwl2JuAnx5Dv/wnI0=
-Date:   Mon, 15 Oct 2018 22:44:03 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] dmaengine: stm32-dma: Add DMA/MDMA chaining
- support
-Message-ID: <20181015171403.GM2400@vkoul-mobl>
-References: <1538139715-24406-1-git-send-email-pierre-yves.mordret@st.com>
- <1538139715-24406-5-git-send-email-pierre-yves.mordret@st.com>
- <20181007160030.GB2372@vkoul-mobl>
- <e9cedfdd-ad90-9123-03bb-34a2e84059c5@st.com>
- <20181010040343.GO2372@vkoul-mobl>
- <d64da587-a680-20c4-7139-f59fd1f299bc@st.com>
+        Mon, 15 Oct 2018 21:03:20 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47105 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726585AbeJPBDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 21:03:20 -0400
+Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w9FHGtRL3710778
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Mon, 15 Oct 2018 10:16:55 -0700
+Subject: Re: [PATCH] kvm/x86 : avoid shifting signed 32-bit value by 31 bits
+To:     peng.hao2@zte.com.cn, richard.weiyang@gmail.com
+Cc:     penghao122@sina.com.cn, pbonzini@redhat.com, rkrcmar@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, joro@8bytes.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
+References: <201810080904344038939@zte.com.cn>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <717c02f3-bb36-33c4-a463-f5759fde30fd@zytor.com>
+Date:   Mon, 15 Oct 2018 10:16:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d64da587-a680-20c4-7139-f59fd1f299bc@st.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <201810080904344038939@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-10-18, 09:02, Pierre Yves MORDRET wrote:
+On 10/7/18 6:04 PM, peng.hao2@zte.com.cn wrote:
+\>>>>>
+>>>>> #define AVIC_LOGICAL_ID_ENTRY_GUEST_PHYSICAL_ID_MASK    (0xFF)
+>>>>> -#define AVIC_LOGICAL_ID_ENTRY_VALID_MASK        (1 << 31)
+>>>>> +#define AVIC_LOGICAL_ID_ENTRY_VALID_MASK        (1UL << 31)
+>>>
+>>>> It is reasonable to change to unsigned, while not necessary to unsigned
+>>>> long?
+>>> AVIC_LOGICAL_ID_ENTRY_VALID_MASK is used in function avic_ldr_write.
+>>> here I think it doesn't matter if you use unsigned or unsigned long. Do you have any suggestions?
 > 
+>> In current case, AVIC_LOGICAL_ID_ENTRY_VALID_MASK is used to calculate
+>> the value of new_entry with type of u32. So the definition here is not
+>> harmful.
 > 
-> On 10/10/2018 06:03 AM, Vinod wrote:
-> > On 09-10-18, 10:40, Pierre Yves MORDRET wrote:
-> >>
-> >>
-> >> On 10/07/2018 06:00 PM, Vinod wrote:
-> >>> On 28-09-18, 15:01, Pierre-Yves MORDRET wrote:
-> >>>> This patch adds support of DMA/MDMA chaining support.
-> >>>> It introduces an intermediate transfer between peripherals and STM32 DMA.
-> >>>> This intermediate transfer is triggered by SW for single M2D transfer and
-> >>>> by STM32 DMA IP for all other modes (sg, cyclic) and direction (D2M).
-> >>>>
-> >>>> A generic SRAM allocator is used for this intermediate buffer
-> >>>> Each DMA channel will be able to define its SRAM needs to achieve chaining
-> >>>> feature : (2 ^ order) * PAGE_SIZE.
-> >>>> For cyclic, SRAM buffer is derived from period length (rounded on
-> >>>> PAGE_SIZE).
-> >>>
-> >>> So IIUC, you chain two dma txns together and transfer data via an SRAM?
-> >>
-> >> Correct. one DMA is DMAv2 (stm32-dma) and the other is MDMA(stm32-mdma).
-> >> Intermediate transfer is between device and memory.
-> >> This intermediate transfer is using SDRAM.
-> > 
-> > Ah so you use dma calls to setup mdma xtfers? I dont think that is a
-> > good idea. How do you know you should use mdma for subsequent transfer?
-> > 
+>> Also, I did a quick grep and found similar definition (1 << 31) is popular
+>> in the whole kernel tree.
 > 
-> When user bindings told to setup chaining intermediate MDMA transfers are always
-> triggers.
-> For instance if a user requests a Dev2Mem transfer with chaining. From client
-> pov this is still a prep_slave_sg. Internally DMAv2 is setup in cyclic mode (in
-> double buffer mode indeed => 2 buffer of PAGE_SIZE/2) and destination is SDRAM.
-> DMAv2 will flip/flop on those 2 buffers.
-> At the same time DMAv2 driver prepares a MDMA SG that will fetch data from those
-> 2 buffers in SDRAM and fills final destination memory.
+>> The reason to make this change is not that strong to me. Would you
+>> minding sharing more reason behind this change?
+> oh, I'm just thinking logically, not more reason.
 
-I am not able to follow is why does it need to be internal, why should
-the client not set the two transfers and trigger them?
+The right way to do this would be to use the _BITUL() (or _BITULL()) macro.
 
--- 
-~Vinod
+	-hpa
+
