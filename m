@@ -2,170 +2,174 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721EBC71133
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86215C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:09:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D6512089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 433012089E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:09:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="gxIj2DdH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6512089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mXFm5w1p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 433012089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbeJPAyI (ORCPT
+        id S1726836AbeJPAzr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:54:08 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44987 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbeJPAyI (ORCPT
+        Mon, 15 Oct 2018 20:55:47 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35924 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726639AbeJPAzr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:54:08 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 63-v6so22192619wra.11
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 10:08:02 -0700 (PDT)
+        Mon, 15 Oct 2018 20:55:47 -0400
+Received: by mail-wm1-f66.google.com with SMTP id a8-v6so20356544wmf.1;
+        Mon, 15 Oct 2018 10:09:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dh+I41dhmOIbT1OIEBdjr5aoOYlS8O6tWmG6ePE8p7k=;
-        b=gxIj2DdH85G1Z6agbRWN6ImiFkRDodnIcAG+pWkRESplybBADvSodDg3qMB1RtYbpV
-         tl+om52DA0gJluwBf3ONn3Ar0LhmPN7kvFbKp6NNw+ofhHkavLZyx03P4O14dy+Gkf+E
-         Ci83VkExtQMaF3263E1G9iUrWA4Zsc3y/1MeNHBlO03LXpL+V20bEMVPoZVmBv2RKWW1
-         f0bhDBTsLfAR8+VSD886PcUXj7MAqlqLzNgKoxfvGvKlnZF2d4DKqYqkWzHMdNZxEXRV
-         XzbjplGAHPQ5Dab68J8cFtFVOMHWgYYpRsf1xxkfhUbLheDZDCJqoyC42z2kbum8OtO/
-         aZKQ==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UaeSn5o7MU44vYPB0/mPq0TGml9+BOlwsrBznXi9V20=;
+        b=mXFm5w1p+AQdj7yfSY2y9WjwePAux/Rk4xqO7sS7qEagAcCJbEVjiCP0mBwJZHkCvs
+         4nxaQ+iJxt165hhS0fVWUOQOFTz3dwc5guzc6VRRIpLr01JaKH1IvR8Oiodsd9YBNg1E
+         BOPS03yEmD3UifMbSOMQVNIWZp24yVjssPkqa6J0CYFAM5+Fo9ylgYNdznqv5Tbcx8dg
+         j47Fa2Iza8ean3VeeKhVnhCW1e4aaGRu6sfgWFR+5jDzScnSNBb6RBSITrQQzbkJkmpt
+         TL0IYMxOFzKOAlIaqcqZY/5mgZgfCFkyvB3nShS7+VBIYg6fWkNNIc9Q0xxzcVsY/6bn
+         9aUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dh+I41dhmOIbT1OIEBdjr5aoOYlS8O6tWmG6ePE8p7k=;
-        b=FTh6noR8bxPn0Krht8S7EiCAppS5oPn323ZjcfbS6dLktrOJncPp3FXM0eqOUaTpQs
-         rbODDyQaXGdu141GZ9SYKqD9A8QGMpsQGGl5ezQnfrX0mkXecdr9FCS9JMYiXBIH8tn5
-         pq/QyC7whSWyQUX6rXIk0YX/xwBuNvIvBkBBEZHh8Kb3yarvJ1w1PdSpMQP+bkm4kBA5
-         CbhnZyLU1sa5BeK6A6rcT+P1FFlhvFAqgdrdGEbf502oQVr7LeJ5TEwOx2EF8PSB0Tec
-         JUpr2ygm2a3Rjro/9ftGc7CgeEKtv4XoIbzZuQIOlNI2BMV1B6XXz6exIgNUlIOHqYKQ
-         e6nw==
-X-Gm-Message-State: ABuFfojRv6lX718MeqO7Hk4zMR7tHY/UfiNQXhAYxXgExgQvVlgmBhF/
-        D0UhebOn9BV8T8+6vykNZjutAW/UpuI=
-X-Google-Smtp-Source: ACcGV63WvDro8j9wJ3io4RG63DgnxBzgyEjabpAC9sTZQLmPMCLqqP3AGn90jook31wF7pp8Q0+YBw==
-X-Received: by 2002:adf:e752:: with SMTP id c18-v6mr16689379wrn.143.1539623281428;
-        Mon, 15 Oct 2018 10:08:01 -0700 (PDT)
-Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id b14-v6sm10499846wrp.42.2018.10.15.10.08.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 10:08:00 -0700 (PDT)
-Message-ID: <ed6a889eeec4e2809f0840c9e8188b5e4b24fa76.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Christian Hewitt <christianshewitt@gmail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Mon, 15 Oct 2018 19:07:59 +0200
-In-Reply-To: <20181013160810.88481.14237@resonance>
-References: <1539425086-10997-1-git-send-email-christianshewitt@gmail.com>
-         <20181013160810.88481.14237@resonance>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=UaeSn5o7MU44vYPB0/mPq0TGml9+BOlwsrBznXi9V20=;
+        b=BhMUmjnyG4jEr0AYFijHNTwwpl45qTj9rEsYk6D1Ebb9L0Hlz6b56vn1Q9Z6VP5gZF
+         CwemlfKvnQksPG7I0X8tvQPF1w5o25fy1OKP/WiUHg+gpE1j9KVeGrJS0nryVnnlw7Z/
+         L9f+ifIk6+qQZ3imLFyZz9vUBdBgThhGAE6vQZLYDiVwun8xzzvl+x69ncnD56hf/+QN
+         yHIvZHbiwWUm7XgFKDs5vNTutcfJK0SL56MFgVDU1rC42KcxtmwPqOpc+F8+Ts81PDiq
+         oW06Wigxtu1M37P+x09G7WYD351OMOOZ27Ox8mC67sfQ0J3osTqGf07wYHQfMqeN9u5G
+         IAoA==
+X-Gm-Message-State: ABuFfohbgNMyh/nXcOOIW+L0b9WOqm123MDW+Abg2cu8+NOO13b1YRn6
+        rERcfnnIh5Wd6wSZplKI8Dq6f5Hq
+X-Google-Smtp-Source: ACcGV61/yC2LgFywZN/PUfPUQEA71OPkJ15T+mKUY07n8PoK7Y9Ujjx2NGTH1IZ4aA0AHdG6UNZKbA==
+X-Received: by 2002:a1c:b9cf:: with SMTP id j198-v6mr13435274wmf.57.1539623378985;
+        Mon, 15 Oct 2018 10:09:38 -0700 (PDT)
+Received: from [192.168.10.150] (dynamic-adsl-78-12-228-118.clienti.tiscali.it. [78.12.228.118])
+        by smtp.googlemail.com with ESMTPSA id a5-v6sm8794602wmh.8.2018.10.15.10.09.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 10:09:38 -0700 (PDT)
+Subject: Re: [PATCH v5 09/12] x86/kvm/nVMX: allow bare VMXON state migration
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        linux-kernel@vger.kernel.org
+References: <20180913170522.24876-1-vkuznets@redhat.com>
+ <20180913170522.24876-10-vkuznets@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
+ UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
+ AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
+ sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
+ FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
+ VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
+ Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
+ znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
+ IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
+ du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
+ dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
+ utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
+ Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
+ wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
+ fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
+ 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
+ zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
+ oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
+ uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
+ plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
+ HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
+ 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
+ iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
+ 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
+ /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
+ 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <8d6b85c4-16c6-cbde-22ec-ee61df0c49fd@redhat.com>
+Date:   Mon, 15 Oct 2018 19:09:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180913170522.24876-10-vkuznets@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-10-13 at 18:08 +0200, Michael Turquette wrote:
-> Quoting Christian Hewitt (2018-10-13 12:04:46)
-> > On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
-> > with reboot; e.g. a ~60 second delay between issuing reboot and the
-> > board power cycling (and in some OS configurations reboot will fail
-> > and require manual power cycling).
-> > 
-> > Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
-> > meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
-> > Co-Processor seems to depend on FCLK_DIV3 being operational.
-> > 
-> > Bisect gives 'commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
-> > meson: add fdiv clock gates") between 4.16 and 4.16-rc1 as the first
-> > bad commit. This added support for the missing clock gates before the
-> > fixed PLL fixed dividers (FCLK_DIVx) and the clock framework which
-> > disabled all the unused fixed dividers, thus it disabled a critical
-> > clock path for the SCPI Co-Processor.
-> > 
-> > This change simply sets the FCLK_DIV3 gate as critical to ensure
-> > nothing can disable it.
+On 13/09/2018 19:05, Vitaly Kuznetsov wrote:
+> It is perfectly valid for a guest to do VMXON and not do VMPTRLD. This
+> state needs to be preserved on migration.
 > 
-> I'm a bit skeptical of this. If FCLK_DIV3 is gated at run-time, there is
-> no side effect other than long and/or failed reboot?
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+
+Please cover this in state-test.c too.
+
+Paolo
+
+> ---
+>  arch/x86/kvm/vmx.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 > 
-> Seems like someone should be managing this clock, and simply leaving it
-> on all the time isn't necessarily the right approach. Any chance that
-> you can dig into this behavior to better understand it?
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index d3297fadf7ed..25a25fff8dd9 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -14482,13 +14482,6 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
+>  	if (!page_address_valid(vcpu, kvm_state->vmx.vmxon_pa))
+>  		return -EINVAL;
+>  
+> -	if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
+> -		return -EINVAL;
+> -
+> -	if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
+> -	    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
+> -		return -EINVAL;
+> -
+>  	if ((kvm_state->vmx.smm.flags & KVM_STATE_NESTED_SMM_GUEST_MODE) &&
+>  	    (kvm_state->flags & KVM_STATE_NESTED_GUEST_MODE))
+>  		return -EINVAL;
+> @@ -14510,6 +14503,14 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
+>  	if (ret)
+>  		return ret;
+>  
+> +	/* Empty 'VMXON' state is permitted */
+> +	if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
+> +		return 0;
+> +
+> +	if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
+> +	    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
+> +		return -EINVAL;
+> +
+>  	set_current_vmptr(vmx, kvm_state->vmx.vmcs_pa);
+>  
+>  	if (kvm_state->vmx.smm.flags & KVM_STATE_NESTED_SMM_VMXON) {
 > 
-> It's easy to solve issues by leaving clocks on all the time, but this
-> becomes a problem later on when trying to tune a device for power.
-
-Hi Mike,
-
-I totally agree with you and, in perfect a world, I would prefer not to use this
-CLK_IS_CRITICAL at all. It looks like a cheap fix for:
-
-"this is required, I don't for what but it is, so please leave it on"
-
-The problem is this issue is a regression. We added a few gates to better model
-the clock tree a while ago. Before, those those clock were left enabled by the
-bootloader.
-
-Now that linux turn them off, we are learning a few things about what the FWs
-are doing behind our backs.
-
-Among the 5 clocks which got a new gates, only 2 needs to back the old way using
-CLK_IS_CRITICAL, so this is still an improvement.
-
-> 
-> Also, if this commit really is the right fix, it should include a
-> comment for FCLK_DIV3 stating why the CLK_IS_CRITICAL flag was set,
-> which may be helpful later on to know if it is safe to remove it. Same
-> is true for FCLK_DIV2 in c987ac6f1f088663b6dad39281071aeb31d450a8.
-
-+1 There should be FIXME notice in the driver explaining why we put that flag in
-the first place, so we can remove it as soon as a driver properly handle this
-clock.
-
-Christian, is Ok if I amend your patch, or do you prefer to post a v2 ?
-Mike, with explained, is this change OK with you ?
-
-> 
-> Regards,
-> Mike
-> 
-> > 
-> > Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> > ---
-> >  drivers/clk/meson/gxbb.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> > index 86d3ae5..4c8925d 100644
-> > --- a/drivers/clk/meson/gxbb.c
-> > +++ b/drivers/clk/meson/gxbb.c
-> > @@ -509,6 +509,7 @@ static struct clk_fixed_factor gxbb_fclk_div3_div = {
-> >                 .ops = &clk_fixed_factor_ops,
-> >                 .parent_names = (const char *[]){ "fixed_pll" },
-> >                 .num_parents = 1,
-> > +               .flags = CLK_IS_CRITICAL,
-> >         },
-> >  };
-> >  
-> > -- 
-> > 2.7.4
-
 
