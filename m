@@ -2,89 +2,106 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD053C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2092AC28CF8
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 724D820644
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:57:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724D820644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id D92B620644
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 08:58:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92B620644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbeJOQmA (ORCPT
+        id S1726779AbeJOQm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 12:42:00 -0400
-Received: from verein.lst.de ([213.95.11.211]:41038 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726273AbeJOQmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 12:42:00 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id EA52268C8E; Mon, 15 Oct 2018 10:57:37 +0200 (CEST)
-Date:   Mon, 15 Oct 2018 10:57:37 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Christoph Hellwig <hch@lst.de>, mporter@kernel.crashing.org,
-        alex.bou9@gmail.com,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 4/8] pci: consolidate PCI config entry in drivers/pci
-Message-ID: <20181015085737.GC27159@lst.de>
-References: <20181013151016.31674-1-hch@lst.de> <20181013151016.31674-5-hch@lst.de> <CAK7LNAQy_NTu5=8R6C3Xc2VLrJo7tKOz-u1=3JfGtBa3Z+ZD9g@mail.gmail.com>
+        Mon, 15 Oct 2018 12:42:57 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:51289 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeJOQm5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 12:42:57 -0400
+X-IronPort-AV: E=Sophos;i="5.54,384,1534834800"; 
+   d="scan'208";a="22434924"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 15 Oct 2018 01:58:36 -0700
+Received: from [10.159.245.112] (10.10.76.4) by CHN-SV-EXCH01.mchp-main.com
+ (10.10.76.37) with Microsoft SMTP Server id 14.3.352.0; Mon, 15 Oct 2018
+ 01:58:36 -0700
+Subject: Re: [PATCH] usb: host: ohci-at91: fix request of irq for optional
+ gpio
+To:     Tudor Ambarus - M18064 <Tudor.Ambarus@microchip.com>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "Cristian Birsan - M91496" <Cristian.Birsan@microchip.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181015083344.4157-1-tudor.ambarus@microchip.com>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <6897566c-7a8b-e071-70df-8f730e93f087@microchip.com>
+Date:   Mon, 15 Oct 2018 10:58:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQy_NTu5=8R6C3Xc2VLrJo7tKOz-u1=3JfGtBa3Z+ZD9g@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20181015083344.4157-1-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 03:37:05PM +0900, Masahiro Yamada wrote:
-> I think HAVE_ is a preferred prefix in this case according to this doc:
-> https://github.com/masahir0y/linux/blob/v4.19-rc4/Documentation/kbuild/kconfig-language.txt#L448
-
-Ok, I'll switch everything to HAVE_*
-
-> If you do this for entire powerpc,
-> the other 'select HAS_PCI' addtions to
-> arch/powerpc/platforms/*/Kconfig look redundant.
-
-I'll drop them.
-
-> > -config PCI
-> > -       bool "PCI support"
-> > -       select PCI_MSI
+On 15/10/2018 at 10:34, Tudor Ambarus - M18064 wrote:
+> atmel,oc-gpio is optional. Request it's irq only when atmel,oc is set
+> in device tree.
 > 
+> devm_gpiod_get_index_optional returns NULL if -ENOENT. Check its
+> return value for NULL before error, because it is more probably that
+> atmel,oc is not set.
 > 
-> I think this 'select PCI_MSI' for riscv was lost.
+> This fixes the following errors on boards where atmel,oc is not set in
+> device tree:
+> [    0.960000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
+> [    0.960000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
+> [    0.970000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-Indeed, fixed.
+Yes, indeed:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-> >  menu "Bus options (PCI etc.)"
-> >
-> > -config PCI
-> > -       bool "PCI support"
-> > -       default y
-> 
-> 
-> The default is y for x86 (and xtensa as well).
-> 
-> With this patch, the default will be flipped.
-> 
-> I think most of people want to use PCI for x86,
-> and this change will make people upset.
-> 
-> Will you update arch/{x86,xtensa}/configs/*_defconfig?
+Thanks, best regards,
+   Nicolas
 
-Yes.  Alternatively we could add a new ARCH_PCI_DEFAULT symbol,
-that architectures could select if they want PCI by default.  Does
-anyone thing this is a good idea?
+> ---
+> Based on https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git,
+> usb-next branch.
+> 
+>   drivers/usb/host/ohci-at91.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
+> index e98673954020..ec6739ef3129 100644
+> --- a/drivers/usb/host/ohci-at91.c
+> +++ b/drivers/usb/host/ohci-at91.c
+> @@ -551,6 +551,8 @@ static int ohci_hcd_at91_drv_probe(struct platform_device *pdev)
+>   		pdata->overcurrent_pin[i] =
+>   			devm_gpiod_get_index_optional(&pdev->dev, "atmel,oc",
+>   						      i, GPIOD_IN);
+> +		if (!pdata->overcurrent_pin[i])
+> +			continue;
+>   		if (IS_ERR(pdata->overcurrent_pin[i])) {
+>   			err = PTR_ERR(pdata->overcurrent_pin[i]);
+>   			dev_err(&pdev->dev, "unable to claim gpio \"overcurrent\": %d\n", err);
+> 
+
+
+-- 
+Nicolas Ferre
