@@ -2,76 +2,91 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD55C28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6028C7112A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD24120853
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:42:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD24120853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 96FB020853
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 07:43:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96FB020853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbeJOP0p (ORCPT
+        id S1726653AbeJOP10 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 11:26:45 -0400
-Received: from mga17.intel.com ([192.55.52.151]:6120 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbeJOP0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 11:26:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 00:42:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,383,1534834800"; 
-   d="scan'208";a="82640236"
-Received: from um.fi.intel.com (HELO localhost) ([10.237.72.212])
-  by orsmga006.jf.intel.com with ESMTP; 15 Oct 2018 00:42:38 -0700
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Zhi Jin <zhi.jin@intel.com>
-Cc:     linux-kernel@vger.kernel.org, Zhi Jin <zhi.jin@intel.com>
-Subject: Re: [PATCH] stm class: increase pos if no free channels found
-In-Reply-To: <1536218530-18601-1-git-send-email-zhi.jin@intel.com>
-References: <1536218530-18601-1-git-send-email-zhi.jin@intel.com>
-Date:   Mon, 15 Oct 2018 10:42:37 +0300
-Message-ID: <87h8hn64gi.fsf@ashishki-desk.ger.corp.intel.com>
+        Mon, 15 Oct 2018 11:27:26 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44696 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbeJOP1Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 11:27:25 -0400
+Received: by mail-ot1-f68.google.com with SMTP id p23so17975804otf.11;
+        Mon, 15 Oct 2018 00:43:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nBq2rN2ny0NQ/6TjHO0DVqb9QWC5/7npaAC7DHfzhDo=;
+        b=OxHcShYn+M48cpWf48jXDm4zIABkHJJl6LM4ctyBpxX5Mmga8Q9jyyj1A9fV6Rsv/j
+         op+4PhXoblIPSGxPf1TVnA7yaCI58j7fpojwtsobBxdnfWNbgqsqxp/J5kEobYNkoH+p
+         InrpKXAs0mF3/GTjJJhknrY0PDknbTeTsR5/Ie2MBxlNGo8XKVoqR9nVinApcW9a7PRy
+         cIdFstC5HbluuREgJZuHrlY5ZTxS4CktipU6bOGqDjtYF2BJpEwfeGDnT0vJJT49Bj87
+         XLmkL0CdSOTDq40GxH1MqkOZ2CNHCUmKxQ70lNvoOoOCASKQlnAHhPnR/0YCjv8kKlC8
+         bwEw==
+X-Gm-Message-State: ABuFfojJMOAgZGjCf05i5JlZ+n61qtE/Ow6eQqcRnH127kxfGM2N0ca6
+        5Y8i8nbZT4Mjkf4RbBr8Ni+Jl/YyBOxiAKd3fV4=
+X-Google-Smtp-Source: ACcGV62NxO+xbw7l3gLEf0obNm2yqru52HSxTuafLrSV/rotXoD157coA+KCPo7CxjTj93xttT+2U06N/fsQLhfll4U=
+X-Received: by 2002:a9d:538c:: with SMTP id w12mr10732308otg.139.1539589399738;
+ Mon, 15 Oct 2018 00:43:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20181013151707.32210-1-hch@lst.de> <20181013151707.32210-2-hch@lst.de>
+In-Reply-To: <20181013151707.32210-2-hch@lst.de>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 15 Oct 2018 09:43:04 +0200
+Message-ID: <CAJZ5v0ju2Y=yQn9uz6HpYGw5BZovxYh2YbYD7Ujq8kajJfvLSQ@mail.gmail.com>
+Subject: Re: [PATCH 1/8] cpufreq: tegra186: don't pass GFP_DMA32 to dma_alloc_coherent
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linux PM <linux-pm@vger.kernel.org>, linux-tegra@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-media@vger.kernel.org, linux-spi <linux-spi@vger.kernel.org>,
+        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zhi Jin <zhi.jin@intel.com> writes:
-
-> Considering this case in find_free_channels():
+On Sat, Oct 13, 2018 at 5:17 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> bitmap:
->        +------------------+-+-+-+-+-+-+-+-+-+-+
->        |     ......       |0|0|0|0|0|0|0|1|0|0|
->        +------------------+-+-+-+-+-+-+-+-+-+-+
+> The DMA API does its own zone decisions based on the coherent_dma_mask.
 >
-> 1. Channel #2 has been occupied, so bit #2 is 1, and the others
->    are all 0.
-> 2. Another thread tries to find 4 free channels from #0.
-> 3. In the 1st loop, pos starts from 0, and then it checks if the
->    following 4 bits are all 0, but fails, as bit#2 is 1.
-> 4. In the 2st loop, pos is not updated, and still starts from 0,
->    so nothing changes against loop #1.
-> 5. Dead loop ...
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+> ---
+>  drivers/cpufreq/tegra186-cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> This patch is to update the pos in step #3 to avoid the issue.
-
-The description is slightly confusing, but the patch looks correct and
-the original code is clearly wrong. Thank you for finding this!
-
-Basically, if you request 1 channel 3 times, release the first two and
-then request 4 channels, you'll be stuck, right?
-
-Thanks,
---
-Alex
+> diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
+> index 1f59966573aa..f1e09022b819 100644
+> --- a/drivers/cpufreq/tegra186-cpufreq.c
+> +++ b/drivers/cpufreq/tegra186-cpufreq.c
+> @@ -121,7 +121,7 @@ static struct cpufreq_frequency_table *init_vhint_table(
+>         void *virt;
+>
+>         virt = dma_alloc_coherent(bpmp->dev, sizeof(*data), &phys,
+> -                                 GFP_KERNEL | GFP_DMA32);
+> +                                 GFP_KERNEL);
+>         if (!virt)
+>                 return ERR_PTR(-ENOMEM);
+>
+> --
+> 2.19.1
+>
