@@ -2,181 +2,201 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D012C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A0FC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C87120652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:17:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C87120652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 2D41620652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 10:17:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D41620652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbeJOSCF (ORCPT
+        id S1726814AbeJOSC1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 14:02:05 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:39567 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJOSCF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 14:02:05 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42YZBF5sxJz1r1yX;
-        Mon, 15 Oct 2018 12:17:25 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42YZBF51KCz1qqkp;
-        Mon, 15 Oct 2018 12:17:25 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id gXK7CUI6Nu3H; Mon, 15 Oct 2018 12:17:23 +0200 (CEST)
-X-Auth-Info: XnWzy6i/q74N6xMx4s76VXeE1H0kHIAFE4eq3vOCDE0=
-Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 15 Oct 2018 14:02:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43076 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726273AbeJOSC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 14:02:26 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon, 15 Oct 2018 12:17:23 +0200 (CEST)
-Date:   Mon, 15 Oct 2018 12:17:16 +0200
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: misc: bk4: Add device tree binding for
- Liebherr's BK4 SPI bus
-Message-ID: <20181015121716.2362d286@jawa>
-In-Reply-To: <20181009122114.39ff3553@jawa>
-References: <20180927222655.24482-1-lukma@denx.de>
-        <20181008144350.GS3587@dragon>
-        <20181009122114.39ff3553@jawa>
-Organization: denx.de
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 770F967EC2;
+        Mon, 15 Oct 2018 10:17:50 +0000 (UTC)
+Received: from krava (unknown [10.43.17.150])
+        by smtp.corp.redhat.com (Postfix) with SMTP id CC9D67B5C2;
+        Mon, 15 Oct 2018 10:17:48 +0000 (UTC)
+Date:   Mon, 15 Oct 2018 12:17:48 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 0/3]: perf: reduce data loss when profiling highly
+ parallel CPU bound workloads
+Message-ID: <20181015101748.GB29504@krava>
+References: <d6bd3626-8c7c-ca12-8adf-31fe15726446@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gmOy39BeIOY7=oX=WTjekxF"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d6bd3626-8c7c-ca12-8adf-31fe15726446@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 15 Oct 2018 10:17:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/gmOy39BeIOY7=oX=WTjekxF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Oct 15, 2018 at 09:26:09AM +0300, Alexey Budankov wrote:
+> 
+> Currently in record mode the tool implements trace writing serially. 
+> The algorithm loops over mapped per-cpu data buffers and stores 
+> ready data chunks into a trace file using write() system call.
+> 
+> At some circumstances the kernel may lack free space in a buffer 
+> because the other buffer's half is not yet written to disk due to 
+> some other buffer's data writing by the tool at the moment.
+> 
+> Thus serial trace writing implementation may cause the kernel 
+> to loose profiling data and that is what observed when profiling 
+> highly parallel CPU bound workloads on machines with big number 
+> of cores.
+> 
+> Experiment with profiling matrix multiplication code executing 128 
+> threads on Intel Xeon Phi (KNM) with 272 cores, like below,
+> demonstrates data loss metrics value of 98%:
+> 
+> /usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
+>     --call-graph dwarf,1024 --user-regs=IP,SP,BP --switch-events \
+>     -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
+>     matrix.gcc
 
-Dear All,
+I ran above on 24 cpu server and could not see the gain,
+but I guess I'd need much bigger server to see that
 
-> Hi Shawn,
->=20
-> > On Fri, Sep 28, 2018 at 12:26:55AM +0200, Lukasz Majewski wrote: =20
-> > > Add Device Tree binding document for Liebherr's BK4 external SPI
-> > > bus.
-> > >=20
-> > > Signed-off-by: Lukasz Majewski <lukma@denx.de>   =20
-> >=20
-> > There should really be a patch series consisting of this one and
-> > spidev change [1].
-> >=20
-> > Since spidev has already been picked up, having a series including
-> > this and dts change would be the second option.  With DT folks' ACK,
-> > I can send bindings change together with DTS using it. =20
->=20
-> Any option will work for me :-).
+anyway, the code is now nicely separated, and given the
+advertised results below I have no objections
 
-Gentle ping on this patch (as corresponding DTS file has been already
-pulled by Shawn).
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 
-Thanks in advance,
-
->=20
-> >=20
-> > Shawn
-> >=20
-> > [1] https://lkml.org/lkml/2018/9/28/48
-> >  =20
-> > > ---
-> > >  Documentation/devicetree/bindings/misc/lwn-bk4.txt | 26
-> > > ++++++++++++++++++++++ 1 file changed, 26 insertions(+)
-> > >  create mode 100644
-> > > Documentation/devicetree/bindings/misc/lwn-bk4.txt
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/misc/lwn-bk4.txt
-> > > b/Documentation/devicetree/bindings/misc/lwn-bk4.txt new file mode
-> > > 100644 index 000000000000..d6a8c188c087
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/misc/lwn-bk4.txt
-> > > @@ -0,0 +1,26 @@
-> > > +* Liebherr's BK4 controller external SPI
-> > > +
-> > > +A device which handles data acquisition from compatible
-> > > industrial +peripherals.
-> > > +The SPI is used for data and management purposes in both master
-> > > and +slave modes.
-> > > +
-> > > +Required properties:
-> > > +
-> > > +- compatible : Should be "lwn,bk4"
-> > > +
-> > > +Required SPI properties:
-> > > +
-> > > +- reg : Should be address of the device chip select within
-> > > +  the controller.
-> > > +
-> > > +- spi-max-frequency : Maximum SPI clocking speed of device in Hz,
-> > > should be
-> > > +  30MHz at most for the Liebherr's BK4 external bus.
-> > > +
-> > > +Example:
-> > > +
-> > > +spidev0: spi@0 {
-> > > +	compatible =3D "lwn,bk4";
-> > > +	spi-max-frequency =3D <30000000>;
-> > > +	reg =3D <0>;
-> > > +};
-> > > --=20
-> > > 2.11.0
-> > >    =20
->=20
->=20
-> Best regards,
->=20
-> Lukasz Majewski
->=20
-> --
->=20
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-> Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+thanks,
+jirka
 
 
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
-
---Sig_/gmOy39BeIOY7=oX=WTjekxF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlvEaSwACgkQAR8vZIA0
-zr1OmwgAzD4ijGq9uMdxpcXGsjzFAeB3t8frizxNHNT/4YEUKndRf3KEq7qIIqsW
-MRDUzD22oWDL59FLWsq7ap9siVLODxB3ITC6u4nrcVHehWNN1LDaEdcbFm1X2QZD
-lgfSIpLg0wa5ryf8Ghm5u1GBi+5FHIUV7yhP6rQ2IuUMRI5LRprkxNO/6/S+oFoR
-ixr2aC0N19rGINzoRpuCj0jyWtSGXG21+eqq3yk5Mjp58zjIkGsbPiGu1Xzwohu+
-nf6taKD33t3brDmYYy2o4zNZt8IsOcKHqcivc51ma4TDJVTDnLK3agdUxSVOwNy8
-LIy0d1KPVJ8pCpkCvTo1B0SjHGJXtg==
-=/1td
------END PGP SIGNATURE-----
-
---Sig_/gmOy39BeIOY7=oX=WTjekxF--
+> 
+> Data loss metrics is the ratio lost_time/elapsed_time where 
+> lost_time is the sum of time intervals containing PERF_RECORD_LOST 
+> records and elapsed_time is the elapsed application run time 
+> under profiling.
+> 
+> Applying asynchronous trace streaming thru Posix AIO API [1] lowers 
+> data loss metrics value providing 2x improvement (from 98% to ~1%)
+> 
+> Asynchronous trace streaming is currently limited to glibc linkage.
+> musl libc [5] also provides Posix AIO API implementation, however 
+> the patchkit is not tested with it. There may be other libc libraries 
+> linked by Perf tool that currently lack Posix AIO API support [2], 
+> [3], [4] so NO_AIO define may be used to limit Perf tool binary to 
+> serial streaming only.
+> 
+> ---
+>  Alexey Budankov (3):
+> 	perf util: map data buffer for preserving collected data
+> 	perf record: enable asynchronous trace writing
+> 	perf record: extend trace writing to multi AIO
+> 
+>  tools/perf/Documentation/perf-record.txt |   5 +
+>  tools/perf/Makefile.config               |   5 +
+>  tools/perf/Makefile.perf                 |   7 +-
+>  tools/perf/builtin-record.c              | 252 ++++++++++++++++++++++++++++++-
+>  tools/perf/perf.h                        |   1 +
+>  tools/perf/util/evlist.c                 |   6 +-
+>  tools/perf/util/evlist.h                 |   2 +-
+>  tools/perf/util/mmap.c                   | 146 +++++++++++++++++-
+>  tools/perf/util/mmap.h                   |  26 +++-
+>  9 files changed, 439 insertions(+), 11 deletions(-)
+> 
+> ---
+>  Changes in v14:
+>  - implement default nr_cblocks_default variable
+>  - fix --aio option handling
+>  Changes in v13:
+>  - named new functions with _aio_ word
+>  - grouped aio functions under single #ifdef HAVE_AIO_SUPPORT
+>  - moved perf_mmap__aio_push() stub into header
+>  - removed trailed white space
+>  Changes in v12:
+>  - applied stub functions design for the whole patch kit
+>  - grouped AIO related data into a struct under struct perf_mmap
+>  - implemented record__aio_get/set_pos(), record__aio_enabled()
+>  - implemented simple --aio option
+>  - extended --aio option to --aio-cblocks=<n>
+>  Changes in v11:
+>  - replacing the both lseek() syscalls in every loop iteration by the only 
+>    two syscalls just before and after the loop at record__mmap_read_evlist() 
+>    and advancing *in-flight* off file pos value at perf_mmap__aio_push()
+>  Changes in v10:
+>  - moved specific code to perf_mmap__aio_mmap(), perf_mmap__aio_munmap();
+>  - adjusted error reporting by using %m
+>  - avoided lseek() setting file pos back in case of record__aio_write() failure
+>  - compacted code selecting between serial and AIO streaming
+>  - optimized call places of record__mmap_read_sync()
+>  - added description of aio-cblocks option into perf-record.txt
+>  Changes in v9:
+>  - enable AIO streaming only when --aio-cblocks option is specified explicitly
+>  - enable AIO based implementation when linking with glibc only
+>  - define NO_AIO to limit Perf binary to serial implementation
+>  Changes in v8:
+>  - run the whole thing thru checkpatch.pl and corrected found issues except
+>    lines longer than 80 symbols
+>  - corrected comments alignment and formatting
+>  - moved multi AIO implementation into 3rd patch in the series
+>  - implemented explicit cblocks array allocation
+>  - split AIO completion check into separate record__aio_complete()
+>  - set nr_cblocks default to 1 and max allowed value to 4
+>  Changes in v7:
+>  - implemented handling record.aio setting from perfconfig file
+>  Changes in v6:
+>  - adjusted setting of priorities for cblocks;
+>  - handled errno == EAGAIN case from aio_write() return;
+>  Changes in v5:
+>  - resolved livelock on perf record -e intel_pt// -- dd if=/dev/zero of=/dev/null count=100000
+>  - data loss metrics decreased from 25% to 2x in trialed configuration;
+>  - reshaped layout of data structures;
+>  - implemented --aio option;
+>  - avoided nanosleep() prior calling aio_suspend();
+>  - switched to per-cpu aio multi buffer record__aio_sync();
+>  - record_mmap_read_sync() now does global sync just before 
+>    switching trace file or collection stop;
+>  Changes in v4:
+>  - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management
+>  - converted void *bf to struct perf_mmap *md in signatures
+>  - written comment in perf_mmap__push() just before perf_mmap__get();
+>  - written comment in record__mmap_read_sync() on possible restarting 
+>    of aio_write() operation and releasing perf_mmap object after all;
+>  - added perf_mmap__put() for the cases of failed aio_write();
+>  Changes in v3:
+>  - written comments about nanosleep(0.5ms) call prior aio_suspend()
+>    to cope with intrusiveness of its implementation in glibc;
+>  - written comments about rationale behind coping profiling data 
+>    into mmap->data buffer;
+>  Changes in v2:
+>  - converted zalloc() to calloc() for allocation of mmap_aio array,
+>  - cleared typo and adjusted fallback branch code;
+> 
+> ---
+> 
+> [1] http://man7.org/linux/man-pages/man7/aio.7.html
+> [2] https://android.googlesource.com/platform/bionic/+/master/docs/status.md
+> [3] https://www.uclibc.org/
+> [4] https://uclibc-ng.org/
+> [5] https://www.musl-libc.org/
