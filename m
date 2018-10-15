@@ -2,142 +2,142 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6B4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAB4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:23:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD012089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:22:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83615208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:23:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIagEI/a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD012089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BXEy0zUK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83615208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbeJPGJ1 (ORCPT
+        id S1727020AbeJPGKh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:09:27 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45548 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726771AbeJPGJ0 (ORCPT
+        Tue, 16 Oct 2018 02:10:37 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:47974 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbeJPGKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:09:26 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t70-v6so9807804pgd.12;
-        Mon, 15 Oct 2018 15:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=idVPqMTWnPvxBijvXlg2fqOnfCoxVCmgtyviF8N53kc=;
-        b=GIagEI/aodGYY6t77UWsjU2UaAG1VTxCuI8qwS/eHVxYuCoMAb//s9Md3Hbgd4sMzQ
-         FpKT0vnIeNu8crTTRYeu6aV0Ek4vFTP3GO3yNTZQqGHkbJFGGMzSupnq2sT+iVZC4hzq
-         xtw0yPfdKFRCyjLtv6M4NvVQFFWmnqIEUXqz7Uw2msmX2EYAuZ9U1gqVSwy9oAlzZbHa
-         6xhBEMpjPN3qybaWfbmCqmsGNmiV/HWmHTRQG/IrKCw0aHvAsPtrCrLsC7flxfanwSrc
-         dNRQYtLYeksP0j5PGCMuEyV5irdZhYV4kfyuS3Dm+au3ZJEwPX3RiGy7FO3/4IsbqwT/
-         5QIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=idVPqMTWnPvxBijvXlg2fqOnfCoxVCmgtyviF8N53kc=;
-        b=sOji+70eeYhCEjpGEUfnj/ezzuNFoqOyjTFuVhgD7lbgwczX2u2n9o0J9u04PwBF4X
-         XDm/fYeBK5NSecS5Q3E9LtTmiKQ7E0B+ehe7qG7ySAvGwUN3/B3XsDVycUB+yUDipVJV
-         pa9HbI7MPtQ7pBxnrQ/7FAD04ng6KyJOS2JdRIofbrnqFTIRiz5IKk4lu9TsWEt3MqNz
-         jhpYKei10SIR0V8NRnO5gvHwOclbU9N8XkBqMn7VY4AqIaRKua2tGbE28N03rsvu/0yc
-         zx4jUllxpIN7pXjF1HPrXgHCxmKVkPdLrrVynkmR9wvEXP2kHGx5XlFCVWjG9wEgEA93
-         o9mA==
-X-Gm-Message-State: ABuFfoiIfxU7dzXlJeAR5RzEI4HsVzx7/Gs4vP22tZeG5uEs0d9C9s5m
-        y0+oUxh3iicpJBkjl0mayZgywhEF
-X-Google-Smtp-Source: ACcGV608YX+dmEzvd4xuzRBip+CAKD7WG91TZg7l8Jf/VKkyb5tfoM8qmqyInCnctvpNb+JO/iHI4A==
-X-Received: by 2002:a63:bd41:: with SMTP id d1-v6mr16819671pgp.367.1539642135083;
-        Mon, 15 Oct 2018 15:22:15 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id r65-v6sm15768554pfj.5.2018.10.15.15.22.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 15:22:14 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 15:22:13 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: linux-next: Tree for Oct 15
-Message-ID: <20181015222213.GA31415@roeck-us.net>
-References: <20181015192546.15faf3a1@canb.auug.org.au>
- <20181015193914.GA9881@roeck-us.net>
- <20181016073359.3fa7bb32@canb.auug.org.au>
+        Tue, 16 Oct 2018 02:10:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SI69yfW0GAWg4TCAlrbh78ou5TZRrPG2qzsQPbYsRsQ=; b=BXEy0zUKR9Apg3YFx+roEw4wo
+        2iCzYRPpqvuxxI/LLs3HznnzlA7dhrBEGJl/Om+A4Hkgi0dTH0R0DzvVo4HN5LzCwqst6+AbOiMou
+        XDgG1MZN7y23447M2YuIv6G6emOyfqOJ8RGt0ql5/pdO60JghS8tiFUXX5pADtNwhu+Yo=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:49128)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gCBGc-00031Q-EK; Mon, 15 Oct 2018 23:23:14 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gCBGV-0007jv-NL; Mon, 15 Oct 2018 23:23:08 +0100
+Date:   Mon, 15 Oct 2018 23:23:03 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     ulli.kroll@googlemail.com, joel@jms.id.au, nico@linaro.org,
+        arnd@arndb.de, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: copypage-fa: add kto and kfrom to input
+ operands list
+Message-ID: <20181015222302.GZ30658@n2100.armlinux.org.uk>
+References: <20181015221629.13924-1-stefan@agner.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181016073359.3fa7bb32@canb.auug.org.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181015221629.13924-1-stefan@agner.ch>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 07:33:59AM +1100, Stephen Rothwell wrote:
-> Hi Guenter,
+On Tue, Oct 16, 2018 at 12:16:29AM +0200, Stefan Agner wrote:
+> When functions incoming parameters are not in input operands list gcc
+> 4.5 does not load the parameters into registers before calling this
+> function but the inline assembly assumes valid addresses inside this
+> function. This breaks the code because r0 and r1 are invalid when
+> execution enters v4wb_copy_user_page ()
+
+NAK.  Naked functions must never be inlined.  Please add a "noinline"
+attribute to the function rather than making things more complex.
+
+The GCC manual states:
+
+`naked'
+     Use this attribute on the ARM, AVR, MCORE, MSP430, NDS32, RL78, RX
+     and SPU ports to indicate that the specified function does not
+     need prologue/epilogue sequences generated by the compiler.  It is
+     up to the programmer to provide these sequences. The only
+                                                      ^^^^^^^^
+     statements that can be safely included in naked functions are
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     `asm' statements that do not have operands.  All other statements,
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     including declarations of local variables, `if' statements, and so
+     forth, should be avoided.  Naked functions should be used to
+     implement the body of an assembly function, while allowing the
+     compiler to construct the requisite function declaration for the
+     assembler.
+
+The 'I' attribute is fine here because it is a constant that is not
+allowed to be in a register (and hence has no code generation side
+effects.)
+
+Adding operands for the input parameters, however, isn't going to
+work around the fact that _this_ assembly is written to be out of
+line and so it must never be inlined by the compiler.
+
+> Also the constant needs to be used as third input operand so account
+> for that as well.
 > 
-> [Again, just cc'ing the PPC folks]
+> This fixes copypage-fa.c what has previously done before for the other
+> copypage implementations in commit 9a40ac86152c ("ARM: 6164/1: Add kto
+> and kfrom to input operands list.").
 > 
-> On Mon, 15 Oct 2018 12:39:14 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
-> >
-> > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > Changes since 20181012:
-> > > 
-> > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
-> > >   
-> > 
-> > Bisect log:
-> > 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  arch/arm/mm/copypage-fa.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mm/copypage-fa.c b/arch/arm/mm/copypage-fa.c
+> index d130a5ece5d5..ec6501308c60 100644
+> --- a/arch/arm/mm/copypage-fa.c
+> +++ b/arch/arm/mm/copypage-fa.c
+> @@ -22,7 +22,7 @@ fa_copy_user_page(void *kto, const void *kfrom)
+>  {
+>  	asm("\
+>  	stmfd	sp!, {r4, lr}			@ 2\n\
+> -	mov	r2, %0				@ 1\n\
+> +	mov	r2, %2				@ 1\n\
+>  1:	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
+>  	stmia	r0, {r3, r4, ip, lr}		@ 4\n\
+>  	mcr	p15, 0, r0, c7, c14, 1		@ 1   clean and invalidate D line\n\
+> @@ -36,7 +36,7 @@ fa_copy_user_page(void *kto, const void *kfrom)
+>  	mcr	p15, 0, r2, c7, c10, 4		@ 1   drain WB\n\
+>  	ldmfd	sp!, {r4, pc}			@ 3"
+>  	:
+> -	: "I" (PAGE_SIZE / 32));
+> +	: "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 32));
+>  }
+>  
+>  void fa_copy_user_highpage(struct page *to, struct page *from,
+> -- 
+> 2.19.1
+> 
 
-Trying again. Not very useful since some of the steps fail with compile errors.
-The problem does seem to be related to the bootmem changes, though.
-
-I might try again tonight if I find the time.
-
-Guenter
-
-# bad: [ca0591d03a2d373e0019ad357fbbee69c8272381] Add linux-next specific files for 20181015
-# good: [0238df646e6224016a45505d2c111a24669ebe21] Linux 4.19-rc7
-git bisect start 'HEAD' 'v4.19-rc7'
-# good: [2fc8fb4c02a0f7b9d5e5b4de80cbcef7c808068b] Merge remote-tracking branch 'spi-nor/spi-nor/next'
-git bisect good 2fc8fb4c02a0f7b9d5e5b4de80cbcef7c808068b
-# good: [a54eefdf4d208f6904da9e836ff32d7dde0c9516] Merge remote-tracking branch 'tip/auto-latest'
-git bisect good a54eefdf4d208f6904da9e836ff32d7dde0c9516
-# good: [d71e0d25be750d02a3d04500aeb151bb94465811] Merge remote-tracking branch 'staging/staging-next'
-git bisect good d71e0d25be750d02a3d04500aeb151bb94465811
-# good: [7961c8ea9d81f927a78e30bb7c194310ed6b7c1d] Merge remote-tracking branch 'pinctrl/for-next'
-git bisect good 7961c8ea9d81f927a78e30bb7c194310ed6b7c1d
-# good: [c3d392e6aae57d54fdc683f7432c3e248602bebb] Merge remote-tracking branch 'xarray/xarray'
-git bisect good c3d392e6aae57d54fdc683f7432c3e248602bebb
-# good: [880c1034475c873963d6250eb95ebbbf5604a281] userfaultfd: selftest: cleanup help messages
-git bisect good 880c1034475c873963d6250eb95ebbbf5604a281
-# good: [9f1fa0ab60f7b09d335bbaf33db9116241059708] reiserfs: propagate errors from fill_with_dentries() properly
-git bisect good 9f1fa0ab60f7b09d335bbaf33db9116241059708
-# good: [596046ffd571f32fa3d3e7ffdf7861b71a258552] memblock: replace alloc_bootmem_low with memblock_alloc_low (2)
-git bisect good 596046ffd571f32fa3d3e7ffdf7861b71a258552
-# bad: [ef07e25e5bb02b420cb66004420cea3e0d65d107] dma-direct: fix up for the removal of linux/bootmem.h
-git bisect bad ef07e25e5bb02b420cb66004420cea3e0d65d107
-# good: [ddaa897c9ab76969a74d67a65b6616895f349644] memblock: replace alloc_bootmem with memblock_alloc
-git bisect good ddaa897c9ab76969a74d67a65b6616895f349644
-# good: [3b79243c2ef23d829a2f01f8c9526f17b80a7a32] memblock: rename free_all_bootmem to memblock_free_all
-git bisect good 3b79243c2ef23d829a2f01f8c9526f17b80a7a32
-# good: [d5fa9634892df2bc6bab6101f18df6ba5a2490c5] mm: remove nobootmem
-git bisect good d5fa9634892df2bc6bab6101f18df6ba5a2490c5
-# bad: [75fd637c22bc9bb5c959b7f93c2c5e5f0495992c] mm: remove include/linux/bootmem.h
-git bisect bad 75fd637c22bc9bb5c959b7f93c2c5e5f0495992c
-# good: [979961b3058df1a6d24ab423dd6fa6f20982f591] memblock: replace BOOTMEM_ALLOC_* with MEMBLOCK variants
-git bisect good 979961b3058df1a6d24ab423dd6fa6f20982f591
-# first bad commit: [75fd637c22bc9bb5c959b7f93c2c5e5f0495992c] mm: remove include/linux/bootmem.h
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
