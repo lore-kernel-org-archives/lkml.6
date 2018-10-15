@@ -2,116 +2,127 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4891DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D03C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00C212089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0C592089D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:16:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cHcWw+RV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00C212089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="afw/VZD3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C592089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbeJPG6r (ORCPT
+        id S1726967AbeJPHEE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:58:47 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:56214 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbeJPG6r (ORCPT
+        Tue, 16 Oct 2018 03:04:04 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44127 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbeJPHED (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:58:47 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7B9A61A81;
-        Tue, 16 Oct 2018 01:11:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1539645081;
-        bh=001rRNPyrySGqbEQWFBWXHB3iS4JlAVH7mwlUttDnPU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cHcWw+RVB/rBCTVHEFtLMXlGA4iv7+A6/Iiw6YRcGAWY6Vn+7ZIFDP/O0WPnjFIxj
-         JeFNZAnBurldAqSM1I5uvJjv+a+dw7C8z3UlGRj5i4yNxgTbpWGKcvAx2xpx/a3rwW
-         /osdHJ17gEt6GPDVx13HCT2aodjWTBr+WApE9Bmg=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        zain wang <wzz@rock-chips.com>,
-        dri-devel@lists.freedesktop.org, Lin Huang <hl@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Sean Paul <seanpaul@chromium.org>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: Re: [PATCH] drm/bridge: analogix_dp: Fix misleading indentation reported by smatch
-Date:   Tue, 16 Oct 2018 02:11:28 +0300
-Message-ID: <3089039.JAYFEciPKB@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20181013111844.22183-1-enric.balletbo@collabora.com>
-References: <20181013111844.22183-1-enric.balletbo@collabora.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 16 Oct 2018 03:04:03 -0400
+Received: by mail-pl1-f196.google.com with SMTP id p25-v6so10003189pli.11
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 16:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zY5FRFGJ1x+0u/V5mm5L6gboapti4teFd3k5CuR3lYA=;
+        b=afw/VZD3n/lVtV9SV2RTXfAcuuZiK/C3lzJa7Yyar09LteLgZHDnw8mJXPSm3dxOo1
+         RbFqJHtz5PUWT8ZxTH16C061i1grp8bJD2EriKxetMboEwPgYMa59si5UEFu3/8cYREN
+         owS+O2OFgwfmi2DJiLZOb89g4cICP9kWyizmYS3zVRkM5ZxTtzl8FQk2bAGiaQlSa/X5
+         2bnSmza3zY5wBaNT1njlN/hUO3CQpxBfo/eWMPBOCAoOJTR/eqHJRVdcgHVoW2LevK5P
+         pA/K0RpN5EQ2iGl9zInUWKUOUO4N7s9CVQv9Q/k4fCPWUYo/ZW4asBdn0nfJ15e1FeTo
+         gezQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=zY5FRFGJ1x+0u/V5mm5L6gboapti4teFd3k5CuR3lYA=;
+        b=krrPJ/r8SI5LtuNeZG9S6UI+OA7juifN/fnneK61eH2L2vDBLcFzLLqOABIKZfKY5O
+         ZonuL79hNtEMdupWuIf5ZCHohOF/vCOBfgfaKRjJtu9MoJCoeClwRuxk1me7fu1VbVjw
+         y2x2xl2ks4l0AuVSmhs436Ly3+rEeuSUVMxLybov1lR34xitll1Pt4gflEnu5BcdKf/y
+         D2YRmpecZ3TIRMZ4pI4ikcH1utOBWrh4iOhTfKsRZdrY8+ozxXM2RPnWYFqTW+YSdtko
+         JSeMXe+LMqvuHt0WrCRhnKfigB6SGLy/KPTYMwSTLai0Mq0N3cXtnCVOOKuYzqiKM9mD
+         aZ4A==
+X-Gm-Message-State: ABuFfojpFC7flQhYHx+8o2Leub4q+ac/63o+QlQTWI7T+qKFUwuJIyn7
+        5FlsYaiNulDKPgu7k8S5THDU5M5wEJc=
+X-Google-Smtp-Source: ACcGV61fuQQ0iW5aZeqcft2ermAFW27Wr/C+O6CPP7Vp30IhvtlV2VWS798LYnIlRwfhU2zx8xTnOw==
+X-Received: by 2002:a17:902:b403:: with SMTP id x3-v6mr19232609plr.237.1539645398172;
+        Mon, 15 Oct 2018 16:16:38 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id x20-v6sm20505698pfe.131.2018.10.15.16.16.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 16:16:37 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 16:16:37 -0700 (PDT)
+X-Google-Original-Date: Mon, 15 Oct 2018 15:51:51 PDT (-0700)
+Subject:     Re: [PATCH v4 0/5] Fix some bugs on RV32 build fail and issue
+In-Reply-To: <CA+ZOyaig6dwzfhUn5CQ92P__yay2-aAgA4Nh+VxTs50FCbECwQ@mail.gmail.com>
+CC:     aou@eecs.berkeley.edu, Christoph Hellwig <hch@infradead.org>,
+        zong@andestech.com, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     zongbox@gmail.com
+Message-ID: <mhng-4a97b34b-cb44-42cb-9fd8-d62b95edfa7e@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+On Mon, 15 Oct 2018 05:33:17 PDT (-0700), zongbox@gmail.com wrote:
+> Zong Li <zongbox@gmail.com> 於 2018年10月3日 週三 上午11:12寫道：
+>>
+>> This patches contain the modificaion as follows:
+>> 1. Fix up the building fail on RV32.
+>> 2. Add umoddi3 and udivmoddi4 functions for RV32.
+>> 3. Fix ioremap problem on RV32.
+>>
+>> Thanks all for review these code and modify the copyright description.
+>>
+>> Changes in v4:
+>>  - Retain the complete copyright description.
+>>  - Modify commit message.
+>>  - Rebase upstream code.
+>>
+>> Changes in v3:
+>>  - Change the copyright notices to GPLv2 from  gcc 4.2.1.
+>>
+>> Changes in v2:
+>>  - Retain the copyright notices from libgcc in umoddi3.c and udivmoddi4.c.
+>>
+>> Vincent Chen (1):
+>>   RISC-V: Avoid corrupting the upper 32-bit of phys_addr_t in ioremap
+>>
+>> Zong Li (4):
+>>   RISC-V: Build tishift only on 64-bit
+>>   RISC-V: Add preprocessor directive for swiotlb
+>>   lib: Add umoddi3 and udivmoddi4 of GCC library routines
+>>   RISC-V: Select GENERIC_LIB_UMODDI3 on RV32
+>>
+>>  arch/riscv/Kconfig        |   1 +
+>>  arch/riscv/kernel/setup.c |   3 +
+>>  arch/riscv/lib/Makefile   |   3 +-
+>>  arch/riscv/mm/ioremap.c   |   2 +-
+>>  lib/Kconfig               |   3 +
+>>  lib/Makefile              |   1 +
+>>  lib/udivmoddi4.c          | 326 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  lib/umoddi3.c             |  48 +++++++
+>>  8 files changed, 385 insertions(+), 2 deletions(-)
+>>  create mode 100644 lib/udivmoddi4.c
+>>  create mode 100644 lib/umoddi3.c
+>>
+>> --
+>> 2.7.4
+>>
+>
+> ping
 
-Thank you for the patch.
-
-On Saturday, 13 October 2018 14:18:44 EEST Enric Balletbo i Serra wrote:
-> This patch avoids that building the bridge/analogix source code with
-> smatch triggers complaints about inconsistent indenting.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c index
-> d68986cea132..75e2649d7515 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -1219,12 +1219,12 @@ static int analogix_dp_bridge_attach(struct
-> drm_bridge *bridge) * plat_data->attch return, that's why we record the
-> connector
->  	 * point after plat attached.
->  	 */
-> -	 if (dp->plat_data->attach) {
-> -		 ret = dp->plat_data->attach(dp->plat_data, bridge, connector);
-> -		 if (ret) {
-> -			 DRM_ERROR("Failed at platform attch func\n");
-> -			 return ret;
-> -		 }
-> +	if (dp->plat_data->attach) {
-> +		ret = dp->plat_data->attach(dp->plat_data, bridge, connector);
-> +		if (ret) {
-> +			DRM_ERROR("Failed at platform attch func\n");
-> +			return ret;
-> +		}
->  	}
-
-This looks good to me. While at it, could you s/attch/attach/ ? With that 
-fixed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
->  	if (dp->plat_data->panel) {
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Oh, sorry about that -- I took them into my local tree but they didn't make it 
+to kernel.org.  They should be in for-next now.
