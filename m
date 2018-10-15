@@ -2,109 +2,167 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389B7C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5D5C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F11542083C
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:33:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F11542083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 5FE81208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 11:34:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE81208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbeJOTS0 (ORCPT
+        id S1726638AbeJOTTL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 15:18:26 -0400
-Received: from sauhun.de ([88.99.104.3]:46290 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726498AbeJOTS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:18:26 -0400
-Received: from localhost (p54B33719.dip0.t-ipconnect.de [84.179.55.25])
-        by pokefinder.org (Postfix) with ESMTPSA id 336C32CF683;
-        Mon, 15 Oct 2018 13:33:33 +0200 (CEST)
-Date:   Mon, 15 Oct 2018 13:33:32 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] mmc: tmio: simplify the DMA mode test
-Message-ID: <20181015113332.uqnd4kmoabzto5kr@ninjato>
-References: <1539356588-18191-1-git-send-email-yamada.masahiro@socionext.com>
- <20181014223636.GH3260@kunai>
+        Mon, 15 Oct 2018 15:19:11 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:60581 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbeJOTTL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 15:19:11 -0400
+Received: from 79.184.253.168.ipv4.supernova.orange.pl (79.184.253.168) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id 2fde9848ee950d54; Mon, 15 Oct 2018 13:34:16 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Bartholomae, Thomas" <t.bartholomae@intel.com>
+Subject: Re: [PATCH] cpufreq: conservative: Fix requested_freq handling
+Date:   Mon, 15 Oct 2018 13:31:03 +0200
+Message-ID: <1926816.WaOCFmosuL@aspire.rjw.lan>
+In-Reply-To: <CAHKzcEPuD7nnmvBjnUNn=wb-5LfN1nHoTYBekAiBFG8Je+oPwA@mail.gmail.com>
+References: <20181008150901.19667-1-waldemar.rymarkiewicz@gmail.com> <2671493.AgiGORq3CZ@aspire.rjw.lan> <CAHKzcEPuD7nnmvBjnUNn=wb-5LfN1nHoTYBekAiBFG8Je+oPwA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7goolrfafe6rco6m"
-Content-Disposition: inline
-In-Reply-To: <20181014223636.GH3260@kunai>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Monday, October 15, 2018 11:34:33 AM CEST Waldemar Rymarkiewicz wrote:
+> On Thu, 11 Oct 2018 at 23:10, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> >
+> > On Tuesday, October 9, 2018 6:06:08 PM CEST Waldemar Rymarkiewicz wrote:
+> > > On Tue, 9 Oct 2018 at 09:47, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > >
+> > > > On Mon, Oct 8, 2018 at 5:11 PM Waldemar Rymarkiewicz
+> > > > <waldemar.rymarkiewicz@gmail.com> wrote:
+> > > > >
+> > > > > From: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+> > > > >
+> > > > > The governor updates dbs_info->requested_freq only after increasing or
+> > > > > decreasing frequency. There is, however, an use case when this is not
+> > > > > sufficient.
+> > > > >
+> > > > > Imagine, external module constraining cpufreq policy in a way that policy->max
+> > > >
+> > > > Is the "external module" here a utility or a demon running in user space?
+> > >
+> > > No, this is a driver that communicates with a firmware and makes sure
+> > > CPU is running at the highest rate in specific time.
+> > > It uses verify_within_limits  and update_policy, a standard way to
+> > > constraint cpufreq policy limits.
+> > >
+> > > > > @@ -136,10 +135,10 @@ static unsigned int cs_dbs_update(struct cpufreq_policy *policy)
+> > > > >                         requested_freq = policy->min;
+> > > > >
+> > > > >                 __cpufreq_driver_target(policy, requested_freq, CPUFREQ_RELATION_L);
+> > > > > -               dbs_info->requested_freq = requested_freq;
+> > > > >         }
+> > > > >
+> > > > >   out:
+> > > > > +       dbs_info->requested_freq = requested_freq;
+> > > >
+> > > > This will have a side effect when requested_freq is updated before the
+> > > > thresholds checks due to the policy_dbs->idle_periods < UINT_MAX
+> > > > check.
+> > > >
+> > > > Shouldn't that be avoided?
+> > >
+> > > I would say we should.
+> > >
+> > > A hardware design I use is running 4.9 kernel where the check does not
+> > > exist yet, so there is not a problem.
+> > > Anyway, the check policy_dbs->idle_periods < UINT_MAX  can change
+> > > requested_freq  either to requested_freq = policy->min or
+> > > requested_freq -= freq_steps;. The first case will not change anything
+> > > for us as policy->max=min=cur. The second, however, will force to
+> > > update freq which is definitely not expected when limits are set to
+> > > min=max. Simply it will not go out  here:
+> > >
+> > > if (load < cs_tuners->down_threshold) {
+> > >       if (requested_freq == policy->min)
+> > >            goto out;   <---
+> > > ...
+> > > }
+> > >
+> > > Am I right here? If so, shouldn't we check explicitly
+> > >
+> > > /*
+> > > * If requested_freq is out of range, it is likely that the limits
+> > > * changed in the meantime, so fall back to current frequency in that
+> > > * case.
+> > > */
+> > > if (requested_freq > policy->max || requested_freq < policy->min)
+> > >        requested_freq = policy->cur;
+> > >
+> > > +/*
+> > > +* If the the new limits min,max are equal, there is no point to process further
+> > > +*/
+> > > +
+> > > +if (requested_freq == policy->max  &&  requested_freq == policy->min)
+> > > +     goto out;
+> >
+> > If my understanding of the problem is correct, it would be better to simply
+> > update dbs_info->requested_freq along with requested_freq when that is found
+> > to be out of range.  IOW, something like the appended patch (untested).
+> 
+> Yes, this will solve the original problem as well.
+> 
+> I think there could also be a  problem with policy_dbs->idle_periods <
+> UINT_MAX  check. It it's true it  can modify requested_freq (
+> requested_freq -= freq_steps) and further it can result in a change of
+> the freq,  requested_freq == policy->max is not anymore true. I would
+> expect governor not to change freq (requested_freq) when
+> policy->max=policy->min=policy->cur.
 
---7goolrfafe6rco6m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well, that's because there is a bug in that code IMO.  It should never
+decrease requested_freq below policy->min in particular.
 
-On Mon, Oct 15, 2018 at 12:36:36AM +0200, Wolfram Sang wrote:
-> On Sat, Oct 13, 2018 at 12:03:08AM +0900, Masahiro Yamada wrote:
-> > host->chan_{rx,tx} represents the DMA capability of the platform.
-> > Even if DMA is supported, there are cases where we want to use PIO,
-> > for example, data length is short enough as commit 5f52c3552946
-> > ("mmc: tmio: use PIO for short transfers") mentioned.
-> >=20
-> > Regarding the hardware control flow, we are interested in whether DMA
-> > is currently enabled or not, instead of whether the platform has the
-> > DMA capability.
-> >=20
-> > Hence, the several conditionals in tmio_mmc_core.c end up with
-> > checking host->chan_{rx,tx} and !host->force_pio. This is not nice.
-> >=20
-> > Let's flip the flag host->force_pio into host->dma_on.
-> >=20
-> > host->dma_on represents whether the DMA is currently enabled or not.
-> > This flag is set false in the beginning of each command, then should
-> > be set true by tmio_mmc_start_dma() when the DMA is turned on.
-> >=20
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->=20
-> I like it. Much easier to read!
->=20
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Please find a patch with that fixed below.
 
-Tested on R-Car H3 ES1.0 and ES2.0, M3N, and H2. No regressions,
-especially no performance regressions (since "when to enable DMA" code
-was refactored).
+---
+ drivers/cpufreq/cpufreq_conservative.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Index: linux-pm/drivers/cpufreq/cpufreq_conservative.c
+===================================================================
+--- linux-pm.orig/drivers/cpufreq/cpufreq_conservative.c
++++ linux-pm/drivers/cpufreq/cpufreq_conservative.c
+@@ -80,8 +80,10 @@ static unsigned int cs_dbs_update(struct
+ 	 * changed in the meantime, so fall back to current frequency in that
+ 	 * case.
+ 	 */
+-	if (requested_freq > policy->max || requested_freq < policy->min)
++	if (requested_freq > policy->max || requested_freq < policy->min) {
+ 		requested_freq = policy->cur;
++		dbs_info->requested_freq = requested_freq;
++	}
+ 
+ 	freq_step = get_freq_step(cs_tuners, policy);
+ 
+@@ -92,7 +94,7 @@ static unsigned int cs_dbs_update(struct
+ 	if (policy_dbs->idle_periods < UINT_MAX) {
+ 		unsigned int freq_steps = policy_dbs->idle_periods * freq_step;
+ 
+-		if (requested_freq > freq_steps)
++		if (requested_freq > policy->min + freq_steps)
+ 			requested_freq -= freq_steps;
+ 		else
+ 			requested_freq = policy->min;
 
-
---7goolrfafe6rco6m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvEewwACgkQFA3kzBSg
-KbZMBRAApYq21ZuXhgZCqB8ZFEjOPPo3rbUqZiTDFtUIaIbfywVpqLMtbeIjGn2K
-7Sx6fuvtIs+usb292zwZfV4RBQHJek35T60MAs2z/t6Ye4WjKQlTinWEMwqQfoJW
-mbFZc6jlXlA7vTc4ji72l8htng7weUuqAruwuPtoE57dHLNIKyUxyKd2zAmwN7yg
-DFfrGmiDHh7B9s/bewdmMFbQ3lLz/LNOHyrhOtYH0l7gLPPN79BhF2NnOa7aqf/d
-ATR81u/VQAGnuITtY6PQhxhNO/EKaFXv1awO244yczvs72M441t4hWG66gMgDB6g
-d7aVEajAuARFvgYpJ0t2BxI1mMtAOFCjS/zN26lyl3tk4UHSC/vX4s/6WL99Dra8
-3Hyi1mfLWL6ypusEpXeEQPAEAqH8W5nfYpTU3WzxsZaLElS3qOMfvYBk/hAnI2c6
-OZJcOcN7NL/4NN38tOty2jWCLB5RSBwdbmmR33L1GhmQ+0T2nTtrO6nmVah1RkXi
-juQn9Zdox/vJr5vIG1O0nex87v3r2MKDdfGrGFkbvD3hiqGXPhX2906pQrkiSCux
-S0H0QIo7tj0cxkxDzP14s8Rkus3mLFhkHrdWSYANFKWh2fla+jIJUhP67Ydgs575
-gelVZHlD8xxC/d3ncv7LiFKeWQQLMfFUeqUEIsDCPCXKUrbC46g=
-=J9y+
------END PGP SIGNATURE-----
-
---7goolrfafe6rco6m--
