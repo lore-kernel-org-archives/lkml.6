@@ -2,169 +2,168 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,
-	URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 001FDC04EBE
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E99DBC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB7B22098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 946272054F
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:54:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UBypfhSh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB7B22098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R3BVFCnR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 946272054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbeJPGkY (ORCPT
+        id S1727067AbeJPGmM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:40:24 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43919 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbeJPGkX (ORCPT
+        Tue, 16 Oct 2018 02:42:12 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33303 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbeJPGmL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:40:23 -0400
-Received: by mail-qt1-f196.google.com with SMTP id q41-v6so23492727qtq.10;
-        Mon, 15 Oct 2018 15:53:03 -0700 (PDT)
+        Tue, 16 Oct 2018 02:42:11 -0400
+Received: by mail-qt1-f195.google.com with SMTP id q40-v6so23544455qte.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 15:54:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=duCa1nK8gaa1XD1+tXdyfBVi5VNEM8pn4CvEMSSCaoA=;
-        b=UBypfhShbRqS2gPjtrXl93iSYdpf5O4LVQ8FeBGQb1WyzDwqQyb73lquWh3owkxVwP
-         duQflbnJiyynIN946X3PD84lepzXE6+kYRLCjo0cAmEmSN0C3LXQhY4uDEJKGgg68GIn
-         ksiF7fu2ZcSoI+iyP/QPZDMNy08f1DxpBoUP8hrdCP+nBU4YnngR2SgLn2Ur1Ml0Xf5o
-         FvHK1gSucsnQA0dJzmbzPwOP35zLp+xjFPAt86cW5TF3DiTV5vhZF/ImvO2UO1IfyrPz
-         kPqyl335BaXsJOw6dgI2140lVM+qfmglWDqRQmwKk7qjdj9u0BICPjFqgKJgYXveA4KY
-         4WVA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=E4FQiwSJmBc7kyShqXZBk91wjEehqaL5rHhd/tM2fBA=;
+        b=R3BVFCnRcP5v9gq8xPygT5YNc7a0kL2yTAvc7IpC/RMtnsOPwnutshp9OdGFfB8M0t
+         YHsOjrq1oozH2RKkKVfqI0mU9gQH+juxMgLi1i7mwKzRpVzoH69WzM9LYxB5rP30ES7m
+         89Z0+GCxIdXPJyeqx1SOs5xiDoh+9PkrI9E64=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=duCa1nK8gaa1XD1+tXdyfBVi5VNEM8pn4CvEMSSCaoA=;
-        b=BDCYkrJ1C25YNX2aIIqHnZXpjLaCBP5UaLHI0hXDT3UAcVMdk4e2dC/e/jhP5QTuOT
-         fjmmLqmJYACO18ejZNLRbhApLW8hHs08k7CLmKrrRPHrI4AiMLHaCvCVmPdJe3P0HhwH
-         KGDLEe4YAoGkFaZYDldVAwMH+M/dF2S/8+KHyg3XaFv9nY1848LvxI0JR2JFuP8Lv/K7
-         7u8uXikcM8bxJpSeazA9NRsOkn0YowzWkPl1NxTf8hPORnz9vPO7Iv0GrIJfq+VHpj3U
-         tuRBDM8cj97Dp5jnZbEs+fIVxfxBcrqYxT+F/6j951+5ktyGimY07MMLiCp7VUW80hW2
-         A0Wg==
-X-Gm-Message-State: ABuFfogG2/MjA0qi0yXqakxApwARw35qBFyOWSmsYKhkdzA0xCr2gS5k
-        S3FSmpnFK5fyJnkNWlHQ2oVEGCcqs+FVOwK4WQUt
-X-Google-Smtp-Source: ACcGV60ojtKbCX/wAhaCluZuzlDKKZ0h0hzbBx6Z1t77UOcYk8QIHEqv4hXlG+NpatEH9n6GMyGmwa92NeCYp61Yn8M=
-X-Received: by 2002:a0c:8c86:: with SMTP id p6-v6mr18696370qvb.246.1539643982971;
- Mon, 15 Oct 2018 15:53:02 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=E4FQiwSJmBc7kyShqXZBk91wjEehqaL5rHhd/tM2fBA=;
+        b=mc10sY+KrfSCv+l1fOv3hN7/bTf7GS1evZttmW2Zr9pwWutQjeHN+lu9I5pEa6CAa3
+         +U2a4w47hCXCCgWHbV3TlNPm5Lhy7XMJIwjIzAun09Gy5eZFEST2vljxzvhVQtRhClaR
+         VwNsltRH6O+SzAOGLbX1PLrVOxhZA/tym5ErFDknh7oVfvXCx+kI805Np3NwwD05r8FA
+         DcmxTw65mga+bdYmwBsyTevRcUBL2JvUelc0LUBkCEk0FGcYvoXkrgwsVDvtug0vYbSb
+         nMrkbV5Sl87zDbZ5Pfzf4bf9UKl8CIVjbqrq4RbdyPHcMI4JIA5LehkStDm5NWpiS6YQ
+         K5LA==
+X-Gm-Message-State: ABuFfogwp/LFDh9H5KVAJpYF4nWi3ae4qqBWPNQ4gd4/16qhKkpL/7Zj
+        FVYxGb7WG4SMEy4/P6NrLKmSYw==
+X-Google-Smtp-Source: ACcGV62AerW4zD9WOR95SWiX25+Ppop4/7tYZBBEDaGXI7syilDhexRCKd2oSyXUGWYAUl8JNhxyfA==
+X-Received: by 2002:aed:3807:: with SMTP id j7-v6mr18635028qte.140.1539644091229;
+        Mon, 15 Oct 2018 15:54:51 -0700 (PDT)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id h66-v6sm6457901qkc.53.2018.10.15.15.54.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 15:54:50 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 18:54:49 -0400 (EDT)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+cc:     Stefan Agner <stefan@agner.ch>, ulli.kroll@googlemail.com,
+        joel@jms.id.au, arnd@arndb.de, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: copypage: do not use naked functions
+In-Reply-To: <20181015224152.GA30658@n2100.armlinux.org.uk>
+Message-ID: <nycvar.YSQ.7.76.1810151843100.1498@knanqh.ubzr>
+References: <20181015222621.14673-1-stefan@agner.ch> <nycvar.YSQ.7.76.1810151831040.1498@knanqh.ubzr> <20181015224152.GA30658@n2100.armlinux.org.uk>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181015192546.15faf3a1@canb.auug.org.au> <20181015182637.GA16445@roeck-us.net>
- <20181016071240.3f62816d@canb.auug.org.au> <CAL_Jsq+DAEEa6i9xb-9MMSxu-znc9tZLZwFRADqE+kcxQYXrTg@mail.gmail.com>
- <20181015211815.GA24993@roeck-us.net> <CAL_JsqKXS0rmmwHgLRDy+6k=GYRt-nFJHJD1A+CkFCDEAEAKvg@mail.gmail.com>
- <20181015221053.GA19822@roeck-us.net> <CAL_JsqLSBE9FFB7=o5bDJ1hxfNP6mAPJ-qXyEVHfY+xwfgDuWw@mail.gmail.com>
- <20181015223424.GA31977@roeck-us.net>
-In-Reply-To: <20181015223424.GA31977@roeck-us.net>
-From:   Rob Herring <robherring2@gmail.com>
-Date:   Mon, 15 Oct 2018 17:52:51 -0500
-Message-ID: <CAL_JsqKLJeTp6-Rjdf=yS1_QWPmHWzW639rxijRRo2TPG4W++Q@mail.gmail.com>
-Subject: Re: linux-next: Tree for Oct 15
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next <linux-next@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 5:34 PM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On Mon, Oct 15, 2018 at 05:13:08PM -0500, Rob Herring wrote:
-> > On Mon, Oct 15, 2018 at 5:10 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> > >
-> > > On Mon, Oct 15, 2018 at 04:48:27PM -0500, Rob Herring wrote:
-> > > > On Mon, Oct 15, 2018 at 4:18 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> > > > >
-> > > > > On Mon, Oct 15, 2018 at 03:35:12PM -0500, Rob Herring wrote:
-> > > > > > On Mon, Oct 15, 2018 at 3:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > > > >
-> > > > > > > Hi Guenter,
-> > > > > > >
-> > > > > > > [Just cc'ing the PPC and devicetree folks]
-> > > > > > >
-> > > > > > > On Mon, 15 Oct 2018 11:26:37 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
-> > > > > > > > >
-> > > > > > > > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
-> > > > > > > >
-> > > > > > > > Same here. Interestingly, this only affects little endian pseries
-> > > > > > > > boots; big endian works fine. I'll try to bisect later.
-> > > > > > > >
-> > > > > > > > ALl ppc qemu tests (including big endian pseries) also generate a warning.
-> > > > > > > >
-> > > > > > > > WARNING: CPU: 0 PID: 0 at mm/memblock.c:1301 .memblock_alloc_range_nid+0x20/0x68
-> > > > > > > > Modules linked in:
-> > > > > > > > CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc7-next-20181015 #1
-> > > > > > > > NIP:  c000000000f99198 LR: c000000000f99490 CTR: c000000000bb8364
-> > > > > > > > REGS: c000000001217a78 TRAP: 0700   Not tainted  (4.19.0-rc7-next-20181015)
-> > > > > > > > MSR:  0000000080021000 <CE,ME>  CR: 24000422  XER: 20000000
-> > > > > > > > IRQMASK: 1
-> > > > > > > > GPR00: c000000000f99490 c000000001217d00 c00000000121a500 00000000000000c0
-> > > > > > > > GPR04: 0000000000000000 0000000000000000 0000000000000000 ffffffffffffffff
-> > > > > > > > GPR08: 0000000000000000 00000000000000c0 0000000000000018 00000000000000b7
-> > > > > > > > GPR12: 0000000000000040 c000000000fe7840 0000000000000000 0000000000000000
-> > > > > > > > GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> > > > > > > > GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> > > > > > > > GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> > > > > > > > GPR28: c000000000000304 c000000001262088 00000000000000c0 c000000000fea500
-> > > > > > > > NIP [c000000000f99198] .memblock_alloc_range_nid+0x20/0x68
-> > > > > > > > LR [c000000000f99490] .memblock_alloc_base+0x18/0x48
-> > > > > > > > Call Trace:
-> > > > > > > > [c000000001217d00] [c000000002a00000] 0xc000000002a00000 (unreliable)
-> > > > > > > > [c000000001217d80] [c000000000f99490] .memblock_alloc_base+0x18/0x48
-> > > > > > > > [c000000001217df0] [c000000000f7a274] .allocate_paca_ptrs+0x3c/0x74
-> > > > > > > > [c000000001217e70] [c000000000f78bf0] .early_init_devtree+0x288/0x320
-> > > > > > > > [c000000001217f10] [c000000000f79b6c] .early_setup+0x80/0x130
-> > > > > > > > [c000000001217f90] [c000000000000528] start_here_multiplatform+0x68/0x80
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > sparc images crash, starting with next-20181009. Bisect with
-> > > > > > > > next-201810112 points to the merge of devicetree/for-next, though
-> > > > > > > > devicetree/for-next itself does not have the problem (bisect log
-> > > > > > > > attached below). The crash is in devicetree code.
-> > > > > > > >
-> > > > > > > > Crash logs:
-> > > > > > > > https://kerneltests.org/builders/qemu-sparc64-next/builds/981/steps/qemubuildcommand_1/logs/stdio
-> > > > > > > > https://kerneltests.org/builders/qemu-sparc-next/builds/975/steps/qemubuildcommand_1/logs/stdio
-> > > > > >
-> > > > > > The sparc crash appears to be related to changes I made. Looking into it.
-> > > > > >
-> > > > >
-> > > > > Let me know if you need me to test anything or do some debugging.
-> > > >
-> > > > Well, I'm not having any luck getting sparc qemu to work. Here's what
-> > > > I'm trying with a sparc32_defconfig kernel:
-> > > >
-> > > > $ qemu-system-sparc -kernel .build-sparc/vmlinux -M SS-4 -nographic -m
-> > > > 256 -no-reboot
-> > > > rom: requested regions overlap (rom phdr #0: .build-sparc/vmlinux.
-> > > > free=0x000000000000057a, addr=0x0000000000000000)
-> > > > qemu-system-sparc: rom check and register reset failed
-> > > >
-> > >
-> > > What is your qemu version ?
-> >
-> > 2.11 from ubuntu 18.04:
-> > QEMU emulator version 2.11.1(Debian 1:2.11+dfsg-1ubuntu7.5)
-> >
->
-> Update: Works for me with
->         QEMU emulator version 2.11.93 (Debian 1:2.12~rc3+dfsg-1)
+On Mon, 15 Oct 2018, Russell King - ARM Linux wrote:
 
-Seems to be some regression in 2.11.1. It works fine with my own build
-with 3.0 based.
+> On Mon, Oct 15, 2018 at 06:35:33PM -0400, Nicolas Pitre wrote:
+> > On Tue, 16 Oct 2018, Stefan Agner wrote:
+> > 
+> > > GCC documentation says naked functions should only use basic ASM
+> > > syntax. The extended ASM or mixture of basic ASM and "C" code is
+> > > not guaranteed. Currently it seems to work though.
+> > > 
+> > > Furthermore with Clang using parameters in extended asm in a
+> > > naked function is not supported:
+> > >   arch/arm/mm/copypage-v4wb.c:47:9: error: parameter references not
+> > >   allowed in naked functions
+> > >         : "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 64));
+> > >                ^
+> > > 
+> > > Use a regular function to be more portable. Also use volatile asm
+> > > to avoid unsolicited optimizations.
+> > > 
+> > > Tested with qemu versatileab machine and versatile_defconfig and
+> > > qemu mainstone machine using pxa_defconfig compiled with GCC 7.2.1
+> > > and Clang 7.0.
+> > > 
+> > > Link: https://github.com/ClangBuiltLinux/linux/issues/90
+> > > Reported-by: Joel Stanley <joel@jms.id.au>
+> > > Signed-off-by: Stefan Agner <stefan@agner.ch>
+> > > ---
+> > >  arch/arm/mm/copypage-fa.c       | 17 +++++++++++------
+> > >  arch/arm/mm/copypage-feroceon.c | 17 +++++++++++------
+> > >  arch/arm/mm/copypage-v4mc.c     | 14 +++++++++-----
+> > >  arch/arm/mm/copypage-v4wb.c     | 17 +++++++++++------
+> > >  arch/arm/mm/copypage-v4wt.c     | 17 +++++++++++------
+> > >  arch/arm/mm/copypage-xsc3.c     | 17 +++++++++++------
+> > >  arch/arm/mm/copypage-xscale.c   | 13 ++++++++-----
+> > >  7 files changed, 72 insertions(+), 40 deletions(-)
+> > > 
+> > > diff --git a/arch/arm/mm/copypage-fa.c b/arch/arm/mm/copypage-fa.c
+> > > index ec6501308c60..33ccd396bf99 100644
+> > > --- a/arch/arm/mm/copypage-fa.c
+> > > +++ b/arch/arm/mm/copypage-fa.c
+> > > @@ -17,11 +17,16 @@
+> > >  /*
+> > >   * Faraday optimised copy_user_page
+> > >   */
+> > > -static void __naked
+> > > -fa_copy_user_page(void *kto, const void *kfrom)
+> > > +static void fa_copy_user_page(void *kto, const void *kfrom)
+> > >  {
+> > > -	asm("\
+> > > -	stmfd	sp!, {r4, lr}			@ 2\n\
+> > > +	register void *r0 asm("r0") = kto;
+> > > +	register const void *r1 asm("r1") = kfrom;
+> > > +
+> > > +	asm(
+> > > +	__asmeq("%0", "r0")
+> > > +	__asmeq("%1", "r1")
+> > > +	"\
+> > > +	stmfd	sp!, {r4}			@ 2\n\
+> > >  	mov	r2, %2				@ 1\n\
+> > >  1:	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
+> > >  	stmia	r0, {r3, r4, ip, lr}		@ 4\n\
+> > > @@ -34,9 +39,9 @@ fa_copy_user_page(void *kto, const void *kfrom)
+> > >  	subs	r2, r2, #1			@ 1\n\
+> > >  	bne	1b				@ 1\n\
+> > >  	mcr	p15, 0, r2, c7, c10, 4		@ 1   drain WB\n\
+> > > -	ldmfd	sp!, {r4, pc}			@ 3"
+> > > +	ldmfd	sp!, {r4}			@ 3"
+> > >  	:
+> > > -	: "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 32));
+> > > +	: "r" (r0), "r" (r1), "I" (PAGE_SIZE / 32));
+> > 
+> > This is still wrong as you list r0 and r1 in the input operand list 
+> > where they must remain constant but the code does modify them. You 
+> > should list them in the output operand list with the "&" attribute. Also 
+> > r2 should be listed in the clobbered list.
+> 
+> Either we keep these as naked functions (and, if Clang wants to
+> try to inline naked functions which makes no sense, also mark them
+> as noinline) or we make them proper functions and also add (eg) r4
+> to the clobber list and get rid of the stacking of that register
+> along with LR/PC.
 
-Rob
+Yes, indeed.
+
+I'd say: remove the naked stuff, and let the compiler do the 
+prologue/epilogue itself (or inline it for that matter). And don't force 
+pointers and counter into particular registers. This way r0-r3 could be 
+used as temporaries since they're probably already clobbered by the call 
+to kmap_atomic() anyway. That is likely to be better than forcing ip/lr 
+as temporaryes.
+
+
+Nicolas
