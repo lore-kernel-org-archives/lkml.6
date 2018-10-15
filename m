@@ -2,74 +2,124 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6F3C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFD7C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E4922083C
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:53:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4F772054F
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 12:55:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QV2BZufm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E4922083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRn0XPuq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4F772054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbeJOUin (ORCPT
+        id S1726605AbeJOUkf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 16:38:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59674 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbeJOUin (ORCPT
+        Mon, 15 Oct 2018 16:40:35 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39890 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbeJOUkf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 16:38:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ye7qdguWGVMxyMFXGZc3mYxNm8/GKTNpe/iAI/SCtS4=; b=QV2BZufmKOTf53vuMKCSaQufu
-        QvYcfWUVnYvkiZFOt1oXs7HDYBMjLr538iYpzEUAFkl4pn9Sa7qFuHBkb8bEef4clo+mwacinPW2T
-        BtJlH5uVYVnn3TlQggyR4P0yYYJOcYyPFUH+03x6tExukzvmcq+AK6KI/mEKAK3IVe14vCFmp714r
-        jC9q5BXQic0xJqxA9vdYsQa5udR9Buz4wtW/6rrt7WEYDrc/HdKoShfTf+rnK8n30lH0BEI8c+hiv
-        cYgirtyBSi2S7k7n9OLQW+QEvCQPIl8lp2cbvAb2KKzZuU5q88ZBiBlEdgR8K0rap/BC4KYWtnd+7
-        U9AjsK6Fg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gC2NF-0002cR-7y; Mon, 15 Oct 2018 12:53:29 +0000
-Date:   Mon, 15 Oct 2018 05:53:29 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     Finn Thain <fthain@telegraphics.com.au>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        linux-scsi@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] esp_scsi: De-duplicate PIO routines
-Message-ID: <20181015125329.GA8952@infradead.org>
-References: <cover.1539497520.git.fthain@telegraphics.com.au>
- <d5fe773ea8c922631836dad2ef2dbb952672c7c7.1539497520.git.fthain@telegraphics.com.au>
- <35ac9f31-7068-ab93-4629-363ee0bb4c70@suse.de>
- <alpine.LNX.2.21.1810151717520.10@nippy.intranet>
- <2b48c925-73f0-0ca0-2f3c-3c35d90010ba@suse.de>
+        Mon, 15 Oct 2018 16:40:35 -0400
+Received: by mail-pf1-f195.google.com with SMTP id c25-v6so9641283pfe.6
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 05:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/x9N+jHuRDPh9uNIhuTAZo2ZBNrX1Px7aajGfuqtLnw=;
+        b=CRn0XPuqKVSOWeuVV/h1F46pS+jLj0/tNYzlS0gI08/kybMx4OBZL94XpoGF+L9fbG
+         hqG2O9jhx2bmDqMLBr404JsgVzUEOhYIC29p537v8t40dr3Ap9k/tb3TegyXXueT7Pu5
+         1Mo5zOi6/7jDbi+OxSrkSezFx9JcbNSE1tJc0TeZpApuql2m5Svbx6kJYax8jS5dJtgT
+         AlXKAbQCzvBe7UhhW7RqDHaib2fWFsE3quolZs8+3waQVG8HL7ViKZ8ies15IeGK4dO6
+         Vb+V/XiuVnRDl2BI8/2cx86C0QzA/uBsKk4AiHZMrg/+fR7Cpbfh3yOcxRA2aqHbuJrG
+         oU7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/x9N+jHuRDPh9uNIhuTAZo2ZBNrX1Px7aajGfuqtLnw=;
+        b=mLXc+ueTLwV07AnFWEfXF2OMMQ5HHUT8zWibU6X9K6UWKPJ0vpPrymBYRq4ER4D+oh
+         Iau3dA5lyh7jyXhSSvWsbs9lO7Jn5EKIT+eWHi8mhGgiBckRef2hZdylhhC8942nmHbV
+         VOZTbg00LmDM2sB6WW9Farcv3ZkhOOessobIFlUY5lcborxGFxP0h2ECSnM2cRdPtm5j
+         DRgE16YUCPyWEkQpn7Pj4kubD8a48nuzl9ZQ3jyrCFzEVm7PldzxE4mvNf8k9wYbeUps
+         W2SD7dHSI2w+h7CFZrtQcgP6VyCm4qJeGDWlJIo6SNTYdyK/Zlhl7GOoAcM/M9UBwalv
+         ocUQ==
+X-Gm-Message-State: ABuFfojwsZfUGMFjZgTaTEr4iqQq1//0W0kpdVw2SbVDxRBSmIxDzw0f
+        EHeQua8GfbNjm3FSy71azsKigJaG
+X-Google-Smtp-Source: ACcGV62UkUs//LgIkagv8TQ5boUUlcZ37uQ44p5p9z3dizjUGEx2f7wtMQeIEoa/LR5LhWztFoz+WQ==
+X-Received: by 2002:a63:4243:: with SMTP id p64-v6mr16232154pga.127.1539608123173;
+        Mon, 15 Oct 2018 05:55:23 -0700 (PDT)
+Received: from [192.168.0.123] ([49.207.50.246])
+        by smtp.gmail.com with ESMTPSA id s13-v6sm23847975pgs.76.2018.10.15.05.55.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 05:55:22 -0700 (PDT)
+From:   "Aneesh Kumar K.V" <aneeshkumar.opensource@gmail.com>
+X-Google-Original-From: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH] powerpc/book3s64: fix dump_linuxpagetables "present" flag
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <23d27ae15a7b0389fc26f2265f969c6c69f44009.1539433567.git.christophe.leroy@c-s.fr>
+Message-ID: <1efceec5-7748-6aa8-66d4-a7dfcbc44649@linux.ibm.com>
+Date:   Mon, 15 Oct 2018 18:25:18 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2b48c925-73f0-0ca0-2f3c-3c35d90010ba@suse.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <23d27ae15a7b0389fc26f2265f969c6c69f44009.1539433567.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 12:58:42PM +0200, Hannes Reinecke wrote:
-> However, the function declaration really is a worry, as the actual function
-> body only exists when the config option is enabled.
+On 10/15/18 12:07 PM, Christophe Leroy wrote:
+> Since commit bd0dbb73e013 ("powerpc/mm/books3s: Add new pte bit to
+> mark pte temporarily invalid."), _PAGE_PRESENT doesn't mean exactly
+> that a page is present. A page is also considered preset when
+> _PAGE_INVALID is set.
+> 
+> This patch changes the meaning of "present" and adds a status "valid"
+> associated to the _PAGE_PRESENT flag.
+> 
 
-Having a prototype without an implementation is no problem at all.
-We have this case all over the kernel, either intentionally to keep
-things simple or due to bitrot.
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+
+> Fixes: bd0dbb73e013 ("powerpc/mm/books3s: Add new pte bit to mark pte temporarily invalid.")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>   arch/powerpc/mm/dump_linuxpagetables-book3s64.c | 9 +++++++--
+>   1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/mm/dump_linuxpagetables-book3s64.c b/arch/powerpc/mm/dump_linuxpagetables-book3s64.c
+> index a637e612b205..ed6fcf78256e 100644
+> --- a/arch/powerpc/mm/dump_linuxpagetables-book3s64.c
+> +++ b/arch/powerpc/mm/dump_linuxpagetables-book3s64.c
+> @@ -38,8 +38,13 @@ static const struct flag_info flag_array[] = {
+>   	}, {
+>   		.mask	= _PAGE_PRESENT,
+>   		.val	= _PAGE_PRESENT,
+> -		.set	= "present",
+> -		.clear	= "       ",
+> +		.set	= "valid",
+> +		.clear	= "     ",
+> +	}, {
+> +		.mask	= _PAGE_PRESENT | _PAGE_INVALID,
+> +		.val	= 0,
+> +		.set	= "       ",
+> +		.clear	= "present",
+>   	}, {
+>   		.mask	= H_PAGE_HASHPTE,
+>   		.val	= H_PAGE_HASHPTE,
+> 
+
