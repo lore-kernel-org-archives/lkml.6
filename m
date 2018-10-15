@@ -2,285 +2,190 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E0EC28CF8
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE4EC7112A
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8922204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:25:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8922204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by mail.kernel.org (Postfix) with ESMTP id 528EA2064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 06:26:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 528EA2064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726499AbeJOOJG (ORCPT
+        id S1726561AbeJOOKG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 10:09:06 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:35006 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbeJOOJG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 10:09:06 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id DDCEC23EF2;
-        Mon, 15 Oct 2018 02:25:11 -0400 (EDT)
-Date:   Mon, 15 Oct 2018 17:25:10 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Hannes Reinecke <hare@suse.de>
-cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        linux-scsi@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] esp_scsi: De-duplicate PIO routines
-In-Reply-To: <35ac9f31-7068-ab93-4629-363ee0bb4c70@suse.de>
-Message-ID: <alpine.LNX.2.21.1810151717520.10@nippy.intranet>
-References: <cover.1539497520.git.fthain@telegraphics.com.au> <d5fe773ea8c922631836dad2ef2dbb952672c7c7.1539497520.git.fthain@telegraphics.com.au> <35ac9f31-7068-ab93-4629-363ee0bb4c70@suse.de>
+        Mon, 15 Oct 2018 10:10:06 -0400
+Received: from mga04.intel.com ([192.55.52.120]:43856 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726164AbeJOOKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 10:10:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2018 23:26:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,383,1534834800"; 
+   d="scan'208";a="271361657"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga005.fm.intel.com with ESMTP; 14 Oct 2018 23:26:14 -0700
+Received: from [10.125.251.255] (unknown [10.125.251.255])
+        by linux.intel.com (Postfix) with ESMTP id B2057580113;
+        Sun, 14 Oct 2018 23:26:11 -0700 (PDT)
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v14 0/3]: perf: reduce data loss when profiling highly
+ parallel CPU bound workloads
+Organization: Intel Corp.
+Message-ID: <d6bd3626-8c7c-ca12-8adf-31fe15726446@linux.intel.com>
+Date:   Mon, 15 Oct 2018 09:26:09 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Oct 2018, Hannes Reinecke wrote:
 
-> On 10/14/18 8:12 AM, Finn Thain wrote:
-> > As a temporary measure, the code to implement PIO transfers was
-> > duplicated in zorro_esp and mac_esp. Now that it has stabilized
-> > move the common code into the core driver but don't build it unless
-> > needed.
-> > 
-> > This replaces the inline assembler with more portable writesb() calls.
-> > Optimizing the m68k writesb() implementation is a separate patch.
-> > 
-> > Tested-by: Stan Johnson <userm57@yahoo.com>
-> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> > Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-> > ---
-> > Changed since v1:
-> >   - Use shost_printk() instead of pr_err().
-> >   - Add new symbol CONFIG_SCSI_ESP_PIO to Kconfig.
-> > ---
-> >   drivers/scsi/Kconfig     |   6 +
-> >   drivers/scsi/esp_scsi.c  | 128 +++++++++++++++++++++
-> >   drivers/scsi/esp_scsi.h  |   5 +
-> >   drivers/scsi/mac_esp.c   | 173 +----------------------------
-> >   drivers/scsi/zorro_esp.c | 232 ++++++---------------------------------
-> >   5 files changed, 179 insertions(+), 365 deletions(-)
-> > 
-> > diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-> > index 35c909bbf8ba..81c6872f24f8 100644
-> > --- a/drivers/scsi/Kconfig
-> > +++ b/drivers/scsi/Kconfig
-> > @@ -42,6 +42,10 @@ config SCSI_DMA
-> >   	bool
-> >   	default n
-> >   +config SCSI_ESP_PIO
-> > +	bool
-> > +	default n
-> > +
-> >   config SCSI_NETLINK
-> >   	bool
-> >   	default	n
-> > @@ -1355,6 +1359,7 @@ config SCSI_ZORRO_ESP
-> >   	tristate "Zorro ESP SCSI support"
-> >   	depends on ZORRO && SCSI
-> >   	select SCSI_SPI_ATTRS
-> > +	select SCSI_ESP_PIO
-> >   	help
-> >   	  Support for various NCR53C9x (ESP) based SCSI controllers on Zorro
-> >   	  expansion boards for the Amiga.
-> > @@ -1397,6 +1402,7 @@ config SCSI_MAC_ESP
-> >   	tristate "Macintosh NCR53c9[46] SCSI"
-> >   	depends on MAC && SCSI
-> >   	select SCSI_SPI_ATTRS
-> > +	select SCSI_ESP_PIO
-> >   	help
-> >   	  This is the NCR 53c9x SCSI controller found on most of the 68040
-> >   	  based Macintoshes.
-> > diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
-> > index 6ccaf818357e..305a322ad13c 100644
-> > --- a/drivers/scsi/esp_scsi.c
-> > +++ b/drivers/scsi/esp_scsi.c
-> > @@ -2776,3 +2776,131 @@ MODULE_PARM_DESC(esp_debug,
-> >     module_init(esp_init);
-> >   module_exit(esp_exit);
-> > +
-> > +#ifdef CONFIG_SCSI_ESP_PIO
-> > +static inline unsigned int esp_wait_for_fifo(struct esp *esp)
-> > +{
-> > +	int i = 500000;
-> > +
-> > +	do {
-> > +		unsigned int fbytes = esp_read8(ESP_FFLAGS) & ESP_FF_FBYTES;
-> > +
-> > +		if (fbytes)
-> > +			return fbytes;
-> > +
-> > +		udelay(2);
-> > +	} while (--i);
-> > +
-> > +	shost_printk(KERN_ERR, esp->host, "FIFO is empty (sreg %02x)\n",
-> > +		     esp_read8(ESP_STATUS));
-> > +	return 0;
-> > +}
-> > +
-> > +static inline int esp_wait_for_intr(struct esp *esp)
-> > +{
-> > +	int i = 500000;
-> > +
-> > +	do {
-> > +		esp->sreg = esp_read8(ESP_STATUS);
-> > +		if (esp->sreg & ESP_STAT_INTR)
-> > +			return 0;
-> > +
-> > +		udelay(2);
-> > +	} while (--i);
-> > +
-> > +	shost_printk(KERN_ERR, esp->host, "IRQ timeout (sreg %02x)\n",
-> > +		     esp->sreg);
-> > +	return 1;
-> > +}
-> > +
-> > +#define ESP_FIFO_SIZE 16
-> > +
-> > +void esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
-> > +		      u32 dma_count, int write, u8 cmd)
-> > +{
-> > +	u8 phase = esp->sreg & ESP_STAT_PMASK;
-> > +
-> > +	cmd &= ~ESP_CMD_DMA;
-> > +	esp->send_cmd_error = 0;
-> > +
-> > +	if (write) {
-> > +		u8 *dst = (u8 *)addr;
-> > +		u8 mask = ~(phase == ESP_MIP ? ESP_INTR_FDONE :
-> > ESP_INTR_BSERV);
-> > +
-> > +		scsi_esp_cmd(esp, cmd);
-> > +
-> > +		while (1) {
-> > +			if (!esp_wait_for_fifo(esp))
-> > +				break;
-> > +
-> > +			*dst++ = esp_read8(ESP_FDATA);
-> > +			--esp_count;
-> > +
-> > +			if (!esp_count)
-> > +				break;
-> > +
-> > +			if (esp_wait_for_intr(esp)) {
-> > +				esp->send_cmd_error = 1;
-> > +				break;
-> > +			}
-> > +
-> > +			if ((esp->sreg & ESP_STAT_PMASK) != phase)
-> > +				break;
-> > +
-> > +			esp->ireg = esp_read8(ESP_INTRPT);
-> > +			if (esp->ireg & mask) {
-> > +				esp->send_cmd_error = 1;
-> > +				break;
-> > +			}
-> > +
-> > +			if (phase == ESP_MIP)
-> > +				scsi_esp_cmd(esp, ESP_CMD_MOK);
-> > +
-> > +			scsi_esp_cmd(esp, ESP_CMD_TI);
-> > +		}
-> > +	} else {
-> > +		unsigned int n = ESP_FIFO_SIZE;
-> > +		u8 *src = (u8 *)addr;
-> > +
-> > +		scsi_esp_cmd(esp, ESP_CMD_FLUSH);
-> > +
-> > +		if (n > esp_count)
-> > +			n = esp_count;
-> > +		writesb(esp->fifo_reg, src, n);
-> > +		src += n;
-> > +		esp_count -= n;
-> > +
-> > +		scsi_esp_cmd(esp, cmd);
-> > +
-> > +		while (esp_count) {
-> > +			if (esp_wait_for_intr(esp)) {
-> > +				esp->send_cmd_error = 1;
-> > +				break;
-> > +			}
-> > +
-> > +			if ((esp->sreg & ESP_STAT_PMASK) != phase)
-> > +				break;
-> > +
-> > +			esp->ireg = esp_read8(ESP_INTRPT);
-> > +			if (esp->ireg & ~ESP_INTR_BSERV) {
-> > +				esp->send_cmd_error = 1;
-> > +				break;
-> > +			}
-> > +
-> > +			n = ESP_FIFO_SIZE -
-> > +			    (esp_read8(ESP_FFLAGS) & ESP_FF_FBYTES);
-> > +
-> > +			if (n > esp_count)
-> > +				n = esp_count;
-> > +			writesb(esp->fifo_reg, src, n);
-> > +			src += n;
-> > +			esp_count -= n;
-> > +
-> > +			scsi_esp_cmd(esp, ESP_CMD_TI);
-> > +		}
-> > +	}
-> > +
-> > +	esp->send_cmd_residual = esp_count;
-> > +}
-> > +EXPORT_SYMBOL(esp_send_pio_cmd);
-> > +#endif
-> > diff --git a/drivers/scsi/esp_scsi.h b/drivers/scsi/esp_scsi.h
-> > index d0c032803749..2590e5eda595 100644
-> > --- a/drivers/scsi/esp_scsi.h
-> > +++ b/drivers/scsi/esp_scsi.h
-> > @@ -431,6 +431,7 @@ struct esp_driver_ops {
-> >   struct esp {
-> >   	void __iomem		*regs;
-> >   	void __iomem		*dma_regs;
-> > +	u8 __iomem		*fifo_reg;
-> >     	const struct esp_driver_ops *ops;
-> >   @@ -540,6 +541,7 @@ struct esp {
-> >   	void			*dma;
-> >   	int			dmarev;
-> >   +	int			send_cmd_error;
-> >   	int			send_cmd_residual;
-> >   };
-> >   
-> These variables are only used within esp_send_pio_cmd(); consider making them
-> conditional based on the config option.
-> 
+Currently in record mode the tool implements trace writing serially. 
+The algorithm loops over mapped per-cpu data buffers and stores 
+ready data chunks into a trace file using write() system call.
 
-In the case of send_cmd_residual, that would mean a second #ifdef added to 
-esp_data_bytes_sent() where it gets used. I'm happy to comply but I fear 
-that all these #ifdefs may harm readability...
+At some circumstances the kernel may lack free space in a buffer 
+because the other buffer's half is not yet written to disk due to 
+some other buffer's data writing by the tool at the moment.
 
-There are already other variables in struct esp that may go unused, such 
-as dma_regs, that don't have #ifdefs to elide them. Are these also 
-problematic in some way?
+Thus serial trace writing implementation may cause the kernel 
+to loose profiling data and that is what observed when profiling 
+highly parallel CPU bound workloads on machines with big number 
+of cores.
 
-Thanks for your review.
+Experiment with profiling matrix multiplication code executing 128 
+threads on Intel Xeon Phi (KNM) with 272 cores, like below,
+demonstrates data loss metrics value of 98%:
 
--- 
+/usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
+    --call-graph dwarf,1024 --user-regs=IP,SP,BP --switch-events \
+    -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
+    matrix.gcc
 
-> > @@ -581,4 +583,7 @@ extern void scsi_esp_unregister(struct esp *);
-> >   extern irqreturn_t scsi_esp_intr(int, void *);
-> >   extern void scsi_esp_cmd(struct esp *, u8);
-> >   +extern void esp_send_pio_cmd(struct esp *esp, u32 dma_addr, u32
-> > esp_count,
-> > +			     u32 dma_count, int write, u8 cmd);
-> > +
-> >   #endif /* !(_ESP_SCSI_H) */
-> Same here; the declaration only makes sense when the config option is set.
-> 
-> Cheers,
-> 
-> Hannes
-> 
+Data loss metrics is the ratio lost_time/elapsed_time where 
+lost_time is the sum of time intervals containing PERF_RECORD_LOST 
+records and elapsed_time is the elapsed application run time 
+under profiling.
+
+Applying asynchronous trace streaming thru Posix AIO API [1] lowers 
+data loss metrics value providing 2x improvement (from 98% to ~1%)
+
+Asynchronous trace streaming is currently limited to glibc linkage.
+musl libc [5] also provides Posix AIO API implementation, however 
+the patchkit is not tested with it. There may be other libc libraries 
+linked by Perf tool that currently lack Posix AIO API support [2], 
+[3], [4] so NO_AIO define may be used to limit Perf tool binary to 
+serial streaming only.
+
+---
+ Alexey Budankov (3):
+	perf util: map data buffer for preserving collected data
+	perf record: enable asynchronous trace writing
+	perf record: extend trace writing to multi AIO
+
+ tools/perf/Documentation/perf-record.txt |   5 +
+ tools/perf/Makefile.config               |   5 +
+ tools/perf/Makefile.perf                 |   7 +-
+ tools/perf/builtin-record.c              | 252 ++++++++++++++++++++++++++++++-
+ tools/perf/perf.h                        |   1 +
+ tools/perf/util/evlist.c                 |   6 +-
+ tools/perf/util/evlist.h                 |   2 +-
+ tools/perf/util/mmap.c                   | 146 +++++++++++++++++-
+ tools/perf/util/mmap.h                   |  26 +++-
+ 9 files changed, 439 insertions(+), 11 deletions(-)
+
+---
+ Changes in v14:
+ - implement default nr_cblocks_default variable
+ - fix --aio option handling
+ Changes in v13:
+ - named new functions with _aio_ word
+ - grouped aio functions under single #ifdef HAVE_AIO_SUPPORT
+ - moved perf_mmap__aio_push() stub into header
+ - removed trailed white space
+ Changes in v12:
+ - applied stub functions design for the whole patch kit
+ - grouped AIO related data into a struct under struct perf_mmap
+ - implemented record__aio_get/set_pos(), record__aio_enabled()
+ - implemented simple --aio option
+ - extended --aio option to --aio-cblocks=<n>
+ Changes in v11:
+ - replacing the both lseek() syscalls in every loop iteration by the only 
+   two syscalls just before and after the loop at record__mmap_read_evlist() 
+   and advancing *in-flight* off file pos value at perf_mmap__aio_push()
+ Changes in v10:
+ - moved specific code to perf_mmap__aio_mmap(), perf_mmap__aio_munmap();
+ - adjusted error reporting by using %m
+ - avoided lseek() setting file pos back in case of record__aio_write() failure
+ - compacted code selecting between serial and AIO streaming
+ - optimized call places of record__mmap_read_sync()
+ - added description of aio-cblocks option into perf-record.txt
+ Changes in v9:
+ - enable AIO streaming only when --aio-cblocks option is specified explicitly
+ - enable AIO based implementation when linking with glibc only
+ - define NO_AIO to limit Perf binary to serial implementation
+ Changes in v8:
+ - run the whole thing thru checkpatch.pl and corrected found issues except
+   lines longer than 80 symbols
+ - corrected comments alignment and formatting
+ - moved multi AIO implementation into 3rd patch in the series
+ - implemented explicit cblocks array allocation
+ - split AIO completion check into separate record__aio_complete()
+ - set nr_cblocks default to 1 and max allowed value to 4
+ Changes in v7:
+ - implemented handling record.aio setting from perfconfig file
+ Changes in v6:
+ - adjusted setting of priorities for cblocks;
+ - handled errno == EAGAIN case from aio_write() return;
+ Changes in v5:
+ - resolved livelock on perf record -e intel_pt// -- dd if=/dev/zero of=/dev/null count=100000
+ - data loss metrics decreased from 25% to 2x in trialed configuration;
+ - reshaped layout of data structures;
+ - implemented --aio option;
+ - avoided nanosleep() prior calling aio_suspend();
+ - switched to per-cpu aio multi buffer record__aio_sync();
+ - record_mmap_read_sync() now does global sync just before 
+   switching trace file or collection stop;
+ Changes in v4:
+ - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management
+ - converted void *bf to struct perf_mmap *md in signatures
+ - written comment in perf_mmap__push() just before perf_mmap__get();
+ - written comment in record__mmap_read_sync() on possible restarting 
+   of aio_write() operation and releasing perf_mmap object after all;
+ - added perf_mmap__put() for the cases of failed aio_write();
+ Changes in v3:
+ - written comments about nanosleep(0.5ms) call prior aio_suspend()
+   to cope with intrusiveness of its implementation in glibc;
+ - written comments about rationale behind coping profiling data 
+   into mmap->data buffer;
+ Changes in v2:
+ - converted zalloc() to calloc() for allocation of mmap_aio array,
+ - cleared typo and adjusted fallback branch code;
+
+---
+
+[1] http://man7.org/linux/man-pages/man7/aio.7.html
+[2] https://android.googlesource.com/platform/bionic/+/master/docs/status.md
+[3] https://www.uclibc.org/
+[4] https://uclibc-ng.org/
+[5] https://www.musl-libc.org/
