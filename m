@@ -2,76 +2,85 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6704C04EBC
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C43C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964D1208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:42:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Cg+VUp0F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964D1208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E5A0208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 22:45:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E5A0208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbeJPG37 (ORCPT
+        id S1727045AbeJPGcT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 02:29:59 -0400
-Received: from a9-99.smtp-out.amazonses.com ([54.240.9.99]:38974 "EHLO
-        a9-99.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726430AbeJPG37 (ORCPT
+        Tue, 16 Oct 2018 02:32:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34470 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726896AbeJPGcS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:29:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1539643362;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=fxwTb3fk5HcRMMz3gZbp/wY+XTqd89yTalFzAi/JmD0=;
-        b=Cg+VUp0FPr6jerpxJQImbd5IpH1gPZRFZ/Tdha8pDJtH3OUtdBr/QZ58WZfYtzJM
-        6D2Ps5mGx/6fgrjKqOljf1DgwN5nbw4/IfViHgU8LKPDiWZZA2O28Ir/AllxkFE3P7B
-        RDs/3r3EgUet5RdrnvTBEvImsxIi9RnfD/g/YIAk=
-Date:   Mon, 15 Oct 2018 22:42:42 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
+        Tue, 16 Oct 2018 02:32:18 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C42C11B95;
+        Mon, 15 Oct 2018 22:45:00 +0000 (UTC)
+Date:   Mon, 15 Oct 2018 15:44:59 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
 To:     David Rientjes <rientjes@google.com>
-cc:     Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [patch] mm, slab: avoid high-order slab pages when it does not
- reduce waste
-In-Reply-To: <alpine.DEB.2.21.1810121424420.116562@chino.kir.corp.google.com>
-Message-ID: <0100016679e54c6e-67ca8716-c95e-427f-aec9-a5bee5e84792-000000@email.amazonses.com>
-References: <alpine.DEB.2.21.1810121424420.116562@chino.kir.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
+ mappings
+Message-Id: <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
+In-Reply-To: <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
+References: <20180925120326.24392-2-mhocko@kernel.org>
+        <alpine.DEB.2.21.1810041302330.16935@chino.kir.corp.google.com>
+        <20181005073854.GB6931@suse.de>
+        <alpine.DEB.2.21.1810051320270.202739@chino.kir.corp.google.com>
+        <20181005232155.GA2298@redhat.com>
+        <alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com>
+        <20181009094825.GC6931@suse.de>
+        <20181009122745.GN8528@dhcp22.suse.cz>
+        <20181009130034.GD6931@suse.de>
+        <20181009142510.GU8528@dhcp22.suse.cz>
+        <20181009230352.GE9307@redhat.com>
+        <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com>
+        <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.10.15-54.240.9.99
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 12 Oct 2018, David Rientjes wrote:
+On Mon, 15 Oct 2018 15:30:17 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
 
-> @@ -1803,6 +1804,20 @@ static size_t calculate_slab_order(struct kmem_cache *cachep,
->  		 */
->  		if (left_over * 8 <= (PAGE_SIZE << gfporder))
->  			break;
-> +
-> +		/*
-> +		 * If a higher gfporder would not reduce internal fragmentation,
-> +		 * no need to continue.  The preference is to keep gfporder as
-> +		 * small as possible so slab allocations can be served from
-> +		 * MIGRATE_UNMOVABLE pcp lists to avoid stranding.
-> +		 */
+> At the risk of beating a dead horse that has already been beaten, what are 
+> the plans for this patch when the merge window opens?
 
-I think either go for order 0 (because then you can use the pcp lists) or
-go as high as possible (then you can allocator larger memory areas with a
-single pass through the page allocator).
+I'll hold onto it until we've settled on something.  Worst case,
+Andrea's original is easily backportable.
 
-But then I am not sure that the whole approach will do any good.
+>  It would be rather 
+> unfortunate for us to start incurring a 14% increase in access latency and 
+> 40% increase in fault latency.
 
+Yes.
+
+>  Would it be possible to test with my 
+> patch[*] that does not try reclaim to address the thrashing issue?
+
+Yes please.
+
+And have you been able to test it with the sort of workloads which
+Andrea is attempting to address?
