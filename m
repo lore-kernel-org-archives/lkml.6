@@ -2,156 +2,229 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2951DC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D4AC04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B34D1208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:24:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EE07208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 20:26:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GcXk6ShA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B34D1208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHi3BS+N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE07208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbeJPELe (ORCPT
+        id S1726586AbeJPENG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 00:11:34 -0400
-Received: from ozlabs.org ([203.11.71.1]:54777 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725917AbeJPELe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 00:11:34 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42Yqfy2h5Hz9s9J;
-        Tue, 16 Oct 2018 07:24:42 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539635082;
-        bh=Lz4ij2tyxiZO7V+1Ri/ommqQAIxbC9spWXjAfQr67nQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GcXk6ShAIMFdCPHfBKMVomwqmpgAXuKfZQ2h5o9mZKvDjReEdSQ6mnDGmM7uadtR1
-         huBQk0zXsgVj19qckHm3Sic/zLBNoa6590Srog9GbW6CWuoIU5gtPJPvKehkVqN7BJ
-         BBuAjTFEvypcuVo1jsphU+QEh0TO0UT4qBq94tzYQALncnCsh+cKgTdo/KOxrwyOHA
-         RPBwr3gUcKGlClGrMGrt/B+2d1U0MMfocxkY+NSRMEYV3zlyTAughNeP/bqs6hj/0G
-         z+0hEpjhqeu4aCi0/dF0t3mi4WQwXd4xY83qz1pIpBgOtBPBtgb5sGKEciOjplxoAJ
-         29U1OEk/ootIg==
-Date:   Tue, 16 Oct 2018 07:24:39 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Rob Herring <robherring2@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for Oct 15
-Message-ID: <20181016072439.42613abd@canb.auug.org.au>
-In-Reply-To: <20181016071240.3f62816d@canb.auug.org.au>
-References: <20181015192546.15faf3a1@canb.auug.org.au>
-        <20181015182637.GA16445@roeck-us.net>
-        <20181016071240.3f62816d@canb.auug.org.au>
+        Tue, 16 Oct 2018 00:13:06 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34919 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbeJPENG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 00:13:06 -0400
+Received: by mail-qt1-f195.google.com with SMTP id d21-v6so10697738qtq.2;
+        Mon, 15 Oct 2018 13:26:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oCi3FVp5ocBY6c4z7IFq967pE+pliNEr3UNCzwjPnio=;
+        b=SHi3BS+NiA6YPq0VLkVZWJqvd92wjSCPHkQYdCOSQEPDVyPNs3aZ2YR66ROPN3Tj6H
+         3tp4aZe1blgkSKLUp4iidNz7V2y1pavjYjKLMSldSOhZs2rpIhR5PyRpVLwOCmRu2swX
+         4U3bIP0THvLorSX8pkJLQU5vTbvdEwoVBbUWBT7gtHYJNmZL0jRbBzGGOoA04tDShkrb
+         +LULEOJr1SfiuBJmL3+xov/vIhA4XqtoGECLz+wnM06AhhTqcY8uEN4eYbLEisFa/Txi
+         uLKwqSy6hRthkOUGm1XfrtWq5ND+FO6JXLXGyiplrKexa4SdjtxdquqNS4vXJjIgyjc2
+         DimA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oCi3FVp5ocBY6c4z7IFq967pE+pliNEr3UNCzwjPnio=;
+        b=PZt4C2TFha/SVln/Yku9rIISDRkEH6pei71AeZ2Z+FWBDfF8qAe+RnUJ2PWJ0tLskm
+         E6aqENOfV23mM+A6V/9W0Qr2JDRVzU3JU2IpsI6HJTQDbK6ryLZ/gYuymllv4vnet/04
+         jOcxXjeK9uuPmaG0WCvPukFOAxZxUFuHlg6yhswm/GleYjBFvhYnuVxMDcxLo5snZS0/
+         89bMQWPinNjV8kAlV0BHnsYBQi5Io5G1S2rpaycJkWe732SmmGHHPG4dn+tl7R3wt5VP
+         BhrkLazhR7AOe6LK2sKHMrV2SE6UCSCp9zGsyKFjCe0e0M/NHnZ3h9sCbPRQWJbdrRFr
+         84AA==
+X-Gm-Message-State: ABuFfojywIQvNljEps2Bd/74CMRiCkji/lKuTPKNXBSzKDePPttQ6cI1
+        izxv7TraKGdq9NndjwtqTA==
+X-Google-Smtp-Source: ACcGV62KSApkwIV39hYTvU2ftAKajeNWRgSIZdqSegEd2wO4U+6dAIcuWyDFEZ0fhrxcBSTmFDA9Ig==
+X-Received: by 2002:a0c:9377:: with SMTP id e52mr18709367qve.73.1539635176394;
+        Mon, 15 Oct 2018 13:26:16 -0700 (PDT)
+Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id a72-v6sm6046369qkc.19.2018.10.15.13.26.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 13:26:16 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 16:26:09 -0400
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, rjw@rjwysocki.net,
+        lenb@kernel.org, ard.biesheuvel@linaro.org,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v8 1/3] x86/boot: Add acpitb.c to parse acpi tables
+Message-ID: <20181015202609.gs6jownxbevs4vzr@gabell>
+References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
+ <20181010084119.17539-2-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/hFNmF3Jj0D7c+SX.8sV79qt"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010084119.17539-2-fanc.fnst@cn.fujitsu.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/hFNmF3Jj0D7c+SX.8sV79qt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Chao,
 
-Hi all,
+Let me add some suggestions.
 
-On Tue, 16 Oct 2018 07:12:40 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Mon, 15 Oct 2018 11:26:37 -0700 Guenter Roeck <linux@roeck-us.net> wro=
-te:
-> >
-> > ALl ppc qemu tests (including big endian pseries) also generate a warni=
-ng.
-> >=20
-> > WARNING: CPU: 0 PID: 0 at mm/memblock.c:1301 .memblock_alloc_range_nid+=
-0x20/0x68
+On Wed, Oct 10, 2018 at 04:41:17PM +0800, Chao Fan wrote:
+> There is a bug that kaslr may randomly chooses some positions
+> which are located in movable memory regions. This will break memory
+> hotplug feature and make the movable memory chosen by KASLR can't be
+> removed. So dig SRAT table from ACPI tables to get memory information.
+> 
+> Imitate the ACPI code of parsing ACPI tables to dig and read ACPI
+> tables. Since some operations are not needed here, functions are
+> simplified. Functions will be used to dig only SRAT tables to get
+> information of memory, so that KASLR can the memory in immovable node.
+> 
+> And also, these functions won't influence the initialization of
+> ACPI after start_kernel().
+> 
+> Since use physical address directely, so acpi_os_map_memory()
+> and acpi_os_unmap_memory() are not needed.
+> 
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/boot/compressed/Makefile |   2 +
+>  arch/x86/boot/compressed/acpitb.c | 405 ++++++++++++++++++++++++++++++
+>  arch/x86/boot/compressed/misc.h   |   8 +
+>  3 files changed, 415 insertions(+)
+>  create mode 100644 arch/x86/boot/compressed/acpitb.c
+> 
+...cut...
+> +static struct acpi_table_header *get_acpi_srat_table(void)
+> +{
+> +	char *args = (char *)get_cmd_line_ptr();
+> +	acpi_physical_address acpi_table;
+> +	acpi_physical_address root_table;
+> +	struct acpi_table_header *header;
+> +	struct acpi_table_rsdp *rsdp;
+> +	char *signature;
+> +	u8 *entry;
+> +	u32 count;
+> +	u32 size;
+> +	int i, j;
+> +	u32 len;
+> +
+> +	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
+> +	if (!rsdp)
+> +		return NULL;
+> +
+> +	/* Get rsdt or xsdt from rsdp. */
+> +	if (!strstr(args, "acpi=rsdt") &&
+> +	    rsdp->xsdt_physical_address && rsdp->revision > 1) {
+> +		root_table = rsdp->xsdt_physical_address;
+> +		size = ACPI_XSDT_ENTRY_SIZE;
+> +	} else {
+> +		root_table = rsdp->rsdt_physical_address;
+> +		size = ACPI_RSDT_ENTRY_SIZE;
+> +	}
+> +
+> +	/* Get ACPI root table from rsdt or xsdt.*/
+> +	header = (struct acpi_table_header *)root_table;
+> +	len = header->length;
+> +	count = (u32)((len - sizeof(struct acpi_table_header)) / size);
+> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
+> +
+> +	for (i = 0; i < count; i++) {
+> +		u64 address64;
+> +
+> +		if (size == ACPI_RSDT_ENTRY_SIZE)
+> +			acpi_table = ((acpi_physical_address)
+> +				      (*ACPI_CAST_PTR(u32, entry)));
+> +		else {
+> +			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
+> +			acpi_table = (acpi_physical_address) address64;
+> +		}
+> +
+> +		if (acpi_table) {
+> +			header = (struct acpi_table_header *)acpi_table;
 
-That is:
+> +			signature = header->signature;
+> +
+> +			if (!strncmp(signature, "SRAT", 4))
 
-static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
-                                        phys_addr_t align, phys_addr_t star=
-t,
-                                        phys_addr_t end, int nid,
-                                        enum memblock_flags flags)
-{
-       if (WARN_ON_ONCE(!align))
-                align =3D SMP_CACHE_BYTES;
+			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
 
-Looks like patch
+> +				return header;
+> +		}
+> +		entry += size;
+> +	}
+> +	return NULL;
+> +}
+> +
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +/*
+> + * According to ACPI table, filter the immvoable memory regions
+> + * and store them in immovable_mem[].
+> + */
+> +void get_immovable_mem(void)
+> +{
+> +	char *args = (char *)get_cmd_line_ptr();
+> +	struct acpi_table_header *table_header;
+> +	struct acpi_subtable_header *table;
+> +	struct acpi_srat_mem_affinity *ma;
+> +	unsigned long table_end;
+> +	int i = 0;
+> +
+> +	if (!strstr(args, "movable_node") || strstr(args, "acpi=off"))
+> +		return;
+> +
+> +	table_header = get_acpi_srat_table();
+> +	if (!table_header)
+> +		return;
+> +
+> +	table_end = (unsigned long)table_header + table_header->length;
+> +
+> +	table = (struct acpi_subtable_header *)
+> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
+> +
 
-  "memblock: stop using implicit alignment to SMP_CACHE_BYTES"
+> +	while (((unsigned long)table) + table->length < table_end) {
 
-missed some places ...
+	while (((unsigned long)table) +
+			sizeof(struct acpi_subtable_header) < table_end) {
 
-> > Modules linked in:
-> > CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc7-next-20181015 #1
-> > NIP:  c000000000f99198 LR: c000000000f99490 CTR: c000000000bb8364
-> > REGS: c000000001217a78 TRAP: 0700   Not tainted  (4.19.0-rc7-next-20181=
-015)
-> > MSR:  0000000080021000 <CE,ME>  CR: 24000422  XER: 20000000
-> > IRQMASK: 1=20
-> > GPR00: c000000000f99490 c000000001217d00 c00000000121a500 0000000000000=
-0c0=20
-> > GPR04: 0000000000000000 0000000000000000 0000000000000000 fffffffffffff=
-fff=20
-> > GPR08: 0000000000000000 00000000000000c0 0000000000000018 0000000000000=
-0b7=20
-> > GPR12: 0000000000000040 c000000000fe7840 0000000000000000 0000000000000=
-000=20
-> > GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000=
-000=20
-> > GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000=
-000=20
-> > GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000=
-000=20
-> > GPR28: c000000000000304 c000000001262088 00000000000000c0 c000000000fea=
-500=20
-> > NIP [c000000000f99198] .memblock_alloc_range_nid+0x20/0x68
-> > LR [c000000000f99490] .memblock_alloc_base+0x18/0x48
-> > Call Trace:
-> > [c000000001217d00] [c000000002a00000] 0xc000000002a00000 (unreliable)
-> > [c000000001217d80] [c000000000f99490] .memblock_alloc_base+0x18/0x48
-> > [c000000001217df0] [c000000000f7a274] .allocate_paca_ptrs+0x3c/0x74
-> > [c000000001217e70] [c000000000f78bf0] .early_init_devtree+0x288/0x320
-> > [c000000001217f10] [c000000000f79b6c] .early_setup+0x80/0x130
-> > [c000000001217f90] [c000000000000528] start_here_multiplatform+0x68/0x80
+> +		if (table->type == 1) {
 
---=20
-Cheers,
-Stephen Rothwell
+		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
 
---Sig_/hFNmF3Jj0D7c+SX.8sV79qt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> +			ma = (struct acpi_srat_mem_affinity *)table;
+> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+> +				immovable_mem[i].start = ma->base_address;
+> +				immovable_mem[i].size = ma->length;
+> +				i++;
+> +			}
+> +
+> +			if (i >= MAX_NUMNODES*2)
+> +				break;
+> +		}
+> +		table = (struct acpi_subtable_header *)
+> +			((unsigned long)table + table->length);
+> +	}
+> +	num_immovable_mem = i;
+> +}
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvE94cACgkQAVBC80lX
-0Gx72Af+J7j/HQpnXqTOaoXhTJfrn/kMP1PLBJQ/AqSa43liPmSQ+1KZ5iDtF6GW
-p0+1gQyLCEYwnxadat4Pmfs6iadVo4NUoVshTTps9vx8U0xLxO0xEHTR7fwqsc7E
-X4thIt2RlvN5W5ikPWaUqMfvtXiFe+5+sHjyHA5ADyDdmX4TqAM0R27Dw2Wd+VJw
-5Iw+zqsK6YLtkQGfLea78o3wvOlqKs9N+h9kPws1Rf0p0bCMDkeBPYtQTHEZM8vr
-sgDAFuWcVc1wMkEI11i8tzzwOzKpGRt6lLLmrgPdiQldgbX1DHLJ0w7W6stq3MQN
-t+KS1u65FdG3t0Qdfb4YzNMjN0nByQ==
-=lsXR
------END PGP SIGNATURE-----
-
---Sig_/hFNmF3Jj0D7c+SX.8sV79qt--
+Thanks,
+Masa
