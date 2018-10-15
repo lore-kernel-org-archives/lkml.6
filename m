@@ -2,299 +2,127 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D14C7112A
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 02:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3A8C070C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 02:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA55920652
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 02:44:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E1F720652
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 02:44:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YpuRa9fN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA55920652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=mendozajonas.com header.i=@mendozajonas.com header.b="U2Y/w/mg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PYoyE8Re"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1F720652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mendozajonas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726588AbeJOK1R (ORCPT
+        id S1726626AbeJOK1z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 06:27:17 -0400
-Received: from mail-ve1eur01on0076.outbound.protection.outlook.com ([104.47.1.76]:7920
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726262AbeJOK1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 06:27:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cvfXcbcPT92V0EoRrFy9VTWTC15NL6A/GVLru9qx7AQ=;
- b=YpuRa9fNmgcV/tfVg6rvoPPyeADydeLYE1FX09fSRwwOHMiWmLoecKS+UQLPgs5fmT/0ywAqmpiCEsz1vEwaD1CtuaVtwdgvs6KI88gFzM3eVy/EjUIuGqPxVYExtS7ysf37OFsfBci9Y2QzUphLNNqbuPWKOicLKoDsV7M4YEE=
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com (20.177.48.221) by
- VI1PR04MB5279.eurprd04.prod.outlook.com (20.177.51.220) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.23; Mon, 15 Oct 2018 02:44:00 +0000
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::a45f:ad96:edec:a2df]) by VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::a45f:ad96:edec:a2df%3]) with mapi id 15.20.1228.027; Mon, 15 Oct 2018
- 02:44:00 +0000
-From:   Vabhav Sharma <vabhav.sharma@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>
-CC:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel-owner@vger.kernel.org" 
-        <linux-kernel-owner@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        Varun Sethi <V.Sethi@nxp.com>, Udit Kumar <udit.kumar@nxp.com>,
-        Pankaj Bansal <pankaj.bansal@nxp.com>,
-        Priyanka Jain <priyanka.jain@nxp.com>,
-        Sriram Dash <sriram.dash@nxp.com>
-Subject: RE: [PATCH v4 6/6] arm64: dts: add LX2160ARDB board support
-Thread-Topic: [PATCH v4 6/6] arm64: dts: add LX2160ARDB board support
-Thread-Index: AQHUW+OAQmr4YeRg8k+lnJ1eSFizYaUU3kmAgArJwGA=
-Date:   Mon, 15 Oct 2018 02:44:00 +0000
-Message-ID: <VI1PR04MB4800555506B64C9E93F9ED36F3FD0@VI1PR04MB4800.eurprd04.prod.outlook.com>
-References: <1538615031-7507-1-git-send-email-vabhav.sharma@nxp.com>
- <1538615031-7507-7-git-send-email-vabhav.sharma@nxp.com>
- <20181008055159.GH3587@dragon>
-In-Reply-To: <20181008055159.GH3587@dragon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vabhav.sharma@nxp.com; 
-x-originating-ip: [14.143.30.134]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5279;6:4S1KZpJaVMzLqOMOJ6SYKGumCvp7wxrwVLhBcLs2rqCbbFBxJ2gLH9HwpKMnZM/wotFwKk+Gs+FxSroXIRXwOWGZ1KtPgJgmFJDN86K6+gH3FzrHF64Pg3wBx4DYxJKf3mhTUAGwqwIwsvNISEkt2Re3eU1Dos6Z48SE1ZRok1x35Iepcv+dBJhREyJcEEwbMdcuGbbiKE37JcVvZiwi3puVZhHtqleR2L/zaOmXypoB4uytJXlSqgGiUIIPEvhT4GBPg76CuhAutxVhker6W9OAZXaoB8ozyLEjvKR5/OjvcAXQtFh6hLG51UjnzX/htpX7NX0pGX8wchFtwLLeMRbtQM0eb0VI4Uek9OV+MIxp5sto6zrehgmR/fywwEKL3AIcXJSJks79k7kGMrXd/X50oCNQB0bIfBRPKJfe/F5Y9tyLega17lL8v4QdyrK2MDI2STgRag9roVCeKcrJ0Q==;5:abnehYpK8KxiVELu3ZJampWfPpyswAjdoHwqJZw0D6+6WO3N5TknekJ6OmKWCQUYeD12vHr3czagW2XykGG30GZBXSDCt6VXJXnt5a+HJcsCE/T5QKNe6JGoqzTJ8xrcTT+ZgKTLxKnU0nk2aR8yj8JsA5X0kwh5xrfFEyfj+kc=;7:AeI2nvQXtb55CqP/lQCED2fKuHN4Bf7CLD8EsndysqpikvIPO7loFJMm7d07tuum6Ehr+ee0gTit2ZvGX5zWZUxKdK8bZrPLLIJP2n9bdM3o4tRqApmOfQKfudtxXRdjCW2ICKiYOOF+7QEx9AvCTpDyhh93+MiiIDan+kJInhYVESL6Dk6LKcrnFzFnYukih4VuzFBeodPOtqGlTTG1kaKZ6swAgQ9wuQgStm35A1LjWXjUhLyw4WzcFEfnl+2e
-x-ms-office365-filtering-correlation-id: eccb7d9b-4155-4646-c78d-08d632480ff6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5279;
-x-ms-traffictypediagnostic: VI1PR04MB5279:
-x-microsoft-antispam-prvs: <VI1PR04MB5279B131D25699F2AC9E9CA4F3FD0@VI1PR04MB5279.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(180628864354917)(65623756079841)(258649278758335)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991067);SRVR:VI1PR04MB5279;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5279;
-x-forefront-prvs: 0826B2F01B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(346002)(136003)(396003)(366004)(189003)(199004)(13464003)(7416002)(55236004)(305945005)(7736002)(256004)(446003)(74316002)(25786009)(68736007)(54906003)(8676002)(86362001)(55016002)(81166006)(81156014)(9686003)(6436002)(53936002)(76176011)(26005)(4326008)(5660300001)(186003)(7696005)(99286004)(53546011)(6506007)(6916009)(486006)(102836004)(476003)(11346002)(14444005)(44832011)(8936002)(2906002)(6116002)(3846002)(316002)(33656002)(2900100001)(71190400001)(97736004)(71200400001)(6246003)(14454004)(478600001)(5250100002)(66066001)(105586002)(106356001)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5279;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: ShH4R0lUmq7bxZcoWS6kfyJ5Oon5qOtCeghWqWrx86xpqnvouRWlTgRBXjNZ5YN/2pXV4mDv84lt1o9aPZxxUMM1CkX6PDPGOxURmk3DxvZdYHXvFgcUaBydba1hjx+sIyh0yyUrfx2WawRC9w7pZMlwy4GTEKHwsermlihDgbSMQb+Ca7RSDTC4R85gJ1mOkKRqeBSn1V973WPhdoykrwUgTK4EzBqQAtAcu8h/7eXzPxReAsqRTHo/wvyUSCwTR1No4N7KBvWsFLF1vgZqNHWRvLqbYl95Cu/5f9CDkDh5O9mtDdl38ulcA6Rd7tlVL2I7TS7JvKDZzqiBPgvxFz3+fFjsCAxGyzeiPembTy8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eccb7d9b-4155-4646-c78d-08d632480ff6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2018 02:44:00.4037
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5279
+        Mon, 15 Oct 2018 06:27:55 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:38697 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726262AbeJOK1z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 06:27:55 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id 68A2F21B2D;
+        Sun, 14 Oct 2018 22:44:42 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Sun, 14 Oct 2018 22:44:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        mendozajonas.com; h=message-id:subject:from:to:cc:date
+        :in-reply-to:references:content-type:mime-version
+        :content-transfer-encoding; s=fm1; bh=3EmHbdL+JmgkbkCKCbopsyOyS8
+        KZzv7tydkv2GAXMY0=; b=U2Y/w/mgWudduz8PdVxGlBJ3Q/CqUPOWapwbh1865I
+        AmIpB9TaQfvZLgeBDwzG+z5vldznB+X7LOb5ZQMKGUYoHsOZ/i9XY579OhHjD5fE
+        y3OgoPG20/2PWZA2LZtcQ5jjoqSekmF7FEyx/H/yrtfYDRg5XTNeip5fZo4fBBst
+        HkRw20Hhy4EMibx3P0LESLW48+aSZEEIsi5WrbmCyVCbDf8sMHpHU3Y4XGDoY6EM
+        NBMe4LrR0Xsf7DNcRBQv2nmmKHKh1LpJk2cEJTqdYWATloO2O8ozCXxC2y2mQtb1
+        yyLjs3jyU5vcFlM0Eg/DcJoJxKSx3QQUrZ8KT+uzJ5VA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=3EmHbdL+JmgkbkCKCbopsyOyS8KZzv7tydkv2GAXM
+        Y0=; b=PYoyE8RewoGY8PU/PBnsvhPVYQDu8cSqzQ0ZiPPIluvlbkx5zpZCreZQ/
+        /ZQaCBmeaLeJ9zSA2IDcxuxHpJcu0fBNKaV7vuVNQk9vIi6HN16fUDPX8cXy7B5E
+        4v3iMijC3LbwkeA1yW697oWPfIjvY+ChazKJrvHpYFlE1zBx2W5ghLnTy6jeBRvo
+        exqIvNFFs4lsSYkZI8mMCs6YwhmZtIft714pFg7lJ2d17oEbcJH3QcvAPClRREzP
+        cS0M31ZT50VjDiPTG0QgbzGm4CyQkqW89pBXfU/7paJxhsBWI6aQstyAVAkYc0tP
+        OzPqz297VSi5ZRT4cyU+QM0v9eMhw==
+X-ME-Sender: <xms:Gf_DW2RpVCQX2rpRKiEjhoCDeN61bi19_zkxyc777DojNdbHWPMcCg>
+X-ME-Proxy: <xmx:Gf_DW6NlQpWRMxywh82P1NL38q5X8FsfKaGBGnmJR7wSZTzHgiBgVQ>
+    <xmx:Gf_DW6VP9KIu-OGYN7407buriNVPA6SBW6P_pWsgR2f3nijDJIWDLQ>
+    <xmx:Gf_DW6jmZv96fNQligFmHXAN-jdQRA0yZdA0sYAtgm-No9c_vZzUKw>
+    <xmx:Gf_DWy_c4Yij-tyiKPM0-4VqtZ1fwiTLqSZoNIjDLfZCfAIOlHBwvQ>
+    <xmx:Gf_DW5QD9wZ9ncy-Vz0BWUk1cNQ3Avj3sGTxQEYxC-yT81bGWA3yMQ>
+    <xmx:Gv_DW5eza3KpZNCHKBsrTEzjfHQk28ueYFv1Ob1QOH-v5lenlFjRzQ>
+Received: from v4 (unknown [122.99.82.10])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CFF93E40E6;
+        Sun, 14 Oct 2018 22:44:39 -0400 (EDT)
+Message-ID: <336fc885b7b3246d7434998514a38fc0b754c865.camel@mendozajonas.com>
+Subject: Re: [RFC PATCH 2/2] net/ncsi: Configure multi-package,
+ multi-channel modes with failover
+From:   Samuel Mendoza-Jonas <sam@mendozajonas.com>
+To:     Justin.Lee1@Dell.com, netdev@vger.kernel.org
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org
+Date:   Mon, 15 Oct 2018 13:44:36 +1100
+In-Reply-To: <d648d156e08c4b2a8135f54abe0e9474@AUSX13MPS302.AMER.DELL.COM>
+References: <20181009035815.5246-1-sam@mendozajonas.com>
+         <20181009035815.5246-2-sam@mendozajonas.com>
+         <d97bb52a060a40cf8e03a49eb82a285f@AUSX13MPS302.AMER.DELL.COM>
+         <8548f1872badb35588d5506da21f0d89bea71127.camel@mendozajonas.com>
+         <e20a7a3da4ca4aec913800355cd6cdaf@AUSX13MPS302.AMER.DELL.COM>
+         <cdf6fa4a6d7a506f84c9d9925d8f621b398a2fff.camel@mendozajonas.com>
+         <d648d156e08c4b2a8135f54abe0e9474@AUSX13MPS302.AMER.DELL.COM>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2018-10-12 at 19:16 +0000, Justin.Lee1@Dell.com wrote:
+> > > > > > +
+> > > > > > +	NCSI_FOR_EACH_CHANNEL(np, channel) {
+> > > > > > +		ncm = &channel->modes[NCSI_MODE_TX_ENABLE];
+> > > > > > +		/* Another channel is already Tx */
+> > > > > > +		if (ncm->enable)
+> > > > > > +			return false;
+> > > > > > +	}
+> 
+> As we don't suspend the old channel when we call the ncsi_stop_dev() function,
+> this will always be false and we will not set it to the right channel.
+> If mutli_channel is enabled, suppose that we only need to send TX enable/disable
+> when  the link is changed.
+
+Ah, good point. I was working on improving the ncsi_stop_dev/ncsi_start_dev
+interactions in a separate patch but we're going to need to fix it for
+multi_channel to work properly. I'll look into that and include it in this
+series.
+
+<snip>
+
+> > > > > > -	if (!found) {
+> > > > > > +	if (!with_link && found) {
+> > > > > > +		netdev_info(ndp->ndev.dev,
+> > > > > > +			    "NCSI: No channel with link found, configuring channel %u\n",
+> > > > > > +			    found->id);
+> > > > > > +		spin_lock_irqsave(&ndp->lock, flags);
+> > > > > > +		list_add_tail_rcu(&found->link, &ndp->channel_queue);
+> > > > > > +		spin_unlock_irqrestore(&ndp->lock, flags);
+> 
+> If multi-channel is enabled and without the link, the last found channel would be added again.
+
+Yep, I've fixed this up by checking whether anything has been added to the
+channel queue instead.
+
+Thanks,
+Sam
 
 
-> -----Original Message-----
-> From: linux-kernel-owner@vger.kernel.org <linux-kernel-
-> owner@vger.kernel.org> On Behalf Of Shawn Guo
-> Sent: Monday, October 8, 2018 11:22 AM
-> To: Vabhav Sharma <vabhav.sharma@nxp.com>
-> Cc: sudeep.holla@arm.com; oss@buserror.net; linux-kernel@vger.kernel.org;
-> devicetree@vger.kernel.org; robh+dt@kernel.org; mark.rutland@arm.com;
-> linuxppc-dev@lists.ozlabs.org; linux-arm-kernel@lists.infradead.org;
-> mturquette@baylibre.com; sboyd@kernel.org; rjw@rjwysocki.net;
-> viresh.kumar@linaro.org; linux-clk@vger.kernel.org; linux-pm@vger.kernel.=
-org;
-> linux-kernel-owner@vger.kernel.org; catalin.marinas@arm.com;
-> will.deacon@arm.com; gregkh@linuxfoundation.org; arnd@arndb.de;
-> kstewart@linuxfoundation.org; yamada.masahiro@socionext.com; Leo Li
-> <leoyang.li@nxp.com>; linux@armlinux.org.uk; Varun Sethi <V.Sethi@nxp.com=
->;
-> Udit Kumar <udit.kumar@nxp.com>; Pankaj Bansal <pankaj.bansal@nxp.com>;
-> Priyanka Jain <priyanka.jain@nxp.com>; Sriram Dash <sriram.dash@nxp.com>
-> Subject: Re: [PATCH v4 6/6] arm64: dts: add LX2160ARDB board support
->=20
-> On Thu, Oct 04, 2018 at 06:33:51AM +0530, Vabhav Sharma wrote:
-> > LX2160A reference design board (RDB) is a high-performance computing,
-> > evaluation, and development platform with LX2160A SoC.
-> >
-> > Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
-> > Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
-> > Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> > ---
-> >  arch/arm64/boot/dts/freescale/Makefile            |   1 +
-> >  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 100
-> > ++++++++++++++++++++++
-> >  2 files changed, 101 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/Makefile
-> > b/arch/arm64/boot/dts/freescale/Makefile
-> > index 86e18ad..445b72b 100644
-> > --- a/arch/arm64/boot/dts/freescale/Makefile
-> > +++ b/arch/arm64/boot/dts/freescale/Makefile
-> > @@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2080a-
-> rdb.dtb
-> >  dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2080a-simu.dtb
-> >  dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2088a-qds.dtb
-> >  dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2088a-rdb.dtb
-> > +dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-lx2160a-rdb.dtb
-> > diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> > b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> > new file mode 100644
-> > index 0000000..1483071
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> > @@ -0,0 +1,100 @@
-> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT) // // Device Tree file
-> > +for LX2160ARDB // // Copyright 2018 NXP
-> > +
-> > +/dts-v1/;
-> > +
-> > +#include "fsl-lx2160a.dtsi"
-> > +
-> > +/ {
-> > +	model =3D "NXP Layerscape LX2160ARDB";
-> > +	compatible =3D "fsl,lx2160a-rdb", "fsl,lx2160a";
-> > +
-> > +	chosen {
-> > +		stdout-path =3D "serial0:115200n8";
-> > +	};
-> > +
-> > +	sb_3v3: regulator-fixed {
->=20
-> The node name should probably be named like regulator-sb3v3 or something,=
- so
-> that the pattern can be followed when we have another fixed regulator to =
-be
-> added.
-Ok, Agree this is fixed 3.3 standby voltage for i2c subchannels
-Updating to regulator-sb3v3=20
->=20
-> > +		compatible =3D "regulator-fixed";
-> > +		regulator-name =3D "fixed-3.3V";
->=20
-> The name should be something we can find on board schematics.
-Sure, I will update SMPS name which provide fixed 3.3 stand-by voltage
->=20
-> > +		regulator-min-microvolt =3D <3300000>;
-> > +		regulator-max-microvolt =3D <3300000>;
-> > +		regulator-boot-on;
-> > +		regulator-always-on;
-> > +	};
-> > +
-> > +};
-> > +
-> > +&uart0 {
-> > +	status =3D "okay";
-> > +};
-> > +
-> > +&uart1 {
-> > +	status =3D "okay";
-> > +};
-> > +
-> > +&i2c0 {
->=20
-> Please keep these labeled nodes sorted alphabetically.
-Ok
->=20
-> > +	status =3D "okay";
->=20
-> Have a newline between properties and child node.
-Sure.
->=20
-> > +	i2c-mux@77 {
-> > +		compatible =3D "nxp,pca9547";
-> > +		reg =3D <0x77>;
-> > +		#address-cells =3D <1>;
-> > +		#size-cells =3D <0>;
-> > +
-> > +		i2c@2 {
-> > +			#address-cells =3D <1>;
-> > +			#size-cells =3D <0>;
-> > +			reg =3D <0x2>;
-> > +
-> > +			power-monitor@40 {
-> > +				compatible =3D "ti,ina220";
-> > +				reg =3D <0x40>;
-> > +				shunt-resistor =3D <1000>;
-> > +			};
-> > +		};
-> > +
-> > +		i2c@3 {
-> > +			#address-cells =3D <1>;
-> > +			#size-cells =3D <0>;
-> > +			reg =3D <0x3>;
-> > +
-> > +			temperature-sensor@4c {
-> > +				compatible =3D "nxp,sa56004";
-> > +				reg =3D <0x4c>;
-> > +				vcc-supply =3D <&sb_3v3>;
-> > +			};
-> > +
-> > +			temperature-sensor@4d {
-> > +				compatible =3D "nxp,sa56004";
-> > +				reg =3D <0x4d>;
-> > +				vcc-supply =3D <&sb_3v3>;
-> > +			};
-> > +		};
-> > +	};
-> > +};
-> > +
-> > +&i2c4 {
-> > +	status =3D "okay";
-> > +
-> > +	rtc@51 {
-> > +		compatible =3D "nxp,pcf2129";
-> > +		reg =3D <0x51>;
-> > +		// IRQ10_B
-> > +		interrupts =3D <0 150 0x4>;
-> > +		};
->=20
-> Bad indentation.
-My mistake, Updated
->=20
-> Shawn
->=20
-> > +
-> > +};
-> > +
-> > +&usb0 {
-> > +	status =3D "okay";
-> > +};
-> > +
-> > +&usb1 {
-> > +	status =3D "okay";
-> > +};
-> > +
-> > +&crypto {
-> > +	status =3D "okay";
-> > +};
-> > --
-> > 2.7.4
-> >
