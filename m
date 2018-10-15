@@ -2,103 +2,196 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5643DC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9073C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D630208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:02:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dbHWiMN2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D630208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 5EEB5208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 21:03:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EEB5208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbeJPEtX (ORCPT
+        id S1727010AbeJPEuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 00:49:23 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:36047 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbeJPEtX (ORCPT
+        Tue, 16 Oct 2018 00:50:23 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33639 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726064AbeJPEuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 00:49:23 -0400
-Received: by mail-yw1-f68.google.com with SMTP id e201-v6so8080027ywa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 14:02:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=6faCqweIkuTWy5VU4l9YjjoSOf4LuGQCWjJ4IVAY5yw=;
-        b=dbHWiMN2/YHcsez8K5Rce/ADXqav0rxd7GAEoYm9LL7gNmDAy78x+abikITBntL6ax
-         u1wuyyaUYtZRLCBomsP9eS3lhLtpnInQhr35XQZ+DfvaIjSGUzi6UTbfueJIKFTd7KzQ
-         auVQxipT5x5JTLIg085cEJoR6CBb4Jl/0L33M=
+        Tue, 16 Oct 2018 00:50:22 -0400
+Received: by mail-ot1-f67.google.com with SMTP id q50so20362111otd.0;
+        Mon, 15 Oct 2018 14:03:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6faCqweIkuTWy5VU4l9YjjoSOf4LuGQCWjJ4IVAY5yw=;
-        b=QINo6rmtbigCh0zr43/5AX/NQbQxvxRNMkz6L2mtJgZmT2rspBXaUGFsd0q1y0NZ+U
-         MA0AVJ+oruVPX9SNOnK9VhrtbIfYSyzwx7gCeZJZhMMUlpENsFCWQEL6p2mrxPHms7RA
-         ZiOQZfv/iCZr8rrk2bPNiY+w5Z0lVgwn46JAnMx3X3Tggw/BODD4N02q06XN6N73GdKc
-         hKDL8SWC9vyj6XBMcWOQRRcOTpswxh2GYkzrn97J8zVIl06qRcreU1fwkwcBXZ3vEjMX
-         +t+rfXwRZWULlFUXujRn4/cd1fu2YjO5Y9QGgcW7rtIDAeVSgrNfWoiXCK6SaUHzh21i
-         ++vw==
-X-Gm-Message-State: ABuFfoh1SUnujEhwxbCYpev2NHAQABvfGdrtXZSWxGq3YsEvRdX5rxJ5
-        LUp88cUY7LuyEsTvSjZ3oi5kK+ZSurg=
-X-Google-Smtp-Source: ACcGV62S5ewm/cRMOfEQlRKH6TN82YHt18RMskDxyp2XZjK0If+PGBzH5nZXuMg2rpiF7FqoYGuKUQ==
-X-Received: by 2002:a81:4a55:: with SMTP id x82-v6mr10387315ywa.3.1539637345819;
-        Mon, 15 Oct 2018 14:02:25 -0700 (PDT)
-Received: from mail-yw1-f45.google.com (mail-yw1-f45.google.com. [209.85.161.45])
-        by smtp.gmail.com with ESMTPSA id j8-v6sm3202589ywa.17.2018.10.15.14.02.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 14:02:24 -0700 (PDT)
-Received: by mail-yw1-f45.google.com with SMTP id j75-v6so8070168ywj.10
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 14:02:24 -0700 (PDT)
-X-Received: by 2002:a81:98cb:: with SMTP id p194-v6mr10273753ywg.353.1539637344226;
- Mon, 15 Oct 2018 14:02:24 -0700 (PDT)
+        bh=oYT+Di1Qh0rrs/VeVc9aCr/oI6BBvWbNg51Y1/zNsAU=;
+        b=A8Hq2J18Jfin6161AxyhBM7QFS1GAdndeMzgNl42w81xcJ3SA4BYTLEo5YR1PqekP7
+         9dExkKKKIM+kudSKu83W67+xm5tPRkvD91oG20YzjXvXaQiwHfoBw3Xwd3FG99HY7V0v
+         PDqBZrBhV2ekYGvKdjJUOXv0aXmqIRIpWDWm+/uJ5iakw5XKAaacOaujfNrb635N9s2Q
+         VM5uFH1ukb3vcnMlg9ynh5a8k32SjNvaXKjXpV4cKpDTL09OyHTPfb8SbOVA3WYAuKn0
+         dt4tHyxwEI9z+Mz1YOyh+GVym8ayMmoann5Smd9uTjdvpfq//vgyVSmDaygvCu/qHhRB
+         RAMQ==
+X-Gm-Message-State: ABuFfohb42YSEQWqDTYhbrgbn/aZe2q06741+tLCSm9zeoQ7beTnaZK4
+        Qjy9Dm9/cOYoLValaFs0i6RaBf+KjESqVKNUD98=
+X-Google-Smtp-Source: ACcGV63Zc6CGNmSioBTyJr9eF1g1H6IBQDJCD8YWyOqWUC9sYrFLStNkyeCdm+i/fctlO3hPGB8CbyishjmVNqyJAZI=
+X-Received: by 2002:a9d:4c90:: with SMTP id m16mr11296383otf.124.1539637405370;
+ Mon, 15 Oct 2018 14:03:25 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 15 Oct 2018 14:02:23
- -0700 (PDT)
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7D40E4F6@ORSMSX107.amr.corp.intel.com>
-References: <1539202053.12644.8.camel@HansenPartnership.com>
- <1539202180.12644.10.camel@HansenPartnership.com> <3908561D78D1C84285E8C5FCA982C28F7D40E4F6@ORSMSX107.amr.corp.intel.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 15 Oct 2018 14:02:23 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKKK76KRpujbudHQWwtcRHSKEQwBeGMBJf=31WjdCJA4A@mail.gmail.com>
-Message-ID: <CAGXu5jKKK76KRpujbudHQWwtcRHSKEQwBeGMBJf=31WjdCJA4A@mail.gmail.com>
-Subject: Re: [Ksummit-discuss] [PATCH v2 2/3] code-of-conduct: Strip the
- enforcement paragraph pending community discussion
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        "ksummit-discuss@lists.linuxfoundation.org" 
-        <ksummit-discuss@lists.linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20181008150901.19667-1-waldemar.rymarkiewicz@gmail.com>
+ <2671493.AgiGORq3CZ@aspire.rjw.lan> <CAHKzcEPuD7nnmvBjnUNn=wb-5LfN1nHoTYBekAiBFG8Je+oPwA@mail.gmail.com>
+ <1926816.WaOCFmosuL@aspire.rjw.lan> <CAHKzcEOECQP8j6q=NKzuEjF+mc0s80fr6xWw-=NXsTtzCGGg_w@mail.gmail.com>
+In-Reply-To: <CAHKzcEOECQP8j6q=NKzuEjF+mc0s80fr6xWw-=NXsTtzCGGg_w@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 15 Oct 2018 23:03:13 +0200
+Message-ID: <CAJZ5v0gFjBoFi=cpC2gPkZTDZof8dxdCCVx0XoAv2XuPmTfWPA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: conservative: Fix requested_freq handling
+To:     Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        t.bartholomae@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 2:04 PM, Luck, Tony <tony.luck@intel.com> wrote:
->> the enforcement clause of the new code of conduct.  Since there is concern
->> that this becomes binding on the release of the 4.19 kernel
+On Mon, Oct 15, 2018 at 2:51 PM Waldemar Rymarkiewicz
+<waldemar.rymarkiewicz@gmail.com> wrote:
 >
-> Is there some logic behind that concern? What's magic about the release
-> of 4.19?
+> On Mon, 15 Oct 2018 at 13:34, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> >
+> > On Monday, October 15, 2018 11:34:33 AM CEST Waldemar Rymarkiewicz wrote:
+> > > On Thu, 11 Oct 2018 at 23:10, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > > >
+> > > > On Tuesday, October 9, 2018 6:06:08 PM CEST Waldemar Rymarkiewicz wrote:
+> > > > > On Tue, 9 Oct 2018 at 09:47, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > > > >
+> > > > > > On Mon, Oct 8, 2018 at 5:11 PM Waldemar Rymarkiewicz
+> > > > > > <waldemar.rymarkiewicz@gmail.com> wrote:
+> > > > > > >
+> > > > > > > From: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+> > > > > > >
+> > > > > > > The governor updates dbs_info->requested_freq only after increasing or
+> > > > > > > decreasing frequency. There is, however, an use case when this is not
+> > > > > > > sufficient.
+> > > > > > >
+> > > > > > > Imagine, external module constraining cpufreq policy in a way that policy->max
+> > > > > >
+> > > > > > Is the "external module" here a utility or a demon running in user space?
+> > > > >
+> > > > > No, this is a driver that communicates with a firmware and makes sure
+> > > > > CPU is running at the highest rate in specific time.
+> > > > > It uses verify_within_limits  and update_policy, a standard way to
+> > > > > constraint cpufreq policy limits.
+> > > > >
+> > > > > > > @@ -136,10 +135,10 @@ static unsigned int cs_dbs_update(struct cpufreq_policy *policy)
+> > > > > > >                         requested_freq = policy->min;
+> > > > > > >
+> > > > > > >                 __cpufreq_driver_target(policy, requested_freq, CPUFREQ_RELATION_L);
+> > > > > > > -               dbs_info->requested_freq = requested_freq;
+> > > > > > >         }
+> > > > > > >
+> > > > > > >   out:
+> > > > > > > +       dbs_info->requested_freq = requested_freq;
+> > > > > >
+> > > > > > This will have a side effect when requested_freq is updated before the
+> > > > > > thresholds checks due to the policy_dbs->idle_periods < UINT_MAX
+> > > > > > check.
+> > > > > >
+> > > > > > Shouldn't that be avoided?
+> > > > >
+> > > > > I would say we should.
+> > > > >
+> > > > > A hardware design I use is running 4.9 kernel where the check does not
+> > > > > exist yet, so there is not a problem.
+> > > > > Anyway, the check policy_dbs->idle_periods < UINT_MAX  can change
+> > > > > requested_freq  either to requested_freq = policy->min or
+> > > > > requested_freq -= freq_steps;. The first case will not change anything
+> > > > > for us as policy->max=min=cur. The second, however, will force to
+> > > > > update freq which is definitely not expected when limits are set to
+> > > > > min=max. Simply it will not go out  here:
+> > > > >
+> > > > > if (load < cs_tuners->down_threshold) {
+> > > > >       if (requested_freq == policy->min)
+> > > > >            goto out;   <---
+> > > > > ...
+> > > > > }
+> > > > >
+> > > > > Am I right here? If so, shouldn't we check explicitly
+> > > > >
+> > > > > /*
+> > > > > * If requested_freq is out of range, it is likely that the limits
+> > > > > * changed in the meantime, so fall back to current frequency in that
+> > > > > * case.
+> > > > > */
+> > > > > if (requested_freq > policy->max || requested_freq < policy->min)
+> > > > >        requested_freq = policy->cur;
+> > > > >
+> > > > > +/*
+> > > > > +* If the the new limits min,max are equal, there is no point to process further
+> > > > > +*/
+> > > > > +
+> > > > > +if (requested_freq == policy->max  &&  requested_freq == policy->min)
+> > > > > +     goto out;
+> > > >
+> > > > If my understanding of the problem is correct, it would be better to simply
+> > > > update dbs_info->requested_freq along with requested_freq when that is found
+> > > > to be out of range.  IOW, something like the appended patch (untested).
+> > >
+> > > Yes, this will solve the original problem as well.
+> > >
+> > > I think there could also be a  problem with policy_dbs->idle_periods <
+> > > UINT_MAX  check. It it's true it  can modify requested_freq (
+> > > requested_freq -= freq_steps) and further it can result in a change of
+> > > the freq,  requested_freq == policy->max is not anymore true. I would
+> > > expect governor not to change freq (requested_freq) when
+> > > policy->max=policy->min=policy->cur.
+> >
+> > Well, that's because there is a bug in that code IMO.  It should never
+> > decrease requested_freq below policy->min in particular.
+> >
+> > Please find a patch with that fixed below.
+> >
+> > ---
+> >  drivers/cpufreq/cpufreq_conservative.c |    6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > Index: linux-pm/drivers/cpufreq/cpufreq_conservative.c
+> > ===================================================================
+> > --- linux-pm.orig/drivers/cpufreq/cpufreq_conservative.c
+> > +++ linux-pm/drivers/cpufreq/cpufreq_conservative.c
+> > @@ -80,8 +80,10 @@ static unsigned int cs_dbs_update(struct
+> >          * changed in the meantime, so fall back to current frequency in that
+> >          * case.
+> >          */
+> > -       if (requested_freq > policy->max || requested_freq < policy->min)
+> > +       if (requested_freq > policy->max || requested_freq < policy->min) {
+> >                 requested_freq = policy->cur;
+> > +               dbs_info->requested_freq = requested_freq;
+> > +       }
+> >
+> >         freq_step = get_freq_step(cs_tuners, policy);
+> >
+> > @@ -92,7 +94,7 @@ static unsigned int cs_dbs_update(struct
+> >         if (policy_dbs->idle_periods < UINT_MAX) {
+> >                 unsigned int freq_steps = policy_dbs->idle_periods * freq_step;
+> >
+> > -               if (requested_freq > freq_steps)
+> > +               if (requested_freq > policy->min + freq_steps)
+> >                         requested_freq -= freq_steps;
+> >                 else
+> >                         requested_freq = policy->min;
+>
+> Yes looks good now. Will you apply this patch?
 
-Greg KH said 4.19 was going to be the next LTS. But, regardless, if we
-view bugs in the CoC as "just bugs", then can't we also include their
-fixes in -stable? It'll land in 4.19.z just like anything else. I
-don't think we need to rush anything into 4.19 -- as so many others
-have said: it's in our best interest to take the time to get the CoC
-right.
+Yes, I will, but let me resend it with a proper changelog first.
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Thanks,
+Rafael
