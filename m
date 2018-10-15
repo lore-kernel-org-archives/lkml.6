@@ -2,237 +2,136 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAEDC71133
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE47C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A086214C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:59:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A086214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 72ABB214C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 17:59:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="atzAePuD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72ABB214C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbeJPBpZ (ORCPT
+        id S1727053AbeJPBne (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 21:45:25 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:54716 "EHLO ale.deltatee.com"
+        Mon, 15 Oct 2018 21:43:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727075AbeJPBnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 21:43:35 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gC77D-0002IN-0U; Mon, 15 Oct 2018 11:57:16 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gC779-0002Mp-Lw; Mon, 15 Oct 2018 11:57:11 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Andrew Waterman <andrew@sifive.com>,
-        Olof Johansson <olof@lixom.net>,
-        Michael Clark <michaeljclark@mac.com>,
-        Rob Herring <robh@kernel.org>, Zong Li <zong@andestech.com>
-Date:   Mon, 15 Oct 2018 11:57:02 -0600
-Message-Id: <20181015175702.9036-7-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181015175702.9036-1-logang@deltatee.com>
-References: <20181015175702.9036-1-logang@deltatee.com>
+        id S1726821AbeJPBmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Oct 2018 21:42:50 -0400
+Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F02221476;
+        Mon, 15 Oct 2018 17:56:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539626192;
+        bh=3UAgcJorP01gMeSZPj7lLGk2NrxNVMeHM2OIlzsI5jk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=atzAePuDCjGFRFBIjTidfvyXToeDkKmr85jXS9Kv1ZB09oPk8Nuk6SuJXxes3k9yi
+         gLKIQpo6rRUSD9QWATqtEIFF0lrH1Zv71935nrnufGqE0rGbN/dc59TdZEz004kHum
+         yHBDonh+GvgYOqEEK4fOqokbRWY3dJN2IMpfM+dQ=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-crypto@vger.kernel.org
+Cc:     linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Subject: [RFC PATCH v2 07/12] crypto: arm/chacha - add XChaCha12 support
+Date:   Mon, 15 Oct 2018 10:54:19 -0700
+Message-Id: <20181015175424.97147-8-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
+In-Reply-To: <20181015175424.97147-1-ebiggers@kernel.org>
+References: <20181015175424.97147-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-mm@kvack.org, linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, sbates@raithlin.com, aou@eecs.berkeley.edu, hch@lst.de, akpm@linux-foundation.org, arnd@arndb.de, logang@deltatee.com, palmer@sifive.com, andrew@sifive.com, olof@lixom.net, michaeljclark@mac.com, robh@kernel.org, zong@andestech.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v2 6/6] RISC-V: Implement sparsemem
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements sparsemem support for risc-v which helps pave the
-way for memory hotplug and eventually P2P support.
+From: Eric Biggers <ebiggers@google.com>
 
-We introduce Kconfig options for virtual and physical address bits which
-are used to calculate the size of the vmemmap and set the
-MAX_PHYSMEM_BITS.
+Now that the 32-bit ARM NEON implementation of ChaCha20 and XChaCha20
+has been refactored to support varying the number of rounds, add support
+for XChaCha12.  This is identical to XChaCha20 except for the number of
+rounds, which is 12 instead of 20.
 
-The vmemmap is located directly before the VMALLOC region and sized
-such that we can allocate enough pages to populate all the virtual
-address space in the system (similar to the way it's done in arm64).
+XChaCha12 is faster than XChaCha20 but has a lower security margin,
+though still greater than AES-256's since the best known attacks make it
+through only 7 rounds.  See the patch "crypto: chacha - add XChaCha12
+support" for more details about why we need XChaCha12 support.
 
-During initialization, call memblocks_present() and sparse_init(),
-and provide a stub for vmemmap_populate() (all of which is similar to
-arm64).
-
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>
-Cc: Andrew Waterman <andrew@sifive.com>
-Cc: Olof Johansson <olof@lixom.net>
-Cc: Michael Clark <michaeljclark@mac.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Zong Li <zong@andestech.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- arch/riscv/Kconfig                 | 23 +++++++++++++++++++++++
- arch/riscv/include/asm/pgtable.h   | 21 +++++++++++++++++----
- arch/riscv/include/asm/sparsemem.h | 11 +++++++++++
- arch/riscv/kernel/setup.c          |  4 +++-
- arch/riscv/mm/init.c               |  8 ++++++++
- 5 files changed, 62 insertions(+), 5 deletions(-)
- create mode 100644 arch/riscv/include/asm/sparsemem.h
+ arch/arm/crypto/Kconfig            |  2 +-
+ arch/arm/crypto/chacha-neon-glue.c | 21 ++++++++++++++++++++-
+ 2 files changed, 21 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index a344980287a5..a1b5d758a542 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -52,12 +52,32 @@ config ZONE_DMA32
- 	bool
- 	default y if 64BIT
+diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
+index 0aa1471f27d2e..cc932d9bba561 100644
+--- a/arch/arm/crypto/Kconfig
++++ b/arch/arm/crypto/Kconfig
+@@ -117,7 +117,7 @@ config CRYPTO_CRC32_ARM_CE
+ 	select CRYPTO_HASH
  
-+config VA_BITS
-+	int
-+	default 32 if 32BIT
-+	default 39 if 64BIT
-+
-+config PA_BITS
-+	int
-+	default 34 if 32BIT
-+	default 56 if 64BIT
-+
- config PAGE_OFFSET
- 	hex
- 	default 0xC0000000 if 32BIT && MAXPHYSMEM_2GB
- 	default 0xffffffff80000000 if 64BIT && MAXPHYSMEM_2GB
- 	default 0xffffffe000000000 if 64BIT && MAXPHYSMEM_128GB
- 
-+config ARCH_FLATMEM_ENABLE
-+	def_bool y
-+
-+config ARCH_SPARSEMEM_ENABLE
-+	def_bool y
-+	select SPARSEMEM_VMEMMAP_ENABLE
-+
-+config ARCH_SELECT_MEMORY_MODEL
-+	def_bool ARCH_SPARSEMEM_ENABLE
-+
- config STACKTRACE_SUPPORT
- 	def_bool y
- 
-@@ -92,6 +112,9 @@ config PGTABLE_LEVELS
- config HAVE_KPROBES
- 	def_bool n
- 
-+config HAVE_ARCH_PFN_VALID
-+	def_bool y
-+
- menu "Platform type"
- 
- choice
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 16301966d65b..e1162336f5ea 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -89,6 +89,23 @@ extern pgd_t swapper_pg_dir[];
- #define __S110	PAGE_SHARED_EXEC
- #define __S111	PAGE_SHARED_EXEC
- 
-+#define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
-+#define VMALLOC_END      (PAGE_OFFSET - 1)
-+#define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
-+
-+/*
-+ * Roughly size the vmemmap space to be large enough to fit enough
-+ * struct pages to map half the virtual address space. Then
-+ * position vmemmap directly below the VMALLOC region.
-+ */
-+#define VMEMMAP_SHIFT \
-+	(CONFIG_VA_BITS - PAGE_SHIFT - 1 + STRUCT_PAGE_MAX_SHIFT)
-+#define VMEMMAP_SIZE	(1UL << VMEMMAP_SHIFT)
-+#define VMEMMAP_END	(VMALLOC_START - 1)
-+#define VMEMMAP_START	(VMALLOC_START - VMEMMAP_SIZE)
-+
-+#define vmemmap		((struct page *)VMEMMAP_START)
-+
+ config CRYPTO_CHACHA20_NEON
+-	tristate "NEON accelerated ChaCha20 stream cipher algorithms"
++	tristate "NEON accelerated ChaCha stream cipher algorithms"
+ 	depends on KERNEL_MODE_NEON
+ 	select CRYPTO_BLKCIPHER
+ 	select CRYPTO_CHACHA20
+diff --git a/arch/arm/crypto/chacha-neon-glue.c b/arch/arm/crypto/chacha-neon-glue.c
+index b236af4889c61..0b1b238227707 100644
+--- a/arch/arm/crypto/chacha-neon-glue.c
++++ b/arch/arm/crypto/chacha-neon-glue.c
+@@ -1,5 +1,6 @@
  /*
-  * ZERO_PAGE is a global shared page that is always zero,
-  * used for zero-mapped memory areas, etc.
-@@ -411,10 +428,6 @@ static inline void pgtable_cache_init(void)
- 	/* No page table caches to initialize */
- }
- 
--#define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
--#define VMALLOC_END      (PAGE_OFFSET - 1)
--#define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
--
- /*
-  * Task size is 0x40000000000 for RV64 or 0xb800000 for RV32.
-  * Note that PGDIR_SIZE must evenly divide TASK_SIZE.
-diff --git a/arch/riscv/include/asm/sparsemem.h b/arch/riscv/include/asm/sparsemem.h
-new file mode 100644
-index 000000000000..215530b24336
---- /dev/null
-+++ b/arch/riscv/include/asm/sparsemem.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+- * ChaCha20 (RFC7539) and XChaCha20 stream ciphers, NEON accelerated
++ * ARM NEON accelerated ChaCha and XChaCha stream ciphers,
++ * including ChaCha20 (RFC7539)
+  *
+  * Copyright (C) 2016 Linaro, Ltd. <ard.biesheuvel@linaro.org>
+  *
+@@ -160,6 +161,22 @@ static struct skcipher_alg algs[] = {
+ 		.setkey			= crypto_chacha20_setkey,
+ 		.encrypt		= xchacha_neon,
+ 		.decrypt		= xchacha_neon,
++	}, {
++		.base.cra_name		= "xchacha12",
++		.base.cra_driver_name	= "xchacha12-neon",
++		.base.cra_priority	= 300,
++		.base.cra_blocksize	= 1,
++		.base.cra_ctxsize	= sizeof(struct chacha_ctx),
++		.base.cra_module	= THIS_MODULE,
 +
-+#ifndef __ASM_SPARSEMEM_H
-+#define __ASM_SPARSEMEM_H
-+
-+#ifdef CONFIG_SPARSEMEM
-+#define MAX_PHYSMEM_BITS	CONFIG_PA_BITS
-+#define SECTION_SIZE_BITS	30
-+#endif /* CONFIG_SPARSEMEM */
-+
-+#endif /* __ASM_SPARSEMEM_H */
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index b2d26d9d8489..494c380e4ea6 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -205,6 +205,9 @@ static void __init setup_bootmem(void)
- 		                  PFN_PHYS(end_pfn - start_pfn),
- 		                  &memblock.memory, 0);
++		.min_keysize		= CHACHA_KEY_SIZE,
++		.max_keysize		= CHACHA_KEY_SIZE,
++		.ivsize			= XCHACHA_IV_SIZE,
++		.chunksize		= CHACHA_BLOCK_SIZE,
++		.walksize		= 4 * CHACHA_BLOCK_SIZE,
++		.setkey			= crypto_chacha12_setkey,
++		.encrypt		= xchacha_neon,
++		.decrypt		= xchacha_neon,
  	}
-+
-+	memblocks_present();
-+	sparse_init();
- }
+ };
  
- void __init setup_arch(char **cmdline_p)
-@@ -239,4 +242,3 @@ void __init setup_arch(char **cmdline_p)
- 
- 	riscv_fill_hwcap();
- }
--
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 58a522f9bcc3..5d529878667c 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -70,3 +70,11 @@ void free_initrd_mem(unsigned long start, unsigned long end)
- {
- }
- #endif /* CONFIG_BLK_DEV_INITRD */
-+
-+#ifdef CONFIG_SPARSEMEM
-+int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
-+			       struct vmem_altmap *altmap)
-+{
-+	return vmemmap_populate_basepages(start, end, node);
-+}
-+#endif
+@@ -186,3 +203,5 @@ MODULE_ALIAS_CRYPTO("chacha20");
+ MODULE_ALIAS_CRYPTO("chacha20-neon");
+ MODULE_ALIAS_CRYPTO("xchacha20");
+ MODULE_ALIAS_CRYPTO("xchacha20-neon");
++MODULE_ALIAS_CRYPTO("xchacha12");
++MODULE_ALIAS_CRYPTO("xchacha12-neon");
 -- 
-2.19.0
+2.19.1.331.ge82ca0e54c-goog
 
