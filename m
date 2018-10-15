@@ -2,181 +2,124 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4CEC04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C5FC71132
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 747B42089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:28:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="RryKO4nX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 747B42089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	by mail.kernel.org (Postfix) with ESMTP id 8B7852089D
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 16:28:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B7852089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbeJPAOY (ORCPT
+        id S1726815AbeJPAOe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:14:24 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35243 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726576AbeJPAOY (ORCPT
+        Mon, 15 Oct 2018 20:14:34 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39375 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbeJPAOe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:14:24 -0400
-Received: by mail-wm1-f68.google.com with SMTP id e187-v6so20377336wmf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 09:28:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Jzks89GG/HNqn+253ROvUQ3oYQXN2Pef9gPwJyk99ok=;
-        b=RryKO4nXIVXfhPPF10goQNEmROlBsJuvqHZP32V2Flc8qSwLZje5qa57DxcDfCcUMg
-         gGBtkaedSv733zde7Z5mDmb+c5FpTbfE8UOvNSd5Ma/1WtPWt17VQGEsjz/5qHGyN2Cm
-         LMUitxEX8HkNEP9dYr0N3uLg2v9Ybsz53J66ubPciTqCXrGatEipPwb47DpN8xrCcajf
-         mwAJB0za4V1cr1Aia7MIgTN68tvpDBas7PyJlefwigvuNBeBiOfwPPEMi8GaTUf3l1LC
-         lrYXXvMLF+jxfDOhfZfTUJltlAG/L2bEae7LDjetY6oFoI1nvEAJyA+yhgpLkY1buK7P
-         2XhA==
+        Mon, 15 Oct 2018 20:14:34 -0400
+Received: by mail-oi1-f196.google.com with SMTP id y81-v6so15555134oia.6;
+        Mon, 15 Oct 2018 09:28:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jzks89GG/HNqn+253ROvUQ3oYQXN2Pef9gPwJyk99ok=;
-        b=U0TVvhuj+9NYzbzmKN98N2A/ZoEIe+P0wr3uqYqszU92HybgYQP62LHuha8S5jYK10
-         7XRd9BPgkBjzbsKehcUKDrcShgjzO6mT2ayjodQhuWmze3Nmo2hkZ/fRKEW/TIPAjMqB
-         9zygjtz0QlYRrL0g2l3S86mpjc0lzfQRFCSmWuamPshkJvLkmGDYrponSa23lbDxJ9Yj
-         dFkJzsGV8j3EX0lwPCGoldOeZCpKhytwuW1YLAX1IR1GsLk02OVIB4UMaAnlWZNj/ur1
-         GRyRgOlpFkoMam1EeSqtyeefFgcUbYpFEaYXnngy9ABRRD47HPtJlVgRNlP6l4aTGPOQ
-         kh4Q==
-X-Gm-Message-State: ABuFfohCI8XYnL//ewkFudaHm0Cs5McjuJwPJccOWY4pgWyLPTVQhAFK
-        kFF7yAQbkgyhus1tgUiwB/9gyQ==
-X-Google-Smtp-Source: ACcGV60hol1CwtfAyti3qEUQBdUzlR+LtMZAtlcVtHZeUe1CT6ZV4jdo40sIciqhjdvOAuHpPGLxeA==
-X-Received: by 2002:a1c:607:: with SMTP id 7-v6mr13402838wmg.103.1539620905207;
-        Mon, 15 Oct 2018 09:28:25 -0700 (PDT)
-Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
-        by smtp.gmail.com with ESMTPSA id 130-v6sm10213527wmn.7.2018.10.15.09.28.23
+        bh=QCu88+v/rKrYw8FDqVth5v2B9w0vxnZsMmrohbeeyfw=;
+        b=i1n+gQHrHlbGmIoX99QCDJaBfh31muinBi8lTN3wItXsf4HPXTALTYBH18MHEpsBI2
+         RW7FzMcTObtomAJ9aSvSTAIi7OnID7PNCO74zYvzU2VGwrG3vIOkdD0bhyMwBG+fRbaf
+         cGtecTw1pTTRexv7xuUkQce9FgrpCuU3D3SZZASroXagKb1kfD5VwvpjYj1SPges4Mw8
+         wH5lrUMg2xVxttISM00sqrVRDYsG8+krPNjryATtX/YjvC8VWSe68LsyLcGQCsr4+4ps
+         B4KOB5xBpAiUVVF0ZlUocCw3fNJOObENW9RDlW3INxKekcYXcvXjHSxahthYq3hmRYwq
+         squw==
+X-Gm-Message-State: ABuFfoh+JVoFWdw9tlluLtPORvVKOk0DozLau4WmAeF2swBs42RUplZd
+        8uB9W4pN0LyuJ8/APlI+uA==
+X-Google-Smtp-Source: ACcGV60D3v/heDp/PGG2JKQUn3cJ+DlIaf1sMQbzQ1vJnm1rTjY56IPz5dYAp8g5zZ672ulZEF+SPQ==
+X-Received: by 2002:aca:dfc3:: with SMTP id w186-v6mr9889955oig.331.1539620917475;
+        Mon, 15 Oct 2018 09:28:37 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r33sm4368708otc.37.2018.10.15.09.28.36
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 09:28:24 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 18:28:18 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v1 2/2] sysctl: handle overflow for file-max
-Message-ID: <20181015162817.a7egfo4hutzi3cah@brauner.io>
-References: <20181015105544.4395-1-christian@brauner.io>
- <20181015105544.4395-3-christian@brauner.io>
- <CAGXu5jL2j+9ey4732XmTrU4ZJQwJvxmkHMCzwgar9FnVNZhjwg@mail.gmail.com>
+        Mon, 15 Oct 2018 09:28:36 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 11:28:35 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     edubezval@gmail.com, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, leo.yan@linaro.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/HISILICON SOC SUPPORT" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 08/14] ARM64: dts: hisilicon: Add tsensor interrupt name
+Message-ID: <20181015162835.GA20955@bogus>
+References: <1537866192-12320-1-git-send-email-daniel.lezcano@linaro.org>
+ <1537866192-12320-9-git-send-email-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jL2j+9ey4732XmTrU4ZJQwJvxmkHMCzwgar9FnVNZhjwg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1537866192-12320-9-git-send-email-daniel.lezcano@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 09:11:51AM -0700, Kees Cook wrote:
-> On Mon, Oct 15, 2018 at 3:55 AM, Christian Brauner <christian@brauner.io> wrote:
-> > Currently, when writing
-> >
-> > echo 18446744073709551616 > /proc/sys/fs/file-max
-> >
-> > /proc/sys/fs/file-max will overflow and be set to 0. That quickly
-> > crashes the system.
-> > This commit explicitly caps the value for file-max to ULONG_MAX.
-> >
-> > Note, this isn't technically necessary since proc_get_long() will already
-> > return ULONG_MAX. However, two reason why we still should do this:
-> > 1. it makes it explicit what the upper bound of file-max is instead of
-> >    making readers of the code infer it from proc_get_long() themselves
-> > 2. other tunebles than file-max may want to set a lower max value than
-> >    ULONG_MAX and we need to enable __do_proc_doulongvec_minmax() to handle
-> >    such cases too
-> >
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Signed-off-by: Christian Brauner <christian@brauner.io>
-> > ---
-> > v0->v1:
-> > - if max value is < than ULONG_MAX use max as upper bound
-> > - (Dominik) remove double "the" from commit message
-> > ---
-> >  kernel/sysctl.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > index 97551eb42946..226d4eaf4b0e 100644
-> > --- a/kernel/sysctl.c
-> > +++ b/kernel/sysctl.c
-> > @@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
-> >  static int __maybe_unused two = 2;
-> >  static int __maybe_unused four = 4;
-> >  static unsigned long one_ul = 1;
-> > +static unsigned long ulong_max = ULONG_MAX;
-> >  static int one_hundred = 100;
-> >  static int one_thousand = 1000;
-> >  #ifdef CONFIG_PRINTK
-> > @@ -1696,6 +1697,7 @@ static struct ctl_table fs_table[] = {
-> >                 .maxlen         = sizeof(files_stat.max_files),
-> >                 .mode           = 0644,
-> >                 .proc_handler   = proc_doulongvec_minmax,
-> > +               .extra2         = &ulong_max,
+On Tue, Sep 25, 2018 at 11:03:06AM +0200, Daniel Lezcano wrote:
+> Add the interrupt names for the sensors, so the code can rely on them
+> instead of dealing with index which are prone to error.
 > 
-> Don't we want this capped lower? The percpu comparisons, for example,
-> are all signed long. And there is at least this test, which could
-> overflow:
+> The name comes from the Hisilicon documentation found on internet.
 > 
->         if (atomic_long_read(&unix_nr_socks) > 2 * get_max_files())
->                 goto out;
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  .../bindings/thermal/hisilicon-thermal.txt         |  3 ++
+>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi          | 63 +++++++++++-----------
+>  arch/arm64/boot/dts/hisilicon/hi6220.dtsi          |  1 +
+>  3 files changed, 36 insertions(+), 31 deletions(-)
 
-Does that check even make sense? 
-Commit 518de9b39e854542de59bfb8b9f61c8f7ecf808b made get_max_files()
-return a long to bump the number of allowed files to more than 2^31.
-
-But assuming a platform where an unsigned long is 64bit which is what
-get_max_files() returns and atomic_long_read() is 64bit too this is
-guaranteed to overflow, no?  So I'm not clear what this is trying to do.
-Seems this should simply be:
-
-if (atomic_long_read(&unix_nr_socks) > get_max_files())
-        goto out;
-
-or am I missing a crucial point?
+Lots of whitespace errors reported by checkpatch.pl.
 
 > 
-> Seems like max-files should be  SLONG_MAX / 2 or something instead?
+> diff --git a/Documentation/devicetree/bindings/thermal/hisilicon-thermal.txt b/Documentation/devicetree/bindings/thermal/hisilicon-thermal.txt
+> index cef716a..3edfae3 100644
+> --- a/Documentation/devicetree/bindings/thermal/hisilicon-thermal.txt
+> +++ b/Documentation/devicetree/bindings/thermal/hisilicon-thermal.txt
+> @@ -7,6 +7,7 @@
+>    region.
+>  - interrupt: The interrupt number to the cpu. Defines the interrupt used
+>    by /SOCTHERM/tsensor.
+> +- interrupt-names: The interrupt names for the different sensors
 
-Hm. Isn't that a bit low? Iiuc, this would mean cutting the maximum
-number of open files in half? If at all shouldn't it be LONG_MAX?
+Need to define what the names are.
 
-> 
-> >         },
-> >         {
-> >                 .procname       = "nr_open",
-> > @@ -2795,6 +2797,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
-> >                                 break;
-> >                         if (neg)
-> >                                 continue;
-> > +                       if (max && val > *max)
-> > +                               val = *max;
-> >                         val = convmul * val / convdiv;
-> >                         if ((min && val < *min) || (max && val > *max))
-> >                                 continue;
-> > --
-> > 2.17.1
-> >
-> 
-> -Kees
-> 
-> -- 
-> Kees Cook
-> Pixel Security
+>  - clock-names: Input clock name, should be 'thermal_clk'.
+>  - clocks: phandles for clock specified in "clock-names" property.
+>  - #thermal-sensor-cells: Should be 1. See ./thermal.txt for a description.
+> @@ -18,6 +19,7 @@ for Hi6220:
+>  		compatible = "hisilicon,tsensor";
+>  		reg = <0x0 0xf7030700 0x0 0x1000>;
+>  		interrupts = <0 7 0x4>;
+> +		interrupt-names = "tsensor_intr";
+
+That name seems pretty pointless.
+
+>  		clocks = <&sys_ctrl HI6220_TSENSOR_CLK>;
+>  		clock-names = "thermal_clk";
+>  		#thermal-sensor-cells = <1>;
+> @@ -28,5 +30,6 @@ for Hi3660:
+>  		compatible = "hisilicon,hi3660-tsensor";
+>  		reg = <0x0 0xfff30000 0x0 0x1000>;
+>  		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-names = "tsensor_a73";
+
+Just 'a73' is sufficient.
+
+>  		#thermal-sensor-cells = <1>;
+>  	};
