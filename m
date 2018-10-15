@@ -2,204 +2,81 @@ Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FAKE_REPLY_C,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BA8C04AA5
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE41C04AA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13B91208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:24:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5880208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 19:27:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="ASx5B3MF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13B91208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kaiy2TRO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5880208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726904AbeJPDKk (ORCPT
+        id S1726915AbeJPDNw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 15 Oct 2018 23:10:40 -0400
-Received: from alln-iport-6.cisco.com ([173.37.142.93]:52546 "EHLO
-        alln-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbeJPDKk (ORCPT
+        Mon, 15 Oct 2018 23:13:52 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51487 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbeJPDNv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Oct 2018 23:10:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=4080; q=dns/txt; s=iport;
-  t=1539631442; x=1540841042;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=w9uNVnQfhuvnwKyGdheHU9+n3ba4ZUiSWgBBSFho/Sg=;
-  b=ASx5B3MFwlweW4Y7exB/guwBAWKHwgWECY3xb95aymR26kyurupPtVuj
-   /DHQEamKsIefeJuAn4KbQ7suLRkP5cnc42XHbBsYSKouiPaWfgLwYvTHv
-   ff5etRCT369/ZbzMXoKoYBVX3EEI0nuVEacvf/a97xYJb0D5dFzpPKYX4
-   c=;
-X-IronPort-AV: E=Sophos;i="5.54,385,1534809600"; 
-   d="scan'208";a="185767457"
-Received: from alln-core-7.cisco.com ([173.36.13.140])
-  by alln-iport-6.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 19:24:01 +0000
-Received: from [10.154.208.167] ([10.154.208.167])
-        by alln-core-7.cisco.com (8.15.2/8.15.2) with ESMTP id w9FJNjYQ011677;
-        Mon, 15 Oct 2018 19:23:47 GMT
-Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
-To:     Jann Horn <jannh@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, deller@gmx.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        christian@brauner.io, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Dave.Martin@arm.com,
-        mchehab+samsung@kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        guro@fb.com, Marcos Souza <marcos.souza.org@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, linux@dominikbrodowski.net,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        yang.shi@linux.alibaba.com, Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Victor Kamensky <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, sstrogin@cisco.com,
-        Enke Chen <enkechen@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <CAG48ez2ZPhnxudqgU7nC2ORvLnS0Ja-qhLSE5WAY361jst7XNw@mail.gmail.com>
- <c5a09a04-b4f2-876b-af83-30f7e527497e@cisco.com>
- <CAG48ez2ZD=dovBApR07wi_DzYjJvEyO-Pm35eLv9AyXv1tcAFQ@mail.gmail.com>
-From:   Enke Chen <enkechen@cisco.com>
-Message-ID: <a8638ed9-1ca8-ef03-c988-c17ce9a6ed39@cisco.com>
-Date:   Mon, 15 Oct 2018 12:23:45 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Mon, 15 Oct 2018 23:13:51 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 143-v6so19953101wmf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 12:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=xg2S62pKZT59+ka4mGMyb0JB66qBgKtk/Lge43FAT+k=;
+        b=kaiy2TROeeqv8/bnczbDDI4/F6b4xQ+NOsag4LmKmQCy1ZlWJZjAGTECR7zYK4shLA
+         Wu3Z1hq80qBHLSAmVId8/G0cXtH1qpJz7Ov15ZjADGjJ0dMAb6FJT4EIVy5drN8QXlEJ
+         E6kshdfu/aURaMwZH6u/9O3N79KDd52u7pEc2jC3R2s61Y5tbXgihYgNwpnmW3KFA0SR
+         XL2otemb03pnsPsQn6xybtUUZyZhlmKvbzHYHioCeKJsD/a5LsMRX6Ni2FivVKA8bQFb
+         C4XS2Yf2cUaNDS6gRZkQaaTaz3h8FG7arldZYbt8MAhqNT0O86t9rAwqnABRC2wH12mv
+         oCxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=xg2S62pKZT59+ka4mGMyb0JB66qBgKtk/Lge43FAT+k=;
+        b=fqtBOE4Orbpykn7r/p7vjhmFIFbEfGgWQIQX9jXdY04+87tR6YiTBnM3zWLBt0ZVj7
+         P+EvyUmzDByH/yulsWCmhLx2bnkqij7h3z9tE+AULETOI6hJFS8M0GQlXGTXnvRpXBZv
+         hIOqQ9mOwYFkb0wRp5u6+KxdMulG0rE3S1o4/MIWAM1Ku0FVAr+JfNYIcvbvHEaLMnNy
+         becM5TkLLvNp3EMDHzYy29XtgJKwfg9iC40TwDFOTLigVIvV3A5k/vpMQjzRuVRmJiD3
+         CgeVOuj9NvaS+LHfwW2mhXF4+UnoPg7xwXYzQkMcPHVknCP7g4uW4sbb3KQxbeu+XBVY
+         OGHA==
+X-Gm-Message-State: ABuFfojGTA1JPdevXjRseAAHt+/KzGxtXrJm4gWVqQfK6E/JiUhkSlsF
+        blZfl9GHsF0L2UP4Vc7JGZ+YOVQ=
+X-Google-Smtp-Source: ACcGV60j6aa609PWLAhSUZozw8iAXuXZnBCC075D74wV9vojr+ZkU/LhnmbjUM5jHWhKtY7nGnxEkw==
+X-Received: by 2002:a1c:e583:: with SMTP id c125-v6mr14907797wmh.134.1539631633456;
+        Mon, 15 Oct 2018 12:27:13 -0700 (PDT)
+Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
+        by smtp.gmail.com with ESMTPSA id v16-v6sm9132122wru.31.2018.10.15.12.27.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 12:27:12 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 22:27:10 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     christian@brauner.io
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v1 1/2] sysctl: cap to ULONG_MAX in proc_get_long()
+Message-ID: <20181015192710.GA18693@avx2>
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez2ZD=dovBApR07wi_DzYjJvEyO-Pm35eLv9AyXv1tcAFQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.154.208.167, [10.154.208.167]
-X-Outbound-Node: alln-core-7.cisco.com
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Jann:
+> int kstrtoul_bounded(const char *s, unsigned int base,
+> char **trailing, unsigned long long *res)
 
-Thanks for your detail explanation. Will take care of it.
-
--- Enke
-
-On 10/15/18 11:54 AM, Jann Horn wrote:
-> On Mon, Oct 15, 2018 at 8:36 PM Enke Chen <enkechen@cisco.com> wrote:
->> On 10/13/18 11:27 AM, Jann Horn wrote:
->>> On Sat, Oct 13, 2018 at 2:33 AM Enke Chen <enkechen@cisco.com> wrote:
->>>> For simplicity and consistency, this patch provides an implementation
->>>> for signal-based fault notification prior to the coredump of a child
->>>> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
->>>> be used by an application to express its interest and to specify the
->>>> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
->>>> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
->>>
->>> Your suggested API looks vaguely similar to PR_SET_PDEATHSIG, but with
->>> some important differences:
->>>
->>>  - You don't reset the signal on setuid execution.
-> [...]
->>>
->>> For both of these: Are these differences actually necessary, and if
->>> so, can you provide a specific rationale? From a security perspective,
->>> I would very much prefer it if this API had semantics closer to
->>> PR_SET_PDEATHSIG.
->>
-> [...]
->>
->> Regarding the impact of "setuid", this property "PR_SET_PREDUMP_SIG" has to
->> do with the application/process whether the signal handler is set for receiving
->> such a notification.  If it is set, the "uid" should not matter.
-> 
-> If an attacker's process first calls PR_SET_PREDUMP_SIG, then forks
-> off a child, then calls execve() on a setuid binary, the setuid binary
-> calls setuid(0), and the attacker-controlled child then crashes, the
-> privileged process will receive an unexpected signal that the attacker
-> wouldn't have been allowed to send otherwise. For similar reasons, the
-> parent death signal is reset when a setuid binary is executed:
-> 
-> void setup_new_exec(struct linux_binprm * bprm)
-> {
->         /*
->          * Once here, prepare_binrpm() will not be called any more, so
->          * the final state of setuid/setgid/fscaps can be merged into the
->          * secureexec flag.
->          */
->         bprm->secureexec |= bprm->cap_elevated;
-> 
->         if (bprm->secureexec) {
->                 /* Make sure parent cannot signal privileged process. */
->                 current->pdeath_signal = 0;
-> [...]
->         }
-> [...]
-> }
-> 
-> int commit_creds(struct cred *new)
-> {
-> [...]
->         /* dumpability changes */
->         if (!uid_eq(old->euid, new->euid) ||
->             !gid_eq(old->egid, new->egid) ||
->             !uid_eq(old->fsuid, new->fsuid) ||
->             !gid_eq(old->fsgid, new->fsgid) ||
->             !cred_cap_issubset(old, new)) {
->                 if (task->mm)
->                         set_dumpable(task->mm, suid_dumpable);
->                 task->pdeath_signal = 0;
->                 smp_wmb();
->         }
-> [...]
-> }
-> 
-> AppArmor and SELinux also do related changes:
-> 
-> static void apparmor_bprm_committing_creds(struct linux_binprm *bprm)
-> {
-> [...]
->         /* bail out if unconfined or not changing profile */
->         if ((new_label->proxy == label->proxy) ||
->             (unconfined(new_label)))
->                 return;
-> 
->         aa_inherit_files(bprm->cred, current->files);
-> 
->         current->pdeath_signal = 0;
-> [...]
-> }
-> 
-> static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
-> {
-> [...]
->         new_tsec = bprm->cred->security;
->         if (new_tsec->sid == new_tsec->osid)
->                 return;
-> 
->         /* Close files for which the new task SID is not authorized. */
->         flush_unauthorized_files(bprm->cred, current->files);
-> 
->         /* Always clear parent death signal on SID transitions. */
->         current->pdeath_signal = 0;
-> [...]
-> }
-> 
-> You should probably reset the coredump signal in the same places - or
-> even better, add a new helper for resetting the parent death signal,
-> and then add code for resetting the coredump signal in there.
-> 
+NO! The whole point is not have million variants of slightly different
+integer parsing functions.
+Cap it in the sysctl -- noone would care.
