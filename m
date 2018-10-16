@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B35C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5F6C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FFC22087B
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADC632087B
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VfVwa0vk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FFC22087B
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cdL/WTHG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADC632087B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbeJQHr3 (ORCPT
+        id S1727871AbeJQHrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:47:29 -0400
-Received: from mail-io1-f74.google.com ([209.85.166.74]:56173 "EHLO
-        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeJQHr2 (ORCPT
+        Wed, 17 Oct 2018 03:47:31 -0400
+Received: from mail-it1-f201.google.com ([209.85.166.201]:58263 "EHLO
+        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727526AbeJQHra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:47:28 -0400
-Received: by mail-io1-f74.google.com with SMTP id o7-v6so3095925ioh.22
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:38 -0700 (PDT)
+        Wed, 17 Oct 2018 03:47:30 -0400
+Received: by mail-it1-f201.google.com with SMTP id d7-v6so222721itf.7
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=XJBXERTeyDT3By2lgjIVo05iHCIAcMCMn8bvbRDnspA=;
-        b=VfVwa0vkb/93+cpra+9YBhynQ9UjnMBJBc4wZLyeXFXfDJVsxx8FJD3Of6Vi94x+I6
-         +APX3u8Y5Pg2WkRb3jVFy7tyQ67v2v8upHWAs3ffGMNBP8HYtw4TTjNgkqDuz6JXB+a9
-         fqPbvE8BvS4IJ1knkXH51IDP0FfuXxjJBev9N5JOWAjiZpz6nE/2qqX3ifb6LHNGENZC
-         EgoaSGWww0OhfXC7YkY8r3JL6HJVCOv3RHi6Aa+2Wb+bDPdbt0gCfJbR4e6z6KT+EJes
-         34uXKYGk91BdtheWBcbQ6UMvaNgC5bEWhMu2elwnekPr5BzZMaR0WhHcubhvaRFpKjPp
-         saiQ==
+        bh=wDfUjpTFuScKe5JOSK0jo+HGTTRhetz+kQRVWENyJS0=;
+        b=cdL/WTHGLGFeVRZQPi0GA7VS9QWPA39qDWYUDKxfj0K8ZnvYhzXxc0dlKh9zoNK+/8
+         5NFq0ybqzXiW0oX3Fxu5zsNkAMag+bGBLsqFd9DPf6Ek3o3qnboiaUx8FjDoVKr/BTPD
+         cZvXDqLB1jf9twv3snl37NsoHfY6BW/TWQKNrQ8BSycAHI+3piQFPzSSLw+XfX2++QDB
+         Lv99kVOuYqcHnwPtn2fJ+8KtvIHPFpCqOZ2x7bj5PRM1ax1/wVH4ZvchOWxBWxAIFnol
+         HidUOJebWRxgtkIziwgrCLseGFjSw/xLl4pGOpfVkOfMcFX6zoGWTDd9dzRp2sYe4PwB
+         xKqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=XJBXERTeyDT3By2lgjIVo05iHCIAcMCMn8bvbRDnspA=;
-        b=O09Ahkuias//+diO2LTgq/BMM2PgRnHO4cj+Wb6Ri2WKstWzCTSD06N+kZslqfZmGG
-         46MaZ6BZhheASjPPdhA7lYfhCb0VaB7j2Q1TYab24kfE9Bn9UoDSmUceKKbVBSGJp9Ob
-         TjWewe6mqN7Yd+w0BsHcPZyYoHps5lwI8a8n8JcKVu6rR7Paalzr6kOaXI0AXJoxhLDW
-         HLZ6zuhHaE6zRXrTQuoLvzZ9aPri5RpVDEChNPZdIBp80wxAbZwElL0TCpZUWlHl3435
-         UGjwWc2m3mTShhta6s/JGr/mIzfhQFBLN9UT4uTcejeMsLWOI/iXiGNxVRiYN5Vx+DcJ
-         K1Nw==
-X-Gm-Message-State: ABuFfoihpk4twpMFLqzbhFW2QrLFwhOUqBMB+yHDV/wtg0dqBzYW1Drq
-        CcoQag3CwYrVwAh4Oa0Z1xx10J3IOEc4ErGLk0mDYA==
-X-Google-Smtp-Source: AJdET5dp8faAFMDxfYk9L34Xr3adUFy2YxvwdvtIB6sC9LYpnMpz2hoPhMOM1bPQ4WpR2722W5lwY6KQ1bqYuKGK7hlPaw==
-X-Received: by 2002:a05:660c:b0c:: with SMTP id f12mr201759itk.22.1539734077965;
- Tue, 16 Oct 2018 16:54:37 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 16:51:10 -0700
+        bh=wDfUjpTFuScKe5JOSK0jo+HGTTRhetz+kQRVWENyJS0=;
+        b=dqQYKbdgY0IXnYBLNoJCQ4O8P35maU7JClPSYut/ojkX8I+ZxGGd/36udEj1/KNHDg
+         hWgVf6xhgiZ0UMZyoam6Zwopz6TIQledB4uOOWTb+8Kw1PtzTjziWIqEdXToOF75KlvK
+         hMHrSA+UklUtRhCViZMcpop9oj+HObVDw3vVrtGWspVM95FQ2kOBBSb9GoY4AlrS2gXZ
+         DtLwJEgEaSz1/w6XQBsCWo4/waUaJOsKuvaSTiiJCcaO9m1OxuYpXtaYz0Iyr8MeUlKK
+         LnL6FGHG/QCyKJgDbyYiW169Uoely1PYT6G5eLVnmprFkGPVhVmDuvb1lilYI5KIyEBi
+         cMGw==
+X-Gm-Message-State: ABuFfohHOpfVkUyQq2UWWTGFKSTC3ejHnmD9mYaA5b5jToeit5j+Ccb/
+        +X+pGSajhc+iMREyUQtbc561VetUyguJjJ2G+JfYWA==
+X-Google-Smtp-Source: ACcGV60fnn6vyQbvIqsJoUCyM0HIqt275NDvsjCWheXNCV4cPttX975jId2HpGF/Krthsvf7AvK26S6Z857gbtlbIDPNog==
+X-Received: by 2002:a24:fe01:: with SMTP id w1-v6mr224481ith.0.1539734080433;
+ Tue, 16 Oct 2018 16:54:40 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 16:51:11 -0700
 In-Reply-To: <20181016235120.138227-1-brendanhiggins@google.com>
-Message-Id: <20181016235120.138227-22-brendanhiggins@google.com>
+Message-Id: <20181016235120.138227-23-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20181016235120.138227-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
-Subject: [RFC v1 21/31] kunit: mock: added support for arbitrary function mocking
+Subject: [RFC v1 22/31] kunit: mock: add the concept of spyable functions
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
         shuah@kernel.org
@@ -77,263 +77,234 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Up to this point KUnit only supported method style function mocking
-where there was some type of class or context object and the function
-was only accessed via a pointer.
-
-This adds support for mocking any function via the __mockable attribute.
+Adds the concept of spying like in Mockito
+(http://static.javadoc.io/org.mockito/mockito-core/2.20.0/org/mockito/Mockito.html#spy-T-).
+This allows a function declaration to be labled as spyable which allows
+the function to be mocked *and* to allow the mock to invoke the original
+function definition.
 
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- include/kunit/mock.h    | 107 ++++++++++++++++++++++++++++++++++++++++
- kunit/mock-macro-test.c |  14 ++++++
- kunit/mock.c            |  41 +++++++++++++++
- 3 files changed, 162 insertions(+)
+ include/kunit/mock.h | 123 ++++++++++++++++++++++++++++++++++++++++++-
+ kunit/common-mocks.c |  36 +++++++++++++
+ 2 files changed, 158 insertions(+), 1 deletion(-)
 
 diff --git a/include/kunit/mock.h b/include/kunit/mock.h
-index 89e95b3fcf09e..b58e30ba02ce2 100644
+index b58e30ba02ce2..c3615e80d96ee 100644
 --- a/include/kunit/mock.h
 +++ b/include/kunit/mock.h
-@@ -144,6 +144,8 @@ void mock_register_formatter(struct mock_param_formatter *formatter);
- 
- void mock_unregister_formatter(struct mock_param_formatter *formatter);
- 
-+struct mock *mock_get_global_mock(void);
-+
- #define MOCK(name) name##_mock
- 
- /**
-@@ -282,6 +284,12 @@ static inline bool is_naggy_mock(struct mock *mock)
+@@ -284,6 +284,13 @@ static inline bool is_naggy_mock(struct mock *mock)
  		DECLARE_MOCK_CLIENT(name, return_type, param_types);	       \
  		DECLARE_MOCK_MASTER(name, handle_index, param_types)
  
-+#define DECLARE_MOCK_FUNC_CLIENT(name, return_type, param_types...) \
-+		DECLARE_MOCK_CLIENT(name, return_type, param_types)
++#define DECLARE_SPYABLE(name, return_type, param_types...)		       \
++		return_type REAL_ID(name)(param_types);			       \
++		return_type name(param_types);				       \
++		void *INVOKE_ID(name)(struct test *test,		       \
++				      const void *params[],		       \
++				      int len)
 +
-+#define DECLARE_MOCK_FUNC_MASTER(name, param_types...) \
-+		DECLARE_MOCK_MASTER(name, MOCK_MAX_PARAMS, param_types)
-+
- #define DECLARE_STRUCT_CLASS_MOCK_STRUCT(struct_name)			       \
- 		struct MOCK(struct_name) {				       \
- 			struct mock		ctrl;			       \
-@@ -411,6 +419,16 @@ static inline bool is_naggy_mock(struct mock *mock)
-  */
- #define CONSTRUCT_MOCK(struct_name, test) MOCK_INIT_ID(struct_name)(test)
+ #define DECLARE_MOCK_FUNC_CLIENT(name, return_type, param_types...) \
+ 		DECLARE_MOCK_CLIENT(name, return_type, param_types)
  
-+#define DECLARE_FUNCTION_MOCK_INTERNAL(name, return_type, param_types...)      \
-+		DECLARE_MOCK_FUNC_CLIENT(name, return_type, param_types);      \
-+		DECLARE_MOCK_FUNC_MASTER(name, param_types);
-+
-+#define DECLARE_FUNCTION_MOCK(name, return_type, param_types...) \
-+		DECLARE_FUNCTION_MOCK_INTERNAL(name, return_type, param_types)
-+
-+#define DECLARE_FUNCTION_MOCK_VOID_RETURN(name, param_types...) \
-+		DECLARE_FUNCTION_MOCK(name, void, param_types)
-+
- #define DEFINE_MOCK_CLIENT_COMMON(name,					       \
- 				  handle_index,				       \
- 				  MOCK_SOURCE,				       \
-@@ -488,6 +506,31 @@ static inline bool is_naggy_mock(struct mock *mock)
- 						 NO_RETURN,		       \
- 						 param_types)
+@@ -465,6 +472,100 @@ static inline bool is_naggy_mock(struct mock *mock)
+ 			RETURN(return_type, retval);			       \
+ 		}
  
-+#define FUNC_MOCK_SOURCE(ctx, handle_index) mock_get_global_mock()
-+#define DEFINE_MOCK_FUNC_CLIENT_COMMON(name,				       \
-+				       return_type,			       \
-+				       RETURN,				       \
-+				       param_types...)			       \
-+		DEFINE_MOCK_CLIENT_COMMON(name,				       \
-+					  MOCK_MAX_PARAMS,		       \
-+					  FUNC_MOCK_SOURCE,		       \
-+					  name,				       \
-+					  return_type,			       \
-+					  RETURN,			       \
-+					  param_types)
++#if IS_ENABLED(CONFIG_KUNIT)
++#define DEFINE_INVOKABLE(name, return_type, RETURN_ASSIGN, param_types...)     \
++		void *INVOKE_ID(name)(struct test *test,		       \
++				      const void *params[],		       \
++				      int len) {			       \
++			return_type *retval;				       \
++									       \
++			TEST_ASSERT_EQ(test, NUM_VA_ARGS(param_types), len);   \
++			retval = test_kzalloc(test,			       \
++					      sizeof(*retval),		       \
++					      GFP_KERNEL);		       \
++			TEST_ASSERT_NOT_ERR_OR_NULL(test, retval);	       \
++			RETURN_ASSIGN() REAL_ID(name)(			       \
++					ARRAY_ACCESSORS_FROM_TYPES(	       \
++							param_types));	       \
++			return retval;					       \
++		}
++#else
++#define DEFINE_INVOKABLE(name, return_type, RETURN_ASSIGN, param_types...)
++#endif
 +
-+#define DEFINE_MOCK_FUNC_CLIENT(name, return_type, param_types...)	       \
-+		DEFINE_MOCK_FUNC_CLIENT_COMMON(name,			       \
-+					       return_type,		       \
-+					       CAST_AND_RETURN,		       \
-+					       param_types)
++#define DEFINE_SPYABLE_COMMON(name,					       \
++			      return_type,				       \
++			      RETURN_ASSIGN,				       \
++			      param_types...)				       \
++		return_type REAL_ID(name)(param_types);			       \
++		return_type name(param_types) __mockable_alias(REAL_ID(name)); \
++		DEFINE_INVOKABLE(name, return_type, RETURN_ASSIGN, param_types);
 +
-+#define DEFINE_MOCK_FUNC_CLIENT_VOID_RETURN(name, param_types...)	       \
-+		DEFINE_MOCK_FUNC_CLIENT_COMMON(name,			       \
-+					       void,			       \
-+					       NO_RETURN,		       \
-+					       param_types)
-+
- #define DEFINE_MOCK_MASTER_COMMON_INTERNAL(name,			       \
- 					   ctrl_index,			       \
- 					   MOCK_SOURCE,			       \
-@@ -522,6 +565,13 @@ static inline bool is_naggy_mock(struct mock *mock)
- 					  CLASS_MOCK_MASTER_SOURCE,	       \
- 					  param_types)
- 
-+#define FUNC_MOCK_CLIENT_SOURCE(ctrl_index) mock_get_global_mock()
-+#define DEFINE_MOCK_FUNC_MASTER(name, param_types...)			       \
-+		DEFINE_MOCK_MASTER_COMMON(name,				       \
-+					  MOCK_MAX_PARAMS,		       \
-+					  FUNC_MOCK_CLIENT_SOURCE,	       \
-+					  param_types)
-+
- #define DEFINE_MOCK_COMMON(name,					       \
- 			   handle_index,				       \
- 			   mock_converter,				       \
-@@ -684,6 +734,63 @@ static inline struct mock *from_void_ptr_to_mock(const void *ptr)
- 
- DECLARE_STRUCT_CLASS_MOCK_INIT(void);
- 
-+#define DEFINE_FUNCTION_MOCK_INTERNAL(name, return_type, param_types...)       \
-+		DEFINE_MOCK_FUNC_CLIENT(name, return_type, param_types);       \
-+		DEFINE_MOCK_FUNC_MASTER(name, param_types)
++#define ASSIGN() *retval =
 +
 +/**
-+ * DEFINE_FUNCTION_MOCK()
++ * DEFINE_SPYABLE()
 + * @name: name of the function
 + * @return_type: return type of the function
-+ * @...: parameter types of the function
++ * @param_types: parameter types of the function
 + *
-+ * Same as DEFINE_STRUCT_CLASS_MOCK() except can be used to mock any function
-+ * declared %__mockable or DEFINE_REDIRECT_MOCKABLE()
-+ */
-+#define DEFINE_FUNCTION_MOCK(name, return_type, param_types...) \
-+		DEFINE_FUNCTION_MOCK_INTERNAL(name, return_type, param_types)
-+
-+#define DEFINE_FUNCTION_MOCK_VOID_RETURN_INTERNAL(name, param_types...)	       \
-+		DEFINE_MOCK_FUNC_CLIENT_VOID_RETURN(name, param_types);	       \
-+		DEFINE_MOCK_FUNC_MASTER(name, param_types)
-+
-+/**
-+ * DEFINE_FUNCTION_MOCK_VOID_RETURN()
-+ * @name: name of the function
-+ * @...: parameter types of the function
-+ *
-+ * Same as DEFINE_FUNCTION_MOCK() except the method has a ``void`` return
-+ * type.
-+ */
-+#define DEFINE_FUNCTION_MOCK_VOID_RETURN(name, param_types...) \
-+		DEFINE_FUNCTION_MOCK_VOID_RETURN_INTERNAL(name, param_types)
-+
-+#if IS_ENABLED(CONFIG_KUNIT)
-+
-+/**
-+ * __mockable - A function decorator that allows the function to be mocked.
++ * Used to define a function which is *redirect-mockable*, which allows the
++ * function to be mocked and refer to the original definition via
++ * INVOKE_REAL().
 + *
 + * Example:
 + *
 + * .. code-block:: c
 + *
-+ *	int __mockable example(int arg) { ... }
-+ */
-+#define __mockable __weak
-+
-+/**
-+ * __visible_for_testing - Makes a static function visible when testing.
++ *	DEFINE_SPYABLE(i2c_add_adapter,
++ *	               RETURNS(int), PARAMS(struct i2c_adapter *));
++ *	int REAL_ID(i2c_add_adapter)(struct i2c_adapter *adapter)
++ *	{
++ *		...
++ *	}
 + *
-+ * A macro that replaces the `static` specifier on functions and global
-+ * variables that is static when compiled normally and visible when compiled for
-+ * tests.
++ *	static int aspeed_i2c_test_init(struct test *test)
++ *	{
++ *		struct mock_param_capturer *adap_capturer;
++ *		struct mock_expectation *handle;
++ *		struct aspeed_i2c_test *ctx;
++ *		int ret;
++ *
++ *		ctx = test_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++ *		if (!ctx)
++ *			return -ENOMEM;
++ *		test->priv = ctx;
++ *
++ *		handle = TEST_EXPECT_CALL(
++ *				i2c_add_adapter(capturer_to_matcher(
++ *						adap_capturer)));
++ *		handle->action = INVOKE_REAL(test, i2c_add_adapter);
++ *		ret = of_fake_probe_platform_by_name(test,
++ *						     "aspeed-i2c-bus",
++ *						     "test-i2c-bus");
++ *		if (ret < 0)
++ *			return ret;
++ *
++ *		TEST_ASSERT_PARAM_CAPTURED(test, adap_capturer);
++ *		ctx->adap = mock_capturer_get(adap_capturer,
++ *					      struct i2c_adapter *);
++ *
++ *		return 0;
++ *	}
 + */
-+#define __visible_for_testing
-+#else
-+#define __mockable
-+#define __visible_for_testing static
-+#endif
++#define DEFINE_SPYABLE(name, return_type, param_types...)		       \
++		DEFINE_SPYABLE_COMMON(name,				       \
++						return_type,		       \
++						ASSIGN,			       \
++						param_types)
 +
- #define CONVERT_TO_ACTUAL_TYPE(type, ptr) (*((type *) ptr))
++#define NO_ASSIGN()
++#define DEFINE_SPYABLE_VOID_RETURN(name, param_types)			       \
++		DEFINE_SPYABLE_COMMON(name,				       \
++				      void,				       \
++				      NO_ASSIGN,			       \
++				      param_types)
++
+ #define CLASS_MOCK_CLIENT_SOURCE(ctx, handle_index) ctx(arg##handle_index)
+ #define DEFINE_MOCK_METHOD_CLIENT_COMMON(name,				       \
+ 					 handle_index,			       \
+@@ -745,7 +846,7 @@ DECLARE_STRUCT_CLASS_MOCK_INIT(void);
+  * @...: parameter types of the function
+  *
+  * Same as DEFINE_STRUCT_CLASS_MOCK() except can be used to mock any function
+- * declared %__mockable or DEFINE_REDIRECT_MOCKABLE()
++ * declared %__mockable or DEFINE_SPYABLE()
+  */
+ #define DEFINE_FUNCTION_MOCK(name, return_type, param_types...) \
+ 		DEFINE_FUNCTION_MOCK_INTERNAL(name, return_type, param_types)
+@@ -777,6 +878,7 @@ DECLARE_STRUCT_CLASS_MOCK_INIT(void);
+  *	int __mockable example(int arg) { ... }
+  */
+ #define __mockable __weak
++#define __mockable_alias(id) __weak __alias(id)
  
  /**
-diff --git a/kunit/mock-macro-test.c b/kunit/mock-macro-test.c
-index 0f95105ec032a..a2628a70bc4e4 100644
---- a/kunit/mock-macro-test.c
-+++ b/kunit/mock-macro-test.c
-@@ -58,6 +58,8 @@ DEFINE_VOID_CLASS_MOCK_HANDLE_INDEX(METHOD(test_void_ptr_func),
- 				    RETURNS(int),
- 				    PARAMS(void*, int));
+  * __visible_for_testing - Makes a static function visible when testing.
+@@ -788,6 +890,7 @@ DECLARE_STRUCT_CLASS_MOCK_INIT(void);
+ #define __visible_for_testing
+ #else
+ #define __mockable
++#define __mockable_alias(id) __alias(id)
+ #define __visible_for_testing static
+ #endif
  
-+DEFINE_FUNCTION_MOCK(add, RETURNS(int), PARAMS(int, int));
-+
- struct mock_macro_context {
- 	struct MOCK(test_struct) *mock_test_struct;
- 	struct MOCK(void) *mock_void_ptr;
-@@ -220,6 +222,17 @@ static void mock_macro_test_generated_method_void_code_works(struct test *test)
- 	test_void_ptr_func(mock_void_ptr, 3);
- }
+@@ -1069,6 +1172,24 @@ struct mock_param_matcher *test_struct_cmp(
+ 		const char *struct_name,
+ 		struct mock_struct_matcher_entry *entries);
  
-+static void mock_macro_test_generated_function_code_works(struct test *test)
-+{
-+	struct mock_expectation *handle;
++struct mock_action *invoke(struct test *test,
++			   void *(*invokable)(struct test *,
++					      const void *params[],
++					      int len));
 +
-+	handle = TEST_EXPECT_CALL(add(test_int_eq(test, 4),
-+				      test_int_eq(test, 3)));
-+	handle->action = test_int_return(test, 7);
++/**
++ * INVOKE_REAL()
++ * @test: associated test
++ * @func_name: name of the function
++ *
++ * See DEFINE_SPYABLE() for an example.
++ *
++ * Return: &struct mock_action that makes the associated mock method or function
++ *         call the original function definition of a redirect-mockable
++ *         function.
++ */
++#define INVOKE_REAL(test, func_name) invoke(test, INVOKE_ID(func_name))
 +
-+	TEST_EXPECT_EQ(test, 7, add(4, 3));
-+}
-+
- static int mock_macro_test_init(struct test *test)
- {
- 	struct mock_macro_context *ctx;
-@@ -250,6 +263,7 @@ static struct test_case mock_macro_test_cases[] = {
- 	TEST_CASE(mock_macro_arg_names_from_types),
- 	TEST_CASE(mock_macro_test_generated_method_code_works),
- 	TEST_CASE(mock_macro_test_generated_method_void_code_works),
-+	TEST_CASE(mock_macro_test_generated_function_code_works),
- 	{},
- };
+ struct mock_struct_formatter_entry {
+ 	size_t member_offset;
+ 	struct mock_param_formatter *formatter;
+diff --git a/kunit/common-mocks.c b/kunit/common-mocks.c
+index 1c52522808cab..ce0159923814d 100644
+--- a/kunit/common-mocks.c
++++ b/kunit/common-mocks.c
+@@ -386,6 +386,42 @@ DEFINE_RETURN_ACTION_WITH_TYPENAME(longlong, long long);
+ DEFINE_RETURN_ACTION_WITH_TYPENAME(ulonglong, unsigned long long);
+ DEFINE_RETURN_ACTION_WITH_TYPENAME(ptr, void *);
  
-diff --git a/kunit/mock.c b/kunit/mock.c
-index 7a9fcf6ae4a55..2b91ea08b6064 100644
---- a/kunit/mock.c
-+++ b/kunit/mock.c
-@@ -93,6 +93,47 @@ void mock_init_ctrl(struct test *test, struct mock *mock)
- 	list_add_tail(&mock->parent.node, &test->post_conditions);
- }
- 
-+struct global_mock {
-+	struct mock ctrl;
-+	bool is_initialized;
++struct mock_invoke_action {
++	struct mock_action action;
++	struct test *test;
++	void *(*invokable)(struct test *test, const void *params[], int len);
 +};
 +
-+static struct global_mock global_mock = {
-+	.is_initialized = false,
-+};
-+
-+static int mock_init_global_mock(struct test_initcall *initcall,
-+				 struct test *test)
++static void *do_invoke(struct mock_action *paction,
++		       const void *params[],
++		       int len)
 +{
-+	BUG_ON(global_mock.is_initialized);
++	struct mock_invoke_action *action =
++			container_of(paction,
++				     struct mock_invoke_action,
++				     action);
 +
-+	mock_init_ctrl(test, &global_mock.ctrl);
-+	global_mock.is_initialized = true;
-+
-+	return 0;
++	return action->invokable(action->test, params, len);
 +}
 +
-+static void mock_exit_global_mock(struct test_initcall *initcall)
++struct mock_action *invoke(struct test *test,
++			   void *(*invokable)(struct test *,
++					      const void *params[],
++					      int len))
 +{
-+	BUG_ON(!global_mock.is_initialized);
++	struct mock_invoke_action *action;
 +
-+	global_mock.ctrl.test = NULL;
-+	global_mock.is_initialized = false;
++	action = test_kmalloc(test, sizeof(*action), GFP_KERNEL);
++	if (!action)
++		return NULL;
++
++	action->action.do_action = do_invoke;
++	action->test = test;
++	action->invokable = invokable;
++
++	return &action->action;
 +}
 +
-+static struct test_initcall global_mock_initcall = {
-+	.init = mock_init_global_mock,
-+	.exit = mock_exit_global_mock,
-+};
-+test_register_initcall(global_mock_initcall);
-+
-+struct mock *mock_get_global_mock(void)
-+{
-+	BUG_ON(!global_mock.is_initialized);
-+
-+	return &global_mock.ctrl;
-+}
-+
- static struct mock_method *mock_lookup_method(struct mock *mock,
- 					      const void *method_ptr)
- {
+ struct mock_param_integer_formatter {
+ 	struct mock_param_formatter formatter;
+ 	const char *fmt_str;
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
