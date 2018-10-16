@@ -2,170 +2,134 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03554C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031FDC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B93022098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:38:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B93022098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BA4B42098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:38:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hpXWofUY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA4B42098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbeJQDaC (ORCPT
+        id S1727503AbeJQDam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 23:30:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33550 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727400AbeJQDaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 23:30:02 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D43FC88E4F;
-        Tue, 16 Oct 2018 19:38:04 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-5.gru2.redhat.com [10.97.112.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2945B608EE;
-        Tue, 16 Oct 2018 19:38:04 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id E80A2295E; Tue, 16 Oct 2018 16:37:50 -0300 (BRT)
-Date:   Tue, 16 Oct 2018 16:37:50 -0300
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, acme@kernel.org,
-        peterz@infradead.org, mingo@kernel.org, jolsa@redhat.com,
-        namhyung@gmail.com, mhiramat@kernel.org, williams@redhat.com
-Subject: Re: perf's handling of unfindable user symbols...
-Message-ID: <20181016193750.GC3254@redhat.com>
-References: <20181015222546.GA2159@redhat.com>
- <20181015.160246.58484704665215987.davem@davemloft.net>
- <20181016184506.GB3254@redhat.com>
- <20181016.120230.1607256792594000833.davem@davemloft.net>
+        Tue, 16 Oct 2018 23:30:42 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:48420 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbeJQDam (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 23:30:42 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9GJcYkK108076;
+        Tue, 16 Oct 2018 14:38:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1539718714;
+        bh=ry1DCDtpEG+friX9KDb9/mPFkLzrvBkzIZa2+pueuLk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=hpXWofUYZ9PuKT/0kYsOyXr6IaJ/Qq9bAHLRSP1qjsqhJ3HTBg2vu5n6Jw0QO26nT
+         z7mSe6HYHbncTdDSLDlaM0IpFuSFTcXQIiHCPye6NOTDkyAFXVmnE1QCKao0E3gtt8
+         5TovMjgEgGz1vHyBtmlH9hdUaoJ1M4Sx7xEqSE4Y=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9GJcXVC005681;
+        Tue, 16 Oct 2018 14:38:33 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 16
+ Oct 2018 14:38:33 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 16 Oct 2018 14:38:33 -0500
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9GJcXP9031728;
+        Tue, 16 Oct 2018 14:38:33 -0500
+Subject: Re: [RFC PATCH net-next 0/4] net: ethernet: ti: cpsw: fix vlan mcast
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, <davem@davemloft.net>
+CC:     <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <alexander.h.duyck@intel.com>
+References: <20181016182035.18234-1-ivan.khoronzhuk@linaro.org>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <92ab4728-109f-01cc-09db-3da4d8c8e92e@ti.com>
+Date:   Tue, 16 Oct 2018 14:38:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016.120230.1607256792594000833.davem@davemloft.net>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 16 Oct 2018 19:38:05 +0000 (UTC)
+In-Reply-To: <20181016182035.18234-1-ivan.khoronzhuk@linaro.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Oct 16, 2018 at 12:02:30PM -0700, David Miller escreveu:
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Date: Tue, 16 Oct 2018 15:45:06 -0300
+
+
+On 10/16/2018 01:20 PM, Ivan Khoronzhuk wrote:
+> The cpsw holds separate mcast entires for vlan entries. At this moment
+> driver adds only not vlan mcast addresses, omitting vlan/mcast entries.
+> As result mcast for vlans doesn't work. It can be fixed by adding same
+> mcast entries for every created vlan, but this patchseries uses more
+> sophisticated way and allows to create mcast entries only for vlans
+> that really require it. Generic functions from this series can be
+> reused for fixing vlan and macvlan unicast.
+
+I assume this is first of all for dual_mac mode.
+
 > 
-> > Exec summary: yeah, drop that hack, I agree, patch at the end of the
-> > message.
-
-> > So, I thought something had changed and in the past we would somehow
-> > find that address in the kallsyms, but I couldn't find anything to back
-> > that up, the patch introducing this is over a decade old, lots of things
-> > changed, so I was just thinking I was missing something.
-
-> > I tried a gtod busy loop to generate vdso activity and added a 'perf
-> > probe' at that branch, on x86_64 to see if it ever gets hit:
- 
-> Good, thanks for doing the detailed checking!
- 
-> > In the process I noticed a bug, we're only have records for '[vdso]' for
-> > pre-existing commands, i.e. ones that are running when we start 'perf top',
-> > when we will generate the PERF_RECORD_MMAP by looking at /perf/PID/maps.
+> Simple example of ALE table before and after this series, having same
+> mcast entries as for vlan 100 as for real device (reserved vlan 2),
+> and one mcast address only for vlan 100 - 01:1b:19:00:00:00.
 > 
-> Hmmm.  vdso mappings are installed by __install_special_mapping()
+[...]
 
-Yeah, the kernel is ok, tooling seems b0rken, will check.
-
-[root@jouet ~]# perf record ~acme/c/gtod
-^C[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.076 MB perf.data (1499 samples) ]
-
-[root@jouet ~]# perf report -D | grep PERF_RECORD_MMAP2
-71293612401913 0x11b48 [0x70]: PERF_RECORD_MMAP2 25484/25484: [0x400000(0x1000) @ 0 fd:02 1137 541179306]: r-xp /home/acme/c/gtod
-71293612419012 0x11be0 [0x70]: PERF_RECORD_MMAP2 25484/25484: [0x7fa4a2783000(0x227000) @ 0 fd:00 3146370 854107250]: r-xp /usr/lib64/ld-2.26.so
-71293612432110 0x11c50 [0x60]: PERF_RECORD_MMAP2 25484/25484: [0x7ffcdb53a000(0x2000) @ 0 00:00 0 0]: r-xp [vdso]
-71293612509944 0x11cb0 [0x70]: PERF_RECORD_MMAP2 25484/25484: [0x7fa4a23cd000(0x3b6000) @ 0 fd:00 3149723 262067164]: r-xp /usr/lib64/libc-2.26.so
-[root@jouet ~]#
-
-And using tools/perf/python/twatch.py enabling mmap = 1:
-
-<SNIP>
-cpu: 1, pid: 25743, tid: 25743 { type: comm, pid: 25743, tid: 25743, comm: gtod }
-cpu: 2, pid: 25742, tid: 25742 { type: mmap, pid: 25742, tid: 25742, start: 0x55d0a916e000, length: 0x219000, offset: 0, filename: /usr/bin/procmail }
-cpu: 1, pid: 25743, tid: 25743 { type: mmap, pid: 25743, tid: 25743, start: 0x400000, length: 0x1000, offset: 0, filename: /home/acme/c/gtod
-}
-cpu: 2, pid: 25742, tid: 25742 { type: mmap, pid: 25742, tid: 25742, start: 0x7fa6d666e000, length: 0x227000, offset: 0, filename: /usr/lib64/ld-2.26.so }
-cpu: 1, pid: 25743, tid: 25743 { type: mmap, pid: 25743, tid: 25743, start: 0x7f7774286000, length: 0x227000, offset: 0, filename: /usr/lib64/ld-2.26.so }
-cpu: 2, pid: 25742, tid: 25742 { type: mmap, pid: 25742, tid: 25742, start: 0x7ffd673d6000, length: 0x2000, offset: 0, filename: [vdso] }
-cpu: 1, pid: 25743, tid: 25743 { type: mmap, pid: 25743, tid: 25743, start: 0x7fff8f7ad000, length: 0x2000, offset: 0, filename: [vdso] }
-<SNIP>
-
-> which should be emitting proper mmap events by calling
-> perf_event_mmap(vma).
-> Maybe the event is emitted too early?  It doesn't look like it.  These
-> are emitted after load_elf_binary() iterates over the PHDRs and
-> mmap()'s those areas of the binary, and we definitely see those events
-> properly.
+> vlan , vid = 100, untag_force = 0x0, reg_mcast = 0x5, mem_list = 0x5
+> ucast, vid = 100, addr = 74:da:ea:47:7d:9d, persistant, port_num = 0x0
+> mcast, vid = 100, addr = ff:ff:ff:ff:ff:ff, port_mask = 0x1
+> mcast, vid = 100, addr = 33:33:00:00:00:01, port_mask = 0x1
+> mcast, vid = 100, addr = 01:00:5e:00:00:01, port_mask = 0x1
+> mcast, vid = 100, addr = 33:33:ff:47:7d:9d, port_mask = 0x1
+> mcast, vid = 100, addr = 01:80:c2:00:00:00, port_mask = 0x1
+> mcast, vid = 100, addr = 01:80:c2:00:00:03, port_mask = 0x1
+> mcast, vid = 100, addr = 01:80:c2:00:00:0e, port_mask = 0x1
+> mcast, vid = 100, addr = 33:33:00:00:00:fb, port_mask = 0x1
+> mcast, vid = 100, addr = 33:33:00:01:00:03, port_mask = 0x1
+> mcast, vid = 100, addr = 01:1b:19:00:00:00, port_mask = 0x1
+> 			 ^^^
+>      Here mcast entry (ptpl2), is added only for vlan 100
+>      as it should be.
 > 
-> > The kernel doesn't seem to be generating a PERF_RECORD_MMAP for vDSOs...  And
-> > we can't do this in 'perf record' because we don't process event by event, just
-> > dump things from the ring buffer to a file...
- 
-> It should be, see above.
+> Based on net-next/master
 
-Yeah, I'll check why is that the tooling side doesn't seem to be
-catching those...
+Thank you.
+For patches 2-4
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-> > diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-> > index 0988eb3b844b..bc646185f8d9 100644
-> > --- a/tools/perf/util/event.c
-> > +++ b/tools/perf/util/event.c
-> > @@ -1561,26 +1561,9 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
-> >  
-> >  		return NULL;
-> >  	}
-> > -try_again:
-> > +
-> >  	al->map = map_groups__find(mg, al->addr);
-> > -	if (al->map == NULL) {
-> > -		/*
-> > -		 * If this is outside of all known maps, and is a negative
-> > -		 * address, try to look it up in the kernel dso, as it might be
-> > -		 * a vsyscall or vdso (which executes in user-mode).
-> > -		 *
-> > -		 * XXX This is nasty, we should have a symbol list in the
-> > -		 * "[vdso]" dso, but for now lets use the old trick of looking
-> > -		 * in the whole kernel symbol list.
-> > -		 */
-> > -		if (cpumode == PERF_RECORD_MISC_USER && machine &&
-> > -		    mg != &machine->kmaps &&
-> > -		    machine__kernel_ip(machine, al->addr)) {
-> > -			mg = &machine->kmaps;
-> > -			load_map = true;
-> > -			goto try_again;
-> > -		}
-> > -	} else {
-> > +	if (al->map != NULL) {
-> >  		/*
-> >  		 * Kernel maps might be changed when loading symbols so loading
-> >  		 * must be done prior to using kernel maps.
-> > 
-> > 
+For patch 1 - I'm not sure, so it'd good to get more comments.
+
 > 
-> Acked-by: David S. Miller <davem@davemloft.net>
+> Ivan Khoronzhuk (4):
+>    net: core: dev_addr_lists: add auxiliary func to handle reference
+>      address updates
+>    net: 8021q: vlan_core: allow use list of vlans for real device
+>    net: ethernet: ti: cpsw: fix vlan mcast
+>    net: ethernet: ti: cpsw: fix vlan configuration while down/up
+> 
+>   drivers/net/ethernet/ti/cpsw.c | 189 +++++++++++++++++++++++++++------
+>   include/linux/if_vlan.h        |  10 ++
+>   include/linux/netdevice.h      |  10 ++
+>   net/8021q/vlan_core.c          |  27 +++++
+>   net/core/dev_addr_lists.c      |  97 +++++++++++++++++
+>   5 files changed, 303 insertions(+), 30 deletions(-)
+> 
 
-Reported-by:
-Suggested-by:
-
-:-)
-
-OK, will get this with a nice cover letter and stash into my perf/urgent
-branch.
-
-- Arnaldo
+-- 
+regards,
+-grygorii
