@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1BAC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 559CCC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D1EE20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DAFA2148D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yfSRWpGW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1EE20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NKxZHPA4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DAFA2148D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730137AbeJPMEf (ORCPT
+        id S1730153AbeJPMEh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:04:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53510 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:04:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729125AbeJPMEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:04:35 -0400
+        id S1728480AbeJPMEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:04:36 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 586A9214AB;
-        Tue, 16 Oct 2018 04:16:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43F2D21470;
+        Tue, 16 Oct 2018 04:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1539663372;
-        bh=qPRCtA8k03NdbKS8quRWD1AA5Fc8Z7kWDvUoCSr6QKA=;
+        bh=KAWPzYf0hA/GL7t3dyJOQMoidKvFhPLNJpjt3Uqrayg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yfSRWpGWATFNr2iU1ltJ3pDjmLuWle7bzDaBsg+3LsH72SvEiSO0IzZm7/T47vK19
-         JipZASf3JflODdNh/wD0UywoBELG0HxpCheMiJ+r+3DQMei8q0y3sfl8CcFGu9E4QR
-         fw8uan5quo0PfQ8PbSoh0nrzo4Cl4iQbZCM8dVFg=
+        b=NKxZHPA4xCgvez4pof2dWwrHJnQlYBfetW9Qae0D+jGancJx1DSK48BPL23dHeCST
+         w/PuxkGYj3wjy5PbPYQ7bahESK3ZleyhHU8w0pWCNRdKMOmhyB3NAfN+XlFPX3ccFT
+         p07P2vG4hdNxLOap7kVO/XlgaVo/s2yTdFT/AnmY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+Cc:     Jouni Malinen <jouni@codeaurora.org>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 04/25] cfg80211: reg: Init wiphy_idx in regulatory_hint_core()
-Date:   Tue, 16 Oct 2018 00:15:45 -0400
-Message-Id: <20181016041606.135876-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 05/25] cfg80211: Address some corner cases in scan result channel updating
+Date:   Tue, 16 Oct 2018 00:15:46 -0400
+Message-Id: <20181016041606.135876-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041606.135876-1-sashal@kernel.org>
 References: <20181016041606.135876-1-sashal@kernel.org>
@@ -54,36 +53,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+From: Jouni Malinen <jouni@codeaurora.org>
 
-[ Upstream commit 24f33e64fcd0d50a4b1a8e5b41bd0257aa66b0e8 ]
+[ Upstream commit 119f94a6fefcc76d47075b83d2b73d04c895df78 ]
 
-Core regulatory hints didn't set wiphy_idx to WIPHY_IDX_INVALID. Since
-the regulatory request is zeroed, wiphy_idx was always implicitly set to
-0. This resulted in updating only phy #0.
-Fix that.
+cfg80211_get_bss_channel() is used to update the RX channel based on the
+available frame payload information (channel number from DSSS Parameter
+Set element or HT Operation element). This is needed on 2.4 GHz channels
+where frames may be received on neighboring channels due to overlapping
+frequency range.
 
-Fixes: 806a9e39670b ("cfg80211: make regulatory_request use wiphy_idx instead of wiphy")
-Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-[add fixes tag]
+This might of some use on the 5 GHz band in some corner cases, but
+things are more complex there since there is no n:1 or 1:n mapping
+between channel numbers and frequencies due to multiple different
+starting frequencies in different operating classes. This could result
+in ieee80211_channel_to_frequency() returning incorrect frequency and
+ieee80211_get_channel() returning incorrect channel information (or
+indication of no match). In the previous implementation, this could
+result in some scan results being dropped completely, e.g., for the 4.9
+GHz channels. That prevented connection to such BSSs.
+
+Fix this by using the driver-provided channel pointer if
+ieee80211_get_channel() does not find matching channel data for the
+channel number in the frame payload and if the scan is done with 5 MHz
+or 10 MHz channel bandwidth. While doing this, also add comments
+describing what the function is trying to achieve to make it easier to
+understand what happens here and why.
+
+Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/reg.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/wireless/scan.c | 58 ++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 49 insertions(+), 9 deletions(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 06d050da0d94..50dffd183cc6 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -2367,6 +2367,7 @@ static int regulatory_hint_core(const char *alpha2)
- 	request->alpha2[0] = alpha2[0];
- 	request->alpha2[1] = alpha2[1];
- 	request->initiator = NL80211_REGDOM_SET_BY_CORE;
-+	request->wiphy_idx = WIPHY_IDX_INVALID;
+diff --git a/net/wireless/scan.c b/net/wireless/scan.c
+index 8dde12a11725..00219f386283 100644
+--- a/net/wireless/scan.c
++++ b/net/wireless/scan.c
+@@ -974,13 +974,23 @@ cfg80211_bss_update(struct cfg80211_registered_device *rdev,
+ 	return NULL;
+ }
  
- 	queue_regulatory_request(request);
++/*
++ * Update RX channel information based on the available frame payload
++ * information. This is mainly for the 2.4 GHz band where frames can be received
++ * from neighboring channels and the Beacon frames use the DSSS Parameter Set
++ * element to indicate the current (transmitting) channel, but this might also
++ * be needed on other bands if RX frequency does not match with the actual
++ * operating channel of a BSS.
++ */
+ static struct ieee80211_channel *
+ cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
+-			 struct ieee80211_channel *channel)
++			 struct ieee80211_channel *channel,
++			 enum nl80211_bss_scan_width scan_width)
+ {
+ 	const u8 *tmp;
+ 	u32 freq;
+ 	int channel_number = -1;
++	struct ieee80211_channel *alt_channel;
+ 
+ 	tmp = cfg80211_find_ie(WLAN_EID_DS_PARAMS, ie, ielen);
+ 	if (tmp && tmp[1] == 1) {
+@@ -994,16 +1004,45 @@ cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
+ 		}
+ 	}
+ 
+-	if (channel_number < 0)
++	if (channel_number < 0) {
++		/* No channel information in frame payload */
+ 		return channel;
++	}
+ 
+ 	freq = ieee80211_channel_to_frequency(channel_number, channel->band);
+-	channel = ieee80211_get_channel(wiphy, freq);
+-	if (!channel)
+-		return NULL;
+-	if (channel->flags & IEEE80211_CHAN_DISABLED)
++	alt_channel = ieee80211_get_channel(wiphy, freq);
++	if (!alt_channel) {
++		if (channel->band == NL80211_BAND_2GHZ) {
++			/*
++			 * Better not allow unexpected channels when that could
++			 * be going beyond the 1-11 range (e.g., discovering
++			 * BSS on channel 12 when radio is configured for
++			 * channel 11.
++			 */
++			return NULL;
++		}
++
++		/* No match for the payload channel number - ignore it */
++		return channel;
++	}
++
++	if (scan_width == NL80211_BSS_CHAN_WIDTH_10 ||
++	    scan_width == NL80211_BSS_CHAN_WIDTH_5) {
++		/*
++		 * Ignore channel number in 5 and 10 MHz channels where there
++		 * may not be an n:1 or 1:n mapping between frequencies and
++		 * channel numbers.
++		 */
++		return channel;
++	}
++
++	/*
++	 * Use the channel determined through the payload channel number
++	 * instead of the RX channel reported by the driver.
++	 */
++	if (alt_channel->flags & IEEE80211_CHAN_DISABLED)
+ 		return NULL;
+-	return channel;
++	return alt_channel;
+ }
+ 
+ /* Returned bss is reference counted and must be cleaned up appropriately. */
+@@ -1028,7 +1067,8 @@ cfg80211_inform_bss_data(struct wiphy *wiphy,
+ 		    (data->signal < 0 || data->signal > 100)))
+ 		return NULL;
+ 
+-	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan);
++	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan,
++					   data->scan_width);
+ 	if (!channel)
+ 		return NULL;
+ 
+@@ -1126,7 +1166,7 @@ cfg80211_inform_bss_frame_data(struct wiphy *wiphy,
+ 		return NULL;
+ 
+ 	channel = cfg80211_get_bss_channel(wiphy, mgmt->u.beacon.variable,
+-					   ielen, data->chan);
++					   ielen, data->chan, data->scan_width);
+ 	if (!channel)
+ 		return NULL;
  
 -- 
 2.17.1
