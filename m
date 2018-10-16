@@ -2,123 +2,131 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F60CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D98A4C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0DBA20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D50B21479
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:31:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zOkguE43"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0DBA20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Tij+a/vV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D50B21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731343AbeJQBOl (ORCPT
+        id S1727162AbeJQBXN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:14:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33104 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730802AbeJQBOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:14:40 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 233D320658;
-        Tue, 16 Oct 2018 17:23:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710594;
-        bh=cPnV/Mt9njc2DORUmrId5MKjDZTccemKYaN/jqTy7QM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zOkguE43Q5zETyrZ7PefnlAlEvrKcn5DsYjD/Gc6jRdcKEunhsEPZWHCzK42pF1FH
-         u2PIfRvUqb9cAIeuYNHZTo7mCCU5QbK44kLN0Q8eNKsLrO+k7OwID4oF2GXQaNZcVe
-         CtIfYCcbgBoxxcC3TVRzf9ju9UgdV3x8qlODg4K8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ross Zwisler <zwisler@google.com>
-Subject: [PATCH 4.9 21/71] xhci: Dont print a warning when setting link state for disabled ports
-Date:   Tue, 16 Oct 2018 19:09:18 +0200
-Message-Id: <20181016170540.460020453@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
-References: <20181016170539.315587743@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 16 Oct 2018 21:23:13 -0400
+Received: from mail-pf1-f180.google.com ([209.85.210.180]:44922 "EHLO
+        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbeJQBXN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:23:13 -0400
+Received: by mail-pf1-f180.google.com with SMTP id r9-v6so11788337pff.11
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 10:31:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Nz+s1fq47X5/tu2PUFqFtpaCvyk5Jvn12B4Jt34WfdQ=;
+        b=Tij+a/vVR5UJBfRbD6QFNoeWPVM2vyWEpbGPdFnqbc953KwSPSBHllc0LpN+l7p1V2
+         GfLeEW6EWm15937hAwEgD3hdlP0HOkz3vLJfvv3PH0/SxX/QlkiagpYTvj9UvKNNWmGO
+         cQ7S2QIVFA7sb4yV0ajys/4alqPPVURvqAxFgKUQ9He8bQSgE6XD01oNBJ3dsEiRTjQ9
+         uB8/ha24w4d/bguUY49WcTjTtaUHtizXoD9xNa/yGswfP6ShcRA0LGRm4QAwXyp+POV3
+         1y1Fgc/WdT0xzdqZd4vdmelogWubL997KVtSs6z+cQDC8VLLwdOnyGX1GHNIKu2Sl06c
+         Scvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Nz+s1fq47X5/tu2PUFqFtpaCvyk5Jvn12B4Jt34WfdQ=;
+        b=KRf6+re9xenT5U5uAF2mJXu6GfF+yRi+vQaoi3wSYyxwo/8bc2a1cCSHfzDPQsLgjb
+         g6O06DI7SunTypb4ckyYTNJVld3WOtCoQ9Y7A2tqJZRxlX+55oWlSJnChhesw4nyeryZ
+         A1Jd/3Zyjm6AInLFJ3g+0FMS+Jp71pkkddJaNfbLvTTX3d6CdptV2ps/Pjzt6EwkSMcC
+         TTJPWEtMRAULckC4eUrOPH/wIxlktKp9eZNTalj+4b872gNpPSgRVJx//m7l5TSiujLA
+         aTC078xSNYj0p21Bz2UheZIn5JQjFnMsr2gkBG8gjZXGrsdJ0Sg1PCoMgsJQsY8gY04d
+         ztIw==
+X-Gm-Message-State: ABuFfohw+GgbT/v0S1UMC1h8UFi9e7rjcH5gp1Evmknqlc7H7lEhMHUD
+        kUj2EC+7Tp0l8BuKEchH+Vz2vw==
+X-Google-Smtp-Source: ACcGV60oxet49enyexZROKkznZaXNAJF9gjKNfM0xepagrr3RD+J8+ysVC3L2ifXD852nBgFipG4Mg==
+X-Received: by 2002:a62:2845:: with SMTP id o66-v6mr22895541pfo.17.1539711104628;
+        Tue, 16 Oct 2018 10:31:44 -0700 (PDT)
+Received: from [192.168.0.21] (97-120-178-141.ptld.qwest.net. [97.120.178.141])
+        by smtp.gmail.com with ESMTPSA id z15-v6sm18183925pfn.170.2018.10.16.10.31.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Oct 2018 10:31:44 -0700 (PDT)
+Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM
+ Controller.
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     mark.rutland@arm.com, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, Wesley Terpstra <wesley@sifive.com>,
+        linus.walleij@linaro.org, palmer@sifive.com,
+        linux-kernel@vger.kernel.org, hch@infradead.org,
+        linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
+ <1539111085-25502-2-git-send-email-atish.patra@wdc.com>
+ <20181010134926.GD21134@ulmo> <25758ab9-eb36-741b-6264-42412b3ddd8e@wdc.com>
+ <20181016110142.GC8852@ulmo>
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+Message-ID: <6e108e3c-15c1-b13b-ac3e-60c5eb209c7b@sifive.com>
+Date:   Tue, 16 Oct 2018 10:31:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20181016110142.GC8852@ulmo>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+On 10/16/18 4:01 AM, Thierry Reding wrote:
+> On Mon, Oct 15, 2018 at 03:57:35PM -0700, Atish Patra wrote:
+>> On 10/10/18 6:49 AM, Thierry Reding wrote:
+>>> On Tue, Oct 09, 2018 at 11:51:22AM -0700, Atish Patra wrote:
+>>>> +Required properties:
+>>>> +- compatible: should be one of
+>>>> +	"sifive,fu540-c000-pwm0","sifive,pwm0".
+>>> What's the '0' in here? A version number?
+>>>
+>> I think yes. Since fu540 is the first Linux capable RISC-V core, SiFive Guys
+>> decided mark it as version 0.
+>>
+>> @Wesly: Please correct me if I am wrong.
+> It seems fairly superfluous to me to have a version number in additon to
+> the fu540-c000, which already seems to be the core plus some sort of
+> part number. Do you really expect there to be any changes in the SoC
+> that would require a different compatible string at this point? If the
+> SoC has taped out, how will you ever get a different version of the PWM
+> IP in it?
+>
+> I would expect any improvements or changes to the PWM IP to show up in a
+> different SoC generation, at which point it would be something like
+> "sifive,fu640-c000" maybe, or perhaps "sifive,fu540-d000", or whatever
+> the numbering is.
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 1208d8a84fdcae6b395c57911cdf907450d30e70 upstream.
+The "0" suffix refers to a revision number for the underlying PWM IP block.
 
-When disabling a USB3 port the hub driver will set the port link state to
-U3 to prevent "ejected" or "safely removed" devices that are still
-physically connected from immediately re-enumerating.
+It's certainly important to keep that version number on the 
+"sifive,pwm0" compatible string that doesn't have the chip name 
+associated with it.
 
-If the device was really unplugged, then error messages were printed
-as the hub tries to set the U3 link state for a port that is no longer
-enabled.
+As to whether there could ever be a FU540-C000 part with different IP 
+block versions on it: FU540-C000 is ultimately a marketing name.  While 
+theoretically we shouldn't have another "FU540-C000" chip with different 
+peripheral IP block versions on it, I don't think any engineer can 
+guarantee that it won't happen.
 
-xhci-hcd ee000000.usb: Cannot set link state.
-usb usb8-port1: cannot disable (err = -32)
 
-Don't print error message in xhci-hub if hub tries to set port link state
-for a disabled port. Return -ENODEV instead which also silences hub driver.
-
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Ross Zwisler <zwisler@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/usb/host/xhci-hub.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -1072,17 +1072,17 @@ int xhci_hub_control(struct usb_hcd *hcd
- 				temp = readl(port_array[wIndex]);
- 				break;
- 			}
--
--			/* Software should not attempt to set
--			 * port link state above '3' (U3) and the port
--			 * must be enabled.
--			 */
--			if ((temp & PORT_PE) == 0 ||
--				(link_state > USB_SS_PORT_LS_U3)) {
--				xhci_warn(xhci, "Cannot set link state.\n");
-+			/* Port must be enabled */
-+			if (!(temp & PORT_PE)) {
-+				retval = -ENODEV;
-+				break;
-+			}
-+			/* Can't set port link state above '3' (U3) */
-+			if (link_state > USB_SS_PORT_LS_U3) {
-+				xhci_warn(xhci, "Cannot set port %d link state %d\n",
-+					 wIndex, link_state);
- 				goto error;
- 			}
--
- 			if (link_state == USB_SS_PORT_LS_U3) {
- 				slot_id = xhci_find_slot_id_by_port(hcd, xhci,
- 						wIndex + 1);
-
+- Paul
 
