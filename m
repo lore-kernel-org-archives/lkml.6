@@ -2,58 +2,73 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E093CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 311C3C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADF9B208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:53:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADF9B208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 95F28208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:57:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95F28208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeJPNmM (ORCPT
+        id S1728102AbeJPNqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 09:42:12 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:44138 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbeJPNmM (ORCPT
+        Tue, 16 Oct 2018 09:46:18 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:42788 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727507AbeJPNqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 09:42:12 -0400
-Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id B1D7012106D92;
-        Mon, 15 Oct 2018 22:53:26 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 22:53:26 -0700 (PDT)
-Message-Id: <20181015.225326.526411008919286426.davem@davemloft.net>
-To:     dhowells@redhat.com
-Cc:     netdev@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] rxrpc: Add /proc/net/rxrpc/peers to display
- peer list
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <153959946389.27408.16748794272430961849.stgit@warthog.procyon.org.uk>
-References: <153959946389.27408.16748794272430961849.stgit@warthog.procyon.org.uk>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 15 Oct 2018 22:53:26 -0700 (PDT)
+        Tue, 16 Oct 2018 09:46:18 -0400
+Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
+        by 156.147.23.53 with ESMTP; 16 Oct 2018 14:57:28 +0900
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.168.176.142)
+        by 156.147.1.127 with ESMTP; 16 Oct 2018 14:57:28 +0900
+X-Original-SENDERIP: 10.168.176.142
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+From:   Kyeongdon Kim <kyeongdon.kim@lge.com>
+To:     davem@davemloft.net, ktkhai@virtuozzo.com, viro@zeniv.linux.org.uk,
+        garsilva@embeddedor.com, jbaron@akamai.com, dvlasenk@redhat.com,
+        xiyou.wangcong@gmail.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kyeongdon.kim@lge.com
+Subject: [PATCH v2] net: fix warning in af_unix
+Date:   Tue, 16 Oct 2018 14:57:26 +0900
+Message-Id: <1539669446-51996-1-git-send-email-kyeongdon.kim@lge.com>
+X-Mailer: git-send-email 2.6.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
-Date: Mon, 15 Oct 2018 11:31:03 +0100
+This fixes the "'hash' may be used uninitialized in this function"
 
-> Add /proc/net/rxrpc/peers to display the list of peers currently active.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
+net/unix/af_unix.c:1041:20: warning: 'hash' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  addr->hash = hash ^ sk->sk_type;
 
-Applied.
+Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
+---
+ net/unix/af_unix.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index d1edfa3..98d34fb 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -225,6 +225,8 @@ static inline void unix_release_addr(struct unix_address *addr)
+ 
+ static int unix_mkname(struct sockaddr_un *sunaddr, int len, unsigned int *hashp)
+ {
++	*hashp = 0;
++
+ 	if (len <= sizeof(short) || len > sizeof(*sunaddr))
+ 		return -EINVAL;
+ 	if (!sunaddr || sunaddr->sun_family != AF_UNIX)
+-- 
+2.6.2
+
