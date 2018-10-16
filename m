@@ -2,388 +2,182 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 999FAC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87324C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41A6B20658
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5159D2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBnN2Ctd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41A6B20658
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOjvQcIW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5159D2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731225AbeJQBOQ (ORCPT
+        id S1731236AbeJQBOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:14:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60744 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:14:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729116AbeJQBOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:14:16 -0400
+        id S1729116AbeJQBOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:14:20 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A80B120866;
-        Tue, 16 Oct 2018 17:22:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D4A52098A;
+        Tue, 16 Oct 2018 17:22:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710570;
-        bh=w+8bq3BjVh3xiKjppFTiUpbBp57QashundoGprDdmFE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=vBnN2Ctd7TwYxBd2eNY+5hpfajxKkMWozbyBLlRqHTM1AodiNVu+9becdktE+mFei
-         TmDRusNPOznem/8Gxr919EHWB/UErQ+ILzC97KQ34at4iH8NVdNyB76CIl3NYj3HKH
-         8PL55v+s2lLxLGmIy4qoWo91q+7NI5LX1STP1+s0=
+        s=default; t=1539710575;
+        bh=vhf9LZD1kVikm1F6Dt3D6MYoSLBMC9QUwyTO5K6o7FY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mOjvQcIWCiXth8BxT6N+b70kRN4eRoafW51Qxq71egZQrGWFztYcRmQX1n9MSVfAw
+         5a3jUdcWmCcPw9q94PX9sPefLWPBO2y66rLEZglatsLt/27A1rDgvDz99QvJSawSw1
+         NKkYAkn9l22Rl8fI5cTi9E9dxfm0zjDh4cfTfpN0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 00/71] 4.9.134-stable review
-Date:   Tue, 16 Oct 2018 19:08:57 +0200
-Message-Id: <20181016170539.315587743@linuxfoundation.org>
+        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Mike Christie <mchristi@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 06/71] scsi: iscsi: target: Dont use stack buffer for scatterlist
+Date:   Tue, 16 Oct 2018 19:09:03 +0200
+Message-Id: <20181016170539.681041359@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
+In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
+References: <20181016170539.315587743@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.134-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.134-rc1
-X-KernelTest-Deadline: 2018-10-18T17:05+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.9.134 release.
-There are 71 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Thu Oct 18 17:05:18 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.134-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.134-rc1
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    ipv4: frags: precedence bug in ip_expire()
-
-Taehee Yoo <ap420073@gmail.com>
-    ip: frags: fix crash in ip_do_fragment()
-
-Peter Oskolkov <posk@google.com>
-    ip: process in-order fragments efficiently
-
-Peter Oskolkov <posk@google.com>
-    ip: add helpers to process in-order fragments faster.
-
-Peter Oskolkov <posk@google.com>
-    ip: use rb trees for IP frag queue.
-
-Eric Dumazet <edumazet@google.com>
-    net: add rb_to_skb() and other rb tree helpers
-
-Eric Dumazet <edumazet@google.com>
-    net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends
-
-Florian Westphal <fw@strlen.de>
-    ipv6: defrag: drop non-last frags smaller than min mtu
-
-Peter Oskolkov <posk@google.com>
-    net: modify skb_rbtree_purge to return the truesize of all purged skbs.
-
-Eric Dumazet <edumazet@google.com>
-    net: speed up skb_rbtree_purge()
-
-Peter Oskolkov <posk@google.com>
-    ip: discard IPv4 datagrams with overlapping segments.
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: fix ip6frag_low_thresh boundary
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: get rid of ipfrag_skb_cb/FRAG_CB
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: reorganize struct netns_frags
-
-Eric Dumazet <edumazet@google.com>
-    rhashtable: reorganize struct rhashtable layout
-
-Eric Dumazet <edumazet@google.com>
-    ipv6: frags: rewrite ip6_expire_frag_queue()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: do not clone skb in ip_expire()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: break the 2GB limit for frags storage
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: remove inet_frag_maybe_warn_overflow()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: get rif of inet_frag_evicting()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: remove some helpers
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: use rhashtables for reassembly units
-
-Eric Dumazet <edumazet@google.com>
-    rhashtable: add schedule points
-
-Eric Dumazet <edumazet@google.com>
-    ipv6: export ip6 fragments sysctl to unprivileged users
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: refactor lowpan_net_frag_init()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: refactor ipv6_frag_init()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: refactor ipfrag_init()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: add a pointer to struct netns_frags
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: change inet_frags_init_net() return value
-
-Eric Dumazet <edumazet@google.com>
-    inet: make sure to grab rcu_read_lock before using ireq->ireq_opt
-
-Eric Dumazet <edumazet@google.com>
-    tcp/dccp: fix lockdep issue when SYN is backlogged
-
-Eric Dumazet <edumazet@google.com>
-    rtnl: limit IFLA_NUM_TX_QUEUES and IFLA_NUM_RX_QUEUES to 4096
-
-Florian Fainelli <f.fainelli@gmail.com>
-    net: systemport: Fix wake-up interrupt race during resume
-
-Maxime Chevallier <maxime.chevallier@bootlin.com>
-    net: mvpp2: Extract the correct ethtype from the skb for tx csum offload
-
-Florian Fainelli <f.fainelli@gmail.com>
-    net: dsa: bcm_sf2: Fix unbind ordering
-
-Ido Schimmel <idosch@mellanox.com>
-    team: Forbid enslaving team device to itself
-
-Giacinto Cifelli <gciofono@gmail.com>
-    qmi_wwan: Added support for Gemalto's Cinterion ALASxx WWAN interface
-
-Shahed Shaikh <shahed.shaikh@cavium.com>
-    qlcnic: fix Tx descriptor corruption on 82xx devices
-
-Yu Zhao <yuzhao@google.com>
-    net/usb: cancel pending work when unbinding smsc75xx
-
-Sean Tranchetti <stranche@codeaurora.org>
-    netlabel: check for IPV4MASK in addrinfo_get
-
-Jeff Barnhill <0xeffeff@gmail.com>
-    net/ipv6: Display all addresses in output of /proc/net/if_inet6
-
-Sabrina Dubroca <sd@queasysnail.net>
-    net: ipv4: update fnhe_pmtu when first hop's MTU changes
-
-Yunsheng Lin <linyunsheng@huawei.com>
-    net: hns: fix for unmapping problem when SMMU is on
-
-Florian Fainelli <f.fainelli@gmail.com>
-    net: dsa: bcm_sf2: Call setup during switch resume
-
-Wei Wang <weiwan@google.com>
-    ipv6: take rcu lock in rawv6_send_hdrinc()
-
-Eric Dumazet <edumazet@google.com>
-    ipv4: fix use-after-free in ip_cmsg_recv_dstaddr()
-
-Paolo Abeni <pabeni@redhat.com>
-    ip_tunnel: be careful when accessing the inner header
-
-Paolo Abeni <pabeni@redhat.com>
-    ip6_tunnel: be careful when accessing the inner header
-
-Mahesh Bandewar <maheshb@google.com>
-    bonding: avoid possible dead-lock
-
-Michael Chan <michael.chan@broadcom.com>
-    bnxt_en: Fix TX timeout during netpoll.
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: Don't print a warning when setting link state for disabled ports
-
-Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
-    i2c: i2c-scmi: fix for i2c_smbus_write_block_data
-
-Jan Kara <jack@suse.cz>
-    mm: Preserve _PAGE_DEVMAP across mprotect() calls
-
-Adrian Hunter <adrian.hunter@intel.com>
-    perf script python: Fix export-to-postgresql.py occasional failure
-
-Mikulas Patocka <mpatocka@redhat.com>
-    mach64: detect the dot clock divider correctly on sparc
-
-Paul Burton <paul.burton@mips.com>
-    MIPS: VDSO: Always map near top of user memory
-
-Jann Horn <jannh@google.com>
-    mm/vmstat.c: fix outdated vmstat_text
-
-Daniel Rosenberg <drosen@google.com>
-    ext4: Fix error code in ext4_xattr_set_entry()
-
-Amber Lin <Amber.Lin@amd.com>
-    drm/amdgpu: Fix SDMA HQD destroy error on gfx_v7
-
-Vitaly Kuznetsov <vkuznets@redhat.com>
-    x86/kvm/lapic: always disable MMIO interface in x2APIC mode
-
-Nicolas Ferre <nicolas.ferre@microchip.com>
-    ARM: dts: at91: add new compatibility string for macb on sama5d3
-
-Nicolas Ferre <nicolas.ferre@microchip.com>
-    net: macb: disable scatter-gather for macb on sama5d3
-
-Jongsung Kim <neidhard.kim@lge.com>
-    stmmac: fix valid numbers of unicast filter entries
-
-Yu Zhao <yuzhao@google.com>
-    sound: enable interrupt after dma buffer initialization
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    scsi: qla2xxx: Fix an endian bug in fcpcmd_is_corrupted()
-
-Laura Abbott <labbott@redhat.com>
-    scsi: iscsi: target: Don't use stack buffer for scatterlist
-
-Tony Lindgren <tony@atomide.com>
-    mfd: omap-usb-host: Fix dts probe of children
-
-Lei Yang <Lei.Yang@windriver.com>
-    selftests: memory-hotplug: add required configs
-
-Lei Yang <Lei.Yang@windriver.com>
-    selftests/efivarfs: add required kernel configs
-
-Danny Smith <danny.smith@axis.com>
-    ASoC: sigmadsp: safeload should not have lower byte limit
-
-Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-    ASoC: wm8804: Add ACPI support
-
-
--------------
-
-Diffstat:
-
- Documentation/devicetree/bindings/net/macb.txt     |   1 +
- Documentation/networking/ip-sysctl.txt             |  13 +-
- Makefile                                           |   4 +-
- arch/arm/boot/dts/sama5d3_emac.dtsi                |   2 +-
- arch/mips/include/asm/processor.h                  |  10 +-
- arch/mips/kernel/process.c                         |  25 +
- arch/mips/kernel/vdso.c                            |  18 +-
- arch/powerpc/include/asm/book3s/64/pgtable.h       |   4 +-
- arch/x86/include/asm/pgtable_types.h               |   2 +-
- arch/x86/include/uapi/asm/kvm.h                    |   1 +
- arch/x86/kvm/lapic.c                               |  22 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c  |   2 +-
- drivers/i2c/busses/i2c-scmi.c                      |   1 +
- drivers/mfd/omap-usb-host.c                        |  11 +-
- drivers/net/bonding/bond_main.c                    |  43 +-
- drivers/net/dsa/bcm_sf2.c                          |  12 +-
- drivers/net/ethernet/broadcom/bcmsysport.c         |  22 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt.c          |  13 +-
- drivers/net/ethernet/cadence/macb.c                |   8 +
- drivers/net/ethernet/hisilicon/hns/hnae.c          |   2 +-
- drivers/net/ethernet/hisilicon/hns/hns_enet.c      |  30 +-
- drivers/net/ethernet/marvell/mvpp2.c               |  10 +-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic.h        |   8 +-
- .../net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c    |   3 +-
- .../net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h    |   3 +-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h     |   3 +-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c     |  12 +-
- .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |   5 +-
- drivers/net/team/team.c                            |   5 +
- drivers/net/usb/qmi_wwan.c                         |   1 +
- drivers/net/usb/smsc75xx.c                         |   1 +
- drivers/scsi/qla2xxx/qla_target.h                  |   4 +-
- drivers/target/iscsi/iscsi_target.c                |  22 +-
- drivers/usb/host/xhci-hub.c                        |  18 +-
- drivers/video/fbdev/aty/atyfb.h                    |   3 +-
- drivers/video/fbdev/aty/atyfb_base.c               |   7 +-
- drivers/video/fbdev/aty/mach64_ct.c                |  10 +-
- fs/ext4/xattr.c                                    |   2 +-
- include/linux/netdevice.h                          |   7 +
- include/linux/rhashtable.h                         |   4 +-
- include/linux/skbuff.h                             |  34 +-
- include/net/bonding.h                              |   7 +-
- include/net/inet_frag.h                            | 133 +++--
- include/net/inet_sock.h                            |   6 -
- include/net/ip.h                                   |   1 -
- include/net/ip_fib.h                               |   1 +
- include/net/ipv6.h                                 |  26 +-
- include/uapi/linux/snmp.h                          |   1 +
- lib/rhashtable.c                                   |   5 +-
- mm/vmstat.c                                        |   1 -
- net/core/dev.c                                     |  28 +-
- net/core/rtnetlink.c                               |   6 +
- net/core/skbuff.c                                  |  31 +-
- net/dccp/input.c                                   |   4 +-
- net/dccp/ipv4.c                                    |   4 +-
- net/ieee802154/6lowpan/6lowpan_i.h                 |  26 +-
- net/ieee802154/6lowpan/reassembly.c                | 148 +++---
- net/ipv4/fib_frontend.c                            |  12 +-
- net/ipv4/fib_semantics.c                           |  50 ++
- net/ipv4/inet_connection_sock.c                    |   5 +-
- net/ipv4/inet_fragment.c                           | 379 +++-----------
- net/ipv4/ip_fragment.c                             | 573 ++++++++++++---------
- net/ipv4/ip_sockglue.c                             |   3 +-
- net/ipv4/ip_tunnel.c                               |   9 +
- net/ipv4/proc.c                                    |   7 +-
- net/ipv4/tcp_input.c                               |  37 +-
- net/ipv4/tcp_ipv4.c                                |   4 +-
- net/ipv6/addrconf.c                                |   4 +-
- net/ipv6/ip6_tunnel.c                              |  13 +-
- net/ipv6/netfilter/nf_conntrack_reasm.c            | 100 ++--
- net/ipv6/proc.c                                    |   5 +-
- net/ipv6/raw.c                                     |  29 +-
- net/ipv6/reassembly.c                              | 212 ++++----
- net/netlabel/netlabel_unlabeled.c                  |   3 +-
- sound/hda/hdac_controller.c                        |   8 +-
- sound/soc/codecs/sigmadsp.c                        |   3 +-
- sound/soc/codecs/wm8804-i2c.c                      |  15 +-
- tools/perf/scripts/python/export-to-postgresql.py  |   9 +
- tools/testing/selftests/efivarfs/config            |   1 +
- tools/testing/selftests/memory-hotplug/config      |   1 +
- 80 files changed, 1185 insertions(+), 1133 deletions(-)
+4.9-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Laura Abbott <labbott@redhat.com>
+
+[ Upstream commit 679fcae46c8b2352bba3485d521da070cfbe68e6 ]
+
+Fedora got a bug report of a crash with iSCSI:
+
+kernel BUG at include/linux/scatterlist.h:143!
+...
+RIP: 0010:iscsit_do_crypto_hash_buf+0x154/0x180 [iscsi_target_mod]
+...
+ Call Trace:
+  ? iscsi_target_tx_thread+0x200/0x200 [iscsi_target_mod]
+  iscsit_get_rx_pdu+0x4cd/0xa90 [iscsi_target_mod]
+  ? native_sched_clock+0x3e/0xa0
+  ? iscsi_target_tx_thread+0x200/0x200 [iscsi_target_mod]
+  iscsi_target_rx_thread+0x81/0xf0 [iscsi_target_mod]
+  kthread+0x120/0x140
+  ? kthread_create_worker_on_cpu+0x70/0x70
+  ret_from_fork+0x3a/0x50
+
+This is a BUG_ON for using a stack buffer with a scatterlist.  There
+are two cases that trigger this bug. Switch to using a dynamically
+allocated buffer for one case and do not assign a NULL buffer in
+another case.
+
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/target/iscsi/iscsi_target.c |   22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+--- a/drivers/target/iscsi/iscsi_target.c
++++ b/drivers/target/iscsi/iscsi_target.c
+@@ -1435,7 +1435,8 @@ static void iscsit_do_crypto_hash_buf(
+ 
+ 	sg_init_table(sg, ARRAY_SIZE(sg));
+ 	sg_set_buf(sg, buf, payload_length);
+-	sg_set_buf(sg + 1, pad_bytes, padding);
++	if (padding)
++		sg_set_buf(sg + 1, pad_bytes, padding);
+ 
+ 	ahash_request_set_crypt(hash, sg, data_crc, payload_length + padding);
+ 
+@@ -3949,10 +3950,14 @@ static bool iscsi_target_check_conn_stat
+ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ {
+ 	int ret;
+-	u8 buffer[ISCSI_HDR_LEN], opcode;
++	u8 *buffer, opcode;
+ 	u32 checksum = 0, digest = 0;
+ 	struct kvec iov;
+ 
++	buffer = kcalloc(ISCSI_HDR_LEN, sizeof(*buffer), GFP_KERNEL);
++	if (!buffer)
++		return;
++
+ 	while (!kthread_should_stop()) {
+ 		/*
+ 		 * Ensure that both TX and RX per connection kthreads
+@@ -3960,7 +3965,6 @@ static void iscsit_get_rx_pdu(struct isc
+ 		 */
+ 		iscsit_thread_check_cpumask(conn, current, 0);
+ 
+-		memset(buffer, 0, ISCSI_HDR_LEN);
+ 		memset(&iov, 0, sizeof(struct kvec));
+ 
+ 		iov.iov_base	= buffer;
+@@ -3969,7 +3973,7 @@ static void iscsit_get_rx_pdu(struct isc
+ 		ret = rx_data(conn, &iov, 1, ISCSI_HDR_LEN);
+ 		if (ret != ISCSI_HDR_LEN) {
+ 			iscsit_rx_thread_wait_for_tcp(conn);
+-			return;
++			break;
+ 		}
+ 
+ 		if (conn->conn_ops->HeaderDigest) {
+@@ -3979,7 +3983,7 @@ static void iscsit_get_rx_pdu(struct isc
+ 			ret = rx_data(conn, &iov, 1, ISCSI_CRC_LEN);
+ 			if (ret != ISCSI_CRC_LEN) {
+ 				iscsit_rx_thread_wait_for_tcp(conn);
+-				return;
++				break;
+ 			}
+ 
+ 			iscsit_do_crypto_hash_buf(conn->conn_rx_hash,
+@@ -4003,7 +4007,7 @@ static void iscsit_get_rx_pdu(struct isc
+ 		}
+ 
+ 		if (conn->conn_state == TARG_CONN_STATE_IN_LOGOUT)
+-			return;
++			break;
+ 
+ 		opcode = buffer[0] & ISCSI_OPCODE_MASK;
+ 
+@@ -4014,13 +4018,15 @@ static void iscsit_get_rx_pdu(struct isc
+ 			" while in Discovery Session, rejecting.\n", opcode);
+ 			iscsit_add_reject(conn, ISCSI_REASON_PROTOCOL_ERROR,
+ 					  buffer);
+-			return;
++			break;
+ 		}
+ 
+ 		ret = iscsi_target_rx_opcode(conn, buffer);
+ 		if (ret < 0)
+-			return;
++			break;
+ 	}
++
++	kfree(buffer);
+ }
+ 
+ int iscsi_target_rx_thread(void *arg)
 
 
