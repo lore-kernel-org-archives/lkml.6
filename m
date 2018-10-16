@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E93C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA74BC070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A76F21470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68C4921479
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UjBaxquW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A76F21470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m24lJqCV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68C4921479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728405AbeJPMBg (ORCPT
+        id S1728441AbeJPMBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:01:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48770 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:01:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728370AbeJPMBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:35 -0400
+        id S1728370AbeJPMBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:37 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAC04214C3;
-        Tue, 16 Oct 2018 04:13:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59A2C21479;
+        Tue, 16 Oct 2018 04:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663193;
-        bh=L5xBlSWW3Ap/C6nHXgo3ZBVVZZhUESoahcIm/JEYgCg=;
+        s=default; t=1539663194;
+        bh=CmvijBzPuy3Kdszmf/Ic5Tj4uG+63Y2U5oBLevoBp5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UjBaxquW4aTkmbx5k0xwd4qeoP8Pajg5GtDM/X8IIzxwXv1nCyjIIhj9lzI1fNxAK
-         COMqBaPA8bIeKhTF0H8OtU5/oQWuzgnCYonUvLTDBefk93sxaCKHhQbKFUFZpQATPZ
-         bAqhtMdPc3LLJXgftlOuQt6EWNuD5W3e3oUVjFAY=
+        b=m24lJqCVXQtPUzuJxeJBVIoZLmtgc+KKxcJ/2/Ca9hUWkgvzG6sbd+oaYkXNFu7Fm
+         PWEnpq3e5Azyky+NhGc37W5ZC5g6XLuvbQHO1SBs3NY8lmJ6jK0YplcU4jyHOazVDT
+         lrtXd/Z5d85ssyojdy51DUas+FxAQa5lCMbNXz8U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+Cc:     Liran Alon <liran.alon@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 056/100] cfg80211: fix use-after-free in reg_process_hint()
-Date:   Tue, 16 Oct 2018 00:11:37 -0400
-Message-Id: <20181016041221.135528-56-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 058/100] KVM: x86: Do not use kvm_x86_ops->mpx_supported() directly
+Date:   Tue, 16 Oct 2018 00:11:39 -0400
+Message-Id: <20181016041221.135528-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -53,107 +53,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Liran Alon <liran.alon@oracle.com>
 
-[ Upstream commit 1db58529454742f67ebd96e3588315e880b72837 ]
+[ Upstream commit 503234b3fdcaa578395c07e393ea3e5d13958824 ]
 
-reg_process_hint_country_ie() can free regulatory_request and return
-REG_REQ_ALREADY_SET. We shouldn't use regulatory_request after it's
-called. KASAN error was observed when this happens.
+Commit a87036add092 ("KVM: x86: disable MPX if host did not enable
+MPX XSAVE features") introduced kvm_mpx_supported() to return true
+iff MPX is enabled in the host.
 
-BUG: KASAN: use-after-free in reg_process_hint+0x839/0x8aa [cfg80211]
-Read of size 4 at addr ffff8800c430d434 by task kworker/1:3/89
-<snipped>
-Workqueue: events reg_todo [cfg80211]
-Call Trace:
- dump_stack+0xc1/0x10c
- ? _atomic_dec_and_lock+0x1ad/0x1ad
- ? _raw_spin_lock_irqsave+0xa0/0xd2
- print_address_description+0x86/0x26f
- ? reg_process_hint+0x839/0x8aa [cfg80211]
- kasan_report+0x241/0x29b
- reg_process_hint+0x839/0x8aa [cfg80211]
- reg_todo+0x204/0x5b9 [cfg80211]
- process_one_work+0x55f/0x8d0
- ? worker_detach_from_pool+0x1b5/0x1b5
- ? _raw_spin_unlock_irq+0x65/0xdd
- ? _raw_spin_unlock_irqrestore+0xf3/0xf3
- worker_thread+0x5dd/0x841
- ? kthread_parkme+0x1d/0x1d
- kthread+0x270/0x285
- ? pr_cont_work+0xe3/0xe3
- ? rcu_read_unlock_sched_notrace+0xca/0xca
- ret_from_fork+0x22/0x40
+However, that commit seems to have missed replacing some calls to
+kvm_x86_ops->mpx_supported() to kvm_mpx_supported().
 
-Allocated by task 2718:
- set_track+0x63/0xfa
- __kmalloc+0x119/0x1ac
- regulatory_hint_country_ie+0x38/0x329 [cfg80211]
- __cfg80211_connect_result+0x854/0xadd [cfg80211]
- cfg80211_rx_assoc_resp+0x3bc/0x4f0 [cfg80211]
-smsc95xx v1.0.6
- ieee80211_sta_rx_queued_mgmt+0x1803/0x7ed5 [mac80211]
- ieee80211_iface_work+0x411/0x696 [mac80211]
- process_one_work+0x55f/0x8d0
- worker_thread+0x5dd/0x841
- kthread+0x270/0x285
- ret_from_fork+0x22/0x40
+Complete original commit by replacing remaining calls to
+kvm_mpx_supported().
 
-Freed by task 89:
- set_track+0x63/0xfa
- kasan_slab_free+0x6a/0x87
- kfree+0xdc/0x470
- reg_process_hint+0x31e/0x8aa [cfg80211]
- reg_todo+0x204/0x5b9 [cfg80211]
- process_one_work+0x55f/0x8d0
- worker_thread+0x5dd/0x841
- kthread+0x270/0x285
- ret_from_fork+0x22/0x40
-<snipped>
+Fixes: a87036add092 ("KVM: x86: disable MPX if host did not enable
+MPX XSAVE features")
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/reg.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/x86/kvm/vmx.c | 2 +-
+ arch/x86/kvm/x86.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 765dedb12361..24cfa2776f50 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -2661,11 +2661,12 @@ static void reg_process_hint(struct regulatory_request *reg_request)
- {
- 	struct wiphy *wiphy = NULL;
- 	enum reg_request_treatment treatment;
-+	enum nl80211_reg_initiator initiator = reg_request->initiator;
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index ea691ddfc3aa..2e23fce5eb1f 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11567,7 +11567,7 @@ static void prepare_vmcs02_full(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
  
- 	if (reg_request->wiphy_idx != WIPHY_IDX_INVALID)
- 		wiphy = wiphy_idx_to_wiphy(reg_request->wiphy_idx);
+ 	set_cr4_guest_host_mask(vmx);
  
--	switch (reg_request->initiator) {
-+	switch (initiator) {
- 	case NL80211_REGDOM_SET_BY_CORE:
- 		treatment = reg_process_hint_core(reg_request);
- 		break;
-@@ -2683,7 +2684,7 @@ static void reg_process_hint(struct regulatory_request *reg_request)
- 		treatment = reg_process_hint_country_ie(wiphy, reg_request);
- 		break;
- 	default:
--		WARN(1, "invalid initiator %d\n", reg_request->initiator);
-+		WARN(1, "invalid initiator %d\n", initiator);
- 		goto out_free;
- 	}
+-	if (vmx_mpx_supported())
++	if (kvm_mpx_supported())
+ 		vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
  
-@@ -2698,7 +2699,7 @@ static void reg_process_hint(struct regulatory_request *reg_request)
- 	 */
- 	if (treatment == REG_REQ_ALREADY_SET && wiphy &&
- 	    wiphy->regulatory_flags & REGULATORY_STRICT_REG) {
--		wiphy_update_regulatory(wiphy, reg_request->initiator);
-+		wiphy_update_regulatory(wiphy, initiator);
- 		wiphy_all_share_dfs_chan_state(wiphy);
- 		reg_check_channels();
- 	}
+ 	if (enable_vpid) {
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 97fcac34e007..3cd58a5eb449 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4625,7 +4625,7 @@ static void kvm_init_msr_list(void)
+ 		 */
+ 		switch (msrs_to_save[i]) {
+ 		case MSR_IA32_BNDCFGS:
+-			if (!kvm_x86_ops->mpx_supported())
++			if (!kvm_mpx_supported())
+ 				continue;
+ 			break;
+ 		case MSR_TSC_AUX:
 -- 
 2.17.1
 
