@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA04C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB84C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11BE420869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31C53208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QuIgtbVE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11BE420869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSEUabeh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C53208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbeJPMAw (ORCPT
+        id S1727550AbeJPMAx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:00:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47408 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:00:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726990AbeJPMAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:00:51 -0400
+        id S1726990AbeJPMAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:00:53 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E94E52145D;
-        Tue, 16 Oct 2018 04:12:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80D0D2098A;
+        Tue, 16 Oct 2018 04:12:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663148;
-        bh=GnsTQ/PQ9o/zGSeEKkoqajfe+LFhzKyI3tyow/uoiWE=;
+        s=default; t=1539663151;
+        bh=4RAFpfr4sjoQUP8CxpjR6J+3raqu4Yoi99juJASXioA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QuIgtbVEdiiqzX8RVlBjmuwr+O1d+hkYeYw0va5p1DM/lr5NHuuh7U2t6c5sRzZps
-         /DU/lmNDJxdtRoyBgXne6Ru3pG4LsRlElxotuQMVLn5IAsEy82TU3X/D2d9ZIHShQB
-         DEBTS2YM+HNaUvLU9NE7mxARfbstlt3FW0jnyRwY=
+        b=NSEUabehvYjKAckOvYhEZ2AleT0/LhvNN9wYF8CJKisRaeLfauH5z/zFqUnLHzdcI
+         PZplIvTZiNEXAMeglvgXxhCaUXDL9KSPT56XfmO9anAN0t5J3hwDCCG5PYDdd7GtLX
+         L0usVzMc2B0YBVk2EQ5eJQfjXjaXD3f5JBXpFn3g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+Cc:     Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 003/100] xfrm: reset transport header back to network header after all input transforms ahave been applied
-Date:   Tue, 16 Oct 2018 00:10:44 -0400
-Message-Id: <20181016041221.135528-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 006/100] cfg80211: reg: Init wiphy_idx in regulatory_hint_core()
+Date:   Tue, 16 Oct 2018 00:10:47 -0400
+Message-Id: <20181016041221.135528-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -53,98 +53,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
 
-[ Upstream commit bfc0698bebcb16d19ecfc89574ad4d696955e5d3 ]
+[ Upstream commit 24f33e64fcd0d50a4b1a8e5b41bd0257aa66b0e8 ]
 
-A policy may have been set up with multiple transforms (e.g., ESP
-and ipcomp). In this situation, the ingress IPsec processing
-iterates in xfrm_input() and applies each transform in turn,
-processing the nexthdr to find any additional xfrm that may apply.
+Core regulatory hints didn't set wiphy_idx to WIPHY_IDX_INVALID. Since
+the regulatory request is zeroed, wiphy_idx was always implicitly set to
+0. This resulted in updating only phy #0.
+Fix that.
 
-This patch resets the transport header back to network header
-only after the last transformation so that subsequent xfrms
-can find the correct transport header.
-
-Fixes: 7785bba299a8 ("esp: Add a software GRO codepath")
-Suggested-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: 806a9e39670b ("cfg80211: make regulatory_request use wiphy_idx instead of wiphy")
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+[add fixes tag]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/xfrm4_input.c          | 1 +
- net/ipv4/xfrm4_mode_transport.c | 4 +---
- net/ipv6/xfrm6_input.c          | 1 +
- net/ipv6/xfrm6_mode_transport.c | 4 +---
- 4 files changed, 4 insertions(+), 6 deletions(-)
+ net/wireless/reg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/ipv4/xfrm4_input.c b/net/ipv4/xfrm4_input.c
-index bcfc00e88756..f8de2482a529 100644
---- a/net/ipv4/xfrm4_input.c
-+++ b/net/ipv4/xfrm4_input.c
-@@ -67,6 +67,7 @@ int xfrm4_transport_finish(struct sk_buff *skb, int async)
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 2f702adf2912..765dedb12361 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -2867,6 +2867,7 @@ static int regulatory_hint_core(const char *alpha2)
+ 	request->alpha2[0] = alpha2[0];
+ 	request->alpha2[1] = alpha2[1];
+ 	request->initiator = NL80211_REGDOM_SET_BY_CORE;
++	request->wiphy_idx = WIPHY_IDX_INVALID;
  
- 	if (xo && (xo->flags & XFRM_GRO)) {
- 		skb_mac_header_rebuild(skb);
-+		skb_reset_transport_header(skb);
- 		return 0;
- 	}
- 
-diff --git a/net/ipv4/xfrm4_mode_transport.c b/net/ipv4/xfrm4_mode_transport.c
-index 3d36644890bb..1ad2c2c4e250 100644
---- a/net/ipv4/xfrm4_mode_transport.c
-+++ b/net/ipv4/xfrm4_mode_transport.c
-@@ -46,7 +46,6 @@ static int xfrm4_transport_output(struct xfrm_state *x, struct sk_buff *skb)
- static int xfrm4_transport_input(struct xfrm_state *x, struct sk_buff *skb)
- {
- 	int ihl = skb->data - skb_transport_header(skb);
--	struct xfrm_offload *xo = xfrm_offload(skb);
- 
- 	if (skb->transport_header != skb->network_header) {
- 		memmove(skb_transport_header(skb),
-@@ -54,8 +53,7 @@ static int xfrm4_transport_input(struct xfrm_state *x, struct sk_buff *skb)
- 		skb->network_header = skb->transport_header;
- 	}
- 	ip_hdr(skb)->tot_len = htons(skb->len + ihl);
--	if (!xo || !(xo->flags & XFRM_GRO))
--		skb_reset_transport_header(skb);
-+	skb_reset_transport_header(skb);
- 	return 0;
- }
- 
-diff --git a/net/ipv6/xfrm6_input.c b/net/ipv6/xfrm6_input.c
-index 841f4a07438e..9ef490dddcea 100644
---- a/net/ipv6/xfrm6_input.c
-+++ b/net/ipv6/xfrm6_input.c
-@@ -59,6 +59,7 @@ int xfrm6_transport_finish(struct sk_buff *skb, int async)
- 
- 	if (xo && (xo->flags & XFRM_GRO)) {
- 		skb_mac_header_rebuild(skb);
-+		skb_reset_transport_header(skb);
- 		return -1;
- 	}
- 
-diff --git a/net/ipv6/xfrm6_mode_transport.c b/net/ipv6/xfrm6_mode_transport.c
-index 9ad07a91708e..3c29da5defe6 100644
---- a/net/ipv6/xfrm6_mode_transport.c
-+++ b/net/ipv6/xfrm6_mode_transport.c
-@@ -51,7 +51,6 @@ static int xfrm6_transport_output(struct xfrm_state *x, struct sk_buff *skb)
- static int xfrm6_transport_input(struct xfrm_state *x, struct sk_buff *skb)
- {
- 	int ihl = skb->data - skb_transport_header(skb);
--	struct xfrm_offload *xo = xfrm_offload(skb);
- 
- 	if (skb->transport_header != skb->network_header) {
- 		memmove(skb_transport_header(skb),
-@@ -60,8 +59,7 @@ static int xfrm6_transport_input(struct xfrm_state *x, struct sk_buff *skb)
- 	}
- 	ipv6_hdr(skb)->payload_len = htons(skb->len + ihl -
- 					   sizeof(struct ipv6hdr));
--	if (!xo || !(xo->flags & XFRM_GRO))
--		skb_reset_transport_header(skb);
-+	skb_reset_transport_header(skb);
- 	return 0;
- }
+ 	queue_regulatory_request(request);
  
 -- 
 2.17.1
