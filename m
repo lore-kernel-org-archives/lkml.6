@@ -2,219 +2,90 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB24C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C78DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52475208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:51:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52475208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 544D920869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:52:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="iac40Rx+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 544D920869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbeJPJjb (ORCPT
+        id S1727062AbeJPJkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 05:39:31 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:12169 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726191AbeJPJja (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 05:39:30 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="46180548"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 16 Oct 2018 09:51:33 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 6EEA44B6ED6B;
-        Tue, 16 Oct 2018 09:51:33 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 16 Oct 2018 09:51:39 +0800
-Date:   Tue, 16 Oct 2018 09:50:51 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <rjw@rjwysocki.net>,
-        <lenb@kernel.org>, <ard.biesheuvel@linaro.org>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v8 1/3] x86/boot: Add acpitb.c to parse acpi tables
-Message-ID: <20181016015050.GA2075@localhost.localdomain>
-References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
- <20181010084119.17539-2-fanc.fnst@cn.fujitsu.com>
- <20181015202609.gs6jownxbevs4vzr@gabell>
+        Tue, 16 Oct 2018 05:40:01 -0400
+Received: from imap.thunk.org ([74.207.234.97]:45588 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726191AbeJPJkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 05:40:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=0awaBIrNlz+LZ/rdVVLaloUEdaqZ8nWryIPbg9MybVA=; b=iac40Rx+YA7fJnhuSHhyhUAPrf
+        Kc3Rs30VMusL9c9/0/+ZZUu5PuOKonl/aBn2gACt8x11ZYIJy2LcMdo+BAXvuQIUld+WkkHpiFm2c
+        PTudARD+XRLnYn6Kt8NOiXGyMI03sqMttuKpKNMUsfNlyqESq0jcA9jvJWhH8ZYoVyIw=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gCEWh-0004G4-EZ; Tue, 16 Oct 2018 01:52:03 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 7BA447A4986; Mon, 15 Oct 2018 21:52:01 -0400 (EDT)
+Date:   Mon, 15 Oct 2018 21:52:01 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     valdis.kletnieks@vt.edu
+Cc:     Dennis Zhou <dennisszhou@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: Re: [BUG] ext4/block null pointer crashes in linux-next
+Message-ID: <20181016015201.GB18547@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        valdis.kletnieks@vt.edu, Dennis Zhou <dennisszhou@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+References: <13987.1539646128@turing-police.cc.vt.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181015202609.gs6jownxbevs4vzr@gabell>
+In-Reply-To: <13987.1539646128@turing-police.cc.vt.edu>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 6EEA44B6ED6B.A0C3E
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 04:26:09PM -0400, Masayoshi Mizuma wrote:
->Hi Chao,
->
->Let me add some suggestions.
+On Mon, Oct 15, 2018 at 07:28:48PM -0400, valdis.kletnieks@vt.edu wrote:
+> 
+> Traceback of the rm crash (I have *no* idea why it has systemd-tmpfile as Comm:
+> as none of the tmpfile config reference /usr/src at all, and the config says it
+> shouldn't have been running at the time of the crash, and I can't replicate as
+> the directory is now empty...)
 
-Thanks for your review and suggestion.
-I will change them in next version.
+Given the commit that it bisected down to, I very much doubt it has
+anything to do with a specific directory or pathname.  Either you or
+your distribution has enabled blk cgroup for I/O throttling, and
+there's some race that you're tripping across.  What ext4 file or
+directory happens to be accessed when you trip across the problem is
+probably just pure luck.
 
-Thanks,
-Chao Fan
+If you can disable the block I/O throttling configuration (which may
+very well be distro-specific), the problem will probably go away.  I
+don't use blkcg at all, personally, and on a personal laptop
+(especially if you have an SSD), I really don't see the point.
 
->
->On Wed, Oct 10, 2018 at 04:41:17PM +0800, Chao Fan wrote:
->> There is a bug that kaslr may randomly chooses some positions
->> which are located in movable memory regions. This will break memory
->> hotplug feature and make the movable memory chosen by KASLR can't be
->> removed. So dig SRAT table from ACPI tables to get memory information.
->> 
->> Imitate the ACPI code of parsing ACPI tables to dig and read ACPI
->> tables. Since some operations are not needed here, functions are
->> simplified. Functions will be used to dig only SRAT tables to get
->> information of memory, so that KASLR can the memory in immovable node.
->> 
->> And also, these functions won't influence the initialization of
->> ACPI after start_kernel().
->> 
->> Since use physical address directely, so acpi_os_map_memory()
->> and acpi_os_unmap_memory() are not needed.
->> 
->> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
->> ---
->>  arch/x86/boot/compressed/Makefile |   2 +
->>  arch/x86/boot/compressed/acpitb.c | 405 ++++++++++++++++++++++++++++++
->>  arch/x86/boot/compressed/misc.h   |   8 +
->>  3 files changed, 415 insertions(+)
->>  create mode 100644 arch/x86/boot/compressed/acpitb.c
->> 
->...cut...
->> +static struct acpi_table_header *get_acpi_srat_table(void)
->> +{
->> +	char *args = (char *)get_cmd_line_ptr();
->> +	acpi_physical_address acpi_table;
->> +	acpi_physical_address root_table;
->> +	struct acpi_table_header *header;
->> +	struct acpi_table_rsdp *rsdp;
->> +	char *signature;
->> +	u8 *entry;
->> +	u32 count;
->> +	u32 size;
->> +	int i, j;
->> +	u32 len;
->> +
->> +	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
->> +	if (!rsdp)
->> +		return NULL;
->> +
->> +	/* Get rsdt or xsdt from rsdp. */
->> +	if (!strstr(args, "acpi=rsdt") &&
->> +	    rsdp->xsdt_physical_address && rsdp->revision > 1) {
->> +		root_table = rsdp->xsdt_physical_address;
->> +		size = ACPI_XSDT_ENTRY_SIZE;
->> +	} else {
->> +		root_table = rsdp->rsdt_physical_address;
->> +		size = ACPI_RSDT_ENTRY_SIZE;
->> +	}
->> +
->> +	/* Get ACPI root table from rsdt or xsdt.*/
->> +	header = (struct acpi_table_header *)root_table;
->> +	len = header->length;
->> +	count = (u32)((len - sizeof(struct acpi_table_header)) / size);
->> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
->> +
->> +	for (i = 0; i < count; i++) {
->> +		u64 address64;
->> +
->> +		if (size == ACPI_RSDT_ENTRY_SIZE)
->> +			acpi_table = ((acpi_physical_address)
->> +				      (*ACPI_CAST_PTR(u32, entry)));
->> +		else {
->> +			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
->> +			acpi_table = (acpi_physical_address) address64;
->> +		}
->> +
->> +		if (acpi_table) {
->> +			header = (struct acpi_table_header *)acpi_table;
->
->> +			signature = header->signature;
->> +
->> +			if (!strncmp(signature, "SRAT", 4))
->
->			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
->
->> +				return header;
->> +		}
->> +		entry += size;
->> +	}
->> +	return NULL;
->> +}
->> +
->> +#ifdef CONFIG_MEMORY_HOTREMOVE
->> +/*
->> + * According to ACPI table, filter the immvoable memory regions
->> + * and store them in immovable_mem[].
->> + */
->> +void get_immovable_mem(void)
->> +{
->> +	char *args = (char *)get_cmd_line_ptr();
->> +	struct acpi_table_header *table_header;
->> +	struct acpi_subtable_header *table;
->> +	struct acpi_srat_mem_affinity *ma;
->> +	unsigned long table_end;
->> +	int i = 0;
->> +
->> +	if (!strstr(args, "movable_node") || strstr(args, "acpi=off"))
->> +		return;
->> +
->> +	table_header = get_acpi_srat_table();
->> +	if (!table_header)
->> +		return;
->> +
->> +	table_end = (unsigned long)table_header + table_header->length;
->> +
->> +	table = (struct acpi_subtable_header *)
->> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
->> +
->
->> +	while (((unsigned long)table) + table->length < table_end) {
->
->	while (((unsigned long)table) +
->			sizeof(struct acpi_subtable_header) < table_end) {
->
->> +		if (table->type == 1) {
->
->		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
->
->> +			ma = (struct acpi_srat_mem_affinity *)table;
->> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
->> +				immovable_mem[i].start = ma->base_address;
->> +				immovable_mem[i].size = ma->length;
->> +				i++;
->> +			}
->> +
->> +			if (i >= MAX_NUMNODES*2)
->> +				break;
->> +		}
->> +		table = (struct acpi_subtable_header *)
->> +			((unsigned long)table + table->length);
->> +	}
->> +	num_immovable_mem = i;
->> +}
->
->Thanks,
->Masa
->
->
+Still, I'm sure the people who *do* use blkcg for real (mostly in data
+centers, in my experience) will probably thank you for being a great
+guinea pig.  :-)
 
-
+						- Ted
