@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DB3C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7D3C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BBC22147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1C1421476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWAH+crj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BBC22147C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fxmOqQvo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C1421476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbeJQBEp (ORCPT
+        id S1728848AbeJQBEr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:04:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47592 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:04:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbeJQBEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:04:44 -0400
+        id S1727280AbeJQBEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:04:46 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1CC520866;
-        Tue, 16 Oct 2018 17:13:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 701B02089E;
+        Tue, 16 Oct 2018 17:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710001;
-        bh=DutE/NqEcymI5we6Z3votG4V2wbJ0TpTaIhcFhx9s6k=;
+        s=default; t=1539710003;
+        bh=V3E3AclmgBQpHpElSz20n57Hi18gyfP3YalyhX8VoKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cWAH+crjNViftbWkhFJ8NqTUR/O9c6qihpyIoNXfvrwh8thU+Lb6VaNNzRP/p6BcU
-         EyJpRT+AztOJ1R3mGJ2gvK6BwdkHONWda88jGb7lc+Y1JJida+7hrIZGCIGJg8Ja8r
-         5yPFPDb03KFf7QATCpetjLsnSx0z+Elgry3FqlsQ=
+        b=fxmOqQvo02Doj9v0ImqtEhv5S1A3YhwS/PFVEziFDes3dX/rNQlwMTKbHhgP5WEl4
+         aMx2fO7kzy261ajwQIEnkf7VDXjcapRnQyoUhhaYqmUmmT4nXoufZ3YXcdEJ0Ua+IV
+         urZAhzabpPHMRnTC7RFODPvPElnMW75ujjoDjfO0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        stable@vger.kernel.org, Danny Smith <dannys@axis.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 069/135] ASoC: wm8804: Add ACPI support
-Date:   Tue, 16 Oct 2018 19:04:59 +0200
-Message-Id: <20181016170519.391086962@linuxfoundation.org>
+Subject: [PATCH 4.18 070/135] ASoC: sigmadsp: safeload should not have lower byte limit
+Date:   Tue, 16 Oct 2018 19:05:00 +0200
+Message-Id: <20181016170519.563174456@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -65,66 +64,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+From: Danny Smith <danny.smith@axis.com>
 
-[ Upstream commit 960cdd50ca9fdfeb82c2757107bcb7f93c8d7d41 ]
+[ Upstream commit 5ea752c6efdf5aa8a57aed816d453a8f479f1b0a ]
 
-HID made of either Wolfson/CirrusLogic PCI ID + 8804 identifier.
+Fixed range in safeload conditional to allow safeload to up to 20 bytes,
+without a lower limit.
 
-This helps enumerate the HifiBerry Digi+ HAT boards on the Up2 platform.
-
-The scripts at https://github.com/thesofproject/acpi-scripts can be
-used to add the ACPI initrd overlays.
-
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Danny Smith <dannys@axis.com>
+Acked-by: Lars-Peter Clausen <lars@metafoo.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/codecs/wm8804-i2c.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ sound/soc/codecs/sigmadsp.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/sound/soc/codecs/wm8804-i2c.c
-+++ b/sound/soc/codecs/wm8804-i2c.c
-@@ -13,6 +13,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/i2c.h>
-+#include <linux/acpi.h>
- 
- #include "wm8804.h"
- 
-@@ -40,17 +41,29 @@ static const struct i2c_device_id wm8804
- };
- MODULE_DEVICE_TABLE(i2c, wm8804_i2c_id);
- 
-+#if defined(CONFIG_OF)
- static const struct of_device_id wm8804_of_match[] = {
- 	{ .compatible = "wlf,wm8804", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, wm8804_of_match);
-+#endif
-+
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id wm8804_acpi_match[] = {
-+	{ "1AEC8804", 0 }, /* Wolfson PCI ID + part ID */
-+	{ "10138804", 0 }, /* Cirrus Logic PCI ID + part ID */
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(acpi, wm8804_acpi_match);
-+#endif
- 
- static struct i2c_driver wm8804_i2c_driver = {
- 	.driver = {
- 		.name = "wm8804",
- 		.pm = &wm8804_pm,
--		.of_match_table = wm8804_of_match,
-+		.of_match_table = of_match_ptr(wm8804_of_match),
-+		.acpi_match_table = ACPI_PTR(wm8804_acpi_match),
- 	},
- 	.probe = wm8804_i2c_probe,
- 	.remove = wm8804_i2c_remove,
+--- a/sound/soc/codecs/sigmadsp.c
++++ b/sound/soc/codecs/sigmadsp.c
+@@ -117,8 +117,7 @@ static int sigmadsp_ctrl_write(struct si
+ 	struct sigmadsp_control *ctrl, void *data)
+ {
+ 	/* safeload loads up to 20 bytes in a atomic operation */
+-	if (ctrl->num_bytes > 4 && ctrl->num_bytes <= 20 && sigmadsp->ops &&
+-	    sigmadsp->ops->safeload)
++	if (ctrl->num_bytes <= 20 && sigmadsp->ops && sigmadsp->ops->safeload)
+ 		return sigmadsp->ops->safeload(sigmadsp, ctrl->addr, data,
+ 			ctrl->num_bytes);
+ 	else
 
 
