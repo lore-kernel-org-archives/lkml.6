@@ -2,102 +2,81 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 858ADC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF60C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 443412083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:50:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 443412083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 69A1A205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:52:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A1A205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbeJPWlY (ORCPT
+        id S1727103AbeJPWnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:41:24 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:60389 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbeJPWlY (ORCPT
+        Tue, 16 Oct 2018 18:43:22 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:38548 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726760AbeJPWnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:41:24 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id F35924121C;
-        Tue, 16 Oct 2018 14:50:35 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id YsV3qY11owGr; Tue, 16 Oct 2018 14:50:35 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id B670240C39;
-        Tue, 16 Oct 2018 14:50:29 +0000 (UTC)
-Subject: Re: [PATCH] selftests: kvm: Fix -Wformat warnings
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>
-References: <20181016141346.19922-1-andrea.parri@amarulasolutions.com>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <2af4a102-f7ef-29bf-15a5-4b355e6d9be0@kernel.org>
-Date:   Tue, 16 Oct 2018 08:50:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 16 Oct 2018 18:43:22 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9GEnMFM017642;
+        Tue, 16 Oct 2018 09:51:46 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2n3es3uu5k-1;
+        Tue, 16 Oct 2018 09:51:45 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail4.cirrus.com (Postfix) with ESMTP id AD59C611CE60;
+        Tue, 16 Oct 2018 09:54:33 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 16 Oct 2018
+ 15:51:44 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9GEphuu031461; Tue,
+ 16 Oct 2018 15:51:43 +0100
+Date:   Tue, 16 Oct 2018 15:51:43 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Colin King <colin.king@canonical.com>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <patches@opensource.cirrus.com>,
+        <alsa-devel@alsa-project.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: wm8904: fix spelling mistake "Inveting" ->
+ "Inverting"
+Message-ID: <20181016145143.GG1653@imbe.wolfsonmicro.main>
+References: <20181013154513.6155-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20181016141346.19922-1-andrea.parri@amarulasolutions.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181013154513.6155-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=608 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1810160125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/2018 08:13 AM, Andrea Parri wrote:
-> Fixes the following warnings:
+On Sat, Oct 13, 2018 at 04:45:13PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> dirty_log_test.c: In function ‘help’:
-> dirty_log_test.c:216:9: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 2 has type ‘int’ [-Wformat=]
->   printf(" -i: specify iteration counts (default: %"PRIu64")\n",
->          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> In file included from include/test_util.h:18:0,
->                  from dirty_log_test.c:16:
-> /usr/include/inttypes.h:105:34: note: format string is defined here
->  # define PRIu64  __PRI64_PREFIX "u"
-> dirty_log_test.c:218:9: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 2 has type ‘int’ [-Wformat=]
->   printf(" -I: specify interval in ms (default: %"PRIu64" ms)\n",
->          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> In file included from include/test_util.h:18:0,
->                  from dirty_log_test.c:16:
-> /usr/include/inttypes.h:105:34: note: format string is defined here
->  # define PRIu64  __PRI64_PREFIX "u"
+> Trivial fix to spelling mistake in sound control text
 > 
-> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  tools/testing/selftests/kvm/dirty_log_test.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
-> index 0c2cdc105f968..a9c4b5e21d7e7 100644
-> --- a/tools/testing/selftests/kvm/dirty_log_test.c
-> +++ b/tools/testing/selftests/kvm/dirty_log_test.c
-> @@ -31,9 +31,9 @@
->  /* How many pages to dirty for each guest loop */
->  #define  TEST_PAGES_PER_LOOP            1024
->  /* How many host loops to run (one KVM_GET_DIRTY_LOG for each loop) */
-> -#define  TEST_HOST_LOOP_N               32
-> +#define  TEST_HOST_LOOP_N               32UL
->  /* Interval for each host loop (ms) */
-> -#define  TEST_HOST_LOOP_INTERVAL        10
-> +#define  TEST_HOST_LOOP_INTERVAL        10UL
->  
->  /*
->   * Guest variables.  We use these variables to share data between host
-> 
 
-Thanks for the patch. Applied to linux-kselftest next for 4.20-rc1
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-thanks,
--- Shuah
+Thanks,
+Charles
