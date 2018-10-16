@@ -2,161 +2,198 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C42C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A81CEC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 014AB21476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 688F92098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kq9Dgv5e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 014AB21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PwiY2m5g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 688F92098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728359AbeJQBDR (ORCPT
+        id S1728379AbeJQBDU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 16 Oct 2018 21:03:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727396AbeJQBDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 16 Oct 2018 21:03:17 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:36870 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727263AbeJQBDP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:03:15 -0400
-Received: by mail-it1-f193.google.com with SMTP id e74-v6so33106758ita.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 10:11:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nKAUkAPuPDlFBmtURpYNjxr6/i+74M1VNtdiYpnxyyY=;
-        b=Kq9Dgv5exf0x8iHKWtuCHgz/+KVeOJGl3cQGnIHXGmJFlGOx1m6QG6KPlV5wycgtIc
-         vxaVh9MQuZkFFNkbT13ZoBd22N4NFiv6Xm6aEWfkSeMjj1FgWdBq1JqPhw4EkPMJOrmD
-         9xdpq7/HNOtX8RAOYArnl6nlVLFwmIH3jJBh8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nKAUkAPuPDlFBmtURpYNjxr6/i+74M1VNtdiYpnxyyY=;
-        b=rbsJqlp/ccxE4UtDy69w6Jxmry+WkPt5XKnWGv6lgAxobVNMcBs4VJUPlJ2llJ4Rfi
-         h22Rn7AmT54Ja9q2yReAuNC1BLziliVc+ZNS83dRsc9OuzFTG8g/g05Nycg26wOJu1Kk
-         IbX2ZJ92rrZF3pl0GBq4KkmcoO19aNGbfrrAy/YqAPLHsdKPMNdl6FmyXYlOb55dVaXO
-         gKORIO2pCmPJKNdsWiWHyyWOBDKwj27GtzlHaeCav8nepZaf0D9TGTDnERCxtY8zvlIE
-         ae7E6FzXLhWBfqj1XXwz0/EwKu2yQa1Mr4AcfPiusnXAaAYar05ja8HLH2a/zC2WODGe
-         +eMw==
-X-Gm-Message-State: ABuFfoiuEzRFGsU/vfLAz/bW4LC6yYBH+upp4joAyL54cZndzfyNE+sF
-        fFnWfWSjnynFg3HHilXud9mhoxo2SF2w2XhAUSUEWg==
-X-Google-Smtp-Source: ACcGV6305ioHwj8dYF2Nk7LTC2KpaoSw7BixDiB4+NRhIiYyEXKaTj/TYkKlUiaCoZEtkMK0AgcPBtDtPKgyKHI8iiM=
-X-Received: by 2002:a02:844c:: with SMTP id l12-v6mr18462723jah.137.1539709912620;
- Tue, 16 Oct 2018 10:11:52 -0700 (PDT)
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BE7220866;
+        Tue, 16 Oct 2018 17:11:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539709914;
+        bh=ZinZamEaTbSjpRi7+dRq9JizfbinPQKBUy+j6wDR5ok=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PwiY2m5gQJomwDe27btuSrVzcoTEPqfGJSUL1tIu6rDddCuiW2jS4pcFiv2c64c+D
+         +CuLhfvECy7t50ZjfM2DbBmLVUetEL8Je9/si+lVOkRHv+4ODXLxNM8wrUoNKaWAI8
+         FVqD5GY1U1XOSnbTutGI0ZGIis3Z7hnxqE51WbaM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+3fde91d4d394747d6db4@syzkaller.appspotmail.com,
+        Alexander Potapenko <glider@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 004/135] ip6_tunnel: be careful when accessing the inner header
+Date:   Tue, 16 Oct 2018 19:03:54 +0200
+Message-Id: <20181016170515.840573799@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
+References: <20181016170515.447235311@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <CGME20181009162509epcas1p4fdd2e23039caa24586a4a52c6d2e7336@epcas1p4.samsung.com>
- <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
- <20181010153553eucas1p1b8f74f4aa45751ef029805fd118affc1~cSUmU58-F2963929639eucas1p1L@eucas1p1.samsung.com>
- <5BBE3751.7000908@linaro.org> <20181011111025eucas1p2125db99d798a60a8e38da97c2a1c7436~ciWHHd0YW0102601026eucas1p2b@eucas1p2.samsung.com>
-In-Reply-To: <20181011111025eucas1p2125db99d798a60a8e38da97c2a1c7436~ciWHHd0YW0102601026eucas1p2b@eucas1p2.samsung.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 16 Oct 2018 19:11:41 +0200
-Message-ID: <CAKfTPtBZam-+3sbKa+XffhoxkPX_ndTLoxioVwU-iz0qTnnPAw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
-To:     l.luba@partner.samsung.com
-Cc:     Thara Gopinath <thara.gopinath@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Ionela Voinescu <ionela.voinescu@arm.com>,
-        b.zolnierkie@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukasz,
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-On Thu, 11 Oct 2018 at 13:10, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
->
->
-> On 10/10/2018 07:30 PM, Thara Gopinath wrote:
-> > Hello Lukasz,
-> >
-> > On 10/10/2018 11:35 AM, Lukasz Luba wrote:
-> >> Hi Thara,
-> >>
-> >> I have run it on Exynos5433 mainline.
-> >> When it is enabled with step_wise thermal governor,
-> >> some of my tests are showing ~30-50% regression (i.e. hackbench),
-> >> dhrystone ~10%.
-> >
-> > That is interesting. If I understand correctly, dhrystone spawns 16
-> > threads or so and floods the system. In "theory", such a test should not
-> > see any performance improvement and degradation. What is the thermal
-> > activity like in your system? I will try running one of these tests on
-> > hikey960.
-> I use this dhrystone implementation:
-> https://github.com/Keith-S-Thompson/dhrystone/blob/master/v2.2/dry.c
-> It does not span new threads/processes and I pinned it to a single cpu.
->
-> My thermal setup is probably different than yours.
-> You have (on hikey960) probably 1 sensor for whole SoC and one thermal
-> zone (if it is this mainline file:
-> arch/arm64/boot/dts/hisilicon/hi3660.dtsi).
-> This thermal zone has two cooling devices - two clusters with dvfs.
-> Your temperature signal read out from that sensor is probably much
-> smoother. When you have sensor inside cluster, the rising factor
-> can be even 20deg/s (for big cores).
-> In my case, there are 4 thermal zones, each cluster has it's private
-> sensor and thermal zone. There is no 'SoC sensor' or 'PCB sensor',
-> which is recommended for IPA.
-> >>
-> >> Could you tell me which thermal governor was used in your case?
-> >> Please also share the name of that benchmark, i will give it a try.
-> >> Is it single threaded compute-intensive?
-> >
-> > Step-wise governor.
-> > I use aobench which is part of phoronix-test-suite.
-> >
-> > Regards
-> > Thara
-> >
-> I have built this aobench and run it pinned to single big cpu:
-> time taskset -c 4 ./aobench
+------------------
 
-Why have you pinned the test only on CPU4 ?
-Goal of thermal pressure is to inform the scheduler of reduced compute
-capacity and help the scheduler to take better decision in tasks
-placement.
-So I would not expect perf impact on your test as the bench will stay
-pinned on the cpu4
-That being said you obviously have perf impact as shown below in your results
-And other tasks on the system are not pinned and might come and
-disturb your bench
+From: Paolo Abeni <pabeni@redhat.com>
 
-> The results:
-> 3min-5:30min [mainline]
-> 5:15min-5:50min [+patchset]
->
-> The idea is definitely worth to investigate further.
+[ Upstream commit 76c0ddd8c3a683f6e2c6e60e11dc1a1558caf4bc ]
 
-Yes I agree
+the ip6 tunnel xmit ndo assumes that the processed skb always
+contains an ip[v6] header, but syzbot has found a way to send
+frames that fall short of this assumption, leading to the following splat:
 
-Vincent
->
-> Regards,
-> Lukasz
->
->
->
+BUG: KMSAN: uninit-value in ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1307
+[inline]
+BUG: KMSAN: uninit-value in ip6_tnl_start_xmit+0x7d2/0x1ef0
+net/ipv6/ip6_tunnel.c:1390
+CPU: 0 PID: 4504 Comm: syz-executor558 Not tainted 4.16.0+ #87
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1307 [inline]
+  ip6_tnl_start_xmit+0x7d2/0x1ef0 net/ipv6/ip6_tunnel.c:1390
+  __netdev_start_xmit include/linux/netdevice.h:4066 [inline]
+  netdev_start_xmit include/linux/netdevice.h:4075 [inline]
+  xmit_one net/core/dev.c:3026 [inline]
+  dev_hard_start_xmit+0x5f1/0xc70 net/core/dev.c:3042
+  __dev_queue_xmit+0x27ee/0x3520 net/core/dev.c:3557
+  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
+  packet_snd net/packet/af_packet.c:2944 [inline]
+  packet_sendmsg+0x7c70/0x8a30 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmmsg+0x42d/0x800 net/socket.c:2136
+  SYSC_sendmmsg+0xc4/0x110 net/socket.c:2167
+  SyS_sendmmsg+0x63/0x90 net/socket.c:2162
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x441819
+RSP: 002b:00007ffe58ee8268 EFLAGS: 00000213 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441819
+RDX: 0000000000000002 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00000000006cd018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000402510
+R13: 00000000004025a0 R14: 0000000000000000 R15: 0000000000000000
+
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+  slab_post_alloc_hook mm/slab.h:445 [inline]
+  slab_alloc_node mm/slub.c:2737 [inline]
+  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:984 [inline]
+  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
+  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
+  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
+  packet_snd net/packet/af_packet.c:2894 [inline]
+  packet_sendmsg+0x6454/0x8a30 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmmsg+0x42d/0x800 net/socket.c:2136
+  SYSC_sendmmsg+0xc4/0x110 net/socket.c:2167
+  SyS_sendmmsg+0x63/0x90 net/socket.c:2162
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+This change addresses the issue adding the needed check before
+accessing the inner header.
+
+The ipv4 side of the issue is apparently there since the ipv4 over ipv6
+initial support, and the ipv6 side predates git history.
+
+Fixes: c4d3efafcc93 ("[IPV6] IP6TUNNEL: Add support to IPv4 over IPv6 tunnel.")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+3fde91d4d394747d6db4@syzkaller.appspotmail.com
+Tested-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv6/ip6_tunnel.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1226,7 +1226,7 @@ static inline int
+ ip4ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct ip6_tnl *t = netdev_priv(dev);
+-	const struct iphdr  *iph = ip_hdr(skb);
++	const struct iphdr  *iph;
+ 	int encap_limit = -1;
+ 	struct flowi6 fl6;
+ 	__u8 dsfield;
+@@ -1234,6 +1234,11 @@ ip4ip6_tnl_xmit(struct sk_buff *skb, str
+ 	u8 tproto;
+ 	int err;
+ 
++	/* ensure we can access the full inner ip header */
++	if (!pskb_may_pull(skb, sizeof(struct iphdr)))
++		return -1;
++
++	iph = ip_hdr(skb);
+ 	memset(&(IPCB(skb)->opt), 0, sizeof(IPCB(skb)->opt));
+ 
+ 	tproto = READ_ONCE(t->parms.proto);
+@@ -1297,7 +1302,7 @@ static inline int
+ ip6ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct ip6_tnl *t = netdev_priv(dev);
+-	struct ipv6hdr *ipv6h = ipv6_hdr(skb);
++	struct ipv6hdr *ipv6h;
+ 	int encap_limit = -1;
+ 	__u16 offset;
+ 	struct flowi6 fl6;
+@@ -1306,6 +1311,10 @@ ip6ip6_tnl_xmit(struct sk_buff *skb, str
+ 	u8 tproto;
+ 	int err;
+ 
++	if (unlikely(!pskb_may_pull(skb, sizeof(*ipv6h))))
++		return -1;
++
++	ipv6h = ipv6_hdr(skb);
+ 	tproto = READ_ONCE(t->parms.proto);
+ 	if ((tproto != IPPROTO_IPV6 && tproto != 0) ||
+ 	    ip6_tnl_addr_conflict(t, ipv6h))
+
+
