@@ -7,97 +7,119 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75711C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5DFC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3677021470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5383820866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NWNSgxoR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3677021470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HeT5Bt+R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5383820866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730397AbeJPMIX (ORCPT
+        id S1730047AbeJPMEV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:08:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53504 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:04:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730095AbeJPMEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:04:34 -0400
+        id S1729950AbeJPMET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:04:19 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E043214C3;
-        Tue, 16 Oct 2018 04:16:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DC33214DA;
+        Tue, 16 Oct 2018 04:15:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663371;
-        bh=8qdNi30QODruT8+/Nu4xnOyCVqTs0bhBTOgHR0uEqRY=;
+        s=default; t=1539663355;
+        bh=YKWNT0pIHwQBFjRYMuZqDabIOvUoQ6Ls3x4kZ6tqr9M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NWNSgxoRwLj1Fu1DOCkUnyIZZdpwhaSLDVrE22kMayJSE19Mxrc2WgUrdTBkc516N
-         Omm25bzgPa6jkLlMuHeWJgzVPzrxwXW1BDnozXyV7OHt5H3iskq5JjsJ62J+ZneVDk
-         XXpOG8KXvsDR9+DOJLV44ewYr7l3/LKStqE1/xiE=
+        b=HeT5Bt+R8cvta0xGqiAgwZNaSC79o2qFxFtISusarm0gbaE6a3k4k3GKWN3cOdnMw
+         cr4MkYrQUwDFGbjCAVnBhvgRyID4oiKymAAcatRFIjame5W53j02sQWC4BumfoCr65
+         Erq5Zbb8W0cWzOjRbWz6qO5kkWmZOXgd9L7XmjIE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 03/25] mac80211: Always report TX status
-Date:   Tue, 16 Oct 2018 00:15:44 -0400
-Message-Id: <20181016041606.135876-3-sashal@kernel.org>
+Cc:     Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 33/38] perf/x86/intel/uncore: Fix PCI BDF address of M3UPI on SKX
+Date:   Tue, 16 Oct 2018 00:15:17 -0400
+Message-Id: <20181016041522.135789-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181016041606.135876-1-sashal@kernel.org>
-References: <20181016041606.135876-1-sashal@kernel.org>
+In-Reply-To: <20181016041522.135789-1-sashal@kernel.org>
+References: <20181016041522.135789-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-[ Upstream commit 8682250b3c1b75a45feb7452bc413d004cfe3778 ]
+[ Upstream commit 9d92cfeaf5215158d26d2991be7f7ff865cb98f3 ]
 
-If a frame is dropped for any reason, mac80211 wouldn't report the TX
-status back to user space.
+The counters on M3UPI Link 0 and Link 3 don't count properly, and writing
+0 to these counters may causes system crash on some machines.
 
-As the user space may rely on the TX_STATUS to kick its state
-machines, resends etc, it's better to just report this frame as not
-acked instead.
+The PCI BDF addresses of the M3UPI in the current code are incorrect.
 
-Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+The correct addresses should be:
+
+  D18:F1	0x204D
+  D18:F2	0x204E
+  D18:F5	0x204D
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore support")
+Link: http://lkml.kernel.org/r/1537538826-55489-1-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/status.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ arch/x86/events/intel/uncore_snbep.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/net/mac80211/status.c b/net/mac80211/status.c
-index 45fb1abdb265..2731cf5bf052 100644
---- a/net/mac80211/status.c
-+++ b/net/mac80211/status.c
-@@ -466,11 +466,6 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
- 	if (!skb)
- 		return;
- 
--	if (dropped) {
--		dev_kfree_skb_any(skb);
--		return;
--	}
--
- 	if (info->flags & IEEE80211_TX_INTFL_NL80211_FRAME_TX) {
- 		u64 cookie = IEEE80211_SKB_CB(skb)->ack.cookie;
- 		struct ieee80211_sub_if_data *sdata;
-@@ -491,6 +486,8 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
- 		}
- 		rcu_read_unlock();
- 
-+		dev_kfree_skb_any(skb);
-+	} else if (dropped) {
- 		dev_kfree_skb_any(skb);
- 	} else {
- 		/* consumes skb */
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 6bc36944a8c1..8c2a9fa0caf3 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3767,16 +3767,16 @@ static const struct pci_device_id skx_uncore_pci_ids[] = {
+ 		.driver_data = UNCORE_PCI_DEV_FULL_DATA(21, 5, SKX_PCI_UNCORE_M2PCIE, 3),
+ 	},
+ 	{ /* M3UPI0 Link 0 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
+-		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 0, SKX_PCI_UNCORE_M3UPI, 0),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
++		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 0),
+ 	},
+ 	{ /* M3UPI0 Link 1 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
+-		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 1),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204E),
++		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 2, SKX_PCI_UNCORE_M3UPI, 1),
+ 	},
+ 	{ /* M3UPI1 Link 2 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
+-		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 4, SKX_PCI_UNCORE_M3UPI, 2),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
++		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 5, SKX_PCI_UNCORE_M3UPI, 2),
+ 	},
+ 	{ /* end: all zeroes */ }
+ };
 -- 
 2.17.1
 
