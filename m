@@ -2,194 +2,165 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8F6C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9BCC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CBD02086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:19:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AF4E2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:21:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mkGjZOZm";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gyg9kOFK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CBD02086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="GchKETCs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AF4E2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbeJPXKt (ORCPT
+        id S1727188AbeJPXMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 19:10:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49006 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbeJPXKs (ORCPT
+        Tue, 16 Oct 2018 19:12:08 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36377 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbeJPXMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:10:48 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7223160769; Tue, 16 Oct 2018 15:19:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539703191;
-        bh=6ogXmNlC7ZW0hqVK7pvj0KX1gRSqBobeM+zsJ3KPpWA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=mkGjZOZma6pVRSPlPT2QaI0aXhnEjkhdLK++BfJecOLdsASh0DaTuDiaINTIS4A1G
-         HwotZg2XNkTWKMIDd2eEn4K2A3zS92E0jbPy6GREUt/yurJ/SYm0XA8JhbnDXKZ7jE
-         G5PHypjHl1MYUa2F8WLx26JH6QQ7r0y7DEI+kOvA=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 7A00E60386;
-        Tue, 16 Oct 2018 15:19:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539703190;
-        bh=6ogXmNlC7ZW0hqVK7pvj0KX1gRSqBobeM+zsJ3KPpWA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gyg9kOFKa7siGQN/pzjPUeNsdxaQ4N3OCNuNs3WnRWntmXpxz9NWjeZq02yedj7bg
-         vEoAQsDsdwv2zdNhwTq7UnzjX5HtYbwJGPMYKbU9zLWcff9SrL7pNLyeLo5rMdp16/
-         K4ZcqyZesIfcRyVKxhaWdhpch2wloeUf8nlTmtzc=
+        Tue, 16 Oct 2018 19:12:08 -0400
+Received: by mail-wr1-f66.google.com with SMTP id y16so26028042wrw.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 08:21:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p0qLxeCpiBAFE040fgHjKvG59bYwWCKtpW0E7xd8WhQ=;
+        b=GchKETCsZIhtTbcSDX+FCjBYZySXRjHi04pdIgNo5EcDAKYBppQBJYo3iuCEXlj0Fr
+         ypak8Z6U0O+Ef/GSfXQwKy3ktwetMldb7ARj2+pQbH6/eE5sqcItHNvgC9C/pJeTVUnd
+         YlrbalZXsrg+AH+pqgMfFFm2yaaG3++ox4gIGL1gKmxU3vX9vw32uaI1i1fHNQAcxVkS
+         gc6HjtwJ6Vb80vV+2mNNnWWxd+VWAdmz2Bq9nwSPs9KVLMXuAeqiDt3jdIVqQKK1xt4a
+         RnKQ2ULmHWMKh9NBye7s5QKPZ/cDUjRQnYFsQTybBwe7rpwiak8KUys4TcgoSsKTRF3V
+         fKJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p0qLxeCpiBAFE040fgHjKvG59bYwWCKtpW0E7xd8WhQ=;
+        b=aBi/6Gr8G/QCWSKf28Ho5yj9OSvxxdhh6uN/ukxc5HmGPhLL/cBGTyKoSYzeevjWfQ
+         wixpe32nTO7SU+wpGtUsK6dCkMuzgW6+xZD+j2Xnm7uIPArUzzof2Yfu5dpcrbx4djOI
+         k6mh9xjYYmw7SVcBHb4siDwlGnKqJ4Uqxlvq+OCPcaYwvTg3mBDN1jkTFWBKxfYAVjPy
+         XbdrUKYbT41EiTgvP4L54eNk9eXXSxzrPBc6aRB74PIJISy2xI2EJlX8iC8WrpW7TZlS
+         6hE/Yp2E33HX7fjWISIUgs2lXv5RKI50yJ4vCymHg5YW5vrJ0eU8ELNG1wBvkh7XJp5P
+         u5aA==
+X-Gm-Message-State: ABuFfohDc89SQuRvSSnZPOicGoLE17PmqwzWZd4DdlTqAV7SIf0a9rLL
+        LlQQf2jgvPHgGBcYRuydpvyQCg==
+X-Google-Smtp-Source: ACcGV61zhDdQkhB/aZGt7jR6UEzcecjFOeHHyl5JX87C2HEyhPaj/9XYlCnXBsAiptkmjCPXmqGe3g==
+X-Received: by 2002:a5d:694c:: with SMTP id r12-v6mr3628668wrw.170.1539703269609;
+        Tue, 16 Oct 2018 08:21:09 -0700 (PDT)
+Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
+        by smtp.gmail.com with ESMTPSA id b5-v6sm11231344wrr.94.2018.10.16.08.21.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 08:21:07 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 17:21:01 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Waiman Long <longman@redhat.com>
+Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
+        ebiederm@xmission.com, mcgrof@kernel.org,
+        akpm@linux-foundation.org, joe.lawrence@redhat.com,
+        linux@dominikbrodowski.net, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v1 2/2] sysctl: handle overflow for file-max
+Message-ID: <20181016152100.zg2pmyk6puc5qsr5@brauner.io>
+References: <20181015105544.4395-1-christian@brauner.io>
+ <20181015105544.4395-3-christian@brauner.io>
+ <22319ca1-6dab-fe36-40d5-9c88f7a175ee@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 16 Oct 2018 20:49:50 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Harish Bandi <c-hbandi@codeaurora.org>
-Subject: Re: [PATCH v2] Bluetooth: hci_qca: Add support for controller debug
- logs.
-In-Reply-To: <01616379-E0FF-49AC-8C69-DA498DA9F51F@holtmann.org>
-References: <20181003151144.10537-1-bgodavar@codeaurora.org>
- <2206464E-FA01-4A5A-8BC4-5CF70A0B9765@holtmann.org>
- <eca6c8832017269881709e51eadcf543@codeaurora.org>
- <EC27FDED-638A-4055-A861-C4AAD842F124@holtmann.org>
- <fed90ab28af93bc27a07c0b4e8ca933c@codeaurora.org>
- <01616379-E0FF-49AC-8C69-DA498DA9F51F@holtmann.org>
-Message-ID: <540262ec6c6f1c5f3a9baf18b6f40d47@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <22319ca1-6dab-fe36-40d5-9c88f7a175ee@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marcel,
-
-On 2018-10-16 20:39, Marcel Holtmann wrote:
-> Hi Balakrishna,
+On Tue, Oct 16, 2018 at 11:13:28AM -0400, Waiman Long wrote:
+> On 10/15/2018 06:55 AM, Christian Brauner wrote:
+> > Currently, when writing
+> >
+> > echo 18446744073709551616 > /proc/sys/fs/file-max
+> >
+> > /proc/sys/fs/file-max will overflow and be set to 0. That quickly
+> > crashes the system.
+> > This commit explicitly caps the value for file-max to ULONG_MAX.
+> >
+> > Note, this isn't technically necessary since proc_get_long() will already
+> > return ULONG_MAX. However, two reason why we still should do this:
+> > 1. it makes it explicit what the upper bound of file-max is instead of
+> >    making readers of the code infer it from proc_get_long() themselves
+> > 2. other tunebles than file-max may want to set a lower max value than
+> >    ULONG_MAX and we need to enable __do_proc_doulongvec_minmax() to handle
+> >    such cases too
+> >
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Signed-off-by: Christian Brauner <christian@brauner.io>
+> > ---
+> > v0->v1:
+> > - if max value is < than ULONG_MAX use max as upper bound
+> > - (Dominik) remove double "the" from commit message
+> > ---
+> >  kernel/sysctl.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> > index 97551eb42946..226d4eaf4b0e 100644
+> > --- a/kernel/sysctl.c
+> > +++ b/kernel/sysctl.c
+> > @@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
+> >  static int __maybe_unused two = 2;
+> >  static int __maybe_unused four = 4;
+> >  static unsigned long one_ul = 1;
+> > +static unsigned long ulong_max = ULONG_MAX;
+> >  static int one_hundred = 100;
+> >  static int one_thousand = 1000;
+> >  #ifdef CONFIG_PRINTK
+> > @@ -1696,6 +1697,7 @@ static struct ctl_table fs_table[] = {
+> >  		.maxlen		= sizeof(files_stat.max_files),
+> >  		.mode		= 0644,
+> >  		.proc_handler	= proc_doulongvec_minmax,
+> > +		.extra2		= &ulong_max,
 > 
->>>>>> This patch will prevent error messages splashing on console.
->>>>>> [   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() hci0: 
->>>>>> ACL packet for unknown connection handle 3804
->>>>>> [   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() hci0: 
->>>>>> ACL packet for unknown connection handle 3804
->>>>>> [   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() hci0: 
->>>>>> ACL packet for unknown connection handle 3804
->>>>>> [   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() hci0: 
->>>>>> ACL packet for unknown connection handle 3804
->>>>>> QCA wcn3990 will send the debug logs in the form of ACL packets.
->>>>>> While decoding packet in qca_recv(), marking the received debug 
->>>>>> log
->>>>>> packet as diagnostic packet.
->>>>>> Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
->>>>>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->>>>>> ---
->>>>>> v2:
->>>>>> * Addressed reviewer comments.
->>>>>> v1:
->>>>>> * initial patch
->>>>>> ---
->>>>>> drivers/bluetooth/hci_qca.c | 20 +++++++++++++++++++-
->>>>>> 1 file changed, 19 insertions(+), 1 deletion(-)
->>>>>> diff --git a/drivers/bluetooth/hci_qca.c 
->>>>>> b/drivers/bluetooth/hci_qca.c
->>>>>> index d98ed0442201..63ac3c6b4149 100644
->>>>>> --- a/drivers/bluetooth/hci_qca.c
->>>>>> +++ b/drivers/bluetooth/hci_qca.c
->>>>>> @@ -63,6 +63,10 @@
->>>>>> /* susclk rate */
->>>>>> #define SUSCLK_RATE_32KHZ	32768
->>>>>> +/* Controller debug log header */
->>>>>> +#define QCA_DEBUG_HDR_MSB	0xDC
->>>>>> +#define QCA_DEBUG_HDR_LSB	0x2E
->>>>>> +
->>>>> since this is actually the ACL handle, why not call it 
->>>>> QCA_DEBUG_HANDLE.
->>>> [Bala]: will update.
->>>>>> /* HCI_IBS transmit side sleep protocol states */
->>>>>> enum tx_ibs_states {
->>>>>> 	HCI_IBS_TX_ASLEEP,
->>>>>> @@ -849,6 +853,20 @@ static int qca_ibs_wake_ack(struct hci_dev 
->>>>>> *hdev, struct sk_buff *skb)
->>>>>> 	return 0;
->>>>>> }
->>>>>> +static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff 
->>>>>> *skb)
->>>>>> +{
->>>>>> +	/* We receive debug logs from chip as an ACL packets.
->>>>>> +	 * Instead of sending the data to ACL to decode the
->>>>>> +	 * received data, we are pushing them to the above layers
->>>>>> +	 * as a diagnostic packet.
->>>>>> +	 */
->>>>>> +	if ((skb->len > 2) && (skb->data[0] == QCA_DEBUG_HDR_MSB) &&
->>>>>> +	    (skb->data[1] == QCA_DEBUG_HDR_LSB))
->>>>> Skip the individual () since they are not needed. Also the skb->len
->>>>> check is not needed since the H4_RECV_ACL already ensures the 
->>>>> proper
->>>>> length of the header.
->>>>> And just use get_unaligned_le16(skb->data) here (or be16 if that is
->>>>> the byte order).
->>>> [Bala] : will update condition with _le16()
->>>>>> +		return hci_recv_diag(hdev, skb);
->>>>> Is there any reason to keep the 4 octets hci_acl_hdr with this SKB? 
->>>>> Or
->>>>> would it be better to be stripped off. Mainly asking are they any
->>>>> other magic handles that we might want to feed through the diag
->>>>> channel?
->>>> [Bala]: yes we need header in the stack, to  differentiate between 
->>>> actual diagnostic packet and debug packet.
->>> please explain that a bit more. There is just one debug handle or do
->>> you have more special handles?
->> [Bala]: Qualcomm bluetooth chip sends the debug data of the chip with 
->> ACL header along with fixed handler i.e. 0x2edc..
->>        this handler is dedicated for the debug logs sent by qcomm bt 
->> chip and it is not used for any other connection handlers.
->>        so here we are checking this handler and sending to stack as an
->>        a diagnostic packet.. so during the log capture we will read 
->> this diagnostic packet and handler,to decode the debug packet.
->>        that is the  reason why we don't remove handler during 
->> condition check,  in future, if qualcomm chip sends diagnostic packet,
->>        then this will create an problem to upper layers to decide 
->> whether it is an diagnostic packet or the debug packet.
->> 
->>       this is how we do it.
->>      if( diagnostic packet && handler == 0x2edc)
->>         treat them as an ddebug packet
->>      else
->>          treat as diagnostic packet.
->> 
+> What is the point of having a maximum value of ULONG_MAX anyway? No
+> value you can put into a ulong type can be bigger than that.
+
+This is changed in the new code to LONG_MAX. See the full thread for
+context. There's also an additional explantion in the commit message.
+
 > 
-> let me interpret this answer. Besides debug handle 0x2edc, there are
-> other handles that are not connection handles. And in future updates
-> you want to send these handles also via hci_recv_diag channel.
+> >  	},
+> >  	{
+> >  		.procname	= "nr_open",
+> > @@ -2795,6 +2797,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+> >  				break;
+> >  			if (neg)
+> >  				continue;
+> > +			if (max && val > *max)
+> > +				val = *max;
+> >  			val = convmul * val / convdiv;
+> >  			if ((min && val < *min) || (max && val > *max))
+> >  				continue;
 > 
+> This does introduce a change in behavior. Previously the out-of-bound
+> value is ignored, now it is capped at its maximum. This is a
+> user-visible change.
 
-No, 0x2edc is an dedicated handle for debug logs, i don't really think 
-they we will have an new handle coming up.
-this is only the handle we will send via hci_recv_diag channel to the 
-stack.
+Not completely true though. Try
 
-what i mean in my previous answer was,we don't to remove debug 
-connection handle from the skb, because in the stack
-we look for a diagnostic packet and debug connection handler to decode 
-the message.
+echo 18446744073709551616 > /proc/sys/fs/file-max
 
-> Regards
+on a system you find acceptable loosing.
+So this is an acceptable user-visible change I'd say. But I'm open to
+other suggestions.
+
 > 
-> Marcel
-
--- 
-Regards
-Balakrishna.
+> Cheers,
+> Longman
+> 
+> 
