@@ -2,161 +2,195 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C18C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA6BC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3417120869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:32:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UGejkEqA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3417120869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8DA8020869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:33:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA8020869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=skidata.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbeJQDYr (ORCPT
+        id S1727361AbeJQDYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 23:24:47 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43740 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727097AbeJQDYr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 23:24:47 -0400
-Received: by mail-io1-f66.google.com with SMTP id y10-v6so17279630ioa.10
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 12:32:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=tIkbwf32ikRMR7fj9veNiBSh9gZIzE+HLHfATNQrYqs=;
-        b=UGejkEqA+yW1sx20YmHj+cA8+ti30AjWZBE7ie0xBfSD3rP0M3LZw7goIK7B9Cgi9c
-         7aedskkK+pwRDM3xSxaE3Q3+tT2gwJ6E8apsIHGdLv6RMpeXYBITICMV3F/1xj/13g2t
-         cbCIDiwhV/KXeL5cDZNIzVXhCUzdx7SLlCtMI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=tIkbwf32ikRMR7fj9veNiBSh9gZIzE+HLHfATNQrYqs=;
-        b=ciS6SXQMTw8IJwYYmZ5mUUBTYx4rBZ48VnNgrafGuKT+NwHji9yOvBOX/uX66f4W2a
-         7rTbJHyvTX38pJqx1VShj6UlmVD+m5zjHp7j9yIZbL4KwA8L2UWABB69N7SwZDJv2LbT
-         4ZsyXMGLk1fJ1mGbiSSZQBT0dF5CUokcIUE+HmLRPzJNW3f7+uxl8cJJYlYWDEGzKquS
-         k6BoRbKPjexKaUZeFmaFJTSEcwWDdFumeEDU/LMyJXKKF9Kgg7ZSGupJFMOVSXFl1o6L
-         Z2AT+jXQkCBY4Zau8FMXfaBIommLdHVN93kBN7BHX8thrqRVnEzbWxsOdHUrmKxxd2TT
-         Zcjg==
-X-Gm-Message-State: ABuFfojwFLY8J8Mz+9/i+OTD5QjVSHzc/V9VT+Nn8hdzFLZ7HVr8QZ8l
-        Dp4rUjxnZQf/0oNrF0IQciYdKQ==
-X-Google-Smtp-Source: ACcGV61t4Vi3iJsWMf6NBqjTfd8INeo6VGaun+AdUU5PLkanwuasq9cYOoZ8r9hTxdxt9oZpGNxrnw==
-X-Received: by 2002:a6b:ef03:: with SMTP id k3-v6mr14413055ioh.17.1539718369641;
-        Tue, 16 Oct 2018 12:32:49 -0700 (PDT)
-Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
-        by smtp.gmail.com with ESMTPSA id x13-v6sm4294227ioa.27.2018.10.16.12.32.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 12:32:48 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 14:32:46 -0500
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Linux 4.19-rc8
-Message-ID: <20181016193246.nqq5xoo2aacpkyoe@xps.therub.org>
-References: <20181015064915.GA10710@kroah.com>
+        Tue, 16 Oct 2018 23:24:55 -0400
+Received: from mail2.skidata.com ([91.230.2.91]:4786 "EHLO mail2.skidata.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727007AbeJQDYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 23:24:54 -0400
+X-IronPort-AV: E=Sophos;i="5.54,389,1534802400"; 
+   d="scan'208";a="1730242"
+Subject: Re: [PATCH 2/7] Input: sx8654 - add reset-gpio support
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Richard Leitner <richard.leitner@skidata.com>
+References: <20181016091653.26896-1-richard.leitner@skidata.com>
+ <20181016091653.26896-3-richard.leitner@skidata.com>
+ <20181016173931.GC230131@dtor-ws>
+From:   Richard Leitner <richard.leitner@skidata.com>
+Message-ID: <8d5ea869-0d92-aef0-1d27-bb5ecf5ba0af@skidata.com>
+Date:   Tue, 16 Oct 2018 21:32:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181015064915.GA10710@kroah.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181016173931.GC230131@dtor-ws>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.111.252]
+X-ClientProxiedBy: sdex5srv.skidata.net (192.168.111.83) To
+ sdex5srv.skidata.net (192.168.111.83)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 08:49:15AM +0200, Greg KH wrote:
-> Hi all,
+Hi Dimitry,
+thanks for the quick reply!
+
+On 10/16/18 7:39 PM, Dmitry Torokhov wrote:
+> Hi Richard,
 > 
-> As mentioned last week, here's a -rc8 release as it seems needed.
+> On Tue, Oct 16, 2018 at 11:16:48AM +0200, Richard Leitner wrote:
+>> The sx8654 features a NRST input which may be connected to a GPIO.
+>> Therefore add support for hard-resetting the sx8654 via this NRST.
+>>
+>> If the reset-gpio property is provided the sx8654 is resetted via NRST
+>> instead of the soft-reset via I2C.
+>>
+
+...
+
+>> +
+>> +	dev_dbg(&ts->client->dev, "NRST unavailable, try softreset\n");
+>> +	err = i2c_smbus_write_byte_data(ts->client, I2C_REG_SOFTRESET,
+>> +					SOFTRESET_VALUE);
+>> +	if (err)
+>> +		return err;
 > 
-> There were a lot of "little" pull requests this week, semi-normal for
-> this late in the cycle, but a lot of them were "fix up the previous fix
-> I just sent" which implies that people are having a few issues still.
+> Have this in an "else" branch?
+
+If that's the preferred way... of course.
+
 > 
-> I also know of at least one "bad" bug that finally has a proposed fix,
-> so that should hopefully get merged this week.  And there are some
-> outstanding USB fixes I know of that have not yet landed in the tree (I
-> blame me for that...)
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int sx8654_open(struct input_dev *dev)
+>>   {
+>>   	struct sx8654 *sx8654 = input_get_drvdata(dev);
+>> @@ -171,6 +195,44 @@ static void sx8654_close(struct input_dev *dev)
+>>   	}
+>>   }
+>>   
+>> +#ifdef CONFIG_OF
+>> +static int sx8654_get_ofdata(struct sx8654 *ts)
+>> +{
+>> +	struct device *dev = &ts->client->dev;
+>> +	struct device_node *node = dev->of_node;
+>> +	int err;
+>> +
+>> +	if (!node) {
+>> +		ts->gpio_reset = NULL;
+>> +		return 0;
+>> +	}
 > 
-> Anyway, the full shortlog is below, lots of tiny things all over the
-> tree.  Please go and test and ensure that all works well for you.
-> Hopefully this should be the last -rc release.
+> There is no need to wrap this into CONFIG_OF or test "node". Just use
+> devm_gpiod_get_optional() and it will work equally well on DT, ACPI, and
+> static board systems.
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Ok. Thank you for that information!
+I haven't been aware of this before :-)
 
-Summary
-------------------------------------------------------------------------
+> 
+>> +
+>> +	ts->gpio_reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+>> +	if (PTR_ERR(ts->gpio_reset) == -EPROBE_DEFER) {
+>> +		return -EPROBE_DEFER;
+>> +	} else if (IS_ERR(ts->gpio_reset)) {
+>> +		err = PTR_ERR(ts->gpio_reset);
+> 
+> I'd do:
+> 
+> 		if (err != -EPROBE_DEFER)
+> 			dev_err(...)
+> 
+> here instead of separate branch.
 
-kernel: 4.19.0-rc8
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-git branch: master
-git commit: 35a7f35ad1b150ddf59a41dcac7b2fa32982be0e
-git describe: v4.19-rc8
-Test details: https://qa-reports.linaro.org/lkft/linux-mainline-oe/build/v4.19-rc8
+Indeed... Looks like a more sexy solution. Thanks.
 
-No regressions (compared to build v4.19-rc7)
-------------------------------------------------------------------------
+> 
+>> +		dev_err(dev, "unable to request GPIO reset pin (%d)\n", err);
+>> +		return err;
+>> +	}
+>> +	dev_dbg(dev, "got GPIO reset pin\n");
+> 
+> Also, I'd move all this code directly into probe() since all this
+> #ifdefery is not needed.
 
-No fixes (compared to build v4.19-rc7)
-------------------------------------------------------------------------
+Without the #ifdef'ery and node checking this sounds reasonable.
 
-Ran 19898 total tests in the following environments and test suites.
+> 
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id sx8654_of_match[] = {
+>> +	{ .compatible = "semtech,sx8654", },
+>> +	{ },
+>> +};
+> 
+> Please keep the device table wehere it was.
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+OK.
 
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
+>> @@ -186,10 +248,20 @@ static int sx8654_probe(struct i2c_client *client,
+>>   	if (!sx8654)
+>>   		return -ENOMEM;
+>>   
+>> +	sx8654->client = client;
+>> +
+>> +	error = sx8654_get_ofdata(sx8654);
+>> +	if (error) {
+>> +		dev_err(&client->dev, "get_ofdata failed: %d\n", error);
+>> +		return error;
+>> +	}
+>> +
+>>   	input = devm_input_allocate_device(&client->dev);
+>>   	if (!input)
+>>   		return -ENOMEM;
+>>   
+>> +	sx8654->input = input;
+>> +
+>>   	input->name = "SX8654 I2C Touchscreen";
+>>   	input->id.bustype = BUS_I2C;
+>>   	input->dev.parent = &client->dev;
+>> @@ -201,15 +273,11 @@ static int sx8654_probe(struct i2c_client *client,
+>>   	input_set_abs_params(input, ABS_X, 0, MAX_12BIT, 0, 0);
+>>   	input_set_abs_params(input, ABS_Y, 0, MAX_12BIT, 0, 0);
+>>   
+>> -	sx8654->client = client;
+>> -	sx8654->input = input;
+>> -
+> 
+> Why do we need to move this?
 
--- 
-Linaro LKFT
-https://lkft.linaro.org
+This was because sx8654_get_ofdata needed ts->client->dev.
+But as I will integrate the reset gpio getting in the probe function 
+I'll move it back.
+
+...
+
+> 
+> Thanks.
+> 
+
+I'll send a v2 of the series as soon as I have fixed the other patches.
+
+regards;Richard.L
