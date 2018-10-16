@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E07C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0948C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19A8D2087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:17:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5330D21470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:21:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="uqU8kyKF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19A8D2087A
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="TRru2n0U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5330D21470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeJQDJd (ORCPT
+        id S1727180AbeJQDN1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 23:09:33 -0400
-Received: from mail.efficios.com ([167.114.142.138]:46848 "EHLO
+        Tue, 16 Oct 2018 23:13:27 -0400
+Received: from mail.efficios.com ([167.114.142.138]:49424 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbeJQDJd (ORCPT
+        with ESMTP id S1727007AbeJQDN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 23:09:33 -0400
+        Tue, 16 Oct 2018 23:13:27 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 21E251C12ED;
-        Tue, 16 Oct 2018 15:17:39 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id 7EE8B1C1436;
+        Tue, 16 Oct 2018 15:21:32 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id UT-JoZxXY-AE; Tue, 16 Oct 2018 15:17:38 -0400 (EDT)
+        with ESMTP id 4bpQKrKkwDmh; Tue, 16 Oct 2018 15:21:32 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 601B81C12E5;
-        Tue, 16 Oct 2018 15:17:38 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 601B81C12E5
+        by mail.efficios.com (Postfix) with ESMTP id 084FD1C1433;
+        Tue, 16 Oct 2018 15:21:32 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 084FD1C1433
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1539717458;
-        bh=zjxmfsGc4CKn/xFgwTqUPhXaJI8Odei5l4VSEwnLrrE=;
+        s=default; t=1539717692;
+        bh=fEfleuhAi5SOPsml1IkkTXbb3NbR3igmWeKbfGT90fk=;
         h=Date:From:To:Message-ID:MIME-Version;
-        b=uqU8kyKFC2mZFFxE/j6bCOF/ZyMUuryt6T6qBNm8o5NWJB/D3mn3+1nU1MJiXI+0v
-         XfIjRca8Rgvs79LR55VQbMjN36zQ8vSbU2JFZ2Vwwmb4MYJUdn8AeRJkgatiIdkkfa
-         ao1FaHL8tmBac77qdLGt72MmQ/zoR0Ybw5GGvCv+tThvs5P8eTOHhsG8AuaBl6ZvYv
-         NEn/IFT58xlyZRlU1RcHtXbw7MOCBUZd8d/S5/fXr7QCfysJZXlkrq58/G9i2SVhLd
-         qpFxVRmBEUFfm8YlKetTLgmK/wuYYEQxtM5iSKQIE6qKGucUJZFzElJO6kAnzDyGWW
-         x/4KZSiB9P7rQ==
+        b=TRru2n0UGTToyr1mIMo+wJTz76VQV9mMCxX32Wbp2c2ckYWpP6FbD+8a0RyjJcKeo
+         MzkvIkhVa+CjuiwU2PIYusJ3tXWPMNvoQjPjW6BXB63Sz2rXqUScAMKzCjvoanf8yJ
+         xyG2KMGip6gvR0zQxrV5CoaDJFhN9jeZFfisTp7mf2rAm91WDsgzTsLxBgWhwzp8tS
+         MWMD85Erxla9/99gXjxRh1Ow6u0AaxmnHmNhnw2aU01Kg/l+Y1Lq+4Au1Vopqo7PkK
+         sunOGvS+mMe5e8Zi7XYQGfNgwf6tJ5bQWjuNzs8NijZ1rmyNO7zJoVX0ebd9g9fq/e
+         lJ8hIUkJDp1Ng==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id B0Brpi0KFSJO; Tue, 16 Oct 2018 15:17:38 -0400 (EDT)
+        with ESMTP id oU5wX8hk8BJQ; Tue, 16 Oct 2018 15:21:31 -0400 (EDT)
 Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 3AA8F1C12DC;
-        Tue, 16 Oct 2018 15:17:38 -0400 (EDT)
-Date:   Tue, 16 Oct 2018 15:17:37 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id D77A51C1428;
+        Tue, 16 Oct 2018 15:21:31 -0400 (EDT)
+Date:   Tue, 16 Oct 2018 15:21:31 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     rostedt <rostedt@goodmis.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Boqun Feng <boqun.feng@gmail.com>,
@@ -68,102 +68,93 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
         Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
         Josh Triplett <josh@joshtriplett.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Message-ID: <1984292897.263.1539717457933.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20181016081029.GA30363@jagdpanzerIV>
-References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com> <20181010191936.7495-7-mathieu.desnoyers@efficios.com> <20181016081029.GA30363@jagdpanzerIV>
-Subject: Re: [RFC PATCH for 4.21 06/16] cpu_opv: Provide cpu_opv system call
- (v8)
+        Joel Fernandes <joelaf@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Message-ID: <1635827931.274.1539717691833.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20181016143016.10da89bd@gandalf.local.home>
+References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com> <20181010191936.7495-5-mathieu.desnoyers@efficios.com> <20181016143016.10da89bd@gandalf.local.home>
+Subject: Re: [RFC PATCH for 4.21 04/16] mm: Introduce vm_map_user_ram,
+ vm_unmap_user_ram
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [167.114.142.138]
 X-Mailer: Zimbra 8.8.10_GA_3039 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: cpu_opv: Provide cpu_opv system call (v8)
-Thread-Index: vm8UPrPInsgaIqXZLf/bG4IscOuaSA==
+Thread-Topic: Introduce vm_map_user_ram, vm_unmap_user_ram
+Thread-Index: J9PjQ3wWUWJncBLA8CDA+ZxmePYh0w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Oct 16, 2018, at 4:10 AM, Sergey Senozhatsky sergey.senozhatsky.work@gmail.com wrote:
+----- On Oct 16, 2018, at 2:30 PM, rostedt rostedt@goodmis.org wrote:
 
-> Hi Mathieu,
+> On Wed, 10 Oct 2018 15:19:24 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 > 
-> On (10/10/18 15:19), Mathieu Desnoyers wrote:
-> [..]
->> +SYSCALL_DEFINE4(cpu_opv, struct cpu_op __user *, ucpuopv, int, cpuopcnt,
->> +		int, cpu, int, flags)
+>> + * vm_unmap_user_ram - unmap linear kernel address space set up by
+>> vm_map_user_ram
+>> + * @mem: the pointer returned by vm_map_user_ram
+>> + * @count: the count passed to that vm_map_user_ram call (cannot unmap partial)
+>> + */
+>> +void vm_unmap_user_ram(const void *mem, unsigned int count)
 >> +{
-> [..]
->> +again:
->> +	ret = cpu_opv_pin_pages(cpuopv, cpuopcnt, &vaddr_ptrs);
->> +	if (ret)
->> +		goto end;
->> +	ret = do_cpu_opv(cpuopv, cpuopcnt, &vaddr_ptrs, cpu);
->> +	if (ret == -EAGAIN)
->> +		retry = true;
->> +end:
->> +	for (i = 0; i < vaddr_ptrs.nr_vaddr; i++) {
->> +		struct vaddr *vaddr = &vaddr_ptrs.addr[i];
->> +		int j;
+>> +	unsigned long size = (unsigned long)count << PAGE_SHIFT;
+>> +	unsigned long addr = (unsigned long)mem;
+>> +	struct vmap_area *va;
 >> +
->> +		vm_unmap_user_ram((void *)vaddr->mem, vaddr->nr_pages);
+>> +	might_sleep();
+>> +	BUG_ON(!addr);
+>> +	BUG_ON(addr < VMALLOC_START);
+>> +	BUG_ON(addr > VMALLOC_END);
+>> +	BUG_ON(!PAGE_ALIGNED(addr));
+>> +
+>> +	debug_check_no_locks_freed(mem, size);
+>> +	va = find_vmap_area(addr);
+>> +	BUG_ON(!va);
+>> +	free_unmap_vmap_area(va);
+>> +}
+>> +EXPORT_SYMBOL(vm_unmap_user_ram);
+>> +
 > 
-> A dumb question.
+> Noticing this from Sergey's question in another patch, why are you
+> using BUG_ON()? That's rather extreme and something we are trying to
+> avoid adding more of (I still need to remove the BUG_ON()s I've added
+> over ten years ago). I don't see why all these BUG_ON's can't be turned
+> into:
 > 
-> Both vm_unmap_user_ram() and vm_map_user_ram() can BUG_ON().
-> So this is
->   userspace -> syscall -> cpu_opv() -> vm_unmap_user_ram() -> BUG_ON()
-> 
-> Any chance someone can exploit it?
+>	if (WARN_ON(x))
+>		return;
 
-Hi Sergey,
+I borrowed the code from vm_unmap_ram(), which has the following checks:
 
-Let's look at vm_unmap_user_ram() and vm_map_user_ram() separately.
-
-If we look at the input from vm_unmap_user_ram, it's called with the
-following parameters by the cpu_opv system call:
-
-        for (i = 0; i < vaddr_ptrs.nr_vaddr; i++) {
-                struct vaddr *vaddr = &vaddr_ptrs.addr[i];
-                int j;
-
-                vm_unmap_user_ram((void *)vaddr->mem, vaddr->nr_pages);
+        BUG_ON(!addr);
+        BUG_ON(addr < VMALLOC_START);
+        BUG_ON(addr > VMALLOC_END);
+        BUG_ON(!PAGE_ALIGNED(addr));
 [...]
-        }
+        va = find_vmap_area(addr);
+        BUG_ON(!va);
 
-The vaddr_ptrs array content is filled by the call to cpu_opv_pin_pages above:
+The expectation here is that inputs to vm_unmap_ram() should always come from
+vm_map_ram(), so an erroneous input is an internal kernel bug. I applied the
+same logic to vm_unmap_user_ram() and vm_map_user_ram().
 
-        ret = cpu_opv_pin_pages(cpuopv, cpuopcnt, &vaddr_ptrs);
-        if (ret)
-                goto end;
-
-by passing the array to cpu_op_pin_pages(), which appends a virtual address at
-the end of the array (on success) and increments nr_vaddr. Those virtual
-addresses are returned by vm_map_user_ram(), so they are not user-controlled.
-
-Therefore, only an internal kernel bug between vm_map_user_ram() and
-vm_unmap_user_ram() should trigger the BUG_ON(). No user input is passed
-to vm_unmap_user_ram().
-
-Now, let's look at vm_map_user_ram(). It calls alloc_vmap_area(), which returns
-a vmap_area. Then if vmap_page_range failed, vm_unmap_user_ram is called on the
-memory that has just been returned by vm_map_user_ram. Again, only an internal
-bug between map/unmap can trigger the BUG_ON() in vm_unmap_user_ram.
-
-Is there another scenario I missed ?
+Should we turn all those BUG_ON() into if (WARN_ON(x)) return; in vm_{map,unmap}_ram
+as well ?
 
 Thanks,
 
 Mathieu
 
+
+> 
+> -- Steve
 
 -- 
 Mathieu Desnoyers
