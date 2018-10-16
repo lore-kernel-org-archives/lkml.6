@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9C8C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B66C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A44262089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:25:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 029752089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:25:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jxl9eki9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44262089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzTLUhIF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 029752089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731952AbeJQBQr (ORCPT
+        id S1731973AbeJQBQt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:16:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35498 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:16:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbeJQBQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:16:45 -0400
+        id S1730396AbeJQBQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:16:48 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DA7420866;
-        Tue, 16 Oct 2018 17:25:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 255B0204EC;
+        Tue, 16 Oct 2018 17:25:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710719;
-        bh=wosc0yvhzjfrKcJItTSpRsOnKIUAFLoqkhojnDQR5bU=;
+        s=default; t=1539710722;
+        bh=UkcKJUFDKgeh8ygd4qM4YRLO02Rjz67L+pMZnmu96tc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jxl9eki9jieGKAjIYnLumR9rn5i+RrwRDJBJTDgUhWn9vMyVcJllNTwQ5BLhyllIl
-         kxJ1D/VjzFbkFXnyz1/mnheA1idNRSVAvVmx1e2TAp1FZ/zZJq4TZeoqmAbmBXTaOH
-         gozI0Zx9UTDU8M35z7Qgf08DlMbSpRyLInvVhLFk=
+        b=SzTLUhIFPNkiyqCylu58GyngiRquSCwkY3ruijmL/i9VlkgI4J7mjEs8MzX+gZEjX
+         DjlaANEXKZmsoRgEKXEX/0qKsUxTEOU5+yiAnK5HVoOrt7FfRL18np8QCRUDqOQf3k
+         H3GDG2u6RuTpPUhceK6dOtuySOhyMhCQ5MiPwbxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Nikolay Borisov <kernel@kyup.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 65/71] net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends
-Date:   Tue, 16 Oct 2018 19:10:02 +0200
-Message-Id: <20181016170542.658704337@linuxfoundation.org>
+Subject: [PATCH 4.9 48/71] ipv6: export ip6 fragments sysctl to unprivileged users
+Date:   Tue, 16 Oct 2018 19:09:45 +0200
+Message-Id: <20181016170541.783944414@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
 References: <20181016170539.315587743@linuxfoundation.org>
@@ -64,69 +65,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-After working on IP defragmentation lately, I found that some large
-packets defeat CHECKSUM_COMPLETE optimization because of NIC adding
-zero paddings on the last (small) fragment.
+IPv4 was changed in commit 52a773d645e9 ("net: Export ip fragment
+sysctl to unprivileged users")
 
-While removing the padding with pskb_trim_rcsum(), we set skb->ip_summed
-to CHECKSUM_NONE, forcing a full csum validation, even if all prior
-fragments had CHECKSUM_COMPLETE set.
-
-We can instead compute the checksum of the part we are trimming,
-usually smaller than the part we keep.
+The only sysctl that is not per-netns is not used :
+ip6frag_secret_interval
 
 Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Nikolay Borisov <kernel@kyup.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-(cherry picked from commit 88078d98d1bb085d72af8437707279e203524fa5)
+(cherry picked from commit 18dcbe12fe9fca0ab825f7eff993060525ac2503)
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/skbuff.h |    5 ++---
- net/core/skbuff.c      |   14 ++++++++++++++
- 2 files changed, 16 insertions(+), 3 deletions(-)
+ net/ipv6/reassembly.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2954,6 +2954,7 @@ static inline unsigned char *skb_push_rc
- 	return skb->data;
- }
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -643,10 +643,6 @@ static int __net_init ip6_frags_ns_sysct
+ 		table[1].data = &net->ipv6.frags.low_thresh;
+ 		table[1].extra2 = &net->ipv6.frags.high_thresh;
+ 		table[2].data = &net->ipv6.frags.timeout;
+-
+-		/* Don't export sysctls to unprivileged users */
+-		if (net->user_ns != &init_user_ns)
+-			table[0].procname = NULL;
+ 	}
  
-+int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len);
- /**
-  *	pskb_trim_rcsum - trim received skb and update checksum
-  *	@skb: buffer to trim
-@@ -2967,9 +2968,7 @@ static inline int pskb_trim_rcsum(struct
- {
- 	if (likely(len >= skb->len))
- 		return 0;
--	if (skb->ip_summed == CHECKSUM_COMPLETE)
--		skb->ip_summed = CHECKSUM_NONE;
--	return __pskb_trim(skb, len);
-+	return pskb_trim_rcsum_slow(skb, len);
- }
- 
- static inline int __skb_trim_rcsum(struct sk_buff *skb, unsigned int len)
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -1578,6 +1578,20 @@ done:
- }
- EXPORT_SYMBOL(___pskb_trim);
- 
-+/* Note : use pskb_trim_rcsum() instead of calling this directly
-+ */
-+int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len)
-+{
-+	if (skb->ip_summed == CHECKSUM_COMPLETE) {
-+		int delta = skb->len - len;
-+
-+		skb->csum = csum_sub(skb->csum,
-+				     skb_checksum(skb, len, delta, 0));
-+	}
-+	return __pskb_trim(skb, len);
-+}
-+EXPORT_SYMBOL(pskb_trim_rcsum_slow);
-+
- /**
-  *	__pskb_pull_tail - advance tail of skb header
-  *	@skb: buffer to reallocate
+ 	hdr = register_net_sysctl(net, "net/ipv6", table);
 
 
