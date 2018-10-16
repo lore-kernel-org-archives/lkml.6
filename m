@@ -2,372 +2,121 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE6EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA60C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:33:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60DDE208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:28:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BAB5208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:33:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qdR4gPn4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60DDE208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="X8ccg64x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BAB5208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbeJPIQJ (ORCPT
+        id S1726988AbeJPIVL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 04:16:09 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39023 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbeJPIQJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 04:16:09 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c25-v6so10509469pfe.6;
-        Mon, 15 Oct 2018 17:28:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=fZgDi/Qyak1ImGdAU2taT9OzCFCADEzEbpIWXhHTErY=;
-        b=qdR4gPn4Er8eY0c94Yh1LSz+Iy0QL9hZ8yfsuJCGtMW+Z+bP3XPM7/NG4hgN38XyU0
-         yq76UlvW4DeO/W6WkZKp0xWcBlRZqeMlrV78pqDRm8b2hItON++76VoDxaWH7ljBor3k
-         znieIieJKb12hdBSzHjwGoblgpn8WDd8dQJnDON8qpZ2Ge1Cw5yNk8vomNnZa7lzUPI/
-         JJhO+QsnDnA4E62UOzzT/JxQQ/hmrg/kJv3jvhlX2r7RUm7HFnANGVMldu+cT3RHObxd
-         +k/icpxkDn7AgrkgnACvoDy+lb+aEUKrkTuFUJle8UyY0OiHD93iLtc2rG8gG1bXocGd
-         tUFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=fZgDi/Qyak1ImGdAU2taT9OzCFCADEzEbpIWXhHTErY=;
-        b=Io/24qP2KwdImHOPQQhjK0kdwVujqQFEwt1x3XDaTWEj1a7ZslOH9JVTdEfIepM86/
-         D5XCMDYQR0nQk1SWSRGOIsBaLm7gdcD/tYg/nQB7Am26tgOdr18YQ/FeOohzBem6a91X
-         CySpMMzQXy6NGBf6+qZdxkYZrNly8AKJXp8O88p9c6MRw+JANbxNptKFxwWNyJa8uuAM
-         FYZurVmwCTXrTT+VhJ97k2wt9o7ykuR5jbVWRFjYKFvJm2smUwylm022vXfrT1PLhwek
-         zU710ooh3CpOdPXH9IWp6y1VoyxMmlOSoetAMU1o7Al2bPzwxSPV/IEq5bXjIJyM3yJA
-         5wjQ==
-X-Gm-Message-State: ABuFfoh0UfviZJo0f+JhPDiwYv4y9gM5hCUczn2w0IPVK1L/cIMe38B+
-        4MpgI+KkE9BZa1TndBuzgPZ1U1tn
-X-Google-Smtp-Source: ACcGV60ZB1tuFcnK6IKEmAqa6nZ72SGqo2b5sTPzTAxP+qmT8HV1PLkgJvv7usMiKFXLgKuKxMjY8A==
-X-Received: by 2002:a63:65c7:: with SMTP id z190-v6mr18100055pgb.146.1539649707831;
-        Mon, 15 Oct 2018 17:28:27 -0700 (PDT)
-Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id k70-v6sm15510196pfc.76.2018.10.15.17.28.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 15 Oct 2018 17:28:27 -0700 (PDT)
-From:   frowand.list@gmail.com
-To:     Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
-        Pantelis Antoniou <panto@antoniou-consulting.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org, Alan Tull <atull@kernel.org>
-Subject: [PATCH v2] of: overlay: user space synchronization
-Date:   Mon, 15 Oct 2018 17:27:01 -0700
-Message-Id: <1539649621-5518-1-git-send-email-frowand.list@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Tue, 16 Oct 2018 04:21:11 -0400
+Received: from ozlabs.org ([203.11.71.1]:48029 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726191AbeJPIVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 04:21:11 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42YxB047Kwz9s8T;
+        Tue, 16 Oct 2018 11:33:28 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539650008;
+        bh=prxPTtb9R2mqXVqo7vpbWCxk32aScWP55D5km6gax7s=;
+        h=Date:From:To:Cc:Subject:From;
+        b=X8ccg64xVbQ225ZlXJd1nGdFbgKbr7C6GulAdBD/fgaqwOJVaPxFXJ50zCCnV4HA9
+         zqZ0SjZnTQuJ8qRc9/X4nTeJIAOzxAIvx6eeLKaHJr7HVK7Lohytps3pP7QtGC0VVv
+         qLnrcg61Aomy2bQ6GaKu2JyktjNeVLIKSd5feTWE8u0jT1f7a4rvUJOlqTYVqrJMrH
+         bSwud4CT3kW6K8h3BcSAeEzpRSgj+R2ucuQXNZ/eaEgr6Y72po8aUFjWbVIzd6rTm5
+         z1AuDAmJaVwRECC9TMr4SZThugUVbtra/ffM/uyX8tHKDG/twJnHqpYtdq0bCVqXLR
+         rX414+EHLA4lg==
+Date:   Tue, 16 Oct 2018 11:33:27 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: linux-next: manual merge of the block tree with the pci tree
+Message-ID: <20181016113327.02ea2317@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+--Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-When an overlay is applied or removed, the live devicetree visible in
-/proc/device-tree/, aka /sys/firmware/devicetree/base/, reflects the
-changes.  There is no method for user space to determine whether the
-live devicetree was modified by overlay actions.
+Hi Jens,
 
-Provide a sysfs file, /sys/firmware/devicetree/tree_version,  to allow
-user space to determine if the live devicetree has remained unchanged
-while a series of one or more accesses of /proc/device-tree/ occur.
+Today's linux-next merge of the block tree got a conflict in:
 
-The use of both dynamic devicetree modifications and overlay apply and
-removal are not supported during the same boot cycle.  Thus non-overlay
-dynamic modifications are not reflected in the value of tree_version.
+  include/linux/blkdev.h
 
-Example shell use:
+between commit:
 
-	done=1
+  113ff970ccda ("block: Add PCI P2P flag for request queue")
 
-	while [ $done = 1 ] ; do
+from the pci tree and commit:
 
-		pre_version=$(cat /sys/firmware/devicetree/tree_version)
-		while [ $(( ${pre_version} & 1 )) != 0 ] ; do
-			# echo is optional, sleep value can be tuned
- 			echo "${pre_version}  locked, sleeping 2 seconds"
- 			sleep 2;
- 			pre_version=$(cat /sys/firmware/devicetree/tree_version)
- 			version=${pre_version}
-		done
+  cd84a62e0078 ("block, scsi: Change the preempt-only flag into a counter")
 
-		# 'critical region'
-		# access /proc/device-tree/ one or more times
+from the block tree.
 
-		post_version=$(cat /sys/firmware/devicetree/tree_version)
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-		if [ ${post_version} = ${pre_version} ] ; then
-			done=0
-		fi
+--=20
+Cheers,
+Stephen Rothwell
 
-	done
+diff --cc include/linux/blkdev.h
+index c32f7171899b,61207560e826..000000000000
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@@ -698,8 -704,6 +704,7 @@@ struct request_queue=20
+  #define QUEUE_FLAG_REGISTERED  26	/* queue has been registered to a disk =
+*/
+  #define QUEUE_FLAG_SCSI_PASSTHROUGH 27	/* queue supports SCSI commands */
+  #define QUEUE_FLAG_QUIESCED    28	/* queue has been quiesced */
+- #define QUEUE_FLAG_PREEMPT_ONLY	29	/* only process REQ_PREEMPT requests */
+ +#define QUEUE_FLAG_PCI_P2PDMA  30	/* device supports PCI p2p requests */
+ =20
+  #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
+  				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
 
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
----
+--Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-updates since v1:
-  - removed unneeded variable "version" from shell script
-  - explicitly state that an odd value of tree_version means the
-    devicetree is locked for an overlay update not just in the
-    source, but also in Documentation/ABI/testing/sysfs-firmware-ofw
-  - document that tree_version is reported as an ascii number, the
-    internal representation, and the resultant wrap around behavior
+-----BEGIN PGP SIGNATURE-----
 
- Documentation/ABI/testing/sysfs-firmware-ofw | 67 +++++++++++++++++++++++++---
- drivers/of/base.c                            | 66 +++++++++++++++++++++++++++
- drivers/of/of_private.h                      |  2 +
- drivers/of/overlay.c                         | 12 +++++
- 4 files changed, 140 insertions(+), 7 deletions(-)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFMdcACgkQAVBC80lX
+0GwX2wf+Kg7aFS1kLmO+eHIz+PR8MNT+eVwcUjn3pFzcGqFYbCKUVUlzz5h/4u5Y
+LKWQjCLv6hOeRbB4RMGs7i6Lo6n8t4yf0NXl6s0lXYA4RBJzusJf2i99QuhgCc/6
+EhPABu6zq28Eg3eABXu3GerE+3pCiLmhBtHjx/m1RLsHjpMkSgnn4dRSBPQVbhBZ
+LRFt1uC3FXmbUlcQC06iSK6G7svyu4Ny09StJRmgv+Cu5XXEamhk8U5SrnLg0VvD
+MII3BHUsm3tV+/cL+sVm8CYSHOjpu8sPvHZBhBvvSiGyyMHzgD8eLRBh/7Fj9ww8
+m+YJ1YoM5F69+ub4uB9XmriziBnssA==
+=5WY/
+-----END PGP SIGNATURE-----
 
-diff --git a/Documentation/ABI/testing/sysfs-firmware-ofw b/Documentation/ABI/testing/sysfs-firmware-ofw
-index edcab3ccfcc0..d2346eb61924 100644
---- a/Documentation/ABI/testing/sysfs-firmware-ofw
-+++ b/Documentation/ABI/testing/sysfs-firmware-ofw
-@@ -1,4 +1,10 @@
--What:		/sys/firmware/devicetree/*
-+What:		/sys/firmware/devicetree/
-+Date:		November 2013
-+Contact:	Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org
-+Description:
-+		Top level Open Firmware, aka devicetree, sysfs directory.
-+
-+What:		/sys/firmware/devicetree/base
- Date:		November 2013
- Contact:	Grant Likely <grant.likely@arm.com>, devicetree@vger.kernel.org
- Description:
-@@ -6,11 +12,6 @@ Description:
- 		hardware, the device tree structure will be exposed in this
- 		directory.
- 
--		It is possible for multiple device-tree directories to exist.
--		Some device drivers use a separate detached device tree which
--		have no attachment to the system tree and will appear in a
--		different subdirectory under /sys/firmware/devicetree.
--
- 		Userspace must not use the /sys/firmware/devicetree/base
- 		path directly, but instead should follow /proc/device-tree
- 		symlink. It is possible that the absolute path will change
-@@ -20,13 +21,65 @@ Description:
- 		filesystem support, and has largely the same semantics and
- 		should be compatible with existing userspace.
- 
--		The contents of /sys/firmware/devicetree/ is a
-+		The /sys/firmware/devicetree/base directory is the root
-+		node of the devicetree.
-+
-+		The contents of /sys/firmware/devicetree/base is a
- 		hierarchy of directories, one per device tree node. The
- 		directory name is the resolved path component name (node
- 		name plus address). Properties are represented as files
- 		in the directory. The contents of each file is the exact
- 		binary data from the device tree.
- 
-+What:		/sys/firmware/devicetree/tree_version
-+Date:		October 2018
-+KernelVersion:	4.20
-+Contact:	Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org
-+Description:
-+		When an overlay is applied or removed, the live devicetree
-+		visible in /proc/device-tree/, aka
-+		/sys/firmware/devicetree/base/, reflects the changes.
-+
-+		tree_version provides a way for user space to determine if the
-+		live devicetree has remained unchanged while a series of one
-+		or more accesses of /proc/device-tree/ occur.  If tree_version
-+		is odd then the devicetree is locked for an overlay update.
-+
-+		The contents of tree_version is the ascii representation of
-+		a kernel unsigned 32 bit int variable, thus when incremented
-+		from 4294967295 it will wrap around to 0.
-+
-+		The use of both dynamic devicetree modifications and overlay
-+		apply and removal are not supported during the same boot
-+		cycle.  Thus non-overlay dynamic modifications are not
-+		reflected in the value of tree_version.
-+
-+		Example shell use of tree_version:
-+
-+		done=1
-+
-+		while [ $done = 1 ] ; do
-+
-+		   pre_version=$(cat /sys/firmware/devicetree/tree_version)
-+		   while [ $(( ${pre_version} & 1 )) != 0 ] ; do
-+		      # echo is optional, sleep value can be tuned
-+		      echo "${pre_version}  tree locked, sleeping 2 seconds"
-+		      sleep 2;
-+		      pre_version=$(cat /sys/firmware/devicetree/tree_version)
-+		   done
-+
-+		   # 'critical region'
-+		   # access /proc/device-tree/ one or more times
-+
-+		   post_version=$(cat /sys/firmware/devicetree/tree_version)
-+
-+		   if [ ${post_version} = ${pre_version} ] ; then
-+		      done=0
-+		   fi
-+
-+		done
-+
-+
- What:		/sys/firmware/fdt
- Date:		February 2015
- KernelVersion:	3.19
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 466e3c8582f0..ec0428e47577 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -151,9 +151,71 @@ int of_free_phandle_cache(void)
- late_initcall_sync(of_free_phandle_cache);
- #endif
- 
-+#define show_one(object)						\
-+	static ssize_t show_##object					\
-+	(struct kobject *kobj, struct attribute *attr, char *buf)	\
-+	{								\
-+		return sprintf(buf, "%u\n", object);			\
-+	}
-+
-+struct global_attr {
-+	struct attribute attr;
-+	ssize_t (*show)(struct kobject *kobj,
-+			struct attribute *attr, char *buf);
-+	ssize_t (*store)(struct kobject *a, struct attribute *b,
-+			 const char *c, size_t count);
-+};
-+
-+#define define_one_global_ro(_name)		\
-+static struct global_attr attr_##_name =	\
-+__ATTR(_name, 0444, show_##_name, NULL)
-+
-+/*
-+ * tree_version must be unsigned so that at maximum value it wraps
-+ * from an odd value (4294967295) to an even value (0).
-+ */
-+static u32 tree_version;
-+
-+show_one(tree_version);
-+
-+define_one_global_ro(tree_version);
-+
-+static struct attribute *of_attributes[] = {
-+	&attr_tree_version.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group of_attr_group = {
-+	.attrs = of_attributes,
-+};
-+
-+/*
-+ * internal documentation
-+ * tree_version_increment() - increment base version
-+ *
-+ * Before starting overlay apply or overlay remove, call this function.
-+ * After completing overlay apply or overlay remove, call this function.
-+ *
-+ * caller must hold of_mutex
-+ *
-+ * Userspace can use the value of this variable to determine whether the
-+ * devicetree has changed while accessing the devicetree.  An odd value
-+ * means a modification is underway.  An even value means no modification
-+ * is underway.
-+ *
-+ * The use of both (1) dynamic devicetree modifications and (2) overlay apply
-+ * and removal are not supported during the same boot cycle.  Thus non-overlay
-+ * dynamic modifications are not reflected in the value of tree_version.
-+ */
-+void tree_version_increment(void)
-+{
-+	tree_version++;
-+}
-+
- void __init of_core_init(void)
- {
- 	struct device_node *np;
-+	int ret;
- 
- 	of_populate_phandle_cache();
- 
-@@ -172,6 +234,10 @@ void __init of_core_init(void)
- 	/* Symlink in /proc as required by userspace ABI */
- 	if (of_root)
- 		proc_symlink("device-tree", NULL, "/sys/firmware/devicetree/base");
-+
-+	ret = sysfs_create_group(&of_kset->kobj, &of_attr_group);
-+	if (ret)
-+		pr_err("sysfs_create_group of_attr_group failed: %d\n", ret);
- }
- 
- static struct property *__of_find_property(const struct device_node *np,
-diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
-index 216175d11d3d..adf89f6bad81 100644
---- a/drivers/of/of_private.h
-+++ b/drivers/of/of_private.h
-@@ -31,6 +31,8 @@ struct alias_prop {
- extern struct list_head aliases_lookup;
- extern struct kset *of_kset;
- 
-+void tree_version_increment(void);
-+
- #if defined(CONFIG_OF_DYNAMIC)
- extern int of_property_notify(int action, struct device_node *np,
- 			      struct property *prop, struct property *old_prop);
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index eda57ef12fd0..53b1810b1e03 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -770,6 +770,9 @@ static int of_overlay_apply(const void *fdt, struct device_node *tree,
- 	of_overlay_mutex_lock();
- 	mutex_lock(&of_mutex);
- 
-+	/* live tree may change after this point, user space synchronization */
-+	tree_version_increment();
-+
- 	ret = of_resolve_phandles(tree);
- 	if (ret)
- 		goto err_free_tree;
-@@ -832,6 +835,9 @@ static int of_overlay_apply(const void *fdt, struct device_node *tree,
- 	free_overlay_changeset(ovcs);
- 
- out_unlock:
-+	/* live tree change complete, user space synchronization */
-+	tree_version_increment();
-+
- 	mutex_unlock(&of_mutex);
- 	of_overlay_mutex_unlock();
- 
-@@ -1028,6 +1034,9 @@ int of_overlay_remove(int *ovcs_id)
- 
- 	mutex_lock(&of_mutex);
- 
-+	/* live tree may change after this point, user space synchronization */
-+	tree_version_increment();
-+
- 	ovcs = idr_find(&ovcs_idr, *ovcs_id);
- 	if (!ovcs) {
- 		ret = -ENODEV;
-@@ -1083,6 +1092,9 @@ int of_overlay_remove(int *ovcs_id)
- 	free_overlay_changeset(ovcs);
- 
- out_unlock:
-+	/* live tree change complete, user space synchronization */
-+	tree_version_increment();
-+
- 	mutex_unlock(&of_mutex);
- 
- out:
--- 
-Frank Rowand <frank.rowand@sony.com>
-
+--Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2--
