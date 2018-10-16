@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 208B0C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EBBC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB85B20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E35620866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:29:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="th3JbHf/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB85B20869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2pJdO6Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E35620866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729002AbeJPMSK (ORCPT
+        id S1728751AbeJPMCE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:18:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49728 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728764AbeJPMCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:06 -0400
+        id S1728733AbeJPMCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B9302148D;
-        Tue, 16 Oct 2018 04:13:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B73DE21479;
+        Tue, 16 Oct 2018 04:13:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663223;
-        bh=dxPFSoXv68evryyNrDeaDBIJOWbg622A+XgLF7jK6NI=;
+        s=default; t=1539663221;
+        bh=u5cJSG9To9MGTUmSanxMglklTWMSY712ZZEqfzHBVt8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=th3JbHf/mVCvetRcbtpEVn3b4pYgla4WbpryY5Qp1gO8o8m+D89zDC8+7arEYWoky
-         R/cEObT1Ul2OvsZ3MtI84D2ptUsqSDK6hL8owVHW2+bTJm+8HdgeNqLsFPiuo+Abod
-         MdaY2q0u2b/RmZlfiGyXDjSILNIeMwriI7/opF/w=
+        b=b2pJdO6Q6F8A4TAEnDS4pFFbivPc3rkXajVJEXrxLVymx33BlV3k98RBf7V2C/Jfa
+         De+g69weDZ1EkF31AkmJZq2PzlJ26g4Mm+Yb8F7WiU1EgtntSH4TjzlFnnk0Py2Agl
+         IJ++0pgrZ3INNUSA2JuROV5oJn2t+l75SqOnTCA8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+Cc:     Yu Zhao <yuzhao@google.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 086/100] bnxt_en: Fix enables field in HWRM_QUEUE_COS2BW_CFG request
-Date:   Tue, 16 Oct 2018 00:12:07 -0400
-Message-Id: <20181016041221.135528-86-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 083/100] net/usb: cancel pending work when unbinding smsc75xx
+Date:   Tue, 16 Oct 2018 00:12:04 -0400
+Message-Id: <20181016041221.135528-83-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -54,46 +53,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+From: Yu Zhao <yuzhao@google.com>
 
-[ Upstream commit 5db0e0969af6501ad45fe0494039d3b9c797822b ]
+[ Upstream commit f7b2a56e1f3dcbdb4cf09b2b63e859ffe0e09df8 ]
 
-In HWRM_QUEUE_COS2BW_CFG request, enables field should have the bits
-set only for the queue ids which are having the valid parameters.
+Cancel pending work before freeing smsc75xx private data structure
+during binding. This fixes the following crash in the driver:
 
-This causes firmware to return error when the TC to hardware CoS queue
-mapping is not 1:1 during DCBNL ETS setup.
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000050
+IP: mutex_lock+0x2b/0x3f
+<snipped>
+Workqueue: events smsc75xx_deferred_multicast_write [smsc75xx]
+task: ffff8caa83e85700 task.stack: ffff948b80518000
+RIP: 0010:mutex_lock+0x2b/0x3f
+<snipped>
+Call Trace:
+ smsc75xx_deferred_multicast_write+0x40/0x1af [smsc75xx]
+ process_one_work+0x18d/0x2fc
+ worker_thread+0x1a2/0x269
+ ? pr_cont_work+0x58/0x58
+ kthread+0xfa/0x10a
+ ? pr_cont_work+0x58/0x58
+ ? rcu_read_unlock_sched_notrace+0x48/0x48
+ ret_from_fork+0x22/0x40
 
-Fixes: 2e8ef77ee0ff ("bnxt_en: Add TC to hardware QoS queue mapping logic.")
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt_dcb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/usb/smsc75xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_dcb.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_dcb.c
-index d5bc72cecde3..3f896acc4ca8 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_dcb.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_dcb.c
-@@ -98,13 +98,13 @@ static int bnxt_hwrm_queue_cos2bw_cfg(struct bnxt *bp, struct ieee_ets *ets,
- 
- 	bnxt_hwrm_cmd_hdr_init(bp, &req, HWRM_QUEUE_COS2BW_CFG, -1, -1);
- 	for (i = 0; i < max_tc; i++) {
--		u8 qidx;
-+		u8 qidx = bp->tc_to_qidx[i];
- 
- 		req.enables |= cpu_to_le32(
--			QUEUE_COS2BW_CFG_REQ_ENABLES_COS_QUEUE_ID0_VALID << i);
-+			QUEUE_COS2BW_CFG_REQ_ENABLES_COS_QUEUE_ID0_VALID <<
-+			qidx);
- 
- 		memset(&cos2bw, 0, sizeof(cos2bw));
--		qidx = bp->tc_to_qidx[i];
- 		cos2bw.queue_id = bp->q_info[qidx].queue_id;
- 		if (ets->tc_tsa[i] == IEEE_8021QAZ_TSA_STRICT) {
- 			cos2bw.tsa =
+diff --git a/drivers/net/usb/smsc75xx.c b/drivers/net/usb/smsc75xx.c
+index e5a4cbb366dc..ec287c9741e8 100644
+--- a/drivers/net/usb/smsc75xx.c
++++ b/drivers/net/usb/smsc75xx.c
+@@ -1520,6 +1520,7 @@ static void smsc75xx_unbind(struct usbnet *dev, struct usb_interface *intf)
+ {
+ 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
+ 	if (pdata) {
++		cancel_work_sync(&pdata->set_multicast);
+ 		netif_dbg(dev, ifdown, dev->net, "free pdata\n");
+ 		kfree(pdata);
+ 		pdata = NULL;
 -- 
 2.17.1
 
