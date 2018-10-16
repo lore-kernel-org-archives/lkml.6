@@ -2,300 +2,227 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BF7C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B799C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC21B20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4FBC208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:45:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VGJhV/kf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC21B20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="UcD8Mjm9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4FBC208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbeJPPdh (ORCPT
+        id S1727081AbeJPPeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 11:33:37 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:41193 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJPPdg (ORCPT
+        Tue, 16 Oct 2018 11:34:18 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:52844 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbeJPPeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 11:33:36 -0400
-Received: by mail-yb1-f194.google.com with SMTP id e16-v6so8525950ybk.8
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 00:44:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ymvPUWAaP70b6eKfX2ExW8rgkKpUUtZAaP1Q67EFVRo=;
-        b=VGJhV/kf12D/kpvInLaA0+MrqPPHeE7A3hTzUts0vR3zihFAGuJEtKt+mCGNXRgfCU
-         xUFih1xkaoHGo6q8ADoV9HKfdTfiwviRpU3JUfJPymwVVJK+D+yXOIpHxkIu2niFjRs4
-         o7hMf/1s9TNM0T2pB/YhuVjogxg3dtb7a2Vzs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ymvPUWAaP70b6eKfX2ExW8rgkKpUUtZAaP1Q67EFVRo=;
-        b=KdMuZRGdfzqnz1iykmn3peODY9yA4a7ukMfvOWwZuPWlvgRK6ZE1/bJme8omwIZwBH
-         WC8FXaxiTg8pWK1VADYKth/gv2Nq+KhbT+MCIy9b0zkH0d0yDEmL/J0XH6ifXUS4/FYq
-         PN8Am37tnMKtMWqP0cnzadVr4ubTRWVXyRp5mxtxaHcqk/7SzcA2BTlJA0ABGl+m6UgY
-         Jc7ryIGd/yDQZiKq8L9TT5Kq7YuwDic79e9C8jDMkEDYd/aEfvwfpdR5JunWO5VPMhuH
-         VG/Cttux86rgjFEeUB/PSunH0zIsaWzje67hu8Z/Il9gapf81tpQzozpAsmy5XPl8KWT
-         E6og==
-X-Gm-Message-State: ABuFfohzIjdVivsDT4VB//dMHReLsG8+pI/PC+zzf/gcbSlS3BbzC3Tr
-        rG/hO4VFyWMzGJmV842nJ/TQMdZlqKU=
-X-Google-Smtp-Source: ACcGV61Xz0hplBivnUDIoBFulen8/y+urWOwPBsNUzmCsa71pcuqiAkEuhhTjF5zzpm/ohTVTq9cUQ==
-X-Received: by 2002:a25:a40a:: with SMTP id f10-v6mr10478644ybi.266.1539675866953;
-        Tue, 16 Oct 2018 00:44:26 -0700 (PDT)
-Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm3581833ywc.96.2018.10.16.00.44.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 00:44:26 -0700 (PDT)
-Received: by mail-yw1-f42.google.com with SMTP id v1-v6so8547246ywv.6
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 00:44:26 -0700 (PDT)
-X-Received: by 2002:a81:3d8d:: with SMTP id k135-v6mr11179021ywa.415.1539675387097;
- Tue, 16 Oct 2018 00:36:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-3-tfiga@chromium.org>
- <4168da98-fa01-ea2f-8162-385501e666be@xs4all.nl> <CAAFQd5BqtKFeJniNaqahi9h_zKR+rPrWUiyx004Z=MWDj7q++w@mail.gmail.com>
-In-Reply-To: <CAAFQd5BqtKFeJniNaqahi9h_zKR+rPrWUiyx004Z=MWDj7q++w@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 16 Oct 2018 16:36:15 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Djur9y+=UHTx9ZSx310p2ShCsBTqsEA1UHCMoawuDscA@mail.gmail.com>
-Message-ID: <CAAFQd5Djur9y+=UHTx9ZSx310p2ShCsBTqsEA1UHCMoawuDscA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] media: docs-rst: Document memory-to-memory video
- encoder interface
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 16 Oct 2018 11:34:18 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 0D26010C0F32;
+        Tue, 16 Oct 2018 00:45:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1539675909; bh=B6euikt3OsfL/gR6Kn7Eitd/hSUbsMnwOUiR9rZOibM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UcD8Mjm9e0pomoykNrrkttJH9dnXRqt44xrDrhmj9fCf38kI6cPGc+dY1QUt5xCSS
+         sfvvMSFA9+BBr4Gvmq7gTrP4Z5GQM/3DIhtz62+X1KgEu4okfUCggdxGONn4HedWoF
+         SNNIoRT9yBCBuXYZFKEss5uk2WUgrIuJw512WjWNiac3WL6f5c/gzkNtWpV6v7d3YD
+         ZO+gEEDNwzniKYlTIMYAIczBeKL6BxpIDq8Ods/MUceCy2YpvyREtivoQZM5c//xE5
+         rNUcmk6hhV9CGxiDwSBTEJ2wF0LgSzVzjV04oFiTHmrPasr3dc/HauiF48WF/riOIt
+         f5VAZ6trU/GTw==
+Received: from abrodkin-7480l.internal.synopsys.com (abrodkin-7480l.internal.synopsys.com [10.121.8.88])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 47A713762;
+        Tue, 16 Oct 2018 00:45:06 -0700 (PDT)
+From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-snps-arc@lists.infradead.org,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] clocksource/drivers/arc_timer: Utilize generic sched_clock
+Date:   Tue, 16 Oct 2018 10:45:04 +0300
+Message-Id: <20181016074504.2042-1-abrodkin@synopsys.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 3:54 PM Tomasz Figa <tfiga@chromium.org> wrote:
->
-> Hi Hans,
->
-> On Wed, Jul 25, 2018 at 10:57 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> >
-> > On 24/07/18 16:06, Tomasz Figa wrote:
-[snip]
-> > > +4. The client may set the raw source format on the ``OUTPUT`` queue via
-> > > +   :c:func:`VIDIOC_S_FMT`.
-> > > +
-> > > +   * **Required fields:**
-> > > +
-> > > +     ``type``
-> > > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-> > > +
-> > > +     ``pixelformat``
-> > > +         raw format of the source
-> > > +
-> > > +     ``width``, ``height``
-> > > +         source resolution
-> > > +
-> > > +     ``num_planes`` (for _MPLANE)
-> > > +         set to number of planes for pixelformat
-> > > +
-> > > +     ``sizeimage``, ``bytesperline``
-> > > +         follow standard semantics
-> > > +
-> > > +   * **Return fields:**
-> > > +
-> > > +     ``width``, ``height``
-> > > +         may be adjusted by driver to match alignment requirements, as
-> > > +         required by the currently selected formats
-> > > +
-> > > +     ``sizeimage``, ``bytesperline``
-> > > +         follow standard semantics
-> > > +
-> > > +   * Setting the source resolution will reset visible resolution to the
-> > > +     adjusted source resolution rounded up to the closest visible
-> > > +     resolution supported by the driver. Similarly, coded resolution will
-> >
-> > coded -> the coded
->
-> Ack.
->
-> >
-> > > +     be reset to source resolution rounded up to the closest coded
-> >
-> > reset -> set
-> > source -> the source
->
-> Ack.
->
+It turned out we used to use default implementation of sched_clock()
+from kernel/sched/clock.c which was as precise as 1/HZ, i.e.
+by default we had 10 msec granularity of time measurement.
 
-Actually, I'd prefer to keep it at "reset", so that it signifies the
-fact that the driver will actually override whatever was set by the
-application before.
+Now given ARC built-in timers are clocked with the same frequency as
+CPU cores we may get much higher precision of time tracking.
 
-[snip]
-> > > +   * The driver must expose following selection targets on ``OUTPUT``:
-> > > +
-> > > +     ``V4L2_SEL_TGT_CROP_BOUNDS``
-> > > +         maximum crop bounds within the source buffer supported by the
-> > > +         encoder
-> > > +
-> > > +     ``V4L2_SEL_TGT_CROP_DEFAULT``
-> > > +         suggested cropping rectangle that covers the whole source picture
-> > > +
-> > > +     ``V4L2_SEL_TGT_CROP``
-> > > +         rectangle within the source buffer to be encoded into the
-> > > +         ``CAPTURE`` stream; defaults to ``V4L2_SEL_TGT_CROP_DEFAULT``
-> > > +
-> > > +     ``V4L2_SEL_TGT_COMPOSE_BOUNDS``
-> > > +         maximum rectangle within the coded resolution, which the cropped
-> > > +         source frame can be output into; always equal to (0, 0)x(width of
-> > > +         ``V4L2_SEL_TGT_CROP``, height of ``V4L2_SEL_TGT_CROP``), if the
-> > > +         hardware does not support compose/scaling
-> > > +
-> > > +     ``V4L2_SEL_TGT_COMPOSE_DEFAULT``
-> > > +         equal to ``V4L2_SEL_TGT_CROP``
-> > > +
-> > > +     ``V4L2_SEL_TGT_COMPOSE``
-> > > +         rectangle within the coded frame, which the cropped source frame
-> > > +         is to be output into; defaults to
-> > > +         ``V4L2_SEL_TGT_COMPOSE_DEFAULT``; read-only on hardware without
-> > > +         additional compose/scaling capabilities; resulting stream will
-> > > +         have this rectangle encoded as the visible rectangle in its
-> > > +         metadata
-> > > +
-> > > +     ``V4L2_SEL_TGT_COMPOSE_PADDED``
-> > > +         always equal to coded resolution of the stream, as selected by the
-> > > +         encoder based on source resolution and crop/compose rectangles
-> >
-> > Are there codec drivers that support composition? I can't remember seeing any.
-> >
->
-> Hmm, I was convinced that MFC could scale and we just lacked support
-> in the driver, but I checked the documentation and it doesn't seem to
-> be able to do so. I guess we could drop the COMPOSE rectangles for
-> now, until we find any hardware that can do scaling or composing on
-> the fly.
->
+Thus we switch to generic sched_clock which really reads ARC hardware
+counters.
 
-On the other hand, having them defined already wouldn't complicate
-existing drivers too much either, because they would just handle all
-of them in the same switch case, i.e.
+This is especially helpful for measuring short events.
+That's what we used to have:
+------------------------------>8------------------------
+$ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
 
-case V4L2_SEL_TGT_COMPOSE_BOUNDS:
-case V4L2_SEL_TGT_COMPOSE_DEFAULT:
-case V4L2_SEL_TGT_COMPOSE:
-case V4L2_SEL_TGT_COMPOSE_PADDED:
-     return visible_rectangle;
+ Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
 
-That would need one change, though. We would define
-V4L2_SEL_TGT_COMPOSE_DEFAULT to be equal to (0, 0)x(width of
-V4L2_SEL_TGT_CROP - 1, height of ``V4L2_SEL_TGT_CROP - 1), which
-makes more sense than current definition, since it would bypass any
-compose/scaling by default.
+         10.000000      task-clock (msec)         #    2.832 CPUs utilized
+                 1      context-switches          #    0.100 K/sec
+                 1      cpu-migrations            #    0.100 K/sec
+                63      page-faults               #    0.006 M/sec
+           3049480      cycles                    #    0.305 GHz
+           1091259      instructions              #    0.36  insn per cycle
+            256828      branches                  #   25.683 M/sec
+             27026      branch-misses             #   10.52% of all branches
 
-> > > +
-> > > +   .. note::
-> > > +
-> > > +      The driver may adjust the crop/compose rectangles to the nearest
-> > > +      supported ones to meet codec and hardware requirements.
-> > > +
-> > > +6. Allocate buffers for both ``OUTPUT`` and ``CAPTURE`` via
-> > > +   :c:func:`VIDIOC_REQBUFS`. This may be performed in any order.
-> > > +
-> > > +   * **Required fields:**
-> > > +
-> > > +     ``count``
-> > > +         requested number of buffers to allocate; greater than zero
-> > > +
-> > > +     ``type``
-> > > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT`` or
-> > > +         ``CAPTURE``
-> > > +
-> > > +     ``memory``
-> > > +         follows standard semantics
-> > > +
-> > > +   * **Return fields:**
-> > > +
-> > > +     ``count``
-> > > +         adjusted to allocated number of buffers
-> > > +
-> > > +   * The driver must adjust count to minimum of required number of
-> > > +     buffers for given format and count passed.
-> >
-> > I'd rephrase this:
-> >
-> >         The driver must adjust ``count`` to the maximum of ``count`` and
-> >         the required number of buffers for the given format.
-> >
-> > Note that this is set to the maximum, not minimum.
-> >
->
-> Good catch. Will fix it.
->
+       0.003530687 seconds time elapsed
 
-Actually this is not always the maximum. Encoders may also have
-constraints on the maximum number of buffers, so how about just making
-it a bit less specific:
+       0.000000000 seconds user
+       0.010000000 seconds sys
+------------------------------>8------------------------
 
-The count will be adjusted by the driver to match the hardware
-requirements. The client must check the final value after the ioctl
-returns to get the number of buffers allocated.
+And now we'll see:
+------------------------------>8------------------------
+$ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
 
-[snip]
-> > One general comment:
-> >
-> > you often talk about 'the driver must', e.g.:
-> >
-> > "The driver must process and encode as normal all ``OUTPUT`` buffers
-> > queued by the client before the :c:func:`VIDIOC_ENCODER_CMD` was issued."
-> >
-> > But this is not a driver specification, it is an API specification.
-> >
-> > I think it would be better to phrase it like this:
-> >
-> > "All ``OUTPUT`` buffers queued by the client before the :c:func:`VIDIOC_ENCODER_CMD`
-> > was issued will be processed and encoded as normal."
-> >
-> > (or perhaps even 'shall' if you want to be really formal)
-> >
-> > End-users do not really care what drivers do, they want to know what the API does,
-> > and that implies rules for drivers.
->
-> While I see the point, I'm not fully convinced that it makes the
-> documentation easier to read. We defined "client" for the purpose of
-> not using the passive form too much, so possibly we could also define
-> "driver" in the glossary. Maybe it's just me, but I find that
-> referring directly to both sides of the API and using the active form
-> is much easier to read.
->
-> Possibly just replacing "driver" with "encoder" would ease your concern?
+ Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
 
-I actually went ahead and rephrased the text of both encoder and
-decoder to be more userspace-centric. There are still mentions of a
-driver, but only limited to the places
-where it is necessary to signify the driver-specific bits, such as
-alignments, capabilities, etc.
+          3.004322      task-clock (msec)         #    0.865 CPUs utilized
+                 1      context-switches          #    0.333 K/sec
+                 1      cpu-migrations            #    0.333 K/sec
+                63      page-faults               #    0.021 M/sec
+           2986734      cycles                    #    0.994 GHz
+           1087466      instructions              #    0.36  insn per cycle
+            255209      branches                  #   84.947 M/sec
+             26002      branch-misses             #   10.19% of all branches
 
-Best regards,
-Tomasz
+       0.003474829 seconds time elapsed
+
+       0.003519000 seconds user
+       0.000000000 seconds sys
+------------------------------>8------------------------
+
+Note how much more meaningful is the second output - time spent for
+execution pretty much matches number of cycles spent (we're runnign
+@ 1GHz here).
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/arc/Kconfig                |  1 +
+ drivers/clocksource/Kconfig     |  1 +
+ drivers/clocksource/arc_timer.c | 22 ++++++++++++++++++++++
+ 3 files changed, 24 insertions(+)
+
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index 5151d81476a1..714f769389a4 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -9,6 +9,7 @@
+ config ARC
+ 	def_bool y
+ 	select ARC_TIMERS
++	select GENERIC_SCHED_CLOCK
+ 	select ARCH_HAS_SYNC_DMA_FOR_CPU
+ 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+ 	select ARCH_HAS_SG_CHAIN
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index dec0dd88ec15..3268dad4effe 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -290,6 +290,7 @@ config CLKSRC_MPS2
+ 
+ config ARC_TIMERS
+ 	bool "Support for 32-bit TIMERn counters in ARC Cores" if COMPILE_TEST
++	depends on GENERIC_SCHED_CLOCK
+ 	select TIMER_OF
+ 	help
+ 	  These are legacy 32-bit TIMER0 and TIMER1 counters found on all ARC cores
+diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
+index 20da9b1d7f7d..6d0ebf64a1c5 100644
+--- a/drivers/clocksource/arc_timer.c
++++ b/drivers/clocksource/arc_timer.c
+@@ -23,6 +23,7 @@
+ #include <linux/cpu.h>
+ #include <linux/of.h>
+ #include <linux/of_irq.h>
++#include <linux/sched_clock.h>
+ 
+ #include <soc/arc/timers.h>
+ #include <soc/arc/mcip.h>
+@@ -88,6 +89,11 @@ static u64 arc_read_gfrc(struct clocksource *cs)
+ 	return (((u64)h) << 32) | l;
+ }
+ 
++static u64 arc_gfrc_clock_read(void)
++{
++	return arc_read_gfrc(NULL);
++}
++
+ static struct clocksource arc_counter_gfrc = {
+ 	.name   = "ARConnect GFRC",
+ 	.rating = 400,
+@@ -111,6 +117,8 @@ static int __init arc_cs_setup_gfrc(struct device_node *node)
+ 	if (ret)
+ 		return ret;
+ 
++	sched_clock_register(arc_gfrc_clock_read, 64, arc_timer_freq);
++
+ 	return clocksource_register_hz(&arc_counter_gfrc, arc_timer_freq);
+ }
+ TIMER_OF_DECLARE(arc_gfrc, "snps,archs-timer-gfrc", arc_cs_setup_gfrc);
+@@ -139,6 +147,11 @@ static u64 arc_read_rtc(struct clocksource *cs)
+ 	return (((u64)h) << 32) | l;
+ }
+ 
++static u64 arc_rtc_clock_read(void)
++{
++	return arc_read_rtc(NULL);
++}
++
+ static struct clocksource arc_counter_rtc = {
+ 	.name   = "ARCv2 RTC",
+ 	.rating = 350,
+@@ -170,6 +183,8 @@ static int __init arc_cs_setup_rtc(struct device_node *node)
+ 
+ 	write_aux_reg(AUX_RTC_CTRL, 1);
+ 
++	sched_clock_register(arc_rtc_clock_read, 64, arc_timer_freq);
++
+ 	return clocksource_register_hz(&arc_counter_rtc, arc_timer_freq);
+ }
+ TIMER_OF_DECLARE(arc_rtc, "snps,archs-timer-rtc", arc_cs_setup_rtc);
+@@ -185,6 +200,11 @@ static u64 arc_read_timer1(struct clocksource *cs)
+ 	return (u64) read_aux_reg(ARC_REG_TIMER1_CNT);
+ }
+ 
++static u64 arc_timer1_clock_read(void)
++{
++	return arc_read_timer1(NULL);
++}
++
+ static struct clocksource arc_counter_timer1 = {
+ 	.name   = "ARC Timer1",
+ 	.rating = 300,
+@@ -209,6 +229,8 @@ static int __init arc_cs_setup_timer1(struct device_node *node)
+ 	write_aux_reg(ARC_REG_TIMER1_CNT, 0);
+ 	write_aux_reg(ARC_REG_TIMER1_CTRL, TIMER_CTRL_NH);
+ 
++	sched_clock_register(arc_timer1_clock_read, 64, arc_timer_freq);
++
+ 	return clocksource_register_hz(&arc_counter_timer1, arc_timer_freq);
+ }
+ 
+-- 
+2.17.2
+
