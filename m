@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA8CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA60CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86FF020866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:34:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7068320866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:34:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oyswaXFY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86FF020866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABPQqWr8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7068320866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbeJPMWv (ORCPT
+        id S1727975AbeJPMBM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:22:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48104 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:01:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727994AbeJPMBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:14 -0400
+        id S1727858AbeJPMBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 251DF208E4;
-        Tue, 16 Oct 2018 04:12:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A32C02148E;
+        Tue, 16 Oct 2018 04:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663171;
-        bh=3VVWvhvfOr3OYjuHV3W6sYJenuV2BT/iBczLXP1gy7Y=;
+        s=default; t=1539663169;
+        bh=FTCnINVJmy1z04pKkgm7Ao95NTfIYimEXdKeEAiJ0iE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oyswaXFY6jCcBlfRDQek7HFRkeR77KIysBuRHnKCUVBSXREAqRe3Xbme6nQXAd1pr
-         HWgR6vzkMFsvq7j1OEDm5bGho9H00EOFDB7CFKRusICbqu9sFgxNYDzuZMk5kmRzhd
-         YBXkwbUfu2JkXEaQ4l9l3UmSDDP+f0TTSe/vIL70=
+        b=ABPQqWr8CE/fOW6dE0tc0amXpQVcrWDbiYc3FNLD3NiuPL910a6Otz0Cp/2ON18Ly
+         Ns2l7FCBan0jta/I62oazphYwgNdzqPLCAgW/x6jC3h5ZscQHw8DxyTDNXOBgMhr/D
+         N2tRz6kcklbXiwui/ua0QlQzeM+u7DVFye+RTwRY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Martin Willi <martin@strongswan.org>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 030/100] qed: Avoid implicit enum conversion in qed_set_tunn_cls_info
-Date:   Tue, 16 Oct 2018 00:11:11 -0400
-Message-Id: <20181016041221.135528-30-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 027/100] mac80211_hwsim: do not omit multicast announce of first added radio
+Date:   Tue, 16 Oct 2018 00:11:08 -0400
+Message-Id: <20181016041221.135528-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -53,62 +53,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Martin Willi <martin@strongswan.org>
 
-[ Upstream commit a898fba32229efd5e6b6154f83fa86a7145156b9 ]
+[ Upstream commit 28ef8b49a338dc1844e86b7954cfffc7dfa2660a ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+The allocation of hwsim radio identifiers uses a post-increment from 0,
+so the first radio has idx 0. This idx is explicitly excluded from
+multicast announcements ever since, but it is unclear why.
 
-drivers/net/ethernet/qlogic/qed/qed_sp_commands.c:163:25: warning:
-implicit conversion from enumeration type 'enum tunnel_clss' to
-different enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
-        p_tun->vxlan.tun_cls = type;
-                             ~ ^~~~
-drivers/net/ethernet/qlogic/qed/qed_sp_commands.c:165:26: warning:
-implicit conversion from enumeration type 'enum tunnel_clss' to
-different enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
-        p_tun->l2_gre.tun_cls = type;
-                              ~ ^~~~
-drivers/net/ethernet/qlogic/qed/qed_sp_commands.c:167:26: warning:
-implicit conversion from enumeration type 'enum tunnel_clss' to
-different enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
-        p_tun->ip_gre.tun_cls = type;
-                              ~ ^~~~
-drivers/net/ethernet/qlogic/qed/qed_sp_commands.c:169:29: warning:
-implicit conversion from enumeration type 'enum tunnel_clss' to
-different enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
-        p_tun->l2_geneve.tun_cls = type;
-                                 ~ ^~~~
-drivers/net/ethernet/qlogic/qed/qed_sp_commands.c:171:29: warning:
-implicit conversion from enumeration type 'enum tunnel_clss' to
-different enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
-        p_tun->ip_geneve.tun_cls = type;
-                                 ~ ^~~~
-5 warnings generated.
+Drop that idx check and announce the first radio as well. This makes
+userspace happy if it relies on these events.
 
-Avoid this by changing type to an int.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/125
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Martin Willi <martin@strongswan.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_sp_commands.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/mac80211_hwsim.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-index 8de644b4721e..77b6248ad3b9 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-@@ -154,7 +154,7 @@ qed_set_pf_update_tunn_mode(struct qed_tunnel_info *p_tun,
- static void qed_set_tunn_cls_info(struct qed_tunnel_info *p_tun,
- 				  struct qed_tunnel_info *p_src)
- {
--	enum tunnel_clss type;
-+	int type;
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index cfd0c58aa02a..58dd217811c8 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -2811,8 +2811,7 @@ static int mac80211_hwsim_new_radio(struct genl_info *info,
+ 	hwsim_radios_generation++;
+ 	spin_unlock_bh(&hwsim_radio_lock);
  
- 	p_tun->b_update_rx_cls = p_src->b_update_rx_cls;
- 	p_tun->b_update_tx_cls = p_src->b_update_tx_cls;
+-	if (idx > 0)
+-		hwsim_mcast_new_radio(idx, info, param);
++	hwsim_mcast_new_radio(idx, info, param);
+ 
+ 	return idx;
+ 
 -- 
 2.17.1
 
