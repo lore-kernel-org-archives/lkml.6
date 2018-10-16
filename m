@@ -2,122 +2,135 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA59C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DF3C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:41:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADA282083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:41:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA282083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id AF03920881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:41:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DtHQafuo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF03920881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbeJPWbz (ORCPT
+        id S1727158AbeJPWcT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:31:55 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37558 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbeJPWbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:31:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23B2A341;
-        Tue, 16 Oct 2018 07:41:09 -0700 (PDT)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 13AB33F71C;
-        Tue, 16 Oct 2018 07:41:06 -0700 (PDT)
-Subject: Re: [PATCH V13 0/4] C-SKY(csky) Linux Intc Driver
-To:     Guo Ren <ren_guo@c-sky.com>, tglx@linutronix.de,
-        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        daniel.lezcano@linaro.org, will.deacon@arm.com, jhogan@kernel.org,
-        paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <cover.1539696960.git.ren_guo@c-sky.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <3fff53d8-fca0-fee4-ae3b-c8b08dc29a37@arm.com>
-Date:   Tue, 16 Oct 2018 15:41:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 16 Oct 2018 18:32:19 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33237 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbeJPWcT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 18:32:19 -0400
+Received: by mail-ed1-f65.google.com with SMTP id l14-v6so12603637edq.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 07:41:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8axZzdNvrzI+u2U7+oDvY9j58Np1YM3RjpcEuRDVIkc=;
+        b=DtHQafuoPc7DjasCmVzobJEekwr2igNZxE/S9NeZl6sJaVW3AQklnLiGKdZ9aZ92zb
+         2BZLPlzKoAx+AxBM8KN9WArM0uwnfRYMnLyWCdJA9ZaT83jwJkEshtKCRw5huwkUvQuz
+         e+nCvLZSsoRRkwvXwW4Asox8kFJbv8jYNq2h+gckswA5wk+pEacXwgxF0bU31ckTN5dn
+         TxNmjJKMJlcmQC0gQj2Itn3KbynqDmEImixhZ2UmVkwTpO25H0kBLqG6Ly/i8tsFe/SC
+         ZXJ2W/ATWrj4L6hQmqwnUx8ZWMJLhm6c/FJ3KK/OhMHAGbXbCo9+l2N6uJkPsz/ojnMQ
+         GUYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8axZzdNvrzI+u2U7+oDvY9j58Np1YM3RjpcEuRDVIkc=;
+        b=mo9Mqk4xVPD7e6KYMAkOozQ44uWpY20yqTaUaSUJVXTSvkXTNvE3KYl0Jx+IRBkCBh
+         Z0Qc98Wlxj6uqY8pKHO53H+TB/lH03Luo8tfCRzWKOjmMxeXcwR9D1GQARexBqqKhSr8
+         UNOV1bvDEAG64htkqEsrKZG1Ql19g4dEDOnCu1Qaooa4lIlgwWSwjMAdlnRGvxKdDLna
+         ISbM39AEHAQ/W3Xe8MsGYwql0Ld3ltpt7D7Xz///VY+ptDXfSgZbl7VLWkoA6XDMz+4L
+         Jrjo4X0S8zuoBbF9dzl4j9F0p/26neA1nIA9zHMCXBLdkaiHR9CelE96BrV73QPhk1zP
+         L9XA==
+X-Gm-Message-State: ABuFfoiGDpS68gwP+VwJXgd4+eGJywpOhuG2IFvBdfFQnEGAdqrG5Xa1
+        XVVqmorCvT4EA9sSDXsDkp0=
+X-Google-Smtp-Source: ACcGV62G/mS0znNf8CngBl4BCW3qf1M3FK/+g33m2Y45QLsQLd0/b6Jg0ys0uQ9vsY1Za1+51jYw+g==
+X-Received: by 2002:a50:abc2:: with SMTP id u60-v6mr31020767edc.185.1539700892076;
+        Tue, 16 Oct 2018 07:41:32 -0700 (PDT)
+Received: from localhost.localdomain (p200300EF2BD0F03569FD0D231D8C2067.dip0.t-ipconnect.de. [2003:ef:2bd0:f035:69fd:d23:1d8c:2067])
+        by smtp.gmail.com with ESMTPSA id h21-v6sm7119155eda.23.2018.10.16.07.41.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 07:41:31 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 16:41:28 +0200
+From:   Juri Lelli <juri.lelli@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        nstange@suse.de, syzkaller-bugs@googlegroups.com,
+        juri.lelli@redhat.com
+Subject: Re: INFO: rcu detected stall in do_idle
+Message-ID: <20181016144045.GF9130@localhost.localdomain>
+References: <000000000000a4ee200578172fde@google.com>
+ <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
+ <20181016140322.GB3121@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <cover.1539696960.git.ren_guo@c-sky.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016140322.GB3121@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guo,
-
-On 16/10/18 15:08, Guo Ren wrote:
-> This is about 13th patchset for C-SKY linux intc drivers and it should pair
-> with 9th kernel patchset. Timer drivers are seperated according to
-> requirements.
+On 16/10/18 16:03, Peter Zijlstra wrote:
+> On Tue, Oct 16, 2018 at 03:24:06PM +0200, Thomas Gleixner wrote:
+> > It does reproduce here but with a kworker stall. Looking at the reproducer:
+> > 
+> >   *(uint32_t*)0x20000000 = 0;
+> >   *(uint32_t*)0x20000004 = 6;
+> >   *(uint64_t*)0x20000008 = 0;
+> >   *(uint32_t*)0x20000010 = 0;
+> >   *(uint32_t*)0x20000014 = 0;
+> >   *(uint64_t*)0x20000018 = 0x9917;
+> >   *(uint64_t*)0x20000020 = 0xffff;
+> >   *(uint64_t*)0x20000028 = 0;
+> >   syscall(__NR_sched_setattr, 0, 0x20000000, 0);
+> > 
+> > which means:
+> > 
+> >   struct sched_attr {
+> >   	 .size		= 0,
+> > 	 .policy	= 6,
+> > 	 .flags		= 0,
+> > 	 .nice		= 0,
+> > 	 .priority	= 0,
+> > 	 .deadline	= 0x9917,
+> > 	 .runtime	= 0xffff,
+> > 	 .period	= 0,
+> >   }
+> > 
+> > policy 6 is SCHED_DEADLINE
+> > 
+> > That makes the thread hog the CPU and prevents all kind of stuff to run.
+> > 
+> > Peter, is that expected behaviour?
 > 
-> This version patch improve the comment in commit-msg and move the
-> changelog to the end with "---", so git am will ignore the changelog.
+> Sorta, just like FIFO-99 while(1);. Except we should be rejecting the
+> above configuration, because of the rule:
 > 
-> Hope it could be merged into linux-4.20 and I'm very grateful to any help.
+>   runtime <= deadline <= period
+> 
+> Juri, where were we supposed to check that?
 
-I can't really see that happening, in all honesty. On its own, this code
-is not very useful (it cannot compile standalone), and I haven't seen a
-clear indication that the rest of the architecture code is going to be
-merged for 4.20.
+Not if period == 0.
 
-If the arch code is actually being merged for 4.20, then please add my:
+https://elixir.bootlin.com/linux/latest/source/kernel/sched/deadline.c#L2632
+https://elixir.bootlin.com/linux/latest/source/kernel/sched/deadline.c#L2515
 
-	Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Now, maybe we should be checking also against the default 95% cap?
 
-to these 4 patches, and get the whole thing merged in one go.
+Best,
 
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+- Juri
