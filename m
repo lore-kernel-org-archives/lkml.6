@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52226C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA84C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DD1720869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:45:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD1720869
+	by mail.kernel.org (Postfix) with ESMTP id 3D1DC20869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:47:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1DC20869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeJPQeV (ORCPT
+        id S1727360AbeJPQgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 12:34:21 -0400
-Received: from gateway33.websitewelcome.com ([192.185.146.78]:28734 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727026AbeJPQeU (ORCPT
+        Tue, 16 Oct 2018 12:36:23 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.144]:40204 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726083AbeJPQgX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 12:34:20 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id CDB715886A9
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 03:44:56 -0500 (CDT)
+        Tue, 16 Oct 2018 12:36:23 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 45BE0B397
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 03:47:00 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id CKyGgJIyxSjJACKyGgp4ww; Tue, 16 Oct 2018 03:44:56 -0500
+        id CL04g8sVEtz4jCL0AgGfLb; Tue, 16 Oct 2018 03:46:59 -0500
 X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:59090 helo=[192.168.1.41])
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:59108 helo=[192.168.1.41])
         by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gCKyF-0044K1-SJ; Tue, 16 Oct 2018 03:44:56 -0500
-Subject: Re: [PATCH 1/2] dt-bindings: phy: Update SERDES_MAX to be SERDES_MAX
- + 1
+        id 1gCL03-0045Ut-Pk; Tue, 16 Oct 2018 03:46:47 -0500
+Subject: Re: [PATCH 2/2] phy: ocelot-serdes: fix out-of-bounds read
 To:     Quentin Schulz <quentin.schulz@bootlin.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
 References: <cover.1539036280.git.gustavo@embeddedor.com>
- <3a1a95a4832af33dcd1842b0298d257bbcf1f5ab.1539036280.git.gustavo@embeddedor.com>
- <20181009072723.mshyvplpo2xmkyfl@qschulz>
+ <30c1dcb4a8d3707238fcf0a996b9e0bf0a4a7bbc.1539036280.git.gustavo@embeddedor.com>
+ <20181009072808.5eynmktmkgjpi2ho@qschulz>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=gustavo@embeddedor.com; keydata=
@@ -89,12 +88,12 @@ Autocrypt: addr=gustavo@embeddedor.com; keydata=
  YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
  GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
  VtSixD1uOgytAP7RWS474w==
-Message-ID: <dab86dfb-d56b-b7c3-8e2a-6955803a2842@embeddedor.com>
-Date:   Tue, 16 Oct 2018 10:44:52 +0200
+Message-ID: <f60ee2ae-6b19-4a61-6d9c-38acdebd7fbe@embeddedor.com>
+Date:   Tue, 16 Oct 2018 10:46:42 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181009072723.mshyvplpo2xmkyfl@qschulz>
+In-Reply-To: <20181009072808.5eynmktmkgjpi2ho@qschulz>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
@@ -106,13 +105,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 86.245.173.13
 X-Source-L: No
-X-Exim-ID: 1gCKyF-0044K1-SJ
+X-Exim-ID: 1gCL03-0045Ut-Pk
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:59090
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:59108
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
+X-Email-Count: 9
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -122,21 +121,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 10/9/18 9:27 AM, Quentin Schulz wrote:
+On 10/9/18 9:28 AM, Quentin Schulz wrote:
 > Hi Gustavo,
 > 
-> On Tue, Oct 09, 2018 at 12:21:36AM +0200, Gustavo A. R. Silva wrote:
->> SERDES_MAX is a valid value to index ctrl->phys in
->> drivers/phy/mscc/phy-ocelot-serdes.c. But, currently,
->> there is an out-of-bounds bug in the mentioned driver
->> when reading from ctrl->phys, because the size of
->> array ctrl->phys is SERDES_MAX.
+> On Tue, Oct 09, 2018 at 12:22:33AM +0200, Gustavo A. R. Silva wrote:
+>> Currently, there is an out-of-bounds read on array ctrl->phys,
+>> once variable i reaches the maximum array size of SERDES_MAX
+>> in the for loop.
 >>
->> Partially fix this by updating SERDES_MAX to be SERDES6G_MAX + 1.
->>
->> Notice that this is the first part of the solution to
->> the out-of-bounds bug mentioned above. Although this
->> change is not dependent on any other one.
+>> Fix this by changing the condition in the for loop from
+>> i <= SERDES_MAX to i < SERDES_MAX.
 >>
 > 
 > Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
