@@ -2,110 +2,108 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFE6C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B324C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82385205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:15:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82385205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A75521479
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:18:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A75521479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbeJQAGt (ORCPT
+        id S1727192AbeJQAJX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:06:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51608 "EHLO mx1.redhat.com"
+        Tue, 16 Oct 2018 20:09:23 -0400
+Received: from anholt.net ([50.246.234.109]:45314 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727061AbeJQAGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:06:49 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CEA6C3F72C;
-        Tue, 16 Oct 2018 16:15:39 +0000 (UTC)
-Received: from treble (ovpn-125-6.rdu2.redhat.com [10.10.125.6])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5A7D25D9C8;
-        Tue, 16 Oct 2018 16:15:38 +0000 (UTC)
-Date:   Tue, 16 Oct 2018 11:15:36 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Borislav Petkov <bp@suse.de>, Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] objtool: move libelf check out of top Makefile
-Message-ID: <20181016161536.pnek3dnyem6mspwr@treble>
-References: <1539681053-24388-1-git-send-email-yamada.masahiro@socionext.com>
- <1539681053-24388-3-git-send-email-yamada.masahiro@socionext.com>
- <20181016142540.pxlwu3ft6n2b4pgj@treble>
- <CAK7LNARLW4NmeY0Rq19Bj_5kOFbp6YDtsUDhNaAfVXjL85cAMg@mail.gmail.com>
+        id S1727103AbeJQAJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 20:09:23 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 4458910A122F;
+        Tue, 16 Oct 2018 09:18:13 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id oSjfAYXx_stw; Tue, 16 Oct 2018 09:18:11 -0700 (PDT)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 50A0310A060E;
+        Tue, 16 Oct 2018 09:18:11 -0700 (PDT)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 9D9422FE1BEE; Tue, 16 Oct 2018 09:18:10 -0700 (PDT)
+From:   Eric Anholt <eric@anholt.net>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        gregkh@linuxfoundation.org
+Cc:     stefan.wahren@i2se.com, linux-rpi-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, tiwai@suse.de, nsaenzjulienne@suse.de
+Subject: Re: [PATCH 7/9] ARM: dts: bcm2835-rpi: add onboard audio device
+In-Reply-To: <20181016150228.16994-8-nsaenzjulienne@suse.de>
+References: <20181016150228.16994-1-nsaenzjulienne@suse.de> <20181016150228.16994-8-nsaenzjulienne@suse.de>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date:   Tue, 16 Oct 2018 09:18:10 -0700
+Message-ID: <877eih6f25.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK7LNARLW4NmeY0Rq19Bj_5kOFbp6YDtsUDhNaAfVXjL85cAMg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 16 Oct 2018 16:15:40 +0000 (UTC)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 12:51:40AM +0900, Masahiro Yamada wrote:
-> > ifdef CONFIG_UNWINDER_ORC
-> >
-> > chk_unwinder_orc = echo "int main() {}" | $(HOSTCC) -xc -o /dev/null -lelf -
-> > msg_unwinder_orc = "Cannot build objtool to generate ORC metadata for CONFIG_UNWINDER_ORC=y.  " \
-> >                        "Please install libelf-dev, libelf-devel or elfutils-libelf-devel."
-> > toolcheck-$(CONFIG_UNWINDER_ORC) += unwinder_orc
-> >
-> > else
-> >
-> > chk_stack_validation = echo "int main() {}" | $(HOSTCC) -xc -o /dev/null -lelf -
-> > msg_stack_validation = "Cannot build objtool for CONFIG_STACK_VALIDATION=y.  " \
-> >                        "Please install libelf-dev, libelf-devel or elfutils-libelf-devel."
-> > toolcheck-$(CONFIG_STACK_VALIDATION) += stack_validation
-> >
-> > endif
-> >
-> >
-> > What do you think?
-> 
-> 
-> It is ugly.
-> 
-> Do you need such detailed information like ORC metadata stuff here?
-> 
-> This Makefile aims to error out, showing why the build failed.
-> That's it.
+--=-=-=
+Content-Type: text/plain
 
-Yeah, it is kind of ugly.  But the "showing why the build failed" part
-is important.  I was trying to give the user a clear error message,
-similar to what we have today.
+Nicolas Saenz Julienne <nsaenzjulienne@suse.de> writes:
 
-Without context, the user won't know what objtool is, or why it needs to
-be built.
+> The audio device interfaces with VCHIQ to send audio through the rpi's
+> Headphones & HDMI.
+>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+>  arch/arm/boot/dts/bcm2835-rpi.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> index cb2d6d78a7fb..6cc580d17862 100644
+> --- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> +++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> @@ -35,6 +35,11 @@
+>  			reg = <0x7e00b840 0xf>;
+>  			interrupts = <0 2>;
+>  		};
+> +
+> +		audio: audio {
+> +			compatible = "brcm,bcm2835-audio";
+> +			brcm,pwm-channels = <8>;
+> +		};
+>  	};
+>  };
 
-If we have just a single error message for all cases, it should at least
-mention the config option.  Like
+Assuming the DT binding gets acked,
 
-   "Cannot build objtool for CONFIG_STACK_VALIDATION."
+Acked-by: Eric Anholt <eric@anholt.net>
 
-But then, most users will only have that enabled because of ORC.  So an
-ORC-specific message would be more appropriate in most cases.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-So maybe it can just be something more vague:
+-----BEGIN PGP SIGNATURE-----
 
-msg_stack_validation = "Cannot build objtool for CONFIG_UNWINDER_ORC and/or CONFIG_STACK_VALIDATION.  " \
-		       "Please install libelf-dev, libelf-devel or elfutils-libelf-devel."
-
-That would probably be good enough.  Then we could drop the ugly ifdef.
-
--- 
-Josh
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlvGD0IACgkQtdYpNtH8
+nuif9xAApg+DGvoIpJnp//LGcqJbH9rM/So9OtjNIl8pZLp+dJ3L0j0g9EToe2/N
+fc8gDUBbeSH81O/a+rsm+DN+sp37SZ5UzFbTpuaiuDKBKcS/E577xzIfk+NRcqT7
+GmAAerqj3b3jN8nJ6INXvYX6FYxoOpyvJETkjCaZuJIcGBKsAdAonghwxMJPOrCA
+OUnMOrHmDvl/qXJ2yIKuJj3Tk3CRTe1HMN0EkoYIqjhHZ3UZJCS3IDtqYfTPxJZT
+exLLEsol6E5T4AZddNq1bX5nLT+XO39gZZ4bg6AA2N1kfAIotp/kGjNXM2swN8ks
+IjqIByjDoPiv0Ow+JoZwaD0y1AKT5EsLNKxJleZu4vRaSOa+0xcPWtcwSFYSonR0
+UT5IZwNpo0EQ2rlPld1f1sqbtqNs3Is0RUXiIpJrFIoxEFsWESwMoBuCSoVz0H6j
+DPpALctlRBvDqnj0lNEi5iHA0I+PbH9tbLckukeXecpIsmb/wXVlk1ZPUElyrfK7
+badEgKijZn1MUJuNQoYZO704iWwDRbvm0itw6FOMgGhzMAoEBAqYaqL6kJAo0O2r
+hsbcxh2geqmgVk/Qe4AmMmqklpD47xVCbuUNQm6kZ+DfY55gQL+QDZBI+JQZrMB+
+pIJap0492wXd63R5ZTGrCitrF6v99D45Wqym2BFQhMZZi8inOjE=
+=9slk
+-----END PGP SIGNATURE-----
+--=-=-=--
