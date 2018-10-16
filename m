@@ -2,137 +2,267 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93960C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C355C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:07:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6690320658
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:03:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6690320658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 017402098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:07:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 017402098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbeJQAzK (ORCPT
+        id S1727315AbeJQA6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:55:10 -0400
-Received: from gateway23.websitewelcome.com ([192.185.49.179]:32593 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727132AbeJQAzK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:55:10 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 77B6119293
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 12:03:49 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id CSkkgWmxytz4jCSkvgeWck; Tue, 16 Oct 2018 12:03:49 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:42698 helo=[192.168.1.41])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gCSkk-000bUb-37; Tue, 16 Oct 2018 12:03:30 -0500
-Subject: Re: [PATCH net-next v2 2/2] net: phy: mscc: fix memory leak in
- vsc8574_config_pre_init
-To:     David Miller <davem@davemloft.net>
-Cc:     quentin.schulz@bootlin.com, linux-kernel@vger.kernel.org,
-        andrew@lunn.ch, f.fainelli@gmail.com
-References: <6161326e265a99f8ec8e0f7028790a0131c5404e.1539159556.git.gustavo@embeddedor.com>
- <20181010083422.phokcciqdkzm6u7w@qschulz>
- <e64b93c2-4f25-ee68-ef23-e947f1e84d55@embeddedor.com>
- <20181016.095414.697502448536323380.davem@davemloft.net>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <e29d0c22-8ad9-5565-2d46-e5d6635a7855@embeddedor.com>
-Date:   Tue, 16 Oct 2018 19:03:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 16 Oct 2018 20:58:23 -0400
+Received: from foss.arm.com ([217.140.101.70]:39904 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727007AbeJQA6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 20:58:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7912E341;
+        Tue, 16 Oct 2018 10:07:01 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (unknown [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DD7B3F71C;
+        Tue, 16 Oct 2018 10:06:59 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 18:06:56 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 11/19] PCI: keystone: Cleanup PHY handling
+Message-ID: <20181016170656.GD16390@e107981-ln.cambridge.arm.com>
+References: <20181015130721.5535-1-kishon@ti.com>
+ <20181015130721.5535-12-kishon@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20181016.095414.697502448536323380.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gCSkk-000bUb-37
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:42698
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181015130721.5535-12-kishon@ti.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 15, 2018 at 06:37:13PM +0530, Kishon Vijay Abraham I wrote:
+> Cleanup PHY handling by using devm_phy_optional_get to get PHYs if
+> the PHYs are optional, creating a device link between the PHY device
+> and the controller device and disable PHY on error cases here.
+> Also invoke phy_reset() as part of initializing PHY.
 
+Hi Kishon,
 
-On 10/16/18 6:54 PM, David Miller wrote:
->>
->> Friendly ping. Dave, can you take this?
+it is a bit of nitpicking, I know it is annoying but when I read "Also"
+in commit logs there is almost certainly a reason to split the patch
+into logical standalone entities, this one looks like one.
+
+Every patch must be a self-contained change that, in case we have to
+revert it, must not affect other patches.
+
+There are some more patches in the series that would benefit from
+splitting so I kindly ask you to go through them and repost, we
+should still be able to hit v4.20.
+
+Thanks,
+Lorenzo
+
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/pci/controller/dwc/pci-keystone.c | 126 +++++++++++++++++++---
+>  1 file changed, 110 insertions(+), 16 deletions(-)
 > 
-> It needs to be posted properly to netdev, just like all networking
-> patches do.
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index e22328f89c84..bf37609ad75b 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -105,6 +105,9 @@ struct keystone_pcie {
+>  
+>  	int			num_msi_host_irqs;
+>  	int			msi_host_irqs[MAX_MSI_HOST_IRQS];
+> +	int			num_lanes;
+> +	struct phy		**phy;
+> +	struct device_link	**link;
+>  	struct			device_node *msi_intc_np;
+>  	struct irq_domain	*legacy_irq_domain;
+>  	struct device_node	*np;
+> @@ -880,22 +883,61 @@ static const struct dw_pcie_ops ks_pcie_dw_pcie_ops = {
+>  	.link_up = ks_pcie_link_up,
+>  };
+>  
+> -static int __exit ks_pcie_remove(struct platform_device *pdev)
+> +static void ks_pcie_disable_phy(struct keystone_pcie *ks_pcie)
+>  {
+> -	struct keystone_pcie *ks_pcie = platform_get_drvdata(pdev);
+> +	int num_lanes = ks_pcie->num_lanes;
+>  
+> -	clk_disable_unprepare(ks_pcie->clk);
+> +	while (num_lanes--) {
+> +		phy_power_off(ks_pcie->phy[num_lanes]);
+> +		phy_exit(ks_pcie->phy[num_lanes]);
+> +	}
+> +}
+> +
+> +static int ks_pcie_enable_phy(struct keystone_pcie *ks_pcie)
+> +{
+> +	int i;
+> +	int ret;
+> +	int num_lanes = ks_pcie->num_lanes;
+> +
+> +	for (i = 0; i < num_lanes; i++) {
+> +		ret = phy_reset(ks_pcie->phy[i]);
+> +		if (ret < 0)
+> +			goto err_phy;
+> +
+> +		ret = phy_init(ks_pcie->phy[i]);
+> +		if (ret < 0)
+> +			goto err_phy;
+> +
+> +		ret = phy_power_on(ks_pcie->phy[i]);
+> +		if (ret < 0) {
+> +			phy_exit(ks_pcie->phy[i]);
+> +			goto err_phy;
+> +		}
+> +	}
+>  
+>  	return 0;
+> +
+> +err_phy:
+> +	while (--i >= 0) {
+> +		phy_power_off(ks_pcie->phy[i]);
+> +		phy_exit(ks_pcie->phy[i]);
+> +	}
+> +
+> +	return ret;
+>  }
+>  
+>  static int __init ks_pcie_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+>  	struct dw_pcie *pci;
+>  	struct keystone_pcie *ks_pcie;
+> -	struct phy *phy;
+> +	struct device_link **link;
+> +	struct phy **phy;
+> +	u32 num_lanes;
+> +	char name[10];
+>  	int ret;
+> +	int i;
+>  
+>  	ks_pcie = devm_kzalloc(dev, sizeof(*ks_pcie), GFP_KERNEL);
+>  	if (!ks_pcie)
+> @@ -908,29 +950,59 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
+>  	pci->dev = dev;
+>  	pci->ops = &ks_pcie_dw_pcie_ops;
+>  
+> -	ks_pcie->pci = pci;
+> +	ret = of_property_read_u32(np, "num-lanes", &num_lanes);
+> +	if (ret)
+> +		num_lanes = 1;
+>  
+> -	/* initialize SerDes Phy if present */
+> -	phy = devm_phy_get(dev, "pcie-phy");
+> -	if (PTR_ERR_OR_ZERO(phy) == -EPROBE_DEFER)
+> -		return PTR_ERR(phy);
+> +	phy = devm_kzalloc(dev, sizeof(*phy) * num_lanes, GFP_KERNEL);
+> +	if (!phy)
+> +		return -ENOMEM;
+>  
+> -	if (!IS_ERR_OR_NULL(phy)) {
+> -		ret = phy_init(phy);
+> -		if (ret < 0)
+> -			return ret;
+> +	link = devm_kzalloc(dev, sizeof(*link) * num_lanes, GFP_KERNEL);
+> +	if (!link)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < num_lanes; i++) {
+> +		snprintf(name, sizeof(name), "pcie-phy%d", i);
+> +		phy[i] = devm_phy_optional_get(dev, name);
+> +		if (IS_ERR(phy[i])) {
+> +			ret = PTR_ERR(phy[i]);
+> +			goto err_link;
+> +		}
+> +
+> +		if (!phy[i])
+> +			continue;
+> +
+> +		link[i] = device_link_add(dev, &phy[i]->dev, DL_FLAG_STATELESS);
+> +		if (!link[i]) {
+> +			ret = -EINVAL;
+> +			goto err_link;
+> +		}
+> +	}
+> +
+> +	ks_pcie->np = np;
+> +	ks_pcie->pci = pci;
+> +	ks_pcie->link = link;
+> +	ks_pcie->num_lanes = num_lanes;
+> +	ks_pcie->phy = phy;
+> +
+> +	ret = ks_pcie_enable_phy(ks_pcie);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable phy\n");
+> +		goto err_link;
+>  	}
+>  
+> -	ks_pcie->np = dev->of_node;
+>  	platform_set_drvdata(pdev, ks_pcie);
+>  	ks_pcie->clk = devm_clk_get(dev, "pcie");
+>  	if (IS_ERR(ks_pcie->clk)) {
+>  		dev_err(dev, "Failed to get pcie rc clock\n");
+> -		return PTR_ERR(ks_pcie->clk);
+> +		ret = PTR_ERR(ks_pcie->clk);
+> +		goto err_phy;
+>  	}
+> +
+>  	ret = clk_prepare_enable(ks_pcie->clk);
+>  	if (ret)
+> -		return ret;
+> +		goto err_phy;
+>  
+>  	ret = ks_pcie_add_pcie_port(ks_pcie, pdev);
+>  	if (ret < 0)
+> @@ -940,9 +1012,31 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
+>  fail_clk:
+>  	clk_disable_unprepare(ks_pcie->clk);
+>  
+> +err_phy:
+> +	ks_pcie_disable_phy(ks_pcie);
+> +
+> +err_link:
+> +	while (--i >= 0 && link[i])
+> +		device_link_del(link[i]);
+> +
+>  	return ret;
+>  }
+>  
+> +static int __exit ks_pcie_remove(struct platform_device *pdev)
+> +{
+> +	struct keystone_pcie *ks_pcie = platform_get_drvdata(pdev);
+> +	struct device_link **link = ks_pcie->link;
+> +	int num_lanes = ks_pcie->num_lanes;
+> +
+> +	clk_disable_unprepare(ks_pcie->clk);
+> +	ks_pcie_disable_phy(ks_pcie);
+> +
+> +	while (num_lanes--)
+> +		device_link_del(link[num_lanes]);
+> +
+> +	return 0;
+> +}
+> +
+>  static struct platform_driver ks_pcie_driver __refdata = {
+>  	.probe  = ks_pcie_probe,
+>  	.remove = __exit_p(ks_pcie_remove),
+> -- 
+> 2.17.1
 > 
-
-mmh... I don't know how I missed it. :/
-
-OK. I'll send the series to netdev.
-
-Thanks!
---
-Gustavo
