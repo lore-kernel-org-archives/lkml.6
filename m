@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC38C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F2AC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03C1C20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 714072098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5xv3o0Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C1C20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="epy406gz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714072098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbeJQBCw (ORCPT
+        id S1728206AbeJQBC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:02:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44480 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:02:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727246AbeJQBCv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:02:51 -0400
+        id S1727246AbeJQBCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:02:55 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12E8F21476;
-        Tue, 16 Oct 2018 17:11:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC9422098A;
+        Tue, 16 Oct 2018 17:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709889;
-        bh=SlkuqQxIGq1A9luawFpkLMjrvPrV5qlMUMVWIUqSlaw=;
+        s=default; t=1539709893;
+        bh=4fov1EAoCm3yRX75UW1GbcExLZzZo72c5U4YX87C/EU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D5xv3o0QbNOd22sHlgz2XKTYfINwYtNILUk+JTs8w81vqAegyFVwR+Hre+m3bFAhj
-         Ls+ar86atofVYYRMpgdxZrls7qmBzC9f24AbIH13ywmYFPaKBoJMS0BbLDauJDRzEp
-         AwjPCQ5rub+6c3+Gs4Bg57poM+kwvQ6FiMX5dnrE=
+        b=epy406gz6RVMJozMyPPpIjqvSkdspnP/sXCnAobMIQI51IxQNHGxhR/HDOvXtwP4p
+         fOf3yB9tKL8svw89uwyrAv2WLZk3xZtH/6orZKBzZe2YIszOG37BdWn9s42LYIcTP7
+         kN462AgDS3ph8f28nbSUStDlnOyppmF+DUY9h9SE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot+e662df0ac1d753b57e80@syzkaller.appspotmail.com,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 030/135] tun: remove unused parameters
-Date:   Tue, 16 Oct 2018 19:04:20 +0200
-Message-Id: <20181016170517.152620698@linuxfoundation.org>
+Subject: [PATCH 4.18 031/135] tun: initialize napi_mutex unconditionally
+Date:   Tue, 16 Oct 2018 19:04:21 +0200
+Message-Id: <20181016170517.200157017@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -63,64 +64,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 06e55addd3f40b5294e448c2cb7605ca4f28c2e3 ]
+[ Upstream commit c7256f579f8302ce2c038181c30060d0b40017b2 ]
 
-tun_napi_disable() and tun_napi_del() do not need
-a pointer to the tun_struct
+This is the first part to fix following syzbot report :
 
+console output: https://syzkaller.appspot.com/x/log.txt?x=145378e6400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=443816db871edd66
+dashboard link: https://syzkaller.appspot.com/bug?extid=e662df0ac1d753b57e80
+
+Following patch is fixing the race condition, but it seems safer
+to initialize this mutex at tfile creation anyway.
+
+Fixes: 90e33d459407 ("tun: enable napi_gro_frags() for TUN/TAP driver")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot+e662df0ac1d753b57e80@syzkaller.appspotmail.com
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/tun.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/tun.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/net/tun.c
 +++ b/drivers/net/tun.c
-@@ -323,13 +323,13 @@ static void tun_napi_init(struct tun_str
+@@ -319,7 +319,6 @@ static void tun_napi_init(struct tun_str
+ 		netif_napi_add(tun->dev, &tfile->napi, tun_napi_poll,
+ 			       NAPI_POLL_WEIGHT);
+ 		napi_enable(&tfile->napi);
+-		mutex_init(&tfile->napi_mutex);
  	}
  }
  
--static void tun_napi_disable(struct tun_struct *tun, struct tun_file *tfile)
-+static void tun_napi_disable(struct tun_file *tfile)
- {
- 	if (tfile->napi_enabled)
- 		napi_disable(&tfile->napi);
- }
- 
--static void tun_napi_del(struct tun_struct *tun, struct tun_file *tfile)
-+static void tun_napi_del(struct tun_file *tfile)
- {
- 	if (tfile->napi_enabled)
- 		netif_napi_del(&tfile->napi);
-@@ -688,8 +688,8 @@ static void __tun_detach(struct tun_file
- 	tun = rtnl_dereference(tfile->tun);
- 
- 	if (tun && clean) {
--		tun_napi_disable(tun, tfile);
--		tun_napi_del(tun, tfile);
-+		tun_napi_disable(tfile);
-+		tun_napi_del(tfile);
+@@ -3241,6 +3240,7 @@ static int tun_chr_open(struct inode *in
+ 		return -ENOMEM;
  	}
  
- 	if (tun && !tfile->detached) {
-@@ -756,7 +756,7 @@ static void tun_detach_all(struct net_de
- 	for (i = 0; i < n; i++) {
- 		tfile = rtnl_dereference(tun->tfiles[i]);
- 		BUG_ON(!tfile);
--		tun_napi_disable(tun, tfile);
-+		tun_napi_disable(tfile);
- 		tfile->socket.sk->sk_shutdown = RCV_SHUTDOWN;
- 		tfile->socket.sk->sk_data_ready(tfile->socket.sk);
- 		RCU_INIT_POINTER(tfile->tun, NULL);
-@@ -772,7 +772,7 @@ static void tun_detach_all(struct net_de
- 	synchronize_net();
- 	for (i = 0; i < n; i++) {
- 		tfile = rtnl_dereference(tun->tfiles[i]);
--		tun_napi_del(tun, tfile);
-+		tun_napi_del(tfile);
- 		/* Drop read queue */
- 		tun_queue_purge(tfile);
- 		xdp_rxq_info_unreg(&tfile->xdp_rxq);
++	mutex_init(&tfile->napi_mutex);
+ 	RCU_INIT_POINTER(tfile->tun, NULL);
+ 	tfile->flags = 0;
+ 	tfile->ifindex = 0;
 
 
