@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AEE8C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7816AC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED872098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 357DF2147E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rrQ/TJyv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED872098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1FZSMpKI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 357DF2147E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbeJPMCc (ORCPT
+        id S1729039AbeJPMCd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50394 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728877AbeJPMCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:31 -0400
+        id S1728877AbeJPMCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:32 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6E9B21477;
-        Tue, 16 Oct 2018 04:14:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 779472145D;
+        Tue, 16 Oct 2018 04:14:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663248;
-        bh=GnsTQ/PQ9o/zGSeEKkoqajfe+LFhzKyI3tyow/uoiWE=;
+        s=default; t=1539663250;
+        bh=wtpycg2c0yN7U3EF2DgLYGrTaxS1wPMNv/hBttU9EpI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rrQ/TJyvTZsFl/8LySDG7Ggwd6dyrlhIRk0KPT4N4vaWn5kzSuW4g5apENvh6iohv
-         CzcefonOjrtnfxAasPMRgn3vkbnAyNJ1kAmczfEcbrNJVdvSnZwhInhGaGWwsfb7me
-         INOEqCUEh8NC+57gS8cW/mQ9BCPqe7e6d4RLC7+s=
+        b=1FZSMpKIN29r8Wo9bC/KFGms7Q2ZLXTPqiJLUwWHBk+xBnHLGPNruqV5gl2BnoyfB
+         UjAUyRsiRb+nhICe4uTc6qWF76X3bheGi3kkCU5M9l4+fDGyU739OObJbOR6Rj50N2
+         Vq1em381oMojCHQ4hW8Zh66Ci4w1Wd+KbATFwuKA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+Cc:     Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 03/61] xfrm: reset transport header back to network header after all input transforms ahave been applied
-Date:   Tue, 16 Oct 2018 00:13:05 -0400
-Message-Id: <20181016041403.135678-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 05/61] mac80211: Always report TX status
+Date:   Tue, 16 Oct 2018 00:13:07 -0400
+Message-Id: <20181016041403.135678-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -53,99 +54,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
 
-[ Upstream commit bfc0698bebcb16d19ecfc89574ad4d696955e5d3 ]
+[ Upstream commit 8682250b3c1b75a45feb7452bc413d004cfe3778 ]
 
-A policy may have been set up with multiple transforms (e.g., ESP
-and ipcomp). In this situation, the ingress IPsec processing
-iterates in xfrm_input() and applies each transform in turn,
-processing the nexthdr to find any additional xfrm that may apply.
+If a frame is dropped for any reason, mac80211 wouldn't report the TX
+status back to user space.
 
-This patch resets the transport header back to network header
-only after the last transformation so that subsequent xfrms
-can find the correct transport header.
+As the user space may rely on the TX_STATUS to kick its state
+machines, resends etc, it's better to just report this frame as not
+acked instead.
 
-Fixes: 7785bba299a8 ("esp: Add a software GRO codepath")
-Suggested-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/xfrm4_input.c          | 1 +
- net/ipv4/xfrm4_mode_transport.c | 4 +---
- net/ipv6/xfrm6_input.c          | 1 +
- net/ipv6/xfrm6_mode_transport.c | 4 +---
- 4 files changed, 4 insertions(+), 6 deletions(-)
+ net/mac80211/status.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/net/ipv4/xfrm4_input.c b/net/ipv4/xfrm4_input.c
-index bcfc00e88756..f8de2482a529 100644
---- a/net/ipv4/xfrm4_input.c
-+++ b/net/ipv4/xfrm4_input.c
-@@ -67,6 +67,7 @@ int xfrm4_transport_finish(struct sk_buff *skb, int async)
+diff --git a/net/mac80211/status.c b/net/mac80211/status.c
+index da7427a41529..ccac205e5853 100644
+--- a/net/mac80211/status.c
++++ b/net/mac80211/status.c
+@@ -470,11 +470,6 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
+ 	if (!skb)
+ 		return;
  
- 	if (xo && (xo->flags & XFRM_GRO)) {
- 		skb_mac_header_rebuild(skb);
-+		skb_reset_transport_header(skb);
- 		return 0;
- 	}
+-	if (dropped) {
+-		dev_kfree_skb_any(skb);
+-		return;
+-	}
+-
+ 	if (info->flags & IEEE80211_TX_INTFL_NL80211_FRAME_TX) {
+ 		u64 cookie = IEEE80211_SKB_CB(skb)->ack.cookie;
+ 		struct ieee80211_sub_if_data *sdata;
+@@ -495,6 +490,8 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
+ 		}
+ 		rcu_read_unlock();
  
-diff --git a/net/ipv4/xfrm4_mode_transport.c b/net/ipv4/xfrm4_mode_transport.c
-index 3d36644890bb..1ad2c2c4e250 100644
---- a/net/ipv4/xfrm4_mode_transport.c
-+++ b/net/ipv4/xfrm4_mode_transport.c
-@@ -46,7 +46,6 @@ static int xfrm4_transport_output(struct xfrm_state *x, struct sk_buff *skb)
- static int xfrm4_transport_input(struct xfrm_state *x, struct sk_buff *skb)
- {
- 	int ihl = skb->data - skb_transport_header(skb);
--	struct xfrm_offload *xo = xfrm_offload(skb);
- 
- 	if (skb->transport_header != skb->network_header) {
- 		memmove(skb_transport_header(skb),
-@@ -54,8 +53,7 @@ static int xfrm4_transport_input(struct xfrm_state *x, struct sk_buff *skb)
- 		skb->network_header = skb->transport_header;
- 	}
- 	ip_hdr(skb)->tot_len = htons(skb->len + ihl);
--	if (!xo || !(xo->flags & XFRM_GRO))
--		skb_reset_transport_header(skb);
-+	skb_reset_transport_header(skb);
- 	return 0;
- }
- 
-diff --git a/net/ipv6/xfrm6_input.c b/net/ipv6/xfrm6_input.c
-index 841f4a07438e..9ef490dddcea 100644
---- a/net/ipv6/xfrm6_input.c
-+++ b/net/ipv6/xfrm6_input.c
-@@ -59,6 +59,7 @@ int xfrm6_transport_finish(struct sk_buff *skb, int async)
- 
- 	if (xo && (xo->flags & XFRM_GRO)) {
- 		skb_mac_header_rebuild(skb);
-+		skb_reset_transport_header(skb);
- 		return -1;
- 	}
- 
-diff --git a/net/ipv6/xfrm6_mode_transport.c b/net/ipv6/xfrm6_mode_transport.c
-index 9ad07a91708e..3c29da5defe6 100644
---- a/net/ipv6/xfrm6_mode_transport.c
-+++ b/net/ipv6/xfrm6_mode_transport.c
-@@ -51,7 +51,6 @@ static int xfrm6_transport_output(struct xfrm_state *x, struct sk_buff *skb)
- static int xfrm6_transport_input(struct xfrm_state *x, struct sk_buff *skb)
- {
- 	int ihl = skb->data - skb_transport_header(skb);
--	struct xfrm_offload *xo = xfrm_offload(skb);
- 
- 	if (skb->transport_header != skb->network_header) {
- 		memmove(skb_transport_header(skb),
-@@ -60,8 +59,7 @@ static int xfrm6_transport_input(struct xfrm_state *x, struct sk_buff *skb)
- 	}
- 	ipv6_hdr(skb)->payload_len = htons(skb->len + ihl -
- 					   sizeof(struct ipv6hdr));
--	if (!xo || !(xo->flags & XFRM_GRO))
--		skb_reset_transport_header(skb);
-+	skb_reset_transport_header(skb);
- 	return 0;
- }
- 
++		dev_kfree_skb_any(skb);
++	} else if (dropped) {
+ 		dev_kfree_skb_any(skb);
+ 	} else {
+ 		/* consumes skb */
 -- 
 2.17.1
 
