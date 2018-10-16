@@ -2,100 +2,219 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E37C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB24C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1591D2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:34:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1591D2089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 52475208D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:51:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52475208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbeJPJWK (ORCPT
+        id S1727018AbeJPJjb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 05:22:10 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36369 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726946AbeJPJWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 05:22:09 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 25683F7D31A45;
-        Tue, 16 Oct 2018 09:34:14 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.399.0; Tue, 16 Oct 2018
- 09:34:10 +0800
-Subject: Re: [PATCH 2/2] f2fs: update REQ_TIME in f2fs_cross_rename()
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     Sahitya Tummala <stummala@codeaurora.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1538716660-31572-1-git-send-email-stummala@codeaurora.org>
- <1538716660-31572-2-git-send-email-stummala@codeaurora.org>
- <fa825846-ba41-31d2-c819-476e9245b7a8@huawei.com>
- <20181015230357.GA1296@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <93a29c62-8115-607c-5b69-a506c9b9a3a1@huawei.com>
-Date:   Tue, 16 Oct 2018 09:34:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 16 Oct 2018 05:39:31 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:12169 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726191AbeJPJja (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 05:39:30 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="46180548"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 16 Oct 2018 09:51:33 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 6EEA44B6ED6B;
+        Tue, 16 Oct 2018 09:51:33 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 16 Oct 2018 09:51:39 +0800
+Date:   Tue, 16 Oct 2018 09:50:51 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <rjw@rjwysocki.net>,
+        <lenb@kernel.org>, <ard.biesheuvel@linaro.org>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v8 1/3] x86/boot: Add acpitb.c to parse acpi tables
+Message-ID: <20181016015050.GA2075@localhost.localdomain>
+References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
+ <20181010084119.17539-2-fanc.fnst@cn.fujitsu.com>
+ <20181015202609.gs6jownxbevs4vzr@gabell>
 MIME-Version: 1.0
-In-Reply-To: <20181015230357.GA1296@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181015202609.gs6jownxbevs4vzr@gabell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 6EEA44B6ED6B.A0C3E
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/16 7:03, Jaegeuk Kim wrote:
-> On 10/15, Chao Yu wrote:
->> On 2018/10/5 13:17, Sahitya Tummala wrote:
->>> Update REQ_TIME in the missing path - f2fs_cross_rename().
->>
->> Needs to cover f2fs_rename() as well?
-> 
-> Hi, I've added this in f2fs_rename().
+On Mon, Oct 15, 2018 at 04:26:09PM -0400, Masayoshi Mizuma wrote:
+>Hi Chao,
+>
+>Let me add some suggestions.
 
-Oh, I see, it looks okay to me now. :)
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Thanks for your review and suggestion.
+I will change them in next version.
 
 Thanks,
+Chao Fan
 
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>> ---
->>>  fs/f2fs/namei.c | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->>> index a146327..e37af23 100644
->>> --- a/fs/f2fs/namei.c
->>> +++ b/fs/f2fs/namei.c
->>> @@ -1154,6 +1154,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
->>>  
->>>  	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
->>>  		f2fs_sync_fs(sbi->sb, 1);
->>> +
->>> +	f2fs_update_time(sbi, REQ_TIME);
->>>  	return 0;
->>>  out_new_dir:
->>>  	if (new_dir_entry) {
->>>
-> 
-> .
-> 
+>
+>On Wed, Oct 10, 2018 at 04:41:17PM +0800, Chao Fan wrote:
+>> There is a bug that kaslr may randomly chooses some positions
+>> which are located in movable memory regions. This will break memory
+>> hotplug feature and make the movable memory chosen by KASLR can't be
+>> removed. So dig SRAT table from ACPI tables to get memory information.
+>> 
+>> Imitate the ACPI code of parsing ACPI tables to dig and read ACPI
+>> tables. Since some operations are not needed here, functions are
+>> simplified. Functions will be used to dig only SRAT tables to get
+>> information of memory, so that KASLR can the memory in immovable node.
+>> 
+>> And also, these functions won't influence the initialization of
+>> ACPI after start_kernel().
+>> 
+>> Since use physical address directely, so acpi_os_map_memory()
+>> and acpi_os_unmap_memory() are not needed.
+>> 
+>> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+>> ---
+>>  arch/x86/boot/compressed/Makefile |   2 +
+>>  arch/x86/boot/compressed/acpitb.c | 405 ++++++++++++++++++++++++++++++
+>>  arch/x86/boot/compressed/misc.h   |   8 +
+>>  3 files changed, 415 insertions(+)
+>>  create mode 100644 arch/x86/boot/compressed/acpitb.c
+>> 
+>...cut...
+>> +static struct acpi_table_header *get_acpi_srat_table(void)
+>> +{
+>> +	char *args = (char *)get_cmd_line_ptr();
+>> +	acpi_physical_address acpi_table;
+>> +	acpi_physical_address root_table;
+>> +	struct acpi_table_header *header;
+>> +	struct acpi_table_rsdp *rsdp;
+>> +	char *signature;
+>> +	u8 *entry;
+>> +	u32 count;
+>> +	u32 size;
+>> +	int i, j;
+>> +	u32 len;
+>> +
+>> +	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
+>> +	if (!rsdp)
+>> +		return NULL;
+>> +
+>> +	/* Get rsdt or xsdt from rsdp. */
+>> +	if (!strstr(args, "acpi=rsdt") &&
+>> +	    rsdp->xsdt_physical_address && rsdp->revision > 1) {
+>> +		root_table = rsdp->xsdt_physical_address;
+>> +		size = ACPI_XSDT_ENTRY_SIZE;
+>> +	} else {
+>> +		root_table = rsdp->rsdt_physical_address;
+>> +		size = ACPI_RSDT_ENTRY_SIZE;
+>> +	}
+>> +
+>> +	/* Get ACPI root table from rsdt or xsdt.*/
+>> +	header = (struct acpi_table_header *)root_table;
+>> +	len = header->length;
+>> +	count = (u32)((len - sizeof(struct acpi_table_header)) / size);
+>> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
+>> +
+>> +	for (i = 0; i < count; i++) {
+>> +		u64 address64;
+>> +
+>> +		if (size == ACPI_RSDT_ENTRY_SIZE)
+>> +			acpi_table = ((acpi_physical_address)
+>> +				      (*ACPI_CAST_PTR(u32, entry)));
+>> +		else {
+>> +			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
+>> +			acpi_table = (acpi_physical_address) address64;
+>> +		}
+>> +
+>> +		if (acpi_table) {
+>> +			header = (struct acpi_table_header *)acpi_table;
+>
+>> +			signature = header->signature;
+>> +
+>> +			if (!strncmp(signature, "SRAT", 4))
+>
+>			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
+>
+>> +				return header;
+>> +		}
+>> +		entry += size;
+>> +	}
+>> +	return NULL;
+>> +}
+>> +
+>> +#ifdef CONFIG_MEMORY_HOTREMOVE
+>> +/*
+>> + * According to ACPI table, filter the immvoable memory regions
+>> + * and store them in immovable_mem[].
+>> + */
+>> +void get_immovable_mem(void)
+>> +{
+>> +	char *args = (char *)get_cmd_line_ptr();
+>> +	struct acpi_table_header *table_header;
+>> +	struct acpi_subtable_header *table;
+>> +	struct acpi_srat_mem_affinity *ma;
+>> +	unsigned long table_end;
+>> +	int i = 0;
+>> +
+>> +	if (!strstr(args, "movable_node") || strstr(args, "acpi=off"))
+>> +		return;
+>> +
+>> +	table_header = get_acpi_srat_table();
+>> +	if (!table_header)
+>> +		return;
+>> +
+>> +	table_end = (unsigned long)table_header + table_header->length;
+>> +
+>> +	table = (struct acpi_subtable_header *)
+>> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
+>> +
+>
+>> +	while (((unsigned long)table) + table->length < table_end) {
+>
+>	while (((unsigned long)table) +
+>			sizeof(struct acpi_subtable_header) < table_end) {
+>
+>> +		if (table->type == 1) {
+>
+>		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+>
+>> +			ma = (struct acpi_srat_mem_affinity *)table;
+>> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+>> +				immovable_mem[i].start = ma->base_address;
+>> +				immovable_mem[i].size = ma->length;
+>> +				i++;
+>> +			}
+>> +
+>> +			if (i >= MAX_NUMNODES*2)
+>> +				break;
+>> +		}
+>> +		table = (struct acpi_subtable_header *)
+>> +			((unsigned long)table + table->length);
+>> +	}
+>> +	num_immovable_mem = i;
+>> +}
+>
+>Thanks,
+>Masa
+>
+>
+
 
