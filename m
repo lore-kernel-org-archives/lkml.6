@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C5DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D0DC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAEEE208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F2B921470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HzBB7PGw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAEEE208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORp1Ql0C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2B921470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbeJPMBB (ORCPT
+        id S1727771AbeJPMBC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:01:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47680 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:01:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727593AbeJPMA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:00:59 -0400
+        id S1727593AbeJPMBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:02 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B5DB21470;
-        Tue, 16 Oct 2018 04:12:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05CE521476;
+        Tue, 16 Oct 2018 04:12:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663157;
-        bh=cHgnifJ3nmVfOjjw1SxdliCRBM9UO/SUpQwiYn1uJFM=;
+        s=default; t=1539663159;
+        bh=/kTS/enFDEyigw1n7Z/THJDyOjInKIVSC+hEKNOUO/M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HzBB7PGwVF1FhvJ1xRaNJbFZ6F4CRamtbRclPGooHe2cpn4KWu/28TY5dX4ckLYG5
-         D80D40BguIsvCispdpwxEok541XMGf3ajHmrIzcJidmG0ci233krQAZPjm+xCgyWL8
-         UG4gvoRGFhR1n/gspBb7wv03t33aARw6kPa4vZlw=
+        b=ORp1Ql0CHqaXBjft0kvlZKlW3V5cf/iaiSFAY9+tJ+I5YqoLKNkGrmRZ9OgBVs1s4
+         QAkwTRT4qalX6+PRIV5CT5r2d9EdcE7/VNst23mrb4NYVfDweFS+o6CgCu1TzWCeAR
+         b9jc2pJS9jDfxLb/1LsoCTQAkgXSZT3as/5U0XnY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sean Tranchetti <stranche@codeaurora.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+Cc:     David Ahern <dsahern@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 013/100] xfrm: validate template mode
-Date:   Tue, 16 Oct 2018 00:10:54 -0400
-Message-Id: <20181016041221.135528-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 016/100] netfilter: bridge: Don't sabotage nf_hook calls from an l3mdev
+Date:   Tue, 16 Oct 2018 00:10:57 -0400
+Message-Id: <20181016041221.135528-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -52,64 +52,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Tranchetti <stranche@codeaurora.org>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit 32bf94fb5c2ec4ec842152d0e5937cd4bb6738fa ]
+[ Upstream commit a173f066c7cfc031acb8f541708041e009fc9812 ]
 
-XFRM mode parameters passed as part of the user templates
-in the IP_XFRM_POLICY are never properly validated. Passing
-values other than valid XFRM modes can cause stack-out-of-bounds
-reads to occur later in the XFRM processing:
+For starters, the bridge netfilter code registers operations that
+are invoked any time nh_hook is called. Specifically, ip_sabotage_in
+watches for nested calls for NF_INET_PRE_ROUTING when a bridge is in
+the stack.
 
-[  140.535608] ================================================================
-[  140.543058] BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x17e4/0x1cc4
-[  140.550306] Read of size 4 at addr ffffffc0238a7a58 by task repro/5148
-[  140.557369]
-[  140.558927] Call trace:
-[  140.558936] dump_backtrace+0x0/0x388
-[  140.558940] show_stack+0x24/0x30
-[  140.558946] __dump_stack+0x24/0x2c
-[  140.558949] dump_stack+0x8c/0xd0
-[  140.558956] print_address_description+0x74/0x234
-[  140.558960] kasan_report+0x240/0x264
-[  140.558963] __asan_report_load4_noabort+0x2c/0x38
-[  140.558967] xfrm_state_find+0x17e4/0x1cc4
-[  140.558971] xfrm_resolve_and_create_bundle+0x40c/0x1fb8
-[  140.558975] xfrm_lookup+0x238/0x1444
-[  140.558977] xfrm_lookup_route+0x48/0x11c
-[  140.558984] ip_route_output_flow+0x88/0xc4
-[  140.558991] raw_sendmsg+0xa74/0x266c
-[  140.558996] inet_sendmsg+0x258/0x3b0
-[  140.559002] sock_sendmsg+0xbc/0xec
-[  140.559005] SyS_sendto+0x3a8/0x5a8
-[  140.559008] el0_svc_naked+0x34/0x38
-[  140.559009]
-[  140.592245] page dumped because: kasan: bad access detected
-[  140.597981] page_owner info is not active (free page?)
-[  140.603267]
-[  140.653503] ================================================================
+Packet wise, the bridge netfilter hook runs first. br_nf_pre_routing
+allocates nf_bridge, sets in_prerouting to 1 and calls NF_HOOK for
+NF_INET_PRE_ROUTING. It's finish function, br_nf_pre_routing_finish,
+then resets in_prerouting flag to 0 and the packet continues up the
+stack. The packet eventually makes it to the VRF driver and it invokes
+nf_hook for NF_INET_PRE_ROUTING in case any rules have been added against
+the vrf device.
 
-Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Because of the registered operations the call to nf_hook causes
+ip_sabotage_in to be invoked. That function sees the nf_bridge on the
+skb and that in_prerouting is not set. Thinking it is an invalid nested
+call it steals (drops) the packet.
+
+Update ip_sabotage_in to recognize that the bridge or one of its upper
+devices (e.g., vlan) can be enslaved to a VRF (L3 master device) and
+allow the packet to go through the nf_hook a second time.
+
+Fixes: 73e20b761acf ("net: vrf: Add support for PREROUTING rules on vrf device")
+Reported-by: D'Souza, Nelson <ndsouza@ciena.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/bridge/br_netfilter_hooks.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 5151b3ebf068..d0672c400c2f 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1455,6 +1455,9 @@ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
- 		    (ut[i].family != prev_family))
- 			return -EINVAL;
- 
-+		if (ut[i].mode >= XFRM_MODE_MAX)
-+			return -EINVAL;
-+
- 		prev_family = ut[i].family;
- 
- 		switch (ut[i].family) {
+diff --git a/net/bridge/br_netfilter_hooks.c b/net/bridge/br_netfilter_hooks.c
+index 9b16eaf33819..58240cc185e7 100644
+--- a/net/bridge/br_netfilter_hooks.c
++++ b/net/bridge/br_netfilter_hooks.c
+@@ -834,7 +834,8 @@ static unsigned int ip_sabotage_in(void *priv,
+ 				   struct sk_buff *skb,
+ 				   const struct nf_hook_state *state)
+ {
+-	if (skb->nf_bridge && !skb->nf_bridge->in_prerouting) {
++	if (skb->nf_bridge && !skb->nf_bridge->in_prerouting &&
++	    !netif_is_l3_master(skb->dev)) {
+ 		state->okfn(state->net, state->sk, skb);
+ 		return NF_STOLEN;
+ 	}
 -- 
 2.17.1
 
