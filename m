@@ -2,92 +2,99 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6D0C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB9CC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:40:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1570320869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:37:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PQIEfptf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1570320869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1EBBD20869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:40:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EBBD20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbeJPQ0g (ORCPT
+        id S1727303AbeJPQaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 12:26:36 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:44792 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727263AbeJPQ0g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 12:26:36 -0400
-Received: by mail-qk1-f194.google.com with SMTP id y8-v6so13569311qka.11
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 01:37:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ubyjo42R+HubJmEREUzTpsPrkU4zre0fUGpTagWB4sw=;
-        b=PQIEfptf8M46zzD1bks1h1Pae9z2YUj3wesKEzX92MvbHjVJLAzBgRfC6/UF3RjE6Y
-         PnL68nd47I5xNrAAYdhbaCqIojkfzZ6u6J4QOypxKegVzZXqAI3T8XnBIut3DZ+goXuk
-         aARPKOpESn2XkGDjEBqttp+74wGRm/5WJ8DM0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ubyjo42R+HubJmEREUzTpsPrkU4zre0fUGpTagWB4sw=;
-        b=fgtVjYj9FzRYqJMGHLN5eITXWVvFuJjzxwbLMMVXR3bSXXGN4c7KmP+pha/Bx56Qh1
-         bncOPjU5w5KmuB5rJLzmFOc0CQdvTs8dQSLRfpmBeX1Y2C824+nMBq3pn5XlcXH7298K
-         Au+t96/l4/BBgzuhGo8vVXGrit2EJyCrYZ9HFi0Gt1jIwkRJc/EPwxOt5GEsSM2ov0xo
-         7+ncS+vuu0Ay54VXC7kPbLCdC1CKdYBMK25gOW6EcQ6nqJ2b1JmGkgkucmvrlotQvLWd
-         JkAUezdgpIN9GLkPqghBU/6Yfe61dG731RDSzkxJ30nSkRpl+bpmOM3NLH9zofgtHlyG
-         HuNA==
-X-Gm-Message-State: ABuFfoiDTAk6umNKeHphVHkafy4ckZA9mTq7kyuWpOf1qA/qlUjHaWtM
-        31cxOeCqMRGdALf1Hm9iQLuLtD/XMKHUEzXu8M4kaA==
-X-Google-Smtp-Source: ACcGV60PoKpJDS0snC52a5O60Ho2xfTletRBeD16hhV4IxNT6VGudEmxVJ9J6PgPstugAJd7pLQnl3xpoo3/kxp5O/o=
-X-Received: by 2002:a37:7282:: with SMTP id n124-v6mr20009923qkc.78.1539679028406;
- Tue, 16 Oct 2018 01:37:08 -0700 (PDT)
+        Tue, 16 Oct 2018 12:30:15 -0400
+Received: from mga11.intel.com ([192.55.52.93]:5298 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727053AbeJPQaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 12:30:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 01:40:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,387,1534834800"; 
+   d="scan'208";a="99587410"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 16 Oct 2018 01:40:51 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 16 Oct 2018 11:40:50 +0300
+Date:   Tue, 16 Oct 2018 11:40:50 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/5] device property: Introducing software nodes
+Message-ID: <20181016084050.GF24771@kuha.fi.intel.com>
+References: <20181012113934.29942-1-heikki.krogerus@linux.intel.com>
+ <CACRpkdZddvkgL1qwO=35y_Jps0+=QD3nPKQwgMEH+zcCH2NPdg@mail.gmail.com>
+ <CAJZ5v0h3uENUqbcb=0HH1wT_0MYQzcHct2d19tiarvXEdRay+Q@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 16 Oct 2018 10:36:56 +0200
-Message-ID: <CACRpkdbOpfDMGhUFAwXUX=-fhGNfhvQq6NgtFtAoTsu8Vo+BQg@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Add initial pinctrl support for MT6797 SoC
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0h3uENUqbcb=0HH1wT_0MYQzcHct2d19tiarvXEdRay+Q@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 9:14 PM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+On Tue, Oct 16, 2018 at 09:36:33AM +0200, Rafael J. Wysocki wrote:
+> On Tue, Oct 16, 2018 at 9:35 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> >
+> > On Fri, Oct 12, 2018 at 1:39 PM Heikki Krogerus
+> > <heikki.krogerus@linux.intel.com> wrote:
+> >
+> > > To continue the discussion started by Dmitry [1], this is my proposal
+> > > that I mentioned in my last mail. In short, the idea is that instead
+> > > of trying to extend the support for the currently used struct
+> > > property_set, I'm proposing that we introduce a completely new,
+> > > independent type of fwnode, and replace the struct property_set with
+> > > it. I'm calling the type "software node" here.
+> >
+> > I'm a big fan of this approach.
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > for all patches.
+> >
+> > I don't know who can finally review and merge this though,
+> > I guess Rafael?
+> 
+> Yes, that would be me. :-)
+> 
+> I no one speaks up against them, I'll pick them up.
 
-> This patchset adds initial pinctrl support for Mediatek MT6797 SoC.
-> The pinctrl driver is based on the vendor binding as like MT6765 and
-> implements only GPIO and pinmux functionalities.
->
-> The devicetree binding doc is not added because it does not exist for
-> MT6765 and I'm not sure about the structure of it.
->
-> This patchset has been tested on 96Boards MediatekX20 development board.
+Let me send a final version of these.
 
-I'd be delighted to merge the pin control bindings and driver
-as soon as I have an OK from Sean Wang.
+I need to add one more patch to the series where I remove an extra
+device_remove_properties() call from platform_device_del().
 
-Yours,
-Linus Walleij
+It's unnecessary in any case as device_del() calls
+device_remove_properties() for every device, but as the properties are
+removed there before the device is removed, we're unable to deduct
+the final ref count in the "remove" platform notification since our
+node is no longer bind to the device.
+
+
+Thanks,
+
+-- 
+heikki
