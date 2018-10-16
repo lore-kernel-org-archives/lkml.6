@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C8BC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC12CC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D7F21477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C5612147E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YwRMApR4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D7F21477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ho2458pT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C5612147E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbeJPMFT (ORCPT
+        id S1730392AbeJPMFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:05:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54372 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:05:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730359AbeJPMFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:05:18 -0400
+        id S1730365AbeJPMFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:05:19 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B87BF2148D;
-        Tue, 16 Oct 2018 04:16:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A387221470;
+        Tue, 16 Oct 2018 04:16:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663415;
-        bh=RDmrAKSiZD60WwkMQCUOuPJy/h0WkbFLmpXB91zEWWU=;
+        s=default; t=1539663416;
+        bh=YoDfEW00ZeF9ONIE3fzwcFKCM3G8vpAiCPD1pcW/5tU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YwRMApR4vRkYBv+MszLuGsc5lU1oeCo69lFBMyP5p0CcZENGmW6526Nd1f9bGE7u8
-         Reb+bd/WIDJAkgD7GxX0mldel9wqcojHWxGbWreumiLGW82RydBEOctIr+qxycmkvS
-         bYhYEyJVfFo6KoEOS8i15wyNrFb8iCCsEHyFBE7M=
+        b=Ho2458pTEo8XvY33PC7y46DFhZp+LAK1wxvdITymXfbsKAv8kdsnNyBNZXd5DtmBt
+         M53pfjFIDnPulfzDSkoQU7LtnR6E+9YwykfCzvhXrfPipkwK3xIv48ux0OMsHp+Al4
+         HMLSDpXU2lPugTzklv8R13nfZit/eBuuG2t8GQK0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+Cc:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 03/15] cfg80211: reg: Init wiphy_idx in regulatory_hint_core()
-Date:   Tue, 16 Oct 2018 00:16:38 -0400
-Message-Id: <20181016041650.135958-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 04/15] ARM: 8799/1: mm: fix pci_ioremap_io() offset check
+Date:   Tue, 16 Oct 2018 00:16:39 -0400
+Message-Id: <20181016041650.135958-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041650.135958-1-sashal@kernel.org>
 References: <20181016041650.135958-1-sashal@kernel.org>
@@ -54,37 +54,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-[ Upstream commit 24f33e64fcd0d50a4b1a8e5b41bd0257aa66b0e8 ]
+[ Upstream commit 3a58ac65e2d7969bcdf1b6acb70fa4d12a88e53e ]
 
-Core regulatory hints didn't set wiphy_idx to WIPHY_IDX_INVALID. Since
-the regulatory request is zeroed, wiphy_idx was always implicitly set to
-0. This resulted in updating only phy #0.
-Fix that.
+IO_SPACE_LIMIT is the ending address of the PCI IO space, i.e
+something like 0xfffff (and not 0x100000).
 
-Fixes: 806a9e39670b ("cfg80211: make regulatory_request use wiphy_idx instead of wiphy")
-Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-[add fixes tag]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Therefore, when offset = 0xf0000 is passed as argument, this function
+fails even though the offset + SZ_64K fits below the
+IO_SPACE_LIMIT. This makes the last chunk of 64 KB of the I/O space
+not usable as it cannot be mapped.
+
+This patch fixes that by substracing 1 to offset + SZ_64K, so that we
+compare the addrss of the last byte of the I/O space against
+IO_SPACE_LIMIT instead of the address of the first byte of what is
+after the I/O space.
+
+Fixes: c2794437091a4 ("ARM: Add fixed PCI i/o mapping")
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Acked-by: Nicolas Pitre <nico@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/reg.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mm/ioremap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 6fd53ea30193..306464b3acdb 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -2033,6 +2033,7 @@ static int regulatory_hint_core(const char *alpha2)
- 	request->alpha2[0] = alpha2[0];
- 	request->alpha2[1] = alpha2[1];
- 	request->initiator = NL80211_REGDOM_SET_BY_CORE;
-+	request->wiphy_idx = WIPHY_IDX_INVALID;
+diff --git a/arch/arm/mm/ioremap.c b/arch/arm/mm/ioremap.c
+index d1e5ad7ab3bc..1500d3befe02 100644
+--- a/arch/arm/mm/ioremap.c
++++ b/arch/arm/mm/ioremap.c
+@@ -447,7 +447,7 @@ void pci_ioremap_set_mem_type(int mem_type)
  
- 	queue_regulatory_request(request);
+ int pci_ioremap_io(unsigned int offset, phys_addr_t phys_addr)
+ {
+-	BUG_ON(offset + SZ_64K > IO_SPACE_LIMIT);
++	BUG_ON(offset + SZ_64K - 1 > IO_SPACE_LIMIT);
  
+ 	return ioremap_page_range(PCI_IO_VIRT_BASE + offset,
+ 				  PCI_IO_VIRT_BASE + offset + SZ_64K,
 -- 
 2.17.1
 
