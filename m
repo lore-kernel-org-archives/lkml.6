@@ -2,31 +2,31 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 102B4C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AADC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D61BD2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:02:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D61BD2089E
+	by mail.kernel.org (Postfix) with ESMTP id 8CED32089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:02:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CED32089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeJPKuP (ORCPT
+        id S1727308AbeJPKuS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 06:50:15 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:56166 "EHLO
+        Tue, 16 Oct 2018 06:50:18 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:33653 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726994AbeJPKuP (ORCPT
+        by vger.kernel.org with ESMTP id S1727241AbeJPKuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 06:50:15 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07438961|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e04486;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.D2f5XYD_1539658914;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D2f5XYD_1539658914)
-          by smtp.aliyun-inc.com(10.147.41.231);
-          Tue, 16 Oct 2018 11:01:55 +0800
+        Tue, 16 Oct 2018 06:50:16 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437211|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03298;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.D2f6fKi_1539658893;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D2f6fKi_1539658893)
+          by smtp.aliyun-inc.com(10.147.41.187);
+          Tue, 16 Oct 2018 11:01:35 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     akpm@linux-foundation.org, arnd@arndb.de,
         daniel.lezcano@linaro.org, davem@davemloft.net,
@@ -36,9 +36,9 @@ To:     akpm@linux-foundation.org, arnd@arndb.de,
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         devicetree@vger.kernel.org, robh+dt@kernel.org,
         c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V9 10/21] csky: IRQ handling
-Date:   Tue, 16 Oct 2018 10:58:29 +0800
-Message-Id: <131eaaee23e5f55cdce90b76b2a64f67cdf0c685.1539655732.git.ren_guo@c-sky.com>
+Subject: [PATCH V9 09/21] csky: VDSO and rt_sigreturn
+Date:   Tue, 16 Oct 2018 10:58:28 +0800
+Message-Id: <cdb473fa2fc1dd5752a989a03b1b9fb2016cb1a2.1539655732.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1539655731.git.ren_guo@c-sky.com>
 References: <cover.1539655731.git.ren_guo@c-sky.com>
@@ -49,104 +49,183 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds IRQ handling files.
+This patch adds files related to VDSO and our VDSO only support
+rt_sigreturn.
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
 ---
-Changelog:
- - Use CONFIG_GENERIC_IRQ_MULTI_HANDLER
----
----
- arch/csky/include/asm/irqflags.h | 49 ++++++++++++++++++++++++++++++++++++++++
- arch/csky/kernel/irq.c           | 22 ++++++++++++++++++
- 2 files changed, 71 insertions(+)
- create mode 100644 arch/csky/include/asm/irqflags.h
- create mode 100644 arch/csky/kernel/irq.c
+ arch/csky/abiv1/inc/abi/vdso.h | 17 +++++++++
+ arch/csky/abiv2/inc/abi/vdso.h | 23 +++++++++++
+ arch/csky/include/asm/vdso.h   | 12 ++++++
+ arch/csky/kernel/vdso.c        | 86 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 138 insertions(+)
+ create mode 100644 arch/csky/abiv1/inc/abi/vdso.h
+ create mode 100644 arch/csky/abiv2/inc/abi/vdso.h
+ create mode 100644 arch/csky/include/asm/vdso.h
+ create mode 100644 arch/csky/kernel/vdso.c
 
-diff --git a/arch/csky/include/asm/irqflags.h b/arch/csky/include/asm/irqflags.h
+diff --git a/arch/csky/abiv1/inc/abi/vdso.h b/arch/csky/abiv1/inc/abi/vdso.h
 new file mode 100644
-index 0000000..9e3a569
+index 0000000..14352f5
 --- /dev/null
-+++ b/arch/csky/include/asm/irqflags.h
-@@ -0,0 +1,49 @@
++++ b/arch/csky/abiv1/inc/abi/vdso.h
+@@ -0,0 +1,17 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +
-+#ifndef __ASM_CSKY_IRQFLAGS_H
-+#define __ASM_CSKY_IRQFLAGS_H
-+#include <abi/reg_ops.h>
++#include <linux/uaccess.h>
 +
-+static inline unsigned long arch_local_irq_save(void)
++static inline int setup_vdso_page(unsigned short *ptr)
 +{
-+	unsigned long flags;
++	int err = 0;
 +
-+	flags = mfcr("psr");
-+	asm volatile("psrclr ie\n":::"memory");
-+	return flags;
++	/* movi r1, 127 */
++	err |= __put_user(0x67f1, ptr + 0);
++	/* addi r1, (139 - 127) */
++	err |= __put_user(0x20b1, ptr + 1);
++	/* trap 0 */
++	err |= __put_user(0x0008, ptr + 2);
++
++	return err;
 +}
-+#define arch_local_irq_save arch_local_irq_save
-+
-+static inline void arch_local_irq_enable(void)
-+{
-+	asm volatile("psrset ee, ie\n":::"memory");
-+}
-+#define arch_local_irq_enable arch_local_irq_enable
-+
-+static inline void arch_local_irq_disable(void)
-+{
-+	asm volatile("psrclr ie\n":::"memory");
-+}
-+#define arch_local_irq_disable arch_local_irq_disable
-+
-+static inline unsigned long arch_local_save_flags(void)
-+{
-+	return mfcr("psr");
-+}
-+#define arch_local_save_flags arch_local_save_flags
-+
-+static inline void arch_local_irq_restore(unsigned long flags)
-+{
-+	mtcr("psr", flags);
-+}
-+#define arch_local_irq_restore arch_local_irq_restore
-+
-+static inline int arch_irqs_disabled_flags(unsigned long flags)
-+{
-+	return !(flags & (1<<6));
-+}
-+#define arch_irqs_disabled_flags arch_irqs_disabled_flags
-+
-+#include <asm-generic/irqflags.h>
-+
-+#endif /* __ASM_CSKY_IRQFLAGS_H */
-diff --git a/arch/csky/kernel/irq.c b/arch/csky/kernel/irq.c
+diff --git a/arch/csky/abiv2/inc/abi/vdso.h b/arch/csky/abiv2/inc/abi/vdso.h
 new file mode 100644
-index 0000000..03a1930
+index 0000000..b60d4a0
 --- /dev/null
-+++ b/arch/csky/kernel/irq.c
-@@ -0,0 +1,22 @@
++++ b/arch/csky/abiv2/inc/abi/vdso.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ABI_CSKY_VDSO_H
++#define __ABI_CSKY_VDSO_H
++
++#include <linux/uaccess.h>
++
++static inline int setup_vdso_page(unsigned short *ptr)
++{
++	int err = 0;
++
++	/* movi r7, 173 */
++	err |= __put_user(0xea07, ptr);
++	err |= __put_user(0x008b,      ptr+1);
++
++	/* trap 0 */
++	err |= __put_user(0xc000,   ptr+2);
++	err |= __put_user(0x2020,   ptr+3);
++
++	return err;
++}
++
++#endif /* __ABI_CSKY_STRING_H */
+diff --git a/arch/csky/include/asm/vdso.h b/arch/csky/include/asm/vdso.h
+new file mode 100644
+index 0000000..d963d69
+--- /dev/null
++++ b/arch/csky/include/asm/vdso.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ASM_CSKY_VDSO_H
++#define __ASM_CSKY_VDSO_H
++
++#include <abi/vdso.h>
++
++struct csky_vdso {
++	unsigned short rt_signal_retcode[4];
++};
++
++#endif /* __ASM_CSKY_VDSO_H */
+diff --git a/arch/csky/kernel/vdso.c b/arch/csky/kernel/vdso.c
+new file mode 100644
+index 0000000..60ff7ad
+--- /dev/null
++++ b/arch/csky/kernel/vdso.c
+@@ -0,0 +1,86 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
 +
++#include <linux/kernel.h>
++#include <linux/err.h>
++#include <linux/sched.h>
++#include <linux/mm.h>
 +#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/irqchip.h>
-+#include <asm/traps.h>
-+#include <asm/smp.h>
++#include <linux/binfmts.h>
++#include <linux/elf.h>
++#include <linux/vmalloc.h>
++#include <linux/unistd.h>
++#include <linux/uaccess.h>
 +
-+void __init init_IRQ(void)
++#include <asm/vdso.h>
++#include <asm/cacheflush.h>
++
++static struct page *vdso_page;
++
++static int __init init_vdso(void)
 +{
-+	irqchip_init();
-+#ifdef CONFIG_SMP
-+	setup_smp_ipi();
-+#endif
++	struct csky_vdso *vdso;
++	int err = 0;
++
++	vdso_page = alloc_page(GFP_KERNEL);
++	if (!vdso_page)
++		panic("Cannot allocate vdso");
++
++	vdso = vmap(&vdso_page, 1, 0, PAGE_KERNEL);
++	if (!vdso)
++		panic("Cannot map vdso");
++
++	clear_page(vdso);
++
++	err = setup_vdso_page(vdso->rt_signal_retcode);
++	if (err)
++		panic("Cannot set signal return code, err: %x.", err);
++
++	dcache_wb_range((unsigned long)vdso, (unsigned long)vdso + 16);
++
++	vunmap(vdso);
++
++	return 0;
++}
++subsys_initcall(init_vdso);
++
++int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++{
++	int ret;
++	unsigned long addr;
++	struct mm_struct *mm = current->mm;
++
++	down_write(&mm->mmap_sem);
++
++	addr = get_unmapped_area(NULL, STACK_TOP, PAGE_SIZE, 0, 0);
++	if (IS_ERR_VALUE(addr)) {
++		ret = addr;
++		goto up_fail;
++	}
++
++	ret = install_special_mapping(
++			mm,
++			addr,
++			PAGE_SIZE,
++			VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
++			&vdso_page);
++	if (ret)
++		goto up_fail;
++
++	mm->context.vdso = (void *)addr;
++
++up_fail:
++	up_write(&mm->mmap_sem);
++	return ret;
 +}
 +
-+asmlinkage void __irq_entry csky_do_IRQ(struct pt_regs *regs)
++const char *arch_vma_name(struct vm_area_struct *vma)
 +{
-+	handle_arch_irq(regs);
++	if (vma->vm_mm == NULL)
++		return NULL;
++
++	if (vma->vm_start == (long)vma->vm_mm->context.vdso)
++		return "[vdso]";
++	else
++		return NULL;
 +}
 -- 
 2.7.4
