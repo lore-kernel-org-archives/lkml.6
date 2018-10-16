@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4AFC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413B4C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C956920869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:33:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC2C920866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:34:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+hWncMV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C956920869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9gJdpNP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC2C920866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbeJPMWW (ORCPT
+        id S1728032AbeJPMBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:22:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48246 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:01:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728001AbeJPMBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:18 -0400
+        id S1727968AbeJPMBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:15 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BFB521471;
-        Tue, 16 Oct 2018 04:12:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C99BA208E4;
+        Tue, 16 Oct 2018 04:12:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663176;
-        bh=znFxxPAPWnj0xhgY05NVA/pLNqsRBifjZAOER+Xr1C0=;
+        s=default; t=1539663173;
+        bh=HzfsSbl/eWF5biI34SWNvkpbkW6b1CiAyyWMW2CyxEQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h+hWncMVqXd4cn1cGCJ0dL0+yMIy0Nw+9sQ7n+8Oezug9WX/tzashGIiJWlFlX0xO
-         cgYpaRmeGNgXGzTOFGY3uFpj4WaGfh1cpgGdxyfk/UNxy1YI0FrhO8jvMLCQ60d63U
-         JMvq8bvQOUZF7tSWFPIczgaiZfmaAbdDllsOrOfE=
+        b=s9gJdpNPDN/h87v1Cwv5SuM+H2jNALL9ACEXZnuOk9mhRw7Q1fnaenbCBHKcnCE2Y
+         CkTlsAlFHc7rz9CqtvgpLqTGFpmQ7TUY5hAr8eMJOHdJWcs3TZIf/968ssYQBm0WPh
+         urqDTSEj5vi7XyOokllPj7z7RS3CsvloEaluOtoI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Nathan Chancellor <natechancellor@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 036/100] qed: Avoid implicit enum conversion in qed_iwarp_parse_rx_pkt
-Date:   Tue, 16 Oct 2018 00:11:17 -0400
-Message-Id: <20181016041221.135528-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 032/100] qed: Avoid implicit enum conversion in qed_roce_mode_to_flavor
+Date:   Tue, 16 Oct 2018 00:11:13 -0400
+Message-Id: <20181016041221.135528-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -55,57 +55,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 77f2d753819b7d50c16abfb778caf1fe075faed0 ]
+[ Upstream commit d3a315795b4ce8b105a64a90699103121bde04a8 ]
 
 Clang warns when one enumerated type is implicitly converted to another.
 
-drivers/net/ethernet/qlogic/qed/qed_iwarp.c:1713:25: warning: implicit
-conversion from enumeration type 'enum tcp_ip_version' to different
-enumeration type 'enum qed_tcp_ip_version' [-Wenum-conversion]
-                cm_info->ip_version = TCP_IPV4;
-                                    ~ ^~~~~~~~
-drivers/net/ethernet/qlogic/qed/qed_iwarp.c:1733:25: warning: implicit
-conversion from enumeration type 'enum tcp_ip_version' to different
-enumeration type 'enum qed_tcp_ip_version' [-Wenum-conversion]
-                cm_info->ip_version = TCP_IPV6;
-                                    ~ ^~~~~~~~
+drivers/net/ethernet/qlogic/qed/qed_roce.c:153:12: warning: implicit
+conversion from enumeration type 'enum roce_mode' to different
+enumeration type 'enum roce_flavor' [-Wenum-conversion]
+                flavor = ROCE_V2_IPV6;
+                       ~ ^~~~~~~~~~~~
+drivers/net/ethernet/qlogic/qed/qed_roce.c:156:12: warning: implicit
+conversion from enumeration type 'enum roce_mode' to different
+enumeration type 'enum roce_flavor' [-Wenum-conversion]
+                flavor = MAX_ROCE_MODE;
+                       ~ ^~~~~~~~~~~~~
 2 warnings generated.
 
-Use the appropriate values from the expected type, qed_tcp_ip_version:
+Use the appropriate values from the expected type, roce_flavor:
 
-TCP_IPV4 = QED_TCP_IPV4 = 0
-TCP_IPV6 = QED_TCP_IPV6 = 1
+ROCE_V2_IPV6 = RROCE_IPV6 = 2
+MAX_ROCE_MODE = MAX_ROCE_FLAVOR = 3
+
+While we're add it, ditch the local variable flavor, we can just return
+the value directly from the switch statement.
 
 Link: https://github.com/ClangBuiltLinux/linux/issues/125
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_iwarp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_roce.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-index 90a2b53096e2..51bbb0e5b514 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-@@ -1710,7 +1710,7 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *p_hwfn,
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_roce.c b/drivers/net/ethernet/qlogic/qed/qed_roce.c
+index b5ce1581645f..79424e6f0976 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_roce.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_roce.c
+@@ -138,23 +138,16 @@ static void qed_rdma_copy_gids(struct qed_rdma_qp *qp, __le32 *src_gid,
  
- 		cm_info->local_ip[0] = ntohl(iph->daddr);
- 		cm_info->remote_ip[0] = ntohl(iph->saddr);
--		cm_info->ip_version = TCP_IPV4;
-+		cm_info->ip_version = QED_TCP_IPV4;
+ static enum roce_flavor qed_roce_mode_to_flavor(enum roce_mode roce_mode)
+ {
+-	enum roce_flavor flavor;
+-
+ 	switch (roce_mode) {
+ 	case ROCE_V1:
+-		flavor = PLAIN_ROCE;
+-		break;
++		return PLAIN_ROCE;
+ 	case ROCE_V2_IPV4:
+-		flavor = RROCE_IPV4;
+-		break;
++		return RROCE_IPV4;
+ 	case ROCE_V2_IPV6:
+-		flavor = ROCE_V2_IPV6;
+-		break;
++		return RROCE_IPV6;
+ 	default:
+-		flavor = MAX_ROCE_MODE;
+-		break;
++		return MAX_ROCE_FLAVOR;
+ 	}
+-	return flavor;
+ }
  
- 		ip_hlen = (iph->ihl) * sizeof(u32);
- 		*payload_len = ntohs(iph->tot_len) - ip_hlen;
-@@ -1730,7 +1730,7 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *p_hwfn,
- 			cm_info->remote_ip[i] =
- 			    ntohl(ip6h->saddr.in6_u.u6_addr32[i]);
- 		}
--		cm_info->ip_version = TCP_IPV6;
-+		cm_info->ip_version = QED_TCP_IPV6;
- 
- 		ip_hlen = sizeof(*ip6h);
- 		*payload_len = ntohs(ip6h->payload_len);
+ void qed_roce_free_cid_pair(struct qed_hwfn *p_hwfn, u16 cid)
 -- 
 2.17.1
 
