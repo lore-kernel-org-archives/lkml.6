@@ -2,34 +2,34 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=FUZZY_XPILL,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 941AEC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E543AC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5129121470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5129121470
+	by mail.kernel.org (Postfix) with ESMTP id B3DC321470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3DC321470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbeJQAmD (ORCPT
+        id S1727797AbeJQAmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:42:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42082 "EHLO mx1.redhat.com"
+        Tue, 16 Oct 2018 20:42:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49316 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727757AbeJQAmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:42:02 -0400
+        id S1727757AbeJQAmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 20:42:04 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2F43E3082144;
-        Tue, 16 Oct 2018 16:50:46 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id BCDDF7F08A;
+        Tue, 16 Oct 2018 16:50:48 +0000 (UTC)
 Received: from vitty.brq.redhat.com (unknown [10.43.2.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AF4792CFD2;
-        Tue, 16 Oct 2018 16:50:42 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6FE1D6BF7B;
+        Tue, 16 Oct 2018 16:50:46 +0000 (UTC)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -41,150 +41,229 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
         Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH v6 10/13] KVM: selftests: state_test: test bare VMXON migration
-Date:   Tue, 16 Oct 2018 18:50:08 +0200
-Message-Id: <20181016165011.6607-11-vkuznets@redhat.com>
+Subject: [PATCH v6 11/13] x86/kvm/nVMX: nested state migration for Enlightened VMCS
+Date:   Tue, 16 Oct 2018 18:50:09 +0200
+Message-Id: <20181016165011.6607-12-vkuznets@redhat.com>
 In-Reply-To: <20181016165011.6607-1-vkuznets@redhat.com>
 References: <20181016165011.6607-1-vkuznets@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 16 Oct 2018 16:50:46 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 16 Oct 2018 16:50:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split prepare_for_vmx_operation() into prepare_for_vmx_operation() and
-load_vmcs() so we can inject GUEST_SYNC() in between.
+Add support for get/set of nested state when Enlightened VMCS is in use.
+A new KVM_STATE_NESTED_EVMCS flag to indicate eVMCS on the vCPU was enabled
+is added.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- .../selftests/kvm/include/x86_64/vmx.h        |  1 +
- tools/testing/selftests/kvm/lib/x86_64/vmx.c  |  5 +++++
- .../testing/selftests/kvm/x86_64/state_test.c | 22 ++++++++++---------
- .../kvm/x86_64/vmx_tsc_adjust_test.c          |  1 +
- 4 files changed, 19 insertions(+), 10 deletions(-)
+ arch/x86/include/uapi/asm/kvm.h |  1 +
+ arch/x86/kvm/vmx.c              | 78 +++++++++++++++++++++++++--------
+ arch/x86/kvm/x86.c              |  6 ++-
+ 3 files changed, 65 insertions(+), 20 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/include/x86_64/vmx.h b/tools/testing/selftests/kvm/include/x86_64/vmx.h
-index 12ebd836f7ef..4bbee8560292 100644
---- a/tools/testing/selftests/kvm/include/x86_64/vmx.h
-+++ b/tools/testing/selftests/kvm/include/x86_64/vmx.h
-@@ -548,5 +548,6 @@ struct vmx_pages {
- struct vmx_pages *vcpu_alloc_vmx(struct kvm_vm *vm, vm_vaddr_t *p_vmx_gva);
- bool prepare_for_vmx_operation(struct vmx_pages *vmx);
- void prepare_vmcs(struct vmx_pages *vmx, void *guest_rip, void *guest_rsp);
-+bool load_vmcs(struct vmx_pages *vmx);
+diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+index fd23d5778ea1..ab76aa1d3a4d 100644
+--- a/arch/x86/include/uapi/asm/kvm.h
++++ b/arch/x86/include/uapi/asm/kvm.h
+@@ -381,6 +381,7 @@ struct kvm_sync_regs {
  
- #endif /* SELFTEST_KVM_VMX_H */
-diff --git a/tools/testing/selftests/kvm/lib/x86_64/vmx.c b/tools/testing/selftests/kvm/lib/x86_64/vmx.c
-index d7c401472247..cc356da9b3d8 100644
---- a/tools/testing/selftests/kvm/lib/x86_64/vmx.c
-+++ b/tools/testing/selftests/kvm/lib/x86_64/vmx.c
-@@ -107,6 +107,11 @@ bool prepare_for_vmx_operation(struct vmx_pages *vmx)
- 	if (vmxon(vmx->vmxon_gpa))
- 		return false;
+ #define KVM_STATE_NESTED_GUEST_MODE	0x00000001
+ #define KVM_STATE_NESTED_RUN_PENDING	0x00000002
++#define KVM_STATE_NESTED_EVMCS		0x00000004
  
-+	return true;
+ #define KVM_STATE_NESTED_SMM_GUEST_MODE	0x00000001
+ #define KVM_STATE_NESTED_SMM_VMXON	0x00000002
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 5df47291ad4d..8d7c60faaacd 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1618,7 +1618,8 @@ static int nested_enable_evmcs(struct kvm_vcpu *vcpu,
+ 	 * maximum supported version. KVM supports versions from 1 to
+ 	 * KVM_EVMCS_VERSION.
+ 	 */
+-	*vmcs_version = (KVM_EVMCS_VERSION << 8) | 1;
++	if (vmcs_version)
++		*vmcs_version = (KVM_EVMCS_VERSION << 8) | 1;
+ 
+ 	vmx->nested.msrs.pinbased_ctls_high &= ~EVMCS1_UNSUPPORTED_PINCTRL;
+ 	vmx->nested.msrs.entry_ctls_high &= ~EVMCS1_UNSUPPORTED_VMENTRY_CTRL;
+@@ -9338,7 +9339,8 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+  * This is an equivalent of the nested hypervisor executing the vmptrld
+  * instruction.
+  */
+-static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu)
++static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu,
++						 bool from_launch)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	struct hv_vp_assist_page assist_page;
+@@ -9389,8 +9391,9 @@ static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu)
+ 		 * present in struct hv_enlightened_vmcs, ...). Make sure there
+ 		 * are no leftovers.
+ 		 */
+-		memset(vmx->nested.cached_vmcs12, 0,
+-		       sizeof(*vmx->nested.cached_vmcs12));
++		if (from_launch)
++			memset(vmx->nested.cached_vmcs12, 0,
++			       sizeof(*vmx->nested.cached_vmcs12));
+ 
+ 	}
+ 	return 1;
+@@ -11147,6 +11150,15 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	}
+ 
+ 	if (vmx->nested.need_vmcs12_sync) {
++		/*
++		 * hv_evmcs may end up being not mapped after migration (when
++		 * L2 was running), map it here to make sure vmcs12 changes are
++		 * properly reflected.
++		 */
++		if (vmx->nested.enlightened_vmcs_enabled &&
++		    !vmx->nested.hv_evmcs)
++			nested_vmx_handle_enlightened_vmptrld(vcpu, false);
++
+ 		if (vmx->nested.hv_evmcs) {
+ 			copy_vmcs12_to_enlightened(vmx);
+ 			/* All fields are clean */
+@@ -13424,7 +13436,7 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+ 	if (!nested_vmx_check_permission(vcpu))
+ 		return 1;
+ 
+-	if (!nested_vmx_handle_enlightened_vmptrld(vcpu))
++	if (!nested_vmx_handle_enlightened_vmptrld(vcpu, true))
+ 		return 1;
+ 
+ 	if (!vmx->nested.hv_evmcs && vmx->nested.current_vmptr == -1ull)
+@@ -14711,6 +14723,20 @@ static int enable_smi_window(struct kvm_vcpu *vcpu)
+ 	return 0;
+ }
+ 
++static inline int vmx_has_valid_vmcs12(struct kvm_vcpu *vcpu)
++{
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++
++	/*
++	 * In case we do two consecutive get/set_nested_state()s while L2 was
++	 * running hv_evmcs may end up not being mapped (we map it from
++	 * nested_vmx_run()/vmx_vcpu_run()). Check is_guest_mode() as we always
++	 * have vmcs12 if it is true.
++	 */
++	return is_guest_mode(vcpu) || vmx->nested.current_vmptr != -1ull ||
++		vmx->nested.hv_evmcs;
 +}
 +
-+bool load_vmcs(struct vmx_pages *vmx)
-+{
- 	/* Load a VMCS. */
- 	*(uint32_t *)(vmx->vmcs) = vmcs_revision();
- 	if (vmclear(vmx->vmcs_gpa))
-diff --git a/tools/testing/selftests/kvm/x86_64/state_test.c b/tools/testing/selftests/kvm/x86_64/state_test.c
-index 43df194a7c1e..03da41f0f736 100644
---- a/tools/testing/selftests/kvm/x86_64/state_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/state_test.c
-@@ -26,20 +26,20 @@ static bool have_nested_state;
+ static int vmx_get_nested_state(struct kvm_vcpu *vcpu,
+ 				struct kvm_nested_state __user *user_kvm_nested_state,
+ 				u32 user_data_size)
+@@ -14731,16 +14757,15 @@ static int vmx_get_nested_state(struct kvm_vcpu *vcpu,
+ 	vmx = to_vmx(vcpu);
+ 	vmcs12 = get_vmcs12(vcpu);
  
- void l2_guest_code(void)
- {
--	GUEST_SYNC(5);
-+	GUEST_SYNC(6);
+-	/* FIXME: Enlightened VMCS is currently unsupported */
+-	if (vmx->nested.hv_evmcs)
+-		return -ENOTSUPP;
++	if (nested_vmx_allowed(vcpu) && vmx->nested.enlightened_vmcs_enabled)
++		kvm_state.flags |= KVM_STATE_NESTED_EVMCS;
  
-         /* Exit to L1 */
- 	vmcall();
+ 	if (nested_vmx_allowed(vcpu) &&
+ 	    (vmx->nested.vmxon || vmx->nested.smm.vmxon)) {
+ 		kvm_state.vmx.vmxon_pa = vmx->nested.vmxon_ptr;
+ 		kvm_state.vmx.vmcs_pa = vmx->nested.current_vmptr;
  
- 	/* L1 has now set up a shadow VMCS for us.  */
- 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0ffee);
--	GUEST_SYNC(9);
-+	GUEST_SYNC(10);
- 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0ffee);
- 	GUEST_ASSERT(!vmwrite(GUEST_RIP, 0xc0fffee));
--	GUEST_SYNC(10);
-+	GUEST_SYNC(11);
- 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0fffee);
- 	GUEST_ASSERT(!vmwrite(GUEST_RIP, 0xc0ffffee));
--	GUEST_SYNC(11);
-+	GUEST_SYNC(12);
+-		if (vmx->nested.current_vmptr != -1ull) {
++		if (vmx_has_valid_vmcs12(vcpu)) {
+ 			kvm_state.size += VMCS12_SIZE;
  
- 	/* Done, exit to L1 and never come back.  */
- 	vmcall();
-@@ -52,15 +52,17 @@ void l1_guest_code(struct vmx_pages *vmx_pages)
+ 			if (is_guest_mode(vcpu) &&
+@@ -14769,20 +14794,24 @@ static int vmx_get_nested_state(struct kvm_vcpu *vcpu,
+ 	if (copy_to_user(user_kvm_nested_state, &kvm_state, sizeof(kvm_state)))
+ 		return -EFAULT;
  
- 	GUEST_ASSERT(vmx_pages->vmcs_gpa);
- 	GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
-+	GUEST_SYNC(3);
-+	GUEST_ASSERT(load_vmcs(vmx_pages));
- 	GUEST_ASSERT(vmptrstz() == vmx_pages->vmcs_gpa);
+-	if (vmx->nested.current_vmptr == -1ull)
++	if (!vmx_has_valid_vmcs12(vcpu))
+ 		goto out;
  
--	GUEST_SYNC(3);
-+	GUEST_SYNC(4);
- 	GUEST_ASSERT(vmptrstz() == vmx_pages->vmcs_gpa);
+ 	/*
+ 	 * When running L2, the authoritative vmcs12 state is in the
+ 	 * vmcs02. When running L1, the authoritative vmcs12 state is
+-	 * in the shadow vmcs linked to vmcs01, unless
++	 * in the shadow or enlightened vmcs linked to vmcs01, unless
+ 	 * need_vmcs12_sync is set, in which case, the authoritative
+ 	 * vmcs12 state is in the vmcs12 already.
+ 	 */
+-	if (is_guest_mode(vcpu))
++	if (is_guest_mode(vcpu)) {
+ 		sync_vmcs12(vcpu, vmcs12);
+-	else if (enable_shadow_vmcs && !vmx->nested.need_vmcs12_sync)
+-		copy_shadow_to_vmcs12(vmx);
++	} else if (!vmx->nested.need_vmcs12_sync) {
++		if (vmx->nested.hv_evmcs)
++			copy_enlightened_to_vmcs12(vmx);
++		else if (enable_shadow_vmcs)
++			copy_shadow_to_vmcs12(vmx);
++	}
  
- 	prepare_vmcs(vmx_pages, l2_guest_code,
- 		     &l2_guest_stack[L2_GUEST_STACK_SIZE]);
+ 	if (copy_to_user(user_kvm_nested_state->data, vmcs12, sizeof(*vmcs12)))
+ 		return -EFAULT;
+@@ -14810,6 +14839,9 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
+ 	if (kvm_state->format != 0)
+ 		return -EINVAL;
  
--	GUEST_SYNC(4);
-+	GUEST_SYNC(5);
- 	GUEST_ASSERT(vmptrstz() == vmx_pages->vmcs_gpa);
- 	GUEST_ASSERT(!vmlaunch());
- 	GUEST_ASSERT(vmptrstz() == vmx_pages->vmcs_gpa);
-@@ -72,7 +74,7 @@ void l1_guest_code(struct vmx_pages *vmx_pages)
- 	GUEST_ASSERT(!vmresume());
- 	GUEST_ASSERT(vmreadz(VM_EXIT_REASON) == EXIT_REASON_VMCALL);
++	if (kvm_state->flags & KVM_STATE_NESTED_EVMCS)
++		nested_enable_evmcs(vcpu, NULL);
++
+ 	if (!nested_vmx_allowed(vcpu))
+ 		return kvm_state->vmx.vmxon_pa == -1ull ? 0 : -EINVAL;
  
--	GUEST_SYNC(6);
-+	GUEST_SYNC(7);
- 	GUEST_ASSERT(vmreadz(VM_EXIT_REASON) == EXIT_REASON_VMCALL);
+@@ -14860,11 +14892,21 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
+ 	if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
+ 		return 0;
  
- 	GUEST_ASSERT(!vmresume());
-@@ -85,12 +87,12 @@ void l1_guest_code(struct vmx_pages *vmx_pages)
+-	if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
+-	    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
+-		return -EINVAL;
++	if (kvm_state->vmx.vmcs_pa != -1ull) {
++		if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
++		    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
++			return -EINVAL;
  
- 	GUEST_ASSERT(!vmptrld(vmx_pages->shadow_vmcs_gpa));
- 	GUEST_ASSERT(vmlaunch());
--	GUEST_SYNC(7);
-+	GUEST_SYNC(8);
- 	GUEST_ASSERT(vmlaunch());
- 	GUEST_ASSERT(vmresume());
+-	set_current_vmptr(vmx, kvm_state->vmx.vmcs_pa);
++		set_current_vmptr(vmx, kvm_state->vmx.vmcs_pa);
++	} else if (kvm_state->flags & KVM_STATE_NESTED_EVMCS) {
++		/*
++		 * Sync eVMCS upon entry as we may not have
++		 * HV_X64_MSR_VP_ASSIST_PAGE set up yet.
++		 */
++		vmx->nested.need_vmcs12_sync = true;
++	} else {
++		return -EINVAL;
++	}
  
- 	vmwrite(GUEST_RIP, 0xc0ffee);
--	GUEST_SYNC(8);
-+	GUEST_SYNC(9);
- 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0ffee);
+ 	if (kvm_state->vmx.smm.flags & KVM_STATE_NESTED_SMM_VMXON) {
+ 		vmx->nested.smm.vmxon = true;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 50f308499ce5..0fe1e3762e82 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4068,11 +4068,13 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 			break;
  
- 	GUEST_ASSERT(!vmptrld(vmx_pages->vmcs_gpa));
-@@ -101,7 +103,7 @@ void l1_guest_code(struct vmx_pages *vmx_pages)
- 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0ffffee);
- 	GUEST_ASSERT(vmlaunch());
- 	GUEST_ASSERT(vmresume());
--	GUEST_SYNC(12);
-+	GUEST_SYNC(13);
- 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0ffffee);
- 	GUEST_ASSERT(vmlaunch());
- 	GUEST_ASSERT(vmresume());
-diff --git a/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c b/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c
-index 38a91a5f04ac..18fa64db0d7a 100644
---- a/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c
-@@ -94,6 +94,7 @@ static void l1_guest_code(struct vmx_pages *vmx_pages)
- 	check_ia32_tsc_adjust(-1 * TSC_ADJUST_VALUE);
+ 		if (kvm_state.flags &
+-		    ~(KVM_STATE_NESTED_RUN_PENDING | KVM_STATE_NESTED_GUEST_MODE))
++		    ~(KVM_STATE_NESTED_RUN_PENDING | KVM_STATE_NESTED_GUEST_MODE
++		      | KVM_STATE_NESTED_EVMCS))
+ 			break;
  
- 	GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
-+	GUEST_ASSERT(load_vmcs(vmx_pages));
+ 		/* nested_run_pending implies guest_mode.  */
+-		if (kvm_state.flags == KVM_STATE_NESTED_RUN_PENDING)
++		if ((kvm_state.flags & KVM_STATE_NESTED_RUN_PENDING)
++		    && !(kvm_state.flags & KVM_STATE_NESTED_GUEST_MODE))
+ 			break;
  
- 	/* Prepare the VMCS for L2 execution. */
- 	prepare_vmcs(vmx_pages, l2_guest_code,
+ 		r = kvm_x86_ops->set_nested_state(vcpu, user_kvm_nested_state, &kvm_state);
 -- 
 2.17.1
 
