@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90383C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB175C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 591D421477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A33BA21477
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zYuAEtBc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 591D421477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4rcLRTA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A33BA21477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730141AbeJQBKA (ORCPT
+        id S1730156AbeJQBKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:10:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54780 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:10:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728680AbeJQBKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:10:00 -0400
+        id S1728680AbeJQBKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:10:02 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8FD72098A;
-        Tue, 16 Oct 2018 17:18:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67B212147C;
+        Tue, 16 Oct 2018 17:18:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710316;
-        bh=xgNr9IEL1oCRDnsLNQaocKb2q2BTe9U+ZU4MjetfGA0=;
+        s=default; t=1539710318;
+        bh=ZCKehb65ezTLMocdUmzoC2q5LuXD6iSu9Up1di8tmbM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zYuAEtBcHfcLMNyCaMh2OHF4D//8Ijhk34vr2l3T42mLVr+sgg8zb6VYy8/3M5UOQ
-         sHOvcGHc6lGw2b0TzX2y9VcnNLTBrQwK57QAYz5zqNe/QMy1p3bsImltIvy9oeOiHB
-         rc31RriFAAe5gP1g0thC/Vdkvr8IKXOvw9Ovn+nI=
+        b=m4rcLRTALC5sz1T51+UifB4ZC+R04CUM9gxEfbkFCsa/o3PO/ViqWKLkSBE/MCRDu
+         yiDcfALGXxtSfCqzs4JgeBQbdvnDYuEQQ4m7LMZo/pVeOTBg9gZHKq4uWV6/LAiCBr
+         IbYk57soBUT5UWdevt2tL6jZqhzgUKc+QCXE5yjE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Sperbeck <jsperbeck@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Mahesh Bandewar <maheshb@google.com>,
+        stable@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Pieter Jansen van Vuuren 
+        <pieter.jansenvanvuuren@netronome.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 033/109] bonding: fix warning message
-Date:   Tue, 16 Oct 2018 19:05:01 +0200
-Message-Id: <20181016170526.836004700@linuxfoundation.org>
+Subject: [PATCH 4.14 034/109] nfp: avoid soft lockups under control message storm
+Date:   Tue, 16 Oct 2018 19:05:02 +0200
+Message-Id: <20181016170526.889486892@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -63,40 +65,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit 0f3b914c9cfcd7bbedd445dc4ac5dd999fa213c2 ]
+[ Upstream commit ff58e2df62ce29d0552278c290ae494b30fe0c6f ]
 
-RX queue config for bonding master could be different from its slave
-device(s). With the commit 6a9e461f6fe4 ("bonding: pass link-local
-packets to bonding master also."), the packet is reinjected into stack
-with skb->dev as bonding master. This potentially triggers the
-message:
+When FW floods the driver with control messages try to exit the cmsg
+processing loop every now and then to avoid soft lockups.  Cmsg
+processing is generally very lightweight so 512 seems like a reasonable
+budget, which should not be exceeded under normal conditions.
 
-   "bondX received packet on queue Y, but number of RX queues is Z"
-
-whenever the queue that packet is received on is higher than the
-numrxqueues on bonding master (Y > Z).
-
-Fixes: 6a9e461f6fe4 ("bonding: pass link-local packets to bonding master also.")
-Reported-by: John Sperbeck <jsperbeck@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Fixes: 77ece8d5f196 ("nfp: add control vNIC datapath")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Tested-by: Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/netronome/nfp/nfp_net_common.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1193,6 +1193,7 @@ static rx_handler_result_t bond_handle_f
+--- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
++++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
+@@ -2058,14 +2058,17 @@ nfp_ctrl_rx_one(struct nfp_net *nn, stru
+ 	return true;
+ }
  
- 		if (nskb) {
- 			nskb->dev = bond->dev;
-+			nskb->queue_mapping = 0;
- 			netif_rx(nskb);
- 		}
- 		return RX_HANDLER_PASS;
+-static void nfp_ctrl_rx(struct nfp_net_r_vector *r_vec)
++static bool nfp_ctrl_rx(struct nfp_net_r_vector *r_vec)
+ {
+ 	struct nfp_net_rx_ring *rx_ring = r_vec->rx_ring;
+ 	struct nfp_net *nn = r_vec->nfp_net;
+ 	struct nfp_net_dp *dp = &nn->dp;
++	unsigned int budget = 512;
+ 
+-	while (nfp_ctrl_rx_one(nn, dp, r_vec, rx_ring))
++	while (nfp_ctrl_rx_one(nn, dp, r_vec, rx_ring) && budget--)
+ 		continue;
++
++	return budget;
+ }
+ 
+ static void nfp_ctrl_poll(unsigned long arg)
+@@ -2077,9 +2080,13 @@ static void nfp_ctrl_poll(unsigned long
+ 	__nfp_ctrl_tx_queued(r_vec);
+ 	spin_unlock_bh(&r_vec->lock);
+ 
+-	nfp_ctrl_rx(r_vec);
+-
+-	nfp_net_irq_unmask(r_vec->nfp_net, r_vec->irq_entry);
++	if (nfp_ctrl_rx(r_vec)) {
++		nfp_net_irq_unmask(r_vec->nfp_net, r_vec->irq_entry);
++	} else {
++		tasklet_schedule(&r_vec->tasklet);
++		nn_dp_warn(&r_vec->nfp_net->dp,
++			   "control message budget exceeded!\n");
++	}
+ }
+ 
+ /* Setup and Configuration
 
 
