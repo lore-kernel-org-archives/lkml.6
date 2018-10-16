@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32014C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A883EC070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E534D2145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7090621471
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZCODZJw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E534D2145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOKApXJs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7090621471
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbeJPMCt (ORCPT
+        id S1729266AbeJPMCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50868 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729219AbeJPMCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:48 -0400
+        id S1729211AbeJPMCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:49 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 023482098A;
-        Tue, 16 Oct 2018 04:14:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D22FD2145D;
+        Tue, 16 Oct 2018 04:14:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663265;
-        bh=URpyGndQ+EqF+KIy/xca6y8mYDxa98Rc1KKvSMjlTi0=;
+        s=default; t=1539663266;
+        bh=li4yarj1vEmz8A+RQpBMkDXdr+vsqcVYll7PFLqjhUU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qZCODZJwyEfmQ5g0xpBl6DUp4MDWs2Ax6hwY9++81obUyj+3NXhJOc3HGaVGq53Nx
-         2VdxrSsHDyDw2rBE0RwXUBhKP8G9I3StTAklUMzyWjpTef27TC7abf3tkxZP+KQs31
-         jyf3D6Gc1tQigxBBqL7EhLQlq4A0aSjheCGb2nBY=
+        b=fOKApXJsWgbtvcO3cLiqJetelr4mIiI08sbhNOBULsE+0qE0GhbQhhWoq5QfxugDF
+         b8vMqyKGZOxjYKE/+K/LA+33aSAnLdmn7N2ikrfsJsOKMBnQawvuNg9LFInAlQTP/Q
+         HzDJAa6MVlo1V6P9vCIN9ITg+U+eF0bgsq41CIzI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Matias Karhumaa <matias.karhumaa@gmail.com>,
-        Johan Hedberg <johan.hedberg@intel.com>,
+Cc:     Lubomir Rintel <lkundrak@v3.sk>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 23/61] Bluetooth: SMP: fix crash in unpairing
-Date:   Tue, 16 Oct 2018 00:13:25 -0400
-Message-Id: <20181016041403.135678-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 24/61] pxa168fb: prepare the clock
+Date:   Tue, 16 Oct 2018 00:13:26 -0400
+Message-Id: <20181016041403.135678-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -52,194 +52,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matias Karhumaa <matias.karhumaa@gmail.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit cb28c306b93b71f2741ce1a5a66289db26715f4d ]
+[ Upstream commit d85536cde91fcfed6fb8d983783bd2b92c843939 ]
 
-In case unpair_device() was called through mgmt interface at the same time
-when pairing was in progress, Bluetooth kernel module crash was seen.
+Add missing prepare/unprepare operations for fbi->clk,
+this fixes following kernel warning:
 
-[  600.351225] general protection fault: 0000 [#1] SMP PTI
-[  600.351235] CPU: 1 PID: 11096 Comm: btmgmt Tainted: G           OE     4.19.0-rc1+ #1
-[  600.351238] Hardware name: Dell Inc. Latitude E5440/08RCYC, BIOS A18 05/14/2017
-[  600.351272] RIP: 0010:smp_chan_destroy.isra.10+0xce/0x2c0 [bluetooth]
-[  600.351276] Code: c0 0f 84 b4 01 00 00 80 78 28 04 0f 84 53 01 00 00 4d 85 ed 0f 85 ab 00 00 00 48 8b 08 48 8b 50 08 be 10 00 00 00 48 89 51 08 <48> 89 0a 48 b9 00 02 00 00 00 00 ad de 48 89 48 08 48 8b 83 00 01
-[  600.351279] RSP: 0018:ffffa9be839b3b50 EFLAGS: 00010246
-[  600.351282] RAX: ffff9c999ac565a0 RBX: ffff9c9996e98c00 RCX: ffff9c999aa28b60
-[  600.351285] RDX: dead000000000200 RSI: 0000000000000010 RDI: ffff9c999e403500
-[  600.351287] RBP: ffffa9be839b3b70 R08: 0000000000000000 R09: ffffffff92a25c00
-[  600.351290] R10: ffffa9be839b3ae8 R11: 0000000000000001 R12: ffff9c995375b800
-[  600.351292] R13: 0000000000000000 R14: ffff9c99619a5000 R15: ffff9c9962a01c00
-[  600.351295] FS:  00007fb2be27c700(0000) GS:ffff9c999e880000(0000) knlGS:0000000000000000
-[  600.351298] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  600.351300] CR2: 00007fb2bdadbad0 CR3: 000000041c328001 CR4: 00000000001606e0
-[  600.351302] Call Trace:
-[  600.351325]  smp_failure+0x4f/0x70 [bluetooth]
-[  600.351345]  smp_cancel_pairing+0x74/0x80 [bluetooth]
-[  600.351370]  unpair_device+0x1c1/0x330 [bluetooth]
-[  600.351399]  hci_sock_sendmsg+0x960/0x9f0 [bluetooth]
-[  600.351409]  ? apparmor_socket_sendmsg+0x1e/0x20
-[  600.351417]  sock_sendmsg+0x3e/0x50
-[  600.351422]  sock_write_iter+0x85/0xf0
-[  600.351429]  do_iter_readv_writev+0x12b/0x1b0
-[  600.351434]  do_iter_write+0x87/0x1a0
-[  600.351439]  vfs_writev+0x98/0x110
-[  600.351443]  ? ep_poll+0x16d/0x3d0
-[  600.351447]  ? ep_modify+0x73/0x170
-[  600.351451]  do_writev+0x61/0xf0
-[  600.351455]  ? do_writev+0x61/0xf0
-[  600.351460]  __x64_sys_writev+0x1c/0x20
-[  600.351465]  do_syscall_64+0x5a/0x110
-[  600.351471]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  600.351474] RIP: 0033:0x7fb2bdb62fe0
-[  600.351477] Code: 73 01 c3 48 8b 0d b8 6e 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 69 c7 2c 00 00 75 10 b8 14 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 de 80 01 00 48 89 04 24
-[  600.351479] RSP: 002b:00007ffe062cb8f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-[  600.351484] RAX: ffffffffffffffda RBX: 000000000255b3d0 RCX: 00007fb2bdb62fe0
-[  600.351487] RDX: 0000000000000001 RSI: 00007ffe062cb920 RDI: 0000000000000004
-[  600.351490] RBP: 00007ffe062cb920 R08: 000000000255bd80 R09: 0000000000000000
-[  600.351494] R10: 0000000000000353 R11: 0000000000000246 R12: 0000000000000001
-[  600.351497] R13: 00007ffe062cbbe0 R14: 0000000000000000 R15: 0000000000000000
-[  600.351501] Modules linked in: algif_hash algif_skcipher af_alg cmac ipt_MASQUERADE nf_conntrack_netlink nfnetlink xfrm_user xfrm_algo iptable_nat nf_nat_ipv4 xt_addrtype iptable_filter ip_tables xt_conntrack x_tables nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 libcrc32c br_netfilter bridge stp llc overlay arc4 nls_iso8859_1 dm_crypt intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp dell_laptop kvm_intel crct10dif_pclmul dell_smm_hwmon crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd cryptd glue_helper intel_cstate intel_rapl_perf uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common videodev media hid_multitouch input_leds joydev serio_raw dell_wmi snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic dell_smbios dcdbas sparse_keymap
-[  600.351569]  snd_hda_intel btusb snd_hda_codec btrtl btbcm btintel snd_hda_core bluetooth(OE) snd_hwdep snd_pcm iwlmvm ecdh_generic wmi_bmof dell_wmi_descriptor snd_seq_midi mac80211 snd_seq_midi_event lpc_ich iwlwifi snd_rawmidi snd_seq snd_seq_device snd_timer cfg80211 snd soundcore mei_me mei dell_rbtn dell_smo8800 mac_hid parport_pc ppdev lp parport autofs4 hid_generic usbhid hid i915 nouveau kvmgt vfio_mdev mdev vfio_iommu_type1 vfio kvm irqbypass i2c_algo_bit ttm drm_kms_helper syscopyarea sysfillrect sysimgblt mxm_wmi psmouse ahci sdhci_pci cqhci libahci fb_sys_fops sdhci drm e1000e video wmi
-[  600.351637] ---[ end trace e49e9f1df09c94fb ]---
-[  600.351664] RIP: 0010:smp_chan_destroy.isra.10+0xce/0x2c0 [bluetooth]
-[  600.351666] Code: c0 0f 84 b4 01 00 00 80 78 28 04 0f 84 53 01 00 00 4d 85 ed 0f 85 ab 00 00 00 48 8b 08 48 8b 50 08 be 10 00 00 00 48 89 51 08 <48> 89 0a 48 b9 00 02 00 00 00 00 ad de 48 89 48 08 48 8b 83 00 01
-[  600.351669] RSP: 0018:ffffa9be839b3b50 EFLAGS: 00010246
-[  600.351672] RAX: ffff9c999ac565a0 RBX: ffff9c9996e98c00 RCX: ffff9c999aa28b60
-[  600.351674] RDX: dead000000000200 RSI: 0000000000000010 RDI: ffff9c999e403500
-[  600.351676] RBP: ffffa9be839b3b70 R08: 0000000000000000 R09: ffffffff92a25c00
-[  600.351679] R10: ffffa9be839b3ae8 R11: 0000000000000001 R12: ffff9c995375b800
-[  600.351681] R13: 0000000000000000 R14: ffff9c99619a5000 R15: ffff9c9962a01c00
-[  600.351684] FS:  00007fb2be27c700(0000) GS:ffff9c999e880000(0000) knlGS:0000000000000000
-[  600.351686] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  600.351689] CR2: 00007fb2bdadbad0 CR3: 000000041c328001 CR4: 00000000001606e0
+  ------------[ cut here ]------------
+  WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:874 clk_core_enable+0x2c/0x1b0
+  Enabling unprepared disp0_clk
+  Modules linked in:
+  CPU: 0 PID: 1 Comm: swapper Not tainted 4.18.0-rc8-00032-g02b43ddd4f21-dirty #25
+  Hardware name: Marvell MMP2 (Device Tree Support)
+  [<c010f7cc>] (unwind_backtrace) from [<c010cc6c>] (show_stack+0x10/0x14)
+  [<c010cc6c>] (show_stack) from [<c011dab4>] (__warn+0xd8/0xf0)
+  [<c011dab4>] (__warn) from [<c011db10>] (warn_slowpath_fmt+0x44/0x6c)
+  [<c011db10>] (warn_slowpath_fmt) from [<c043898c>] (clk_core_enable+0x2c/0x1b0)
+  [<c043898c>] (clk_core_enable) from [<c0439ec8>] (clk_core_enable_lock+0x18/0x2c)
+  [<c0439ec8>] (clk_core_enable_lock) from [<c0436698>] (pxa168fb_probe+0x464/0x6ac)
+  [<c0436698>] (pxa168fb_probe) from [<c04779a0>] (platform_drv_probe+0x48/0x94)
+  [<c04779a0>] (platform_drv_probe) from [<c0475bec>] (driver_probe_device+0x328/0x470)
+  [<c0475bec>] (driver_probe_device) from [<c0475de4>] (__driver_attach+0xb0/0x124)
+  [<c0475de4>] (__driver_attach) from [<c0473c38>] (bus_for_each_dev+0x64/0xa0)
+  [<c0473c38>] (bus_for_each_dev) from [<c0474ee0>] (bus_add_driver+0x1b8/0x230)
+  [<c0474ee0>] (bus_add_driver) from [<c0476a20>] (driver_register+0xac/0xf0)
+  [<c0476a20>] (driver_register) from [<c0102dd4>] (do_one_initcall+0xb8/0x1f0)
+  [<c0102dd4>] (do_one_initcall) from [<c0b010a0>] (kernel_init_freeable+0x294/0x2e0)
+  [<c0b010a0>] (kernel_init_freeable) from [<c07e9eb8>] (kernel_init+0x8/0x10c)
+  [<c07e9eb8>] (kernel_init) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+  Exception stack(0xd008bfb0 to 0xd008bff8)
+  bfa0:                                     00000000 00000000 00000000 00000000
+  bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+  bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+  ---[ end trace c0af40f9e2ed7cb4 ]---
 
-Crash happened because list_del_rcu() was called twice for smp->ltk. This
-was possible if unpair_device was called right after ltk was generated
-but before keys were distributed.
-
-In this commit smp_cancel_pairing was refactored to cancel pairing if it
-is in progress and otherwise just removes keys. Once keys are removed from
-rcu list, pointers to smp context's keys are set to NULL to make sure
-removed list items are not accessed later.
-
-This commit also adjusts the functionality of mgmt unpair_device() little
-bit. Previously pairing was canceled only if pairing was in state that
-keys were already generated. With this commit unpair_device() cancels
-pairing already in earlier states.
-
-Bug was found by fuzzing kernel SMP implementation using Synopsys
-Defensics.
-
-Reported-by: Pekka Oikarainen <pekka.oikarainen@synopsys.com>
-Signed-off-by: Matias Karhumaa <matias.karhumaa@gmail.com>
-Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+[b.zolnierkie: enhance patch description a bit]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bluetooth/mgmt.c |  7 ++-----
- net/bluetooth/smp.c  | 29 +++++++++++++++++++++++++----
- net/bluetooth/smp.h  |  3 ++-
- 3 files changed, 29 insertions(+), 10 deletions(-)
+ drivers/video/fbdev/pxa168fb.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index 1fba2a03f8ae..ba24f613c0fc 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -2298,9 +2298,8 @@ static int unpair_device(struct sock *sk, struct hci_dev *hdev, void *data,
- 	/* LE address type */
- 	addr_type = le_addr_type(cp->addr.type);
+diff --git a/drivers/video/fbdev/pxa168fb.c b/drivers/video/fbdev/pxa168fb.c
+index def3a501acd6..d059d04c63ac 100644
+--- a/drivers/video/fbdev/pxa168fb.c
++++ b/drivers/video/fbdev/pxa168fb.c
+@@ -712,7 +712,7 @@ static int pxa168fb_probe(struct platform_device *pdev)
+ 	/*
+ 	 * enable controller clock
+ 	 */
+-	clk_enable(fbi->clk);
++	clk_prepare_enable(fbi->clk);
  
--	hci_remove_irk(hdev, &cp->addr.bdaddr, addr_type);
--
--	err = hci_remove_ltk(hdev, &cp->addr.bdaddr, addr_type);
-+	/* Abort any ongoing SMP pairing. Removes ltk and irk if they exist. */
-+	err = smp_cancel_and_remove_pairing(hdev, &cp->addr.bdaddr, addr_type);
- 	if (err < 0) {
- 		err = mgmt_cmd_complete(sk, hdev->id, MGMT_OP_UNPAIR_DEVICE,
- 					MGMT_STATUS_NOT_PAIRED, &rp,
-@@ -2314,8 +2313,6 @@ static int unpair_device(struct sock *sk, struct hci_dev *hdev, void *data,
- 		goto done;
- 	}
+ 	pxa168fb_set_par(info);
  
--	/* Abort any ongoing SMP pairing */
--	smp_cancel_pairing(conn);
+@@ -767,7 +767,7 @@ static int pxa168fb_probe(struct platform_device *pdev)
+ failed_free_cmap:
+ 	fb_dealloc_cmap(&info->cmap);
+ failed_free_clk:
+-	clk_disable(fbi->clk);
++	clk_disable_unprepare(fbi->clk);
+ failed_free_fbmem:
+ 	dma_free_coherent(fbi->dev, info->fix.smem_len,
+ 			info->screen_base, fbi->fb_start_dma);
+@@ -807,7 +807,7 @@ static int pxa168fb_remove(struct platform_device *pdev)
+ 	dma_free_wc(fbi->dev, PAGE_ALIGN(info->fix.smem_len),
+ 		    info->screen_base, info->fix.smem_start);
  
- 	/* Defer clearing up the connection parameters until closing to
- 	 * give a chance of keeping them if a repairing happens.
-diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
-index a27704ff13a9..dbcc439fc78b 100644
---- a/net/bluetooth/smp.c
-+++ b/net/bluetooth/smp.c
-@@ -2410,30 +2410,51 @@ int smp_conn_security(struct hci_conn *hcon, __u8 sec_level)
- 	return ret;
- }
+-	clk_disable(fbi->clk);
++	clk_disable_unprepare(fbi->clk);
  
--void smp_cancel_pairing(struct hci_conn *hcon)
-+int smp_cancel_and_remove_pairing(struct hci_dev *hdev, bdaddr_t *bdaddr,
-+				  u8 addr_type)
- {
--	struct l2cap_conn *conn = hcon->l2cap_data;
-+	struct hci_conn *hcon;
-+	struct l2cap_conn *conn;
- 	struct l2cap_chan *chan;
- 	struct smp_chan *smp;
-+	int err;
-+
-+	err = hci_remove_ltk(hdev, bdaddr, addr_type);
-+	hci_remove_irk(hdev, bdaddr, addr_type);
-+
-+	hcon = hci_conn_hash_lookup_le(hdev, bdaddr, addr_type);
-+	if (!hcon)
-+		goto done;
+ 	framebuffer_release(info);
  
-+	conn = hcon->l2cap_data;
- 	if (!conn)
--		return;
-+		goto done;
- 
- 	chan = conn->smp;
- 	if (!chan)
--		return;
-+		goto done;
- 
- 	l2cap_chan_lock(chan);
- 
- 	smp = chan->data;
- 	if (smp) {
-+		/* Set keys to NULL to make sure smp_failure() does not try to
-+		 * remove and free already invalidated rcu list entries. */
-+		smp->ltk = NULL;
-+		smp->slave_ltk = NULL;
-+		smp->remote_irk = NULL;
-+
- 		if (test_bit(SMP_FLAG_COMPLETE, &smp->flags))
- 			smp_failure(conn, 0);
- 		else
- 			smp_failure(conn, SMP_UNSPECIFIED);
-+		err = 0;
- 	}
- 
- 	l2cap_chan_unlock(chan);
-+
-+done:
-+	return err;
- }
- 
- static int smp_cmd_encrypt_info(struct l2cap_conn *conn, struct sk_buff *skb)
-diff --git a/net/bluetooth/smp.h b/net/bluetooth/smp.h
-index 0ff6247eaa6c..121edadd5f8d 100644
---- a/net/bluetooth/smp.h
-+++ b/net/bluetooth/smp.h
-@@ -181,7 +181,8 @@ enum smp_key_pref {
- };
- 
- /* SMP Commands */
--void smp_cancel_pairing(struct hci_conn *hcon);
-+int smp_cancel_and_remove_pairing(struct hci_dev *hdev, bdaddr_t *bdaddr,
-+				  u8 addr_type);
- bool smp_sufficient_security(struct hci_conn *hcon, u8 sec_level,
- 			     enum smp_key_pref key_pref);
- int smp_conn_security(struct hci_conn *hcon, __u8 sec_level);
 -- 
 2.17.1
 
