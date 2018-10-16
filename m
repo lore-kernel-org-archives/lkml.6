@@ -2,205 +2,94 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4613C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5EAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83F1C20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DP1QgmQN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83F1C20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 20C1D208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C1D208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbeJPK1q (ORCPT
+        id S1727349AbeJPK1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 06:27:46 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33814 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727267AbeJPK1i (ORCPT
+        Tue, 16 Oct 2018 06:27:52 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:41624 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbeJPK1w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 06:27:38 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f18-v6so10224763plr.1;
-        Mon, 15 Oct 2018 19:39:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Q0blMRhqNPiCrzvXWEp+FPb/ePWbrdIXRWW/hT0vdeE=;
-        b=DP1QgmQNl4zcZHGFUSVn67XJmv+bzF7wA++eucggGjHLvC/xflvaZKZgBJrjNmg8iR
-         +xt/u8sJKOk/cGSOajk5sjO05MmIxcEyynU7c9c9qsXzGNbakiCZb5EEiM05bT8suB74
-         cCo5d2miRLJKziGOLn/gyQpQ1DlTaVXaWRwglQ5HYV/RHvlBdRJxVk2E2zUlDTxPKjgo
-         Yguxx1RAYQjF+wDm208bmBTM8dfDFGkFe/BHZTzSey5m/4vBtAWehRif5XxWLWONG6En
-         tclOpvl444eYVavzt4293e8Cy9VhOlKYxxbkOs4Q2WBGPT3nhLhEy8ONzKzlE1UHBkUk
-         OEeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Q0blMRhqNPiCrzvXWEp+FPb/ePWbrdIXRWW/hT0vdeE=;
-        b=nbtTdA1yIzJ+njyiX4+kbjTDhGhP/uneptCREQ6ckkypGTPcbiR6jf0+NuwnSiYPst
-         sI2yup934uA4debXRwjiKIqO0isOEJY0bwtCxJL3UYijjAEanE39Ou3bS8fj3sMMoXTL
-         ZbHmiYMfECK0FBX3g58YzEb2/BSU95DXlgdS45W6heRR0jAMpRDMsv661fWtJLCFh+DB
-         AgZFkkqO+5IvFLuyFC3HB35op6FKSwmilaXKc9rSVi4EEi6u9UqJ8oOVv3SUSH0uv5IG
-         7CCApVoJzVeUC/zfSGr+hoYth4xYj5A7FJ4rxJYGcloTIAjV7OvymNAFy0LNxoTeJd0K
-         Qvug==
-X-Gm-Message-State: ABuFfojzgAP1Fpp3TcfLuvs+F832xSBryniFZt6p9NG/k/PbzGmD1jkY
-        qth6p91OvX+c/0TpYVkpmaFsZNGA
-X-Google-Smtp-Source: ACcGV61n9QxQLxzubFxAmrh48bRRDs3KINsn6QIhT8tU9RN1M+EiqIeGdUNcfh81GZ4W+RKqziEqkw==
-X-Received: by 2002:a17:902:369:: with SMTP id 96-v6mr19392242pld.36.1539657573685;
-        Mon, 15 Oct 2018 19:39:33 -0700 (PDT)
-Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id u79-v6sm18620287pfd.117.2018.10.15.19.39.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 15 Oct 2018 19:39:33 -0700 (PDT)
-From:   frowand.list@gmail.com
-To:     Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v4 18/18] of: unittest: initialize args before calling of_*parse_*()
-Date:   Mon, 15 Oct 2018 19:37:38 -0700
-Message-Id: <1539657458-24401-19-git-send-email-frowand.list@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
-References: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
+        Tue, 16 Oct 2018 06:27:52 -0400
+Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id ABFA21449BE5F;
+        Mon, 15 Oct 2018 19:39:47 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 19:39:45 -0700 (PDT)
+Message-Id: <20181015.193945.304905055642913000.davem@davemloft.net>
+To:     gregkh@linuxfoundation.org
+CC:     akpm@linux-foundation.org, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Sparc
+From:   David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 15 Oct 2018 19:39:48 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
 
-Callers of of_irq_parse_one() blindly use the pointer args.np
-without checking whether of_irq_parse_one() had an error and
-thus did not set the value of args.np.  Initialize args to
-zero so that using the format "%pOF" to show the value of
-args.np will show "(null)" when of_irq_parse_one() has an
-error.  This prevents the dereference of a random value.
+1) Revert the %pOF change, it causes regressions.
 
-Make the same fix for callers of of_parse_phandle_with_args()
-and of_parse_phandle_with_args_map().
+2) Wire up io_pgetevents().
 
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
----
- drivers/of/unittest.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+3) Fix perf events on single-PCR sparc64 cpus.
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 785985bdbfa6..5f4db23e4752 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -375,6 +375,7 @@ static void __init of_unittest_parse_phandle_with_args(void)
- 	for (i = 0; i < 8; i++) {
- 		bool passed = true;
- 
-+		memset(&args, 0, sizeof(args));
- 		rc = of_parse_phandle_with_args(np, "phandle-list",
- 						"#phandle-cells", i, &args);
- 
-@@ -428,6 +429,7 @@ static void __init of_unittest_parse_phandle_with_args(void)
- 	}
- 
- 	/* Check for missing list property */
-+	memset(&args, 0, sizeof(args));
- 	rc = of_parse_phandle_with_args(np, "phandle-list-missing",
- 					"#phandle-cells", 0, &args);
- 	unittest(rc == -ENOENT, "expected:%i got:%i\n", -ENOENT, rc);
-@@ -436,6 +438,7 @@ static void __init of_unittest_parse_phandle_with_args(void)
- 	unittest(rc == -ENOENT, "expected:%i got:%i\n", -ENOENT, rc);
- 
- 	/* Check for missing cells property */
-+	memset(&args, 0, sizeof(args));
- 	rc = of_parse_phandle_with_args(np, "phandle-list",
- 					"#phandle-cells-missing", 0, &args);
- 	unittest(rc == -EINVAL, "expected:%i got:%i\n", -EINVAL, rc);
-@@ -444,6 +447,7 @@ static void __init of_unittest_parse_phandle_with_args(void)
- 	unittest(rc == -EINVAL, "expected:%i got:%i\n", -EINVAL, rc);
- 
- 	/* Check for bad phandle in list */
-+	memset(&args, 0, sizeof(args));
- 	rc = of_parse_phandle_with_args(np, "phandle-list-bad-phandle",
- 					"#phandle-cells", 0, &args);
- 	unittest(rc == -EINVAL, "expected:%i got:%i\n", -EINVAL, rc);
-@@ -452,6 +456,7 @@ static void __init of_unittest_parse_phandle_with_args(void)
- 	unittest(rc == -EINVAL, "expected:%i got:%i\n", -EINVAL, rc);
- 
- 	/* Check for incorrectly formed argument list */
-+	memset(&args, 0, sizeof(args));
- 	rc = of_parse_phandle_with_args(np, "phandle-list-bad-args",
- 					"#phandle-cells", 1, &args);
- 	unittest(rc == -EINVAL, "expected:%i got:%i\n", -EINVAL, rc);
-@@ -502,6 +507,7 @@ static void __init of_unittest_parse_phandle_with_args_map(void)
- 	for (i = 0; i < 8; i++) {
- 		bool passed = true;
- 
-+		memset(&args, 0, sizeof(args));
- 		rc = of_parse_phandle_with_args_map(np, "phandle-list",
- 						    "phandle", i, &args);
- 
-@@ -559,21 +565,25 @@ static void __init of_unittest_parse_phandle_with_args_map(void)
- 	}
- 
- 	/* Check for missing list property */
-+	memset(&args, 0, sizeof(args));
- 	rc = of_parse_phandle_with_args_map(np, "phandle-list-missing",
- 					    "phandle", 0, &args);
- 	unittest(rc == -ENOENT, "expected:%i got:%i\n", -ENOENT, rc);
- 
- 	/* Check for missing cells,map,mask property */
-+	memset(&args, 0, sizeof(args));
- 	rc = of_parse_phandle_with_args_map(np, "phandle-list",
- 					    "phandle-missing", 0, &args);
- 	unittest(rc == -EINVAL, "expected:%i got:%i\n", -EINVAL, rc);
- 
- 	/* Check for bad phandle in list */
-+	memset(&args, 0, sizeof(args));
- 	rc = of_parse_phandle_with_args_map(np, "phandle-list-bad-phandle",
- 					    "phandle", 0, &args);
- 	unittest(rc == -EINVAL, "expected:%i got:%i\n", -EINVAL, rc);
- 
- 	/* Check for incorrectly formed argument list */
-+	memset(&args, 0, sizeof(args));
- 	rc = of_parse_phandle_with_args_map(np, "phandle-list-bad-args",
- 					    "phandle", 1, &args);
- 	unittest(rc == -EINVAL, "expected:%i got:%i\n", -EINVAL, rc);
-@@ -780,7 +790,7 @@ static void __init of_unittest_parse_interrupts(void)
- 	for (i = 0; i < 4; i++) {
- 		bool passed = true;
- 
--		args.args_count = 0;
-+		memset(&args, 0, sizeof(args));
- 		rc = of_irq_parse_one(np, i, &args);
- 
- 		passed &= !rc;
-@@ -801,7 +811,7 @@ static void __init of_unittest_parse_interrupts(void)
- 	for (i = 0; i < 4; i++) {
- 		bool passed = true;
- 
--		args.args_count = 0;
-+		memset(&args, 0, sizeof(args));
- 		rc = of_irq_parse_one(np, i, &args);
- 
- 		/* Test the values from tests-phandle.dtsi */
-@@ -854,6 +864,7 @@ static void __init of_unittest_parse_interrupts_extended(void)
- 	for (i = 0; i < 7; i++) {
- 		bool passed = true;
- 
-+		memset(&args, 0, sizeof(args));
- 		rc = of_irq_parse_one(np, i, &args);
- 
- 		/* Test the values from tests-phandle.dtsi */
--- 
-Frank Rowand <frank.rowand@sony.com>
+4) Do proper perf event throttling like arm and x86.
 
+Please pull, thanks a lot!
+
+The following changes since commit 0854ba5ff5c938307cd783e996b62c83f1ce923b:
+
+  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc (2018-10-08 16:25:01 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git 
+
+for you to fetch changes up to a06ecbfe784ceb22e56ae3cd75fe77138e7cfa0b:
+
+  Revert "sparc: Convert to using %pOFn instead of device_node.name" (2018-10-15 18:32:54 -0700)
+
+----------------------------------------------------------------
+David S. Miller (6):
+      sparc: Wire up io_pgetevents system call.
+      sparc: Fix single-pcr perf event counter management.
+      sparc: Throttle perf events properly.
+      sparc64: Make proc_id signed.
+      sparc64: Set %l4 properly on trap return after handling signals.
+      Revert "sparc: Convert to using %pOFn instead of device_node.name"
+
+Kees Cook (1):
+      sunvdc: Remove VLA usage
+
+ arch/sparc/include/asm/cpudata_64.h  |  2 +-
+ arch/sparc/include/uapi/asm/unistd.h |  3 ++-
+ arch/sparc/kernel/auxio_64.c         |  4 ++--
+ arch/sparc/kernel/perf_event.c       | 26 ++++++++++++++++++++++----
+ arch/sparc/kernel/power.c            |  4 ++--
+ arch/sparc/kernel/prom_32.c          | 26 +++++++++++++-------------
+ arch/sparc/kernel/prom_64.c          | 68 ++++++++++++++++++++++++++++++++++----------------------------------
+ arch/sparc/kernel/rtrap_64.S         |  3 ++-
+ arch/sparc/kernel/systbls_32.S       |  2 +-
+ arch/sparc/kernel/systbls_64.S       |  4 ++--
+ drivers/block/sunvdc.c               | 14 ++++++++++----
+ 11 files changed, 91 insertions(+), 65 deletions(-)
