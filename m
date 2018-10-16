@@ -2,140 +2,102 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4C1C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A581C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D017208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:19:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D017208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 1984320869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:24:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1984320869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbeJPVKT (ORCPT
+        id S1727059AbeJPVPB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:10:19 -0400
-Received: from relay.sw.ru ([185.231.240.75]:40416 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbeJPVKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 17:10:18 -0400
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.90_1)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1gCPGA-00018u-7T; Tue, 16 Oct 2018 16:19:42 +0300
-Subject: Re: [PATCH] mm: Convert mem_cgroup_id::ref to refcount_t type
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-        vdavydov.dev@gmail.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <153910718919.7006.13400779039257185427.stgit@localhost.localdomain>
- <20181016124939.GA13278@andrea>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <a990eed4-611b-8464-c2aa-56684fee0ee5@virtuozzo.com>
-Date:   Tue, 16 Oct 2018 16:19:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 16 Oct 2018 17:15:01 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58133 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbeJPVPA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 17:15:00 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gCPKR-0005u6-47; Tue, 16 Oct 2018 15:24:07 +0200
+Date:   Tue, 16 Oct 2018 15:24:06 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>
+cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        nstange@suse.de, syzkaller-bugs@googlegroups.com, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: INFO: rcu detected stall in do_idle
+In-Reply-To: <000000000000a4ee200578172fde@google.com>
+Message-ID: <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
+References: <000000000000a4ee200578172fde@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181016124939.GA13278@andrea>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Andrea,
+On Sat, 13 Oct 2018, syzbot wrote:
+> syzbot found the following crash on:
+> 
+> HEAD commit:    6b3944e42e2e afs: Fix cell proc list
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1545a479400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=88e9a8a39dc0be2d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=385468161961cee80c31
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14825d5e400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=122cc531400000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+385468161961cee80c31@syzkaller.appspotmail.com
+> 
+> sshd (5193) used greatest stack depth: 15496 bytes left
+> sched: DL replenish lagged too much
+> hrtimer: interrupt took 417330 ns
+> rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
 
-On 16.10.2018 15:49, Andrea Parri wrote:
-> Hi Kirill,
-> 
-> On Tue, Oct 09, 2018 at 08:46:56PM +0300, Kirill Tkhai wrote:
->> This will allow to use generic refcount_t interfaces
->> to check counters overflow instead of currently existing
->> VM_BUG_ON(). The only difference after the patch is
->> VM_BUG_ON() may cause BUG(), while refcount_t fires
->> with WARN().
-> 
-> refcount_{sub_and_test,inc_not_zero}() are documented to provide
-> "slightly" more relaxed ordering than their atomic_* counterpart,
-> c.f.,
-> 
->   Documentation/core-api/refcount-vs-atomic.rst
->   lib/refcount.c (inline comments)
-> 
-> IIUC, this semantic change won't cause problems here (but please
-> double-check? ;D ).
+It does reproduce here but with a kworker stall. Looking at the reproducer:
 
-I just don't see a place, where we may think about using a modification
-of struct mem_cgroup::id::ref as a memory barrier to order something,
-and all this looks safe for me.
+  *(uint32_t*)0x20000000 = 0;
+  *(uint32_t*)0x20000004 = 6;
+  *(uint64_t*)0x20000008 = 0;
+  *(uint32_t*)0x20000010 = 0;
+  *(uint32_t*)0x20000014 = 0;
+  *(uint64_t*)0x20000018 = 0x9917;
+  *(uint64_t*)0x20000020 = 0xffff;
+  *(uint64_t*)0x20000028 = 0;
+  syscall(__NR_sched_setattr, 0, 0x20000000, 0);
 
-Kirill
- 
->> But this seems not to be significant here,
->> since such the problems are usually caught by syzbot
->> with panic-on-warn enabled.
->>
->> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
->> ---
->>  include/linux/memcontrol.h |    2 +-
->>  mm/memcontrol.c            |   10 ++++------
->>  2 files changed, 5 insertions(+), 7 deletions(-)
->>
->> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
->> index 4399cc3f00e4..7ab2120155a4 100644
->> --- a/include/linux/memcontrol.h
->> +++ b/include/linux/memcontrol.h
->> @@ -78,7 +78,7 @@ struct mem_cgroup_reclaim_cookie {
->>  
->>  struct mem_cgroup_id {
->>  	int id;
->> -	atomic_t ref;
->> +	refcount_t ref;
->>  };
->>  
->>  /*
->> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->> index 7bebe2ddec05..aa728d5b3d72 100644
->> --- a/mm/memcontrol.c
->> +++ b/mm/memcontrol.c
->> @@ -4299,14 +4299,12 @@ static void mem_cgroup_id_remove(struct mem_cgroup *memcg)
->>  
->>  static void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n)
->>  {
->> -	VM_BUG_ON(atomic_read(&memcg->id.ref) <= 0);
->> -	atomic_add(n, &memcg->id.ref);
->> +	refcount_add(n, &memcg->id.ref);
->>  }
->>  
->>  static void mem_cgroup_id_put_many(struct mem_cgroup *memcg, unsigned int n)
->>  {
->> -	VM_BUG_ON(atomic_read(&memcg->id.ref) < n);
->> -	if (atomic_sub_and_test(n, &memcg->id.ref)) {
->> +	if (refcount_sub_and_test(n, &memcg->id.ref)) {
->>  		mem_cgroup_id_remove(memcg);
->>  
->>  		/* Memcg ID pins CSS */
->> @@ -4523,7 +4521,7 @@ static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
->>  	}
->>  
->>  	/* Online state pins memcg ID, memcg ID pins CSS */
->> -	atomic_set(&memcg->id.ref, 1);
->> +	refcount_set(&memcg->id.ref, 1);
->>  	css_get(css);
->>  	return 0;
->>  }
->> @@ -6357,7 +6355,7 @@ subsys_initcall(mem_cgroup_init);
->>  #ifdef CONFIG_MEMCG_SWAP
->>  static struct mem_cgroup *mem_cgroup_id_get_online(struct mem_cgroup *memcg)
->>  {
->> -	while (!atomic_inc_not_zero(&memcg->id.ref)) {
->> +	while (!refcount_inc_not_zero(&memcg->id.ref)) {
->>  		/*
->>  		 * The root cgroup cannot be destroyed, so it's refcount must
->>  		 * always be >= 1.
->>
+which means:
+
+  struct sched_attr {
+  	 .size		= 0,
+	 .policy	= 6,
+	 .flags		= 0,
+	 .nice		= 0,
+	 .priority	= 0,
+	 .deadline	= 0x9917,
+	 .runtime	= 0xffff,
+	 .period	= 0,
+  }
+
+policy 6 is SCHED_DEADLINE
+
+That makes the thread hog the CPU and prevents all kind of stuff to run.
+
+Peter, is that expected behaviour?
+
+Thanks,
+
+	tglx
