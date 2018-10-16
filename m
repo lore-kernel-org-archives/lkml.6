@@ -2,89 +2,83 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C05C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3DDC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 299532083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:05:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CKSc2y34";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ISC1nSpK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 299532083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id E5ACB20869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:08:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5ACB20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeJPLxW (ORCPT
+        id S1727061AbeJPL5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 07:53:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51694 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726649AbeJPLxW (ORCPT
+        Tue, 16 Oct 2018 07:57:06 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42278 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbeJPL5G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 07:53:22 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4915F60BFA; Tue, 16 Oct 2018 04:05:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539662701;
-        bh=PSJrWXOaHBq6myX08lDVA31+ExmRcoUrsl930KP/+pA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=CKSc2y34ubGUPLPgqy6HVCYGL/DDlr0oGjH22Fvl2DaNsmArk3ZM341OpYVnvuqzC
-         TdF0klHwRQm2IiVBHNwGIqn7vFrYhcAmCjDwL8uxdCZWM/9Uaosc4KH4C9N2lxnpve
-         vwllr7l7oPZnn1G+vUbsb75OLtQ2S7N8+CHGEXD8=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id C827D604BE;
-        Tue, 16 Oct 2018 04:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539662700;
-        bh=PSJrWXOaHBq6myX08lDVA31+ExmRcoUrsl930KP/+pA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ISC1nSpKTEwfc2dOUvSIfeEuOmnsJ0oX7tM43EWwof8mMeNOJIeGmLN5it0mfcry9
-         3fwZ6wheoSA2nuuJM3wjxjaFI9LeIutLSkl7wKHl1HC16TeAA7zrlPd1g9imm9UqJv
-         CEBKO7X7Kyk/5yn7jvD6sdwTVTWxgopm6QnHjPS0=
+        Tue, 16 Oct 2018 07:57:06 -0400
+Received: by mail-ed1-f67.google.com with SMTP id b7-v6so19879333edd.9;
+        Mon, 15 Oct 2018 21:08:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nDhV0QHL1AOUPGY6lvhj7WHShGcLbPJgG6TnCyqSOpU=;
+        b=LAnUrxwIDGV3Oc6YeNZNjQOC15SC8Gk9DPh37BsF4x6pdqV5qvEDiBEu9oIhycPhZh
+         MK68bcjUdSHG208XMprrcDXvWUBOsRMRpozNkfPqQxOYrSKR3K2k9r9msPD7TVs+zbbB
+         i+0S+vStfj6lTQk1UAEoKXMBX4cFDyzKClFzeeqIp8LJlxaPHrBgRUQL6gZ9SIkM0j6c
+         w54LVuFECcJeqIK3CNWJKJFdJKqheR7YpEF2Y1V+UKX1C7XcVfly36donIsQRnYZiEL/
+         u8Cwa8PDL9eKoK9hrHJKehLViHns5ehgc12d+e418CC5x5O9+Ff1MBqGO/cOIcQBVAO7
+         pEig==
+X-Gm-Message-State: ABuFfogjr8Cv9XwuTdakxX8GI/RHMGuRW87cWnernML7dv1i1u9NAVnv
+        D/oJesmXTLVAe9c1uYyjq/ADXL+e
+X-Google-Smtp-Source: ACcGV60bmOcOlIHZzj6kmvkeJNzia1hptMyMr4op67loLKQ1IxT1eb9YeKTPY0kzklcATWg9tyuuaw==
+X-Received: by 2002:a50:e602:: with SMTP id y2-v6mr28873229edm.278.1539662923356;
+        Mon, 15 Oct 2018 21:08:43 -0700 (PDT)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com. [209.85.221.48])
+        by smtp.gmail.com with ESMTPSA id r55-v6sm7267269edd.80.2018.10.15.21.08.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 21:08:42 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id e4-v6so23705936wrs.0;
+        Mon, 15 Oct 2018 21:08:42 -0700 (PDT)
+X-Received: by 2002:adf:edc2:: with SMTP id v2-v6mr15836968wro.208.1539662921945;
+ Mon, 15 Oct 2018 21:08:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 16 Oct 2018 12:05:00 +0800
-From:   cang@codeaurora.org
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     dianders@chromium.org, subhashj@codeaurora.org,
-        asutoshd@codeaurora.org, vivek.gautam@codeaurora.org,
-        evgreen@chromium.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/1] scsi: ufs: make UFS Tx lane1 clock optional for
- QCOM platforms
-In-Reply-To: <yq1ftx6wqeh.fsf@oracle.com>
-References: <1539397502-30120-1-git-send-email-cang@codeaurora.org>
- <yq1ftx6wqeh.fsf@oracle.com>
-Message-ID: <98938b7462e2a90e1b2089d6c6706c52@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20181013080848.29894-1-oskari@lemmela.net> <20181013080848.29894-3-oskari@lemmela.net>
+In-Reply-To: <20181013080848.29894-3-oskari@lemmela.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 16 Oct 2018 12:08:28 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66WEx049805p65+4xaTnfeCQqT6EOCKmx=KD8dU=ogAbA@mail.gmail.com>
+Message-ID: <CAGb2v66WEx049805p65+4xaTnfeCQqT6EOCKmx=KD8dU=ogAbA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] ARM: dts: axp81x: add AC power supply subnode
+To:     oskari@lemmela.net
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+On Sat, Oct 13, 2018 at 4:09 PM Oskari Lemmela <oskari@lemmela.net> wrote:
+>
+> Add AC power supply subnode for AXP81X PMIC.
+>
+> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
 
-On 2018-10-16 10:56, Martin K. Petersen wrote:
-> Can,
-> 
->> Per Qcom's UFS host controller HW design, the UFS Tx lane1 clock could
->> be muxed with Tx lane0 clock, hence keep Tx lane1 clock optional by
->> ignoring it if it is not provided in device tree. This change also
->> performs some cleanup to lanes per direction checks when
->> enable/disable lane clocks just for symmetry.
-> 
-> Applied to 4.20/scsi-queue, thanks!
-
-Thanks a lot!
-
--Can Guo
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
