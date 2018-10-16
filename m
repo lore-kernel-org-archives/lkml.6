@@ -6,52 +6,53 @@ X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676C1C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 629ECC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20F6B20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:06:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20BBA208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:07:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4Wb34Ix"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F6B20881
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBsCNG8h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BBA208B3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbeJPU4b (ORCPT
+        id S1727141AbeJPU53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 16:56:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51540 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 16:57:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbeJPU4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 16:56:31 -0400
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+        id S1726760AbeJPU53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 16:57:29 -0400
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14C6620881;
-        Tue, 16 Oct 2018 13:06:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFF142145D;
+        Tue, 16 Oct 2018 13:07:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539695167;
-        bh=g4duEpsJS1VdTYdC4H2W7JnIL4xUim62Yj3MZKE9uJQ=;
+        s=default; t=1539695225;
+        bh=scN6/EPRlFKv4sLdDNQsmjtVWMzLwhQr9ubP+0B2JI4=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=D4Wb34Ixi6gIYyKtPonz3lcZKApRbk2kUgXRntqadr08Bitfj12akMNn9uG+90pav
-         QQQHgQfUOe+0CoMtnKNrLC3y5oB+3tWbk6jKWJ64xGSdUzM4LHyD1sbIRZrCyL1KJt
-         mNtZ08Oy2uw23AyXRQ7GJWrg7WsQGhJhQOiAObcE=
-Received: by mail-wm1-f41.google.com with SMTP id i8-v6so22216239wmg.0;
-        Tue, 16 Oct 2018 06:06:07 -0700 (PDT)
-X-Gm-Message-State: ABuFfoj7ZNAMZzVmjCuLWr6NgyprurwjxLq4Lc5uvIIvgYGkbN1OV2nt
-        oss0PTu8Y9XekrmZPGOPMbI3D2JacAtGiIw/wGQ=
-X-Google-Smtp-Source: ACcGV61IQVPmnCK3CE9FIeg78e8OSv4VIg4fYlb6lk2tUmy3FQGNNmLzHrgvklaHVgSROMUDx/osVLBPVNXHcXzG7Ro=
-X-Received: by 2002:a1c:ab54:: with SMTP id u81-v6mr16387254wme.45.1539695165516;
- Tue, 16 Oct 2018 06:06:05 -0700 (PDT)
+        b=YBsCNG8hwU5EN4UE5XL2v+eUQ3s+UmUdGPZDUcOeS/P/aAXZjQjnYLnkcaHDGuzl/
+         i4Ly5zkc8M4cRXyahbkmLA1HV3F7FbtxXHPcKNKnB5WDR2VeycreB9P6GLVPQvX8C2
+         dqQ5+nD3TflbclPSLJEY+Ekawi/QZQHO1M9x5fKU=
+Received: by mail-wr1-f49.google.com with SMTP id y16so25451347wrw.3;
+        Tue, 16 Oct 2018 06:07:04 -0700 (PDT)
+X-Gm-Message-State: ABuFfojP5/uOPjUSCYQtF6trGbyzy083wwqNJpKYUSjgjh4gAM69LgEC
+        LJwUpABG9cBlsE5FVAZUzGB/r2wQU5LRbmWA8MY=
+X-Google-Smtp-Source: ACcGV61Igj015ki4JqOig05d3k2V86Kbe4M9GolX4MF8VNF8WCGEow+ka8hHXOzcvvXRbGk+yo6F/LCl/1D1UB8qFJc=
+X-Received: by 2002:a5d:4306:: with SMTP id h6-v6mr19802116wrq.189.1539695223198;
+ Tue, 16 Oct 2018 06:07:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20181015123136eucas1p292c0d6662da5e6694e9f6773282ea017@eucas1p2.samsung.com>
- <20181015123112.9379-1-m.szyprowski@samsung.com> <20181015123112.9379-6-m.szyprowski@samsung.com>
-In-Reply-To: <20181015123112.9379-6-m.szyprowski@samsung.com>
+References: <CGME20181015123137eucas1p1cf043644b9b40e15c9d2f221f26bef51@eucas1p1.samsung.com>
+ <20181015123112.9379-1-m.szyprowski@samsung.com> <20181015123112.9379-7-m.szyprowski@samsung.com>
+In-Reply-To: <20181015123112.9379-7-m.szyprowski@samsung.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 16 Oct 2018 15:05:54 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPct1-8g6hcfzwkMdyFDJPfj=5Y9-s0R9mtpTJu99in7Xg@mail.gmail.com>
-Message-ID: <CAJKOXPct1-8g6hcfzwkMdyFDJPfj=5Y9-s0R9mtpTJu99in7Xg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] arm64: dts: exynos: Move arch-timer node to right place
+Date:   Tue, 16 Oct 2018 15:06:52 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfEUVFYCpWiNVWWLydM6pisTEvDPk1OJnY2CC7z7Zt_Cg@mail.gmail.com>
+Message-ID: <CAJKOXPfEUVFYCpWiNVWWLydM6pisTEvDPk1OJnY2CC7z7Zt_Cg@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] arm64: platform: Add enable Exynos Multi-Core
+ Timer driver
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
 Cc:     "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>,
@@ -69,15 +70,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, 15 Oct 2018 at 14:31, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 >
-> Move ARM architected timer device-tree node to the beginning of 'soc'
-> node, to group it together with other ARM CPU core devices (like PMU).
+> On Exynos SoCs enabling MCT driver is required even if ARM Architected
+> Timer driver is used to for managing timer hardware and clock source
+> events.
 >
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 23 +++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
+>  arch/arm64/Kconfig.platforms | 1 +
+>  1 file changed, 1 insertion(+)
 
 Looks okay, I'll take it after this merge window.
+
+In case this was applied directly to arm-soc:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
