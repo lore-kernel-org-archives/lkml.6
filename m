@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40667C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98566C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AB5B21477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6156621477
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiDRqD7u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AB5B21477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HN6+mypf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6156621477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbeJQBDk (ORCPT
+        id S1727601AbeJQBDm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:03:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45782 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:03:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727263AbeJQBDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:03:39 -0400
+        id S1727263AbeJQBDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:03:41 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FD09214C3;
-        Tue, 16 Oct 2018 17:12:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AFA22147C;
+        Tue, 16 Oct 2018 17:12:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709936;
-        bh=xfb/vqsJkwpm3n9eYLewTc9P8ZWMmb6ZFB49nahRRCk=;
+        s=default; t=1539709939;
+        bh=Ef7ei2uh4fJ0+s3antgBEIL6+ceWDycr9FPiw6wYFFY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZiDRqD7u45cRPCiHKNPgOm/zmLDHmgVsEj3xQi9p/5+yx4pUj3b0sTku3dEZzseae
-         yltrZOmr9riUvH5bYHu+M7V90cXHu5DeoEajPfLUQYpMTZxDdJqmcpuSAWjXQs6AUd
-         IogQWNuD+P3fssos5lUZx0H9Gw39cW8smc61yx5c=
+        b=HN6+mypfS+cd/ujoV3vV7HpJcmEPo8ujMxPkX8/FDSHHyklDsg8v2KPvlRpCjmCEg
+         JS3nmDCVuQ8lpLK5+4NO/8hLTMfgq88KEjVWj/A6Jus9JaBtKAlWSLVijMssZOhhAo
+         mAvb7Sr9V5FbxtEyhYKNcwoCn/iQlGVPwghRIMxE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org, Gerhard Wiesinger <lists@wiesinger.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 048/135] inet: make sure to grab rcu_read_lock before using ireq->ireq_opt
-Date:   Tue, 16 Oct 2018 19:04:38 +0200
-Message-Id: <20181016170518.014364406@linuxfoundation.org>
+Subject: [PATCH 4.18 049/135] net: dsa: b53: Keep CPU port as tagged in all VLANs
+Date:   Tue, 16 Oct 2018 19:04:39 +0200
+Message-Id: <20181016170518.068876258@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -62,101 +62,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 2ab2ddd301a22ca3c5f0b743593e4ad2953dfa53 ]
+[ Upstream commit ca8931948344c485569b04821d1f6bcebccd376b ]
 
-Timer handlers do not imply rcu_read_lock(), so my recent fix
-triggered a LOCKDEP warning when SYNACK is retransmit.
+Commit c499696e7901 ("net: dsa: b53: Stop using dev->cpu_port
+incorrectly") was a bit too trigger happy in removing the CPU port from
+the VLAN membership because we rely on DSA to program the CPU port VLAN,
+which it does, except it does not bother itself with tagged/untagged and
+just usese untagged.
 
-Lets add rcu_read_lock()/rcu_read_unlock() pairs around ireq->ireq_opt
-usages instead of guessing what is done by callers, since it is
-not worth the pain.
+Having the CPU port "follow" the user ports tagged/untagged is not great
+and does not allow for properly differentiating, so keep the CPU port
+tagged in all VLANs.
 
-Get rid of ireq_opt_deref() helper since it hides the logic
-without real benefit, since it is now a standard rcu_dereference().
-
-Fixes: 1ad98e9d1bdf ("tcp/dccp: fix lockdep issue when SYN is backlogged")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Willem de Bruijn <willemb@google.com>
+Reported-by: Gerhard Wiesinger <lists@wiesinger.com>
+Fixes: c499696e7901 ("net: dsa: b53: Stop using dev->cpu_port incorrectly")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/inet_sock.h         |    5 -----
- net/dccp/ipv4.c                 |    4 +++-
- net/ipv4/inet_connection_sock.c |    5 ++++-
- net/ipv4/tcp_ipv4.c             |    4 +++-
- 4 files changed, 10 insertions(+), 8 deletions(-)
+ drivers/net/dsa/b53/b53_common.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/net/inet_sock.h
-+++ b/include/net/inet_sock.h
-@@ -130,11 +130,6 @@ static inline int inet_request_bound_dev
- 	return sk->sk_bound_dev_if;
- }
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -1107,7 +1107,7 @@ void b53_vlan_add(struct dsa_switch *ds,
+ 		b53_get_vlan_entry(dev, vid, vl);
  
--static inline struct ip_options_rcu *ireq_opt_deref(const struct inet_request_sock *ireq)
--{
--	return rcu_dereference(ireq->ireq_opt);
--}
--
- struct inet_cork {
- 	unsigned int		flags;
- 	__be32			addr;
---- a/net/dccp/ipv4.c
-+++ b/net/dccp/ipv4.c
-@@ -493,9 +493,11 @@ static int dccp_v4_send_response(const s
+ 		vl->members |= BIT(port);
+-		if (untagged)
++		if (untagged && !dsa_is_cpu_port(ds, port))
+ 			vl->untag |= BIT(port);
+ 		else
+ 			vl->untag &= ~BIT(port);
+@@ -1149,7 +1149,7 @@ int b53_vlan_del(struct dsa_switch *ds,
+ 				pvid = 0;
+ 		}
  
- 		dh->dccph_checksum = dccp_v4_csum_finish(skb, ireq->ir_loc_addr,
- 							      ireq->ir_rmt_addr);
-+		rcu_read_lock();
- 		err = ip_build_and_send_pkt(skb, sk, ireq->ir_loc_addr,
- 					    ireq->ir_rmt_addr,
--					    ireq_opt_deref(ireq));
-+					    rcu_dereference(ireq->ireq_opt));
-+		rcu_read_unlock();
- 		err = net_xmit_eval(err);
- 	}
+-		if (untagged)
++		if (untagged && !dsa_is_cpu_port(ds, port))
+ 			vl->untag &= ~(BIT(port));
  
---- a/net/ipv4/inet_connection_sock.c
-+++ b/net/ipv4/inet_connection_sock.c
-@@ -535,7 +535,8 @@ struct dst_entry *inet_csk_route_req(con
- 	struct ip_options_rcu *opt;
- 	struct rtable *rt;
- 
--	opt = ireq_opt_deref(ireq);
-+	rcu_read_lock();
-+	opt = rcu_dereference(ireq->ireq_opt);
- 
- 	flowi4_init_output(fl4, ireq->ir_iif, ireq->ir_mark,
- 			   RT_CONN_FLAGS(sk), RT_SCOPE_UNIVERSE,
-@@ -549,11 +550,13 @@ struct dst_entry *inet_csk_route_req(con
- 		goto no_route;
- 	if (opt && opt->opt.is_strictroute && rt->rt_uses_gateway)
- 		goto route_err;
-+	rcu_read_unlock();
- 	return &rt->dst;
- 
- route_err:
- 	ip_rt_put(rt);
- no_route:
-+	rcu_read_unlock();
- 	__IP_INC_STATS(net, IPSTATS_MIB_OUTNOROUTES);
- 	return NULL;
- }
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -942,9 +942,11 @@ static int tcp_v4_send_synack(const stru
- 	if (skb) {
- 		__tcp_v4_send_check(skb, ireq->ir_loc_addr, ireq->ir_rmt_addr);
- 
-+		rcu_read_lock();
- 		err = ip_build_and_send_pkt(skb, sk, ireq->ir_loc_addr,
- 					    ireq->ir_rmt_addr,
--					    ireq_opt_deref(ireq));
-+					    rcu_dereference(ireq->ireq_opt));
-+		rcu_read_unlock();
- 		err = net_xmit_eval(err);
- 	}
- 
+ 		b53_set_vlan_entry(dev, vid, vl);
 
 
