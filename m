@@ -2,72 +2,73 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43959C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE5EC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E42E21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:53:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ko/OIuE8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E42E21471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2B2C2205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:54:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B2C2205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbeJQAoX (ORCPT
+        id S1727401AbeJQApf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:44:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59418 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbeJQAoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:44:23 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9AC2205C9;
-        Tue, 16 Oct 2018 16:53:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539708786;
-        bh=qeOIAJTmOn0k5o+SGOgqo4Ko+QwYNLbEWjvwrrvf92s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ko/OIuE8aY3kERP885lCc5fMnJFvfmYHWWE2sW0Qw1Z4se/JubRXW2tHAszyFwhMc
-         QoVKYs+mHj0+lx7pUYWRayJD4/71lQLXEQdwthofyYUsZPcMO6VpPSgjUQVpLtkXMF
-         XnCLza28/2cUeU1cw2rlm2lvpEFYx1aWC7YU/mPo=
-Date:   Tue, 16 Oct 2018 18:53:04 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] SELinux fixes for v4.19 (#1)
-Message-ID: <20181016165304.GD9547@kroah.com>
-References: <CAHC9VhRDmorDGkUkXv5f4YT-PxBdspbqmo+fYpu7-P-xzC2FxA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRDmorDGkUkXv5f4YT-PxBdspbqmo+fYpu7-P-xzC2FxA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 16 Oct 2018 20:45:35 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:53284 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727163AbeJQApf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 20:45:35 -0400
+Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5C6C512DE580D;
+        Tue, 16 Oct 2018 09:54:17 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 09:54:14 -0700 (PDT)
+Message-Id: <20181016.095414.697502448536323380.davem@davemloft.net>
+To:     gustavo@embeddedor.com
+Cc:     quentin.schulz@bootlin.com, linux-kernel@vger.kernel.org,
+        andrew@lunn.ch, f.fainelli@gmail.com
+Subject: Re: [PATCH net-next v2 2/2] net: phy: mscc: fix memory leak in
+ vsc8574_config_pre_init
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <e64b93c2-4f25-ee68-ef23-e947f1e84d55@embeddedor.com>
+References: <6161326e265a99f8ec8e0f7028790a0131c5404e.1539159556.git.gustavo@embeddedor.com>
+        <20181010083422.phokcciqdkzm6u7w@qschulz>
+        <e64b93c2-4f25-ee68-ef23-e947f1e84d55@embeddedor.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 16 Oct 2018 09:54:17 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 06:28:04PM -0400, Paul Moore wrote:
-> Hi Greg,
-> 
-> We've got one SELinux "fix" that I'd like to get into v4.19 if
-> possible.  I'm using double quotes on "fix" as this is just an update
-> to the MAINTAINERS file and not a code change.  From my perspective,
-> MAINTAINERS updates generally don't warrant inclusion during the -rcX
-> phase, but this is a change to the mailing list location so it seemed
-> prudent to get this in before v4.19 is released.
-> 
-> If you don't want this for v4.19 let me know and I'll queue it up for
-> the upcoming merge window.
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Tue, 16 Oct 2018 10:49:36 +0200
 
-Not a problem, now merged, thanks.
+> Hi,
+> 
+> On 10/10/18 10:34 AM, Quentin Schulz wrote:
+>> Hi Gustavo,
+>> 
+>> On Wed, Oct 10, 2018 at 10:31:39AM +0200, Gustavo A. R. Silva wrote:
+>>> In case memory resources for *fw* were successfully allocated,
+>>> release them before return.
+>>>
+>>> Addresses-Coverity-ID: 1473968 ("Resource leak")
+>>> Fixes: 00d70d8e0e78 ("net: phy: mscc: add support for VSC8574 PHY")
+>> 
+>> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
+>> 
+> 
+> Friendly ping. Dave, can you take this?
 
-greg k-h
+It needs to be posted properly to netdev, just like all networking
+patches do.
