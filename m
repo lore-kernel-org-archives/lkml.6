@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C906AC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FC9C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9337420866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:14:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5D982098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:14:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3llPpK+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9337420866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vtT5yEoa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5D982098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbeJQBFX (ORCPT
+        id S1729050AbeJQBF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:05:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48700 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:05:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbeJQBFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:05:22 -0400
+        id S1727280AbeJQBFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:05:25 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6187D20866;
-        Tue, 16 Oct 2018 17:13:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29A172098A;
+        Tue, 16 Oct 2018 17:14:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710039;
-        bh=oyzVHra+OcCSA7yj3/rWQ02MgjbIAxdI/TSnDpRoaCQ=;
+        s=default; t=1539710042;
+        bh=P7HLrP8Yf5+IZNlK7NQlXBb70EpQedhq3C/kFgbHl84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h3llPpK+5yIFk6PSeWFGjZjpnlp1reu4zpMehbX6UwUuBM7Laq5DvonEx043YIW2E
-         xcmlkr5Mcnosdb4WlMR2lDyOBs8cOcMjSU2FlDnZhlqPmvuuaI62kQ8xzP7u02xyKz
-         K/DV62f7GUGksuXBb2Mma2n0opJByxFFG5yOh0OU=
+        b=vtT5yEoa/SBYFyEe5Og7NXDT46PsqAfe3qisygRlpVmEyBAJp+mKugSje7lvV47dM
+         /ChVC/dtr0nDCVCIgKwC/BMH0SIbJbIRCDlDKoSwgnjpAHkfmAB/muPfnpUfxzeclw
+         EyZ3CtoeQPSuI6qB5zpH/2QtmZc3yqTeWOXCJ6N8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 046/135] sfp: fix oops with ethtool -m
-Date:   Tue, 16 Oct 2018 19:04:36 +0200
-Message-Id: <20181016170517.917484649@linuxfoundation.org>
+Subject: [PATCH 4.18 047/135] tcp/dccp: fix lockdep issue when SYN is backlogged
+Date:   Tue, 16 Oct 2018 19:04:37 +0200
+Message-Id: <20181016170517.969907149@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -63,71 +63,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 126d6848ef13958e1cb959e96c21d19bc498ade9 ]
+[ Upstream commit 1ad98e9d1bdf4724c0a8532fabd84bf3c457c2bc ]
 
-If a network interface is created prior to the SFP socket being
-available, ethtool can request module information.  This unfortunately
-leads to an oops:
+In normal SYN processing, packets are handled without listener
+lock and in RCU protected ingress path.
 
-Unable to handle kernel NULL pointer dereference at virtual address 00000008
-pgd = (ptrval)
-[00000008] *pgd=7c400831, *pte=00000000, *ppte=00000000
-Internal error: Oops: 17 [#1] SMP ARM
-Modules linked in:
-CPU: 0 PID: 1480 Comm: ethtool Not tainted 4.19.0-rc3 #138
-Hardware name: Broadcom Northstar Plus SoC
-PC is at sfp_get_module_info+0x8/0x10
-LR is at dev_ethtool+0x218c/0x2afc
+But syzkaller is known to be able to trick us and SYN
+packets might be processed in process context, after being
+queued into socket backlog.
 
-Fix this by not filling in the network device's SFP bus pointer until
-SFP is fully bound, thereby avoiding the core calling into the SFP bus
-code.
+In commit 06f877d613be ("tcp/dccp: fix other lockdep splats
+accessing ireq_opt") I made a very stupid fix, that happened
+to work mostly because of the regular path being RCU protected.
 
-Fixes: ce0aa27ff3f6 ("sfp: add sfp-bus to bridge between network devices and sfp cages")
-Reported-by: Florian Fainelli <f.fainelli@gmail.com>
-Tested-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Really the thing protecting ireq->ireq_opt is RCU read lock,
+and the pseudo request refcnt is not relevant.
+
+This patch extends what I did in commit 449809a66c1d ("tcp/dccp:
+block BH for SYN processing") by adding an extra rcu_read_{lock|unlock}
+pair in the paths that might be taken when processing SYN from
+socket backlog (thus possibly in process context)
+
+Fixes: 06f877d613be ("tcp/dccp: fix other lockdep splats accessing ireq_opt")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/sfp-bus.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/net/inet_sock.h |    3 +--
+ net/dccp/input.c        |    4 +++-
+ net/ipv4/tcp_input.c    |    4 +++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/net/phy/sfp-bus.c
-+++ b/drivers/net/phy/sfp-bus.c
-@@ -349,6 +349,7 @@ static int sfp_register_bus(struct sfp_b
- 	}
- 	if (bus->started)
- 		bus->socket_ops->start(bus->sfp);
-+	bus->netdev->sfp_bus = bus;
- 	bus->registered = true;
- 	return 0;
- }
-@@ -357,6 +358,7 @@ static void sfp_unregister_bus(struct sf
- {
- 	const struct sfp_upstream_ops *ops = bus->upstream_ops;
+--- a/include/net/inet_sock.h
++++ b/include/net/inet_sock.h
+@@ -132,8 +132,7 @@ static inline int inet_request_bound_dev
  
-+	bus->netdev->sfp_bus = NULL;
- 	if (bus->registered) {
- 		if (bus->started)
- 			bus->socket_ops->stop(bus->sfp);
-@@ -438,7 +440,6 @@ static void sfp_upstream_clear(struct sf
+ static inline struct ip_options_rcu *ireq_opt_deref(const struct inet_request_sock *ireq)
  {
- 	bus->upstream_ops = NULL;
- 	bus->upstream = NULL;
--	bus->netdev->sfp_bus = NULL;
- 	bus->netdev = NULL;
+-	return rcu_dereference_check(ireq->ireq_opt,
+-				     refcount_read(&ireq->req.rsk_refcnt) > 0);
++	return rcu_dereference(ireq->ireq_opt);
  }
  
-@@ -467,7 +468,6 @@ struct sfp_bus *sfp_register_upstream(st
- 		bus->upstream_ops = ops;
- 		bus->upstream = upstream;
- 		bus->netdev = ndev;
--		ndev->sfp_bus = bus;
+ struct inet_cork {
+--- a/net/dccp/input.c
++++ b/net/dccp/input.c
+@@ -606,11 +606,13 @@ int dccp_rcv_state_process(struct sock *
+ 	if (sk->sk_state == DCCP_LISTEN) {
+ 		if (dh->dccph_type == DCCP_PKT_REQUEST) {
+ 			/* It is possible that we process SYN packets from backlog,
+-			 * so we need to make sure to disable BH right there.
++			 * so we need to make sure to disable BH and RCU right there.
+ 			 */
++			rcu_read_lock();
+ 			local_bh_disable();
+ 			acceptable = inet_csk(sk)->icsk_af_ops->conn_request(sk, skb) >= 0;
+ 			local_bh_enable();
++			rcu_read_unlock();
+ 			if (!acceptable)
+ 				return 1;
+ 			consume_skb(skb);
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -5976,11 +5976,13 @@ int tcp_rcv_state_process(struct sock *s
+ 			if (th->fin)
+ 				goto discard;
+ 			/* It is possible that we process SYN packets from backlog,
+-			 * so we need to make sure to disable BH right there.
++			 * so we need to make sure to disable BH and RCU right there.
+ 			 */
++			rcu_read_lock();
+ 			local_bh_disable();
+ 			acceptable = icsk->icsk_af_ops->conn_request(sk, skb) >= 0;
+ 			local_bh_enable();
++			rcu_read_unlock();
  
- 		if (bus->sfp) {
- 			ret = sfp_register_bus(bus);
+ 			if (!acceptable)
+ 				return 1;
 
 
