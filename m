@@ -2,135 +2,120 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D22C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B77DC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5B2620881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:49:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5B2620881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A50E2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:50:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wn3meXFS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A50E2089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbeJPSjJ (ORCPT
+        id S1727076AbeJPSkr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 14:39:09 -0400
-Received: from mout.perfora.net ([74.208.4.194]:46115 "EHLO mout.perfora.net"
+        Tue, 16 Oct 2018 14:40:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726968AbeJPSjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 14:39:08 -0400
-Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
- mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MFrWa-1gP4jd3ndO-00EvqI; Tue, 16 Oct 2018 12:48:04 +0200
-Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
- mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MFrWa-1gP4jd3ndO-00EvqI; Tue, 16 Oct 2018 12:48:04 +0200
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Mark Brown <broonie@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH v2 8/9] ASoC: tegra_sgtl5000: fix device_node refcounting
-Date:   Tue, 16 Oct 2018 12:47:29 +0200
-Message-Id: <20181016104730.4598-9-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20181016104730.4598-1-marcel@ziswiler.com>
-References: <20181016104730.4598-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:7TKYwea7pN/FWXKM2Q9kNjlXDrov0p69mKi9DQOv0CigpMCpmmc
- kob2L8tHU6iGejBFVZKzaRpmEAjuN0cF3PXJBWzgLRAGFevl/3Yp8BGnpdLdf7pj22J2OEh
- 5/nhOBF7qtXlGWqFbxQkGqFVNsx/6jo/ABLZSqPP81dNlY+iT+ozXbKt8kYHyln/7W99hyd
- 2UlkfMUt+qHamyyY7/fsA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:GG2omMcOvbQ=:pA8YgHqtjekhBq7pBHqxoI
- IhIFE81AouqFaqljSnIM8sdpsVACEXFrkngdFs2Ua6o5zf9XmSh9+WwnSBto/4bjmezMxCp7f
- bMb6s3hPGZSekx/5+h8PmuI/VF/RCtBic7+I/AGoIi7nKydE2z3IN29QAm4lvEcxOmCUvbaQr
- CugDw5ncPquW/L/ua8qcUTPSy84k0X76DBw7mP4J02jPZ+awU3fhPtrbjE8OMPBftwff49Mfb
- YiS7LIAPJGs+tvBYESOIJfqY5OX34ml/5PB/V103HbRLScbHPZrc9HSOBywZquvL6riNQFWgl
- y/UPdtGG1lItAyPeFIInk6bZQ6zUN5Hy7hfZ8Rz3cLM3BU3RMopsLGOVEL+1DVZR65t86OIev
- hr7gM8WfAe+A+kHj+7mK5cljZkTDaHOZwiT5o5iqA7xbI/8XgVvXZMgZMX+jKoDIkmSgVAmqf
- Spi7jhvXH4anVp1KdFptRWdPlFko5+lD26ebgEtfmvM+XS1Qlym+bpbCNyecHypHrVi+z2aXd
- ZAZwYc2s51/5ra8OZ6EhtRxTzcVkb14icOXI9gioOY8U30GZcAcAl0QAHYnwG4rwzjGv2RIpY
- EEqPDSlIXjM+N+EZ+qbyxnFHx3IrJUOtOdYhrl+/RaMEPYp/97AhJ5kKs4mZC+Wa1caahfmNi
- F+g13naxEgQIyGMXAq9nrFbULvTuOEsIwWc0A7UiSkLuaXa1rlpqWBMDF1b2xaaQ7e1g=
+        id S1726581AbeJPSkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 14:40:47 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42D9B2089E;
+        Tue, 16 Oct 2018 10:50:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539687056;
+        bh=m6BkLeRjRJKtqLLYvRuVOGZ+TJMI8JRstcZ8V81HXR4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Wn3meXFSNoEgnvlhLVDtUy5BurBXchLLuBcmMnCKLCcPAkkIWK61SLabXgZ+h9M2O
+         JY72mOejH/gL5NhytHJsDnFBA4igCIfkxyJgKCq98MtEx42FhJpMitDU8Ivdkbk3JZ
+         dUPsngcyO27mqRxR4aujX04myaPfVJ2O6zvPkYis=
+Date:   Tue, 16 Oct 2018 12:50:54 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v6 3/4] devres: provide devm_kstrdup_const()
+Message-ID: <20181016105054.GC4768@kroah.com>
+References: <20181014152010.2021-1-brgl@bgdev.pl>
+ <20181014152010.2021-4-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181014152010.2021-4-brgl@bgdev.pl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On Sun, Oct 14, 2018 at 05:20:09PM +0200, Bartosz Golaszewski wrote:
+> Provide a resource managed version of kstrdup_const(). This variant
+> internally calls devm_kstrdup() on pointers that are outside of
+> .rodata section and returns the string as is otherwise.
+> 
+> Make devm_kfree() check if the passed pointer doesn't point to .rodata
+> and if so - don't actually destroy the resource.
+> 
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/base/devres.c  | 31 +++++++++++++++++++++++++++++++
+>  include/linux/device.h |  2 ++
+>  2 files changed, 33 insertions(+)
+> 
+> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+> index 438c91a43508..00c70f0fcdcd 100644
+> --- a/drivers/base/devres.c
+> +++ b/drivers/base/devres.c
+> @@ -11,6 +11,8 @@
+>  #include <linux/slab.h>
+>  #include <linux/percpu.h>
+>  
+> +#include <asm/sections.h>
+> +
+>  #include "base.h"
+>  
+>  struct devres_node {
+> @@ -822,6 +824,28 @@ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+>  }
+>  EXPORT_SYMBOL_GPL(devm_kstrdup);
+>  
+> +/**
+> + * devm_kstrdup_const - resource managed conditional string duplication
+> + * @dev: device for which to duplicate the string
+> + * @s: the string to duplicate
+> + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
+> + *
+> + * Strings allocated by devm_kstrdup_const will be automatically freed when
+> + * the associated device is detached.
+> + *
+> + * RETURNS:
+> + * Source string if it is in .rodata section otherwise it falls back to
+> + * devm_kstrdup.
+> + */
+> +const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
+> +{
+> +	if (is_kernel_rodata((unsigned long)s))
+> +		return s;
+> +
+> +	return devm_kstrdup(dev, s, gfp);
+> +}
+> +EXPORT_SYMBOL(devm_kstrdup_const);
 
-Similar to the following:
+This should be EXPORT_SYMBOL_GPL() to match the rest of the file.  I'll
+go fix that up when I apply it.
 
-commit 4321723648b0 ("ASoC: tegra_alc5632: fix device_node refcounting")
+thanks,
 
-commit 7c5dfd549617 ("ASoC: tegra: fix device_node refcounting")
-
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
----
-
-Changes in v2: New patch
-
- sound/soc/tegra/tegra_sgtl5000.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-index 45a4aa9d2a47..901457da25ec 100644
---- a/sound/soc/tegra/tegra_sgtl5000.c
-+++ b/sound/soc/tegra/tegra_sgtl5000.c
-@@ -149,14 +149,14 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,i2s-controller' missing/invalid\n");
- 		ret = -EINVAL;
--		goto err;
-+		goto err_put_codec_of_node;
- 	}
- 
- 	tegra_sgtl5000_dai.platform_of_node = tegra_sgtl5000_dai.cpu_of_node;
- 
- 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
- 	if (ret)
--		goto err;
-+		goto err_put_cpu_of_node;
- 
- 	ret = snd_soc_register_card(card);
- 	if (ret) {
-@@ -169,6 +169,13 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
- 
- err_fini_utils:
- 	tegra_asoc_utils_fini(&machine->util_data);
-+err_put_cpu_of_node:
-+	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
-+	tegra_sgtl5000_dai.cpu_of_node = NULL;
-+	tegra_sgtl5000_dai.platform_of_node = NULL;
-+err_put_codec_of_node:
-+	of_node_put(tegra_sgtl5000_dai.codec_of_node);
-+	tegra_sgtl5000_dai.codec_of_node = NULL;
- err:
- 	return ret;
- }
-@@ -183,6 +190,12 @@ static int tegra_sgtl5000_driver_remove(struct platform_device *pdev)
- 
- 	tegra_asoc_utils_fini(&machine->util_data);
- 
-+	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
-+	tegra_sgtl5000_dai.cpu_of_node = NULL;
-+	tegra_sgtl5000_dai.platform_of_node = NULL;
-+	of_node_put(tegra_sgtl5000_dai.codec_of_node);
-+	tegra_sgtl5000_dai.codec_of_node = NULL;
-+
- 	return ret;
- }
- 
--- 
-2.14.4
-
+greg k-h
