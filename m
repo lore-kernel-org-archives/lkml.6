@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A250C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EC8C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 510CA21477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B8F720866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jh6X0P9O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 510CA21477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UmrsPEa4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8F720866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728628AbeJQBED (ORCPT
+        id S1728642AbeJQBEF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:04:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46456 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:04:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727734AbeJQBEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:04:02 -0400
+        id S1727734AbeJQBEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:04:05 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AD422089E;
-        Tue, 16 Oct 2018 17:12:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 402072098A;
+        Tue, 16 Oct 2018 17:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709960;
-        bh=paN14ZUWdPc1IcXhhKZAEXwaD/tI6D/p60FPwZJXgU4=;
+        s=default; t=1539709962;
+        bh=GpBohf9VGS890TdtMRBQG6ZDAhDLwBfcn2cDG1hrRqo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jh6X0P9ODRdTTusdM5+AR5czV8ZvfSRV7Ke7Xfq6C+TIdtZ1NMB1nEt2v5EluPEeV
-         FCQHsIlrGvszZ4Qtg9G8hkY7bG0rXlOJrOoO5gE8/mHM53v7swqJWas7EXXuFKUiUa
-         PzMqfAr6OQSsHC6g2KZZSQrb+cZGsetO7Mqq9l00=
+        b=UmrsPEa4iO690M2AU+u5CzEAOirYphByvdiXbWbHQS9tbhHAtaNGOxUkopvcK5llN
+         K8Y00SNfWlMBwCv/yEUIKPGThxoAgbVG0NFTw9TRpEZZy273++Raeu/nT9t7F0D9j0
+         2egm1kd7Bfi+TvBB8foPIL6a+vS46FLItUNV41IU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 056/135] net/ipv6: Remove extra call to ip6_convert_metrics for multipath case
-Date:   Tue, 16 Oct 2018 19:04:46 +0200
-Message-Id: <20181016170518.413223683@linuxfoundation.org>
+Subject: [PATCH 4.18 057/135] net/ipv6: stop leaking percpu memory in fib6 info
+Date:   Tue, 16 Oct 2018 19:04:47 +0200
+Message-Id: <20181016170518.491920828@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -61,37 +62,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-[ Upstream commit 36f19d5b4f99fa9fa8263877e5f8e669d7fddc14 ]
+[ Upstream commit 7abab7b9b498650404800a08765f44929fee8f31 ]
 
-The change to move metrics from the dst to rt6_info moved the call
-to ip6_convert_metrics from ip6_route_add to ip6_route_info_create. In
-doing so it makes the call in ip6_route_info_append redundant and
-actually leaks the metrics installed as part of the ip6_route_info_create.
-Remove the now unnecessary call.
+The fib6_info_alloc() function allocates percpu memory to hold per CPU
+pointers to rt6_info, but this memory is never freed. Fix it.
 
-Fixes: d4ead6b34b67f ("net/ipv6: move metrics from dst to rt6_info")
-Signed-off-by: David Ahern <dsahern@gmail.com>
+Fixes: a64efe142f5e ("net/ipv6: introduce fib6_info struct and helpers")
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/route.c |    5 -----
- 1 file changed, 5 deletions(-)
+ net/ipv6/ip6_fib.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -4314,11 +4314,6 @@ static int ip6_route_info_append(struct
- 	if (!nh)
- 		return -ENOMEM;
- 	nh->fib6_info = rt;
--	err = ip6_convert_metrics(net, rt, r_cfg);
--	if (err) {
--		kfree(nh);
--		return err;
--	}
- 	memcpy(&nh->r_cfg, r_cfg, sizeof(*r_cfg));
- 	list_add_tail(&nh->next, rt6_nh_list);
+--- a/net/ipv6/ip6_fib.c
++++ b/net/ipv6/ip6_fib.c
+@@ -196,6 +196,8 @@ void fib6_info_destroy_rcu(struct rcu_he
+ 				*ppcpu_rt = NULL;
+ 			}
+ 		}
++
++		free_percpu(f6i->rt6i_pcpu);
+ 	}
  
+ 	lwtstate_put(f6i->fib6_nh.nh_lwtstate);
 
 
