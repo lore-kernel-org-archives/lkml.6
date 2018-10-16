@@ -2,149 +2,92 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17067C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6D0C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E6E820881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:35:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E6E820881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1570320869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:37:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PQIEfptf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1570320869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbeJPQYz (ORCPT
+        id S1727291AbeJPQ0g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 12:24:55 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58680 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726453AbeJPQYz (ORCPT
+        Tue, 16 Oct 2018 12:26:36 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44792 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727263AbeJPQ0g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 12:24:55 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9G8YmBc109113
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 04:35:36 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n57pwtqqx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 04:35:35 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Tue, 16 Oct 2018 09:35:33 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 16 Oct 2018 09:35:28 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9G8ZSkE4391236
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 16 Oct 2018 08:35:28 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C8E17A404D;
-        Tue, 16 Oct 2018 11:34:57 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2204AA4057;
-        Tue, 16 Oct 2018 11:34:56 +0100 (BST)
-Received: from skywalker (unknown [9.199.58.69])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Tue, 16 Oct 2018 11:34:55 +0100 (BST)
-Received: (nullmailer pid 25992 invoked by uid 1000);
-        Tue, 16 Oct 2018 08:35:25 -0000
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>, akpm@linux-foundation.org,
-        Michal Hocko <mhocko@kernel.org>, mpe@ellerman.id.au
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH V3 1/2] mm: Add get_user_pages_cma_migrate
-In-Reply-To: <485adcad-4996-ae2c-c098-9dc7bcd2d29a@ozlabs.ru>
-References: <20180918115839.22154-1-aneesh.kumar@linux.ibm.com> <20180918115839.22154-2-aneesh.kumar@linux.ibm.com> <6112386d-65cd-fc1f-b012-e33da2c3b8fe@ozlabs.ru> <87murewecs.fsf@linux.ibm.com> <485adcad-4996-ae2c-c098-9dc7bcd2d29a@ozlabs.ru>
-Date:   Tue, 16 Oct 2018 14:05:25 +0530
+        Tue, 16 Oct 2018 12:26:36 -0400
+Received: by mail-qk1-f194.google.com with SMTP id y8-v6so13569311qka.11
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 01:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ubyjo42R+HubJmEREUzTpsPrkU4zre0fUGpTagWB4sw=;
+        b=PQIEfptf8M46zzD1bks1h1Pae9z2YUj3wesKEzX92MvbHjVJLAzBgRfC6/UF3RjE6Y
+         PnL68nd47I5xNrAAYdhbaCqIojkfzZ6u6J4QOypxKegVzZXqAI3T8XnBIut3DZ+goXuk
+         aARPKOpESn2XkGDjEBqttp+74wGRm/5WJ8DM0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ubyjo42R+HubJmEREUzTpsPrkU4zre0fUGpTagWB4sw=;
+        b=fgtVjYj9FzRYqJMGHLN5eITXWVvFuJjzxwbLMMVXR3bSXXGN4c7KmP+pha/Bx56Qh1
+         bncOPjU5w5KmuB5rJLzmFOc0CQdvTs8dQSLRfpmBeX1Y2C824+nMBq3pn5XlcXH7298K
+         Au+t96/l4/BBgzuhGo8vVXGrit2EJyCrYZ9HFi0Gt1jIwkRJc/EPwxOt5GEsSM2ov0xo
+         7+ncS+vuu0Ay54VXC7kPbLCdC1CKdYBMK25gOW6EcQ6nqJ2b1JmGkgkucmvrlotQvLWd
+         JkAUezdgpIN9GLkPqghBU/6Yfe61dG731RDSzkxJ30nSkRpl+bpmOM3NLH9zofgtHlyG
+         HuNA==
+X-Gm-Message-State: ABuFfoiDTAk6umNKeHphVHkafy4ckZA9mTq7kyuWpOf1qA/qlUjHaWtM
+        31cxOeCqMRGdALf1Hm9iQLuLtD/XMKHUEzXu8M4kaA==
+X-Google-Smtp-Source: ACcGV60PoKpJDS0snC52a5O60Ho2xfTletRBeD16hhV4IxNT6VGudEmxVJ9J6PgPstugAJd7pLQnl3xpoo3/kxp5O/o=
+X-Received: by 2002:a37:7282:: with SMTP id n124-v6mr20009923qkc.78.1539679028406;
+ Tue, 16 Oct 2018 01:37:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18101608-0012-0000-0000-000002B79DEA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101608-0013-0000-0000-000020EC1312
-Message-Id: <87in22wape.fsf@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=44 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=824 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810160076
+References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 16 Oct 2018 10:36:56 +0200
+Message-ID: <CACRpkdbOpfDMGhUFAwXUX=-fhGNfhvQq6NgtFtAoTsu8Vo+BQg@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Add initial pinctrl support for MT6797 SoC
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Sean Wang <sean.wang@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexey Kardashevskiy <aik@ozlabs.ru> writes:
+On Mon, Oct 8, 2018 at 9:14 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 
-> On 16/10/2018 18:16, Aneesh Kumar K.V wrote:
->> Alexey Kardashevskiy <aik@ozlabs.ru> writes:
->> 
->>> +			}
->>>> +		}
->>>> +	}
->>>> +	if (!list_empty(&cma_page_list)) {
->>>> +		/*
->>>> +		 * drop the above get_user_pages reference.
->>>> +		 */
+> This patchset adds initial pinctrl support for Mediatek MT6797 SoC.
+> The pinctrl driver is based on the vendor binding as like MT6765 and
+> implements only GPIO and pinmux functionalities.
 >
+> The devicetree binding doc is not added because it does not exist for
+> MT6765 and I'm not sure about the structure of it.
 >
-> btw, can these pages be used by somebody else in this short window
-> before we migrated and pinned them?
+> This patchset has been tested on 96Boards MediatekX20 development board.
 
-isolate lru page make sure that we remove them from lru list. So lru
-walkers won't find the page. If somebody happen to increment the page
-reference count in that window, the migrate_pages will fail. That is
-handled via migrate_page_move_mapping returning EAGAIN
+I'd be delighted to merge the pin control bindings and driver
+as soon as I have an OK from Sean Wang.
 
->
->
->>>> +		for (i = 0; i < ret; ++i)
->>>> +			put_page(pages[i]);
->>>> +
->>>> +		if (migrate_pages(&cma_page_list, new_non_cma_page,
->>>> +				  NULL, 0, MIGRATE_SYNC, MR_CONTIG_RANGE)) {
->>>> +			/*
->>>> +			 * some of the pages failed migration. Do get_user_pages
->>>> +			 * without migration.
->>>> +			 */
->>>> +			migrate_allow = false;
->>>
->>>
->>> migrate_allow seems useless, simply calling get_user_pages_fast() should
->>> make the code easier to read imho. And the comment says
->>> get_user_pages(), where does this guy hide?
->> 
->> I didn't get that suggestion. What we want to do here is try to migrate pages as
->> long as we find CMA pages in the result of get_user_pages_fast. If we
->> failed any migration attempt, don't try to migrate again.
->
->
-> Setting migrate_allow to false here means you jump up, call
-> get_user_pages_fast() and then run the loop which will do nothing just
-> because if(...migrate_allow) is false. Instead of jumping up you could
-> just call get_user_pages_fast().
-
-ok, that is coding preference I guess, I prefer to avoid multiple
-get_user_pages_fast there. Since we droped the page reference, we need
-to _go back_ and get the page reference without attempting to migrate. That
-is the way I was looking at this.
-
->
-> btw what is migrate_pages() leaves something in cma_page_list (I cannot
-> see it removing pages)? Won't it loop indefinitely?
->
-
-putback_movable_pages take care of that. The below hunk.
-
-			if (!list_empty(&cma_page_list))
-				putback_movable_pages(&cma_page_list);
-
--aneesh
-
+Yours,
+Linus Walleij
