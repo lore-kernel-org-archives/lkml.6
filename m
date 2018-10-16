@@ -2,127 +2,78 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADCFC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D7BC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5526821471
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:42:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4862214AB
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:44:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="rv6/KXGm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5526821471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIwdLrh3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4862214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbeJQGeg (ORCPT
+        id S1727211AbeJQGgk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 02:34:36 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:16413 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbeJQGeg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 02:34:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1539729729; x=1571265729;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=bIKrHmJ5r6oX+d3ZG6SZwoyMJNUWYLEyxfD0C4trCHo=;
-  b=rv6/KXGmMUkRI2YRI8Q+kpKzfZRJTNopwUlsC0vsab5bRZYdUJvLyo9B
-   XnB9lg3l/LPIRt5oeWGgM54to8kKRN/eJffoZ3q6OydC0aVRYoTfAeShn
-   AEOc/AdZ0+vKz2j2PdiL225gfEfYIfhyZgIq9ufx8ws3d5xxNJssF4eIT
-   SWOiq1UUcCVQo+I8gt1vhPsctuP8YA7mA00yc5mug39jN3YkD3dpreZWt
-   fq7GT75ppFVOBzDet3gLjp4VHyrWCpCMIVodhspimUaHzzjxQbzlTwAE2
-   z7cmhxdtqzfHjhl07PiDhyGJW3nXbTiH18aSmThvZ473xV4UY/4mWTFIS
-   A==;
-X-IronPort-AV: E=Sophos;i="5.54,389,1534780800"; 
-   d="scan'208";a="189794714"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 17 Oct 2018 06:42:08 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 16 Oct 2018 15:26:34 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.73.114]) ([10.111.73.114])
-  by uls-op-cesaip02.wdc.com with ESMTP; 16 Oct 2018 15:42:01 -0700
-Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM
- Controller.
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Wesley Terpstra <wesley@sifive.com>, palmer@sifive.com,
-        linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        hch@infradead.org
-References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
- <1539111085-25502-2-git-send-email-atish.patra@wdc.com>
- <20181010135109.GE21134@ulmo> <ef19e79a-d975-bde4-1692-65389ead7c15@wdc.com>
- <20181016105103.GB8852@ulmo>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <c702cf04-a565-dc76-a3bb-dbed922a9c80@wdc.com>
-Date:   Tue, 16 Oct 2018 15:42:00 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Wed, 17 Oct 2018 02:36:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43160 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726923AbeJQGgk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 02:36:40 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D2C221471;
+        Tue, 16 Oct 2018 22:44:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539729845;
+        bh=WraKKlw7FLBAet3clYJlOXNFU0lbilCqu3z92iK5NQM=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=TIwdLrh3HE0V/LqLYtsELlepSRpUxqnMd/2ZFYqmNOPQtfZkRPjdEmPoLzX1DRe3s
+         ueVByw2yDl3NgTGlsqb1XFDgN0LnixOqU5bGiUfEztV2SNwlv49HrJEt6HtTwW/lrT
+         EXYYyPDMbc/tXpWpnMoZNE07wNIe/VZ4pogclMhQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20181016105103.GB8852@ulmo>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1535690756-22234-2-git-send-email-aisheng.dong@nxp.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mturquette@baylibre.com, shawnguo@kernel.org,
+        thor.thayer@linux.intel.com, linux-imx@nxp.com,
+        hdegoede@redhat.com, Dong Aisheng <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Russell King <linux@arm.linux.org.uk>
+References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+ <1535690756-22234-2-git-send-email-aisheng.dong@nxp.com>
+Message-ID: <153972984485.5275.12234542827124661483@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH V6 1/4] clk: bulk: add of_clk_bulk_get()
+Date:   Tue, 16 Oct 2018 15:44:04 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/18 3:51 AM, Thierry Reding wrote:
-> On Mon, Oct 15, 2018 at 03:45:46PM -0700, Atish Patra wrote:
->> On 10/10/18 6:51 AM, Thierry Reding wrote:
->>> On Tue, Oct 09, 2018 at 11:51:22AM -0700, Atish Patra wrote:
->>> [...]
->>>> +- interrupts: one interrupt per PWM channel (currently unused in the driver)
->>>
->>> This should probably say what the interrupt is used for. And once you
->>> have that, remove the comment about it being unused in the driver. DT
->>> is OS agnostic, so "driver" is very unspecific and your claim may
->>> actually be false.
->>>
->>> Thierry
->>>
->> As per my understanding, they are generated by hardware but no usage of pwm
->> interrupts as of now.
-> 
-> It might be useful to say when they are generated. Are they generated
-> once per period? At the beginning or the end of the period? That kind
-> of thing.
-> 
+Quoting Dong Aisheng (2018-08-30 21:45:53)
+> 'clock-names' property is optional in DT, so of_clk_bulk_get() is
+> introduced here to handle this for DT users without 'clock-names'
+> specified. Later clk_bulk_get_all() will be implemented on top of
+> it and this API will be kept private until someone proves they need
+> it because they don't have a struct device pointer.
+> =
 
-Sure. I might have over simplified the statement above.
-I could only find this about pwm interrupts in spec.
-"The PWM can be configured to provide periodic counter interrupts by 
-enabling auto-zeroing of the count register when a comparator 0 fires"
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Reported-by: Shawn Guo <shawnguo@kernel.org>
+> Tested-by: Thor Thayer <thor.thayer@linux.intel.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
 
-I may be wrong here but it looks like we need to configure the hardware 
-to generate periodic interrupts. I will confirm with Wesly and update it 
-in v2.
-
->> I am not sure if removing the entire entry is a good idea.
->> What would be the best way to represent that information ?
->>
->> May be this ?
->>
->> +-interrupts: one interrupt per PWM channel. No usage in HiFive Unleashed
->> SoC.
-> 
-> Why do you think you need to say that they are unused? If the hardware
-> generates these interrupts, then they are "used". If no driver currently
-> has a use for them, that's driver specific and doesn't belong in the DT
-> bindings.
-> 
-
-Sounds good. I will update accordingly.
-
-Regards,
-Atish
-> Thierry
-> 
+Applied to clk-next
 
