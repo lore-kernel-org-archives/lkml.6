@@ -6,466 +6,353 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5AFC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA18EC070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 893F1208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:07:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 893F1208E4
+	by mail.kernel.org (Postfix) with ESMTP id 861D420869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:07:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 861D420869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbeJPMzi (ORCPT
+        id S1727796AbeJPMzk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:55:38 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:21423 "EHLO pegase1.c-s.fr"
+        Tue, 16 Oct 2018 08:55:40 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:33342 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727476AbeJPMzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:55:37 -0400
+        id S1727437AbeJPMzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:55:39 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42Z3FJ56Xyz9ttBv;
-        Tue, 16 Oct 2018 07:06:44 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 42Z3FN46PWz9ttBx;
+        Tue, 16 Oct 2018 07:06:48 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id mCAnJNhz-cya; Tue, 16 Oct 2018 07:06:44 +0200 (CEST)
+        with ESMTP id zqbPZo6JscfD; Tue, 16 Oct 2018 07:06:48 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42Z3FJ4PNWz9ttBh;
-        Tue, 16 Oct 2018 07:06:44 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42Z3FN3cf1z9ttBh;
+        Tue, 16 Oct 2018 07:06:48 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id EA18E8B78F;
-        Tue, 16 Oct 2018 07:06:54 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E10F88B78F;
+        Tue, 16 Oct 2018 07:06:58 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id BfZ1u-LsTYpM; Tue, 16 Oct 2018 07:06:54 +0200 (CEST)
+        with ESMTP id EfEAzNAwo-W1; Tue, 16 Oct 2018 07:06:58 +0200 (CEST)
 Received: from pc13168vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7C5408B755;
-        Tue, 16 Oct 2018 07:06:54 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 909BA8B755;
+        Tue, 16 Oct 2018 07:06:58 +0200 (CEST)
 Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 551DC6F4C9; Tue, 16 Oct 2018 05:06:54 +0000 (UTC)
-Message-Id: <6a06f71773381b9327a96ca966ef6e25945bb56b.1539623258.git.christophe.leroy@c-s.fr>
+        id 618F96F4C9; Tue, 16 Oct 2018 05:06:58 +0000 (UTC)
+Message-Id: <a0ac7c82762936cb1a4bafa9e9230acb510cea6d.1539623259.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1539623258.git.christophe.leroy@c-s.fr>
 References: <cover.1539623258.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v8 3/9] powerpc: Prepare for moving thread_info into
- task_struct
+Subject: [PATCH v8 5/9] powerpc: regain entire stack space
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 16 Oct 2018 05:06:54 +0000 (UTC)
+Date:   Tue, 16 Oct 2018 05:06:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch cleans the powerpc kernel before activating
-CONFIG_THREAD_INFO_IN_TASK:
-- The purpose of the pointer given to call_do_softirq() and
-call_do_irq() is to point the new stack ==> change it to void* and
-rename it 'sp'
-- Don't use CURRENT_THREAD_INFO() to locate the stack.
-- Fix a few comments.
-- Replace current_thread_info()->task by current
-- Remove unnecessary casts to thread_info, as they'll become invalid
-once thread_info is not in stack anymore.
-- Rename THREAD_INFO to TASK_STASK: as it is in fact the offset of the
-pointer to the stack in task_struct, this pointer will not be impacted
-by the move of THREAD_INFO.
-- Makes TASK_STACK available to PPC64. PPC64 will need it to get the
-stack pointer from current once the thread_info have been moved.
-- Modifies klp_init_thread_info() to take task_struct pointer argument.
+thread_info is not anymore in the stack, so the entire stack
+can now be used.
+
+There is also no risk anymore of corrupting task_cpu(p) with a
+stack overflow so the patch removes the test.
+
+When doing this, an explicit test for NULL stack pointer is
+needed in validate_sp() as it is not anymore implicitely covered
+by the sizeof(thread_info) gap.
+
+In the meantime, with the previous patch all pointers to the stacks
+are not anymore pointers to thread_info so this patch changes them
+to void*
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
 ---
- arch/powerpc/include/asm/irq.h       |  4 ++--
- arch/powerpc/include/asm/livepatch.h |  7 ++++---
- arch/powerpc/include/asm/processor.h |  4 ++--
- arch/powerpc/include/asm/reg.h       |  2 +-
- arch/powerpc/kernel/asm-offsets.c    |  2 +-
- arch/powerpc/kernel/entry_32.S       |  2 +-
- arch/powerpc/kernel/entry_64.S       |  2 +-
- arch/powerpc/kernel/head_32.S        |  4 ++--
- arch/powerpc/kernel/head_40x.S       |  4 ++--
- arch/powerpc/kernel/head_44x.S       |  2 +-
- arch/powerpc/kernel/head_8xx.S       |  2 +-
- arch/powerpc/kernel/head_booke.h     |  4 ++--
- arch/powerpc/kernel/head_fsl_booke.S |  4 ++--
- arch/powerpc/kernel/irq.c            |  2 +-
- arch/powerpc/kernel/misc_32.S        |  4 ++--
- arch/powerpc/kernel/process.c        |  8 ++++----
- arch/powerpc/kernel/setup-common.c   |  2 +-
- arch/powerpc/kernel/setup_32.c       | 15 +++++----------
- arch/powerpc/kernel/smp.c            |  4 +++-
- 19 files changed, 38 insertions(+), 40 deletions(-)
+ arch/powerpc/include/asm/irq.h       | 10 +++++-----
+ arch/powerpc/include/asm/processor.h |  3 +--
+ arch/powerpc/kernel/asm-offsets.c    |  1 -
+ arch/powerpc/kernel/entry_32.S       | 14 ++++----------
+ arch/powerpc/kernel/irq.c            | 19 +++++++++----------
+ arch/powerpc/kernel/misc_32.S        |  6 ++----
+ arch/powerpc/kernel/process.c        | 32 +++++++++++++-------------------
+ arch/powerpc/kernel/setup_64.c       |  8 ++++----
+ 8 files changed, 38 insertions(+), 55 deletions(-)
 
 diff --git a/arch/powerpc/include/asm/irq.h b/arch/powerpc/include/asm/irq.h
-index ee39ce56b2a2..2efbae8d93be 100644
+index 2efbae8d93be..966ddd4d2414 100644
 --- a/arch/powerpc/include/asm/irq.h
 +++ b/arch/powerpc/include/asm/irq.h
-@@ -63,8 +63,8 @@ extern struct thread_info *hardirq_ctx[NR_CPUS];
- extern struct thread_info *softirq_ctx[NR_CPUS];
+@@ -48,9 +48,9 @@ struct pt_regs;
+  * Per-cpu stacks for handling critical, debug and machine check
+  * level interrupts.
+  */
+-extern struct thread_info *critirq_ctx[NR_CPUS];
+-extern struct thread_info *dbgirq_ctx[NR_CPUS];
+-extern struct thread_info *mcheckirq_ctx[NR_CPUS];
++extern void *critirq_ctx[NR_CPUS];
++extern void *dbgirq_ctx[NR_CPUS];
++extern void *mcheckirq_ctx[NR_CPUS];
+ extern void exc_lvl_ctx_init(void);
+ #else
+ #define exc_lvl_ctx_init()
+@@ -59,8 +59,8 @@ extern void exc_lvl_ctx_init(void);
+ /*
+  * Per-cpu stacks for handling hard and soft interrupts.
+  */
+-extern struct thread_info *hardirq_ctx[NR_CPUS];
+-extern struct thread_info *softirq_ctx[NR_CPUS];
++extern void *hardirq_ctx[NR_CPUS];
++extern void *softirq_ctx[NR_CPUS];
  
  extern void irq_ctx_init(void);
--extern void call_do_softirq(struct thread_info *tp);
--extern void call_do_irq(struct pt_regs *regs, struct thread_info *tp);
-+void call_do_softirq(void *sp);
-+void call_do_irq(struct pt_regs *regs, void *sp);
- extern void do_IRQ(struct pt_regs *regs);
- extern void __init init_IRQ(void);
- extern void __do_irq(struct pt_regs *regs);
-diff --git a/arch/powerpc/include/asm/livepatch.h b/arch/powerpc/include/asm/livepatch.h
-index 47a03b9b528b..8a81d10ccc82 100644
---- a/arch/powerpc/include/asm/livepatch.h
-+++ b/arch/powerpc/include/asm/livepatch.h
-@@ -43,13 +43,14 @@ static inline unsigned long klp_get_ftrace_location(unsigned long faddr)
- 	return ftrace_location_range(faddr, faddr + 16);
- }
- 
--static inline void klp_init_thread_info(struct thread_info *ti)
-+static inline void klp_init_thread_info(struct task_struct *p)
- {
-+	struct thread_info *ti = task_thread_info(p);
- 	/* + 1 to account for STACK_END_MAGIC */
--	ti->livepatch_sp = (unsigned long *)(ti + 1) + 1;
-+	ti->livepatch_sp = end_of_stack(p) + 1;
- }
- #else
--static void klp_init_thread_info(struct thread_info *ti) { }
-+static inline void klp_init_thread_info(struct task_struct *p) { }
- #endif /* CONFIG_LIVEPATCH */
- 
- #endif /* _ASM_POWERPC_LIVEPATCH_H */
+ void call_do_softirq(void *sp);
 diff --git a/arch/powerpc/include/asm/processor.h b/arch/powerpc/include/asm/processor.h
-index 2caa44db709a..53649b9b7dc4 100644
+index 53649b9b7dc4..238f0938c859 100644
 --- a/arch/powerpc/include/asm/processor.h
 +++ b/arch/powerpc/include/asm/processor.h
-@@ -40,7 +40,7 @@
- 
- #ifndef __ASSEMBLY__
- #include <linux/types.h>
--#include <asm/thread_info.h>
-+#include <linux/thread_info.h>
- #include <asm/ptrace.h>
- #include <asm/hw_breakpoint.h>
- 
-@@ -332,7 +332,7 @@ struct thread_struct {
+@@ -331,8 +331,7 @@ struct thread_struct {
+ #define ARCH_MIN_TASKALIGN 16
  
  #define INIT_SP		(sizeof(init_stack) + (unsigned long) &init_stack)
- #define INIT_SP_LIMIT \
--	(_ALIGN_UP(sizeof(init_thread_info), 16) + (unsigned long) &init_stack)
-+	(_ALIGN_UP(sizeof(struct thread_info), 16) + (unsigned long)&init_stack)
+-#define INIT_SP_LIMIT \
+-	(_ALIGN_UP(sizeof(struct thread_info), 16) + (unsigned long)&init_stack)
++#define INIT_SP_LIMIT	((unsigned long)&init_stack)
  
  #ifdef CONFIG_SPE
  #define SPEFSCR_INIT \
-diff --git a/arch/powerpc/include/asm/reg.h b/arch/powerpc/include/asm/reg.h
-index 640a4d818772..d2528a0b2f5b 100644
---- a/arch/powerpc/include/asm/reg.h
-+++ b/arch/powerpc/include/asm/reg.h
-@@ -1058,7 +1058,7 @@
-  *	- SPRG9 debug exception scratch
-  *
-  * All 32-bit:
-- *	- SPRG3 current thread_info pointer
-+ *	- SPRG3 current thread_struct physical addr pointer
-  *        (virtual on BookE, physical on others)
-  *
-  * 32-bit classic:
 diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
-index 10ef2e4db2fd..47adbb8673f1 100644
+index 5ef6db2d8a9e..93040c19942e 100644
 --- a/arch/powerpc/kernel/asm-offsets.c
 +++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -90,10 +90,10 @@ int main(void)
+@@ -92,7 +92,6 @@ int main(void)
  	DEFINE(SIGSEGV, SIGSEGV);
  	DEFINE(NMI_MASK, NMI_MASK);
  #else
--	OFFSET(THREAD_INFO, task_struct, stack);
- 	DEFINE(THREAD_INFO_GAP, _ALIGN_UP(sizeof(struct thread_info), 16));
+-	DEFINE(THREAD_INFO_GAP, _ALIGN_UP(sizeof(struct thread_info), 16));
  	OFFSET(KSP_LIMIT, thread_struct, ksp_limit);
  #endif /* CONFIG_PPC64 */
-+	OFFSET(TASK_STACK, task_struct, stack);
- 
- #ifdef CONFIG_LIVEPATCH
- 	OFFSET(TI_livepatch_sp, thread_info, livepatch_sp);
+ 	OFFSET(TASK_STACK, task_struct, stack);
 diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
-index 77decded1175..7ea1d71f4546 100644
+index fa7a69ffb37a..bd3b146e18a3 100644
 --- a/arch/powerpc/kernel/entry_32.S
 +++ b/arch/powerpc/kernel/entry_32.S
-@@ -1166,7 +1166,7 @@ ret_from_debug_exc:
- 	mfspr	r9,SPRN_SPRG_THREAD
- 	lwz	r10,SAVED_KSP_LIMIT(r1)
- 	stw	r10,KSP_LIMIT(r9)
--	lwz	r9,THREAD_INFO-THREAD(r9)
-+	lwz	r9,TASK_STACK-THREAD(r9)
- 	CURRENT_THREAD_INFO(r10, r1)
- 	lwz	r10,TI_PREEMPT(r10)
- 	stw	r10,TI_PREEMPT(r9)
-diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
-index 7b1693adff2a..03cbf409c3f8 100644
---- a/arch/powerpc/kernel/entry_64.S
-+++ b/arch/powerpc/kernel/entry_64.S
-@@ -683,7 +683,7 @@ END_FTR_SECTION_IFCLR(CPU_FTR_ARCH_207S)
- 2:
- #endif /* CONFIG_PPC_BOOK3S_64 */
+@@ -97,14 +97,11 @@ crit_transfer_to_handler:
+ 	mfspr	r0,SPRN_SRR1
+ 	stw	r0,_SRR1(r11)
  
--	CURRENT_THREAD_INFO(r7, r8)  /* base of new stack */
-+	clrrdi	r7, r8, THREAD_SHIFT	/* base of new stack */
- 	/* Note: this uses SWITCH_FRAME_SIZE rather than INT_FRAME_SIZE
- 	   because we don't need to leave the 288-byte ABI gap at the
- 	   top of the kernel stack. */
-diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
-index 61ca27929355..dce6f2ff07e5 100644
---- a/arch/powerpc/kernel/head_32.S
-+++ b/arch/powerpc/kernel/head_32.S
-@@ -261,7 +261,7 @@ __secondary_hold_acknowledge:
- 	tophys(r11,r1);			/* use tophys(r1) if kernel */ \
- 	beq	1f;		\
- 	mfspr	r11,SPRN_SPRG_THREAD;	\
--	lwz	r11,THREAD_INFO-THREAD(r11);	\
-+	lwz	r11,TASK_STACK-THREAD(r11);	\
- 	addi	r11,r11,THREAD_SIZE;	\
- 	tophys(r11,r11);	\
- 1:	subi	r11,r11,INT_FRAME_SIZE	/* alloc exc. frame */
-@@ -841,7 +841,7 @@ __secondary_start:
- 	bl	init_idle_6xx
- #endif /* CONFIG_6xx */
+-	/* set the stack limit to the current stack
+-	 * and set the limit to protect the thread_info
+-	 * struct
+-	 */
++	/* set the stack limit to the current stack */
+ 	mfspr	r8,SPRN_SPRG_THREAD
+ 	lwz	r0,KSP_LIMIT(r8)
+ 	stw	r0,SAVED_KSP_LIMIT(r11)
+-	rlwimi	r0,r1,0,0,(31-THREAD_SHIFT)
++	rlwinm	r0,r1,0,0,(31 - THREAD_SHIFT)
+ 	stw	r0,KSP_LIMIT(r8)
+ 	/* fall through */
+ #endif
+@@ -121,14 +118,11 @@ crit_transfer_to_handler:
+ 	mfspr	r0,SPRN_SRR1
+ 	stw	r0,crit_srr1@l(0)
  
--	/* get current_thread_info and current */
-+	/* get current's stack and current */
- 	lis	r1,secondary_ti@ha
- 	tophys(r1,r1)
- 	lwz	r1,secondary_ti@l(r1)
-diff --git a/arch/powerpc/kernel/head_40x.S b/arch/powerpc/kernel/head_40x.S
-index b19d78410511..3088c9f29f5e 100644
---- a/arch/powerpc/kernel/head_40x.S
-+++ b/arch/powerpc/kernel/head_40x.S
-@@ -115,7 +115,7 @@ _ENTRY(saved_ksp_limit)
- 	andi.	r11,r11,MSR_PR;						     \
- 	beq	1f;							     \
- 	mfspr	r1,SPRN_SPRG_THREAD;	/* if from user, start at top of   */\
--	lwz	r1,THREAD_INFO-THREAD(r1); /* this thread's kernel stack   */\
-+	lwz	r1,TASK_STACK-THREAD(r1); /* this thread's kernel stack   */\
- 	addi	r1,r1,THREAD_SIZE;					     \
- 1:	subi	r1,r1,INT_FRAME_SIZE;	/* Allocate an exception frame     */\
- 	tophys(r11,r1);							     \
-@@ -158,7 +158,7 @@ _ENTRY(saved_ksp_limit)
- 	beq	1f;							     \
- 	/* COMING FROM USER MODE */					     \
- 	mfspr	r11,SPRN_SPRG_THREAD;	/* if from user, start at top of   */\
--	lwz	r11,THREAD_INFO-THREAD(r11); /* this thread's kernel stack */\
-+	lwz	r11,TASK_STACK-THREAD(r11); /* this thread's kernel stack */\
- 1:	addi	r11,r11,THREAD_SIZE-INT_FRAME_SIZE; /* Alloc an excpt frm  */\
- 	tophys(r11,r11);						     \
- 	stw	r10,_CCR(r11);          /* save various registers	   */\
-diff --git a/arch/powerpc/kernel/head_44x.S b/arch/powerpc/kernel/head_44x.S
-index 37e4a7cf0065..15d39b2499de 100644
---- a/arch/powerpc/kernel/head_44x.S
-+++ b/arch/powerpc/kernel/head_44x.S
-@@ -1020,7 +1020,7 @@ _GLOBAL(start_secondary_47x)
- 
- 	/* Now we can get our task struct and real stack pointer */
- 
--	/* Get current_thread_info and current */
-+	/* Get current's stack and current */
- 	lis	r1,secondary_ti@ha
- 	lwz	r1,secondary_ti@l(r1)
- 	lwz	r2,TI_TASK(r1)
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index 134a573a9f2d..5eeca20e195e 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -124,7 +124,7 @@ turn_on_mmu:
- 	tophys(r11,r1);			/* use tophys(r1) if kernel */ \
- 	beq	1f;		\
- 	mfspr	r11,SPRN_SPRG_THREAD;	\
--	lwz	r11,THREAD_INFO-THREAD(r11);	\
-+	lwz	r11,TASK_STACK-THREAD(r11);	\
- 	addi	r11,r11,THREAD_SIZE;	\
- 	tophys(r11,r11);	\
- 1:	subi	r11,r11,INT_FRAME_SIZE	/* alloc exc. frame */
-diff --git a/arch/powerpc/kernel/head_booke.h b/arch/powerpc/kernel/head_booke.h
-index d0862a100d29..175f812066dc 100644
---- a/arch/powerpc/kernel/head_booke.h
-+++ b/arch/powerpc/kernel/head_booke.h
-@@ -44,7 +44,7 @@
- 	mr	r11, r1;						     \
- 	beq	1f;							     \
- 	/* if from user, start at top of this thread's kernel stack */       \
--	lwz	r11, THREAD_INFO-THREAD(r10);				     \
-+	lwz	r11, TASK_STACK - THREAD(r10);				     \
- 	ALLOC_STACK_FRAME(r11, THREAD_SIZE);				     \
- 1 :	subi	r11, r11, INT_FRAME_SIZE; /* Allocate exception frame */     \
- 	stw	r13, _CCR(r11);		/* save various registers */	     \
-@@ -130,7 +130,7 @@
- 	DO_KVM	BOOKE_INTERRUPT_##intno exc_level_srr1;		             \
- 	andi.	r11,r11,MSR_PR;						     \
- 	mfspr	r11,SPRN_SPRG_THREAD;	/* if from user, start at top of   */\
--	lwz	r11,THREAD_INFO-THREAD(r11); /* this thread's kernel stack */\
-+	lwz	r11, TASK_STACK - THREAD(r11); /* this thread's kernel stack */\
- 	addi	r11,r11,EXC_LVL_FRAME_OVERHEAD;	/* allocate stack frame    */\
- 	beq	1f;							     \
- 	/* COMING FROM USER MODE */					     \
-diff --git a/arch/powerpc/kernel/head_fsl_booke.S b/arch/powerpc/kernel/head_fsl_booke.S
-index 05b574f416b3..239ad8a4754e 100644
---- a/arch/powerpc/kernel/head_fsl_booke.S
-+++ b/arch/powerpc/kernel/head_fsl_booke.S
-@@ -704,7 +704,7 @@ finish_tlb_load:
- 
- 	/* Get the next_tlbcam_idx percpu var */
- #ifdef CONFIG_SMP
--	lwz	r12, THREAD_INFO-THREAD(r12)
-+	lwz	r12, TASK_STACK-THREAD(r12)
- 	lwz	r15, TI_CPU(r12)
- 	lis     r14, __per_cpu_offset@h
- 	ori     r14, r14, __per_cpu_offset@l
-@@ -1076,7 +1076,7 @@ __secondary_start:
- 	mr	r4,r24		/* Why? */
- 	bl	call_setup_cpu
- 
--	/* get current_thread_info and current */
-+	/* get current's stack and current */
- 	lis	r1,secondary_ti@ha
- 	lwz	r1,secondary_ti@l(r1)
- 	lwz	r2,TI_TASK(r1)
+-	/* set the stack limit to the current stack
+-	 * and set the limit to protect the thread_info
+-	 * struct
+-	 */
++	/* set the stack limit to the current stack */
+ 	mfspr	r8,SPRN_SPRG_THREAD
+ 	lwz	r0,KSP_LIMIT(r8)
+ 	stw	r0,saved_ksp_limit@l(0)
+-	rlwimi	r0,r1,0,0,(31-THREAD_SHIFT)
++	rlwinm	r0,r1,0,0,(31 - THREAD_SHIFT)
+ 	stw	r0,KSP_LIMIT(r8)
+ 	/* fall through */
+ #endif
 diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
-index 916ddc4aac44..9e7dc4468c8c 100644
+index 3fdb6b6973cf..62cfccf4af89 100644
 --- a/arch/powerpc/kernel/irq.c
 +++ b/arch/powerpc/kernel/irq.c
-@@ -663,7 +663,7 @@ void do_IRQ(struct pt_regs *regs)
- 	struct thread_info *curtp, *irqtp, *sirqtp;
+@@ -618,9 +618,8 @@ static inline void check_stack_overflow(void)
+ 	sp = current_stack_pointer() & (THREAD_SIZE-1);
+ 
+ 	/* check for stack overflow: is there less than 2KB free? */
+-	if (unlikely(sp < (sizeof(struct thread_info) + 2048))) {
+-		pr_err("do_IRQ: stack overflow: %ld\n",
+-			sp - sizeof(struct thread_info));
++	if (unlikely(sp < 2048)) {
++		pr_err("do_IRQ: stack overflow: %ld\n", sp);
+ 		dump_stack();
+ 	}
+ #endif
+@@ -660,7 +659,7 @@ void __do_irq(struct pt_regs *regs)
+ void do_IRQ(struct pt_regs *regs)
+ {
+ 	struct pt_regs *old_regs = set_irq_regs(regs);
+-	struct thread_info *curtp, *irqtp, *sirqtp;
++	void *curtp, *irqtp, *sirqtp;
  
  	/* Switch to the irq stack to handle this */
--	curtp = current_thread_info();
-+	curtp = (void *)(current_stack_pointer() & ~(THREAD_SIZE - 1));
- 	irqtp = hardirq_ctx[raw_smp_processor_id()];
- 	sirqtp = softirq_ctx[raw_smp_processor_id()];
+ 	curtp = (void *)(current_stack_pointer() & ~(THREAD_SIZE - 1));
+@@ -690,9 +689,9 @@ void __init init_IRQ(void)
+ }
  
+ #if defined(CONFIG_BOOKE) || defined(CONFIG_40x)
+-struct thread_info   *critirq_ctx[NR_CPUS] __read_mostly;
+-struct thread_info    *dbgirq_ctx[NR_CPUS] __read_mostly;
+-struct thread_info *mcheckirq_ctx[NR_CPUS] __read_mostly;
++void   *critirq_ctx[NR_CPUS] __read_mostly;
++void    *dbgirq_ctx[NR_CPUS] __read_mostly;
++void *mcheckirq_ctx[NR_CPUS] __read_mostly;
+ 
+ void exc_lvl_ctx_init(void)
+ {
+@@ -718,8 +717,8 @@ void exc_lvl_ctx_init(void)
+ }
+ #endif
+ 
+-struct thread_info *softirq_ctx[NR_CPUS] __read_mostly;
+-struct thread_info *hardirq_ctx[NR_CPUS] __read_mostly;
++void *softirq_ctx[NR_CPUS] __read_mostly;
++void *hardirq_ctx[NR_CPUS] __read_mostly;
+ 
+ void irq_ctx_init(void)
+ {
+@@ -733,7 +732,7 @@ void irq_ctx_init(void)
+ 
+ void do_softirq_own_stack(void)
+ {
+-	struct thread_info *irqtp;
++	void *irqtp;
+ 
+ 	irqtp = softirq_ctx[smp_processor_id()];
+ 	call_do_softirq(irqtp);
 diff --git a/arch/powerpc/kernel/misc_32.S b/arch/powerpc/kernel/misc_32.S
-index 2f0fe8bfc078..32762f4c3458 100644
+index 32762f4c3458..a3663ad62f16 100644
 --- a/arch/powerpc/kernel/misc_32.S
 +++ b/arch/powerpc/kernel/misc_32.S
-@@ -60,7 +60,7 @@ _GLOBAL(call_do_softirq)
- 	blr
- 
- /*
-- * void call_do_irq(struct pt_regs *regs, struct thread_info *irqtp);
-+ * void call_do_irq(struct pt_regs *regs, void *sp);
-  */
- _GLOBAL(call_do_irq)
+@@ -46,11 +46,10 @@ _GLOBAL(call_do_softirq)
  	mflr	r0
-@@ -603,7 +603,7 @@ EXPORT_SYMBOL(__bswapdi2)
- #ifdef CONFIG_SMP
- _GLOBAL(start_secondary_resume)
- 	/* Reset stack */
--	CURRENT_THREAD_INFO(r1, r1)
-+	rlwinm	r1, r1, 0, 0, 31 - THREAD_SHIFT
- 	addi	r1,r1,THREAD_SIZE-STACK_FRAME_OVERHEAD
- 	li	r3,0
- 	stw	r3,0(r1)		/* Zero the stack frame pointer	*/
+ 	stw	r0,4(r1)
+ 	lwz	r10,THREAD+KSP_LIMIT(r2)
+-	addi	r11,r3,THREAD_INFO_GAP
++	stw	r3, THREAD+KSP_LIMIT(r2)
+ 	stwu	r1,THREAD_SIZE-STACK_FRAME_OVERHEAD(r3)
+ 	mr	r1,r3
+ 	stw	r10,8(r1)
+-	stw	r11,THREAD+KSP_LIMIT(r2)
+ 	bl	__do_softirq
+ 	lwz	r10,8(r1)
+ 	lwz	r1,0(r1)
+@@ -66,11 +65,10 @@ _GLOBAL(call_do_irq)
+ 	mflr	r0
+ 	stw	r0,4(r1)
+ 	lwz	r10,THREAD+KSP_LIMIT(r2)
+-	addi	r11,r4,THREAD_INFO_GAP
++	stw	r4, THREAD+KSP_LIMIT(r2)
+ 	stwu	r1,THREAD_SIZE-STACK_FRAME_OVERHEAD(r4)
+ 	mr	r1,r4
+ 	stw	r10,8(r1)
+-	stw	r11,THREAD+KSP_LIMIT(r2)
+ 	bl	__do_irq
+ 	lwz	r10,8(r1)
+ 	lwz	r1,0(r1)
 diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-index 7ad304a3cc7d..84e39cedf03b 100644
+index 84e39cedf03b..16d937a8c378 100644
 --- a/arch/powerpc/kernel/process.c
 +++ b/arch/powerpc/kernel/process.c
-@@ -1239,8 +1239,8 @@ struct task_struct *__switch_to(struct task_struct *prev,
- 		batch->active = 1;
- 	}
+@@ -1699,8 +1699,7 @@ int copy_thread(unsigned long clone_flags, unsigned long usp,
+ 	sp -= STACK_FRAME_OVERHEAD;
+ 	p->thread.ksp = sp;
+ #ifdef CONFIG_PPC32
+-	p->thread.ksp_limit = (unsigned long)task_stack_page(p) +
+-				_ALIGN_UP(sizeof(struct thread_info), 16);
++	p->thread.ksp_limit = (unsigned long)end_of_stack(p);
+ #endif
+ #ifdef CONFIG_HAVE_HW_BREAKPOINT
+ 	p->thread.ptrace_bps[0] = NULL;
+@@ -2003,21 +2002,14 @@ static inline int valid_irq_stack(unsigned long sp, struct task_struct *p,
+ 	unsigned long stack_page;
+ 	unsigned long cpu = task_cpu(p);
  
--	if (current_thread_info()->task->thread.regs) {
--		restore_math(current_thread_info()->task->thread.regs);
-+	if (current->thread.regs) {
-+		restore_math(current->thread.regs);
+-	/*
+-	 * Avoid crashing if the stack has overflowed and corrupted
+-	 * task_cpu(p), which is in the thread_info struct.
+-	 */
+-	if (cpu < NR_CPUS && cpu_possible(cpu)) {
+-		stack_page = (unsigned long) hardirq_ctx[cpu];
+-		if (sp >= stack_page + sizeof(struct thread_struct)
+-		    && sp <= stack_page + THREAD_SIZE - nbytes)
+-			return 1;
+-
+-		stack_page = (unsigned long) softirq_ctx[cpu];
+-		if (sp >= stack_page + sizeof(struct thread_struct)
+-		    && sp <= stack_page + THREAD_SIZE - nbytes)
+-			return 1;
+-	}
++	stack_page = (unsigned long)hardirq_ctx[cpu];
++	if (sp >= stack_page && sp <= stack_page + THREAD_SIZE - nbytes)
++		return 1;
++
++	stack_page = (unsigned long)softirq_ctx[cpu];
++	if (sp >= stack_page && sp <= stack_page + THREAD_SIZE - nbytes)
++		return 1;
++
+ 	return 0;
+ }
  
- 		/*
- 		 * The copy-paste buffer can only store into foreign real
-@@ -1250,7 +1250,7 @@ struct task_struct *__switch_to(struct task_struct *prev,
- 		 * mappings, we must issue a cp_abort to clear any state and
- 		 * prevent snooping, corruption or a covert channel.
- 		 */
--		if (current_thread_info()->task->thread.used_vas)
-+		if (current->thread.used_vas)
- 			asm volatile(PPC_CP_ABORT);
- 	}
- #endif /* CONFIG_PPC_BOOK3S_64 */
-@@ -1642,7 +1642,7 @@ int copy_thread(unsigned long clone_flags, unsigned long usp,
- 	unsigned long sp = (unsigned long)task_stack_page(p) + THREAD_SIZE;
- 	struct thread_info *ti = task_thread_info(p);
+@@ -2026,8 +2018,10 @@ int validate_sp(unsigned long sp, struct task_struct *p,
+ {
+ 	unsigned long stack_page = (unsigned long)task_stack_page(p);
  
--	klp_init_thread_info(ti);
-+	klp_init_thread_info(p);
+-	if (sp >= stack_page + sizeof(struct thread_struct)
+-	    && sp <= stack_page + THREAD_SIZE - nbytes)
++	if (sp < THREAD_SIZE)
++		return 0;
++
++	if (sp >= stack_page && sp <= stack_page + THREAD_SIZE - nbytes)
+ 		return 1;
  
- 	/* Copy registers */
- 	sp -= sizeof(struct pt_regs);
-diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-index 9ca9db707bcb..8054a7b9e026 100644
---- a/arch/powerpc/kernel/setup-common.c
-+++ b/arch/powerpc/kernel/setup-common.c
-@@ -940,7 +940,7 @@ void __init setup_arch(char **cmdline_p)
- 	/* Reserve large chunks of memory for use by CMA for KVM. */
- 	kvm_cma_reserve();
+ 	return valid_irq_stack(sp, p, nbytes);
+diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+index 2d682f3e31c6..6792e9c90689 100644
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -717,22 +717,22 @@ void __init emergency_stack_init(void)
+ 	limit = min(ppc64_bolted_size(), ppc64_rma_size);
  
--	klp_init_thread_info(&init_thread_info);
-+	klp_init_thread_info(&init_task);
- 
- 	init_mm.start_code = (unsigned long)_stext;
- 	init_mm.end_code = (unsigned long) _etext;
-diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
-index 8c507be12c3c..81ebf7d6f526 100644
---- a/arch/powerpc/kernel/setup_32.c
-+++ b/arch/powerpc/kernel/setup_32.c
-@@ -205,10 +205,8 @@ void __init irqstack_early_init(void)
- 	/* interrupt stacks must be in lowmem, we get that for free on ppc32
- 	 * as the memblock is limited to lowmem by default */
  	for_each_possible_cpu(i) {
--		softirq_ctx[i] = (struct thread_info *)
--			__va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
--		hardirq_ctx[i] = (struct thread_info *)
--			__va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
-+		softirq_ctx[i] = __va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
-+		hardirq_ctx[i] = __va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
- 	}
- }
+-		struct thread_info *ti;
++		void *ti;
  
-@@ -226,13 +224,10 @@ void __init exc_lvl_early_init(void)
- 		hw_cpu = 0;
- #endif
+ 		ti = alloc_stack(limit, i);
+ 		memset(ti, 0, THREAD_SIZE);
+-		paca_ptrs[i]->emergency_sp = (void *)ti + THREAD_SIZE;
++		paca_ptrs[i]->emergency_sp = ti + THREAD_SIZE;
  
--		critirq_ctx[hw_cpu] = (struct thread_info *)
--			__va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
-+		critirq_ctx[hw_cpu] = __va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
- #ifdef CONFIG_BOOKE
--		dbgirq_ctx[hw_cpu] = (struct thread_info *)
--			__va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
--		mcheckirq_ctx[hw_cpu] = (struct thread_info *)
--			__va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
-+		dbgirq_ctx[hw_cpu] = __va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
-+		mcheckirq_ctx[hw_cpu] = __va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
+ #ifdef CONFIG_PPC_BOOK3S_64
+ 		/* emergency stack for NMI exception handling. */
+ 		ti = alloc_stack(limit, i);
+ 		memset(ti, 0, THREAD_SIZE);
+-		paca_ptrs[i]->nmi_emergency_sp = (void *)ti + THREAD_SIZE;
++		paca_ptrs[i]->nmi_emergency_sp = ti + THREAD_SIZE;
+ 
+ 		/* emergency stack for machine check exception handling. */
+ 		ti = alloc_stack(limit, i);
+ 		memset(ti, 0, THREAD_SIZE);
+-		paca_ptrs[i]->mc_emergency_sp = (void *)ti + THREAD_SIZE;
++		paca_ptrs[i]->mc_emergency_sp = ti + THREAD_SIZE;
  #endif
  	}
  }
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 8e3a5da24d59..5613c9617840 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -20,6 +20,7 @@
- #include <linux/kernel.h>
- #include <linux/export.h>
- #include <linux/sched/mm.h>
-+#include <linux/sched/task_stack.h>
- #include <linux/sched/topology.h>
- #include <linux/smp.h>
- #include <linux/interrupt.h>
-@@ -1020,7 +1021,8 @@ static void cpu_idle_thread_init(unsigned int cpu, struct task_struct *idle)
- 
- #ifdef CONFIG_PPC64
- 	paca_ptrs[cpu]->__current = idle;
--	paca_ptrs[cpu]->kstack = (unsigned long)ti + THREAD_SIZE - STACK_FRAME_OVERHEAD;
-+	paca_ptrs[cpu]->kstack = (unsigned long)task_stack_page(idle) +
-+				  THREAD_SIZE - STACK_FRAME_OVERHEAD;
- #ifdef CONFIG_STACKPROTECTOR
- 	paca_ptrs[cpu]->canary = idle->stack_canary;
- #endif
 -- 
 2.13.3
 
