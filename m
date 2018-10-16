@@ -2,335 +2,184 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0469C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC229C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 992312098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:26:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74D2F204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:35:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="LAz8h9Ds"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 992312098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="PdAFoWQ6";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="b1s0zErh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74D2F204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbeJQASF (ORCPT
+        id S1727187AbeJQA0b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:18:05 -0400
-Received: from mail-eopbgr40063.outbound.protection.outlook.com ([40.107.4.63]:40133
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727016AbeJQASF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:18:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
+        Tue, 16 Oct 2018 20:26:31 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:46102 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726778AbeJQA0a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 20:26:30 -0400
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9GGWKD9026879;
+        Tue, 16 Oct 2018 09:34:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=WTallpRffM3mz1Fl4qeyuyq9b38p0KLJOQJWGATCGs4=;
+ b=PdAFoWQ6BTte3D27xBv8cC/DhGWBSM29BWkRdXPxunFwV64J/8vM7tn0tm21dq4B7Jgn
+ Dohy48TJrgNNGi6Dbi6MCtwSFSaNr9qaQI/4NsWF//bgIzKD9ol/d7Ad1JIW1V+Z8waj
+ 8ocLEcY1apND/8ILds1BN4FpYBOT25ZhRVc= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2n5j1cgevr-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 16 Oct 2018 09:34:41 -0700
+Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
+ prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Tue, 16 Oct 2018 09:34:08 -0700
+Received: from PRN-CHUB03.TheFacebook.com (2620:10d:c081:35::12) by
+ prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3
+ via Frontend Transport; Tue, 16 Oct 2018 09:34:08 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.13) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Tue, 16 Oct 2018 09:34:08 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=032NYMqbBRYh4x9IPHC8MSyVE4YO7qmC+VgD485rhNM=;
- b=LAz8h9DsnrQbDCU1jFPlRRjo1xbqN6Ksw+DeXdRSDPjzuMEewRj98bhFegh1Sn6eSP2ZExVBCy+qYZT5hfhYZvpw5RbfY++R9Ua74IaCOxvF4qeerjF64Jki0IpSFATZ9thGixrRVWVbMiho+J5qMS+nxrVCR0hpiBFFYAm4UgY=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Mark.Rutland@arm.com; 
-Received: from lakrids.cambridge.arm.com (217.140.106.52) by
- VI1PR08MB2989.eurprd08.prod.outlook.com (2603:10a6:803:44::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.31; Tue, 16 Oct 2018 16:26:48 +0000
-Date:   Tue, 16 Oct 2018 17:26:45 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
+ bh=WTallpRffM3mz1Fl4qeyuyq9b38p0KLJOQJWGATCGs4=;
+ b=b1s0zErhHNUIbouSUNN1Zw1GIGMgbA9SK3zE91e9JxoinjChzEJRHempsrws2vlxy8/ifRO5/4BtWFMVu5a0VXh5yyt3c1Ro6JLXCUUZ1Pr09e7TKjWKQtK/5drb2jJ5M09FPqCMu902DujrxBv/PlJt/+l4PdWNaEt1pI3srAA=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
+ MWHPR15MB1296.namprd15.prod.outlook.com (10.175.3.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1250.20; Tue, 16 Oct 2018 16:34:05 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::f809:2e0d:6e1c:924a]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::f809:2e0d:6e1c:924a%8]) with mapi id 15.20.1228.027; Tue, 16 Oct 2018
+ 16:34:05 +0000
+From:   Song Liu <songliubraving@fb.com>
 To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        songliubraving@fb.com, eranian@google.com, tglx@linutronix.de,
-        alexey.budankov@linux.intel.com, megha.dey@intel.com,
-        frederic@kernel.org, nd@arm.com
+CC:     Ingo Molnar <mingo@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "alexander.shishkin@linux.intel.com" 
+        <alexander.shishkin@linux.intel.com>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "eranian@google.com" <eranian@google.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "alexey.budankov@linux.intel.com" <alexey.budankov@linux.intel.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "megha.dey@intel.com" <megha.dey@intel.com>,
+        "frederic@kernel.org" <frederic@kernel.org>
 Subject: Re: [RFC][PATCH] perf: Rewrite core context handling
-Message-ID: <20181016162645.ymtuk6qqz65sg7bt@lakrids.cambridge.arm.com>
+Thread-Topic: [RFC][PATCH] perf: Rewrite core context handling
+Thread-Index: AQHUYIaFJ/VvvMmSxkC06uIJGGK3pKUZrRIAgAAbn4CAANwqgIAAu/qAgAF8bACABM0pAIAAcKMA
+Date:   Tue, 16 Oct 2018 16:34:05 +0000
+Message-ID: <9865C981-0E8C-4419-AE8C-638DCD40D74E@fb.com>
 References: <20181010104559.GO5728@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181010104559.GO5728@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Originating-IP: [217.140.106.52]
-X-ClientProxiedBy: CWXP265CA0074.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:39::14) To VI1PR08MB2989.eurprd08.prod.outlook.com
- (2603:10a6:803:44::19)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 69d78b37-763e-4bec-2633-08d633842c2a
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB2989;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2989;3:EyOO0qRuotcyrTfjMX3apSvPMtGxhLTHVq7JAvtd0CQFqWz6SeuA54GqolYVnrti7wQ49J/plrRX6PekbvEzFtsb+LO5QML+KK7JBbj0VYEZ/iGt93d7U56akvqEpLVMK7NSEFwb/cbJeyheIWfVieAXEA/XC2NXCWCfOxSUsX/kQUheyQs1JQfvDdmhyEuv3nZl9bQiHKLWRWgRDwXGYJptDRb1Fq+DDuRMP2P5/qntzdrWDjzNEO5JXfNh9D2X;25:OrypruS1QZUMUyVO9Ab/W+8pYmyoU35HGaSM5MsMRBYkpA11eykiLHThr2GtYzKnTt6DBURtydQnJ2hkSyR8PjNLOi0HCjqLqRvvb9m4zZE+cbU8bza2ovl9oruWna/tMQqThe+rNesCURjFPkr2Mh/UqeLcxhbKBOgDcQT8KrW99DBkrpKhrD2GtaZc9xLv0kSMx0/3H+A1O/glNOnWWvK6oxuOT0i0SLmxN7xVgxbsRoVtByVaEO4CU40HZotEe4mk2eIVH3iCfbNoSf05yjuYxiEx+r99bRcDw8ZwILR/LhIGEMOtD1oI4RnQ913LGvwRUCHiUOa4abxTxCyHhA==;31:Xbk8EyqVfpSB/HHXTFqiibufhxGrIx9UczFv35T6LZQjDG9l5jOD6xrTUQ/LCQuc7oJo3PFVpQerTMf1ngPDNaFCGgV85MDtJBx5i1Nzn+hFEOZF2s+/KWWzoYwmvfbhY76ifNHitrFoVaGd3VMFWkho+NUFIInSQLUg50zOAr/zv/msbTX/8h2eTTTJrNRfOWGh8A95PDe17JeMZV1IvwBCBPQAgKg9tBymeS0rg+s=
-X-MS-TrafficTypeDiagnostic: VI1PR08MB2989:
-NoDisclaimer: True
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2989;20:gDXeltoTDRcCC7ITHKikfqCkr/jLNZt+F8scwKJMgiz+RPMksb6zFutV2/Zigm6OpBoIVQHtao7QgtEw90N6bV3YBD3YmoFedt8ZQGiWQJ9j7NQRe4Ffk6RlZjkSwwPq54j8gViBVxnxqA1HYou2+1HPzgCXIpBty7VOs8UFsiD0H31Z1IORBfo86fcwgxcpcVJNa09G8tzwBEKYef1vUozCHyuDk/fDh/3VVUnLkAc280ZDZNHQnl1AdqwvKN5Cc9Z8rif0a4LZv58ha76P6fm8WC23FWVh32vFgIoTVnY5SIPxNSB6V6sIEAH1OOpzO+Adsqg7LbzQIx9nY4Co7aL3xgPGLZ3wtK+v34ZzwrrvFjNMebQzU5KENQQi9IYTquPaJ2YgfJW0T3NpWa0ermbwvxP08ndlhqRxiwogglE=;4:jrqFrvvRzCmm14YTmQjZI/biCP8+rDhQSLV8eGG3IJ2rL3qhUt0N3b+mlMQoxm/kKE2BeGJbU3dzoGoweKu2jlZXRb0EAuuoYfskePzeyuEz8+LX7jaur6whMmFJEdzl7xN199WktoHBbnfqSuxsDoiWaYxjaglEp3+ua+2M7vHXFgcwJZJOvym4uliL9gDTICuhJAdGOUMlN4zBJfvScS/Yqn3elRBkRwhzLv43J3z8LuV/Eabp3jZ6HQzzLuBsxx8HCyTz/FoFYdneyEHyyVRRej0XKZQR6cM47F7qzNnyE1nhroiEqzZvSM45VNTR
-X-Microsoft-Antispam-PRVS: <VI1PR08MB29893AE164D3A3656DA3392684FE0@VI1PR08MB2989.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(72170088055959);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:VI1PR08MB2989;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB2989;
-X-Forefront-PRVS: 0827D7ACB9
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(366004)(346002)(39860400002)(57704003)(53754006)(51444003)(199004)(189003)(106356001)(6916009)(5660300001)(229853002)(105586002)(86362001)(316002)(446003)(476003)(16586007)(956004)(58126008)(97736004)(44832011)(486006)(53936002)(6246003)(14444005)(55016002)(76176011)(81166006)(3846002)(16526019)(6116002)(186003)(68736007)(7736002)(4326008)(8676002)(81156014)(72206003)(11346002)(26005)(1076002)(23726003)(305945005)(7696005)(52116002)(7416002)(25786009)(478600001)(8936002)(66066001)(386003)(6666004)(2906002)(47776003)(50466002)(21314002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB2989;H:lakrids.cambridge.arm.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: arm.com does not designate
+ <D2014055-9B25-4152-A582-7AD42A3837AB@fb.com>
+ <20181011092913.GA9848@hirez.programming.kicks-ass.net>
+ <70079805-1CAE-4CAA-813A-F8DDB929F22B@fb.com>
+ <20181012095001.GG9867@hirez.programming.kicks-ass.net>
+ <E4F81A5E-C371-429D-AFEC-6F4B32971F09@fb.com>
+ <20181016095056.GE4030@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181016095056.GE4030@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.9.1)
+x-originating-ip: [2620:10d:c090:200::4:9180]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1296;20:3H8H8JMVosprlbJ35acb0MJdQ9DGSHAuw9MoTCBuZ1xHMuNknkmJx8dnSmj/Sf7f7zlKHx+rhgf0iwipMrC9vOosceDvOujHsfz+BkhBVQJBbUOOzO1StYXwJK2rjStN/zktPuquTK00HC6MmErki2JpKNiiQkdNPCN8gLsbj7I=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 6a0208e4-863f-4453-ab06-08d633853088
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1296;
+x-ms-traffictypediagnostic: MWHPR15MB1296:
+x-microsoft-antispam-prvs: <MWHPR15MB12962CC04FA1200A0CCF9B0EB3FE0@MWHPR15MB1296.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231355)(11241501184)(944501410)(52105095)(3002001)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991067);SRVR:MWHPR15MB1296;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1296;
+x-forefront-prvs: 0827D7ACB9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(366004)(396003)(376002)(346002)(189003)(199004)(86362001)(478600001)(5250100002)(6246003)(2900100001)(99286004)(76176011)(316002)(486006)(14454004)(8676002)(7416002)(97736004)(81156014)(6506007)(81166006)(53936002)(93886005)(54906003)(8936002)(33656002)(7736002)(57306001)(256004)(305945005)(102836004)(4326008)(6116002)(186003)(50226002)(46003)(106356001)(71200400001)(53546011)(2906002)(6486002)(6512007)(82746002)(105586002)(476003)(2616005)(25786009)(11346002)(5660300001)(83716004)(71190400001)(6916009)(229853002)(68736007)(36756003)(6436002)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1296;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB2989;23:IEBH4plMBJrA5pmMQ+nu51wRegLcYF7edsBzgmxBw?=
- =?us-ascii?Q?zubAXEu92kLPkQPE7lS7+HdWfqVDdB0JOBwh+NJlSWUUwEW0YtBJI3tiMgwA?=
- =?us-ascii?Q?zY+wpr+VRstQUIiQ51WgtotKo3qX+Ozj5gkRJwOYS5blfc12mWv9i62enVGY?=
- =?us-ascii?Q?iYE6qVMp8D9qKjBL2i3uGhM4LUuT0FCvkunhVuangOpowvgU2oEMccgJdU9M?=
- =?us-ascii?Q?Ey7PLc7/VluHrd+KtS6D+vmcduqPQCf3EhGdT3+LwIPYLi74xUeBrwz3Ilk/?=
- =?us-ascii?Q?UXYnY5linuvA+PkSX9qWUR6bwM2uvg9NBzfAHqmKnrUi9DUkAtfWb8J3tRzW?=
- =?us-ascii?Q?gS6RYmqzIOyHs+ymU90YYdipNCtL4qz9EPWW7ukMOXem9jr4p2H87zNasyeq?=
- =?us-ascii?Q?HWEkDBkWQbyBy89FCxCpqJZaFPlJpo8qnE/yOEdIlewqa6VzGhDMv8Z3hYBV?=
- =?us-ascii?Q?BrrqfUwDVFPqIf8vdux9vUp4UumKRmX22fcAt4tdmHR7mE2NJSHLbpU1OUZ6?=
- =?us-ascii?Q?sleUv46odovunNx1YpSlGTH2Zs1ZpZTm+m2ErzjVyrF6fhNh8dcgf1G/4aJh?=
- =?us-ascii?Q?Hn9hB7g6HbmG0kFMZckt0G1RPFUI4Va0uWEvz53w6gyFY1kJlDUDmxC9z/mN?=
- =?us-ascii?Q?L5QYP83HK+YJ/oR3LvxaWIHrFoCBR1LlElHDpPz/4xCwAINWZ5QhNEkEMLBt?=
- =?us-ascii?Q?LYnTrnBYGTSKd/lnMheTlt9I+2Swg6o1BCJf6CBKgr1VJthZqbVCri4U/+s2?=
- =?us-ascii?Q?vM7c54/OXuf0PN8j5+0nWwD4Xl34BGhzXR9EJ6mhSky3wec0VqEt+YTLkiQX?=
- =?us-ascii?Q?XqFPrvpanYW23beiMrMuIp3+Bkw/9nTLARGraegwTE0IrRWDZpnIL4QNCXxl?=
- =?us-ascii?Q?7E9yj27MF5coKP7H8KNkqBG8uvmB/DEGE7NbtQN9G1g71+unhND/v/RKoWQa?=
- =?us-ascii?Q?30Wq4EZDa3xlrUb9kd0ZGTbcHbAxrmPLnW3mI8I+FpUEVl+sO+kfI9ZPV3i5?=
- =?us-ascii?Q?wGSmXIHvHVXuUXxQmjsCfQ5VQOHv+25wu6NcfWrz3rN2j2WxcupRrxmHY5yU?=
- =?us-ascii?Q?3l4N+Y06vnpSSYXAm2JBDBQ5w9tbgsO/8neueQbLjs8FL2eZHgmd5Ck1otM3?=
- =?us-ascii?Q?zbZ47s55PwB4AszXSuJKM+HZ3eHLix1JVt0MBz/Z1oph2Gb09MYt3w8L2geM?=
- =?us-ascii?Q?dkxXVz/DoSSSPgjFimYdTg+p4nSf/N6xX14UbsfcwAPMkOgn5dKMfuvZ5Mk/?=
- =?us-ascii?Q?TV7aZ+JGmsq4Wt6stkDTXE12hEvOgunrnzEOv03nkWSYE2s47Q134yv9KR0Z?=
- =?us-ascii?Q?URZZbLJWYq75ZMl3x7lIQM=3D?=
-X-Microsoft-Antispam-Message-Info: V9do3a5mX5sH94G/GEPCT7d6lvt5hzFJ8ve1gD1/LNm6jUFRae/r9rU/J1QwGurQXNY58dHrOtaAl7KrJ2UEohXdEexTJxkH/EHUOUvjHltVwg1I4dMJqH3WlPVmWmW8KG5h7R29yRFZ5LozTEgETkw07RKU3lYCMZsArItH4jRz/jWmuCY0IeBh+U7lh5YvR+NZiDLx7p5c9BOoPqqXhvM5JDNzRi0xHEHQmPqJlj5EFESkahtwPykcKrdaz5FrSEiL3cBVFD3yS6B57kmdaxjM5O6aKh4wJV4XXa8mEFoC6J3IyLP6L+MykCjumP5xK7bNSN0AZFmTAc8mhMh1IuPGpze7Qmji9EO6m7GJ4Xo=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2989;6:gmLcauqBPoGoUSPr1yCAfp/dyfY5KCeF+pnue9GAN06skOzmhtCma5WSFlbCtpQmg2Jr0dwE0xw4kWlCtnJBLT9s1iyZN/EllphzJaCpbYublf/cv9hlMqYeySDG9hkdlpSnyskSXCqsNtBqYqglFDsDvUp0G7UrFtrdtJe9ssltDAddfXITTCyD+HOaGS6TSx4lFyHapDOX5easTOiTjHXG1RgSe+Lkdt0JSFiHesZn6S4YEX4EJ1A3HcJlcFx73ewtaVc6C1VLLxnJ1ZYgFRavpSpZHdCAx6kTjvA78LqG3hdRT7yTNYXDC215UeNIBGU4qiMkAgNWtcG+2f+bdWtAdjGRcFRKKQL2HbfE3n/NRk0oN2F/dLrhuCO9OaLsq9ZoojPKnu2/iKS7ZCIuQv9TSmvohqbI5f8kQ0H+OQRO9lxe/x3l3mwo8yIjsh3x3tDgiA/WodmT91tDmX8o8A==;5:QATgZJ4HvjBFuGTal/JkCtAtgRNtQotf7N1gD4CtphTUEGXfSdbcFoERzUHo5C75D0hLXOOJ67El7MbKqqnQZVKwP6OD5KrNrATOx4S3ASYe0tsSPwIv8qbzR/kBy+MpsDPuh5lJOXnaChv4+hGodCSWcKXsi8OVmYrd3rVZaYs=;7:7Gd29L2IxJ0hLDpc0yqhE8CSTCzSgpC3gBZvG6e8O+nP/aIoMX426k9YIgFiEnSXzSx8w4iF3f1o1HChW1hfev32QyZBffsWzBfI7yzwTJ3C4u7gIYfSYjTagJUrycyL+UwUFt7YdCIuGDsVQL+prQzRd25tmbQAKNFDURUeSjSvaAwvuNLUu1MMF+u+cAFyOaGWIO119AzyZR+Wo/TJi9n2PyB8u8DvNVLTRVzkvI38iHi9iR5PaGwPx4Gv9qvB
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2018 16:26:48.4007 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69d78b37-763e-4bec-2633-08d633842c2a
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB2989
+x-microsoft-antispam-message-info: 8o7oVDqFbxVz16nadR/u1oT6hFaK8dagWJI7cE2iUW5vknwJplVVTos5JREvU8Cg8TWyqz3yc0owAUsKtOmOyebPVTOn9qaTI2PWsQcwKvHM6PM8uj15ocbMyM1mpYwGFS62PckQJo0WU9Q1MZZD/4zgUKtbDP605uy7RXiiic4nuBrOPpQchvD1lyZC5Va6+ZhO8Im9x2zmXCbEWh5AA4U+7au7AsqkoWQ3XzaJhmGGsmKrdyt3vkvNtRtRN44lx7F8oIZWhGHSZI3x6h7F9BgR3+HsM/vGYM0/v2JtRmuX75ZwF5UEdsq4rVDE3NwYOSlJaERyRtJTbxXPTd21oW4mG0IBDDBeMxTZDUnBnMQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A641A2C667C2B14EAFBB00E70A52D4DE@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a0208e4-863f-4453-ab06-08d633853088
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2018 16:34:05.6012
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1296
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_11:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 12:45:59PM +0200, Peter Zijlstra wrote:
-> Hi all,
-> 
-> There have been various issues and limitations with the way perf uses
-> (task) contexts to track events. Most notable is the single hardware PMU
-> task context, which has resulted in a number of yucky things (both
-> proposed and merged).
-> 
-> Notably:
-> 
->  - HW breakpoint PMU
->  - ARM big.little PMU
->  - Intel Branch Monitoring PMU
-> 
-> Since we now track the events in RB trees, we can 'simply' add a pmu
-> order to them and have them grouped that way, reducing to a single
-> context. Of course, reality never quite works out that simple, and below
-> ends up adding an intermediate data structure to bridge the context ->
-> pmu mapping.
-> 
-> Something a little like:
-> 
->               ,------------------------[1:n]---------------------.
->               V                                                  V
->     perf_event_context <-[1:n]-> perf_event_pmu_context <--- perf_event
->               ^                      ^     |                     |
->               `--------[1:n]---------'     `-[n:1]-> pmu <-[1:n]-'
-> 
-> This patch builds (provided you disable CGROUP_PERF), boots and survives
-> perf-top without the machine catching fire.
-> 
-> There's still a fair bit of loose ends (look for XXX), but I think this
-> is the direction we should be going.
 
-I think this is the right direction, as this is roughly what I suggested
-before the RB-tree stuff. ;)
 
-> Comments?
+> On Oct 16, 2018, at 2:50 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+>=20
+> On Sat, Oct 13, 2018 at 08:31:37AM +0000, Song Liu wrote:
+>=20
+>> The only suggestion I have right now is on which struct owns which
+>> data:
+>>=20
+>> 1. perf_cpu_context owns two perf_event_context: ctx and *task_ctx.=20
+>>   This is the same as right now.=20
+>=20
+>> 2. perf_event_context owns multiple perf_event_pmu_context:=20
+>>   One perf_event_pmu_context for software groups;
+>>   One perf_event_pmu_context for each hardware PMU.
+>=20
+> It does now already, right? Through the pmu_ctx_list we can, given an
+> perf_event_context, find all associated perf_event_pmu_context's.
 
-Vague things inline below.
+Yes, this is very similar to right now. It is related to #4, #5 below.=20
+With current patch, perf_cpu_pmu_context is more like the "owner" of
+the per CPU perf_event_pmu_context. I feel it is more natural that=20
+perf_cpu_context is the owner of perf_event_pmu_context, while the
+perf_cpu_pmu_context doesn't own anything.=20
 
-> +/*
-> + *           ,------------------------[1:n]---------------------.
-> + *           V                                                  V
-> + * perf_event_context <-[1:n]-> perf_event_pmu_context <--- perf_event
-> + *           ^                      ^     |                     |
-> + *           `--------[1:n]---------'     `-[n:1]-> pmu <-[1:n]-'
-> + *
-> + *
-> + * XXX destroy epc when empty
-> + *   refcount, !rcu
-> + *
-> + * XXX epc locking
-> + *
-> + *   event->pmu_ctx		ctx->mutex && inactive
-> + *   ctx->pmu_ctx_list		ctx->mutex && ctx->lock
-> + *
-> + */
-> +struct perf_event_pmu_context {
-> +	struct pmu			*pmu;
-> +	struct perf_event_context 	*ctx;
-> +
-> +	struct list_head		pmu_ctx_entry;
-> +
-> +	struct list_head		pinned_active;
-> +	struct list_head		flexible_active;
-> +
-> +	unsigned int			embedded : 1;
+Again, the difference to current patch is very small.=20
 
-Is this just for lifetime management (i.e. not attempting to free the
-embedded epc)?
+>=20
+>> 3. perf_event_pmu_context owns RB tree of events. Since we don't=20
+>>   need rotation across multiple hardware PMUs, the rotation is=20
+>>   within same perf_event_pmu_context. =20
+>=20
+> By keeping the RB trees in perf_event_context, we get bigger trees,
+> which is more efficient (log(n+m) < log(n) + log(m))
+>=20
+> Also, specifically, it means we only need a single merge sort /
+> iteration to schedule in a full context, instead of (again) doing 'n' of
+> them.
+>=20
+> Also, given a context and a pmu, it is cheaper for finding the relevant
+> events; this is needed for big.little for instance. Something the
+> proposed patch doesn't fully flesh out.
 
-Do we need a flag? Can't we have the pmu hold a ref on its embedded epc,
-and init that at pmu init time?
-
-> +
-> +	unsigned int			nr_events;
-> +	unsigned int			nr_active;
-> +
-> +	atomic_t			refcount; /* event <-> epc */
-> +
-> +	void				*task_ctx_data; /* pmu specific data */
-> +};
->  
->  struct perf_event_groups {
->  	struct rb_root	tree;
-> @@ -710,7 +749,6 @@ struct perf_event_groups {
->   * Used as a container for task events and CPU events as well:
->   */
->  struct perf_event_context {
-> -	struct pmu			*pmu;
->  	/*
->  	 * Protect the states of the events in the list,
->  	 * nr_active, and the list:
-> @@ -723,20 +761,21 @@ struct perf_event_context {
->  	 */
->  	struct mutex			mutex;
->  
-> -	struct list_head		active_ctx_list;
-> +	struct list_head		pmu_ctx_list;
-> +
->  	struct perf_event_groups	pinned_groups;
->  	struct perf_event_groups	flexible_groups;
->  	struct list_head		event_list;
-
-I think that the groups lists and event list should be in the
-perf_event_pmu_context.
-
-That would make scheduling and rotating events a per-pmu thing, as we
-want, without complicating the RB tree logic or requiring additional
-hooks.
-
-That may make the move_group case more complicated, though.
-
-... and maybe I've missed some other headache with that?
-
->  
-> -	struct list_head		pinned_active;
-> -	struct list_head		flexible_active;
-> -
->  	int				nr_events;
->  	int				nr_active;
->  	int				is_active;
-> +
-> +	int				nr_task_data;
->  	int				nr_stat;
->  	int				nr_freq;
->  	int				rotate_disable;
-
-Likewise these all seem to be PMU-specific (though I guess we care about
-them in the ctx-switch fast paths?).
-
-> +
->  	atomic_t			refcount;
->  	struct task_struct		*task;
->  
-> @@ -757,7 +796,6 @@ struct perf_event_context {
->  #ifdef CONFIG_CGROUP_PERF
->  	int				nr_cgroups;	 /* cgroup evts */
->  #endif
-> -	void				*task_ctx_data; /* pmu specific data */
->  	struct rcu_head			rcu_head;
->  };
-
-[...]
-
-> @@ -1528,6 +1498,11 @@ perf_event_groups_less(struct perf_event
->  	if (left->cpu > right->cpu)
->  		return false;
->  
-> +	if (left->pmu_ctx->pmu < right->pmu_ctx->pmu)
-> +		return true;
-> +	if (left->pmu_ctx->pmu > right->pmu_ctx->pmu)
-> +		return false;
-> +
->  	if (left->group_index < right->group_index)
->  		return true;
->  	if (left->group_index > right->group_index)
-> @@ -1610,7 +1585,7 @@ del_event_from_groups(struct perf_event
->   * Get the leftmost event in the @cpu subtree.
->   */
->  static struct perf_event *
-> -perf_event_groups_first(struct perf_event_groups *groups, int cpu)
-> +perf_event_groups_first(struct perf_event_groups *groups, int cpu, struct pmu *pmu)
->  {
->  	struct perf_event *node_event = NULL, *match = NULL;
->  	struct rb_node *node = groups->tree.rb_node;
-> @@ -1623,8 +1598,19 @@ perf_event_groups_first(struct perf_even
->  		} else if (cpu > node_event->cpu) {
->  			node = node->rb_right;
->  		} else {
-> -			match = node_event;
-> -			node = node->rb_left;
-> +			if (pmu) {
-> +				if (pmu < node_event->pmu_ctx->pmu) {
-> +					node = node->rb_left;
-> +				} else if (pmu > node_event->pmu_ctx->pmu) {
-> +					node = node->rb_right;
-> +				} else  {
-> +					match = node_event;
-> +					node = node->rb_left;
-> +				}
-> +			} else {
-> +				match = node_event;
-> +				node = node->rb_left;
-> +			}
->  		}
->  	}
->  
-> @@ -1635,13 +1621,17 @@ perf_event_groups_first(struct perf_even
->   * Like rb_entry_next_safe() for the @cpu subtree.
->   */
->  static struct perf_event *
-> -perf_event_groups_next(struct perf_event *event)
-> +perf_event_groups_next(struct perf_event *event, struct pmu *pmu)
->  {
->  	struct perf_event *next;
->  
->  	next = rb_entry_safe(rb_next(&event->group_node), typeof(*event), group_node);
-> -	if (next && next->cpu == event->cpu)
-> +	if (next && next->cpu == event->cpu) {
-> +		if (pmu && next->pmu_ctx->pmu != pmu)
-> +			return NULL;
-> +
->  		return next;
-> +	}
->  
->  	return NULL;
->  }
-
-This would be much nicer with a per-pmu event_list.
-
-[...]
-
-> +	// XXX premature; what if this is allowed, but we get moved to a PMU
-> +	// that doesn't have this.
->  	if (is_sampling_event(event)) {
->  		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
->  			err = -EOPNOTSUPP;
-
-Ugh, could that happen for SW events moved into a HW context?
+Would it be faster if we add a perf_event_pmu_context pointer to the=20
+perf_event? I think a group on hw PMU-a should never know a group on
+hw PMU-b. So some separation would make things simpler.=20
 
 Thanks,
-Mark.
+Song
