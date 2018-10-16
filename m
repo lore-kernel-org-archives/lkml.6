@@ -2,633 +2,96 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70411C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7F1C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E67B42145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:43:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5FF52145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:45:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GwF8THd/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E67B42145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lJiUMaBf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FF52145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbeJQEfP (ORCPT
+        id S1727053AbeJQEhh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 00:35:15 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37621 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbeJQEfO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 00:35:14 -0400
-Received: by mail-qt1-f193.google.com with SMTP id d14-v6so27464642qto.4
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 13:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=c1jadCGVPiyQm1nG0ddjnfWQrCDxV49VYnReJsARfMA=;
-        b=GwF8THd/EWDYZbQe6ZQIXp5A1wHBj1MMNMnS4M9ssLUv7i4y3MCp9Ca2h/ugA5Ll0H
-         5jZklVr88xRWkQcS6c2XA4YOTQHLSRsAVYGRzYOIukaeT9LjNBE3rs6LiLwSBSDBNubQ
-         HCjIRhyEg0NokQfMLTk37hThn06rfbP++O3KQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=c1jadCGVPiyQm1nG0ddjnfWQrCDxV49VYnReJsARfMA=;
-        b=IvgJNdCVtNXKIdhvofCssEdg7p1VxOi1lf4XoDKAh6xZuvnd4CoiJBTsetC2f5S1/u
-         vJhe6R4OrhBIaOxFKBOaE2RvLdjYoYNNottiw1I33jqd/34gNxFhhyObWlwo8GrF3KNP
-         LCZB42bU3bHqaJIUzQuWnFtacK+Z1ZhShWj87G2AvJvQvKdN4BLhkkkTqTbhysyFfG61
-         6PcGhVJHLSb93i5spdVpptMdWKGn9FeYAjhsUyygRsHCUctSZAhLoB2bBw54fX7V76xC
-         MjRwMJqvzz6SgqmyNNhkfiTFBm6bzKloomcNjqJhE5D+gumNmLXr9ieilAAY5bVhtH51
-         +Yzg==
-X-Gm-Message-State: ABuFfogxBPDs9pN2kRGdJUbFtbbrYFdFjO2XgPSNoez+Kg/p6xPt3pw6
-        myp1f3MeynNwCG81FjIh2UdI/g==
-X-Google-Smtp-Source: ACcGV601itWVYQR4HqUeX/4A5RA/bALmZjDZ+sOfYxhqm/affflNPXdKAXHvOBRo+i66KfRFm65phg==
-X-Received: by 2002:aed:3224:: with SMTP id y33-v6mr22429669qtd.6.1539722583339;
-        Tue, 16 Oct 2018 13:43:03 -0700 (PDT)
-Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
-        by smtp.gmail.com with ESMTPSA id 140-v6sm10651943qkj.13.2018.10.16.13.43.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 13:43:02 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 16:43:01 -0400 (EDT)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Roman Yeryomin <roman@advem.lv>
-Subject: Re: [PATCH 1/2] ARM: copypage-fa: add kto and kfrom to input operands
- list
-In-Reply-To: <20181016084416.GF30658@n2100.armlinux.org.uk>
-Message-ID: <nycvar.YSQ.7.76.1810161357580.1498@knanqh.ubzr>
-References: <20181015221629.13924-1-stefan@agner.ch> <CACRpkdaVGKLtE-whhK3oFgY+4xoy1JqWkcBW4UO0-hJs2B-QGg@mail.gmail.com> <20181016084416.GF30658@n2100.armlinux.org.uk>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Wed, 17 Oct 2018 00:37:37 -0400
+Received: from ozlabs.org ([203.11.71.1]:40619 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725960AbeJQEhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 00:37:37 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42ZS4N6c9Nz9sCT;
+        Wed, 17 Oct 2018 07:45:24 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539722725;
+        bh=OkeFkr+aSlxgtJKDydrgrn02R7XWliJaankncE84Ss0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=lJiUMaBf25gqxC798Jh1uItSFCq4v5P7jlRdztHfDmRgMEEV4aBZCN8Mz6O6314T9
+         DpaJxSEILM4FkEnjgfv1rQZMxs3K8RGWiWw4MKP7KgNz7wqzFU/HXIqYzGd4cMe0Lx
+         9m8FfSYdKQ9t2PjFoS0j/r3o7UF3JHDzdohCkbVENND8OTJw2SkMe+DXGO9wYawqEQ
+         xDkEl2KWesC2N2tounoSSL7vECO1/LPM4SkcERbXN2jyyfH/IyUgO45HT0mhqMQs9t
+         i0AZP1pTX3w3Wr/MpGaZF5x5PoXjJ68NkZz9fX4EIO0iPttwD8m4cpjlAwtkTIR66N
+         N+1xI2j/hPwIw==
+Date:   Wed, 17 Oct 2018 07:45:22 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Daniel Rosenberg <drosen@google.com>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Message-ID: <20181017074522.770f8cc1@canb.auug.org.au>
+In-Reply-To: <20181016163744.GA29774@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181003103222.6e1655cd@canb.auug.org.au>
+        <20181016111712.33f9dc2e@canb.auug.org.au>
+        <20181016163744.GA29774@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/J59MMHI/AeR5unet2Ouv8QG"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Oct 2018, Russell King - ARM Linux wrote:
+--Sig_/J59MMHI/AeR5unet2Ouv8QG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, Oct 16, 2018 at 10:00:19AM +0200, Linus Walleij wrote:
-> > On Tue, Oct 16, 2018 at 12:16 AM Stefan Agner <stefan@agner.ch> wrote:
-> > 
-> > > When functions incoming parameters are not in input operands list gcc
-> > > 4.5 does not load the parameters into registers before calling this
-> > > function but the inline assembly assumes valid addresses inside this
-> > > function. This breaks the code because r0 and r1 are invalid when
-> > > execution enters v4wb_copy_user_page ()
-> > >
-> > > Also the constant needs to be used as third input operand so account
-> > > for that as well.
-> > >
-> > > This fixes copypage-fa.c what has previously done before for the other
-> > > copypage implementations in commit 9a40ac86152c ("ARM: 6164/1: Add kto
-> > > and kfrom to input operands list.").
-> > >
-> > > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > 
-> > Please add:
-> > Cc: stable@vger.kernel.org
-> 
-> It's not obvious yet whether this is right - it contradicts the GCC
-> manual, but then we have evidence that it's required for some GCC
-> versions where GCC may clone the function, or if the function is
-> used within the same file.
+Hi Jaegeuk,
 
-Why not getting rid of __naked altogether? Here's what I suggest:
+On Tue, 16 Oct 2018 09:37:44 -0700 Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>
+> I've modified this patch in f2fs tree to use SB_RDONLY.
 
------ >8
-Subject: [PATCH] ARM: remove naked function usage
+Thanks for that.
 
-Convert page copy functions not to rely on the naked function attribute.
+--=20
+Cheers,
+Stephen Rothwell
 
-This attribute is known to confuse some gcc versions when function
-arguments aren't explicitly listed as inline assembly operands despite
-the gcc documentation. That resulted in commit 9a40ac86152c ("ARM:
-6164/1: Add kto and kfrom to input operands list.").
+--Sig_/J59MMHI/AeR5unet2Ouv8QG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Yet that commit has problems of its own by having assembly operand
-constraints completely wrong. If the generated code has been OK since
-then, it is due to luck rather than correctness. So this patch provides
-proper assembly operand usage, and removes two instances of redundant
-register duplications in the implementation while at it.
+-----BEGIN PGP SIGNATURE-----
 
-Inspection of the generated code with this patch doesn't show any obvious
-quality degradation either, so not relying on __naked at all will make
-the code less fragile, and more likely to be compilable with clang.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvGTeIACgkQAVBC80lX
+0GzusAf/aXRjzeUjPE6Mr329/ug5SMBj+rrX1TqG2dtMvZpkMiV4gCuUbD+mYN5F
+WPVLX4PtVDPJ/q4nCOgfSWrdKcp/S5ujw1e0NNOygnJKV93+GoY7IFcZZZebLbDN
+ir8dFlneVRDmHzp0RSiKf38nVMkkqqeU70ZJHE1G46fzETKWmbrxRaJ6U/YDB21k
+ZXrDDkEdtwRLMKRESm52I8Pi4taonT2MnBExhgmn4gdObrB96K8otHFdWrNu7jkA
+HENI8nJNNRWpXRD9BMzPTipwTd2eCN0nBavMYIYpk2ZdC2HMjDYNkcdkllFxVaag
+4tlam68QTC9zHiNv1nfN+tDiAQBuBw==
+=hJbL
+-----END PGP SIGNATURE-----
 
-The only remaining __naked instances (excluding the kprobes test cases)
-are exynos_pm_power_up_setup() and tc2_pm_power_up_setup(). But in those
-cases only the function address is used by the compiler with no chance of
-inlining it by mistake.
-
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
----
- arch/arm/mm/copypage-fa.c       | 34 ++++++------
- arch/arm/mm/copypage-feroceon.c | 97 +++++++++++++++++------------------
- arch/arm/mm/copypage-v4mc.c     | 18 +++----
- arch/arm/mm/copypage-v4wb.c     | 40 +++++++--------
- arch/arm/mm/copypage-v4wt.c     | 36 ++++++-------
- arch/arm/mm/copypage-xsc3.c     | 70 +++++++++++--------------
- arch/arm/mm/copypage-xscale.c   | 70 ++++++++++++-------------
- 7 files changed, 171 insertions(+), 194 deletions(-)
-
-diff --git a/arch/arm/mm/copypage-fa.c b/arch/arm/mm/copypage-fa.c
-index d130a5ece5..453a3341ca 100644
---- a/arch/arm/mm/copypage-fa.c
-+++ b/arch/arm/mm/copypage-fa.c
-@@ -17,26 +17,24 @@
- /*
-  * Faraday optimised copy_user_page
-  */
--static void __naked
--fa_copy_user_page(void *kto, const void *kfrom)
-+static void fa_copy_user_page(void *kto, const void *kfrom)
- {
--	asm("\
--	stmfd	sp!, {r4, lr}			@ 2\n\
--	mov	r2, %0				@ 1\n\
--1:	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
--	stmia	r0, {r3, r4, ip, lr}		@ 4\n\
--	mcr	p15, 0, r0, c7, c14, 1		@ 1   clean and invalidate D line\n\
--	add	r0, r0, #16			@ 1\n\
--	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
--	stmia	r0, {r3, r4, ip, lr}		@ 4\n\
--	mcr	p15, 0, r0, c7, c14, 1		@ 1   clean and invalidate D line\n\
--	add	r0, r0, #16			@ 1\n\
--	subs	r2, r2, #1			@ 1\n\
-+	int tmp;
-+	asm volatile ("\
-+1:	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
-+	stmia	%0, {r3, r4, ip, lr}		@ 4\n\
-+	mcr	p15, 0, %0, c7, c14, 1		@ 1   clean and invalidate D line\n\
-+	add	%0, %0, #16			@ 1\n\
-+	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
-+	stmia	%0, {r3, r4, ip, lr}		@ 4\n\
-+	mcr	p15, 0, %0, c7, c14, 1		@ 1   clean and invalidate D line\n\
-+	add	%0, %0, #16			@ 1\n\
-+	subs	%2, %2, #1			@ 1\n\
- 	bne	1b				@ 1\n\
--	mcr	p15, 0, r2, c7, c10, 4		@ 1   drain WB\n\
--	ldmfd	sp!, {r4, pc}			@ 3"
--	:
--	: "I" (PAGE_SIZE / 32));
-+	mcr	p15, 0, %2, c7, c10, 4		@ 1   drain WB"
-+	: "+&r" (kto), "+&r" (kfrom), "=&r" "tmp)
-+	: "2" (PAGE_SIZE / 32)
-+	: "r3", "r4", "ip", "lr");
- }
- 
- void fa_copy_user_highpage(struct page *to, struct page *from,
-diff --git a/arch/arm/mm/copypage-feroceon.c b/arch/arm/mm/copypage-feroceon.c
-index 49ee0c1a72..1349430c63 100644
---- a/arch/arm/mm/copypage-feroceon.c
-+++ b/arch/arm/mm/copypage-feroceon.c
-@@ -13,58 +13,55 @@
- #include <linux/init.h>
- #include <linux/highmem.h>
- 
--static void __naked
--feroceon_copy_user_page(void *kto, const void *kfrom)
-+static void feroceon_copy_user_page(void *kto, const void *kfrom)
- {
--	asm("\
--	stmfd	sp!, {r4-r9, lr}		\n\
--	mov	ip, %2				\n\
--1:	mov	lr, r1				\n\
--	ldmia	r1!, {r2 - r9}			\n\
--	pld	[lr, #32]			\n\
--	pld	[lr, #64]			\n\
--	pld	[lr, #96]			\n\
--	pld	[lr, #128]			\n\
--	pld	[lr, #160]			\n\
--	pld	[lr, #192]			\n\
--	pld	[lr, #224]			\n\
--	stmia	r0, {r2 - r9}			\n\
--	ldmia	r1!, {r2 - r9}			\n\
--	mcr	p15, 0, r0, c7, c14, 1		@ clean and invalidate D line\n\
--	add	r0, r0, #32			\n\
--	stmia	r0, {r2 - r9}			\n\
--	ldmia	r1!, {r2 - r9}			\n\
--	mcr	p15, 0, r0, c7, c14, 1		@ clean and invalidate D line\n\
--	add	r0, r0, #32			\n\
--	stmia	r0, {r2 - r9}			\n\
--	ldmia	r1!, {r2 - r9}			\n\
--	mcr	p15, 0, r0, c7, c14, 1		@ clean and invalidate D line\n\
--	add	r0, r0, #32			\n\
--	stmia	r0, {r2 - r9}			\n\
--	ldmia	r1!, {r2 - r9}			\n\
--	mcr	p15, 0, r0, c7, c14, 1		@ clean and invalidate D line\n\
--	add	r0, r0, #32			\n\
--	stmia	r0, {r2 - r9}			\n\
--	ldmia	r1!, {r2 - r9}			\n\
--	mcr	p15, 0, r0, c7, c14, 1		@ clean and invalidate D line\n\
--	add	r0, r0, #32			\n\
--	stmia	r0, {r2 - r9}			\n\
--	ldmia	r1!, {r2 - r9}			\n\
--	mcr	p15, 0, r0, c7, c14, 1		@ clean and invalidate D line\n\
--	add	r0, r0, #32			\n\
--	stmia	r0, {r2 - r9}			\n\
--	ldmia	r1!, {r2 - r9}			\n\
--	mcr	p15, 0, r0, c7, c14, 1		@ clean and invalidate D line\n\
--	add	r0, r0, #32			\n\
--	stmia	r0, {r2 - r9}			\n\
--	subs	ip, ip, #(32 * 8)		\n\
--	mcr	p15, 0, r0, c7, c14, 1		@ clean and invalidate D line\n\
--	add	r0, r0, #32			\n\
-+	int tmp;
-+	asm volatile ("\
-+1:	ldmia	%1!, {r2 - r7, ip, lr}		\n\
-+	pld	[%1, #0]			\n\
-+	pld	[%1, #32]			\n\
-+	pld	[%1, #64]			\n\
-+	pld	[%1, #96]			\n\
-+	pld	[%1, #128]			\n\
-+	pld	[%1, #160]			\n\
-+	pld	[%1, #192]			\n\
-+	stmia	%0, {r2 - r7, ip, lr}		\n\
-+	ldmia	%1!, {r2 - r7, ip, lr}		\n\
-+	mcr	p15, 0, %0, c7, c14, 1		@ clean and invalidate D line\n\
-+	add	%0, %0, #32			\n\
-+	stmia	%0, {r2 - r7, ip, lr}		\n\
-+	ldmia	%1!, {r2 - r7, ip, lr}		\n\
-+	mcr	p15, 0, %0, c7, c14, 1		@ clean and invalidate D line\n\
-+	add	%0, %0, #32			\n\
-+	stmia	%0, {r2 - r7, ip, lr}		\n\
-+	ldmia	%1!, {r2 - r7, ip, lr}		\n\
-+	mcr	p15, 0, %0, c7, c14, 1		@ clean and invalidate D line\n\
-+	add	%0, %0, #32			\n\
-+	stmia	%0, {r2 - r7, ip, lr}		\n\
-+	ldmia	%1!, {r2 - r7, ip, lr}		\n\
-+	mcr	p15, 0, %0, c7, c14, 1		@ clean and invalidate D line\n\
-+	add	%0, %0, #32			\n\
-+	stmia	%0, {r2 - r7, ip, lr}		\n\
-+	ldmia	%1!, {r2 - r7, ip, lr}		\n\
-+	mcr	p15, 0, %0, c7, c14, 1		@ clean and invalidate D line\n\
-+	add	%0, %0, #32			\n\
-+	stmia	%0, {r2 - r7, ip, lr}		\n\
-+	ldmia	%1!, {r2 - r7, ip, lr}		\n\
-+	mcr	p15, 0, %0, c7, c14, 1		@ clean and invalidate D line\n\
-+	add	%0, %0, #32			\n\
-+	stmia	%0, {r2 - r7, ip, lr}		\n\
-+	ldmia	%1!, {r2 - r7, ip, lr}		\n\
-+	mcr	p15, 0, %0, c7, c14, 1		@ clean and invalidate D line\n\
-+	add	%0, %0, #32			\n\
-+	stmia	%0, {r2 - r7, ip, lr}		\n\
-+	subs	%2, %2, #(32 * 8)		\n\
-+	mcr	p15, 0, %0, c7, c14, 1		@ clean and invalidate D line\n\
-+	add	%0, %0, #32			\n\
- 	bne	1b				\n\
--	mcr	p15, 0, ip, c7, c10, 4		@ drain WB\n\
--	ldmfd	sp!, {r4-r9, pc}"
--	:
--	: "r" (kto), "r" (kfrom), "I" (PAGE_SIZE));
-+	mcr	p15, 0, %2, c7, c10, 4		@ drain WB"
-+	: "+&r" (kto), "+&r" (kfrom), "=&r" (tmp)
-+	: =2" (PAGE_SIZE),
-+	: "r2", "r3", "r4", "r5", "r6", "r7", "ip", "lr");
- }
- 
- void feroceon_copy_user_highpage(struct page *to, struct page *from,
-diff --git a/arch/arm/mm/copypage-v4mc.c b/arch/arm/mm/copypage-v4mc.c
-index 0224416cba..494ddc435a 100644
---- a/arch/arm/mm/copypage-v4mc.c
-+++ b/arch/arm/mm/copypage-v4mc.c
-@@ -40,12 +40,10 @@ static DEFINE_RAW_SPINLOCK(minicache_lock);
-  * instruction.  If your processor does not supply this, you have to write your
-  * own copy_user_highpage that does the right thing.
-  */
--static void __naked
--mc_copy_user_page(void *from, void *to)
-+static void mc_copy_user_page(void *from, void *to)
- {
--	asm volatile(
--	"stmfd	sp!, {r4, lr}			@ 2\n\
--	mov	r4, %2				@ 1\n\
-+	int tmp;
-+	asm volatile ("\
- 	ldmia	%0!, {r2, r3, ip, lr}		@ 4\n\
- 1:	mcr	p15, 0, %1, c7, c6, 1		@ 1   invalidate D line\n\
- 	stmia	%1!, {r2, r3, ip, lr}		@ 4\n\
-@@ -55,13 +53,13 @@ mc_copy_user_page(void *from, void *to)
- 	mcr	p15, 0, %1, c7, c6, 1		@ 1   invalidate D line\n\
- 	stmia	%1!, {r2, r3, ip, lr}		@ 4\n\
- 	ldmia	%0!, {r2, r3, ip, lr}		@ 4\n\
--	subs	r4, r4, #1			@ 1\n\
-+	subs	%2, %2, #1			@ 1\n\
- 	stmia	%1!, {r2, r3, ip, lr}		@ 4\n\
- 	ldmneia	%0!, {r2, r3, ip, lr}		@ 4\n\
--	bne	1b				@ 1\n\
--	ldmfd	sp!, {r4, pc}			@ 3"
--	:
--	: "r" (from), "r" (to), "I" (PAGE_SIZE / 64));
-+	bne	1b				@ "
-+	: "+&r" (from), "+&r" (to), "=&r" (tmp)
-+	: "2" (PAGE_SIZE / 64)
-+	: "r2", "r3", "ip", "lr");
- }
- 
- void v4_mc_copy_user_highpage(struct page *to, struct page *from,
-diff --git a/arch/arm/mm/copypage-v4wb.c b/arch/arm/mm/copypage-v4wb.c
-index 067d0fdd63..cf064ac6fc 100644
---- a/arch/arm/mm/copypage-v4wb.c
-+++ b/arch/arm/mm/copypage-v4wb.c
-@@ -22,29 +22,27 @@
-  * instruction.  If your processor does not supply this, you have to write your
-  * own copy_user_highpage that does the right thing.
-  */
--static void __naked
--v4wb_copy_user_page(void *kto, const void *kfrom)
-+static void v4wb_copy_user_page(void *kto, const void *kfrom)
- {
--	asm("\
--	stmfd	sp!, {r4, lr}			@ 2\n\
--	mov	r2, %2				@ 1\n\
--	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
--1:	mcr	p15, 0, r0, c7, c6, 1		@ 1   invalidate D line\n\
--	stmia	r0!, {r3, r4, ip, lr}		@ 4\n\
--	ldmia	r1!, {r3, r4, ip, lr}		@ 4+1\n\
--	stmia	r0!, {r3, r4, ip, lr}		@ 4\n\
--	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
--	mcr	p15, 0, r0, c7, c6, 1		@ 1   invalidate D line\n\
--	stmia	r0!, {r3, r4, ip, lr}		@ 4\n\
--	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
--	subs	r2, r2, #1			@ 1\n\
--	stmia	r0!, {r3, r4, ip, lr}		@ 4\n\
--	ldmneia	r1!, {r3, r4, ip, lr}		@ 4\n\
-+	int tmp;
-+	asm volatile ("\
-+	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
-+1:	mcr	p15, 0, %0, c7, c6, 1		@ 1   invalidate D line\n\
-+	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
-+	ldmia	%1!, {r3, r4, ip, lr}		@ 4+1\n\
-+	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
-+	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
-+	mcr	p15, 0, %0, c7, c6, 1		@ 1   invalidate D line\n\
-+	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
-+	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
-+	subs	%2, %2, #1			@ 1\n\
-+	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
-+	ldmneia	%1!, {r3, r4, ip, lr}		@ 4\n\
- 	bne	1b				@ 1\n\
--	mcr	p15, 0, r1, c7, c10, 4		@ 1   drain WB\n\
--	ldmfd	 sp!, {r4, pc}			@ 3"
--	:
--	: "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 64));
-+	mcr	p15, 0, %1, c7, c10, 4		@ 1   drain WB"
-+	: "+&r" (kto), "+&r" (kfrom), "=&r" (tmp)
-+	: "2" (PAGE_SIZE / 64)
-+	: "r3", "r4", "ip", "lr");
- }
- 
- void v4wb_copy_user_highpage(struct page *to, struct page *from,
-diff --git a/arch/arm/mm/copypage-v4wt.c b/arch/arm/mm/copypage-v4wt.c
-index b85c5da2e5..66745bd3a6 100644
---- a/arch/arm/mm/copypage-v4wt.c
-+++ b/arch/arm/mm/copypage-v4wt.c
-@@ -20,27 +20,25 @@
-  * dirty data in the cache.  However, we do have to ensure that
-  * subsequent reads are up to date.
-  */
--static void __naked
--v4wt_copy_user_page(void *kto, const void *kfrom)
-+static void v4wt_copy_user_page(void *kto, const void *kfrom)
- {
--	asm("\
--	stmfd	sp!, {r4, lr}			@ 2\n\
--	mov	r2, %2				@ 1\n\
--	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
--1:	stmia	r0!, {r3, r4, ip, lr}		@ 4\n\
--	ldmia	r1!, {r3, r4, ip, lr}		@ 4+1\n\
--	stmia	r0!, {r3, r4, ip, lr}		@ 4\n\
--	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
--	stmia	r0!, {r3, r4, ip, lr}		@ 4\n\
--	ldmia	r1!, {r3, r4, ip, lr}		@ 4\n\
--	subs	r2, r2, #1			@ 1\n\
--	stmia	r0!, {r3, r4, ip, lr}		@ 4\n\
--	ldmneia	r1!, {r3, r4, ip, lr}		@ 4\n\
-+	int tmp;
-+	asm volatile ("\
-+	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
-+1:	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
-+	ldmia	%1!, {r3, r4, ip, lr}		@ 4+1\n\
-+	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
-+	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
-+	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
-+	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
-+	subs	%2, %2, #1			@ 1\n\
-+	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
-+	ldmneia	%1!, {r3, r4, ip, lr}		@ 4\n\
- 	bne	1b				@ 1\n\
--	mcr	p15, 0, r2, c7, c7, 0		@ flush ID cache\n\
--	ldmfd	sp!, {r4, pc}			@ 3"
--	:
--	: "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 64));
-+	mcr	p15, 0, %2, c7, c7, 0		@ flush ID cache"
-+	: "+&r" (kto), "+&r" (kfrom), "=&r" (tmp)
-+	: "2" (PAGE_SIZE / 64)
-+	: "r3", "r4", "ip", "lr");
- }
- 
- void v4wt_copy_user_highpage(struct page *to, struct page *from,
-diff --git a/arch/arm/mm/copypage-xsc3.c b/arch/arm/mm/copypage-xsc3.c
-index 03a2042ace..727a02c149 100644
---- a/arch/arm/mm/copypage-xsc3.c
-+++ b/arch/arm/mm/copypage-xsc3.c
-@@ -21,53 +21,45 @@
- 
- /*
-  * XSC3 optimised copy_user_highpage
-- *  r0 = destination
-- *  r1 = source
-  *
-  * The source page may have some clean entries in the cache already, but we
-  * can safely ignore them - break_cow() will flush them out of the cache
-  * if we eventually end up using our copied page.
-  *
-  */
--static void __naked
--xsc3_mc_copy_user_page(void *kto, const void *kfrom)
-+static void xsc3_mc_copy_user_page(void *kto, const void *kfrom)
- {
--	asm("\
--	stmfd	sp!, {r4, r5, lr}		\n\
--	mov	lr, %2				\n\
--						\n\
--	pld	[r1, #0]			\n\
--	pld	[r1, #32]			\n\
--1:	pld	[r1, #64]			\n\
--	pld	[r1, #96]			\n\
-+	int tmp;
-+	asm volatile ("\
-+	pld	[%1, #0]			\n\
-+	pld	[%1, #32]			\n\
-+1:	pld	[%1, #64]			\n\
-+	pld	[%1, #96]			\n\
- 						\n\
--2:	ldrd	r2, [r1], #8			\n\
--	mov	ip, r0				\n\
--	ldrd	r4, [r1], #8			\n\
--	mcr	p15, 0, ip, c7, c6, 1		@ invalidate\n\
--	strd	r2, [r0], #8			\n\
--	ldrd	r2, [r1], #8			\n\
--	strd	r4, [r0], #8			\n\
--	ldrd	r4, [r1], #8			\n\
--	strd	r2, [r0], #8			\n\
--	strd	r4, [r0], #8			\n\
--	ldrd	r2, [r1], #8			\n\
--	mov	ip, r0				\n\
--	ldrd	r4, [r1], #8			\n\
--	mcr	p15, 0, ip, c7, c6, 1		@ invalidate\n\
--	strd	r2, [r0], #8			\n\
--	ldrd	r2, [r1], #8			\n\
--	subs	lr, lr, #1			\n\
--	strd	r4, [r0], #8			\n\
--	ldrd	r4, [r1], #8			\n\
--	strd	r2, [r0], #8			\n\
--	strd	r4, [r0], #8			\n\
-+2:	ldrd	r2, [%1], #8			\n\
-+	ldrd	r4, [%1], #8			\n\
-+	mcr	p15, 0, %0, c7, c6, 1		@ invalidate\n\
-+	strd	r2, [%0], #8			\n\
-+	ldrd	r2, [%1], #8			\n\
-+	strd	r4, [%0], #8			\n\
-+	ldrd	r4, [%1], #8			\n\
-+	strd	r2, [%0], #8			\n\
-+	strd	r4, [%0], #8			\n\
-+	ldrd	r2, [%1], #8			\n\
-+	ldrd	r4, [%1], #8			\n\
-+	mcr	p15, 0, %0, c7, c6, 1		@ invalidate\n\
-+	strd	r2, [%0], #8			\n\
-+	ldrd	r2, [%1], #8			\n\
-+	subs	%2, %2, #1			\n\
-+	strd	r4, [%0], #8			\n\
-+	ldrd	r4, [%1], #8			\n\
-+	strd	r2, [%0], #8			\n\
-+	strd	r4, [%0], #8			\n\
- 	bgt	1b				\n\
--	beq	2b				\n\
--						\n\
--	ldmfd	sp!, {r4, r5, pc}"
--	:
--	: "r" (kto), "r" (kfrom), "I" (PAGE_SIZE / 64 - 1));
-+	beq	2b				"
-+	: "+&r" (kto), "+&r" (kfrom), "=&r" (tmp)
-+	: "2" (PAGE_SIZE / 64 - 1)
-+	: "r2", "r3", "r4", "r5");
- }
- 
- void xsc3_mc_copy_user_highpage(struct page *to, struct page *from,
-@@ -85,8 +77,6 @@ void xsc3_mc_copy_user_highpage(struct page *to, struct page *from,
- 
- /*
-  * XScale optimised clear_user_page
-- *  r0 = destination
-- *  r1 = virtual user address of ultimate destination page
-  */
- void xsc3_mc_clear_user_highpage(struct page *page, unsigned long vaddr)
- {
-diff --git a/arch/arm/mm/copypage-xscale.c b/arch/arm/mm/copypage-xscale.c
-index 97972379f4..fa0be66082 100644
---- a/arch/arm/mm/copypage-xscale.c
-+++ b/arch/arm/mm/copypage-xscale.c
-@@ -36,52 +36,50 @@ static DEFINE_RAW_SPINLOCK(minicache_lock);
-  * Dcache aliasing issue.  The writes will be forwarded to the write buffer,
-  * and merged as appropriate.
-  */
--static void __naked
--mc_copy_user_page(void *from, void *to)
-+static void mc_copy_user_page(void *from, void *to)
- {
-+	int tmp;
- 	/*
- 	 * Strangely enough, best performance is achieved
- 	 * when prefetching destination as well.  (NP)
- 	 */
--	asm volatile(
--	"stmfd	sp!, {r4, r5, lr}		\n\
--	mov	lr, %2				\n\
--	pld	[r0, #0]			\n\
--	pld	[r0, #32]			\n\
--	pld	[r1, #0]			\n\
--	pld	[r1, #32]			\n\
--1:	pld	[r0, #64]			\n\
--	pld	[r0, #96]			\n\
--	pld	[r1, #64]			\n\
--	pld	[r1, #96]			\n\
--2:	ldrd	r2, [r0], #8			\n\
--	ldrd	r4, [r0], #8			\n\
--	mov	ip, r1				\n\
--	strd	r2, [r1], #8			\n\
--	ldrd	r2, [r0], #8			\n\
--	strd	r4, [r1], #8			\n\
--	ldrd	r4, [r0], #8			\n\
--	strd	r2, [r1], #8			\n\
--	strd	r4, [r1], #8			\n\
-+	asm volatile ("\
-+	pld	[%0, #0]			\n\
-+	pld	[%0, #32]			\n\
-+	pld	[%1, #0]			\n\
-+	pld	[%1, #32]			\n\
-+1:	pld	[%0, #64]			\n\
-+	pld	[%0, #96]			\n\
-+	pld	[%1, #64]			\n\
-+	pld	[%1, #96]			\n\
-+2:	ldrd	r2, [%0], #8			\n\
-+	ldrd	r4, [%0], #8			\n\
-+	mov	ip, %1				\n\
-+	strd	r2, [%1], #8			\n\
-+	ldrd	r2, [%0], #8			\n\
-+	strd	r4, [%1], #8			\n\
-+	ldrd	r4, [%0], #8			\n\
-+	strd	r2, [%1], #8			\n\
-+	strd	r4, [%1], #8			\n\
- 	mcr	p15, 0, ip, c7, c10, 1		@ clean D line\n\
--	ldrd	r2, [r0], #8			\n\
-+	ldrd	r2, [%0], #8			\n\
- 	mcr	p15, 0, ip, c7, c6, 1		@ invalidate D line\n\
--	ldrd	r4, [r0], #8			\n\
--	mov	ip, r1				\n\
--	strd	r2, [r1], #8			\n\
--	ldrd	r2, [r0], #8			\n\
--	strd	r4, [r1], #8			\n\
--	ldrd	r4, [r0], #8			\n\
--	strd	r2, [r1], #8			\n\
--	strd	r4, [r1], #8			\n\
-+	ldrd	r4, [%0], #8			\n\
-+	mov	ip, %1				\n\
-+	strd	r2, [%1], #8			\n\
-+	ldrd	r2, [%0], #8			\n\
-+	strd	r4, [%1], #8			\n\
-+	ldrd	r4, [%0], #8			\n\
-+	strd	r2, [%1], #8			\n\
-+	strd	r4, [%1], #8			\n\
- 	mcr	p15, 0, ip, c7, c10, 1		@ clean D line\n\
--	subs	lr, lr, #1			\n\
-+	subs	%2, %2, #1			\n\
- 	mcr	p15, 0, ip, c7, c6, 1		@ invalidate D line\n\
- 	bgt	1b				\n\
--	beq	2b				\n\
--	ldmfd	sp!, {r4, r5, pc}		"
--	:
--	: "r" (from), "r" (to), "I" (PAGE_SIZE / 64 - 1));
-+	beq	2b				"
-+	: "+&r" (from), "+&r" (to), "=&r" (tmp)
-+	: "2" (PAGE_SIZE / 64 - 1)
-+	: "r2", "r3", "r4", "r5", "ip");
- }
- 
- void xscale_mc_copy_user_highpage(struct page *to, struct page *from,
-
+--Sig_/J59MMHI/AeR5unet2Ouv8QG--
