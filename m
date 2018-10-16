@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 892A1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB01DC070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5046321470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B19421477
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vaJ/wQzS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5046321470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTkR4XoT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B19421477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730405AbeJPMFV (ORCPT
+        id S1730419AbeJPMFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:05:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54416 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:05:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730380AbeJPMFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:05:20 -0400
+        id S1728951AbeJPMFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:05:21 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FF7B2147E;
-        Tue, 16 Oct 2018 04:16:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68E792148D;
+        Tue, 16 Oct 2018 04:16:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663417;
-        bh=sUyOEP7cMBwsIoebn2BQOesbq8icAfzJ15gmO3Llfbw=;
+        s=default; t=1539663418;
+        bh=x9BNu4eQQeDuftKfoJdePgHeJ7Cz/mC8i8A4hyu3fEM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vaJ/wQzSHVQyjXtwAX9vvPMrZcwU6+jCiAKspbL167ljfDNktPK+XHuViGm6MbH2H
-         jKC9yZMo4mDH3OXvUHxhF0/Or5U+KMAGjp4yeUcvmSHWhLJxzNOmwPif3WZRxcf1iu
-         8+oD8RHTyOBhaWhTKxJqFmen0gxUOcuvvjhOqgeg=
+        b=XTkR4XoTlSQ8TyukukDW2dGVhSgWKfGBgD7TFgvvFeZUbWG62oGLqtwSYi4yOPdDb
+         1ueIpubVkZUw7w3rgXzC3gihPdfzLbxulP/3x2hm+7y6wLcq0cgNlTI0g/SbuCE9W7
+         pN6PWyPS2d0eXOlPqzie94cEkca5Tj6SzZQgHB8Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sean Tranchetti <stranche@codeaurora.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 05/15] xfrm: validate template mode
-Date:   Tue, 16 Oct 2018 00:16:40 -0400
-Message-Id: <20181016041650.135958-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 06/15] asix: Check for supported Wake-on-LAN modes
+Date:   Tue, 16 Oct 2018 00:16:41 -0400
+Message-Id: <20181016041650.135958-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041650.135958-1-sashal@kernel.org>
 References: <20181016041650.135958-1-sashal@kernel.org>
@@ -53,64 +53,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Tranchetti <stranche@codeaurora.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 32bf94fb5c2ec4ec842152d0e5937cd4bb6738fa ]
+[ Upstream commit c4ce446e33d7a0e978256ac6fea4c80e59d9de5f ]
 
-XFRM mode parameters passed as part of the user templates
-in the IP_XFRM_POLICY are never properly validated. Passing
-values other than valid XFRM modes can cause stack-out-of-bounds
-reads to occur later in the XFRM processing:
+The driver currently silently accepts unsupported Wake-on-LAN modes
+(other than WAKE_PHY or WAKE_MAGIC) without reporting that to the user,
+which is confusing.
 
-[  140.535608] ================================================================
-[  140.543058] BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x17e4/0x1cc4
-[  140.550306] Read of size 4 at addr ffffffc0238a7a58 by task repro/5148
-[  140.557369]
-[  140.558927] Call trace:
-[  140.558936] dump_backtrace+0x0/0x388
-[  140.558940] show_stack+0x24/0x30
-[  140.558946] __dump_stack+0x24/0x2c
-[  140.558949] dump_stack+0x8c/0xd0
-[  140.558956] print_address_description+0x74/0x234
-[  140.558960] kasan_report+0x240/0x264
-[  140.558963] __asan_report_load4_noabort+0x2c/0x38
-[  140.558967] xfrm_state_find+0x17e4/0x1cc4
-[  140.558971] xfrm_resolve_and_create_bundle+0x40c/0x1fb8
-[  140.558975] xfrm_lookup+0x238/0x1444
-[  140.558977] xfrm_lookup_route+0x48/0x11c
-[  140.558984] ip_route_output_flow+0x88/0xc4
-[  140.558991] raw_sendmsg+0xa74/0x266c
-[  140.558996] inet_sendmsg+0x258/0x3b0
-[  140.559002] sock_sendmsg+0xbc/0xec
-[  140.559005] SyS_sendto+0x3a8/0x5a8
-[  140.559008] el0_svc_naked+0x34/0x38
-[  140.559009]
-[  140.592245] page dumped because: kasan: bad access detected
-[  140.597981] page_owner info is not active (free page?)
-[  140.603267]
-[  140.653503] ================================================================
-
-Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: 2e55cc7210fe ("[PATCH] USB: usbnet (3/9) module for ASIX Ethernet adapters")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 3 +++
+ drivers/net/usb/asix_common.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index ca99638b5d5a..017b1c91d58e 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1381,6 +1381,9 @@ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
- 		    (ut[i].family != prev_family))
- 			return -EINVAL;
+diff --git a/drivers/net/usb/asix_common.c b/drivers/net/usb/asix_common.c
+index 75d6f26729a3..ad81af135a32 100644
+--- a/drivers/net/usb/asix_common.c
++++ b/drivers/net/usb/asix_common.c
+@@ -417,6 +417,9 @@ int asix_set_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
+ 	struct usbnet *dev = netdev_priv(net);
+ 	u8 opt = 0;
  
-+		if (ut[i].mode >= XFRM_MODE_MAX)
-+			return -EINVAL;
++	if (wolinfo->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
++		return -EINVAL;
 +
- 		prev_family = ut[i].family;
- 
- 		switch (ut[i].family) {
+ 	if (wolinfo->wolopts & WAKE_PHY)
+ 		opt |= AX_MONITOR_LINK;
+ 	if (wolinfo->wolopts & WAKE_MAGIC)
 -- 
 2.17.1
 
