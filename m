@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59039C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3D3C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21C2E2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9418721477
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="daP6In1+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21C2E2089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSX8d6RO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9418721477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbeJQBDK (ORCPT
+        id S1728327AbeJQBDO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:03:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45010 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:03:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727263AbeJQBDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:03:09 -0400
+        id S1727263AbeJQBDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:03:11 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37F9620866;
-        Tue, 16 Oct 2018 17:11:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D85DB20866;
+        Tue, 16 Oct 2018 17:11:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709906;
-        bh=D7jReaJgv6Vy1/HWJrlY53lJpd5O7/HjYIGRZJ0DIk4=;
+        s=default; t=1539709909;
+        bh=uvQ501CfRdwQaRieZhJjf9n0kltezfCnZtsma9BSJFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=daP6In1+HP0WozsOf2f1eT0Ll0njDEthn6nc+uHWDoFhGY4+NiELH7ghfVq0H4qfW
-         RTyiyWomUfAoYpD7sgooYnpr9S+oJBGMmK1O7AkqNJcK8cSli+9nwP6K4FnO5kPsfC
-         nr78g06xbBx4BcXBxMMW1YPeguVrAz+gWVlAbnag=
+        b=iSX8d6ROWcBcgnfhDqNdenmXWqDwkyr4wg7VDpNPgxudtnFRwLmifPw/k0IoM8ats
+         gy7tm3YaBMhtuNQwkzjKzfv+bswfKTpVAdeZ5iugoua0azeLNBJf8PlXhupeFAbk6G
+         GZIqVQJJ2hk6jq/JPLxcF9bTu4EPFTJBYr3agy0c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 035/135] net: dsa: bcm_sf2: Fix unbind ordering
-Date:   Tue, 16 Oct 2018 19:04:25 +0200
-Message-Id: <20181016170517.388541430@linuxfoundation.org>
+        stable@vger.kernel.org, Jianbo Liu <jianbol@mellanox.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.18 036/135] net/mlx5e: Set vlan masks for all offloaded TC rules
+Date:   Tue, 16 Oct 2018 19:04:26 +0200
+Message-Id: <20181016170517.444389343@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -61,46 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Jianbo Liu <jianbol@mellanox.com>
 
-[ Upstream commit bf3b452b7af787b8bf27de6490dc4eedf6f97599 ]
+[ Upstream commit cee26487620bc9bc3c7db21b6984d91f7bae12ae ]
 
-The order in which we release resources is unfortunately leading to bus
-errors while dismantling the port. This is because we set
-priv->wol_ports_mask to 0 to tell bcm_sf2_sw_suspend() that it is now
-permissible to clock gate the switch. Later on, when dsa_slave_destroy()
-comes in from dsa_unregister_switch() and calls
-dsa_switch_ops::port_disable, we perform the same dismantling again, and
-this time we hit registers that are clock gated.
+In flow steering, if asked to, the hardware matches on the first ethertype
+which is not vlan. It's possible to set a rule as follows, which is meant
+to match on untagged packet, but will match on a vlan packet:
+    tc filter add dev eth0 parent ffff: protocol ip flower ...
 
-Make sure that dsa_unregister_switch() is the first thing that happens,
-which takes care of releasing all user visible resources, then proceed
-with clock gating hardware. We still need to set priv->wol_ports_mask to
-0 to make sure that an enabled port properly gets disabled in case it
-was previously used as part of Wake-on-LAN.
+To avoid this for packets with single tag, we set vlan masks to tell
+hardware to check the tags for every matched packet.
 
-Fixes: d9338023fb8e ("net: dsa: bcm_sf2: Make it a real platform device driver")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 095b6cfd69ce ('net/mlx5e: Add TC vlan match parsing')
+Signed-off-by: Jianbo Liu <jianbol@mellanox.com>
+Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/bcm_sf2.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -1160,10 +1160,10 @@ static int bcm_sf2_sw_remove(struct plat
- {
- 	struct bcm_sf2_priv *priv = platform_get_drvdata(pdev);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -1339,6 +1339,9 @@ static int __parse_cls_flower(struct mlx
  
--	/* Disable all ports and interrupts */
- 	priv->wol_ports_mask = 0;
--	bcm_sf2_sw_suspend(priv->dev->ds);
- 	dsa_unregister_switch(priv->dev->ds);
-+	/* Disable all ports and interrupts */
-+	bcm_sf2_sw_suspend(priv->dev->ds);
- 	bcm_sf2_mdio_unregister(priv);
+ 			*match_level = MLX5_MATCH_L2;
+ 		}
++	} else {
++		MLX5_SET(fte_match_set_lyr_2_4, headers_c, svlan_tag, 1);
++		MLX5_SET(fte_match_set_lyr_2_4, headers_c, cvlan_tag, 1);
+ 	}
  
- 	return 0;
+ 	if (dissector_uses_key(f->dissector, FLOW_DISSECTOR_KEY_BASIC)) {
 
 
