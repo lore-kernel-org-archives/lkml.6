@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C20C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9419FC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72A8A2098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CCCE21476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y/31dg5x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72A8A2098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGGA7+qM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CCCE21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730769AbeJQBMY (ORCPT
+        id S1730782AbeJQBM1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:12:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57876 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:12:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729296AbeJQBMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:12:23 -0400
+        id S1729296AbeJQBM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:12:26 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4717A21476;
-        Tue, 16 Oct 2018 17:20:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1066E2089E;
+        Tue, 16 Oct 2018 17:21:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710458;
-        bh=/M53Kq7OJLLG1idCZ3p5bMbj+JsmCBo4ptLDcGk4bMs=;
+        s=default; t=1539710461;
+        bh=KYlTcfLE6p0qfhYgXt1LLKdA4NlfFXcH2CVRH7s6X3w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y/31dg5x4806WhtkddqKfz5GMILV66yUmELvAAFtQI1LCC5BlJBC3TaJJuOpIwlkD
-         /HuAa16TyLa0/ODPwq3UgHNJuj/KH2n4i2kY0ZbIJOMVGslEdEhQ2Rk+MdCVIXDQx4
-         hGMQL03IlZKhoT5F/Bu7puacDARvpklnAbl/aw3Q=
+        b=uGGA7+qMf3nROOnqT77a4LZ79sVnt3x8O5RU/Hhw9kniTeecub20JTB5fM+Hpzuas
+         Zb16e4cCUeeIuv6OsKQj37tqXsEGTwnHwcB9ZmbUG0SFt4C2bKAl5gUa6S+fVMvSLN
+         /arTvYR400oNukCTogphddkxbAYbypA+UdfrEUvU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Edgar Cherkasov <echerkasov@dev.rtsoft.ru>,
-        Viktor Krasnov <vkrasnov@dev.rtsoft.ru>,
-        Michael Brunner <Michael.Brunner@kontron.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.14 078/109] i2c: i2c-scmi: fix for i2c_smbus_write_block_data
-Date:   Tue, 16 Oct 2018 19:05:46 +0200
-Message-Id: <20181016170529.149259351@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "David A. Long" <dave.long@linaro.org>
+Subject: [PATCH 4.14 087/109] ARM: bugs: hook processor bug checking into SMP and suspend paths
+Date:   Tue, 16 Oct 2018 19:05:55 +0200
+Message-Id: <20181016170529.741223925@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -64,60 +65,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-commit 08d9db00fe0e300d6df976e6c294f974988226dd upstream.
+Commit 26602161b5ba795928a5a719fe1d5d9f2ab5c3ef upstream.
 
-The i2c-scmi driver crashes when the SMBus Write Block transaction is
-executed:
+Check for CPU bugs when secondary processors are being brought online,
+and also when CPUs are resuming from a low power mode.  This gives an
+opportunity to check that processor specific bug workarounds are
+correctly enabled for all paths that a CPU re-enters the kernel.
 
-WARNING: CPU: 9 PID: 2194 at mm/page_alloc.c:3931 __alloc_pages_slowpath+0x9db/0xec0
- Call Trace:
-  ? get_page_from_freelist+0x49d/0x11f0
-  ? alloc_pages_current+0x6a/0xe0
-  ? new_slab+0x499/0x690
-  __alloc_pages_nodemask+0x265/0x280
-  alloc_pages_current+0x6a/0xe0
-  kmalloc_order+0x18/0x40
-  kmalloc_order_trace+0x24/0xb0
-  ? acpi_ut_allocate_object_desc_dbg+0x62/0x10c
-  __kmalloc+0x203/0x220
-  acpi_os_allocate_zeroed+0x34/0x36
-  acpi_ut_copy_eobject_to_iobject+0x266/0x31e
-  acpi_evaluate_object+0x166/0x3b2
-  acpi_smbus_cmi_access+0x144/0x530 [i2c_scmi]
-  i2c_smbus_xfer+0xda/0x370
-  i2cdev_ioctl_smbus+0x1bd/0x270
-  i2cdev_ioctl+0xaa/0x250
-  do_vfs_ioctl+0xa4/0x600
-  SyS_ioctl+0x79/0x90
-  do_syscall_64+0x73/0x130
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-ACPI Error: Evaluating _SBW: 4 (20170831/smbus_cmi-185)
-
-This problem occurs because the length of ACPI Buffer object is not
-defined/initialized in the code before a corresponding ACPI method is
-called. The obvious patch below fixes this issue.
-
-Signed-off-by: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
-Acked-by: Viktor Krasnov <vkrasnov@dev.rtsoft.ru>
-Acked-by: Michael Brunner <Michael.Brunner@kontron.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Boot-tested-by: Tony Lindgren <tony@atomide.com>
+Reviewed-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: David A. Long <dave.long@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/i2c/busses/i2c-scmi.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/include/asm/bugs.h |    2 ++
+ arch/arm/kernel/bugs.c      |    5 +++++
+ arch/arm/kernel/smp.c       |    4 ++++
+ arch/arm/kernel/suspend.c   |    2 ++
+ 4 files changed, 13 insertions(+)
 
---- a/drivers/i2c/busses/i2c-scmi.c
-+++ b/drivers/i2c/busses/i2c-scmi.c
-@@ -152,6 +152,7 @@ acpi_smbus_cmi_access(struct i2c_adapter
- 			mt_params[3].type = ACPI_TYPE_INTEGER;
- 			mt_params[3].integer.value = len;
- 			mt_params[4].type = ACPI_TYPE_BUFFER;
-+			mt_params[4].buffer.length = len;
- 			mt_params[4].buffer.pointer = data->block + 1;
- 		}
- 		break;
+--- a/arch/arm/include/asm/bugs.h
++++ b/arch/arm/include/asm/bugs.h
+@@ -14,8 +14,10 @@ extern void check_writebuffer_bugs(void)
+ 
+ #ifdef CONFIG_MMU
+ extern void check_bugs(void);
++extern void check_other_bugs(void);
+ #else
+ #define check_bugs() do { } while (0)
++#define check_other_bugs() do { } while (0)
+ #endif
+ 
+ #endif
+--- a/arch/arm/kernel/bugs.c
++++ b/arch/arm/kernel/bugs.c
+@@ -3,7 +3,12 @@
+ #include <asm/bugs.h>
+ #include <asm/proc-fns.h>
+ 
++void check_other_bugs(void)
++{
++}
++
+ void __init check_bugs(void)
+ {
+ 	check_writebuffer_bugs();
++	check_other_bugs();
+ }
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -31,6 +31,7 @@
+ #include <linux/irq_work.h>
+ 
+ #include <linux/atomic.h>
++#include <asm/bugs.h>
+ #include <asm/smp.h>
+ #include <asm/cacheflush.h>
+ #include <asm/cpu.h>
+@@ -402,6 +403,9 @@ asmlinkage void secondary_start_kernel(v
+ 	 * before we continue - which happens after __cpu_up returns.
+ 	 */
+ 	set_cpu_online(cpu, true);
++
++	check_other_bugs();
++
+ 	complete(&cpu_running);
+ 
+ 	local_irq_enable();
+--- a/arch/arm/kernel/suspend.c
++++ b/arch/arm/kernel/suspend.c
+@@ -3,6 +3,7 @@
+ #include <linux/slab.h>
+ #include <linux/mm_types.h>
+ 
++#include <asm/bugs.h>
+ #include <asm/cacheflush.h>
+ #include <asm/idmap.h>
+ #include <asm/pgalloc.h>
+@@ -36,6 +37,7 @@ int cpu_suspend(unsigned long arg, int (
+ 		cpu_switch_mm(mm->pgd, mm);
+ 		local_flush_bp_all();
+ 		local_flush_tlb_all();
++		check_other_bugs();
+ 	}
+ 
+ 	return ret;
 
 
