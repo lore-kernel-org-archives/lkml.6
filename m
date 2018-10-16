@@ -2,135 +2,140 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DF3C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DB9C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF03920881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:41:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C66F2148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:44:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DtHQafuo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF03920881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tc6AWTxn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C66F2148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbeJPWcT (ORCPT
+        id S1727119AbeJPWf0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:32:19 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33237 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbeJPWcT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:32:19 -0400
-Received: by mail-ed1-f65.google.com with SMTP id l14-v6so12603637edq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 07:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8axZzdNvrzI+u2U7+oDvY9j58Np1YM3RjpcEuRDVIkc=;
-        b=DtHQafuoPc7DjasCmVzobJEekwr2igNZxE/S9NeZl6sJaVW3AQklnLiGKdZ9aZ92zb
-         2BZLPlzKoAx+AxBM8KN9WArM0uwnfRYMnLyWCdJA9ZaT83jwJkEshtKCRw5huwkUvQuz
-         e+nCvLZSsoRRkwvXwW4Asox8kFJbv8jYNq2h+gckswA5wk+pEacXwgxF0bU31ckTN5dn
-         TxNmjJKMJlcmQC0gQj2Itn3KbynqDmEImixhZ2UmVkwTpO25H0kBLqG6Ly/i8tsFe/SC
-         ZXJ2W/ATWrj4L6hQmqwnUx8ZWMJLhm6c/FJ3KK/OhMHAGbXbCo9+l2N6uJkPsz/ojnMQ
-         GUYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8axZzdNvrzI+u2U7+oDvY9j58Np1YM3RjpcEuRDVIkc=;
-        b=mo9Mqk4xVPD7e6KYMAkOozQ44uWpY20yqTaUaSUJVXTSvkXTNvE3KYl0Jx+IRBkCBh
-         Z0Qc98Wlxj6uqY8pKHO53H+TB/lH03Luo8tfCRzWKOjmMxeXcwR9D1GQARexBqqKhSr8
-         UNOV1bvDEAG64htkqEsrKZG1Ql19g4dEDOnCu1Qaooa4lIlgwWSwjMAdlnRGvxKdDLna
-         ISbM39AEHAQ/W3Xe8MsGYwql0Ld3ltpt7D7Xz///VY+ptDXfSgZbl7VLWkoA6XDMz+4L
-         Jrjo4X0S8zuoBbF9dzl4j9F0p/26neA1nIA9zHMCXBLdkaiHR9CelE96BrV73QPhk1zP
-         L9XA==
-X-Gm-Message-State: ABuFfoiGDpS68gwP+VwJXgd4+eGJywpOhuG2IFvBdfFQnEGAdqrG5Xa1
-        XVVqmorCvT4EA9sSDXsDkp0=
-X-Google-Smtp-Source: ACcGV62G/mS0znNf8CngBl4BCW3qf1M3FK/+g33m2Y45QLsQLd0/b6Jg0ys0uQ9vsY1Za1+51jYw+g==
-X-Received: by 2002:a50:abc2:: with SMTP id u60-v6mr31020767edc.185.1539700892076;
-        Tue, 16 Oct 2018 07:41:32 -0700 (PDT)
-Received: from localhost.localdomain (p200300EF2BD0F03569FD0D231D8C2067.dip0.t-ipconnect.de. [2003:ef:2bd0:f035:69fd:d23:1d8c:2067])
-        by smtp.gmail.com with ESMTPSA id h21-v6sm7119155eda.23.2018.10.16.07.41.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 07:41:31 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 16:41:28 +0200
-From:   Juri Lelli <juri.lelli@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        nstange@suse.de, syzkaller-bugs@googlegroups.com,
-        juri.lelli@redhat.com
-Subject: Re: INFO: rcu detected stall in do_idle
-Message-ID: <20181016144045.GF9130@localhost.localdomain>
-References: <000000000000a4ee200578172fde@google.com>
- <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
- <20181016140322.GB3121@hirez.programming.kicks-ass.net>
+        Tue, 16 Oct 2018 18:35:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53854 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726778AbeJPWf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 18:35:26 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C03A4208B3;
+        Tue, 16 Oct 2018 14:44:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539701078;
+        bh=4gaieX353ARNS4j7F496jnpg38O9WhEBCQBcU1ftDMU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Tc6AWTxnl2Jgm8LjVTXIxixM8+qJwHdtu2xTakvEWd/WH0hubWNVSxfm2V8fo0Ho8
+         gC3k1kR/b7BEWkgQ1YCe84Zu4NFJpD4XV9vgNbatpU9yFkFR+Nv+Io10UsW8jRkt/L
+         DH0ds6+IZfW216xZ8ysUrBW1KD/+2Z56v3HsL54Q=
+Received: by mail-qk1-f172.google.com with SMTP id p6-v6so14297735qkg.1;
+        Tue, 16 Oct 2018 07:44:38 -0700 (PDT)
+X-Gm-Message-State: ABuFfohHy+h4qL47XAX4FfHmqv4hNCeKa9Dcs2qLUh2Y5OV37yveZnUG
+        o2t0sSvb7g2EMZSynX08NDrU3lu9v2pKarLhDg==
+X-Google-Smtp-Source: ACcGV60UeVZaHOAjpZVx869r+1noWVYhA9BHqX7AxSgtfyuxMlnydqnfsuaMkdcecjjR8MsjJpFo+dleRFhFapx1Moc=
+X-Received: by 2002:a37:12d1:: with SMTP id 78-v6mr20860146qks.147.1539701077916;
+ Tue, 16 Oct 2018 07:44:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016140322.GB3121@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1537866192-12320-1-git-send-email-daniel.lezcano@linaro.org>
+ <1537866192-12320-9-git-send-email-daniel.lezcano@linaro.org>
+ <20181015162835.GA20955@bogus> <d2cb2fa0-b579-205c-1777-308da075b3fd@linaro.org>
+In-Reply-To: <d2cb2fa0-b579-205c-1777-308da075b3fd@linaro.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 16 Oct 2018 09:44:25 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJCJbOxP_ODJ_JTRCvrFpSCSxa-X1LCr+1-pY_ApTz_1Q@mail.gmail.com>
+Message-ID: <CAL_JsqJCJbOxP_ODJ_JTRCvrFpSCSxa-X1LCr+1-pY_ApTz_1Q@mail.gmail.com>
+Subject: Re: [PATCH 08/14] ARM64: dts: hisilicon: Add tsensor interrupt name
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Eduardo Valentin <edubezval@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Leo Yan <leo.yan@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wei Xu <xuwei5@hisilicon.com>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/10/18 16:03, Peter Zijlstra wrote:
-> On Tue, Oct 16, 2018 at 03:24:06PM +0200, Thomas Gleixner wrote:
-> > It does reproduce here but with a kworker stall. Looking at the reproducer:
-> > 
-> >   *(uint32_t*)0x20000000 = 0;
-> >   *(uint32_t*)0x20000004 = 6;
-> >   *(uint64_t*)0x20000008 = 0;
-> >   *(uint32_t*)0x20000010 = 0;
-> >   *(uint32_t*)0x20000014 = 0;
-> >   *(uint64_t*)0x20000018 = 0x9917;
-> >   *(uint64_t*)0x20000020 = 0xffff;
-> >   *(uint64_t*)0x20000028 = 0;
-> >   syscall(__NR_sched_setattr, 0, 0x20000000, 0);
-> > 
-> > which means:
-> > 
-> >   struct sched_attr {
-> >   	 .size		= 0,
-> > 	 .policy	= 6,
-> > 	 .flags		= 0,
-> > 	 .nice		= 0,
-> > 	 .priority	= 0,
-> > 	 .deadline	= 0x9917,
-> > 	 .runtime	= 0xffff,
-> > 	 .period	= 0,
-> >   }
-> > 
-> > policy 6 is SCHED_DEADLINE
-> > 
-> > That makes the thread hog the CPU and prevents all kind of stuff to run.
-> > 
-> > Peter, is that expected behaviour?
-> 
-> Sorta, just like FIFO-99 while(1);. Except we should be rejecting the
-> above configuration, because of the rule:
-> 
->   runtime <= deadline <= period
-> 
-> Juri, where were we supposed to check that?
+On Mon, Oct 15, 2018 at 1:01 PM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+>
+> Hi Rob,
+>
+> thanks for the review.
+>
+> On 15/10/2018 18:28, Rob Herring wrote:
+> > On Tue, Sep 25, 2018 at 11:03:06AM +0200, Daniel Lezcano wrote:
+> >> Add the interrupt names for the sensors, so the code can rely on them
+> >> instead of dealing with index which are prone to error.
 
-Not if period == 0.
+[...]
 
-https://elixir.bootlin.com/linux/latest/source/kernel/sched/deadline.c#L2632
-https://elixir.bootlin.com/linux/latest/source/kernel/sched/deadline.c#L2515
+> >> +            interrupt-names =3D "tsensor_intr";
+> >
+> > That name seems pretty pointless.
+> >
+> >>              clocks =3D <&sys_ctrl HI6220_TSENSOR_CLK>;
+> >>              clock-names =3D "thermal_clk";
+> >>              #thermal-sensor-cells =3D <1>;
+> >> @@ -28,5 +30,6 @@ for Hi3660:
+> >>              compatible =3D "hisilicon,hi3660-tsensor";
+> >>              reg =3D <0x0 0xfff30000 0x0 0x1000>;
+> >>              interrupts =3D <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+> >> +            interrupt-names =3D "tsensor_a73";
+> >
+> > Just 'a73' is sufficient.
+>
+> This is the name defined in the board documentation to give a name to
+> the interrupt when requesting it. This one appears in /proc/interrupts.
+>
+> I can replace the 'tsensor_intr' by 'tsensor', but if 'tsensor_a73' is
+> replaced by 'a73' that may looks odd in /proc/interrupts to see an
+> interrupts line with the 'a73' name.
 
-Now, maybe we should be checking also against the default 95% cap?
+Sounds like a Linux problem, not DT...
 
-Best,
+The thing is that any *-names property is supposed to be a local to
+block name. For example, a UART may have a TX irq. It's local name is
+just "TX IRQ", but then upstream at the interrupt controller it may be
+"UART1 TX IRQ". If you have multiple instances, the local names are
+the same.
 
-- Juri
+If we lose the node name from /proc/interrupts when interrupt-names is
+used, then we should fix that.
+
+>
+> However this is the preparation for the multiple sensors support so we
+> will have more interrupt names.
+>
+> Is it possible to keep these names ?
+>
+>  - tsensor
+>  - tsensor_a73
+>  - tsensor_a57
+>  - tsensor_gpu
+>
+>
+>
+>
+> --
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
+RM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
