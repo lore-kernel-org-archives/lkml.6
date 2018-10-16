@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE743C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8273EC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88D4421476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BB7820866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZCCituL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D4421476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKgsUA+S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BB7820866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730747AbeJQBMT (ORCPT
+        id S1730758AbeJQBMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:12:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57764 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:12:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729296AbeJQBMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:12:18 -0400
+        id S1729296AbeJQBMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:12:21 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B285C21476;
-        Tue, 16 Oct 2018 17:20:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 816BF20866;
+        Tue, 16 Oct 2018 17:20:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710453;
-        bh=i0Pzy8ldfIlPb8Ga+VFHko846OG8ad6JHn+M7A94Djw=;
+        s=default; t=1539710456;
+        bh=fHCI57UnZMTcDgX7PZqP/FIk9wRUyJrt3YjczipzSvo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sZCCituLpNxPgglCxj3J5rD9qLbUK/EeRoTT9TDFCesUk0HnxrFOHYfPXd5V4FZJM
-         M92hfxFjTcsMvEjZJB3A+mjmZdWwUya+tZJgG20yioWAVby7dsssgNVdB3npXuJMQL
-         /3TQN9n+knoVb4YnwHZsQA/r7s3Tb6v0j4Uc6v7A=
+        b=SKgsUA+SpCK+qx9fm/7mqh/4ilU0nKfo4f2AMkPMd0qZp+5xa+66Ztj37m+tS7DxD
+         RrsjnUbN4/mTdidBocN7wWZ78nfxkOv3HFI+UeAtZW31UqQiu4DextegNLOm1qJSf0
+         Xb2qO8TIsHvOPY3Ec9v6sOieJlf8BEUID4ZkH7+c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hermes Zhang <chenhuiz@axis.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 046/109] Bluetooth: hci_ldisc: Free rw_semaphore on close
-Date:   Tue, 16 Oct 2018 19:05:14 +0200
-Message-Id: <20181016170527.482259406@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 037/109] tcp/dccp: fix lockdep issue when SYN is backlogged
+Date:   Tue, 16 Oct 2018 19:05:05 +0200
+Message-Id: <20181016170527.030026128@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -63,56 +63,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hermes Zhang <chenhuiz@axis.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit e6a57d22f787e73635ce0d29eef0abb77928b3e9 ]
+[ Upstream commit 1ad98e9d1bdf4724c0a8532fabd84bf3c457c2bc ]
 
-The percpu_rw_semaphore is not currently freed, and this leads to
-a crash when the stale rcu callback is invoked.  DEBUG_OBJECTS
-detects this.
+In normal SYN processing, packets are handled without listener
+lock and in RCU protected ingress path.
 
- ODEBUG: free active (active state 1) object type: rcu_head hint: (null)
- ------------[ cut here ]------------
- WARNING: CPU: 1 PID: 2024 at debug_print_object+0xac/0xc8
- PC is at debug_print_object+0xac/0xc8
- LR is at debug_print_object+0xac/0xc8
- Call trace:
- [<ffffff80082e2c2c>] debug_print_object+0xac/0xc8
- [<ffffff80082e40b0>] debug_check_no_obj_freed+0x1e8/0x228
- [<ffffff8008191254>] kfree+0x1cc/0x250
- [<ffffff80083cc03c>] hci_uart_tty_close+0x54/0x108
- [<ffffff800832e118>] tty_ldisc_close.isra.1+0x40/0x58
- [<ffffff800832e14c>] tty_ldisc_kill+0x1c/0x40
- [<ffffff800832e3dc>] tty_ldisc_release+0x94/0x170
- [<ffffff8008325554>] tty_release_struct+0x1c/0x58
- [<ffffff8008326400>] tty_release+0x3b0/0x490
- [<ffffff80081a3fe8>] __fput+0x88/0x1d0
- [<ffffff80081a418c>] ____fput+0xc/0x18
- [<ffffff80080c0624>] task_work_run+0x9c/0xc0
- [<ffffff80080a9e24>] do_exit+0x24c/0x8a0
- [<ffffff80080aa4e0>] do_group_exit+0x38/0xa0
- [<ffffff80080aa558>] __wake_up_parent+0x0/0x28
- [<ffffff8008082c00>] el0_svc_naked+0x34/0x38
- ---[ end trace bfe08cbd89098cdf ]---
+But syzkaller is known to be able to trick us and SYN
+packets might be processed in process context, after being
+queued into socket backlog.
 
-Signed-off-by: Hermes Zhang <chenhuiz@axis.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+In commit 06f877d613be ("tcp/dccp: fix other lockdep splats
+accessing ireq_opt") I made a very stupid fix, that happened
+to work mostly because of the regular path being RCU protected.
+
+Really the thing protecting ireq->ireq_opt is RCU read lock,
+and the pseudo request refcnt is not relevant.
+
+This patch extends what I did in commit 449809a66c1d ("tcp/dccp:
+block BH for SYN processing") by adding an extra rcu_read_{lock|unlock}
+pair in the paths that might be taken when processing SYN from
+socket backlog (thus possibly in process context)
+
+Fixes: 06f877d613be ("tcp/dccp: fix other lockdep splats accessing ireq_opt")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bluetooth/hci_ldisc.c |    2 ++
- 1 file changed, 2 insertions(+)
+ include/net/inet_sock.h |    3 +--
+ net/dccp/input.c        |    4 +++-
+ net/ipv4/tcp_input.c    |    4 +++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -539,6 +539,8 @@ static void hci_uart_tty_close(struct tt
- 	}
- 	clear_bit(HCI_UART_PROTO_SET, &hu->flags);
+--- a/include/net/inet_sock.h
++++ b/include/net/inet_sock.h
+@@ -131,8 +131,7 @@ static inline int inet_request_bound_dev
  
-+	percpu_free_rwsem(&hu->proto_lock);
-+
- 	kfree(hu);
+ static inline struct ip_options_rcu *ireq_opt_deref(const struct inet_request_sock *ireq)
+ {
+-	return rcu_dereference_check(ireq->ireq_opt,
+-				     refcount_read(&ireq->req.rsk_refcnt) > 0);
++	return rcu_dereference(ireq->ireq_opt);
  }
  
+ struct inet_cork {
+--- a/net/dccp/input.c
++++ b/net/dccp/input.c
+@@ -605,11 +605,13 @@ int dccp_rcv_state_process(struct sock *
+ 	if (sk->sk_state == DCCP_LISTEN) {
+ 		if (dh->dccph_type == DCCP_PKT_REQUEST) {
+ 			/* It is possible that we process SYN packets from backlog,
+-			 * so we need to make sure to disable BH right there.
++			 * so we need to make sure to disable BH and RCU right there.
+ 			 */
++			rcu_read_lock();
+ 			local_bh_disable();
+ 			acceptable = inet_csk(sk)->icsk_af_ops->conn_request(sk, skb) >= 0;
+ 			local_bh_enable();
++			rcu_read_unlock();
+ 			if (!acceptable)
+ 				return 1;
+ 			consume_skb(skb);
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -5913,11 +5913,13 @@ int tcp_rcv_state_process(struct sock *s
+ 			if (th->fin)
+ 				goto discard;
+ 			/* It is possible that we process SYN packets from backlog,
+-			 * so we need to make sure to disable BH right there.
++			 * so we need to make sure to disable BH and RCU right there.
+ 			 */
++			rcu_read_lock();
+ 			local_bh_disable();
+ 			acceptable = icsk->icsk_af_ops->conn_request(sk, skb) >= 0;
+ 			local_bh_enable();
++			rcu_read_unlock();
+ 
+ 			if (!acceptable)
+ 				return 1;
 
 
