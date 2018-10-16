@@ -2,103 +2,207 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9916C169D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBC8C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BD6D2098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:48:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NWjbfROv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BD6D2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0F6FB20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:48:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F6FB20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbeJPSiG (ORCPT
+        id S1727378AbeJPSiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 14:38:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47802 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 14:38:20 -0400
+Received: from mout.perfora.net ([74.208.4.197]:53065 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726581AbeJPSiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 14:38:06 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C05712089E;
-        Tue, 16 Oct 2018 10:48:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539686896;
-        bh=fE/XmmY2hkqcv6th2dVvPuRnofzNhARCYzY9GtU+phk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NWjbfROvhmuFh+qacaL3pli/QvHcqLXzqg5xJO2LKEAyRmvlSvM7tWgtHE7Vh3I8H
-         Z2SIsFDoPuuAZZzmtszK3XQVuC51EpOZgvDQzmFTzeyqZX+bF+RcMWkLgY8xkgGL9a
-         h/eSA2O/+7rhAEpDsmCUSfBxXjwLjbnKDRiB7IM8=
-Date:   Tue, 16 Oct 2018 12:48:14 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc:     "idryomov@gmail.com" <idryomov@gmail.com>,
-        "sage@redhat.com" <sage@redhat.com>,
-        "elder@kernel.org" <elder@kernel.org>,
-        "jth@kernel.org" <jth@kernel.org>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH] driver core: device: add BUS_ATTR_WO macro
-Message-ID: <20181016104814.GA4768@kroah.com>
-References: <1538407972-9340-1-git-send-email-ioana.ciornei@nxp.com>
- <20181001210804.GA24332@kroah.com>
- <HE1PR0401MB236354F325B7A56355068E35E0E80@HE1PR0401MB2363.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <HE1PR0401MB236354F325B7A56355068E35E0E80@HE1PR0401MB2363.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727220AbeJPShz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 14:37:55 -0400
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0MFrWa-1gP4k317fq-00EvqI; Tue, 16 Oct 2018 12:47:53 +0200
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0MFrWa-1gP4k317fq-00EvqI; Tue, 16 Oct 2018 12:47:53 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 4/9] ARM: tegra: apalis-tk1: further regulator clean-up
+Date:   Tue, 16 Oct 2018 12:47:25 +0200
+Message-Id: <20181016104730.4598-5-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20181016104730.4598-1-marcel@ziswiler.com>
+References: <20181016104730.4598-1-marcel@ziswiler.com>
+X-Provags-ID: V03:K1:x5wMa9lz8945j41QvdNnVnyUXqcalrRijtDdY1dDZS7hkN1HkTJ
+ bfOKEIMbQXUo3ep1AlMHzcDVvWF4yhAoIY8Z8OwDsEky6Ygc9zFoVHfYq22O76jnQ1Vcvpd
+ YxfHR68lod9UTEdt/NNGKWfsy2S8hgosftcr+ulOfdBFs1+PHCCU2Vi0QySppn6XFdNfa+3
+ UyrRa6gMLcC/DVYUJvfDA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:TSa39364F3g=:uP8hH4oD/wJJxsEfxH7y8N
+ TimgKLSfViL6Oy6MxDieW6kBZPg972Lt+O02QBk4smNGBv+vrv8wT4FqsV+6CzcKywNOEkouw
+ iNgixFR1D803ONwsB5U3hBr4aBZUfi79lIjQCXos0rz9a8/ZYcImJ4hIPwGb1UEiaaV5jHG0T
+ Af+SS7lwWjP03L06qIJblKQm4PcgRcZsJVdmS3fYPrLzobq4p1kiv6JgOL7mI7BzFL7dtaDrf
+ jW7286IOALAoJSALOqTuKhr9Oc5cK+CmrX6h5XM2PgUHpIT+DpfixiZ4RaCbLDGiEY2z5y2gX
+ p9jZdIqNTuBeXUEy7/SOx+zq4G0oQf1VV5lnnJVx3S3JIqKfYv7+ZXR1/wyMBRiL8QnB49ica
+ 30aXBcIgvBCRqZZO2GI3xUx4e1eKaUBGY5D9fAcptuf/744akgIULGD//88XiJ495KROjgsv7
+ Kr4YKldugDIKV9AW2eoXKhgeT9LyBRQfw1g1aWj9ejB7kXRMbFGVXBcCa7uqRt66EhBpnM60Y
+ OPr7wLMvKwMK49JcKDH8QMpSBvqgPqQmPfRlPBlwa8Hcl4ksGtZPLjcJRr3OkI1yLewmnhnH3
+ Cr/mI19Df/L7ICA3ESCvz9TV4wjjLgSBhJGXDw7Fik9QXS1go+CTk6FExSpR+SGSFeQn229Rc
+ CkLkoPffJBA9RsXDL0DBIuht5iwIS6VG1cVL91qeliuFRtEbtzFj40/uCL81W0J3WsLE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 09:43:35AM +0000, Ioana Ciornei wrote:
-> > > Add BUS_ATTR_WO macro to make it easier to add attributes without
-> > > auditing the mode settings. Also, use the newly added macro where
-> > > appropriate.
-> > >
-> > > Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> > > ---
-> > >  arch/powerpc/platforms/pseries/ibmebus.c | 12 ++++----
-> > >  drivers/block/rbd.c                      | 48 ++++++++++++++++----------------
-> > >  drivers/scsi/fcoe/fcoe_sysfs.c           |  4 +--
-> > >  drivers/scsi/fcoe/fcoe_transport.c       | 10 +++----
-> > >  include/linux/device.h                   |  2 ++
-> > >  include/scsi/libfcoe.h                   |  8 +++---
-> > >  6 files changed, 43 insertions(+), 41 deletions(-)
-> > 
-> > Nice!  This duplicates a lot of the work I did back in July but have not pushed out
-> > very far due to the other things that ended up happening around that time:
-> > 	https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/log/?h=bus_cleanup 
-> > 
-> > As the patch series seen at that link shows, you can do this in more places than
-> > just what you did here.
-> > 
-> > Either way, you should break this up into the individual patches, like I did or you
-> > can take my patches if you want.  Getting the BUS_ATTR_WO() macro added is
-> > good to do now, and then you can go and hit up all of the different subsystems
-> > that should be converted over to it.
-> 
-> I can of course split my patch into individual ones and resubmit them, but as you already have the entire patch set ready, I feel like we can just push those. I looked through your changes and it seems like you covered all the subsystems. Please let me know if there is something else I should do.
-> 
-> My intention here was to first add the _WO attribute so that afterwards I can add a new bus attribute in the fsl-mc bus.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Ok, I've queued up the patch that adds the _WO attribute now, so that
-you should be able to use this after 4.20-rc1.  I'll work on getting my
-other patches merged in that series at that time as well.
+Add reg_ prefix to vddio_sdmmc1 and vddio_sdmmc3.
+Reorder PMIC properties.
 
-thanks,
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-greg k-h
+---
+
+Changes in v2: None
+Changes in v1: None
+
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      |  4 ++--
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  4 ++--
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 10 +++++-----
+ arch/arm/boot/dts/tegra124-apalis.dtsi          | 10 +++++-----
+ 4 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+index eaee10ef6512..e553eff50499 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+@@ -171,7 +171,7 @@
+ 		bus-width = <4>;
+ 		/* MMC1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
+-		vqmmc-supply = <&vddio_sdmmc1>;
++		vqmmc-supply = <&reg_vddio_sdmmc1>;
+ 	};
+ 
+ 	/* Apalis SD1 */
+@@ -180,7 +180,7 @@
+ 		bus-width = <4>;
+ 		/* SD1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
+-		vqmmc-supply = <&vddio_sdmmc3>;
++		vqmmc-supply = <&reg_vddio_sdmmc3>;
+ 	};
+ 
+ 	/* EHCI instance 0: USB1_DP/N -> USBO1_DP/N */
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+index 7961eb4bd803..e2f94dc7ff91 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+@@ -137,7 +137,7 @@
+ 		bus-width = <4>;
+ 		/* MMC1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
+-		vqmmc-supply = <&vddio_sdmmc1>;
++		vqmmc-supply = <&reg_vddio_sdmmc1>;
+ 	};
+ 
+ 	/* Apalis SD1 */
+@@ -146,7 +146,7 @@
+ 		bus-width = <4>;
+ 		/* SD1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
+-		vqmmc-supply = <&vddio_sdmmc3>;
++		vqmmc-supply = <&reg_vddio_sdmmc3>;
+ 	};
+ 
+ 	/* EHCI instance 0: USB1_DP/N -> USBO1_DP/N */
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+index 73a8e117a9b9..e532b564e4c9 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+@@ -1570,12 +1570,12 @@
+ 		pmic: pmic@40 {
+ 			compatible = "ams,as3722";
+ 			reg = <0x40>;
+-			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
+ 			ams,system-power-controller;
++			#gpio-cells = <2>;
++			gpio-controller;
++			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-			gpio-controller;
+-			#gpio-cells = <2>;
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&as3722_default>;
+ 
+@@ -1679,7 +1679,7 @@
+ 					ams,ext-control = <1>;
+ 				};
+ 
+-				vddio_sdmmc1: ldo1 {
++				reg_vddio_sdmmc1: ldo1 {
+ 					regulator-name = "VDDIO_SDMMC1";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <3300000>;
+@@ -1711,7 +1711,7 @@
+ 
+ 				/* LDO5 not used */
+ 
+-				vddio_sdmmc3: ldo6 {
++				reg_vddio_sdmmc3: ldo6 {
+ 					regulator-name = "VDDIO_SDMMC3";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <3300000>;
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index 3e3b347afe56..3cab9bda918f 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -1600,12 +1600,12 @@
+ 		pmic: pmic@40 {
+ 			compatible = "ams,as3722";
+ 			reg = <0x40>;
+-			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
+ 			ams,system-power-controller;
++			#gpio-cells = <2>;
++			gpio-controller;
++			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-			gpio-controller;
+-			#gpio-cells = <2>;
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&as3722_default>;
+ 
+@@ -1709,7 +1709,7 @@
+ 					ams,ext-control = <1>;
+ 				};
+ 
+-				vddio_sdmmc1: ldo1 {
++				reg_vddio_sdmmc1: ldo1 {
+ 					regulator-name = "VDDIO_SDMMC1";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <3300000>;
+@@ -1741,7 +1741,7 @@
+ 
+ 				/* LDO5 not used */
+ 
+-				vddio_sdmmc3: ldo6 {
++				reg_vddio_sdmmc3: ldo6 {
+ 					regulator-name = "VDDIO_SDMMC3";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <3300000>;
+-- 
+2.14.4
+
