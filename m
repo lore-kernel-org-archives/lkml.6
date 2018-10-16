@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7F4C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CB8C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12D65214AB
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8A112087B
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cD87gkTc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12D65214AB
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t25OKSQ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A112087B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbeJQHrO (ORCPT
+        id S1727757AbeJQHrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:47:14 -0400
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:48968 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727443AbeJQHrN (ORCPT
+        Wed, 17 Oct 2018 03:47:16 -0400
+Received: from mail-it1-f202.google.com ([209.85.166.202]:52645 "EHLO
+        mail-it1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727443AbeJQHrQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:47:13 -0400
-Received: by mail-qk1-f201.google.com with SMTP id w6-v6so22526740qka.15
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:23 -0700 (PDT)
+        Wed, 17 Oct 2018 03:47:16 -0400
+Received: by mail-it1-f202.google.com with SMTP id n132-v6so234715itn.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=G8mUMu2GbUg2JX8LWDmnjinAwy7AJF1XWi8Z4EzyP2w=;
-        b=cD87gkTcOY15FVf3OnY9ju2AYChLswyGiPO4qaT8gdvcGVkGIvKvt7wtEHYP80HnD1
-         QRpEJLRWwfE0WMkD1M1v7egeqhHB1KM1hjHU0LAZynpldBJyOqtN1FQelV07daXW/iuB
-         Yx0kYYsbE5KqlEMvVPWS0iVoCsyt5ypyRX9I81qXLSGh4shAbpO0J0mVaAxfm7AxXkOZ
-         hDoAaEEmWwfU2Ow4n3z99cD+pqTBArGldXauqEFv+4/0TzC5iG/O/pUkWxoY9XUYZZ1R
-         PdknRKzx2mMaPprbC6+0mlMsnjxSjjyY2e9AnkpN5tIdZ5gCh4PyO7fwmvQJ3gnxuSkb
-         sHtg==
+        bh=eYgRPNileDwgvqqyHv6bH3k+biiDMeehKa3nWE2sDeg=;
+        b=t25OKSQ9zcvMWXvA/j/yO893F3RUC3gcgUH+TXYxjVYtjtHFseMJ1CVGF1VWpviqRv
+         qno8hUtS214ythFe7WcAPrfua4RYeFFDg0TEz2gz3/iJkWJiTNNJsTJh/K0y7oX7Uq59
+         D+PCMMOU5Sf3kTtZgcXRmDTcTwJVhcLbYP0DIiAsFlvdn3mHPu9Ww7p2BG8EWeeoGJMh
+         +Gkrh1wod+Jq8hih6xsBW0jiZPy0YLUO7aLyiG96/YP846CDo6+OSlz/OVCqoFTvwje0
+         c5tpk4dR6j6vaQkD7AQpuS2xllFYPBCWHJxavSQn4D3GaDZfpsuPZPUJcjvNE/DIVaqi
+         oSIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=G8mUMu2GbUg2JX8LWDmnjinAwy7AJF1XWi8Z4EzyP2w=;
-        b=umO8A8kIWSN0OKxlnCM1zzrqeePhDjdYWMjnZuCmTCbdHxlHTX2tK5tdeu65zxZIr9
-         jVnjhQGxj6L/JzXBPDfhzbTL6J+a7+154Ob0z/P6UoZ3tAUpNtv0n1zAMnPA+ytkqnj5
-         d6FMmxKZKnHf+tv5/8ixZXVh05dki/kpBCNy7RvRTAt8FCAa7Mgr1qhn/hCtyeEtSS7V
-         OvWhf2NOGOEGT7FNeVE1RBHCSsueqwkGGT+7FXNEqlbG/hlxoubtwFewlWm0gfU8JFE0
-         H/EqgF4r2OL5okh0OENegYw+T7gjeppH+rE3I7WwSWDkKV7El0pvFsKhrKljL620H0HU
-         FcfQ==
-X-Gm-Message-State: ABuFfohPcohxJ+DGlZBKfHvtvbbc2E6jEu68owCFPzXQdLXOX5+tH+KE
-        AVnLgEg+sZTc4u17Y6/jKAMfR0zNHJR4Zkvt+Eb5nQ==
-X-Google-Smtp-Source: ACcGV63goyHFI0Ba5xYbIs9fHChd50SB7jnKKtV9799SecgHVnuGXxqOIClC29aphcr7I+bghKungYtXv51a2aZu1iC9HA==
-X-Received: by 2002:a0c:d0f2:: with SMTP id b47-v6mr19387561qvh.20.1539734063602;
- Tue, 16 Oct 2018 16:54:23 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 16:51:04 -0700
+        bh=eYgRPNileDwgvqqyHv6bH3k+biiDMeehKa3nWE2sDeg=;
+        b=gs8QQhtyHWRhMQeju1hW7mUAxxrF59Im0mV/7XOaqAQkOiJaoEsYCc01Uwdbj1frEF
+         pv42lkVRHaQFgge3yVo6pxmiCc5pPJ9rwW+TVgJMXBEWs98TKPXIOmouvHAiAQ6dFekF
+         mfq4pU6oqhmMICPKwrjTdCLyqj7H2KHao30MCaPOf9Pf7iXBU+8IKnumZLNiBx/YQcqa
+         /Stvx6CXeao0v9yXmyc7omSlLhUfZxb6yJ5wSZmpKHItA8pvpg48/usaFaVMCTledocg
+         PGrqmyXFJZp0vKo9kMYM7qY23bYFZYj9ifyGc1kzkxkIlA/qONs4L2pNvwPcJczhfwrU
+         +Z5w==
+X-Gm-Message-State: ABuFfoiMhwUQvyHDRA1dKP/IPswA2EYQcmjUd/mWc1HByEmwQGOhl70Z
+        ROUpUJ7exyMon/MVZLNqPaRU6GQN8N0ePv4qEeRxRg==
+X-Google-Smtp-Source: ACcGV603sB8VhNBjAmSgSitkpW+o+yP69w/yJ4Vhra8w7uyYdqVP6BkVPXavyl4xUanhAR3xjB2ufoSwlE7WnJLPTEJ3Aw==
+X-Received: by 2002:a24:17c5:: with SMTP id 188-v6mr203693ith.19.1539734066132;
+ Tue, 16 Oct 2018 16:54:26 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 16:51:05 -0700
 In-Reply-To: <20181016235120.138227-1-brendanhiggins@google.com>
-Message-Id: <20181016235120.138227-16-brendanhiggins@google.com>
+Message-Id: <20181016235120.138227-17-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20181016235120.138227-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
-Subject: [RFC v1 15/31] kunit: mock: added basic matchers and actions
+Subject: [RFC v1 16/31] kunit: mock: added class mocking support
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
         shuah@kernel.org
@@ -77,539 +77,1087 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added basic matchers and actions needed for any kind of mocking to be
-useful; these matchers and actions are how expectations for mocks are
-described: what calls the mocks are expected to receive, and what the
-mock should do under those circumstances.
+Introduces basic class mocking, the ability to automatically generate a
+Linux C-style class implementation whose behavior is controlled by test
+cases, which can also set expectations on when and how mocks are called.
 
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- include/kunit/mock.h | 222 +++++++++++++++++++++++++++++++++++
- kunit/Makefile       |   3 +-
- kunit/common-mocks.c | 272 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 496 insertions(+), 1 deletion(-)
- create mode 100644 kunit/common-mocks.c
+ include/kunit/mock.h    | 438 +++++++++++++++++++++++++++++++++++++++-
+ kunit/Makefile          |   2 +-
+ kunit/example-test.c    |  90 +++++++++
+ kunit/mock-macro-test.c |  82 ++++++++
+ kunit/mock-test.c       | 276 +++++++++++++++++++++++++
+ kunit/test-mock.c       |  39 ++++
+ kunit/test-mock.h       |  23 +++
+ 7 files changed, 947 insertions(+), 3 deletions(-)
+ create mode 100644 kunit/mock-test.c
+ create mode 100644 kunit/test-mock.c
+ create mode 100644 kunit/test-mock.h
 
 diff --git a/include/kunit/mock.h b/include/kunit/mock.h
-index 1a35c5702cb15..62e8afcaeab55 100644
+index 62e8afcaeab55..1b7485e2cedb8 100644
 --- a/include/kunit/mock.h
 +++ b/include/kunit/mock.h
-@@ -122,4 +122,226 @@ struct mock_expectation *mock_add_matcher(struct mock *mock,
+@@ -72,7 +72,8 @@ struct mock_action {
+  * @retire_on_saturation: no longer match once ``max_calls_expected`` is
+  *			  reached.
+  *
+- * Represents a *call expectation* on a function created with EXPECT_CALL().
++ * Represents a *call expectation* on a function created with
++ * TEST_EXPECT_CALL().
+  */
+ struct mock_expectation {
+ 	struct mock_action *action;
+@@ -122,13 +123,446 @@ struct mock_expectation *mock_add_matcher(struct mock *mock,
  					  struct mock_param_matcher *matchers[],
  					  int len);
  
-+#define CONVERT_TO_ACTUAL_TYPE(type, ptr) (*((type *) ptr))
++#define MOCK(name) name##_mock
 +
 +/**
-+ * DOC: Built In Matchers
++ * TEST_EXPECT_CALL() - Declares a *call expectation* on a mock function.
++ * @expectation_call: a mocked method or function with parameters replaced with
++ *                    matchers.
 + *
-+ * These are the matchers that can be used when matching arguments in
-+ * :c:func:`EXPECT_CALL` (more can be defined manually).
-+ *
-+ * For example, there's a matcher that matches any arguments:
-+ *
-+ * .. code-block:: c
-+ *
-+ *    struct mock_param_matcher *any(struct test *test);
-+ *
-+ * There are matchers for integers based on the binary condition:
-+ *
-+ * * eq: equals to
-+ * * ne: not equal to
-+ * * lt: less than
-+ * * le: less than or equal to
-+ * * gt: greater than
-+ * * ge: greater than or equal to
++ * Example:
 + *
 + * .. code-block:: c
 + *
-+ *    struct mock_param_matcher *test_int_eq(struct test *test, int expected);
-+ *    struct mock_param_matcher *test_int_ne(struct test *test, int expected);
-+ *    struct mock_param_matcher *test_int_lt(struct test *test, int expected);
-+ *    struct mock_param_matcher *test_int_le(struct test *test, int expected);
-+ *    struct mock_param_matcher *test_int_gt(struct test *test, int expected);
-+ *    struct mock_param_matcher *test_int_ge(struct test *test, int expected);
++ *	// Class to mock.
++ *	struct example {
++ *		int (*foo)(struct example *, int);
++ *	};
 + *
-+ * For a detailed list, please see
-+ * ``include/linux/mock.h``.
++ *	// Define the mock.
++ *	DECLARE_STRUCT_CLASS_MOCK_PREREQS(example);
++ *
++ *	DEFINE_STRUCT_CLASS_MOCK(METHOD(foo), CLASS(example),
++ *				 RETURNS(int),
++ *				 PARAMS(struct example *, int));
++ *
++ *	static int example_init(struct MOCK(example) *mock_example)
++ *	{
++ *		struct example *example = mock_get_trgt(mock_example);
++ *
++ *		example->foo = foo;
++ *		return 0;
++ *	}
++ *
++ *	DEFINE_STRUCT_CLASS_MOCK_INIT(example, example_init);
++ *
++ *	static void foo_example_test_success(struct test *test)
++ *	{
++ *		struct MOCK(example) *mock_example;
++ *		struct example *example = mock_get_trgt(mock_example);
++ *		struct mock_expectation *handle;
++ *
++ *		mock_example = CONSTRUCT_MOCK(example, test);
++ *
++ *		handle = TEST_EXPECT_CALL(foo(mock_get_ctrl(mock_example),
++ *				     test_int_eq(test, 5)));
++ *		handle->action = int_return(test, 2);
++ *
++ *		EXPECT_EQ(test, 2, example_bar(example, 5));
++ *	}
++ *
++ * Return:
++ * A &struct mock_expectation representing the call expectation.
++ * allowing additional conditions and actions to be specified.
 + */
++#define TEST_EXPECT_CALL(expectation_call) mock_master_##expectation_call
 +
-+/* Matches any argument */
-+struct mock_param_matcher *test_any(struct test *test);
++#define mock_get_ctrl_internal(mock_object) (&(mock_object)->ctrl)
++#define mock_get_ctrl(mock_object) mock_get_ctrl_internal(mock_object)
 +
-+/*
-+ * Matches different types of integers, the argument is compared to the
-+ * `expected` field, based on the comparison defined.
++#define mock_get_trgt_internal(mock_object) (&(mock_object)->trgt)
++#define mock_get_trgt(mock_object) mock_get_trgt_internal(mock_object)
++
++#define mock_get_test(mock_object) (mock_get_ctrl(mock_object)->test)
++
++#define CLASS(struct_name) struct_name
++#define HANDLE_INDEX(index) index
++#define METHOD(method_name) method_name
++#define RETURNS(return_type) return_type
++/* #define PARAMS(...) __VA_ARGS__ included by linux/tracepoint.h */
++
++#define MOCK_INIT_ID(struct_name) struct_name##mock_init
++#define REAL_ID(func_name) __real__##func_name
++#define INVOKE_ID(func_name) __invoke__##func_name
++
++#define DECLARE_MOCK_CLIENT(name, return_type, param_types...) \
++		return_type name(PARAM_LIST_FROM_TYPES(param_types))
++
++#define DECLARE_MOCK_MASTER(name, ctrl_index, param_types...)		       \
++		struct mock_expectation *mock_master_##name(		       \
++				MATCHER_PARAM_LIST_FROM_TYPES(ctrl_index,      \
++							      param_types));
++
++#define DECLARE_MOCK_COMMON(name, handle_index, return_type, param_types...)   \
++		DECLARE_MOCK_CLIENT(name, return_type, param_types);	       \
++		DECLARE_MOCK_MASTER(name, handle_index, param_types)
++
++#define DECLARE_STRUCT_CLASS_MOCK_STRUCT(struct_name)			       \
++		struct MOCK(struct_name) {				       \
++			struct mock		ctrl;			       \
++			struct struct_name	trgt;			       \
++		}
++
++#define DECLARE_STRUCT_CLASS_MOCK_CONVERTER(struct_name)		       \
++		static inline struct mock *from_##struct_name##_to_mock(       \
++				const struct struct_name *trgt)		       \
++		{							       \
++			return mock_get_ctrl(				       \
++					container_of(trgt,		       \
++						     struct MOCK(struct_name), \
++						     trgt));		       \
++		}
++
++/**
++ * DECLARE_STRUCT_CLASS_MOCK_PREREQS() - Create a mock child class
++ * @struct_name: name of the class/struct to be mocked
++ *
++ * Creates a mock child class of ``struct_name`` named
++ * ``struct MOCK(struct_name)`` along with supporting internally used methods.
++ *
++ * See TEST_EXPECT_CALL() for example usages.
 + */
-+struct mock_param_matcher *test_u8_eq(struct test *test, u8 expected);
-+struct mock_param_matcher *test_u8_ne(struct test *test, u8 expected);
-+struct mock_param_matcher *test_u8_le(struct test *test, u8 expected);
-+struct mock_param_matcher *test_u8_lt(struct test *test, u8 expected);
-+struct mock_param_matcher *test_u8_ge(struct test *test, u8 expected);
-+struct mock_param_matcher *test_u8_gt(struct test *test, u8 expected);
++#define DECLARE_STRUCT_CLASS_MOCK_PREREQS(struct_name)			       \
++		DECLARE_STRUCT_CLASS_MOCK_STRUCT(struct_name);		       \
++		DECLARE_STRUCT_CLASS_MOCK_CONVERTER(struct_name)
 +
-+struct mock_param_matcher *test_u16_eq(struct test *test, u16 expected);
-+struct mock_param_matcher *test_u16_ne(struct test *test, u16 expected);
-+struct mock_param_matcher *test_u16_le(struct test *test, u16 expected);
-+struct mock_param_matcher *test_u16_lt(struct test *test, u16 expected);
-+struct mock_param_matcher *test_u16_ge(struct test *test, u16 expected);
-+struct mock_param_matcher *test_u16_gt(struct test *test, u16 expected);
++#define DECLARE_STRUCT_CLASS_MOCK_HANDLE_INDEX_INTERNAL(name,		       \
++							struct_name,	       \
++							handle_index,	       \
++							return_type,	       \
++							param_types...)	       \
++		DECLARE_MOCK_COMMON(name,				       \
++				    handle_index,			       \
++				    return_type,			       \
++				    param_types)
 +
-+struct mock_param_matcher *test_u32_eq(struct test *test, u32 expected);
-+struct mock_param_matcher *test_u32_ne(struct test *test, u32 expected);
-+struct mock_param_matcher *test_u32_le(struct test *test, u32 expected);
-+struct mock_param_matcher *test_u32_lt(struct test *test, u32 expected);
-+struct mock_param_matcher *test_u32_ge(struct test *test, u32 expected);
-+struct mock_param_matcher *test_u32_gt(struct test *test, u32 expected);
++#define DECLARE_STRUCT_CLASS_MOCK_HANDLE_INDEX(name,			       \
++					       struct_name,		       \
++					       handle_index,		       \
++					       return_type,		       \
++					       param_types...)		       \
++		DECLARE_STRUCT_CLASS_MOCK_HANDLE_INDEX_INTERNAL(name,	       \
++								struct_name,   \
++								handle_index,  \
++								return_type,   \
++								param_types)
 +
-+struct mock_param_matcher *test_u64_eq(struct test *test, u64 expected);
-+struct mock_param_matcher *test_u64_ne(struct test *test, u64 expected);
-+struct mock_param_matcher *test_u64_le(struct test *test, u64 expected);
-+struct mock_param_matcher *test_u64_lt(struct test *test, u64 expected);
-+struct mock_param_matcher *test_u64_ge(struct test *test, u64 expected);
-+struct mock_param_matcher *test_u64_gt(struct test *test, u64 expected);
++/**
++ * DECLARE_STRUCT_CLASS_MOCK()
++ * @name: method name
++ * @struct_name: name of the class/struct
++ * @return_type: return type of the method
++ * @param_types: parameters of the method
++ *
++ * Same as DEFINE_STRUCT_CLASS_MOCK(), but only makes header compatible
++ * declarations.
++ */
++#define DECLARE_STRUCT_CLASS_MOCK(name,					       \
++				  struct_name,				       \
++				  return_type,				       \
++				  param_types...)			       \
++		DECLARE_STRUCT_CLASS_MOCK_HANDLE_INDEX(name,		       \
++						       struct_name,	       \
++						       0,		       \
++						       return_type,	       \
++						       param_types)
 +
-+struct mock_param_matcher *test_char_eq(struct test *test, char expected);
-+struct mock_param_matcher *test_char_ne(struct test *test, char expected);
-+struct mock_param_matcher *test_char_le(struct test *test, char expected);
-+struct mock_param_matcher *test_char_lt(struct test *test, char expected);
-+struct mock_param_matcher *test_char_ge(struct test *test, char expected);
-+struct mock_param_matcher *test_char_gt(struct test *test, char expected);
++/**
++ * DECLARE_STRUCT_CLASS_MOCK_VOID_RETURN()
++ * @name: method name
++ * @struct_name: name of the class/struct
++ * @param_types: parameters of the method
++ *
++ * Same as DEFINE_STRUCT_CLASS_MOCK_VOID_RETURN(), but only makes header
++ * compatible declarations.
++ */
++#define DECLARE_STRUCT_CLASS_MOCK_VOID_RETURN(name,			       \
++					      struct_name,		       \
++					      param_types...)		       \
++		DECLARE_STRUCT_CLASS_MOCK_HANDLE_INDEX(name,		       \
++						       struct_name,	       \
++						       0,		       \
++						       void,		       \
++						       param_types)
 +
-+struct mock_param_matcher *test_uchar_eq(struct test *test,
-+					 unsigned char expected);
-+struct mock_param_matcher *test_uchar_ne(struct test *test,
-+					 unsigned char expected);
-+struct mock_param_matcher *test_uchar_le(struct test *test,
-+					 unsigned char expected);
-+struct mock_param_matcher *test_uchar_lt(struct test *test,
-+					 unsigned char expected);
-+struct mock_param_matcher *test_uchar_ge(struct test *test,
-+					 unsigned char expected);
-+struct mock_param_matcher *test_uchar_gt(struct test *test,
-+					 unsigned char expected);
++/**
++ * DECLARE_STRUCT_CLASS_MOCK_INIT()
++ * @struct_name: name of the class/struct
++ *
++ * Same as DEFINE_STRUCT_CLASS_MOCK_INIT(), but only makes header compatible
++ * declarations.
++ */
++#define DECLARE_STRUCT_CLASS_MOCK_INIT(struct_name)			       \
++		struct MOCK(struct_name) *MOCK_INIT_ID(struct_name)(	       \
++				struct test *test)
 +
-+struct mock_param_matcher *test_schar_eq(struct test *test,
-+					 signed char expected);
-+struct mock_param_matcher *test_schar_ne(struct test *test,
-+					 signed char expected);
-+struct mock_param_matcher *test_schar_le(struct test *test,
-+					 signed char expected);
-+struct mock_param_matcher *test_schar_lt(struct test *test,
-+					 signed char expected);
-+struct mock_param_matcher *test_schar_ge(struct test *test,
-+					 signed char expected);
-+struct mock_param_matcher *test_schar_gt(struct test *test,
-+					 signed char expected);
++/**
++ * CONSTRUCT_MOCK()
++ * @struct_name: name of the class
++ * @test: associated test
++ *
++ * Constructs and allocates a test managed ``struct MOCK(struct_name)`` given
++ * the name of the class for which the mock is defined and a test object.
++ *
++ * See TEST_EXPECT_CALL() for example usage.
++ */
++#define CONSTRUCT_MOCK(struct_name, test) MOCK_INIT_ID(struct_name)(test)
 +
-+struct mock_param_matcher *test_short_eq(struct test *test, short expected);
-+struct mock_param_matcher *test_short_ne(struct test *test, short expected);
-+struct mock_param_matcher *test_short_le(struct test *test, short expected);
-+struct mock_param_matcher *test_short_lt(struct test *test, short expected);
-+struct mock_param_matcher *test_short_ge(struct test *test, short expected);
-+struct mock_param_matcher *test_short_gt(struct test *test, short expected);
++#define DEFINE_MOCK_CLIENT_COMMON(name,					       \
++				  handle_index,				       \
++				  MOCK_SOURCE,				       \
++				  mock_source_ctx,			       \
++				  return_type,				       \
++				  RETURN,				       \
++				  param_types...)			       \
++		return_type name(PARAM_LIST_FROM_TYPES(param_types))	       \
++		{							       \
++			struct mock *mock = MOCK_SOURCE(mock_source_ctx,       \
++							handle_index);	       \
++			static const char * const param_type_names[] = {       \
++				TYPE_NAMES_FROM_TYPES(handle_index,	       \
++						      param_types)	       \
++			};						       \
++			const void *params[] = {			       \
++				PTR_TO_ARG_FROM_TYPES(handle_index,	       \
++						      param_types)	       \
++			};						       \
++			const void *retval;				       \
++									       \
++			retval = mock->do_expect(mock,			       \
++						 #name,			       \
++						 name,			       \
++						 param_type_names,	       \
++						 params,		       \
++						 ARRAY_SIZE(params));	       \
++			TEST_ASSERT_NOT_ERR_OR_NULL(mock->test, retval);       \
++			if (!retval) {					       \
++				test_info(mock->test,			       \
++					  "no action installed for "#name);    \
++				BUG();					       \
++			}						       \
++			RETURN(return_type, retval);			       \
++		}
 +
-+struct mock_param_matcher *test_ushort_eq(struct test *test,
-+					  unsigned short expected);
-+struct mock_param_matcher *test_ushort_ne(struct test *test,
-+					  unsigned short expected);
-+struct mock_param_matcher *test_ushort_le(struct test *test,
-+					  unsigned short expected);
-+struct mock_param_matcher *test_ushort_lt(struct test *test,
-+					  unsigned short expected);
-+struct mock_param_matcher *test_ushort_ge(struct test *test,
-+					  unsigned short expected);
-+struct mock_param_matcher *test_ushort_gt(struct test *test,
-+					  unsigned short expected);
++#define CLASS_MOCK_CLIENT_SOURCE(ctx, handle_index) ctx(arg##handle_index)
++#define DEFINE_MOCK_METHOD_CLIENT_COMMON(name,				       \
++					 handle_index,			       \
++					 mock_converter,		       \
++					 return_type,			       \
++					 RETURN,			       \
++					 param_types...)		       \
++		DEFINE_MOCK_CLIENT_COMMON(name,				       \
++					  handle_index,			       \
++					  CLASS_MOCK_CLIENT_SOURCE,	       \
++					  mock_converter,		       \
++					  return_type,			       \
++					  RETURN,			       \
++					  param_types)
 +
-+struct mock_param_matcher *test_int_eq(struct test *test, int expected);
-+struct mock_param_matcher *test_int_ne(struct test *test, int expected);
-+struct mock_param_matcher *test_int_lt(struct test *test, int expected);
-+struct mock_param_matcher *test_int_le(struct test *test, int expected);
-+struct mock_param_matcher *test_int_gt(struct test *test, int expected);
-+struct mock_param_matcher *test_int_ge(struct test *test, int expected);
++#define CAST_AND_RETURN(return_type, retval) return *((return_type *) retval)
++#define NO_RETURN(return_type, retval)
 +
-+struct mock_param_matcher *test_uint_eq(struct test *test,
-+					unsigned int expected);
-+struct mock_param_matcher *test_uint_ne(struct test *test,
-+					unsigned int expected);
-+struct mock_param_matcher *test_uint_lt(struct test *test,
-+					unsigned int expected);
-+struct mock_param_matcher *test_uint_le(struct test *test,
-+					unsigned int expected);
-+struct mock_param_matcher *test_uint_gt(struct test *test,
-+					unsigned int expected);
-+struct mock_param_matcher *test_uint_ge(struct test *test,
-+					unsigned int expected);
++#define DEFINE_MOCK_METHOD_CLIENT(name,					       \
++				  handle_index,				       \
++				  mock_converter,			       \
++				  return_type,				       \
++				  param_types...)			       \
++		DEFINE_MOCK_METHOD_CLIENT_COMMON(name,			       \
++						 handle_index,		       \
++						 mock_converter,	       \
++						 return_type,		       \
++						 CAST_AND_RETURN,	       \
++						 param_types)
 +
-+struct mock_param_matcher *test_long_eq(struct test *test, long expected);
-+struct mock_param_matcher *test_long_ne(struct test *test, long expected);
-+struct mock_param_matcher *test_long_le(struct test *test, long expected);
-+struct mock_param_matcher *test_long_lt(struct test *test, long expected);
-+struct mock_param_matcher *test_long_ge(struct test *test, long expected);
-+struct mock_param_matcher *test_long_gt(struct test *test, long expected);
++#define DEFINE_MOCK_METHOD_CLIENT_VOID_RETURN(name,			       \
++					      handle_index,		       \
++					      mock_converter,		       \
++					      param_types...)		       \
++		DEFINE_MOCK_METHOD_CLIENT_COMMON(name,			       \
++						 handle_index,		       \
++						 mock_converter,	       \
++						 void,			       \
++						 NO_RETURN,		       \
++						 param_types)
 +
-+struct mock_param_matcher *test_ulong_eq(struct test *test,
-+					 unsigned long expected);
-+struct mock_param_matcher *test_ulong_ne(struct test *test,
-+					 unsigned long expected);
-+struct mock_param_matcher *test_ulong_le(struct test *test,
-+					 unsigned long expected);
-+struct mock_param_matcher *test_ulong_lt(struct test *test,
-+					 unsigned long expected);
-+struct mock_param_matcher *test_ulong_ge(struct test *test,
-+					 unsigned long expected);
-+struct mock_param_matcher *test_ulong_gt(struct test *test,
-+					 unsigned long expected);
++#define DEFINE_MOCK_MASTER_COMMON_INTERNAL(name,			       \
++					   ctrl_index,			       \
++					   MOCK_SOURCE,			       \
++					   param_types...)		       \
++		struct mock_expectation *mock_master_##name(		       \
++				MATCHER_PARAM_LIST_FROM_TYPES(ctrl_index,      \
++							      param_types))    \
++		{ \
++			struct mock_param_matcher *matchers[] = {	       \
++				ARG_NAMES_FROM_TYPES(ctrl_index, param_types)  \
++			};						       \
++									       \
++			return mock_add_matcher(MOCK_SOURCE(ctrl_index),       \
++						#name,			       \
++						(const void *) name,	       \
++						matchers,		       \
++						ARRAY_SIZE(matchers));	       \
++		}
++#define DEFINE_MOCK_MASTER_COMMON(name,					       \
++				  ctrl_index,				       \
++				  MOCK_SOURCE,				       \
++				  param_types...)			       \
++		DEFINE_MOCK_MASTER_COMMON_INTERNAL(name,		       \
++						   ctrl_index,		       \
++						   MOCK_SOURCE,		       \
++						   param_types)
 +
-+struct mock_param_matcher *test_longlong_eq(struct test *test,
-+					    long long expected);
-+struct mock_param_matcher *test_longlong_ne(struct test *test,
-+					    long long expected);
-+struct mock_param_matcher *test_longlong_le(struct test *test,
-+					    long long expected);
-+struct mock_param_matcher *test_longlong_lt(struct test *test,
-+					    long long expected);
-+struct mock_param_matcher *test_longlong_ge(struct test *test,
-+					    long long expected);
-+struct mock_param_matcher *test_longlong_gt(struct test *test,
-+					    long long expected);
++#define CLASS_MOCK_MASTER_SOURCE(ctrl_index) arg##ctrl_index
++#define DEFINE_MOCK_METHOD_MASTER(name, ctrl_index, param_types...)	       \
++		DEFINE_MOCK_MASTER_COMMON(name,				       \
++					  ctrl_index,			       \
++					  CLASS_MOCK_MASTER_SOURCE,	       \
++					  param_types)
 +
-+struct mock_param_matcher *test_ulonglong_eq(struct test *test,
-+					     unsigned long long expected);
-+struct mock_param_matcher *test_ulonglong_ne(struct test *test,
-+					     unsigned long long expected);
-+struct mock_param_matcher *test_ulonglong_le(struct test *test,
-+					     unsigned long long expected);
-+struct mock_param_matcher *test_ulonglong_lt(struct test *test,
-+					     unsigned long long expected);
-+struct mock_param_matcher *test_ulonglong_ge(struct test *test,
-+					     unsigned long long expected);
-+struct mock_param_matcher *test_ulonglong_gt(struct test *test,
-+					     unsigned long long expected);
++#define DEFINE_MOCK_COMMON(name,					       \
++			   handle_index,				       \
++			   mock_converter,				       \
++			   return_type,					       \
++			   param_types...)				       \
++		DEFINE_MOCK_METHOD_CLIENT(name,				       \
++					  handle_index,			       \
++					  mock_converter,		       \
++					  return_type,			       \
++					  param_types);			       \
++		DEFINE_MOCK_METHOD_MASTER(name, handle_index, param_types)
 +
-+/* Matches pointers. */
-+struct mock_param_matcher *test_ptr_eq(struct test *test, void *expected);
-+struct mock_param_matcher *test_ptr_ne(struct test *test, void *expected);
-+struct mock_param_matcher *test_ptr_lt(struct test *test, void *expected);
-+struct mock_param_matcher *test_ptr_le(struct test *test, void *expected);
-+struct mock_param_matcher *test_ptr_gt(struct test *test, void *expected);
-+struct mock_param_matcher *test_ptr_ge(struct test *test, void *expected);
++#define DEFINE_MOCK_COMMON_VOID_RETURN(name,				       \
++				       handle_index,			       \
++				       mock_converter,			       \
++				       param_types...)			       \
++		DEFINE_MOCK_METHOD_CLIENT_VOID_RETURN(name,		       \
++						      handle_index,	       \
++						      mock_converter,	       \
++						      param_types);	       \
++		DEFINE_MOCK_METHOD_MASTER(name, handle_index, param_types)
 +
-+/* Matches memory sections and strings. */
-+struct mock_param_matcher *test_memeq(struct test *test,
-+				      const void *buf,
-+				      size_t size);
-+struct mock_param_matcher *test_streq(struct test *test, const char *str);
++#define DEFINE_STRUCT_CLASS_MOCK_HANDLE_INDEX_INTERNAL(name,		       \
++						       struct_name,	       \
++						       handle_index,	       \
++						       return_type,	       \
++						       param_types...)	       \
++		DEFINE_MOCK_COMMON(name,				       \
++				   handle_index,			       \
++				   from_##struct_name##_to_mock,	       \
++				   return_type, param_types)
++#define DEFINE_STRUCT_CLASS_MOCK_HANDLE_INDEX(name,			       \
++					      struct_name,		       \
++					      handle_index,		       \
++					      return_type,		       \
++					      param_types...)		       \
++		DEFINE_STRUCT_CLASS_MOCK_HANDLE_INDEX_INTERNAL(name,	       \
++							       struct_name,    \
++							       handle_index,   \
++							       return_type,    \
++							       param_types)
 +
-+struct mock_action *test_u8_return(struct test *test, u8 ret);
-+struct mock_action *test_u16_return(struct test *test, u16 ret);
-+struct mock_action *test_u32_return(struct test *test, u32 ret);
-+struct mock_action *test_u64_return(struct test *test, u64 ret);
-+struct mock_action *test_char_return(struct test *test, char ret);
-+struct mock_action *test_uchar_return(struct test *test, unsigned char ret);
-+struct mock_action *test_schar_return(struct test *test, signed char ret);
-+struct mock_action *test_short_return(struct test *test, short ret);
-+struct mock_action *test_ushort_return(struct test *test, unsigned short ret);
-+struct mock_action *test_int_return(struct test *test, int ret);
-+struct mock_action *test_uint_return(struct test *test, unsigned int ret);
-+struct mock_action *test_long_return(struct test *test, long ret);
-+struct mock_action *test_ulong_return(struct test *test, unsigned long ret);
-+struct mock_action *test_longlong_return(struct test *test, long long ret);
-+struct mock_action *test_ulonglong_return(struct test *test,
-+					  unsigned long long ret);
-+struct mock_action *test_ptr_return(struct test *test, void *ret);
++#define DEFINE_STRUCT_CLASS_MOCK_HANDLE_INDEX_VOID_RETURN_INTERNAL(	       \
++		name,							       \
++		struct_name,						       \
++		handle_index,						       \
++		param_types...)						       \
++		DEFINE_MOCK_COMMON_VOID_RETURN(name,			       \
++					       handle_index,		       \
++					       from_##struct_name##_to_mock,   \
++					       param_types)
++#define DEFINE_STRUCT_CLASS_MOCK_HANDLE_INDEX_VOID_RETURN(name,		       \
++							  struct_name,	       \
++							  handle_index,	       \
++							  param_types...)      \
++		DEFINE_STRUCT_CLASS_MOCK_HANDLE_INDEX_VOID_RETURN_INTERNAL(    \
++				name,					       \
++				struct_name,				       \
++				handle_index,				       \
++				param_types)
 +
- #endif /* _KUNIT_MOCK_H */
++/**
++ * DEFINE_STRUCT_CLASS_MOCK()
++ * @name: name of the method
++ * @struct_name: name of the class of which the method belongs
++ * @return_type: return type of the method to be created. **Must not be void.**
++ * @param_types: parameters to method to be created.
++ *
++ * See TEST_EXPECT_CALL() for example usage.
++ */
++#define DEFINE_STRUCT_CLASS_MOCK(name,					       \
++				 struct_name,				       \
++				 return_type,				       \
++				 param_types...)			       \
++		DEFINE_STRUCT_CLASS_MOCK_HANDLE_INDEX(name,		       \
++						      struct_name,	       \
++						      0,		       \
++						      return_type,	       \
++						      param_types)
++
++/**
++ * DEFINE_STRUCT_CLASS_MOCK_VOID_RETURN()
++ * @name: name of the method
++ * @struct_name: name of the class of which the method belongs
++ * @param_types: parameters to method to be created.
++ *
++ * Same as DEFINE_STRUCT_CLASS_MOCK() except the method has a ``void`` return
++ * type.
++ */
++#define DEFINE_STRUCT_CLASS_MOCK_VOID_RETURN(name, struct_name, param_types...)\
++		DEFINE_STRUCT_CLASS_MOCK_HANDLE_INDEX_VOID_RETURN(name,	       \
++								  struct_name, \
++								  0,	       \
++								  param_types)
++
++/**
++ * DEFINE_STRUCT_CLASS_MOCK_INIT()
++ * @struct_name: name of the class
++ * @init_func: a function of type ``int (*)(struct MOCK(struct_name) *)``. This
++ *             function is passed a pointer to an allocated, *but not
++ *             initialized*, ``struct MOCK(struct_name)``. The job of this user
++ *             provided function is to perform remaining initialization. Usually
++ *             this entails assigning mock methods to the function pointers in
++ *             the parent struct.
++ *
++ * See TEST_EXPECT_CALL() for example usage.
++ */
++#define DEFINE_STRUCT_CLASS_MOCK_INIT(struct_name, init_func)		       \
++		struct MOCK(struct_name) *MOCK_INIT_ID(struct_name)(	       \
++				struct test *test)			       \
++		{							       \
++			struct MOCK(struct_name) *mock_obj;		       \
++									       \
++			mock_obj = test_kzalloc(test,			       \
++						sizeof(*mock_obj),	       \
++						GFP_KERNEL);		       \
++			if (!mock_obj)					       \
++				return NULL;				       \
++									       \
++			mock_init_ctrl(test, mock_get_ctrl(mock_obj));	       \
++									       \
++			if (init_func(mock_obj))			       \
++				return NULL;				       \
++									       \
++			return mock_obj;				       \
++		}
++
+ #define CONVERT_TO_ACTUAL_TYPE(type, ptr) (*((type *) ptr))
+ 
+ /**
+  * DOC: Built In Matchers
+  *
+  * These are the matchers that can be used when matching arguments in
+- * :c:func:`EXPECT_CALL` (more can be defined manually).
++ * :c:func:`TEST_EXPECT_CALL` (more can be defined manually).
+  *
+  * For example, there's a matcher that matches any arguments:
+  *
 diff --git a/kunit/Makefile b/kunit/Makefile
-index ad58110de695c..52a1da46cbd21 100644
+index 52a1da46cbd21..6fccfcdbc6f84 100644
 --- a/kunit/Makefile
 +++ b/kunit/Makefile
-@@ -1,4 +1,5 @@
--obj-$(CONFIG_KUNIT)		+= test.o mock.o string-stream.o test-stream.o
-+obj-$(CONFIG_KUNIT)		+= test.o mock.o common-mocks.o string-stream.o \
-+  test-stream.o
+@@ -1,5 +1,5 @@
+ obj-$(CONFIG_KUNIT)		+= test.o mock.o common-mocks.o string-stream.o \
+   test-stream.o
  obj-$(CONFIG_KUNIT_TEST)		+= \
-   test-test.o mock-macro-test.o string-stream-test.o
+-  test-test.o mock-macro-test.o string-stream-test.o
++  test-test.o test-mock.o mock-macro-test.o mock-test.o string-stream-test.o
  obj-$(CONFIG_EXAMPLE_TEST)	+= example-test.o
-diff --git a/kunit/common-mocks.c b/kunit/common-mocks.c
+diff --git a/kunit/example-test.c b/kunit/example-test.c
+index e9bd2b41c5fd2..dd3b75a61d5b4 100644
+--- a/kunit/example-test.c
++++ b/kunit/example-test.c
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <kunit/test.h>
++#include <kunit/mock.h>
+ 
+ /*
+  * This is the most fundamental element of KUnit, the test case. A test case
+@@ -29,6 +30,84 @@ static void example_simple_test(struct test *test)
+ 	TEST_EXPECT_EQ(test, 1 + 1, 2);
+ }
+ 
++/*
++ * A lot of times, you have a C-style class like this, which acts an abstraction
++ * over hardware, a file system implementation, or some other subsystem that you
++ * want to reason about in a generic way.
++ */
++struct example {
++	int (*foo)(struct example *example, int num);
++};
++
++static int example_bar(struct example *example, int num)
++{
++	return example->foo(example, num);
++}
++
++/*
++ * KUnit allows such a class to be "mocked out" with the following:
++ */
++
++/*
++ * This macro creates a mock subclass of the specified class.
++ */
++DECLARE_STRUCT_CLASS_MOCK_PREREQS(example);
++
++/*
++ * This macro creates a mock implementation of the specified method of the
++ * specified class.
++ */
++DEFINE_STRUCT_CLASS_MOCK(METHOD(foo), CLASS(example),
++			 RETURNS(int),
++			 PARAMS(struct example *, int));
++
++/*
++ * This tells KUnit how to initialize the parts of the mock that come from the
++ * parent. In this example, all we have to do is populate the member functions
++ * of the parent class with the mock versions we defined.
++ */
++static int example_init(struct MOCK(example) *mock_example)
++{
++	/* This is how you get a pointer to the parent class of a mock. */
++	struct example *example = mock_get_trgt(mock_example);
++
++	/*
++	 * Here we populate the member function (method) with our mock method.
++	 */
++	example->foo = foo;
++	return 0;
++}
++
++/*
++ * This registers our parent init function above, allowing KUnit to create a
++ * constructor for the mock.
++ */
++DEFINE_STRUCT_CLASS_MOCK_INIT(example, example_init);
++
++/*
++ * This is a test case where we use our mock.
++ */
++static void example_mock_test(struct test *test)
++{
++	struct MOCK(example) *mock_example = test->priv;
++	struct example *example = mock_get_trgt(mock_example);
++	struct mock_expectation *handle;
++
++	/*
++	 * Here we make an expectation that our mock method will be called with
++	 * a parameter equal to 5 passed in.
++	 */
++	handle = TEST_EXPECT_CALL(foo(mock_get_ctrl(mock_example),
++				      test_int_eq(test, 5)));
++	/*
++	 * We specify that when our mock is called in this way, we want it to
++	 * return 2.
++	 */
++	handle->action = test_int_return(test, 2);
++
++	TEST_EXPECT_EQ(test, 2, example_bar(example, 5));
++}
++
+ /*
+  * This is run once before each test case, see the comment on
+  * example_test_module for more information.
+@@ -37,6 +116,16 @@ static int example_test_init(struct test *test)
+ {
+ 	test_info(test, "initializing");
+ 
++	/*
++	 * Here we construct the mock and store it in test's `priv` field; this
++	 * field is for KUnit users. You can put whatever you want here, but
++	 * most often it is a place that the init function can put stuff to be
++	 * used by test cases.
++	 */
++	test->priv = CONSTRUCT_MOCK(example, test);
++	if (!test->priv)
++		return -EINVAL;
++
+ 	return 0;
+ }
+ 
+@@ -52,6 +141,7 @@ static struct test_case example_test_cases[] = {
+ 	 * test module.
+ 	 */
+ 	TEST_CASE(example_simple_test),
++	TEST_CASE(example_mock_test),
+ 	{},
+ };
+ 
+diff --git a/kunit/mock-macro-test.c b/kunit/mock-macro-test.c
+index c30b859ff2b14..84d9d3f484366 100644
+--- a/kunit/mock-macro-test.c
++++ b/kunit/mock-macro-test.c
+@@ -8,6 +8,49 @@
+ 
+ #include <kunit/test.h>
+ #include <kunit/params.h>
++#include <kunit/mock.h>
++
++struct test_struct {
++	int (*one_param)(struct test_struct *test_struct);
++	int (*two_param)(struct test_struct *test_struct, int num);
++	int (*non_first_slot_param)(int num, struct test_struct *test_struct);
++	void *(*void_ptr_return)(struct test_struct *test_struct);
++};
++
++DECLARE_STRUCT_CLASS_MOCK_PREREQS(test_struct);
++
++DEFINE_STRUCT_CLASS_MOCK(METHOD(one_param), CLASS(test_struct),
++			 RETURNS(int),
++			 PARAMS(struct test_struct *));
++
++DEFINE_STRUCT_CLASS_MOCK(METHOD(two_param), CLASS(test_struct),
++			 RETURNS(int),
++			 PARAMS(struct test_struct *, int));
++
++DEFINE_STRUCT_CLASS_MOCK_HANDLE_INDEX(METHOD(non_first_slot_param),
++			 CLASS(test_struct), HANDLE_INDEX(1),
++			 RETURNS(int),
++			 PARAMS(int, struct test_struct *));
++
++DEFINE_STRUCT_CLASS_MOCK(METHOD(void_ptr_return), CLASS(test_struct),
++			 RETURNS(void *),
++			 PARAMS(struct test_struct *));
++
++static int test_struct_init(struct MOCK(test_struct) *mock_test_struct)
++{
++	struct test_struct *test_struct = mock_get_trgt(mock_test_struct);
++
++	test_struct->one_param = one_param;
++	test_struct->two_param = two_param;
++	test_struct->non_first_slot_param = non_first_slot_param;
++	return 0;
++}
++
++DEFINE_STRUCT_CLASS_MOCK_INIT(test_struct, test_struct_init);
++
++struct mock_macro_context {
++	struct MOCK(test_struct) *mock_test_struct;
++};
+ 
+ #define TO_STR_INTERNAL(...) #__VA_ARGS__
+ #define TO_STR(...) TO_STR_INTERNAL(__VA_ARGS__)
+@@ -131,6 +174,43 @@ static void mock_macro_arg_names_from_types(struct test *test)
+ 						      type15)));
+ }
+ 
++static void mock_macro_test_generated_method_code_works(struct test *test)
++{
++	struct mock_macro_context *ctx = test->priv;
++	struct MOCK(test_struct) *mock_test_struct = ctx->mock_test_struct;
++	struct test_struct *test_struct = mock_get_trgt(mock_test_struct);
++	struct mock_expectation *handle;
++
++	handle = TEST_EXPECT_CALL(one_param(mock_get_ctrl(mock_test_struct)));
++	handle->action = test_int_return(test, 0);
++	handle = TEST_EXPECT_CALL(two_param(mock_get_ctrl(mock_test_struct),
++					    test_int_eq(test, 5)));
++	handle->action = test_int_return(test, 1);
++	handle = TEST_EXPECT_CALL(non_first_slot_param(
++			test_int_eq(test, 5), mock_get_ctrl(mock_test_struct)));
++	handle->action = test_int_return(test, 1);
++
++	test_struct->one_param(test_struct);
++	test_struct->two_param(test_struct, 5);
++	test_struct->non_first_slot_param(5, test_struct);
++}
++
++static int mock_macro_test_init(struct test *test)
++{
++	struct mock_macro_context *ctx;
++
++	ctx = test_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++	test->priv = ctx;
++
++	ctx->mock_test_struct = CONSTRUCT_MOCK(test_struct, test);
++	if (!ctx->mock_test_struct)
++		return -EINVAL;
++
++	return 0;
++}
++
+ static struct test_case mock_macro_test_cases[] = {
+ 	TEST_CASE(mock_macro_is_equal),
+ 	TEST_CASE(mock_macro_if),
+@@ -139,11 +219,13 @@ static struct test_case mock_macro_test_cases[] = {
+ 	TEST_CASE(mock_macro_for_each_param),
+ 	TEST_CASE(mock_macro_param_list_from_types_basic),
+ 	TEST_CASE(mock_macro_arg_names_from_types),
++	TEST_CASE(mock_macro_test_generated_method_code_works),
+ 	{},
+ };
+ 
+ static struct test_module mock_macro_test_module = {
+ 	.name = "mock-macro-test",
++	.init = mock_macro_test_init,
+ 	.test_cases = mock_macro_test_cases,
+ };
+ module_test(mock_macro_test_module);
+diff --git a/kunit/mock-test.c b/kunit/mock-test.c
 new file mode 100644
-index 0000000000000..ecac9c1c29c0e
+index 0000000000000..523ddee8f24e2
 --- /dev/null
-+++ b/kunit/common-mocks.c
-@@ -0,0 +1,272 @@
++++ b/kunit/mock-test.c
+@@ -0,0 +1,276 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Common KUnit mock call arg matchers and formatters.
++ * KUnit test for mock.h.
 + *
 + * Copyright (C) 2018, Google LLC.
 + * Author: Brendan Higgins <brendanhiggins@google.com>
 + */
 +
-+#include <linux/kernel.h>
++#include <kunit/test.h>
 +#include <kunit/mock.h>
 +
-+static bool match_any(struct mock_param_matcher *pmatcher,
-+		      struct test_stream *stream,
-+		      const void *actual)
-+{
-+	stream->add(stream, "don't care");
-+	return true;
-+}
++#include "test-mock.h"
 +
-+static struct mock_param_matcher any_matcher = {
-+	.match = match_any,
++struct mock_test_context {
++	struct MOCK(test)	*mock_test;
++	struct mock		*mock;
 +};
 +
-+struct mock_param_matcher *test_any(struct test *test)
++static void mock_test_do_expect_basic(struct test *test)
 +{
-+	return &any_matcher;
++	struct mock_test_context *ctx = test->priv;
++	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct test *trgt = mock_get_trgt(mock_test);
++	struct mock *mock = ctx->mock;
++	int param0 = 5, param1 = -4;
++	static const char * const two_param_types[] = {"int", "int"};
++	const void *two_params[] = {&param0, &param1};
++	struct mock_param_matcher *matchers_any_two[] = {
++		test_any(trgt), test_any(trgt)
++	};
++	struct mock_expectation *expectation;
++	const void *ret;
++
++	expectation = mock_add_matcher(mock,
++				       "",
++				       NULL,
++				       matchers_any_two,
++				       ARRAY_SIZE(matchers_any_two));
++	expectation->action = test_int_return(trgt, 5);
++	TEST_EXPECT_EQ(test, 0, expectation->times_called);
++
++	ret = mock->do_expect(mock,
++			      "",
++			      NULL,
++			      two_param_types,
++			      two_params,
++			      ARRAY_SIZE(two_params));
++	TEST_ASSERT_NOT_ERR_OR_NULL(test, ret);
++	TEST_EXPECT_EQ(test, 5, *((int *) ret));
++	TEST_EXPECT_EQ(test, 1, expectation->times_called);
 +}
 +
-+#define DEFINE_MATCHER_STRUCT(type_name, type)				       \
-+		struct mock_##type_name##_matcher {			       \
-+			struct mock_param_matcher matcher;		       \
-+			type expected;					       \
-+		};
++static void mock_test_ptr_eq(struct test *test)
++{
++	struct mock_test_context *ctx = test->priv;
++	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct test *trgt = mock_get_trgt(mock_test);
++	struct mock *mock = ctx->mock;
++	void *param0 = ctx, *param1 = trgt;
++	static const char * const two_param_types[] = {"void *", "void *"};
++	const void *two_params[] = {&param0, &param1};
++	struct mock_param_matcher *matchers_two_ptrs[] = {
++		test_ptr_eq(trgt, param0), test_ptr_eq(trgt, param1)
++	};
++	struct mock_expectation *expectation;
++	const void *ret;
 +
-+#define DEFINE_TO_MATCHER_STRUCT(type_name)				       \
-+		struct mock_##type_name##_matcher *			       \
-+		to_mock_##type_name##_matcher(				       \
-+				struct mock_param_matcher *matcher)	       \
-+		{							       \
-+			return container_of(matcher,			       \
-+					    struct mock_##type_name##_matcher, \
-+					    matcher);			       \
-+		}
++	expectation = mock_add_matcher(mock,
++				       "",
++				       NULL,
++				       matchers_two_ptrs,
++				       ARRAY_SIZE(matchers_two_ptrs));
++	expectation->action = test_int_return(trgt, 0);
++	TEST_EXPECT_EQ(test, 0, expectation->times_called);
 +
-+#define DEFINE_MATCH_FUNC(type_name, type, op_name, op)			       \
-+		bool match_##type_name##_##op_name(			       \
-+				struct mock_param_matcher *pmatcher,	       \
-+				struct test_stream *stream,		       \
-+				const void *pactual)			       \
-+		{							       \
-+			struct mock_##type_name##_matcher *matcher =	       \
-+				to_mock_##type_name##_matcher(pmatcher);       \
-+			type actual = *((type *) pactual);		       \
-+			bool matches = actual op matcher->expected;	       \
-+									       \
-+			if (matches)					       \
-+				stream->add(stream,			       \
-+					    "%d "#op" %d",		       \
-+					    actual,			       \
-+					    matcher->expected);		       \
-+			else						       \
-+				stream->add(stream,			       \
-+					    "%d not "#op" %d",		       \
-+					    actual,			       \
-+					    matcher->expected);		       \
-+									       \
-+			return matches;					       \
-+		}
++	ret = mock->do_expect(mock,
++			      "",
++			      NULL,
++			      two_param_types,
++			      two_params,
++			      ARRAY_SIZE(two_params));
++	TEST_ASSERT_NOT_ERR_OR_NULL(test, ret);
++	TEST_EXPECT_EQ(test, 1, expectation->times_called);
++}
 +
-+#define DEFINE_MATCH_FACTORY(type_name, type, op_name)			       \
-+		struct mock_param_matcher *test_##type_name##_##op_name(       \
-+				struct test *test, type expected)	       \
-+		{							       \
-+			struct mock_##type_name##_matcher *matcher;	       \
-+									       \
-+			matcher = test_kmalloc(test,			       \
-+					       sizeof(*matcher),	       \
-+					       GFP_KERNEL);		       \
-+			if (!matcher)					       \
-+				return NULL;				       \
-+									       \
-+			matcher->matcher.match = match_##type_name##_##op_name;\
-+			matcher->expected = expected;			       \
-+			return &matcher->matcher;			       \
-+		}
++static void mock_test_ptr_eq_not_equal(struct test *test)
++{
++	struct mock_test_context *ctx = test->priv;
++	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct test *trgt = mock_get_trgt(mock_test);
++	struct mock *mock = ctx->mock;
++	void *param0 = ctx, *param1 = trgt;
++	static const char * const two_param_types[] = {"void *", "void *"};
++	const void *two_params[] = {&param0, &param1};
++	struct mock_param_matcher *matchers_two_ptrs[] = {
++		test_ptr_eq(trgt, param0), test_ptr_eq(trgt, param1 - 1)
++	};
++	struct mock_expectation *expectation;
++	const void *ret;
 +
-+#define DEFINE_MATCHER_WITH_TYPENAME(type_name, type)			       \
-+		DEFINE_MATCHER_STRUCT(type_name, type)			       \
-+		DEFINE_TO_MATCHER_STRUCT(type_name)			       \
-+		DEFINE_MATCH_FUNC(type_name, type, eq, ==)		       \
-+		DEFINE_MATCH_FACTORY(type_name, type, eq)		       \
-+		DEFINE_MATCH_FUNC(type_name, type, ne, !=)		       \
-+		DEFINE_MATCH_FACTORY(type_name, type, ne)		       \
-+		DEFINE_MATCH_FUNC(type_name, type, le, <=)		       \
-+		DEFINE_MATCH_FACTORY(type_name, type, le)		       \
-+		DEFINE_MATCH_FUNC(type_name, type, lt, <)		       \
-+		DEFINE_MATCH_FACTORY(type_name, type, lt)		       \
-+		DEFINE_MATCH_FUNC(type_name, type, ge, >=)		       \
-+		DEFINE_MATCH_FACTORY(type_name, type, ge)		       \
-+		DEFINE_MATCH_FUNC(type_name, type, gt, >)		       \
-+		DEFINE_MATCH_FACTORY(type_name, type, gt)
++	expectation = mock_add_matcher(mock,
++				       "",
++				       NULL,
++				       matchers_two_ptrs,
++				       ARRAY_SIZE(matchers_two_ptrs));
++	expectation->action = test_int_return(trgt, 0);
++	TEST_EXPECT_EQ(test, 0, expectation->times_called);
 +
-+#define DEFINE_MATCHER(type) DEFINE_MATCHER_WITH_TYPENAME(type, type)
++	ret = mock->do_expect(mock,
++			      "",
++			      NULL,
++			      two_param_types,
++			      two_params,
++			      ARRAY_SIZE(two_params));
++	TEST_EXPECT_FALSE(test, ret);
++	TEST_EXPECT_EQ(test, 0, expectation->times_called);
++}
 +
-+DEFINE_MATCHER(u8);
-+DEFINE_MATCHER(u16);
-+DEFINE_MATCHER(u32);
-+DEFINE_MATCHER(u64);
-+DEFINE_MATCHER(char);
-+DEFINE_MATCHER_WITH_TYPENAME(uchar, unsigned char);
-+DEFINE_MATCHER_WITH_TYPENAME(schar, signed char);
-+DEFINE_MATCHER(short);
-+DEFINE_MATCHER_WITH_TYPENAME(ushort, unsigned short);
-+DEFINE_MATCHER(int);
-+DEFINE_MATCHER_WITH_TYPENAME(uint, unsigned int);
-+DEFINE_MATCHER(long);
-+DEFINE_MATCHER_WITH_TYPENAME(ulong, unsigned long);
-+DEFINE_MATCHER_WITH_TYPENAME(longlong, long long);
-+DEFINE_MATCHER_WITH_TYPENAME(ulonglong, unsigned long long);
++/*
++ * In order for us to be able to rely on TEST_EXPECT_CALL to validate other
++ * behavior, we need to test that unsatisfied TEST_EXPECT_CALL causes a test
++ * failure.
++ */
++static void mock_test_failed_expect_call_fails_test(struct test *test)
++{
++	struct mock_test_context *ctx = test->priv;
++	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct mock *mock = ctx->mock;
 +
-+DEFINE_MATCHER_WITH_TYPENAME(ptr, void *);
++	/* mock is a pretend mock belonging to our mocked_test */
 +
-+struct mock_memeq_matcher {
-+	struct mock_param_matcher matcher;
-+	const void *expected;
-+	size_t size;
++	/* Put an expectation on mocked mock */
++	TEST_EXPECT_CALL(fail(mock, test_any(mock_get_trgt(mock_test))));
++
++	/*
++	 * Expect that mock_test will fail because the above won't be satisfied
++	 */
++	TEST_EXPECT_CALL(fail(mock_get_ctrl(mock_test), test_any(test)));
++
++	/*
++	 * Validate expectations of mocked mock, which should fail mocked test
++	 */
++	mock_validate_expectations(mock);
++
++	/* Validate mock_test's expectations, that is, it should have failed */
++	mock_validate_expectations(mock_get_ctrl(mock_test));
++	TEST_EXPECT_FALSE(test, mock_get_trgt(mock_test)->success);
++}
++
++static void mock_test_do_expect_default_return(struct test *test)
++{
++	struct mock_test_context *ctx = test->priv;
++	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct test *trgt = mock_get_trgt(mock_test);
++	struct mock *mock = ctx->mock;
++	int param0 = 5, param1 = -5;
++	static const char * const two_param_types[] = {"int", "int"};
++	const void *two_params[] = {&param0, &param1};
++	struct mock_param_matcher *matchers[] = {
++		test_int_eq(trgt, 5),
++		test_int_eq(trgt, -4)
++	};
++	struct mock_expectation *expectation;
++	const void *ret;
++
++	expectation = mock_add_matcher(mock,
++				       "test_printk",
++				       test_printk,
++				       matchers,
++				       ARRAY_SIZE(matchers));
++	expectation->action = test_int_return(trgt, 5);
++	TEST_EXPECT_EQ(test, 0, expectation->times_called);
++
++	TEST_EXPECT_FALSE(test, mock_set_default_action(mock,
++						   "test_printk",
++						   test_printk,
++						   test_int_return(trgt, -4)));
++
++	ret = mock->do_expect(mock,
++			      "test_printk",
++			      test_printk,
++			      two_param_types,
++			      two_params,
++			      ARRAY_SIZE(two_params));
++	TEST_ASSERT_NOT_ERR_OR_NULL(test, ret);
++	TEST_EXPECT_EQ(test, -4, *((int *) ret));
++	TEST_EXPECT_EQ(test, 0, expectation->times_called);
++}
++
++static void mock_test_mock_validate_expectations(struct test *test)
++{
++	struct mock_test_context *ctx = test->priv;
++	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct test *trgt = mock_get_trgt(mock_test);
++	struct mock *mock = ctx->mock;
++	struct mock_param_matcher *matchers[] = {
++		test_int_eq(trgt, 5),
++		test_int_eq(trgt, -4)
++	};
++	struct mock_expectation *expectation;
++
++	TEST_EXPECT_EQ(test, mock_get_trgt(mock_test), mock->test);
++
++	expectation = mock_add_matcher(mock,
++				       "test_printk",
++				       test_printk,
++				       matchers,
++				       ARRAY_SIZE(matchers));
++	expectation->times_called = 0;
++	expectation->min_calls_expected = 1;
++	expectation->max_calls_expected = 1;
++
++	TEST_EXPECT_CALL(fail(mock_get_ctrl(mock_test), test_any(test)));
++
++	mock_validate_expectations(mock);
++}
++
++void *do_mocked_fail(struct mock_action *this, const void **params, int len)
++{
++	static const int ret;
++	struct test_stream * const *stream_ptr = params[0];
++	struct test_stream *stream = *stream_ptr;
++
++	stream->set_level(stream, KERN_ERR);
++	stream->commit(stream);
++	return (void *) &ret;
++}
++
++static struct mock_action mocked_fail = {
++	.do_action = do_mocked_fail
 +};
 +
-+static bool match_memeq(struct mock_param_matcher *pmatcher,
-+			struct test_stream *stream,
-+			const void *pactual)
++static int mock_test_init(struct test *test)
 +{
-+	struct mock_memeq_matcher *matcher =
-+			container_of(pmatcher,
-+				     struct mock_memeq_matcher,
-+				     matcher);
-+	const void *actual = CONVERT_TO_ACTUAL_TYPE(const void *, pactual);
-+	bool matches = !memcmp(actual, matcher->expected, matcher->size);
-+	int i;
++	struct mock_test_context *ctx;
 +
-+	for (i = 0; i < matcher->size; i++)
-+		stream->add(stream, "%02x, ", ((const char *) actual)[i]);
-+	if (matches)
-+		stream->add(stream, "== ");
-+	else
-+		stream->add(stream, "!= ");
-+	for (i = 0; i < matcher->size; i++)
-+		stream->add(stream,
-+			    "%02x, ",
-+			    ((const char *) matcher->expected)[i]);
++	ctx = test_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++	test->priv = ctx;
 +
-+	return matches;
++	ctx->mock_test = CONSTRUCT_MOCK(test, test);
++	if (!ctx->mock_test)
++		return -EINVAL;
++
++	ctx->mock = test_kzalloc(test, sizeof(*ctx->mock), GFP_KERNEL);
++	if (!ctx->mock)
++		return -ENOMEM;
++	mock_init_ctrl(mock_get_trgt(ctx->mock_test), ctx->mock);
++
++	/* This test suite tests the behaviour of the error messages printed
++	 * when mocks fail, which requires the mocked fail to commit the
++	 * stream.
++	 */
++	mock_set_default_action(mock_get_ctrl(ctx->mock_test),
++		"fail", fail, &mocked_fail);
++	return 0;
 +}
 +
-+struct mock_param_matcher *test_memeq(struct test *test,
-+				      const void *buf,
-+				      size_t size)
-+{
-+	struct mock_memeq_matcher *matcher;
-+
-+	matcher = test_kzalloc(test, sizeof(*matcher), GFP_KERNEL);
-+	if (!matcher)
-+		return NULL;
-+
-+	matcher->matcher.match = match_memeq;
-+	matcher->expected = buf;
-+	matcher->size = size;
-+
-+	return &matcher->matcher;
-+}
-+
-+struct mock_streq_matcher {
-+	struct mock_param_matcher matcher;
-+	const char *expected;
++static struct test_case mock_test_cases[] = {
++	TEST_CASE(mock_test_do_expect_basic),
++	TEST_CASE(mock_test_ptr_eq),
++	TEST_CASE(mock_test_ptr_eq_not_equal),
++	TEST_CASE(mock_test_failed_expect_call_fails_test),
++	TEST_CASE(mock_test_do_expect_default_return),
++	TEST_CASE(mock_test_mock_validate_expectations),
++	{},
 +};
 +
-+static bool match_streq(struct mock_param_matcher *pmatcher,
-+			struct test_stream *stream,
-+			const void *pactual)
++static struct test_module mock_test_module = {
++	.name = "mock-test",
++	.init = mock_test_init,
++	.test_cases = mock_test_cases,
++};
++
++module_test(mock_test_module);
+diff --git a/kunit/test-mock.c b/kunit/test-mock.c
+new file mode 100644
+index 0000000000000..a0858d6b3f9c1
+--- /dev/null
++++ b/kunit/test-mock.c
+@@ -0,0 +1,39 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * KUnit mock for struct test.
++ *
++ * Copyright (C) 2018, Google LLC.
++ * Author: Brendan Higgins <brendanhiggins@google.com>
++ */
++
++#include "test-mock.h"
++
++DEFINE_STRUCT_CLASS_MOCK_VOID_RETURN(METHOD(fail), CLASS(test),
++				     PARAMS(struct test *,
++					    struct test_stream *));
++
++DEFINE_STRUCT_CLASS_MOCK_VOID_RETURN(METHOD(mock_vprintk), CLASS(test),
++				     PARAMS(const struct test *,
++					    const char *,
++					    struct va_format *));
++
++static int test_init(struct MOCK(test) *mock_test)
 +{
-+	struct mock_streq_matcher *matcher =
-+			container_of(pmatcher,
-+				     struct mock_streq_matcher,
-+				     matcher);
-+	const char *actual = CONVERT_TO_ACTUAL_TYPE(const char *, pactual);
-+	bool matches = !strcmp(actual, matcher->expected);
++	struct test *trgt = mock_get_trgt(mock_test);
++	int ret;
 +
-+	if (matches)
-+		stream->add(stream, "%s == %s", actual, matcher->expected);
-+	else
-+		stream->add(stream, "%s != %s", actual, matcher->expected);
-+
-+	return matches;
++	ret = test_init_test(trgt, "MOCK(test)");
++	trgt->fail = fail;
++	mock_set_default_action(mock_get_ctrl(mock_test),
++				"fail",
++				fail,
++				test_int_return(mock_get_test(mock_test), 0));
++	trgt->vprintk = mock_vprintk;
++	mock_set_default_action(mock_get_ctrl(mock_test),
++				"mock_vprintk",
++				mock_vprintk,
++				test_int_return(mock_get_test(mock_test), 0));
++	return ret;
 +}
 +
-+struct mock_param_matcher *test_streq(struct test *test, const char *str)
-+{
-+	struct mock_streq_matcher *matcher;
++DEFINE_STRUCT_CLASS_MOCK_INIT(test, test_init);
+diff --git a/kunit/test-mock.h b/kunit/test-mock.h
+new file mode 100644
+index 0000000000000..c57e9384b1d8a
+--- /dev/null
++++ b/kunit/test-mock.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * KUnit mock for struct test.
++ *
++ * Copyright (C) 2018, Google LLC.
++ * Author: Brendan Higgins <brendanhiggins@google.com>
++ */
 +
-+	matcher = test_kzalloc(test, sizeof(*matcher), GFP_KERNEL);
-+	if (!matcher)
-+		return NULL;
++#include <kunit/test.h>
++#include <kunit/mock.h>
 +
-+	matcher->matcher.match = match_streq;
-+	matcher->expected = str;
++DECLARE_STRUCT_CLASS_MOCK_PREREQS(test);
 +
-+	return &matcher->matcher;
-+}
++DECLARE_STRUCT_CLASS_MOCK_VOID_RETURN(METHOD(fail), CLASS(test),
++				      PARAMS(struct test *,
++					     struct test_stream *));
 +
-+#define DEFINE_RETURN_ACTION_STRUCT(type_name, type)			       \
-+		struct mock_##type_name##_action {			       \
-+			struct mock_action action;			       \
-+			type ret;					       \
-+		};
++DECLARE_STRUCT_CLASS_MOCK_VOID_RETURN(METHOD(mock_vprintk), CLASS(test),
++				      PARAMS(const struct test *,
++					     const char *,
++					     struct va_format *));
 +
-+#define DEFINE_RETURN_ACTION_FUNC(type_name, type)			       \
-+		void *do_##type_name##_return(struct mock_action *paction,     \
-+					      const void **params,	       \
-+					      int len)			       \
-+		{							       \
-+			struct mock_##type_name##_action *action =	       \
-+					container_of(paction,		       \
-+						     struct mock_##type_name##_action,\
-+						     action);		       \
-+									       \
-+			return (void *) &action->ret;			       \
-+		}
-+
-+#define DEFINE_RETURN_ACTION_FACTORY(type_name, type)			       \
-+		struct mock_action *test_##type_name##_return(		       \
-+				struct test *test,			       \
-+				type ret)				       \
-+		{							       \
-+			struct mock_##type_name##_action *action;	       \
-+									       \
-+			action = test_kmalloc(test,			       \
-+					      sizeof(*action),		       \
-+					      GFP_KERNEL);		       \
-+			if (!action)					       \
-+				return NULL;				       \
-+									       \
-+			action->action.do_action = do_##type_name##_return;    \
-+			action->ret = ret;				       \
-+									       \
-+			return &action->action;				       \
-+		}
-+
-+#define DEFINE_RETURN_ACTION_WITH_TYPENAME(type_name, type)		       \
-+		DEFINE_RETURN_ACTION_STRUCT(type_name, type);		       \
-+		DEFINE_RETURN_ACTION_FUNC(type_name, type);		       \
-+		DEFINE_RETURN_ACTION_FACTORY(type_name, type);
-+
-+#define DEFINE_RETURN_ACTION(type) \
-+		DEFINE_RETURN_ACTION_WITH_TYPENAME(type, type)
-+
-+DEFINE_RETURN_ACTION(u8);
-+DEFINE_RETURN_ACTION(u16);
-+DEFINE_RETURN_ACTION(u32);
-+DEFINE_RETURN_ACTION(u64);
-+DEFINE_RETURN_ACTION(char);
-+DEFINE_RETURN_ACTION_WITH_TYPENAME(uchar, unsigned char);
-+DEFINE_RETURN_ACTION_WITH_TYPENAME(schar, signed char);
-+DEFINE_RETURN_ACTION(short);
-+DEFINE_RETURN_ACTION_WITH_TYPENAME(ushort, unsigned short);
-+DEFINE_RETURN_ACTION(int);
-+DEFINE_RETURN_ACTION_WITH_TYPENAME(uint, unsigned int);
-+DEFINE_RETURN_ACTION(long);
-+DEFINE_RETURN_ACTION_WITH_TYPENAME(ulong, unsigned long);
-+DEFINE_RETURN_ACTION_WITH_TYPENAME(longlong, long long);
-+DEFINE_RETURN_ACTION_WITH_TYPENAME(ulonglong, unsigned long long);
-+DEFINE_RETURN_ACTION_WITH_TYPENAME(ptr, void *);
-+
++DECLARE_STRUCT_CLASS_MOCK_INIT(test);
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
