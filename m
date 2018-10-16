@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FA2C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80873C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B586C2087B
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3171F2148D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jObYhDzd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B586C2087B
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OBvgp0mJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3171F2148D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbeJQHrd (ORCPT
+        id S1727958AbeJQHre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:47:33 -0400
-Received: from mail-io1-f74.google.com ([209.85.166.74]:48010 "EHLO
-        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727526AbeJQHrc (ORCPT
+        Wed, 17 Oct 2018 03:47:34 -0400
+Received: from mail-it1-f201.google.com ([209.85.166.201]:53828 "EHLO
+        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727942AbeJQHre (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:47:32 -0400
-Received: by mail-io1-f74.google.com with SMTP id c21-v6so23253260ioi.14
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:42 -0700 (PDT)
+        Wed, 17 Oct 2018 03:47:34 -0400
+Received: by mail-it1-f201.google.com with SMTP id f79-v6so233773ita.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=FPIYCn6EOx1XsTWZ4p6VpTMVblaLhIfS9g7PdcTELME=;
-        b=jObYhDzdAodeqbMaupPyJOZrepJm1v4ub0X324PwVojcSD6LzyRBYEJlGkf5WJ/4iO
-         xFCcn4TF+vvga75ygcFE5OqkwSSNioPrAG5NtFTrZpiOcyiNYFFwjREjywoR6FdAnR6o
-         mvym6+WDHPTe2YlVpA4vkRw1McojScwQZB/0y11Ox51mDiFrxxPrMNXDI6/7O2i0MJbs
-         NyzyQUUgpacKymiZ+cJRCrU4qhwH+yr4D9/IhS5eaPOcgCAp7ts/9oaCvgk4NTW/Cqn9
-         QXAEmzv9NWz/ypXUomOiaLdlMowNBH7nzRHi+j5kKS4EimsM22xRppfl76ZVeacwtf5P
-         i3xg==
+        bh=/cIwxaWjuX5zXpExKbickYNnSKyceHv4B+fk4+zCXKw=;
+        b=OBvgp0mJoUKBhNDc6ja0qaG2wAkB/90CV8v/Kg64dnb5uhOHYgNt0vzASZj3BC/gFI
+         w5LcxMMLMCl5Pwqlt2IMQ1RMPA36CUqknXp1erMIeAw1MbwYapX+oAVc5l4lND9WHFo9
+         b/ix6YlvXa1qVgmRZnDewfyU7zeaO8zdj00glgldVCmtP8JZ89aX+Sfgq9tPXoY/Y1Xy
+         Cq9liBf5Fw4Huhl4Rr/5/zZ/6lIIejypwAIRx87X/mHqG7psjzMbKN6ED08PYfCArJwt
+         4TjkiQL5HNW274WbipUOqzDrjbYgMiR/DZfHkvBJaTbNtYquCqmH9u27BlLfYYT4rbFV
+         Ahug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=FPIYCn6EOx1XsTWZ4p6VpTMVblaLhIfS9g7PdcTELME=;
-        b=aWsQYWsdUvcCKEU8byUHHjbzCir+4BM1pHQmvx1WZwvKeLf3bgNZ9mReCJ96eR7YZW
-         TWP/qtQkHNJ/7SfXd9H17QbLoEe54x+pUvngcahRjBS3ydYCk6xMUwrdIdozZ4ZvAE0H
-         JtCc01RDFeWQSOnVvBeYZWpN+gXGHOu6szQ9TpXplL4tokMW+/J730pnx10C9CulAjXw
-         8EcSBsMKNyUm0fVNDjObJ8YeBguXKB4l4fuHHT1NO3r+BDekIoDY5Oj7yVCZJdP1s2Ky
-         sQO5SVglx9AAvEJMFD4xJMu8d04HcTx2L7XmvkxzHH6VnltRlRkPV874JS2+GDGmnvdG
-         8Q/g==
-X-Gm-Message-State: ABuFfoh22RYYskgzS6Jz6bShR1rPdEd5fApVC+2QDnOi2+uty4hbFzIy
-        fnqhJv0WJOb2seG79JsN45dInsolvIoresLpq+DZGw==
-X-Google-Smtp-Source: ACcGV62ehVJ8AHeD9ZnEiqipPbKj1hD4xI+nJJKTsv8DRZBI3hKxGL6otUBF/c4WZRoECtmpAv/O5TQ2IAmPVzpPgWWMTg==
-X-Received: by 2002:a24:8903:: with SMTP id s3-v6mr211702itd.26.1539734082598;
- Tue, 16 Oct 2018 16:54:42 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 16:51:12 -0700
+        bh=/cIwxaWjuX5zXpExKbickYNnSKyceHv4B+fk4+zCXKw=;
+        b=r86/xJJefFLLnISANatMdqGcpIY7jvKuWnVwjRbvmqANzk5NAdvNvPcMRPOGq5ETQU
+         nLnOt+Am6n5g9icy1xmYMIvu78EjGVUAaQC8hsGsr3s3pe3RZkPxdJUkEG/UWjNQRIiD
+         0DUfAF9oA/L/AYBAq6nENh6vIfvrt4qubZksxTePqu9+6WmI5JuL2Mup83CqEnPJ3dUe
+         50Fvu3oQCRI80NGugvXBDzo0H9qNf3cHKeQ17FlzBtO/DB+syWfXUjJWeobkSmlrsfSW
+         W+EGRoQexnwrDpa5TSB4wKRCuaa8/36EGOHmW8Xo9B/njGxY+fHhNk15BbdoeJQv96gS
+         TQKg==
+X-Gm-Message-State: ABuFfohBP3L+eGS6EszhSK+78sDSdEe0GZRC7PhvwQFO3DsGtXW8m07W
+        ULu12UpKTEo3NQjbBq2Naf46BD+h3Hjyurac5XyaSg==
+X-Google-Smtp-Source: ACcGV62l5qWluLUdWqzgSRINvFIqAn0zVr+2iNoYAcJiT8V6kuklivgL4UhosQ3bkbFHrilEw3E9ehC0f6RUy2ud4LHt7A==
+X-Received: by 2002:a24:fe01:: with SMTP id w1-v6mr224693ith.0.1539734085013;
+ Tue, 16 Oct 2018 16:54:45 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 16:51:13 -0700
 In-Reply-To: <20181016235120.138227-1-brendanhiggins@google.com>
-Message-Id: <20181016235120.138227-24-brendanhiggins@google.com>
+Message-Id: <20181016235120.138227-25-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20181016235120.138227-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
-Subject: [RFC v1 23/31] kunit: mock: add parameter capturers
+Subject: [RFC v1 24/31] kunit: improved sigsegv stack trace printing
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
         shuah@kernel.org
@@ -77,198 +77,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds the concept of an argument capturer which, when used with a matcher
-in an EXPECT_CALL(...), will capture the value of the matching argument.
+Sacrificed the control of printing stack trace within the crash handler
+in the test runner for getting a better stack trace; this is still not
+ideal, but much better than before.
 
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- include/kunit/mock.h | 83 ++++++++++++++++++++++++++++++++++++++++++++
- kunit/common-mocks.c | 78 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 161 insertions(+)
+ arch/um/kernel/trap.c | 11 ++++++++++-
+ kunit/test.c          | 13 +++++++++----
+ 2 files changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/include/kunit/mock.h b/include/kunit/mock.h
-index c3615e80d96ee..0e1aa568709a1 100644
---- a/include/kunit/mock.h
-+++ b/include/kunit/mock.h
-@@ -1172,6 +1172,89 @@ struct mock_param_matcher *test_struct_cmp(
- 		const char *struct_name,
- 		struct mock_struct_matcher_entry *entries);
+diff --git a/arch/um/kernel/trap.c b/arch/um/kernel/trap.c
+index 9b97712daf14f..c3ff8346800c4 100644
+--- a/arch/um/kernel/trap.c
++++ b/arch/um/kernel/trap.c
+@@ -226,8 +226,17 @@ unsigned long segv(struct faultinfo fi, unsigned long ip, int is_user,
+ 		current->thread.segv_regs = container_of(regs, struct pt_regs, regs);
  
-+/**
-+ * struct mock_param_capturer - used to capture parameter when matching
-+ *
-+ * Use the associated helper macros to access relevant fields.
-+ * Example:
-+ *
-+ * .. code-block::c
-+ *
-+ *	static int some_test(struct test *test)
-+ *	{
-+ *		// imagine a mocked function: int add(int a, int b)
-+ *		struct mock_param_capturer *capturer =
-+ *			mock_int_capturer_create(test, any(test));
-+ *		TEST_EXPECT_CALL(add(any(test), capturer_to_matcher(capturer)));
-+ *		TEST_ASSERT_PARAM_CAPTURED(test, capturer);
-+ *
-+ *		int captured_value = mock_capturer_get(capturer, int);
-+ *	}
-+ */
-+struct mock_param_capturer {
-+	/* private: internal use only. */
-+	struct mock_param_matcher matcher;
-+	struct mock_param_matcher *child_matcher;
-+	void *(*capture_param)(struct test *test, const void *param);
-+	void *captured_param;
-+};
-+
-+struct mock_param_capturer *mock_param_capturer_create(
-+		struct test *test,
-+		struct mock_param_matcher *child_matcher,
-+		void *(*capture_param)(struct test *, const void *));
-+
-+/**
-+ * mock_int_capturer_create() - creates a int parameter capturer
-+ * @test: associated test
-+ * @child_matcher: matcher used to match the integer
-+ *
-+ * The capturer will capture the value if the matcher is satisfied.
-+ */
-+struct mock_param_capturer *mock_int_capturer_create(
-+		struct test *test, struct mock_param_matcher *child_matcher);
-+
-+/**
-+ * mock_int_capturer_create() - creates a generic pointer parameter capturer
-+ * @test: associated test
-+ * @child_matcher: matcher used to match the pointer
-+ *
-+ * The capturer will capture the value if the matcher is satisfied
-+ */
-+struct mock_param_capturer *mock_ptr_capturer_create(
-+		struct test *test, struct mock_param_matcher *child_matcher);
-+
-+/**
-+ * capturer_to_matcher()
-+ * @capturer: the param capturer
-+ *
-+ * Use this function when passing a capturer into an EXPECT_CALL() where a
-+ * matcher would be expected. See the example for &struct mock_param_capturer.
-+ */
-+#define capturer_to_matcher(capturer) (&(capturer)->matcher)
-+
-+/**
-+ * TEST_ASSERT_PARAM_CAPTURED(): Asserts that a parameter has been captured.
-+ * @test: the associated test
-+ * @capturer: the param capturer
-+ *
-+ * See &struct mock_param_capturer for an example.
-+ */
-+#define TEST_ASSERT_PARAM_CAPTURED(test, capturer)			       \
-+		TEST_ASSERT(test,					       \
-+		       !IS_ERR_OR_NULL((capturer)->captured_param),	       \
-+		       "Asserted " #capturer " captured param, but did not.")
-+
-+/**
-+ * mock_capturer_get(): Returns the value captured by ``capturer``
-+ * @capturer: the param capturer
-+ * @type: the type of the value
-+ *
-+ * See &struct mock_param_capturer for an example.
-+ */
-+#define mock_capturer_get(capturer, type) \
-+		CONVERT_TO_ACTUAL_TYPE(type, (capturer)->captured_param)
-+
- struct mock_action *invoke(struct test *test,
- 			   void *(*invokable)(struct test *,
- 					      const void *params[],
-diff --git a/kunit/common-mocks.c b/kunit/common-mocks.c
-index ce0159923814d..62528b7df83c6 100644
---- a/kunit/common-mocks.c
-+++ b/kunit/common-mocks.c
-@@ -323,6 +323,84 @@ struct mock_param_matcher *test_struct_cmp(
- 	return &matcher->matcher;
+ 	catcher = current->thread.fault_catcher;
+-	if (catcher && current->thread.is_running_test)
++	if (catcher && current->thread.is_running_test) {
++		/*
++		 * TODO(b/77223210): Right now we don't have a way to store a
++		 * copy of the stack, or a copy of information from the stack,
++		 * so we need to print it now; otherwise, the stack will be
++		 * destroyed by segv_run_catcher which works by popping off
++		 * stack frames.
++		 */
++		show_stack(NULL, NULL);
+ 		segv_run_catcher(catcher, (void *) address);
++	}
+ 	else if (!is_user && (address >= start_vm) && (address < end_vm)) {
+ 		flush_tlb_kernel_vm();
+ 		goto out;
+diff --git a/kunit/test.c b/kunit/test.c
+index 6ea60059b4918..5d78f76b421af 100644
+--- a/kunit/test.c
++++ b/kunit/test.c
+@@ -210,12 +210,17 @@ static void test_handle_test_crash(struct test *test,
+ 				   struct test_module *module,
+ 				   struct test_case *test_case)
+ {
+-	test_err(test, "%s crashed", test_case->name);
+ 	/*
+-	 * TODO(brendanhiggins@google.com): This prints the stack trace up
+-	 * through this frame, not up to the frame that caused the crash.
++	 * TODO(brendanhiggins@google.com): Right now we don't have a way to
++	 * store a copy of the stack, or a copy of information from the stack,
++	 * so we need to print it in the "trap" handler; otherwise, the stack
++	 * will be destroyed when it returns to us by popping off the
++	 * appropriate stack frames (see longjmp).
++	 *
++	 * Ideally we would print the stack trace here, but we do not have the
++	 * ability to do so with meaningful information at this time.
+ 	 */
+-	show_stack(NULL, NULL);
++	test_err(test, "%s crashed", test_case->name);
+ 
+ 	test_case_internal_cleanup(test);
  }
- 
-+static bool match_and_capture_param(struct mock_param_matcher *pmatcher,
-+				    struct test_stream *stream,
-+				    const void *param)
-+{
-+	struct mock_param_capturer *capturer =
-+			container_of(pmatcher,
-+				     struct mock_param_capturer,
-+				     matcher);
-+	struct mock_param_matcher *child_matcher = capturer->child_matcher;
-+	bool matches;
-+
-+	matches = child_matcher->match(child_matcher, stream, param);
-+	if (matches)
-+		capturer->captured_param = capturer->capture_param(stream->test,
-+								   param);
-+
-+	return matches;
-+}
-+
-+struct mock_param_capturer *mock_param_capturer_create(
-+		struct test *test,
-+		struct mock_param_matcher *child_matcher,
-+		void *(*capture_param)(struct test *, const void *))
-+{
-+	struct mock_param_capturer *capturer;
-+
-+	capturer = test_kzalloc(test, sizeof(*capturer), GFP_KERNEL);
-+	if (!capturer)
-+		return NULL;
-+
-+	capturer->matcher.match = match_and_capture_param;
-+	capturer->child_matcher = child_matcher;
-+	capturer->capture_param = capture_param;
-+	capturer->captured_param = NULL;
-+
-+	return capturer;
-+}
-+
-+static void *mock_capture_int(struct test *test, const void *param)
-+{
-+	int value = CONVERT_TO_ACTUAL_TYPE(int, param);
-+	int *pvalue;
-+
-+	pvalue = test_kzalloc(test, sizeof(*pvalue), GFP_KERNEL);
-+	if (!pvalue)
-+		return NULL;
-+	*pvalue = value;
-+
-+	return pvalue;
-+}
-+
-+struct mock_param_capturer *mock_int_capturer_create(
-+		struct test *test, struct mock_param_matcher *child_matcher)
-+{
-+	return mock_param_capturer_create(test,
-+					  child_matcher,
-+					  mock_capture_int);
-+}
-+
-+static void *mock_capture_ptr(struct test *test, const void *param)
-+{
-+	void *ptr = CONVERT_TO_ACTUAL_TYPE(void *, param);
-+	void **pptr;
-+
-+	pptr = test_kzalloc(test, sizeof(*pptr), GFP_KERNEL);
-+	*pptr = ptr;
-+
-+	return pptr;
-+}
-+
-+struct mock_param_capturer *mock_ptr_capturer_create(
-+		struct test *test, struct mock_param_matcher *child_matcher)
-+{
-+	return mock_param_capturer_create(test,
-+					  child_matcher,
-+					  mock_capture_ptr);
-+}
-+
- #define DEFINE_RETURN_ACTION_STRUCT(type_name, type)			       \
- 		struct mock_##type_name##_action {			       \
- 			struct mock_action action;			       \
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
