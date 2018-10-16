@@ -2,161 +2,146 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A798AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1680DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41283208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:59:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7B3F208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:00:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cFUw7s/a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41283208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwnX+Jxx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7B3F208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeJPIrQ (ORCPT
+        id S1727037AbeJPIsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 04:47:16 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:16638 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726883AbeJPIrQ (ORCPT
+        Tue, 16 Oct 2018 04:48:24 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38224 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbeJPIsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 04:47:16 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20181016005927epoutp049b04ad356f86f9bd4b3d4960445dd1e0~d8PF3Ynjd2593625936epoutp04K;
-        Tue, 16 Oct 2018 00:59:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20181016005927epoutp049b04ad356f86f9bd4b3d4960445dd1e0~d8PF3Ynjd2593625936epoutp04K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539651567;
-        bh=rYsH4EJWxyrAoKOKgind43v17vRu5CnLkmgllDQAdcI=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=cFUw7s/arPvSo5jI299pVH7hIZ9pqQm2NIY01A/uw70fuxJVgE5mlGPuF8N35ZPib
-         +XuQm/qgPsKkWVkJjaVhUh5YjOePQuqSm7Zfu4HspPNHI7x1nCtND/Se2RThXe+8qs
-         pewBv0KjMvcCOv73Zg51BPeeUICUbQuMn7XxLmWw=
-Received: from epsmges2p4.samsung.com (unknown [182.195.40.157]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20181016005923epcas1p376a2bbd77271f89b11c9e0efe4276182~d8PCAbfLT1733917339epcas1p3a;
-        Tue, 16 Oct 2018 00:59:23 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        13.FE.04069.BE735CB5; Tue, 16 Oct 2018 09:59:23 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20181016005923epcas2p290b02823a00f6dc4539ecb2e0ebbba8b~d8PBvIgzM0664806648epcas2p2V;
-        Tue, 16 Oct 2018 00:59:23 +0000 (GMT)
-X-AuditID: b6c32a48-e59ff70000000fe5-ce-5bc537ebef78
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        63.4C.03633.AE735CB5; Tue, 16 Oct 2018 09:59:22 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PGO004X82QY5V80@mmp1.samsung.com>; Tue, 16 Oct 2018 09:59:22 +0900 (KST)
-Message-id: <5BC537EA.9000700@samsung.com>
-Date:   Tue, 16 Oct 2018 09:59:22 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 4/6] clocksource: Change CPU hotplug priority of
- exynos_mct driver
-In-reply-to: <20181015123112.9379-5-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTmt7vdXa3lbWn9UCy74B8K1uZa3kWWkMUNIyR7kZRe3K9N9mR3
-        62WQEZlJ1MoetsqUHoQV6dQyrZRN02o5Wk3sob0sqmUvKwvS2naL/O873/nO4ZzvHAKTOvBY
-        otBoRRYjq6fwSOFld1JaSiCtI1dWfFhK11VcEtEfz+4BdOVQPH3gqV1Ie721Ytr5skdE328+
-        jtMV3hsC+mJ7n5geeTKK0/XOQxj99nOXMGM8c6HyAmCcNbtx5knPNZz50N0tZupPb2P2NtQA
-        Zsg5NVu8RjdXi1g1siQgY4FJXWjUpFNZOXkL8pSzZfIUuYpOoxKMrAGlU5lLslMWFeqDc1IJ
-        G1i9LUhlsxxHzZw312KyWVGC1sRZ0ylkVuvNKvMMjjVwNqNmRoHJMEcuk6Uqg8J8nXa7pwmY
-        z4zbVPmiHysG7ogyEEFAchZ0P3CKy0AkISWbACz++UvAB8MA1p9rxP6pvj5rF/GJFgB7z1cI
-        QwkJORH+KO8PYoLAyGmw3acL0RiZBBtbLv3t2gegPbAT8PpkeNPbGMZCMhG27DgdxniQb33T
-        i4dwFDkd+n+8DPMx5Gp49eT3cKNo0gHgvsFyEAow8q4A9l/3hysmkbkwMNARHjWCTIeu8lt4
-        SATJ3zgM/BrF+R0yYe87j5DHk+C7zgYxj+Pg65o6wBfsAvDrmx0iPrAD+Ol2vYBXKeDr6jIB
-        v90EWOoeEYeWhqQElpZIeQkDjxyq/WuSG8C+e2WYHcQ7xvjk+O+TY4xPVQCrAZORmTNoEJdq
-        njX2gk4Q/stkpgm0dS9xAZIA1HhJlb89VypiN3CbDS4ACYyKluQ/DlISNbt5C7KY8iw2PeJc
-        QBm0eT8WG1NgCn650ZonV6YqFApamaZSyFTUFMnzuBO5UlLDWpEOITOy/KsTEBGxxaDBl3XK
-        48r8fiwwuHJ94qqWF4t9BlTUeaxn7YCztdS/bH5nka9oxcYrmoW+yuWaqNVfHNIbuu2Lba+O
-        fnNloNpVw8ZA88dqz2fBOoFrzmCJO7PxctL7mep4VdYjz5DUG/nFudSxdatde+dc23D8lpyu
-        hwe3+bInFrSO9Efdj/Z7d1JCTsvKkzELx/4Bh3wAlq0DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42I5/e+xgO4r86PRBhN+2VhsnLGe1eL9sh5G
-        i3mfZS0m3Z/AYnH+/AZ2i02Pr7FaXN41h81ixvl9TBZrj9xlt/h75x+bxeZNU5ktXn48weLA
-        47Fm3hpGj02rOtk87lzbw+bx7tw5do/NS+o9+rasYvT4vEkugD2KyyYlNSezLLVI3y6BK6Px
-        zA7GgqXcFfMe3WNuYDzM2cXIySEhYCLx5cER1i5GLg4hgZ2MEi+mTGYGSfAKCEr8mHyPpYuR
-        g4NZQF7iyKVskDCzgLrEpHmLmCHq7zNKHNxxmQWiXkvi2PmtjCA2i4CqxO7mJWA2G1B8/4sb
-        bCA2v4CixNUfjxlBZooKREh0n6gEmSMiMItR4nnvCjaIBReZJH7cB7tBWCBa4vWTo1DLDjNK
-        fFreD7aMU8BW4tDkk2wTGIFaEW6dhXDrLCS3LmBkXsUomVpQnJueW2xUYJSXWq5XnJhbXJqX
-        rpecn7uJERgv2w5r9e9gfLwk/hCjAAejEg/vgqtHooVYE8uKK3MPMUpwMCuJ8CbcBgrxpiRW
-        VqUW5ccXleakFh9ilOZgURLn5c8/FikkkJ5YkpqdmlqQWgSTZeLglGpgzPpuyphYwWM2X/9R
-        66e6t0VsSokJWyRz7pvL/Ik20ErJ7v1Uxy5qtGqr4Tnt5ap/D6To2xmpWTz4qPpmzowrfAYH
-        mq9GtuU3L/U8/2Fu/4qPrsdS/zJtYlt37J3k5nd2hj8nWsxkd7p/0q8jl/dd2lHjSQGuL4++
-        47oseHKbnrTJqxk/H2ktUGIpzkg01GIuKk4EAEwf2mGTAgAA
-X-CMS-MailID: 20181016005923epcas2p290b02823a00f6dc4539ecb2e0ebbba8b
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20181015123136eucas1p2f7d4ae86ba3547b891749b01514cd335
-References: <20181015123112.9379-1-m.szyprowski@samsung.com>
-        <CGME20181015123136eucas1p2f7d4ae86ba3547b891749b01514cd335@eucas1p2.samsung.com>
-        <20181015123112.9379-5-m.szyprowski@samsung.com>
+        Tue, 16 Oct 2018 04:48:23 -0400
+Received: by mail-qt1-f193.google.com with SMTP id l9-v6so23803522qtf.5;
+        Mon, 15 Oct 2018 18:00:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i15KWysMeu4MH4r+I0X38zhZQetTV9oaA0Pq1P90Bwg=;
+        b=SwnX+JxxzlP9TyWn9C9H2rGdmRQ1J52lNGTpROsb8U4j2Mb5XGJv0XnzTVTZRHGtd+
+         RZIdaOOx49UQ2S4wZds7q55+BEZjHuNJwD+zeUPpogx2o+hvmpU6sVIars1v13YZL4Id
+         DAA7XpOd2Fd/8Ilf6rIVpA+F2/5Al73hpTBcYyrGsUVJAYQHGoGVKrxwt1yt/rcapqra
+         QNcU/Pd8ptmZWXnwTMrktTPeoay5RLxHKQXwovjVRzW8sRhFS2eCUmayaVmgYOjUCaZd
+         aHOAASXbt6gT/ty0NI+zhvkYbhLRWhgvDk/LN1nlQgfP49L3Q/Xww8kAZxq2cofTvLBM
+         h2uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i15KWysMeu4MH4r+I0X38zhZQetTV9oaA0Pq1P90Bwg=;
+        b=QZfS7/Y/DJQBbO1OYi/kH9siMsWjmZrtGo6Upma5srcWe/QfD8knZCyHNSRbNWB0eG
+         Skt9peMNaVoedXr0rgIveATgamLJbbpEI77qTglmF8maFHm/JUnldQCfd75C3t5aqWoI
+         8UdcW3RBOif8dxalF9d9x6kPqnVHYeoyiSfZJz4VQMZoLnby0pBscOyrQr9pPO/q5h9n
+         pYrHt6CIWnuO1YriN0t8/5DnZxzETJGpjmrfEfcYSDPYJxhja8OUauAjBsKol8LKrR+H
+         h//+MHsAOyLfmI0TN4XkyZS/CLIpzG8WVUV7bjgdLK6QBzhaw7b48UZjfP9vE60Gf+f3
+         aGXQ==
+X-Gm-Message-State: ABuFfoheYlsk80490fZ5jmjc4cETPFrrdlSP6nSNof9+KSG6aMVj5ON8
+        7vYiN/kMj5J3I/jIzhRPYphwAZGta08lLr1Gtw==
+X-Google-Smtp-Source: ACcGV63He/VXYAWUeDldpxkRKk3Yj/vWLbp8t1TDuXZnwsG0V24hkdJ+bJFvhJlyxVO6IAUBxcOWkUSffw/Tavh17ZQ=
+X-Received: by 2002:a0c:ade7:: with SMTP id x36mr4142659qvc.218.1539651636139;
+ Mon, 15 Oct 2018 18:00:36 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181015192546.15faf3a1@canb.auug.org.au> <20181015182637.GA16445@roeck-us.net>
+ <20181016071240.3f62816d@canb.auug.org.au> <CAL_Jsq+DAEEa6i9xb-9MMSxu-znc9tZLZwFRADqE+kcxQYXrTg@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+DAEEa6i9xb-9MMSxu-znc9tZLZwFRADqE+kcxQYXrTg@mail.gmail.com>
+From:   Rob Herring <robherring2@gmail.com>
+Date:   Mon, 15 Oct 2018 20:00:24 -0500
+Message-ID: <CAL_Jsq+t2ZXhtzN0KnnU1jn+JZE3Spfgm8jT60jx8j8gEEKjFQ@mail.gmail.com>
+Subject: Re: linux-next: Tree for Oct 15
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        linux-next <linux-next@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018년 10월 15일 21:31, Marek Szyprowski wrote:
-> Exynos Multi-Core Timer driver (exynos_mct) must be started before
-> ARM Architected Timers (arch_timer), because both timers share common
-> hardware block and turning on MCT is needed to get ARM Architected
-> Timer working properly.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  include/linux/cpuhotplug.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-> index caf40ad0bbc6..5d9e4a6ea299 100644
-> --- a/include/linux/cpuhotplug.h
-> +++ b/include/linux/cpuhotplug.h
-> @@ -115,10 +115,10 @@ enum cpuhp_state {
->  	CPUHP_AP_PERF_ARM_ACPI_STARTING,
->  	CPUHP_AP_PERF_ARM_STARTING,
->  	CPUHP_AP_ARM_L2X0_STARTING,
-> +	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
->  	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
->  	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
->  	CPUHP_AP_JCORE_TIMER_STARTING,
-> -	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
->  	CPUHP_AP_ARM_TWD_STARTING,
->  	CPUHP_AP_QCOM_TIMER_STARTING,
->  	CPUHP_AP_ARMADA_TIMER_STARTING,
-> 
++davem
 
-On Exynos SoC, ARM architecture timer shares the block of Exynos MCT timer.
-For using arch_timer, Exynos MCT timer should be initialized before arch_timer.
-I agree about this.
+On Mon, Oct 15, 2018 at 3:35 PM Rob Herring <robherring2@gmail.com> wrote:
+>
+> On Mon, Oct 15, 2018 at 3:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi Guenter,
+> >
+> > [Just cc'ing the PPC and devicetree folks]
+> >
+> > On Mon, 15 Oct 2018 11:26:37 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+> > >
+> > > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
+> > > >
+> > > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
+> > >
+> > > Same here. Interestingly, this only affects little endian pseries
+> > > boots; big endian works fine. I'll try to bisect later.
+> > >
+> > > ALl ppc qemu tests (including big endian pseries) also generate a warning.
+> > >
+> > > WARNING: CPU: 0 PID: 0 at mm/memblock.c:1301 .memblock_alloc_range_nid+0x20/0x68
+> > > Modules linked in:
+> > > CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc7-next-20181015 #1
+> > > NIP:  c000000000f99198 LR: c000000000f99490 CTR: c000000000bb8364
+> > > REGS: c000000001217a78 TRAP: 0700   Not tainted  (4.19.0-rc7-next-20181015)
+> > > MSR:  0000000080021000 <CE,ME>  CR: 24000422  XER: 20000000
+> > > IRQMASK: 1
+> > > GPR00: c000000000f99490 c000000001217d00 c00000000121a500 00000000000000c0
+> > > GPR04: 0000000000000000 0000000000000000 0000000000000000 ffffffffffffffff
+> > > GPR08: 0000000000000000 00000000000000c0 0000000000000018 00000000000000b7
+> > > GPR12: 0000000000000040 c000000000fe7840 0000000000000000 0000000000000000
+> > > GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > GPR28: c000000000000304 c000000001262088 00000000000000c0 c000000000fea500
+> > > NIP [c000000000f99198] .memblock_alloc_range_nid+0x20/0x68
+> > > LR [c000000000f99490] .memblock_alloc_base+0x18/0x48
+> > > Call Trace:
+> > > [c000000001217d00] [c000000002a00000] 0xc000000002a00000 (unreliable)
+> > > [c000000001217d80] [c000000000f99490] .memblock_alloc_base+0x18/0x48
+> > > [c000000001217df0] [c000000000f7a274] .allocate_paca_ptrs+0x3c/0x74
+> > > [c000000001217e70] [c000000000f78bf0] .early_init_devtree+0x288/0x320
+> > > [c000000001217f10] [c000000000f79b6c] .early_setup+0x80/0x130
+> > > [c000000001217f90] [c000000000000528] start_here_multiplatform+0x68/0x80
+> > >
+> > >
+> > > sparc images crash, starting with next-20181009. Bisect with
+> > > next-201810112 points to the merge of devicetree/for-next, though
+> > > devicetree/for-next itself does not have the problem (bisect log
+> > > attached below). The crash is in devicetree code.
+> > >
+> > > Crash logs:
+> > > https://kerneltests.org/builders/qemu-sparc64-next/builds/981/steps/qemubuildcommand_1/logs/stdio
+> > > https://kerneltests.org/builders/qemu-sparc-next/builds/975/steps/qemubuildcommand_1/logs/stdio
+>
+> The sparc crash appears to be related to changes I made. Looking into it.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+The problem is a combination of commit 0b9871a3a8cc ("sparc: Convert
+to using %pOFn instead of device_node.name") and commit 6d0a70a284be
+("vsprintf: print OF node name using full_name"). The Sparc functions
+in prom_*.c can't use %pOFn to ultimately construct full_name as %pOFn
+is derived from full_name. Reverting the former commit gets QEMU
+booting again.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+David, Can you revert commit 0b9871a3a8cc. I'll have to find another approach.
+
+Rob
