@@ -2,109 +2,112 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4258C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E02C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9114D20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:42:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9114D20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id 7311520869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:45:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JL9nF9M/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7311520869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbeJPUck (ORCPT
+        id S1727051AbeJPUft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 16:32:40 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:36682 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727042AbeJPUck (ORCPT
+        Tue, 16 Oct 2018 16:35:49 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:40252 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbeJPUft (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 16:32:40 -0400
-Received: from mr1.cc.vt.edu (inbound.smtp.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w9GCgMPE018752
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 08:42:22 -0400
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w9GCgHm6011424
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 08:42:22 -0400
-Received: by mail-qt1-f200.google.com with SMTP id q48-v6so24077133qte.11
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 05:42:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:date:message-id;
-        bh=jrfxm+D/M+FIPBzak4i2H/bMQJvCd5PXWgk6ISzMjSw=;
-        b=qAZOXvcZkk6pkv4vXYNp2Nz1Sioq+fQWXXUOISLns2IP5dQSpXSptvODM+JFdnH+a0
-         3VMPQ6BePGvMiuZb2GaXHcDgarkY0BAwmVV9C95/BB2XYG9jDID2ikHV6V9tPeHun4+f
-         98YgI+ywhOg/V7LH38LKm+VVFu7k1DS5WY0qQKPqrkHpts5hZZI+h3rQD2zY1NrXB1Q+
-         COngJHGLEblsrKKg7imWqozn/llAWPN1cT0Og0L58l0Ln4Gr/Xn6PlSgssOqrFelI0JO
-         eygUa1H1DrgTJFf9Y/NQfDoB1CVWOfRfAivJ9cv2zChO8g8YgTblraABMTOfqFDbN6hO
-         QPYg==
-X-Gm-Message-State: ABuFfoizbdQJ2wJ228SE+aQRy3BuoE9VoYDie0KUY/I6LNBMqrG+YRrh
-        WL53iuWe66ko7dSh/3ILbULuMrtr62QeWrMzsaAI7Q0fYA7gU3FXegl8o/NrCkZDT57Cac51iqM
-        Q/ryei6Cw0y0uJzra6jEofC5GOaFCtispz6s=
-X-Received: by 2002:ac8:276a:: with SMTP id h39-v6mr15152689qth.274.1539693737148;
-        Tue, 16 Oct 2018 05:42:17 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV63pz+OZk1sDRixOCIZ6CKflT2LILkYZsfNLi8pChzVb/SZ9JYjJGvYZausZqzEjdPmUmCkOEQ==
-X-Received: by 2002:ac8:276a:: with SMTP id h39-v6mr15152658qth.274.1539693736745;
-        Tue, 16 Oct 2018 05:42:16 -0700 (PDT)
-Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4340::377])
-        by smtp.gmail.com with ESMTPSA id k14-v6sm10795271qtk.28.2018.10.16.05.42.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 05:42:15 -0700 (PDT)
-From:   valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-cc:     Dennis Zhou <dennisszhou@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [BUG] ext4/block null pointer crashes in linux-next
-In-reply-to: <20181016015201.GB18547@thunk.org>
-References: <13987.1539646128@turing-police.cc.vt.edu>
- <20181016015201.GB18547@thunk.org>
-Mime-Version: 1.0
+        Tue, 16 Oct 2018 16:35:49 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9GChoMq112206;
+        Tue, 16 Oct 2018 12:44:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=53G3jIaewNyix2sT8B4NyZbCJiytr2VwuelpVGz1FTg=;
+ b=JL9nF9M/B3jB371z29Jb+P+yWjW+AyeIPtQU7y1YegtnNjyWrcHp2zEGzQ9r8R1plLDT
+ S+McWHKENkRaz1ffin+XsCjTcEogGRtDPK2PpHH9R+nmG3Q64Nw5BdnAzW4ftTrQxnQc
+ qi2H6rPjBHEGHhcvFN3h+iesWxretL/zf7ZLoej+SYVKw7+YlAjo9PC/kJsbAwzYwqda
+ m0O8U5xpGy+Du5aFfvwjWhxA7TZ3ea21GMUr96CaaWCSI8cViJax0N0d4HfP7K6YIe4N
+ rXrcbylzbMAkxXspze1IVQW4hJvVvWIzlgqOu3hlkQQ6c7es6UGlo28KCnRw6fk9fi1i NA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2n384u0hbs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Oct 2018 12:44:19 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9GCiJUB021843
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Oct 2018 12:44:19 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9GCiGj0014203;
+        Tue, 16 Oct 2018 12:44:16 GMT
+Received: from mwanda (/129.205.6.86)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 16 Oct 2018 05:44:15 -0700
+Date:   Tue, 16 Oct 2018 15:44:04 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Gabriel Capella <gabriel@capella.pro>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: Re: [PATCH] staging: iio: adc: Add comments to prevent checks
+ corrections
+Message-ID: <20181016124404.fyzau4pd7wq6r7js@mwanda>
+References: <20181015212521.GA24512@mantaray>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Date:   Tue, 16 Oct 2018 08:42:14 -0400
-Message-ID: <66480.1539693734@turing-police.cc.vt.edu>
+Content-Disposition: inline
+In-Reply-To: <20181015212521.GA24512@mantaray>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9047 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=985
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810160109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Oct 2018 21:52:01 -0400, "Theodore Y. Ts'o" said:
-> Given the commit that it bisected down to, I very much doubt it has
-> anything to do with a specific directory or pathname.  Either you or
-> your distribution has enabled blk cgroup for I/O throttling, and
+On Mon, Oct 15, 2018 at 06:25:21PM -0300, Gabriel Capella wrote:
+> This patch adds 3 comments in 2 different files.
+> These comments warn to don't correct the checks of type:
+> "CHECK: spaces preferred around that '-'"
+> 
+> Signed-off-by: Gabriel Capella <gabriel@capella.pro>
+> ---
+>  drivers/staging/iio/adc/ad7192.c  | 1 +
+>  drivers/staging/iio/adc/ad7280a.c | 2 ++
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/staging/iio/adc/ad7192.c b/drivers/staging/iio/adc/ad7192.c
+> index acdbc07fd259..786ace19c240 100644
+> --- a/drivers/staging/iio/adc/ad7192.c
+> +++ b/drivers/staging/iio/adc/ad7192.c
+> @@ -354,6 +354,7 @@ ad7192_show_scale_available(struct device *dev,
+>  	return len;
+>  }
+>  
+> +/* Do not put spaces around the hyphen. #checkpatch.pl */
+>  static IIO_DEVICE_ATTR_NAMED(in_v_m_v_scale_available,
+>  			     in_voltage-voltage_scale_available,
+>  			     0444, ad7192_show_scale_available, NULL, 0);
 
-Bingo.
+No one will read that...  :(  It has to be on the same line.
 
-[~] zgrep CGROUP /proc/config.gz 
-CONFIG_CGROUPS=y
-CONFIG_BLK_CGROUP=y
-# CONFIG_DEBUG_BLK_CGROUP is not set
-(...)
-
-> there's some race that you're tripping across.  What ext4 file or
-> directory happens to be accessed when you trip across the problem is
-> probably just pure luck.
-
-I'm suspecting that my repeatable crash with rpm just does a *really*
-good job of setting up the race.
-
-> If you can disable the block I/O throttling configuration (which may
-> very well be distro-specific), the problem will probably go away.  I
-> don't use blkcg at all, personally, and on a personal laptop
-> (especially if you have an SSD), I really don't see the point.
-
-I often turn on new features just to watch the sparks fly.
-
-> Still, I'm sure the people who *do* use blkcg for real (mostly in data
-> centers, in my experience) will probably thank you for being a great
-> guinea pig.  :-)
-
-It's why I build a linux-next kernel every week. ;)
-
-Looks like I should enable DEBUG_BLK_CGROUP and see what that says.
+regards,
+dan carpenter
 
