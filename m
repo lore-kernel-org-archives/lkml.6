@@ -2,169 +2,146 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0738C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E44DAC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89A26208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:30:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="C40yAATK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A26208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	by mail.kernel.org (Postfix) with ESMTP id B5E9D208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:31:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5E9D208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbeJPXVF (ORCPT
+        id S1727213AbeJPXWW convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 19:21:05 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55712 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbeJPXVE (ORCPT
+        Tue, 16 Oct 2018 19:22:22 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:45473 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbeJPXWW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:21:04 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 206-v6so22905136wmb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 08:30:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OC2yBX4ecwtUPB3o2eH1Ejris9XvElnftBOJQletE3I=;
-        b=C40yAATKGMRCgZZ2UQOCVDCab/nHriTz08vbnrCsgONFgiShZUHnHj5bTHQV5p5m5T
-         ICfcuj95QvUF9VLY1UQNW2HR/YWq8HfZ9sjUpPHpaayoXQxcT3Cj9ka75GJ7/eWmsbHw
-         RinwgrjFq5cWAi29fVd1SY0zhUQxzSlXc8k9qEFBFrKP2I7vq7DO5V9fN+SUFi/tnmGn
-         YaoHv8eygWY0eGdoA2YM1ShHt1QOa+Y2T86BSE3QkXCVlHrrOGZtyNU/z6hY2h3zdDT2
-         6iOqJlquPL9nYDngXJ6qjXo0coWdyNdFPs42s4fN3FdxGzAZPnOSiuHQ3C1Ht+tOBw/l
-         OySg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OC2yBX4ecwtUPB3o2eH1Ejris9XvElnftBOJQletE3I=;
-        b=hYtCwPUZhnCbB+5RXD+/cQ5Hd1NRidvxnL8u7ynnDqw0AqvBXehI3DU+5ITNH0I/J4
-         gHf9VuORFSrMV2eGl8DChVsMFLi9gBjIYaiRIpKNKL0aHxoRfpHIhWYIOFThNafwM/qB
-         Sd8H9wHdZ26wA+Crm3KHTcbzAWmgynjeSoL+/MuVBXUJYEMVeadCA0q/wHWEauoUKeKi
-         uxWqPlRHOSYme5yz9Wx91bjGiZ9oOybDk23a8qdLgTbl0sczeSLsil29FUqPFaBNFi/9
-         odoU/UjgeXdJRRetZpja93r2LTWUvtO+MW+v/1lvQgl+9FNxnknCfZB6R5wjmE8bSgpg
-         0KvA==
-X-Gm-Message-State: ABuFfohgvTj+UjRxoPRXptKZvklEP7yt1DXn30T2oMISKJbcGa+LqGyy
-        r64n4an0qceQpbLzhAcK1hzynw==
-X-Google-Smtp-Source: ACcGV60c+s34M8N2lR8D5do+0Z0SJWhZ1YYV0NIx70kwepCK8IRqbsq3c88o52IIzpCDR+Y5+5uq/g==
-X-Received: by 2002:a1c:1b91:: with SMTP id b139-v6mr17234151wmb.147.1539703803169;
-        Tue, 16 Oct 2018 08:30:03 -0700 (PDT)
-Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
-        by smtp.gmail.com with ESMTPSA id e142-v6sm34599191wmf.20.2018.10.16.08.30.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 08:30:01 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 17:29:56 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Waiman Long <longman@redhat.com>
-Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, mcgrof@kernel.org,
-        akpm@linux-foundation.org, joe.lawrence@redhat.com,
-        linux@dominikbrodowski.net, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v1 2/2] sysctl: handle overflow for file-max
-Message-ID: <20181016152955.vcjtzcx5rzlxeovh@brauner.io>
-References: <20181015105544.4395-1-christian@brauner.io>
- <20181015105544.4395-3-christian@brauner.io>
- <22319ca1-6dab-fe36-40d5-9c88f7a175ee@redhat.com>
- <20181016152100.zg2pmyk6puc5qsr5@brauner.io>
- <11e172de-0953-2c46-c0f0-72c42ae9a910@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <11e172de-0953-2c46-c0f0-72c42ae9a910@redhat.com>
-User-Agent: NeoMutt/20180716
+        Tue, 16 Oct 2018 19:22:22 -0400
+Received: from marcel-macbook.fritz.box (p4FF9F655.dip0.t-ipconnect.de [79.249.246.85])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 36510CEE16;
+        Tue, 16 Oct 2018 17:38:44 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: [PATCH v2] Bluetooth: hci_qca: Add support for controller debug
+ logs.
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <540262ec6c6f1c5f3a9baf18b6f40d47@codeaurora.org>
+Date:   Tue, 16 Oct 2018 17:31:21 +0200
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Harish Bandi <c-hbandi@codeaurora.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <9261133E-226E-42E7-B2F6-15489CCC7CF1@holtmann.org>
+References: <20181003151144.10537-1-bgodavar@codeaurora.org>
+ <2206464E-FA01-4A5A-8BC4-5CF70A0B9765@holtmann.org>
+ <eca6c8832017269881709e51eadcf543@codeaurora.org>
+ <EC27FDED-638A-4055-A861-C4AAD842F124@holtmann.org>
+ <fed90ab28af93bc27a07c0b4e8ca933c@codeaurora.org>
+ <01616379-E0FF-49AC-8C69-DA498DA9F51F@holtmann.org>
+ <540262ec6c6f1c5f3a9baf18b6f40d47@codeaurora.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+X-Mailer: Apple Mail (2.3445.100.39)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 11:25:42AM -0400, Waiman Long wrote:
-> On 10/16/2018 11:21 AM, Christian Brauner wrote:
-> > On Tue, Oct 16, 2018 at 11:13:28AM -0400, Waiman Long wrote:
-> >> On 10/15/2018 06:55 AM, Christian Brauner wrote:
-> >>> Currently, when writing
-> >>>
-> >>> echo 18446744073709551616 > /proc/sys/fs/file-max
-> >>>
-> >>> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
-> >>> crashes the system.
-> >>> This commit explicitly caps the value for file-max to ULONG_MAX.
-> >>>
-> >>> Note, this isn't technically necessary since proc_get_long() will already
-> >>> return ULONG_MAX. However, two reason why we still should do this:
-> >>> 1. it makes it explicit what the upper bound of file-max is instead of
-> >>>    making readers of the code infer it from proc_get_long() themselves
-> >>> 2. other tunebles than file-max may want to set a lower max value than
-> >>>    ULONG_MAX and we need to enable __do_proc_doulongvec_minmax() to handle
-> >>>    such cases too
-> >>>
-> >>> Cc: Kees Cook <keescook@chromium.org>
-> >>> Signed-off-by: Christian Brauner <christian@brauner.io>
-> >>> ---
-> >>> v0->v1:
-> >>> - if max value is < than ULONG_MAX use max as upper bound
-> >>> - (Dominik) remove double "the" from commit message
-> >>> ---
-> >>>  kernel/sysctl.c | 4 ++++
-> >>>  1 file changed, 4 insertions(+)
-> >>>
-> >>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> >>> index 97551eb42946..226d4eaf4b0e 100644
-> >>> --- a/kernel/sysctl.c
-> >>> +++ b/kernel/sysctl.c
-> >>> @@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
-> >>>  static int __maybe_unused two = 2;
-> >>>  static int __maybe_unused four = 4;
-> >>>  static unsigned long one_ul = 1;
-> >>> +static unsigned long ulong_max = ULONG_MAX;
-> >>>  static int one_hundred = 100;
-> >>>  static int one_thousand = 1000;
-> >>>  #ifdef CONFIG_PRINTK
-> >>> @@ -1696,6 +1697,7 @@ static struct ctl_table fs_table[] = {
-> >>>  		.maxlen		= sizeof(files_stat.max_files),
-> >>>  		.mode		= 0644,
-> >>>  		.proc_handler	= proc_doulongvec_minmax,
-> >>> +		.extra2		= &ulong_max,
-> >> What is the point of having a maximum value of ULONG_MAX anyway? No
-> >> value you can put into a ulong type can be bigger than that.
-> > This is changed in the new code to LONG_MAX. See the full thread for
-> > context. There's also an additional explantion in the commit message.
-> >
-> >>>  	},
-> >>>  	{
-> >>>  		.procname	= "nr_open",
-> >>> @@ -2795,6 +2797,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
-> >>>  				break;
-> >>>  			if (neg)
-> >>>  				continue;
-> >>> +			if (max && val > *max)
-> >>> +				val = *max;
-> >>>  			val = convmul * val / convdiv;
-> >>>  			if ((min && val < *min) || (max && val > *max))
-> >>>  				continue;
-> >> This does introduce a change in behavior. Previously the out-of-bound
-> >> value is ignored, now it is capped at its maximum. This is a
-> >> user-visible change.
-> > Not completely true though. Try
-> >
-> > echo 18446744073709551616 > /proc/sys/fs/file-max
-> >
-> > on a system you find acceptable loosing.
-> > So this is an acceptable user-visible change I'd say. But I'm open to
-> > other suggestions.
+Hi Balakrishna,
+
+>>>>>>> This patch will prevent error messages splashing on console.
+>>>>>>> [   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+>>>>>>> [   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+>>>>>>> [   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+>>>>>>> [   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+>>>>>>> QCA wcn3990 will send the debug logs in the form of ACL packets.
+>>>>>>> While decoding packet in qca_recv(), marking the received debug log
+>>>>>>> packet as diagnostic packet.
+>>>>>>> Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
+>>>>>>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>>>>>>> ---
+>>>>>>> v2:
+>>>>>>> * Addressed reviewer comments.
+>>>>>>> v1:
+>>>>>>> * initial patch
+>>>>>>> ---
+>>>>>>> drivers/bluetooth/hci_qca.c | 20 +++++++++++++++++++-
+>>>>>>> 1 file changed, 19 insertions(+), 1 deletion(-)
+>>>>>>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>>>>>>> index d98ed0442201..63ac3c6b4149 100644
+>>>>>>> --- a/drivers/bluetooth/hci_qca.c
+>>>>>>> +++ b/drivers/bluetooth/hci_qca.c
+>>>>>>> @@ -63,6 +63,10 @@
+>>>>>>> /* susclk rate */
+>>>>>>> #define SUSCLK_RATE_32KHZ	32768
+>>>>>>> +/* Controller debug log header */
+>>>>>>> +#define QCA_DEBUG_HDR_MSB	0xDC
+>>>>>>> +#define QCA_DEBUG_HDR_LSB	0x2E
+>>>>>>> +
+>>>>>> since this is actually the ACL handle, why not call it QCA_DEBUG_HANDLE.
+>>>>> [Bala]: will update.
+>>>>>>> /* HCI_IBS transmit side sleep protocol states */
+>>>>>>> enum tx_ibs_states {
+>>>>>>> 	HCI_IBS_TX_ASLEEP,
+>>>>>>> @@ -849,6 +853,20 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, struct sk_buff *skb)
+>>>>>>> 	return 0;
+>>>>>>> }
+>>>>>>> +static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff *skb)
+>>>>>>> +{
+>>>>>>> +	/* We receive debug logs from chip as an ACL packets.
+>>>>>>> +	 * Instead of sending the data to ACL to decode the
+>>>>>>> +	 * received data, we are pushing them to the above layers
+>>>>>>> +	 * as a diagnostic packet.
+>>>>>>> +	 */
+>>>>>>> +	if ((skb->len > 2) && (skb->data[0] == QCA_DEBUG_HDR_MSB) &&
+>>>>>>> +	    (skb->data[1] == QCA_DEBUG_HDR_LSB))
+>>>>>> Skip the individual () since they are not needed. Also the skb->len
+>>>>>> check is not needed since the H4_RECV_ACL already ensures the proper
+>>>>>> length of the header.
+>>>>>> And just use get_unaligned_le16(skb->data) here (or be16 if that is
+>>>>>> the byte order).
+>>>>> [Bala] : will update condition with _le16()
+>>>>>>> +		return hci_recv_diag(hdev, skb);
+>>>>>> Is there any reason to keep the 4 octets hci_acl_hdr with this SKB? Or
+>>>>>> would it be better to be stripped off. Mainly asking are they any
+>>>>>> other magic handles that we might want to feed through the diag
+>>>>>> channel?
+>>>>> [Bala]: yes we need header in the stack, to  differentiate between actual diagnostic packet and debug packet.
+>>>> please explain that a bit more. There is just one debug handle or do
+>>>> you have more special handles?
+>>> [Bala]: Qualcomm bluetooth chip sends the debug data of the chip with ACL header along with fixed handler i.e. 0x2edc..
+>>>       this handler is dedicated for the debug logs sent by qcomm bt chip and it is not used for any other connection handlers.
+>>>       so here we are checking this handler and sending to stack as an
+>>>       a diagnostic packet.. so during the log capture we will read this diagnostic packet and handler,to decode the debug packet.
+>>>       that is the  reason why we don't remove handler during condition check,  in future, if qualcomm chip sends diagnostic packet,
+>>>       then this will create an problem to upper layers to decide whether it is an diagnostic packet or the debug packet.
+>>>      this is how we do it.
+>>>     if( diagnostic packet && handler == 0x2edc)
+>>>        treat them as an ddebug packet
+>>>     else
+>>>         treat as diagnostic packet.
+>> let me interpret this answer. Besides debug handle 0x2edc, there are
+>> other handles that are not connection handles. And in future updates
+>> you want to send these handles also via hci_recv_diag channel.
 > 
-> I am not saying this is unacceptable. I just say this is a user-visible
-> change and so should be documented somehow. BTW, you cap the max value,
+> No, 0x2edc is an dedicated handle for debug logs, i don't really think they we will have an new handle coming up.
+> this is only the handle we will send via hci_recv_diag channel to the stack.
+> 
+> what i mean in my previous answer was,we don't to remove debug connection handle from the skb, because in the stack
+> we look for a diagnostic packet and debug connection handler to decode the message.
 
-Sure, I'll update linux manpages and I can CC stable on the next round.
+if 0x2edc is the only magic connection handle, then lets strip the SKB of the ACL packet header and send only the payload to via hci_recv_diag. All the information is present and you would be just sending the ACL packet header for no reason. The diagnostic packets get a separate channel on the monitor interface.
 
-> but not the min value. So there is inconsistency. I would say you either
-> do both, or none of them.
+Regards
 
-The min value is 0. I don't think it needs to be set explicitly. I just
-kept the max value because it is != ULONG_MAX but LONG_MAX for file-max.
+Marcel
+
