@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7AEC070C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54779C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E763821470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13D4B21470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="liqvVc0Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E763821470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QE8ZHQHI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13D4B21470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730167AbeJPMEj (ORCPT
+        id S1730185AbeJPMEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:04:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53578 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:04:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728480AbeJPMEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:04:38 -0400
+        id S1728480AbeJPMEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:04:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A06D214AB;
-        Tue, 16 Oct 2018 04:16:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE05E21470;
+        Tue, 16 Oct 2018 04:16:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663374;
-        bh=gqRIGy/Z0Cfljg1QGjyVV3z967UfS3yBPOS0S47xkoU=;
+        s=default; t=1539663376;
+        bh=GsD6ctP03FD62Ea9/RAh2GsVtdVLrDcMp72zmlYsUnA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=liqvVc0QPJl7R/eC0CIEdp/DCSkcj8HaWE2Po5W42xVt0IxNfzRbUy5w8NgERKCUW
-         UNdl+G/ekrZkV31bNp355ytmT/yX9FXUn5TU5Ggury2FQ8i+1KhW95dWMsU+EolaW6
-         UFQFFMlPTKT+XWDqsa0qUA6uGz+WYrrNoOJMCfgo=
+        b=QE8ZHQHIPblUNPQPDWzO+IpExCdserQ0ZWZbJ98ydZzq6KEjB8jom3SLSa0+zig1z
+         PX93o52ZCfPAkm61KRkTvRGEfrHcO7OdsNylcTerScHVdjuBWnQVz0O8EFd7pfbNUd
+         3zh5+jtbh9vXgD8hvrofaRVg4CYhg03B7uncN8Zg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sean Tranchetti <stranche@codeaurora.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+Cc:     Matias Karhumaa <matias.karhumaa@gmail.com>,
+        Johan Hedberg <johan.hedberg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 07/25] xfrm: validate template mode
-Date:   Tue, 16 Oct 2018 00:15:48 -0400
-Message-Id: <20181016041606.135876-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 09/25] Bluetooth: SMP: fix crash in unpairing
+Date:   Tue, 16 Oct 2018 00:15:50 -0400
+Message-Id: <20181016041606.135876-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041606.135876-1-sashal@kernel.org>
 References: <20181016041606.135876-1-sashal@kernel.org>
@@ -53,64 +53,194 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Tranchetti <stranche@codeaurora.org>
+From: Matias Karhumaa <matias.karhumaa@gmail.com>
 
-[ Upstream commit 32bf94fb5c2ec4ec842152d0e5937cd4bb6738fa ]
+[ Upstream commit cb28c306b93b71f2741ce1a5a66289db26715f4d ]
 
-XFRM mode parameters passed as part of the user templates
-in the IP_XFRM_POLICY are never properly validated. Passing
-values other than valid XFRM modes can cause stack-out-of-bounds
-reads to occur later in the XFRM processing:
+In case unpair_device() was called through mgmt interface at the same time
+when pairing was in progress, Bluetooth kernel module crash was seen.
 
-[  140.535608] ================================================================
-[  140.543058] BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x17e4/0x1cc4
-[  140.550306] Read of size 4 at addr ffffffc0238a7a58 by task repro/5148
-[  140.557369]
-[  140.558927] Call trace:
-[  140.558936] dump_backtrace+0x0/0x388
-[  140.558940] show_stack+0x24/0x30
-[  140.558946] __dump_stack+0x24/0x2c
-[  140.558949] dump_stack+0x8c/0xd0
-[  140.558956] print_address_description+0x74/0x234
-[  140.558960] kasan_report+0x240/0x264
-[  140.558963] __asan_report_load4_noabort+0x2c/0x38
-[  140.558967] xfrm_state_find+0x17e4/0x1cc4
-[  140.558971] xfrm_resolve_and_create_bundle+0x40c/0x1fb8
-[  140.558975] xfrm_lookup+0x238/0x1444
-[  140.558977] xfrm_lookup_route+0x48/0x11c
-[  140.558984] ip_route_output_flow+0x88/0xc4
-[  140.558991] raw_sendmsg+0xa74/0x266c
-[  140.558996] inet_sendmsg+0x258/0x3b0
-[  140.559002] sock_sendmsg+0xbc/0xec
-[  140.559005] SyS_sendto+0x3a8/0x5a8
-[  140.559008] el0_svc_naked+0x34/0x38
-[  140.559009]
-[  140.592245] page dumped because: kasan: bad access detected
-[  140.597981] page_owner info is not active (free page?)
-[  140.603267]
-[  140.653503] ================================================================
+[  600.351225] general protection fault: 0000 [#1] SMP PTI
+[  600.351235] CPU: 1 PID: 11096 Comm: btmgmt Tainted: G           OE     4.19.0-rc1+ #1
+[  600.351238] Hardware name: Dell Inc. Latitude E5440/08RCYC, BIOS A18 05/14/2017
+[  600.351272] RIP: 0010:smp_chan_destroy.isra.10+0xce/0x2c0 [bluetooth]
+[  600.351276] Code: c0 0f 84 b4 01 00 00 80 78 28 04 0f 84 53 01 00 00 4d 85 ed 0f 85 ab 00 00 00 48 8b 08 48 8b 50 08 be 10 00 00 00 48 89 51 08 <48> 89 0a 48 b9 00 02 00 00 00 00 ad de 48 89 48 08 48 8b 83 00 01
+[  600.351279] RSP: 0018:ffffa9be839b3b50 EFLAGS: 00010246
+[  600.351282] RAX: ffff9c999ac565a0 RBX: ffff9c9996e98c00 RCX: ffff9c999aa28b60
+[  600.351285] RDX: dead000000000200 RSI: 0000000000000010 RDI: ffff9c999e403500
+[  600.351287] RBP: ffffa9be839b3b70 R08: 0000000000000000 R09: ffffffff92a25c00
+[  600.351290] R10: ffffa9be839b3ae8 R11: 0000000000000001 R12: ffff9c995375b800
+[  600.351292] R13: 0000000000000000 R14: ffff9c99619a5000 R15: ffff9c9962a01c00
+[  600.351295] FS:  00007fb2be27c700(0000) GS:ffff9c999e880000(0000) knlGS:0000000000000000
+[  600.351298] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  600.351300] CR2: 00007fb2bdadbad0 CR3: 000000041c328001 CR4: 00000000001606e0
+[  600.351302] Call Trace:
+[  600.351325]  smp_failure+0x4f/0x70 [bluetooth]
+[  600.351345]  smp_cancel_pairing+0x74/0x80 [bluetooth]
+[  600.351370]  unpair_device+0x1c1/0x330 [bluetooth]
+[  600.351399]  hci_sock_sendmsg+0x960/0x9f0 [bluetooth]
+[  600.351409]  ? apparmor_socket_sendmsg+0x1e/0x20
+[  600.351417]  sock_sendmsg+0x3e/0x50
+[  600.351422]  sock_write_iter+0x85/0xf0
+[  600.351429]  do_iter_readv_writev+0x12b/0x1b0
+[  600.351434]  do_iter_write+0x87/0x1a0
+[  600.351439]  vfs_writev+0x98/0x110
+[  600.351443]  ? ep_poll+0x16d/0x3d0
+[  600.351447]  ? ep_modify+0x73/0x170
+[  600.351451]  do_writev+0x61/0xf0
+[  600.351455]  ? do_writev+0x61/0xf0
+[  600.351460]  __x64_sys_writev+0x1c/0x20
+[  600.351465]  do_syscall_64+0x5a/0x110
+[  600.351471]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  600.351474] RIP: 0033:0x7fb2bdb62fe0
+[  600.351477] Code: 73 01 c3 48 8b 0d b8 6e 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 69 c7 2c 00 00 75 10 b8 14 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 de 80 01 00 48 89 04 24
+[  600.351479] RSP: 002b:00007ffe062cb8f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
+[  600.351484] RAX: ffffffffffffffda RBX: 000000000255b3d0 RCX: 00007fb2bdb62fe0
+[  600.351487] RDX: 0000000000000001 RSI: 00007ffe062cb920 RDI: 0000000000000004
+[  600.351490] RBP: 00007ffe062cb920 R08: 000000000255bd80 R09: 0000000000000000
+[  600.351494] R10: 0000000000000353 R11: 0000000000000246 R12: 0000000000000001
+[  600.351497] R13: 00007ffe062cbbe0 R14: 0000000000000000 R15: 0000000000000000
+[  600.351501] Modules linked in: algif_hash algif_skcipher af_alg cmac ipt_MASQUERADE nf_conntrack_netlink nfnetlink xfrm_user xfrm_algo iptable_nat nf_nat_ipv4 xt_addrtype iptable_filter ip_tables xt_conntrack x_tables nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 libcrc32c br_netfilter bridge stp llc overlay arc4 nls_iso8859_1 dm_crypt intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp dell_laptop kvm_intel crct10dif_pclmul dell_smm_hwmon crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd cryptd glue_helper intel_cstate intel_rapl_perf uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common videodev media hid_multitouch input_leds joydev serio_raw dell_wmi snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic dell_smbios dcdbas sparse_keymap
+[  600.351569]  snd_hda_intel btusb snd_hda_codec btrtl btbcm btintel snd_hda_core bluetooth(OE) snd_hwdep snd_pcm iwlmvm ecdh_generic wmi_bmof dell_wmi_descriptor snd_seq_midi mac80211 snd_seq_midi_event lpc_ich iwlwifi snd_rawmidi snd_seq snd_seq_device snd_timer cfg80211 snd soundcore mei_me mei dell_rbtn dell_smo8800 mac_hid parport_pc ppdev lp parport autofs4 hid_generic usbhid hid i915 nouveau kvmgt vfio_mdev mdev vfio_iommu_type1 vfio kvm irqbypass i2c_algo_bit ttm drm_kms_helper syscopyarea sysfillrect sysimgblt mxm_wmi psmouse ahci sdhci_pci cqhci libahci fb_sys_fops sdhci drm e1000e video wmi
+[  600.351637] ---[ end trace e49e9f1df09c94fb ]---
+[  600.351664] RIP: 0010:smp_chan_destroy.isra.10+0xce/0x2c0 [bluetooth]
+[  600.351666] Code: c0 0f 84 b4 01 00 00 80 78 28 04 0f 84 53 01 00 00 4d 85 ed 0f 85 ab 00 00 00 48 8b 08 48 8b 50 08 be 10 00 00 00 48 89 51 08 <48> 89 0a 48 b9 00 02 00 00 00 00 ad de 48 89 48 08 48 8b 83 00 01
+[  600.351669] RSP: 0018:ffffa9be839b3b50 EFLAGS: 00010246
+[  600.351672] RAX: ffff9c999ac565a0 RBX: ffff9c9996e98c00 RCX: ffff9c999aa28b60
+[  600.351674] RDX: dead000000000200 RSI: 0000000000000010 RDI: ffff9c999e403500
+[  600.351676] RBP: ffffa9be839b3b70 R08: 0000000000000000 R09: ffffffff92a25c00
+[  600.351679] R10: ffffa9be839b3ae8 R11: 0000000000000001 R12: ffff9c995375b800
+[  600.351681] R13: 0000000000000000 R14: ffff9c99619a5000 R15: ffff9c9962a01c00
+[  600.351684] FS:  00007fb2be27c700(0000) GS:ffff9c999e880000(0000) knlGS:0000000000000000
+[  600.351686] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  600.351689] CR2: 00007fb2bdadbad0 CR3: 000000041c328001 CR4: 00000000001606e0
 
-Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Crash happened because list_del_rcu() was called twice for smp->ltk. This
+was possible if unpair_device was called right after ltk was generated
+but before keys were distributed.
+
+In this commit smp_cancel_pairing was refactored to cancel pairing if it
+is in progress and otherwise just removes keys. Once keys are removed from
+rcu list, pointers to smp context's keys are set to NULL to make sure
+removed list items are not accessed later.
+
+This commit also adjusts the functionality of mgmt unpair_device() little
+bit. Previously pairing was canceled only if pairing was in state that
+keys were already generated. With this commit unpair_device() cancels
+pairing already in earlier states.
+
+Bug was found by fuzzing kernel SMP implementation using Synopsys
+Defensics.
+
+Reported-by: Pekka Oikarainen <pekka.oikarainen@synopsys.com>
+Signed-off-by: Matias Karhumaa <matias.karhumaa@gmail.com>
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/bluetooth/mgmt.c |  7 ++-----
+ net/bluetooth/smp.c  | 29 +++++++++++++++++++++++++----
+ net/bluetooth/smp.h  |  3 ++-
+ 3 files changed, 29 insertions(+), 10 deletions(-)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index c2e98dcba9fe..476f1fc6d655 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1408,6 +1408,9 @@ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
- 		    (ut[i].family != prev_family))
- 			return -EINVAL;
+diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+index b1b0a1c0bd8d..ecc3da6a14a1 100644
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+@@ -3083,9 +3083,8 @@ static int unpair_device(struct sock *sk, struct hci_dev *hdev, void *data,
+ 	/* LE address type */
+ 	addr_type = le_addr_type(cp->addr.type);
  
-+		if (ut[i].mode >= XFRM_MODE_MAX)
-+			return -EINVAL;
+-	hci_remove_irk(hdev, &cp->addr.bdaddr, addr_type);
+-
+-	err = hci_remove_ltk(hdev, &cp->addr.bdaddr, addr_type);
++	/* Abort any ongoing SMP pairing. Removes ltk and irk if they exist. */
++	err = smp_cancel_and_remove_pairing(hdev, &cp->addr.bdaddr, addr_type);
+ 	if (err < 0) {
+ 		err = mgmt_cmd_complete(sk, hdev->id, MGMT_OP_UNPAIR_DEVICE,
+ 					MGMT_STATUS_NOT_PAIRED, &rp,
+@@ -3099,8 +3098,6 @@ static int unpair_device(struct sock *sk, struct hci_dev *hdev, void *data,
+ 		goto done;
+ 	}
+ 
+-	/* Abort any ongoing SMP pairing */
+-	smp_cancel_pairing(conn);
+ 
+ 	/* Defer clearing up the connection parameters until closing to
+ 	 * give a chance of keeping them if a repairing happens.
+diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
+index 0dc27d2e8f18..bedfaef2c59e 100644
+--- a/net/bluetooth/smp.c
++++ b/net/bluetooth/smp.c
+@@ -2371,30 +2371,51 @@ int smp_conn_security(struct hci_conn *hcon, __u8 sec_level)
+ 	return ret;
+ }
+ 
+-void smp_cancel_pairing(struct hci_conn *hcon)
++int smp_cancel_and_remove_pairing(struct hci_dev *hdev, bdaddr_t *bdaddr,
++				  u8 addr_type)
+ {
+-	struct l2cap_conn *conn = hcon->l2cap_data;
++	struct hci_conn *hcon;
++	struct l2cap_conn *conn;
+ 	struct l2cap_chan *chan;
+ 	struct smp_chan *smp;
++	int err;
 +
- 		prev_family = ut[i].family;
++	err = hci_remove_ltk(hdev, bdaddr, addr_type);
++	hci_remove_irk(hdev, bdaddr, addr_type);
++
++	hcon = hci_conn_hash_lookup_le(hdev, bdaddr, addr_type);
++	if (!hcon)
++		goto done;
  
- 		switch (ut[i].family) {
++	conn = hcon->l2cap_data;
+ 	if (!conn)
+-		return;
++		goto done;
+ 
+ 	chan = conn->smp;
+ 	if (!chan)
+-		return;
++		goto done;
+ 
+ 	l2cap_chan_lock(chan);
+ 
+ 	smp = chan->data;
+ 	if (smp) {
++		/* Set keys to NULL to make sure smp_failure() does not try to
++		 * remove and free already invalidated rcu list entries. */
++		smp->ltk = NULL;
++		smp->slave_ltk = NULL;
++		smp->remote_irk = NULL;
++
+ 		if (test_bit(SMP_FLAG_COMPLETE, &smp->flags))
+ 			smp_failure(conn, 0);
+ 		else
+ 			smp_failure(conn, SMP_UNSPECIFIED);
++		err = 0;
+ 	}
+ 
+ 	l2cap_chan_unlock(chan);
++
++done:
++	return err;
+ }
+ 
+ static int smp_cmd_encrypt_info(struct l2cap_conn *conn, struct sk_buff *skb)
+diff --git a/net/bluetooth/smp.h b/net/bluetooth/smp.h
+index ffcc70b6b199..993cbd7bcfe7 100644
+--- a/net/bluetooth/smp.h
++++ b/net/bluetooth/smp.h
+@@ -180,7 +180,8 @@ enum smp_key_pref {
+ };
+ 
+ /* SMP Commands */
+-void smp_cancel_pairing(struct hci_conn *hcon);
++int smp_cancel_and_remove_pairing(struct hci_dev *hdev, bdaddr_t *bdaddr,
++				  u8 addr_type);
+ bool smp_sufficient_security(struct hci_conn *hcon, u8 sec_level,
+ 			     enum smp_key_pref key_pref);
+ int smp_conn_security(struct hci_conn *hcon, __u8 sec_level);
 -- 
 2.17.1
 
