@@ -4,47 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A41A2C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 260B7C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB3F21477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E39C421476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjxRNQIv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB3F21477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJJe9h9Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E39C421476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730707AbeJQBML (ORCPT
+        id S1730720AbeJQBMO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:12:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57592 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:12:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729637AbeJQBMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:12:09 -0400
+        id S1729296AbeJQBMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:12:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5FAC2098A;
-        Tue, 16 Oct 2018 17:20:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 520AB2098A;
+        Tue, 16 Oct 2018 17:20:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710445;
-        bh=bGG2VladVDM4Dy1khPdyc5HxjUOnKyNg2tHas76ZH8E=;
+        s=default; t=1539710447;
+        bh=IWqmkiAdTf3BQLTuA5qMeiQUwyPw9pVHbRsaFq204go=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pjxRNQIvWItuasrYX+kQFdlA1o4kc/w5S6UxEJsQ8nvBk1eA3IXfBMDXskhliHfIi
-         /C1Htx4JMznN4pmdAUYp50cwOXWzNHA6IjDpuLHSnJjDyrIZcxhvuouNtbCE84VFtA
-         OIs7iZDpd3rweZXSNaYhQE+Ww1Bge+ouBhnPBqQo=
+        b=UJJe9h9ZZGZxufOMPOXCpkCFU+v13GLPSTLdNormhZrp9bdivlDvfvoI6QA10fJtF
+         ydE+uRqkryZaShPF/E+py1w+Yh6pZfe1IeV1Qzyw3U3gcDaArOPD/U2Ma6moEPJlov
+         ix7/ikgB6qr2T4H15uaFpZXTlAEW4rIWk598g3gk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lei Yang <Lei.Yang@windriver.com>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        stable@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 043/109] selftests: memory-hotplug: add required configs
-Date:   Tue, 16 Oct 2018 19:05:11 +0200
-Message-Id: <20181016170527.325017495@linuxfoundation.org>
+Subject: [PATCH 4.14 044/109] ASoC: rsnd: adg: care clock-frequency size
+Date:   Tue, 16 Oct 2018 19:05:12 +0200
+Message-Id: <20181016170527.381058046@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -62,28 +65,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lei Yang <Lei.Yang@windriver.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-[ Upstream commit 4d85af102a66ee6aeefa596f273169e77fb2b48e ]
+[ Upstream commit 69235ccf491d2e26aefd465c0d3ccd1e3b2a9a9c ]
 
-add CONFIG_MEMORY_HOTREMOVE=y in config
-without this config, /sys/devices/system/memory/memory*/removable
-always return 0, I endup getting an early skip during test
+ADG has buffer over flow bug if DT has more than 3 clock-frequency.
+This patch fixup this issue, and uses first 2 values.
 
-Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+	clock-frequency = <x y>;	/* this is OK */
+	clock-frequency = <x y z>;	/* this is NG */
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/memory-hotplug/config |    1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/sh/rcar/adg.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/tools/testing/selftests/memory-hotplug/config
-+++ b/tools/testing/selftests/memory-hotplug/config
-@@ -2,3 +2,4 @@ CONFIG_MEMORY_HOTPLUG=y
- CONFIG_MEMORY_HOTPLUG_SPARSE=y
- CONFIG_NOTIFIER_ERROR_INJECTION=y
- CONFIG_MEMORY_NOTIFIER_ERROR_INJECT=m
-+CONFIG_MEMORY_HOTREMOVE=y
+--- a/sound/soc/sh/rcar/adg.c
++++ b/sound/soc/sh/rcar/adg.c
+@@ -467,6 +467,11 @@ static void rsnd_adg_get_clkout(struct r
+ 		goto rsnd_adg_get_clkout_end;
+ 
+ 	req_size = prop->length / sizeof(u32);
++	if (req_size > REQ_SIZE) {
++		dev_err(dev,
++			"too many clock-frequency, use top %d\n", REQ_SIZE);
++		req_size = REQ_SIZE;
++	}
+ 
+ 	of_property_read_u32_array(np, "clock-frequency", req_rate, req_size);
+ 	req_48kHz_rate = 0;
 
 
