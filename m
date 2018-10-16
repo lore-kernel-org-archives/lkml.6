@@ -2,124 +2,114 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1A1C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5B5C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFC582148C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:47:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 909722148C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:47:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Vy112zEw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC582148C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M9ASXLrB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 909722148C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbeJQHju (ORCPT
+        id S1727375AbeJQHkJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:39:50 -0400
-Received: from ozlabs.org ([203.11.71.1]:38127 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727097AbeJQHju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:39:50 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42ZX5x0h9Hz9s8F;
-        Wed, 17 Oct 2018 10:47:00 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539733621;
-        bh=436XRDCBPoaFIQh9MBLN7D5drdmuI/ucqFnuDsBfnxY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Vy112zEwj+CSyv2bzi/eLjQTG7LrJEp+Rg4sVraJAsq0Erz88XaCYBLhYFfwUt8ZV
-         o4FdYR2jMDLfGVIkPD1jIhltWpSwHc3fkpPWUh0D7jGw/lshkGiz2Okodq5usUJUBc
-         eUzQPpcE9K6PlRpWPCYozFF/Ddk4rSVvGg41n8+y2YGrYlM4vC7DyT1FabTy5Buexb
-         CDKNgLUqCEJ/0usXiT1at4VPebAOITMxlffpJrKm43+aWLw5bdhC8kNxnHVD5hIZEG
-         o7grtXu0mvY2sy1NTeEEUviIJAQ8n98ZvMcH+gLiOrSydbDBByvgeqZBRJdOkRqeqT
-         GUq1nt2TBmwLA==
-Date:   Wed, 17 Oct 2018 10:46:42 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Davide Caratti <dcaratti@redhat.com>,
-        David Ahern <dsahern@gmail.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20181017104642.40d37d05@canb.auug.org.au>
+        Wed, 17 Oct 2018 03:40:09 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34785 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727087AbeJQHkJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 03:40:09 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w19-v6so23083168eds.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:47:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L20oBb+GTRAlxBhsQCOZ0ZfwFt4RyVEHkcClT6KSZms=;
+        b=M9ASXLrBzHy7kk8zctLq/RrDOtSXJOqEO8iq10RNv40A2XdBfvigk4Jfs/rq4Fjz7d
+         7H5apakEwTHlvamo5V9UFlHkWUBQ/IoFgw7FZ7K76gccqehHuUrVVWRC8RkbGNY0atYY
+         O1+xmayMMJnb9OB92NFwke6uwaF57tqECbbsU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L20oBb+GTRAlxBhsQCOZ0ZfwFt4RyVEHkcClT6KSZms=;
+        b=h1tPjRGq1y2lG7Lymf+H3OOS7nRvNXwk63eUCm2+Y5TP6YseyLOlDkvfZyhrqXAKyM
+         Cd1Q2tJ/FZllLksLhr26Wt66LYrm4bl6Eb/KO33qi5OP5sOyLM2mmi+ZBWcNj60Xiu5A
+         RRn6O2sJk/sq2aghKgsUxPtwRk4T6JguNqV6K/9J1FGe4PcqJRPTOdEqwggnQ34Wyccs
+         SC6FecZ8pKg+P1oOrWLZqDTCrdKnotZuTVpHlfGnZwStySIDe/DMsdVU3voDwW+7JhtC
+         O5+MEQ1keBZs89AwcoAjlrFsgNU7zhXfp6SaQ7bLUf5b+eO/qk6IOAX/NJBCSxqDtlV6
+         nqoA==
+X-Gm-Message-State: ABuFfohblQf1AWG5wqwLKneO62nw4sue5AP/3IdbPwui0iqgE46BB9CD
+        aTjSZtW7kx9ZNH0NbUA+e5LmQmcT5rE=
+X-Google-Smtp-Source: ACcGV62djhQEi/tbptSUjbTLVM5gJ5742TnMTaOyVxmSVHali/FI4neNpL1sssQnTexvp6Ki25g1Bg==
+X-Received: by 2002:a50:c94b:: with SMTP id p11-v6mr32942527edh.6.1539733639366;
+        Tue, 16 Oct 2018 16:47:19 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id i19-v6sm3306797ejv.73.2018.10.16.16.47.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Oct 2018 16:47:19 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id v18-v6so23064680edq.12
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:47:18 -0700 (PDT)
+X-Received: by 2002:a17:906:1f87:: with SMTP id t7-v6mr25479858ejr.153.1539733637583;
+ Tue, 16 Oct 2018 16:47:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ig8Rxox_Ru14hlzWqD3VREN"; protocol="application/pgp-signature"
+References: <20181013005504.46399-1-briannorris@chromium.org> <CAD=FV=UmvnsueUbDTa-vSp5Ay+8Zo0YORW8T7u1AwreUbZA4+Q@mail.gmail.com>
+In-Reply-To: <CAD=FV=UmvnsueUbDTa-vSp5Ay+8Zo0YORW8T7u1AwreUbZA4+Q@mail.gmail.com>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Tue, 16 Oct 2018 16:47:05 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXO6PMudAkt0BTXRh8GjmheYvge+smYdr-n=pdBP5swJrA@mail.gmail.com>
+Message-ID: <CA+ASDXO6PMudAkt0BTXRh8GjmheYvge+smYdr-n=pdBP5swJrA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ath10k: snoc: remove 'wcn3990' from generic resource handling
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, govinds@codeaurora.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ig8Rxox_Ru14hlzWqD3VREN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 16, 2018 at 4:43 PM Doug Anderson <dianders@chromium.org> wrote:
+> On Fri, Oct 12, 2018 at 5:55 PM Brian Norris <briannorris@chromium.org> wrote:
+> >
+> > ath10k_wcn3990_clk_info and ath10k_wcn3990_vreg_info are not
+> > WCN3990-specific structures. They hold generic data. So don't name them
+> > with wcn3990 specifics.
+> >
 
-Hi all,
+> > -static struct ath10k_wcn3990_vreg_info vreg_cfg[] = {
+> > +static struct ath10k_vreg_info vreg_cfg[] = {
+>
+> Ironically, you could sorta make the argument that this should be:
+>
+> static struct ath10k_vreg_info wcn3990_vreg_cfg
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Hehe, good point.
 
-  net/sched/cls_api.c
+> AKA the "wcn3990" shouldn't be in the name of the structure (since all
+> snoc devices can have the concept of an array of regulators) but
+> wcn3990 could be in the name of the variable since it's possible that
+> different snoc devices could have different arrays.  However I'm OK w/
+> waiting to do that part until we actually see a different snoc device
+> with a different array.
 
-between commit:
+But I think that is a pretty reasonable conclusion.
 
-  e331473fee3d ("net/sched: cls_api: add missing validation of netlink attr=
-ibutes")
+There's still some other strange stuff in this driver too, like the
+fact that this is NOT a const array -- we assign things dynamically to
+the regulator fields within the array -- that we would probably want
+to fix if this is really supposed to be a generic multi-IP driver.
 
-from the net tree and commit:
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-  dac9c9790e54 ("net: Add extack to nlmsg_parse")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/sched/cls_api.c
-index 70f144ac5e1d,43c8559aca56..000000000000
---- a/net/sched/cls_api.c
-+++ b/net/sched/cls_api.c
-@@@ -1951,8 -2055,8 +2057,8 @@@ static int tc_dump_chain(struct sk_buf
-  	if (nlmsg_len(cb->nlh) < sizeof(*tcm))
-  		return skb->len;
- =20
- -	err =3D nlmsg_parse(cb->nlh, sizeof(*tcm), tca, TCA_MAX, NULL,
- +	err =3D nlmsg_parse(cb->nlh, sizeof(*tcm), tca, TCA_MAX, rtm_tca_policy,
-- 			  NULL);
-+ 			  cb->extack);
-  	if (err)
-  		return err;
- =20
-
---Sig_/ig8Rxox_Ru14hlzWqD3VREN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvGeGIACgkQAVBC80lX
-0Gwipwf9FqVC/wokTOmwv2KJ3oSYm/q3NrEFLt43Ib5oyotPln8zMbGkbQ1DBzEI
-VIqUTK6Sj2V98uCuUY9ABZ/CFCGPPn7aGb6nJ2+vOG4NTHHizK18z4TvY3QH7lSA
-X9zrTeuI1NCsAm+xvq34EDL8BZ7jzwMwV5x7RE4aT8ZVeK/+z0gxWu1RR2GQ+L6A
-hgonqUY/yfI8+ORBq72JGvdfQUbCR4L409uxKN731BYJZW/tgyXOrz3MTMwE3sa7
-/iLnziESd4X//d5RugDA8Lha993FNLLU9mCczsqAOA6qaJSMs3C6KtT1kLNOWEpT
-9w9hIy7XKLVqEE6Cv5IVLbm2HwOQCQ==
-=R+Vg
------END PGP SIGNATURE-----
-
---Sig_/ig8Rxox_Ru14hlzWqD3VREN--
+Thanks,
+Brian
