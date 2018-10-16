@@ -2,103 +2,106 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C58C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4843C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6348420881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:49:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6348420881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 91CA62098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:49:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91CA62098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbeJPSis (ORCPT
+        id S1727463AbeJPSis (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 16 Oct 2018 14:38:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59980 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727218AbeJPSir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mout.perfora.net ([74.208.4.197]:60191 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727075AbeJPSir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 16 Oct 2018 14:38:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4A883AF79;
-        Tue, 16 Oct 2018 10:48:56 +0000 (UTC)
-Date:   Tue, 16 Oct 2018 12:48:55 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org
-Subject: Re: [RFC PATCH] mm, proc: report PR_SET_THP_DISABLE in proc
-Message-ID: <20181016104855.GQ18839@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1810021329260.87409@chino.kir.corp.google.com>
- <20181003073640.GF18290@dhcp22.suse.cz>
- <alpine.DEB.2.21.1810031547150.202532@chino.kir.corp.google.com>
- <20181004055842.GA22173@dhcp22.suse.cz>
- <alpine.DEB.2.21.1810040209130.113459@chino.kir.corp.google.com>
- <20181004094637.GG22173@dhcp22.suse.cz>
- <alpine.DEB.2.21.1810041130380.12951@chino.kir.corp.google.com>
- <20181009083326.GG8528@dhcp22.suse.cz>
- <20181015150325.GN18839@dhcp22.suse.cz>
- <alpine.DEB.2.21.1810151519250.247641@chino.kir.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1810151519250.247641@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0LzIe7-1fYL5j3C3V-014Pxx; Tue, 16 Oct 2018 12:48:07 +0200
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0LzIe7-1fYL5j3C3V-014Pxx; Tue, 16 Oct 2018 12:48:07 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform name vs. of_node assignement
+Date:   Tue, 16 Oct 2018 12:47:30 +0200
+Message-Id: <20181016104730.4598-10-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20181016104730.4598-1-marcel@ziswiler.com>
+References: <20181016104730.4598-1-marcel@ziswiler.com>
+X-Provags-ID: V03:K1:MIunh8M8gL/uGufQy84VMDRM78SzrUFY0quxDQdowA0Wsci8h+a
+ 38ubtDDQBcvaJz9+ceurnZK6HKW9+1Xlv19w6emZe1YA5SU3lW01AKbyETAnabzStDOX0Dh
+ a5tV+xrPwQi7Uk/kNDzJDJq2PJro4mjdXM8GmdR6RZ4tpjKYSE0+/N+zQ6vE8tnxfA3ia4C
+ Zt9JlDlWQiofVpm5pmW1A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:C3uMcV8zHwI=:3lyw1gJjsmSoDHl2tc44Ea
+ nKE3+a8aWKIOFCOYqfNa3a950WF/j9nEi2NE0gjtd0tZuWwaYJ9drKZ1w/4pJ0yiD1U0WBMEW
+ 83ZKjeD1UpNeAPRagy6rfwzdndoy+9HoyNuTH5tu9GZidP68uxEl4boql4DTN8c8wK+kwDOME
+ GHpMT/ipAn5fq19FwDYHNypxdTIijYRdQ/UwnwQcHhG8cJOjlHwq8dbaYutGtJu6Yqm726Pcz
+ U0gX/6qFIDWwc1FqYFkESge6oZpf/mUgWpXqgP0/0U9mrMpLdspSQ3hEG7uBmhucpC5SQXtft
+ Mi/ADhNi8OqVu88Vui1/ru2ik4Z8nmolA+SQQA+e9bEZB+WT/ehE+VCm50Ov52YryvjeG7f0K
+ 9fKFb0DP1KQhZlJp2BV4SQCFMKxoCAnHbx9BOhqRV+t/YECYYVIlTNcGnGG369NetdOs2VpKi
+ Vr0oTxYeRodJ42dEo4m0i7abQVzuzn2Wf11L2a/vwSRV5oUoGLFGXByO1A2gNZydTPF26NH3P
+ E/y6541JZrz0+vaOdApWUWhLOxnP9fmS2+Ub4Gdr7x9kyh+IWiWqBE3RQcG9VTMwlM5ZPFQGX
+ 2KQTdTkfN+Z+X74vi/FvvlYzqQZ9Ca118B5Kb69sPMv8h/eMXyACgld8l6COUzY/fYECChcd5
+ 9hnVG9Kfh1707a9JsCH1UwHq7i8zEhpC1JRPlLmHd803Q/YQMYwqQF37KoIAqPmS74mU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 15-10-18 15:25:14, David Rientjes wrote:
-> On Mon, 15 Oct 2018, Michal Hocko wrote:
-> 
-> > > > No, because the offending commit actually changed the precedence itself: 
-> > > > PR_SET_THP_DISABLE used to be honored for future mappings and the commit 
-> > > > changed that for all current mappings.
-> > > 
-> > > Which is the actual and the full point of the fix as described in the
-> > > changelog. The original implementation was poor and inconsistent.
-> > > 
-> > > > So as a result of the commit 
-> > > > itself we would have had to change the documentation and userspace can't 
-> > > > be expected to keep up with yet a fourth variable: kernel version.  It 
-> > > > really needs to be simpler, just a per-mapping specifier.
-> > > 
-> > > As I've said, if you really need a per-vma granularity then make it a
-> > > dedicated line in the output with a clear semantic. Do not make VMA
-> > > flags even more confusing.
-> > 
-> > Can we settle with something please?
-> 
-> I don't understand the point of extending smaps with yet another line.  
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Because abusing a vma flag part is just wrong. What are you going to do
-when a next bug report states that the flag is set even though no
-userspace has set it and that leads to some malfunctioning? Can you rule
-that out? Even your abuse of the flag is surprising so why others
-wouldn't be?
+This fixes the following error as seen post commit daecf46ee0e5
+("ASoC: soc-core: use snd_soc_dai_link_component for platform"):
 
-> The only way for a different process to determine if a single vma from 
-> another process is thp disabled is by the "nh" flag, so it is reasonable 
-> that userspace reads this.  My patch fixes that.  If smaps is extended 
-> with another line per your patch, it doesn't change the fact that previous 
-> binaries are built to check for "nh" so it does not deprecate that.  
-> ("THP_Enabled" is also ambiguous since it only refers to prctl and not the 
-> default thp setting or madvise.)
+tegra-snd-sgtl5000 sound: ASoC: Both platform name/of_node are set for
+ sgtl5000
+tegra-snd-sgtl5000 sound: ASoC: failed to init link sgtl5000
+tegra-snd-sgtl5000 sound: snd_soc_register_card failed (-22)
+tegra-snd-sgtl5000: probe of sound failed with error -22
 
-As I've said there are two things. Exporting PR_SET_THP_DISABLE to
-userspace so that a 3rd party process can query it. I've already
-explained why that might be useful. If you really insist on having
-a per-vma field then let's do it properly now. Are you going to agree on
-that? If yes, I am willing to spend my time on that but I am not going
-to bother if this will lead to "I want my vma field abuse anyway".
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+---
+
+Changes in v2: New patch
+
+ sound/soc/tegra/tegra_sgtl5000.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
+index 901457da25ec..eb702925cac3 100644
+--- a/sound/soc/tegra/tegra_sgtl5000.c
++++ b/sound/soc/tegra/tegra_sgtl5000.c
+@@ -168,6 +168,11 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_fini_utils:
++	if (tegra_sgtl5000_dai.platform) {
++		devm_kfree(&pdev->dev, tegra_sgtl5000_dai.platform);
++		tegra_sgtl5000_dai.platform = NULL;
++	}
++
+ 	tegra_asoc_utils_fini(&machine->util_data);
+ err_put_cpu_of_node:
+ 	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
 -- 
-Michal Hocko
-SUSE Labs
+2.14.4
+
