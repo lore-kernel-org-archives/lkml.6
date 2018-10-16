@@ -2,263 +2,143 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8AE2C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4835C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 913FB2098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:45:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 913FB2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8885A20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:47:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cHx1STwv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8885A20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbeJQCg5 (ORCPT
+        id S1727360AbeJQCiy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 22:36:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36884 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbeJQCg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 22:36:57 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 68FEA30020AA;
-        Tue, 16 Oct 2018 18:45:10 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-5.gru2.redhat.com [10.97.112.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 911C684B16;
-        Tue, 16 Oct 2018 18:45:09 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id 75E34295E; Tue, 16 Oct 2018 15:45:06 -0300 (BRT)
-Date:   Tue, 16 Oct 2018 15:45:06 -0300
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, acme@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@gmail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: perf's handling of unfindable user symbols...
-Message-ID: <20181016184506.GB3254@redhat.com>
-References: <20181014.004238.292485794143606801.davem@davemloft.net>
- <20181015222546.GA2159@redhat.com>
- <20181015.160246.58484704665215987.davem@davemloft.net>
+        Tue, 16 Oct 2018 22:38:54 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45461 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727111AbeJQCiy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 22:38:54 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v22-v6so6000086lfe.12
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 11:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ARuNdrw4LF3tXeh34z8Oo7ZWKVz0S91fJDD3+IU4Mc0=;
+        b=cHx1STwv1/t2IAT16pzENaovP0h7c+LUA790D4ReGUVJxWkTQBSKgbp52R3Pmw2D6i
+         rwvZZi5Vr8RekVXhJ5u07aydRZzjtiYW6BEDrdNFQ30u1Vz1dDGJnUfg+dDD/5CinJAg
+         2TNBlxojiKaPfmjgcKwA+EXyUv6OGRsCVUCH0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ARuNdrw4LF3tXeh34z8Oo7ZWKVz0S91fJDD3+IU4Mc0=;
+        b=iR5+mwoTEaNy/LHKZWAH3i9YPORFErHjlPmWNw17Kb4ygyrZBqGzWOXIPNUW275vZP
+         91cDPZLGj6cv/zswLc4/qfV5tixzxn8X2lT+y+16QuZnDv5OOJ2CX/G/UF91Wps1Ps0C
+         qwqUDfYwsRX8lznPCxoiRyis/Or61/S58Rxo/tsjsIcEP6xfH4XwV759Dsp/6yZQes39
+         x45xywtyhg0aGSvBtMKQYJxLND1/3vB2+dEPMXtSpV5Bc9nP1DCCLxIzYjN6TCUDZKgl
+         xqi2imtn52Ae/Zqi5/m4jBm4CJY/rH4yRJ49GtZnz34GahkR+rjtuRxroJKDzuq2kzpJ
+         YWvA==
+X-Gm-Message-State: ABuFfoiiV0BT6/d5zvfOkL2n+hp5BHGZ9URJr31b0nZ7YxCLpa7Wv4Ah
+        ult5PIVKAqRLpUdL55oklxtaAW2hno7EggS/ky4lxw==
+X-Google-Smtp-Source: ACcGV62q6pgWK29sH0P8aj3TCcVLkH87Xx3aKmj5qXhrGRFpL/CDwlFMFmChXncTwDl3YOEfCUFpknVEJWRU6lCTPm4=
+X-Received: by 2002:a19:cf8d:: with SMTP id f135-v6mr6219804lfg.53.1539715625344;
+ Tue, 16 Oct 2018 11:47:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181015.160246.58484704665215987.davem@davemloft.net>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 16 Oct 2018 18:45:10 +0000 (UTC)
+References: <20181011152508.885515042@linuxfoundation.org> <20181011152510.156825448@linuxfoundation.org>
+ <CADVatmO4qd2D7j9AuVWX29ODMd9xV7-ndMSv+dfFatT60h+mzQ@mail.gmail.com> <20181012110511.GB26625@kroah.com>
+In-Reply-To: <20181012110511.GB26625@kroah.com>
+From:   Amit Pundir <amit.pundir@linaro.org>
+Date:   Wed, 17 Oct 2018 00:16:28 +0530
+Message-ID: <CAMi1Hd2YHYpxohDEa5_vVmsJaH9m4TBbjRy_SUxiDEjT5F6Q8Q@mail.gmail.com>
+Subject: Re: [PATCH 4.14 29/45] cgroup/cpuset: remove circular dependency deadlock
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Prateek Sood <prsood@codeaurora.org>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding some people to the CC list.
+On Fri, 12 Oct 2018 at 16:35, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Oct 11, 2018 at 08:33:34PM +0100, Sudip Mukherjee wrote:
+> > Hi Greg,
+> >
+> > On Thu, Oct 11, 2018 at 4:54 PM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > 4.14-stable review patch.  If anyone has any objections, please let me know.
+> > >
+> > > ------------------
+> > >
+> > > From: Prateek Sood <prsood@codeaurora.org>
+> > >
+> > > commit aa24163b2ee5c92120e32e99b5a93143a0f4258e upstream.
+> >
+> > This has been already reverted in upstream.
+> > bdfbbda90aeb ("Revert "cgroup/cpuset: remove circular dependency deadlock"")
+> >
+> > Might be better to add e8b3f8db7aad ("workqueue/hotplug: simplify
+> > workqueue_offline_cpu()") instead which is mentioned in the revert
+> > commit.
+>
+> Good point.  I'm dropping this patch for now.
+>
+> Amit, can you test the above patch instead and figure out why you wanted
+> to add a patch to the tree that ended up being reverted?  :)
 
-Em Mon, Oct 15, 2018 at 04:02:46PM -0700, David Miller escreveu:
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Date: Mon, 15 Oct 2018 19:25:46 -0300
- 
-> > But I think we should have it as a property of 'struct machine', because we may
-> > be processing on, say, x86, a perf.data file recorded on a Sparc machine, so we
-> > need to save this property on the perf.data file, humm, or we can derive that
-> > from data already there, like the quick patch below. I'll cache that property
-> > on machine->user_kernel_shared_address_space, to avoid having to do the
-> > strcmp() lots of times.
- 
-> > Does that document the hack further? Defining the
-> > machine__user_kernel_shared_address_space() function right besides the
-> > machine__kernel_ip() inline should help as well?
- 
-> Your patch looks fine.
-> 
-> But, more deeply, the VDSO thing itself makes no sense to me.
- 
-> Why would we use the kernel map for something that is mapped into
-> userspace and uses the user space virtual addresse range?
- 
-> As it is used by user applications, the VDSO isn't mapped into the
-> kernel virtual address range, therefore no PC from userspace executing
-> the VDSO will have a kernel range address.
- 
-> We will see normal userspace virtual addresses instead.  Test this
-> assertion, if you like :-)
- 
-> So I am suggesting that we remove the hack, and don't try to use the
-> kernel map for resolving the IP of user mode events.  If that is a
-> valid change, we can toss all of this weird stuff that tries to
-> interpret an address based upon what "range" it falls into.
+Sorry I goofed up here. Thank you Sudip for catching this.
 
-Exec summary: yeah, drop that hack, I agree, patch at the end of the
-message.
+I forgot to look up for the upstream followup fixes for the patches
+which I submitted lately and missed out on this Revert.
 
-So, I thought something had changed and in the past we would somehow
-find that address in the kallsyms, but I couldn't find anything to back
-that up, the patch introducing this is over a decade old, lots of things
-changed, so I was just thinking I was missing something.
+msm-4.9 tree, which I'm currently looking at, didn't revert this
+particular patch either. It did cherry-pick e8b3f8db7aad
+("workqueue/hotplug: simplify workqueue_offline_cpu()") as well
+though.
 
-I tried a gtod busy loop to generate vdso activity and added a 'perf
-probe' at that branch, on x86_64 to see if it ever gets hit:
+About e8b3f8db7aad ("workqueue/hotplug: simplify workqueue_offline_cpu()"):
+--------------------------------------------
+commit e8b3f8db7aad99fcc5234fc5b89984ff6620de3d
+Author: Lai Jiangshan <jiangshanlai@gmail.com>
+Date:   Fri Dec 1 22:20:36 2017 +0800
 
-Made thread__find_map() noinline, as 'perf probe' in lines of inline
-functions seems to not be working, only at function start. (Masami?)
+    workqueue/hotplug: simplify workqueue_offline_cpu()
 
-[root@jouet ~]# perf probe -x ~/bin/perf -L thread__find_map:57
-<thread__find_map@/home/acme/git/perf/tools/perf/util/event.c:57>
-     57                 if (cpumode == PERF_RECORD_MISC_USER && machine &&
-     58                     mg != &machine->kmaps &&
-     59                     machine__kernel_ip(machine, al->addr)) {
-     60                         mg = &machine->kmaps;
-     61                         load_map = true;
-     62                         goto try_again;
-                        }
-                } else {
-                        /*
-                         * Kernel maps might be changed when loading
-                         * symbols so loading
-                         * must be done prior to using kernel maps.
-                         */
-     69                 if (load_map)
-     70                         map__load(al->map);
-     71                 al->addr = al->map->map_ip(al->map, al->addr);
+    Since the recent cpu/hotplug refactoring, workqueue_offline_cpu() is
+    guaranteed to run on the local cpu which is going offline.
 
-[root@jouet ~]# perf probe -x ~/bin/perf thread__find_map:60
-Added new event:
-  probe_perf:thread__find_map (on thread__find_map:60 in /home/acme/bin/perf)
+    This also fixes the following deadlock by removing work item
+    scheduling and flushing from CPU hotplug path.
 
-You can now use it in all perf tools, such as:
+     http://lkml.kernel.org/r/1504764252-29091-1-git-send-email-prsood@codeaurora.org
+--------------------------------------------
+This patch applies cleanly to 4.14.y and 4.9.y. But I'm confused if
+this particular patch alone is good enough for these stable kernels,
+since the commit message talks about some "recent cpu/hotplug
+refactoring" dependency(?).
 
-	perf record -e probe_perf:thread__find_map -aR sleep 1
+Regards,
+Amit Pundir
 
-[root@jouet ~]#
-
-Then used this to see if, system wide, those probe points were being hit:
-
-[root@jouet ~]# perf trace -e *perf:thread*/max-stack=8/
-^C[root@jouet ~]#
-
-No hits when running 'perf top' and:
-
-[root@jouet c]# cat gtod.c
-#include <sys/time.h>
-
-int main(void)
-{
-	struct timeval tv;
-
-	while (1)
-		gettimeofday(&tv, 0);
-
-	return 0;
-}
-[root@jouet c]# ./gtod 
-^C
-
-Pressed 'P' in 'perf top' and the [vdso] samples are there:
-
-  62.84%  [vdso]                    [.] __vdso_gettimeofday
-   8.13%  gtod                      [.] main
-   7.51%  [vdso]                    [.] 0x0000000000000914
-   5.78%  [vdso]                    [.] 0x0000000000000917
-   5.43%  gtod                      [.] _init
-   2.71%  [vdso]                    [.] 0x000000000000092d
-   0.35%  [kernel]                  [k] native_io_delay
-   0.33%  libc-2.26.so              [.] __memmove_avx_unaligned_erms
-   0.20%  [vdso]                    [.] 0x000000000000091d
-   0.17%  [i2c_i801]                [k] i801_access
-   0.06%  firefox                   [.] free
-   0.06%  libglib-2.0.so.0.5400.3   [.] g_source_iter_next
-   0.05%  [vdso]                    [.] 0x0000000000000919
-   0.05%  libpthread-2.26.so        [.] __pthread_mutex_lock
-   0.05%  libpixman-1.so.0.34.0     [.] 0x000000000006d3a7
-   0.04%  [kernel]                  [k] entry_SYSCALL_64_trampoline
-   0.04%  libxul.so                 [.] style::dom_apis::query_selector_slow
-   0.04%  [kernel]                  [k] module_get_kallsym
-   0.04%  firefox                   [.] malloc
-   0.04%  [vdso]                    [.] 0x0000000000000910
-
-I added a 'perf probe' to thread__find_map:69, and that surely got tons
-of hits, i.e. for every map found, just to make sure the 'perf probe'
-command was really working.
-
-In the process I noticed a bug, we're only have records for '[vdso]' for
-pre-existing commands, i.e. ones that are running when we start 'perf top',
-when we will generate the PERF_RECORD_MMAP by looking at /perf/PID/maps.
-
-I.e. like this, for preexisting processes with a vdso map, again,
-tracing for all the system, only pre-existing processes get a [vdso] map
-(when having one):
-
-[root@jouet ~]# perf probe -x ~/bin/perf __machine__addnew_vdso
-Added new event:
-  probe_perf:__machine__addnew_vdso (on __machine__addnew_vdso in /home/acme/bin/perf)
-
-You can now use it in all perf tools, such as:
-
-	perf record -e probe_perf:__machine__addnew_vdso -aR sleep 1
-
-[root@jouet ~]# perf trace -e probe_perf:__machine__addnew_vdso/max-stack=8/
-     0.000 probe_perf:__machine__addnew_vdso:(568eb3)
-                                       __machine__addnew_vdso (/home/acme/bin/perf)
-                                       map__new (/home/acme/bin/perf)
-                                       machine__process_mmap2_event (/home/acme/bin/perf)
-                                       machine__process_event (/home/acme/bin/perf)
-                                       perf_event__process (/home/acme/bin/perf)
-                                       perf_tool__process_synth_event (/home/acme/bin/perf)
-                                       perf_event__synthesize_mmap_events (/home/acme/bin/perf)
-                                       __event__synthesize_thread (/home/acme/bin/perf)
-
-The kernel doesn't seem to be generating a PERF_RECORD_MMAP for vDSOs...  And
-we can't do this in 'perf record' because we don't process event by event, just
-dump things from the ring buffer to a file...
-
-For 'perf top', since we process the PERF_RECORD_MMAPs, we can piggyback and
-read the smaps file to hack around this limitation somehow... Peter?
-
-Anyway, two bugs found in this exercise...
-
-The patch is the obvious one and with it we also continue to resolve
-vdso symbols (for pre-existing processes).
-
-- Arnaldo
-
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 0988eb3b844b..bc646185f8d9 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1561,26 +1561,9 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
- 
- 		return NULL;
- 	}
--try_again:
-+
- 	al->map = map_groups__find(mg, al->addr);
--	if (al->map == NULL) {
--		/*
--		 * If this is outside of all known maps, and is a negative
--		 * address, try to look it up in the kernel dso, as it might be
--		 * a vsyscall or vdso (which executes in user-mode).
--		 *
--		 * XXX This is nasty, we should have a symbol list in the
--		 * "[vdso]" dso, but for now lets use the old trick of looking
--		 * in the whole kernel symbol list.
--		 */
--		if (cpumode == PERF_RECORD_MISC_USER && machine &&
--		    mg != &machine->kmaps &&
--		    machine__kernel_ip(machine, al->addr)) {
--			mg = &machine->kmaps;
--			load_map = true;
--			goto try_again;
--		}
--	} else {
-+	if (al->map != NULL) {
- 		/*
- 		 * Kernel maps might be changed when loading symbols so loading
- 		 * must be done prior to using kernel maps.
-
-
+>
+> thanks,
+>
+> greg k-h
+>
+> >
+> > --
+> > Regards
+> > Sudip
