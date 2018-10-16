@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFDBC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D29C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 359D321476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C97F20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/PootAN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 359D321476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ir5x4ung"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C97F20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730976AbeJQBNM (ORCPT
+        id S1730986AbeJQBNP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:13:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58940 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:13:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729207AbeJQBNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:13:11 -0400
+        id S1729207AbeJQBNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:13:14 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69FA12089E;
-        Tue, 16 Oct 2018 17:21:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30C1620866;
+        Tue, 16 Oct 2018 17:21:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710506;
-        bh=/i4vDm8pnyhWtt9UoWCfK84n3rxltSizFGTPjIpBUfE=;
+        s=default; t=1539710508;
+        bh=pg2jarIqg17KtXqUeyWeToPPa2bPGi0nVCHN4ygCZI0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P/PootAN/ZRpgYIx6zjBp43emvGgAe0NYVdC0+3wEz0S15+DyDvqXTv5kZA4buo3N
-         nJc5+RqpVD6clt3L0CRH0Nzi0BNQAzxAE7U+VWBbgTfX7/BQiGPzfIEjkzqo6ipOL8
-         gRSUw+V8TwIuHgpgSb41Ya+ZKfypnV5cge6gAH0s=
+        b=Ir5x4ungX25tR0AkoE74d367egFNM3Iav04y5sNfpWi9sMTaFL6XfEyu5UUVD5aM1
+         Mh/IB5anXO8NYcDBny6Kg5S4kQni1jE6qYt7Ighqs/4jMxA80pGDz79nvzSNm00P2H
+         BI3OGVg9hkb4qW5oHlsXDRpkFWxFHI4dHVvlK7ik=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Tony Lindgren <tony@atomide.com>,
         "David A. Long" <dave.long@linaro.org>
-Subject: [PATCH 4.14 101/109] ARM: spectre-v1: add array_index_mask_nospec() implementation
-Date:   Tue, 16 Oct 2018 19:06:09 +0200
-Message-Id: <20181016170530.498919372@linuxfoundation.org>
+Subject: [PATCH 4.14 102/109] ARM: spectre-v1: fix syscall entry
+Date:   Tue, 16 Oct 2018 19:06:10 +0200
+Message-Id: <20181016170530.539960618@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -66,10 +66,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Commit 1d4238c56f9816ce0f9c8dbe42d7f2ad81cb6613 upstream.
+Commit 10573ae547c85b2c61417ff1a106cffbfceada35 upstream.
 
-Add an implementation of the array_index_mask_nospec() function for
-mitigating Spectre variant 1 throughout the kernel.
+Prevent speculation at the syscall table decoding by clamping the index
+used to zero on invalid system call numbers, and using the csdb
+speculative barrier.
 
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Acked-by: Mark Rutland <mark.rutland@arm.com>
@@ -78,36 +79,84 @@ Reviewed-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/barrier.h |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm/kernel/entry-common.S |   18 +++++++-----------
+ arch/arm/kernel/entry-header.S |   25 +++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 11 deletions(-)
 
---- a/arch/arm/include/asm/barrier.h
-+++ b/arch/arm/include/asm/barrier.h
-@@ -76,6 +76,25 @@ extern void arm_heavy_mb(void);
- #define __smp_rmb()	__smp_mb()
- #define __smp_wmb()	dmb(ishst)
+--- a/arch/arm/kernel/entry-common.S
++++ b/arch/arm/kernel/entry-common.S
+@@ -241,9 +241,7 @@ local_restart:
+ 	tst	r10, #_TIF_SYSCALL_WORK		@ are we tracing syscalls?
+ 	bne	__sys_trace
  
+-	cmp	scno, #NR_syscalls		@ check upper syscall limit
+-	badr	lr, ret_fast_syscall		@ return address
+-	ldrcc	pc, [tbl, scno, lsl #2]		@ call sys_* routine
++	invoke_syscall tbl, scno, r10, ret_fast_syscall
+ 
+ 	add	r1, sp, #S_OFF
+ 2:	cmp	scno, #(__ARM_NR_BASE - __NR_SYSCALL_BASE)
+@@ -277,14 +275,8 @@ __sys_trace:
+ 	mov	r1, scno
+ 	add	r0, sp, #S_OFF
+ 	bl	syscall_trace_enter
+-
+-	badr	lr, __sys_trace_return		@ return address
+-	mov	scno, r0			@ syscall number (possibly new)
+-	add	r1, sp, #S_R0 + S_OFF		@ pointer to regs
+-	cmp	scno, #NR_syscalls		@ check upper syscall limit
+-	ldmccia	r1, {r0 - r6}			@ have to reload r0 - r6
+-	stmccia	sp, {r4, r5}			@ and update the stack args
+-	ldrcc	pc, [tbl, scno, lsl #2]		@ call sys_* routine
++	mov	scno, r0
++	invoke_syscall tbl, scno, r10, __sys_trace_return, reload=1
+ 	cmp	scno, #-1			@ skip the syscall?
+ 	bne	2b
+ 	add	sp, sp, #S_OFF			@ restore stack
+@@ -362,6 +354,10 @@ sys_syscall:
+ 		bic	scno, r0, #__NR_OABI_SYSCALL_BASE
+ 		cmp	scno, #__NR_syscall - __NR_SYSCALL_BASE
+ 		cmpne	scno, #NR_syscalls	@ check range
 +#ifdef CONFIG_CPU_SPECTRE
-+static inline unsigned long array_index_mask_nospec(unsigned long idx,
-+						    unsigned long sz)
-+{
-+	unsigned long mask;
-+
-+	asm volatile(
-+		"cmp	%1, %2\n"
-+	"	sbc	%0, %1, %1\n"
-+	CSDB
-+	: "=r" (mask)
-+	: "r" (idx), "Ir" (sz)
-+	: "cc");
-+
-+	return mask;
-+}
-+#define array_index_mask_nospec array_index_mask_nospec
++		movhs	scno, #0
++		csdb
 +#endif
-+
- #include <asm-generic/barrier.h>
+ 		stmloia	sp, {r5, r6}		@ shuffle args
+ 		movlo	r0, r1
+ 		movlo	r1, r2
+--- a/arch/arm/kernel/entry-header.S
++++ b/arch/arm/kernel/entry-header.S
+@@ -378,6 +378,31 @@
+ #endif
+ 	.endm
  
- #endif /* !__ASSEMBLY__ */
++	.macro	invoke_syscall, table, nr, tmp, ret, reload=0
++#ifdef CONFIG_CPU_SPECTRE
++	mov	\tmp, \nr
++	cmp	\tmp, #NR_syscalls		@ check upper syscall limit
++	movcs	\tmp, #0
++	csdb
++	badr	lr, \ret			@ return address
++	.if	\reload
++	add	r1, sp, #S_R0 + S_OFF		@ pointer to regs
++	ldmccia	r1, {r0 - r6}			@ reload r0-r6
++	stmccia	sp, {r4, r5}			@ update stack arguments
++	.endif
++	ldrcc	pc, [\table, \tmp, lsl #2]	@ call sys_* routine
++#else
++	cmp	\nr, #NR_syscalls		@ check upper syscall limit
++	badr	lr, \ret			@ return address
++	.if	\reload
++	add	r1, sp, #S_R0 + S_OFF		@ pointer to regs
++	ldmccia	r1, {r0 - r6}			@ reload r0-r6
++	stmccia	sp, {r4, r5}			@ update stack arguments
++	.endif
++	ldrcc	pc, [\table, \nr, lsl #2]	@ call sys_* routine
++#endif
++	.endm
++
+ /*
+  * These are the registers used in the syscall handler, and allow us to
+  * have in theory up to 7 arguments to a function - r0 to r6.
 
 
