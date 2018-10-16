@@ -7,50 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DA5C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B35C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50C1820866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 985E021470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vw80GyIE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C1820866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxfTpSxo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985E021470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730337AbeJPME5 (ORCPT
+        id S1730340AbeJPMFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:04:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54150 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:05:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730314AbeJPMEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:04:54 -0400
+        id S1730300AbeJPMEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:04:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F0C62147E;
-        Tue, 16 Oct 2018 04:16:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60782214AB;
+        Tue, 16 Oct 2018 04:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663391;
-        bh=BMKsN4VJtuGOR+Y4tL7iQWp2uIezAetxah1boK1+qY8=;
+        s=default; t=1539663388;
+        bh=jzrBnfv4faBEpcrMZEfjR1ksJV/pYcpSd39PT1HnDes=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vw80GyIEwIQNa7aPq8gmnou2hJ4fD23CbhzCfK4TY6wvos6QQF7xKnoOCiw6X9vtU
-         kPvzgYtKO/hGizsZraHdqD0v1gB7UA0gyOvCyZiWHpnSitH5hMJs+Umpo3+DA/A2i2
-         YnPszq/trX9McA2RPfmeQLpCLR9BfLcWHt++cpdU=
+        b=FxfTpSxoEFCgfhCD5FgAvhurLe1rITTTY820mTHIq61fONcsw9aqmw70n3a1Kaige
+         LSjC4I0LPEK91h7dwsmJ262eTFRCJeIMZPbDYXpeXj0t4T+P2ro3VAjI6kVOv9jfjn
+         SmeNJkPcawpQl8Y2jX+kF06gorzFc90IIkMWRuqI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jann Horn <jannh@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Christoph Lameter <clameter@sgi.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Yu Zhao <yuzhao@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 25/25] mm/vmstat.c: fix outdated vmstat_text
-Date:   Tue, 16 Oct 2018 00:16:06 -0400
-Message-Id: <20181016041606.135876-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 23/25] net/usb: cancel pending work when unbinding smsc75xx
+Date:   Tue, 16 Oct 2018 00:16:04 -0400
+Message-Id: <20181016041606.135876-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041606.135876-1-sashal@kernel.org>
 References: <20181016041606.135876-1-sashal@kernel.org>
@@ -59,50 +53,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Yu Zhao <yuzhao@google.com>
 
-[ Upstream commit 28e2c4bb99aa40f9d5f07ac130cbc4da0ea93079 ]
+[ Upstream commit f7b2a56e1f3dcbdb4cf09b2b63e859ffe0e09df8 ]
 
-7a9cdebdcc17 ("mm: get rid of vmacache_flush_all() entirely") removed the
-VMACACHE_FULL_FLUSHES statistics, but didn't remove the corresponding
-entry in vmstat_text.  This causes an out-of-bounds access in
-vmstat_show().
+Cancel pending work before freeing smsc75xx private data structure
+during binding. This fixes the following crash in the driver:
 
-Luckily this only affects kernels with CONFIG_DEBUG_VM_VMACACHE=y, which
-is probably very rare.
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000050
+IP: mutex_lock+0x2b/0x3f
+<snipped>
+Workqueue: events smsc75xx_deferred_multicast_write [smsc75xx]
+task: ffff8caa83e85700 task.stack: ffff948b80518000
+RIP: 0010:mutex_lock+0x2b/0x3f
+<snipped>
+Call Trace:
+ smsc75xx_deferred_multicast_write+0x40/0x1af [smsc75xx]
+ process_one_work+0x18d/0x2fc
+ worker_thread+0x1a2/0x269
+ ? pr_cont_work+0x58/0x58
+ kthread+0xfa/0x10a
+ ? pr_cont_work+0x58/0x58
+ ? rcu_read_unlock_sched_notrace+0x48/0x48
+ ret_from_fork+0x22/0x40
 
-Link: http://lkml.kernel.org/r/20181001143138.95119-1-jannh@google.com
-Fixes: 7a9cdebdcc17 ("mm: get rid of vmacache_flush_all() entirely")
-Signed-off-by: Jann Horn <jannh@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Christoph Lameter <clameter@sgi.com>
-Cc: Kemi Wang <kemi.wang@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/vmstat.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/usb/smsc75xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 8895eff2d735..a2d70ef74db7 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -869,7 +869,6 @@ const char * const vmstat_text[] = {
- #ifdef CONFIG_DEBUG_VM_VMACACHE
- 	"vmacache_find_calls",
- 	"vmacache_find_hits",
--	"vmacache_full_flushes",
- #endif
- #endif /* CONFIG_VM_EVENTS_COUNTERS */
- };
+diff --git a/drivers/net/usb/smsc75xx.c b/drivers/net/usb/smsc75xx.c
+index 1a8b9ea49144..234febc6e1d9 100644
+--- a/drivers/net/usb/smsc75xx.c
++++ b/drivers/net/usb/smsc75xx.c
+@@ -1509,6 +1509,7 @@ static void smsc75xx_unbind(struct usbnet *dev, struct usb_interface *intf)
+ {
+ 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
+ 	if (pdata) {
++		cancel_work_sync(&pdata->set_multicast);
+ 		netif_dbg(dev, ifdown, dev->net, "free pdata\n");
+ 		kfree(pdata);
+ 		pdata = NULL;
 -- 
 2.17.1
 
