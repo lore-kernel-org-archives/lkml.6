@@ -2,74 +2,97 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FDBC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 836BAC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52C60208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:30:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYLkejN+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C60208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C61220881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:37:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C61220881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbeJPOTY (ORCPT
+        id S1727379AbeJPO0M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 10:19:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727174AbeJPOTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 10:19:24 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C201208B3;
-        Tue, 16 Oct 2018 06:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539671430;
-        bh=Ge8s/Dq5YcJ/53G9YIBTAfEdxSrRs4heXdL2r3Q9N9g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AYLkejN+l865Gd1reee2iOEXE+1QDdD7DziAVe+8cBFLGhZD4bGXuvYu51KM0oeEM
-         /8xLv33AI5RXIWTXdNaU7WZJZ79TIwLxGpNBUGuuePF176Gvf4c5el6IPCfTtATGGC
-         eSdlxeV0RfYqZu2IV/j4fyy2uZIL61p1ocmW3/Z0=
-Date:   Tue, 16 Oct 2018 08:30:28 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Roman Kiryanov <rkir@google.com>
-Cc:     linux-kernel@vger.kernel.org, Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v3 07/15] platform: goldfish: pipe: Return status from
- "deinit" since "remove" does not do much
-Message-ID: <20181016063028.GC882@kroah.com>
-References: <20181003171720.169953-1-rkir@google.com>
- <20181003171720.169953-7-rkir@google.com>
- <20181015183605.GB28454@kroah.com>
- <CAOGAQeqiWMseXPi6n2gkBHAWhsRdwDyMXpCFB1h2mEuQLJz-mw@mail.gmail.com>
+        Tue, 16 Oct 2018 10:26:12 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49887 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727094AbeJPO0L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 10:26:11 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9G6aqlm3981714
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 15 Oct 2018 23:36:52 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9G6aqUD3981711;
+        Mon, 15 Oct 2018 23:36:52 -0700
+Date:   Mon, 15 Oct 2018 23:36:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Waiman Long <tipbot@zytor.com>
+Message-ID: <tip-4766ab5677a2842834f9bc4a21587256a811531c@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, longman@redhat.com,
+        will.deacon@arm.com, peterz@infradead.org,
+        torvalds@linux-foundation.org, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de
+Reply-To: torvalds@linux-foundation.org, mingo@kernel.org, hpa@zytor.com,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          longman@redhat.com, peterz@infradead.org, will.deacon@arm.com
+In-Reply-To: <1539380547-16726-1-git-send-email-longman@redhat.com>
+References: <1539380547-16726-1-git-send-email-longman@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] locking/lockdep: Remove duplicated
+ 'lock_class_ops' percpu array
+Git-Commit-ID: 4766ab5677a2842834f9bc4a21587256a811531c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAOGAQeqiWMseXPi6n2gkBHAWhsRdwDyMXpCFB1h2mEuQLJz-mw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 03:04:47PM -0700, Roman Kiryanov wrote:
-> > This function can not fail, why are you returning 0 always?  That
-> > doesn't make sense.
-> 
-> remove in struct platform_driver requires returning something, we have
-> to have "return" somewhere.
+Commit-ID:  4766ab5677a2842834f9bc4a21587256a811531c
+Gitweb:     https://git.kernel.org/tip/4766ab5677a2842834f9bc4a21587256a811531c
+Author:     Waiman Long <longman@redhat.com>
+AuthorDate: Fri, 12 Oct 2018 17:42:27 -0400
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 16 Oct 2018 08:21:10 +0200
 
-But this code always returns 0, you are changing the function return
-value to int, but it can not fail.  I do not understand the need for
-this change at all, sorry.
+locking/lockdep: Remove duplicated 'lock_class_ops' percpu array
 
-> I think we want to return closer to the place where we do something useful.
+Remove the duplicated 'lock_class_ops' percpu array that is not used
+anywhere.
 
-I do not understand this.
+Signed-off-by: Waiman Long <longman@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Fixes: 8ca2b56cd7da ("locking/lockdep: Make class->ops a percpu counter and move it under CONFIG_DEBUG_LOCKDEP=y")
+Link: http://lkml.kernel.org/r/1539380547-16726-1-git-send-email-longman@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/locking/lockdep.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-greg k-h
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index a0f83058d6aa..8a732c856624 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -436,7 +436,6 @@ unsigned int max_lockdep_depth;
+  * Various lockdep statistics:
+  */
+ DEFINE_PER_CPU(struct lockdep_stats, lockdep_stats);
+-DEFINE_PER_CPU(unsigned long [MAX_LOCKDEP_KEYS], lock_class_ops);
+ #endif
+ 
+ /*
