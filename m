@@ -2,79 +2,114 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA083C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D994C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB04208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:12:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB04208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 596B52089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:13:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 596B52089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbeJPTC2 (ORCPT
+        id S1727132AbeJPTDW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 15:02:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35182 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726595AbeJPTC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 15:02:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AB6E4AF3F;
-        Tue, 16 Oct 2018 11:12:30 +0000 (UTC)
-Date:   Tue, 16 Oct 2018 13:12:30 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/3] mm: Shuffle initial free memory
-Message-ID: <20181016111230.GR18839@dhcp22.suse.cz>
-References: <153922180166.838512.8260339805733812034.stgit@dwillia2-desk3.amr.corp.intel.com>
- <153922180696.838512.12621709717839260874.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CAGXu5j+PStxYhiJaWM-mt4+WWbS_WAfvyHoyZYD5ndDLN2SY6w@mail.gmail.com>
+        Tue, 16 Oct 2018 15:03:22 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.109]:42701 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726595AbeJPTDW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 15:03:22 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id AC6C2278D9
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 06:13:15 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id CNHngDp8aFxNhCNHngXPbq; Tue, 16 Oct 2018 06:13:15 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:36404 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gCNHn-000y2q-0v; Tue, 16 Oct 2018 06:13:15 -0500
+Date:   Tue, 16 Oct 2018 13:13:13 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] Input: uinput - fix Spectre v1 vulnerability
+Message-ID: <20181016111313.GA28307@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5j+PStxYhiJaWM-mt4+WWbS_WAfvyHoyZYD5ndDLN2SY6w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gCNHn-000y2q-0v
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:36404
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 15-10-18 15:25:47, Kees Cook wrote:
-> On Wed, Oct 10, 2018 at 6:36 PM, Dan Williams <dan.j.williams@intel.com> wrote:
-> > While SLAB_FREELIST_RANDOM reduces the predictability of some local slab
-> > caches it leaves vast bulk of memory to be predictably in order
-> > allocated. That ordering can be detected by a memory side-cache.
-> >
-> > The shuffling is done in terms of CONFIG_SHUFFLE_PAGE_ORDER sized free
-> > pages where the default CONFIG_SHUFFLE_PAGE_ORDER is MAX_ORDER-1 i.e.
-> > 10, 4MB this trades off randomization granularity for time spent
-> > shuffling.  MAX_ORDER-1 was chosen to be minimally invasive to the page
-> > allocator while still showing memory-side cache behavior improvements,
-> > and the expectation that the security implications of finer granularity
-> > randomization is mitigated by CONFIG_SLAB_FREELIST_RANDOM.
-> 
-> Perhaps it would help some of the detractors of this feature to make
-> this a runtime choice? Some benchmarks show improvements, some show
-> regressions. It could just be up to the admin to turn this on/off
-> given their paranoia levels? (i.e. the shuffling could become a no-op
-> with a given specific boot param?)
+setup.code can be indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Sure, making this a opt-in is really necessary but it would be even
-_better_ to actually evaluate how much security relevance it has as
-well. If for nothing else then to allow an educated decision rather than
-a fear driven one. And that pretty much involves evaluation on how hard
-it is to bypass the randomness. If I am going to pay some overhead I
-would like to know how much hardening I get in return, right? Something
-completely missing in the current evaluation so far.
+This issue was detected with the help of Smatch:
+
+drivers/input/misc/uinput.c:512 uinput_abs_setup() warn: potential
+spectre issue 'dev->absinfo' [w] (local cap)
+
+Fix this by sanitizing setup.code before using it to index dev->absinfo.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/input/misc/uinput.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/input/misc/uinput.c b/drivers/input/misc/uinput.c
+index 8ec483e..97b0809 100644
+--- a/drivers/input/misc/uinput.c
++++ b/drivers/input/misc/uinput.c
+@@ -42,6 +42,8 @@
+ #include <linux/input/mt.h>
+ #include "../input-compat.h"
+ 
++#include <linux/nospec.h>
++
+ #define UINPUT_NAME		"uinput"
+ #define UINPUT_BUFFER_SIZE	16
+ #define UINPUT_NUM_REQUESTS	16
+@@ -497,6 +499,7 @@ static int uinput_abs_setup(struct uinput_device *udev,
+ 
+ 	if (setup.code > ABS_MAX)
+ 		return -ERANGE;
++	setup.code = array_index_nospec(setup.code, ABS_MAX + 1);
+ 
+ 	dev = udev->dev;
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
