@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7364C5ACC8
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 709BCC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E88421476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3803821476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyejWFpB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E88421476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuAQMajp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3803821476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbeJQBHv (ORCPT
+        id S1729694AbeJQBHy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:07:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52358 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:07:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728606AbeJQBHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:07:50 -0400
+        id S1728606AbeJQBHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:07:54 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FA102098A;
-        Tue, 16 Oct 2018 17:16:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D2A02089E;
+        Tue, 16 Oct 2018 17:16:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710187;
-        bh=sGJWfwQgKCWgJoO5oPMTZRhEEQeivGN24h4iap2Op/g=;
+        s=default; t=1539710190;
+        bh=HVs2Gc+4o1Dgpsbdx4B5TGKeBpvHBWbtOn9KmjGjxkU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OyejWFpBQ1JtYl6Lz4XhEPidkOVBlYP5PA3DZfSlOAAJoK/aVUkR5E2LfniLd55ek
-         wkDawr0GgDfe6VYH2ndJU1wt8LVmF2rBLzqcxtEl44OKtKAB9z3PiWFnaGBfkUr6gw
-         ifFR0LYtfVg92Fye9/8M1gXpsjnkc5Scs8RBxz2Y=
+        b=IuAQMajpthL9ka0JxUlB1MzA5F3vtYPOpgXh90Z0GOhHzwlmKXc8bDodKNCY97VzP
+         npGLqaP3m8Ml+0XUwwgkLFi8bsw71wyloA+tZ/MQbpXiqKgJIb0HkLmhaIKgEi1RDI
+         noFoeSxmQLwkZH5SnR3EIyuo6h44dyKjbJn2WpX0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Zwisler <zwisler@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.18 133/135] filesystem-dax: Fix dax_layout_busy_page() livelock
-Date:   Tue, 16 Oct 2018 19:06:03 +0200
-Message-Id: <20181016170524.437414404@linuxfoundation.org>
+Subject: [PATCH 4.18 134/135] mm: Preserve _PAGE_DEVMAP across mprotect() calls
+Date:   Tue, 16 Oct 2018 19:06:04 +0200
+Message-Id: <20181016170524.520134936@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -63,80 +64,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Jan Kara <jack@suse.cz>
 
-commit d7782145e1ad537df4ce74e58c50f1f732a1462d upstream.
+commit 4628a64591e6cee181237060961e98c615c33966 upstream.
 
-In the presence of multi-order entries the typical
-pagevec_lookup_entries() pattern may loop forever:
+Currently _PAGE_DEVMAP bit is not preserved in mprotect(2) calls. As a
+result we will see warnings such as:
 
-	while (index < end && pagevec_lookup_entries(&pvec, mapping, index,
-				min(end - index, (pgoff_t)PAGEVEC_SIZE),
-				indices)) {
-		...
-		for (i = 0; i < pagevec_count(&pvec); i++) {
-			index = indices[i];
-			...
-		}
-		index++; /* BUG */
-	}
+BUG: Bad page map in process JobWrk0013  pte:800001803875ea25 pmd:7624381067
+addr:00007f0930720000 vm_flags:280000f9 anon_vma:          (null) mapping:ffff97f2384056f0 index:0
+file:457-000000fe00000030-00000009-000000ca-00000001_2001.fileblock fault:xfs_filemap_fault [xfs] mmap:xfs_file_mmap [xfs] readpage:          (null)
+CPU: 3 PID: 15848 Comm: JobWrk0013 Tainted: G        W          4.12.14-2.g7573215-default #1 SLE12-SP4 (unreleased)
+Hardware name: Intel Corporation S2600WFD/S2600WFD, BIOS SE5C620.86B.01.00.0833.051120182255 05/11/2018
+Call Trace:
+ dump_stack+0x5a/0x75
+ print_bad_pte+0x217/0x2c0
+ ? enqueue_task_fair+0x76/0x9f0
+ _vm_normal_page+0xe5/0x100
+ zap_pte_range+0x148/0x740
+ unmap_page_range+0x39a/0x4b0
+ unmap_vmas+0x42/0x90
+ unmap_region+0x99/0xf0
+ ? vma_gap_callbacks_rotate+0x1a/0x20
+ do_munmap+0x255/0x3a0
+ vm_munmap+0x54/0x80
+ SyS_munmap+0x1d/0x30
+ do_syscall_64+0x74/0x150
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+...
 
-The loop updates 'index' for each index found and then increments to the
-next possible page to continue the lookup. However, if the last entry in
-the pagevec is multi-order then the next possible page index is more
-than 1 page away. Fix this locally for the filesystem-dax case by
-checking for dax-multi-order entries. Going forward new users of
-multi-order entries need to be similarly careful, or we need a generic
-way to report the page increment in the radix iterator.
+when mprotect(2) gets used on DAX mappings. Also there is a wide variety
+of other failures that can result from the missing _PAGE_DEVMAP flag
+when the area gets used by get_user_pages() later.
 
-Fixes: 5fac7408d828 ("mm, fs, dax: handle layout changes to pinned dax...")
+Fix the problem by including _PAGE_DEVMAP in a set of flags that get
+preserved by mprotect(2).
+
+Fixes: 69660fd797c3 ("x86, mm: introduce _PAGE_DEVMAP")
+Fixes: ebd31197931d ("powerpc/mm: Add devmap support for ppc64")
 Cc: <stable@vger.kernel.org>
-Cc: Ross Zwisler <zwisler@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dax.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ arch/powerpc/include/asm/book3s/64/pgtable.h |    4 ++--
+ arch/x86/include/asm/pgtable_types.h         |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -558,6 +558,8 @@ struct page *dax_layout_busy_page(struct
- 	while (index < end && pagevec_lookup_entries(&pvec, mapping, index,
- 				min(end - index, (pgoff_t)PAGEVEC_SIZE),
- 				indices)) {
-+		pgoff_t nr_pages = 1;
-+
- 		for (i = 0; i < pagevec_count(&pvec); i++) {
- 			struct page *pvec_ent = pvec.pages[i];
- 			void *entry;
-@@ -571,8 +573,15 @@ struct page *dax_layout_busy_page(struct
+--- a/arch/powerpc/include/asm/book3s/64/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+@@ -104,7 +104,7 @@
+  */
+ #define _HPAGE_CHG_MASK (PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
+ 			 _PAGE_ACCESSED | H_PAGE_THP_HUGE | _PAGE_PTE | \
+-			 _PAGE_SOFT_DIRTY)
++			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
+ /*
+  * user access blocked by key
+  */
+@@ -122,7 +122,7 @@
+  */
+ #define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
+ 			 _PAGE_ACCESSED | _PAGE_SPECIAL | _PAGE_PTE |	\
+-			 _PAGE_SOFT_DIRTY)
++			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
  
- 			xa_lock_irq(&mapping->i_pages);
- 			entry = get_unlocked_mapping_entry(mapping, index, NULL);
--			if (entry)
-+			if (entry) {
- 				page = dax_busy_page(entry);
-+				/*
-+				 * Account for multi-order entries at
-+				 * the end of the pagevec.
-+				 */
-+				if (i + 1 >= pagevec_count(&pvec))
-+					nr_pages = 1UL << dax_radix_order(entry);
-+			}
- 			put_unlocked_mapping_entry(mapping, index, entry);
- 			xa_unlock_irq(&mapping->i_pages);
- 			if (page)
-@@ -580,7 +589,7 @@ struct page *dax_layout_busy_page(struct
- 		}
- 		pagevec_remove_exceptionals(&pvec);
- 		pagevec_release(&pvec);
--		index++;
-+		index += nr_pages;
+ #define H_PTE_PKEY  (H_PTE_PKEY_BIT0 | H_PTE_PKEY_BIT1 | H_PTE_PKEY_BIT2 | \
+ 		     H_PTE_PKEY_BIT3 | H_PTE_PKEY_BIT4)
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -123,7 +123,7 @@
+  */
+ #define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
+ 			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
+-			 _PAGE_SOFT_DIRTY)
++			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
+ #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
  
- 		if (page)
- 			break;
+ /*
 
 
