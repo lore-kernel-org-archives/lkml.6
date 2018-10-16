@@ -6,52 +6,44 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19233C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45065C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D963921479
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00EC521486
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nM4Y2av1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D963921479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ng7cn00/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00EC521486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731270AbeJQBOY (ORCPT
+        id S1731280AbeJQBO1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:14:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60950 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:14:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730635AbeJQBOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:14:23 -0400
+        id S1730397AbeJQBO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:14:26 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41C9620658;
-        Tue, 16 Oct 2018 17:22:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A98421477;
+        Tue, 16 Oct 2018 17:23:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710578;
-        bh=c0SdQ1kXtaoCN1czBd7Qdf8yP0HHMu9vO0lfPK3KQpw=;
+        s=default; t=1539710580;
+        bh=sn/oKwQJlc6qaWg5c2z2LYL3L1jTFXKpZo+GyI8W2xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nM4Y2av1XbF8Mh32sWd+sk17is8vFwTofxhZ5gtbQD75Mwxw0ek77A8ZBWYQqqTr9
-         ou7jgpBfOVnucrUN6BTrYz8TDOIxX0EUeMJvnoOTO8Gdkp4yvSFPcw/hWriHfLvryb
-         ys34RDkntiqZPjsulCXhBXq/4OAAjvYtzva5M9as=
+        b=Ng7cn00/f1as/j9QsJ8xXl15LsYed3CXyWQSH+LMzXeFIEs1Dp8Ii9Xk1UzFcpZoP
+         AA+XZnDRfDSA+6F42ZJTHBP8pYArrbM+dXy6kl0Qcu3Hd6yuuiwPFtpGKFp3Vs3Eh9
+         lvqqPGv+qvTD7nJcvkFIn2Ub2NC80VzQ5nhDH4lU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Christoph Lameter <clameter@sgi.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 15/71] mm/vmstat.c: fix outdated vmstat_text
-Date:   Tue, 16 Oct 2018 19:09:12 +0200
-Message-Id: <20181016170540.160160468@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org
+Subject: [PATCH 4.9 16/71] MIPS: VDSO: Always map near top of user memory
+Date:   Tue, 16 Oct 2018 19:09:13 +0200
+Message-Id: <20181016170540.218002691@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
 References: <20181016170539.315587743@linuxfoundation.org>
@@ -69,47 +61,186 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit 28e2c4bb99aa40f9d5f07ac130cbc4da0ea93079 upstream.
+commit ea7e0480a4b695d0aa6b3fa99bd658a003122113 upstream.
 
-7a9cdebdcc17 ("mm: get rid of vmacache_flush_all() entirely") removed the
-VMACACHE_FULL_FLUSHES statistics, but didn't remove the corresponding
-entry in vmstat_text.  This causes an out-of-bounds access in
-vmstat_show().
+When using the legacy mmap layout, for example triggered using ulimit -s
+unlimited, get_unmapped_area() fills memory from bottom to top starting
+from a fairly low address near TASK_UNMAPPED_BASE.
 
-Luckily this only affects kernels with CONFIG_DEBUG_VM_VMACACHE=y, which
-is probably very rare.
+This placement is suboptimal if the user application wishes to allocate
+large amounts of heap memory using the brk syscall. With the VDSO being
+located low in the user's virtual address space, the amount of space
+available for access using brk is limited much more than it was prior to
+the introduction of the VDSO.
 
-Link: http://lkml.kernel.org/r/20181001143138.95119-1-jannh@google.com
-Fixes: 7a9cdebdcc17 ("mm: get rid of vmacache_flush_all() entirely")
-Signed-off-by: Jann Horn <jannh@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Christoph Lameter <clameter@sgi.com>
-Cc: Kemi Wang <kemi.wang@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+For example:
+
+  # ulimit -s unlimited; cat /proc/self/maps
+  00400000-004ec000 r-xp 00000000 08:00 71436      /usr/bin/coreutils
+  004fc000-004fd000 rwxp 000ec000 08:00 71436      /usr/bin/coreutils
+  004fd000-0050f000 rwxp 00000000 00:00 0
+  00cc3000-00ce4000 rwxp 00000000 00:00 0          [heap]
+  2ab96000-2ab98000 r--p 00000000 00:00 0          [vvar]
+  2ab98000-2ab99000 r-xp 00000000 00:00 0          [vdso]
+  2ab99000-2ab9d000 rwxp 00000000 00:00 0
+  ...
+
+Resolve this by adjusting STACK_TOP to reserve space for the VDSO &
+providing an address hint to get_unmapped_area() causing it to use this
+space even when using the legacy mmap layout.
+
+We reserve enough space for the VDSO, plus 1MB or 256MB for 32 bit & 64
+bit systems respectively within which we randomize the VDSO base
+address. Previously this randomization was taken care of by the mmap
+base address randomization performed by arch_mmap_rnd(). The 1MB & 256MB
+sizes are somewhat arbitrary but chosen such that we have some
+randomization without taking up too much of the user's virtual address
+space, which is often in short supply for 32 bit systems.
+
+With this the VDSO is always mapped at a high address, leaving lots of
+space for statically linked programs to make use of brk:
+
+  # ulimit -s unlimited; cat /proc/self/maps
+  00400000-004ec000 r-xp 00000000 08:00 71436      /usr/bin/coreutils
+  004fc000-004fd000 rwxp 000ec000 08:00 71436      /usr/bin/coreutils
+  004fd000-0050f000 rwxp 00000000 00:00 0
+  00c28000-00c49000 rwxp 00000000 00:00 0          [heap]
+  ...
+  7f67c000-7f69d000 rwxp 00000000 00:00 0          [stack]
+  7f7fc000-7f7fd000 rwxp 00000000 00:00 0
+  7fcf1000-7fcf3000 r--p 00000000 00:00 0          [vvar]
+  7fcf3000-7fcf4000 r-xp 00000000 00:00 0          [vdso]
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reported-by: Huacai Chen <chenhc@lemote.com>
+Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmstat.c |    1 -
- 1 file changed, 1 deletion(-)
+ arch/mips/include/asm/processor.h |   10 +++++-----
+ arch/mips/kernel/process.c        |   25 +++++++++++++++++++++++++
+ arch/mips/kernel/vdso.c           |   18 +++++++++++++++++-
+ 3 files changed, 47 insertions(+), 6 deletions(-)
 
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1089,7 +1089,6 @@ const char * const vmstat_text[] = {
- #ifdef CONFIG_DEBUG_VM_VMACACHE
- 	"vmacache_find_calls",
- 	"vmacache_find_hits",
--	"vmacache_full_flushes",
+--- a/arch/mips/include/asm/processor.h
++++ b/arch/mips/include/asm/processor.h
+@@ -13,6 +13,7 @@
+ 
+ #include <linux/atomic.h>
+ #include <linux/cpumask.h>
++#include <linux/sizes.h>
+ #include <linux/threads.h>
+ 
+ #include <asm/cachectl.h>
+@@ -80,11 +81,10 @@ extern unsigned int vced_count, vcei_cou
+ 
  #endif
- #endif /* CONFIG_VM_EVENTS_COUNTERS */
- };
+ 
+-/*
+- * One page above the stack is used for branch delay slot "emulation".
+- * See dsemul.c for details.
+- */
+-#define STACK_TOP	((TASK_SIZE & PAGE_MASK) - PAGE_SIZE)
++#define VDSO_RANDOMIZE_SIZE	(TASK_IS_32BIT_ADDR ? SZ_1M : SZ_256M)
++
++extern unsigned long mips_stack_top(void);
++#define STACK_TOP		mips_stack_top()
+ 
+ /*
+  * This decides where the kernel will search for a free chunk of vm
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -28,6 +28,7 @@
+ #include <linux/prctl.h>
+ #include <linux/nmi.h>
+ 
++#include <asm/abi.h>
+ #include <asm/asm.h>
+ #include <asm/bootinfo.h>
+ #include <asm/cpu.h>
+@@ -35,6 +36,7 @@
+ #include <asm/dsp.h>
+ #include <asm/fpu.h>
+ #include <asm/irq.h>
++#include <asm/mips-cps.h>
+ #include <asm/msa.h>
+ #include <asm/pgtable.h>
+ #include <asm/mipsregs.h>
+@@ -621,6 +623,29 @@ out:
+ 	return pc;
+ }
+ 
++unsigned long mips_stack_top(void)
++{
++	unsigned long top = TASK_SIZE & PAGE_MASK;
++
++	/* One page for branch delay slot "emulation" */
++	top -= PAGE_SIZE;
++
++	/* Space for the VDSO, data page & GIC user page */
++	top -= PAGE_ALIGN(current->thread.abi->vdso->size);
++	top -= PAGE_SIZE;
++	top -= mips_gic_present() ? PAGE_SIZE : 0;
++
++	/* Space for cache colour alignment */
++	if (cpu_has_dc_aliases)
++		top -= shm_align_mask + 1;
++
++	/* Space to randomize the VDSO base */
++	if (current->flags & PF_RANDOMIZE)
++		top -= VDSO_RANDOMIZE_SIZE;
++
++	return top;
++}
++
+ /*
+  * Don't forget that the stack pointer must be aligned on a 8 bytes
+  * boundary for 32-bits ABI and 16 bytes for 64-bits ABI.
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -16,6 +16,7 @@
+ #include <linux/irqchip/mips-gic.h>
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
++#include <linux/random.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/timekeeper_internal.h>
+@@ -97,6 +98,21 @@ void update_vsyscall_tz(void)
+ 	}
+ }
+ 
++static unsigned long vdso_base(void)
++{
++	unsigned long base;
++
++	/* Skip the delay slot emulation page */
++	base = STACK_TOP + PAGE_SIZE;
++
++	if (current->flags & PF_RANDOMIZE) {
++		base += get_random_int() & (VDSO_RANDOMIZE_SIZE - 1);
++		base = PAGE_ALIGN(base);
++	}
++
++	return base;
++}
++
+ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ {
+ 	struct mips_vdso_image *image = current->thread.abi->vdso;
+@@ -138,7 +154,7 @@ int arch_setup_additional_pages(struct l
+ 	if (cpu_has_dc_aliases)
+ 		size += shm_align_mask + 1;
+ 
+-	base = get_unmapped_area(NULL, 0, size, 0, 0);
++	base = get_unmapped_area(NULL, vdso_base(), size, 0, 0);
+ 	if (IS_ERR_VALUE(base)) {
+ 		ret = base;
+ 		goto out;
 
 
