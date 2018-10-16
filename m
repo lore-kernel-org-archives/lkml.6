@@ -2,180 +2,125 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F74C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BECC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E302089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:46:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E302089E
+	by mail.kernel.org (Postfix) with ESMTP id BA25920881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:46:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA25920881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbeJPVgg (ORCPT
+        id S1727257AbeJPVhP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:36:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51428 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727002AbeJPVge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 17:36:34 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 28CDB308429C;
-        Tue, 16 Oct 2018 13:46:01 +0000 (UTC)
-Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 921162E64A;
-        Tue, 16 Oct 2018 13:46:00 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: [PATCH 2/2] locking/pvqspinlock: Extend node size when pvqspinlock is configured
-Date:   Tue, 16 Oct 2018 09:45:07 -0400
-Message-Id: <1539697507-28084-2-git-send-email-longman@redhat.com>
-In-Reply-To: <1539697507-28084-1-git-send-email-longman@redhat.com>
-References: <1539697507-28084-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 16 Oct 2018 13:46:01 +0000 (UTC)
+        Tue, 16 Oct 2018 17:37:15 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37949 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727184AbeJPVhP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 17:37:15 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a13-v6so25621822wrt.5
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 06:46:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p4y/FV5ULAiX9E5VTGl1UX33BFZt7Sw86vT2QEBhx/0=;
+        b=rKIt/hoRrsvo+Fd3CVcfrYaufA29DfANyvUSa2ee/OYwLCAeTc0KJmL7FJ1hOjiS1E
+         EV9D3ThL4oGTUHD0afZvvgwf+lF3bHBsN54E5XFvW0DDJMR+SMiGLaT+2YJkYd3jBT+s
+         sq0Y6QPIRzrWyDtiB5RpcBkmkZID6n+E3gUCXbRt8EKBOGpMSZA9/fSU1PCByuEsGh+B
+         U6//6goWT5cKn9e9f7C0fJNL5Obx9K5qAyPOpwirdIjvxV9OUIKd67hteIGlXw13DoF/
+         sP5ONRAgTZVYh7o1wmfjXpxhrH+6apFy+OeGd+DFttFoFuTtvOUhtupKxF059JxNiSMo
+         uDaA==
+X-Gm-Message-State: ABuFfogv5ZS9ILikp0jhi03SX1zxZOnNz+2GxXSll2NddxQ6mWj5rtIh
+        6X52pNe1uoVxla5ju+aSCMKYZQ==
+X-Google-Smtp-Source: ACcGV60EhDNHxbO4PltUobFB1H9ISiXHQrBMEaQvIWuu1wo1AUlkYfyQ51zR+WXNXc2LCUj4qrQ/RA==
+X-Received: by 2002:a5d:4b84:: with SMTP id b4-v6mr19503135wrt.168.1539697600506;
+        Tue, 16 Oct 2018 06:46:40 -0700 (PDT)
+Received: from localhost.localdomain (p200300EF2BD31613C1F2E846AEDA540D.dip0.t-ipconnect.de. [2003:ef:2bd3:1613:c1f2:e846:aeda:540d])
+        by smtp.gmail.com with ESMTPSA id v184-v6sm10260119wme.3.2018.10.16.06.46.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 06:46:39 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 15:46:36 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v8 10/15] sched: Introduce a sysctl for Energy Aware
+ Scheduling
+Message-ID: <20181016134636.GE9130@localhost.localdomain>
+References: <20181016101513.26919-1-quentin.perret@arm.com>
+ <20181016101513.26919-11-quentin.perret@arm.com>
+ <20181016125058.GD9130@localhost.localdomain>
+ <20181016133451.w2y3gwj2c56cvy5c@queper01-lin>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016133451.w2y3gwj2c56cvy5c@queper01-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The qspinlock code supports up to 4 level of slowpath nesting using
-four per-cpu mcs_spinlock structures. For 64-bit architectures, they
-fit nicely in one 64-byte cacheline.
+On 16/10/18 14:36, Quentin Perret wrote:
+> Hi,
+> 
+> On Tuesday 16 Oct 2018 at 14:50:58 (+0200), Juri Lelli wrote:
+> > Hi,
+> > 
+> > On 16/10/18 11:15, Quentin Perret wrote:
+> > 
+> > [...]
+> > 
+> > > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> > > index cc02050fd0c4..481309a11174 100644
+> > > --- a/kernel/sysctl.c
+> > > +++ b/kernel/sysctl.c
+> > > @@ -466,6 +466,17 @@ static struct ctl_table kern_table[] = {
+> > >  		.extra1		= &one,
+> > >  	},
+> > >  #endif
+> > > +#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+> > > +	{
+> > > +		.procname	= "sched_energy_aware",
+> > > +		.data		= &sysctl_sched_energy_aware,
+> > > +		.maxlen		= sizeof(unsigned int),
+> > > +		.mode		= 0644,
+> > > +		.proc_handler	= sched_energy_aware_handler,
+> > > +		.extra1		= &zero,
+> > > +		.extra2		= &one,
+> > > +	},
+> > > +#endif
+> > 
+> > Doesn't this need to be documented in Documentation/sysctl/kernel.txt?
+> 
+> Right, that'd be a good practice indeed. What do you think about the
+> patch below ?
 
-For para-virtualized (PV) qspinlock, it needs to store more information
-in the per-cpu node structure than there is space for. It uses a trick
-to use a second cacheline to hold the extra information that it needs.
-So PV qspinlock needs to access two extra cachelines for its information
-whereas the native qspinlock code only needs one extra cacheline.
+LGTM.
 
-Counter profiling of the qspinlock code, however, revealed that it
-was very rare to use more than two levels of slowpath nesting. So it
-doesn't make sense to penalize PV qspinlock code in order to have four
-mcs_spinlock structures in the same cacheline to optimize for a case
-in the native qspinlock code that rarely happens.
+> > Also, do we want a kernel parameter as well to be able to disable this
+> > at boot?
+> 
+> Yeah, why not. But I guess we could always add that later if need be ?
 
-The per-cpu node structure is now extended to have two more long
-words when PV qspinlock lock is configured to hold the extra data
-that it needs.  As a result, the PV qspinlock code will enjoy the same
-benefit of using just one extra cacheline like the native counterpart
-for most cases.
+Sure. Works with me.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/locking/qspinlock.c          | 34 ++++++++++++++++++++++++++--------
- kernel/locking/qspinlock_paravirt.h |  4 +---
- 2 files changed, 27 insertions(+), 11 deletions(-)
+Thanks,
 
-diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index 7099bbe..389bdb7 100644
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -74,12 +74,24 @@
-  */
- 
- #include "mcs_spinlock.h"
-+#define MAX_NODES	4
- 
-+/*
-+ * On 64-bit architectures, the mcs_spinlock structure will be 16 bytes in
-+ * size and four of them will fit nicely in one 64-byte cacheline. For
-+ * pvqspinlock, however, we need more space for extra data. To accommodate
-+ * that, we insert two more long words to pad it up to 32 bytes. IOW, only
-+ * two of them can fit in a cacheline in this case. That is OK as it is rare
-+ * to have more than 2 levels of slowpath nesting in actual use. We don't
-+ * want to penalize pvqspinlock to optimize for a rare case in native
-+ * qspinlock.
-+ */
-+struct qnode {
-+	struct mcs_spinlock mcs;
- #ifdef CONFIG_PARAVIRT_SPINLOCKS
--#define MAX_NODES	8
--#else
--#define MAX_NODES	4
-+	long reserved[2];
- #endif
-+};
- 
- /*
-  * The pending bit spinning loop count.
-@@ -101,7 +113,7 @@
-  *
-  * PV doubles the storage and uses the second cacheline for PV state.
-  */
--static DEFINE_PER_CPU_ALIGNED(struct mcs_spinlock, mcs_nodes[MAX_NODES]);
-+static DEFINE_PER_CPU_ALIGNED(struct qnode, qnodes[MAX_NODES]);
- 
- /*
-  * We must be able to distinguish between no-tail and the tail at 0:0,
-@@ -126,7 +138,13 @@ static inline __pure struct mcs_spinlock *decode_tail(u32 tail)
- 	int cpu = (tail >> _Q_TAIL_CPU_OFFSET) - 1;
- 	int idx = (tail &  _Q_TAIL_IDX_MASK) >> _Q_TAIL_IDX_OFFSET;
- 
--	return per_cpu_ptr(&mcs_nodes[idx], cpu);
-+	return per_cpu_ptr(&qnodes[idx].mcs, cpu);
-+}
-+
-+static inline __pure
-+struct mcs_spinlock *grab_mcs_node(struct mcs_spinlock *base, int idx)
-+{
-+	return &((struct qnode *)base + idx)->mcs;
- }
- 
- #define _Q_LOCKED_PENDING_MASK (_Q_LOCKED_MASK | _Q_PENDING_MASK)
-@@ -371,11 +389,11 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
- queue:
- 	qstat_inc(qstat_lock_slowpath, true);
- pv_queue:
--	node = this_cpu_ptr(&mcs_nodes[0]);
-+	node = this_cpu_ptr(&qnodes[0].mcs);
- 	idx = node->count++;
- 	tail = encode_tail(smp_processor_id(), idx);
- 
--	node += idx;
-+	node = grab_mcs_node(node, idx);
- 
- 	/*
- 	 * Keep counts of non-zero index values
-@@ -506,7 +524,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
- 	/*
- 	 * release the node
- 	 */
--	__this_cpu_dec(mcs_nodes[0].count);
-+	__this_cpu_dec(qnodes[0].mcs.count);
- }
- EXPORT_SYMBOL(queued_spin_lock_slowpath);
- 
-diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
-index 5a0cf5f..0130e48 100644
---- a/kernel/locking/qspinlock_paravirt.h
-+++ b/kernel/locking/qspinlock_paravirt.h
-@@ -49,8 +49,6 @@ enum vcpu_state {
- 
- struct pv_node {
- 	struct mcs_spinlock	mcs;
--	struct mcs_spinlock	__res[3];
--
- 	int			cpu;
- 	u8			state;
- };
-@@ -281,7 +279,7 @@ static void pv_init_node(struct mcs_spinlock *node)
- {
- 	struct pv_node *pn = (struct pv_node *)node;
- 
--	BUILD_BUG_ON(sizeof(struct pv_node) > 5*sizeof(struct mcs_spinlock));
-+	BUILD_BUG_ON(sizeof(struct pv_node) > sizeof(struct qnode));
- 
- 	pn->cpu = smp_processor_id();
- 	pn->state = vcpu_running;
--- 
-1.8.3.1
-
+- Juri
