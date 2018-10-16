@@ -2,118 +2,163 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FAAC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA4CC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 473EC208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:27:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d22wxBkn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 473EC208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 80D852098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:27:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D852098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727439AbeJPOQR (ORCPT
+        id S1727470AbeJPOQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 10:16:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727093AbeJPOQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 10:16:17 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A9F4208B3;
-        Tue, 16 Oct 2018 06:27:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539671244;
-        bh=NaN9aAokQaczPfGn05CUFy8guXpRqzf7zL8yQzcBaRY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=d22wxBknidUycQgLi8A2S02+noUTQjTDyKmqKPxKWRI5iEGkNyVWXJX/39DXgLP7k
-         lPlIGyACxbOKiS+JyevsPq+S5HqhBqcSWQUGuf8Yn4rl6A0mQ/wmkiC/CcgPkvUStZ
-         Eke+0blaaqidLm5C7DtYvw2y/r+sL1AyLhRuNvAE=
-Date:   Tue, 16 Oct 2018 08:27:21 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Roman Kiryanov <rkir@google.com>
-Cc:     linux-kernel@vger.kernel.org, Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v3 06/15] platform: goldfish: pipe: Move memory
- allocation from probe to init
-Message-ID: <20181016062721.GA882@kroah.com>
-References: <20181003171720.169953-1-rkir@google.com>
- <20181003171720.169953-6-rkir@google.com>
- <20181015183458.GA28454@kroah.com>
- <CAOGAQerzTxLEcFjqCqjGvFDaK79LWw7kuGqprw4mEj6gmcm6tA@mail.gmail.com>
- <20181015185611.GA5201@kroah.com>
- <CAOGAQerxP0hsVF2ArpXJ4HrPj=-XKfdqvAdUGoC4xo+sc4UYvw@mail.gmail.com>
+        Tue, 16 Oct 2018 10:16:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39994 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727093AbeJPOQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 10:16:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 771C2AD83;
+        Tue, 16 Oct 2018 06:27:46 +0000 (UTC)
+Subject: Re: [PATCH] bcache: add separate workqueue for journal_write to avoid
+ deadlock
+To:     Eddie Chapman <eddie@ehuk.net>, guoju <fangguoju@gmail.com>
+Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org, s.priebe@profihost.ag
+References: <1538055919-5757-1-git-send-email-fangguoju@gmail.com>
+ <bda92f58-d321-d4db-c73f-0ceecbfd9c38@suse.de>
+ <9b1abe65-c6f5-77b4-290e-e6af21723cfc@ehuk.net>
+ <ef36fbef-9f2e-0208-aa00-bd9ba656de31@suse.de>
+ <17ea92fa-a07b-2391-aba3-377382c63d9b@ehuk.net>
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <e7dd4db1-85c6-5acd-4737-cc03b904973e@suse.de>
+Date:   Tue, 16 Oct 2018 14:27:38 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOGAQerxP0hsVF2ArpXJ4HrPj=-XKfdqvAdUGoC4xo+sc4UYvw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <17ea92fa-a07b-2391-aba3-377382c63d9b@ehuk.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 12:06:12PM -0700, Roman Kiryanov wrote:
-> > > probe does not know what memory to allocate. We have several versions
-> > > of the driver (with different init) and different versions allocate
-> > > different state.
-> >
-> > I only see one driver here.
+On 2018/10/4 下午10:07, Eddie Chapman wrote:
+> On 28/09/18 03:32, Coly Li wrote:
+>>
+>> On 9/27/18 11:53 PM, Eddie Chapman wrote:
+>>> On 27/09/18 16:23, Coly Li wrote:
+>>>>
+>>>> On 9/27/18 9:45 PM, guoju wrote:
+>>>>> After write SSD completed, bcache schedule journal_write work to
+>>>>> system_wq, that is a public workqueue in system, without
+>>>>> WQ_MEM_RECLAIM>>>> flag. system_wq is also a bound wq, and there
+>>>>> may be no idle kworker on
+>>>>> current processor. Creating a new kworker may unfortunately need to
+>>>>> reclaim memory first, by shrinking cache and slab used by vfs, which
+>>>>> depends on bcache device. That's a deadlock.
+>>>>>
+>>>>> This patch create a new workqueue for journal_write with
+>>>>> WQ_MEM_RECLAIM
+>>>>> flag. It's rescuer thread will work to avoid the deadlock.
+>>>>>
+>>>>> Signed-off-by: guoju <fangguoju@gmail.com>
+>>>>
+>>>> Nice catch, this fix is quite important. I will try to submit to
+>>>> Jens ASAP.
+>>>>
+>>>> Thanks.
+>>>>
+>>>> Coly Li
+>>>
+>>> Once this goes into 4.19, would this be a candidate for backporting
+>>> to any stable kernels, or does it only fix something introduced in
+>>> this cycle?
+>>>
+>> This bug exists in upstream for quite long time, it should be applied
+>> to all stable kernels which it can be applied. And it is Cced to
+>> stable@vger.kernel.org already.
+>>
+>> Coly Li
 > 
-> It will be added in "PATCH v3 15/15". There will be two init functions
-> allocating different states.
-
-I think we are getting our terms confused here.
-
-"init" usually means module_init(), is that what you are referring to
-here?
-
-probe means when your bus-specific driver's probe function is called
-because the kernel recognizes your hardware as being present.
-
-At module_init time, you should do nothing except register your bus
-specific driver.
-
-At probe time, allocate memory all you want, that is the correct point
-in time to do it.
-
-So yes, if you have two separate drivers, you will have two separate
-init functions, but both of them should just register the bus specific
-driver.
-
-> > Why does probe not know what to allocate?  That is exactly when the
-> > device is bound to the driver, you have _way_ more information than you
-> > do at init time.
+> Thanks Coly! :-)
 > 
-> We have two versions of the driver. Probe asks for the version and
-> calls the init function for this version.
-> I don't want probe to know everything about all versions.
-
-Why would your probe function know, or care, about versions?  That's up
-to the driver core.  How is your probe function learning about the
-"version" to use here?
-
-> > > >, not init time as what
-> > > > happens if the hardware is not present yet your driver is loaded?
-> > >
-> > > init will have to rollback what it allocated.
-> >
-> > But those resources it will sit there wasted until unload happens.  And
-> > unload _never_ happens on a system unless you are a developer working on
-> > the module.
+> Just to let you know, I applied this (and couple of other cherry picks)
+> to a couple of 4.14 boxes last night, so far so good, running without
+> issues. However, this one needed this recent commit upstream as a
+> pre-requisite:
 > 
-> If probe fails I expect the kernel to release all resources. Is this
-> not the case?
+> 16c1fdf4cfd6c0091e59b93ec2cb7e99973f8244
+> bcache: do not assign in if condition in bcache_init()
+> 
+> in order to be able to apply it.
+> 
+> This is because the context of the second hunk for
+> drivers/md/bcache/super.c (in this journal_write workqueue patch)
+> contains code added by that commit
+> 16c1fdf4cfd6c0091e59b93ec2cb7e99973f8244.
+> 
+> So I guess either 16c1fdf4cfd6c0091e59b93ec2cb7e99973f8244 also needs
+> tagging for stable, or perhaps a backport of this journal_write
+> workqueue will have to be created for earlier kernels, with different
+> context for that hunk?
+> 
+> Eddie
 
-You have to clean up after your probe function failing before you return
-from it.
+Hi Eddie,
 
-thanks,
+Yes I missed the patch dependency, thanks for the hint:-)
+Guoju Fang or I will take care of the back port to stable tree.
 
-greg k-h
+Coly Li
