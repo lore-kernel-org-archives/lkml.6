@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C3AC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE1CC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0DC12089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00AB52089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:17:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdhTSW23"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0DC12089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1mZ5zcJ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00AB52089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729904AbeJQBIo (ORCPT
+        id S1729916AbeJQBIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:08:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53454 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:08:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727486AbeJQBIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:08:43 -0400
+        id S1727486AbeJQBIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:08:46 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2037320866;
-        Tue, 16 Oct 2018 17:17:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBEDE20866;
+        Tue, 16 Oct 2018 17:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710239;
-        bh=2caFDXfRleOomWHGh5tpS69fmrBAsUOecLbGRNYLL+g=;
+        s=default; t=1539710242;
+        bh=hy8+lMWYjui7rb8G9gvHwt65dORDfefJ96Ui6dTtsjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FdhTSW23WfqMZ0xb7h5DekuEfFeOqdHh7GG8+B5Q0vFbLsOAUSZbqzXoM18Tuil4L
-         GlJ2LW/e6ruBZ2ijf27aH+rmHA1V/fhj2jbwDawit0qd/Hkc4EW0oY4xW8alRQeCDX
-         SsXcGjedtK5EkJfTyZS7jwkRhkNQCG1DexoH2RKs=
+        b=1mZ5zcJ9+qJANh960LQi9OPOQKqtn7/2C/50mVHGJZxLFfjofEiKBLD1KTqBuLiOT
+         67Lrwjxd5jhc76mlUSZyB4DVTIsJ/LacITPK+IL+v9DFG+wbiYwjhfKQlA+HXBY6uK
+         vSJTLeXquFtthvzk4h0th0VlFpE8n3vFji3Rk/RM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 015/109] net: sched: Add policy validation for tc attributes
-Date:   Tue, 16 Oct 2018 19:04:43 +0200
-Message-Id: <20181016170525.815024482@linuxfoundation.org>
+Subject: [PATCH 4.14 016/109] net: systemport: Fix wake-up interrupt race during resume
+Date:   Tue, 16 Oct 2018 19:04:44 +0200
+Message-Id: <20181016170525.876992537@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -62,85 +62,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 8b4c3cdd9dd8290343ce959a132d3b334062c5b9 ]
+[ Upstream commit 45ec318578c0c22a11f5b9927d064418e1ab1905 ]
 
-A number of TC attributes are processed without proper validation
-(e.g., length checks). Add a tca policy for all input attributes and use
-when invoking nlmsg_parse.
+The AON_PM_L2 is normally used to trigger and identify the source of a
+wake-up event. Since the RX_SYS clock is no longer turned off, we also
+have an interrupt being sent to the SYSTEMPORT INTRL_2_0 controller, and
+that interrupt remains active up until the magic packet detector is
+disabled which happens much later during the driver resumption.
 
-The 2 Fixes tags below cover the latest additions. The other attributes
-are a string (KIND), nested attribute (OPTIONS which does seem to have
-validation in most cases), for dumps only or a flag.
+The race happens if we have a CPU that is entering the SYSTEMPORT
+INTRL2_0 handler during resume, and another CPU has managed to clear the
+wake-up interrupt during bcm_sysport_resume_from_wol(). In that case, we
+have the first CPU stuck in the interrupt handler with an interrupt
+cause that has been cleared under its feet, and so we keep returning
+IRQ_NONE and we never make any progress.
 
-Fixes: 5bc1701881e39 ("net: sched: introduce multichain support for filters")
-Fixes: d47a6b0e7c492 ("net: sched: introduce ingress/egress block index attributes for qdisc")
-Signed-off-by: David Ahern <dsahern@gmail.com>
+This was not a problem before because we would always turn off the
+RX_SYS clock during WoL, so the SYSTEMPORT INTRL2_0 would also be turned
+off as well, thus not latching the interrupt.
+
+The fix is to make sure we do not enable either the MPD or
+BRCM_TAG_MATCH interrupts since those are redundant with what the
+AON_PM_L2 interrupt controller already processes and they would cause
+such a race to occur.
+
+Fixes: bb9051a2b230 ("net: systemport: Add support for WAKE_FILTER")
+Fixes: 83e82f4c706b ("net: systemport: add Wake-on-LAN support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_api.c |   22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/broadcom/bcmsysport.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---- a/net/sched/sch_api.c
-+++ b/net/sched/sch_api.c
-@@ -1216,6 +1216,16 @@ check_loop_fn(struct Qdisc *q, unsigned
-  * Delete/get qdisc.
-  */
- 
-+const struct nla_policy rtm_tca_policy[TCA_MAX + 1] = {
-+	[TCA_KIND]		= { .type = NLA_STRING },
-+	[TCA_OPTIONS]		= { .type = NLA_NESTED },
-+	[TCA_RATE]		= { .type = NLA_BINARY,
-+				    .len = sizeof(struct tc_estimator) },
-+	[TCA_STAB]		= { .type = NLA_NESTED },
-+	[TCA_DUMP_INVISIBLE]	= { .type = NLA_FLAG },
-+	[TCA_CHAIN]		= { .type = NLA_U32 },
-+};
-+
- static int tc_get_qdisc(struct sk_buff *skb, struct nlmsghdr *n,
- 			struct netlink_ext_ack *extack)
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -1001,14 +1001,22 @@ static void bcm_sysport_resume_from_wol(
  {
-@@ -1232,7 +1242,8 @@ static int tc_get_qdisc(struct sk_buff *
- 	    !netlink_ns_capable(skb, net->user_ns, CAP_NET_ADMIN))
- 		return -EPERM;
+ 	u32 reg;
  
--	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, NULL, extack);
-+	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, rtm_tca_policy,
-+			  extack);
- 	if (err < 0)
- 		return err;
+-	/* Stop monitoring MPD interrupt */
+-	intrl2_0_mask_set(priv, INTRL2_0_MPD);
+-
+ 	/* Clear the MagicPacket detection logic */
+ 	reg = umac_readl(priv, UMAC_MPD_CTRL);
+ 	reg &= ~MPD_EN;
+ 	umac_writel(priv, reg, UMAC_MPD_CTRL);
  
-@@ -1302,7 +1313,8 @@ static int tc_modify_qdisc(struct sk_buf
++	reg = intrl2_0_readl(priv, INTRL2_CPU_STATUS);
++	if (reg & INTRL2_0_MPD)
++		netdev_info(priv->netdev, "Wake-on-LAN (MPD) interrupt!\n");
++
++	if (reg & INTRL2_0_BRCM_MATCH_TAG) {
++		reg = rxchk_readl(priv, RXCHK_BRCM_TAG_MATCH_STATUS) &
++				  RXCHK_BRCM_TAG_MATCH_MASK;
++		netdev_info(priv->netdev,
++			    "Wake-on-LAN (filters 0x%02x) interrupt!\n", reg);
++	}
++
+ 	netif_dbg(priv, wol, priv->netdev, "resumed from WOL\n");
+ }
  
- replay:
- 	/* Reinit, just in case something touches this. */
--	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, NULL, extack);
-+	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, rtm_tca_policy,
-+			  extack);
- 	if (err < 0)
- 		return err;
+@@ -1043,11 +1051,6 @@ static irqreturn_t bcm_sysport_rx_isr(in
+ 	if (priv->irq0_stat & INTRL2_0_TX_RING_FULL)
+ 		bcm_sysport_tx_reclaim_all(priv);
  
-@@ -1512,7 +1524,8 @@ static int tc_dump_qdisc(struct sk_buff
- 	idx = 0;
- 	ASSERT_RTNL();
+-	if (priv->irq0_stat & INTRL2_0_MPD) {
+-		netdev_info(priv->netdev, "Wake-on-LAN interrupt!\n");
+-		bcm_sysport_resume_from_wol(priv);
+-	}
+-
+ 	if (!priv->is_lite)
+ 		goto out;
  
--	err = nlmsg_parse(nlh, sizeof(*tcm), tca, TCA_MAX, NULL, NULL);
-+	err = nlmsg_parse(nlh, sizeof(*tcm), tca, TCA_MAX,
-+			  rtm_tca_policy, NULL);
- 	if (err < 0)
- 		return err;
+@@ -2248,9 +2251,6 @@ static int bcm_sysport_suspend_to_wol(st
+ 	/* UniMAC receive needs to be turned on */
+ 	umac_enable_set(priv, CMD_RX_EN, 1);
  
-@@ -1729,7 +1742,8 @@ static int tc_ctl_tclass(struct sk_buff
- 	    !netlink_ns_capable(skb, net->user_ns, CAP_NET_ADMIN))
- 		return -EPERM;
+-	/* Enable the interrupt wake-up source */
+-	intrl2_0_mask_clear(priv, INTRL2_0_MPD);
+-
+ 	netif_dbg(priv, wol, ndev, "entered WOL mode\n");
  
--	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, NULL, extack);
-+	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, rtm_tca_policy,
-+			  extack);
- 	if (err < 0)
- 		return err;
- 
+ 	return 0;
 
 
