@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A220CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A75C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68A582089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 004672089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0AgIo9zL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68A582089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="11zINYHl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 004672089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbeJQBBp (ORCPT
+        id S1727554AbeJQBBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:01:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41772 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:01:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727132AbeJQBBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:01:45 -0400
+        id S1727132AbeJQBBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:01:48 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19B6720866;
-        Tue, 16 Oct 2018 17:10:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 533BE20866;
+        Tue, 16 Oct 2018 17:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709822;
-        bh=Xn2sI7Ism8KOog/p/JFUMaVU+I0l8UDiDhdA2Gfl5Hc=;
+        s=default; t=1539709825;
+        bh=pX6mjjP/bUp87P/AEikwGB6OCYWU936VNKIG+f+2KoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0AgIo9zLLWhQ695i84XEnnvKjHwbVHVoU9wLo9d9xC0MhVUt0VQ1zqdQhggJWzxYy
-         zjhogxvTS85ILdEJ8iurqUDXTV+0XifuMfec4DgtKOHAID+j1XtQvBhqzLreFJXWWG
-         trdS1flBPlkUc/Hqi8EM6i55flla6DGZwmNZQYSA=
+        b=11zINYHlt6zGCRgmlgOVblNz8QEThguDGPiXggu7Yq1CbGpvKsbG5VL1esdh0jcWP
+         ve4JBix9aMmkzZYV3Tu3qnUUZiPUwpTOW8F6n+kSpwTaUJcrkmAIix1+BEL1lRQfoM
+         XGp78FwtkEi4demC4zBHQn9qfByjPZdE7bhCtGxk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 001/135] bnxt_en: Fix TX timeout during netpoll.
-Date:   Tue, 16 Oct 2018 19:03:51 +0200
-Message-Id: <20181016170515.558324066@linuxfoundation.org>
+Subject: [PATCH 4.18 010/135] net: ipv4: update fnhe_pmtu when first hops MTU changes
+Date:   Tue, 16 Oct 2018 19:04:00 +0200
+Message-Id: <20181016170516.153266308@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -62,73 +64,218 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit 73f21c653f930f438d53eed29b5e4c65c8a0f906 ]
+[ Upstream commit af7d6cce53694a88d6a1bb60c9a239a6a5144459 ]
 
-The current netpoll implementation in the bnxt_en driver has problems
-that may miss TX completion events.  bnxt_poll_work() in effect is
-only handling at most 1 TX packet before exiting.  In addition,
-there may be in flight TX completions that ->poll() may miss even
-after we fix bnxt_poll_work() to handle all visible TX completions.
-netpoll may not call ->poll() again and HW may not generate IRQ
-because the driver does not ARM the IRQ when the budget (0 for netpoll)
-is reached.
+Since commit 5aad1de5ea2c ("ipv4: use separate genid for next hop
+exceptions"), exceptions get deprecated separately from cached
+routes. In particular, administrative changes don't clear PMTU anymore.
 
-We fix it by handling all TX completions and to always ARM the IRQ
-when we exit ->poll() with 0 budget.
+As Stefano described in commit e9fa1495d738 ("ipv6: Reflect MTU changes
+on PMTU of exceptions for MTU-less routes"), the PMTU discovered before
+the local MTU change can become stale:
+ - if the local MTU is now lower than the PMTU, that PMTU is now
+   incorrect
+ - if the local MTU was the lowest value in the path, and is increased,
+   we might discover a higher PMTU
 
-Also, the logic to ACK the completion ring in case it is almost filled
-with TX completions need to be adjusted to take care of the 0 budget
-case, as discussed with Eric Dumazet <edumazet@google.com>
+Similarly to what commit e9fa1495d738 did for IPv6, update PMTU in those
+cases.
 
-Reported-by: Song Liu <songliubraving@fb.com>
-Reviewed-by: Song Liu <songliubraving@fb.com>
-Tested-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+If the exception was locked, the discovered PMTU was smaller than the
+minimal accepted PMTU. In that case, if the new local MTU is smaller
+than the current PMTU, let PMTU discovery figure out if locking of the
+exception is still needed.
+
+To do this, we need to know the old link MTU in the NETDEV_CHANGEMTU
+notifier. By the time the notifier is called, dev->mtu has been
+changed. This patch adds the old MTU as additional information in the
+notifier structure, and a new call_netdevice_notifiers_u32() function.
+
+Fixes: 5aad1de5ea2c ("ipv4: use separate genid for next hop exceptions")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ include/linux/netdevice.h |    7 ++++++
+ include/net/ip_fib.h      |    1 
+ net/core/dev.c            |   28 +++++++++++++++++++++++--
+ net/ipv4/fib_frontend.c   |   12 +++++++----
+ net/ipv4/fib_semantics.c  |   50 ++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 92 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -1882,8 +1882,11 @@ static int bnxt_poll_work(struct bnxt *b
- 		if (TX_CMP_TYPE(txcmp) == CMP_TYPE_TX_L2_CMP) {
- 			tx_pkts++;
- 			/* return full budget so NAPI will complete. */
--			if (unlikely(tx_pkts > bp->tx_wake_thresh))
-+			if (unlikely(tx_pkts > bp->tx_wake_thresh)) {
- 				rx_pkts = budget;
-+				raw_cons = NEXT_RAW_CMP(raw_cons);
-+				break;
-+			}
- 		} else if ((TX_CMP_TYPE(txcmp) & 0x30) == 0x10) {
- 			if (likely(budget))
- 				rc = bnxt_rx_pkt(bp, bnapi, &raw_cons, &event);
-@@ -1911,7 +1914,7 @@ static int bnxt_poll_work(struct bnxt *b
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -2420,6 +2420,13 @@ struct netdev_notifier_info {
+ 	struct netlink_ext_ack	*extack;
+ };
+ 
++struct netdev_notifier_info_ext {
++	struct netdev_notifier_info info; /* must be first */
++	union {
++		u32 mtu;
++	} ext;
++};
++
+ struct netdev_notifier_change_info {
+ 	struct netdev_notifier_info info; /* must be first */
+ 	unsigned int flags_changed;
+--- a/include/net/ip_fib.h
++++ b/include/net/ip_fib.h
+@@ -394,6 +394,7 @@ int ip_fib_check_default(__be32 gw, stru
+ int fib_sync_down_dev(struct net_device *dev, unsigned long event, bool force);
+ int fib_sync_down_addr(struct net_device *dev, __be32 local);
+ int fib_sync_up(struct net_device *dev, unsigned int nh_flags);
++void fib_sync_mtu(struct net_device *dev, u32 orig_mtu);
+ 
+ #ifdef CONFIG_IP_ROUTE_MULTIPATH
+ int fib_multipath_hash(const struct net *net, const struct flowi4 *fl4,
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -1754,6 +1754,28 @@ int call_netdevice_notifiers(unsigned lo
+ }
+ EXPORT_SYMBOL(call_netdevice_notifiers);
+ 
++/**
++ *	call_netdevice_notifiers_mtu - call all network notifier blocks
++ *	@val: value passed unmodified to notifier function
++ *	@dev: net_device pointer passed unmodified to notifier function
++ *	@arg: additional u32 argument passed to the notifier function
++ *
++ *	Call all network notifier blocks.  Parameters and return value
++ *	are as for raw_notifier_call_chain().
++ */
++static int call_netdevice_notifiers_mtu(unsigned long val,
++					struct net_device *dev, u32 arg)
++{
++	struct netdev_notifier_info_ext info = {
++		.info.dev = dev,
++		.ext.mtu = arg,
++	};
++
++	BUILD_BUG_ON(offsetof(struct netdev_notifier_info_ext, info) != 0);
++
++	return call_netdevice_notifiers_info(val, &info.info);
++}
++
+ #ifdef CONFIG_NET_INGRESS
+ static DEFINE_STATIC_KEY_FALSE(ingress_needed_key);
+ 
+@@ -7118,14 +7140,16 @@ int dev_set_mtu(struct net_device *dev,
+ 	err = __dev_set_mtu(dev, new_mtu);
+ 
+ 	if (!err) {
+-		err = call_netdevice_notifiers(NETDEV_CHANGEMTU, dev);
++		err = call_netdevice_notifiers_mtu(NETDEV_CHANGEMTU, dev,
++						   orig_mtu);
+ 		err = notifier_to_errno(err);
+ 		if (err) {
+ 			/* setting mtu back and notifying everyone again,
+ 			 * so that they have a chance to revert changes.
+ 			 */
+ 			__dev_set_mtu(dev, orig_mtu);
+-			call_netdevice_notifiers(NETDEV_CHANGEMTU, dev);
++			call_netdevice_notifiers_mtu(NETDEV_CHANGEMTU, dev,
++						     new_mtu);
  		}
- 		raw_cons = NEXT_RAW_CMP(raw_cons);
- 
--		if (rx_pkts == budget)
-+		if (rx_pkts && rx_pkts == budget)
- 			break;
  	}
+ 	return err;
+--- a/net/ipv4/fib_frontend.c
++++ b/net/ipv4/fib_frontend.c
+@@ -1243,7 +1243,8 @@ static int fib_inetaddr_event(struct not
+ static int fib_netdev_event(struct notifier_block *this, unsigned long event, void *ptr)
+ {
+ 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
+-	struct netdev_notifier_changeupper_info *info;
++	struct netdev_notifier_changeupper_info *upper_info = ptr;
++	struct netdev_notifier_info_ext *info_ext = ptr;
+ 	struct in_device *in_dev;
+ 	struct net *net = dev_net(dev);
+ 	unsigned int flags;
+@@ -1278,16 +1279,19 @@ static int fib_netdev_event(struct notif
+ 			fib_sync_up(dev, RTNH_F_LINKDOWN);
+ 		else
+ 			fib_sync_down_dev(dev, event, false);
+-		/* fall through */
++		rt_cache_flush(net);
++		break;
+ 	case NETDEV_CHANGEMTU:
++		fib_sync_mtu(dev, info_ext->ext.mtu);
+ 		rt_cache_flush(net);
+ 		break;
+ 	case NETDEV_CHANGEUPPER:
+-		info = ptr;
++		upper_info = ptr;
+ 		/* flush all routes if dev is linked to or unlinked from
+ 		 * an L3 master device (e.g., VRF)
+ 		 */
+-		if (info->upper_dev && netif_is_l3_master(info->upper_dev))
++		if (upper_info->upper_dev &&
++		    netif_is_l3_master(upper_info->upper_dev))
+ 			fib_disable_ip(dev, NETDEV_DOWN, true);
+ 		break;
+ 	}
+--- a/net/ipv4/fib_semantics.c
++++ b/net/ipv4/fib_semantics.c
+@@ -1470,6 +1470,56 @@ static int call_fib_nh_notifiers(struct
+ 	return NOTIFY_DONE;
+ }
  
-@@ -2025,8 +2028,12 @@ static int bnxt_poll(struct napi_struct
- 	while (1) {
- 		work_done += bnxt_poll_work(bp, bnapi, budget - work_done);
- 
--		if (work_done >= budget)
-+		if (work_done >= budget) {
-+			if (!budget)
-+				BNXT_CP_DB_REARM(cpr->cp_doorbell,
-+						 cpr->cp_raw_cons);
- 			break;
++/* Update the PMTU of exceptions when:
++ * - the new MTU of the first hop becomes smaller than the PMTU
++ * - the old MTU was the same as the PMTU, and it limited discovery of
++ *   larger MTUs on the path. With that limit raised, we can now
++ *   discover larger MTUs
++ * A special case is locked exceptions, for which the PMTU is smaller
++ * than the minimal accepted PMTU:
++ * - if the new MTU is greater than the PMTU, don't make any change
++ * - otherwise, unlock and set PMTU
++ */
++static void nh_update_mtu(struct fib_nh *nh, u32 new, u32 orig)
++{
++	struct fnhe_hash_bucket *bucket;
++	int i;
++
++	bucket = rcu_dereference_protected(nh->nh_exceptions, 1);
++	if (!bucket)
++		return;
++
++	for (i = 0; i < FNHE_HASH_SIZE; i++) {
++		struct fib_nh_exception *fnhe;
++
++		for (fnhe = rcu_dereference_protected(bucket[i].chain, 1);
++		     fnhe;
++		     fnhe = rcu_dereference_protected(fnhe->fnhe_next, 1)) {
++			if (fnhe->fnhe_mtu_locked) {
++				if (new <= fnhe->fnhe_pmtu) {
++					fnhe->fnhe_pmtu = new;
++					fnhe->fnhe_mtu_locked = false;
++				}
++			} else if (new < fnhe->fnhe_pmtu ||
++				   orig == fnhe->fnhe_pmtu) {
++				fnhe->fnhe_pmtu = new;
++			}
 +		}
- 
- 		if (!bnxt_has_work(bp, cpr)) {
- 			if (napi_complete_done(napi, work_done))
++	}
++}
++
++void fib_sync_mtu(struct net_device *dev, u32 orig_mtu)
++{
++	unsigned int hash = fib_devindex_hashfn(dev->ifindex);
++	struct hlist_head *head = &fib_info_devhash[hash];
++	struct fib_nh *nh;
++
++	hlist_for_each_entry(nh, head, nh_hash) {
++		if (nh->nh_dev == dev)
++			nh_update_mtu(nh, dev->mtu, orig_mtu);
++	}
++}
++
+ /* Event              force Flags           Description
+  * NETDEV_CHANGE      0     LINKDOWN        Carrier OFF, not for scope host
+  * NETDEV_DOWN        0     LINKDOWN|DEAD   Link down, not for scope host
 
 
