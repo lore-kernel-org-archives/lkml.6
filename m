@@ -2,86 +2,126 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDE9C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7EBC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5F742086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:13:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HU7TZO2X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5F742086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6E38520866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:13:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E38520866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbeJPXEL (ORCPT
+        id S1727437AbeJPXE2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 19:04:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37678 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 19:04:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45452 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727180AbeJPXEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:04:11 -0400
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727100AbeJPXE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 19:04:27 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 789252089E;
-        Tue, 16 Oct 2018 15:13:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539702796;
-        bh=Opwcj4xd9/EDDJll25PGE5qm/OpY3qbhs0oRCFlkv8g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HU7TZO2X+LzN/2G4M1sImthJpJGu7n6to1S2hafGq9MwBNYyUhzzFv7KVRy7khH0K
-         rx9n9IlbmwSvfUjmh4pNcWlp1t6rwfxVdhACu5WX9oMaj5+iZGTp0M8sBcNLP30TBf
-         KMVzyAfvCbkfwBfoyXduPkc6hkZQjqQIZInJ+kk0=
-Received: by mail-wm1-f44.google.com with SMTP id 206-v6so22844861wmb.5;
-        Tue, 16 Oct 2018 08:13:16 -0700 (PDT)
-X-Gm-Message-State: ABuFfojoCQ/Tlp/jU/OuJbeqrJ8QCLm+HH6xgi2PqM1IlpJDoEQzc2Qg
-        jPpPMgGq/AeUPUe9sUe+kZAJUSWtT/VC+pbRrVw=
-X-Google-Smtp-Source: ACcGV61vHNaUteW84b9vLlHpV65O1QdEQFx8BqIHbxDvbUyBCK0uu8Hv45X0NNW7A+E3bq7McoBtSSfadcUpcM6TB2A=
-X-Received: by 2002:a1c:a015:: with SMTP id j21-v6mr18197456wme.78.1539702794893;
- Tue, 16 Oct 2018 08:13:14 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E51546202;
+        Tue, 16 Oct 2018 15:13:33 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 07C1169FBA;
+        Tue, 16 Oct 2018 15:13:28 +0000 (UTC)
+Subject: Re: [PATCH v1 2/2] sysctl: handle overflow for file-max
+To:     Christian Brauner <christian@brauner.io>, keescook@chromium.org,
+        linux-kernel@vger.kernel.org
+Cc:     ebiederm@xmission.com, mcgrof@kernel.org,
+        akpm@linux-foundation.org, joe.lawrence@redhat.com,
+        linux@dominikbrodowski.net, viro@zeniv.linux.org.uk
+References: <20181015105544.4395-1-christian@brauner.io>
+ <20181015105544.4395-3-christian@brauner.io>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <22319ca1-6dab-fe36-40d5-9c88f7a175ee@redhat.com>
+Date:   Tue, 16 Oct 2018 11:13:28 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-References: <CGME20181016145651eucas1p1ea84684e37e67b4161548e6cff489cb8@eucas1p1.samsung.com>
- <1539701782-26852-1-git-send-email-l.luba@partner.samsung.com> <20181016145651eucas1p1ea84684e37e67b4161548e6cff489cb8~eHqPK-tM31616816168eucas1p1y@eucas1p1.samsung.com>
-In-Reply-To: <20181016145651eucas1p1ea84684e37e67b4161548e6cff489cb8~eHqPK-tM31616816168eucas1p1y@eucas1p1.samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 16 Oct 2018 17:13:03 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdKoxB3aN+1y48WD9Gv2P6KvSFSiD6aCk+PimBooE3YWg@mail.gmail.com>
-Message-ID: <CAJKOXPdKoxB3aN+1y48WD9Gv2P6KvSFSiD6aCk+PimBooE3YWg@mail.gmail.com>
-Subject: Re: [PATCH 09/11] DT: arm: exynos: add support for thermal trip irq-mode
-To:     l.luba@partner.samsung.com
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com,
-        daniel.lezcano@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, corbet@lwn.net,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, kgene@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181015105544.4395-3-christian@brauner.io>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 16 Oct 2018 15:13:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Oct 2018 at 16:56, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+On 10/15/2018 06:55 AM, Christian Brauner wrote:
+> Currently, when writing
 >
-> This patch adds support for new flash which indicates
-> that trip point triggers irq when temperature is met.
-> Exynos5433 supports 8 trip point which will trigger irq.
+> echo 18446744073709551616 > /proc/sys/fs/file-max
+>
+> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
+> crashes the system.
+> This commit explicitly caps the value for file-max to ULONG_MAX.
+>
+> Note, this isn't technically necessary since proc_get_long() will already
+> return ULONG_MAX. However, two reason why we still should do this:
+> 1. it makes it explicit what the upper bound of file-max is instead of
+>    making readers of the code infer it from proc_get_long() themselves
+> 2. other tunebles than file-max may want to set a lower max value than
+>    ULONG_MAX and we need to enable __do_proc_doulongvec_minmax() to handle
+>    such cases too
+>
+> Cc: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Christian Brauner <christian@brauner.io>
+> ---
+> v0->v1:
+> - if max value is < than ULONG_MAX use max as upper bound
+> - (Dominik) remove double "the" from commit message
+> ---
+>  kernel/sysctl.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 97551eb42946..226d4eaf4b0e 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
+>  static int __maybe_unused two = 2;
+>  static int __maybe_unused four = 4;
+>  static unsigned long one_ul = 1;
+> +static unsigned long ulong_max = ULONG_MAX;
+>  static int one_hundred = 100;
+>  static int one_thousand = 1000;
+>  #ifdef CONFIG_PRINTK
+> @@ -1696,6 +1697,7 @@ static struct ctl_table fs_table[] = {
+>  		.maxlen		= sizeof(files_stat.max_files),
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_doulongvec_minmax,
+> +		.extra2		= &ulong_max,
 
-Exynos5420? 4 trip points?
+What is the point of having a maximum value of ULONG_MAX anyway? No
+value you can put into a ulong type can be bigger than that.
 
-BTW, I just noted that you skipped samsung-soc mailing list.
+>  	},
+>  	{
+>  		.procname	= "nr_open",
+> @@ -2795,6 +2797,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+>  				break;
+>  			if (neg)
+>  				continue;
+> +			if (max && val > *max)
+> +				val = *max;
+>  			val = convmul * val / convdiv;
+>  			if ((min && val < *min) || (max && val > *max))
+>  				continue;
 
-DTS patches always should go through arm-soc so in case of Exynos -
-linux-samsung-soc mailing list. The list should be also CC-ed if you
-touch other Exynos or Samsung related code and get_maintainers.pl
-always point it. Because you skipped it, some people might miss your
-patches and definitely Patchwork which I am using won't see them
-(https://patchwork.kernel.org/project/linux-samsung-soc/list/).
+This does introduce a change in behavior. Previously the out-of-bound
+value is ignored, now it is capped at its maximum. This is a
+user-visible change.
 
-Best regards,
-Krzysztof
+Cheers,
+Longman
+
+
