@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BDBC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2360EC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1934120866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E376B20658
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbi1JjBK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1934120866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0VKj9It"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E376B20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731765AbeJQBQL (ORCPT
+        id S1731780AbeJQBQO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:16:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34852 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:16:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbeJQBQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:16:10 -0400
+        id S1730396AbeJQBQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:16:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83F6C20866;
-        Tue, 16 Oct 2018 17:24:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EE5F20658;
+        Tue, 16 Oct 2018 17:24:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710684;
-        bh=xf4uPhx1Y1fd2hCxERAYbvnulWxBS+P5phOgWJDUgvw=;
+        s=default; t=1539710686;
+        bh=xLk2STXAY7CnSoXlPjz4SHstfhW7AXwGIeXZEqpMmuM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hbi1JjBKuNI8LuaBXYYMf506ir9EYY7wyP6gbzEl09HD1gjo8ZJ/HiWT9IN8JVlqb
-         tQliBkb3AzqTf0u2jtO+hBa9a4RewHM/gMdIXN4JCfI68HJQ/6fyvTWvLImyQROz/R
-         8yr/mSh+hGQXaou8AEkiiiuvGgLLWKeLVXYnd+q8=
+        b=Y0VKj9ItMJyCui4eHcdMMkEtn2WqEBhQZBRwQyxu7VuXGopksj972Fmhh9UAfDK69
+         BCCy7XDgkQw8KacCgujCwZCbdRA1UB1jiMnzrnSMKKGvRg0ejLcJ6WTysA4BBQFk7D
+         oZF1cKsZRw79RBfFpFEZy/YOOIys2/U2fu3ks9Dc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Roger Quadros <rogerq@ti.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 05/71] mfd: omap-usb-host: Fix dts probe of children
-Date:   Tue, 16 Oct 2018 19:09:02 +0200
-Message-Id: <20181016170539.636542236@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 47/71] inet: frags: refactor lowpan_net_frag_init()
+Date:   Tue, 16 Oct 2018 19:09:44 +0200
+Message-Id: <20181016170541.745869834@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
 References: <20181016170539.315587743@linuxfoundation.org>
@@ -64,68 +62,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 10492ee8ed9188d6d420e1f79b2b9bdbc0624e65 ]
+We want to call lowpan_net_frag_init() earlier.
+Similar to commit "inet: frags: refactor ipv6_frag_init()"
 
-It currently only works if the parent bus uses "simple-bus". We
-currently try to probe children with non-existing compatible values.
-And we're missing .probe.
+This is a prereq to "inet: frags: use rhashtables for reassembly units"
 
-I noticed this while testing devices configured to probe using ti-sysc
-interconnect target module driver. For that we also may want to rebind
-the driver, so let's remove __init and __exit.
-
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+(cherry picked from commit 807f1844df4ac23594268fa9f41902d0549e92aa)
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mfd/omap-usb-host.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ net/ieee802154/6lowpan/reassembly.c |   20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
---- a/drivers/mfd/omap-usb-host.c
-+++ b/drivers/mfd/omap-usb-host.c
-@@ -548,8 +548,8 @@ static int usbhs_omap_get_dt_pdata(struc
- }
- 
- static const struct of_device_id usbhs_child_match_table[] = {
--	{ .compatible = "ti,omap-ehci", },
--	{ .compatible = "ti,omap-ohci", },
-+	{ .compatible = "ti,ehci-omap", },
-+	{ .compatible = "ti,ohci-omap3", },
- 	{ }
- };
- 
-@@ -875,6 +875,7 @@ static struct platform_driver usbhs_omap
- 		.pm		= &usbhsomap_dev_pm_ops,
- 		.of_match_table = usbhs_omap_dt_ids,
- 	},
-+	.probe		= usbhs_omap_probe,
- 	.remove		= usbhs_omap_remove,
- };
- 
-@@ -884,9 +885,9 @@ MODULE_ALIAS("platform:" USBHS_DRIVER_NA
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("usb host common core driver for omap EHCI and OHCI");
- 
--static int __init omap_usbhs_drvinit(void)
-+static int omap_usbhs_drvinit(void)
+--- a/net/ieee802154/6lowpan/reassembly.c
++++ b/net/ieee802154/6lowpan/reassembly.c
+@@ -614,14 +614,6 @@ int __init lowpan_net_frag_init(void)
  {
--	return platform_driver_probe(&usbhs_omap_driver, usbhs_omap_probe);
-+	return platform_driver_register(&usbhs_omap_driver);
+ 	int ret;
+ 
+-	ret = lowpan_frags_sysctl_register();
+-	if (ret)
+-		return ret;
+-
+-	ret = register_pernet_subsys(&lowpan_frags_ops);
+-	if (ret)
+-		goto err_pernet;
+-
+ 	lowpan_frags.hashfn = lowpan_hashfn;
+ 	lowpan_frags.constructor = lowpan_frag_init;
+ 	lowpan_frags.destructor = NULL;
+@@ -631,11 +623,21 @@ int __init lowpan_net_frag_init(void)
+ 	lowpan_frags.frags_cache_name = lowpan_frags_cache_name;
+ 	ret = inet_frags_init(&lowpan_frags);
+ 	if (ret)
+-		goto err_pernet;
++		goto out;
++
++	ret = lowpan_frags_sysctl_register();
++	if (ret)
++		goto err_sysctl;
+ 
++	ret = register_pernet_subsys(&lowpan_frags_ops);
++	if (ret)
++		goto err_pernet;
++out:
+ 	return ret;
+ err_pernet:
+ 	lowpan_frags_sysctl_unregister();
++err_sysctl:
++	inet_frags_fini(&lowpan_frags);
+ 	return ret;
  }
  
- /*
-@@ -898,7 +899,7 @@ static int __init omap_usbhs_drvinit(voi
-  */
- fs_initcall_sync(omap_usbhs_drvinit);
- 
--static void __exit omap_usbhs_drvexit(void)
-+static void omap_usbhs_drvexit(void)
- {
- 	platform_driver_unregister(&usbhs_omap_driver);
- }
 
 
