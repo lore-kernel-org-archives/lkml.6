@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96525C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0278EC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 618552089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFCED2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uF0BgeSY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618552089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RU2hU5Ky"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFCED2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbeJQBCn (ORCPT
+        id S1728151AbeJQBCq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:02:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44208 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:02:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727246AbeJQBCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:02:42 -0400
+        id S1727246AbeJQBCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:02:45 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33AF021476;
-        Tue, 16 Oct 2018 17:11:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFD1C20866;
+        Tue, 16 Oct 2018 17:11:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709880;
-        bh=Rx9HUsOghiIs1G4kmOrXegjuLhQ2Nc2gOAdbsUSWHtA=;
+        s=default; t=1539709883;
+        bh=JCZ8ZJ5sWsteDLrnor2NvQgeISVjfAsHKUcwnLwGP1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uF0BgeSY/8wcKm+vfX6fynAUqgiCFQL9kQccNXEFIPQFmhjq/nhBsRAeLXse1fw/o
-         GTLbJyIoeww76TesGMBKOIH+oPINRbO8tEGkRgRIA/mLCNxrtfWU278ybV95t3X3NY
-         Nw2nEkgVk2nXJA9WKl9pShbsUCdRhQtrj3ZR6e9E=
+        b=RU2hU5Ky8ISq+6rlNTgwlELdpvRxtsF+OC+GP/auf1YjYxqJBjGsdZkZgqpwtPlYt
+         qj4n8xuJ5WVRXQJ7KroB3btbgh02VjoA6Hxn8t0Pr+RNPfln74lVBBp9cdlACDPEmd
+         HQT1adwOO+RP9KV3o4s1i2ReSYEU9rOeXIFXEDUU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Sean Tranchetti <stranche@codeaurora.org>,
         Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 028/135] net: qualcomm: rmnet: Fix incorrect allocation flag in transmit
-Date:   Tue, 16 Oct 2018 19:04:18 +0200
-Message-Id: <20181016170517.062489759@linuxfoundation.org>
+Subject: [PATCH 4.18 029/135] net: qualcomm: rmnet: Fix incorrect allocation flag in receive path
+Date:   Tue, 16 Oct 2018 19:04:19 +0200
+Message-Id: <20181016170517.116720853@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -64,33 +64,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
 
-[ Upstream commit 6392ff3c8e4c23d0a09b0ae9f94feb3effed490b ]
+[ Upstream commit ec405641e2b73160e26ef17580d0cf28565d146c ]
 
 The incoming skb needs to be reallocated in case the headroom
-is not sufficient to add the MAP header. This allocation needs to
-be atomic otherwise it results in the following splat
+is not sufficient to adjust the ethernet header. This allocation
+needs to be atomic otherwise it results in this splat
 
-[32805.801456] BUG: sleeping function called from invalid context
-[32805.841141] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-[32805.904773] task: ffffffd7c5f62280 task.stack: ffffff80464a8000
-[32805.910851] pc : ___might_sleep+0x180/0x188
-[32805.915143] lr : ___might_sleep+0x180/0x188
-[32806.131520] Call trace:
-[32806.134041]  ___might_sleep+0x180/0x188
-[32806.137980]  __might_sleep+0x50/0x84
-[32806.141653]  __kmalloc_track_caller+0x80/0x3bc
-[32806.146215]  __kmalloc_reserve+0x3c/0x88
-[32806.150241]  pskb_expand_head+0x74/0x288
-[32806.154269]  rmnet_egress_handler+0xb0/0x1d8
-[32806.162239]  rmnet_vnd_start_xmit+0xc8/0x13c
-[32806.166627]  dev_hard_start_xmit+0x148/0x280
-[32806.181181]  sch_direct_xmit+0xa4/0x198
-[32806.185125]  __qdisc_run+0x1f8/0x310
-[32806.188803]  net_tx_action+0x23c/0x26c
-[32806.192655]  __do_softirq+0x220/0x408
-[32806.196420]  do_softirq+0x4c/0x70
+ [<600601bb>] ___might_sleep+0x185/0x1a3
+ [<603f6314>] ? _raw_spin_unlock_irqrestore+0x0/0x27
+ [<60069bb0>] ? __wake_up_common_lock+0x95/0xd1
+ [<600602b0>] __might_sleep+0xd7/0xe2
+ [<60065598>] ? enqueue_task_fair+0x112/0x209
+ [<600eea13>] __kmalloc_track_caller+0x5d/0x124
+ [<600ee9b6>] ? __kmalloc_track_caller+0x0/0x124
+ [<602696d5>] __kmalloc_reserve.isra.34+0x30/0x7e
+ [<603f629b>] ? _raw_spin_lock_irqsave+0x0/0x3d
+ [<6026b744>] pskb_expand_head+0xbf/0x310
+ [<6025ca6a>] rmnet_rx_handler+0x7e/0x16b
+ [<6025c9ec>] ? rmnet_rx_handler+0x0/0x16b
+ [<6027ad0c>] __netif_receive_skb_core+0x301/0x96f
+ [<60033c17>] ? set_signals+0x0/0x40
+ [<6027bbcb>] __netif_receive_skb+0x24/0x8e
 
-Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
+Fixes: 74692caf1b0b ("net: qualcomm: rmnet: Process packets over ethernet")
+Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
 Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -100,14 +97,14 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
 +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-@@ -147,7 +147,7 @@ static int rmnet_map_egress_handler(stru
- 	}
+@@ -113,7 +113,7 @@ rmnet_map_ingress_handler(struct sk_buff
+ 	struct sk_buff *skbn;
  
- 	if (skb_headroom(skb) < required_headroom) {
--		if (pskb_expand_head(skb, required_headroom, 0, GFP_KERNEL))
-+		if (pskb_expand_head(skb, required_headroom, 0, GFP_ATOMIC))
- 			return -ENOMEM;
- 	}
- 
+ 	if (skb->dev->type == ARPHRD_ETHER) {
+-		if (pskb_expand_head(skb, ETH_HLEN, 0, GFP_KERNEL)) {
++		if (pskb_expand_head(skb, ETH_HLEN, 0, GFP_ATOMIC)) {
+ 			kfree_skb(skb);
+ 			return;
+ 		}
 
 
