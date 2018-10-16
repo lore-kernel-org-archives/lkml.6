@@ -2,106 +2,210 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A9DC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10C0C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB3F6205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:00:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="RutvyTzH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB3F6205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	by mail.kernel.org (Postfix) with ESMTP id 6348F20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:03:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6348F20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbeJPWvH (ORCPT
+        id S1727154AbeJPWya (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:51:07 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:37136 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726778AbeJPWvH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:51:07 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 534BC8EE2BB;
-        Tue, 16 Oct 2018 08:00:17 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 6PKa4A7qgQ7T; Tue, 16 Oct 2018 08:00:17 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7B27D8EE0BA;
-        Tue, 16 Oct 2018 08:00:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1539702016;
-        bh=7HLSwqMidK8PcoQvLd3rQX+7fyme2YiYWgljhJj6wO8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=RutvyTzHoLVBCoyxQr6S9ssgsJaVJ8v1iJrgNzxhzRqX4WQniZRfGdIcj+h+atZ5X
-         KODSrg1TwEm/e48M9u61FHao9SYHCuS9waXXd0ThLhNcRrgf4C+9w7b1wxmB7AznvT
-         Gt6PKDUxFwQhrkH0Jd3/przJUI17vJkgH601ccf4=
-Message-ID: <1539702015.2805.10.camel@HansenPartnership.com>
-Subject: [PATCH v3 3/3] code-of-conduct: Add back the TAB as the central
- reporting point
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     ksummit-discuss@lists.linuxfoundation.org
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Tue, 16 Oct 2018 08:00:15 -0700
-In-Reply-To: <1539701820.2805.6.camel@HansenPartnership.com>
-References: <1539701820.2805.6.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 16 Oct 2018 18:54:30 -0400
+Received: from mga14.intel.com ([192.55.52.115]:37563 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726760AbeJPWya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 18:54:30 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 08:03:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,388,1534834800"; 
+   d="scan'208";a="272881009"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga006.fm.intel.com with ESMTP; 16 Oct 2018 08:03:37 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gCQsh-0000UC-Sd; Tue, 16 Oct 2018 18:03:35 +0300
+Date:   Tue, 16 Oct 2018 18:03:35 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>, Joe Perches <joe@perches.com>
+Subject: Re: [PATCH] lib: Fix ia64 bootloader linkage
+Message-ID: <20181016150335.GZ15943@smile.fi.intel.com>
+References: <201810161649.o89WBjtC%fengguang.wu@intel.com>
+ <20181016111340.8046-1-alexander.shishkin@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016111340.8046-1-alexander.shishkin@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a Reporting section where the Enforcement section used to be.  The
-intention is still to debate what should go here, but in the meantime, this
-gives us back the central reporting point we had in the old code of conflict.
+On Tue, Oct 16, 2018 at 02:13:40PM +0300, Alexander Shishkin wrote:
+> kbuild robot reports that since commit ce76d938dd98 ("lib: Add memcat_p():
+> paste 2 pointer arrays together") the ia64/hp/sim/boot fails to link:
+> 
+> > LD      arch/ia64/hp/sim/boot/bootloader
+> > lib/string.o: In function `__memcat_p':
+> > string.c:(.text+0x1f22): undefined reference to `__kmalloc'
+> > string.c:(.text+0x1ff2): undefined reference to `__kmalloc'
+> > make[1]: *** [arch/ia64/hp/sim/boot/Makefile:37: arch/ia64/hp/sim/boot/bootloader] Error 1
+> 
+> The reason is, the above commit, via __memcat_p(), adds a call to
+> __kmalloc to string.o, which happens to be used in the bootloader, but
+> there's no kmalloc or slab or anything.
+> 
+> Since the linker would only pull in objects that contain referenced
+> symbols, moving __memcat_p() to a different compilation unit solves the
+> problem.
+> 
 
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Reviewed-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Oh, nice catch!
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
----
+Perhaps checkpatch.pl can somehow catch these...
 
-v2: Added this patch to allay concerns we were stripping the reporting
-    mechanism entirely.
-v3: Add (where required by law) as a qualifier to the confidentiality
-    requirement
----
- Documentation/process/code-of-conduct.rst | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> Fixes: ce76d938dd98 ("lib: Add memcat_p(): paste 2 pointer arrays together")
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Cc: Fenghua Yu <fenghua.yu@intel.com>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Joe Perches <joe@perches.com>
+> ---
+>  lib/Makefile        |  2 +-
+>  lib/memcat_p.c      | 34 ++++++++++++++++++++++++++++++++++
+>  lib/string.c        | 30 ------------------------------
+>  lib/test_memcat_p.c |  2 +-
+>  4 files changed, 36 insertions(+), 32 deletions(-)
+>  create mode 100644 lib/memcat_p.c
+> 
+> diff --git a/lib/Makefile b/lib/Makefile
+> index c2588a2d7b1e..40e79f88c3cd 100644
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@ -24,7 +24,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+>  	 flex_proportions.o ratelimit.o show_mem.o \
+>  	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
+>  	 earlycpio.o seq_buf.o siphash.o dec_and_lock.o \
+> -	 nmi_backtrace.o nodemask.o win_minmax.o
+> +	 nmi_backtrace.o nodemask.o win_minmax.o memcat_p.o
+>  
+>  lib-$(CONFIG_PRINTK) += dump_stack.o
+>  lib-$(CONFIG_MMU) += ioremap.o
+> diff --git a/lib/memcat_p.c b/lib/memcat_p.c
+> new file mode 100644
+> index 000000000000..b810fbc66962
+> --- /dev/null
+> +++ b/lib/memcat_p.c
+> @@ -0,0 +1,34 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/slab.h>
+> +
+> +/*
+> + * Merge two NULL-terminated pointer arrays into a newly allocated
+> + * array, which is also NULL-terminated. Nomenclature is inspired by
+> + * memset_p() and memcat() found elsewhere in the kernel source tree.
+> + */
+> +void **__memcat_p(void **a, void **b)
+> +{
+> +	void **p = a, **new;
+> +	int nr;
+> +
+> +	/* count the elements in both arrays */
+> +	for (nr = 0, p = a; *p; nr++, p++)
+> +		;
+> +	for (p = b; *p; nr++, p++)
+> +		;
+> +	/* one for the NULL-terminator */
+> +	nr++;
+> +
+> +	new = kmalloc_array(nr, sizeof(void *), GFP_KERNEL);
+> +	if (!new)
+> +		return NULL;
+> +
+> +	/* nr -> last index; p points to NULL in b[] */
+> +	for (nr--; nr >= 0; nr--, p = p == b ? &a[nr] : p - 1)
+> +		new[nr] = *p;
+> +
+> +	return new;
+> +}
+> +EXPORT_SYMBOL_GPL(__memcat_p);
+> +
+> diff --git a/lib/string.c b/lib/string.c
+> index 453f35994eb6..38e4ca08e757 100644
+> --- a/lib/string.c
+> +++ b/lib/string.c
+> @@ -891,36 +891,6 @@ void *memscan(void *addr, int c, size_t size)
+>  EXPORT_SYMBOL(memscan);
+>  #endif
+>  
+> -/*
+> - * Merge two NULL-terminated pointer arrays into a newly allocated
+> - * array, which is also NULL-terminated. Nomenclature is inspired by
+> - * memset_p() and memcat() found elsewhere in the kernel source tree.
+> - */
+> -void **__memcat_p(void **a, void **b)
+> -{
+> -	void **p = a, **new;
+> -	int nr;
+> -
+> -	/* count the elements in both arrays */
+> -	for (nr = 0, p = a; *p; nr++, p++)
+> -		;
+> -	for (p = b; *p; nr++, p++)
+> -		;
+> -	/* one for the NULL-terminator */
+> -	nr++;
+> -
+> -	new = kmalloc_array(nr, sizeof(void *), GFP_KERNEL);
+> -	if (!new)
+> -		return NULL;
+> -
+> -	/* nr -> last index; p points to NULL in b[] */
+> -	for (nr--; nr >= 0; nr--, p = p == b ? &a[nr] : p - 1)
+> -		new[nr] = *p;
+> -
+> -	return new;
+> -}
+> -EXPORT_SYMBOL_GPL(__memcat_p);
+> -
+>  #ifndef __HAVE_ARCH_STRSTR
+>  /**
+>   * strstr - Find the first substring in a %NUL terminated string
+> diff --git a/lib/test_memcat_p.c b/lib/test_memcat_p.c
+> index 2b163a749ecb..849c477d49d0 100644
+> --- a/lib/test_memcat_p.c
+> +++ b/lib/test_memcat_p.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * Test cases for memcat_p() in lib/string.c
+> + * Test cases for memcat_p() in lib/memcat_p.c
+>   */
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>  
+> -- 
+> 2.19.1
+> 
 
-diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/process/code-of-conduct.rst
-index 4dd90987305b..eec768471a4d 100644
---- a/Documentation/process/code-of-conduct.rst
-+++ b/Documentation/process/code-of-conduct.rst
-@@ -59,6 +59,17 @@ address, posting via an official social media account, or acting as an appointed
- representative at an online or offline event. Representation of a project may be
- further defined and clarified by project maintainers.
- 
-+Reporting
-+=========
-+
-+Instances of abusive, harassing, or otherwise unacceptable behavior may be
-+reported by contacting the Technical Advisory Board (TAB) at
-+<tab@lists.linux-foundation.org>. All complaints will be reviewed and
-+investigated and will result in a response that is deemed necessary and
-+appropriate to the circumstances. The TAB is obligated to maintain
-+confidentiality with regard to the reporter of an incident (except where
-+required by law).
-+
- Attribution
- ===========
- 
 -- 
-2.13.7
+With Best Regards,
+Andy Shevchenko
+
 
