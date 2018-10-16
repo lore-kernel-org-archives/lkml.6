@@ -2,266 +2,96 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B93C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 752C4C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3DA920869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:48:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C1BD20869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:49:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="XX2u+RVn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3DA920869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (1024-bit key) header.d=infinera.com header.i=@infinera.com header.b="MAm8W5yH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1BD20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=infinera.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbeJPUiw (ORCPT
+        id S1727158AbeJPUji (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 16:38:52 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33604 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726781AbeJPUiv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 16:38:51 -0400
-Received: by mail-ed1-f67.google.com with SMTP id l14-v6so12206842edq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 05:48:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=TNCq3rU+vUbF45TFOze9zOJGq6W+xML8NdK59MUQfFQ=;
-        b=XX2u+RVnXA+hF9dTJaMsUhz4jSftSbjjqVqV3QICyFTyOlPRDgbDCkaMy3fXMB2IIk
-         VLimi9AcNLpOrRmK+zyI4VzmMzsBAKyyRXLqGu+aVU66lcB3EPqxN5SMmBLxITBGpm0d
-         evlBswLba1l5atjLB/6Xg3dwzA93lwNwukWPQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=TNCq3rU+vUbF45TFOze9zOJGq6W+xML8NdK59MUQfFQ=;
-        b=P7tDWqgkNPivnylzF0ovhx4xMhe9oOOBHzMR02ch9ENmhIzZbipWoNBYbVSfq4TxEv
-         UUZ6fQojeFPvoZW+7z6rsoxyO2s/73nLaSQuiCljKfSWgLafFpbbbIuSGP4RRFrYlaSs
-         R1YN0GDLoh4ZuQIRK0pfAfEknyHOChplTVaOwiqmNFbGYg+TLETkItsTFmhvKiUVwcsx
-         1mFsV8ct35Eit88dD98p0/66GePQjt/hrCRKp/uf+89B2nT+aYKgZiRhZ34P9hJpCn3/
-         77+P7QprmSXm5qUsxb8ZZV03hfCIQGRUpR+I+iRC6ZfkV2hCa0r1PeDpzy+OAIbjcyGU
-         hqBw==
-X-Gm-Message-State: ABuFfogYa24x32N1vXHQNrXEGl4YHK0UMokRxsTgMtCpAn+9oUHB13fM
-        zYUUR/8t7W/nKQ/zmRX4rn7sNw==
-X-Google-Smtp-Source: ACcGV631GfUGPgr7ZRSffHPbNh9jdo5HS6h6Vi45HM+sa50D4+owlcQ3vF86iL0aHNu8cBCWkxVUEw==
-X-Received: by 2002:a50:9873:: with SMTP id h48-v6mr29372859edb.247.1539694110961;
-        Tue, 16 Oct 2018 05:48:30 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id x14-v6sm5245285edb.84.2018.10.16.05.48.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 05:48:30 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 14:48:27 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, stable@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/atomic_helper: Stop modesets on unregistered
- connectors harder
-Message-ID: <20181016124827.GY31561@phenom.ffwll.local>
-Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, stable@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20181016023306.27417-1-lyude@redhat.com>
+        Tue, 16 Oct 2018 16:39:38 -0400
+Received: from mail-bl2nam02on0044.outbound.protection.outlook.com ([104.47.38.44]:20571
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726778AbeJPUji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 16:39:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infinera.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RrbHE3Bf9hG7APS2/HK9vC5IOf+GnWPxqqvOnEBYd/g=;
+ b=MAm8W5yHm/uG+VhF4mbHnkDBLoDh9xJOrVNMwVP6TYFkNZwNGXferNTDAr924FmJvRtZXzMU7NHUyuCqbbFMTxiREVd2vi5yXk8oc4HgEdXcFLGHwaFR8v3JmUtWhaE9wLNKq09PCJOH+KpsQE5myssTQQdb7yoLaXXntGf+obo=
+Received: from SN1PR10MB0736.namprd10.prod.outlook.com (10.163.206.15) by
+ SN1PR10MB0400.namprd10.prod.outlook.com (10.162.102.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.24; Tue, 16 Oct 2018 12:49:15 +0000
+Received: from SN1PR10MB0736.namprd10.prod.outlook.com
+ ([fe80::b517:3cf8:a1ee:e732]) by SN1PR10MB0736.namprd10.prod.outlook.com
+ ([fe80::b517:3cf8:a1ee:e732%2]) with mapi id 15.20.1250.020; Tue, 16 Oct 2018
+ 12:49:15 +0000
+From:   Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+To:     "christophe.leroy@c-s.fr" <christophe.leroy@c-s.fr>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>
+CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] powerpc/io: remove old GCC version implementation
+Thread-Topic: [PATCH] powerpc/io: remove old GCC version implementation
+Thread-Index: AQHUZUzrSLuQCVp/oEaybjzPZbsXMqUh0qwA
+Date:   Tue, 16 Oct 2018 12:49:15 +0000
+Message-ID: <8eb877e31130aee531409d18e19894d64690163d.camel@infinera.com>
+References: <199ae2a28f14f944ee9ae2770a3f1dd030e762bc.1539693039.git.christophe.leroy@c-s.fr>
+In-Reply-To: <199ae2a28f14f944ee9ae2770a3f1dd030e762bc.1539693039.git.christophe.leroy@c-s.fr>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [88.131.87.201]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN1PR10MB0400;6:6hrmju49xYDb1bneHjcEsMKVK6HfPlAqBtmykp5enP2UZMgdKVo2L0EIz8AtSzZLxi7OoVPkGihJ/r+gYE4ex/B82/4Zv7WrqoA39WV4p8HOkrgOMz1WCgjP11TVOacTy1ccMw7MQ5Pfjtb9zth0Vo3rGLBiUOzGj1QNKScnNbGQ9hdqdlLdfLwqAuZUa+blDrmg2lyJ9r6igQjQppjBcpWJT4VL1YcVKOAiqEZz3Mi64a23kDqKw/wMBvY5e8wlvTV67a6HQlYNXeZz+gMonZYvIt5wF/+SoZACeVHbfs7HhHDgrGnwvIXBiBdHuuk2yyTdGWZBlkMv1HX/rfb4RCUDQGD3VhhTzjeYGi7zf95rC8+BR0s9c55od0UHhLtDDjk+PpUDq6ijvWvvqGShoimNzVOYs7z2dTIHv9xroaJLzrFWQPeHzzmUj4fbbt0sYKidtPYlBlRp0zNfyQxtD4d5xGEllZpKhoSmtFGYJb0=;5:OEwUwk2TASg3uPALvobi2lZUOKZ1UyQqVrA1AwvtzR5STx2xQlo4ydkFu2JO4zWePudGzcvxJcvkBd0rUTYzTFARggbTd5Pju+UW1RV/pAg3e5BXR3dJMxMCZIiXZLcEAw96znKioQznwYqT4Zxwx3URB8WUZEHRPYQ8U/033vg=;7:Vn1/LVnGQO1CGX8dCX+4Lt3MLJSITcs3fZ8tXiBqGdxcBLFBfwRTtNmQoiEsKas+wCtIkPY7NB2bzqTsIIeOanaqm4M+oQQXHBHJx8ppH6DOtjUZY7fgifOpEZLT9rIcTbNfF/tdj4tETIKxQwtITArZ57EL2aCWJXGy2l4UYSsGEq+1EoXW5odNOsAObjrtHgVNOiLPdgjE8MhGhZUkkwBo9a5f3Q1xhw8wtWiU7YEBsURMdMXjtSqfK9OdD0Yg
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: da2a9fc5-c0a8-4d9e-d780-08d63365c7b2
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN1PR10MB0400;
+x-ms-traffictypediagnostic: SN1PR10MB0400:
+x-microsoft-antispam-prvs: <SN1PR10MB04005E8958C6FF91A43EF984F4FE0@SN1PR10MB0400.namprd10.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991067);SRVR:SN1PR10MB0400;BCL:0;PCL:0;RULEID:;SRVR:SN1PR10MB0400;
+x-forefront-prvs: 0827D7ACB9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(346002)(376002)(39860400002)(189003)(199004)(446003)(25786009)(5250100002)(3846002)(486006)(316002)(2900100001)(97736004)(478600001)(6436002)(68736007)(256004)(2201001)(6246003)(106356001)(2501003)(86362001)(4326008)(6116002)(14454004)(71200400001)(71190400001)(36756003)(2616005)(105586002)(4001150100001)(6346003)(118296001)(305945005)(5660300001)(72206003)(186003)(110136005)(229853002)(8676002)(66066001)(476003)(7736002)(558084003)(102836004)(99286004)(81166006)(6506007)(81156014)(54906003)(6512007)(26005)(8936002)(11346002)(2906002)(6486002)(76176011)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR10MB0400;H:SN1PR10MB0736.namprd10.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: infinera.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Joakim.Tjernlund@infinera.com; 
+x-microsoft-antispam-message-info: B35dpeJeJz0F/9iTEh9pOQB5sH9VaORfGQDf4wQwAvf++w+VFeniFR0Zq7YxpwghkxhMxRq2TK4kq9339jshKS670eSmUzhJ7IwnMkjrrWrNTz969HEiSQqEDTJwn40Q+Z6j5Dagc+1m1budmU3TiMdvnfCjQm3/NstIrAefwMIglqbKuJlPXM+vhXAKbWVqfyOf6uVOO0LYrjASAPdIW5pIJmea0iXFC88f5AnHkiOu6gOwKIiYElHldKjluFwOIKmGblCYC71NqYi2xkB0wbbfiOIMTV3DkQfBz1uat/wZOM6sAyPFjZY4rh5aRnNM6MhlRLwRIkXfWR0zmmciIhcKxMDnFXEWT0GVN96s6iU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B130CED99D5E6D4AAD2C6506EEBB5C3F@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181016023306.27417-1-lyude@redhat.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: infinera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da2a9fc5-c0a8-4d9e-d780-08d63365c7b2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2018 12:49:15.3963
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 285643de-5f5b-4b03-a153-0ae2dc8aaf77
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR10MB0400
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 10:33:06PM -0400, Lyude Paul wrote:
-> Unfortunately, it appears our fix in:
-> commit b5d29843d8ef ("drm/atomic_helper: Allow DPMS On<->Off changes
-> for unregistered connectors")
-> 
-> Which attempted to work around the problems introduced by:
-> commit 4d80273976bf ("drm/atomic_helper: Disallow new modesets on
-> unregistered connectors")
-> 
-> Is still not the right solution, as modesets can still be triggered
-> outside of drm_atomic_set_crtc_for_connector().
-> 
-> So in order to fix this, while still being careful that we don't break
-> modesets that a driver may perform before being registered with
-> userspace, we replace connector->registered with a tristate member,
-> connector->registration_state. This allows us to keep track of whether
-> or not a connector is still initializing and hasn't been exposed to
-> userspace, is currently registered and exposed to userspace, or has been
-> legitimately removed from the system after having once been present.
-> 
-> Using this info, we can prevent userspace from performing new modesets
-> on unregistered connectors while still allowing the driver to perform
-> modesets on unregistered connectors before the driver has finished being
-> registered.
-> 
-> Fixes: b5d29843d8ef ("drm/atomic_helper: Allow DPMS On<->Off changes for unregistered connectors")
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: stable@vger.kernel.org
-> Cc: David Airlie <airlied@linux.ie>
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c | 60 +++++++++++++++++++++----
->  drivers/gpu/drm/drm_atomic_uapi.c   | 21 ---------
->  drivers/gpu/drm/drm_connector.c     | 10 ++---
->  drivers/gpu/drm/i915/intel_dp_mst.c |  8 ++--
->  include/drm/drm_connector.h         | 68 ++++++++++++++++++++++++++++-
->  5 files changed, 127 insertions(+), 40 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 6f66777dca4b..6cadeaf28ae4 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -529,6 +529,35 @@ mode_valid(struct drm_atomic_state *state)
->  	return 0;
->  }
->  
-> +static int
-> +unregistered_connector_check(struct drm_atomic_state *state,
-> +			     struct drm_connector *connector,
-> +			     struct drm_connector_state *old_conn_state,
-> +			     struct drm_connector_state *new_conn_state)
-> +{
-> +	struct drm_crtc_state *crtc_state;
-> +	struct drm_crtc *crtc;
-> +
-> +	if (!drm_connector_unregistered(connector))
-> +		return 0;
-> +
-> +	crtc = new_conn_state->crtc;
-> +	if (!crtc)
-> +		return 0;
-> +
-> +	crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
-> +	if (!crtc_state || !drm_atomic_crtc_needs_modeset(crtc_state))
-> +		return 0;
-> +
-> +	if (crtc_state->mode_changed) {
-> +		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] can't change mode on unregistered connector\n",
-> +				 connector->base.id, connector->name);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * drm_atomic_helper_check_modeset - validate state object for modeset changes
->   * @dev: DRM device
-> @@ -684,18 +713,33 @@ drm_atomic_helper_check_modeset(struct drm_device *dev,
->  			return ret;
->  	}
->  
-> -	/*
-> -	 * Iterate over all connectors again, to make sure atomic_check()
-> -	 * has been called on them when a modeset is forced.
-> -	 */
->  	for_each_oldnew_connector_in_state(state, connector, old_connector_state, new_connector_state, i) {
->  		const struct drm_connector_helper_funcs *funcs = connector->helper_private;
->  
-> -		if (connectors_mask & BIT(i))
-> -			continue;
-> +		/* Make sure atomic_check() is called on any unchecked
-> +		 * connectors when a modeset has been forced
-> +		 */
-> +		if (connectors_mask & BIT(i) && funcs->atomic_check) {
-> +			ret = funcs->atomic_check(connector,
-> +						  new_connector_state);
-> +			if (ret)
-> +				return ret;
-> +		}
->  
-> -		if (funcs->atomic_check)
-> -			ret = funcs->atomic_check(connector, new_connector_state);
-> +		/*
-> +		 * Prevent userspace from turning on new displays or setting
-> +		 * new modes using connectors which have been removed from
-> +		 * userspace. This is racy since an unplug could happen at any
-> +		 * time including after this check, but that's OK: we only
-> +		 * care about preventing userspace from trying to set invalid
-> +		 * state using destroyed connectors that it's been notified
-> +		 * about. No one can save us after the atomic check completes
-> +		 * but ourselves.
-> +		 */
-> +		ret = unregistered_connector_check(state,
-> +						   connector,
-> +						   old_connector_state,
-> +						   new_connector_state);
-
-I expect a functional revert of b5d29843d8ef ("drm/atomic_helper: Allow
-DPMS On<->Off changes for unregistered connectors"), but with
-drm_connector_unregistered() instead of the READ_ONCE. This here is
-entirely different, and I'm not clear on why.
-
-Aside from this looks good to me.
-
-[snip]
-
-> +/**
-> + * drm_connector_unregistered - has the connector been unregistered from
-> + * userspace?
-> + * @connector: DRM connector
-> + *
-> + * Checks whether or not @connector has been unregistered from userspace.
-> + *
-> + * Returns:
-> + * True if the connector was unregistered, false if the connector is
-> + * registered or has not yet been registered with userspace.
-> + */
-> +static inline bool drm_connector_unregistered(struct drm_connector *connector)
-
-Bikeshed: I'd call this drm_connector_is_unregistered(). C is imperative,
-functions without verbs always look a bit funny to me :-)
-
-Feel free to ignore the bikeshed.
-
-Cheers, Daniel
-
-> +{
-> +	return READ_ONCE(connector->registration_state) ==
-> +		DRM_CONNECTOR_UNREGISTERED;
-> +}
-> +
->  const char *drm_get_connector_status_name(enum drm_connector_status status);
->  const char *drm_get_subpixel_order_name(enum subpixel_order order);
->  const char *drm_get_dpms_name(int val);
-> -- 
-> 2.17.2
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+T24gVHVlLCAyMDE4LTEwLTE2IGF0IDEyOjMzICswMDAwLCBDaHJpc3RvcGhlIExlcm95IHdyb3Rl
+Og0KPiANCj4gDQo+IEdDQyA0LjYgaXMgdGhlIG1pbmltdW0gc3VwcG9ydGVkIG5vdy4NCg0KT3Vj
+aCwgZnJvbSBrZXJuZWwgNC4xOSBvciBlYXJsaWVyIGV2ZW4gPw0KDQogSm9ja2UNCg==
