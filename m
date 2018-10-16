@@ -7,51 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 280D7C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3C8C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6CD32147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C83321470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSxu2JxE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6CD32147C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPIe80RC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C83321470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbeJPMBu (ORCPT
+        id S1728620AbeJPMBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:01:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49222 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:01:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728476AbeJPMBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:49 -0400
+        id S1727280AbeJPMBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47A1A20869;
-        Tue, 16 Oct 2018 04:13:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9ACA421480;
+        Tue, 16 Oct 2018 04:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663206;
-        bh=zTav4CkItbU1giw8qeja9H7oKHHJkmVkbxZCyGcQixs=;
+        s=default; t=1539663210;
+        bh=JyHDsJZ9t55Q+gjZyplNVMWls6o8j6sanbBDF7Vg8h4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dSxu2JxEasX/WFZeW3q570vefQPTU9xC/sswamg5r0GtHDjiJcQ9UGCVC0JHs5yVZ
-         C4Au2wo9ukW2SzTQ59fuOb+KqT/+sk+M8aIVu1/d8RZUGthH1BaGLehqZx++SZGj9F
-         Dgb77D+Vkplp6Lx9kmVkToF+IEUYh7EB2hZTaUXU=
+        b=sPIe80RCUAD2NioK+wbdWHK42nX/AOPe9P29HDrDPM3JMopICoYIeMR778RoV8Z74
+         ow/CwLZ4Dhz+vZBLRcpCRZkAlwThUvEs06NT8xw5+HLZeenBO0NmJ/Wm7N+B2NxrE5
+         tkasOvVgk1WgN27MEnZQBRi4LoikA/gDmzcppdA4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 068/100] perf/x86/intel/uncore: Fix PCI BDF address of M3UPI on SKX
-Date:   Tue, 16 Oct 2018 00:11:49 -0400
-Message-Id: <20181016041221.135528-68-sashal@kernel.org>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 071/100] thunderbolt: Initialize after IOMMUs
+Date:   Tue, 16 Oct 2018 00:11:52 -0400
+Message-Id: <20181016041221.135528-71-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -60,66 +53,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit 9d92cfeaf5215158d26d2991be7f7ff865cb98f3 ]
+[ Upstream commit eafa717bc145963c944bb0a64d16add683861b35 ]
 
-The counters on M3UPI Link 0 and Link 3 don't count properly, and writing
-0 to these counters may causes system crash on some machines.
+If IOMMU is enabled and Thunderbolt driver is built into the kernel
+image, it will be probed before IOMMUs are attached to the PCI bus.
+Because of this DMA mappings the driver does will not go through IOMMU
+and start failing right after IOMMUs are enabled.
 
-The PCI BDF addresses of the M3UPI in the current code are incorrect.
+For this reason move the Thunderbolt driver initialization happen at
+rootfs level.
 
-The correct addresses should be:
-
-  D18:F1	0x204D
-  D18:F2	0x204E
-  D18:F5	0x204D
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore support")
-Link: http://lkml.kernel.org/r/1537538826-55489-1-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/uncore_snbep.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/thunderbolt/nhi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 53b981dcdb42..c07bee31abe8 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3931,16 +3931,16 @@ static const struct pci_device_id skx_uncore_pci_ids[] = {
- 		.driver_data = UNCORE_PCI_DEV_FULL_DATA(21, 5, SKX_PCI_UNCORE_M2PCIE, 3),
- 	},
- 	{ /* M3UPI0 Link 0 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 0, SKX_PCI_UNCORE_M3UPI, 0),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 0),
- 	},
- 	{ /* M3UPI0 Link 1 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 1),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204E),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 2, SKX_PCI_UNCORE_M3UPI, 1),
- 	},
- 	{ /* M3UPI1 Link 2 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 4, SKX_PCI_UNCORE_M3UPI, 2),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 5, SKX_PCI_UNCORE_M3UPI, 2),
- 	},
- 	{ /* end: all zeroes */ }
- };
+diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
+index f5a33e88e676..2d042150e41c 100644
+--- a/drivers/thunderbolt/nhi.c
++++ b/drivers/thunderbolt/nhi.c
+@@ -1147,5 +1147,5 @@ static void __exit nhi_unload(void)
+ 	tb_domain_exit();
+ }
+ 
+-fs_initcall(nhi_init);
++rootfs_initcall(nhi_init);
+ module_exit(nhi_unload);
 -- 
 2.17.1
 
