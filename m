@@ -7,52 +7,53 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B26BC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A63C070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D61A82145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF9552145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S28x7zJr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D61A82145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uy/JBnX1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF9552145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbeJPMBq (ORCPT
+        id S1728567AbeJPMBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:01:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49100 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:01:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728476AbeJPMBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:45 -0400
+        id S1728476AbeJPMBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B103521476;
-        Tue, 16 Oct 2018 04:13:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7225D21471;
+        Tue, 16 Oct 2018 04:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663203;
-        bh=CoOLY3bUKxwqCq/C925RISiyBTuRWDj11EDcazjdHqk=;
+        s=default; t=1539663205;
+        bh=mBVBQ3REcKAgw3KSYgb3JYObBLNOrFgi+wWYYpQi+iI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S28x7zJrDnYnd8pcjqCOiam44d8s7VdwI55g5wHJ1ZGC3xuZnjwwao33k42JUo9Fk
-         x4KkUoHs1NK6LR+/Nls1/4pY1r0fdYegbE2wVcnjbwlal26nPydaJJmhsBfrAN74jo
-         d4zMHgKs/TYCH4guSnTjZ4zXk7w+55h5BPEj4pnU=
+        b=uy/JBnX1gKjXcYUyjSAo0Kq9MHeAaji4AE2TdyWYrDy51toxlPetZMniiNBV8h+tI
+         FDXt4w2OlCT0tnmFvL5BtluaOifcTwragpn57TwM+JAa0DOcEDtcfG92l1ApuHEBoe
+         1xi0/DXs2jCJ9Ct/q7xoxxkXipCxL4cYlmtKgQ2A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+Cc:     Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Vagin <avagin@openvz.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Stephane Eranian <eranian@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Vince Weaver <vincent.weaver@maine.edu>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 066/100] perf/x86/intel/uncore: Use boot_cpu_data.phys_proc_id instead of hardcorded physical package ID 0
-Date:   Tue, 16 Oct 2018 00:11:47 -0400
-Message-Id: <20181016041221.135528-66-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 067/100] perf/ring_buffer: Prevent concurent ring buffer access
+Date:   Tue, 16 Oct 2018 00:11:48 -0400
+Message-Id: <20181016041221.135528-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -61,45 +62,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+From: Jiri Olsa <jolsa@redhat.com>
 
-[ Upstream commit 6265adb9726098b7f4f7ca70bc51992b25fdd9d6 ]
+[ Upstream commit cd6fb677ce7e460c25bdd66f689734102ec7d642 ]
 
-Physical package id 0 doesn't always exist, we should use
-boot_cpu_data.phys_proc_id here.
+Some of the scheduling tracepoints allow the perf_tp_event
+code to write to ring buffer under different cpu than the
+code is running on.
 
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+This results in corrupted ring buffer data demonstrated in
+following perf commands:
+
+  # perf record -e 'sched:sched_switch,sched:sched_wakeup' perf bench sched messaging
+  # Running 'sched/messaging' benchmark:
+  # 20 sender and receiver processes per group
+  # 10 groups == 400 processes run
+
+       Total time: 0.383 [sec]
+  [ perf record: Woken up 8 times to write data ]
+  0x42b890 [0]: failed to process type: -1765585640
+  [ perf record: Captured and wrote 4.825 MB perf.data (29669 samples) ]
+
+  # perf report --stdio
+  0x42b890 [0]: failed to process type: -1765585640
+
+The reason for the corruption are some of the scheduling tracepoints,
+that have __perf_task dfined and thus allow to store data to another
+cpu ring buffer:
+
+  sched_waking
+  sched_wakeup
+  sched_wakeup_new
+  sched_stat_wait
+  sched_stat_sleep
+  sched_stat_iowait
+  sched_stat_blocked
+
+The perf_tp_event function first store samples for current cpu
+related events defined for tracepoint:
+
+    hlist_for_each_entry_rcu(event, head, hlist_entry)
+      perf_swevent_event(event, count, &data, regs);
+
+And then iterates events of the 'task' and store the sample
+for any task's event that passes tracepoint checks:
+
+  ctx = rcu_dereference(task->perf_event_ctxp[perf_sw_context]);
+
+  list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
+    if (event->attr.type != PERF_TYPE_TRACEPOINT)
+      continue;
+    if (event->attr.config != entry->type)
+      continue;
+
+    perf_swevent_event(event, count, &data, regs);
+  }
+
+Above code can race with same code running on another cpu,
+ending up with 2 cpus trying to store under the same ring
+buffer, which is specifically not allowed.
+
+This patch prevents the problem, by allowing only events with the same
+current cpu to receive the event.
+
+NOTE: this requires the use of (per-task-)per-cpu buffers for this
+feature to work; perf-record does this.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+[peterz: small edits to Changelog]
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrew Vagin <avagin@openvz.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: http://lkml.kernel.org/r/20180910144750.6782-1-msys.mizuma@gmail.com
+Fixes: e6dab5ffab59 ("perf/trace: Add ability to set a target task for events")
+Link: http://lkml.kernel.org/r/20180923161343.GB15054@krava
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/uncore_snbep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 51d7c117e3c7..53b981dcdb42 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3061,7 +3061,7 @@ static struct event_constraint bdx_uncore_pcu_constraints[] = {
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index b1ed5e99d9c6..fc072b7f839d 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8319,6 +8319,8 @@ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
+ 			goto unlock;
  
- void bdx_uncore_cpu_init(void)
- {
--	int pkg = topology_phys_to_logical_pkg(0);
-+	int pkg = topology_phys_to_logical_pkg(boot_cpu_data.phys_proc_id);
- 
- 	if (bdx_uncore_cbox.num_boxes > boot_cpu_data.x86_max_cores)
- 		bdx_uncore_cbox.num_boxes = boot_cpu_data.x86_max_cores;
+ 		list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
++			if (event->cpu != smp_processor_id())
++				continue;
+ 			if (event->attr.type != PERF_TYPE_TRACEPOINT)
+ 				continue;
+ 			if (event->attr.config != entry->type)
 -- 
 2.17.1
 
