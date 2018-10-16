@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFE0C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 791D5C07208
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B6821480
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 432B42145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gl79F7JB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B6821480
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2+AslaP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 432B42145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728876AbeJPMCN (ORCPT
+        id S1728892AbeJPMCO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49916 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727259AbeJPMCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:12 -0400
+        id S1728864AbeJPMCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:13 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37E992147C;
+        by mail.kernel.org (Postfix) with ESMTPSA id 1147821470;
         Tue, 16 Oct 2018 04:13:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663229;
-        bh=mlVwj7JZsgTkqK0nv847F4xKTGsrw1GFeSTGLlNAtH8=;
+        s=default; t=1539663230;
+        bh=ECYa4y79hAXXujS29j6h3qN0kRWm+Jmke44gYJJmjLc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gl79F7JBnrGKyXBp0keHrz8IYBDHcCZp+hmkC3a2PStyNGNWCG69yzYe+BnW2eeAK
-         Vgf1RjTjqWwD3O88x/oNuhpf3/zsVGgmQuNTeOEHTcZzEgaYUsI5TemNoboISKlKEf
-         JJu/UliO9lRKmFLQjsyEa9BuHqatL+qFepwCJP40=
+        b=O2+AslaPG1KSMb1sSrbTKJYVLwCvp4YXHGaE4rD5iXgh60szgLvFAwwSnS9DPGzl4
+         JO20cLB40p/wAKE+HA4Ji2fq1y5M8ur5YphmwXz7FDGy4uyuQPWXtURS+q+u19FTI0
+         d9h5A8Wiwa01bW1W0gy0tQDMLjWKuvpeHBlQivxU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Wenwen Wang <wang6495@umn.edu>,
+Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 093/100] yam: fix a missing-check bug
-Date:   Tue, 16 Oct 2018 00:12:14 -0400
-Message-Id: <20181016041221.135528-93-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 094/100] net: mvpp2: Extract the correct ethtype from the skb for tx csum offload
+Date:   Tue, 16 Oct 2018 00:12:15 -0400
+Message-Id: <20181016041221.135528-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -53,56 +53,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-[ Upstream commit 0781168e23a2fc8dceb989f11fc5b39b3ccacc35 ]
+[ Upstream commit 35f3625c21852ad839f20c91c7d81c4c1101e207 ]
 
-In yam_ioctl(), the concrete ioctl command is firstly copied from the
-user-space buffer 'ifr->ifr_data' to 'ioctl_cmd' and checked through the
-following switch statement. If the command is not as expected, an error
-code EINVAL is returned. In the following execution the buffer
-'ifr->ifr_data' is copied again in the cases of the switch statement to
-specific data structures according to what kind of ioctl command is
-requested. However, after the second copy, no re-check is enforced on the
-newly-copied command. Given that the buffer 'ifr->ifr_data' is in the user
-space, a malicious user can race to change the command between the two
-copies. This way, the attacker can inject inconsistent data and cause
-undefined behavior.
+When offloading the L3 and L4 csum computation on TX, we need to extract
+the l3_proto from the ethtype, independently of the presence of a vlan
+tag.
 
-This patch adds a re-check in each case of the switch statement if there is
-a second copy in that case, to re-check whether the command obtained in the
-second copy is the same as the one in the first copy. If not, an error code
-EINVAL will be returned.
+The actual driver uses skb->protocol as-is, resulting in packets with
+the wrong L4 checksum being sent when there's a vlan tag in the packet
+header and checksum offloading is enabled.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+This commit makes use of vlan_protocol_get() to get the correct ethtype
+regardless the presence of a vlan tag.
+
+Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/hamradio/yam.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/hamradio/yam.c b/drivers/net/hamradio/yam.c
-index 16ec7af6ab7b..ba9df430fca6 100644
---- a/drivers/net/hamradio/yam.c
-+++ b/drivers/net/hamradio/yam.c
-@@ -966,6 +966,8 @@ static int yam_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
- 				 sizeof(struct yamdrv_ioctl_mcs));
- 		if (IS_ERR(ym))
- 			return PTR_ERR(ym);
-+		if (ym->cmd != SIOCYAMSMCS)
-+			return -EINVAL;
- 		if (ym->bitrate > YAM_MAXBITRATE) {
- 			kfree(ym);
- 			return -EINVAL;
-@@ -981,6 +983,8 @@ static int yam_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
- 		if (copy_from_user(&yi, ifr->ifr_data, sizeof(struct yamdrv_ioctl_cfg)))
- 			 return -EFAULT;
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index b8bba64673e5..556024c4463a 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -1725,7 +1725,7 @@ static void mvpp2_txq_desc_put(struct mvpp2_tx_queue *txq)
+ }
  
-+		if (yi.cmd != SIOCYAMSCFG)
-+			return -EINVAL;
- 		if ((yi.cfg.mask & YAM_IOBASE) && netif_running(dev))
- 			return -EINVAL;		/* Cannot change this parameter when up */
- 		if ((yi.cfg.mask & YAM_IRQ) && netif_running(dev))
+ /* Set Tx descriptors fields relevant for CSUM calculation */
+-static u32 mvpp2_txq_desc_csum(int l3_offs, int l3_proto,
++static u32 mvpp2_txq_desc_csum(int l3_offs, __be16 l3_proto,
+ 			       int ip_hdr_len, int l4_proto)
+ {
+ 	u32 command;
+@@ -2600,14 +2600,15 @@ static u32 mvpp2_skb_tx_csum(struct mvpp2_port *port, struct sk_buff *skb)
+ 	if (skb->ip_summed == CHECKSUM_PARTIAL) {
+ 		int ip_hdr_len = 0;
+ 		u8 l4_proto;
++		__be16 l3_proto = vlan_get_protocol(skb);
+ 
+-		if (skb->protocol == htons(ETH_P_IP)) {
++		if (l3_proto == htons(ETH_P_IP)) {
+ 			struct iphdr *ip4h = ip_hdr(skb);
+ 
+ 			/* Calculate IPv4 checksum and L4 checksum */
+ 			ip_hdr_len = ip4h->ihl;
+ 			l4_proto = ip4h->protocol;
+-		} else if (skb->protocol == htons(ETH_P_IPV6)) {
++		} else if (l3_proto == htons(ETH_P_IPV6)) {
+ 			struct ipv6hdr *ip6h = ipv6_hdr(skb);
+ 
+ 			/* Read l4_protocol from one of IPv6 extra headers */
+@@ -2619,7 +2620,7 @@ static u32 mvpp2_skb_tx_csum(struct mvpp2_port *port, struct sk_buff *skb)
+ 		}
+ 
+ 		return mvpp2_txq_desc_csum(skb_network_offset(skb),
+-				skb->protocol, ip_hdr_len, l4_proto);
++					   l3_proto, ip_hdr_len, l4_proto);
+ 	}
+ 
+ 	return MVPP2_TXD_L4_CSUM_NOT | MVPP2_TXD_IP_CSUM_DISABLE;
 -- 
 2.17.1
 
