@@ -2,141 +2,124 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C966C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF4EC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 411AC20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:49:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 411AC20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 6343820869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:51:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6343820869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbeJPQjQ (ORCPT
+        id S1727392AbeJPQkn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 12:39:16 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.123]:15465 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726165AbeJPQjQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 12:39:16 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 8F14F11107E
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 03:49:52 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id CL2og8zWstz4jCL2wgGmPN; Tue, 16 Oct 2018 03:49:52 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:59126 helo=[192.168.1.41])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gCL2o-0047JG-8e; Tue, 16 Oct 2018 03:49:38 -0500
-Subject: Re: [PATCH net-next v2 2/2] net: phy: mscc: fix memory leak in
- vsc8574_config_pre_init
-To:     Quentin Schulz <quentin.schulz@bootlin.com>
-Cc:     linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-References: <cover.1539159556.git.gustavo@embeddedor.com>
- <6161326e265a99f8ec8e0f7028790a0131c5404e.1539159556.git.gustavo@embeddedor.com>
- <20181010083422.phokcciqdkzm6u7w@qschulz>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <e64b93c2-4f25-ee68-ef23-e947f1e84d55@embeddedor.com>
-Date:   Tue, 16 Oct 2018 10:49:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 16 Oct 2018 12:40:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39980 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726541AbeJPQkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 12:40:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 63DB6B08B;
+        Tue, 16 Oct 2018 08:51:03 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id ADB0F1E088D; Tue, 16 Oct 2018 10:51:02 +0200 (CEST)
+Date:   Tue, 16 Oct 2018 10:51:02 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
+Message-ID: <20181016085102.GB18918@quack2.suse.cz>
+References: <20181012060014.10242-1-jhubbard@nvidia.com>
+ <20181012060014.10242-5-jhubbard@nvidia.com>
+ <20181013035516.GA18822@dastard>
+ <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
+ <20181013230124.GB18822@dastard>
 MIME-Version: 1.0
-In-Reply-To: <20181010083422.phokcciqdkzm6u7w@qschulz>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gCL2o-0047JG-8e
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:59126
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181013230124.GB18822@dastard>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 10/10/18 10:34 AM, Quentin Schulz wrote:
-> Hi Gustavo,
+On Sun 14-10-18 10:01:24, Dave Chinner wrote:
+> On Sat, Oct 13, 2018 at 12:34:12AM -0700, John Hubbard wrote:
+> > On 10/12/18 8:55 PM, Dave Chinner wrote:
+> > > On Thu, Oct 11, 2018 at 11:00:12PM -0700, john.hubbard@gmail.com wrote:
+> > >> From: John Hubbard <jhubbard@nvidia.com>
+> > [...]
+> > >> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > >> index 5ed8f6292a53..017ab82e36ca 100644
+> > >> --- a/include/linux/mm_types.h
+> > >> +++ b/include/linux/mm_types.h
+> > >> @@ -78,12 +78,22 @@ struct page {
+> > >>  	 */
+> > >>  	union {
+> > >>  		struct {	/* Page cache and anonymous pages */
+> > >> -			/**
+> > >> -			 * @lru: Pageout list, eg. active_list protected by
+> > >> -			 * zone_lru_lock.  Sometimes used as a generic list
+> > >> -			 * by the page owner.
+> > >> -			 */
+> > >> -			struct list_head lru;
+> > >> +			union {
+> > >> +				/**
+> > >> +				 * @lru: Pageout list, eg. active_list protected
+> > >> +				 * by zone_lru_lock.  Sometimes used as a
+> > >> +				 * generic list by the page owner.
+> > >> +				 */
+> > >> +				struct list_head lru;
+> > >> +				/* Used by get_user_pages*(). Pages may not be
+> > >> +				 * on an LRU while these dma_pinned_* fields
+> > >> +				 * are in use.
+> > >> +				 */
+> > >> +				struct {
+> > >> +					unsigned long dma_pinned_flags;
+> > >> +					atomic_t      dma_pinned_count;
+> > >> +				};
+> > >> +			};
+> > > 
+> > > Isn't this broken for mapped file-backed pages? i.e. they may be
+> > > passed as the user buffer to read/write direct IO and so the pages
+> > > passed to gup will be on the active/inactive LRUs. hence I can't see
+> > > how you can have dual use of the LRU list head like this....
+> > > 
+> > > What am I missing here?
+> > 
+> > Hi Dave,
+> > 
+> > In patch 6/6, pin_page_for_dma(), which is called at the end of get_user_pages(),
+> > unceremoniously rips the pages out of the LRU, as a prerequisite to using
+> > either of the page->dma_pinned_* fields. 
 > 
-> On Wed, Oct 10, 2018 at 10:31:39AM +0200, Gustavo A. R. Silva wrote:
->> In case memory resources for *fw* were successfully allocated,
->> release them before return.
->>
->> Addresses-Coverity-ID: 1473968 ("Resource leak")
->> Fixes: 00d70d8e0e78 ("net: phy: mscc: add support for VSC8574 PHY")
-> 
-> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> 
+> How is that safe? If you've ripped the page out of the LRU, it's no
+> longer being tracked by the page cache aging and reclaim algorithms.
+> Patch 6 doesn't appear to put these pages back in the LRU, either,
+> so it looks to me like this just dumps them on the ground after the
+> gup reference is dropped.  How do we reclaim these page cache pages
+> when there is memory pressure if they aren't in the LRU?
 
-Friendly ping. Dave, can you take this?
+Yeah, that's a bug in patch 6/6 (possibly in ClearPageDmaPinned). It should
+return the page to the LRU from put_user_page().
 
-Thanks!
---
-Gustavo
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
