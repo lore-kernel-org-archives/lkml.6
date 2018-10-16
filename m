@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97989C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B91FC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6028F2098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A2432089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmuqzQzJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6028F2098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qbQxmOA5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2432089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729289AbeJQBGa (ORCPT
+        id S1729302AbeJQBGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:06:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50458 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:06:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbeJQBG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:06:29 -0400
+        id S1727007AbeJQBGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:06:32 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40CD620866;
-        Tue, 16 Oct 2018 17:15:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E1AE2089E;
+        Tue, 16 Oct 2018 17:15:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710106;
-        bh=tCA8M4VFrVa7w5HZMTBTiGi9oNpHvyOsMT6AJuSa8Nw=;
+        s=default; t=1539710109;
+        bh=uvpqrJvFuXnY94tvSqLCwh3Za9HH3QDYD/ZNAw+kJ7A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TmuqzQzJ/hZBPCmvIfDRr1NHH96SDxQUeI2XsXQqAqmHJwU9RQhMvjjBhp4dOQCfM
-         CY622kk13ORpqFPBfrUmcB4x4zIYJHQLJebqfhj0emNhuxVqoII3xhLwVmN05g94nU
-         jbv+SEW2jKbU8uRWbtMxmi7K2aw3vNUOw6A9c4H8=
+        b=qbQxmOA5V1nrPONFZ9C/Qd/Me1ZdeWhf8NgNt1N5Aw9UFfeDKXLLcLvv0hWLJ9SfH
+         2etGALcEKE+XgcdP390l+S0R4cqBwBlLa1bZ3gdL/Sw5nFRO6wnp3I//9VqYAxVVLL
+         PWnUppRGBvVyOWS2C7qc6uVdgnrMSdPfUbe+OVW0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Simon Detheridge <s@sd.ai>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 103/135] clk: x86: Stop marking clocks as CLK_IS_CRITICAL
-Date:   Tue, 16 Oct 2018 19:05:33 +0200
-Message-Id: <20181016170522.446062934@linuxfoundation.org>
+Subject: [PATCH 4.18 104/135] pinctrl: cannonlake: Fix gpio base for GPP-E
+Date:   Tue, 16 Oct 2018 19:05:34 +0200
+Message-Id: <20181016170522.557405628@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -67,55 +64,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Simon Detheridge <s@sd.ai>
 
-[ Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f ]
+[ Upstream commit 8e2aac333785f91ff74e219a1e78e6bdc1ef2c41 ]
 
-Commit d31fd43c0f9a ("clk: x86: Do not gate clocks enabled by the
-firmware"), which added the code to mark clocks as CLK_IS_CRITICAL, causes
-all unclaimed PMC clocks on Cherry Trail devices to be on all the time,
-resulting on the device not being able to reach S0i3 when suspended.
+The gpio base for GPP-E was set incorrectly to 258 instead of 256,
+preventing the touchpad working on my Tong Fang GK5CN5Z laptop.
 
-The reason for this commit is that on some Bay Trail / Cherry Trail devices
-the r8169 ethernet controller uses pmc_plt_clk_4. Now that the clk-pmc-atom
-driver exports an "ether_clk" alias for pmc_plt_clk_4 and the r8169 driver
-has been modified to get and enable this clock (if present) the marking of
-the clocks as CLK_IS_CRITICAL is no longer necessary.
-
-This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
-devices not being able to reach S0i3 greatly decreasing their battery
-drain when suspended.
-
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=193891#c102
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=196861
-Cc: Johannes Stezenbach <js@sig21.net>
-Cc: Carlo Caione <carlo@endlessm.com>
-Reported-by: Johannes Stezenbach <js@sig21.net>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=200787
+Signed-off-by: Simon Detheridge <s@sd.ai>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/x86/clk-pmc-atom.c |    7 -------
- 1 file changed, 7 deletions(-)
+ drivers/pinctrl/intel/pinctrl-cannonlake.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/x86/clk-pmc-atom.c
-+++ b/drivers/clk/x86/clk-pmc-atom.c
-@@ -187,13 +187,6 @@ static struct clk_plt *plt_clk_register(
- 	pclk->reg = base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
- 	spin_lock_init(&pclk->lock);
- 
--	/*
--	 * If the clock was already enabled by the firmware mark it as critical
--	 * to avoid it being gated by the clock framework if no driver owns it.
--	 */
--	if (plt_clk_is_enabled(&pclk->hw))
--		init.flags |= CLK_IS_CRITICAL;
--
- 	ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
- 	if (ret) {
- 		pclk = ERR_PTR(ret);
+--- a/drivers/pinctrl/intel/pinctrl-cannonlake.c
++++ b/drivers/pinctrl/intel/pinctrl-cannonlake.c
+@@ -382,7 +382,7 @@ static const struct intel_padgroup cnlh_
+ static const struct intel_padgroup cnlh_community3_gpps[] = {
+ 	CNL_GPP(0, 155, 178, 192),		/* GPP_K */
+ 	CNL_GPP(1, 179, 202, 224),		/* GPP_H */
+-	CNL_GPP(2, 203, 215, 258),		/* GPP_E */
++	CNL_GPP(2, 203, 215, 256),		/* GPP_E */
+ 	CNL_GPP(3, 216, 239, 288),		/* GPP_F */
+ 	CNL_GPP(4, 240, 248, CNL_NO_GPIO),	/* SPI */
+ };
 
 
