@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13076C070C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46BFC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5C192098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FFE721471
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5dHW146"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5C192098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbaUfWP7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FFE721471
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728298AbeJPMBa (ORCPT
+        id S1728334AbeJPMBc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:01:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48566 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:01:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728271AbeJPMB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:29 -0400
+        id S1728162AbeJPMBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D00DF21479;
-        Tue, 16 Oct 2018 04:13:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB5472145D;
+        Tue, 16 Oct 2018 04:13:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663187;
-        bh=eS6LfxP3V7zBCGuWv70mJwsz6N/z7z/1npS5oCzVFNI=;
+        s=default; t=1539663188;
+        bh=jcA084tA/1J4DrKUoW8ifC2pT7V+KQHIqKXsWQVn808=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k5dHW146oGXo3EArSM63ZfStJJPT0kMElslA/hkxTrqDM6hOdjJgDiTMcubSEPZha
-         MV8jyMOd4K8FKcyBLNENgbpqRWjdfZJiFKqfyTNK06yL6pAAZ08jDlT6CrfTM0rxWe
-         CP/z15vDnQd19MF/RQi0VLS2oO/VHCCRAZsSgZo4=
+        b=NbaUfWP7g0PCXNKVMdteD6VCTpodis9rd8Oj43ypYa6MTRJYK38bNFtapxdbyQJc+
+         uwtYJIvc8WZjUXgtGqMR2vm7d50mHjdAOtKJXnzHi89j7OsNjlPWkmN4pqyEHEFzbs
+         9JAv5Tsp9tWem4wJ8K19VqF+SFmTeUcoWxXan4Sg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 049/100] lan78xx: Check for supported Wake-on-LAN modes
-Date:   Tue, 16 Oct 2018 00:11:30 -0400
-Message-Id: <20181016041221.135528-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 050/100] sr9800: Check for supported Wake-on-LAN modes
+Date:   Tue, 16 Oct 2018 00:11:31 -0400
+Message-Id: <20181016041221.135528-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -55,48 +55,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit eb9ad088f96653a26b340f7c447c44cf023d5cdc ]
+[ Upstream commit c5cb93e994ffb43b7b3b1ff10b9f928f54574a36 ]
 
-The driver supports a fair amount of Wake-on-LAN modes, but is not
-checking that the user specified one that is supported.
+The driver currently silently accepts unsupported Wake-on-LAN modes
+(other than WAKE_PHY or WAKE_MAGIC) without reporting that to the user,
+which is confusing.
 
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
+Fixes: 19a38d8e0aa3 ("USB2NET : SR9800 : One chip USB2.0 USB2NET SR9800 Device Driver Support")
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Woojung Huh <Woojung.Huh@Microchip.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/lan78xx.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+ drivers/net/usb/sr9800.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index aeca484a75b8..2bb3a081ff10 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1401,19 +1401,10 @@ static int lan78xx_set_wol(struct net_device *netdev,
- 	if (ret < 0)
- 		return ret;
+diff --git a/drivers/net/usb/sr9800.c b/drivers/net/usb/sr9800.c
+index 9277a0f228df..35f39f23d881 100644
+--- a/drivers/net/usb/sr9800.c
++++ b/drivers/net/usb/sr9800.c
+@@ -421,6 +421,9 @@ sr_set_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
+ 	struct usbnet *dev = netdev_priv(net);
+ 	u8 opt = 0;
  
--	pdata->wol = 0;
--	if (wol->wolopts & WAKE_UCAST)
--		pdata->wol |= WAKE_UCAST;
--	if (wol->wolopts & WAKE_MCAST)
--		pdata->wol |= WAKE_MCAST;
--	if (wol->wolopts & WAKE_BCAST)
--		pdata->wol |= WAKE_BCAST;
--	if (wol->wolopts & WAKE_MAGIC)
--		pdata->wol |= WAKE_MAGIC;
--	if (wol->wolopts & WAKE_PHY)
--		pdata->wol |= WAKE_PHY;
--	if (wol->wolopts & WAKE_ARP)
--		pdata->wol |= WAKE_ARP;
-+	if (wol->wolopts & ~WAKE_ALL)
++	if (wolinfo->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
 +		return -EINVAL;
 +
-+	pdata->wol = wol->wolopts;
- 
- 	device_set_wakeup_enable(&dev->udev->dev, (bool)wol->wolopts);
- 
+ 	if (wolinfo->wolopts & WAKE_PHY)
+ 		opt |= SR_MONITOR_LINK;
+ 	if (wolinfo->wolopts & WAKE_MAGIC)
 -- 
 2.17.1
 
