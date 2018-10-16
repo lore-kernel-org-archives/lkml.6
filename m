@@ -2,50 +2,53 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A268C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9848BC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3353B20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6151D21477
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ywYMVoDH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3353B20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDC8ul/F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6151D21477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbeJQBFH (ORCPT
+        id S1728968AbeJQBFJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:05:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48246 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:05:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbeJQBFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:05:06 -0400
+        id S1727280AbeJQBFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:05:09 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16F592098A;
-        Tue, 16 Oct 2018 17:13:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC18A20866;
+        Tue, 16 Oct 2018 17:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710023;
-        bh=lcD1Z/SiZSVb0tPJOLh6OgsY+NW4j0uej46Jhc6piOM=;
+        s=default; t=1539710026;
+        bh=sfCusYObXVOvvRjaW9uKkw0HAqbSgaX2ylMNCj5oIag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ywYMVoDHuVOhNP52wkS58+ZM3dmZ6Kp4xu3fjKBI6gOJWKXWjbkl//4tY9RroDmxt
-         WHK2w4F7lqfvFuDwe+low0HQKBqoYIteuKsCmmeCSGoZLVMCNkbXPN0TzD69W8B/mX
-         Y4fyGGFvTWD6lBEs/+XkDYM76dxu0Jl0dCmgb9N8=
+        b=CDC8ul/FzSl9X910/F/3hGKIDCUcmCG94blcA2vDULspd0UGJ+5tU0ZnAefmSSGBJ
+         heildIAIQfUbhI/JSF+ZqzDTMINBSooCWv4z6g5uL1c+UlYjDFdS0L65Qx2eR4s0Wp
+         usYQ1QlfQHMa9PCczDr0paocfhQ8zR0QpERFLWOI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 077/135] hwmon: (nct6775) Fix access to fan pulse registers
-Date:   Tue, 16 Oct 2018 19:05:07 +0200
-Message-Id: <20181016170520.501191047@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Pieter Jansen van Vuuren 
+        <pieter.jansenvanvuuren@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 042/135] nfp: avoid soft lockups under control message storm
+Date:   Tue, 16 Oct 2018 19:04:32 +0200
+Message-Id: <20181016170517.744028985@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -63,101 +66,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit c793279c77035053e67937f5743c6ebfc303e7c5 ]
+[ Upstream commit ff58e2df62ce29d0552278c290ae494b30fe0c6f ]
 
-Not all fans have a fan pulse register. This can result in reading
-beyond the end of REG_FAN_PULSES and FAN_PULSE_SHIFT arrays,
-and was reported by smatch as possible error.
+When FW floods the driver with control messages try to exit the cmsg
+processing loop every now and then to avoid soft lockups.  Cmsg
+processing is generally very lightweight so 512 seems like a reasonable
+budget, which should not be exceeded under normal conditions.
 
-1672          for (i = 0; i < ARRAY_SIZE(data->rpm); i++) {
-                              ^^^^^^^^^^^^^^^^^^^^^^^^
-			      This is a 7 element array.
-...
-1685                  data->fan_pulses[i] =
-1686                    (nct6775_read_value(data, data->REG_FAN_PULSES[i])
-1687                          >> data->FAN_PULSE_SHIFT[i]) & 0x03;
-                                 ^^^^^^^^^^^^^^^^^^^^^^^^
-				 FAN_PULSE_SHIFT is either 5 or 6
-				 elements.
-
-To fix the problem, we have to ensure that all REG_FAN_PULSES and
-FAN_PULSE_SHIFT have the appropriate length, and that REG_FAN_PULSES
-is only read if the register actually exists.
-
-Fixes: 6c009501ff200 ("hwmon: (nct6775) Add support for NCT6102D/6106D")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 77ece8d5f196 ("nfp: add control vNIC datapath")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Tested-by: Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/nct6775.c |   27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/netronome/nfp/nfp_net_common.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
---- a/drivers/hwmon/nct6775.c
-+++ b/drivers/hwmon/nct6775.c
-@@ -299,8 +299,9 @@ static const u16 NCT6775_REG_PWM_READ[]
+--- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
++++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
+@@ -2068,14 +2068,17 @@ nfp_ctrl_rx_one(struct nfp_net *nn, stru
+ 	return true;
+ }
  
- static const u16 NCT6775_REG_FAN[] = { 0x630, 0x632, 0x634, 0x636, 0x638 };
- static const u16 NCT6775_REG_FAN_MIN[] = { 0x3b, 0x3c, 0x3d };
--static const u16 NCT6775_REG_FAN_PULSES[] = { 0x641, 0x642, 0x643, 0x644, 0 };
--static const u16 NCT6775_FAN_PULSE_SHIFT[] = { 0, 0, 0, 0, 0, 0 };
-+static const u16 NCT6775_REG_FAN_PULSES[NUM_FAN] = {
-+	0x641, 0x642, 0x643, 0x644 };
-+static const u16 NCT6775_FAN_PULSE_SHIFT[NUM_FAN] = { };
+-static void nfp_ctrl_rx(struct nfp_net_r_vector *r_vec)
++static bool nfp_ctrl_rx(struct nfp_net_r_vector *r_vec)
+ {
+ 	struct nfp_net_rx_ring *rx_ring = r_vec->rx_ring;
+ 	struct nfp_net *nn = r_vec->nfp_net;
+ 	struct nfp_net_dp *dp = &nn->dp;
++	unsigned int budget = 512;
  
- static const u16 NCT6775_REG_TEMP[] = {
- 	0x27, 0x150, 0x250, 0x62b, 0x62c, 0x62d };
-@@ -425,8 +426,8 @@ static const u8 NCT6776_PWM_MODE_MASK[]
- 
- static const u16 NCT6776_REG_FAN_MIN[] = {
- 	0x63a, 0x63c, 0x63e, 0x640, 0x642, 0x64a, 0x64c };
--static const u16 NCT6776_REG_FAN_PULSES[] = {
--	0x644, 0x645, 0x646, 0x647, 0x648, 0x649, 0 };
-+static const u16 NCT6776_REG_FAN_PULSES[NUM_FAN] = {
-+	0x644, 0x645, 0x646, 0x647, 0x648, 0x649 };
- 
- static const u16 NCT6776_REG_WEIGHT_DUTY_BASE[] = {
- 	0x13e, 0x23e, 0x33e, 0x83e, 0x93e, 0xa3e };
-@@ -502,8 +503,8 @@ static const s8 NCT6779_BEEP_BITS[] = {
- 
- static const u16 NCT6779_REG_FAN[] = {
- 	0x4b0, 0x4b2, 0x4b4, 0x4b6, 0x4b8, 0x4ba, 0x660 };
--static const u16 NCT6779_REG_FAN_PULSES[] = {
--	0x644, 0x645, 0x646, 0x647, 0x648, 0x649, 0 };
-+static const u16 NCT6779_REG_FAN_PULSES[NUM_FAN] = {
-+	0x644, 0x645, 0x646, 0x647, 0x648, 0x649 };
- 
- static const u16 NCT6779_REG_CRITICAL_PWM_ENABLE[] = {
- 	0x136, 0x236, 0x336, 0x836, 0x936, 0xa36, 0xb36 };
-@@ -779,8 +780,8 @@ static const u16 NCT6106_REG_TEMP_CONFIG
- 
- static const u16 NCT6106_REG_FAN[] = { 0x20, 0x22, 0x24 };
- static const u16 NCT6106_REG_FAN_MIN[] = { 0xe0, 0xe2, 0xe4 };
--static const u16 NCT6106_REG_FAN_PULSES[] = { 0xf6, 0xf6, 0xf6, 0, 0 };
--static const u16 NCT6106_FAN_PULSE_SHIFT[] = { 0, 2, 4, 0, 0 };
-+static const u16 NCT6106_REG_FAN_PULSES[] = { 0xf6, 0xf6, 0xf6 };
-+static const u16 NCT6106_FAN_PULSE_SHIFT[] = { 0, 2, 4 };
- 
- static const u8 NCT6106_REG_PWM_MODE[] = { 0xf3, 0xf3, 0xf3 };
- static const u8 NCT6106_PWM_MODE_MASK[] = { 0x01, 0x02, 0x04 };
-@@ -1682,9 +1683,13 @@ static struct nct6775_data *nct6775_upda
- 			if (data->has_fan_min & BIT(i))
- 				data->fan_min[i] = nct6775_read_value(data,
- 					   data->REG_FAN_MIN[i]);
--			data->fan_pulses[i] =
--			  (nct6775_read_value(data, data->REG_FAN_PULSES[i])
--				>> data->FAN_PULSE_SHIFT[i]) & 0x03;
+-	while (nfp_ctrl_rx_one(nn, dp, r_vec, rx_ring))
++	while (nfp_ctrl_rx_one(nn, dp, r_vec, rx_ring) && budget--)
+ 		continue;
 +
-+			if (data->REG_FAN_PULSES[i]) {
-+				data->fan_pulses[i] =
-+				  (nct6775_read_value(data,
-+						      data->REG_FAN_PULSES[i])
-+				   >> data->FAN_PULSE_SHIFT[i]) & 0x03;
-+			}
++	return budget;
+ }
  
- 			nct6775_select_fan_div(dev, data, i, reg);
- 		}
+ static void nfp_ctrl_poll(unsigned long arg)
+@@ -2087,9 +2090,13 @@ static void nfp_ctrl_poll(unsigned long
+ 	__nfp_ctrl_tx_queued(r_vec);
+ 	spin_unlock_bh(&r_vec->lock);
+ 
+-	nfp_ctrl_rx(r_vec);
+-
+-	nfp_net_irq_unmask(r_vec->nfp_net, r_vec->irq_entry);
++	if (nfp_ctrl_rx(r_vec)) {
++		nfp_net_irq_unmask(r_vec->nfp_net, r_vec->irq_entry);
++	} else {
++		tasklet_schedule(&r_vec->tasklet);
++		nn_dp_warn(&r_vec->nfp_net->dp,
++			   "control message budget exceeded!\n");
++	}
+ }
+ 
+ /* Setup and Configuration
 
 
