@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD65C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A322C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49C0320866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3726B2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmkUjbFf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C0320866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DuTLFih+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3726B2089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729731AbeJQBIE (ORCPT
+        id S1729744AbeJQBIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:08:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52640 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:08:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728606AbeJQBIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:08:04 -0400
+        id S1728606AbeJQBIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:08:07 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39F1921477;
-        Tue, 16 Oct 2018 17:16:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E45722089E;
+        Tue, 16 Oct 2018 17:16:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710200;
-        bh=gQCWGxaUoxaf5cstrkIhRnLkKl50v8A1t5ymusIkZA8=;
+        s=default; t=1539710203;
+        bh=G8ggKPQKQxfHMqBnJT0n4NAe600HcH0U85NGXGtWuOg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mmkUjbFf6xmtNiT8SUm6Jz5+TO4dZnsVQSeeBefRN6yoDwO2W8rblh0cpyt/Kt4Vi
-         uMWGTnz6Mf9g1RKW6ylRXwX5Zt5wZ0CdqtIKFughxDDsuaQaMoJSn2DO1LzRzlfNDo
-         E/PHBzlNtpaeYTkWLzmMRr15nuI7yhci7sVOwOi0=
+        b=DuTLFih+6RDpTndN1omyI7StnThRnarj/m1SnqrT+YM1nxkGRX581yJfIbC8pkdW6
+         GK+QCf/mX/Mb2m50j8IhjiT3EI/bKJDPMYeTkM+U9IJ3HzAyfvN+4r9l5yVkm+F6+f
+         sTdb8lrAajsmilklir9ye2LnXnYHHRmy9MD2Fxto=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.18 122/135] dm: fix report zone remapping to account for partition offset
-Date:   Tue, 16 Oct 2018 19:05:52 +0200
-Message-Id: <20181016170523.698713964@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.18 123/135] dm linear: eliminate linear_end_io call if CONFIG_DM_ZONED disabled
+Date:   Tue, 16 Oct 2018 19:05:53 +0200
+Message-Id: <20181016170523.769863370@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -62,100 +61,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 9864cd5dc54cade89fd4b0954c2e522841aa247c upstream.
+commit beb9caac211c1be1bc118bb62d5cf09c4107e6a5 upstream.
 
-If dm-linear or dm-flakey are layered on top of a partition of a zoned
-block device, remapping of the start sector and write pointer position
-of the zones reported by a report zones BIO must be modified to account
-for the target table entry mapping (start offset within the device and
-entry mapping with the dm device).  If the target's backing device is a
-partition of a whole disk, the start sector on the physical device of
-the partition must also be accounted for when modifying the zone
-information.  However, dm_remap_zone_report() was not considering this
-last case, resulting in incorrect zone information remapping with
-targets using disk partitions.
+It is best to avoid any extra overhead associated with bio completion.
+DM core will indirectly call a DM target's .end_io if it is defined.
+In the case of DM linear, there is no need to do so (for every bio that
+completes) if CONFIG_DM_ZONED is not enabled.
 
-Fix this by calculating the target backing device start sector using
-the position of the completed report zones BIO and the unchanged
-position and size of the original report zone BIO. With this value
-calculated, the start sector and write pointer position of the target
-zones can be correctly remapped.
+Avoiding an extra indirect call for every bio completion is very
+important for ensuring DM linear doesn't incur more overhead that
+further widens the performance gap between dm-linear and raw block
+devices.
 
-Fixes: 10999307c14e ("dm: introduce dm_remap_zone_report()")
+Fixes: 0be12c1c7fce7 ("dm linear: add support for zoned block devices")
 Cc: stable@vger.kernel.org
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm.c |   27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ drivers/md/dm-linear.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1153,12 +1153,14 @@ void dm_accept_partial_bio(struct bio *b
- EXPORT_SYMBOL_GPL(dm_accept_partial_bio);
+--- a/drivers/md/dm-linear.c
++++ b/drivers/md/dm-linear.c
+@@ -102,6 +102,7 @@ static int linear_map(struct dm_target *
+ 	return DM_MAPIO_REMAPPED;
+ }
  
- /*
-- * The zone descriptors obtained with a zone report indicate
-- * zone positions within the target device. The zone descriptors
-- * must be remapped to match their position within the dm device.
-- * A target may call dm_remap_zone_report after completion of a
-- * REQ_OP_ZONE_REPORT bio to remap the zone descriptors obtained
-- * from the target device mapping to the dm device.
-+ * The zone descriptors obtained with a zone report indicate zone positions
-+ * within the target backing device, regardless of that device is a partition
-+ * and regardless of the target mapping start sector on the device or partition.
-+ * The zone descriptors start sector and write pointer position must be adjusted
-+ * to match their relative position within the dm device.
-+ * A target may call dm_remap_zone_report() after completion of a
-+ * REQ_OP_ZONE_REPORT bio to remap the zone descriptors obtained from the
-+ * backing device.
-  */
- void dm_remap_zone_report(struct dm_target *ti, struct bio *bio, sector_t start)
++#ifdef CONFIG_DM_ZONED
+ static int linear_end_io(struct dm_target *ti, struct bio *bio,
+ 			 blk_status_t *error)
  {
-@@ -1169,6 +1171,7 @@ void dm_remap_zone_report(struct dm_targ
- 	struct blk_zone *zone;
- 	unsigned int nr_rep = 0;
- 	unsigned int ofst;
-+	sector_t part_offset;
- 	struct bio_vec bvec;
- 	struct bvec_iter iter;
- 	void *addr;
-@@ -1177,6 +1180,15 @@ void dm_remap_zone_report(struct dm_targ
- 		return;
+@@ -112,6 +113,7 @@ static int linear_end_io(struct dm_targe
  
- 	/*
-+	 * bio sector was incremented by the request size on completion. Taking
-+	 * into account the original request sector, the target start offset on
-+	 * the backing device and the target mapping offset (ti->begin), the
-+	 * start sector of the backing device. The partition offset is always 0
-+	 * if the target uses a whole device.
-+	 */
-+	part_offset = bio->bi_iter.bi_sector + ti->begin - (start + bio_end_sector(report_bio));
-+
-+	/*
- 	 * Remap the start sector of the reported zones. For sequential zones,
- 	 * also remap the write pointer position.
- 	 */
-@@ -1193,6 +1205,7 @@ void dm_remap_zone_report(struct dm_targ
- 		/* Set zones start sector */
- 		while (hdr->nr_zones && ofst < bvec.bv_len) {
- 			zone = addr + ofst;
-+			zone->start -= part_offset;
- 			if (zone->start >= start + ti->len) {
- 				hdr->nr_zones = 0;
- 				break;
-@@ -1204,7 +1217,7 @@ void dm_remap_zone_report(struct dm_targ
- 				else if (zone->cond == BLK_ZONE_COND_EMPTY)
- 					zone->wp = zone->start;
- 				else
--					zone->wp = zone->wp + ti->begin - start;
-+					zone->wp = zone->wp + ti->begin - start - part_offset;
- 			}
- 			ofst += sizeof(struct blk_zone);
- 			hdr->nr_zones--;
+ 	return DM_ENDIO_DONE;
+ }
++#endif
+ 
+ static void linear_status(struct dm_target *ti, status_type_t type,
+ 			  unsigned status_flags, char *result, unsigned maxlen)
+@@ -208,12 +210,16 @@ static size_t linear_dax_copy_to_iter(st
+ static struct target_type linear_target = {
+ 	.name   = "linear",
+ 	.version = {1, 4, 0},
++#ifdef CONFIG_DM_ZONED
++	.end_io = linear_end_io,
+ 	.features = DM_TARGET_PASSES_INTEGRITY | DM_TARGET_ZONED_HM,
++#else
++	.features = DM_TARGET_PASSES_INTEGRITY,
++#endif
+ 	.module = THIS_MODULE,
+ 	.ctr    = linear_ctr,
+ 	.dtr    = linear_dtr,
+ 	.map    = linear_map,
+-	.end_io = linear_end_io,
+ 	.status = linear_status,
+ 	.prepare_ioctl = linear_prepare_ioctl,
+ 	.iterate_devices = linear_iterate_devices,
 
 
