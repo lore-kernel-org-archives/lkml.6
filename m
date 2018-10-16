@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0F7C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D583C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 644C22089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 455A62089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ilYwzq0Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 644C22089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="edpOul6E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 455A62089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730401AbeJQBK6 (ORCPT
+        id S1730414AbeJQBLB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:10:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56132 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:11:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbeJQBK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:10:58 -0400
+        id S1729960AbeJQBLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:11:00 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4C4120866;
-        Tue, 16 Oct 2018 17:19:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 775F020866;
+        Tue, 16 Oct 2018 17:19:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710373;
-        bh=qmJhRaWiopWyaICIvc97IVvNZYU7HQcCja4uVqfx6QQ=;
+        s=default; t=1539710376;
+        bh=IrEstG3a+ivLmCY4qAFoQ8cvTXBM7KOZ0iJH/r0xrsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ilYwzq0Q1OmzZPAr0HbbDeQlVk/a5b4cNM2LAWxd/73Lc+Wfts3aR76ckFkKv/yCP
-         A7aErUhrZrAILoCQJv3XrOhgr2p3J6VDDYbnots+H1N5/qKwHCLFOKWHrgrHh+cfjn
-         idUFin5QKvXuhfH6uNEVBkvMOxw7L0sUr07LwFl4=
+        b=edpOul6EJh2Y00HrzkVuswmMbYx9jtFm4ZvhL2B4g+eC6574INroA0C09zaJukGm8
+         0/clndrpGX9xK8wmlk61Flj/DOglotWAZVyPRzxzRGUPvEgbkg9C09lbnP7wKTz+ke
+         JFuNu3Od4cRp5fOUAzFSJWxJARoR0RAJglVxnfPg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Oder Chiou <oder_chiou@realtek.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 056/109] PCI: hv: support reporting serial number as slot information
-Date:   Tue, 16 Oct 2018 19:05:24 +0200
-Message-Id: <20181016170527.955865574@linuxfoundation.org>
+Subject: [PATCH 4.14 039/109] ASoC: rt5514: Fix the issue of the delay volume applied again
+Date:   Tue, 16 Oct 2018 19:05:07 +0200
+Message-Id: <20181016170527.133001137@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -63,117 +63,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Oder Chiou <oder_chiou@realtek.com>
 
-[ Upstream commit a15f2c08c70811f120d99288d81f70d7f3d104f1 ]
+[ Upstream commit 6f0a256253f48095ba2e5bcdfbed41f21643c105 ]
 
-The Hyper-V host API for PCI provides a unique "serial number" which
-can be used as basis for sysfs PCI slot table. This can be useful
-for cases where userspace wants to find the PCI device based on
-serial number.
+After our evaluation, we need to modify the default values to make sure
+the volume applied immediately.
 
-When an SR-IOV NIC is added, the host sends an attach message
-with serial number. The kernel doesn't use the serial number, but
-it is useful when doing the same thing in a userspace driver such
-as the DPDK. By having /sys/bus/pci/slots/N it provides a direct
-way to find the matching PCI device.
-
-There maybe some cases where serial number is not unique such
-as when using GPU's. But the PCI slot infrastructure will handle
-that.
-
-This has a side effect which may also be useful. The common udev
-network device naming policy uses the slot information (rather
-than PCI address).
-
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Oder Chiou <oder_chiou@realtek.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/host/pci-hyperv.c |   37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ sound/soc/codecs/rt5514.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/pci/host/pci-hyperv.c
-+++ b/drivers/pci/host/pci-hyperv.c
-@@ -100,6 +100,9 @@ static enum pci_protocol_version_t pci_p
+--- a/sound/soc/codecs/rt5514.c
++++ b/sound/soc/codecs/rt5514.c
+@@ -64,8 +64,8 @@ static const struct reg_sequence rt5514_
+ 	{RT5514_ANA_CTRL_LDO10,		0x00028604},
+ 	{RT5514_ANA_CTRL_ADCFED,	0x00000800},
+ 	{RT5514_ASRC_IN_CTRL1,		0x00000003},
+-	{RT5514_DOWNFILTER0_CTRL3,	0x10000352},
+-	{RT5514_DOWNFILTER1_CTRL3,	0x10000352},
++	{RT5514_DOWNFILTER0_CTRL3,	0x10000342},
++	{RT5514_DOWNFILTER1_CTRL3,	0x10000342},
+ };
  
- #define STATUS_REVISION_MISMATCH 0xC0000059
- 
-+/* space for 32bit serial number as string */
-+#define SLOT_NAME_SIZE 11
-+
- /*
-  * Message Types
-  */
-@@ -516,6 +519,7 @@ struct hv_pci_dev {
- 	struct list_head list_entry;
- 	refcount_t refs;
- 	enum hv_pcichild_state state;
-+	struct pci_slot *pci_slot;
- 	struct pci_function_description desc;
- 	bool reported_missing;
- 	struct hv_pcibus_device *hbus;
-@@ -1481,6 +1485,34 @@ static void prepopulate_bars(struct hv_p
- 	spin_unlock_irqrestore(&hbus->device_list_lock, flags);
- }
- 
-+/*
-+ * Assign entries in sysfs pci slot directory.
-+ *
-+ * Note that this function does not need to lock the children list
-+ * because it is called from pci_devices_present_work which
-+ * is serialized with hv_eject_device_work because they are on the
-+ * same ordered workqueue. Therefore hbus->children list will not change
-+ * even when pci_create_slot sleeps.
-+ */
-+static void hv_pci_assign_slots(struct hv_pcibus_device *hbus)
-+{
-+	struct hv_pci_dev *hpdev;
-+	char name[SLOT_NAME_SIZE];
-+	int slot_nr;
-+
-+	list_for_each_entry(hpdev, &hbus->children, list_entry) {
-+		if (hpdev->pci_slot)
-+			continue;
-+
-+		slot_nr = PCI_SLOT(wslot_to_devfn(hpdev->desc.win_slot.slot));
-+		snprintf(name, SLOT_NAME_SIZE, "%u", hpdev->desc.ser);
-+		hpdev->pci_slot = pci_create_slot(hbus->pci_bus, slot_nr,
-+					  name, NULL);
-+		if (!hpdev->pci_slot)
-+			pr_warn("pci_create slot %s failed\n", name);
-+	}
-+}
-+
- /**
-  * create_root_hv_pci_bus() - Expose a new root PCI bus
-  * @hbus:	Root PCI bus, as understood by this driver
-@@ -1504,6 +1536,7 @@ static int create_root_hv_pci_bus(struct
- 	pci_lock_rescan_remove();
- 	pci_scan_child_bus(hbus->pci_bus);
- 	pci_bus_assign_resources(hbus->pci_bus);
-+	hv_pci_assign_slots(hbus);
- 	pci_bus_add_devices(hbus->pci_bus);
- 	pci_unlock_rescan_remove();
- 	hbus->state = hv_pcibus_installed;
-@@ -1787,6 +1820,7 @@ static void pci_devices_present_work(str
- 		 */
- 		pci_lock_rescan_remove();
- 		pci_scan_child_bus(hbus->pci_bus);
-+		hv_pci_assign_slots(hbus);
- 		pci_unlock_rescan_remove();
- 		break;
- 
-@@ -1895,6 +1929,9 @@ static void hv_eject_device_work(struct
- 	list_del(&hpdev->list_entry);
- 	spin_unlock_irqrestore(&hpdev->hbus->device_list_lock, flags);
- 
-+	if (hpdev->pci_slot)
-+		pci_destroy_slot(hpdev->pci_slot);
-+
- 	memset(&ctxt, 0, sizeof(ctxt));
- 	ejct_pkt = (struct pci_eject_response *)&ctxt.pkt.message;
- 	ejct_pkt->message_type.type = PCI_EJECTION_COMPLETE;
+ static const struct reg_default rt5514_reg[] = {
+@@ -92,10 +92,10 @@ static const struct reg_default rt5514_r
+ 	{RT5514_ASRC_IN_CTRL1,		0x00000003},
+ 	{RT5514_DOWNFILTER0_CTRL1,	0x00020c2f},
+ 	{RT5514_DOWNFILTER0_CTRL2,	0x00020c2f},
+-	{RT5514_DOWNFILTER0_CTRL3,	0x10000352},
++	{RT5514_DOWNFILTER0_CTRL3,	0x10000342},
+ 	{RT5514_DOWNFILTER1_CTRL1,	0x00020c2f},
+ 	{RT5514_DOWNFILTER1_CTRL2,	0x00020c2f},
+-	{RT5514_DOWNFILTER1_CTRL3,	0x10000352},
++	{RT5514_DOWNFILTER1_CTRL3,	0x10000342},
+ 	{RT5514_ANA_CTRL_LDO10,		0x00028604},
+ 	{RT5514_ANA_CTRL_LDO18_16,	0x02000345},
+ 	{RT5514_ANA_CTRL_ADC12,		0x0000a2a8},
 
 
