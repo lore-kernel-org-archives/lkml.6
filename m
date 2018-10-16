@@ -2,98 +2,148 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B63A3C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFE9C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70FE92098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:03:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FE92098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id EBC9B21476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:05:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PvJvc/Ef";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="l7ysdptI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBC9B21476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbeJQBzX (ORCPT
+        id S1727363AbeJQB4w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:55:23 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40361 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbeJQBzX (ORCPT
+        Tue, 16 Oct 2018 21:56:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58924 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbeJQB4v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:55:23 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gCTh2-000389-FZ; Tue, 16 Oct 2018 18:03:44 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
+        Tue, 16 Oct 2018 21:56:51 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DC38F612F6; Tue, 16 Oct 2018 18:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539713113;
+        bh=v9UsiGiw9e1yioOSWt6WIEiPefDHfptpAdXO4v7qen0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PvJvc/EfVuRzsurhe4hoyc27qNJvBW2HDobOvi48/U6wCD86tQw9w7zW5yZSr4J8K
+         J6Snsro9wSLeKRrgUBfMTMCa84Nxg6ZLRzKyTOYEijQQ8IaSyBH6pyUXa2Su6Y6ulg
+         UsMJEqVj6CPdV57qj+tuOr3fpz2E/XBv+/yUrwf0=
+Received: from [192.168.43.47] (unknown [223.227.22.91])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 48673606DD;
+        Tue, 16 Oct 2018 18:05:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539713112;
+        bh=v9UsiGiw9e1yioOSWt6WIEiPefDHfptpAdXO4v7qen0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=l7ysdptIb4aj0L4FfPU24NJEZoVU/BoO57L1KZtOyKvL0bPy3apP6yq2Ng2Z1xwmx
+         MHuihzEoPX7eIeWjtkEQoCBuWrO19MuuTpo+E6POXiiJmbEbvIM08e/VqzbCLsRy5E
+         3KSugB9UhrfQeLVHDXi6HgfNimCjBdt1cNJCxvg4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48673606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Geliang Tang <geliangtang@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usbip: tools: fix atoi() on non-null terminated string
-Date:   Tue, 16 Oct 2018 19:03:43 +0100
-Message-Id: <20181016180343.5620-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Pramod Gurav <gpramod@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
+ <20181016112928.4b52afb5@gandalf.local.home>
+ <8c2fb318-813d-81f1-1e2f-cdbc68353077@codeaurora.org>
+ <20181016125721.236ada82@gandalf.local.home>
+ <cab1be04-be06-6f53-7fe9-159936893fc8@codeaurora.org>
+ <20181016134803.1b9260c1@gandalf.local.home>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
+Date:   Tue, 16 Oct 2018 23:35:00 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181016134803.1b9260c1@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 10/16/2018 11:18 PM, Steven Rostedt wrote:
+> On Tue, 16 Oct 2018 23:06:24 +0530
+> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
+> 
+>> On 10/16/2018 10:27 PM, Steven Rostedt wrote:
+>>>
+>>> OK, can you add to the command line:
+>>>
+>>>    ftrace=function ftrace_filter=*schedule*
+>>>
+>>> to see if it's a specific function that may be causing the issue (but
+>>> hopefully it's not one of the scheduling functions that caused it).
+>>>    
+>>
+>> Target boots fine with this. So its not scheduling functions that is
+>> causing it. Also I tried with ftrace_filter=*msm* just to be sure if
+>> tracing driver functions is causing any issue but its NOT.
+> 
+> OK, seems that something is being traced that shouldn't be.
+> 
+> When this happens after boot up, it's easy to bisect down to the
+> problem function. But since it's at boot up, it will take a lot longer.
+> 
+> I would suggest to start by going down the alphabet.
+> 
+> 	ftrace_filter=a*
+>   	ftrace_filter=b*
+> 	ftrace_filter=c*
+> 	[...]
+> 
+> And at least find the letter the bad function starts with.
+> 
+> Note, it could be more than one function (I've had that a couple of
+> times), and to find that out, you can test with "ftrace_notrace". Say
+> you find that the problem function starts with 'x'. You can do:
+> 
+> 	ftrace_notrace=x*
+> 
+> Which will trace all functions except those that start with an 'x', to
+> make sure it still boots.
+> 
+> Remember, you still need to have ftrace=function for all of this.
+> 
+> Once you find the letter of the function, you can try the next letter,
+> or perhaps come up with another method. I would say look at the
+> functions in /sys/kernel/debug/tracing/available_filter_functions, but
+> they don't list the init function (that can be traced). But you can
+> use /proc/kallsyms instead.
+> 
 
-Currently the call to atoi is being passed a single char string
-that is not null terminated, so there is a potential read overrun
-along the stack when parsing for an integer value.  Fix this by
-instead using a 2 char string that is initialized to all zeros
-to ensure that a 1 char read into the string is always terminated
-with a \0.
+Ok got it, this sounds fun. I'll give it a try.
 
-Detected by cppcheck:
-"Invalid atoi() argument nr 1. A nul-terminated string is required."
+Thanks
 
-Fixes: 3391ba0e2792 ("usbip: tools: Extract generic code to be shared with vudc backend")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- tools/usb/usbip/libsrc/usbip_host_common.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/tools/usb/usbip/libsrc/usbip_host_common.c b/tools/usb/usbip/libsrc/usbip_host_common.c
-index dc93fadbee96..d79c7581b175 100644
---- a/tools/usb/usbip/libsrc/usbip_host_common.c
-+++ b/tools/usb/usbip/libsrc/usbip_host_common.c
-@@ -43,7 +43,7 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
- 	int size;
- 	int fd;
- 	int length;
--	char status;
-+	char status[2] = { 0 };
- 	int value = 0;
- 
- 	size = snprintf(status_attr_path, sizeof(status_attr_path),
-@@ -61,14 +61,14 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
- 		return -1;
- 	}
- 
--	length = read(fd, &status, 1);
-+	length = read(fd, status, 1);
- 	if (length < 0) {
- 		err("error reading attribute %s", status_attr_path);
- 		close(fd);
- 		return -1;
- 	}
- 
--	value = atoi(&status);
-+	value = atoi(status);
- 
- 	return value;
- }
 -- 
-2.19.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
