@@ -2,94 +2,98 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84F1C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FFEC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 898932089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:34:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68B1C20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:36:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4Xu4x23"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 898932089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h0C9xjJd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68B1C20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbeJPTYZ (ORCPT
+        id S1727051AbeJPT0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 15:24:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42584 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726595AbeJPTYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 15:24:25 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D34C20881;
-        Tue, 16 Oct 2018 11:34:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539689663;
-        bh=0xwbWQWhIpc0MU+Sq4wY9BGDQjLerJV3ZVtdB0R5TSA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J4Xu4x23jgxqlthtuaPOF0xlKko9ZhiDHfu7TgKlBoiegfTCZvsqb3PDEWdmav2Jl
-         RD2sp//9DWlP8m9irxFB9CRnoagQwh9f22WHRQTAAW7hUbXnGvc590h1ahNmkFLnFc
-         oxeX3TB3regWfaCaLeYDs2GSLc+7al5HKrfhrkMA=
-Date:   Tue, 16 Oct 2018 13:34:21 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: storage: Fix Spectre v1 vulnerability
-Message-ID: <20181016113421.GA21169@kroah.com>
-References: <20181016101645.GA24870@embeddedor.com>
- <8736t6p1v0.fsf@linux.intel.com>
+        Tue, 16 Oct 2018 15:26:00 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41356 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbeJPTZ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 15:25:59 -0400
+Received: by mail-qt1-f195.google.com with SMTP id l41-v6so25152103qtl.8
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 04:35:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VFgcHTi3iDuk1hrzjgQiMH2q3iaZ3sEZLEA+ZtLn/RM=;
+        b=h0C9xjJdpiTcwldudkkH0ZuDU7tPu1DrB23viOggQnnh50t/ZpV+AkiX5Brd9w9bRT
+         OOZYoCHsKm6QfqgoP5K41pguMoN+T5H3K4/t+bCzOfH4CrcpvWLedcTYJR3ghv7TpX1v
+         6utfN02Zf21V9KqyB8+5tJ8is6TpJrYifvK60=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VFgcHTi3iDuk1hrzjgQiMH2q3iaZ3sEZLEA+ZtLn/RM=;
+        b=T0CL2nLon3HlsX9URh3MJClDaWd1lhqw2Tnf7+RNEAjguW6sTJqCIZ2wibKsBbjRsv
+         bLdveFs+vlMITFmzIQfi69dSl2FFtFaxXLoJya5Z3Gxuw7kZ4tqR3vsP+D++Z8v4ZKaG
+         isLhjK1asET8pl6/myUdtbCBDqxiexzvndEDVLlzj85UGUA1zDmkuFXA8dZZ+9/AL9uf
+         GyPma3Zshoqh3/iAF9LoIVkWAgGcL7yFrdQWuFtpRh6tXw3hzx5CNudTdsubIGNSKBZE
+         GWwu6mk8tH5j6WQcqH5j+qLhw+/Gj+doshdDqCY80QJVsyKDBUiq+9kiDGct1CbMOC+P
+         cWnA==
+X-Gm-Message-State: ABuFfoisYwdBLlAYG+K/eK2IkyDK39uO3bbhOYBjhT3SN+xnvZ9bB0De
+        wQfTvurJ2b6xLaYZIH5tCV2yN+GUnFpM1g/CYMg4/w==
+X-Google-Smtp-Source: ACcGV621u80rcTkDhytSB6yhK/Hr1oQAvE3qveoi//p4S6qvnc2NplcM3ksf8bqWUtPAU/BtSR+d0LbYKetDH/AQp3o=
+X-Received: by 2002:a0c:eb42:: with SMTP id c2mr21208841qvq.105.1539689757635;
+ Tue, 16 Oct 2018 04:35:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8736t6p1v0.fsf@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181015221629.13924-1-stefan@agner.ch> <CACRpkdaVGKLtE-whhK3oFgY+4xoy1JqWkcBW4UO0-hJs2B-QGg@mail.gmail.com>
+ <20181016084416.GF30658@n2100.armlinux.org.uk>
+In-Reply-To: <20181016084416.GF30658@n2100.armlinux.org.uk>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 16 Oct 2018 13:35:44 +0200
+Message-ID: <CACRpkdavnYDE42GOwsVqnLwqjVmLmkwJ=sQBjUFn=aFbqXqVPw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: copypage-fa: add kto and kfrom to input operands list
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Joel Stanley <joel@jms.id.au>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Roman Yeryomin <roman@advem.lv>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 02:28:19PM +0300, Felipe Balbi wrote:
-> 
-> Hi Greg,
-> 
-> "Gustavo A. R. Silva" <gustavo@embeddedor.com> writes:
-> 
-> > num can be indirectly controlled by user-space, hence leading to
-> > a potential exploitation of the Spectre variant 1 vulnerability.
-> >
-> > This issue was detected with the help of Smatch:
-> >
-> > drivers/usb/gadget/function/f_mass_storage.c:3177 fsg_lun_make() warn:
-> > potential spectre issue 'fsg_opts->common->luns' [r] (local cap)
-> >
-> > Fix this by sanitizing num before using it to index
-> > fsg_opts->common->luns
-> >
-> > Notice that given that speculation windows are large, the policy is
-> > to kill the speculation on the first load and not worry if it can be
-> > completed with a dependent load/store [1].
-> >
-> > [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Can you still take this as an urgent fix?
-> 
-> Acked-by: Felipe Balbi <felipe.balbi@intel.com>
+On Tue, Oct 16, 2018 at 10:44 AM Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+> On Tue, Oct 16, 2018 at 10:00:19AM +0200, Linus Walleij wrote:
 
-Yes, will do so, thanks.
+> > I am on deep waters with ARM assembly, admittedly. So I wanted to
+> > ask: OpenWRT has this cache patch:
+> > https://github.com/openwrt/openwrt/blob/master/target/linux/gemini/patches-4.14/0001-cache-patch-from-OpenWRT.patch
+> > I do not know why (sorry).
+> >
+> > Do you think that patch is actually a hack to hide the problem
+> > fixed with this patch? (OK maybe stupid question but...)
+>
+> No, it looks to me like a hack to make DMA cache handling "more
+> efficient" by cleaning/invalidating the entire cache when dealing
+> with large streaming buffers.
 
-greg k-h
+Aha that makes a lot of sense.
 
-> 
-> -- 
-> balbi
+I will attempt to drop it from OpenWRT in the next kernel upgrade
+unless benchmarks can show that it is worth it.
+
+Thanks Russell!
+
+Linus Walleij
