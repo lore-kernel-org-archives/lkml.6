@@ -2,135 +2,300 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B887AC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BF7C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71C5120866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:43:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71C5120866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id AC21B20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:44:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VGJhV/kf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC21B20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbeJPPcq (ORCPT
+        id S1727061AbeJPPdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 11:32:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56432 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726729AbeJPPcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 11:32:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 42CB2AE78;
-        Tue, 16 Oct 2018 07:43:36 +0000 (UTC)
-Subject: Re: [PATCH] x86: modify inline asm constraints in __cmpxchg_double()
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
-References: <20181015084802.30934-1-jgross@suse.com>
- <20181016062556.GA56841@gmail.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e43d18fd-22c0-5c59-5cb6-3d7c8da71d8e@suse.com>
-Date:   Tue, 16 Oct 2018 09:43:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 16 Oct 2018 11:33:37 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:41193 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbeJPPdg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 11:33:36 -0400
+Received: by mail-yb1-f194.google.com with SMTP id e16-v6so8525950ybk.8
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 00:44:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ymvPUWAaP70b6eKfX2ExW8rgkKpUUtZAaP1Q67EFVRo=;
+        b=VGJhV/kf12D/kpvInLaA0+MrqPPHeE7A3hTzUts0vR3zihFAGuJEtKt+mCGNXRgfCU
+         xUFih1xkaoHGo6q8ADoV9HKfdTfiwviRpU3JUfJPymwVVJK+D+yXOIpHxkIu2niFjRs4
+         o7hMf/1s9TNM0T2pB/YhuVjogxg3dtb7a2Vzs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ymvPUWAaP70b6eKfX2ExW8rgkKpUUtZAaP1Q67EFVRo=;
+        b=KdMuZRGdfzqnz1iykmn3peODY9yA4a7ukMfvOWwZuPWlvgRK6ZE1/bJme8omwIZwBH
+         WC8FXaxiTg8pWK1VADYKth/gv2Nq+KhbT+MCIy9b0zkH0d0yDEmL/J0XH6ifXUS4/FYq
+         PN8Am37tnMKtMWqP0cnzadVr4ubTRWVXyRp5mxtxaHcqk/7SzcA2BTlJA0ABGl+m6UgY
+         Jc7ryIGd/yDQZiKq8L9TT5Kq7YuwDic79e9C8jDMkEDYd/aEfvwfpdR5JunWO5VPMhuH
+         VG/Cttux86rgjFEeUB/PSunH0zIsaWzje67hu8Z/Il9gapf81tpQzozpAsmy5XPl8KWT
+         E6og==
+X-Gm-Message-State: ABuFfohzIjdVivsDT4VB//dMHReLsG8+pI/PC+zzf/gcbSlS3BbzC3Tr
+        rG/hO4VFyWMzGJmV842nJ/TQMdZlqKU=
+X-Google-Smtp-Source: ACcGV61Xz0hplBivnUDIoBFulen8/y+urWOwPBsNUzmCsa71pcuqiAkEuhhTjF5zzpm/ohTVTq9cUQ==
+X-Received: by 2002:a25:a40a:: with SMTP id f10-v6mr10478644ybi.266.1539675866953;
+        Tue, 16 Oct 2018 00:44:26 -0700 (PDT)
+Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
+        by smtp.gmail.com with ESMTPSA id v5-v6sm3581833ywc.96.2018.10.16.00.44.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Oct 2018 00:44:26 -0700 (PDT)
+Received: by mail-yw1-f42.google.com with SMTP id v1-v6so8547246ywv.6
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 00:44:26 -0700 (PDT)
+X-Received: by 2002:a81:3d8d:: with SMTP id k135-v6mr11179021ywa.415.1539675387097;
+ Tue, 16 Oct 2018 00:36:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181016062556.GA56841@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-3-tfiga@chromium.org>
+ <4168da98-fa01-ea2f-8162-385501e666be@xs4all.nl> <CAAFQd5BqtKFeJniNaqahi9h_zKR+rPrWUiyx004Z=MWDj7q++w@mail.gmail.com>
+In-Reply-To: <CAAFQd5BqtKFeJniNaqahi9h_zKR+rPrWUiyx004Z=MWDj7q++w@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Tue, 16 Oct 2018 16:36:15 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Djur9y+=UHTx9ZSx310p2ShCsBTqsEA1UHCMoawuDscA@mail.gmail.com>
+Message-ID: <CAAFQd5Djur9y+=UHTx9ZSx310p2ShCsBTqsEA1UHCMoawuDscA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: docs-rst: Document memory-to-memory video
+ encoder interface
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/10/2018 08:25, Ingo Molnar wrote:
-> 
-> * Juergen Gross <jgross@suse.com> wrote:
-> 
->> Some gcc versions seem to have problems with the constraints in
->> __cmpxchg_double() as they suddenly issue a build error when random
->> parts of sources calling __cmpxchg_double() are modified, like e.g.
->> slub.c. This has been observed on Debian systems only so far.
->>
->> Using "0" instead of "a" in the input constraints has the same
->> semantics while avoiding that build error.
->>
->> Signed-off-by: Juergen Gross <jgross@suse.com>
->> ---
->> I should note that I have observed gcc hangs instead sometimes. Not
->> taking any patches modifying users of __cmpxchg_double() due to a gcc
->> bug which seems to be distro-specific is a bad move IMO.
->>
->> I'd rather make it clear from build behavior that this is a bug in gcc
->> by letting the build hang instead of throwing error warnings not in any
->> way related to changes in the code.
->>
->> The gcc bug is filed under:
->>
->> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=908154
->> ---
->>  arch/x86/include/asm/cmpxchg.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
->> index a55d79b233d3..b3b4d61a8969 100644
->> --- a/arch/x86/include/asm/cmpxchg.h
->> +++ b/arch/x86/include/asm/cmpxchg.h
->> @@ -245,7 +245,7 @@ extern void __add_wrong_size(void)
->>  	asm volatile(pfx "cmpxchg%c4b %2; sete %0"			\
->>  		     : "=a" (__ret), "+d" (__old2),			\
->>  		       "+m" (*(p1)), "+m" (*(p2))			\
->> -		     : "i" (2 * sizeof(long)), "a" (__old1),		\
->> +		     : "i" (2 * sizeof(long)), "0" (__old1),		\
->>  		       "b" (__new1), "c" (__new2));			\
-> 
-> This got changed to +a in -tip:
-> 
->   c808c09b527c: x86/asm: Use CC_SET()/CC_OUT() in __cmpxchg_double()
-> 
-> Mind sending a patch on top of -tip?
+On Tue, Aug 7, 2018 at 3:54 PM Tomasz Figa <tfiga@chromium.org> wrote:
+>
+> Hi Hans,
+>
+> On Wed, Jul 25, 2018 at 10:57 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> >
+> > On 24/07/18 16:06, Tomasz Figa wrote:
+[snip]
+> > > +4. The client may set the raw source format on the ``OUTPUT`` queue via
+> > > +   :c:func:`VIDIOC_S_FMT`.
+> > > +
+> > > +   * **Required fields:**
+> > > +
+> > > +     ``type``
+> > > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+> > > +
+> > > +     ``pixelformat``
+> > > +         raw format of the source
+> > > +
+> > > +     ``width``, ``height``
+> > > +         source resolution
+> > > +
+> > > +     ``num_planes`` (for _MPLANE)
+> > > +         set to number of planes for pixelformat
+> > > +
+> > > +     ``sizeimage``, ``bytesperline``
+> > > +         follow standard semantics
+> > > +
+> > > +   * **Return fields:**
+> > > +
+> > > +     ``width``, ``height``
+> > > +         may be adjusted by driver to match alignment requirements, as
+> > > +         required by the currently selected formats
+> > > +
+> > > +     ``sizeimage``, ``bytesperline``
+> > > +         follow standard semantics
+> > > +
+> > > +   * Setting the source resolution will reset visible resolution to the
+> > > +     adjusted source resolution rounded up to the closest visible
+> > > +     resolution supported by the driver. Similarly, coded resolution will
+> >
+> > coded -> the coded
+>
+> Ack.
+>
+> >
+> > > +     be reset to source resolution rounded up to the closest coded
+> >
+> > reset -> set
+> > source -> the source
+>
+> Ack.
+>
 
-No, I think you can drop my patch.
+Actually, I'd prefer to keep it at "reset", so that it signifies the
+fact that the driver will actually override whatever was set by the
+application before.
 
-c808c09b527c: x86/asm: Use CC_SET()/CC_OUT() in __cmpxchg_double()
-has the same effect as my patch: the build failure is replaced by
-gcc hanging instead in the critical configuration.
+[snip]
+> > > +   * The driver must expose following selection targets on ``OUTPUT``:
+> > > +
+> > > +     ``V4L2_SEL_TGT_CROP_BOUNDS``
+> > > +         maximum crop bounds within the source buffer supported by the
+> > > +         encoder
+> > > +
+> > > +     ``V4L2_SEL_TGT_CROP_DEFAULT``
+> > > +         suggested cropping rectangle that covers the whole source picture
+> > > +
+> > > +     ``V4L2_SEL_TGT_CROP``
+> > > +         rectangle within the source buffer to be encoded into the
+> > > +         ``CAPTURE`` stream; defaults to ``V4L2_SEL_TGT_CROP_DEFAULT``
+> > > +
+> > > +     ``V4L2_SEL_TGT_COMPOSE_BOUNDS``
+> > > +         maximum rectangle within the coded resolution, which the cropped
+> > > +         source frame can be output into; always equal to (0, 0)x(width of
+> > > +         ``V4L2_SEL_TGT_CROP``, height of ``V4L2_SEL_TGT_CROP``), if the
+> > > +         hardware does not support compose/scaling
+> > > +
+> > > +     ``V4L2_SEL_TGT_COMPOSE_DEFAULT``
+> > > +         equal to ``V4L2_SEL_TGT_CROP``
+> > > +
+> > > +     ``V4L2_SEL_TGT_COMPOSE``
+> > > +         rectangle within the coded frame, which the cropped source frame
+> > > +         is to be output into; defaults to
+> > > +         ``V4L2_SEL_TGT_COMPOSE_DEFAULT``; read-only on hardware without
+> > > +         additional compose/scaling capabilities; resulting stream will
+> > > +         have this rectangle encoded as the visible rectangle in its
+> > > +         metadata
+> > > +
+> > > +     ``V4L2_SEL_TGT_COMPOSE_PADDED``
+> > > +         always equal to coded resolution of the stream, as selected by the
+> > > +         encoder based on source resolution and crop/compose rectangles
+> >
+> > Are there codec drivers that support composition? I can't remember seeing any.
+> >
+>
+> Hmm, I was convinced that MFC could scale and we just lacked support
+> in the driver, but I checked the documentation and it doesn't seem to
+> be able to do so. I guess we could drop the COMPOSE rectangles for
+> now, until we find any hardware that can do scaling or composing on
+> the fly.
+>
 
+On the other hand, having them defined already wouldn't complicate
+existing drivers too much either, because they would just handle all
+of them in the same switch case, i.e.
 
-Juergen
+case V4L2_SEL_TGT_COMPOSE_BOUNDS:
+case V4L2_SEL_TGT_COMPOSE_DEFAULT:
+case V4L2_SEL_TGT_COMPOSE:
+case V4L2_SEL_TGT_COMPOSE_PADDED:
+     return visible_rectangle;
+
+That would need one change, though. We would define
+V4L2_SEL_TGT_COMPOSE_DEFAULT to be equal to (0, 0)x(width of
+V4L2_SEL_TGT_CROP - 1, height of ``V4L2_SEL_TGT_CROP - 1), which
+makes more sense than current definition, since it would bypass any
+compose/scaling by default.
+
+> > > +
+> > > +   .. note::
+> > > +
+> > > +      The driver may adjust the crop/compose rectangles to the nearest
+> > > +      supported ones to meet codec and hardware requirements.
+> > > +
+> > > +6. Allocate buffers for both ``OUTPUT`` and ``CAPTURE`` via
+> > > +   :c:func:`VIDIOC_REQBUFS`. This may be performed in any order.
+> > > +
+> > > +   * **Required fields:**
+> > > +
+> > > +     ``count``
+> > > +         requested number of buffers to allocate; greater than zero
+> > > +
+> > > +     ``type``
+> > > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT`` or
+> > > +         ``CAPTURE``
+> > > +
+> > > +     ``memory``
+> > > +         follows standard semantics
+> > > +
+> > > +   * **Return fields:**
+> > > +
+> > > +     ``count``
+> > > +         adjusted to allocated number of buffers
+> > > +
+> > > +   * The driver must adjust count to minimum of required number of
+> > > +     buffers for given format and count passed.
+> >
+> > I'd rephrase this:
+> >
+> >         The driver must adjust ``count`` to the maximum of ``count`` and
+> >         the required number of buffers for the given format.
+> >
+> > Note that this is set to the maximum, not minimum.
+> >
+>
+> Good catch. Will fix it.
+>
+
+Actually this is not always the maximum. Encoders may also have
+constraints on the maximum number of buffers, so how about just making
+it a bit less specific:
+
+The count will be adjusted by the driver to match the hardware
+requirements. The client must check the final value after the ioctl
+returns to get the number of buffers allocated.
+
+[snip]
+> > One general comment:
+> >
+> > you often talk about 'the driver must', e.g.:
+> >
+> > "The driver must process and encode as normal all ``OUTPUT`` buffers
+> > queued by the client before the :c:func:`VIDIOC_ENCODER_CMD` was issued."
+> >
+> > But this is not a driver specification, it is an API specification.
+> >
+> > I think it would be better to phrase it like this:
+> >
+> > "All ``OUTPUT`` buffers queued by the client before the :c:func:`VIDIOC_ENCODER_CMD`
+> > was issued will be processed and encoded as normal."
+> >
+> > (or perhaps even 'shall' if you want to be really formal)
+> >
+> > End-users do not really care what drivers do, they want to know what the API does,
+> > and that implies rules for drivers.
+>
+> While I see the point, I'm not fully convinced that it makes the
+> documentation easier to read. We defined "client" for the purpose of
+> not using the passive form too much, so possibly we could also define
+> "driver" in the glossary. Maybe it's just me, but I find that
+> referring directly to both sides of the API and using the active form
+> is much easier to read.
+>
+> Possibly just replacing "driver" with "encoder" would ease your concern?
+
+I actually went ahead and rephrased the text of both encoder and
+decoder to be more userspace-centric. There are still mentions of a
+driver, but only limited to the places
+where it is necessary to signify the driver-specific bits, such as
+alignments, capabilities, etc.
+
+Best regards,
+Tomasz
