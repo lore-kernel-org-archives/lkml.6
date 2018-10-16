@@ -2,140 +2,245 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BDB9C070C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A876CC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E8712089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:16:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E8712089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sigma-star.at
+	by mail.kernel.org (Postfix) with ESMTP id 614A32086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:16:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 614A32086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbeJPSGG convert rfc822-to-8bit (ORCPT
+        id S1727493AbeJPSGJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 14:06:06 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:54228 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbeJPSGG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 14:06:06 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id 4ED27180230B6;
-        Tue, 16 Oct 2018 12:16:20 +0200 (CEST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH v2 1/2] security/keys/secure_key: Adds the secure key
- support based on CAAM.
-From:   David Gstir <david@sigma-star.at>
-In-Reply-To: <1533320921.4337.479.camel@linux.ibm.com>
-Date:   Tue, 16 Oct 2018 12:16:15 +0200
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        David Howells <dhowells@redhat.com>,
-        Udit Agarwal <udit.agarwal@nxp.com>, zohar@linux.vnet.ibm.com,
-        jmorris@namei.org, serge@hallyn.com, denkenz@gmail.com,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sahil.malhotra@nxp.com,
-        ruchika.gupta@nxp.com, Horia Geanta <horia.geanta@nxp.com>,
-        aymen.sghaier@nxp.com, Richard Weinberger <richard@sigma-star.at>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <F6B8DD08-A54A-4792-AC36-BF0335B1750A@sigma-star.at>
-References: <20180723111432.26830-1-udit.agarwal@nxp.com>
- <8060.1533226481@warthog.procyon.org.uk>
- <1533297482.4337.373.camel@linux.ibm.com>
- <1533306238.4140.1.camel@HansenPartnership.com>
- <1533307535.4337.415.camel@linux.ibm.com>
- <1533311338.4140.3.camel@HansenPartnership.com>
- <1533320921.4337.479.camel@linux.ibm.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Tue, 16 Oct 2018 14:06:09 -0400
+Received: from foss.arm.com ([217.140.101.70]:34100 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726553AbeJPSGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 14:06:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5FC7880D;
+        Tue, 16 Oct 2018 03:16:25 -0700 (PDT)
+Received: from queper01-lin.local (unknown [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2AEA73F59C;
+        Tue, 16 Oct 2018 03:16:21 -0700 (PDT)
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org,
+        quentin.perret@arm.com
+Subject: [PATCH v8 14/15] sched/fair: Select an energy-efficient CPU on task wake-up
+Date:   Tue, 16 Oct 2018 11:15:12 +0100
+Message-Id: <20181016101513.26919-15-quentin.perret@arm.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181016101513.26919-1-quentin.perret@arm.com>
+References: <20181016101513.26919-1-quentin.perret@arm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+If an Energy Model (EM) is available and if the system isn't
+overutilized, re-route waking tasks into an energy-aware placement
+algorithm. The selection of an energy-efficient CPU for a task
+is achieved by estimating the impact on system-level active energy
+resulting from the placement of the task on the CPU with the highest
+spare capacity in each performance domain. This strategy spreads tasks
+in a performance domain and avoids overly aggressive task packing. The
+best CPU energy-wise is then selected if it saves a large enough amount
+of energy with respect to prev_cpu.
 
-> On 03.08.2018, at 20:28, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> 
->>>>> If they have symmetric key support, there would be no need for
->>>>> the
->>>>> symmetric key ever to leave the device in the clear. The device
->>>>> would unseal/decrypt data, such as an encrypted key.
->>>>> 
->>>>> The "symmetric" key type would be a generic interface for
->>>>> different
->>>>> devices.
->>>> 
->>>> It's possible, but it would only work for a non-bulk use case; do
->>>> we
->>>> have one of those?
->>> 
->>> "trusted" keys are currently being used to decrypt other keys (eg.
->>> encrypted, ecryptfs, ...).
->> 
->> Yes, but that's just double encryption: it serves no real security
->> purpose because at the end of the chain, the symmetric key is released
->> into kernel memory to use in software crypto.  Unless you're using a
->> high speed (and high cost) crypto accelerator with HSA, this will
->> always be the case for bulk crypto.
->> 
->> The other slight problem with this chain of crypto is that I can impose
->> conditions on the key release from the TPM (well TPM2, since TPM1.2 has
->> a very weak policy engine) but if we use intermediate steps, those
->> conditions might not be preserved, so I think the ideal would be a
->> trusted key being released directly to LUKS or ecryptfs because the TPM
->> can then verify the policy at actual unseal time.  I get that for the
->> ecryptfs case you might want one key per file for sharding and sharing,
->> and that's more like a bulk case because the TPM isn't going to keep up
->> with the number of unseal operations required.
-> 
-> Agreed.  Yet there are a couple of reasons for having this sort of
-> indirection. By having the "encrypted" key encrypted/decrypted by a
-> "trusted" key, the "trusted" key could be updated without impacting
-> the "encrypted" key.  This could be used, for example, for key
-> migration.  Another reason would be to define a single "trusted" key
-> sealed to a set of PCRs, which could be used to encrypt/decrypt
-> multiple symmetric keys.
-> 
-> Nothing is preventing these subsystems from directly using a "trusted"
-> key.
-> 
-> This discussion is the result of Udit Agarwal's posting a "secure" key
-> patch. Before defining a new key type, whether it is called "secure"
-> or "symmetric", we need to understand how the this new key type is
-> going to be used.  Will it have a similar ability to impose conditions
-> on the key release as the TPM?  Will it have symmetric key support, so
-> that the symmetric key never needs to be released from the HW?
+Although it has already shown significant benefits on some existing
+targets, this approach cannot scale to platforms with numerous CPUs.
+This is an attempt to do something useful as writing a fast heuristic
+that performs reasonably well on a broad spectrum of architectures isn't
+an easy task. As such, the scope of usability of the energy-aware
+wake-up path is restricted to systems with the SD_ASYM_CPUCAPACITY flag
+set, and where the EM isn't too complex.
 
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+---
+ kernel/sched/fair.c | 143 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 141 insertions(+), 2 deletions(-)
 
-I'm looking into mainline support for CAAM-protected keys. I currently have
-hacky patches that duplicate trusted keys, and use CAAM instead of TPM to
-seal/unseal keys and make them available to other kernel features like fscrypt.
-This patch by Udit Agarwal looks like an interesting base for my code.
-However, AFAICT there has been no progress for some time now. 
-
-Is anybody still working on this? If not, I'm happy to help out! :)
-
-Regarding the new key type:
-In addition to unsealing a key/data into kernel memory, CAAM also supports
-unsealing a symmetric key directly into a key register of CAAM's crypto
-acceleration engine. This is something I'd like to have, but it will surely
-require changes the the CAAM crypto driver as well. Jan Lübbe already mentioned
-he is interested in this too: https://www.spinics.net/lists/keyrings/msg03919.html
-
-AFAIK, CAAM does not have fine-grained key release restrictions like TPM.
-IMHO such a new key type should provide a generic interface with backends for
-CAAM, TPM and possibly others to seal/unseal arbitrary data. As for supporting
-keys that only reside in the HW, I'm not yet sure what the best approach would be.
-It should probably tie into the crypto API to be usable throughout the kernel...
-
-Thanks!
-David
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 89dd58dbc89f..93a477c5829a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6384,6 +6384,137 @@ compute_energy(struct task_struct *p, int dst_cpu, struct perf_domain *pd)
+ 	return energy;
+ }
+ 
++/*
++ * find_energy_efficient_cpu(): Find most energy-efficient target CPU for the
++ * waking task. find_energy_efficient_cpu() looks for the CPU with maximum
++ * spare capacity in each performance domain and uses it as a potential
++ * candidate to execute the task. Then, it uses the Energy Model to figure
++ * out which of the CPU candidates is the most energy-efficient.
++ *
++ * The rationale for this heuristic is as follows. In a performance domain,
++ * all the most energy efficient CPU candidates (according to the Energy
++ * Model) are those for which we'll request a low frequency. When there are
++ * several CPUs for which the frequency request will be the same, we don't
++ * have enough data to break the tie between them, because the Energy Model
++ * only includes active power costs. With this model, if we assume that
++ * frequency requests follow utilization (e.g. using schedutil), the CPU with
++ * the maximum spare capacity in a performance domain is guaranteed to be among
++ * the best candidates of the performance domain.
++ *
++ * In practice, it could be preferable from an energy standpoint to pack
++ * small tasks on a CPU in order to let other CPUs go in deeper idle states,
++ * but that could also hurt our chances to go cluster idle, and we have no
++ * ways to tell with the current Energy Model if this is actually a good
++ * idea or not. So, find_energy_efficient_cpu() basically favors
++ * cluster-packing, and spreading inside a cluster. That should at least be
++ * a good thing for latency, and this is consistent with the idea that most
++ * of the energy savings of EAS come from the asymmetry of the system, and
++ * not so much from breaking the tie between identical CPUs. That's also the
++ * reason why EAS is enabled in the topology code only for systems where
++ * SD_ASYM_CPUCAPACITY is set.
++ *
++ * NOTE: Forkees are not accepted in the energy-aware wake-up path because
++ * they don't have any useful utilization data yet and it's not possible to
++ * forecast their impact on energy consumption. Consequently, they will be
++ * placed by find_idlest_cpu() on the least loaded CPU, which might turn out
++ * to be energy-inefficient in some use-cases. The alternative would be to
++ * bias new tasks towards specific types of CPUs first, or to try to infer
++ * their util_avg from the parent task, but those heuristics could hurt
++ * other use-cases too. So, until someone finds a better way to solve this,
++ * let's keep things simple by re-using the existing slow path.
++ */
++
++static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
++{
++	unsigned long prev_energy = ULONG_MAX, best_energy = ULONG_MAX;
++	struct root_domain *rd = cpu_rq(smp_processor_id())->rd;
++	int cpu, best_energy_cpu = prev_cpu;
++	struct perf_domain *head, *pd;
++	unsigned long cpu_cap, util;
++	struct sched_domain *sd;
++
++	rcu_read_lock();
++	pd = rcu_dereference(rd->pd);
++	if (!pd || READ_ONCE(rd->overutilized))
++		goto fail;
++	head = pd;
++
++	/*
++	 * Energy-aware wake-up happens on the lowest sched_domain starting
++	 * from sd_asym_cpucapacity spanning over this_cpu and prev_cpu.
++	 */
++	sd = rcu_dereference(*this_cpu_ptr(&sd_asym_cpucapacity));
++	while (sd && !cpumask_test_cpu(prev_cpu, sched_domain_span(sd)))
++		sd = sd->parent;
++	if (!sd)
++		goto fail;
++
++	sync_entity_load_avg(&p->se);
++	if (!task_util_est(p))
++		goto unlock;
++
++	for (; pd; pd = pd->next) {
++		unsigned long cur_energy, spare_cap, max_spare_cap = 0;
++		int max_spare_cap_cpu = -1;
++
++		for_each_cpu_and(cpu, perf_domain_span(pd), sched_domain_span(sd)) {
++			if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
++				continue;
++
++			/* Skip CPUs that will be overutilized. */
++			util = cpu_util_next(cpu, p, cpu);
++			cpu_cap = capacity_of(cpu);
++			if (cpu_cap * 1024 < util * capacity_margin)
++				continue;
++
++			/* Always use prev_cpu as a candidate. */
++			if (cpu == prev_cpu) {
++				prev_energy = compute_energy(p, prev_cpu, head);
++				best_energy = min(best_energy, prev_energy);
++				continue;
++			}
++
++			/*
++			 * Find the CPU with the maximum spare capacity in
++			 * the performance domain
++			 */
++			spare_cap = cpu_cap - util;
++			if (spare_cap > max_spare_cap) {
++				max_spare_cap = spare_cap;
++				max_spare_cap_cpu = cpu;
++			}
++		}
++
++		/* Evaluate the energy impact of using this CPU. */
++		if (max_spare_cap_cpu >= 0) {
++			cur_energy = compute_energy(p, max_spare_cap_cpu, head);
++			if (cur_energy < best_energy) {
++				best_energy = cur_energy;
++				best_energy_cpu = max_spare_cap_cpu;
++			}
++		}
++	}
++unlock:
++	rcu_read_unlock();
++
++	/*
++	 * Pick the best CPU if prev_cpu cannot be used, or if it saves at
++	 * least 6% of the energy used by prev_cpu.
++	 */
++	if (prev_energy == ULONG_MAX)
++		return best_energy_cpu;
++
++	if ((prev_energy - best_energy) > (prev_energy >> 4))
++		return best_energy_cpu;
++
++	return prev_cpu;
++
++fail:
++	rcu_read_unlock();
++
++	return -1;
++}
++
+ /*
+  * select_task_rq_fair: Select target runqueue for the waking task in domains
+  * that have the 'sd_flag' flag set. In practice, this is SD_BALANCE_WAKE,
+@@ -6407,8 +6538,16 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+ 
+ 	if (sd_flag & SD_BALANCE_WAKE) {
+ 		record_wakee(p);
+-		want_affine = !wake_wide(p) && !wake_cap(p, cpu, prev_cpu)
+-			      && cpumask_test_cpu(cpu, &p->cpus_allowed);
++
++		if (static_branch_unlikely(&sched_energy_present)) {
++			new_cpu = find_energy_efficient_cpu(p, prev_cpu);
++			if (new_cpu >= 0)
++				return new_cpu;
++			new_cpu = prev_cpu;
++		}
++
++		want_affine = !wake_wide(p) && !wake_cap(p, cpu, prev_cpu) &&
++			      cpumask_test_cpu(cpu, &p->cpus_allowed);
+ 	}
+ 
+ 	rcu_read_lock();
+-- 
+2.19.1
 
