@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E88C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB221C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 117DF20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 986852089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kt8AsNtS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 117DF20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDuAe0GQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 986852089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731648AbeJQBPr (ORCPT
+        id S1731678AbeJQBPw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:15:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34408 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:15:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbeJQBPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:15:46 -0400
+        id S1730396AbeJQBPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:15:50 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA65220866;
-        Tue, 16 Oct 2018 17:24:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55C7320658;
+        Tue, 16 Oct 2018 17:24:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710659;
-        bh=CKmERwvZHQNLKcBXVzi7vCvAyo9JQQBC4IuQgfNcqcM=;
+        s=default; t=1539710664;
+        bh=H29PVWSENl9sKLtTUEXPR2BqxOgp6G7eAaN7z4vSg2A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kt8AsNtS4MXGOdZKTkQamuN5XLyjF8wM9Tg44vcomj1rINFI+ItXKtiHxd0G5rlg7
-         AgpLFRJO3FPfNCC+hGoA9ckP8jhzyQ35r/GqKt4r19KJtrRxGR9l/44/qLHPpfAYFG
-         6f5LfP3pWvdXYbhStqClcQnBmmRA0io3GQcIbex4=
+        b=WDuAe0GQ0FT2nqRfeSmkpFKirKMLE2UA/5/rmWqWyEqRTCk/kbkr6c7c9lFnGSsWB
+         eKNIKb8bhbT2f0OVubx0zHCmjyRiFps048ZW/DD+Ua5/TwMluOD+LKnyXTEfrjl6D4
+         1ocCcLEC7XBoGsLGYNCNbLm4v4ys8flOYF7t5MJc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 43/71] inet: frags: change inet_frags_init_net() return value
-Date:   Tue, 16 Oct 2018 19:09:40 +0200
-Message-Id: <20181016170541.532847208@linuxfoundation.org>
+        stable@vger.kernel.org, Jongsung Kim <neidhard.kim@lge.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 09/71] stmmac: fix valid numbers of unicast filter entries
+Date:   Tue, 16 Oct 2018 19:09:06 +0200
+Message-Id: <20181016170539.868924013@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
 References: <20181016170539.315587743@linuxfoundation.org>
@@ -61,141 +62,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Jongsung Kim <neidhard.kim@lge.com>
 
-We will soon initialize one rhashtable per struct netns_frags
-in inet_frags_init_net().
+[ Upstream commit edf2ef7242805e53ec2e0841db26e06d8bc7da70 ]
 
-This patch changes the return value to eventually propagate an
-error.
+Synopsys DWC Ethernet MAC can be configured to have 1..32, 64, or
+128 unicast filter entries. (Table 7-8 MAC Address Registers from
+databook) Fix dwmac1000_validate_ucast_entries() to accept values
+between 1 and 32 in addition.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-(cherry picked from commit 787bea7748a76130566f881c2342a0be4127d182)
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/inet_frag.h                 |    3 ++-
- net/ieee802154/6lowpan/reassembly.c     |   11 ++++++++---
- net/ipv4/ip_fragment.c                  |   12 +++++++++---
- net/ipv6/netfilter/nf_conntrack_reasm.c |   12 +++++++++---
- net/ipv6/reassembly.c                   |   11 +++++++++--
- 5 files changed, 37 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/include/net/inet_frag.h
-+++ b/include/net/inet_frag.h
-@@ -103,9 +103,10 @@ struct inet_frags {
- int inet_frags_init(struct inet_frags *);
- void inet_frags_fini(struct inet_frags *);
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -71,7 +71,7 @@ static int dwmac1000_validate_mcast_bins
+  * Description:
+  * This function validates the number of Unicast address entries supported
+  * by a particular Synopsys 10/100/1000 controller. The Synopsys controller
+- * supports 1, 32, 64, or 128 Unicast filter entries for it's Unicast filter
++ * supports 1..32, 64, or 128 Unicast filter entries for it's Unicast filter
+  * logic. This function validates a valid, supported configuration is
+  * selected, and defaults to 1 Unicast address if an unsupported
+  * configuration is selected.
+@@ -81,8 +81,7 @@ static int dwmac1000_validate_ucast_entr
+ 	int x = ucast_entries;
  
--static inline void inet_frags_init_net(struct netns_frags *nf)
-+static inline int inet_frags_init_net(struct netns_frags *nf)
- {
- 	atomic_set(&nf->mem, 0);
-+	return 0;
- }
- void inet_frags_exit_net(struct netns_frags *nf, struct inet_frags *f);
- 
---- a/net/ieee802154/6lowpan/reassembly.c
-+++ b/net/ieee802154/6lowpan/reassembly.c
-@@ -580,14 +580,19 @@ static int __net_init lowpan_frags_init_
- {
- 	struct netns_ieee802154_lowpan *ieee802154_lowpan =
- 		net_ieee802154_lowpan(net);
-+	int res;
- 
- 	ieee802154_lowpan->frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
- 	ieee802154_lowpan->frags.low_thresh = IPV6_FRAG_LOW_THRESH;
- 	ieee802154_lowpan->frags.timeout = IPV6_FRAG_TIMEOUT;
- 
--	inet_frags_init_net(&ieee802154_lowpan->frags);
--
--	return lowpan_frags_ns_sysctl_register(net);
-+	res = inet_frags_init_net(&ieee802154_lowpan->frags);
-+	if (res < 0)
-+		return res;
-+	res = lowpan_frags_ns_sysctl_register(net);
-+	if (res < 0)
-+		inet_frags_exit_net(&ieee802154_lowpan->frags, &lowpan_frags);
-+	return res;
- }
- 
- static void __net_exit lowpan_frags_exit_net(struct net *net)
---- a/net/ipv4/ip_fragment.c
-+++ b/net/ipv4/ip_fragment.c
-@@ -849,6 +849,8 @@ static void __init ip4_frags_ctl_registe
- 
- static int __net_init ipv4_frags_init_net(struct net *net)
- {
-+	int res;
-+
- 	/* Fragment cache limits.
- 	 *
- 	 * The fragment memory accounting code, (tries to) account for
-@@ -874,9 +876,13 @@ static int __net_init ipv4_frags_init_ne
- 
- 	net->ipv4.frags.max_dist = 64;
- 
--	inet_frags_init_net(&net->ipv4.frags);
--
--	return ip4_frags_ns_ctl_register(net);
-+	res = inet_frags_init_net(&net->ipv4.frags);
-+	if (res < 0)
-+		return res;
-+	res = ip4_frags_ns_ctl_register(net);
-+	if (res < 0)
-+		inet_frags_exit_net(&net->ipv4.frags, &ip4_frags);
-+	return res;
- }
- 
- static void __net_exit ipv4_frags_exit_net(struct net *net)
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -630,12 +630,18 @@ EXPORT_SYMBOL_GPL(nf_ct_frag6_gather);
- 
- static int nf_ct_net_init(struct net *net)
- {
-+	int res;
-+
- 	net->nf_frag.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
- 	net->nf_frag.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
- 	net->nf_frag.frags.timeout = IPV6_FRAG_TIMEOUT;
--	inet_frags_init_net(&net->nf_frag.frags);
--
--	return nf_ct_frag6_sysctl_register(net);
-+	res = inet_frags_init_net(&net->nf_frag.frags);
-+	if (res < 0)
-+		return res;
-+	res = nf_ct_frag6_sysctl_register(net);
-+	if (res < 0)
-+		inet_frags_exit_net(&net->nf_frag.frags, &nf_frags);
-+	return res;
- }
- 
- static void nf_ct_net_exit(struct net *net)
---- a/net/ipv6/reassembly.c
-+++ b/net/ipv6/reassembly.c
-@@ -709,13 +709,20 @@ static void ip6_frags_sysctl_unregister(
- 
- static int __net_init ipv6_frags_init_net(struct net *net)
- {
-+	int res;
-+
- 	net->ipv6.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
- 	net->ipv6.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
- 	net->ipv6.frags.timeout = IPV6_FRAG_TIMEOUT;
- 
--	inet_frags_init_net(&net->ipv6.frags);
-+	res = inet_frags_init_net(&net->ipv6.frags);
-+	if (res < 0)
-+		return res;
- 
--	return ip6_frags_ns_sysctl_register(net);
-+	res = ip6_frags_ns_sysctl_register(net);
-+	if (res < 0)
-+		inet_frags_exit_net(&net->ipv6.frags, &ip6_frags);
-+	return res;
- }
- 
- static void __net_exit ipv6_frags_exit_net(struct net *net)
+ 	switch (x) {
+-	case 1:
+-	case 32:
++	case 1 ... 32:
+ 	case 64:
+ 	case 128:
+ 		break;
 
 
