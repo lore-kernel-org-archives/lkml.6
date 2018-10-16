@@ -2,224 +2,101 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2126C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCBCC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 736B920866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9CA92098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:27:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2NXm7vn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 736B920866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="NrX4xRKi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9CA92098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732017AbeJQBQ6 (ORCPT
+        id S1727350AbeJQBTC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:16:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbeJQBQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:16:57 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A73062089E;
-        Tue, 16 Oct 2018 17:25:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710731;
-        bh=0MmIzDXzsd4wkMOI7o0UUdqLDy15som9rZ4JZLTK3tk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P2NXm7vnveMyKHUTJeyljPTit5/Crg+qq95tYBRN2UZEppjpIy9pPgHkV4RE9qrxO
-         t7/vLYvQjNHo8lNdJHrbQmlC6ELv0p+b8ByvzYzI6Uznzw95EDzrwgckAcZ7shwGpC
-         E9wcSzmEZi6pAnmmlFQ80gZB8nUlF2xLPS6nwMB8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
-        Peter Oskolkov <posk@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 68/71] ip: add helpers to process in-order fragments faster.
-Date:   Tue, 16 Oct 2018 19:10:05 +0200
-Message-Id: <20181016170542.804830975@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
-References: <20181016170539.315587743@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 16 Oct 2018 21:19:02 -0400
+Received: from smtprelay.synopsys.com ([198.182.47.9]:45956 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727213AbeJQBTB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:19:01 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 0181124E0D73;
+        Tue, 16 Oct 2018 10:27:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1539710855; bh=xs1oKAmQZKMnbyQZIWLwz4nucbWh/FytIoNc2quLmoI=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=NrX4xRKiadL8SrUXMTE9PrVRQbomEVrMuQevhBFJBfJfEdOpf0bgsImllmVUWTP0c
+         ohBDPUyXHM+2mBc4w2DbbVq1cDjtin5yc27i1HjnLspt6RHQyS0u1K31MgzIx0nsnE
+         ettaqvgSG2vKXh6mzq6upGfTfBGoqWh2ShTXadRVE2NcmC1/qPQnI6yDVq76+E6khD
+         al6vvU1z3gLDJ5OMpamaymKpn2BQ1aSJaSo5mB5dvER9ZjmE0dQ4LnAbKOnl8m+Y+K
+         2MbjvoSfWQOvawaWHlraqhYy3GTjANVY7QHr/XdpEQAhtiimSLB88PnBqwAjJNy7ZN
+         p5ZRKAQ9qQfUw==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
+        by mailhost.synopsys.com (Postfix) with ESMTP id E2AAF308C;
+        Tue, 16 Oct 2018 10:27:34 -0700 (PDT)
+Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
+ by US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
+ 14.03.0415.000; Tue, 16 Oct 2018 10:27:35 -0700
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <alexey.brodkin@synopsys.com>
+Subject: Re: [PATCH] ARC: IOC: panic if kernel was started with previously
+ enabled IOC
+Thread-Topic: [PATCH] ARC: IOC: panic if kernel was started with previously
+ enabled IOC
+Thread-Index: AQHUW+Pi2l0qN/ga1kOYlHrTlH6D2Q==
+Date:   Tue, 16 Oct 2018 17:27:34 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B0AE414@US01WEMBX2.internal.synopsys.com>
+References: <20181004131212.16405-1-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.106]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Peter Oskolkov <posk@google.com>
-
-This patch introduces several helper functions/macros that will be
-used in the follow-up patch. No runtime changes yet.
-
-The new logic (fully implemented in the second patch) is as follows:
-
-* Nodes in the rb-tree will now contain not single fragments, but lists
-  of consecutive fragments ("runs").
-
-* At each point in time, the current "active" run at the tail is
-  maintained/tracked. Fragments that arrive in-order, adjacent
-  to the previous tail fragment, are added to this tail run without
-  triggering the re-balancing of the rb-tree.
-
-* If a fragment arrives out of order with the offset _before_ the tail run,
-  it is inserted into the rb-tree as a single fragment.
-
-* If a fragment arrives after the current tail fragment (with a gap),
-  it starts a new "tail" run, as is inserted into the rb-tree
-  at the end as the head of the new run.
-
-skb->cb is used to store additional information
-needed here (suggested by Eric Dumazet).
-
-Reported-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: Peter Oskolkov <posk@google.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Florian Westphal <fw@strlen.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-(cherry picked from commit 353c9cb360874e737fb000545f783df756c06f9a)
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/inet_frag.h |    6 +++
- net/ipv4/ip_fragment.c  |   73 ++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 79 insertions(+)
-
---- a/include/net/inet_frag.h
-+++ b/include/net/inet_frag.h
-@@ -56,7 +56,9 @@ struct frag_v6_compare_key {
-  * @lock: spinlock protecting this frag
-  * @refcnt: reference count of the queue
-  * @fragments: received fragments head
-+ * @rb_fragments: received fragments rb-tree root
-  * @fragments_tail: received fragments tail
-+ * @last_run_head: the head of the last "run". see ip_fragment.c
-  * @stamp: timestamp of the last received fragment
-  * @len: total length of the original datagram
-  * @meat: length of received fragments so far
-@@ -77,6 +79,7 @@ struct inet_frag_queue {
- 	struct sk_buff		*fragments;  /* Used in IPv6. */
- 	struct rb_root		rb_fragments; /* Used in IPv4. */
- 	struct sk_buff		*fragments_tail;
-+	struct sk_buff		*last_run_head;
- 	ktime_t			stamp;
- 	int			len;
- 	int			meat;
-@@ -112,6 +115,9 @@ void inet_frag_kill(struct inet_frag_que
- void inet_frag_destroy(struct inet_frag_queue *q);
- struct inet_frag_queue *inet_frag_find(struct netns_frags *nf, void *key);
- 
-+/* Free all skbs in the queue; return the sum of their truesizes. */
-+unsigned int inet_frag_rbtree_purge(struct rb_root *root);
-+
- static inline void inet_frag_put(struct inet_frag_queue *q)
- {
- 	if (atomic_dec_and_test(&q->refcnt))
---- a/net/ipv4/ip_fragment.c
-+++ b/net/ipv4/ip_fragment.c
-@@ -56,6 +56,57 @@
-  */
- static const char ip_frag_cache_name[] = "ip4-frags";
- 
-+/* Use skb->cb to track consecutive/adjacent fragments coming at
-+ * the end of the queue. Nodes in the rb-tree queue will
-+ * contain "runs" of one or more adjacent fragments.
-+ *
-+ * Invariants:
-+ * - next_frag is NULL at the tail of a "run";
-+ * - the head of a "run" has the sum of all fragment lengths in frag_run_len.
-+ */
-+struct ipfrag_skb_cb {
-+	struct inet_skb_parm	h;
-+	struct sk_buff		*next_frag;
-+	int			frag_run_len;
-+};
-+
-+#define FRAG_CB(skb)		((struct ipfrag_skb_cb *)((skb)->cb))
-+
-+static void ip4_frag_init_run(struct sk_buff *skb)
-+{
-+	BUILD_BUG_ON(sizeof(struct ipfrag_skb_cb) > sizeof(skb->cb));
-+
-+	FRAG_CB(skb)->next_frag = NULL;
-+	FRAG_CB(skb)->frag_run_len = skb->len;
-+}
-+
-+/* Append skb to the last "run". */
-+static void ip4_frag_append_to_last_run(struct inet_frag_queue *q,
-+					struct sk_buff *skb)
-+{
-+	RB_CLEAR_NODE(&skb->rbnode);
-+	FRAG_CB(skb)->next_frag = NULL;
-+
-+	FRAG_CB(q->last_run_head)->frag_run_len += skb->len;
-+	FRAG_CB(q->fragments_tail)->next_frag = skb;
-+	q->fragments_tail = skb;
-+}
-+
-+/* Create a new "run" with the skb. */
-+static void ip4_frag_create_run(struct inet_frag_queue *q, struct sk_buff *skb)
-+{
-+	if (q->last_run_head)
-+		rb_link_node(&skb->rbnode, &q->last_run_head->rbnode,
-+			     &q->last_run_head->rbnode.rb_right);
-+	else
-+		rb_link_node(&skb->rbnode, NULL, &q->rb_fragments.rb_node);
-+	rb_insert_color(&skb->rbnode, &q->rb_fragments);
-+
-+	ip4_frag_init_run(skb);
-+	q->fragments_tail = skb;
-+	q->last_run_head = skb;
-+}
-+
- /* Describe an entry in the "incomplete datagrams" queue. */
- struct ipq {
- 	struct inet_frag_queue q;
-@@ -652,6 +703,28 @@ struct sk_buff *ip_check_defrag(struct n
- }
- EXPORT_SYMBOL(ip_check_defrag);
- 
-+unsigned int inet_frag_rbtree_purge(struct rb_root *root)
-+{
-+	struct rb_node *p = rb_first(root);
-+	unsigned int sum = 0;
-+
-+	while (p) {
-+		struct sk_buff *skb = rb_entry(p, struct sk_buff, rbnode);
-+
-+		p = rb_next(p);
-+		rb_erase(&skb->rbnode, root);
-+		while (skb) {
-+			struct sk_buff *next = FRAG_CB(skb)->next_frag;
-+
-+			sum += skb->truesize;
-+			kfree_skb(skb);
-+			skb = next;
-+		}
-+	}
-+	return sum;
-+}
-+EXPORT_SYMBOL(inet_frag_rbtree_purge);
-+
- #ifdef CONFIG_SYSCTL
- static int dist_min;
- 
-
-
+On 10/04/2018 06:12 AM, Eugeniy Paltsev wrote:=0A=
+> Disabling and reconfiguring of IOC are quite a tricky actions because=0A=
+> nobody knows what happens if there're IOC-ahndled tarnsactions in flight=
+=0A=
+> when we're disabling IOC.=0A=
+>=0A=
+> And the problem is external DMA masters [that were initialized and set=0A=
+> in a bootlaoder that was executed before we got here] might continue=0A=
+> to send data to memory even at this point and we have no way to prevent=
+=0A=
+> that.=0A=
+>=0A=
+> That said it's much safer to not enable IOC at all anywhere before Linux=
+=0A=
+> kernel.=0A=
+>=0A=
+> As we can build u-boot with IOC support (mostly for debugging purposes)=
+=0A=
+> let's check that kernel was started with disabled IOC regardless of=0A=
+> our plans to use it or not.=0A=
+>=0A=
+> Also while I'm at it, replace hardcoded bits in ARC_REG_IO_COH_PARTIAL=0A=
+> and ARC_REG_IO_COH_ENABLE registers by definitions.=0A=
+>=0A=
+> Inspired by: https://lkml.org/lkml/2018/1/19/557=0A=
+>=0A=
+=0A=
+Applied with updated changelog !=0A=
+=0A=
+-Vineet=0A=
