@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EDDC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B2D5C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B25A42089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44C072089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3NxRSgD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B25A42089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xeScyFB5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C072089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbeJQBDs (ORCPT
+        id S1728568AbeJQBDu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:03:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46036 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:03:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727263AbeJQBDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:03:47 -0400
+        id S1727734AbeJQBDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:03:50 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65A3A20866;
-        Tue, 16 Oct 2018 17:12:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27DB520866;
+        Tue, 16 Oct 2018 17:12:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709944;
-        bh=uyUBVmW0oq+jLo0TYzr194fC/RPTOwk3mekCXbjzxZA=;
+        s=default; t=1539709947;
+        bh=XmBiKDKcpxhmGa6jExpSznHAvcQSnLJ+iPrxJlOneTg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O3NxRSgDXExYVxFWkVSgxrUSMc03h9mu7HHGvhSJeiMSZJEK8boCyhpk8NoZCZf+v
-         yV5A9mNDcuhp/aZvgV6cw5wU5Bi5bXxYQSmOaenGdNyOZL8EIOQroKRJ60e9BnMbmF
-         MfyhbpRsmTILqG3YhzZRWWX7h2m3Pn9+Bu2+MvAc=
+        b=xeScyFB5J2hyemWQM6+epZJIM5fEdfn8kCUmQTKX69PQvx/jLMNc4Bvh8DWn/zr5T
+         MeamldAdxVZF2Uosb5Q/n33YqLcj1bjC5BMffWKa0Y4yLuWDDTz6qTpxHtIESKg41a
+         9Z3chyhkvvONQey/qABakrGPuWUIEcmqkRox/zoU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        Stefano Brivio <sbrivio@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 051/135] bnxt_en: Fix VNIC reservations on the PF.
-Date:   Tue, 16 Oct 2018 19:04:41 +0200
-Message-Id: <20181016170518.175043239@linuxfoundation.org>
+Subject: [PATCH 4.18 052/135] net: ipv4: dont let PMTU updates increase route MTU
+Date:   Tue, 16 Oct 2018 19:04:42 +0200
+Message-Id: <20181016170518.220019849@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -61,34 +62,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit dbe80d446c859873820eedfff4abc61c71f1927b ]
+[ Upstream commit 28d35bcdd3925e7293408cdb8aa5f2aac5f0d6e3 ]
 
-The enables bit for VNIC was set wrong when calling the HWRM_FUNC_CFG
-firmware call to reserve VNICs.  This has the effect that the firmware
-will keep a large number of VNICs for the PF, and having very few for
-VFs.  DPDK driver running on the VFs, which requires more VNICs, may not
-work properly as a result.
+When an MTU update with PMTU smaller than net.ipv4.route.min_pmtu is
+received, we must clamp its value. However, we can receive a PMTU
+exception with PMTU < old_mtu < ip_rt_min_pmtu, which would lead to an
+increase in PMTU.
 
-Fixes: 674f50a5b026 ("bnxt_en: Implement new method to reserve rings.")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+To fix this, take the smallest of the old MTU and ip_rt_min_pmtu.
+
+Before this patch, in case of an update, the exception's MTU would
+always change. Now, an exception can have only its lock flag updated,
+but not the MTU, so we need to add a check on locking to the following
+"is this exception getting updated, or close to expiring?" test.
+
+Fixes: d52e5a7e7ca4 ("ipv4: lock mtu in fnhe when received PMTU < net.ipv4.route.min_pmtu")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/route.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -4651,7 +4651,7 @@ __bnxt_hwrm_reserve_pf_rings(struct bnxt
- 				      FUNC_CFG_REQ_ENABLES_NUM_STAT_CTXS : 0;
- 		enables |= ring_grps ?
- 			   FUNC_CFG_REQ_ENABLES_NUM_HW_RING_GRPS : 0;
--		enables |= vnics ? FUNC_VF_CFG_REQ_ENABLES_NUM_VNICS : 0;
-+		enables |= vnics ? FUNC_CFG_REQ_ENABLES_NUM_VNICS : 0;
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -1001,21 +1001,22 @@ out:	kfree_skb(skb);
+ static void __ip_rt_update_pmtu(struct rtable *rt, struct flowi4 *fl4, u32 mtu)
+ {
+ 	struct dst_entry *dst = &rt->dst;
++	u32 old_mtu = ipv4_mtu(dst);
+ 	struct fib_result res;
+ 	bool lock = false;
  
- 		req->num_rx_rings = cpu_to_le16(rx_rings);
- 		req->num_hw_ring_grps = cpu_to_le16(ring_grps);
+ 	if (ip_mtu_locked(dst))
+ 		return;
+ 
+-	if (ipv4_mtu(dst) < mtu)
++	if (old_mtu < mtu)
+ 		return;
+ 
+ 	if (mtu < ip_rt_min_pmtu) {
+ 		lock = true;
+-		mtu = ip_rt_min_pmtu;
++		mtu = min(old_mtu, ip_rt_min_pmtu);
+ 	}
+ 
+-	if (rt->rt_pmtu == mtu &&
++	if (rt->rt_pmtu == mtu && !lock &&
+ 	    time_before(jiffies, dst->expires - ip_rt_mtu_expires / 2))
+ 		return;
+ 
 
 
