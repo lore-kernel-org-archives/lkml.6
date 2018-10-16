@@ -6,61 +6,65 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90852C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E14FC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 544F320869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:16:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 544F320869
+	by mail.kernel.org (Postfix) with ESMTP id E3D3A2083C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:20:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3D3A2083C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbeJPNEm (ORCPT
+        id S1727820AbeJPNJe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 09:04:42 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:43634 "EHLO
+        Tue, 16 Oct 2018 09:09:34 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:43684 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbeJPNEm (ORCPT
+        with ESMTP id S1727008AbeJPNJe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 09:04:42 -0400
+        Tue, 16 Oct 2018 09:09:34 -0400
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4E57C1456E0B9;
-        Mon, 15 Oct 2018 22:16:03 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 22:16:02 -0700 (PDT)
-Message-Id: <20181015.221602.1800911512004774943.davem@davemloft.net>
-To:     kyeongdon.kim@lge.com
-Cc:     ktkhai@virtuozzo.com, viro@zeniv.linux.org.uk,
-        garsilva@embeddedor.com, jbaron@akamai.com, dvlasenk@redhat.com,
-        xiyou.wangcong@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: fix waring in af_unix
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 469251456FDF3;
+        Mon, 15 Oct 2018 22:20:55 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 22:20:54 -0700 (PDT)
+Message-Id: <20181015.222054.1171518157059418301.davem@davemloft.net>
+To:     dhowells@redhat.com
+Cc:     netdev@vger.kernel.org, kbuild-all@01.org, arnd@arndb.de,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] rxrpc: Fix incorrect conditional on IPV6
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1539340454-67970-1-git-send-email-kyeongdon.kim@lge.com>
-References: <1539340454-67970-1-git-send-email-kyeongdon.kim@lge.com>
+In-Reply-To: <153935871685.8157.12127765977392104630.stgit@warthog.procyon.org.uk>
+References: <153935871685.8157.12127765977392104630.stgit@warthog.procyon.org.uk>
 X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 15 Oct 2018 22:16:03 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 15 Oct 2018 22:20:55 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kyeongdon Kim <kyeongdon.kim@lge.com>
-Date: Fri, 12 Oct 2018 19:34:14 +0900
+From: David Howells <dhowells@redhat.com>
+Date: Fri, 12 Oct 2018 16:38:36 +0100
 
-> This fixes the "'hash' may be used uninitialized in this function"
+> The udpv6_encap_enable() function is part of the ipv6 code, and if that is
+> configured as a loadable module and rxrpc is built in then a build failure
+> will occur because the conditional check is wrong:
 > 
-> net/unix/af_unix.c:1041:20: warning: 'hash' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   addr->hash = hash ^ sk->sk_type;
->                       ^
+>   net/rxrpc/local_object.o: In function `rxrpc_lookup_local':
+>   local_object.c:(.text+0x2688): undefined reference to `udpv6_encap_enable'
 > 
-> Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
+> Use the correct config symbol (CONFIG_AF_RXRPC_IPV6) in the conditional
+> check rather than CONFIG_IPV6 as that will do the right thing.
+> 
+> Fixes: 5271953cad31 ("rxrpc: Use the UDP encap_rcv hook")
+> Reported-by: kbuild-all@01.org
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-Please put the initialization at the start of unix_mkname() as a similar
-situation exists elsewhere in this file, and the compiler will eventually
-warn there too.
+Applied.
