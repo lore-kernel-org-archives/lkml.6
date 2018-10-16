@@ -2,49 +2,49 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A08F8C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3956BC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CA9621477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:25:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E53C22098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:25:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7IcnLb5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA9621477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wp72JkEC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E53C22098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732128AbeJQBRP (ORCPT
+        id S1732147AbeJQBRT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:17:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36024 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:17:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731272AbeJQBRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:17:14 -0400
+        id S1731313AbeJQBRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:17:17 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE21521477;
-        Tue, 16 Oct 2018 17:25:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E333E2098A;
+        Tue, 16 Oct 2018 17:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710748;
-        bh=EK/kRPcNE0SK6KHOrU7UoN+woW1sQU3xKzDeY0T5Nx4=;
+        s=default; t=1539710751;
+        bh=9cIGkkUlzrEU7y5UkRrz0D6OkEhjjG/ETtSY3VdAR30=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u7IcnLb5eW3pYqcvGsgmUf4Nx/fktowqY8Q+5NGT7fJ1KbEFW2PN+yXQ/mt8F44SJ
-         SXUPmXZe0F+Ab6y9WvCjlq28oXiSm6OP+Be5BW9rEotJLjNpKCiWhUq2gTli2sBOig
-         vc/j3qne3JqkTuE224i7yuZogv05DN/TsThZ48lI=
+        b=Wp72JkECIsfg9ExvJJNsWtM5Bez8cMPUWr2oQnafoadGLfgdqs7qEC6C3foISpCYp
+         bUPoMxEUSXYUwf0PORmfpjAkoJeAX7e0LUI0ZPHL225ok09Dq4ORSPROBWudxBARcH
+         P5ncs6V5Ck9wiD1ExT2+WZfSoMx4ut3kysJ4oidM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 51/71] inet: frags: remove some helpers
-Date:   Tue, 16 Oct 2018 19:09:48 +0200
-Message-Id: <20181016170541.925602774@linuxfoundation.org>
+Subject: [PATCH 4.9 52/71] inet: frags: get rif of inet_frag_evicting()
+Date:   Tue, 16 Oct 2018 19:09:49 +0200
+Message-Id: <20181016170541.975679282@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
 References: <20181016170539.315587743@linuxfoundation.org>
@@ -64,122 +64,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-Remove sum_frag_mem_limit(), ip_frag_mem() & ip6_frag_mem()
+This refactors ip_expire() since one indentation level is removed.
 
-Also since we use rhashtable we can bring back the number of fragments
-in "grep FRAG /proc/net/sockstat /proc/net/sockstat6" that was
-removed in commit 434d305405ab ("inet: frag: don't account number
-of fragment queues")
+Note: in the future, we should try hard to avoid the skb_clone()
+since this is a serious performance cost.
+Under DDOS, the ICMP message wont be sent because of rate limits.
+
+Fact that ip6_expire_frag_queue() does not use skb_clone() is
+disturbing too. Presumably IPv6 should have the same
+issue than the one we fixed in commit ec4fbd64751d
+("inet: frag: release spinlock before calling icmp_send()")
 
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-(cherry picked from commit 6befe4a78b1553edb6eed3a78b4bcd9748526672)
+(cherry picked from commit 399d1404be660d355192ff4df5ccc3f4159ec1e4)
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/inet_frag.h |    5 -----
- include/net/ip.h        |    1 -
- include/net/ipv6.h      |    7 -------
- net/ipv4/ip_fragment.c  |    5 -----
- net/ipv4/proc.c         |    6 +++---
- net/ipv6/proc.c         |    5 +++--
- 6 files changed, 6 insertions(+), 23 deletions(-)
+ include/net/inet_frag.h |    5 ---
+ net/ipv4/ip_fragment.c  |   65 +++++++++++++++++++++++-------------------------
+ net/ipv6/reassembly.c   |    4 --
+ 3 files changed, 32 insertions(+), 42 deletions(-)
 
 --- a/include/net/inet_frag.h
 +++ b/include/net/inet_frag.h
-@@ -140,11 +140,6 @@ static inline void add_frag_mem_limit(st
- 	atomic_add(i, &nf->mem);
+@@ -118,11 +118,6 @@ static inline void inet_frag_put(struct
+ 		inet_frag_destroy(q);
  }
  
--static inline int sum_frag_mem_limit(struct netns_frags *nf)
+-static inline bool inet_frag_evicting(struct inet_frag_queue *q)
 -{
--	return atomic_read(&nf->mem);
+-	return false;
 -}
 -
- /* RFC 3168 support :
-  * We want to check ECN values of all fragments, do detect invalid combinations.
-  * In ipq->ecn, we store the OR value of each ip4_frag_ecn() fragment value.
---- a/include/net/ip.h
-+++ b/include/net/ip.h
-@@ -548,7 +548,6 @@ static inline struct sk_buff *ip_check_d
- 	return skb;
- }
- #endif
--int ip_frag_mem(struct net *net);
+ /* Memory Tracking Functions. */
  
- /*
-  *	Functions provided by ip_forward.c
---- a/include/net/ipv6.h
-+++ b/include/net/ipv6.h
-@@ -330,13 +330,6 @@ static inline bool ipv6_accept_ra(struct
- 	    idev->cnf.accept_ra;
- }
- 
--#if IS_ENABLED(CONFIG_IPV6)
--static inline int ip6_frag_mem(struct net *net)
--{
--	return sum_frag_mem_limit(&net->ipv6.frags);
--}
--#endif
--
- #define IPV6_FRAG_HIGH_THRESH	(4 * 1024*1024)	/* 4194304 */
- #define IPV6_FRAG_LOW_THRESH	(3 * 1024*1024)	/* 3145728 */
- #define IPV6_FRAG_TIMEOUT	(60 * HZ)	/* 60 seconds */
+ static inline int frag_mem_limit(struct netns_frags *nf)
 --- a/net/ipv4/ip_fragment.c
 +++ b/net/ipv4/ip_fragment.c
-@@ -82,11 +82,6 @@ static u8 ip4_frag_ecn(u8 tos)
+@@ -141,8 +141,11 @@ static bool frag_expire_skip_icmp(u32 us
+  */
+ static void ip_expire(unsigned long arg)
+ {
+-	struct ipq *qp;
++	struct sk_buff *clone, *head;
++	const struct iphdr *iph;
+ 	struct net *net;
++	struct ipq *qp;
++	int err;
  
- static struct inet_frags ip4_frags;
+ 	qp = container_of((struct inet_frag_queue *) arg, struct ipq, q);
+ 	net = container_of(qp->q.net, struct net, ipv4.frags);
+@@ -156,45 +159,41 @@ static void ip_expire(unsigned long arg)
+ 	ipq_kill(qp);
+ 	__IP_INC_STATS(net, IPSTATS_MIB_REASMFAILS);
  
--int ip_frag_mem(struct net *net)
--{
--	return sum_frag_mem_limit(&net->ipv4.frags);
--}
+-	if (!inet_frag_evicting(&qp->q)) {
+-		struct sk_buff *clone, *head = qp->q.fragments;
+-		const struct iphdr *iph;
+-		int err;
++	head = qp->q.fragments;
+ 
+-		__IP_INC_STATS(net, IPSTATS_MIB_REASMTIMEOUT);
++	__IP_INC_STATS(net, IPSTATS_MIB_REASMTIMEOUT);
+ 
+-		if (!(qp->q.flags & INET_FRAG_FIRST_IN) || !qp->q.fragments)
+-			goto out;
++	if (!(qp->q.flags & INET_FRAG_FIRST_IN) || !head)
++		goto out;
+ 
+-		head->dev = dev_get_by_index_rcu(net, qp->iif);
+-		if (!head->dev)
+-			goto out;
++	head->dev = dev_get_by_index_rcu(net, qp->iif);
++	if (!head->dev)
++		goto out;
+ 
+ 
+-		/* skb has no dst, perform route lookup again */
+-		iph = ip_hdr(head);
+-		err = ip_route_input_noref(head, iph->daddr, iph->saddr,
++	/* skb has no dst, perform route lookup again */
++	iph = ip_hdr(head);
++	err = ip_route_input_noref(head, iph->daddr, iph->saddr,
+ 					   iph->tos, head->dev);
+-		if (err)
+-			goto out;
++	if (err)
++		goto out;
++
++	/* Only an end host needs to send an ICMP
++	 * "Fragment Reassembly Timeout" message, per RFC792.
++	 */
++	if (frag_expire_skip_icmp(qp->q.key.v4.user) &&
++	    (skb_rtable(head)->rt_type != RTN_LOCAL))
++		goto out;
++
++	clone = skb_clone(head, GFP_ATOMIC);
+ 
+-		/* Only an end host needs to send an ICMP
+-		 * "Fragment Reassembly Timeout" message, per RFC792.
+-		 */
+-		if (frag_expire_skip_icmp(qp->q.key.v4.user) &&
+-		    (skb_rtable(head)->rt_type != RTN_LOCAL))
+-			goto out;
 -
- static int ip_frag_reasm(struct ipq *qp, struct sk_buff *prev,
- 			 struct net_device *dev);
+-		clone = skb_clone(head, GFP_ATOMIC);
+-
+-		/* Send an ICMP "Fragment Reassembly Timeout" message. */
+-		if (clone) {
+-			spin_unlock(&qp->q.lock);
+-			icmp_send(clone, ICMP_TIME_EXCEEDED,
+-				  ICMP_EXC_FRAGTIME, 0);
+-			consume_skb(clone);
+-			goto out_rcu_unlock;
+-		}
++	/* Send an ICMP "Fragment Reassembly Timeout" message. */
++	if (clone) {
++		spin_unlock(&qp->q.lock);
++		icmp_send(clone, ICMP_TIME_EXCEEDED,
++			  ICMP_EXC_FRAGTIME, 0);
++		consume_skb(clone);
++		goto out_rcu_unlock;
+ 	}
+ out:
+ 	spin_unlock(&qp->q.lock);
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -106,10 +106,6 @@ void ip6_expire_frag_queue(struct net *n
+ 		goto out_rcu_unlock;
  
---- a/net/ipv4/proc.c
-+++ b/net/ipv4/proc.c
-@@ -54,7 +54,6 @@
- static int sockstat_seq_show(struct seq_file *seq, void *v)
- {
- 	struct net *net = seq->private;
--	unsigned int frag_mem;
- 	int orphans, sockets;
+ 	__IP6_INC_STATS(net, __in6_dev_get(dev), IPSTATS_MIB_REASMFAILS);
+-
+-	if (inet_frag_evicting(&fq->q))
+-		goto out_rcu_unlock;
+-
+ 	__IP6_INC_STATS(net, __in6_dev_get(dev), IPSTATS_MIB_REASMTIMEOUT);
  
- 	local_bh_disable();
-@@ -74,8 +73,9 @@ static int sockstat_seq_show(struct seq_
- 		   sock_prot_inuse_get(net, &udplite_prot));
- 	seq_printf(seq, "RAW: inuse %d\n",
- 		   sock_prot_inuse_get(net, &raw_prot));
--	frag_mem = ip_frag_mem(net);
--	seq_printf(seq,  "FRAG: inuse %u memory %u\n", !!frag_mem, frag_mem);
-+	seq_printf(seq,  "FRAG: inuse %u memory %u\n",
-+		   atomic_read(&net->ipv4.frags.rhashtable.nelems),
-+		   frag_mem_limit(&net->ipv4.frags));
- 	return 0;
- }
- 
---- a/net/ipv6/proc.c
-+++ b/net/ipv6/proc.c
-@@ -38,7 +38,6 @@
- static int sockstat6_seq_show(struct seq_file *seq, void *v)
- {
- 	struct net *net = seq->private;
--	unsigned int frag_mem = ip6_frag_mem(net);
- 
- 	seq_printf(seq, "TCP6: inuse %d\n",
- 		       sock_prot_inuse_get(net, &tcpv6_prot));
-@@ -48,7 +47,9 @@ static int sockstat6_seq_show(struct seq
- 			sock_prot_inuse_get(net, &udplitev6_prot));
- 	seq_printf(seq, "RAW6: inuse %d\n",
- 		       sock_prot_inuse_get(net, &rawv6_prot));
--	seq_printf(seq, "FRAG6: inuse %u memory %u\n", !!frag_mem, frag_mem);
-+	seq_printf(seq, "FRAG6: inuse %u memory %u\n",
-+		   atomic_read(&net->ipv6.frags.rhashtable.nelems),
-+		   frag_mem_limit(&net->ipv6.frags));
- 	return 0;
- }
- 
+ 	/* Don't send error if the first segment did not arrive. */
 
 
