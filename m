@@ -2,141 +2,109 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7E1C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4258C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD8920869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:41:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VqzoC60s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD8920869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 9114D20869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:42:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9114D20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbeJPUbx (ORCPT
+        id S1727141AbeJPUck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 16:31:53 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40026 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbeJPUbx (ORCPT
+        Tue, 16 Oct 2018 16:32:40 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:36682 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727042AbeJPUck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 16:31:53 -0400
-Received: by mail-oi1-f196.google.com with SMTP id j68-v6so17889622oib.7
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 05:41:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vENAup6evfpT5UsjzZe6Xq6qPlB8onFIu1ydE2f8DG0=;
-        b=VqzoC60s9nUHLrwgWUXEbvN02wNcCbsPzNSgZwf6ftHyauXHINBT5MVoPYO7e4+jIX
-         36WOY2sfcfuEqQVcpZydw5vsf2VanS3ubXX3lO8bU7GdLgmkebZMkjlSAaORntLMzBLT
-         bCng8MvEwuhnveveCpgYli5syProAvp2ZSyrw=
+        Tue, 16 Oct 2018 16:32:40 -0400
+Received: from mr1.cc.vt.edu (inbound.smtp.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w9GCgMPE018752
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 08:42:22 -0400
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w9GCgHm6011424
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 08:42:22 -0400
+Received: by mail-qt1-f200.google.com with SMTP id q48-v6so24077133qte.11
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 05:42:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vENAup6evfpT5UsjzZe6Xq6qPlB8onFIu1ydE2f8DG0=;
-        b=pegAvL56u2KeXUH4A+bqWnhYB2c7Usag/OTGVYZzNXqitT34o3S/OI/q2Nw4X1XREk
-         PzHmLApGIWVqDB2ky8qKtiVG/BNhWZHWzENVx1ag+YxA4YDBsfw8YDfL7xsWfRDxZiEb
-         d2URB125r7+VV316ghw13lZQgVgz2li6jrFgK/MX9LH4QIpA7A0w1u2NaizUtQKY3AVo
-         RQCggOz3noM1l1hjz76TktmM2AzvGPfHR6cHUbYw/FzWocPiK4bv9gm4xfEUYgtMgVd6
-         5pHFuzU2hfos3l2jZL3fz0JfBCXzA5+OVkpEzzBRptC171S29K669aXe1ON17ry3dNsB
-         hUUw==
-X-Gm-Message-State: ABuFfoj3CEKHn86py8gL19N7tP1K+IitXROCROVnny2mciy1CWXSu3sm
-        RygrP7qIQTRwDEiZBQANoyOjgQOjrryt/ebqUU7Afg==
-X-Google-Smtp-Source: ACcGV62uircI7R4QGdAhVSUSsPx4rSK7/xqFC1lkU/MjjCYOyJT1ibb9HzQF+5jhGc8BW1YwTQ+K36p3MkVDfm2axxk=
-X-Received: by 2002:aca:dd08:: with SMTP id u8-v6mr10837712oig.94.1539693694647;
- Tue, 16 Oct 2018 05:41:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181013151707.32210-1-hch@lst.de> <20181013151707.32210-7-hch@lst.de>
- <CA+M3ks66FL-F8dk+UcG-gR8Gz4N6gz7eYuT_Ht_scw7foPaP0A@mail.gmail.com>
-In-Reply-To: <CA+M3ks66FL-F8dk+UcG-gR8Gz4N6gz7eYuT_Ht_scw7foPaP0A@mail.gmail.com>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Tue, 16 Oct 2018 14:41:23 +0200
-Message-ID: <CA+M3ks6a-D4j425JGBof+ma3NX5Fo52k5fadRNRauexOBXuaaw@mail.gmail.com>
-Subject: Re: [PATCH 6/8] drm: sti: don't pass GFP_DMA32 to dma_alloc_wc
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-media@vger.kernel.org, linux-spi@vger.kernel.org,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        alsa-devel@alsa-project.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:date:message-id;
+        bh=jrfxm+D/M+FIPBzak4i2H/bMQJvCd5PXWgk6ISzMjSw=;
+        b=qAZOXvcZkk6pkv4vXYNp2Nz1Sioq+fQWXXUOISLns2IP5dQSpXSptvODM+JFdnH+a0
+         3VMPQ6BePGvMiuZb2GaXHcDgarkY0BAwmVV9C95/BB2XYG9jDID2ikHV6V9tPeHun4+f
+         98YgI+ywhOg/V7LH38LKm+VVFu7k1DS5WY0qQKPqrkHpts5hZZI+h3rQD2zY1NrXB1Q+
+         COngJHGLEblsrKKg7imWqozn/llAWPN1cT0Og0L58l0Ln4Gr/Xn6PlSgssOqrFelI0JO
+         eygUa1H1DrgTJFf9Y/NQfDoB1CVWOfRfAivJ9cv2zChO8g8YgTblraABMTOfqFDbN6hO
+         QPYg==
+X-Gm-Message-State: ABuFfoizbdQJ2wJ228SE+aQRy3BuoE9VoYDie0KUY/I6LNBMqrG+YRrh
+        WL53iuWe66ko7dSh/3ILbULuMrtr62QeWrMzsaAI7Q0fYA7gU3FXegl8o/NrCkZDT57Cac51iqM
+        Q/ryei6Cw0y0uJzra6jEofC5GOaFCtispz6s=
+X-Received: by 2002:ac8:276a:: with SMTP id h39-v6mr15152689qth.274.1539693737148;
+        Tue, 16 Oct 2018 05:42:17 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV63pz+OZk1sDRixOCIZ6CKflT2LILkYZsfNLi8pChzVb/SZ9JYjJGvYZausZqzEjdPmUmCkOEQ==
+X-Received: by 2002:ac8:276a:: with SMTP id h39-v6mr15152658qth.274.1539693736745;
+        Tue, 16 Oct 2018 05:42:16 -0700 (PDT)
+Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4340::377])
+        by smtp.gmail.com with ESMTPSA id k14-v6sm10795271qtk.28.2018.10.16.05.42.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 05:42:15 -0700 (PDT)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+cc:     Dennis Zhou <dennisszhou@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: Re: [BUG] ext4/block null pointer crashes in linux-next
+In-reply-to: <20181016015201.GB18547@thunk.org>
+References: <13987.1539646128@turing-police.cc.vt.edu>
+ <20181016015201.GB18547@thunk.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date:   Tue, 16 Oct 2018 08:42:14 -0400
+Message-ID: <66480.1539693734@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le lun. 15 oct. 2018 =C3=A0 11:12, Benjamin Gaignard
-<benjamin.gaignard@linaro.org> a =C3=A9crit :
->
-> Le sam. 13 oct. 2018 =C3=A0 17:17, Christoph Hellwig <hch@lst.de> a =C3=
-=A9crit :
-> >
-> > The DMA API does its own zone decisions based on the coherent_dma_mask.
-> >
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
->
-> Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+On Mon, 15 Oct 2018 21:52:01 -0400, "Theodore Y. Ts'o" said:
+> Given the commit that it bisected down to, I very much doubt it has
+> anything to do with a specific directory or pathname.  Either you or
+> your distribution has enabled blk cgroup for I/O throttling, and
 
-Christoph do you plan to merge this patch on your own tree ? or would
-like I put it directly in drm-misc-next branch ?
+Bingo.
 
-Regards,
-Benjamin
->
-> > ---
-> >  drivers/gpu/drm/sti/sti_gdp.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gd=
-p.c
-> > index c32de6cbf061..cdf0a1396e00 100644
-> > --- a/drivers/gpu/drm/sti/sti_gdp.c
-> > +++ b/drivers/gpu/drm/sti/sti_gdp.c
-> > @@ -517,7 +517,7 @@ static void sti_gdp_init(struct sti_gdp *gdp)
-> >         /* Allocate all the nodes within a single memory page */
-> >         size =3D sizeof(struct sti_gdp_node) *
-> >             GDP_NODE_PER_FIELD * GDP_NODE_NB_BANK;
-> > -       base =3D dma_alloc_wc(gdp->dev, size, &dma_addr, GFP_KERNEL | G=
-FP_DMA);
-> > +       base =3D dma_alloc_wc(gdp->dev, size, &dma_addr, GFP_KERNEL);
-> >
-> >         if (!base) {
-> >                 DRM_ERROR("Failed to allocate memory for GDP node\n");
-> > --
-> > 2.19.1
-> >
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
->
->
-> --
-> Benjamin Gaignard
->
-> Graphic Study Group
->
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
->
-> Follow Linaro: Facebook | Twitter | Blog
+[~] zgrep CGROUP /proc/config.gz 
+CONFIG_CGROUPS=y
+CONFIG_BLK_CGROUP=y
+# CONFIG_DEBUG_BLK_CGROUP is not set
+(...)
 
+> there's some race that you're tripping across.  What ext4 file or
+> directory happens to be accessed when you trip across the problem is
+> probably just pure luck.
 
+I'm suspecting that my repeatable crash with rpm just does a *really*
+good job of setting up the race.
 
---=20
-Benjamin Gaignard
+> If you can disable the block I/O throttling configuration (which may
+> very well be distro-specific), the problem will probably go away.  I
+> don't use blkcg at all, personally, and on a personal laptop
+> (especially if you have an SSD), I really don't see the point.
 
-Graphic Study Group
+I often turn on new features just to watch the sparks fly.
 
-Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Still, I'm sure the people who *do* use blkcg for real (mostly in data
+> centers, in my experience) will probably thank you for being a great
+> guinea pig.  :-)
 
-Follow Linaro: Facebook | Twitter | Blog
+It's why I build a linux-next kernel every week. ;)
+
+Looks like I should enable DEBUG_BLK_CGROUP and see what that says.
+
