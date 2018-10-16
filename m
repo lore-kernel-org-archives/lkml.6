@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E25C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A250C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E16B32089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 510CA21477
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DL4gPNQD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16B32089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jh6X0P9O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 510CA21477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbeJQBD7 (ORCPT
+        id S1728628AbeJQBED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:03:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46368 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:04:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727734AbeJQBD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:03:58 -0400
+        id S1727734AbeJQBEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:04:02 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE05320866;
-        Tue, 16 Oct 2018 17:12:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AD422089E;
+        Tue, 16 Oct 2018 17:12:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709956;
-        bh=Dki2Phb1Zd9Wt21oMwb21Da2c56Gf0RZ5NH6C3fP+p4=;
+        s=default; t=1539709960;
+        bh=paN14ZUWdPc1IcXhhKZAEXwaD/tI6D/p60FPwZJXgU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DL4gPNQDRfsZ0e+LC2qT0UI7sHef5fPGbpFsMmCkWbf9xISHRynFlLXiFjzbrBo6R
-         qwqpScJMndGekk4tV6LgH+oQMS5vodXKFcRaa4i8DEWB97VwFLRVyqBy5cXDGYi4gH
-         UkiDJC9y6kipebzha6S2WFtmZ6lVZgk18nYe+KGY=
+        b=jh6X0P9ODRdTTusdM5+AR5czV8ZvfSRV7Ke7Xfq6C+TIdtZ1NMB1nEt2v5EluPEeV
+         FCQHsIlrGvszZ4Qtg9G8hkY7bG0rXlOJrOoO5gE8/mHM53v7swqJWas7EXXuFKUiUa
+         PzMqfAr6OQSsHC6g2KZZSQrb+cZGsetO7Mqq9l00=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 055/135] bnxt_en: get the reduced max_irqs by the ones used by RDMA
-Date:   Tue, 16 Oct 2018 19:04:45 +0200
-Message-Id: <20181016170518.355137729@linuxfoundation.org>
+Subject: [PATCH 4.18 056/135] net/ipv6: Remove extra call to ip6_convert_metrics for multipath case
+Date:   Tue, 16 Oct 2018 19:04:46 +0200
+Message-Id: <20181016170518.413223683@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -63,36 +61,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit c78fe058879bdea919d44f23e21da26f603e9166 ]
+[ Upstream commit 36f19d5b4f99fa9fa8263877e5f8e669d7fddc14 ]
 
-When getting the max rings supported, get the reduced max_irqs
-by the ones used by RDMA.
+The change to move metrics from the dst to rt6_info moved the call
+to ip6_convert_metrics from ip6_route_add to ip6_route_info_create. In
+doing so it makes the call in ip6_route_info_append redundant and
+actually leaks the metrics installed as part of the ip6_route_info_create.
+Remove the now unnecessary call.
 
-If the number MSIX is the limiting factor, this bug may cause the
-max ring count to be higher than it should be when RDMA driver is
-loaded and may result in ring allocation failures.
-
-Fixes: 30f529473ec9 ("bnxt_en: Do not modify max IRQ count after RDMA driver requests/frees IRQs.")
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Fixes: d4ead6b34b67f ("net/ipv6: move metrics from dst to rt6_info")
+Signed-off-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/route.c |    5 -----
+ 1 file changed, 5 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -8501,7 +8501,7 @@ static void _bnxt_get_max_rings(struct b
- 	*max_tx = hw_resc->max_tx_rings;
- 	*max_rx = hw_resc->max_rx_rings;
- 	*max_cp = min_t(int, bnxt_get_max_func_cp_rings_for_en(bp),
--			hw_resc->max_irqs);
-+			hw_resc->max_irqs - bnxt_get_ulp_msix_num(bp));
- 	*max_cp = min_t(int, *max_cp, hw_resc->max_stat_ctxs);
- 	max_ring_grps = hw_resc->max_hw_ring_grps;
- 	if (BNXT_CHIP_TYPE_NITRO_A0(bp) && BNXT_PF(bp)) {
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -4314,11 +4314,6 @@ static int ip6_route_info_append(struct
+ 	if (!nh)
+ 		return -ENOMEM;
+ 	nh->fib6_info = rt;
+-	err = ip6_convert_metrics(net, rt, r_cfg);
+-	if (err) {
+-		kfree(nh);
+-		return err;
+-	}
+ 	memcpy(&nh->r_cfg, r_cfg, sizeof(*r_cfg));
+ 	list_add_tail(&nh->next, rt6_nh_list);
+ 
 
 
