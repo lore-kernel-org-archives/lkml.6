@@ -2,152 +2,110 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3362DC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F282CC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF3E42086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71FAC2083C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:38:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="INbsJJZ1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF3E42086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=catalogicsoftware.com header.i=@catalogicsoftware.com header.b="LKYzxGgA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71FAC2083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=catalogicsoftware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbeJPW0r (ORCPT
+        id S1727159AbeJPW2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:26:47 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:42111 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbeJPW0r (ORCPT
+        Tue, 16 Oct 2018 18:28:52 -0400
+Received: from us-smtp-delivery-107.mimecast.com ([63.128.21.107]:27914 "EHLO
+        us-smtp-delivery-107.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727016AbeJPW2v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:26:47 -0400
-Received: by mail-qk1-f193.google.com with SMTP id g20-v6so14221439qke.9;
-        Tue, 16 Oct 2018 07:36:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=86Ds328eziIMIPevc2kks39VYSat+UYQJcwfQ52w1+I=;
-        b=INbsJJZ1NicP8vDVaaeabWOhZZ19YBmH0Y5tv9KYkjW62fdH1OceJIVaCUHtjHWOwV
-         Fpumj9Udxw72zz2uCPlrSFDUbZ2/FE6AjYivuCTin0s8/5VzkHPJ7LDLmXu8b1+YhvXX
-         xvAiReSKFg8OJc7RDd0SHV7Nagg+AFz7xzcZ3DzhhXHUlcbzcvgrUqh+38Ngj57uqmlm
-         6BdRoePXn7VJ2GHdeuEhAEKuYDJ/TRMtZ5AsKL/ekxAxH/aaj8OnskTtnqOQx0Cx/wNR
-         6d0LWMu2pdjvnW955Eg/R0xDIPqW3zkPxZZsbSZNlqcM0wrgUiQ+D/+JeaOObusUWMX8
-         RWmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=86Ds328eziIMIPevc2kks39VYSat+UYQJcwfQ52w1+I=;
-        b=tKvprlUGBBcbdp+vgXbqeIde0yiXf5DZ083beGF1OzlzyjBQ8sS3cuAMDkTr98QMSw
-         ruzLm1MHG5KAm+Ynl3lPng7EFhes4V1hj8OzyUgC4m3DcwFxdNqTRKKJlLlxEU2TsMau
-         F00BS7ARtzyIUw+5wGuP0CLfHO8tkWwStiPW6q3U79QlX1PzUZpxQsbDrS977+ibAICr
-         lxff9mV3V6wvx9kUDy+MNDtnH1njFmUfrb8KARReMTcSpd229sJZFkplnjZnjxZnBgKy
-         6JpQ6gSvo6obiiucKf+gq4yEVklrXdyOvdQvmNMocmv1rr4xm+gOSUVD5ZvpmJvr7J6h
-         QL3g==
-X-Gm-Message-State: ABuFfohHrEMqRZk522TgB7Nr2+oHjvuLCsaaGUthTF0Af6u34jYYKK8n
-        XJ38U0ss5v/N6Hmp9k6AjYTwf7loWUXoY9zeoXw=
-X-Google-Smtp-Source: ACcGV62AA727wqyVPO5iB76qY9KY8IWO0uhDAx5JTbU0dyvPVsahWN+mUx5/K5P0oc1hWemnwM1a1HSa4gb9DpsG3oA=
-X-Received: by 2002:ae9:c307:: with SMTP id n7-v6mr20567208qkg.70.1539700561454;
- Tue, 16 Oct 2018 07:36:01 -0700 (PDT)
+        Tue, 16 Oct 2018 18:28:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=catalogicsoftware.com; s=mimecast20180821; t=1539700684; h=from:from:sender:reply-to:subject:subject:date:date: message-id:message-id:to:to:cc:cc:mime-version:mime-version: content-type:content-type: content-transfer-encoding:content-transfer-encoding: in-reply-to:in-reply-to:references:references; bh=Sy7ls6M2qBDwQlXulMOh0/f1wKAKKszgsjoclO5s1v0=; b=LKYzxGgA2n4vAbVyqUD9fbcu48de2I8/aWM/h2kdZ0cgA5TPxjSM7S2uiHXI6751dvssyx/vC27W/acI6VDncJYXjsNAQxIk8Y1PPzB335Lv1V0KnaCFhJRrjHoB5ZVS0316wsCo12fobbsUy8YiyMVKKA3oMssoStIj4ESo1Ys=
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com
+ (mail-co1nam03lp0021.outbound.protection.outlook.com [216.32.181.21])
+ (Using TLS) by us-smtp-1.mimecast.com with ESMTP id
+ us-mta-196-VIfpF6j0M7im0AlI47C1RA-1; Tue, 16 Oct 2018 10:38:03 -0400
+Received: from DM5PR01MB2348.prod.exchangelabs.com (10.168.192.138) by
+ DM5PR01MB2842.prod.exchangelabs.com (10.172.186.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.24; Tue, 16 Oct 2018 14:37:59 +0000
+Received: from DM5PR01MB2348.prod.exchangelabs.com
+ ([fe80::a16f:30df:2f13:edb1]) by DM5PR01MB2348.prod.exchangelabs.com
+ ([fe80::a16f:30df:2f13:edb1%3]) with mapi id 15.20.1250.020; Tue, 16 Oct 2018
+ 14:37:59 +0000
+From:   "Ly, Bryant" <bly@catalogicsoftware.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+CC:     "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        Mike Christie <mchristi@redhat.com>,
+        target-devel <target-devel@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH 2/2] target: Fix target_wait_for_sess_cmds breakage with
+ active signals
+Thread-Topic: [PATCH 2/2] target: Fix target_wait_for_sess_cmds breakage with
+ active signals
+Thread-Index: AQHUYEiZqcAaFWCqE06ZzWwpCq+UtqUYtGqAgADZNoCAAHgcAIAHRwXegACuVwA=
+Date:   Tue, 16 Oct 2018 14:37:58 +0000
+Message-ID: <01F789A9-AF3F-4226-B9D1-9BB160AC4947@catalogicsoftware.com>
+References: <1539141790-13557-1-git-send-email-nab@linux-iscsi.org>
+ <1539141790-13557-3-git-send-email-nab@linux-iscsi.org>
+ <5BBE2FBF.7080804@redhat.com>
+ <1539237365.6150.32.camel@haakon3.daterainc.com>
+ <F43269BA-4D7B-486C-87C6-0FB48FF890EA@catalogicsoftware.com>
+ <yq1lg6yv899.fsf@oracle.com>
+In-Reply-To: <yq1lg6yv899.fsf@oracle.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [96.42.214.145]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR01MB2842;20:ixPoZlygiZdr6ohrFGrRxzvR3a2rgDEtzcsCQ1sXlsYRz1idPZtQCLEaPudz3DQWyIqCpUgHw+Fbwy2rCL5oLWcBolLGVXG0k+Oj9BPZLBFdRkGW7PpRoou+7b629mrEZZGtdKVPxQJCfU8GB6wNQIfWKqUayeYEZxqXBZFQ0aw=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 97c951ef-8680-4f7e-e39c-08d63374f835
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DM5PR01MB2842;
+x-ms-traffictypediagnostic: DM5PR01MB2842:
+x-microsoft-antispam-prvs: <DM5PR01MB284271C9303C3EB20A1D4B21B4FE0@DM5PR01MB2842.prod.exchangelabs.com>
+x-exchange-antispam-report-test: UriScan:(146099531331640);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991067);SRVR:DM5PR01MB2842;BCL:0;PCL:0;RULEID:;SRVR:DM5PR01MB2842;
+x-forefront-prvs: 0827D7ACB9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39830400003)(396003)(136003)(376002)(366004)(189003)(199004)(486006)(7736002)(82746002)(305945005)(86362001)(5660300001)(6916009)(11346002)(7416002)(2616005)(68736007)(33656002)(446003)(99286004)(476003)(76176011)(4326008)(66066001)(97736004)(54906003)(93886005)(2906002)(106356001)(71200400001)(316002)(71190400001)(105586002)(6246003)(83716004)(6116002)(8936002)(2900100001)(14454004)(229853002)(102836004)(8676002)(3846002)(36756003)(81156014)(6436002)(6506007)(6486002)(81166006)(53546011)(25786009)(26005)(53936002)(478600001)(256004)(186003)(6512007)(5250100002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR01MB2842;H:DM5PR01MB2348.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: XmPQ0Uy5Mz/fUUdMhDofvLYCU/jJ4sZPNDr+WRr54w/Ip/6MSJGnTcSJs+xG0+vsDHpxU3BewaZMlVDWejBITIw2ThI0zLs5gpwBHgSr7UWOfxnHks1KMo4nE/2ZB16OwRTYLa2ibeHaBgWXhsrKaCPRJ2SbNfg1Fv6/E4scbBKjs2rgqPQzB7BNvbY6azwshuHesf/xGOGQ6YvFqYL49EVMaA40OrkqB2cdhckWRSBrAD5VrGzPd0sdANN4XyeY2vFCkgZP1+JeGeyEGNzEu+TqDj6jVUcSmZEzfBx+2YxbjWXJX+qU4UkJtqQN4ucemFmGlSVRMZRl0s47O41fJY2bPdH//yrjL5GjorhTiD4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-ID: <10F2FAACA27E1E4D8895C09EDF922C47@prod.exchangelabs.com>
 MIME-Version: 1.0
-References: <20181012113934.29942-1-heikki.krogerus@linux.intel.com>
-In-Reply-To: <20181012113934.29942-1-heikki.krogerus@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 16 Oct 2018 17:35:50 +0300
-Message-ID: <CAHp75VcWu_6jco6k5to1x1QNG8Ad893J81TPpTbJkLcqw=RR=g@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/5] device property: Introducing software nodes
-To:     "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: catalogicsoftware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97c951ef-8680-4f7e-e39c-08d63374f835
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2018 14:37:59.0225
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: ea3d63e8-dd40-410b-9496-d2ee49ccddc3
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR01MB2842
+X-MC-Unique: VIfpF6j0M7im0AlI47C1RA-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 2:41 PM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> Hi guys,
->
-> To continue the discussion started by Dmitry [1], this is my proposal
-> that I mentioned in my last mail. In short, the idea is that instead
-> of trying to extend the support for the currently used struct
-> property_set, I'm proposing that we introduce a completely new,
-> independent type of fwnode, and replace the struct property_set with
-> it. I'm calling the type "software node" here.
->
-> The reason for a complete separation of the software nodes from the
-> generic property handling code is the need to be able to create the
-> nodes independently from the devices that they are bind to.
->
-> The way this works is that every node that is created will have a
-> kobject registered. That will take care the ref counting for us, and
-> also allow us to for example display the properties in sysfs.
->
-> There are a few more details in patch 3/5 about the software nodes in
-> the commit message.
->
-> [1] https://lkml.org/lkml/2018/9/17/1067
+TWFydGluLCANCg0KPiBPbiBPY3QgMTUsIDIwMTgsIGF0IDExOjEzIFBNLCBNYXJ0aW4gSy4gUGV0
+ZXJzZW4gPG1hcnRpbi5wZXRlcnNlbkBvcmFjbGUuY29tPiB3cm90ZToNCj4gDQo+IA0KPiBCcnlh
+bnQsDQo+IA0KPj4gVk1zIGRvIG5vdCByZW1vdmUgdGhlIElfVCBuZXh1cyB3aGlsZSB0aGUgVk0g
+aXMgYWN0aXZlLCBzbyB3ZSBjYW4gcmVtb3ZlDQo+PiB0aGUgdGFyZ2V0X3dhaXRfZm9yX3Nlc3Nf
+Y21kKCkgY2FsbC4gDQo+IA0KPiBQYXRjaCBmb3J0aGNvbWluZz8NCg0KSSBjYW4gcHV0IG91dCBh
+IHBhdGNoLCBJ4oCZbSB0cnlpbmcgdG8gZ2V0IHNvbWVvbmUgYXQgSUJNIHRvIHRlc3QgaXQgdGhv
+dWdoLg0KDQotQnJ5YW50
 
-In private discussion I brought a concern that we exposed properties
-as a part of ABI, but at the same time we have not strict rules which
-might lead to ambiguous reading, e.g. there is no type exported and
-thus no possibility to tell what kind of property it is.
-
-Examples:
-1. 0x1 and 0x1 =E2=80=94 are they of the same type?
-2. 0x1 =E2=80=94 is it an array or single value?
-3. 0x12345678 =E2=80=94 is it string or hex?
-4. 25 =E2=80=94 is it hex or decimal?
-
-Until these will not be solved, better to not to expose properties to users=
-pace.
-
->
-> --
-> heikki
->
->
-> Heikki Krogerus (5):
->   drivers core: Prepare support for multiple platform notifications
->   ACPI / glue: Add acpi_platform_notify() function
->   drivers: base: Introducing software nodes to the firmware node
->     framework
->   device property: Move device_add_properties() to swnode.c
->   device property: Remove struct property_set
->
->  .../ABI/testing/sysfs-devices-software_node   |  27 +
->  drivers/acpi/bus.c                            |   1 -
->  drivers/acpi/glue.c                           |  21 +-
->  drivers/acpi/internal.h                       |   1 -
->  drivers/base/Makefile                         |   2 +-
->  drivers/base/core.c                           |  32 +-
->  drivers/base/property.c                       | 529 +-----------
->  drivers/base/swnode.c                         | 812 ++++++++++++++++++
->  include/linux/acpi.h                          |  10 +
->  include/linux/property.h                      |  12 +
->  10 files changed, 929 insertions(+), 518 deletions(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-devices-software_node
->  create mode 100644 drivers/base/swnode.c
->
-> --
-> 2.19.1
->
-
-
---=20
-With Best Regards,
-Andy Shevchenko
