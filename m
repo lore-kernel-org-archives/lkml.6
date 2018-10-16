@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4C0C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAAE0C070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC8892098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B7F821471
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EbkLMbkf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC8892098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oxNKwY4g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B7F821471
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbeJPMB1 (ORCPT
+        id S1728265AbeJPMB2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:01:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48432 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:01:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728205AbeJPMB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:26 -0400
+        id S1728162AbeJPMB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:27 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63AD52145D;
-        Tue, 16 Oct 2018 04:13:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D4AC208E4;
+        Tue, 16 Oct 2018 04:13:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1539663184;
-        bh=5dLmQxAQ0U3kOhLyOHBm0gy8vglB/xW6VDF02ORZlH4=;
+        bh=Sotuto2ZEBhAXD8XkyN3jjEetqdgy8y0xOHwMpyWB6M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EbkLMbkfQh1ls9VP5x7keQP7hLGyveiFV+MPdya6mk1F9NAlCmtZjrvN0qm/uBAs7
-         FlE5BsiKyEVmGvk4cD6EPAyH7uE1btT/CbMaaSNzhoV63W1tlyaJzeZO9k9ibQhRhn
-         MwraepAwgOzW7TmYRTrnjosR5/zYWMDjNIgigxvY=
+        b=oxNKwY4gxxHIrxZcYtaUrR2zSqav2/gnen3XUUlmp8Qj+YoexRTkd3mVIhAc+H+OP
+         POnNx7prSBJNlqMof4Zx4WczrbkuwuLFlD+bnByHy24fEV4NjMqpd2cvbuQ42mts1R
+         mMbngjFbn9di1/xgl9s//WPROsNgpEyfJWituCmg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+Cc:     Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Michal Kalderon <Michal.Kalderon@cavium.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 045/100] netfilter: avoid erronous array bounds warning
-Date:   Tue, 16 Oct 2018 00:11:26 -0400
-Message-Id: <20181016041221.135528-45-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 046/100] qed: Fix shmem structure inconsistency between driver and the mfw.
+Date:   Tue, 16 Oct 2018 00:11:27 -0400
+Message-Id: <20181016041221.135528-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -53,46 +54,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 421c119f558761556afca6a62ad183bc2d8659e0 ]
+[ Upstream commit 5f672090e44f4951084c5e1d6b0668a5fc422af8 ]
 
-Unfortunately some versions of gcc emit following warning:
-  $ make net/xfrm/xfrm_output.o
-  linux/compiler.h:252:20: warning: array subscript is above array bounds [-Warray-bounds]
-  hook_head = rcu_dereference(net->nf.hooks_arp[hook]);
-                            ^~~~~~~~~~~~~~~~~~~~~
-xfrm_output_resume passes skb_dst(skb)->ops->family as its 'pf' arg so compiler
-can't know that we'll never access hooks_arp[].
-(NFPROTO_IPV4 or NFPROTO_IPV6 are only possible cases).
+The structure shared between driver and the management FW (mfw) differ in
+sizes. This would lead to issues when driver try to access the structure
+members which are not-aligned with the mfw copy e.g., data_ptr usage in the
+case of mfw_tlv request.
+Align the driver structure with mfw copy, add reserved field(s) to driver
+structure for the members not used by the driver.
 
-Avoid this by adding an explicit WARN_ON_ONCE() check.
-
-This patch has no effect if the family is a compile-time constant as gcc
-will remove the switch() construct entirely.
-
-Reported-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Reviewed-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: dd006921d67f ("qed: Add MFW interfaces for TLV request support.)
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/netfilter.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/qlogic/qed/qed_hsi.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/netfilter.h b/include/linux/netfilter.h
-index dd2052f0efb7..11b7b8ab0696 100644
---- a/include/linux/netfilter.h
-+++ b/include/linux/netfilter.h
-@@ -215,6 +215,8 @@ static inline int nf_hook(u_int8_t pf, unsigned int hook, struct net *net,
- 		break;
- 	case NFPROTO_ARP:
- #ifdef CONFIG_NETFILTER_FAMILY_ARP
-+		if (WARN_ON_ONCE(hook >= ARRAY_SIZE(net->nf.hooks_arp)))
-+			break;
- 		hook_head = rcu_dereference(net->nf.hooks_arp[hook]);
- #endif
- 		break;
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_hsi.h b/drivers/net/ethernet/qlogic/qed/qed_hsi.h
+index bee10c1781fb..463ffa83685f 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_hsi.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_hsi.h
+@@ -11987,6 +11987,7 @@ struct public_global {
+ 	u32 running_bundle_id;
+ 	s32 external_temperature;
+ 	u32 mdump_reason;
++	u64 reserved;
+ 	u32 data_ptr;
+ 	u32 data_size;
+ };
 -- 
 2.17.1
 
