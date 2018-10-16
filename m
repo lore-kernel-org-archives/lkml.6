@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C187C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BDBC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8E7F2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1934120866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz7fcvz5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8E7F2089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbi1JjBK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1934120866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731741AbeJQBQF (ORCPT
+        id S1731765AbeJQBQL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:16:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34760 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:16:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbeJQBQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:16:04 -0400
+        id S1730396AbeJQBQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:16:10 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0E1C20658;
-        Tue, 16 Oct 2018 17:24:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83F6C20866;
+        Tue, 16 Oct 2018 17:24:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710678;
-        bh=jZ0Fol55lggfKG4cJ7npJqBVE8pWNjUd3vxoH5ulQs4=;
+        s=default; t=1539710684;
+        bh=xf4uPhx1Y1fd2hCxERAYbvnulWxBS+P5phOgWJDUgvw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mz7fcvz5hW9EFwbzvtCTdy2P6dbz10DV1C5R04Y7jNXRApivyIstOTudhbOnyP2Ra
-         07XO1J8cKwjpNtPSXvsd7YF9IH2yGTtxWldZpyDGw0fY65qaVcU1eDBdxO0Tt5Q2fs
-         CiAzipszD/0Djc0M9Lm+JxWQu2nZvEzHXph5Zrm8=
+        b=hbi1JjBKuNI8LuaBXYYMf506ir9EYY7wyP6gbzEl09HD1gjo8ZJ/HiWT9IN8JVlqb
+         tQliBkb3AzqTf0u2jtO+hBa9a4RewHM/gMdIXN4JCfI68HJQ/6fyvTWvLImyQROz/R
+         8yr/mSh+hGQXaou8AEkiiiuvGgLLWKeLVXYnd+q8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        Amber Lin <Amber.Lin@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 13/71] drm/amdgpu: Fix SDMA HQD destroy error on gfx_v7
-Date:   Tue, 16 Oct 2018 19:09:10 +0200
-Message-Id: <20181016170540.060540688@linuxfoundation.org>
+Subject: [PATCH 4.9 05/71] mfd: omap-usb-host: Fix dts probe of children
+Date:   Tue, 16 Oct 2018 19:09:02 +0200
+Message-Id: <20181016170539.636542236@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
 References: <20181016170539.315587743@linuxfoundation.org>
@@ -64,35 +64,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amber Lin <Amber.Lin@amd.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit caaa4c8a6be2a275bd14f2369ee364978ff74704 ]
+[ Upstream commit 10492ee8ed9188d6d420e1f79b2b9bdbc0624e65 ]
 
-A wrong register bit was examinated for checking SDMA status so it reports
-false failures. This typo only appears on gfx_v7. gfx_v8 checks the correct
-bit.
+It currently only works if the parent bus uses "simple-bus". We
+currently try to probe children with non-existing compatible values.
+And we're missing .probe.
 
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Amber Lin <Amber.Lin@amd.com>
-Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+I noticed this while testing devices configured to probe using ti-sysc
+interconnect target module driver. For that we also may want to rebind
+the driver, so let's remove __init and __exit.
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/omap-usb-host.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c
-@@ -505,7 +505,7 @@ static int kgd_hqd_sdma_destroy(struct k
+--- a/drivers/mfd/omap-usb-host.c
++++ b/drivers/mfd/omap-usb-host.c
+@@ -548,8 +548,8 @@ static int usbhs_omap_get_dt_pdata(struc
+ }
  
- 	while (true) {
- 		temp = RREG32(sdma_base_addr + mmSDMA0_RLC0_CONTEXT_STATUS);
--		if (temp & SDMA0_STATUS_REG__RB_CMD_IDLE__SHIFT)
-+		if (temp & SDMA0_RLC0_CONTEXT_STATUS__IDLE_MASK)
- 			break;
- 		if (timeout <= 0)
- 			return -ETIME;
+ static const struct of_device_id usbhs_child_match_table[] = {
+-	{ .compatible = "ti,omap-ehci", },
+-	{ .compatible = "ti,omap-ohci", },
++	{ .compatible = "ti,ehci-omap", },
++	{ .compatible = "ti,ohci-omap3", },
+ 	{ }
+ };
+ 
+@@ -875,6 +875,7 @@ static struct platform_driver usbhs_omap
+ 		.pm		= &usbhsomap_dev_pm_ops,
+ 		.of_match_table = usbhs_omap_dt_ids,
+ 	},
++	.probe		= usbhs_omap_probe,
+ 	.remove		= usbhs_omap_remove,
+ };
+ 
+@@ -884,9 +885,9 @@ MODULE_ALIAS("platform:" USBHS_DRIVER_NA
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("usb host common core driver for omap EHCI and OHCI");
+ 
+-static int __init omap_usbhs_drvinit(void)
++static int omap_usbhs_drvinit(void)
+ {
+-	return platform_driver_probe(&usbhs_omap_driver, usbhs_omap_probe);
++	return platform_driver_register(&usbhs_omap_driver);
+ }
+ 
+ /*
+@@ -898,7 +899,7 @@ static int __init omap_usbhs_drvinit(voi
+  */
+ fs_initcall_sync(omap_usbhs_drvinit);
+ 
+-static void __exit omap_usbhs_drvexit(void)
++static void omap_usbhs_drvexit(void)
+ {
+ 	platform_driver_unregister(&usbhs_omap_driver);
+ }
 
 
