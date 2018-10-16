@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 235ACC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3920C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5A4F2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:23:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5A4F2086E
+	by mail.kernel.org (Postfix) with ESMTP id A8DD32086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:23:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8DD32086E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbeJPWNI (ORCPT
+        id S1727187AbeJPWOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:13:08 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48196 "EHLO mail.bootlin.com"
+        Tue, 16 Oct 2018 18:14:35 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48182 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727419AbeJPWNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:13:08 -0400
+        id S1727386AbeJPWNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 18:13:07 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0CA0D20DD8; Tue, 16 Oct 2018 16:22:23 +0200 (CEST)
+        id F325A20E0A; Tue, 16 Oct 2018 16:22:22 +0200 (CEST)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 90F8720DE2;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4A2FA20DD8;
         Tue, 16 Oct 2018 16:22:03 +0200 (CEST)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>
@@ -35,9 +35,9 @@ Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v2 11/22] clk: at91: add sama5d2 PMC driver
-Date:   Tue, 16 Oct 2018 16:21:49 +0200
-Message-Id: <20181016142200.19741-12-alexandre.belloni@bootlin.com>
+Subject: [PATCH v2 10/22] clk: at91: add sama5d4 pmc driver
+Date:   Tue, 16 Oct 2018 16:21:48 +0200
+Message-Id: <20181016142200.19741-11-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016142200.19741-1-alexandre.belloni@bootlin.com>
 References: <20181016142200.19741-1-alexandre.belloni@bootlin.com>
@@ -48,30 +48,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for the PMC clocks of the sama5d2
+Add a driver for the PMC clocks of the sama5d4
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
  drivers/clk/at91/Makefile  |   1 +
- drivers/clk/at91/sama5d2.c | 336 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 337 insertions(+)
- create mode 100644 drivers/clk/at91/sama5d2.c
+ drivers/clk/at91/sama5d4.c | 264 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 265 insertions(+)
+ create mode 100644 drivers/clk/at91/sama5d4.c
 
 diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
-index 7cdb762f3e2e..1e7c70dda723 100644
+index facc169ebb68..7cdb762f3e2e 100644
 --- a/drivers/clk/at91/Makefile
 +++ b/drivers/clk/at91/Makefile
-@@ -15,3 +15,4 @@ obj-$(CONFIG_HAVE_AT91_H32MX)		+= clk-h32mx.o
+@@ -14,3 +14,4 @@ obj-$(CONFIG_HAVE_AT91_SMD)		+= clk-smd.o
+ obj-$(CONFIG_HAVE_AT91_H32MX)		+= clk-h32mx.o
  obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)	+= clk-generated.o
  obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)	+= clk-i2s-mux.o
- obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
-+obj-$(CONFIG_SOC_SAMA5D2) += sama5d2.o
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
++obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
+diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
 new file mode 100644
-index 000000000000..07f1f1d613ff
+index 000000000000..64b9f438f73b
 --- /dev/null
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -0,0 +1,336 @@
++++ b/drivers/clk/at91/sama5d4.c
+@@ -0,0 +1,264 @@
 +// SPDX-License-Identifier: GPL-2.0
 +#include <linux/clk-provider.h>
 +#include <linux/mfd/syscon.h>
@@ -82,7 +82,7 @@ index 000000000000..07f1f1d613ff
 +#include "pmc.h"
 +
 +static const struct clk_master_characteristics mck_characteristics = {
-+	.output = { .min = 124000000, .max = 166000000 },
++	.output = { .min = 125000000, .max = 200000000 },
 +	.divisors = { 1, 2, 4, 3 },
 +};
 +
@@ -106,106 +106,89 @@ index 000000000000..07f1f1d613ff
 +	char *n;
 +	char *p;
 +	u8 id;
-+} sama5d2_systemck[] = {
++} sama5d4_systemck[] = {
 +	{ .n = "ddrck", .p = "masterck", .id = 2 },
 +	{ .n = "lcdck", .p = "masterck", .id = 3 },
++	{ .n = "smdck", .p = "smdclk",   .id = 4 },
 +	{ .n = "uhpck", .p = "usbck",    .id = 6 },
 +	{ .n = "udpck", .p = "usbck",    .id = 7 },
 +	{ .n = "pck0",  .p = "prog0",    .id = 8 },
 +	{ .n = "pck1",  .p = "prog1",    .id = 9 },
 +	{ .n = "pck2",  .p = "prog2",    .id = 10 },
-+	{ .n = "iscck", .p = "masterck", .id = 18 },
 +};
 +
 +static const struct {
 +	char *n;
 +	u8 id;
-+	struct clk_range r;
-+} sama5d2_periph32ck[] = {
-+	{ .n = "macb0_clk",   .id = 5,  .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "tdes_clk",    .id = 11, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "matrix1_clk", .id = 14, },
-+	{ .n = "hsmc_clk",    .id = 17, },
-+	{ .n = "pioA_clk",    .id = 18, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "flx0_clk",    .id = 19, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "flx1_clk",    .id = 20, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "flx2_clk",    .id = 21, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "flx3_clk",    .id = 22, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "flx4_clk",    .id = 23, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "uart0_clk",   .id = 24, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "uart1_clk",   .id = 25, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "uart2_clk",   .id = 26, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "uart3_clk",   .id = 27, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "uart4_clk",   .id = 28, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "twi0_clk",    .id = 29, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "twi1_clk",    .id = 30, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "spi0_clk",    .id = 33, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "spi1_clk",    .id = 34, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "tcb0_clk",    .id = 35, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "tcb1_clk",    .id = 36, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "pwm_clk",     .id = 38, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "adc_clk",     .id = 40, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "uhphs_clk",   .id = 41, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "udphs_clk",   .id = 42, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "ssc0_clk",    .id = 43, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "ssc1_clk",    .id = 44, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "trng_clk",    .id = 47, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "pdmic_clk",   .id = 48, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "securam_clk", .id = 51, },
-+	{ .n = "i2s0_clk",    .id = 54, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "i2s1_clk",    .id = 55, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "can0_clk",    .id = 56, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "can1_clk",    .id = 57, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "classd_clk",  .id = 59, .r = { .min = 0, .max = 83000000 }, },
++} sama5d4_periph32ck[] = {
++	{ .n = "pioD_clk", .id = 5 },
++	{ .n = "usart0_clk", .id = 6 },
++	{ .n = "usart1_clk", .id = 7 },
++	{ .n = "icm_clk", .id = 9 },
++	{ .n = "aes_clk", .id = 12 },
++	{ .n = "tdes_clk", .id = 14 },
++	{ .n = "sha_clk", .id = 15 },
++	{ .n = "matrix1_clk", .id = 17 },
++	{ .n = "hsmc_clk", .id = 22 },
++	{ .n = "pioA_clk", .id = 23 },
++	{ .n = "pioB_clk", .id = 24 },
++	{ .n = "pioC_clk", .id = 25 },
++	{ .n = "pioE_clk", .id = 26 },
++	{ .n = "uart0_clk", .id = 27 },
++	{ .n = "uart1_clk", .id = 28 },
++	{ .n = "usart2_clk", .id = 29 },
++	{ .n = "usart3_clk", .id = 30 },
++	{ .n = "usart4_clk", .id = 31 },
++	{ .n = "twi0_clk", .id = 32 },
++	{ .n = "twi1_clk", .id = 33 },
++	{ .n = "twi2_clk", .id = 34 },
++	{ .n = "mci0_clk", .id = 35 },
++	{ .n = "mci1_clk", .id = 36 },
++	{ .n = "spi0_clk", .id = 37 },
++	{ .n = "spi1_clk", .id = 38 },
++	{ .n = "spi2_clk", .id = 39 },
++	{ .n = "tcb0_clk", .id = 40 },
++	{ .n = "tcb1_clk", .id = 41 },
++	{ .n = "tcb2_clk", .id = 42 },
++	{ .n = "pwm_clk", .id = 43 },
++	{ .n = "adc_clk", .id = 44 },
++	{ .n = "dbgu_clk", .id = 45 },
++	{ .n = "uhphs_clk", .id = 46 },
++	{ .n = "udphs_clk", .id = 47 },
++	{ .n = "ssc0_clk", .id = 48 },
++	{ .n = "ssc1_clk", .id = 49 },
++	{ .n = "trng_clk", .id = 53 },
++	{ .n = "macb0_clk", .id = 54 },
++	{ .n = "macb1_clk", .id = 55 },
++	{ .n = "fuse_clk", .id = 57 },
++	{ .n = "securam_clk", .id = 59 },
++	{ .n = "smd_clk", .id = 61 },
++	{ .n = "twi3_clk", .id = 62 },
++	{ .n = "catb_clk", .id = 63 },
 +};
 +
 +static const struct {
 +	char *n;
 +	u8 id;
-+} sama5d2_periphck[] = {
-+	{ .n = "dma0_clk",    .id = 6, },
-+	{ .n = "dma1_clk",    .id = 7, },
-+	{ .n = "aes_clk",     .id = 9, },
-+	{ .n = "aesb_clk",    .id = 10, },
-+	{ .n = "sha_clk",     .id = 12, },
-+	{ .n = "mpddr_clk",   .id = 13, },
-+	{ .n = "matrix0_clk", .id = 15, },
-+	{ .n = "sdmmc0_hclk", .id = 31, },
-+	{ .n = "sdmmc1_hclk", .id = 32, },
-+	{ .n = "lcdc_clk",    .id = 45, },
-+	{ .n = "isc_clk",     .id = 46, },
-+	{ .n = "qspi0_clk",   .id = 52, },
-+	{ .n = "qspi1_clk",   .id = 53, },
++} sama5d4_periphck[] = {
++	{ .n = "dma0_clk", .id = 8 },
++	{ .n = "cpkcc_clk", .id = 10 },
++	{ .n = "aesb_clk", .id = 13 },
++	{ .n = "mpddr_clk", .id = 16 },
++	{ .n = "matrix0_clk", .id = 18 },
++	{ .n = "vdec_clk", .id = 19 },
++	{ .n = "dma1_clk", .id = 50 },
++	{ .n = "lcdc_clk", .id = 51 },
++	{ .n = "isi_clk", .id = 52 },
 +};
 +
-+static const struct {
-+	char *n;
-+	u8 id;
-+	struct clk_range r;
-+	bool pll;
-+} sama5d2_gck[] = {
-+	{ .n = "sdmmc0_gclk", .id = 31, },
-+	{ .n = "sdmmc1_gclk", .id = 32, },
-+	{ .n = "tcb0_gclk",   .id = 35, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "tcb1_gclk",   .id = 36, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "pwm_gclk",    .id = 38, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "isc_gclk",    .id = 46, },
-+	{ .n = "pdmic_gclk",  .id = 48, },
-+	{ .n = "i2s0_gclk",   .id = 54, .pll = true },
-+	{ .n = "i2s1_gclk",   .id = 55, .pll = true },
-+	{ .n = "can0_gclk",   .id = 56, .r = { .min = 0, .max = 80000000 }, },
-+	{ .n = "can1_gclk",   .id = 57, .r = { .min = 0, .max = 80000000 }, },
-+	{ .n = "classd_gclk", .id = 59, .r = { .min = 0, .max = 100000000 },
-+	  .pll = true },
-+};
-+
-+static void __init sama5d2_pmc_setup(struct device_node *np)
++static void __init sama5d4_pmc_setup(struct device_node *np)
 +{
 +	struct clk_range range = CLK_RANGE(0, 0);
 +	const char *slck_name, *mainxtal_name;
-+	struct pmc_data *sama5d2_pmc;
-+	const char *parent_names[6];
-+	struct regmap *regmap, *regmap_sfr;
++	struct pmc_data *sama5d4_pmc;
++	const char *parent_names[5];
++	struct regmap *regmap;
 +	struct clk_hw *hw;
 +	unsigned int i;
 +	bool bypass;
@@ -225,11 +208,10 @@ index 000000000000..07f1f1d613ff
 +	if (IS_ERR(regmap))
 +		return;
 +
-+	sama5d2_pmc = pmc_data_allocate(PMC_I2S1_MUX + 1,
-+					nck(sama5d2_systemck),
-+					nck(sama5d2_periph32ck),
-+					nck(sama5d2_gck));
-+	if (!sama5d2_pmc)
++	sama5d4_pmc = pmc_data_allocate(PMC_MCK2 +1,
++					nck(sama5d4_systemck),
++					nck(sama5d4_periph32ck), 0);
++	if (!sama5d4_pmc)
 +		return;
 +
 +	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
@@ -250,8 +232,6 @@ index 000000000000..07f1f1d613ff
 +	if (IS_ERR(hw))
 +		goto err_free;
 +
-+	sama5d2_pmc->chws[PMC_MAIN] = hw;
-+
 +	hw = at91_clk_register_pll(regmap, "pllack", "mainck", 0,
 +				   &sama5d3_pll_layout, &plla_characteristics);
 +	if (IS_ERR(hw))
@@ -261,30 +241,11 @@ index 000000000000..07f1f1d613ff
 +	if (IS_ERR(hw))
 +		goto err_free;
 +
-+	hw = at91_clk_register_audio_pll_frac(regmap, "audiopll_fracck",
-+					      "mainck");
++	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck");
 +	if (IS_ERR(hw))
 +		goto err_free;
 +
-+	hw = at91_clk_register_audio_pll_pad(regmap, "audiopll_padck",
-+					     "audiopll_fracck");
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	hw = at91_clk_register_audio_pll_pmc(regmap, "audiopll_pmcck",
-+					     "audiopll_fracck");
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	regmap_sfr = syscon_regmap_lookup_by_compatible("atmel,sama5d2-sfr");
-+	if (IS_ERR(regmap_sfr))
-+		regmap_sfr = NULL;
-+
-+	hw = at91_clk_register_utmi(regmap, regmap_sfr, "utmick", "mainck");
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	sama5d2_pmc->chws[PMC_UTMI] = hw;
++	sama5d4_pmc->chws[PMC_UTMI] = hw;
 +
 +	parent_names[0] = slck_name;
 +	parent_names[1] = "mainck";
@@ -296,17 +257,23 @@ index 000000000000..07f1f1d613ff
 +	if (IS_ERR(hw))
 +		goto err_free;
 +
-+	sama5d2_pmc->chws[PMC_MCK] = hw;
++	sama5d4_pmc->chws[PMC_MCK] = hw;
 +
 +	hw = at91_clk_register_h32mx(regmap, "h32mxck", "masterck");
 +	if (IS_ERR(hw))
 +		goto err_free;
 +
-+	sama5d2_pmc->chws[PMC_MCK2] = hw;
++	sama5d4_pmc->chws[PMC_MCK2] = hw;
 +
 +	parent_names[0] = "plladivck";
 +	parent_names[1] = "utmick";
 +	hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = "plladivck";
++	parent_names[1] = "utmick";
++	hw = at91sam9x5_clk_register_smd(regmap, "smdclk", parent_names, 2);
 +	if (IS_ERR(hw))
 +		goto err_free;
 +
@@ -327,87 +294,48 @@ index 000000000000..07f1f1d613ff
 +			goto err_free;
 +	}
 +
-+	for (i = 0; i < ARRAY_SIZE(sama5d2_systemck); i++) {
-+		hw = at91_clk_register_system(regmap, sama5d2_systemck[i].n,
-+					      sama5d2_systemck[i].p,
-+					      sama5d2_systemck[i].id);
++	for (i = 0; i < ARRAY_SIZE(sama5d4_systemck); i++) {
++		hw = at91_clk_register_system(regmap, sama5d4_systemck[i].n,
++					      sama5d4_systemck[i].p,
++					      sama5d4_systemck[i].id);
 +		if (IS_ERR(hw))
 +			goto err_free;
 +
-+		sama5d2_pmc->shws[sama5d2_systemck[i].id] = hw;
++		sama5d4_pmc->shws[sama5d4_systemck[i].id] = hw;
 +	}
 +
-+	for (i = 0; i < ARRAY_SIZE(sama5d2_periphck); i++) {
++	for (i = 0; i < ARRAY_SIZE(sama5d4_periphck); i++) {
 +		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
-+							 sama5d2_periphck[i].n,
++							 sama5d4_periphck[i].n,
 +							 "masterck",
-+							 sama5d2_periphck[i].id,
++							 sama5d4_periphck[i].id,
 +							 &range);
 +		if (IS_ERR(hw))
 +			goto err_free;
 +
-+		sama5d2_pmc->phws[sama5d2_periphck[i].id] = hw;
++		sama5d4_pmc->phws[sama5d4_periphck[i].id] = hw;
 +	}
 +
-+	for (i = 0; i < ARRAY_SIZE(sama5d2_periph32ck); i++) {
++	for (i = 0; i < ARRAY_SIZE(sama5d4_periph32ck); i++) {
 +		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
-+							 sama5d2_periph32ck[i].n,
++							 sama5d4_periph32ck[i].n,
 +							 "h32mxck",
-+							 sama5d2_periph32ck[i].id,
-+							 &sama5d2_periph32ck[i].r);
++							 sama5d4_periph32ck[i].id,
++							 &range);
 +		if (IS_ERR(hw))
 +			goto err_free;
 +
-+		sama5d2_pmc->phws[sama5d2_periph32ck[i].id] = hw;
++		sama5d4_pmc->phws[sama5d4_periph32ck[i].id] = hw;
 +	}
 +
-+	parent_names[0] = slck_name;
-+	parent_names[1] = "mainck";
-+	parent_names[2] = "plladivck";
-+	parent_names[3] = "utmick";
-+	parent_names[4] = "mck";
-+	parent_names[5] = "audiopll_pmcck";
-+	for (i = 0; i < ARRAY_SIZE(sama5d2_gck); i++) {
-+		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
-+						 sama5d2_gck[i].n,
-+						 parent_names, 6,
-+						 sama5d2_gck[i].id,
-+						 sama5d2_gck[i].pll,
-+						 &sama5d2_gck[i].r);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		sama5d2_pmc->ghws[sama5d2_gck[i].id] = hw;
-+	}
-+
-+	if (regmap_sfr) {
-+		parent_names[0] = "i2s0_clk";
-+		parent_names[1] = "i2s0_gclk";
-+		hw = at91_clk_i2s_mux_register(regmap_sfr, "i2s0_muxclk",
-+					       parent_names, 2, 0);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		sama5d2_pmc->chws[PMC_I2S0_MUX] = hw;
-+
-+		parent_names[0] = "i2s1_clk";
-+		parent_names[1] = "i2s1_gclk";
-+		hw = at91_clk_i2s_mux_register(regmap_sfr, "i2s1_muxclk",
-+					       parent_names, 2, 1);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		sama5d2_pmc->chws[PMC_I2S1_MUX] = hw;
-+	}
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d2_pmc);
++	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d4_pmc);
 +
 +	return;
 +
 +err_free:
-+	pmc_data_free(sama5d2_pmc);
++	pmc_data_free(sama5d4_pmc);
 +}
-+CLK_OF_DECLARE_DRIVER(sama5d2_pmc, "atmel,sama5d2-pmc", sama5d2_pmc_setup);
++CLK_OF_DECLARE_DRIVER(sama5d4_pmc, "atmel,sama5d4-pmc", sama5d4_pmc_setup);
 -- 
 2.19.1
 
