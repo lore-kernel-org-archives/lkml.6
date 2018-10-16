@@ -2,104 +2,108 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF63C5ACCE
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686C1C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 218BC21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17E642148D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:29:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ucg4eXWI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 218BC21471
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2Gnd7cP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E642148D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbeJQHO4 (ORCPT
+        id S1727243AbeJQHVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:14:56 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:47623 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726936AbeJQHOz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:14:55 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4051022075;
-        Tue, 16 Oct 2018 19:22:09 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 16 Oct 2018 19:22:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:date:from:in-reply-to:message-id
-        :references:subject:to:x-me-proxy:x-me-proxy:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm1; bh=ql0Ah+TZCdzTMcj7O9bwrTPiDqGl9
-        4a7onJeqGv0s8c=; b=Ucg4eXWIKVneU1ZQ5eTwYWJaP1qWett40vq83SUT9gDDs
-        heI0eTSUFEVLDZz1j+JrYvYpegn1CNEDhFW3Fn74VDIs2o0A45he419jvDSwGEB1
-        o74j4SJoKLUgFYiPy8FFffdcUbQZtHJ4mEMcc+gcR2GKSyg94Mcfu/JMcFL1BgYD
-        kXt8sTodTTMm0+dKvA/cp/NkwkhEhEm6yYIU/iagUp0yxWyoLCaDocVQp3ocDUGY
-        YFBpzu0s0BTvhQQxIL+RtFW/MkCYIddvPio7XoO1bcJ1Yzv76cHrSJFqxvsA2fcd
-        4rOCw5Nzn9BrHHiIevLK8q/38B41GiBDRu0zgvDXw==
-X-ME-Sender: <xms:oXLGWx42K-DovwWJYtB5BsD0VOaBxPVOHqCH__9RSOg96h6XJJywGw>
-X-ME-Proxy: <xmx:oXLGW95GHrTkPLB2B1Rr2A-c4a-1idAURKgZeUTB3wQdHVWfy4Simg>
-    <xmx:oXLGW3BwY7I-dFxe24WwLCBNJ55hETE76cM5VdoGfe7Zm4pWq1vd5w>
-    <xmx:oXLGW6Z34q1a6urQlYC8M45Sh1KRUorBnb_EADag-SMYb2Ah_8fkHg>
-    <xmx:oXLGWzcyiiQu8mwMPNX0HAoZHe95duibIaPVLTC3gf6rGGkAjbPsUg>
-    <xmx:oXLGW97bd8VdYJLgtq3YMiI9b_1SVeDBLkTBeHZ5PoB1nFAOKaRcHw>
-    <xmx:oXLGW-xCUXmEWLeVuqetW2rTKgEF6n_uR2AshrloHf2h_IK4hKwo-Q>
-Received: from localhost (ppp121-44-203-227.bras1.syd2.internode.on.net [121.44.203.227])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5D6F5E4074;
-        Tue, 16 Oct 2018 19:22:08 -0400 (EDT)
-From:   "Tobin C. Harding" <tobin@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        linux-kernel@vger.kernel.org, "Tobin C. Harding" <me@tobin.cc>
-Subject: [PATCH 4/7] tty: Fix kernel-doc variable typos
-Date:   Wed, 17 Oct 2018 10:21:27 +1100
-Message-Id: <20181016232130.728-5-tobin@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181016232130.728-1-tobin@kernel.org>
-References: <20181016232130.728-1-tobin@kernel.org>
+        Wed, 17 Oct 2018 03:21:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51058 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727013AbeJQHVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 03:21:54 -0400
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DC87214C3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 23:29:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539732550;
+        bh=0SLkIOp/zYCd2QzIQvQ0DO1pKBnlQ1Qg0e0RXGq3zw0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=U2Gnd7cPeYiXx/r/GiIxyzJLGRFyrgrGeXCN2L1euQnsQjQlDHML+oZCKCDWzjx+A
+         cLqSu7souukbWkDQs9phC27ssY1UM6OGxTZ2VxEpPjcIEm6l8j1LMt4P5GsGOCm5Vl
+         8VssFBLAjulEs6MRHciiuhOBHzUPbTQQAWhG5nKo=
+Received: by mail-wm1-f46.google.com with SMTP id e187-v6so193929wmf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:29:10 -0700 (PDT)
+X-Gm-Message-State: ABuFfoh0GAANUN7kf8ZoognOYUsoJXlPaLyVnQxYFOwCmdbhXgM8Nf+h
+        kNet6ednsUlX+Kd0uArTkESCsFY87GDQQOFBnFg3KQ==
+X-Google-Smtp-Source: ACcGV60SoE9kY2FNHWNvxS5/t8BVsQqrbjgY5yIRmMyFqbBF0V8ogzczkBdY4+9/t4c7TAGCbm1TG4VwXzykDQ97T5s=
+X-Received: by 2002:a1c:9355:: with SMTP id v82-v6mr234944wmd.128.1539732548922;
+ Tue, 16 Oct 2018 16:29:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181016202525.29437-1-bigeasy@linutronix.de> <20181016202525.29437-2-bigeasy@linutronix.de>
+ <CALCETrWB2kH9d5ui5haY3aRTD9SAU=tcdkTMoAzJ5rhLh3mO3w@mail.gmail.com> <20181016213859.ldx34cab7ggm5nm5@linutronix.de>
+In-Reply-To: <20181016213859.ldx34cab7ggm5nm5@linutronix.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 16 Oct 2018 16:28:57 -0700
+X-Gmail-Original-Message-ID: <CALCETrWf_RqcX7_R_0O0nZ9E8voTB4SE8WX=AP6mk2Uid1CxrQ@mail.gmail.com>
+Message-ID: <CALCETrWf_RqcX7_R_0O0nZ9E8voTB4SE8WX=AP6mk2Uid1CxrQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86/mm/pat: Disable preemption around __flush_tlb_all()
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tobin C. Harding" <me@tobin.cc>
+On Tue, Oct 16, 2018 at 2:39 PM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> On 2018-10-16 14:25:07 [-0700], Andy Lutomirski wrote:
+> > > diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+> > > index 51a5a69ecac9f..fe6b21f0a6631 100644
+> > > --- a/arch/x86/mm/pageattr.c
+> > > +++ b/arch/x86/mm/pageattr.c
+> > > @@ -2088,7 +2088,9 @@ void __kernel_map_pages(struct page *page, int numpages, int enable)
+> > >          * We should perform an IPI and flush all tlbs,
+> > >          * but that can deadlock->flush only current cpu:
+> > >          */
+> > > +       preempt_disable();
+> > >         __flush_tlb_all();
+> > > +       preempt_enable();
+> > >
+> >
+> > Depending on your CPU, __flush_tlb_all() is either
+> > __native_flush_tlb_global() or __native_flush_tlb().  Only
+> > __native_flush_tlb() could have any problem with preemption, but it
+> > has a WARN_ON_ONCE(preemptible()); in it.  Can you try to figure out
+> > why that's not firing for you?
+>
+> It is firing, it is the warning that was introduced in commit
+> decab0888e6e (as mention in the commit message; I just noticed it way
+> later because it popped early in the boot log).
+>
+> > I suspect that a better fix would be to put preempt_disable() into
+> > __native_flulsh_tlb(), but I'd still like to understand why the
+> > warning isn't working.
+>
+> __native_flulsh_tlb() just had its preempt_disable() removed in
+> decab0888e6e and __kernel_map_pages() is only called from the debug
+> code. The other caller of __native_flulsh_tlb() seem to hold a lock or
+> run with disabled interrupts.
+>
+> Sebastian
 
-There are a few typos in the kernel-doc variables [descriptions].  Fix
-these by using the correct variable name and adding a description.
 
-Fix kernel-doc variable typos.
+Fair enough.  But can you copy the warning to __flush_tlb_all() so
+it's checked on all systems (but make it VM_WARN_ON_ONCE)?
 
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
----
- drivers/tty/serial/men_z135_uart.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/men_z135_uart.c b/drivers/tty/serial/men_z135_uart.c
-index ef89534dd760..784756139935 100644
---- a/drivers/tty/serial/men_z135_uart.c
-+++ b/drivers/tty/serial/men_z135_uart.c
-@@ -173,7 +173,7 @@ static void men_z135_reg_clr(struct men_z135_port *uart,
- 
- /**
-  * men_z135_handle_modem_status() - Handle change of modem status
-- * @port: The UART port
-+ * @uart: The UART port
-  *
-  * Handle change of modem status register. This is done by reading the "delta"
-  * versions of DCD (Data Carrier Detect) and CTS (Clear To Send).
-@@ -597,7 +597,7 @@ static void men_z135_stop_rx(struct uart_port *port)
- 
- /**
-  * men_z135_enable_ms() - Enable Modem Status
-- * port:
-+ * @port: The UART port
-  *
-  * Enable Modem Status IRQ.
-  */
--- 
-2.17.1
-
+--Andy
