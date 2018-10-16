@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4843C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D22C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91CA62098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:49:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91CA62098A
+	by mail.kernel.org (Postfix) with ESMTP id D5B2620881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:49:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5B2620881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbeJPSis (ORCPT
+        id S1727304AbeJPSjJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 14:38:48 -0400
-Received: from mout.perfora.net ([74.208.4.197]:60191 "EHLO mout.perfora.net"
+        Tue, 16 Oct 2018 14:39:09 -0400
+Received: from mout.perfora.net ([74.208.4.194]:46115 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727075AbeJPSir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 14:38:47 -0400
+        id S1726968AbeJPSjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 14:39:08 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LzIe7-1fYL5j3C3V-014Pxx; Tue, 16 Oct 2018 12:48:07 +0200
+ 0MFrWa-1gP4jd3ndO-00EvqI; Tue, 16 Oct 2018 12:48:04 +0200
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LzIe7-1fYL5j3C3V-014Pxx; Tue, 16 Oct 2018 12:48:07 +0200
+ 0MFrWa-1gP4jd3ndO-00EvqI; Tue, 16 Oct 2018 12:48:04 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -40,27 +40,27 @@ Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Takashi Iwai <tiwai@suse.com>,
         Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform name vs. of_node assignement
-Date:   Tue, 16 Oct 2018 12:47:30 +0200
-Message-Id: <20181016104730.4598-10-marcel@ziswiler.com>
+Subject: [PATCH v2 8/9] ASoC: tegra_sgtl5000: fix device_node refcounting
+Date:   Tue, 16 Oct 2018 12:47:29 +0200
+Message-Id: <20181016104730.4598-9-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181016104730.4598-1-marcel@ziswiler.com>
 References: <20181016104730.4598-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:MIunh8M8gL/uGufQy84VMDRM78SzrUFY0quxDQdowA0Wsci8h+a
- 38ubtDDQBcvaJz9+ceurnZK6HKW9+1Xlv19w6emZe1YA5SU3lW01AKbyETAnabzStDOX0Dh
- a5tV+xrPwQi7Uk/kNDzJDJq2PJro4mjdXM8GmdR6RZ4tpjKYSE0+/N+zQ6vE8tnxfA3ia4C
- Zt9JlDlWQiofVpm5pmW1A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:C3uMcV8zHwI=:3lyw1gJjsmSoDHl2tc44Ea
- nKE3+a8aWKIOFCOYqfNa3a950WF/j9nEi2NE0gjtd0tZuWwaYJ9drKZ1w/4pJ0yiD1U0WBMEW
- 83ZKjeD1UpNeAPRagy6rfwzdndoy+9HoyNuTH5tu9GZidP68uxEl4boql4DTN8c8wK+kwDOME
- GHpMT/ipAn5fq19FwDYHNypxdTIijYRdQ/UwnwQcHhG8cJOjlHwq8dbaYutGtJu6Yqm726Pcz
- U0gX/6qFIDWwc1FqYFkESge6oZpf/mUgWpXqgP0/0U9mrMpLdspSQ3hEG7uBmhucpC5SQXtft
- Mi/ADhNi8OqVu88Vui1/ru2ik4Z8nmolA+SQQA+e9bEZB+WT/ehE+VCm50Ov52YryvjeG7f0K
- 9fKFb0DP1KQhZlJp2BV4SQCFMKxoCAnHbx9BOhqRV+t/YECYYVIlTNcGnGG369NetdOs2VpKi
- Vr0oTxYeRodJ42dEo4m0i7abQVzuzn2Wf11L2a/vwSRV5oUoGLFGXByO1A2gNZydTPF26NH3P
- E/y6541JZrz0+vaOdApWUWhLOxnP9fmS2+Ub4Gdr7x9kyh+IWiWqBE3RQcG9VTMwlM5ZPFQGX
- 2KQTdTkfN+Z+X74vi/FvvlYzqQZ9Ca118B5Kb69sPMv8h/eMXyACgld8l6COUzY/fYECChcd5
- 9hnVG9Kfh1707a9JsCH1UwHq7i8zEhpC1JRPlLmHd803Q/YQMYwqQF37KoIAqPmS74mU=
+X-Provags-ID: V03:K1:7TKYwea7pN/FWXKM2Q9kNjlXDrov0p69mKi9DQOv0CigpMCpmmc
+ kob2L8tHU6iGejBFVZKzaRpmEAjuN0cF3PXJBWzgLRAGFevl/3Yp8BGnpdLdf7pj22J2OEh
+ 5/nhOBF7qtXlGWqFbxQkGqFVNsx/6jo/ABLZSqPP81dNlY+iT+ozXbKt8kYHyln/7W99hyd
+ 2UlkfMUt+qHamyyY7/fsA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:GG2omMcOvbQ=:pA8YgHqtjekhBq7pBHqxoI
+ IhIFE81AouqFaqljSnIM8sdpsVACEXFrkngdFs2Ua6o5zf9XmSh9+WwnSBto/4bjmezMxCp7f
+ bMb6s3hPGZSekx/5+h8PmuI/VF/RCtBic7+I/AGoIi7nKydE2z3IN29QAm4lvEcxOmCUvbaQr
+ CugDw5ncPquW/L/ua8qcUTPSy84k0X76DBw7mP4J02jPZ+awU3fhPtrbjE8OMPBftwff49Mfb
+ YiS7LIAPJGs+tvBYESOIJfqY5OX34ml/5PB/V103HbRLScbHPZrc9HSOBywZquvL6riNQFWgl
+ y/UPdtGG1lItAyPeFIInk6bZQ6zUN5Hy7hfZ8Rz3cLM3BU3RMopsLGOVEL+1DVZR65t86OIev
+ hr7gM8WfAe+A+kHj+7mK5cljZkTDaHOZwiT5o5iqA7xbI/8XgVvXZMgZMX+jKoDIkmSgVAmqf
+ Spi7jhvXH4anVp1KdFptRWdPlFko5+lD26ebgEtfmvM+XS1Qlym+bpbCNyecHypHrVi+z2aXd
+ ZAZwYc2s51/5ra8OZ6EhtRxTzcVkb14icOXI9gioOY8U30GZcAcAl0QAHYnwG4rwzjGv2RIpY
+ EEqPDSlIXjM+N+EZ+qbyxnFHx3IrJUOtOdYhrl+/RaMEPYp/97AhJ5kKs4mZC+Wa1caahfmNi
+ F+g13naxEgQIyGMXAq9nrFbULvTuOEsIwWc0A7UiSkLuaXa1rlpqWBMDF1b2xaaQ7e1g=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -68,14 +68,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-This fixes the following error as seen post commit daecf46ee0e5
-("ASoC: soc-core: use snd_soc_dai_link_component for platform"):
+Similar to the following:
 
-tegra-snd-sgtl5000 sound: ASoC: Both platform name/of_node are set for
- sgtl5000
-tegra-snd-sgtl5000 sound: ASoC: failed to init link sgtl5000
-tegra-snd-sgtl5000 sound: snd_soc_register_card failed (-22)
-tegra-snd-sgtl5000: probe of sound failed with error -22
+commit 4321723648b0 ("ASoC: tegra_alc5632: fix device_node refcounting")
+
+commit 7c5dfd549617 ("ASoC: tegra: fix device_node refcounting")
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -83,25 +80,57 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: New patch
 
- sound/soc/tegra/tegra_sgtl5000.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ sound/soc/tegra/tegra_sgtl5000.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-index 901457da25ec..eb702925cac3 100644
+index 45a4aa9d2a47..901457da25ec 100644
 --- a/sound/soc/tegra/tegra_sgtl5000.c
 +++ b/sound/soc/tegra/tegra_sgtl5000.c
-@@ -168,6 +168,11 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
- 	return 0;
+@@ -149,14 +149,14 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,i2s-controller' missing/invalid\n");
+ 		ret = -EINVAL;
+-		goto err;
++		goto err_put_codec_of_node;
+ 	}
+ 
+ 	tegra_sgtl5000_dai.platform_of_node = tegra_sgtl5000_dai.cpu_of_node;
+ 
+ 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
+ 	if (ret)
+-		goto err;
++		goto err_put_cpu_of_node;
+ 
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+@@ -169,6 +169,13 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
  
  err_fini_utils:
-+	if (tegra_sgtl5000_dai.platform) {
-+		devm_kfree(&pdev->dev, tegra_sgtl5000_dai.platform);
-+		tegra_sgtl5000_dai.platform = NULL;
-+	}
-+
  	tegra_asoc_utils_fini(&machine->util_data);
- err_put_cpu_of_node:
- 	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
++err_put_cpu_of_node:
++	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
++	tegra_sgtl5000_dai.cpu_of_node = NULL;
++	tegra_sgtl5000_dai.platform_of_node = NULL;
++err_put_codec_of_node:
++	of_node_put(tegra_sgtl5000_dai.codec_of_node);
++	tegra_sgtl5000_dai.codec_of_node = NULL;
+ err:
+ 	return ret;
+ }
+@@ -183,6 +190,12 @@ static int tegra_sgtl5000_driver_remove(struct platform_device *pdev)
+ 
+ 	tegra_asoc_utils_fini(&machine->util_data);
+ 
++	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
++	tegra_sgtl5000_dai.cpu_of_node = NULL;
++	tegra_sgtl5000_dai.platform_of_node = NULL;
++	of_node_put(tegra_sgtl5000_dai.codec_of_node);
++	tegra_sgtl5000_dai.codec_of_node = NULL;
++
+ 	return ret;
+ }
+ 
 -- 
 2.14.4
 
