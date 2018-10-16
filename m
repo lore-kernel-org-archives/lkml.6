@@ -1,110 +1,108 @@
 Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=FUZZY_XPILL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D00D8C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 037C7C169D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E3A22083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:43:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3A22083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id CC5362083C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:44:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5362083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeJPRdJ (ORCPT
+        id S1727196AbeJPReT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 13:33:09 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40194 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbeJPRdJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 13:33:09 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 74076260B5F
-Subject: Re: [PATCH] drm/bridge: analogix_dp: Fix misleading indentation
- reported by smatch
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        zain wang <wzz@rock-chips.com>,
-        dri-devel@lists.freedesktop.org, Lin Huang <hl@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Sean Paul <seanpaul@chromium.org>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-References: <20181013111844.22183-1-enric.balletbo@collabora.com>
- <3089039.JAYFEciPKB@avalon>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <2f21f4ab-cd03-3286-084b-24b51502d6ba@collabora.com>
-Date:   Tue, 16 Oct 2018 11:43:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <3089039.JAYFEciPKB@avalon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+        Tue, 16 Oct 2018 13:34:19 -0400
+Received: from shell.v3.sk ([90.176.6.54]:51362 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726968AbeJPReT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 13:34:19 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id C5930BD785;
+        Tue, 16 Oct 2018 11:44:39 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id W7TXrftDPv7G; Tue, 16 Oct 2018 11:44:36 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 9F64ABD788;
+        Tue, 16 Oct 2018 11:44:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 2uAriDGphmVQ; Tue, 16 Oct 2018 11:44:36 +0200 (CEST)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id B465FBD785;
+        Tue, 16 Oct 2018 11:44:35 +0200 (CEST)
+Message-ID: <c4edf9b09e88cd265a0829644aa962c28cbc3d51.camel@v3.sk>
+Subject: Re: [PATCH v2 0/8] OLPC 1.75 Keyboard/Touchpad fixes
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Date:   Tue, 16 Oct 2018 11:44:34 +0200
+In-Reply-To: <20181015195612.GB29649@amd>
+References: <20181010142504.233467-1-lkundrak@v3.sk>
+         <20181015195612.GB29649@amd>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ho Laurent,
+Hello Pavel,
 
-On 16/10/18 01:11, Laurent Pinchart wrote:
-> Hi Enric,
+On Mon, 2018-10-15 at 21:56 +0200, Pavel Machek wrote:
+> Hi!
 > 
-> Thank you for the patch.
+> > This makes keyboard/touchpad work on a DT MMP2 platform.
+> > 
+> > I believe that it would be a good idea if this, once reviewed, went
+> > in
+> > via the input tree. The DT and CLK parts got reviews/acks.
+> > 
+> > Changes from v1:
+> > - Basically none, just re-send, including Ack and Review tags in
+> > patches
+> >   that received them. Plus an extra Cc.
+> >   I'd be very thankful for reviews.
 > 
-> On Saturday, 13 October 2018 14:18:44 EEST Enric Balletbo i Serra wrote:
->> This patch avoids that building the bridge/analogix source code with
->> smatch triggers complaints about inconsistent indenting.
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
->>
->>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c index
->> d68986cea132..75e2649d7515 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -1219,12 +1219,12 @@ static int analogix_dp_bridge_attach(struct
->> drm_bridge *bridge) * plat_data->attch return, that's why we record the
->> connector
->>  	 * point after plat attached.
->>  	 */
->> -	 if (dp->plat_data->attach) {
->> -		 ret = dp->plat_data->attach(dp->plat_data, bridge, connector);
->> -		 if (ret) {
->> -			 DRM_ERROR("Failed at platform attch func\n");
->> -			 return ret;
->> -		 }
->> +	if (dp->plat_data->attach) {
->> +		ret = dp->plat_data->attach(dp->plat_data, bridge, connector);
->> +		if (ret) {
->> +			DRM_ERROR("Failed at platform attch func\n");
->> +			return ret;
->> +		}
->>  	}
-> 
-> This looks good to me. While at it, could you s/attch/attach/ ? With that 
-> fixed,
+> Ok, I believe I have OLPC 1.75, and it is actually a nice
+> machine. Can I get recent kernel working there in useful fashion? (Is
+> there docs somewhere)?
 
-Sure, will do now, just preparing v2.
+A lovely machine indeed. I've written this now:
+
+https://github.com/hackerspace/olpc-xo175-linux/wiki/How-to-run-an-up-to-date-Linux-on-a-XO-1.75
+
+I didn't test it yet -- will do when I get home in the evening. But
+chances are it's good enough and I guess you'd be able to get it
+working even if I messed up some details.
+
+Please let me know if it works for you -- I'm having trouble getting
+reviews/acks/tested-bys for the XO-1.75 patch sets [1] and will be
+super thankful if I get some feedback from you.
+
+[1] https://lore.kernel.org/patchwork/bundle/lkundrak/OLPC%20XO%201.75/
 
 > 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
->>  	if (dp->plat_data->panel) {
-> 
+> Thanks,
+> 									
+> Pavel
+
+Cheers,
+Lubo
+
