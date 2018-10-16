@@ -2,85 +2,81 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24639C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3228C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCD6C208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:43:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCD6C208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id A51982098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:43:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y3mCUtfx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A51982098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbeJPTdh (ORCPT
+        id S1727157AbeJPTdx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 15:33:37 -0400
-Received: from smtprelay0010.hostedemail.com ([216.40.44.10]:49115 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726760AbeJPTdh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 15:33:37 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 42C84837F27F;
-        Tue, 16 Oct 2018 11:43:32 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: sheet99_1ec7ac17dd41e
-X-Filterd-Recvd-Size: 1963
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 16 Oct 2018 11:43:31 +0000 (UTC)
-Message-ID: <249981aa5af26de07565946fbe806e3c01f26c07.camel@perches.com>
-Subject: Re: patch "staging: MAINTAINERS: remove obsolete IPX staging
- directory" added to staging-testing
-From:   Joe Perches <joe@perches.com>
-To:     gregkh@linuxfoundation.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Date:   Tue, 16 Oct 2018 04:43:30 -0700
-In-Reply-To: <15396867728666@kroah.com>
-References: <15396867728666@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 16 Oct 2018 15:33:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726760AbeJPTdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 15:33:53 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEC24208B3;
+        Tue, 16 Oct 2018 11:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539690229;
+        bh=aCKFQRfoa45UVON+WZ3xtwI1Qtf5Uqlv/SX0ePEVqdM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=y3mCUtfxPsCPpEEkxa6S71N257DRaYfZdtoYT0yHG1Q12ToffXO1QUMuH1l1SX1OA
+         umRNdvLr6/PCQXJjKMKIvKB/uHV62ZwUuC9h8OLjQqbUrGWvPfwDZk8twKF9b9sInz
+         qoW3944Nm7fTPVv5gD7EzzHdIeod5/lcKOa/k7VI=
+Date:   Tue, 16 Oct 2018 13:43:47 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jani Nikula <jani.nikula@intel.com>
+Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 1/2] sysfs: constify sysfs create/remove files harder
+Message-ID: <20181016114347.GA21790@kroah.com>
+References: <20181004143750.30880-1-jani.nikula@intel.com>
+ <20181016104845.GB4768@kroah.com>
+ <87pnwakto2.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87pnwakto2.fsf@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-16 at 12:46 +0200, gregkh@linuxfoundation.org wrote:
-> This is a note to let you know that I've just added the patch titled
+On Tue, Oct 16, 2018 at 02:38:53PM +0300, Jani Nikula wrote:
+> On Tue, 16 Oct 2018, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > On Thu, Oct 04, 2018 at 05:37:49PM +0300, Jani Nikula wrote:
+> >> Let the passed in array be const (and thus placed in rodata) instead of
+> >> a mutable array of const pointers.
+> >> 
+> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> >> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+> >> ---
+> >>  fs/sysfs/file.c       | 4 ++--
+> >>  include/linux/sysfs.h | 8 ++++----
+> >>  2 files changed, 6 insertions(+), 6 deletions(-)
+> >
+> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > 
->     staging: MAINTAINERS: remove obsolete IPX staging directoryts
-[]
-> From dd71c89b2c1ae049d2018107e9d7a41261db3f7b Mon Sep 17 00:00:00 2001
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Date: Tue, 16 Oct 2018 12:45:13 +0200
-> Subject: staging: MAINTAINERS: remove obsolete IPX staging directory
-> 
-> The IPX code was removed from staging back in November 2017, but the
-> MAINTAINERS entry stuck around.  Remove the invalid directory from the
-> file as it does not actually point to anything anymore.
+> Thanks; who should pick them up?
 
-As the uapi ipx file still exists but the functionality
-has been removed, perhaps some compiler message like
+I could pick the first one up, but as you need this for a drm patch,
+both should probably go through that tree, right?
 
-#pragma message "IPX functionality removed as of linux kernel v4.18"
+thanks,
 
-should be added to the uapi file.
-
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> []
-> @@ -7672,7 +7672,6 @@ IPX NETWORK LAYER
->  L:	netdev@vger.kernel.org
->  S:	Obsolete
->  F:	include/uapi/linux/ipx.h
-> -F:	drivers/staging/ipx/
->  
->  IRQ DOMAINS (IRQ NUMBER MAPPING LIBRARY)
->  M:	Marc Zyngier <marc.zyngier@arm.com>
-
+greg k-h
