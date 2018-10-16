@@ -2,177 +2,190 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 010C9C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D02D2C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B792121476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:52:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A71C2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:54:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sv7Nv9J1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B792121476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="NIXsMjoh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A71C2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbeJQBnm (ORCPT
+        id S1727331AbeJQBpn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:43:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbeJQBnm (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:43:42 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3DC92148C;
-        Tue, 16 Oct 2018 17:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539712327;
-        bh=f5eoZr7ehDovQTYj6F++VTDr1i78US87L8dFxUsF+3Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sv7Nv9J1gMI4FGoUJEqGRRAvhdPzPqB8CgYw+6aQFdvBypcpBkSJMDc6JSaxPk/I9
-         7MNRmHxm9ZynuoPI3JJ6I/YAgLQJuLiIEWuf5gE/WxEjEXvBfXD83tgKyU85fIpm5D
-         FRM+bWGZrDRn/OlJGyFORpeeFvO3BK8BAS8TwwYI=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id BB921142C5E; Tue, 16 Oct 2018 14:52:04 -0300 (-03)
-Date:   Tue, 16 Oct 2018 14:52:04 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Milian Wolff <milian.wolff@kdab.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: Re: [PATCH 3/3] perf report: don't crash on invalid inline debug
- information
-Message-ID: <20181016175204.GF3849@kernel.org>
-References: <20180926135207.30263-1-milian.wolff@kdab.com>
- <1768601.Weh5pZyhPy@agathebauer>
- <20181011193920.GA393@kernel.org>
- <4772069.7eSvdiorvC@agathebauer>
- <20181016174923.GE3849@kernel.org>
+        Tue, 16 Oct 2018 21:45:43 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41630 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727032AbeJQBpn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:45:43 -0400
+Received: by mail-qt1-f195.google.com with SMTP id l41-v6so26760827qtl.8
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 10:54:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=6jbX9SMoH/ZlXoUdvLHsqUIWxy8e5wiSEb1rP1JCA9g=;
+        b=NIXsMjohFTQEMNZtOCfH/UbjhvOg/QFKwCKF7BsaroFbJj5URU99eenmxwWbihOC9m
+         GS65n0eP/2pyNClC6Av2NlMzmbysSQ24vlnkzYsv1W/nfsFWCwBtHcWkgFH2fU6nI/e8
+         4tG1+gFpr8qD7p6/ol7PDr3pUtBKEf/FBeNcI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=6jbX9SMoH/ZlXoUdvLHsqUIWxy8e5wiSEb1rP1JCA9g=;
+        b=FHO88Qxmmw9f+pTClb06SUGSqNsNJNSIDBWiAWJJGacGtqdDXB/uzlpB9ODEx0S7Dz
+         hDOjPGBqlriZfsIzoISul3b0Msy10xS/ElJqFayy4WEOrJY5ST+M4RSHcxu+h9gXpgTE
+         Qrdco4RR9pLxLDjEsX6cfrDla/yzG2K876mJBdevaPXlBqv1KbgLLgC0vFTEH2xkNltJ
+         dT5a8mzgt35GmHGtSNe9LbhAOlbSpWJdJ4UjudrFK8D1SwyXFN8CPKdNgQeaKgGeDyMZ
+         wR3zXxBHFH5sH+KMEry0pcrpal+3rJW300m71MbuDmJyyGQGfwO2Mw/W2uv2tM6UFWpl
+         wyMg==
+X-Gm-Message-State: ABuFfog4yzdIBnGzBocQ73umiaV/3FXjLFXFE8fodt7yloR+2s8F6CJE
+        qB95prvCS6wfQORmhjWNzJZVF3NVaScQAsZo9O3fEQ==
+X-Google-Smtp-Source: ACcGV60FLBktLtcAkUA0E5IqCykG4QT/ssNoV56Yn+SV8+8FXCgjMSTzNJlJmePvqH2noDm8Qm4ez10gW58C8j4lA3w=
+X-Received: by 2002:a05:6214:188:: with SMTP id q8mr10050688qvr.227.1539712447987;
+ Tue, 16 Oct 2018 10:54:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016174923.GE3849@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20181015170529.dgzpbm37hbuvqatc@smtp.gmail.com>
+ <57b40f9f-24d2-27de-4895-5a76ff267643@linux.intel.com> <20181016163831.GA31561@phenom.ffwll.local>
+ <20181016172803.GH9144@intel.com>
+In-Reply-To: <20181016172803.GH9144@intel.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Tue, 16 Oct 2018 19:53:56 +0200
+Message-ID: <CAKMK7uEYM2nfPV5NmcxD12oVEWLmTd0-4Ox+A570SGRVULFAmw@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/drm_vblank: Change EINVAL by the correct errno
+To:     "Syrjala, Ville" <ville.syrjala@linux.intel.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <sean@poorly.run>, Dave Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Oct 16, 2018 at 02:49:23PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Mon, Oct 15, 2018 at 10:51:36PM +0200, Milian Wolff escreveu:
-> > On Donnerstag, 11. Oktober 2018 21:39:20 CEST Arnaldo Carvalho de Melo wrote:
-> > > Em Thu, Oct 11, 2018 at 08:23:31PM +0200, Milian Wolff escreveu:
-> > > > On Donnerstag, 27. September 2018 21:10:37 CEST Arnaldo Carvalho de Melo
-> > > > 
-> > > > wrote:
-> > > > > Em Wed, Sep 26, 2018 at 03:52:07PM +0200, Milian Wolff escreveu:
-> > > > > > When the function name for an inline frame is invalid, we must
-> > > > > > not try to demangle this symbol, otherwise we crash with:
-> > > > > > 
-> > > > > > #0  0x0000555555895c01 in bfd_demangle ()
-> > > > > > #1  0x0000555555823262 in demangle_sym (dso=0x555555d92b90,
-> > > > > > elf_name=0x0,
-> > > > > > kmodule=0) at util/symbol-elf.c:215 #2  dso__demangle_sym
-> > > > > > (dso=dso@entry=0x555555d92b90, kmodule=<optimized out>,
-> > > > > > kmodule@entry=0,
-> > > > > > elf_name=elf_name@entry=0x0) at util/symbol-elf.c:400 #3
-> > > > > > 0x00005555557fef4b in new_inline_sym (funcname=0x0,
-> > > > > > base_sym=0x555555d92b90, dso=0x555555d92b90) at util/srcline.c:89 #4
-> > > > > > inline_list__append_dso_a2l (dso=dso@entry=0x555555c7bb00,
-> > > > > > node=node@entry=0x555555e31810, sym=sym@entry=0x555555d92b90) at
-> > > > > > util/srcline.c:264 #5  0x00005555557ff27f in addr2line
-> > > > > > (dso_name=dso_name@entry=0x555555d92430
-> > > > > > "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fc
-> > > > > > e5/
-> > > > > > elf", addr=addr@entry=2888, file=file@entry=0x0,>
-> > > > > > 
-> > > > > >     line=line@entry=0x0, dso=dso@entry=0x555555c7bb00,
-> > > > > >     unwind_inlines=unwind_inlines@entry=true, node=0x555555e31810,
-> > > > > >     sym=0x555555d92b90) at util/srcline.c:313>
-> > > > > > 
-> > > > > > #6  0x00005555557ffe7c in addr2inlines (sym=0x555555d92b90,
-> > > > > > dso=0x555555c7bb00, addr=2888, dso_name=0x555555d92430
-> > > > > > "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fc
-> > > > > > e5/
-> > > > > > elf")>
-> > > > > > 
-> > > > > >     at util/srcline.c:358
-> > > > > > 
-> > > > > > So instead handle the case where we get invalid function names
-> > > > > > for inlined frames and use a fallback '??' function name instead.
-> > > > > > 
-> > > > > > While this crash was originally reported by Hadrien for rust code,
-> > > > > > I can now also reproduce it with trivial C++ code. Indeed, it seems
-> > > > > > like libbfd fails to interpret the debug information for the inline
-> > > > > > frame symbol name:
-> > > > > > 
-> > > > > > $ addr2line -e
-> > > > > > /home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce
-> > > > > > 5/e
-> > > > > > lf -if b48 main
-> > > > > > /usr/include/c++/8.2.1/complex:610
-> > > > > > ??
-> > > > > > /usr/include/c++/8.2.1/complex:618
-> > > > > > ??
-> > > > > > /usr/include/c++/8.2.1/complex:675
-> > > > > > ??
-> > > > > > /usr/include/c++/8.2.1/complex:685
-> > > > > > main
-> > > > > > /home/milian/projects/kdab/rnd/hotspot/tests/test-clients/cpp-inlining
-> > > > > > /mai
-> > > > > > n.cpp:39
-> > > > > > 
-> > > > > > I've reported this bug upstream and also attached a patch there
-> > > > > > which should fix this issue:
-> > > > > > https://sourceware.org/bugzilla/show_bug.cgi?id=23715
-> > > > > 
-> > > > > Millian, what about this one, which is the cset it is fixing?
-> > > > 
-> > > > Hey Arnaldo,
-> > > > 
-> > > > just noticed this email and that the corresponding patch hasn't landed in
-> > > > perf/core yet. The patch set which introduced this is a64489c56c307 ("perf
-> > > > report: Find the inline stack for a given address"). Note that the code
-> > > > was
-> > > > introduced by this patch, but then subsequently touched and moved by
-> > > > follow up patches. So, is this the patch you want to see referenced?
-> > > > Otherwise, the latest patch which gets fixed is afaik: 7285cf3325b4a
-> > > > ("perf srcline: Show correct function name for srcline of callchains").
-> > > > 
-> > > > Can you please pick either of these patches and amend the commit message
-> > > > of my patch and push it to perf/urgent and perf/core?
-> > > 
-> > > I'll reread all this later or tomorrow and continue, going AFK now.
-> > 
-> > Ping?
-> 
-> Applied, seems simple enough, makes this code a bit more robust.
-> 
-> With regards to the cset where the problem originally was introduced,
-> i.e. not checking if a2l->funcname was NULL before either passing it to
-> strdup() or all the way to bfd_demangle(), that would cause the crash in
-> either place, I think this is the cset:
-> 
->   commit a64489c56c307bf0955f0489158c5ecf6aa10fe2
->   Author: Jin Yao <yao.jin@linux.intel.com>
->   Date:   Sun Mar 26 04:34:26 2017 +0800
-> 
->       perf report: Find the inline stack for a given address
-> 
->> Agreed?
+On Tue, Oct 16, 2018 at 7:28 PM Ville Syrj=C3=A4l=C3=A4
+<ville.syrjala@linux.intel.com> wrote:
+>
+> On Tue, Oct 16, 2018 at 06:38:31PM +0200, Daniel Vetter wrote:
+> > On Tue, Oct 16, 2018 at 03:36:20PM +0200, Maarten Lankhorst wrote:
+> > > Op 15-10-18 om 19:05 schreef Rodrigo Siqueira:
+> > > > For historical reason, the function drm_wait_vblank_ioctl always re=
+turn
+> > > > -EINVAL if something gets wrong. This scenario limits the flexibili=
+ty
+> > > > for the userspace make detailed verification of the problem and tak=
+e
+> > > > some action. In particular, the validation of =E2=80=9Cif (!dev->ir=
+q_enabled)=E2=80=9D
+> > > > in the drm_wait_vblank_ioctl is responsible for checking if the dri=
+ver
+> > > > support vblank or not. If the driver does not support VBlank, the
+> > > > function drm_wait_vblank_ioctl returns EINVAL which does not repres=
+ent
+> > > > the real issue; this patch changes this behavior by return EOPNOTSU=
+PP.
+> > > > Additionally, some operations are unsupported by this function, and
+> > > > returns EINVAL; this patch also changes the return value to EOPNOTS=
+UPP
+> > > > in this case. Lastly, the function drm_wait_vblank_ioctl is invoked=
+ by
+> > > > libdrm, which is used by many compositors; because of this, it is
+> > > > important to check if this change breaks any compositor. In this se=
+nse,
+> > > > the following projects were examined:
+> > > >
+> > > > * Drm-hwcomposer
+> > > > * Kwin
+> > > > * Sway
+> > > > * Wlroots
+> > > > * Wayland-core
+> > > > * Weston
+> > > > * Xorg (67 different drivers)
+> > > >
+> > > > For each repository the verification happened in three steps:
+> > > >
+> > > > * Update the main branch
+> > > > * Look for any occurrence "drmWaitVBlank" with the command:
+> > > >   git grep -n "drmWaitVBlank"
+> > > > * Look in the git history of the project with the command:
+> > > >   git log -SdrmWaitVBlank
+> > > >
+> > > > Finally, none of the above projects validate the use of EINVAL whic=
+h
+> > > > make safe, at least for these projects, to change the return values=
+.
+> > > >
+> > > > Change since V1:
+> > > >  Daniel Vetter and Chris Wilson
+> > > >  - Replace ENOTTY by EOPNOTSUPP
+> > > >  - Return EINVAL if the parameters are wrong
+> > > >
+> > > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> > > > ---
+> > > >  drivers/gpu/drm/drm_vblank.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vbl=
+ank.c
+> > > > index 98e091175921..80f5a3bb427e 100644
+> > > > --- a/drivers/gpu/drm/drm_vblank.c
+> > > > +++ b/drivers/gpu/drm/drm_vblank.c
+> > > > @@ -1533,10 +1533,10 @@ int drm_wait_vblank_ioctl(struct drm_device=
+ *dev, void *data,
+> > > >   unsigned int flags, pipe, high_pipe;
+> > > >
+> > > >   if (!dev->irq_enabled)
+> > > > -         return -EINVAL;
+> > > > +         return -EOPNOTSUPP;
+> > > Change to -EIO?
+> > >
+> > > If userspace would ever print this out, it would print the following
+> > > confusing message to userspace:
+> > > "Operation not supported on transport endpoint"
+> >
+> > You're a bit late, EOPNOTSUPP is not established already in upstream fo=
+r
+> > this. And -EIO is taken already for "the gpu is dead".
+> >
+> > > >
+> > > >   if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+> > > > -         return -EINVAL;
+> > > > +         return -EOPNOTSUPP;
+> > > I would keep this -EINVAL, tbh and making it part of the below if sta=
+tement..
+> >
+> > We discussed this, it's different: This here is an ioctl flag that's no
+> > longer supported, the below is just an invalid request. Hence different
+> > errno.
+> >
+> > I think you missed a bit with your bikeshed :-)
+>
+> I think I too agree with the -EINVAL here as this flag is never
+> supported, whereas -EOPNOTSUPP seems to mean "this flag is still
+> valid, but not supported by your current hardware/driver
+> configuration".
 
-But I'm not sure this will be worth for doing backports, as before
-applying this patch a series of other patches touching this code would
-have to be applied :-\
+Michel D=C3=A4nzer claims this was support way back in 2.6.29 or so :-)
 
-I can leave it there, so that we know when the problem was introduced,
-i.e. I _guess_ that if this rust or C++ reproducers would be used with
-perf built with a64489c56c307bf0955f0489158c5ecf6aa10fe2 as head, we
-would see a crash as well.
+> Also drm_invalid_op() uses -EINVAL for deprecated features as well.
 
-- Arnaldo
+Should probably adjust that too. The entire EOPNOTSUPP color choice is
+very brand new ...
+-Daniel
+--=20
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
