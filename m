@@ -2,139 +2,223 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE11C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F32C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FE27208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:59:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FE27208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id F14182089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:00:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0x5PSgM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F14182089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbeJPVud (ORCPT
+        id S1727219AbeJPVvd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:50:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39964 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727184AbeJPVud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 17:50:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F23DBADF2;
-        Tue, 16 Oct 2018 13:59:54 +0000 (UTC)
-Subject: Re: [PATCH v2] mm: don't warn about large allocations for slab
-To:     Dmitry Vyukov <dvyukov@gmail.com>, cl@linux.com,
-        penberg@kernel.org, akpm@linux-foundation.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com
-Cc:     Dmitry Vyukov <dvyukov@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20180927171502.226522-1-dvyukov@gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
+        Tue, 16 Oct 2018 17:51:33 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:32916 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbeJPVvc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 17:51:32 -0400
+Received: by mail-ed1-f65.google.com with SMTP id l14-v6so12453615edq.0;
+        Tue, 16 Oct 2018 07:00:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Os08TZtRIQQk5XJNkJ906/VCHb2GgmVLiq2u3CX0KWI=;
+        b=m0x5PSgMo3ZtDTCYDv5a+w7eJk/eGouug4g4ycVrGru97ZAbp5bIdLvcCGYcBK5sHN
+         tttptxcmF870jaTTgCtYXnsVJudiy2voP41R82Zaey7vjcmcw8smICBeykYp4pO4v8cC
+         NxO1hu1LkmXbZ0wfYzOKKmujSsaaX1vNvpkkO4327AIlFVrTFSIejhmags09kN74nG/u
+         0C/pnxSNj+YxAWB/oE1YBIdkyXEbHVI5zV5zVqgO2MYtKtQuof6zCtR+aJbOjaMgKiG4
+         O9JTt3bzQVZuTpsd694Keur1vfP8gqdOehEody3zStcNYMADiwKO7+rH2OzofLkAUY1S
+         NMZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Os08TZtRIQQk5XJNkJ906/VCHb2GgmVLiq2u3CX0KWI=;
+        b=qo/+E+AoFw0Xey1X1iQbR7Z27yv4NlchUtEB9p1fpNpGyEkKYQWzLAdCE7e5A2zgdw
+         lkoBNvkwQOaXLGvppAuPoUDfPL35TcmwC6cGGZgBFW0TrRL20AvYKh6PJB9uYat5aTuk
+         mZn4HwlHWq0v5K3mrmYrUXtQoq7hYtxPMjgJebBRnM29WX35R6xHu7qcOnVMY11Q4Xyc
+         BY50E6yEh1/YotlwEyUyVwLDN0WyghQx8DHa9wPhxZHk3mX1RN5c8+HQ7KnPcAMjf2DH
+         llfEI6wpbQuqEpl3WqLsSlbO4az9s3BWdrwysBmHBjJJ7IOyUsS7Ojb736/MRteroB1N
+         SVQw==
+X-Gm-Message-State: ABuFfogATwUP85bWWCkGJjlu/7CS/FzVo/HjGkYxt7QzVeIxxlzi1jgH
+        7o55b6kBY4L0vODz1IjbWWw=
+X-Google-Smtp-Source: ACcGV62cuxolFyFEFkxl86XJPH+h6bFNn0P6O7jKMfAoIwqGVlKO+j2kZVQ0NXmPusiuapQH7AKw3Q==
+X-Received: by 2002:a50:b2a6:: with SMTP id p35-v6mr30555649edd.261.1539698453513;
+        Tue, 16 Oct 2018 07:00:53 -0700 (PDT)
+Received: from ziggy.stardust ([93.176.144.101])
+        by smtp.gmail.com with ESMTPSA id i6-v6sm2858946eja.63.2018.10.16.07.00.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Oct 2018 07:00:52 -0700 (PDT)
+Subject: Re: [PATCH 5/5] pinctrl: mediatek: Add initial pinctrl driver for
+ MT6797 SoC
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     sean.wang@mediatek.com, linus.walleij@linaro.org,
+        robh+dt@kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org,
+        Mars Cheng <mars.cheng@mediatek.com>
+References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
+ <20181008191411.32555-6-manivannan.sadhasivam@linaro.org>
+ <c8d65395-c60c-5d06-92ad-c389642c22ba@gmail.com>
+ <20181011164429.GA18174@Mani-XPS-13-9360>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <12881182-2459-910a-8f3a-04b3e85f08b6@suse.cz>
-Date:   Tue, 16 Oct 2018 15:59:52 +0200
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <e7abee72-23a3-4716-baf0-484514bbb019@gmail.com>
+Date:   Tue, 16 Oct 2018 15:58:41 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180927171502.226522-1-dvyukov@gmail.com>
+In-Reply-To: <20181011164429.GA18174@Mani-XPS-13-9360>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/27/18 7:15 PM, Dmitry Vyukov wrote:
-> From: Dmitry Vyukov <dvyukov@google.com>
-> 
-> Slub does not call kmalloc_slab() for sizes > KMALLOC_MAX_CACHE_SIZE,
-> instead it falls back to kmalloc_large().
-> For slab KMALLOC_MAX_CACHE_SIZE == KMALLOC_MAX_SIZE and it calls
-> kmalloc_slab() for all allocations relying on NULL return value
-> for over-sized allocations.
-> This inconsistency leads to unwanted warnings from kmalloc_slab()
-> for over-sized allocations for slab. Returning NULL for failed
-> allocations is the expected behavior.
-> 
-> Make slub and slab code consistent by checking size >
-> KMALLOC_MAX_CACHE_SIZE in slab before calling kmalloc_slab().
-> 
-> While we are here also fix the check in kmalloc_slab().
-> We should check against KMALLOC_MAX_CACHE_SIZE rather than
-> KMALLOC_MAX_SIZE. It all kinda worked because for slab the
-> constants are the same, and slub always checks the size against
-> KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().
-> But if we get there with size > KMALLOC_MAX_CACHE_SIZE anyhow
-> bad things will happen. For example, in case of a newly introduced
-> bug in slub code.
-> 
-> Also move the check in kmalloc_slab() from function entry
-> to the size > 192 case. This partially compensates for the additional
-> check in slab code and makes slub code a bit faster
-> (at least theoretically).
-> 
-> Also drop __GFP_NOWARN in the warning check.
-> This warning means a bug in slab code itself,
-> user-passed flags have nothing to do with it.
-> 
-> Nothing of this affects slob.
-> 
-> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
-> Reported-by: syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com
-> Reported-by: syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com
-> Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
-> Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+On 11/10/2018 18:44, Manivannan Sadhasivam wrote:
+> On Thu, Oct 11, 2018 at 05:50:19PM +0200, Matthias Brugger wrote:
+>>
+>>
+>> On 08/10/2018 21:14, Manivannan Sadhasivam wrote:
+>>> Add initial pinctrl driver for Mediatek MT6797 SoC supporting only
+>>> GPIO and pinmux configurations.
+>>>
+>>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>>> ---
+>>>  drivers/pinctrl/mediatek/Kconfig              |    7 +
+>>>  drivers/pinctrl/mediatek/Makefile             |    1 +
+>>>  drivers/pinctrl/mediatek/pinctrl-mt6797.c     |   82 +
+>>>  drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h | 2430 +++++++++++++++++
+>>>  4 files changed, 2520 insertions(+)
+>>>  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6797.c
+>>>  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+>>>
+>> [...]
+>>> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h b/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+>>> new file mode 100644
+>>> index 000000000000..8949d2a15c39
+>>> --- /dev/null
+>>> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+>>> @@ -0,0 +1,2430 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +/*
+>>> + * Based on pinctrl-mtk-mt6765.h
+>>> + *
+>>> + * Copyright (C) 2018 MediaTek Inc.
+>>> + *
+>>> + * Author: ZH Chen <zh.chen@mediatek.com>
+>>> + *
+>>> + * Copyright (c) 2018 Manivannan Sadhasivam
+>>> + */
+>>> +
+>>> +#ifndef __PINCTRL_MTK_MT6797_H
+>>> +#define __PINCTRL_MTK_MT6797_H
+>>> +
+>>> +#include "pinctrl-paris.h"
+>>> +
+>>> +static const struct mtk_pin_desc mtk_pins_mt6797[] = {
+>>> +	MTK_PIN(
+>>> +		0, "GPIO0",
+>>> +		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
+>>> +		DRV_GRP3,
+>>
+>> As far as I have seen, you put all pins in driving group 3, but from the public
+>> available "Functional Specification" (page 51-81) I can see that there exist
+>> several driving groups:
+>> 2/4/6/8 mA (DRV_GRP3)
+>> 4/8/12/16 mA (not sure which group this is)
+>> 2/4/6/8/10/12/14/16 mA (DRV_GRP4).
+>>
+> 
+> Not sure about that. But I derived the configuration from DRV_CFGx
+> registers available in "Application Software Register Table - Part 1"
+> from page no: 906.
+> 
+> This register supports 2/4/6/8mA and this belongs to DRV_GRP2/DRV_GRP3
+> [1].
+
+I can see other driving groups as defined in the "Functional Specification" [1]
+which gets also reflected in the "Application Software Register Table - Part 1"
+[2], see for example page 852.
+
+CCing Mars, maybe he can help to clarify.
+
+Regards,
+Matthias
+
+[1]
+https://www.96boards.org/documentation/consumer/mediatekx20/additional-docs/docs/MT6797_Functional_Specification_V1_0.pdf
+[2]
+https://www.96boards.org/documentation/consumer/mediatekx20/additional-docs/docs/MT6797_Register_Table_Part_1.pdf
+
+> 
+> Still I'm not fully confident of my choice here. Maybe Sean can throw
+> some inputs!
+> 
+> Thanks,
+> Mani
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c#n40
+> 
+>> Regards,
+>> Matthias
+>>
