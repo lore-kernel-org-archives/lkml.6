@@ -7,53 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73799C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBB4C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC3421470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38DD221470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMSssJQq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC3421470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXX1QZJR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DD221470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730513AbeJPMF3 (ORCPT
+        id S1730526AbeJPMFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:05:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54694 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:05:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730439AbeJPMF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:05:28 -0400
+        id S1729665AbeJPMFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:05:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4353A20866;
-        Tue, 16 Oct 2018 04:17:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3892214AB;
+        Tue, 16 Oct 2018 04:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663424;
-        bh=kb1GE91htJ4I3ZwcxFRxtQybNQJW4EiHwvg60ro4lcc=;
+        s=default; t=1539663426;
+        bh=XcOCs41tCvc2tjvkw/xlAZMB4/vxqk0hz5f/T2V759k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oMSssJQqNgRBjtZRH0nSUKRHYErl9BMF8g/Y/wRZAq2VRR2rOTsoyrlmXTRKQlBzv
-         8YYbR9rQY+sLAga51mpxJ2X3dxukAlul5T07D6QqlD7Sa08lBhogKO+nXeZPIlxbnz
-         3S1+LQLefzAKosOHwcUqW1v6r2iiG2g2OpBd1xDo=
+        b=nXX1QZJRolVba2v/Djj1gdkI7igxOpmGXrJCecc1kVsJV9Gqb2wjOQmPVALwqP4t9
+         qXQ7O9BIA56FqB+daLsKhUMJW8XtcWAatkg557WRWNidMfAs6HWoL93Ff4kFMsTn6n
+         QAEgk/0oihX4EuhAZRsw8hQ4gpsnAyRWUAatqVXY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andrew Vagin <avagin@openvz.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 13/15] perf/ring_buffer: Prevent concurent ring buffer access
-Date:   Tue, 16 Oct 2018 00:16:48 -0400
-Message-Id: <20181016041650.135958-13-sashal@kernel.org>
+Cc:     Wenwen Wang <wang6495@umn.edu>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 15/15] net: cxgb3_main: fix a missing-check bug
+Date:   Tue, 16 Oct 2018 00:16:50 -0400
+Message-Id: <20181016041650.135958-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041650.135958-1-sashal@kernel.org>
 References: <20181016041650.135958-1-sashal@kernel.org>
@@ -62,107 +53,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@redhat.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-[ Upstream commit cd6fb677ce7e460c25bdd66f689734102ec7d642 ]
+[ Upstream commit 2c05d88818ab6571816b93edce4d53703870d7ae ]
 
-Some of the scheduling tracepoints allow the perf_tp_event
-code to write to ring buffer under different cpu than the
-code is running on.
+In cxgb_extension_ioctl(), the command of the ioctl is firstly copied from
+the user-space buffer 'useraddr' to 'cmd' and checked through the
+switch statement. If the command is not as expected, an error code
+EOPNOTSUPP is returned. In the following execution, i.e., the cases of the
+switch statement, the whole buffer of 'useraddr' is copied again to a
+specific data structure, according to what kind of command is requested.
+However, after the second copy, there is no re-check on the newly-copied
+command. Given that the buffer 'useraddr' is in the user space, a malicious
+user can race to change the command between the two copies. By doing so,
+the attacker can supply malicious data to the kernel and cause undefined
+behavior.
 
-This results in corrupted ring buffer data demonstrated in
-following perf commands:
+This patch adds a re-check in each case of the switch statement if there is
+a second copy in that case, to re-check whether the command obtained in the
+second copy is the same as the one in the first copy. If not, an error code
+EINVAL is returned.
 
-  # perf record -e 'sched:sched_switch,sched:sched_wakeup' perf bench sched messaging
-  # Running 'sched/messaging' benchmark:
-  # 20 sender and receiver processes per group
-  # 10 groups == 400 processes run
-
-       Total time: 0.383 [sec]
-  [ perf record: Woken up 8 times to write data ]
-  0x42b890 [0]: failed to process type: -1765585640
-  [ perf record: Captured and wrote 4.825 MB perf.data (29669 samples) ]
-
-  # perf report --stdio
-  0x42b890 [0]: failed to process type: -1765585640
-
-The reason for the corruption are some of the scheduling tracepoints,
-that have __perf_task dfined and thus allow to store data to another
-cpu ring buffer:
-
-  sched_waking
-  sched_wakeup
-  sched_wakeup_new
-  sched_stat_wait
-  sched_stat_sleep
-  sched_stat_iowait
-  sched_stat_blocked
-
-The perf_tp_event function first store samples for current cpu
-related events defined for tracepoint:
-
-    hlist_for_each_entry_rcu(event, head, hlist_entry)
-      perf_swevent_event(event, count, &data, regs);
-
-And then iterates events of the 'task' and store the sample
-for any task's event that passes tracepoint checks:
-
-  ctx = rcu_dereference(task->perf_event_ctxp[perf_sw_context]);
-
-  list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-    if (event->attr.type != PERF_TYPE_TRACEPOINT)
-      continue;
-    if (event->attr.config != entry->type)
-      continue;
-
-    perf_swevent_event(event, count, &data, regs);
-  }
-
-Above code can race with same code running on another cpu,
-ending up with 2 cpus trying to store under the same ring
-buffer, which is specifically not allowed.
-
-This patch prevents the problem, by allowing only events with the same
-current cpu to receive the event.
-
-NOTE: this requires the use of (per-task-)per-cpu buffers for this
-feature to work; perf-record does this.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-[peterz: small edits to Changelog]
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andrew Vagin <avagin@openvz.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: e6dab5ffab59 ("perf/trace: Add ability to set a target task for events")
-Link: http://lkml.kernel.org/r/20180923161343.GB15054@krava
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 1f08f691de59..98ec8186b7d6 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6351,6 +6351,8 @@ void perf_tp_event(u64 addr, u64 count, void *record, int entry_size,
- 			goto unlock;
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+index db76f7040455..dd3e5247190e 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+@@ -2146,6 +2146,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
+ 			return -EPERM;
+ 		if (copy_from_user(&t, useraddr, sizeof(t)))
+ 			return -EFAULT;
++		if (t.cmd != CHELSIO_SET_QSET_PARAMS)
++			return -EINVAL;
+ 		if (t.qset_idx >= SGE_QSETS)
+ 			return -EINVAL;
+ 		if (!in_range(t.intr_lat, 0, M_NEWTIMER) ||
+@@ -2245,6 +2247,9 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
+ 		if (copy_from_user(&t, useraddr, sizeof(t)))
+ 			return -EFAULT;
  
- 		list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-+			if (event->cpu != smp_processor_id())
-+				continue;
- 			if (event->attr.type != PERF_TYPE_TRACEPOINT)
- 				continue;
- 			if (event->attr.config != entry->type)
++		if (t.cmd != CHELSIO_GET_QSET_PARAMS)
++			return -EINVAL;
++
+ 		/* Display qsets for all ports when offload enabled */
+ 		if (test_bit(OFFLOAD_DEVMAP_BIT, &adapter->open_device_map)) {
+ 			q1 = 0;
+@@ -2289,6 +2294,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
+ 			return -EBUSY;
+ 		if (copy_from_user(&edata, useraddr, sizeof(edata)))
+ 			return -EFAULT;
++		if (edata.cmd != CHELSIO_SET_QSET_NUM)
++			return -EINVAL;
+ 		if (edata.val < 1 ||
+ 			(edata.val > 1 && !(adapter->flags & USING_MSIX)))
+ 			return -EINVAL;
+@@ -2329,6 +2336,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
+ 			return -EPERM;
+ 		if (copy_from_user(&t, useraddr, sizeof(t)))
+ 			return -EFAULT;
++		if (t.cmd != CHELSIO_LOAD_FW)
++			return -EINVAL;
+ 		/* Check t.len sanity ? */
+ 		fw_data = memdup_user(useraddr + sizeof(t), t.len);
+ 		if (IS_ERR(fw_data))
+@@ -2352,6 +2361,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
+ 			return -EBUSY;
+ 		if (copy_from_user(&m, useraddr, sizeof(m)))
+ 			return -EFAULT;
++		if (m.cmd != CHELSIO_SETMTUTAB)
++			return -EINVAL;
+ 		if (m.nmtus != NMTUS)
+ 			return -EINVAL;
+ 		if (m.mtus[0] < 81)	/* accommodate SACK */
+@@ -2393,6 +2404,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
+ 			return -EBUSY;
+ 		if (copy_from_user(&m, useraddr, sizeof(m)))
+ 			return -EFAULT;
++		if (m.cmd != CHELSIO_SET_PM)
++			return -EINVAL;
+ 		if (!is_power_of_2(m.rx_pg_sz) ||
+ 			!is_power_of_2(m.tx_pg_sz))
+ 			return -EINVAL;	/* not power of 2 */
+@@ -2426,6 +2439,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
+ 			return -EIO;	/* need the memory controllers */
+ 		if (copy_from_user(&t, useraddr, sizeof(t)))
+ 			return -EFAULT;
++		if (t.cmd != CHELSIO_GET_MEM)
++			return -EINVAL;
+ 		if ((t.addr & 7) || (t.len & 7))
+ 			return -EINVAL;
+ 		if (t.mem_id == MEM_CM)
+@@ -2478,6 +2493,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
+ 			return -EAGAIN;
+ 		if (copy_from_user(&t, useraddr, sizeof(t)))
+ 			return -EFAULT;
++		if (t.cmd != CHELSIO_SET_TRACE_FILTER)
++			return -EINVAL;
+ 
+ 		tp = (const struct trace_params *)&t.sip;
+ 		if (t.config_tx)
 -- 
 2.17.1
 
