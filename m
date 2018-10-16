@@ -2,107 +2,113 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E49C070C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F829C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE3A214AB
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 540B3214AB
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0z58V/y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE3A214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JlmA7YSv";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ber74H4A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 540B3214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730084AbeJPMEY (ORCPT
+        id S1730092AbeJPMEb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:04:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730041AbeJPMEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:04:23 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 16 Oct 2018 08:04:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39630 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728480AbeJPMEa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:04:30 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7978661364; Tue, 16 Oct 2018 04:16:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539663366;
+        bh=XD6yAbdKU+W1gaQrsNMVMdA7e/vMB9VIT5n8m0qce0M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JlmA7YSvbTGolKZ1RxPHC9MCo9L3VcMn08TDDbHn+og6BmGA0NWzKik7dy8E/3EE0
+         A2nFJKxcv1k8PB2/1INM59O7t7Y2PBZ2dy9zoe6JsbkLBdTUmUVu6ezGubNb0yayIn
+         sMp4Sm15W03JutymQ4uoZ0mxKqu/84zenEcOroWI=
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D84812148D;
-        Tue, 16 Oct 2018 04:15:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663360;
-        bh=9hyTwfAlP/BlQWDDZYkMWFK0kn9dVmdbBOD4/xshWLM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j0z58V/ySQXfbQUEHvRb4msP8pyGirMCfmYLWHLhxkDye2RqXNqC+vIOuAEfHV8gV
-         HxjBs/T7Q1qHN82lKR79NkNqBewl0yYrdsFwUx7ZZhDYVD5BqTF7GYr14N2gCshpDH
-         sBPqFKEeZxxawMqhbTjPol+haXLeWPSG6NfKWXTw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jann Horn <jannh@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Christoph Lameter <clameter@sgi.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
+        (Authenticated sender: pkondeti@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4113061472;
+        Tue, 16 Oct 2018 04:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539663359;
+        bh=XD6yAbdKU+W1gaQrsNMVMdA7e/vMB9VIT5n8m0qce0M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ber74H4A7h/2w9dh/yU/Rb2DgcNgFzsYNAJeXNu8s7uH3HGJZqgfpUslJJn4tLzVs
+         N0QRzAv3xGMiuRVW2d1o56qPhn842AZe/t4TDlamK1Opp6CB+EPOhccNGSnzCgL31H
+         Z3PjGE8C4uf8+vmHiuTYvmoI+nJYD5Kgr2gnM9KI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4113061472
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
+Date:   Tue, 16 Oct 2018 09:45:52 +0530
+From:   Pavan Kondeti <pkondeti@codeaurora.org>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
         Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 38/38] mm/vmstat.c: fix outdated vmstat_text
-Date:   Tue, 16 Oct 2018 00:15:22 -0400
-Message-Id: <20181016041522.135789-38-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181016041522.135789-1-sashal@kernel.org>
-References: <20181016041522.135789-1-sashal@kernel.org>
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: Re: [RFC PATCH 29/30] softirq: Make softirq processing
+ softinterruptible
+Message-ID: <20181016041552.GA27587@codeaurora.org>
+References: <1539213137-13953-1-git-send-email-frederic@kernel.org>
+ <1539213137-13953-30-git-send-email-frederic@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539213137-13953-30-git-send-email-frederic@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+Hi Frederic,
 
-[ Upstream commit 28e2c4bb99aa40f9d5f07ac130cbc4da0ea93079 ]
+On Thu, Oct 11, 2018 at 01:12:16AM +0200, Frederic Weisbecker wrote:
+> From: Frederic Weisbecker <fweisbec@gmail.com>
+> 
+> Make do_softirq() re-entrant and allow a vector, being either processed
+> or disabled, to be interrupted by another vector. This way a vector
+> won't be able to monopolize the CPU for a long while at the expense of
+> the others that may rely on some predictable latency, especially on
+> softirq disabled sections that used to disable all vectors.
+> 
+I understand that a long running softirq can be preempted/interrupted by
+other softirqs which is not possible today. I have few questions on your
+patches.
 
-7a9cdebdcc17 ("mm: get rid of vmacache_flush_all() entirely") removed the
-VMACACHE_FULL_FLUSHES statistics, but didn't remove the corresponding
-entry in vmstat_text.  This causes an out-of-bounds access in
-vmstat_show().
+(1) When softirq processing is pushed to ksoftirqd, then the long running
+softirq can still block other softirqs (not in SOFTIRQ_NOW_MASK) for a while.
+correct?
 
-Luckily this only affects kernels with CONFIG_DEBUG_VM_VMACACHE=y, which
-is probably very rare.
+(2) When softirqs processing happens asynchronously, a particular softirq
+like TASKLET can keep interrupting an already running softirq like TIMER/NET_RX,
+correct? In worse case scenario, a long running softirq like NET_RX interrupt
+a TIMER softirq. But I guess this is something expected with this. i.e
+each softirq is independent and whichever comes recent gets to interrupt the
+previously running softirqs.
 
-Link: http://lkml.kernel.org/r/20181001143138.95119-1-jannh@google.com
-Fixes: 7a9cdebdcc17 ("mm: get rid of vmacache_flush_all() entirely")
-Signed-off-by: Jann Horn <jannh@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Christoph Lameter <clameter@sgi.com>
-Cc: Kemi Wang <kemi.wang@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- mm/vmstat.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks,
+Pavan
 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index d31e801a467c..5e6a4d76659d 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1089,7 +1089,6 @@ const char * const vmstat_text[] = {
- #ifdef CONFIG_DEBUG_VM_VMACACHE
- 	"vmacache_find_calls",
- 	"vmacache_find_hits",
--	"vmacache_full_flushes",
- #endif
- #endif /* CONFIG_VM_EVENTS_COUNTERS */
- };
 -- 
-2.17.1
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
