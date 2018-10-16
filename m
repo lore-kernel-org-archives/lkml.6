@@ -2,69 +2,140 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E14FC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B7AC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3D3A2083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:20:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3D3A2083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 489312083C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:21:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="wKUwQx2/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 489312083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeJPNJe (ORCPT
+        id S1727950AbeJPNJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 09:09:34 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:43684 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbeJPNJe (ORCPT
+        Tue, 16 Oct 2018 09:09:51 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:50213 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727008AbeJPNJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 09:09:34 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 469251456FDF3;
-        Mon, 15 Oct 2018 22:20:55 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 22:20:54 -0700 (PDT)
-Message-Id: <20181015.222054.1171518157059418301.davem@davemloft.net>
-To:     dhowells@redhat.com
-Cc:     netdev@vger.kernel.org, kbuild-all@01.org, arnd@arndb.de,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] rxrpc: Fix incorrect conditional on IPV6
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <153935871685.8157.12127765977392104630.stgit@warthog.procyon.org.uk>
-References: <153935871685.8157.12127765977392104630.stgit@warthog.procyon.org.uk>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 15 Oct 2018 22:20:55 -0700 (PDT)
+        Tue, 16 Oct 2018 09:09:50 -0400
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w9G5L0OB026336;
+        Tue, 16 Oct 2018 14:21:01 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w9G5L0OB026336
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539667261;
+        bh=FDIGmE5b5K9BmEWUF/OrPaKAb5bJ4bsEha3Y3EORDIQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wKUwQx2/7aUUkj6aNVBCk7JlQa/hx5qmnIOiipqx1nYUzBT1Ylk17jmg5SbzyJ2+X
+         8hAR3pHmKBKgKpG29FYkn7uUmc3nXr+7mz6FUDyCH8Tq/yX21nIEb6j/A5MrUbMEsP
+         QRnCdvBRs1yGFrc/ec9o9sFiG7yKonhZW98yEpFnrJqP2rpcsQgDpD5VEkeNTcDwBY
+         Qs4JHmK/+tGqaYwY2h5Bj1LC5hLfOJc5DQReLucQ2fqHOP7PwrOrRjrwZz7qQpTXJJ
+         LlxDPKotTjsKfWFfpAFgkaUxizlRPXTp/ncLEAhELy3uSe9xDigURJSAkB83RXNETi
+         XQ15TCc8gVlwg==
+X-Nifty-SrcIP: [209.85.222.52]
+Received: by mail-ua1-f52.google.com with SMTP id o17so133699uad.8;
+        Mon, 15 Oct 2018 22:21:00 -0700 (PDT)
+X-Gm-Message-State: ABuFfoj+xBAV0AhnY549DScCoUoJbT4WWF2sZFyblnIUwBjbdBOX2Fi0
+        lazQQ46SdXwjPP6IDlwwk2ASye+dgCNA3rKM6sk=
+X-Google-Smtp-Source: ACcGV61ZnDsm1Nha0a5yHh0vPG6Piw2+qTgZ1yt8n6hzXeBJoavGmeMzDMu+IRdRHaaAVTWbfsMClBFk4YUYrnVrW8o=
+X-Received: by 2002:ab0:7093:: with SMTP id m19mr8698603ual.55.1539667259783;
+ Mon, 15 Oct 2018 22:20:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181013151016.31674-1-hch@lst.de> <20181013151016.31674-9-hch@lst.de>
+In-Reply-To: <20181013151016.31674-9-hch@lst.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 16 Oct 2018 14:20:23 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQwyWUq_ohVMe9QLLbyHHQdjkrkM9DPd3pgYLz8UhG6rA@mail.gmail.com>
+Message-ID: <CAK7LNAQwyWUq_ohVMe9QLLbyHHQdjkrkM9DPd3pgYLz8UhG6rA@mail.gmail.com>
+Subject: Re: [PATCH 8/8] kconfig: remove CONFIG_MCA leftovers
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     mporter@kernel.crashing.org, Alex Bounine <alex.bou9@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
-Date: Fri, 12 Oct 2018 16:38:36 +0100
+On Sun, Oct 14, 2018 at 12:11 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-> The udpv6_encap_enable() function is part of the ipv6 code, and if that is
-> configured as a loadable module and rxrpc is built in then a build failure
-> will occur because the conditional check is wrong:
-> 
->   net/rxrpc/local_object.o: In function `rxrpc_lookup_local':
->   local_object.c:(.text+0x2688): undefined reference to `udpv6_encap_enable'
-> 
-> Use the correct config symbol (CONFIG_AF_RXRPC_IPV6) in the conditional
-> check rather than CONFIG_IPV6 as that will do the right thing.
-> 
-> Fixes: 5271953cad31 ("rxrpc: Use the UDP encap_rcv hook")
-> Reported-by: kbuild-all@01.org
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-Applied.
+Can you use "powerpc:" or something
+for the subject line?
+
+I'd like to see "kconfig:" only for patches
+that touch the scripts/kconfig/ directory.
+
+
+
+
+>  arch/powerpc/Kconfig | 4 ----
+>  drivers/scsi/Kconfig | 6 +++---
+>  2 files changed, 3 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index f0ea460653cd..8b9edf7caf96 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -944,10 +944,6 @@ config FSL_GTM
+>         help
+>           Freescale General-purpose Timers support
+>
+> -# Yes MCA RS/6000s exist but Linux-PPC does not currently support any
+> -config MCA
+> -       bool
+> -
+>  config PCI_DOMAINS
+>         def_bool PCI
+>
+> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+> index 7c097006c54d..d3734c54aec9 100644
+> --- a/drivers/scsi/Kconfig
+> +++ b/drivers/scsi/Kconfig
+> @@ -535,7 +535,7 @@ config SCSI_HPTIOP
+>
+>  config SCSI_BUSLOGIC
+>         tristate "BusLogic SCSI support"
+> -       depends on (PCI || ISA || MCA) && SCSI && ISA_DMA_API && VIRT_TO_BUS
+> +       depends on (PCI || ISA) && SCSI && ISA_DMA_API && VIRT_TO_BUS
+>         ---help---
+>           This is support for BusLogic MultiMaster and FlashPoint SCSI Host
+>           Adapters. Consult the SCSI-HOWTO, available from
+> @@ -1142,12 +1142,12 @@ config SCSI_LPFC_DEBUG_FS
+>
+>  config SCSI_SIM710
+>         tristate "Simple 53c710 SCSI support (Compaq, NCR machines)"
+> -       depends on (EISA || MCA) && SCSI
+> +       depends on EISA && SCSI
+>         select SCSI_SPI_ATTRS
+>         ---help---
+>           This driver is for NCR53c710 based SCSI host adapters.
+>
+> -         It currently supports Compaq EISA cards and NCR MCA cards
+> +         It currently supports Compaq EISA cards.
+>
+>  config SCSI_DC395x
+>         tristate "Tekram DC395(U/UW/F) and DC315(U) SCSI support"
+> --
+> 2.19.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
