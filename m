@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 435E8C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D59EC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DB602098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D80E62098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HqTyDym6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB602098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDp6WT4r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D80E62098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbeJQBCF (ORCPT
+        id S1727805AbeJQBCH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:02:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42426 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:02:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727669AbeJQBCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:02:04 -0400
+        id S1727669AbeJQBCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:02:07 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CD182098A;
-        Tue, 16 Oct 2018 17:10:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43F702089E;
+        Tue, 16 Oct 2018 17:10:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709841;
-        bh=5S27gnNdrjcR2HgUi07Y/zYuA0HUxVYiQsqtIrovkp0=;
+        s=default; t=1539709844;
+        bh=t+v/u9IveNb6jrkU0xa8g9kC8usnEFqJZeyl0CYpX5k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HqTyDym6cldIIprfMfLXkQoo1BTYxA7BBg08CvjgqO0GDYRxBMET6Ku5K81R9Y8PW
-         XS//8s6Sd4kNUOQh5JPSkKUHwSwS2OumUSMst671Ypx/qxG76BOBSs8s7F7vjNj4Mp
-         X78vJ9Px6882zw7cB08LdAfBI4P7GCylJ2MwCzj0=
+        b=BDp6WT4r3kD9KgEiMIoNMbdLHOrAEvli+R7HrBuUYrf/D/bGVyzephptEqKna+/YD
+         wi+SXxCXU18u7z8SZzFwtH76pMNC8poXqkhisekf+2DryxvuYBQoXc1x17mfRyYLog
+         CzZcj3YOhkBkFiD572jwsrhk4RkGboN/9qw4HZUM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 015/135] net: sched: Add policy validation for tc attributes
-Date:   Tue, 16 Oct 2018 19:04:05 +0200
-Message-Id: <20181016170516.428841245@linuxfoundation.org>
+Subject: [PATCH 4.18 016/135] net: sched: cls_u32: fix hnode refcounting
+Date:   Tue, 16 Oct 2018 19:04:06 +0200
+Message-Id: <20181016170516.477109260@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -62,87 +63,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 8b4c3cdd9dd8290343ce959a132d3b334062c5b9 ]
+[ Upstream commit 6d4c407744dd0338da5d5d76f40dce5adabfb30a ]
 
-A number of TC attributes are processed without proper validation
-(e.g., length checks). Add a tca policy for all input attributes and use
-when invoking nlmsg_parse.
+cls_u32.c misuses refcounts for struct tc_u_hnode - it counts references
+via ->hlist and via ->tp_root together.  u32_destroy() drops the former
+and, in case when there had been links, leaves the sucker on the list.
+As the result, there's nothing to protect it from getting freed once links
+are dropped.
+That also makes the "is it busy" check incapable of catching the root
+hnode - it *is* busy (there's a reference from tp), but we don't see it as
+something separate.  "Is it our root?" check partially covers that, but
+the problem exists for others' roots as well.
 
-The 2 Fixes tags below cover the latest additions. The other attributes
-are a string (KIND), nested attribute (OPTIONS which does seem to have
-validation in most cases), for dumps only or a flag.
+AFAICS, the minimal fix preserving the existing behaviour (where it doesn't
+include oopsen, that is) would be this:
+        * count tp->root and tp_c->hlist as separate references.  I.e.
+have u32_init() set refcount to 2, not 1.
+	* in u32_destroy() we always drop the former;
+in u32_destroy_hnode() - the latter.
 
-Fixes: 5bc1701881e39 ("net: sched: introduce multichain support for filters")
-Fixes: d47a6b0e7c492 ("net: sched: introduce ingress/egress block index attributes for qdisc")
-Signed-off-by: David Ahern <dsahern@gmail.com>
+	That way we have *all* references contributing to refcount.  List
+removal happens in u32_destroy_hnode() (called only when ->refcnt is 1)
+an in u32_destroy() in case of tc_u_common going away, along with
+everything reachable from it.  IOW, that way we know that
+u32_destroy_key() won't free something still on the list (or pointed to by
+someone's ->root).
+
+Reproducer:
+
+tc qdisc add dev eth0 ingress
+tc filter add dev eth0 parent ffff: protocol ip prio 100 handle 1: \
+u32 divisor 1
+tc filter add dev eth0 parent ffff: protocol ip prio 200 handle 2: \
+u32 divisor 1
+tc filter add dev eth0 parent ffff: protocol ip prio 100 \
+handle 1:0:11 u32 ht 1: link 801: offset at 0 mask 0f00 shift 6 \
+plus 0 eat match ip protocol 6 ff
+tc filter delete dev eth0 parent ffff: protocol ip prio 200
+tc filter change dev eth0 parent ffff: protocol ip prio 100 \
+handle 1:0:11 u32 ht 1: link 0: offset at 0 mask 0f00 shift 6 plus 0 \
+eat match ip protocol 6 ff
+tc filter delete dev eth0 parent ffff: protocol ip prio 100
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Jamal Hadi Salim <jhs@mojatatu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_api.c |   24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ net/sched/cls_u32.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/sched/sch_api.c
-+++ b/net/sched/sch_api.c
-@@ -1304,6 +1304,18 @@ check_loop_fn(struct Qdisc *q, unsigned
-  * Delete/get qdisc.
-  */
+--- a/net/sched/cls_u32.c
++++ b/net/sched/cls_u32.c
+@@ -397,6 +397,7 @@ static int u32_init(struct tcf_proto *tp
+ 	rcu_assign_pointer(tp_c->hlist, root_ht);
+ 	root_ht->tp_c = tp_c;
  
-+const struct nla_policy rtm_tca_policy[TCA_MAX + 1] = {
-+	[TCA_KIND]		= { .type = NLA_STRING },
-+	[TCA_OPTIONS]		= { .type = NLA_NESTED },
-+	[TCA_RATE]		= { .type = NLA_BINARY,
-+				    .len = sizeof(struct tc_estimator) },
-+	[TCA_STAB]		= { .type = NLA_NESTED },
-+	[TCA_DUMP_INVISIBLE]	= { .type = NLA_FLAG },
-+	[TCA_CHAIN]		= { .type = NLA_U32 },
-+	[TCA_INGRESS_BLOCK]	= { .type = NLA_U32 },
-+	[TCA_EGRESS_BLOCK]	= { .type = NLA_U32 },
-+};
-+
- static int tc_get_qdisc(struct sk_buff *skb, struct nlmsghdr *n,
- 			struct netlink_ext_ack *extack)
- {
-@@ -1320,7 +1332,8 @@ static int tc_get_qdisc(struct sk_buff *
- 	    !netlink_ns_capable(skb, net->user_ns, CAP_NET_ADMIN))
- 		return -EPERM;
++	root_ht->refcnt++;
+ 	rcu_assign_pointer(tp->root, root_ht);
+ 	tp->data = tp_c;
+ 	return 0;
+@@ -608,7 +609,7 @@ static int u32_destroy_hnode(struct tcf_
+ 	struct tc_u_hnode __rcu **hn;
+ 	struct tc_u_hnode *phn;
  
--	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, NULL, extack);
-+	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, rtm_tca_policy,
-+			  extack);
- 	if (err < 0)
- 		return err;
+-	WARN_ON(ht->refcnt);
++	WARN_ON(--ht->refcnt);
  
-@@ -1404,7 +1417,8 @@ static int tc_modify_qdisc(struct sk_buf
+ 	u32_clear_hnode(tp, ht, extack);
  
- replay:
- 	/* Reinit, just in case something touches this. */
--	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, NULL, extack);
-+	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, rtm_tca_policy,
-+			  extack);
- 	if (err < 0)
- 		return err;
+@@ -647,7 +648,7 @@ static void u32_destroy(struct tcf_proto
  
-@@ -1638,7 +1652,8 @@ static int tc_dump_qdisc(struct sk_buff
- 	idx = 0;
- 	ASSERT_RTNL();
+ 	WARN_ON(root_ht == NULL);
  
--	err = nlmsg_parse(nlh, sizeof(struct tcmsg), tca, TCA_MAX, NULL, NULL);
-+	err = nlmsg_parse(nlh, sizeof(struct tcmsg), tca, TCA_MAX,
-+			  rtm_tca_policy, NULL);
- 	if (err < 0)
- 		return err;
+-	if (root_ht && --root_ht->refcnt == 0)
++	if (root_ht && --root_ht->refcnt == 1)
+ 		u32_destroy_hnode(tp, root_ht, extack);
  
-@@ -1857,7 +1872,8 @@ static int tc_ctl_tclass(struct sk_buff
- 	    !netlink_ns_capable(skb, net->user_ns, CAP_NET_ADMIN))
- 		return -EPERM;
+ 	if (--tp_c->refcnt == 0) {
+@@ -696,7 +697,6 @@ static int u32_delete(struct tcf_proto *
+ 	}
  
--	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, NULL, extack);
-+	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, rtm_tca_policy,
-+			  extack);
- 	if (err < 0)
- 		return err;
- 
+ 	if (ht->refcnt == 1) {
+-		ht->refcnt--;
+ 		u32_destroy_hnode(tp, ht, extack);
+ 	} else {
+ 		NL_SET_ERR_MSG_MOD(extack, "Can not delete in-use filter");
+@@ -706,11 +706,11 @@ static int u32_delete(struct tcf_proto *
+ out:
+ 	*last = true;
+ 	if (root_ht) {
+-		if (root_ht->refcnt > 1) {
++		if (root_ht->refcnt > 2) {
+ 			*last = false;
+ 			goto ret;
+ 		}
+-		if (root_ht->refcnt == 1) {
++		if (root_ht->refcnt == 2) {
+ 			if (!ht_empty(root_ht)) {
+ 				*last = false;
+ 				goto ret;
 
 
