@@ -7,45 +7,51 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1191C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 753AFC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74D6C20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 347332089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LwA4dfi9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74D6C20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oX7euUv2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347332089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731067AbeJQBNi (ORCPT
+        id S1731080AbeJQBNm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:13:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59560 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:13:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727433AbeJQBNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:13:37 -0400
+        id S1727433AbeJQBNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:13:41 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A04A2098A;
-        Tue, 16 Oct 2018 17:22:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1BFA20658;
+        Tue, 16 Oct 2018 17:22:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710532;
-        bh=wKltxuXx6vf5bda3rX4ndW2vpSJ/NBWGxvP2j5Jkr4k=;
+        s=default; t=1539710535;
+        bh=hgaTSBx4lZzsOwr7mQx4TvjAS6VpzK9HxZ8PXjfrnnM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LwA4dfi9l2fHXQbv3TApiIt+IA+9efLr0FxG7/4mdQm4zlTa4pxAnBBjWfSiGLEzt
-         EdDXsB6YoO4csodJ3KNmjLtHjY9c0ERsTzSCN3pIwopqmkg1MPL6f68U8bO/3BYgjz
-         8nYJr7lkn+BomVWToiWeiIv1HkTbfIJxM6dnJ8do=
+        b=oX7euUv2kOcnMado/M4i9PSGBRjWD+Xx7723nyjMzsAajDK/f2KtUkPozyRPjCddo
+         vto7OgPspO4fOzaF+GcI4qc54aPr9zk7YZ/nrgoR6m4VDOu9C/V4Us0b/s5j2Ge5F7
+         Ygfy24qiilKUKfX1AB89FXvoGf7eJ4mauvnb51rc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        "David A. Long" <dave.long@linaro.org>
-Subject: [PATCH 4.14 108/109] ARM: spectre-v1: mitigate user accesses
-Date:   Tue, 16 Oct 2018 19:06:16 +0200
-Message-Id: <20181016170530.890735026@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ignat Korchagin <ignat@cloudflare.com>
+Subject: [PATCH 4.14 109/109] perf tools: Fix snprint warnings for gcc 8
+Date:   Tue, 16 Oct 2018 19:06:17 +0200
+Message-Id: <20181016170530.933912000@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -63,75 +69,187 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Jiri Olsa <jolsa@kernel.org>
 
-Commit a3c0f84765bb429ba0fd23de1c57b5e1591c9389 upstream.
+commit 77f18153c080855e1c3fb520ca31a4e61530121d upstream.
 
-Spectre variant 1 attacks are about this sequence of pseudo-code:
+With gcc 8 we get new set of snprintf() warnings that breaks the
+compilation, one example:
 
-	index = load(user-manipulated pointer);
-	access(base + index * stride);
+  tests/mem.c: In function ‘check’:
+  tests/mem.c:19:48: error: ‘%s’ directive output may be truncated writing \
+        up to 99 bytes into a region of size 89 [-Werror=format-truncation=]
+    snprintf(failure, sizeof failure, "unexpected %s", out);
 
-In order for the cache side-channel to work, the access() must me made
-to memory which userspace can detect whether cache lines have been
-loaded.  On 32-bit ARM, this must be either user accessible memory, or
-a kernel mapping of that same user accessible memory.
+The gcc docs says:
 
-The problem occurs when the load() speculatively loads privileged data,
-and the subsequent access() is made to user accessible memory.
+ To avoid the warning either use a bigger buffer or handle the
+ function's return value which indicates whether or not its output
+ has been truncated.
 
-Any load() which makes use of a user-maniplated pointer is a potential
-problem if the data it has loaded is used in a subsequent access.  This
-also applies for the access() if the data loaded by that access is used
-by a subsequent access.
+Given that all these warnings are harmless, because the code either
+properly fails due to uncomplete file path or we don't care for
+truncated output at all, I'm changing all those snprintf() calls to
+scnprintf(), which actually 'checks' for the snprint return value so the
+gcc stays silent.
 
-Harden the get_user() accessors against Spectre attacks by forcing out
-of bounds addresses to a NULL pointer.  This prevents get_user() being
-used as the load() step above.  As a side effect, put_user() will also
-be affected even though it isn't implicated.
-
-Also harden copy_from_user() by redoing the bounds check within the
-arm_copy_from_user() code, and NULLing the pointer if out of bounds.
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Link: http://lkml.kernel.org/r/20180319082902.4518-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Ignat Korchagin <ignat@cloudflare.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/include/asm/assembler.h |    4 ++++
- arch/arm/lib/copy_from_user.S    |    9 +++++++++
- 2 files changed, 13 insertions(+)
 
---- a/arch/arm/include/asm/assembler.h
-+++ b/arch/arm/include/asm/assembler.h
-@@ -460,6 +460,10 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
- 	adds	\tmp, \addr, #\size - 1
- 	sbcccs	\tmp, \tmp, \limit
- 	bcs	\bad
-+#ifdef CONFIG_CPU_SPECTRE
-+	movcs	\addr, #0
-+	csdb
-+#endif
- #endif
- 	.endm
+---
+ tools/perf/builtin-script.c    |   22 +++++++++++-----------
+ tools/perf/tests/attr.c        |    4 ++--
+ tools/perf/tests/mem.c         |    2 +-
+ tools/perf/tests/pmu.c         |    2 +-
+ tools/perf/util/cgroup.c       |    2 +-
+ tools/perf/util/parse-events.c |    4 ++--
+ tools/perf/util/pmu.c          |    2 +-
+ 7 files changed, 19 insertions(+), 19 deletions(-)
+
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -2304,8 +2304,8 @@ static int list_available_scripts(const
+ 	}
  
---- a/arch/arm/lib/copy_from_user.S
-+++ b/arch/arm/lib/copy_from_user.S
-@@ -90,6 +90,15 @@
- 	.text
+ 	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
+-		snprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
+-			 lang_dirent->d_name);
++		scnprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
++			  lang_dirent->d_name);
+ 		lang_dir = opendir(lang_path);
+ 		if (!lang_dir)
+ 			continue;
+@@ -2314,8 +2314,8 @@ static int list_available_scripts(const
+ 			script_root = get_script_root(script_dirent, REPORT_SUFFIX);
+ 			if (script_root) {
+ 				desc = script_desc__findnew(script_root);
+-				snprintf(script_path, MAXPATHLEN, "%s/%s",
+-					 lang_path, script_dirent->d_name);
++				scnprintf(script_path, MAXPATHLEN, "%s/%s",
++					  lang_path, script_dirent->d_name);
+ 				read_script_info(desc, script_path);
+ 				free(script_root);
+ 			}
+@@ -2351,7 +2351,7 @@ static int check_ev_match(char *dir_name
+ 	int match, len;
+ 	FILE *fp;
  
- ENTRY(arm_copy_from_user)
-+#ifdef CONFIG_CPU_SPECTRE
-+	get_thread_info r3
-+	ldr	r3, [r3, #TI_ADDR_LIMIT]
-+	adds	ip, r1, r2	@ ip=addr+size
-+	sub	r3, r3, #1	@ addr_limit - 1
-+	cmpcc	ip, r3		@ if (addr+size > addr_limit - 1)
-+	movcs	r1, #0		@ addr = NULL
-+	csdb
-+#endif
+-	sprintf(filename, "%s/bin/%s-record", dir_name, scriptname);
++	scnprintf(filename, MAXPATHLEN, "%s/bin/%s-record", dir_name, scriptname);
  
- #include "copy_template.S"
+ 	fp = fopen(filename, "r");
+ 	if (!fp)
+@@ -2427,8 +2427,8 @@ int find_scripts(char **scripts_array, c
+ 	}
  
+ 	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
+-		snprintf(lang_path, MAXPATHLEN, "%s/%s", scripts_path,
+-			 lang_dirent->d_name);
++		scnprintf(lang_path, MAXPATHLEN, "%s/%s", scripts_path,
++			  lang_dirent->d_name);
+ #ifdef NO_LIBPERL
+ 		if (strstr(lang_path, "perl"))
+ 			continue;
+@@ -2483,8 +2483,8 @@ static char *get_script_path(const char
+ 		return NULL;
+ 
+ 	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
+-		snprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
+-			 lang_dirent->d_name);
++		scnprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
++			  lang_dirent->d_name);
+ 		lang_dir = opendir(lang_path);
+ 		if (!lang_dir)
+ 			continue;
+@@ -2495,8 +2495,8 @@ static char *get_script_path(const char
+ 				free(__script_root);
+ 				closedir(lang_dir);
+ 				closedir(scripts_dir);
+-				snprintf(script_path, MAXPATHLEN, "%s/%s",
+-					 lang_path, script_dirent->d_name);
++				scnprintf(script_path, MAXPATHLEN, "%s/%s",
++					  lang_path, script_dirent->d_name);
+ 				return strdup(script_path);
+ 			}
+ 			free(__script_root);
+--- a/tools/perf/tests/attr.c
++++ b/tools/perf/tests/attr.c
+@@ -164,8 +164,8 @@ static int run_dir(const char *d, const
+ 	if (verbose > 0)
+ 		vcnt++;
+ 
+-	snprintf(cmd, 3*PATH_MAX, PYTHON " %s/attr.py -d %s/attr/ -p %s %.*s",
+-		 d, d, perf, vcnt, v);
++	scnprintf(cmd, 3*PATH_MAX, PYTHON " %s/attr.py -d %s/attr/ -p %s %.*s",
++		  d, d, perf, vcnt, v);
+ 
+ 	return system(cmd) ? TEST_FAIL : TEST_OK;
+ }
+--- a/tools/perf/tests/mem.c
++++ b/tools/perf/tests/mem.c
+@@ -16,7 +16,7 @@ static int check(union perf_mem_data_src
+ 
+ 	n = perf_mem__snp_scnprintf(out, sizeof out, &mi);
+ 	n += perf_mem__lvl_scnprintf(out + n, sizeof out - n, &mi);
+-	snprintf(failure, sizeof failure, "unexpected %s", out);
++	scnprintf(failure, sizeof failure, "unexpected %s", out);
+ 	TEST_ASSERT_VAL(failure, !strcmp(string, out));
+ 	return 0;
+ }
+--- a/tools/perf/tests/pmu.c
++++ b/tools/perf/tests/pmu.c
+@@ -98,7 +98,7 @@ static char *test_format_dir_get(void)
+ 		struct test_format *format = &test_formats[i];
+ 		FILE *file;
+ 
+-		snprintf(name, PATH_MAX, "%s/%s", dir, format->name);
++		scnprintf(name, PATH_MAX, "%s/%s", dir, format->name);
+ 
+ 		file = fopen(name, "w");
+ 		if (!file)
+--- a/tools/perf/util/cgroup.c
++++ b/tools/perf/util/cgroup.c
+@@ -78,7 +78,7 @@ static int open_cgroup(char *name)
+ 	if (cgroupfs_find_mountpoint(mnt, PATH_MAX + 1))
+ 		return -1;
+ 
+-	snprintf(path, PATH_MAX, "%s/%s", mnt, name);
++	scnprintf(path, PATH_MAX, "%s/%s", mnt, name);
+ 
+ 	fd = open(path, O_RDONLY);
+ 	if (fd == -1)
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -202,8 +202,8 @@ struct tracepoint_path *tracepoint_id_to
+ 
+ 		for_each_event(sys_dirent, evt_dir, evt_dirent) {
+ 
+-			snprintf(evt_path, MAXPATHLEN, "%s/%s/id", dir_path,
+-				 evt_dirent->d_name);
++			scnprintf(evt_path, MAXPATHLEN, "%s/%s/id", dir_path,
++				  evt_dirent->d_name);
+ 			fd = open(evt_path, O_RDONLY);
+ 			if (fd < 0)
+ 				continue;
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -349,7 +349,7 @@ static int pmu_aliases_parse(char *dir,
+ 		if (pmu_alias_info_file(name))
+ 			continue;
+ 
+-		snprintf(path, PATH_MAX, "%s/%s", dir, name);
++		scnprintf(path, PATH_MAX, "%s/%s", dir, name);
+ 
+ 		file = fopen(path, "r");
+ 		if (!file) {
 
 
