@@ -2,163 +2,128 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C939DC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E616BC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D22205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A71BE2064A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:03:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fmAZyL/X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D22205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HnKewxau"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A71BE2064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbeJQAyQ (ORCPT
+        id S1727471AbeJQAyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:54:16 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:39730 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727173AbeJQAyP (ORCPT
+        Tue, 16 Oct 2018 20:54:20 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:33167 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727364AbeJQAyT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:54:15 -0400
-Received: by mail-yw1-f65.google.com with SMTP id v1-v6so9197673ywv.6
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 10:02:55 -0700 (PDT)
+        Tue, 16 Oct 2018 20:54:19 -0400
+Received: by mail-yb1-f196.google.com with SMTP id u88-v6so9199461ybi.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 10:02:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RaPTae517Y+bNpef4yQIvFQgsgdIAhxr/JzYA1ji4RE=;
-        b=fmAZyL/XuhaSR2b0tAZm1ewvTSsWICZRbQWOkl85bVnbDxw0cff6TSdw54wgOcAnXN
-         +Ey7/unYVeqNSTZBIbHYGaTypTyXZnx+cPl2seqtb4KxIrsMdSa+FC/nBV8tQnKqn52F
-         TYm2LhLxClitrtIVeThsNkRG8m4w/kX28dl4c=
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=W+X5PaUpkOlPOO1tCJJftVuhOIrLdOI2ZHpJ3GHF0Ak=;
+        b=HnKewxaupCcOK8cijKFG1yMgJz/jcv6g3pUVPw+UEAxyJzkzAFCVY5caSYRBa0QRZ1
+         4FbJApSTyK6JgoYT3E6mrfUVt4s9FS72Id37ahDfoRmJjU8d4W48xlh0j+5SUa/ooSCE
+         OzNVBZbLvuyPUU1zuuy/OSwPjCIZuyJfTdM3g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RaPTae517Y+bNpef4yQIvFQgsgdIAhxr/JzYA1ji4RE=;
-        b=P/VjB4tInio/t/PgmNyDelyy3NIoNCkLsmBJ6co/8Jmg+icQushQ48H7l+7A8EZyVQ
-         Zm9Tys0OGG/5Sx2XfCnuCjV8yDOKxJ1AdgRrhbnizLAO6pe5siWDgiP4spxKd+ulkVXn
-         k5KDsqDhxVJtcWLlnu3bYVJLiiSGTVupTh8yjnRv9qTP4EE+ro5+6YaqGHgc3qh9gmDW
-         FvMNiVjEiYwZZbxJdM2Iz8YaXglAy4MvMNNlSyHlIi9SXb/oCIWqeE0IJbl3+XA+qBAs
-         GJcYkQOrdWcd6SHxalM18NJ4TpGTR8ltaJMh0y7fOE0v90uvxMX8pjFVhO9efsSIvf1Z
-         bEOg==
-X-Gm-Message-State: ABuFfohU8ZMCv0trp27JcPcPD+a644DiEJfGFoYAVeM4useSuaZ/OGzq
-        fc1NrUeuENujXIIEexr/TdoQcQ==
-X-Google-Smtp-Source: ACcGV63Owz/bC1n1lNE4SmpSEXBNZ8/AnuA0FhxlN61PoEKxSUUBapLfckn1EmpfHJWWGdJimbgE4A==
-X-Received: by 2002:a0d:fe07:: with SMTP id o7-v6mr9730237ywf.379.1539709374895;
-        Tue, 16 Oct 2018 10:02:54 -0700 (PDT)
-Received: from alago.cortijodelrio.net (CableLink-187-161-144-121.PCs.InterCable.net. [187.161.144.121])
-        by smtp.googlemail.com with ESMTPSA id r8-v6sm5049384ywa.56.2018.10.16.10.02.53
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=W+X5PaUpkOlPOO1tCJJftVuhOIrLdOI2ZHpJ3GHF0Ak=;
+        b=hutguLTnLsZvQVfOsHai3482q8VBmVXq4aBz2CxW+PebNhSRpppJ+J90IK+p9PVKC3
+         X82ivzRnQOGdxzy9Ty6O3/vd5EF3x82wIUdai1dqgHK3VBAWbMP1wGTxRXVCXJrn9KcF
+         V0kyj6f8zF8L9YAbY94KsbwT7u45wiMyRGNjzMMgDAkMx7NOh7fjyHifaNbDyocLjViP
+         nlwBvHHGe5ByccIHxSAEzwdI4bJt7f5MRyfchVTIHl2XKt5DMuIrRG60+86Zk5OOre6s
+         4IODhZW57NJXfJsH9/IIfKrZzosaA1ZqxfRNjyDVjhEDteIOsjGfZJVL0AGZcH/334I6
+         rLlg==
+X-Gm-Message-State: ABuFfoiQUmzWX5LzAlIOyVDFf3knP8IWcG3wcwQt1BIBTSSxuB3b43mB
+        HRFzOINQ4QCfa6HfyZwwjf7MAowMbcs=
+X-Google-Smtp-Source: ACcGV61WxDRVW2VZoqpcbIiMCb9dw+Y3rL1kfW6HurLKXYKMgrTpCpz1zTAfzICWW8W5R9MbJ/hOdg==
+X-Received: by 2002:a25:9343:: with SMTP id g3-v6mr5601608ybo.222.1539709378999;
+        Tue, 16 Oct 2018 10:02:58 -0700 (PDT)
+Received: from mail-yw1-f47.google.com (mail-yw1-f47.google.com. [209.85.161.47])
+        by smtp.gmail.com with ESMTPSA id q11-v6sm3485024ywc.77.2018.10.16.10.02.55
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 10:02:53 -0700 (PDT)
-From:   =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
-To:     shuah@kernel.org, linux-kselftest@vger.kernel.org
-Cc:     =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] selftests/ftrace: Use colored output when available
-Date:   Tue, 16 Oct 2018 12:02:20 -0500
-Message-Id: <20181016170220.31156-1-daniel.diaz@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 16 Oct 2018 10:02:56 -0700 (PDT)
+Received: by mail-yw1-f47.google.com with SMTP id m127-v6so9206484ywb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 10:02:55 -0700 (PDT)
+X-Received: by 2002:a81:2cc3:: with SMTP id s186-v6mr12732048yws.168.1539709374873;
+ Tue, 16 Oct 2018 10:02:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Tue, 16 Oct 2018 10:02:53
+ -0700 (PDT)
+In-Reply-To: <20181016112928.4b52afb5@gandalf.local.home>
+References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org> <20181016112928.4b52afb5@gandalf.local.home>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 16 Oct 2018 10:02:53 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLBtBU1eX7tGX1gOVKSFKeLMeoke3bGHUuqxk86dLSnng@mail.gmail.com>
+Message-ID: <CAGXu5jLBtBU1eX7tGX1gOVKSFKeLMeoke3bGHUuqxk86dLSnng@mail.gmail.com>
+Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Geliang Tang <geliangtang@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pramod Gurav <gpramod@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If test is being directly executed (with stdout opened on the
-terminal) and the terminal capabilities indicate enough
-colors, then use the existing scheme of green, red, and blue
-to show when tests pass, fail or end in a different way.
+On Tue, Oct 16, 2018 at 8:29 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Tue, 16 Oct 2018 17:08:25 +0530
+> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
+>> One more thing is for pstore dmesg-ramoops, I had to change
+>> late_initcall to postcore_initcall which brings the question as to why
+>> we changed to late_initcall?
+>> Simple git blame shows to support crypto compress api, but is it really
+>> helpful? A lot of boottime issues can be caught with pstore enabled at
+>> postcore_initcall rather than late_initcall, this backtrace
+>> is just one example. Is there any way we could change this?
+>
+> Does it break if the crypto is not initialized? Perhaps add a command
+> line flag to have it happen earlier:
+>
+>  ramoops=earlyinit
+>
+> and add a postcore_initcall that checks if that flag is set, and if so,
+> it does the work then, and the late_initcall() will do nothing.
+>
+> That way, you can still have unmodified kernels use pstore when it
+> crashes at boot up.
 
-When running the tests redirecting the stdout, for instance,
-to a file, then colors are not shown, thus producing a more
-readable output.
+Even better, if we could find a way to make it work with a late
+initialization of compression (i.e. postcore_initcall() by default
+means anything caught would be uncompressed, but anything after
+late_initcall() would be compressed). I'd be very happy to review
+patches for that!
 
-Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
----
- tools/testing/selftests/ftrace/ftracetest | 29 +++++++++++++++++------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+-Kees
 
-diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-index 4946b2edfcff..d987bbec675f 100755
---- a/tools/testing/selftests/ftrace/ftracetest
-+++ b/tools/testing/selftests/ftrace/ftracetest
-@@ -152,6 +152,21 @@ else
-   date > $LOG_FILE
- fi
- 
-+# Define text colors
-+# Check available colors on the terminal, if any
-+ncolors=`tput colors 2>/dev/null`
-+color_reset=
-+color_red=
-+color_green=
-+color_blue=
-+# If stdout exists and number of colors is eight or more, use them
-+if [ -t 1 -a "$ncolors" -a "$ncolors" -ge 8 ]; then
-+  color_reset="\e[0m"
-+  color_red="\e[31m"
-+  color_green="\e[32m"
-+  color_blue="\e[34m"
-+fi
-+
- prlog() { # messages
-   [ -z "$LOG_FILE" ] && echo -e "$@" || echo -e "$@" | tee -a $LOG_FILE
- }
-@@ -195,37 +210,37 @@ test_on_instance() { # testfile
- eval_result() { # sigval
-   case $1 in
-     $PASS)
--      prlog "	[\e[32mPASS\e[30m]"
-+      prlog "	[${color_green}PASS${color_reset}]"
-       PASSED_CASES="$PASSED_CASES $CASENO"
-       return 0
-     ;;
-     $FAIL)
--      prlog "	[\e[31mFAIL\e[30m]"
-+      prlog "	[${color_red}FAIL${color_reset}]"
-       FAILED_CASES="$FAILED_CASES $CASENO"
-       return 1 # this is a bug.
-     ;;
-     $UNRESOLVED)
--      prlog "	[\e[34mUNRESOLVED\e[30m]"
-+      prlog "	[${color_blue}UNRESOLVED${color_reset}]"
-       UNRESOLVED_CASES="$UNRESOLVED_CASES $CASENO"
-       return 1 # this is a kind of bug.. something happened.
-     ;;
-     $UNTESTED)
--      prlog "	[\e[34mUNTESTED\e[30m]"
-+      prlog "	[${color_blue}UNTESTED${color_reset}]"
-       UNTESTED_CASES="$UNTESTED_CASES $CASENO"
-       return 0
-     ;;
-     $UNSUPPORTED)
--      prlog "	[\e[34mUNSUPPORTED\e[30m]"
-+      prlog "	[${color_blue}UNSUPPORTED${color_reset}]"
-       UNSUPPORTED_CASES="$UNSUPPORTED_CASES $CASENO"
-       return $UNSUPPORTED_RESULT # depends on use case
-     ;;
-     $XFAIL)
--      prlog "	[\e[31mXFAIL\e[30m]"
-+      prlog "	[${color_red}XFAIL${color_reset}]"
-       XFAILED_CASES="$XFAILED_CASES $CASENO"
-       return 0
-     ;;
-     *)
--      prlog "	[\e[34mUNDEFINED\e[30m]"
-+      prlog "	[${color_blue}UNDEFINED${color_reset}]"
-       UNDEFINED_CASES="$UNDEFINED_CASES $CASENO"
-       return 1 # this must be a test bug
-     ;;
 -- 
-2.17.1
-
+Kees Cook
+Pixel Security
