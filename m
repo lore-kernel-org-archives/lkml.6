@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E001AC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE743C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA5462147E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88D4421476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YaCMOAyh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5462147E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZCCituL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D4421476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730734AbeJQBMQ (ORCPT
+        id S1730747AbeJQBMT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:12:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57706 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:12:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729296AbeJQBMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:12:15 -0400
+        id S1729296AbeJQBMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:12:18 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0564B2098A;
-        Tue, 16 Oct 2018 17:20:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B285C21476;
+        Tue, 16 Oct 2018 17:20:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710450;
-        bh=XOHEfNleFC+6Y6TxFaAktDUPEZc/Jn8IwnqlVgNumfs=;
+        s=default; t=1539710453;
+        bh=i0Pzy8ldfIlPb8Ga+VFHko846OG8ad6JHn+M7A94Djw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YaCMOAyhC9Isfb8ecER4wGGejrVSZ3dN39OPLnGIdTm/ymn+7Es33KKag9yUeLTLW
-         z9huxapXn1YWpjcOJFSMvagL0s/nyJIZfCg5QYA+gWeFDW46TfIepq+BnxhMUqhWvq
-         gbk/TQi2om0b1fQrnvFmdXz3xaJiott0fBdk4mXU=
+        b=sZCCituLpNxPgglCxj3J5rD9qLbUK/EeRoTT9TDFCesUk0HnxrFOHYfPXd5V4FZJM
+         M92hfxFjTcsMvEjZJB3A+mjmZdWwUya+tZJgG20yioWAVby7dsssgNVdB3npXuJMQL
+         /3TQN9n+knoVb4YnwHZsQA/r7s3Tb6v0j4Uc6v7A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Hermes Zhang <chenhuiz@axis.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 045/109] ASoC: rsnd: dont fallback to PIO mode when -EPROBE_DEFER
-Date:   Tue, 16 Oct 2018 19:05:13 +0200
-Message-Id: <20181016170527.428381156@linuxfoundation.org>
+Subject: [PATCH 4.14 046/109] Bluetooth: hci_ldisc: Free rw_semaphore on close
+Date:   Tue, 16 Oct 2018 19:05:14 +0200
+Message-Id: <20181016170527.482259406@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -64,73 +63,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Hermes Zhang <chenhuiz@axis.com>
 
-[ Upstream commit 6c92d5a2744e27619a8fcc9d74b91ee9f1cdebd1 ]
+[ Upstream commit e6a57d22f787e73635ce0d29eef0abb77928b3e9 ]
 
-Current rsnd driver will fallback to PIO mode if it can't get DMA
-handler. But, DMA might return -EPROBE_DEFER when probe timing.
-This driver always fallback to PIO mode especially from
-commit ac6bbf0cdf4206c ("iommu: Remove IOMMU_OF_DECLARE") because
-of this reason.
+The percpu_rw_semaphore is not currently freed, and this leads to
+a crash when the stale rcu callback is invoked.  DEBUG_OBJECTS
+detects this.
 
-The DMA driver will be probed later, but sound driver might be
-probed as PIO mode in such case. This patch fixup this issue.
-Then, -EPROBE_DEFER is not error. Thus, let's don't indicate error
-message in such case.
-And it needs to call rsnd_adg_remove() individually if probe failed,
-because it registers clk which should be unregister.
+ ODEBUG: free active (active state 1) object type: rcu_head hint: (null)
+ ------------[ cut here ]------------
+ WARNING: CPU: 1 PID: 2024 at debug_print_object+0xac/0xc8
+ PC is at debug_print_object+0xac/0xc8
+ LR is at debug_print_object+0xac/0xc8
+ Call trace:
+ [<ffffff80082e2c2c>] debug_print_object+0xac/0xc8
+ [<ffffff80082e40b0>] debug_check_no_obj_freed+0x1e8/0x228
+ [<ffffff8008191254>] kfree+0x1cc/0x250
+ [<ffffff80083cc03c>] hci_uart_tty_close+0x54/0x108
+ [<ffffff800832e118>] tty_ldisc_close.isra.1+0x40/0x58
+ [<ffffff800832e14c>] tty_ldisc_kill+0x1c/0x40
+ [<ffffff800832e3dc>] tty_ldisc_release+0x94/0x170
+ [<ffffff8008325554>] tty_release_struct+0x1c/0x58
+ [<ffffff8008326400>] tty_release+0x3b0/0x490
+ [<ffffff80081a3fe8>] __fput+0x88/0x1d0
+ [<ffffff80081a418c>] ____fput+0xc/0x18
+ [<ffffff80080c0624>] task_work_run+0x9c/0xc0
+ [<ffffff80080a9e24>] do_exit+0x24c/0x8a0
+ [<ffffff80080aa4e0>] do_group_exit+0x38/0xa0
+ [<ffffff80080aa558>] __wake_up_parent+0x0/0x28
+ [<ffffff8008082c00>] el0_svc_naked+0x34/0x38
+ ---[ end trace bfe08cbd89098cdf ]---
 
-Maybe PIO fallback feature itself is not needed,
-but let's keep it so far.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Hermes Zhang <chenhuiz@axis.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/sh/rcar/core.c |   10 +++++++++-
- sound/soc/sh/rcar/dma.c  |    4 ++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/bluetooth/hci_ldisc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -486,7 +486,7 @@ static int rsnd_status_update(u32 *statu
- 			(func_call && (mod)->ops->fn) ? #fn : "");	\
- 		if (func_call && (mod)->ops->fn)			\
- 			tmp = (mod)->ops->fn(mod, io, param);		\
--		if (tmp)						\
-+		if (tmp && (tmp != -EPROBE_DEFER))			\
- 			dev_err(dev, "%s[%d] : %s error %d\n",		\
- 				rsnd_mod_name(mod), rsnd_mod_id(mod),	\
- 						     #fn, tmp);		\
-@@ -1469,6 +1469,14 @@ exit_snd_probe:
- 		rsnd_dai_call(remove, &rdai->capture, priv);
+--- a/drivers/bluetooth/hci_ldisc.c
++++ b/drivers/bluetooth/hci_ldisc.c
+@@ -539,6 +539,8 @@ static void hci_uart_tty_close(struct tt
  	}
+ 	clear_bit(HCI_UART_PROTO_SET, &hu->flags);
  
-+	/*
-+	 * adg is very special mod which can't use rsnd_dai_call(remove),
-+	 * and it registers ADG clock on probe.
-+	 * It should be unregister if probe failed.
-+	 * Mainly it is assuming -EPROBE_DEFER case
-+	 */
-+	rsnd_adg_remove(priv);
++	percpu_free_rwsem(&hu->proto_lock);
 +
- 	return ret;
+ 	kfree(hu);
  }
  
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -330,6 +330,10 @@ static int rsnd_dmaen_attach(struct rsnd
- 	/* try to get DMAEngine channel */
- 	chan = rsnd_dmaen_request_channel(io, mod_from, mod_to);
- 	if (IS_ERR_OR_NULL(chan)) {
-+		/* Let's follow when -EPROBE_DEFER case */
-+		if (PTR_ERR(chan) == -EPROBE_DEFER)
-+			return PTR_ERR(chan);
-+
- 		/*
- 		 * DMA failed. try to PIO mode
- 		 * see
 
 
