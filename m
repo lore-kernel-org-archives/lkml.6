@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D45F3C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BBDC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0DA42089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C3452098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7Pm+4T2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0DA42089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mjhgGZi/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C3452098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbeJQBHP (ORCPT
+        id S1729520AbeJQBHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:07:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51498 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:07:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728422AbeJQBHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:07:14 -0400
+        id S1728422AbeJQBHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:07:16 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0648A20866;
-        Tue, 16 Oct 2018 17:15:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A99D820866;
+        Tue, 16 Oct 2018 17:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710150;
-        bh=fAPK7RD7/GUcnpPUdBzqdRvmiGz9uxnGIBOcgQK6HnE=;
+        s=default; t=1539710153;
+        bh=sDNqdxUx1YNWOVJicr13KEDGBLWr0eGcSsNgJ64bOt8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W7Pm+4T2jHap0DbbQW1MkQ1m0tM+l340dl8lyw6kPNrgChryi4nvZsH1JkaftTuks
-         +dFiuXEDOzBm5sc3+cWVq5U+nUJuUECyWJynpamb5Td/qn143ZtqqrPzRrQQ5XwFZz
-         WofheuTQ6kkDluJYWFoEJv/npuzMuvDjSfnwRb0M=
+        b=mjhgGZi/hRhnEbxGTaFtSVSdeabDiWFtyl0HhG+CSR6VA29pgYLWaH6bBXh1unSn9
+         S4isrWy//8PaPPke3ZHTtlQpSCVixsnn+y6niZ3rgvK/KoyFW+PjqJFgfb9UIykLMr
+         1m7pnTwpHxTZvI82M/tHXZAK/eR7qbw+cXpo1cso=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.18 118/135] perf script python: Fix export-to-postgresql.py occasional failure
-Date:   Tue, 16 Oct 2018 19:05:48 +0200
-Message-Id: <20181016170523.442001717@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Matias Karhumaa <matias.karhumaa@gmail.com>,
+        Johan Hedberg <johan.hedberg@intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 083/135] Bluetooth: Use correct tfm to generate OOB data
+Date:   Tue, 16 Oct 2018 19:05:13 +0200
+Message-Id: <20181016170520.990543219@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -63,50 +65,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Matias Karhumaa <matias.karhumaa@gmail.com>
 
-commit 25e11700b54c7b6b5ebfc4361981dae12299557b upstream.
+[ Upstream commit 4ba5175f2c10affd412fa41855cecda02b66cd71 ]
 
-Occasional export failures were found to be caused by truncating 64-bit
-pointers to 32-bits. Fix by explicitly setting types for all ctype
-arguments and results.
+In case local OOB data was generated and other device initiated pairing
+claiming that it has got OOB data, following crash occurred:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180911114504.28516-2-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[  222.847853] general protection fault: 0000 [#1] SMP PTI
+[  222.848025] CPU: 1 PID: 42 Comm: kworker/u5:0 Tainted: G         C        4.18.0-custom #4
+[  222.848158] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  222.848307] Workqueue: hci0 hci_rx_work [bluetooth]
+[  222.848416] RIP: 0010:compute_ecdh_secret+0x5a/0x270 [bluetooth]
+[  222.848540] Code: 0c af f5 48 8b 3d 46 de f0 f6 ba 40 00 00 00 be c0 00 60 00 e8 b7 7b c5 f5 48 85 c0 0f 84 ea 01 00 00 48 89 c3 e8 16 0c af f5 <49> 8b 47 38 be c0 00 60 00 8b 78 f8 48 83 c7 48 e8 51 84 c5 f5 48
+[  222.848914] RSP: 0018:ffffb1664087fbc0 EFLAGS: 00010293
+[  222.849021] RAX: ffff8a5750d7dc00 RBX: ffff8a5671096780 RCX: ffffffffc08bc32a
+[  222.849111] RDX: 0000000000000000 RSI: 00000000006000c0 RDI: ffff8a5752003800
+[  222.849192] RBP: ffffb1664087fc60 R08: ffff8a57525280a0 R09: ffff8a5752003800
+[  222.849269] R10: ffffb1664087fc70 R11: 0000000000000093 R12: ffff8a5674396e00
+[  222.849350] R13: ffff8a574c2e79aa R14: ffff8a574c2e796a R15: 020e0e100d010101
+[  222.849429] FS:  0000000000000000(0000) GS:ffff8a5752500000(0000) knlGS:0000000000000000
+[  222.849518] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  222.849586] CR2: 000055856016a038 CR3: 0000000110d2c005 CR4: 00000000000606e0
+[  222.849671] Call Trace:
+[  222.849745]  ? sc_send_public_key+0x110/0x2a0 [bluetooth]
+[  222.849825]  ? sc_send_public_key+0x115/0x2a0 [bluetooth]
+[  222.849925]  smp_recv_cb+0x959/0x2490 [bluetooth]
+[  222.850023]  ? _cond_resched+0x19/0x40
+[  222.850105]  ? mutex_lock+0x12/0x40
+[  222.850202]  l2cap_recv_frame+0x109d/0x3420 [bluetooth]
+[  222.850315]  ? l2cap_recv_frame+0x109d/0x3420 [bluetooth]
+[  222.850426]  ? __switch_to_asm+0x34/0x70
+[  222.850515]  ? __switch_to_asm+0x40/0x70
+[  222.850625]  ? __switch_to_asm+0x34/0x70
+[  222.850724]  ? __switch_to_asm+0x40/0x70
+[  222.850786]  ? __switch_to_asm+0x34/0x70
+[  222.850846]  ? __switch_to_asm+0x40/0x70
+[  222.852581]  ? __switch_to_asm+0x34/0x70
+[  222.854976]  ? __switch_to_asm+0x40/0x70
+[  222.857475]  ? __switch_to_asm+0x40/0x70
+[  222.859775]  ? __switch_to_asm+0x34/0x70
+[  222.861218]  ? __switch_to_asm+0x40/0x70
+[  222.862327]  ? __switch_to_asm+0x34/0x70
+[  222.863758]  l2cap_recv_acldata+0x266/0x3c0 [bluetooth]
+[  222.865122]  hci_rx_work+0x1c9/0x430 [bluetooth]
+[  222.867144]  process_one_work+0x210/0x4c0
+[  222.868248]  worker_thread+0x41/0x4d0
+[  222.869420]  kthread+0x141/0x160
+[  222.870694]  ? process_one_work+0x4c0/0x4c0
+[  222.871668]  ? kthread_create_worker_on_cpu+0x90/0x90
+[  222.872896]  ret_from_fork+0x35/0x40
+[  222.874132] Modules linked in: algif_hash algif_skcipher af_alg rfcomm bnep btusb btrtl btbcm btintel snd_intel8x0 cmac intel_rapl_perf vboxvideo(C) snd_ac97_codec bluetooth ac97_bus joydev ttm snd_pcm ecdh_generic drm_kms_helper snd_timer snd input_leds drm serio_raw fb_sys_fops soundcore syscopyarea sysfillrect sysimgblt mac_hid sch_fq_codel ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi ip_tables x_tables autofs4 btrfs zstd_compress raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid1 raid0 multipath linear hid_generic usbhid hid crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd cryptd glue_helper ahci psmouse libahci i2c_piix4 video e1000 pata_acpi
+[  222.883153] fbcon_switch: detected unhandled fb_set_par error, error code -16
+[  222.886774] fbcon_switch: detected unhandled fb_set_par error, error code -16
+[  222.890503] ---[ end trace 6504aa7a777b5316 ]---
+[  222.890541] RIP: 0010:compute_ecdh_secret+0x5a/0x270 [bluetooth]
+[  222.890551] Code: 0c af f5 48 8b 3d 46 de f0 f6 ba 40 00 00 00 be c0 00 60 00 e8 b7 7b c5 f5 48 85 c0 0f 84 ea 01 00 00 48 89 c3 e8 16 0c af f5 <49> 8b 47 38 be c0 00 60 00 8b 78 f8 48 83 c7 48 e8 51 84 c5 f5 48
+[  222.890555] RSP: 0018:ffffb1664087fbc0 EFLAGS: 00010293
+[  222.890561] RAX: ffff8a5750d7dc00 RBX: ffff8a5671096780 RCX: ffffffffc08bc32a
+[  222.890565] RDX: 0000000000000000 RSI: 00000000006000c0 RDI: ffff8a5752003800
+[  222.890571] RBP: ffffb1664087fc60 R08: ffff8a57525280a0 R09: ffff8a5752003800
+[  222.890576] R10: ffffb1664087fc70 R11: 0000000000000093 R12: ffff8a5674396e00
+[  222.890581] R13: ffff8a574c2e79aa R14: ffff8a574c2e796a R15: 020e0e100d010101
+[  222.890586] FS:  0000000000000000(0000) GS:ffff8a5752500000(0000) knlGS:0000000000000000
+[  222.890591] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  222.890594] CR2: 000055856016a038 CR3: 0000000110d2c005 CR4: 00000000000606e0
+
+This commit fixes a bug where invalid pointer to crypto tfm was used for
+SMP SC ECDH calculation when OOB was in use. Solution is to use same
+crypto tfm than when generating OOB material on generate_oob() function.
+
+This bug was introduced in commit c0153b0b901a ("Bluetooth: let the crypto
+subsystem generate the ecc privkey"). Bug was found by fuzzing kernel SMP
+implementation using Synopsys Defensics.
+
+Signed-off-by: Matias Karhumaa <matias.karhumaa@gmail.com>
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- tools/perf/scripts/python/export-to-postgresql.py |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ net/bluetooth/smp.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/tools/perf/scripts/python/export-to-postgresql.py
-+++ b/tools/perf/scripts/python/export-to-postgresql.py
-@@ -204,14 +204,23 @@ from ctypes import *
- libpq = CDLL("libpq.so.5")
- PQconnectdb = libpq.PQconnectdb
- PQconnectdb.restype = c_void_p
-+PQconnectdb.argtypes = [ c_char_p ]
- PQfinish = libpq.PQfinish
-+PQfinish.argtypes = [ c_void_p ]
- PQstatus = libpq.PQstatus
-+PQstatus.restype = c_int
-+PQstatus.argtypes = [ c_void_p ]
- PQexec = libpq.PQexec
- PQexec.restype = c_void_p
-+PQexec.argtypes = [ c_void_p, c_char_p ]
- PQresultStatus = libpq.PQresultStatus
-+PQresultStatus.restype = c_int
-+PQresultStatus.argtypes = [ c_void_p ]
- PQputCopyData = libpq.PQputCopyData
-+PQputCopyData.restype = c_int
- PQputCopyData.argtypes = [ c_void_p, c_void_p, c_int ]
- PQputCopyEnd = libpq.PQputCopyEnd
-+PQputCopyEnd.restype = c_int
- PQputCopyEnd.argtypes = [ c_void_p, c_void_p ]
+--- a/net/bluetooth/smp.c
++++ b/net/bluetooth/smp.c
+@@ -2700,7 +2700,13 @@ static int smp_cmd_public_key(struct l2c
+ 	 * key was set/generated.
+ 	 */
+ 	if (test_bit(SMP_FLAG_LOCAL_OOB, &smp->flags)) {
+-		struct smp_dev *smp_dev = chan->data;
++		struct l2cap_chan *hchan = hdev->smp_data;
++		struct smp_dev *smp_dev;
++
++		if (!hchan || !hchan->data)
++			return SMP_UNSPECIFIED;
++
++		smp_dev = hchan->data;
  
- sys.path.append(os.environ['PERF_EXEC_PATH'] + \
+ 		tfm_ecdh = smp_dev->tfm_ecdh;
+ 	} else {
 
 
