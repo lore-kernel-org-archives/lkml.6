@@ -2,90 +2,105 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A698C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59039C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F822089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F822089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 21C2E2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="daP6In1+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21C2E2089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbeJQBDH (ORCPT
+        id S1728306AbeJQBDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:03:07 -0400
-Received: from smtprelay0106.hostedemail.com ([216.40.44.106]:42909 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727263AbeJQBDH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:03:07 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 219C01804A321;
-        Tue, 16 Oct 2018 17:11:44 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: wish21_8372314a88721
-X-Filterd-Recvd-Size: 2392
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 16 Oct 2018 17:11:43 +0000 (UTC)
-Message-ID: <bbef856ec1671776f7b72107620beb6b4b2b16f5.camel@perches.com>
-Subject: Re: patch "staging: MAINTAINERS: remove obsolete IPX staging
- directory" added to staging-testing
-From:   Joe Perches <joe@perches.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Date:   Tue, 16 Oct 2018 10:11:41 -0700
-In-Reply-To: <20181016115137.GA28641@kroah.com>
-References: <15396867728666@kroah.com>
-         <249981aa5af26de07565946fbe806e3c01f26c07.camel@perches.com>
-         <20181016115137.GA28641@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 16 Oct 2018 21:03:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45010 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727263AbeJQBDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:03:09 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37F9620866;
+        Tue, 16 Oct 2018 17:11:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539709906;
+        bh=D7jReaJgv6Vy1/HWJrlY53lJpd5O7/HjYIGRZJ0DIk4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=daP6In1+HP0WozsOf2f1eT0Ll0njDEthn6nc+uHWDoFhGY4+NiELH7ghfVq0H4qfW
+         RTyiyWomUfAoYpD7sgooYnpr9S+oJBGMmK1O7AkqNJcK8cSli+9nwP6K4FnO5kPsfC
+         nr78g06xbBx4BcXBxMMW1YPeguVrAz+gWVlAbnag=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 035/135] net: dsa: bcm_sf2: Fix unbind ordering
+Date:   Tue, 16 Oct 2018 19:04:25 +0200
+Message-Id: <20181016170517.388541430@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
+References: <20181016170515.447235311@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-16 at 13:51 +0200, Greg KH wrote:
-> On Tue, Oct 16, 2018 at 04:43:30AM -0700, Joe Perches wrote:
-> > On Tue, 2018-10-16 at 12:46 +0200, gregkh@linuxfoundation.org wrote:
-> > > This is a note to let you know that I've just added the patch titled
-> > > 
-> > >     staging: MAINTAINERS: remove obsolete IPX staging directoryts
-> > []
-> > > From dd71c89b2c1ae049d2018107e9d7a41261db3f7b Mon Sep 17 00:00:00 2001
-> > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Date: Tue, 16 Oct 2018 12:45:13 +0200
-> > > Subject: staging: MAINTAINERS: remove obsolete IPX staging directory
-> > > 
-> > > The IPX code was removed from staging back in November 2017, but the
-> > > MAINTAINERS entry stuck around.  Remove the invalid directory from the
-> > > file as it does not actually point to anything anymore.
-> > 
-> > As the uapi ipx file still exists but the functionality
-> > has been removed, perhaps some compiler message like
-> > 
-> > #pragma message "IPX functionality removed as of linux kernel v4.18"
-> > 
-> > should be added to the uapi file.
-> 
-> Eventually those files should be removed by the networking developers.
-> It will take a bit of work for them to do it, it's not a straight
-> "delete the file" work.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-I understand that, but it's not the point.
+------------------
 
-#pragma message might still be useful because,
-in the meantime, anyone
-actually including the
-uapi file would get some heads-up notification
-that IPX doesn't work here anymore.
+From: Florian Fainelli <f.fainelli@gmail.com>
+
+[ Upstream commit bf3b452b7af787b8bf27de6490dc4eedf6f97599 ]
+
+The order in which we release resources is unfortunately leading to bus
+errors while dismantling the port. This is because we set
+priv->wol_ports_mask to 0 to tell bcm_sf2_sw_suspend() that it is now
+permissible to clock gate the switch. Later on, when dsa_slave_destroy()
+comes in from dsa_unregister_switch() and calls
+dsa_switch_ops::port_disable, we perform the same dismantling again, and
+this time we hit registers that are clock gated.
+
+Make sure that dsa_unregister_switch() is the first thing that happens,
+which takes care of releasing all user visible resources, then proceed
+with clock gating hardware. We still need to set priv->wol_ports_mask to
+0 to make sure that an enabled port properly gets disabled in case it
+was previously used as part of Wake-on-LAN.
+
+Fixes: d9338023fb8e ("net: dsa: bcm_sf2: Make it a real platform device driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/dsa/bcm_sf2.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/net/dsa/bcm_sf2.c
++++ b/drivers/net/dsa/bcm_sf2.c
+@@ -1160,10 +1160,10 @@ static int bcm_sf2_sw_remove(struct plat
+ {
+ 	struct bcm_sf2_priv *priv = platform_get_drvdata(pdev);
+ 
+-	/* Disable all ports and interrupts */
+ 	priv->wol_ports_mask = 0;
+-	bcm_sf2_sw_suspend(priv->dev->ds);
+ 	dsa_unregister_switch(priv->dev->ds);
++	/* Disable all ports and interrupts */
++	bcm_sf2_sw_suspend(priv->dev->ds);
+ 	bcm_sf2_mdio_unregister(priv);
+ 
+ 	return 0;
 
 
