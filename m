@@ -2,81 +2,82 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3228C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7BFC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A51982098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:43:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y3mCUtfx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A51982098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D29122098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:44:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D29122098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727157AbeJPTdx (ORCPT
+        id S1727164AbeJPTeo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 15:33:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46296 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbeJPTdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 15:33:53 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEC24208B3;
-        Tue, 16 Oct 2018 11:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539690229;
-        bh=aCKFQRfoa45UVON+WZ3xtwI1Qtf5Uqlv/SX0ePEVqdM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=y3mCUtfxPsCPpEEkxa6S71N257DRaYfZdtoYT0yHG1Q12ToffXO1QUMuH1l1SX1OA
-         umRNdvLr6/PCQXJjKMKIvKB/uHV62ZwUuC9h8OLjQqbUrGWvPfwDZk8twKF9b9sInz
-         qoW3944Nm7fTPVv5gD7EzzHdIeod5/lcKOa/k7VI=
-Date:   Tue, 16 Oct 2018 13:43:47 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jani Nikula <jani.nikula@intel.com>
-Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 1/2] sysfs: constify sysfs create/remove files harder
-Message-ID: <20181016114347.GA21790@kroah.com>
-References: <20181004143750.30880-1-jani.nikula@intel.com>
- <20181016104845.GB4768@kroah.com>
- <87pnwakto2.fsf@intel.com>
+        Tue, 16 Oct 2018 15:34:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40454 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726760AbeJPTeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 15:34:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7D2CEAEE4;
+        Tue, 16 Oct 2018 11:44:06 +0000 (UTC)
+Date:   Tue, 16 Oct 2018 13:44:05 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Jann Horn <jannh@google.com>
+cc:     Casey Schaufler <casey.schaufler@intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@tycho.nsa.gov, Dave Hansen <dave.hansen@intel.com>,
+        deneen.t.dock@intel.com, kristen@linux.intel.com,
+        Arjan van de Ven <arjan@linux.intel.com>
+Subject: Re: [PATCH v5 2/5] Smack: Prepare for PTRACE_MODE_SCHED
+In-Reply-To: <CAG48ez1OiAvqqtLXpBjxz-=9X+YdtR9iF7fA_pXhu2GfBt5osw@mail.gmail.com>
+Message-ID: <nycvar.YFH.7.76.1810161343110.23511@cbobk.fhfr.pm>
+References: <20180926203446.2004-1-casey.schaufler@intel.com> <20180926203446.2004-3-casey.schaufler@intel.com> <CAG48ez3_XJYCURiCurDeCousGguGUdPego30j5+UF8FebWxUtA@mail.gmail.com> <99FC4B6EFCEFD44486C35F4C281DC673214625EA@ORSMSX107.amr.corp.intel.com>
+ <CAG48ez1+9Bfadu4y4TzPYJfFpLk+N8w7GdCE+xwNCM5TfQ8W8Q@mail.gmail.com> <nycvar.YFH.7.76.1810040942110.14430@cbobk.fhfr.pm> <CAG48ez1OiAvqqtLXpBjxz-=9X+YdtR9iF7fA_pXhu2GfBt5osw@mail.gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87pnwakto2.fsf@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 02:38:53PM +0300, Jani Nikula wrote:
-> On Tue, 16 Oct 2018, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > On Thu, Oct 04, 2018 at 05:37:49PM +0300, Jani Nikula wrote:
-> >> Let the passed in array be const (and thus placed in rodata) instead of
-> >> a mutable array of const pointers.
-> >> 
-> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> >> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-> >> ---
-> >>  fs/sysfs/file.c       | 4 ++--
-> >>  include/linux/sysfs.h | 8 ++++----
-> >>  2 files changed, 6 insertions(+), 6 deletions(-)
+On Thu, 4 Oct 2018, Jann Horn wrote:
+
+> > Well, we can't really call out into audit from scheduler code, and the
+> > previous versions of the patchsets didn't have PTRACE_MODE_SCHED, so it
+> > had to be included in PTRACE_MODE_IBPB in order to make sure we're not
+> > calling into audit from context switch code.
 > >
-> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Or did I misunderstand the question?
 > 
-> Thanks; who should pick them up?
+> If I understand Casey correctly, he is saying that your patch
+> (https://lore.kernel.org/lkml/nycvar.YFH.7.76.1809251437340.15880@cbobk.fhfr.pm/)
+> doesn't include PTRACE_MODE_NOAUDIT for IBPB, but the previous v6 of
+> your patch (https://lore.kernel.org/lkml/nycvar.YFH.7.76.1809121105330.15880@cbobk.fhfr.pm/)
+> did include it, and therefore Casey thinks that there is a specific
+> reason why you removed PTRACE_MODE_NOAUDIT, 
 
-I could pick the first one up, but as you need this for a drm patch,
-both should probably go through that tree, right?
+Quite honestly, I don't remember. I dont't think there is any deadlock 
+that'd be triggered by this.
 
-thanks,
+> and therefore Casey is adding special-case logic for PTRACE_MODE_SCHED 
+> to Smack when simply using PTRACE_MODE_NOAUDIT would also work.
+> 
+> I think that Casey should change ptrace_may_access_sched() to use
+> "mode | PTRACE_MODE_SCHED | PTRACE_MODE_NOAUDIT".
 
-greg k-h
+Agreed, that should work.
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
+
