@@ -2,85 +2,98 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CC4C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60DAC070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84DE62083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:22:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84DE62083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 868EF21470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:27:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 868EF21470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728026AbeJPNL2 (ORCPT
+        id S1727862AbeJPNQQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 09:11:28 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:43720 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbeJPNL2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 09:11:28 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1ACD71456E0B9;
-        Mon, 15 Oct 2018 22:22:49 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 22:22:48 -0700 (PDT)
-Message-Id: <20181015.222248.2263887975438589835.davem@davemloft.net>
-To:     ivan.khoronzhuk@linaro.org
-Cc:     grygorii.strashko@ti.com, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: use for mcast
- entries only host port
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181012160629.7245-1-ivan.khoronzhuk@linaro.org>
-References: <20181012160629.7245-1-ivan.khoronzhuk@linaro.org>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 15 Oct 2018 22:22:49 -0700 (PDT)
+        Tue, 16 Oct 2018 09:16:16 -0400
+Received: from mx.socionext.com ([202.248.49.38]:29535 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727280AbeJPNQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 09:16:15 -0400
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 16 Oct 2018 14:27:34 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 1EEBC6006C;
+        Tue, 16 Oct 2018 14:27:34 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 16 Oct 2018 14:27:34 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 47A151A1210;
+        Tue, 16 Oct 2018 14:27:33 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [RESEND PATCH v3 0/2] add new UniPhier PCIe host driver
+Date:   Tue, 16 Oct 2018 14:27:19 +0900
+Message-Id: <1539667641-26024-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Date: Fri, 12 Oct 2018 19:06:29 +0300
+This series adds PCIe host controller driver for Socionext UniPhier SoCs.
+This controller is based on the DesignWare PCIe core. This driver
+supports LD20 and PXs3 SoCs.
 
-> In dual-emac mode the cpsw driver sends directed packets, that means
-> that packets go to the directed port, but an ALE lookup is performed
-> to determine untagged egress only. It means that on tx side no need
-> to add port bit for ALE mcast entry mask, and basically ALE entry
-> for port identification is needed only on rx side.
-> 
-> So, add only host port in dual_emac mode as used directed
-> transmission, and no need in one more port. For single port boards
-> and switch mode all ports used, as usual, so no changes for them.
-> Also it simplifies farther changes.
-> 
-> In other words, mcast entries for dual-emac should behave exactly
-> like unicast. It also can help avoid leaking packets between ports
-> with same vlan on h/w level if ports could became members of same vid.
-> 
-> So now, for instance, if mcast address 33:33:00:00:00:01 is added then
-> entries in ALE table:
-> 
-> vid = 1, addr = 33:33:00:00:00:01, port_mask = 0x1
-> vid = 2, addr = 33:33:00:00:00:01, port_mask = 0x1
-> 
-> Instead of:
-> vid = 1, addr = 33:33:00:00:00:01, port_mask = 0x3
-> vid = 2, addr = 33:33:00:00:00:01, port_mask = 0x5
-> 
-> With the same considerations, set only host port for unregistered
-> mcast for dual-emac mode in case of IFF_ALLMULTI is set, exactly like
-> it's done in cpsw_ale_set_allmulti().
-> 
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+v2: https://www.spinics.net/lists/linux-pci/msg75930.html
 
-Applied.
+About legacy IRQ, it might be necessary to share common view from
+keystone driver that have been cleaned up[1].
+
+[1] https://lore.kernel.org/patchwork/patch/989541/
+
+Changes since v2:
+- dt-bindings: remove a comment that the node name isn't important
+- dt-bindings: remove "intx" interrupt
+- dt-bindings: define 'legacy-interrupt-controller' node and its properties
+- return an error value when link up fails
+- remove devm_request_irq() and a handler for MSI IRQ
+- use chained interrupt instead of devm_request_irq() for legacy IRQ
+- add unipher_pcie_config_legacy_irq() to get legacy IRQ from
+  'legacy-interrupt controller' node
+- replace 4 statments to handle INTX with for_each_set_bit()
+- remove initialization of pp->root_bus_nr
+- remove indivisual interrupt enable bit definitions
+- rename 'irq_domain' member to 'legacy_irq_domain' in private structure
+- use pci_irqd_intx_xlate() for irq_domain_ops.xlate function
+
+Changes since v1:
+- follow capitalization conventions in the descriptions
+- use C style comments except for the SPDX line
+
+Kunihiko Hayashi (2):
+  dt-bindings: PCI: Add UniPhier PCIe host controller description
+  PCI: uniphier: Add UniPhier PCIe host controller support
+
+ .../devicetree/bindings/pci/uniphier-pcie.txt      |  81 ++++
+ drivers/pci/controller/dwc/Kconfig                 |   9 +
+ drivers/pci/controller/dwc/Makefile                |   1 +
+ drivers/pci/controller/dwc/pcie-uniphier.c         | 433 +++++++++++++++++++++
+ 4 files changed, 524 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+ create mode 100644 drivers/pci/controller/dwc/pcie-uniphier.c
+
+-- 
+2.7.4
+
