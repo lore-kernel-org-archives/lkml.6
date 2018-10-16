@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 695BBC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F967C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C6C9208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:30:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE1CB20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:30:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LrXPfAHg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C6C9208B3
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z8W1axTG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE1CB20881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbeJPPTR (ORCPT
+        id S1727079AbeJPPUC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 11:19:17 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43462 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbeJPPTR (ORCPT
+        Tue, 16 Oct 2018 11:20:02 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:35283 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbeJPPUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 11:19:17 -0400
-Received: by mail-qt1-f193.google.com with SMTP id q41-v6so24530554qtq.10
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 00:30:11 -0700 (PDT)
+        Tue, 16 Oct 2018 11:20:02 -0400
+Received: by mail-qk1-f194.google.com with SMTP id v68-v6so13506169qka.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 00:30:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=h6LoBoRFgCvRapU0Kj82C/RUkpCby0NviBiWvvnysNs=;
-        b=LrXPfAHg0o1fGbmANLMAUcfMt4LYa6LnLR5dYZjU3frWFkNTp6AD9F8cXfOZ2iYU//
-         5Ou3DVDdujHeWzUfPFoCMByvxaL58FUlismZZHWeMBRMYiza2G6aYfUSsxNzV+KPue06
-         eIxzFbsmRNGKoG7EXX0Y623cQG+elkA4zhIOE=
+        bh=xngWekDgdWVLYtgMwZB4bPZP4dRKVsxuWF5aDY6u6AQ=;
+        b=Z8W1axTGUIif58g7arM6h7JupiF3FaI55RpZzzSvLugTHPHLUwzvTu0Zpkz6K1Dyg0
+         F2U+hN07yHX6F+1QiK1mytEB24Mi4rVKuO2tVL0JaKmNwNC0yPb+/eWAstQocf1izl9x
+         vmZQv52+efbQXaCyZJ8nja/R2gN/zSrcgy64A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=h6LoBoRFgCvRapU0Kj82C/RUkpCby0NviBiWvvnysNs=;
-        b=ti+gtFUjIpnUh+dHCgaz4/PeoluNmbguSzAmISybRHUAb2ZKN0pDCPfAlBk+jKmZjT
-         kEHJVqrXWngTafyOG8pHEat/+Lt5Ovv9bkG4eeHB80aLS5MHcOjOYFWu4/pKZDvjCz95
-         SDWgomxXRP7+wPaIXMxeY29HMzIA5C7o1ChPGZXbSh6fcfjtDZEo/jCQ2z8sTPpzQlR1
-         /7CsovHRTLEmbyAMA2wkCdTPy+f6JK6BV27i/hUTh3x5SMre/+/6Wy9Jh2dmjHrvIFr2
-         sYJ9tspY1q9eNaowWVd0f5EL3EheDnKF6QsH3foj1t3BSzloOXomLUtjTkbCseApI+Pn
-         vcCw==
-X-Gm-Message-State: ABuFfoh05rjIU0T6GVon0D0RSfU1HvZ2rTtttuoq1fqsw5aaSwEvKNdH
-        B1pl07neSwxAmtdhxCjxE9jL31bv90c7/LOAh4xBIA==
-X-Google-Smtp-Source: ACcGV62myHepaN86cRaHeXlJpdJyP4/ZE5o8ljMA+Qri1RVyoXARNqAb6yu62RV1b7eqdhxrbBZ8xTJGKIsf+gcVGN0=
-X-Received: by 2002:a0c:9689:: with SMTP id a9mr418331qvd.103.1539675011119;
- Tue, 16 Oct 2018 00:30:11 -0700 (PDT)
+        bh=xngWekDgdWVLYtgMwZB4bPZP4dRKVsxuWF5aDY6u6AQ=;
+        b=b6XzqdH3UsHg2wFAECFyLNnnh/gdbKvORQ3ePUCkiHoEdUhJpPJ05n9qdLfyvGrPuN
+         UATZL9IynbL9bBVS0PkQWa2OyNqgYqHjaQVCNHa8GO67yfa8JbJS+4UXVi3PI9rEfD1b
+         QA7hGqfCob/IjEYOfBDrITtIVTwshqie1GEo/nIn2W4qMjLm6x8Zcwlla+jbde0mKmwb
+         Ujni50f104zxxMyuAcVi9lVg4uRlxZ14t6WkjAMSWwGvpKWBbwWvf/eGM3PkFK3r1MCF
+         kLnuYEGuWdIEUNL1mVXowSk0xKdKPBJo5sHlYpXwsVg5Ll1env8dMi4LsQoKzQN79HxJ
+         HN+A==
+X-Gm-Message-State: ABuFfoh5pHm7myyKK9rJ3NdVpJWx7MikUAesr2s2mRg6YiaNlFpY/uld
+        1GCCLmMzKPsdoH14WaU6pHauZDrejqXTpYSm4qBCdA==
+X-Google-Smtp-Source: ACcGV63lGCwb6K9vE0hFujI/4Kt7K/LARB6dhZp90lzRf8hA4xcqP8e0iVb3aHHiNptWxV5nJvb0cRpt5SsaC4kkW/8=
+X-Received: by 2002:a37:1f53:: with SMTP id f80-v6mr18527190qkf.109.1539675056216;
+ Tue, 16 Oct 2018 00:30:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181008163216.97436-1-swboyd@chromium.org> <20181008163216.97436-4-swboyd@chromium.org>
-In-Reply-To: <20181008163216.97436-4-swboyd@chromium.org>
+References: <20181008163216.97436-1-swboyd@chromium.org> <20181008163216.97436-5-swboyd@chromium.org>
+In-Reply-To: <20181008163216.97436-5-swboyd@chromium.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 16 Oct 2018 09:29:59 +0200
-Message-ID: <CACRpkdYmzRHcF=Bap=zjMoFRuEobqBibChQVCNiD0XrE+Kc_nw@mail.gmail.com>
-Subject: Re: [PATCH 3/4] gpio: Remove unused 'irqchip' argument to gpiochip_set_cascaded_irqchip()
+Date:   Tue, 16 Oct 2018 09:30:44 +0200
+Message-ID: <CACRpkdZ+wSEnT3u-0MeGaQhmivLDZJxUnEULFwT_trks8vYFBw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] gpio: Clarify kerneldoc on gpiochip_set_chained_irqchip()
 To:     Stephen Boyd <swboyd@chromium.org>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
@@ -71,16 +71,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Oct 8, 2018 at 6:32 PM Stephen Boyd <swboyd@chromium.org> wrote:
 
-> This argument hasn't ever been used since it was introduced in commit
-> 1425052097b5 ("gpio: add IRQ chip helpers in gpiolib"). Let's drop it to
-> reduce reading confusion.
+> This doesn't support nested anymore, so drivers shouldn't call it with
+> the handler set to NULL.
 >
 > Cc: Evan Green <evgreen@chromium.org>
 > Cc: Thierry Reding <treding@nvidia.com>
 > Cc: Grygorii Strashko <grygorii.strashko@ti.com>
 > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-Patch applied. Good catch.
+Patch applied.
 
 Yours,
 Linus Walleij
