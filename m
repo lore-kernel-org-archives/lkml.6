@@ -6,44 +6,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA40AC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DDEC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A480B21476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C13221476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjYHHuOA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A480B21476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxMok2lm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C13221476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730512AbeJQBLX (ORCPT
+        id S1730550AbeJQBLb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:11:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56656 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:11:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729271AbeJQBLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:11:22 -0400
+        id S1729271AbeJQBLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:11:31 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70C4D21477;
-        Tue, 16 Oct 2018 17:19:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6847621477;
+        Tue, 16 Oct 2018 17:20:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710397;
-        bh=WcI3tnG8YjTtjFQhA0MBciRASopNMTgO07mrLs1k9l8=;
+        s=default; t=1539710405;
+        bh=HzCCTyI5ITsnWTtY8Qf4KTXonympOykIypolrYaFun8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AjYHHuOAkg5MKnT534LhrVgRpSAfRioDeCj8SOKq2kJziBZT0vsAlwCLOtWaMLAGM
-         3c9cstrrOtKXm9JF/y2FY3tAdClFySUVlYgswr3w1x4fNTlHmnQhgr/ALQvDoUbObW
-         6MdPrcBiUsG7EveTXtIPt0x3FyBRusypGFXK2UKA=
+        b=PxMok2lm9YIyYTqA5NlTUW7n0l7gpqI59MHgFqQGPLNbM4+VkTjO625DwcFLHURnL
+         QWibG62IteHLTvXsdBhCvDGTiWFm1SQa9abIqgG/Fc9PckcZt3oQIarhbf8OHVmi1X
+         mYWyOvE95ev2pEm2WL50ZvJh1u4lpICz2ezf1RLI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 4.14 064/109] percpu: stop leaking bitmap metadata blocks
-Date:   Tue, 16 Oct 2018 19:05:32 +0200
-Message-Id: <20181016170528.331231775@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 040/109] ASoC: wm8804: Add ACPI support
+Date:   Tue, 16 Oct 2018 19:05:08 +0200
+Message-Id: <20181016170527.185875196@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -61,33 +64,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-commit 6685b357363bfe295e3ae73665014db4aed62c58 upstream.
+[ Upstream commit 960cdd50ca9fdfeb82c2757107bcb7f93c8d7d41 ]
 
-The commit ca460b3c9627 ("percpu: introduce bitmap metadata blocks")
-introduced bitmap metadata blocks. These metadata blocks are allocated
-whenever a new chunk is created, but they are never freed. Fix it.
+HID made of either Wolfson/CirrusLogic PCI ID + 8804 identifier.
 
-Fixes: ca460b3c9627 ("percpu: introduce bitmap metadata blocks")
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
+This helps enumerate the HifiBerry Digi+ HAT boards on the Up2 platform.
+
+The scripts at https://github.com/thesofproject/acpi-scripts can be
+used to add the ACPI initrd overlays.
+
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- mm/percpu.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/wm8804-i2c.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -1208,6 +1208,7 @@ static void pcpu_free_chunk(struct pcpu_
- {
- 	if (!chunk)
- 		return;
-+	pcpu_mem_free(chunk->md_blocks);
- 	pcpu_mem_free(chunk->bound_map);
- 	pcpu_mem_free(chunk->alloc_map);
- 	pcpu_mem_free(chunk);
+--- a/sound/soc/codecs/wm8804-i2c.c
++++ b/sound/soc/codecs/wm8804-i2c.c
+@@ -13,6 +13,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/i2c.h>
++#include <linux/acpi.h>
+ 
+ #include "wm8804.h"
+ 
+@@ -40,17 +41,29 @@ static const struct i2c_device_id wm8804
+ };
+ MODULE_DEVICE_TABLE(i2c, wm8804_i2c_id);
+ 
++#if defined(CONFIG_OF)
+ static const struct of_device_id wm8804_of_match[] = {
+ 	{ .compatible = "wlf,wm8804", },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, wm8804_of_match);
++#endif
++
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id wm8804_acpi_match[] = {
++	{ "1AEC8804", 0 }, /* Wolfson PCI ID + part ID */
++	{ "10138804", 0 }, /* Cirrus Logic PCI ID + part ID */
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, wm8804_acpi_match);
++#endif
+ 
+ static struct i2c_driver wm8804_i2c_driver = {
+ 	.driver = {
+ 		.name = "wm8804",
+ 		.pm = &wm8804_pm,
+-		.of_match_table = wm8804_of_match,
++		.of_match_table = of_match_ptr(wm8804_of_match),
++		.acpi_match_table = ACPI_PTR(wm8804_acpi_match),
+ 	},
+ 	.probe = wm8804_i2c_probe,
+ 	.remove = wm8804_i2c_remove,
 
 
