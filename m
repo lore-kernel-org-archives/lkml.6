@@ -2,117 +2,156 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C932C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D0AC18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D908020881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:42:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D908020881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4FD552089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:45:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD552089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbeJPSbr (ORCPT
+        id S1727043AbeJPSer (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 14:31:47 -0400
-Received: from gateway20.websitewelcome.com ([192.185.66.3]:36364 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726553AbeJPSbr (ORCPT
+        Tue, 16 Oct 2018 14:34:47 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:43234 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726581AbeJPSer (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 14:31:47 -0400
-X-Greylist: delayed 1505 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Oct 2018 14:31:47 EDT
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 95FFC400D85E4
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 04:56:07 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id CM4wgC4Kttz4jCM54gJqog; Tue, 16 Oct 2018 04:56:07 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:35248 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gCM4v-000I8X-MA; Tue, 16 Oct 2018 04:55:54 -0500
-Date:   Tue, 16 Oct 2018 11:55:49 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/bufs: Fix Spectre v1 vulnerability
-Message-ID: <20181016095549.GA23586@embeddedor.com>
+        Tue, 16 Oct 2018 14:34:47 -0400
+X-UUID: 309a8ec271fa495da4f61707a5ce6737-20181016
+X-UUID: 309a8ec271fa495da4f61707a5ce6737-20181016
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2093863655; Tue, 16 Oct 2018 18:44:54 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 16 Oct 2018 18:44:52 +0800
+Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 16 Oct 2018 18:44:51 +0800
+From:   <honghui.zhang@mediatek.com>
+To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>
+CC:     <ulf.hansson@linaro.org>, <marc.zyngier@arm.com>,
+        <matthias.bgg@gmail.com>, <devicetree@vger.kernel.org>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>,
+        <yt.shen@mediatek.com>, <jianjun.wang@mediatek.com>
+Subject: [PATCH v9 0/9] PCI: mediatek: fixup find_port, enable_msi and add PM, module support
+Date:   Tue, 16 Oct 2018 18:44:41 +0800
+Message-ID: <1539686690-24068-1-git-send-email-honghui.zhang@mediatek.com>
+X-Mailer: git-send-email 2.6.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gCM4v-000I8X-MA
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:35248
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 056F4A73DB67DE3FF30761804B4E20FF218B66E6966FF4B08E3D16C2E4C0BF012000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-idx can be indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-This issue was detected with the help of Smatch:
+This patchset includes misc patchs:
 
-drivers/gpu/drm/drm_bufs.c:1420 drm_legacy_freebufs() warn: potential
-spectre issue 'dma->buflist' [r] (local cap)
+The patch 1 fixup the mtk_pcie_find_port logic which will cause system
+could not touch the EP's configuration space that connected to PCIe slot 1.
 
-Fix this by sanitizing idx before using it to index dma->buflist
+The patch fixup the PCI core defect which assign resource base on device's class
+type. Logically, the resource assignment should base on PCIe configuration space
+layout instead of class type. So this patch using configuration header type for
+resource assignment, this patch is suggested by Bjorn.
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
+The patch 6 fixup the enable msi logic, the operation to enable MSI
+should be after system clock is enabled. Call mtk_pcie_enable_msi in
+mtk_pcie_startup_port_v2 since the clock was all enabled at that time.
 
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+The patch 7 was rebased and refactor of the v4 patch[1], changes are:
+ -Add PM support for MT7622.
+ -Using mtk_pcie_enable_port to re-establish the link when resumed.
+ -Rebased on this patchset.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/drm_bufs.c | 3 +++
- 1 file changed, 3 insertions(+)
+The patch 9 add loadable kernel module support.
 
-diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
-index 7412aca..d7d10ca 100644
---- a/drivers/gpu/drm/drm_bufs.c
-+++ b/drivers/gpu/drm/drm_bufs.c
-@@ -36,6 +36,8 @@
- #include <drm/drmP.h>
- #include "drm_legacy.h"
- 
-+#include <linux/nospec.h>
-+
- static struct drm_map_list *drm_find_matching_map(struct drm_device *dev,
- 						  struct drm_local_map *map)
- {
-@@ -1417,6 +1419,7 @@ int drm_legacy_freebufs(struct drm_device *dev, void *data,
- 				  idx, dma->buf_count - 1);
- 			return -EINVAL;
- 		}
-+		idx = array_index_nospec(idx, dma->buf_count);
- 		buf = dma->buflist[idx];
- 		if (buf->file_priv != file_priv) {
- 			DRM_ERROR("Process %d freeing buffer not owned\n",
+[1] https://patchwork.kernel.org/patch/10479079
+
+Change since v8:
+ - Remove the patch (PCI: mediatek: Fix class type for MT7622 as PCI_CLASS_BRIDGE_PCI)
+ - Add patch 2 (PCI: Using PCI configuration space header type instead of class type
+   to assign resource)
+
+Change since v7:
+ - Add Acked-by tags from Ryder Lee.
+ - Add Fix tags for patch 2(Fix calss type for MT7622 as PCI_CLASS_BRIDGE_PCI)
+   and patch 6(Fixup enable MSI logic by enable MSI after clock enabled)
+
+Change since v6:
+ - Remove the pci_unmap_iospace when remove the device since the
+   devm_pci_remap_iospace is an devm_ version.
+ - Commit message changed for patch 2(Fix class type for MT7622 as PCI_CLASS_BRIDGE_PCI).
+ - Capitilizing "MSI" and "PM" in the patch title.
+
+Change since v5:
+ - A bit improvement of mtk_pcie_find_port suggest by Lorenzo.
+   MSI after clock enabled.
+ - Add Acked-by tags from Ryder.
+
+Change since v4:
+ - Add patch 2 to fixup class type for MT7622.
+ - Add patch 3 to remove the redundant dev->pm_domain check
+ - Add patch 4 to covert to use pci_host_probe
+ - Add patch 5 to re-arrange the function define, this is a prepare patch for
+   fixup the enable_msi logic, no functional changed have been made by this one.
+ - Add patch 8 to save the GIC IRQ in mtk_pcie_port as a prepare patch for tear
+   down the irq when remove the kernel module.
+ - Re-arrange the find_port flow suggest by Lorenzo to make the code parse easier
+   for the patch 1.
+ - Remove the .pm_support in mtk_pcie_soc in patch 7 since if system pm was not
+   supported, then those pm callbacks will never be executed for MT7622. So the
+   .pm_support is not needed.
+
+Change since v3:
+ - Remove pm_runtime_XXX ops in suspend and resume callbacks in the third patch.
+ - Rebase to 4.19-rc1.
+
+Change since v2:
+ - Fix the list_for_each_entry_safe parameter error.
+ - Add Ryder's Acked-by flag.
+
+Change since v1:
+ - A bit of code refact of the first patch suggested by Andy Shevchenko, and
+   commit message updated.
+
+Honghui Zhang (9):
+  PCI: mediatek: Using slot's devfn for compare to fix
+    mtk_pcie_find_port logic
+  PCI: Using PCI configuration space header type instead of class type
+    to assign resource
+  PCI: mediatek: Remove the redundant dev->pm_domain check
+  PCI: mediatek: Convert to use pci_host_probe()
+  PCI: mediatek: Move the mtk_pcie_startup_port_v2 function's define
+    after mtk_pcie_setup_irq
+  PCI: mediatek: Fixup enable MSI logic by enable MSI after clock
+    enabled
+  PCI: mediatek: Add system PM support for MT2712 and MT7622
+  PCI: mediatek: Save the GIC IRQ in mtk_pcie_port
+  PCI: mediatek: Add loadable kernel module support
+
+ drivers/pci/controller/Kconfig         |   2 +-
+ drivers/pci/controller/pcie-mediatek.c | 319 +++++++++++++++++++++------------
+ drivers/pci/pci.c                      |   3 +-
+ drivers/pci/probe.c                    |   3 -
+ drivers/pci/setup-bus.c                |  20 +--
+ 5 files changed, 215 insertions(+), 132 deletions(-)
+
 -- 
-2.7.4
+2.6.4
 
