@@ -2,80 +2,120 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4AFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A9AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9678120869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:32:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9678120869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 98BF020869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:32:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98BF020869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbeJPLUh (ORCPT
+        id S1727463AbeJPLVI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 07:20:37 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:37286 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726934AbeJPLUg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 07:20:36 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2692026|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03298;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.D2fZ9yQ_1539660707;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D2fZ9yQ_1539660707)
-          by smtp.aliyun-inc.com(10.147.41.231);
-          Tue, 16 Oct 2018 11:31:47 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     akpm@linux-foundation.org, arnd@arndb.de,
-        daniel.lezcano@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hch@infradead.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, peterz@infradead.org,
-        robh@kernel.org, tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V9 20/21] MAINTAINERS: Add csky
-Date:   Tue, 16 Oct 2018 10:58:39 +0800
-Message-Id: <139bb600da725b1e251f0b465b24a865622a6f57.1539655732.git.ren_guo@c-sky.com>
+        Tue, 16 Oct 2018 07:21:08 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13641 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726934AbeJPLVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 07:21:08 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 08D09722F64C8;
+        Tue, 16 Oct 2018 11:32:50 +0800 (CST)
+Received: from dessert.huawei.com (10.69.192.158) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.399.0; Tue, 16 Oct 2018 11:32:44 +0800
+From:   Zeng Tao <prime.zeng@hisilicon.com>
+To:     <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
+CC:     Zeng Tao <prime.zeng@hisilicon.com>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] xhci: remove the unused sw_lpm_support
+Date:   Tue, 16 Oct 2018 19:37:08 +0800
+Message-ID: <1539689828-35940-1-git-send-email-prime.zeng@hisilicon.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1539655731.git.ren_guo@c-sky.com>
-References: <cover.1539655731.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1539655731.git.ren_guo@c-sky.com>
-References: <cover.1539655731.git.ren_guo@c-sky.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a maintainer information for the csky(C-SKY) architecture.
+It is introduced for the pre-0.96 xHC controllers, and the driver only
+support HW LPM for 1.0 and later controllers.It's not actually used now
+and is thought not to be used in the future any more, so just remove it.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Acked-by: Mathias Nyman <mathias.nyman@intel.com>
+Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/usb/host/xhci-mem.c | 20 ++++----------------
+ drivers/usb/host/xhci.c     |  3 +--
+ drivers/usb/host/xhci.h     |  2 --
+ 3 files changed, 5 insertions(+), 20 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d870cb5..9dac20e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3211,6 +3211,15 @@ T:	git git://git.alsa-project.org/alsa-kernel.git
- S:	Maintained
- F:	sound/pci/oxygen/
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index b1f27aa..791c5d8 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -2181,23 +2181,11 @@ static void xhci_add_in_port(struct xhci_hcd *xhci, unsigned int num_ports,
+ 	if (major_revision < 0x03 && xhci->num_ext_caps < max_caps)
+ 		xhci->ext_caps[xhci->num_ext_caps++] = temp;
  
-+C-SKY ARCHITECTURE
-+M:	Guo Ren <ren_guo@c-sky.com>
-+T:	git https://github.com/c-sky/csky-linux.git
-+S:	Supported
-+F:	arch/csky/
-+F:	Documentation/devicetree/bindings/csky/
-+K:	csky
-+N:	csky
-+
- C6X ARCHITECTURE
- M:	Mark Salter <msalter@redhat.com>
- M:	Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
+-	/* Check the host's USB2 LPM capability */
+-	if ((xhci->hci_version == 0x96) && (major_revision != 0x03) &&
+-			(temp & XHCI_L1C)) {
++	if ((xhci->hci_version >= 0x100) && (major_revision != 0x03) &&
++		 (temp & XHCI_HLC)) {
+ 		xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+-				"xHCI 0.96: support USB2 software lpm");
+-		xhci->sw_lpm_support = 1;
+-	}
+-
+-	if ((xhci->hci_version >= 0x100) && (major_revision != 0x03)) {
+-		xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+-				"xHCI 1.0: support USB2 software lpm");
+-		xhci->sw_lpm_support = 1;
+-		if (temp & XHCI_HLC) {
+-			xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+-					"xHCI 1.0: support USB2 hardware lpm");
+-			xhci->hw_lpm_support = 1;
+-		}
++			       "xHCI 1.0: support USB2 hardware lpm");
++		xhci->hw_lpm_support = 1;
+ 	}
+ 
+ 	port_offset--;
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 0420eef..d565d5a 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -4372,8 +4372,7 @@ static int xhci_update_device(struct usb_hcd *hcd, struct usb_device *udev)
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+ 	int		portnum = udev->portnum - 1;
+ 
+-	if (hcd->speed >= HCD_USB3 || !xhci->sw_lpm_support ||
+-			!udev->lpm_capable)
++	if (hcd->speed >= HCD_USB3 || !udev->lpm_capable)
+ 		return 0;
+ 
+ 	/* we only support lpm for non-hub device connected to root hub yet */
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 6230a57..746129d 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1854,8 +1854,6 @@ struct xhci_hcd {
+ 	struct xhci_port	*hw_ports;
+ 	struct xhci_hub		usb2_rhub;
+ 	struct xhci_hub		usb3_rhub;
+-	/* support xHCI 0.96 spec USB2 software LPM */
+-	unsigned		sw_lpm_support:1;
+ 	/* support xHCI 1.0 spec USB2 hardware LPM */
+ 	unsigned		hw_lpm_support:1;
+ 	/* cached usb2 extened protocol capabilites */
 -- 
 2.7.4
 
