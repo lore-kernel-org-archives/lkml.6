@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9848BC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC674C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6151D21477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8334A21476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDC8ul/F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6151D21477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HjT/M0EN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8334A21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbeJQBFJ (ORCPT
+        id S1728980AbeJQBFN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:05:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48328 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:05:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbeJQBFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:05:09 -0400
+        id S1727280AbeJQBFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:05:11 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC18A20866;
-        Tue, 16 Oct 2018 17:13:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59BF92089E;
+        Tue, 16 Oct 2018 17:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710026;
-        bh=sfCusYObXVOvvRjaW9uKkw0HAqbSgaX2ylMNCj5oIag=;
+        s=default; t=1539710028;
+        bh=Qo/opxfR+PPQk3aPWluF7FLUlFpqLhMxBdid6Xz6VLg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CDC8ul/FzSl9X910/F/3hGKIDCUcmCG94blcA2vDULspd0UGJ+5tU0ZnAefmSSGBJ
-         heildIAIQfUbhI/JSF+ZqzDTMINBSooCWv4z6g5uL1c+UlYjDFdS0L65Qx2eR4s0Wp
-         usYQ1QlfQHMa9PCczDr0paocfhQ8zR0QpERFLWOI=
+        b=HjT/M0ENWYoV8GAWDCGkHNrDu0/xKg7ts2wZawNTHzoitc4egMb1QKhenaExyzq5U
+         4Psp2JP9Zn2OIDyf4jLNVcSBBnx4rS3AA6HX6TbbI+ayBNayfsKqbB4sQGtp1LhIFv
+         S8on8oocR40FSHGt0675Tpa5Tae2hoxVYOBndD+Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Pieter Jansen van Vuuren 
-        <pieter.jansenvanvuuren@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 042/135] nfp: avoid soft lockups under control message storm
-Date:   Tue, 16 Oct 2018 19:04:32 +0200
-Message-Id: <20181016170517.744028985@linuxfoundation.org>
+        stable@vger.kernel.org, Jay Kamat <jgkamat@fb.com>,
+        Roman Gushchin <guro@fb.com>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 078/135] Fix cg_read_strcmp()
+Date:   Tue, 16 Oct 2018 19:05:08 +0200
+Message-Id: <20181016170520.552373329@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -66,63 +64,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Jay Kamat <jgkamat@fb.com>
 
-[ Upstream commit ff58e2df62ce29d0552278c290ae494b30fe0c6f ]
+[ Upstream commit 48c2bb0b9cf863e0ed78e269f188ce65b73e0fd1 ]
 
-When FW floods the driver with control messages try to exit the cmsg
-processing loop every now and then to avoid soft lockups.  Cmsg
-processing is generally very lightweight so 512 seems like a reasonable
-budget, which should not be exceeded under normal conditions.
+Fix a couple issues with cg_read_strcmp(), to improve correctness of
+cgroup tests
+- Fix cg_read_strcmp() always returning 0 for empty "needle" strings.
+Previously, this function read to a size = 1 buffer when comparing
+against empty strings, which would lead to cg_read_strcmp() comparing
+two empty strings.
+- Fix a memory leak in cg_read_strcmp()
 
-Fixes: 77ece8d5f196 ("nfp: add control vNIC datapath")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
-Tested-by: Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 84092dbcf901 ("selftests: cgroup: add memory controller self-tests")
+
+Signed-off-by: Jay Kamat <jgkamat@fb.com>
+Acked-by: Roman Gushchin <guro@fb.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/nfp_net_common.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ tools/testing/selftests/cgroup/cgroup_util.c |   17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-@@ -2068,14 +2068,17 @@ nfp_ctrl_rx_one(struct nfp_net *nn, stru
- 	return true;
- }
- 
--static void nfp_ctrl_rx(struct nfp_net_r_vector *r_vec)
-+static bool nfp_ctrl_rx(struct nfp_net_r_vector *r_vec)
+--- a/tools/testing/selftests/cgroup/cgroup_util.c
++++ b/tools/testing/selftests/cgroup/cgroup_util.c
+@@ -89,17 +89,28 @@ int cg_read(const char *cgroup, const ch
+ int cg_read_strcmp(const char *cgroup, const char *control,
+ 		   const char *expected)
  {
- 	struct nfp_net_rx_ring *rx_ring = r_vec->rx_ring;
- 	struct nfp_net *nn = r_vec->nfp_net;
- 	struct nfp_net_dp *dp = &nn->dp;
-+	unsigned int budget = 512;
- 
--	while (nfp_ctrl_rx_one(nn, dp, r_vec, rx_ring))
-+	while (nfp_ctrl_rx_one(nn, dp, r_vec, rx_ring) && budget--)
- 		continue;
+-	size_t size = strlen(expected) + 1;
++	size_t size;
+ 	char *buf;
++	int ret;
 +
-+	return budget;
- }
++	/* Handle the case of comparing against empty string */
++	if (!expected)
++		size = 32;
++	else
++		size = strlen(expected) + 1;
  
- static void nfp_ctrl_poll(unsigned long arg)
-@@ -2087,9 +2090,13 @@ static void nfp_ctrl_poll(unsigned long
- 	__nfp_ctrl_tx_queued(r_vec);
- 	spin_unlock_bh(&r_vec->lock);
+ 	buf = malloc(size);
+ 	if (!buf)
+ 		return -1;
  
--	nfp_ctrl_rx(r_vec);
--
--	nfp_net_irq_unmask(r_vec->nfp_net, r_vec->irq_entry);
-+	if (nfp_ctrl_rx(r_vec)) {
-+		nfp_net_irq_unmask(r_vec->nfp_net, r_vec->irq_entry);
-+	} else {
-+		tasklet_schedule(&r_vec->tasklet);
-+		nn_dp_warn(&r_vec->nfp_net->dp,
-+			   "control message budget exceeded!\n");
+-	if (cg_read(cgroup, control, buf, size))
++	if (cg_read(cgroup, control, buf, size)) {
++		free(buf);
+ 		return -1;
 +	}
+ 
+-	return strcmp(expected, buf);
++	ret = strcmp(expected, buf);
++	free(buf);
++	return ret;
  }
  
- /* Setup and Configuration
+ int cg_read_strstr(const char *cgroup, const char *control, const char *needle)
 
 
