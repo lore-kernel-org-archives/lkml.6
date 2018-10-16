@@ -4,50 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0700C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1820C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEB8C21476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A008E20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrrB23bS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB8C21476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLExPKMx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A008E20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729449AbeJQBHB (ORCPT
+        id S1729461AbeJQBHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:07:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51172 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:07:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728422AbeJQBHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:07:00 -0400
+        id S1728422AbeJQBHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:07:03 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 199D62089E;
-        Tue, 16 Oct 2018 17:15:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E625C21479;
+        Tue, 16 Oct 2018 17:15:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710136;
-        bh=wmPdhtzpAGAX/GabuZk1t53+G79BPXWMX8QiR5XZ2xw=;
+        s=default; t=1539710139;
+        bh=9BXSJQ8e+glVsB6J+dP/BPQJeDblAl3d1rh1mvRZC9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OrrB23bS4G5YJQpP9H3ZFBgn1mBiKtvbIyr7wDQ1k8NXsHun85ayvN1hYDgfute4X
-         EoXL+ywEY+77AmDxiwMd4KQ8kTmz6DCNfH8nMMJ/0hhnbiBK7LHpBBStS09xOsFRuZ
-         kg6aZjKRiReAKsVeZ8T75FDJql7q5rljmbG8oEsY=
+        b=VLExPKMxAoSwBu1O4IQfuJel4Vj9414HVugGSfbZ0k+KPp2XoRRio9kqkIdWqafB8
+         fliNoM1Ox7cf43SI7AoQNCMIzb9+Ez/Miu20lWABA7tcbwP74T4F6+wJiGRcCfk6ZH
+         xDEl59t6bVnXr1SfNEb0aAABbMy50XtueuuAk6nc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Jaedon Shin <jaedon.shin@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-mips@linux-mips.org
-Subject: [PATCH 4.18 113/135] MIPS: Fix CONFIG_CMDLINE handling
-Date:   Tue, 16 Oct 2018 19:05:43 +0200
-Message-Id: <20181016170523.124003229@linuxfoundation.org>
+        Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org
+Subject: [PATCH 4.18 114/135] MIPS: VDSO: Always map near top of user memory
+Date:   Tue, 16 Oct 2018 19:05:44 +0200
+Message-Id: <20181016170523.187877880@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -67,124 +64,184 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Paul Burton <paul.burton@mips.com>
 
-commit 951d223c6c16ed5d2a71a4d1f13c1e65d6882156 upstream.
+commit ea7e0480a4b695d0aa6b3fa99bd658a003122113 upstream.
 
-Commit 8ce355cf2e38 ("MIPS: Setup boot_command_line before
-plat_mem_setup") fixed a problem for systems which have
-CONFIG_CMDLINE_BOOL=y & use a DT with a chosen node that has either no
-bootargs property or an empty one. In this configuration
-early_init_dt_scan_chosen() copies CONFIG_CMDLINE into
-boot_command_line, but the MIPS code doesn't know this so it appends
-CONFIG_CMDLINE (via builtin_cmdline) to boot_command_line again. The
-result is that boot_command_line contains the arguments from
-CONFIG_CMDLINE twice.
+When using the legacy mmap layout, for example triggered using ulimit -s
+unlimited, get_unmapped_area() fills memory from bottom to top starting
+from a fairly low address near TASK_UNMAPPED_BASE.
 
-That commit took the approach of simply setting up boot_command_line
-from the MIPS code before early_init_dt_scan_chosen() runs, causing it
-not to copy CONFIG_CMDLINE to boot_command_line if a chosen node with no
-bootargs property is found.
+This placement is suboptimal if the user application wishes to allocate
+large amounts of heap memory using the brk syscall. With the VDSO being
+located low in the user's virtual address space, the amount of space
+available for access using brk is limited much more than it was prior to
+the introduction of the VDSO.
 
-Unfortunately this is problematic for systems which do have a non-empty
-bootargs property & CONFIG_CMDLINE_BOOL=y. There
-early_init_dt_scan_chosen() will overwrite boot_command_line with the
-arguments from DT, which means we lose those from CONFIG_CMDLINE
-entirely. This breaks CONFIG_MIPS_CMDLINE_DTB_EXTEND. If we have
-CONFIG_MIPS_CMDLINE_FROM_BOOTLOADER or
-CONFIG_MIPS_CMDLINE_BUILTIN_EXTEND selected and the DT has a bootargs
-property which we should ignore, it will instead be honoured breaking
-those configurations too.
+For example:
 
-Fix this by reverting commit 8ce355cf2e38 ("MIPS: Setup
-boot_command_line before plat_mem_setup") to restore the former
-behaviour, and fixing the CONFIG_CMDLINE duplication issue by
-initializing boot_command_line to a non-empty string that
-early_init_dt_scan_chosen() will not overwrite with CONFIG_CMDLINE.
+  # ulimit -s unlimited; cat /proc/self/maps
+  00400000-004ec000 r-xp 00000000 08:00 71436      /usr/bin/coreutils
+  004fc000-004fd000 rwxp 000ec000 08:00 71436      /usr/bin/coreutils
+  004fd000-0050f000 rwxp 00000000 00:00 0
+  00cc3000-00ce4000 rwxp 00000000 00:00 0          [heap]
+  2ab96000-2ab98000 r--p 00000000 00:00 0          [vvar]
+  2ab98000-2ab99000 r-xp 00000000 00:00 0          [vdso]
+  2ab99000-2ab9d000 rwxp 00000000 00:00 0
+  ...
 
-This is a little ugly, but cleanup in this area is on its way. In the
-meantime this is at least easy to backport & contains the ugliness
-within arch/mips/.
+Resolve this by adjusting STACK_TOP to reserve space for the VDSO &
+providing an address hint to get_unmapped_area() causing it to use this
+space even when using the legacy mmap layout.
+
+We reserve enough space for the VDSO, plus 1MB or 256MB for 32 bit & 64
+bit systems respectively within which we randomize the VDSO base
+address. Previously this randomization was taken care of by the mmap
+base address randomization performed by arch_mmap_rnd(). The 1MB & 256MB
+sizes are somewhat arbitrary but chosen such that we have some
+randomization without taking up too much of the user's virtual address
+space, which is often in short supply for 32 bit systems.
+
+With this the VDSO is always mapped at a high address, leaving lots of
+space for statically linked programs to make use of brk:
+
+  # ulimit -s unlimited; cat /proc/self/maps
+  00400000-004ec000 r-xp 00000000 08:00 71436      /usr/bin/coreutils
+  004fc000-004fd000 rwxp 000ec000 08:00 71436      /usr/bin/coreutils
+  004fd000-0050f000 rwxp 00000000 00:00 0
+  00c28000-00c49000 rwxp 00000000 00:00 0          [heap]
+  ...
+  7f67c000-7f69d000 rwxp 00000000 00:00 0          [stack]
+  7f7fc000-7f7fd000 rwxp 00000000 00:00 0
+  7fcf1000-7fcf3000 r--p 00000000 00:00 0          [vvar]
+  7fcf3000-7fcf4000 r-xp 00000000 00:00 0          [vdso]
 
 Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: 8ce355cf2e38 ("MIPS: Setup boot_command_line before plat_mem_setup")
-References: https://patchwork.linux-mips.org/patch/18804/
-Patchwork: https://patchwork.linux-mips.org/patch/20813/
-Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: Jaedon Shin <jaedon.shin@gmail.com>
-Cc: Mathieu Malaterre <malat@debian.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Reported-by: Huacai Chen <chenhc@lemote.com>
+Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
+Cc: Huacai Chen <chenhc@lemote.com>
 Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # v4.16+
+Cc: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/setup.c |   48 +++++++++++++++++++++++++++--------------------
- 1 file changed, 28 insertions(+), 20 deletions(-)
+ arch/mips/include/asm/processor.h |   10 +++++-----
+ arch/mips/kernel/process.c        |   25 +++++++++++++++++++++++++
+ arch/mips/kernel/vdso.c           |   18 +++++++++++++++++-
+ 3 files changed, 47 insertions(+), 6 deletions(-)
 
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -835,6 +835,34 @@ static void __init arch_mem_init(char **
- 	struct memblock_region *reg;
- 	extern void plat_mem_setup(void);
+--- a/arch/mips/include/asm/processor.h
++++ b/arch/mips/include/asm/processor.h
+@@ -13,6 +13,7 @@
  
-+	/*
-+	 * Initialize boot_command_line to an innocuous but non-empty string in
-+	 * order to prevent early_init_dt_scan_chosen() from copying
-+	 * CONFIG_CMDLINE into it without our knowledge. We handle
-+	 * CONFIG_CMDLINE ourselves below & don't want to duplicate its
-+	 * content because repeating arguments can be problematic.
-+	 */
-+	strlcpy(boot_command_line, " ", COMMAND_LINE_SIZE);
+ #include <linux/atomic.h>
+ #include <linux/cpumask.h>
++#include <linux/sizes.h>
+ #include <linux/threads.h>
+ 
+ #include <asm/cachectl.h>
+@@ -80,11 +81,10 @@ extern unsigned int vced_count, vcei_cou
+ 
+ #endif
+ 
+-/*
+- * One page above the stack is used for branch delay slot "emulation".
+- * See dsemul.c for details.
+- */
+-#define STACK_TOP	((TASK_SIZE & PAGE_MASK) - PAGE_SIZE)
++#define VDSO_RANDOMIZE_SIZE	(TASK_IS_32BIT_ADDR ? SZ_1M : SZ_256M)
 +
-+	/* call board setup routine */
-+	plat_mem_setup();
++extern unsigned long mips_stack_top(void);
++#define STACK_TOP		mips_stack_top()
+ 
+ /*
+  * This decides where the kernel will search for a free chunk of vm
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -31,6 +31,7 @@
+ #include <linux/prctl.h>
+ #include <linux/nmi.h>
+ 
++#include <asm/abi.h>
+ #include <asm/asm.h>
+ #include <asm/bootinfo.h>
+ #include <asm/cpu.h>
+@@ -38,6 +39,7 @@
+ #include <asm/dsp.h>
+ #include <asm/fpu.h>
+ #include <asm/irq.h>
++#include <asm/mips-cps.h>
+ #include <asm/msa.h>
+ #include <asm/pgtable.h>
+ #include <asm/mipsregs.h>
+@@ -644,6 +646,29 @@ out:
+ 	return pc;
+ }
+ 
++unsigned long mips_stack_top(void)
++{
++	unsigned long top = TASK_SIZE & PAGE_MASK;
 +
-+	/*
-+	 * Make sure all kernel memory is in the maps.  The "UP" and
-+	 * "DOWN" are opposite for initdata since if it crosses over
-+	 * into another memory section you don't want that to be
-+	 * freed when the initdata is freed.
-+	 */
-+	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
-+			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
-+			 BOOT_MEM_RAM);
-+	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
-+			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
-+			 BOOT_MEM_INIT_RAM);
++	/* One page for branch delay slot "emulation" */
++	top -= PAGE_SIZE;
 +
-+	pr_info("Determined physical RAM map:\n");
-+	print_memory_map();
++	/* Space for the VDSO, data page & GIC user page */
++	top -= PAGE_ALIGN(current->thread.abi->vdso->size);
++	top -= PAGE_SIZE;
++	top -= mips_gic_present() ? PAGE_SIZE : 0;
 +
- #if defined(CONFIG_CMDLINE_BOOL) && defined(CONFIG_CMDLINE_OVERRIDE)
- 	strlcpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
- #else
-@@ -862,26 +890,6 @@ static void __init arch_mem_init(char **
++	/* Space for cache colour alignment */
++	if (cpu_has_dc_aliases)
++		top -= shm_align_mask + 1;
++
++	/* Space to randomize the VDSO base */
++	if (current->flags & PF_RANDOMIZE)
++		top -= VDSO_RANDOMIZE_SIZE;
++
++	return top;
++}
++
+ /*
+  * Don't forget that the stack pointer must be aligned on a 8 bytes
+  * boundary for 32-bits ABI and 16 bytes for 64-bits ABI.
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -15,6 +15,7 @@
+ #include <linux/ioport.h>
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
++#include <linux/random.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/timekeeper_internal.h>
+@@ -97,6 +98,21 @@ void update_vsyscall_tz(void)
  	}
- #endif
- #endif
--
--	/* call board setup routine */
--	plat_mem_setup();
--
--	/*
--	 * Make sure all kernel memory is in the maps.  The "UP" and
--	 * "DOWN" are opposite for initdata since if it crosses over
--	 * into another memory section you don't want that to be
--	 * freed when the initdata is freed.
--	 */
--	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
--			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
--			 BOOT_MEM_RAM);
--	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
--			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
--			 BOOT_MEM_INIT_RAM);
--
--	pr_info("Determined physical RAM map:\n");
--	print_memory_map();
--
- 	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
+ }
  
- 	*cmdline_p = command_line;
++static unsigned long vdso_base(void)
++{
++	unsigned long base;
++
++	/* Skip the delay slot emulation page */
++	base = STACK_TOP + PAGE_SIZE;
++
++	if (current->flags & PF_RANDOMIZE) {
++		base += get_random_int() & (VDSO_RANDOMIZE_SIZE - 1);
++		base = PAGE_ALIGN(base);
++	}
++
++	return base;
++}
++
+ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ {
+ 	struct mips_vdso_image *image = current->thread.abi->vdso;
+@@ -137,7 +153,7 @@ int arch_setup_additional_pages(struct l
+ 	if (cpu_has_dc_aliases)
+ 		size += shm_align_mask + 1;
+ 
+-	base = get_unmapped_area(NULL, 0, size, 0, 0);
++	base = get_unmapped_area(NULL, vdso_base(), size, 0, 0);
+ 	if (IS_ERR_VALUE(base)) {
+ 		ret = base;
+ 		goto out;
 
 
