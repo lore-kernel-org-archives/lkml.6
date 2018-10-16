@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BD8C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A034C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 259CB21476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3480821476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9OkBuNe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 259CB21476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="glHNJXCR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3480821476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730880AbeJQBMt (ORCPT
+        id S1730890AbeJQBMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:12:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58404 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:12:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729296AbeJQBMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:12:48 -0400
+        id S1729296AbeJQBMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:12:52 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7576C20866;
-        Tue, 16 Oct 2018 17:21:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 407F02098A;
+        Tue, 16 Oct 2018 17:21:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710483;
-        bh=7uKK3G27JInx1cSMXVolowY2R/NkSKQUC0DtyTvM/Fk=;
+        s=default; t=1539710485;
+        bh=HeHMIfVIvtiKCqRwwZ57hsni87Tt7llkNZhMAYBHfC4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F9OkBuNe0ZNGN+JOiVKt+PvcYoL5Dy51J7+zmNTOevB1ZWqQh4I+om3P5QdAs9WkH
-         PpArivJs/tKqQj/sEr9xdoxoxGi2UH5qkTbIxPUkxQq0BSsMuouyvvrT1djQsu69kZ
-         jqHPFP9nquM75Wc9sgooYtQrdsFlr153Sus1TQFg=
+        b=glHNJXCR2Afwo0mPF05voAeS1Cei7F9sdHIL69dnAzXYfedBIjYuziXfii2VH78nT
+         Znk9j5ZcPSIzkCxC2Kft8NXeT/WIH3PKWnEFms/1qzbBnxTTaxoN8mO3z+G1OW1JHo
+         Atlau9tfdh1VacA5iD4OMD2pYp+0/mGqSUBTnfRc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Tony Lindgren <tony@atomide.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
         "David A. Long" <dave.long@linaro.org>
-Subject: [PATCH 4.14 094/109] ARM: spectre-v2: warn about incorrect context switching functions
-Date:   Tue, 16 Oct 2018 19:06:02 +0200
-Message-Id: <20181016170530.096183824@linuxfoundation.org>
+Subject: [PATCH 4.14 095/109] ARM: KVM: invalidate BTB on guest exit for Cortex-A12/A17
+Date:   Tue, 16 Oct 2018 19:06:03 +0200
+Message-Id: <20181016170530.142174682@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -64,82 +64,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-Commit c44f366ea7c85e1be27d08f2f0880f4120698125 upstream.
+Commit 3f7e8e2e1ebda787f156ce46e3f0a9ce2833fa4f upstream.
 
-Warn at error level if the context switching function is not what we
-are expecting.  This can happen with big.Little systems, which we
-currently do not support.
+In order to avoid aliasing attacks against the branch predictor,
+let's invalidate the BTB on guest exit. This is made complicated
+by the fact that we cannot take a branch before invalidating the
+BTB.
 
+We only apply this to A12 and A17, which are the only two ARM
+cores on which this useful.
+
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Boot-tested-by: Tony Lindgren <tony@atomide.com>
 Reviewed-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mm/proc-v7-bugs.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/include/asm/kvm_asm.h |    2 -
+ arch/arm/include/asm/kvm_mmu.h |   17 +++++++++
+ arch/arm/kvm/hyp/hyp-entry.S   |   71 +++++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 85 insertions(+), 5 deletions(-)
 
---- a/arch/arm/mm/proc-v7-bugs.c
-+++ b/arch/arm/mm/proc-v7-bugs.c
-@@ -12,6 +12,8 @@
- #ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
- DEFINE_PER_CPU(harden_branch_predictor_fn_t, harden_branch_predictor_fn);
+--- a/arch/arm/include/asm/kvm_asm.h
++++ b/arch/arm/include/asm/kvm_asm.h
+@@ -61,8 +61,6 @@ struct kvm_vcpu;
+ extern char __kvm_hyp_init[];
+ extern char __kvm_hyp_init_end[];
  
-+extern void cpu_v7_iciallu_switch_mm(phys_addr_t pgd_phys, struct mm_struct *mm);
-+extern void cpu_v7_bpiall_switch_mm(phys_addr_t pgd_phys, struct mm_struct *mm);
- extern void cpu_v7_smc_switch_mm(phys_addr_t pgd_phys, struct mm_struct *mm);
- extern void cpu_v7_hvc_switch_mm(phys_addr_t pgd_phys, struct mm_struct *mm);
+-extern char __kvm_hyp_vector[];
+-
+ extern void __kvm_flush_vm_context(void);
+ extern void __kvm_tlb_flush_vmid_ipa(struct kvm *kvm, phys_addr_t ipa);
+ extern void __kvm_tlb_flush_vmid(struct kvm *kvm);
+--- a/arch/arm/include/asm/kvm_mmu.h
++++ b/arch/arm/include/asm/kvm_mmu.h
+@@ -246,7 +246,22 @@ static inline int kvm_read_guest_lock(st
  
-@@ -50,6 +52,8 @@ static void cpu_v7_spectre_init(void)
- 	case ARM_CPU_PART_CORTEX_A17:
- 	case ARM_CPU_PART_CORTEX_A73:
- 	case ARM_CPU_PART_CORTEX_A75:
-+		if (processor.switch_mm != cpu_v7_bpiall_switch_mm)
-+			goto bl_error;
- 		per_cpu(harden_branch_predictor_fn, cpu) =
- 			harden_branch_predictor_bpiall;
- 		spectre_v2_method = "BPIALL";
-@@ -57,6 +61,8 @@ static void cpu_v7_spectre_init(void)
- 
- 	case ARM_CPU_PART_CORTEX_A15:
- 	case ARM_CPU_PART_BRAHMA_B15:
-+		if (processor.switch_mm != cpu_v7_iciallu_switch_mm)
-+			goto bl_error;
- 		per_cpu(harden_branch_predictor_fn, cpu) =
- 			harden_branch_predictor_iciallu;
- 		spectre_v2_method = "ICIALLU";
-@@ -82,6 +88,8 @@ static void cpu_v7_spectre_init(void)
- 					  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
- 			if ((int)res.a0 != 0)
- 				break;
-+			if (processor.switch_mm != cpu_v7_hvc_switch_mm && cpu)
-+				goto bl_error;
- 			per_cpu(harden_branch_predictor_fn, cpu) =
- 				call_hvc_arch_workaround_1;
- 			processor.switch_mm = cpu_v7_hvc_switch_mm;
-@@ -93,6 +101,8 @@ static void cpu_v7_spectre_init(void)
- 					  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
- 			if ((int)res.a0 != 0)
- 				break;
-+			if (processor.switch_mm != cpu_v7_smc_switch_mm && cpu)
-+				goto bl_error;
- 			per_cpu(harden_branch_predictor_fn, cpu) =
- 				call_smc_arch_workaround_1;
- 			processor.switch_mm = cpu_v7_smc_switch_mm;
-@@ -109,6 +119,11 @@ static void cpu_v7_spectre_init(void)
- 	if (spectre_v2_method)
- 		pr_info("CPU%u: Spectre v2: using %s workaround\n",
- 			smp_processor_id(), spectre_v2_method);
-+	return;
+ static inline void *kvm_get_hyp_vector(void)
+ {
+-	return kvm_ksym_ref(__kvm_hyp_vector);
++	switch(read_cpuid_part()) {
++#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
++	case ARM_CPU_PART_CORTEX_A12:
++	case ARM_CPU_PART_CORTEX_A17:
++	{
++		extern char __kvm_hyp_vector_bp_inv[];
++		return kvm_ksym_ref(__kvm_hyp_vector_bp_inv);
++	}
 +
-+bl_error:
-+	pr_err("CPU%u: Spectre v2: incorrect context switching function, system vulnerable\n",
-+		cpu);
++#endif
++	default:
++	{
++		extern char __kvm_hyp_vector[];
++		return kvm_ksym_ref(__kvm_hyp_vector);
++	}
++	}
  }
- #else
- static void cpu_v7_spectre_init(void)
+ 
+ static inline int kvm_map_vectors(void)
+--- a/arch/arm/kvm/hyp/hyp-entry.S
++++ b/arch/arm/kvm/hyp/hyp-entry.S
+@@ -71,6 +71,66 @@ __kvm_hyp_vector:
+ 	W(b)	hyp_irq
+ 	W(b)	hyp_fiq
+ 
++#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
++	.align 5
++__kvm_hyp_vector_bp_inv:
++	.global __kvm_hyp_vector_bp_inv
++
++	/*
++	 * We encode the exception entry in the bottom 3 bits of
++	 * SP, and we have to guarantee to be 8 bytes aligned.
++	 */
++	W(add)	sp, sp, #1	/* Reset 	  7 */
++	W(add)	sp, sp, #1	/* Undef	  6 */
++	W(add)	sp, sp, #1	/* Syscall	  5 */
++	W(add)	sp, sp, #1	/* Prefetch abort 4 */
++	W(add)	sp, sp, #1	/* Data abort	  3 */
++	W(add)	sp, sp, #1	/* HVC		  2 */
++	W(add)	sp, sp, #1	/* IRQ		  1 */
++	W(nop)			/* FIQ		  0 */
++
++	mcr	p15, 0, r0, c7, c5, 6	/* BPIALL */
++	isb
++
++#ifdef CONFIG_THUMB2_KERNEL
++	/*
++	 * Yet another silly hack: Use VPIDR as a temp register.
++	 * Thumb2 is really a pain, as SP cannot be used with most
++	 * of the bitwise instructions. The vect_br macro ensures
++	 * things gets cleaned-up.
++	 */
++	mcr	p15, 4, r0, c0, c0, 0	/* VPIDR */
++	mov	r0, sp
++	and	r0, r0, #7
++	sub	sp, sp, r0
++	push	{r1, r2}
++	mov	r1, r0
++	mrc	p15, 4, r0, c0, c0, 0	/* VPIDR */
++	mrc	p15, 0, r2, c0, c0, 0	/* MIDR  */
++	mcr	p15, 4, r2, c0, c0, 0	/* VPIDR */
++#endif
++
++.macro vect_br val, targ
++ARM(	eor	sp, sp, #\val	)
++ARM(	tst	sp, #7		)
++ARM(	eorne	sp, sp, #\val	)
++
++THUMB(	cmp	r1, #\val	)
++THUMB(	popeq	{r1, r2}	)
++
++	beq	\targ
++.endm
++
++	vect_br	0, hyp_fiq
++	vect_br	1, hyp_irq
++	vect_br	2, hyp_hvc
++	vect_br	3, hyp_dabt
++	vect_br	4, hyp_pabt
++	vect_br	5, hyp_svc
++	vect_br	6, hyp_undef
++	vect_br	7, hyp_reset
++#endif
++
+ .macro invalid_vector label, cause
+ 	.align
+ \label:	mov	r0, #\cause
+@@ -149,7 +209,14 @@ hyp_hvc:
+ 	bx	ip
+ 
+ 1:
+-	push	{lr}
++	/*
++	 * Pushing r2 here is just a way of keeping the stack aligned to
++	 * 8 bytes on any path that can trigger a HYP exception. Here,
++	 * we may well be about to jump into the guest, and the guest
++	 * exit would otherwise be badly decoded by our fancy
++	 * "decode-exception-without-a-branch" code...
++	 */
++	push	{r2, lr}
+ 
+ 	mov	lr, r0
+ 	mov	r0, r1
+@@ -159,7 +226,7 @@ hyp_hvc:
+ THUMB(	orr	lr, #1)
+ 	blx	lr			@ Call the HYP function
+ 
+-	pop	{lr}
++	pop	{r2, lr}
+ 	eret
+ 
+ guest_trap:
 
 
