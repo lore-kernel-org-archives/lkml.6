@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC823C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F24C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 877B521471
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9089721471
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:20:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SVgLBgPN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 877B521471
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FIaiTraV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9089721471
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeJQCM2 (ORCPT
+        id S1727670AbeJQCMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 22:12:28 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45025 "EHLO
+        Tue, 16 Oct 2018 22:12:36 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34484 "EHLO
         mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbeJQCM1 (ORCPT
+        with ESMTP id S1727123AbeJQCM0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 22:12:27 -0400
-Received: by mail-lf1-f66.google.com with SMTP id m18-v6so17732625lfl.11
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 11:20:44 -0700 (PDT)
+        Tue, 16 Oct 2018 22:12:26 -0400
+Received: by mail-lf1-f66.google.com with SMTP id y10-v6so17753310lfj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 11:20:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ssuygcYMLn1Q3WIghGGutlJDCYEv/K27yRAinbSWkn0=;
-        b=SVgLBgPNL/Sitz1phBzvx86rsDjysgDcl4zkZoW8vR7l04xha37TWN57++dA+Z7tbG
-         8a62jDyS2L1Cmn1YBDyC8OBpIl6Sy83zj1YANM8LCJN9L7KJE56gjxwSuXKVXYISoQq7
-         HoWglV34ppwNd8C53EhQe0LRiHB1zASMCaoqc=
+        bh=jLFuOs1cSVmlpobA1RYDVi6svvbcni9hZ6eXt8GSdXw=;
+        b=FIaiTraVPXrqdoxh0HtJYKo8IhE+QVgs/NViyyoegt8hW2EPcAxXZMPTuP2KuIXD88
+         NLSCnk4RKWh4pG8tXs4ksgTJrb0A1ldbAv9u6IzOzhhQEg/VgitiZ7OnIS1viy3ODBzh
+         wid/HPjpypVB2SjsbdCh0RON1srP7cKDGD9yg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ssuygcYMLn1Q3WIghGGutlJDCYEv/K27yRAinbSWkn0=;
-        b=OEimGybECwEXHmf+WAWD2Ju3AoN2sSTbcALEEMEfyQ0z/eJshFSGBttb0l2444zOn6
-         Na0nhji0VNVPqQJoJtmuV0dYCcaA7hRvBfnZ4eLDfxzXW3R5rpTKbeDWZ6ZFItmpvRvf
-         hojM/NRDVnpDHVzgPyyPwViav2L2QRHoaqI/GrOumEk/eu1mxcak4Rh78qLWmwqQf9jG
-         6qEXDsZpl74TPJKiufx2PWfDlHfKCko9DKkv0adv7+FlcoHRDcPolJwhEB8zQlbeeqTh
-         eVA+ULD10bXtlpraY8B27lUP2FxDr0jaA5dTxYj8t5z+P5mI4oXGCdH9lamZcV6nUbWv
-         ZGKg==
-X-Gm-Message-State: ABuFfohgO8LF32e9Nwk4I+3JGaupKF5rveDhK9vm8fcWUAn+WHyfB3fm
-        SRlixEnKg04KaD3X9FbrNKrIHg==
-X-Google-Smtp-Source: ACcGV63xvagoTNoSMklmn+Vbqu7O/3oz7HBsg8rMijkZXCRqDemPgsGVYfIMKZf9bwZda16jnK+bAQ==
-X-Received: by 2002:a19:d3c4:: with SMTP id k187-v6mr13953987lfg.101.1539714044045;
-        Tue, 16 Oct 2018 11:20:44 -0700 (PDT)
+        bh=jLFuOs1cSVmlpobA1RYDVi6svvbcni9hZ6eXt8GSdXw=;
+        b=TQZ5PW25QCoLHbdARVEsPIE585BYnESh3KsNiqFbYndOHIlTvZalpqCKJqt3Hvm16W
+         diEfrUk6MUyBeh5K42OFF1CPmMAGaR8QT8R6YIx3pi0CtszlsSSZ7J0cOCFGut7rqY1/
+         KkDQgd9KoZuysWBlYKL2+NBo0djbUNapdZjQHoH87w8v7SsTopsau90dZQbXvCStanX1
+         OBgTi/1X4oCWL6BNDESJX8xT9gvLfKQn6wCbePkQ6YxvqKkjqHpcM/g3LE/SQgTBhXnM
+         K/6sM1krcmpLdNMQYS0+nuGsOK9FgC1sPdlVGWBjCEu22MkI2ZM1CKlpXs/lmKq54gHi
+         1l1Q==
+X-Gm-Message-State: ABuFfojsJzYAgXd5nxrpdydPcJx8tvdRoZANyYbe4v02hqtM1+oLDMtm
+        mim+mcQ8TFMZbVAgNUdk7l9BUQ==
+X-Google-Smtp-Source: ACcGV63NzpZi1n2cOSAgCTOqHPxWcPrm75bVEIwRa0h+IPaSALnevFe15RFyQvo4CPlbLkMEe21mxw==
+X-Received: by 2002:a19:d713:: with SMTP id o19-v6mr13078188lfg.114.1539714042680;
+        Tue, 16 Oct 2018 11:20:42 -0700 (PDT)
 Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id i27-v6sm3207844lfc.22.2018.10.16.11.20.42
+        by smtp.gmail.com with ESMTPSA id i27-v6sm3207844lfc.22.2018.10.16.11.20.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 11:20:43 -0700 (PDT)
+        Tue, 16 Oct 2018 11:20:41 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     grygorii.strashko@ti.com, davem@davemloft.net
 Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, alexander.h.duyck@intel.com,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [RFC PATCH net-next 4/4] net: ethernet: ti: cpsw: fix vlan configuration while down/up
-Date:   Tue, 16 Oct 2018 21:20:35 +0300
-Message-Id: <20181016182035.18234-5-ivan.khoronzhuk@linaro.org>
+Subject: [RFC PATCH net-next 3/4] net: ethernet: ti: cpsw: fix vlan mcast
+Date:   Tue, 16 Oct 2018 21:20:34 +0300
+Message-Id: <20181016182035.18234-4-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016182035.18234-1-ivan.khoronzhuk@linaro.org>
 References: <20181016182035.18234-1-ivan.khoronzhuk@linaro.org>
@@ -71,71 +71,244 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vlan configuration is not restored after interface donw/up sequence
-(if dual-emac - both interfaces). Tested on am572x EVM.
+At this moment, mcast addresses are added only for real device only
+(reserved vlans for dual-emac mode), even if a mcast address was added
+for some vlan only, thus ALE doesn't have corresponding vlan mcast
+entries after vlan socket joined multicast group. So ALE drops vlan
+frames with mcast addresses intended for vlans and potentially can
+receive mcast frames for base ndev. That's not correct. So, fix it by
+creating only vlan/mcast entries as requested. Patch doesn't use any
+additional lists and is based on device mc address list and cpsw ALE
+table entries.
 
-Steps to check:
-~# ip link add link eth1 name eth1.100 type vlan id 100
-~# ifconfig eth0 down
-~# ifconfig eth1 down
-
-This is TI sdk tool, dumping all ALE entries, see they are present
-~# switch-config -d
-~# ifconfig eth1 up
-See entry for vid 100 is absent
-~# switch-config -d
-
-Try to remove vid and observe warning:
-~# ip link del eth1.100
-[  739.526757] net eth1: removing vlanid 100 from vlan filter
-[  739.533322] failed to kill vid 0081/100 for device eth1
-
-This patch fixes it, restoring only vlan ALE entries and all other
-unicast/multicast entries are restored by system calling rx_mode ndo.
+Also, move device to allmulti state if no space for new mcast entries.
 
 Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- drivers/net/ethernet/ti/cpsw.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/net/ethernet/ti/cpsw.c | 172 +++++++++++++++++++++++++++------
+ 1 file changed, 142 insertions(+), 30 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 5967484619d4..0b28a90b62bb 100644
+index 226be2a56c1f..5967484619d4 100644
 --- a/drivers/net/ethernet/ti/cpsw.c
 +++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -565,6 +565,9 @@ static const struct cpsw_stats cpsw_gstrings_ch_stats[] = {
- 				(func)(slave++, ##arg);			\
- 	} while (0)
- 
-+static int cpsw_ndo_vlan_rx_add_vid(struct net_device *ndev,
-+				    __be16 proto, u16 vid);
-+
- static inline int cpsw_get_slave_port(u32 slave_num)
- {
+@@ -570,21 +570,6 @@ static inline int cpsw_get_slave_port(u32 slave_num)
  	return slave_num + 1;
-@@ -1955,9 +1958,23 @@ static void cpsw_mqprio_resume(struct cpsw_slave *slave, struct cpsw_priv *priv)
- 	slave_write(slave, tx_prio_map, tx_prio_rg);
  }
  
-+static int cpsw_restore_vlans(struct net_device *vdev, int vid, void *arg)
-+{
-+	struct cpsw_priv *priv = arg;
+-static void cpsw_add_mcast(struct cpsw_priv *priv, const u8 *addr)
+-{
+-	struct cpsw_common *cpsw = priv->cpsw;
+-
+-	if (cpsw->data.dual_emac) {
+-		struct cpsw_slave *slave = cpsw->slaves + priv->emac_port;
+-
+-		cpsw_ale_add_mcast(cpsw->ale, addr, ALE_PORT_HOST,
+-				   ALE_VLAN, slave->port_vlan, 0);
+-		return;
+-	}
+-
+-	cpsw_ale_add_mcast(cpsw->ale, addr, ALE_ALL_PORTS, 0, 0, 0);
+-}
+-
+ static void cpsw_set_promiscious(struct net_device *ndev, bool enable)
+ {
+ 	struct cpsw_common *cpsw = ndev_to_cpsw(ndev);
+@@ -660,29 +645,153 @@ static void cpsw_set_promiscious(struct net_device *ndev, bool enable)
+ 	}
+ }
+ 
+-static int cpsw_add_mc_addr(struct net_device *ndev, const u8 *addr)
++struct addr_sync_ctx {
++	struct net_device *ndev;
++	const u8 *addr;		/* address to be sync or unsync */
++	int keep_num;		/* number of address instances to be kept */
++	int flush;		/* flush flag */
++};
 +
-+	if (!vdev)
++/**
++ * cpsw_set_mc - adds multicast entry to the table if it's not added or deletes
++ * if it's not deleted
++ * @ndev: device to sync
++ * @addr: address to be added or deleted
++ * @vid: vlan id, if vid < 0 set/unset address for real device
++ * @add: add address if the flag is set or remove otherwise
++ */
++static int cpsw_set_mc(struct net_device *ndev, const u8 *addr,
++		       int vid, int add)
+ {
+ 	struct cpsw_priv *priv = netdev_priv(ndev);
++	struct cpsw_common *cpsw = priv->cpsw;
++	int mask, flags, ret;
++
++	if (vid < 0) {
++		if (cpsw->data.dual_emac)
++			vid = cpsw->slaves[priv->emac_port].port_vlan;
++		else
++			vid = 0;
++	}
++
++	mask = cpsw->data.dual_emac ? ALE_PORT_HOST : ALE_ALL_PORTS;
++	flags = vid ? ALE_VLAN : 0;
++
++	if (add)
++		ret = cpsw_ale_add_mcast(cpsw->ale, addr, mask, flags, vid, 0);
++	else
++		ret = cpsw_ale_del_mcast(cpsw->ale, addr, 0, flags, vid);
++
++	return ret;
++}
++
++static int cpsw_update_vlan_mc(struct net_device *vdev, int vid, void *ctx)
++{
++	struct addr_sync_ctx *sync_ctx = ctx;
++	struct netdev_hw_addr *ha;
++	int found = 0, ret = 0;
++
++	if (!vdev || !(vdev->flags & IFF_UP))
++		return ret;
++
++	/* vlan address is relevant if it's sync_cnt != 0 */
++	netdev_for_each_mc_addr(ha, vdev) {
++		if (ether_addr_equal(ha->addr, sync_ctx->addr)) {
++			found = ha->sync_cnt;
++			break;
++		}
++	}
++
++	if (found)
++		sync_ctx->keep_num--;
++
++	if (sync_ctx->flush) {
++		if (!found)
++			cpsw_set_mc(sync_ctx->ndev, sync_ctx->addr, vid, 0);
++		return ret;
++	}
++
++	if (found)
++		ret = cpsw_set_mc(sync_ctx->ndev, sync_ctx->addr, vid, 1);
++
++	return ret;
++}
++
++static int cpsw_add_mc_addr(struct net_device *ndev, const u8 *addr, int num)
++{
++	struct cpsw_common *cpsw = ndev_to_cpsw(ndev);
++	struct addr_sync_ctx sync_ctx;
++	int ret;
++
++	sync_ctx.keep_num = num;
++	sync_ctx.addr = addr;
++	sync_ctx.ndev = ndev;
++	sync_ctx.flush = 0;
++
++	ret = vlan_for_each(ndev, cpsw_update_vlan_mc, &sync_ctx);
++	if (sync_ctx.keep_num && !ret)
++		ret = cpsw_set_mc(ndev, addr, -1, 1);
++
++	/* table is overflowed, set ALLMULTI */
++	if (ret == -ENOMEM)
++		cpsw_ale_set_allmulti(cpsw->ale, IFF_ALLMULTI);
++
++	return ret;
++}
++
++static int cpsw_del_mc_addr(struct net_device *ndev, const u8 *addr, int num)
++{
++	struct addr_sync_ctx sync_ctx;
++
++	sync_ctx.keep_num = num;
++	sync_ctx.addr = addr;
++	sync_ctx.ndev = ndev;
++	sync_ctx.flush = 1;
++
++	vlan_for_each(ndev, cpsw_update_vlan_mc, &sync_ctx);
++	if (!sync_ctx.keep_num)
++		cpsw_set_mc(ndev, addr, -1, 0);
+ 
+-	cpsw_add_mcast(priv, addr);
+ 	return 0;
+ }
+ 
+-static int cpsw_del_mc_addr(struct net_device *ndev, const u8 *addr)
++static int cpsw_purge_vlan_mc(struct net_device *vdev, int vid, void *ctx)
+ {
+-	struct cpsw_priv *priv = netdev_priv(ndev);
+-	struct cpsw_common *cpsw = priv->cpsw;
+-	int vid, flags;
++	struct addr_sync_ctx *sync_ctx = ctx;
++	struct netdev_hw_addr *ha;
++	int found = 0;
+ 
+-	if (cpsw->data.dual_emac) {
+-		vid = cpsw->slaves[priv->emac_port].port_vlan;
+-		flags = ALE_VLAN;
+-	} else {
+-		vid = 0;
+-		flags = 0;
++	if (!vdev || !(vdev->flags & IFF_UP))
 +		return 0;
 +
-+	cpsw_ndo_vlan_rx_add_vid(priv->ndev, 0, vid);
++	/* vlan address is relevant if it's sync_cnt != 0 */
++	netdev_for_each_mc_addr(ha, vdev) {
++		if (ether_addr_equal(ha->addr, sync_ctx->addr)) {
++			found = ha->sync_cnt;
++			break;
++		}
+ 	}
+ 
+-	cpsw_ale_del_mcast(cpsw->ale, addr, 0, flags, vid);
++	if (!found)
++		return 0;
++
++	sync_ctx->keep_num--;
++	cpsw_set_mc(sync_ctx->ndev, sync_ctx->addr, vid, 0);
 +	return 0;
 +}
 +
- /* restore resources after port reset */
- static void cpsw_restore(struct cpsw_priv *priv)
- {
-+	/* restore vlan configurations */
-+	vlan_for_each(priv->ndev, cpsw_restore_vlans, priv);
++static int cpsw_purge_all_mc(struct net_device *ndev, const u8 *addr, int num)
++{
++	struct addr_sync_ctx sync_ctx;
 +
- 	/* restore MQPRIO offload */
- 	for_each_slave(priv, cpsw_mqprio_resume, priv);
++	sync_ctx.addr = addr;
++	sync_ctx.ndev = ndev;
++	sync_ctx.keep_num = num;
++
++	vlan_for_each(ndev, cpsw_purge_vlan_mc, &sync_ctx);
++	if (sync_ctx.keep_num)
++		cpsw_set_mc(ndev, addr, -1, 0);
++
+ 	return 0;
+ }
  
+@@ -703,7 +812,9 @@ static void cpsw_ndo_set_rx_mode(struct net_device *ndev)
+ 	/* Restore allmulti on vlans if necessary */
+ 	cpsw_ale_set_allmulti(cpsw->ale, ndev->flags & IFF_ALLMULTI);
+ 
+-	__dev_mc_sync(ndev, cpsw_add_mc_addr, cpsw_del_mc_addr);
++	/* add/remove mcast address either for real netdev or for vlan */
++	__hw_addr_ref_sync_dev(&ndev->mc, ndev, cpsw_add_mc_addr,
++			       cpsw_del_mc_addr);
+ }
+ 
+ static void cpsw_intr_enable(struct cpsw_common *cpsw)
+@@ -1963,7 +2074,7 @@ static int cpsw_ndo_stop(struct net_device *ndev)
+ 	struct cpsw_common *cpsw = priv->cpsw;
+ 
+ 	cpsw_info(priv, ifdown, "shutting down cpsw device\n");
+-	__dev_mc_unsync(priv->ndev, cpsw_del_mc_addr);
++	__hw_addr_ref_unsync_dev(&ndev->mc, ndev, cpsw_purge_all_mc);
+ 	netif_tx_stop_all_queues(priv->ndev);
+ 	netif_carrier_off(priv->ndev);
+ 
+@@ -2414,6 +2525,7 @@ static int cpsw_ndo_vlan_rx_kill_vid(struct net_device *ndev,
+ 				  HOST_PORT_NUM, ALE_VLAN, vid);
+ 	ret |= cpsw_ale_del_mcast(cpsw->ale, priv->ndev->broadcast,
+ 				  0, ALE_VLAN, vid);
++	ret |= cpsw_ale_flush_multicast(cpsw->ale, 0, vid);
+ err:
+ 	pm_runtime_put(cpsw->dev);
+ 	return ret;
 -- 
 2.17.1
 
