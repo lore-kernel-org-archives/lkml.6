@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5DEC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 941AEC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 247E82089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 247E82089E
+	by mail.kernel.org (Postfix) with ESMTP id 5129121470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5129121470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbeJQAl7 (ORCPT
+        id S1727781AbeJQAmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:41:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49238 "EHLO mx1.redhat.com"
+        Tue, 16 Oct 2018 20:42:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42082 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727272AbeJQAl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:41:58 -0400
+        id S1727757AbeJQAmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 20:42:02 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6AAFD76540;
-        Tue, 16 Oct 2018 16:50:42 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2F43E3082144;
+        Tue, 16 Oct 2018 16:50:46 +0000 (UTC)
 Received: from vitty.brq.redhat.com (unknown [10.43.2.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BEFD86A039;
-        Tue, 16 Oct 2018 16:50:38 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AF4792CFD2;
+        Tue, 16 Oct 2018 16:50:42 +0000 (UTC)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -41,59 +41,150 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
         Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH v6 09/13] x86/kvm/nVMX: allow bare VMXON state migration
-Date:   Tue, 16 Oct 2018 18:50:07 +0200
-Message-Id: <20181016165011.6607-10-vkuznets@redhat.com>
+Subject: [PATCH v6 10/13] KVM: selftests: state_test: test bare VMXON migration
+Date:   Tue, 16 Oct 2018 18:50:08 +0200
+Message-Id: <20181016165011.6607-11-vkuznets@redhat.com>
 In-Reply-To: <20181016165011.6607-1-vkuznets@redhat.com>
 References: <20181016165011.6607-1-vkuznets@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 16 Oct 2018 16:50:42 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 16 Oct 2018 16:50:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is perfectly valid for a guest to do VMXON and not do VMPTRLD. This
-state needs to be preserved on migration.
+Split prepare_for_vmx_operation() into prepare_for_vmx_operation() and
+load_vmcs() so we can inject GUEST_SYNC() in between.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/kvm/vmx.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ .../selftests/kvm/include/x86_64/vmx.h        |  1 +
+ tools/testing/selftests/kvm/lib/x86_64/vmx.c  |  5 +++++
+ .../testing/selftests/kvm/x86_64/state_test.c | 22 ++++++++++---------
+ .../kvm/x86_64/vmx_tsc_adjust_test.c          |  1 +
+ 4 files changed, 19 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 0b665c74fadc..5df47291ad4d 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -14827,13 +14827,6 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
- 	if (!page_address_valid(vcpu, kvm_state->vmx.vmxon_pa))
- 		return -EINVAL;
+diff --git a/tools/testing/selftests/kvm/include/x86_64/vmx.h b/tools/testing/selftests/kvm/include/x86_64/vmx.h
+index 12ebd836f7ef..4bbee8560292 100644
+--- a/tools/testing/selftests/kvm/include/x86_64/vmx.h
++++ b/tools/testing/selftests/kvm/include/x86_64/vmx.h
+@@ -548,5 +548,6 @@ struct vmx_pages {
+ struct vmx_pages *vcpu_alloc_vmx(struct kvm_vm *vm, vm_vaddr_t *p_vmx_gva);
+ bool prepare_for_vmx_operation(struct vmx_pages *vmx);
+ void prepare_vmcs(struct vmx_pages *vmx, void *guest_rip, void *guest_rsp);
++bool load_vmcs(struct vmx_pages *vmx);
  
--	if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
--		return -EINVAL;
--
--	if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
--	    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
--		return -EINVAL;
--
- 	if ((kvm_state->vmx.smm.flags & KVM_STATE_NESTED_SMM_GUEST_MODE) &&
- 	    (kvm_state->flags & KVM_STATE_NESTED_GUEST_MODE))
- 		return -EINVAL;
-@@ -14863,6 +14856,14 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
- 	if (ret)
- 		return ret;
+ #endif /* SELFTEST_KVM_VMX_H */
+diff --git a/tools/testing/selftests/kvm/lib/x86_64/vmx.c b/tools/testing/selftests/kvm/lib/x86_64/vmx.c
+index d7c401472247..cc356da9b3d8 100644
+--- a/tools/testing/selftests/kvm/lib/x86_64/vmx.c
++++ b/tools/testing/selftests/kvm/lib/x86_64/vmx.c
+@@ -107,6 +107,11 @@ bool prepare_for_vmx_operation(struct vmx_pages *vmx)
+ 	if (vmxon(vmx->vmxon_gpa))
+ 		return false;
  
-+	/* Empty 'VMXON' state is permitted */
-+	if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
-+		return 0;
++	return true;
++}
 +
-+	if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
-+	    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
-+		return -EINVAL;
-+
- 	set_current_vmptr(vmx, kvm_state->vmx.vmcs_pa);
++bool load_vmcs(struct vmx_pages *vmx)
++{
+ 	/* Load a VMCS. */
+ 	*(uint32_t *)(vmx->vmcs) = vmcs_revision();
+ 	if (vmclear(vmx->vmcs_gpa))
+diff --git a/tools/testing/selftests/kvm/x86_64/state_test.c b/tools/testing/selftests/kvm/x86_64/state_test.c
+index 43df194a7c1e..03da41f0f736 100644
+--- a/tools/testing/selftests/kvm/x86_64/state_test.c
++++ b/tools/testing/selftests/kvm/x86_64/state_test.c
+@@ -26,20 +26,20 @@ static bool have_nested_state;
  
- 	if (kvm_state->vmx.smm.flags & KVM_STATE_NESTED_SMM_VMXON) {
+ void l2_guest_code(void)
+ {
+-	GUEST_SYNC(5);
++	GUEST_SYNC(6);
+ 
+         /* Exit to L1 */
+ 	vmcall();
+ 
+ 	/* L1 has now set up a shadow VMCS for us.  */
+ 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0ffee);
+-	GUEST_SYNC(9);
++	GUEST_SYNC(10);
+ 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0ffee);
+ 	GUEST_ASSERT(!vmwrite(GUEST_RIP, 0xc0fffee));
+-	GUEST_SYNC(10);
++	GUEST_SYNC(11);
+ 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0fffee);
+ 	GUEST_ASSERT(!vmwrite(GUEST_RIP, 0xc0ffffee));
+-	GUEST_SYNC(11);
++	GUEST_SYNC(12);
+ 
+ 	/* Done, exit to L1 and never come back.  */
+ 	vmcall();
+@@ -52,15 +52,17 @@ void l1_guest_code(struct vmx_pages *vmx_pages)
+ 
+ 	GUEST_ASSERT(vmx_pages->vmcs_gpa);
+ 	GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
++	GUEST_SYNC(3);
++	GUEST_ASSERT(load_vmcs(vmx_pages));
+ 	GUEST_ASSERT(vmptrstz() == vmx_pages->vmcs_gpa);
+ 
+-	GUEST_SYNC(3);
++	GUEST_SYNC(4);
+ 	GUEST_ASSERT(vmptrstz() == vmx_pages->vmcs_gpa);
+ 
+ 	prepare_vmcs(vmx_pages, l2_guest_code,
+ 		     &l2_guest_stack[L2_GUEST_STACK_SIZE]);
+ 
+-	GUEST_SYNC(4);
++	GUEST_SYNC(5);
+ 	GUEST_ASSERT(vmptrstz() == vmx_pages->vmcs_gpa);
+ 	GUEST_ASSERT(!vmlaunch());
+ 	GUEST_ASSERT(vmptrstz() == vmx_pages->vmcs_gpa);
+@@ -72,7 +74,7 @@ void l1_guest_code(struct vmx_pages *vmx_pages)
+ 	GUEST_ASSERT(!vmresume());
+ 	GUEST_ASSERT(vmreadz(VM_EXIT_REASON) == EXIT_REASON_VMCALL);
+ 
+-	GUEST_SYNC(6);
++	GUEST_SYNC(7);
+ 	GUEST_ASSERT(vmreadz(VM_EXIT_REASON) == EXIT_REASON_VMCALL);
+ 
+ 	GUEST_ASSERT(!vmresume());
+@@ -85,12 +87,12 @@ void l1_guest_code(struct vmx_pages *vmx_pages)
+ 
+ 	GUEST_ASSERT(!vmptrld(vmx_pages->shadow_vmcs_gpa));
+ 	GUEST_ASSERT(vmlaunch());
+-	GUEST_SYNC(7);
++	GUEST_SYNC(8);
+ 	GUEST_ASSERT(vmlaunch());
+ 	GUEST_ASSERT(vmresume());
+ 
+ 	vmwrite(GUEST_RIP, 0xc0ffee);
+-	GUEST_SYNC(8);
++	GUEST_SYNC(9);
+ 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0ffee);
+ 
+ 	GUEST_ASSERT(!vmptrld(vmx_pages->vmcs_gpa));
+@@ -101,7 +103,7 @@ void l1_guest_code(struct vmx_pages *vmx_pages)
+ 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0ffffee);
+ 	GUEST_ASSERT(vmlaunch());
+ 	GUEST_ASSERT(vmresume());
+-	GUEST_SYNC(12);
++	GUEST_SYNC(13);
+ 	GUEST_ASSERT(vmreadz(GUEST_RIP) == 0xc0ffffee);
+ 	GUEST_ASSERT(vmlaunch());
+ 	GUEST_ASSERT(vmresume());
+diff --git a/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c b/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c
+index 38a91a5f04ac..18fa64db0d7a 100644
+--- a/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c
++++ b/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c
+@@ -94,6 +94,7 @@ static void l1_guest_code(struct vmx_pages *vmx_pages)
+ 	check_ia32_tsc_adjust(-1 * TSC_ADJUST_VALUE);
+ 
+ 	GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
++	GUEST_ASSERT(load_vmcs(vmx_pages));
+ 
+ 	/* Prepare the VMCS for L2 execution. */
+ 	prepare_vmcs(vmx_pages, l2_guest_code,
 -- 
 2.17.1
 
