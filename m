@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F30C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 433AEC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 784AE2098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02A3C2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GyHIb40C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 784AE2098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtoGb8pg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02A3C2098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729351AbeJPMC4 (ORCPT
+        id S1729369AbeJPMC5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51120 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729302AbeJPMCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:55 -0400
+        id S1729340AbeJPMC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84D0E21486;
-        Tue, 16 Oct 2018 04:14:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D82D21470;
+        Tue, 16 Oct 2018 04:14:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1539663273;
-        bh=tSYDKLuTSTfMyiH275XMgsb0xe9ifzjGOih9B0cs/Mc=;
+        bh=NLDRErPHUGVU6AJ6yqtHlDs0En8ukSv5Y2M8TWgYplA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GyHIb40CYkDI+EwWgaUCUJsANnL+PnBa+vZoSbnjoR6i4INuh3jXe9VyifuUqOzty
-         wg1mPz4EtCyUDRzYhOtjbUePwnj2/ej1094YuNAi+9Tm/D1h7NoQfzcpwJz/xeFGZO
-         ADTTk3QXJcO4GTMcUtElogo+mZZ/2rqT7vvRGlXM=
+        b=rtoGb8pg+8fvlbRBhbb6nlYghzXwei2Z5kQgppjMzVcS1cWC8hgo2mjd0SPAtlr6i
+         gib9+klfJZWKR+DPA0BMdhuxxN9JYd97xE7hgvbR+j4rCQu3qSxiMuTvuKB9Ql4ZQJ
+         A8yjUCG+xtnuOs8XiISEdfqhu4YI4GzaAvb9Vby4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Chan <michael.chan@broadcom.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Masashi Honma <masashi.honma@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 32/61] bnxt_en: Fix TX timeout during netpoll.
-Date:   Tue, 16 Oct 2018 00:13:34 -0400
-Message-Id: <20181016041403.135678-32-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 33/61] nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds
+Date:   Tue, 16 Oct 2018 00:13:35 -0400
+Message-Id: <20181016041403.135678-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -52,76 +53,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Masashi Honma <masashi.honma@gmail.com>
 
-[ Upstream commit 73f21c653f930f438d53eed29b5e4c65c8a0f906 ]
+[ Upstream commit 1222a16014888ed9733c11e221730d4a8196222b ]
 
-The current netpoll implementation in the bnxt_en driver has problems
-that may miss TX completion events.  bnxt_poll_work() in effect is
-only handling at most 1 TX packet before exiting.  In addition,
-there may be in flight TX completions that ->poll() may miss even
-after we fix bnxt_poll_work() to handle all visible TX completions.
-netpoll may not call ->poll() again and HW may not generate IRQ
-because the driver does not ARM the IRQ when the budget (0 for netpoll)
-is reached.
+Use array_index_nospec() to sanitize i with respect to speculation.
 
-We fix it by handling all TX completions and to always ARM the IRQ
-when we exit ->poll() with 0 budget.
+Note that the user doesn't control i directly, but can make it out
+of bounds by not finding a threshold in the array.
 
-Also, the logic to ACK the completion ring in case it is almost filled
-with TX completions need to be adjusted to take care of the 0 budget
-case, as discussed with Eric Dumazet <edumazet@google.com>
-
-Reported-by: Song Liu <songliubraving@fb.com>
-Reviewed-by: Song Liu <songliubraving@fb.com>
-Tested-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
+[add note about user control, as explained by Masashi]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ net/wireless/nl80211.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 937db8019289..a741c0648b25 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -1864,8 +1864,11 @@ static int bnxt_poll_work(struct bnxt *bp, struct bnxt_napi *bnapi, int budget)
- 		if (TX_CMP_TYPE(txcmp) == CMP_TYPE_TX_L2_CMP) {
- 			tx_pkts++;
- 			/* return full budget so NAPI will complete. */
--			if (unlikely(tx_pkts > bp->tx_wake_thresh))
-+			if (unlikely(tx_pkts > bp->tx_wake_thresh)) {
- 				rx_pkts = budget;
-+				raw_cons = NEXT_RAW_CMP(raw_cons);
-+				break;
-+			}
- 		} else if ((TX_CMP_TYPE(txcmp) & 0x30) == 0x10) {
- 			if (likely(budget))
- 				rc = bnxt_rx_pkt(bp, bnapi, &raw_cons, &event);
-@@ -1893,7 +1896,7 @@ static int bnxt_poll_work(struct bnxt *bp, struct bnxt_napi *bnapi, int budget)
- 		}
- 		raw_cons = NEXT_RAW_CMP(raw_cons);
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 5e7c9b361e8a..46e9812d13c0 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -9720,7 +9720,7 @@ static int cfg80211_cqm_rssi_update(struct cfg80211_registered_device *rdev,
+ 	struct wireless_dev *wdev = dev->ieee80211_ptr;
+ 	s32 last, low, high;
+ 	u32 hyst;
+-	int i, n;
++	int i, n, low_index;
+ 	int err;
  
--		if (rx_pkts == budget)
-+		if (rx_pkts && rx_pkts == budget)
+ 	/* RSSI reporting disabled? */
+@@ -9757,10 +9757,19 @@ static int cfg80211_cqm_rssi_update(struct cfg80211_registered_device *rdev,
+ 		if (last < wdev->cqm_config->rssi_thresholds[i])
  			break;
- 	}
  
-@@ -2007,8 +2010,12 @@ static int bnxt_poll(struct napi_struct *napi, int budget)
- 	while (1) {
- 		work_done += bnxt_poll_work(bp, bnapi, budget - work_done);
+-	low = i > 0 ?
+-		(wdev->cqm_config->rssi_thresholds[i - 1] - hyst) : S32_MIN;
+-	high = i < n ?
+-		(wdev->cqm_config->rssi_thresholds[i] + hyst - 1) : S32_MAX;
++	low_index = i - 1;
++	if (low_index >= 0) {
++		low_index = array_index_nospec(low_index, n);
++		low = wdev->cqm_config->rssi_thresholds[low_index] - hyst;
++	} else {
++		low = S32_MIN;
++	}
++	if (i < n) {
++		i = array_index_nospec(i, n);
++		high = wdev->cqm_config->rssi_thresholds[i] + hyst - 1;
++	} else {
++		high = S32_MAX;
++	}
  
--		if (work_done >= budget)
-+		if (work_done >= budget) {
-+			if (!budget)
-+				BNXT_CP_DB_REARM(cpr->cp_doorbell,
-+						 cpr->cp_raw_cons);
- 			break;
-+		}
- 
- 		if (!bnxt_has_work(bp, cpr)) {
- 			if (napi_complete_done(napi, work_done))
+ 	return rdev_set_cqm_rssi_range_config(rdev, dev, low, high);
+ }
 -- 
 2.17.1
 
