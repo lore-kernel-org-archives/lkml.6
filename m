@@ -2,146 +2,176 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E4CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F17C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9CFB20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:36:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9CFB20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 955542089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:37:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 955542089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbeJPV1E (ORCPT
+        id S1727336AbeJPV1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:27:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36472 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727002AbeJPV1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 17:27:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84F3380D;
-        Tue, 16 Oct 2018 06:36:33 -0700 (PDT)
-Received: from queper01-lin (unknown [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FF873F5D3;
-        Tue, 16 Oct 2018 06:36:29 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 14:36:24 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
-        adharmap@codeaurora.org, skannan@codeaurora.org,
-        pkondeti@codeaurora.org, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v8 10/15] sched: Introduce a sysctl for Energy Aware
- Scheduling
-Message-ID: <20181016133451.w2y3gwj2c56cvy5c@queper01-lin>
-References: <20181016101513.26919-1-quentin.perret@arm.com>
- <20181016101513.26919-11-quentin.perret@arm.com>
- <20181016125058.GD9130@localhost.localdomain>
+        Tue, 16 Oct 2018 17:27:39 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57056 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727002AbeJPV1i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 17:27:38 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9GDZ0dq063922
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 09:37:07 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n5dywgyx1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 09:37:06 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 16 Oct 2018 14:37:05 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 16 Oct 2018 14:37:00 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9GDaxqa53870692
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 16 Oct 2018 13:36:59 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D5E9E11C064;
+        Tue, 16 Oct 2018 16:36:28 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E40511C058;
+        Tue, 16 Oct 2018 16:36:28 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.72])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 16 Oct 2018 16:36:28 +0100 (BST)
+Date:   Tue, 16 Oct 2018 16:36:56 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        Rob Herring <robherring2@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for Oct 15
+References: <20181015192546.15faf3a1@canb.auug.org.au>
+ <20181015182637.GA16445@roeck-us.net>
+ <20181016071240.3f62816d@canb.auug.org.au>
+ <20181016072439.42613abd@canb.auug.org.au>
+ <20181015151319.3a443f0421c20bd7ed055cb9@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181016125058.GD9130@localhost.localdomain>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20181015151319.3a443f0421c20bd7ed055cb9@linux-foundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18101613-4275-0000-0000-000002CCD285
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101613-4276-0000-0000-000037D7DB10
+Message-Id: <20181016133656.GA10925@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810160116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tuesday 16 Oct 2018 at 14:50:58 (+0200), Juri Lelli wrote:
-> Hi,
+On Mon, Oct 15, 2018 at 03:13:19PM -0700, Andrew Morton wrote:
+> On Tue, 16 Oct 2018 07:24:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> On 16/10/18 11:15, Quentin Perret wrote:
+> > On Tue, 16 Oct 2018 07:12:40 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > On Mon, 15 Oct 2018 11:26:37 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+> > > >
+> > > > ALl ppc qemu tests (including big endian pseries) also generate a warning.
+> > > > 
+> > > > WARNING: CPU: 0 PID: 0 at mm/memblock.c:1301 .memblock_alloc_range_nid+0x20/0x68
+> > 
+> > That is:
+> > 
+> > static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+> >                                         phys_addr_t align, phys_addr_t start,
+> >                                         phys_addr_t end, int nid,
+> >                                         enum memblock_flags flags)
+> > {
+> >        if (WARN_ON_ONCE(!align))
+> >                 align = SMP_CACHE_BYTES;
+> > 
+> > Looks like patch
+> > 
+> >   "memblock: stop using implicit alignment to SMP_CACHE_BYTES"
+> > 
+> > missed some places ...
 > 
-> [...]
-> 
-> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > index cc02050fd0c4..481309a11174 100644
-> > --- a/kernel/sysctl.c
-> > +++ b/kernel/sysctl.c
-> > @@ -466,6 +466,17 @@ static struct ctl_table kern_table[] = {
-> >  		.extra1		= &one,
-> >  	},
-> >  #endif
-> > +#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-> > +	{
-> > +		.procname	= "sched_energy_aware",
-> > +		.data		= &sysctl_sched_energy_aware,
-> > +		.maxlen		= sizeof(unsigned int),
-> > +		.mode		= 0644,
-> > +		.proc_handler	= sched_energy_aware_handler,
-> > +		.extra1		= &zero,
-> > +		.extra2		= &one,
-> > +	},
-> > +#endif
-> 
-> Doesn't this need to be documented in Documentation/sysctl/kernel.txt?
+> To be expected, I guess.  I'm pretty relaxed about this ;) Let's do
+> another sweep in a week or so, after which we'll have a couple of
+> months to mop up any leftovers.
 
-Right, that'd be a good practice indeed. What do you think about the
-patch below ?
+After some more grepping and spatching I've found these:
 
-> Also, do we want a kernel parameter as well to be able to disable this
-> at boot?
+From 8b014bae53a78ab747dbb76b9aff7df4cefcb604 Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.ibm.com>
+Date: Tue, 16 Oct 2018 16:03:00 +0300
+Subject: [PATCH] memblock: fix missed uses of implicit aligment
 
-Yeah, why not. But I guess we could always add that later if need be ?
+A couple of memblock*alloc uses were missed during conversion from implicit
+alignment setting with 'align = 0' to explictly using SMP_CACHE_BYTES.
+Fix them now.
 
-Thanks,
-Quentin
-
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
-From: Quentin Perret <quentin.perret@arm.com>
-Date: Tue, 16 Oct 2018 14:26:06 +0100
-Subject: [PATCH] sched: Document sched_energy_aware sysctl
+ arch/powerpc/kernel/paca.c    | 2 +-
+ drivers/firmware/efi/memmap.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Add a new entry to Documentation/sysctl/kernel.txt explaining how
-the new 'sched_energy_aware' knob should be used.
+diff --git a/arch/powerpc/kernel/paca.c b/arch/powerpc/kernel/paca.c
+index f331a00..913bfca 100644
+--- a/arch/powerpc/kernel/paca.c
++++ b/arch/powerpc/kernel/paca.c
+@@ -198,7 +198,7 @@ void __init allocate_paca_ptrs(void)
+ 	paca_nr_cpu_ids = nr_cpu_ids;
+ 
+ 	paca_ptrs_size = sizeof(struct paca_struct *) * nr_cpu_ids;
+-	paca_ptrs = __va(memblock_phys_alloc(paca_ptrs_size, 0));
++	paca_ptrs = __va(memblock_phys_alloc(paca_ptrs_size, SMP_CACHE_BYTES));
+ 	memset(paca_ptrs, 0x88, paca_ptrs_size);
+ }
+ 
+diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
+index ef618bc..fa2904f 100644
+--- a/drivers/firmware/efi/memmap.c
++++ b/drivers/firmware/efi/memmap.c
+@@ -15,7 +15,7 @@
+ 
+ static phys_addr_t __init __efi_memmap_alloc_early(unsigned long size)
+ {
+-	return memblock_phys_alloc(size, 0);
++	return memblock_phys_alloc(size, SMP_CACHE_BYTES);
+ }
+ 
+ static phys_addr_t __init __efi_memmap_alloc_late(unsigned long size)
+-- 
+2.7.4
 
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
----
- Documentation/sysctl/kernel.txt | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ 
 
-diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
-index 37a679501ddc..36bee799ee9e 100644
---- a/Documentation/sysctl/kernel.txt
-+++ b/Documentation/sysctl/kernel.txt
-@@ -78,6 +78,7 @@ show up in /proc/sys/kernel:
- - reboot-cmd                  [ SPARC only ]
- - rtsig-max
- - rtsig-nr
-+- sched_energy_aware
- - seccomp/                    ==> Documentation/userspace-api/seccomp_filter.rst
- - sem
- - sem_next_id		      [ sysv ipc ]
-@@ -872,6 +873,17 @@ rtsig-nr shows the number of RT signals currently queued.
- 
- ==============================================================
- 
-+sched_energy_aware:
-+
-+Enables/disables Energy Aware Scheduling (EAS). EAS starts
-+automatically on platforms where it can run (that is,
-+platforms with asymmetric CPU topologies and having an Energy
-+Model available). If your platform happens to meet the
-+requirements for EAS but you do not want to use it, change
-+this value to 0.
-+
-+==============================================================
-+
- sched_schedstats:
- 
- Enables/disables scheduler statistics. Enabling this feature
+-- 
+Sincerely yours,
+Mike.
 
