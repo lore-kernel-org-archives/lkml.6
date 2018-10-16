@@ -2,118 +2,131 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97507C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36EC3C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C874208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F18582089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:18:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="ASgBWw3j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C874208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1jrAan67"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F18582089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeJPXIx (ORCPT
+        id S1727316AbeJPXJN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 19:08:53 -0400
-Received: from a9-114.smtp-out.amazonses.com ([54.240.9.114]:58740 "EHLO
-        a9-114.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727100AbeJPXIx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:08:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1539703076;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=zisL8ov3KWgOHzFU/T/9Xg/6fw08V8Px6ZPEYvtNj7Q=;
-        b=ASgBWw3jDOL8TKeDbOYwCa02AaGBGhDgP2fKf1E4yTa9bKQJ3iIzOzSbtYr2jU/S
-        3ck7EIf6O34idAuZm1UnjdXoglEsVwUTqscN6OrikeyHgi9v/cfhJQM0H8mE5VkZF/s
-        4iAP6DkaYQqOeSDvixJJulzERDJ1v2sTQO01f1gk=
-Date:   Tue, 16 Oct 2018 15:17:56 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     David Rientjes <rientjes@google.com>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [patch] mm, slab: avoid high-order slab pages when it does not
- reduce waste
-In-Reply-To: <alpine.DEB.2.21.1810151715220.21338@chino.kir.corp.google.com>
-Message-ID: <010001667d7476a2-f91dcf12-5e90-4ade-97e8-9fd651f7bf17-000000@email.amazonses.com>
-References: <alpine.DEB.2.21.1810121424420.116562@chino.kir.corp.google.com> <20181012151341.286cd91321cdda9b6bde4de9@linux-foundation.org> <0100016679e3c96f-c78df4e2-9ab8-48db-8796-271c4b439f16-000000@email.amazonses.com>
- <alpine.DEB.2.21.1810151715220.21338@chino.kir.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 16 Oct 2018 19:09:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40088 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727100AbeJPXJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 19:09:12 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C99E2086E;
+        Tue, 16 Oct 2018 15:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539703096;
+        bh=B1bBgwS+YFsFbbk+RAmEx+hX5UEJ7WojbyEp03tWBoQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1jrAan67SqZkOCvCgDrIPQh8pturm97VyVKqjg5DzefC7Kgnrb97KnND9mnpf8S0Q
+         HVpz3DdXcxuEp+rATCua9C7KEwxl26z3+3dK6+I99NoQwfxEkRLs8l+T8udQO0BYio
+         p7bZ5GPIRHrk0oYEIP5l11+8IKg4VrupeAbqo4gw=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id D2B97142C5E; Tue, 16 Oct 2018 12:18:13 -0300 (-03)
+Date:   Tue, 16 Oct 2018 12:18:13 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH] perf tools: Fix tracing_path_mount proper path
+Message-ID: <20181016151813.GB3849@kernel.org>
+References: <20181016114818.3595-1-jolsa@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.10.16-54.240.9.114
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016114818.3595-1-jolsa@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Oct 2018, David Rientjes wrote:
+Em Tue, Oct 16, 2018 at 01:48:18PM +0200, Jiri Olsa escreveu:
+> If there's no tracefs (RHEL7) support the tracing_path_mount
+> returns debugfs path which results in following fail:
+> 
+>   # perf probe sys_write
+>   kprobe_events file does not exist - please rebuild kernel with CONFIG_KPROBE_EVENTS.
+>   Error: Failed to add events.
+> 
+> In tracing_path_debugfs_mount function we need to return the
+> 'tracing' path instead of just the mount to make it work:
+> 
+>   # perf probe sys_write
+>   Added new event:
+>     probe:sys_write      (on sys_write)
+> 
+>   You can now use it in all perf tools, such as:
+> 
+>           perf record -e probe:sys_write -aR sleep 1
+> 
+> Adding the 'return tracing_path;' also to tracing_path_tracefs_mount
+> function just for consistency with tracing_path_debugfs_mount.
+> 
+> Upstream keeps working, because it has the tracefs support.
+> 
+> Link: http://lkml.kernel.org/n/tip-yiwkzexq9fk1ey1xg3gnjlw4@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/lib/api/fs/tracing_path.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/lib/api/fs/tracing_path.c b/tools/lib/api/fs/tracing_path.c
+> index 120037496f77..5afb11b30fca 100644
+> --- a/tools/lib/api/fs/tracing_path.c
+> +++ b/tools/lib/api/fs/tracing_path.c
+> @@ -36,7 +36,7 @@ static const char *tracing_path_tracefs_mount(void)
+>  
+>  	__tracing_path_set("", mnt);
+>  
+> -	return mnt;
+> +	return tracing_path;
+>  }
+>  
+>  static const char *tracing_path_debugfs_mount(void)
+> @@ -49,7 +49,7 @@ static const char *tracing_path_debugfs_mount(void)
+>  
+>  	__tracing_path_set("tracing/", mnt);
+>  
+> -	return mnt;
+> +	return tracing_path;
 
-> On Mon, 15 Oct 2018, Christopher Lameter wrote:
->
-> > > > If the amount of waste is the same at higher cachep->gfporder values,
-> > > > there is no significant benefit to allocating higher order memory.  There
-> > > > will be fewer calls to the page allocator, but each call will require
-> > > > zone->lock and finding the page of best fit from the per-zone free areas.
-> >
-> > There is a benefit because the management overhead is halved.
-> >
->
-> It depends on (1) how difficult it is to allocate higher order memory and
-> (2) the long term affects of preferring high order memory over order 0.
+Humm, colour me confused, by the name of the function I expected
+tracing_path_debugfs_mount() to return the debugfs mount.
 
-The overhead of the page allocator is orders of magnitudes bigger than
-slab allocation. Higher order may be faster because the pcp overhead is
-not there. It all depends. Please come up with some benchmarking to
-substantiate these ideas.
+tracing_path_tracefs_mount() would return the tracefs mount point, so,
+there, returning tracing_path would be ok.
 
->
-> For (1), slab has no minimum order fallback like slub does so the
-> allocation either succeeds at cachep->gfporder or it fails.  If memory
-> fragmentation is such that order-1 memory is not possible, this is fixing
-> an issue where the slab allocation would succeed but now fails
-> unnecessarily.  If that order-1 memory is painful to allocate, we've
-> reclaimed and compacted unnecessarily when order-0 pages are available
-> from the pcp list.
->
+Is there some other way to figure out that tracefs isn't available and
+thus we should use debugfs_mount + "/tracing/" for the "tracefs" mount?
 
-Ok that sounds good but the performance impact is still an issue. Also we
-agreed that the page allocator will provide allocations up to
-COSTLY_ORDER without too much fuss. Other system components may fail if
-these smaller order pages are not available.
+This may well be just the naming confusion... lemme read this a bit
+more...
 
-> > Have a benchmark that shows this?
-> >
->
-> I'm not necessarily approaching this from a performance point of view, but
-> rather as a means to reduce slab fragmentation when fallback to order-0
-> memory, especially when completely legitimate, is prohibited.  From a
-> performance standpoint, this will depend on separately on fragmentation
-> and contention on zone->lock which both don't exist for order-0 memory
-> until fallback is required and then the pcp are filled with up to
-> batchcount pages.
+- Arnaldo
 
-Fragmentation is a performance issue and causes degradation of Linux MM
-performance over time.  There are pretty complex mechanism that need to be
-played against one another.
-
-Come up with some metrics to get meaningful data that allows us to see the
-impact.
-
-I think what would be beneficial to have is a load that gradually
-degrade as another process causes fragmentation. Any patch like the one
-proposed should have an effect on the degree of fragmentation after a
-certain time.
-
-Having something like that could lead to a whole serial of optimizations.
-Ideally we would like to have a MM subsystem that does not degrade as
-today.
+>  }
+>  
+>  const char *tracing_path_mount(void)
+> -- 
+> 2.17.2
