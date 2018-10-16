@@ -2,68 +2,133 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F908C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A220CC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42A792089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42A792089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 68A582089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0AgIo9zL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68A582089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbeJQBBf (ORCPT
+        id S1727509AbeJQBBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:01:35 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:53572 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727211AbeJQBBf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:01:35 -0400
-Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id A352C12DE5805;
-        Tue, 16 Oct 2018 10:10:12 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 10:10:11 -0700 (PDT)
-Message-Id: <20181016.101011.368948030874381665.davem@davemloft.net>
-To:     linyunsheng@huawei.com
-Cc:     huangdaode@hisilicon.com, xuwei5@hisilicon.com,
-        liguozhu@hisilicon.com, Yisen.Zhuang@huawei.com,
-        john.garry@huawei.com, linuxarm@huawei.com, salil.mehta@huawei.com,
-        lipeng321@huawei.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/5] Some cleanup and bugfix for desc filling
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1539691132-158455-1-git-send-email-linyunsheng@huawei.com>
-References: <1539691132-158455-1-git-send-email-linyunsheng@huawei.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 16 Oct 2018 10:10:13 -0700 (PDT)
+        Tue, 16 Oct 2018 21:01:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41772 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727132AbeJQBBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:01:45 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19B6720866;
+        Tue, 16 Oct 2018 17:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539709822;
+        bh=Xn2sI7Ism8KOog/p/JFUMaVU+I0l8UDiDhdA2Gfl5Hc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0AgIo9zLLWhQ695i84XEnnvKjHwbVHVoU9wLo9d9xC0MhVUt0VQ1zqdQhggJWzxYy
+         zjhogxvTS85ILdEJ8iurqUDXTV+0XifuMfec4DgtKOHAID+j1XtQvBhqzLreFJXWWG
+         trdS1flBPlkUc/Hqi8EM6i55flla6DGZwmNZQYSA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 001/135] bnxt_en: Fix TX timeout during netpoll.
+Date:   Tue, 16 Oct 2018 19:03:51 +0200
+Message-Id: <20181016170515.558324066@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
+References: <20181016170515.447235311@linuxfoundation.org>
+User-Agent: quilt/0.65
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
-Date: Tue, 16 Oct 2018 19:58:47 +0800
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-> When retransmiting packets, skb_cow_head which is called in
-> hns3_set_tso may clone a new header. And driver will clear the
-> checksum of the header after doing DMA map, so HW will read the
-> old header whose L3 checksum is not cleared and calculate a
-> wrong L3 checksum.
-> 
-> Also When sending a big fragment using multiple buffer descriptor,
-> hns3 does one maping, but do multiple unmapping when tx is done,
-> which may cause unmapping problem.
-> 
-> This patchset does some cleanup before fixing the above problem.
+------------------
 
-Series applied.
+From: Michael Chan <michael.chan@broadcom.com>
+
+[ Upstream commit 73f21c653f930f438d53eed29b5e4c65c8a0f906 ]
+
+The current netpoll implementation in the bnxt_en driver has problems
+that may miss TX completion events.  bnxt_poll_work() in effect is
+only handling at most 1 TX packet before exiting.  In addition,
+there may be in flight TX completions that ->poll() may miss even
+after we fix bnxt_poll_work() to handle all visible TX completions.
+netpoll may not call ->poll() again and HW may not generate IRQ
+because the driver does not ARM the IRQ when the budget (0 for netpoll)
+is reached.
+
+We fix it by handling all TX completions and to always ARM the IRQ
+when we exit ->poll() with 0 budget.
+
+Also, the logic to ACK the completion ring in case it is almost filled
+with TX completions need to be adjusted to take care of the 0 budget
+case, as discussed with Eric Dumazet <edumazet@google.com>
+
+Reported-by: Song Liu <songliubraving@fb.com>
+Reviewed-by: Song Liu <songliubraving@fb.com>
+Tested-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -1882,8 +1882,11 @@ static int bnxt_poll_work(struct bnxt *b
+ 		if (TX_CMP_TYPE(txcmp) == CMP_TYPE_TX_L2_CMP) {
+ 			tx_pkts++;
+ 			/* return full budget so NAPI will complete. */
+-			if (unlikely(tx_pkts > bp->tx_wake_thresh))
++			if (unlikely(tx_pkts > bp->tx_wake_thresh)) {
+ 				rx_pkts = budget;
++				raw_cons = NEXT_RAW_CMP(raw_cons);
++				break;
++			}
+ 		} else if ((TX_CMP_TYPE(txcmp) & 0x30) == 0x10) {
+ 			if (likely(budget))
+ 				rc = bnxt_rx_pkt(bp, bnapi, &raw_cons, &event);
+@@ -1911,7 +1914,7 @@ static int bnxt_poll_work(struct bnxt *b
+ 		}
+ 		raw_cons = NEXT_RAW_CMP(raw_cons);
+ 
+-		if (rx_pkts == budget)
++		if (rx_pkts && rx_pkts == budget)
+ 			break;
+ 	}
+ 
+@@ -2025,8 +2028,12 @@ static int bnxt_poll(struct napi_struct
+ 	while (1) {
+ 		work_done += bnxt_poll_work(bp, bnapi, budget - work_done);
+ 
+-		if (work_done >= budget)
++		if (work_done >= budget) {
++			if (!budget)
++				BNXT_CP_DB_REARM(cpr->cp_doorbell,
++						 cpr->cp_raw_cons);
+ 			break;
++		}
+ 
+ 		if (!bnxt_has_work(bp, cpr)) {
+ 			if (napi_complete_done(napi, work_done))
+
+
