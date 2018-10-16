@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A52C5ACC8
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D055C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F41521477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC5ED2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wzkFzGFl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F41521477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="erMa2KqP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5ED2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731303AbeJQBOc (ORCPT
+        id S1731317AbeJQBOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:14:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32942 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:14:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730397AbeJQBOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:14:32 -0400
+        id S1730397AbeJQBOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:14:35 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03E6220866;
-        Tue, 16 Oct 2018 17:23:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B14F12098A;
+        Tue, 16 Oct 2018 17:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710586;
-        bh=XrDiy3YmMkr5gQWKyM6u2HH2UVi0mLztmeocqmXETTI=;
+        s=default; t=1539710589;
+        bh=cwsYEq8Fs8uPL+yD3hLe71xsMjx5Evw7jjhVdwt8RyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wzkFzGFl8JGbepPVi0k50X6iCv7tpk8StJSzCxSa6z19UX6aRyQBJkdu89woahLok
-         S/Kaf6w3JzLunNAbT5v11VeWx611kNKVY38AHpHGwbw1ySPhLRSn0iTbu/Z/zqtfuE
-         0gwTJBQ2vyeOeJqhQRoSN+UqOf/pPhbrasDMtxXY=
+        b=erMa2KqPCugV7cjI3yXMs13Wdl+iYy5fg2+Rf/SFa8yQSjksnbAcgCqQr0BEKyv/f
+         bBVqezu/nw5K1ND9OkSInGrwMeK0KduGBO9aL203mCGohOrgcUz46EM6CsLdCImqk1
+         c3aUf6rV3UaXWQnZkwEzvQu3iX/oWsqfTwZ5HTqk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 18/71] perf script python: Fix export-to-postgresql.py occasional failure
-Date:   Tue, 16 Oct 2018 19:09:15 +0200
-Message-Id: <20181016170540.313226239@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.9 19/71] mm: Preserve _PAGE_DEVMAP across mprotect() calls
+Date:   Tue, 16 Oct 2018 19:09:16 +0200
+Message-Id: <20181016170540.351359047@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
 References: <20181016170539.315587743@linuxfoundation.org>
@@ -62,50 +63,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 25e11700b54c7b6b5ebfc4361981dae12299557b upstream.
+commit 4628a64591e6cee181237060961e98c615c33966 upstream.
 
-Occasional export failures were found to be caused by truncating 64-bit
-pointers to 32-bits. Fix by explicitly setting types for all ctype
-arguments and results.
+Currently _PAGE_DEVMAP bit is not preserved in mprotect(2) calls. As a
+result we will see warnings such as:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180911114504.28516-2-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+BUG: Bad page map in process JobWrk0013  pte:800001803875ea25 pmd:7624381067
+addr:00007f0930720000 vm_flags:280000f9 anon_vma:          (null) mapping:ffff97f2384056f0 index:0
+file:457-000000fe00000030-00000009-000000ca-00000001_2001.fileblock fault:xfs_filemap_fault [xfs] mmap:xfs_file_mmap [xfs] readpage:          (null)
+CPU: 3 PID: 15848 Comm: JobWrk0013 Tainted: G        W          4.12.14-2.g7573215-default #1 SLE12-SP4 (unreleased)
+Hardware name: Intel Corporation S2600WFD/S2600WFD, BIOS SE5C620.86B.01.00.0833.051120182255 05/11/2018
+Call Trace:
+ dump_stack+0x5a/0x75
+ print_bad_pte+0x217/0x2c0
+ ? enqueue_task_fair+0x76/0x9f0
+ _vm_normal_page+0xe5/0x100
+ zap_pte_range+0x148/0x740
+ unmap_page_range+0x39a/0x4b0
+ unmap_vmas+0x42/0x90
+ unmap_region+0x99/0xf0
+ ? vma_gap_callbacks_rotate+0x1a/0x20
+ do_munmap+0x255/0x3a0
+ vm_munmap+0x54/0x80
+ SyS_munmap+0x1d/0x30
+ do_syscall_64+0x74/0x150
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+...
+
+when mprotect(2) gets used on DAX mappings. Also there is a wide variety
+of other failures that can result from the missing _PAGE_DEVMAP flag
+when the area gets used by get_user_pages() later.
+
+Fix the problem by including _PAGE_DEVMAP in a set of flags that get
+preserved by mprotect(2).
+
+Fixes: 69660fd797c3 ("x86, mm: introduce _PAGE_DEVMAP")
+Fixes: ebd31197931d ("powerpc/mm: Add devmap support for ppc64")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/scripts/python/export-to-postgresql.py |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/powerpc/include/asm/book3s/64/pgtable.h |    4 ++--
+ arch/x86/include/asm/pgtable_types.h         |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/tools/perf/scripts/python/export-to-postgresql.py
-+++ b/tools/perf/scripts/python/export-to-postgresql.py
-@@ -204,14 +204,23 @@ from ctypes import *
- libpq = CDLL("libpq.so.5")
- PQconnectdb = libpq.PQconnectdb
- PQconnectdb.restype = c_void_p
-+PQconnectdb.argtypes = [ c_char_p ]
- PQfinish = libpq.PQfinish
-+PQfinish.argtypes = [ c_void_p ]
- PQstatus = libpq.PQstatus
-+PQstatus.restype = c_int
-+PQstatus.argtypes = [ c_void_p ]
- PQexec = libpq.PQexec
- PQexec.restype = c_void_p
-+PQexec.argtypes = [ c_void_p, c_char_p ]
- PQresultStatus = libpq.PQresultStatus
-+PQresultStatus.restype = c_int
-+PQresultStatus.argtypes = [ c_void_p ]
- PQputCopyData = libpq.PQputCopyData
-+PQputCopyData.restype = c_int
- PQputCopyData.argtypes = [ c_void_p, c_void_p, c_int ]
- PQputCopyEnd = libpq.PQputCopyEnd
-+PQputCopyEnd.restype = c_int
- PQputCopyEnd.argtypes = [ c_void_p, c_void_p ]
+--- a/arch/powerpc/include/asm/book3s/64/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+@@ -53,7 +53,7 @@
+  */
+ #define _HPAGE_CHG_MASK (PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
+ 			 _PAGE_ACCESSED | H_PAGE_THP_HUGE | _PAGE_PTE | \
+-			 _PAGE_SOFT_DIRTY)
++			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
+ /*
+  * user access blocked by key
+  */
+@@ -71,7 +71,7 @@
+  */
+ #define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
+ 			 _PAGE_ACCESSED | _PAGE_SPECIAL | _PAGE_PTE |	\
+-			 _PAGE_SOFT_DIRTY)
++			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
+ /*
+  * Mask of bits returned by pte_pgprot()
+  */
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -134,7 +134,7 @@
+  */
+ #define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
+ 			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
+-			 _PAGE_SOFT_DIRTY)
++			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
+ #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
  
- sys.path.append(os.environ['PERF_EXEC_PATH'] + \
+ /* The ASID is the lower 12 bits of CR3 */
 
 
