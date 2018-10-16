@@ -2,118 +2,127 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D071C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA7EC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2929E2145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:49:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2929E2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 14FF62145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:49:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14FF62145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbeJQEl0 (ORCPT
+        id S1727146AbeJQElx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 00:41:26 -0400
-Received: from mga14.intel.com ([192.55.52.115]:4660 "EHLO mga14.intel.com"
+        Wed, 17 Oct 2018 00:41:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41906 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726048AbeJQEl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 00:41:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 13:49:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,389,1534834800"; 
-   d="scan'208";a="92542532"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.154]) ([10.7.198.154])
-  by orsmga003.jf.intel.com with ESMTP; 16 Oct 2018 13:49:15 -0700
-Subject: Re: [mm PATCH v3 2/6] mm: Drop meminit_pfn_in_nid as it is redundant
-To:     Pavel Tatashin <pasha.tatashin@gmail.com>, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.jiang@intel.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, davem@davemloft.net,
-        yi.z.zhang@linux.intel.com, khalid.aziz@oracle.com,
-        rppt@linux.vnet.ibm.com, vbabka@suse.cz,
-        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-References: <20181015202456.2171.88406.stgit@localhost.localdomain>
- <20181015202703.2171.40829.stgit@localhost.localdomain>
- <a21c1827-10ad-8ff5-c8b6-e34a3f1e8b80@gmail.com>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <e4f806d4-2527-07c2-56bc-9c41789d669c@linux.intel.com>
-Date:   Tue, 16 Oct 2018 13:49:14 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726048AbeJQElx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 00:41:53 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6754F3084259;
+        Tue, 16 Oct 2018 20:49:42 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B126663BA3;
+        Tue, 16 Oct 2018 20:49:37 +0000 (UTC)
+Subject: Re: [PATCH v2 2/2] sysctl: handle overflow for file-max
+To:     Christian Brauner <christian@brauner.io>, keescook@chromium.org,
+        linux-kernel@vger.kernel.org
+Cc:     ebiederm@xmission.com, mcgrof@kernel.org,
+        akpm@linux-foundation.org, joe.lawrence@redhat.com,
+        linux@dominikbrodowski.net, viro@zeniv.linux.org.uk,
+        adobriyan@gmail.com, linux-api@vger.kernel.org
+References: <20181016195337.2440-1-christian@brauner.io>
+ <20181016195337.2440-3-christian@brauner.io>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <e8d3d39a-6880-486b-84fc-7fd0848bb4a3@redhat.com>
+Date:   Tue, 16 Oct 2018 16:49:37 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <a21c1827-10ad-8ff5-c8b6-e34a3f1e8b80@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20181016195337.2440-3-christian@brauner.io>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 16 Oct 2018 20:49:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/2018 1:33 PM, Pavel Tatashin wrote:
-> 
-> 
-> On 10/15/18 4:27 PM, Alexander Duyck wrote:
->> As best as I can tell the meminit_pfn_in_nid call is completely redundant.
->> The deferred memory initialization is already making use of
->> for_each_free_mem_range which in turn will call into __next_mem_range which
->> will only return a memory range if it matches the node ID provided assuming
->> it is not NUMA_NO_NODE.
->>
->> I am operating on the assumption that there are no zones or pgdata_t
->> structures that have a NUMA node of NUMA_NO_NODE associated with them. If
->> that is the case then __next_mem_range will never return a memory range
->> that doesn't match the zone's node ID and as such the check is redundant.
->>
->> So one piece I would like to verfy on this is if this works for ia64.
->> Technically it was using a different approach to get the node ID, but it
->> seems to have the node ID also encoded into the memblock. So I am
->> assuming this is okay, but would like to get confirmation on that.
->>
->> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> 
-> If I am not mistaken, this code is for systems with memory interleaving.
-> Quick looks shows that x86, powerpc, s390, and sparc have it set.
-> 
-> I am not sure about other arches, but at least on SPARC, there are some
-> processors with memory interleaving feature:
-> 
-> http://www.fujitsu.com/global/products/computing/servers/unix/sparc-enterprise/technology/performance/memory.html
-> 
-> Pavel
+On 10/16/2018 03:53 PM, Christian Brauner wrote:
+> Currently, when writing
+>
+> echo 18446744073709551616 > /proc/sys/fs/file-max
+>
+> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
+> crashes the system.
+> This commit sets the max and min value for file-max and returns -EINVAL
+> when a long int is exceeded. Any higher value cannot currently be used as
+> the percpu counters are long ints and not unsigned integers. This behavior
+> also aligns with other tuneables that return -EINVAL when their range is
+> exceeded. See e.g. [1], [2] and others.
+>
+> [1]: fb910c42cceb ("sysctl: check for UINT_MAX before unsigned int min/max")
+> [2]: 196851bed522 ("s390/topology: correct topology mode proc handler")
+>
+> Cc: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Christian Brauner <christian@brauner.io>
+> ---
+> v2->v1:
+> - consistenly fail on overflow
+> v0->v1:
+> - if max value is < than ULONG_MAX use max as upper bound
+> - (Dominik) remove double "the" from commit message
+> ---
+>  kernel/sysctl.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 7d98e02e5d72..0874001e5435 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
+>  static int __maybe_unused two = 2;
+>  static int __maybe_unused four = 4;
+>  static unsigned long one_ul = 1;
+> +static unsigned long long_max = LONG_MAX;
+>  static int one_hundred = 100;
+>  static int one_thousand = 1000;
+>  #ifdef CONFIG_PRINTK
+> @@ -1696,6 +1697,8 @@ static struct ctl_table fs_table[] = {
+>  		.maxlen		= sizeof(files_stat.max_files),
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_doulongvec_minmax,
+> +		.extra1		= &zero,
+> +		.extra2		= &long_max,
+>  	},
+>  	{
+>  		.procname	= "nr_open",
+> @@ -2797,6 +2800,10 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+>  				break;
+>  			if (neg)
+>  				continue;
+> +			if ((max && val > *max) || (min && val < *min)) {
+> +				err = -EINVAL;
+> +				break;
+> +			}
+>  			val = convmul * val / convdiv;
 
-I get what it is for. However as best I can tell the check is actually 
-redundant. In the case of the deferred page initialization we are 
-already pulling the memory regions via "for_each_free_mem_range". That 
-function is already passed a NUMA node ID. Because of that we are 
-already checking the memory range to determine if it is in the node or 
-not. As such it doesn't really make sense to go through for each PFN and 
-then go back to the memory range and see if the node matches or not.
+Should the conversion be done before the min/max check?
 
-You can take a look at __next_mem_range which is called by 
-for_each_free_mem_range and passed &memblock.memory and 
-&memblock.reserved to avoid:
-https://elixir.bootlin.com/linux/latest/source/mm/memblock.c#L899
+>  			if ((min && val < *min) || (max && val > *max))
+>  				continue;
 
-Then you can work your way through:
-meminit_pfn_in_nid(pfn, node, state)
-  __early_pfn_to_nid(pfn, state)
-   memblock_search_pfn_nid(pfn, &start_pfn, &end_pfn)
-    memblock_search(&memblock.memory, pfn)
+You may be able to drop the above statement.
 
- From what I can tell the deferred init is going back through the 
-memblock.memory list we pulled this range from and just validating it 
-against itself. This makes sense for the standard init as that is just 
-going from start_pfn->end_pfn, but for the deferred init we are pulling 
-the memory ranges ahead of time so we shouldn't need to re-validate the 
-memory that is contained within that range.
+Cheers,
+Longman
+
