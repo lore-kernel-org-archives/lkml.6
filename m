@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 224A4C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BA7C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E04B721477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FBC621476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zaZHSnCV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E04B721477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPi5KINl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FBC621476
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729128AbeJPMCj (ORCPT
+        id S1729142AbeJPMCl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50546 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729075AbeJPMCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:37 -0400
+        id S1729122AbeJPMCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6EF421476;
-        Tue, 16 Oct 2018 04:14:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D1C621477;
+        Tue, 16 Oct 2018 04:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663254;
-        bh=hEbZ+MD11StPve5h2gVF5MFtPBXyn9532+ZnHL/erTU=;
+        s=default; t=1539663256;
+        bh=U6WaY/cuWgCQ//b/Mq00UtTjCGrnHHW/WgTN/OrIwpg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zaZHSnCVDpjUt2m9z2mLIGQVmp2lYVJTfaoIuyKLQBFbS1swW+UGgffM7TuC0RJvY
-         6VQE85U6e+JNiDjKwQ1xnuOa9sBLCkUTW05P4rB0M6JWUOtwKqM1dgGt2JXAfFPwUf
-         XFm/BgxM2n5HYCjOW3xCt8joSDgHMmVMhDokJkHs=
+        b=IPi5KINlFhJha0U/7BWf+vRVqa26yvZz59kCfhSLwI6nLClr7vFK38hYQMueb1XKy
+         NFf2F1BDaBJ6pjgrmuOpDTH5NPB+SlrnwYVma7F3vp1VETeTNLVWWghw5yuHfdBbEV
+         hWBraZYloDXWs3C2leEk0BxdSBlbYfZA61SAEBlQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yuan-Chi Pang <fu3mo6goo@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+Cc:     Sean Tranchetti <stranche@codeaurora.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 10/61] mac80211: fix TX status reporting for ieee80211s
-Date:   Tue, 16 Oct 2018 00:13:12 -0400
-Message-Id: <20181016041403.135678-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 13/61] xfrm: validate template mode
+Date:   Tue, 16 Oct 2018 00:13:15 -0400
+Message-Id: <20181016041403.135678-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -52,91 +53,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuan-Chi Pang <fu3mo6goo@gmail.com>
+From: Sean Tranchetti <stranche@codeaurora.org>
 
-[ Upstream commit c42055105785580563535e6d3143cad95c7ac7ee ]
+[ Upstream commit 32bf94fb5c2ec4ec842152d0e5937cd4bb6738fa ]
 
-TX status reporting to ieee80211s is through ieee80211s_update_metric.
-There are two problems about ieee80211s_update_metric:
+XFRM mode parameters passed as part of the user templates
+in the IP_XFRM_POLICY are never properly validated. Passing
+values other than valid XFRM modes can cause stack-out-of-bounds
+reads to occur later in the XFRM processing:
 
-1. The purpose is to estimate the fail probability
-to a specific link. No need to restrict to data frame.
+[  140.535608] ================================================================
+[  140.543058] BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x17e4/0x1cc4
+[  140.550306] Read of size 4 at addr ffffffc0238a7a58 by task repro/5148
+[  140.557369]
+[  140.558927] Call trace:
+[  140.558936] dump_backtrace+0x0/0x388
+[  140.558940] show_stack+0x24/0x30
+[  140.558946] __dump_stack+0x24/0x2c
+[  140.558949] dump_stack+0x8c/0xd0
+[  140.558956] print_address_description+0x74/0x234
+[  140.558960] kasan_report+0x240/0x264
+[  140.558963] __asan_report_load4_noabort+0x2c/0x38
+[  140.558967] xfrm_state_find+0x17e4/0x1cc4
+[  140.558971] xfrm_resolve_and_create_bundle+0x40c/0x1fb8
+[  140.558975] xfrm_lookup+0x238/0x1444
+[  140.558977] xfrm_lookup_route+0x48/0x11c
+[  140.558984] ip_route_output_flow+0x88/0xc4
+[  140.558991] raw_sendmsg+0xa74/0x266c
+[  140.558996] inet_sendmsg+0x258/0x3b0
+[  140.559002] sock_sendmsg+0xbc/0xec
+[  140.559005] SyS_sendto+0x3a8/0x5a8
+[  140.559008] el0_svc_naked+0x34/0x38
+[  140.559009]
+[  140.592245] page dumped because: kasan: bad access detected
+[  140.597981] page_owner info is not active (free page?)
+[  140.603267]
+[  140.653503] ================================================================
 
-2. Current implementation does not work if wireless driver does not
-pass tx_status with skb.
-
-Fix this by removing ieee80211_is_data condition, passing
-ieee80211_tx_status directly to ieee80211s_update_metric, and
-putting it in both __ieee80211_tx_status and ieee80211_tx_status_ext.
-
-Signed-off-by: Yuan-Chi Pang <fu3mo6goo@gmail.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/mesh.h      | 3 ++-
- net/mac80211/mesh_hwmp.c | 9 +++------
- net/mac80211/status.c    | 4 +++-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ net/xfrm/xfrm_user.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/mac80211/mesh.h b/net/mac80211/mesh.h
-index 7e5f271e3c30..4f1c61637ce3 100644
---- a/net/mac80211/mesh.h
-+++ b/net/mac80211/mesh.h
-@@ -217,7 +217,8 @@ void mesh_rmc_free(struct ieee80211_sub_if_data *sdata);
- int mesh_rmc_init(struct ieee80211_sub_if_data *sdata);
- void ieee80211s_init(void);
- void ieee80211s_update_metric(struct ieee80211_local *local,
--			      struct sta_info *sta, struct sk_buff *skb);
-+			      struct sta_info *sta,
-+			      struct ieee80211_tx_status *st);
- void ieee80211_mesh_init_sdata(struct ieee80211_sub_if_data *sdata);
- void ieee80211_mesh_teardown_sdata(struct ieee80211_sub_if_data *sdata);
- int ieee80211_start_mesh(struct ieee80211_sub_if_data *sdata);
-diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
-index 055ea36ff27b..fab0764c315f 100644
---- a/net/mac80211/mesh_hwmp.c
-+++ b/net/mac80211/mesh_hwmp.c
-@@ -295,15 +295,12 @@ int mesh_path_error_tx(struct ieee80211_sub_if_data *sdata,
- }
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index 4292347bf45e..4e8319766f2b 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -1449,6 +1449,9 @@ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
+ 		    (ut[i].family != prev_family))
+ 			return -EINVAL;
  
- void ieee80211s_update_metric(struct ieee80211_local *local,
--		struct sta_info *sta, struct sk_buff *skb)
-+			      struct sta_info *sta,
-+			      struct ieee80211_tx_status *st)
- {
--	struct ieee80211_tx_info *txinfo = IEEE80211_SKB_CB(skb);
--	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb->data;
-+	struct ieee80211_tx_info *txinfo = st->info;
- 	int failed;
++		if (ut[i].mode >= XFRM_MODE_MAX)
++			return -EINVAL;
++
+ 		prev_family = ut[i].family;
  
--	if (!ieee80211_is_data(hdr->frame_control))
--		return;
--
- 	failed = !(txinfo->flags & IEEE80211_TX_STAT_ACK);
- 
- 	/* moving average, scaled to 100.
-diff --git a/net/mac80211/status.c b/net/mac80211/status.c
-index ccac205e5853..bdf131ed5ce8 100644
---- a/net/mac80211/status.c
-+++ b/net/mac80211/status.c
-@@ -797,7 +797,7 @@ static void __ieee80211_tx_status(struct ieee80211_hw *hw,
- 
- 		rate_control_tx_status(local, sband, status);
- 		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
--			ieee80211s_update_metric(local, sta, skb);
-+			ieee80211s_update_metric(local, sta, status);
- 
- 		if (!(info->flags & IEEE80211_TX_CTL_INJECTED) && acked)
- 			ieee80211_frame_acked(sta, skb);
-@@ -958,6 +958,8 @@ void ieee80211_tx_status_ext(struct ieee80211_hw *hw,
- 		}
- 
- 		rate_control_tx_status(local, sband, status);
-+		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
-+			ieee80211s_update_metric(local, sta, status);
- 	}
- 
- 	if (acked || noack_success) {
+ 		switch (ut[i].family) {
 -- 
 2.17.1
 
