@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D69C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A94C070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 364BA20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:34:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4967F20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:35:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LX4tkJMA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 364BA20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjHT3xXS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4967F20866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbeJPMBI (ORCPT
+        id S1728174AbeJPMXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:01:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47910 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:23:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727810AbeJPMBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:06 -0400
+        id S1727813AbeJPMBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DCD0208E4;
-        Tue, 16 Oct 2018 04:12:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D96021477;
+        Tue, 16 Oct 2018 04:12:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663164;
-        bh=0A/0nhkiTsqGUtEAXUOj/m5t0k0B+Tx3S+BcBTfGia4=;
+        s=default; t=1539663165;
+        bh=DIcvI1x1xhB226EQNNh5mu3KeEqb8PA2L/sKHvtQpzs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LX4tkJMAv0/JurG3u7kgRrmXpMbPHmNwDxFhUNH1D7KVSqxUICjOS3TKJ/PPB2Rb4
-         uMR1AuJ3P4XeOLJT/9Vjq3v+xWhSHq4QS/e2QEdfJNz3sNO72Ve3NKkO4o3izBA9oZ
-         H331b5iYd5z1oP0iEZPv/hX4uD/j4nOmYVJLKFAs=
+        b=tjHT3xXSOUjJWn2uR8b2ZhutLRyxSzPHpHjfqYS7Wh3xVUGRk22hpjVy4vF8hG3Dt
+         Gxo+b4+EKItDypL8s0+L8ElYgyKI1ExD54Qajk7RTLSno1GYFSM/FItFn71kWoK9Sw
+         9VwIhUBZcFu6rRyxI78RDhVA8qmGqGDeQCnPz1AM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+Cc:     Zhao Qiang <qiang.zhao@nxp.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
         Li Yang <leoyang.li@nxp.com>, Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 022/100] soc: fsl: qbman: qman: avoid allocating from non existing gen_pool
-Date:   Tue, 16 Oct 2018 00:11:03 -0400
-Message-Id: <20181016041221.135528-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 023/100] soc: fsl: qe: Fix copy/paste bug in ucc_get_tdm_sync_shift()
+Date:   Tue, 16 Oct 2018 00:11:04 -0400
+Message-Id: <20181016041221.135528-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -52,39 +53,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Zhao Qiang <qiang.zhao@nxp.com>
 
-[ Upstream commit 64e9e22e68512da8df3c9a7430f07621e48db3c2 ]
+[ Upstream commit 96fc74333f84cfdf8d434c6c07254e215e2aad00 ]
 
-If the qman driver didn't probe, calling qman_alloc_fqid_range,
-qman_alloc_pool_range or qman_alloc_cgrid_range (as done in dpaa_eth) will
-pass a NULL pointer to gen_pool_alloc, leading to a NULL pointer
-dereference.
+There is a copy and paste bug so we accidentally use the RX_ shift when
+we're in TX_ mode.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Reviewed-by: Roy Pledge <roy.pledge@nxp.com>
+Fixes: bb8b2062aff3 ("fsl/qe: setup clock source for TDM mode")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Zhao Qiang <qiang.zhao@nxp.com>
 Signed-off-by: Li Yang <leoyang.li@nxp.com>
-(cherry picked from commit f72487a2788aa70c3aee1d0ebd5470de9bac953a)
+(cherry picked from commit 3cb31b634052ed458922e0c8e2b4b093d7fb60b9)
 Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/fsl/qbman/qman.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/soc/fsl/qe/ucc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/fsl/qbman/qman.c b/drivers/soc/fsl/qbman/qman.c
-index ecb22749df0b..8cc015183043 100644
---- a/drivers/soc/fsl/qbman/qman.c
-+++ b/drivers/soc/fsl/qbman/qman.c
-@@ -2729,6 +2729,9 @@ static int qman_alloc_range(struct gen_pool *p, u32 *result, u32 cnt)
+diff --git a/drivers/soc/fsl/qe/ucc.c b/drivers/soc/fsl/qe/ucc.c
+index c646d8713861..681f7d4b7724 100644
+--- a/drivers/soc/fsl/qe/ucc.c
++++ b/drivers/soc/fsl/qe/ucc.c
+@@ -626,7 +626,7 @@ static u32 ucc_get_tdm_sync_shift(enum comm_dir mode, u32 tdm_num)
  {
- 	unsigned long addr;
+ 	u32 shift;
  
-+	if (!p)
-+		return -ENODEV;
-+
- 	addr = gen_pool_alloc(p, cnt);
- 	if (!addr)
- 		return -ENOMEM;
+-	shift = (mode == COMM_DIR_RX) ? RX_SYNC_SHIFT_BASE : RX_SYNC_SHIFT_BASE;
++	shift = (mode == COMM_DIR_RX) ? RX_SYNC_SHIFT_BASE : TX_SYNC_SHIFT_BASE;
+ 	shift -= tdm_num * 2;
+ 
+ 	return shift;
 -- 
 2.17.1
 
