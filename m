@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A13C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5829C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EB052089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8155320866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsDEDxfi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EB052089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdPOeu7d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8155320866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730200AbeJQBKP (ORCPT
+        id S1730217AbeJQBKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:10:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55162 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:10:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbeJQBKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:10:14 -0400
+        id S1727562AbeJQBKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:10:16 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F6B621476;
-        Tue, 16 Oct 2018 17:18:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0490120866;
+        Tue, 16 Oct 2018 17:18:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710329;
-        bh=K5+nlledb+2N4C3TovUGKepZyURqXeuRf5kJWI1+HXg=;
+        s=default; t=1539710332;
+        bh=2RX8tra1OH9oeMGY0ZSS+JOOYxTirsmKs/5QgvvI63A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HsDEDxfijGCjoRYhd+Y5CN8zQO1GOCLHIA5SmIl4j8goSrih687iJbOkgr1mIc4QE
-         V0I47OHgzilkmqpopqqGQAsHBC7yzE1oraR1GYPCEP0PiEuXW8Iz9opzAOwMWE1m8h
-         j0TjXJ+1cua6ue8rCmw9dBoQ7PdkkODwK5MOPedE=
+        b=RdPOeu7dwEiFPkznEyr8tJ+oOWU+WQL0TfydHZxaxeDF9G1r3CuXyuq4yqrgsxgdJ
+         zQOpY8V0iCT7SYci/PLpGrHcSPWUlVryEykT65xKXT3Q2rdCgpxgMt+SF4TZpjI0N6
+         xNn5DuqN7CS5iblodV0ICEtBIZqCiV7j/F3PXYKE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 005/109] ip_tunnel: be careful when accessing the inner header
-Date:   Tue, 16 Oct 2018 19:04:33 +0200
-Message-Id: <20181016170524.958398088@linuxfoundation.org>
+Subject: [PATCH 4.14 006/109] ipv4: fix use-after-free in ip_cmsg_recv_dstaddr()
+Date:   Tue, 16 Oct 2018 19:04:34 +0200
+Message-Id: <20181016170525.055445682@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -63,47 +64,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit ccfec9e5cb2d48df5a955b7bf47f7782157d3bc2]
+[ Upstream commit 64199fc0a46ba211362472f7f942f900af9492fd ]
 
-Cong noted that we need the same checks introduced by commit 76c0ddd8c3a6
-("ip6_tunnel: be careful when accessing the inner header")
-even for ipv4 tunnels.
+Caching ip_hdr(skb) before a call to pskb_may_pull() is buggy,
+do not do it.
 
-Fixes: c54419321455 ("GRE: Refactor GRE tunneling code.")
-Suggested-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Fixes: 2efd4fca703a ("ip: in cmsg IP(V6)_ORIGDSTADDR call pskb_may_pull")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Willem de Bruijn <willemb@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_tunnel.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ net/ipv4/ip_sockglue.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/ipv4/ip_tunnel.c
-+++ b/net/ipv4/ip_tunnel.c
-@@ -635,6 +635,7 @@ void ip_tunnel_xmit(struct sk_buff *skb,
- 		    const struct iphdr *tnl_params, u8 protocol)
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -147,7 +147,6 @@ static void ip_cmsg_recv_security(struct
+ static void ip_cmsg_recv_dstaddr(struct msghdr *msg, struct sk_buff *skb)
  {
- 	struct ip_tunnel *tunnel = netdev_priv(dev);
-+	unsigned int inner_nhdr_len = 0;
- 	const struct iphdr *inner_iph;
- 	struct flowi4 fl4;
- 	u8     tos, ttl;
-@@ -644,6 +645,14 @@ void ip_tunnel_xmit(struct sk_buff *skb,
- 	__be32 dst;
- 	bool connected;
+ 	struct sockaddr_in sin;
+-	const struct iphdr *iph = ip_hdr(skb);
+ 	__be16 *ports;
+ 	int end;
  
-+	/* ensure we can access the inner net header, for several users below */
-+	if (skb->protocol == htons(ETH_P_IP))
-+		inner_nhdr_len = sizeof(struct iphdr);
-+	else if (skb->protocol == htons(ETH_P_IPV6))
-+		inner_nhdr_len = sizeof(struct ipv6hdr);
-+	if (unlikely(!pskb_may_pull(skb, inner_nhdr_len)))
-+		goto tx_error;
-+
- 	inner_iph = (const struct iphdr *)skb_inner_network_header(skb);
- 	connected = (tunnel->parms.iph.daddr != 0);
+@@ -162,7 +161,7 @@ static void ip_cmsg_recv_dstaddr(struct
+ 	ports = (__be16 *)skb_transport_header(skb);
+ 
+ 	sin.sin_family = AF_INET;
+-	sin.sin_addr.s_addr = iph->daddr;
++	sin.sin_addr.s_addr = ip_hdr(skb)->daddr;
+ 	sin.sin_port = ports[1];
+ 	memset(sin.sin_zero, 0, sizeof(sin.sin_zero));
  
 
 
