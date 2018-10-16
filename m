@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 961F6C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D45F3C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6172A2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0DA42089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XsvAjp1N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6172A2089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7Pm+4T2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0DA42089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbeJQBHM (ORCPT
+        id S1729506AbeJQBHP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:07:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51438 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:07:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728422AbeJQBHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:07:10 -0400
+        id S1728422AbeJQBHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:07:14 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 320E420866;
-        Tue, 16 Oct 2018 17:15:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0648A20866;
+        Tue, 16 Oct 2018 17:15:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710147;
-        bh=H6EavX5kiUCwTlL0B0Zfx15VmRJQcvrg+RR0MJm222k=;
+        s=default; t=1539710150;
+        bh=fAPK7RD7/GUcnpPUdBzqdRvmiGz9uxnGIBOcgQK6HnE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XsvAjp1NJq3QsSlbVFkGC83x1zHdRqx8hxYYPDk8Meg89JP0EpPGsjzirup7TRmi5
-         UKhD67Na5vS2gzAuNtLuXtpEoxxJ0SGlZhR4fUIKO5PkMYrFjb7PWfbbCY0Se4vndk
-         cvxyTh+b58UAM4IjybcYbW4aOkgkX4fuCIlTFNFs=
+        b=W7Pm+4T2jHap0DbbQW1MkQ1m0tM+l340dl8lyw6kPNrgChryi4nvZsH1JkaftTuks
+         +dFiuXEDOzBm5sc3+cWVq5U+nUJuUECyWJynpamb5Td/qn143ZtqqrPzRrQQ5XwFZz
+         WofheuTQ6kkDluJYWFoEJv/npuzMuvDjSfnwRb0M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 4.18 117/135] percpu: stop leaking bitmap metadata blocks
-Date:   Tue, 16 Oct 2018 19:05:47 +0200
-Message-Id: <20181016170523.386357636@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.18 118/135] perf script python: Fix export-to-postgresql.py occasional failure
+Date:   Tue, 16 Oct 2018 19:05:48 +0200
+Message-Id: <20181016170523.442001717@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -62,33 +63,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 6685b357363bfe295e3ae73665014db4aed62c58 upstream.
+commit 25e11700b54c7b6b5ebfc4361981dae12299557b upstream.
 
-The commit ca460b3c9627 ("percpu: introduce bitmap metadata blocks")
-introduced bitmap metadata blocks. These metadata blocks are allocated
-whenever a new chunk is created, but they are never freed. Fix it.
+Occasional export failures were found to be caused by truncating 64-bit
+pointers to 32-bits. Fix by explicitly setting types for all ctype
+arguments and results.
 
-Fixes: ca460b3c9627 ("percpu: introduce bitmap metadata blocks")
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Link: http://lkml.kernel.org/r/20180911114504.28516-2-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/percpu.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/scripts/python/export-to-postgresql.py |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -1204,6 +1204,7 @@ static void pcpu_free_chunk(struct pcpu_
- {
- 	if (!chunk)
- 		return;
-+	pcpu_mem_free(chunk->md_blocks);
- 	pcpu_mem_free(chunk->bound_map);
- 	pcpu_mem_free(chunk->alloc_map);
- 	pcpu_mem_free(chunk);
+--- a/tools/perf/scripts/python/export-to-postgresql.py
++++ b/tools/perf/scripts/python/export-to-postgresql.py
+@@ -204,14 +204,23 @@ from ctypes import *
+ libpq = CDLL("libpq.so.5")
+ PQconnectdb = libpq.PQconnectdb
+ PQconnectdb.restype = c_void_p
++PQconnectdb.argtypes = [ c_char_p ]
+ PQfinish = libpq.PQfinish
++PQfinish.argtypes = [ c_void_p ]
+ PQstatus = libpq.PQstatus
++PQstatus.restype = c_int
++PQstatus.argtypes = [ c_void_p ]
+ PQexec = libpq.PQexec
+ PQexec.restype = c_void_p
++PQexec.argtypes = [ c_void_p, c_char_p ]
+ PQresultStatus = libpq.PQresultStatus
++PQresultStatus.restype = c_int
++PQresultStatus.argtypes = [ c_void_p ]
+ PQputCopyData = libpq.PQputCopyData
++PQputCopyData.restype = c_int
+ PQputCopyData.argtypes = [ c_void_p, c_void_p, c_int ]
+ PQputCopyEnd = libpq.PQputCopyEnd
++PQputCopyEnd.restype = c_int
+ PQputCopyEnd.argtypes = [ c_void_p, c_void_p ]
+ 
+ sys.path.append(os.environ['PERF_EXEC_PATH'] + \
 
 
