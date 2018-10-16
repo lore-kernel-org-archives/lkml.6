@@ -7,106 +7,97 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C365C04EBF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9EBFC070C3
 	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E20C02147E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 999F92147E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:15:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zk19OFsI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E20C02147E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUj1IdQN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999F92147E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729719AbeJPMDv (ORCPT
+        id S1729733AbeJPMDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:03:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52402 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:03:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727482AbeJPMDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:03:49 -0400
+        id S1728408AbeJPMDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:03:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D504520866;
-        Tue, 16 Oct 2018 04:15:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E7BC21477;
+        Tue, 16 Oct 2018 04:15:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663326;
-        bh=ke5gYTtRv2NEOK+4ofRlLzWv7QHo3iZhtRsYdGRDFFo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Zk19OFsI25AAWeKO5lkEVYdkc4od6TwGoSnAEdJOjQdjgbVLi2qsnBKkys5dJTkwr
-         0yGNZ8+om5KGreWrb6yU5FTC93pB1/zaVnhq2Qa/I81essI3bwc8vgGMIm7MtejOOt
-         4j+8i3ooHqjqkkk3ctKNHthTDIX6qBUQgAX3wrKA=
+        s=default; t=1539663328;
+        bh=/1HVK8jkEEJZI4UXy49lEh+z5P0tMTX90xRvbrtQD04=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YUj1IdQNjVPwh6LTAd7kOLLudkjwHP0Mb90yhfIuVbMVo2RtIqXkvPksz/+m06bLJ
+         gioD/DPt7ZOIzAzAGipY3l1fWj6YdS20Dl9b3jQgl+7fqLjOMW87v8mMk4MeMNf9xZ
+         lQPm6khs9wiqGikWlhvQMaIy9sd8QLlayzrfWDcs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+Cc:     Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 01/38] xfrm: Validate address prefix lengths in the xfrm selector.
-Date:   Tue, 16 Oct 2018 00:14:45 -0400
-Message-Id: <20181016041522.135789-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 03/38] mac80211: Always report TX status
+Date:   Tue, 16 Oct 2018 00:14:47 -0400
+Message-Id: <20181016041522.135789-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181016041522.135789-1-sashal@kernel.org>
+References: <20181016041522.135789-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steffen Klassert <steffen.klassert@secunet.com>
+From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
 
-[ Upstream commit 07bf7908950a8b14e81aa1807e3c667eab39287a ]
+[ Upstream commit 8682250b3c1b75a45feb7452bc413d004cfe3778 ]
 
-We don't validate the address prefix lengths in the xfrm
-selector we got from userspace. This can lead to undefined
-behaviour in the address matching functions if the prefix
-is too big for the given address family. Fix this by checking
-the prefixes and refuse SA/policy insertation when a prefix
-is invalid.
+If a frame is dropped for any reason, mac80211 wouldn't report the TX
+status back to user space.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: Air Icy <icytxw@gmail.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+As the user space may rely on the TX_STATUS to kick its state
+machines, resends etc, it's better to just report this frame as not
+acked instead.
+
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ net/mac80211/status.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 6e768093d7c8..b7ac834a6091 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -151,10 +151,16 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
- 	err = -EINVAL;
- 	switch (p->family) {
- 	case AF_INET:
-+		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
-+			goto out;
-+
- 		break;
+diff --git a/net/mac80211/status.c b/net/mac80211/status.c
+index 72fe9bc7a1f9..7892bac21eac 100644
+--- a/net/mac80211/status.c
++++ b/net/mac80211/status.c
+@@ -472,11 +472,6 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
+ 	if (!skb)
+ 		return;
  
- 	case AF_INET6:
- #if IS_ENABLED(CONFIG_IPV6)
-+		if (p->sel.prefixlen_d > 128 || p->sel.prefixlen_s > 128)
-+			goto out;
-+
- 		break;
- #else
- 		err = -EAFNOSUPPORT;
-@@ -1316,10 +1322,16 @@ static int verify_newpolicy_info(struct xfrm_userpolicy_info *p)
+-	if (dropped) {
+-		dev_kfree_skb_any(skb);
+-		return;
+-	}
+-
+ 	if (info->flags & IEEE80211_TX_INTFL_NL80211_FRAME_TX) {
+ 		u64 cookie = IEEE80211_SKB_CB(skb)->ack.cookie;
+ 		struct ieee80211_sub_if_data *sdata;
+@@ -497,6 +492,8 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
+ 		}
+ 		rcu_read_unlock();
  
- 	switch (p->sel.family) {
- 	case AF_INET:
-+		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
-+			return -EINVAL;
-+
- 		break;
- 
- 	case AF_INET6:
- #if IS_ENABLED(CONFIG_IPV6)
-+		if (p->sel.prefixlen_d > 128 || p->sel.prefixlen_s > 128)
-+			return -EINVAL;
-+
- 		break;
- #else
- 		return  -EAFNOSUPPORT;
++		dev_kfree_skb_any(skb);
++	} else if (dropped) {
+ 		dev_kfree_skb_any(skb);
+ 	} else {
+ 		/* consumes skb */
 -- 
 2.17.1
 
