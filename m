@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BCAC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1EBC070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77F1A2148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A0D72098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wueBVVQV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F1A2148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdsgSmyq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A0D72098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbeJPMCI (ORCPT
+        id S1728828AbeJPMCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49750 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727259AbeJPMCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:07 -0400
+        id S1727259AbeJPMCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ACBF21479;
-        Tue, 16 Oct 2018 04:13:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E032521479;
+        Tue, 16 Oct 2018 04:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663224;
-        bh=MtCxTdEf+TFrcIqy9d+k26BQiz8p5fE98/SBG7eeSvY=;
+        s=default; t=1539663226;
+        bh=1FrgQJRZO5COeVxZm7+ytZ2+5L5jYpkte9zPbO57hwg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wueBVVQVJlfdOiQNtUaV/Rli+GBNZ+w/8Ygfl+UYtnhjxq/eVRKXzTGZ+tS9xK8Nl
-         ZBV4Pp3mmk4OwsWQfGzO85ABOjz4jauMAjlRAFmxBd0vzg3r2ZP/he11vyi8bHW5TO
-         O6l6YdH1L5dt88xKvq91yDNRNDtGlL1TfqDiKgaw=
+        b=GdsgSmyqejCTPAyrV2uQwCiydz3cmALQawYdy+o/yjCvFxa1yv+V0nuC81tZkyMeq
+         UOThdW3Ja37EwxATvt9lptz9QiDQGYGduuXZy+8FMYfTP4BJmfEBIkNeZ3ruoZOKno
+         oxiSY+RQ2Fjk6Accs86lB7tNpt0tztAYvTpZoyKQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+Cc:     Davide Caratti <dcaratti@redhat.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 087/100] bnxt_en: get the reduced max_irqs by the ones used by RDMA
-Date:   Tue, 16 Oct 2018 00:12:08 -0400
-Message-Id: <20181016041221.135528-87-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 089/100] be2net: don't flip hw_features when VXLANs are added/deleted
+Date:   Tue, 16 Oct 2018 00:12:10 -0400
+Message-Id: <20181016041221.135528-89-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -54,39 +53,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit c78fe058879bdea919d44f23e21da26f603e9166 ]
+[ Upstream commit 2d52527e80c2dc0c5f43f50adf183781262ec565 ]
 
-When getting the max rings supported, get the reduced max_irqs
-by the ones used by RDMA.
+the be2net implementation of .ndo_tunnel_{add,del}() changes the value of
+NETIF_F_GSO_UDP_TUNNEL bit in 'features' and 'hw_features', but it forgets
+to call netdev_features_change(). Moreover, ethtool setting for that bit
+can potentially be reverted after a tunnel is added or removed.
 
-If the number MSIX is the limiting factor, this bug may cause the
-max ring count to be higher than it should be when RDMA driver is
-loaded and may result in ring allocation failures.
+GSO already does software segmentation when 'hw_enc_features' is 0, even
+if VXLAN offload is turned on. In addition, commit 096de2f83ebc ("benet:
+stricter vxlan offloading check in be_features_check") avoids hardware
+segmentation of non-VXLAN tunneled packets, or VXLAN packets having wrong
+destination port. So, it's safe to avoid flipping the above feature on
+addition/deletion of VXLAN tunnels.
 
-Fixes: 30f529473ec9 ("bnxt_en: Do not modify max IRQ count after RDMA driver requests/frees IRQs.")
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Fixes: 630f4b70567f ("be2net: Export tunnel offloads only when a VxLAN tunnel is created")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/emulex/benet/be_main.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 84a96c277994..6d22762ca1c5 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -8500,7 +8500,7 @@ static void _bnxt_get_max_rings(struct bnxt *bp, int *max_rx, int *max_tx,
- 	*max_tx = hw_resc->max_tx_rings;
- 	*max_rx = hw_resc->max_rx_rings;
- 	*max_cp = min_t(int, bnxt_get_max_func_cp_rings_for_en(bp),
--			hw_resc->max_irqs);
-+			hw_resc->max_irqs - bnxt_get_ulp_msix_num(bp));
- 	*max_cp = min_t(int, *max_cp, hw_resc->max_stat_ctxs);
- 	max_ring_grps = hw_resc->max_hw_ring_grps;
- 	if (BNXT_CHIP_TYPE_NITRO_A0(bp) && BNXT_PF(bp)) {
+diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
+index 8f755009ff38..c8445a4135a9 100644
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@ -3915,8 +3915,6 @@ static int be_enable_vxlan_offloads(struct be_adapter *adapter)
+ 	netdev->hw_enc_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
+ 				   NETIF_F_TSO | NETIF_F_TSO6 |
+ 				   NETIF_F_GSO_UDP_TUNNEL;
+-	netdev->hw_features |= NETIF_F_GSO_UDP_TUNNEL;
+-	netdev->features |= NETIF_F_GSO_UDP_TUNNEL;
+ 
+ 	dev_info(dev, "Enabled VxLAN offloads for UDP port %d\n",
+ 		 be16_to_cpu(port));
+@@ -3938,8 +3936,6 @@ static void be_disable_vxlan_offloads(struct be_adapter *adapter)
+ 	adapter->vxlan_port = 0;
+ 
+ 	netdev->hw_enc_features = 0;
+-	netdev->hw_features &= ~(NETIF_F_GSO_UDP_TUNNEL);
+-	netdev->features &= ~(NETIF_F_GSO_UDP_TUNNEL);
+ }
+ 
+ static void be_calculate_vf_res(struct be_adapter *adapter, u16 num_vfs,
+@@ -5232,6 +5228,7 @@ static void be_netdev_init(struct net_device *netdev)
+ 	struct be_adapter *adapter = netdev_priv(netdev);
+ 
+ 	netdev->hw_features |= NETIF_F_SG | NETIF_F_TSO | NETIF_F_TSO6 |
++		NETIF_F_GSO_UDP_TUNNEL |
+ 		NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM | NETIF_F_RXCSUM |
+ 		NETIF_F_HW_VLAN_CTAG_TX;
+ 	if ((be_if_cap_flags(adapter) & BE_IF_FLAGS_RSS))
 -- 
 2.17.1
 
