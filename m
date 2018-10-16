@@ -2,100 +2,106 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6218C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CBEC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5504A21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4781A2148C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:55:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OW8rW2ZQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5504A21471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vCy0wl4H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4781A2148C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeJQGku (ORCPT
+        id S1727250AbeJQGsE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 02:40:50 -0400
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:37689 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbeJQGku (ORCPT
+        Wed, 17 Oct 2018 02:48:04 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38080 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbeJQGsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 02:40:50 -0400
-Received: by mail-wr1-f41.google.com with SMTP id y11-v6so27386778wrd.4
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 15:48:14 -0700 (PDT)
+        Wed, 17 Oct 2018 02:48:03 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a13-v6so27441282wrt.5;
+        Tue, 16 Oct 2018 15:55:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=t+Q6eT27WtfGUH7pM0A7N4d4g04+vT/bPNbY2TXcbDo=;
-        b=OW8rW2ZQ6dkShXaiijteIn7bFHfnTgoQL4mPnTjQDackaDlZ+ufC8/9jvklwLe4NR5
-         vMCOLb3eH28PPtEeuk371bKy1EEq/celWoLCNM+lhXpIfqXScsnc+YJ13lFPxOPRQ0AO
-         +HyidlQBU73ChWbgx3qJA1euU5b1L8epZVpow=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=WEuovPHMi2rHnMRq9NI/DlHQ1fPItAQ88ffmtIZfQHE=;
+        b=vCy0wl4HRmUTIjmrYXCmiWFTwRiLw4TU2PUu/ODk91avvisDMIP6GujRMO2K3wx3xV
+         7hoH9OCBb/JvNa51+P5mCzPoG6j3z70vce4zZS7ILjcGYMeEl4mYtzAp6IiqVEy5wHUC
+         HZGbxyl4UMv27R7p0BdfBv8nXEBgBppFB74Iv96gKtrV9FBWqh7k6ITR5Aectl7B2Rya
+         /TIPSxOzYrx7FPE3OtCOnrlK12agAoL/2xDTz2XT9bcnERila4WOPitXw6ZQu6gkretV
+         ynq5iMdNLGB1cIraXnBiJ7eQkRw1fR7Q6ohLTnwtqekD5IsMa9G+w5Riyc+NQwHh42hw
+         s4Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=t+Q6eT27WtfGUH7pM0A7N4d4g04+vT/bPNbY2TXcbDo=;
-        b=d6WNiWwyAhy4ddxiryiufb3NJfQMvTCYIJ5xMWjyVoalzTvTXjTi/0vtDvg0qQBFry
-         AjpR2AWsfbTckk3zswIFsXp/uBW9lN61oeZ4e5vem1NaRhIdrpcE3P4WzcPI9bTe8CNV
-         SikpRhZa7ENargkVdwdnJAS3X1omVZrOy0SkgkTDs4LHCwip1PGWj2IXyKsOj6T9RU6D
-         pMGVzK1wSL3cdfo2uCR1fkKoSNkosTvfIFCvYlK9daBnv1TJebGHi2pkW/3T5Ba+LFTW
-         TuQCC2zmGDGTyi43kSJNpGyn9RUVMvpG/cNPW5FtWzQ9Oh0XG35v9l3AjP+E15E/tZiF
-         WDew==
-X-Gm-Message-State: ABuFfoi9OgO8Kmuu7twlYQTYbbnD+e/qszJZuPKI2FROMtcAXLyRJSKX
-        SHRbxkJPIdMf5oqaqphrsH+w+DzBUlHxpCkHzb+IAw==
-X-Google-Smtp-Source: ACcGV62Bb4dxxJd1aLUzm50C08rhQvLnueordHil3vg1RmKBNJubZuL3TUwwRwhnHI4Sb36JcwuwS++hrptGUCbU/Gk=
-X-Received: by 2002:adf:e28d:: with SMTP id v13-v6mr19809140wri.139.1539730093364;
- Tue, 16 Oct 2018 15:48:13 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:b485:0:0:0:0:0 with HTTP; Tue, 16 Oct 2018 15:48:12
- -0700 (PDT)
-In-Reply-To: <yq17eiiwobx.fsf@oracle.com>
-References: <1538434698-1042-1-git-send-email-john.stultz@linaro.org> <yq17eiiwobx.fsf@oracle.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Tue, 16 Oct 2018 15:48:12 -0700
-Message-ID: <CALAqxLXYTZZ12haKHGwnTBqPgkv_JF8=fiiJrD9OWRFdcXf0Sw@mail.gmail.com>
-Subject: Re: [RESEND][PATCH] scsi: ufs: Fix hynix ufs bug with quirk on hi36xx SoC
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>, Wei Li <liwei213@huawei.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=WEuovPHMi2rHnMRq9NI/DlHQ1fPItAQ88ffmtIZfQHE=;
+        b=EWYKRti+Vagp+eW+WoHiZ1+cQxSIohm3XIJtlEVBpMmn2HPsXKKqX3g6GR8NNsQ9vp
+         hubyLwOnDwUKpymCp/YANob4hhbEAeju/gZG9hy0uXMZF8gd3WnC63edku5Go5ZqARw5
+         xnftPYFQeG+dLcfXctjGsJIr7jh/p+GrT+m0nHRg2vYvJKmbgwLUJeBGA/t8mpTx32PJ
+         qPCnTmFvl5ppmZ9uoJ0hwT4z10PsXdRzkWb7i0s+QJXw5aDz4kf3zwbVDWLj38n4TcZP
+         pdmWBh6Wvm7wfg6AlAGrI34S/jWOVQ/SAttIgibCuNhO+ZqUQMthyv8Rbet1Ni/4NoYY
+         2vIw==
+X-Gm-Message-State: ABuFfoj0oeqBj2ztllBjRxeNjhsCEZKWyG2ovwHS/r81U/TtBYwY4PGi
+        u6yLLSwBcrr8fkh7ADlTtER/20tV
+X-Google-Smtp-Source: ACcGV62IJu/sEwBAbIGvruibP/PalfopGNanWJAiAqN1leOXzP/DDCgj50qZwBBkbq2iJSRst2fKEQ==
+X-Received: by 2002:a5d:4fcf:: with SMTP id h15-v6mr19238563wrw.261.1539730525013;
+        Tue, 16 Oct 2018 15:55:25 -0700 (PDT)
+Received: from donizetti.redhat.com (94-36-192-45.adsl-ull.clienti.tiscali.it. [94.36.192.45])
+        by smtp.gmail.com with ESMTPSA id a5-v6sm144887wmh.8.2018.10.16.15.55.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 15:55:24 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     liran.alon@oracle.com, jmattson@google.com
+Subject: [PATCH] KVM: VMX: enable nested virtualization by default
+Date:   Wed, 17 Oct 2018 00:55:22 +0200
+Message-Id: <20181016225522.13077-1-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 8:41 PM, Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
->
-> John,
->
->> Hynix ufs has deviations on hi36xx platform which will result in ufs
->> bursts transfer failures.
->
-> Is this specific to the particular implementation on hi36xx or all SK
-> Hynix implementations?
+With live migration support and finally a good solution for CR2/DR6
+exception payloads, nested VMX should finally be ready for having a stable
+userspace ABI.  The results of syzkaller fuzzing are not perfect but not
+horrible either (and might be partially due to running on GCE, so that
+effectively we're testing three-level nesting on a fork of upstream KVM!).
+Enabling it by default seems like a nice way to conclude the 4.20
+pull request. :)
 
-I'd have to defer to Wei Li on that question.
+Unfortunately, enabling nested SVM in 2009 was a bit premature.  However,
+until live migration support is in place we can reasonably expect that
+it does not offer much in terms of ABI guarantees.  Therefore we are
+still in time to break things and conform as much as possible to the
+interface used for VMX.
 
-Wei Li?
+Suggested-by: Jim Mattson <jmattson@google.com>
+Suggested-by: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/vmx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index e665aa7167cf..89fc2a744d7f 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -107,7 +107,7 @@ module_param_named(enable_shadow_vmcs, enable_shadow_vmcs, bool, S_IRUGO);
+  * VMX and be a hypervisor for its own guests. If nested=0, guests may not
+  * use VMX instructions.
+  */
+-static bool __read_mostly nested = 0;
++static bool __read_mostly nested = 1;
+ module_param(nested, bool, S_IRUGO);
+ 
+ static u64 __read_mostly host_xss;
+-- 
+2.17.1
 
->> +     UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL,
->> +             UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME),
->
-> I am not so keen on matching on all current and future models.
-
-I'll see if I can narrow down the affected model version on the board
-I have. Hopefully it doesn't vary too much.
-
-Really appreciate the review and the feedback!
-
-thanks
--john
