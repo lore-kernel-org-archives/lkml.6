@@ -2,122 +2,123 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFC1C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FA5C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E67D02089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:26:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdocE2iC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E67D02089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 892E3208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:27:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 892E3208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbeJPXRd (ORCPT
+        id S1727196AbeJPXSI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 19:17:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726978AbeJPXRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:17:33 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3DDB2083C;
-        Tue, 16 Oct 2018 15:26:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539703595;
-        bh=ACXox51dDgGsy+J2wwHPeURhjx6sOgxqY6vXLCXWSF0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fdocE2iCTJw555y1elcIsT7efIqZ5BHjnzQXnjrr4N4/yV2Ob5zuePdIbN+0ckPm+
-         DVKs1rw1OY3kBauDMVDX9C7MTrBNzQTk93po8NQHBqApNNQhLQr/CWYw4NnrsDIJsN
-         XNec1pxSib3fqhG6YuRKzPPMHcsMwaf74M/hcSJ4=
-Date:   Wed, 17 Oct 2018 00:26:32 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH] selftests/ftrace: Add color to the PASS / FAIL results
-Message-Id: <20181017002632.20fcb18bf94efb79aa58219b@kernel.org>
-In-Reply-To: <20181015234231.e163ab77fd42dbd3ac9c84d5@kernel.org>
-References: <20181012222106.7f38b667@vmware.local.home>
-        <20181015234231.e163ab77fd42dbd3ac9c84d5@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 16 Oct 2018 19:18:08 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:42693 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbeJPXSI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 19:18:08 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gCRFV-0005At-E3; Tue, 16 Oct 2018 09:27:09 -0600
+Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gCRFU-00088y-Gi; Tue, 16 Oct 2018 09:27:09 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Enke Chen <enkechen@cisco.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky \(kamensky\)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+        <87va62lri4.fsf@xmission.com>
+        <6211eeaa-ce07-a909-e4c2-172618ddfb95@cisco.com>
+Date:   Tue, 16 Oct 2018 10:26:50 -0500
+In-Reply-To: <6211eeaa-ce07-a909-e4c2-172618ddfb95@cisco.com> (Enke Chen's
+        message of "Mon, 15 Oct 2018 17:54:43 -0700")
+Message-ID: <87ftx5kj45.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1gCRFU-00088y-Gi;;;mid=<87ftx5kj45.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18cBUikD1RZP+LoIb4Y7J0pKV0OWDGySyw=
+X-SA-Exim-Connect-IP: 67.3.154.154
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Oct 2018 23:42:31 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Enke Chen <enkechen@cisco.com> writes:
 
-> On Fri, 12 Oct 2018 22:21:06 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > From: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > 
-> > Now that ftracetest has over 80 tests, it is difficult to simply scroll
-> > up the console window to find the failed tests when it reports just two
-> > tests have failed. In order to make this stand out better, have the
-> > color of the word "PASS" be green, "FAIL" and "XFAIL" be red, and all
-> > other results be blue. This helps tremendously in quickly spotting the
-> > failed tests by just scrolling up the console window.
-> > 
-> 
-> Looks good to me.
-> 
-> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Hi, Eric:
+>
+> On 10/15/18 4:28 PM, Eric W. Biederman wrote:
 
-Oops, I found some problems.
+>> With that said I think the best solution would be to figure out how to
+>> allow the coredump to run in parallel with the usual exit signal, and
+>> exit code reaping of the process> 
+>> That would solve the problem for everyone, and would not introduce any
+>> new complicated APIs.
+>
+> That would certainly help. But given the huge deployment of Linux, I don't
+> think it would be feasible to change this fundamental behavior (signal post
+> coredump).
 
-> 
-> Thanks!
-> 
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > ---
-> > diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-> > index 5c71d58..4946b2e 100755
-> > --- a/tools/testing/selftests/ftrace/ftracetest
-> > +++ b/tools/testing/selftests/ftrace/ftracetest
-> > @@ -153,7 +153,7 @@ else
-> >  fi
-> >  
-> >  prlog() { # messages
-> > -  [ -z "$LOG_FILE" ] && echo "$@" || echo "$@" | tee -a $LOG_FILE
-> > +  [ -z "$LOG_FILE" ] && echo -e "$@" || echo -e "$@" | tee -a $LOG_FILE
+Of course it will be feasible to change.  Make it a sysctl and keep the
+current default and no one will even notice.  Waiting for something that
+is happening asynchronously is not be difficult so having the wait
+optional should not be a problem.
 
-I think we should strip escape-sequences from log files, like below;
+Right now the default in most distributions is to disable core dumps
+entirely.   Which means that you are going to have to find a very
+specific situation in which people and applications care about core
+dumps happening to break an existing setup.
 
-strip_esc() {
-  sed -E "s/[[:cntrl:]]\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
-}
+Then all you have to do to get the non-blocking behavior is to just do:
+echo 1 > /proc/sys/kernel_core_async
 
-  [ -z "$LOG_FILE" ] && echo -e "$@" || echo -e "$@" | strip_esc | tee -a $LOG_FILE
+Then everything else works without modifications and everyone is happy.
+Maybe I am wearing rose colored glasses but that looks like all that is
+needed and it should be much easier to work with and maintain than
+having to modify every manager process to listen for unreliable signals,
+and then take action on those unreliable signals.
 
-
-> >  }
-> >  catlog() { #file
-> >    [ -z "$LOG_FILE" ] && cat $1 || cat $1 | tee -a $LOG_FILE
-> > @@ -195,37 +195,37 @@ test_on_instance() { # testfile
-> >  eval_result() { # sigval
-> >    case $1 in
-> >      $PASS)
-> > -      prlog "	[PASS]"
-> > +      prlog "	[\e[32mPASS\e[30m]"
-
-The last one should be "\e[0m" (reset), "\e[30m" just set the color "black".
-That doesn't work on my terminal, which is "white on black".
-
-Thank you,
-
-
--- 
-Masami Hiramatsu
+Eric
