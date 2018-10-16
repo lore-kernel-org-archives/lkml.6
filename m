@@ -2,162 +2,169 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EC7C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0738C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BF57208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:29:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BF57208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 89A26208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:30:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="C40yAATK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A26208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbeJPXUb (ORCPT
+        id S1727238AbeJPXVF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 19:20:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727173AbeJPXUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:20:30 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00537208B3;
-        Tue, 16 Oct 2018 15:29:29 +0000 (UTC)
-Date:   Tue, 16 Oct 2018 11:29:28 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pramod Gurav <gpramod@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
-Message-ID: <20181016112928.4b52afb5@gandalf.local.home>
-In-Reply-To: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
-References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 16 Oct 2018 19:21:05 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55712 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbeJPXVE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 19:21:04 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 206-v6so22905136wmb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 08:30:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OC2yBX4ecwtUPB3o2eH1Ejris9XvElnftBOJQletE3I=;
+        b=C40yAATKGMRCgZZ2UQOCVDCab/nHriTz08vbnrCsgONFgiShZUHnHj5bTHQV5p5m5T
+         ICfcuj95QvUF9VLY1UQNW2HR/YWq8HfZ9sjUpPHpaayoXQxcT3Cj9ka75GJ7/eWmsbHw
+         RinwgrjFq5cWAi29fVd1SY0zhUQxzSlXc8k9qEFBFrKP2I7vq7DO5V9fN+SUFi/tnmGn
+         YaoHv8eygWY0eGdoA2YM1ShHt1QOa+Y2T86BSE3QkXCVlHrrOGZtyNU/z6hY2h3zdDT2
+         6iOqJlquPL9nYDngXJ6qjXo0coWdyNdFPs42s4fN3FdxGzAZPnOSiuHQ3C1Ht+tOBw/l
+         OySg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OC2yBX4ecwtUPB3o2eH1Ejris9XvElnftBOJQletE3I=;
+        b=hYtCwPUZhnCbB+5RXD+/cQ5Hd1NRidvxnL8u7ynnDqw0AqvBXehI3DU+5ITNH0I/J4
+         gHf9VuORFSrMV2eGl8DChVsMFLi9gBjIYaiRIpKNKL0aHxoRfpHIhWYIOFThNafwM/qB
+         Sd8H9wHdZ26wA+Crm3KHTcbzAWmgynjeSoL+/MuVBXUJYEMVeadCA0q/wHWEauoUKeKi
+         uxWqPlRHOSYme5yz9Wx91bjGiZ9oOybDk23a8qdLgTbl0sczeSLsil29FUqPFaBNFi/9
+         odoU/UjgeXdJRRetZpja93r2LTWUvtO+MW+v/1lvQgl+9FNxnknCfZB6R5wjmE8bSgpg
+         0KvA==
+X-Gm-Message-State: ABuFfohgvTj+UjRxoPRXptKZvklEP7yt1DXn30T2oMISKJbcGa+LqGyy
+        r64n4an0qceQpbLzhAcK1hzynw==
+X-Google-Smtp-Source: ACcGV60c+s34M8N2lR8D5do+0Z0SJWhZ1YYV0NIx70kwepCK8IRqbsq3c88o52IIzpCDR+Y5+5uq/g==
+X-Received: by 2002:a1c:1b91:: with SMTP id b139-v6mr17234151wmb.147.1539703803169;
+        Tue, 16 Oct 2018 08:30:03 -0700 (PDT)
+Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
+        by smtp.gmail.com with ESMTPSA id e142-v6sm34599191wmf.20.2018.10.16.08.30.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 08:30:01 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 17:29:56 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Waiman Long <longman@redhat.com>
+Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
+        ebiederm@xmission.com, mcgrof@kernel.org,
+        akpm@linux-foundation.org, joe.lawrence@redhat.com,
+        linux@dominikbrodowski.net, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v1 2/2] sysctl: handle overflow for file-max
+Message-ID: <20181016152955.vcjtzcx5rzlxeovh@brauner.io>
+References: <20181015105544.4395-1-christian@brauner.io>
+ <20181015105544.4395-3-christian@brauner.io>
+ <22319ca1-6dab-fe36-40d5-9c88f7a175ee@redhat.com>
+ <20181016152100.zg2pmyk6puc5qsr5@brauner.io>
+ <11e172de-0953-2c46-c0f0-72c42ae9a910@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <11e172de-0953-2c46-c0f0-72c42ae9a910@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Oct 2018 17:08:25 +0530
-Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
-
-> Hi,
+On Tue, Oct 16, 2018 at 11:25:42AM -0400, Waiman Long wrote:
+> On 10/16/2018 11:21 AM, Christian Brauner wrote:
+> > On Tue, Oct 16, 2018 at 11:13:28AM -0400, Waiman Long wrote:
+> >> On 10/15/2018 06:55 AM, Christian Brauner wrote:
+> >>> Currently, when writing
+> >>>
+> >>> echo 18446744073709551616 > /proc/sys/fs/file-max
+> >>>
+> >>> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
+> >>> crashes the system.
+> >>> This commit explicitly caps the value for file-max to ULONG_MAX.
+> >>>
+> >>> Note, this isn't technically necessary since proc_get_long() will already
+> >>> return ULONG_MAX. However, two reason why we still should do this:
+> >>> 1. it makes it explicit what the upper bound of file-max is instead of
+> >>>    making readers of the code infer it from proc_get_long() themselves
+> >>> 2. other tunebles than file-max may want to set a lower max value than
+> >>>    ULONG_MAX and we need to enable __do_proc_doulongvec_minmax() to handle
+> >>>    such cases too
+> >>>
+> >>> Cc: Kees Cook <keescook@chromium.org>
+> >>> Signed-off-by: Christian Brauner <christian@brauner.io>
+> >>> ---
+> >>> v0->v1:
+> >>> - if max value is < than ULONG_MAX use max as upper bound
+> >>> - (Dominik) remove double "the" from commit message
+> >>> ---
+> >>>  kernel/sysctl.c | 4 ++++
+> >>>  1 file changed, 4 insertions(+)
+> >>>
+> >>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> >>> index 97551eb42946..226d4eaf4b0e 100644
+> >>> --- a/kernel/sysctl.c
+> >>> +++ b/kernel/sysctl.c
+> >>> @@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
+> >>>  static int __maybe_unused two = 2;
+> >>>  static int __maybe_unused four = 4;
+> >>>  static unsigned long one_ul = 1;
+> >>> +static unsigned long ulong_max = ULONG_MAX;
+> >>>  static int one_hundred = 100;
+> >>>  static int one_thousand = 1000;
+> >>>  #ifdef CONFIG_PRINTK
+> >>> @@ -1696,6 +1697,7 @@ static struct ctl_table fs_table[] = {
+> >>>  		.maxlen		= sizeof(files_stat.max_files),
+> >>>  		.mode		= 0644,
+> >>>  		.proc_handler	= proc_doulongvec_minmax,
+> >>> +		.extra2		= &ulong_max,
+> >> What is the point of having a maximum value of ULONG_MAX anyway? No
+> >> value you can put into a ulong type can be bigger than that.
+> > This is changed in the new code to LONG_MAX. See the full thread for
+> > context. There's also an additional explantion in the commit message.
+> >
+> >>>  	},
+> >>>  	{
+> >>>  		.procname	= "nr_open",
+> >>> @@ -2795,6 +2797,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+> >>>  				break;
+> >>>  			if (neg)
+> >>>  				continue;
+> >>> +			if (max && val > *max)
+> >>> +				val = *max;
+> >>>  			val = convmul * val / convdiv;
+> >>>  			if ((min && val < *min) || (max && val > *max))
+> >>>  				continue;
+> >> This does introduce a change in behavior. Previously the out-of-bound
+> >> value is ignored, now it is capped at its maximum. This is a
+> >> user-visible change.
+> > Not completely true though. Try
+> >
+> > echo 18446744073709551616 > /proc/sys/fs/file-max
+> >
+> > on a system you find acceptable loosing.
+> > So this is an acceptable user-visible change I'd say. But I'm open to
+> > other suggestions.
 > 
-> On dragonboard 410c, with "ftrace=function" boot args, the console 
-> output slows down and board resets without any backtrace as below. This 
-> is tested on latest kernel and seems to exist even in older kernels as well.
+> I am not saying this is unacceptable. I just say this is a user-visible
+> change and so should be documented somehow. BTW, you cap the max value,
 
-So this only happens when ftrace=function is on the boot console.
+Sure, I'll update linux manpages and I can CC stable on the next round.
 
+> but not the min value. So there is inconsistency. I would say you either
+> do both, or none of them.
 
-> 
-> [    2.949164] EINJ: ACPI disabled.
-> [    3.133001] Serial: 8250/16550 dri
-> Format: Log Type - Time(microsec) - Message - Optional Info
-> Log Type: B - Since Boot(Power On Reset),  D - Delta,  S - Statistic
-> 
-> But with pstore enabled, able to get the below backtrace:
-> 
-> <4>[    2.949164] EINJ: ACPI disabled.
-> <6>[    3.133001] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
-> <6>[    3.164097] SuperH (H)SCI(F) driver initialized
-> <0>[    3.164471] Internal error: synchronous external abort: 96000010 
-> [#1] PREEMPT SMP
-> <4>[    3.164479] Modules linked in:
-> <4>[    3.164495] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 
-> 4.19.0-rc8-00008-ge033b9909fff-dirty #175
-> <4>[    3.164501] Hardware name: Qualcomm Technologies, Inc. APQ 8016 
-> SBC (DT)
-> <4>[    3.164508] pstate: 40000085 (nZcv daIf -PAN -UAO)
-> <4>[    3.164514] pc : msm_read.isra.2+0x20/0x50
-> <4>[    3.164520] lr : msm_read.isra.2+0x1c/0x50
-> <4>[    3.164526] sp : ffff000008033a50
-> <4>[    3.164531] x29: ffff000008033a50 x28: ffff000009486018
-> <4>[    3.164548] x27: 0000000000000001 x26: ffff7dfffe7ff070
-> <4>[    3.164565] x25: 0000000000000034 x24: ffff000009486000
-> <4>[    3.164582] x23: 0000000000000000 x22: ffff00000978e190
-> <4>[    3.164599] x21: ffff0000095e8228 x20: 0000000000000034
-> <4>[    3.164616] x19: ffff7dfffe7ff008 x18: ffffffffffffffff
-> <4>[    3.164632] x17: 0000000000000000 x16: 0000000000000000
-> <4>[    3.164649] x15: ffff0000094a96c8 x14: ffff00008978e6bf
-> <4>[    3.164666] x13: ffff00000978e6cd x12: 0000000000000038
-> <4>[    3.164683] x11: ffff0000094c6000 x10: 0000000000000c24
-> <4>[    3.164699] x9 : ffff80003c89b400 x8 : ffff000008033970
-> <4>[    3.164716] x7 : ffff80000eb04100 x6 : 00000000000af304
-> <4>[    3.164732] x5 : 0000000000000c40 x4 : ffff80003c06f000
-> <4>[    3.164750] x3 : ffff80003c89b498 x2 : 0000000000000000
-> <4>[    3.164766] x1 : ffff80003ca68000 x0 : 0000000000000800
-> <0>[    3.164785] Process swapper/0 (pid: 1, stack limit = 
-> 0x(____ptrval____))
-> <4>[    3.164791] Call trace:
-> <4>[    3.164797]  msm_read.isra.2+0x20/0x50
-> <4>[    3.164804]  msm_reset_dm_count+0x44/0x80
-> <4>[    3.164810]  __msm_console_write+0x1c8/0x1d0
-> <4>[    3.164816]  msm_serial_early_write_dm+0x3c/0x50
-> <4>[    3.164823]  console_unlock.part.6+0x468/0x528
-> <4>[    3.164829]  vprintk_emit+0x210/0x218
-> <4>[    3.164835]  vprintk_default+0x48/0x58
-> <4>[    3.164841]  vprintk_func+0xf0/0x1c0
-> <4>[    3.164847]  printk+0x74/0x94
-> <4>[    3.164853]  sci_init+0x24/0x3c
-> <4>[    3.164859]  do_one_initcall+0x54/0x248
-> <4>[    3.164866]  kernel_init_freeable+0x210/0x378
-> <4>[    3.164872]  kernel_init+0x18/0x118
-> <4>[    3.164878]  ret_from_fork+0x10/0x1c
-> <0>[    3.164884] Code: aa1e03e0 8b214273 97e616f7 d503201f (b9400260)
-> 
-> Seems to be issue with the msm serial driver and not ftrace.
-> Could someone look into it.
-
-I'm guessing that there may have been an issue with ftrace, it tried to
-print, but the printing caused a bug that rebooted the box.
-
-Does function tracing work after boot up? That is, without the
-ftrace=function, can you do:
-
- echo function > /sys/kernel/debug/tracing/current_tracer
-
-without any issue?
-
-> 
-> One more thing is for pstore dmesg-ramoops, I had to change 
-> late_initcall to postcore_initcall which brings the question as to why 
-> we changed to late_initcall?
-> Simple git blame shows to support crypto compress api, but is it really 
-> helpful? A lot of boottime issues can be caught with pstore enabled at 
-> postcore_initcall rather than late_initcall, this backtrace
-> is just one example. Is there any way we could change this?
-
-Does it break if the crypto is not initialized? Perhaps add a command
-line flag to have it happen earlier:
-
- ramoops=earlyinit
-
-and add a postcore_initcall that checks if that flag is set, and if so,
-it does the work then, and the late_initcall() will do nothing.
-
-That way, you can still have unmodified kernels use pstore when it
-crashes at boot up.
-
--- Steve
+The min value is 0. I don't think it needs to be set explicitly. I just
+kept the max value because it is != ULONG_MAX but LONG_MAX for file-max.
