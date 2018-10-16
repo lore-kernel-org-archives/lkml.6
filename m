@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E08C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DE7C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1A3721471
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 706E82098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:15:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljCqDFdG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A3721471
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/MufoYK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706E82098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729600AbeJPMDT (ORCPT
+        id S1729615AbeJPMDV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:03:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51828 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:03:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729577AbeJPMDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:03:18 -0400
+        id S1729577AbeJPMDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:03:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C3B92148C;
-        Tue, 16 Oct 2018 04:14:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85C22214C4;
+        Tue, 16 Oct 2018 04:14:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663295;
-        bh=U+3EFEWHEFbLwtn1ruOUU53PzVr3Jur7HAL/OT64tZw=;
+        s=default; t=1539663297;
+        bh=u5cJSG9To9MGTUmSanxMglklTWMSY712ZZEqfzHBVt8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ljCqDFdGtYj8ZQYm00qC0rqXpYWNkg6HjG+0HXozGmjDvDzeu6/vUrjur0OlTq8X6
-         zhmXofCJCxJbW0Th2bONR4rE0mUpkZcDwpCiCgFxLzYospxSe5PSMC1zVs/uazUnt/
-         x1Ct8H4L5DrTYz14aGJ3QoGSPdNCopemNBFiAoL4=
+        b=g/MufoYKvzcg9hXVp+bcT/JcNZUqas8ZczGx1gIiw80IQxpAvRFV6x9j7cYXVcXNo
+         gkqVDN8K2JPw49MWtSwVqPLMrVkclwqqOs1Fxmds8Ez7YWLcwMi6YZoG+QSmIvO2rR
+         2vidLVhFNJuQV0LBp1CSv1nKO819QeO6u+/3nGaI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sean Tranchetti <stranche@codeaurora.org>,
-        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+Cc:     Yu Zhao <yuzhao@google.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 54/61] net: qualcomm: rmnet: Skip processing loopback packets
-Date:   Tue, 16 Oct 2018 00:13:56 -0400
-Message-Id: <20181016041403.135678-54-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 56/61] net/usb: cancel pending work when unbinding smsc75xx
+Date:   Tue, 16 Oct 2018 00:13:58 -0400
+Message-Id: <20181016041403.135678-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -54,37 +53,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Tranchetti <stranche@codeaurora.org>
+From: Yu Zhao <yuzhao@google.com>
 
-[ Upstream commit a07f388e2cde2be74b263f85df6f672fea0305a1 ]
+[ Upstream commit f7b2a56e1f3dcbdb4cf09b2b63e859ffe0e09df8 ]
 
-RMNET RX handler was processing invalid packets that were
-originally sent on the real device and were looped back via
-dev_loopback_xmit(). This was detected using syzkaller.
+Cancel pending work before freeing smsc75xx private data structure
+during binding. This fixes the following crash in the driver:
 
-Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
-Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
-Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000050
+IP: mutex_lock+0x2b/0x3f
+<snipped>
+Workqueue: events smsc75xx_deferred_multicast_write [smsc75xx]
+task: ffff8caa83e85700 task.stack: ffff948b80518000
+RIP: 0010:mutex_lock+0x2b/0x3f
+<snipped>
+Call Trace:
+ smsc75xx_deferred_multicast_write+0x40/0x1af [smsc75xx]
+ process_one_work+0x18d/0x2fc
+ worker_thread+0x1a2/0x269
+ ? pr_cont_work+0x58/0x58
+ kthread+0xfa/0x10a
+ ? pr_cont_work+0x58/0x58
+ ? rcu_read_unlock_sched_notrace+0x48/0x48
+ ret_from_fork+0x22/0x40
+
+Signed-off-by: Yu Zhao <yuzhao@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/usb/smsc75xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-index 929fb8d96ec0..8d979fef5fc7 100644
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-@@ -205,6 +205,9 @@ rx_handler_result_t rmnet_rx_handler(struct sk_buff **pskb)
- 	if (!skb)
- 		return RX_HANDLER_CONSUMED;
- 
-+	if (skb->pkt_type == PACKET_LOOPBACK)
-+		return RX_HANDLER_PASS;
-+
- 	dev = skb->dev;
- 	port = rmnet_get_port(dev);
- 
+diff --git a/drivers/net/usb/smsc75xx.c b/drivers/net/usb/smsc75xx.c
+index e5a4cbb366dc..ec287c9741e8 100644
+--- a/drivers/net/usb/smsc75xx.c
++++ b/drivers/net/usb/smsc75xx.c
+@@ -1520,6 +1520,7 @@ static void smsc75xx_unbind(struct usbnet *dev, struct usb_interface *intf)
+ {
+ 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
+ 	if (pdata) {
++		cancel_work_sync(&pdata->set_multicast);
+ 		netif_dbg(dev, ifdown, dev->net, "free pdata\n");
+ 		kfree(pdata);
+ 		pdata = NULL;
 -- 
 2.17.1
 
