@@ -2,173 +2,125 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AAC3C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E078CC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1968720881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:22:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1968720881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
+	by mail.kernel.org (Postfix) with ESMTP id A398420881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:22:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UcIthqKW";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ntMNunRR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A398420881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbeJPPLH (ORCPT
+        id S1727074AbeJPPLk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 11:11:07 -0400
-Received: from mo-csw-fb1514.securemx.jp ([210.130.202.170]:38424 "EHLO
-        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726649AbeJPPLH (ORCPT
+        Tue, 16 Oct 2018 11:11:40 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38362 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbeJPPLk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 11:11:07 -0400
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1514) id w9G72nRs018779; Tue, 16 Oct 2018 16:02:49 +0900
-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id w9G7115Y005207; Tue, 16 Oct 2018 16:01:02 +0900
-X-Iguazu-Qid: 34tKGYFtwQQ7t5gOyz
-X-Iguazu-QSIG: v=1; s=0; t=1539673261; q=34tKGYFtwQQ7t5gOyz; m=pxvGA7ZGbR6Vkl6CXuhSrj7tUz7j0HbKseWrqU3uIPA=
-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-        by relay.securemx.jp (mx-mr1513) id w9G70pZu019646;
-        Tue, 16 Oct 2018 16:00:51 +0900
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by imx2.toshiba.co.jp  with ESMTP id w9G70pQw029484;
-        Tue, 16 Oct 2018 16:00:51 +0900 (JST)
-From:   Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-To:     stable@vger.kernel.org
-Cc:     Rik van Riel <riel@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, pbonzini@redhat.com,
-        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bo Gan <ganb@vmware.com>,
-        Alexey Makhalov <amakhalov@vmware.com>,
-        "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        yu-cheng yu <yu-cheng.yu@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4.4 3/4] x86/fpu: Remove struct fpu::counter
-Date:   Tue, 16 Oct 2018 16:00:02 +0900
-X-TSB-HOP: ON
-Message-Id: <1539673203-21068-4-git-send-email-daniel.sangorrin@toshiba.co.jp>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539673203-21068-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
-References: <1539673203-21068-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+        Tue, 16 Oct 2018 11:11:40 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 227E560F39; Tue, 16 Oct 2018 07:22:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539674556;
+        bh=rmErbHhxeGcoDw34xCSQzAAwsUOQV1yGRknEezCy+gY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UcIthqKW+Fw5mF8K/KZ9LtRB9CMZ9XzOwt70IUDpqL+UDc51n7BjDjHBv7Dei773k
+         1HX5ghu1GXot6EoSNZ2SdbFvq8BF6HloEjDUrcNjPeP6MdKLE9kSF71a/0NS4nsjqC
+         GHYzf23We7o3n3utYEC24ffXHwsdeqlU0Odm12Zo=
+Received: from mgautam-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mgautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 90D42601D2;
+        Tue, 16 Oct 2018 07:22:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539674555;
+        bh=rmErbHhxeGcoDw34xCSQzAAwsUOQV1yGRknEezCy+gY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ntMNunRRJiP9Rf3eGepOzh5QGwIu7fEF+w1sqqhk5PIJq/yesosjD+WEnXehVEyAZ
+         Te/id2xvZmH0CVQZGFDt7f2xz+BC1jmfl5BYkt/ULHJ8t4m2BOXbeUA0OUhTUbPPSf
+         emNGTnVXg+ROEtf103B4bim6a0oSmZfWf35yVBVQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 90D42601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+From:   Manu Gautam <mgautam@codeaurora.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        linux-kernel@vger.kernel.org (open list:GENERIC PHY FRAMEWORK)
+Subject: [PATCH v2 1/2] phy: qcom-qusb2: Use HSTX_TRIM fused value as is
+Date:   Tue, 16 Oct 2018 12:52:06 +0530
+Message-Id: <20181016072209.1011-1-mgautam@codeaurora.org>
+X-Mailer: git-send-email 2.19.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rik van Riel <riel@redhat.com>
+Fix HSTX_TRIM tuning logic which instead of using fused value
+as HSTX_TRIM, incorrectly performs bitwise OR operation with
+existing default value.
 
-commit 3913cc3507575273beb165a5e027a081913ed507 upstream.
-
-With the lazy FPU code gone, we no longer use the counter field
-in struct fpu for anything. Get rid it.
-
-Signed-off-by: Rik van Riel <riel@redhat.com>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: pbonzini@redhat.com
-Link: http://lkml.kernel.org/r/1475627678-20788-6-git-send-email-riel@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+Fixes: ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2 PHY on Qcom chips")
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
- arch/x86/include/asm/fpu/internal.h |  3 ---
- arch/x86/include/asm/fpu/types.h    | 11 -----------
- arch/x86/kernel/fpu/core.c          |  3 ---
- 3 files changed, 17 deletions(-)
+ drivers/phy/qualcomm/phy-qcom-qusb2.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 2ff03cc..16825dd 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -575,15 +575,12 @@ switch_fpu_prepare(struct fpu *old_fpu, struct fpu *new_fpu, int cpu)
- 
- 		/* Don't change CR0.TS if we just switch! */
- 		if (fpu.preload) {
--			new_fpu->counter++;
- 			__fpregs_activate(new_fpu);
- 			prefetch(&new_fpu->state);
- 		}
- 	} else {
--		old_fpu->counter = 0;
- 		old_fpu->last_cpu = -1;
- 		if (fpu.preload) {
--			new_fpu->counter++;
- 			if (fpu_want_lazy_restore(new_fpu, cpu))
- 				fpu.preload = 0;
- 			else
-diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
-index 1c6f6ac..dcb85a9 100644
---- a/arch/x86/include/asm/fpu/types.h
-+++ b/arch/x86/include/asm/fpu/types.h
-@@ -303,17 +303,6 @@ struct fpu {
- 	unsigned char			fpregs_active;
+diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+index e70e425f26f5..9d6c88064158 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
++++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+@@ -402,10 +402,10 @@ static void qusb2_phy_set_tune2_param(struct qusb2_phy *qphy)
  
  	/*
--	 * @counter:
--	 *
--	 * This counter contains the number of consecutive context switches
--	 * during which the FPU stays used. If this is over a threshold, the
--	 * lazy FPU restore logic becomes eager, to save the trap overhead.
--	 * This is an unsigned char so that after 256 iterations the counter
--	 * wraps and the context switch behavior turns lazy again; this is to
--	 * deal with bursty apps that only use the FPU for a short time:
--	 */
--	unsigned char			counter;
--	/*
- 	 * @state:
- 	 *
- 	 * In-memory copy of all FPU registers that we save/restore
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index b282364..b322325 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -250,7 +250,6 @@ static void fpu_copy(struct fpu *dst_fpu, struct fpu *src_fpu)
+ 	 * Read efuse register having TUNE2/1 parameter's high nibble.
+-	 * If efuse register shows value as 0x0, or if we fail to find
+-	 * a valid efuse register settings, then use default value
+-	 * as 0xB for high nibble that we have already set while
+-	 * configuring phy.
++	 * If efuse register shows value as 0x0 (indicating value is not
++	 * fused), or if we fail to find a valid efuse register setting,
++	 * then use default value for high nibble that we have already
++	 * set while configuring the phy.
+ 	 */
+ 	val = nvmem_cell_read(qphy->cell, NULL);
+ 	if (IS_ERR(val) || !val[0]) {
+@@ -415,12 +415,13 @@ static void qusb2_phy_set_tune2_param(struct qusb2_phy *qphy)
  
- int fpu__copy(struct fpu *dst_fpu, struct fpu *src_fpu)
- {
--	dst_fpu->counter = 0;
- 	dst_fpu->fpregs_active = 0;
- 	dst_fpu->last_cpu = -1;
- 
-@@ -353,7 +352,6 @@ void fpu__restore(struct fpu *fpu)
- 	kernel_fpu_disable();
- 	fpregs_activate(fpu);
- 	copy_kernel_to_fpregs(&fpu->state);
--	fpu->counter++;
- 	kernel_fpu_enable();
+ 	/* Fused TUNE1/2 value is the higher nibble only */
+ 	if (cfg->update_tune1_with_efuse)
+-		qusb2_setbits(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
+-			      val[0] << 0x4);
++		qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
++				 val[0] << HSTX_TRIM_SHIFT,
++				 HSTX_TRIM_MASK);
+ 	else
+-		qusb2_setbits(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE2],
+-			      val[0] << 0x4);
+-
++		qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE2],
++				 val[0] << HSTX_TRIM_SHIFT,
++				 HSTX_TRIM_MASK);
  }
- EXPORT_SYMBOL_GPL(fpu__restore);
-@@ -370,7 +368,6 @@ EXPORT_SYMBOL_GPL(fpu__restore);
- void fpu__drop(struct fpu *fpu)
- {
- 	preempt_disable();
--	fpu->counter = 0;
  
- 	if (fpu->fpregs_active) {
- 		/* Ignore delayed exceptions from user space */
+ static int qusb2_phy_set_mode(struct phy *phy, enum phy_mode mode)
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
