@@ -2,140 +2,100 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3812CC070C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E44B5C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CD46205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:19:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CD46205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id B7FCB205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:19:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7FCB205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbeJPRJU (ORCPT
+        id S1727208AbeJPRJW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 16 Oct 2018 13:09:22 -0400
+Received: from mga05.intel.com ([192.55.52.43]:13325 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727128AbeJPRJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 16 Oct 2018 13:09:20 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:50826 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbeJPRJT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 13:09:19 -0400
-Received: from 79.184.253.168.ipv4.supernova.orange.pl (79.184.253.168) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
- id fa0184db1757bc2b; Tue, 16 Oct 2018 11:19:48 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v2] kernel/hung_task.c: disable on suspend
-Date:   Tue, 16 Oct 2018 11:16:34 +0200
-Message-ID: <1805225.nUohvyHBhR@aspire.rjw.lan>
-In-Reply-To: <20180925121636.592-1-vkuznets@redhat.com>
-References: <20180925121636.592-1-vkuznets@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 02:19:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,388,1534834800"; 
+   d="scan'208";a="97835676"
+Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
+  by fmsmga004.fm.intel.com with ESMTP; 16 Oct 2018 02:19:47 -0700
+From:   Songjun Wu <songjun.wu@linux.intel.com>
+To:     yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
+        hauke.mehrtens@intel.com
+Cc:     gregkh@linuxfoundation.org, paul.burton@mips.com, jslaby@suse.com,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: [RESEND PATCH 02/14] MIPS: dts: Add aliases node for lantiq danube serial
+Date:   Tue, 16 Oct 2018 17:19:03 +0800
+Message-Id: <20181016091915.19909-3-songjun.wu@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181016091915.19909-1-songjun.wu@linux.intel.com>
+References: <20181016091915.19909-1-songjun.wu@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Previous implementation uses a hard-coded register value to check
+if the current serial entity is the console entity.
+Now the lantiq serial driver uses the aliases for the index of the
+serial port.
+The lantiq danube serial dts are updated with aliases to support this.
 
-Sorry for the delay here.
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
 
-On Tuesday, September 25, 2018 2:16:36 PM CEST Vitaly Kuznetsov wrote:
-> It is possible to observe hung_task complaints when system goes to
-> suspend-to-idle state:
-> 
->  PM: Syncing filesystems ... done.
->  Freezing user space processes ... (elapsed 0.001 seconds) done.
->  OOM killer disabled.
->  Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
->  sd 0:0:0:0: [sda] Synchronizing SCSI cache
->  INFO: task bash:1569 blocked for more than 120 seconds.
->        Not tainted 4.19.0-rc3_+ #687
->  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->  bash            D    0  1569    604 0x00000000
->  Call Trace:
->   ? __schedule+0x1fe/0x7e0
->   schedule+0x28/0x80
->   suspend_devices_and_enter+0x4ac/0x750
->   pm_suspend+0x2c0/0x310
-> 
-> The root cause of the issue is that under certain circumstances jiffies
-> counter keeps advancing, some work to prevent that is currently ongoing.
-> However, it seems that it would make sense to disable hung task detector
-> on suspend and re-enable it on wakeup regardless.
-> 
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
-> Changes since v1:
-> - Implement detector disabling by zeroing timeout [Rafael J. Wysocki]
-> ---
->  kernel/hung_task.c | 36 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 35 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> index b9132d1269ef..ac6e8c9306bd 100644
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -15,6 +15,7 @@
->  #include <linux/lockdep.h>
->  #include <linux/export.h>
->  #include <linux/sysctl.h>
-> +#include <linux/suspend.h>
->  #include <linux/utsname.h>
->  #include <linux/sched/signal.h>
->  #include <linux/sched/debug.h>
-> @@ -242,12 +243,14 @@ void reset_hung_task_detector(void)
->  }
->  EXPORT_SYMBOL_GPL(reset_hung_task_detector);
->  
-> +static unsigned long hung_last_checked;
-> +
->  /*
->   * kthread which checks for tasks stuck in D state
->   */
->  static int watchdog(void *dummy)
->  {
-> -	unsigned long hung_last_checked = jiffies;
-> +	hung_last_checked = jiffies;
->  
->  	set_user_nice(current, 0);
->  
-> @@ -272,9 +275,40 @@ static int watchdog(void *dummy)
->  	return 0;
->  }
->  
-> +static int hungtask_pm_notify(struct notifier_block *self,
-> +			      unsigned long action, void *hcpu)
-> +{
-> +	static unsigned long saved_timeout, saved_interval;
-> +
-> +	switch (action) {
-> +	case PM_SUSPEND_PREPARE:
-> +	case PM_HIBERNATION_PREPARE:
-> +		saved_timeout = sysctl_hung_task_timeout_secs;
-> +		saved_interval = sysctl_hung_task_check_interval_secs;
-> +		sysctl_hung_task_timeout_secs = 0;
-> +		sysctl_hung_task_check_interval_secs = 0;
-> +		wake_up_process(watchdog_task);
-> +		break;
+ arch/mips/boot/dts/lantiq/danube.dtsi   | 2 +-
+ arch/mips/boot/dts/lantiq/easy50712.dts | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-AFAICS, this is racy (for example, it still is possible for user space
-to update the sysctl_* values after you've set them to 0).  That can be
-fixed, but I'm not sure it is worth the effort.
-
-Since watchdog() is not expected to run very often in general, I think
-I prefer your v1 after all, so please resend it.
-
-Thanks,
-Rafael
+diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
+index 510be63c8bdf..73746d7577d7 100644
+--- a/arch/mips/boot/dts/lantiq/danube.dtsi
++++ b/arch/mips/boot/dts/lantiq/danube.dtsi
+@@ -74,7 +74,7 @@
+ 			reg = <0xe100a00 0x100>;
+ 		};
+ 
+-		serial@e100c00 {
++		asc1: serial@e100c00 {
+ 			compatible = "lantiq,asc";
+ 			reg = <0xe100c00 0x400>;
+ 			interrupt-parent = <&icu0>;
+diff --git a/arch/mips/boot/dts/lantiq/easy50712.dts b/arch/mips/boot/dts/lantiq/easy50712.dts
+index 1ce20b7d05cb..452860ca1868 100644
+--- a/arch/mips/boot/dts/lantiq/easy50712.dts
++++ b/arch/mips/boot/dts/lantiq/easy50712.dts
+@@ -4,6 +4,10 @@
+ /include/ "danube.dtsi"
+ 
+ / {
++	aliases {
++		serial0 = &asc1;
++	};
++
+ 	chosen {
+ 		bootargs = "console=ttyLTQ0,115200 init=/etc/preinit";
+ 	};
+-- 
+2.11.0
 
