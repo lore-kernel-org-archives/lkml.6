@@ -1,4 +1,4 @@
-Return-Path: <SRS0=AKhD=M3=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,107 +6,101 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8A7C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E69C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 837732089D
-	for <linux-kernel@archiver.kernel.org>; Mon, 15 Oct 2018 23:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C04B20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:04:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hGOOFobd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 837732089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="L/FcNMEO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C04B20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbeJPHkQ (ORCPT
+        id S1727018AbeJPHvu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 03:40:16 -0400
-Received: from ozlabs.org ([203.11.71.1]:32897 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbeJPHkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 03:40:14 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42YwGw5Lfjz9s8F;
-        Tue, 16 Oct 2018 10:52:40 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539647560;
-        bh=btU8Uy9R7DaclMFysZ2Nrk6Rk1bPqxI8mS1r5SJHdHM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hGOOFobd/To9b8j8ki07ZLVhA/RKdzbH1nPay/Itzs5F+trOYxhUvw108bCiH74dc
-         /rkDdwMa+oxvX3Ldu2b+h4a4xw5i3BY+LIVAXUJx6+bHA/1BcmxD8hr1NyCEceex7h
-         oQP6SKuBTRGPoi94AGKNMq0NtHj/jJ/gVyQfdxUssIhHbHEiV44GO6lIhpehFsmyNp
-         AbqfWftFKC6IIiE9b0D+pO+UWs3CspV9movhlnpVT2+5Mxnl5PX07QaJPT7XM7O6jD
-         p/GOyp4tT79d+EL6bbO0P64+cdKgLQKRU0h74DDZjGgg2Vyik6ceRO8+pVY3KxD/Gg
-         mBM+nNjCRG43Q==
-Date:   Tue, 16 Oct 2018 10:52:40 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: qemu boot failures with today's linux-next
-Message-ID: <20181016105240.70369b98@canb.auug.org.au>
-In-Reply-To: <87murfz8dl.fsf@concordia.ellerman.id.au>
-References: <20181015191859.2f600de5@canb.auug.org.au>
-        <87murfz8dl.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ofMVVG.UGOBjDEohDHL+3SX"; protocol="application/pgp-signature"
+        Tue, 16 Oct 2018 03:51:50 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43705 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbeJPHvu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 03:51:50 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 80-v6so9909712pgh.10
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 17:04:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tMQBZuAMjt1FkZfBs4UV5DijDt4DkhvMojJJ2OXPgtI=;
+        b=L/FcNMEOU5xYzlq2zP+54tuWOifb9dchGTzVIE+3WhCzbjLPjnIVjA6MuFM2TfE5xw
+         nqDC1sVDDXhjo9DcovreSnlmDSxYfzUPWUTCstOdyg6XNRvkceGAdhbM7sK9NigeifYc
+         /P+BOykiYH6stLHqyuSAEPH+VI/7q+QsBpgi3EdrPh6KvvY8gGIQP+NeAKPhGlI/7h9O
+         k9CcA0LfNtg8HExsoaKiYB4yjdBwMhUKDRZF17G1/aHcmK3Tm5vqq6TaAybn5hSiPns4
+         EIqORFPCBb7eLL1PvppT44M/g+9ge/Y1deLRAz36kzywY9LKDQ4i14MTYF/cvA1RHTJJ
+         F8uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=tMQBZuAMjt1FkZfBs4UV5DijDt4DkhvMojJJ2OXPgtI=;
+        b=T2i39nVmecbAWaZzu8npnZ5cQrkpS0rgej2X97cd3G0pqI5ScO/13SuRKZqvb0nlJ9
+         xonfoNhRKeVOi2GDwav9yNIOJNZylh93lDzi8uWLsLFPYj5Dgq97A3mDjy3nw0E8IpZf
+         nkzKz8sq8IVdv8rQb0E8P5j2CME2yWAHrXQdh28/O7zl5qY3RtaACATDBnfy/P8gyx5+
+         ujcKSpkwEC733XhR6Dvh5KxpFozBXu9ObPbtAQOqBWjlHdtFyLE6Ta3YD4KNlL2L4GOg
+         y8cxRKQqrjmw9+0BxfhSVKqfXfCz5mUcbP95CKU4a3G23m7B0ErShHaJBq6STKH7AHHO
+         P1Fw==
+X-Gm-Message-State: ABuFfohFLfN0XokYDNlIGoS+JVMe1fbuQuHD6t2OHIK1S+byfm71gPcE
+        Q6SeJVk3EHveV+mn0mMshKtwvBtJHzM=
+X-Google-Smtp-Source: ACcGV62A+CYJf4BHUbwI8z72gjvJ4gRfUglCggCNOBalkZvnLineMaxhPGxx/qem+YitjDzY01OkUw==
+X-Received: by 2002:a62:2c16:: with SMTP id s22-v6mr19621680pfs.6.1539648256407;
+        Mon, 15 Oct 2018 17:04:16 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id i69-v6sm11524907pfe.106.2018.10.15.17.04.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 17:04:15 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 17:04:15 -0700 (PDT)
+X-Google-Original-Date: Mon, 15 Oct 2018 17:04:10 PDT (-0700)
+Subject:     Re: [PATCH v2 0/6] sparsemem support for RISC-V
+In-Reply-To: <20181015175702.9036-1-logang@deltatee.com>
+CC:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
+        sbates@raithlin.com, aou@eecs.berkeley.edu,
+        Christoph Hellwig <hch@lst.de>, akpm@linux-foundation.org,
+        Arnd Bergmann <arnd@arndb.de>, logang@deltatee.com
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     logang@deltatee.com
+Message-ID: <mhng-fd0541de-3ac1-4772-916d-be6b2d02e63e@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ofMVVG.UGOBjDEohDHL+3SX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Michael,
-
-On Mon, 15 Oct 2018 23:45:10 +1100 Michael Ellerman <mpe@ellerman.id.au> wr=
-ote:
+On Mon, 15 Oct 2018 10:56:56 PDT (-0700), logang@deltatee.com wrote:
+> This patchset implements sparsemem on RISC-V. The first few patches
+> move some code in existing architectures into common helpers
+> so they can be used by the new RISC-V implementation. The final
+> patch actually adds sparsmem support to RISC-V.
 >
-> > Preparing to boot Linux version 4.19.0-rc7 (sfr@ash) (gcc version 8.2.0=
- (Debian 8.2.0-4)) #2 SMP Mon Oct 15 18:53:28 AEDT 2018 =20
->                                   ^^^^^^^^^^
->                                   I assume that's wrong, this is actually=
- linux-next you're booting?
+> This is the first small step in supporting P2P on RISC-V.
 
-Yes, it was just before -rc8 came out and I suppress the extra version
-information to save rebuilding things that depend on the version.
+Thanks.  I see less maintainer tags for the parts that touch other ports than I 
+would feel comfortable merging.  I'm going to let this sit in my inbox for 
+a bit and we'll see if anything collects.
 
-> > Booting Linux via __start() @ 0x0000000000400000 ...
->=20
-> If you git Ctrl-a-c you should get the qemu prompt. Then you can run
-> 'info registers' to print the regs and maybe see where it's stuck.
->=20
-> And/or build with EARLY_DEBUG_LPAR to get early console output.
+For patch sets I submit that clean up other ports I've attempted to split the 
+patch into N patch sets, where:
 
-That gave one more line:
+* One part adds the generic support, which starts out as dead code.
+* One part per arch uses the generic support.
 
-[    0.000000] printk: bootconsole [udbg0] enabled
+This is a bit of a headache, but it at least allows us to get the RISC-V 
+version that uses the generic support in quickly while waiting on acks from the 
+other arch maintainers.
 
---=20
-Cheers,
-Stephen Rothwell
+Like I said, I'll wait a bit and hope people ack.
 
---Sig_/ofMVVG.UGOBjDEohDHL+3SX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFKEgACgkQAVBC80lX
-0GwexAf+MFS71cjMU/23VwEAs7GbNie6yHMgHEebYSJhw86kMKxjg9+Dg6Lqr8Ui
-7xsPfqKvAhX6NG9VFIL+BHZMZnR8qc3k12vcQ+Pgp37UlxfvV2z36TMVnnjn4vm9
-LXAtLM2SNwLcEDUTwvgx8LFZo2pQ4T5DbdOeJJKZMHJ/z0b4lTzOmlXMN+sJ4Y7x
-eIrjas6om+58MJBII554klUD2TBm/wqQE602j8ho+z2IdZqYy19WdX5Ea7n+O689
-U43s6uWLUlmD4LY3+XW6IW8z0okJMJuwy2BL5EoLDgdqal0iW17K1d/hKkskCZ18
-2ugto8inlzslS0vay9mBb35cE2pxnQ==
-=UqkH
------END PGP SIGNATURE-----
-
---Sig_/ofMVVG.UGOBjDEohDHL+3SX--
+Thanks!
