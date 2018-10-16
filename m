@@ -2,79 +2,99 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A3CC5ACCD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FE3C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E06842148D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:51:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ty1TEPzl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E06842148D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A2442148D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:51:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2442148D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbeJQHoH (ORCPT
+        id S1727402AbeJQHoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:44:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53538 "EHLO mail.kernel.org"
+        Wed, 17 Oct 2018 03:44:23 -0400
+Received: from mga12.intel.com ([192.55.52.136]:9920 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727088AbeJQHoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:44:07 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE3A12148C;
-        Tue, 16 Oct 2018 23:51:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539733878;
-        bh=KAjQLG4gba45Z89y69IXYD4/VU7gmuJ8Jb7gk8YMbC0=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=ty1TEPzlTr8NdpBkTx/1F94tLIUAPCRPD4mu0eEh3gYzHktTgXmMHUzH2Gy5TJu4j
-         nLvzmxn9EAiHXW5NCR7bEReiZj4xKkxOLLvoEqZghJz0oJsvw0++pxmWYPmSpKm9Jz
-         P61EGB78v/XkoO1nUPmvOYM7e6oKdpQG4G+9mAFA=
-Content-Type: text/plain; charset="utf-8"
+        id S1727064AbeJQHoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 03:44:23 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 16:51:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,389,1534834800"; 
+   d="scan'208";a="241889725"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga004.jf.intel.com with ESMTP; 16 Oct 2018 16:51:33 -0700
+Date:   Tue, 16 Oct 2018 16:48:08 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "jannh@google.com" <jannh@google.com>,
+        "dima@arista.com" <dima@arista.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>
+Subject: Re: [PATCH v4 10/13] arch/x86: Add AMD feature bit X86_FEATURE_MBA
+ in cpuid bits array
+Message-ID: <20181016234807.GC39177@romley-ivt3.sc.intel.com>
+References: <20181015205514.25387-1-babu.moger@amd.com>
+ <20181015205514.25387-11-babu.moger@amd.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181010181838.26923-1-gregory.clement@bootlin.com>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-References: <20181010181838.26923-1-gregory.clement@bootlin.com>
-Message-ID: <153973387816.5275.3801197644507437368@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2] clk: mvebu: armada-37xx-tbg: Switch to clk_get and balance it
- in probe
-Date:   Tue, 16 Oct 2018 16:51:18 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181015205514.25387-11-babu.moger@amd.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Gregory CLEMENT (2018-10-10 11:18:38)
-> The parent clock is get only to have its name, and then the clock is no
-> more used, so we can safely free it using clk_put. Furthermore as between
-> the successful devm_clk_get() and the devm_clk_put() call we don't exit
-> the probe function in error so I can use non managed version of clk_get()
-> and clk_put().
-> =
+On Mon, Oct 15, 2018 at 08:55:54PM +0000, Moger, Babu wrote:
+> From: Sherry Hurwitz <sherry.hurwitz@amd.com>
+> 
+> The feature bit X86_FEATURE_MBA is detected via CPUID leaf 0x80000008
+> EBX Bit 06. This bit indicates the support of AMD's MBA feature.
+> 
+> This feature is supported by both Intel and AMD. But they are detected
+> different CPUID leaves.
 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-> ---
+Should be "in different..."
 
-Applied to clk-next
+Thanks.
 
+-Fenghua
