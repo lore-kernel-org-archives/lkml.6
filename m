@@ -2,141 +2,100 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4DBC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45244C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32DBE20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:02:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32DBE20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A9C052086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:07:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gReM9Bqv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C052086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbeJPRwc (ORCPT
+        id S1727006AbeJPR4v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 13:52:32 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13663 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726083AbeJPRwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 13:52:31 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0575FB4336185;
-        Tue, 16 Oct 2018 18:02:47 +0800 (CST)
-Received: from [127.0.0.1] (10.177.23.164) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Tue, 16 Oct 2018
- 18:02:42 +0800
-Subject: Re: [PATCH 1/1] iommu/arm-smmu-v3: eliminate a potential memory
- corruption on Hi16xx soc
-To:     Andrew Murray <andrew.murray@arm.com>
-References: <1539592576-24352-1-git-send-email-thunder.leizhen@huawei.com>
- <20181015124617.GA12972@e119886-lin.cambridge.arm.com>
-CC:     Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LinuxArm <linuxarm@huawei.com>
-From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <5BC5B741.4020801@huawei.com>
-Date:   Tue, 16 Oct 2018 18:02:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Tue, 16 Oct 2018 13:56:51 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36772 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbeJPR4v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 13:56:51 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DDEF61A81;
+        Tue, 16 Oct 2018 12:07:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1539684428;
+        bh=VolwqHG6RB27aKVdw7JhyL4K5q3qWJdPdt63PWmddqM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gReM9BqvyLfMwr2cGEhDJaKvr3n+1D9qX3bISRpMSVyDIr/D48b3rH0hI8Gc4XBVw
+         kUnHZ0yB+MnFUVTeeW31hb79mR/H3T9y3YBUQcX22Pi05BEx8UTiJ/1DfbE+SSGRTf
+         w2o5U/zTNqk5pFx3V51RCj2HaUkoBbBgliv6763U=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm: rcar-du: Fix the return value in case of error in 'rcar_du_crtc_set_crc_source()'
+Date:   Tue, 16 Oct 2018 13:07:16 +0300
+Message-ID: <2042905.omcotxa4GD@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181016065825.23206-1-christophe.jaillet@wanadoo.fr>
+References: <20181016065825.23206-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-In-Reply-To: <20181015124617.GA12972@e119886-lin.cambridge.arm.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Christophe,
 
+Thank you for the patch.
 
-On 2018/10/15 20:46, Andrew Murray wrote:
-> Hi Zhen,
+On Tuesday, 16 October 2018 09:58:25 EEST Christophe JAILLET wrote:
+> We return 0 unconditionally in 'rcar_du_crtc_set_crc_source()'.
+> However, 'ret' is set to some error codes if some function calls fail.
 > 
-> On Mon, Oct 15, 2018 at 04:36:16PM +0800, Zhen Lei wrote:
->> ITS translation register map:
->> 0x0000-0x003C	Reserved
->> 0x0040		GITS_TRANSLATER
->> 0x0044-0xFFFC	Reserved
->>
->> The standard GITS_TRANSLATER register in ITS is only 4 bytes, but Hisilicon
->> expands the next 4 bytes to carry some IMPDEF information. That means, 8 bytes
->> data will be written to MSIAddress each time.
->>
->> MSIAddr: |----4bytes----|----4bytes----|
->> 	 |    MSIData   |    IMPDEF    |
->>
->> There is no problem for ITS, because the next 4 bytes space is reserved in ITS.
->> But it will overwrite the 4 bytes memory following "sync_count". It's very
->> luckly that the previous and the next neighbour of "sync_count" are both aligned
->> by 8 bytes, so no problem is met now.
+> Return 'ret' instead to propagate the error code.
 > 
-> My understanding is that MSI's are 32bit memory writes and as such the SMMU
-> performs a 32bit write in response to the MSI. If so then what is different
-> with the Hi16xx that causes a problem? Have you been able to able to adjust
-> the layout of the arm_smmu_device struct to demonstrate this?
+> Fixes: 47a52d024e89 ("media: drm: rcar-du: Add support for CRC computation")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-In normal, only 32bits MSIdata will be written into sync_count:
-|----4bytes----|----4bytes----|
-|  sync_count  |     xxxx     |
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-But for Hi16xx, the ITS hardware will write extra 32bits IMDDEF data into "xxxx". If
-"xxxx" is the space of the next struct member, its value will be overwritten.
+and applied to my tree.
 
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Thanks,
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c index 8a9e5e6f16b4..6eb0a95ad5a6
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -940,7 +940,7 @@ static int rcar_du_crtc_set_crc_source(struct drm_crtc
+> *crtc, drm_modeset_drop_locks(&ctx);
+>  	drm_modeset_acquire_fini(&ctx);
 > 
-> Andrew Murray
+> -	return 0;
+> +	return ret;
+>  }
 > 
->>
->> It's good to explicitly add a workaround:
->> 1. Add gcc __attribute__((aligned(8))) to make sure that "sync_count" is always
->>    aligned by 8 bytes.
->> 2. Add a "u64" union member to make sure the 4 bytes padding is always exist.
->>
->> There is no functional change.
->>
->> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
->> ---
->>  drivers/iommu/arm-smmu-v3.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
->> index 5059d09..a07bc0d 100644
->> --- a/drivers/iommu/arm-smmu-v3.c
->> +++ b/drivers/iommu/arm-smmu-v3.c
->> @@ -586,7 +586,10 @@ struct arm_smmu_device {
->>  
->>  	struct arm_smmu_strtab_cfg	strtab_cfg;
->>  
->> +	union {
->> +	u64				padding; /* workaround for Hisilicon */
->>  	u32				sync_count;
->> +	} __attribute__((aligned(8)));
->>  
->>  	/* IOMMU core code handle */
->>  	struct iommu_device		iommu;
->> -- 
->> 1.8.3
->>
->>
->> _______________________________________________
->> iommu mailing list
->> iommu@lists.linux-foundation.org
->> https://lists.linuxfoundation.org/mailman/listinfo/iommu
-> 
-> .
-> 
+>  static const struct drm_crtc_funcs crtc_funcs_gen2 = {
+
 
 -- 
-Thanks!
-BestRegards
+Regards,
+
+Laurent Pinchart
+
+
 
