@@ -2,106 +2,137 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7372EC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3032C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EF9E2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:03:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF9E2089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 881922086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:05:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 881922086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbeJPSxi (ORCPT
+        id S1727108AbeJPSzv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 14:53:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37380 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbeJPSxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 14:53:37 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 00E0286668;
-        Tue, 16 Oct 2018 11:03:44 +0000 (UTC)
-Received: from krava (unknown [10.43.17.150])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 49E746248C;
-        Tue, 16 Oct 2018 11:03:42 +0000 (UTC)
-Date:   Tue, 16 Oct 2018 13:03:41 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Stephane Eranian <eranian@google.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: Re: [BUG] perf stat: hangs with -p and process completes
-Message-ID: <20181016110341.GB18450@krava>
-References: <CABPqkBTEOwKrq6ZJo3W-rZQi56OWorWo3VcOTwV17QxZBckS0Q@mail.gmail.com>
+        Tue, 16 Oct 2018 14:55:51 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:11186 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726718AbeJPSzv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 14:55:51 -0400
+Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9GB5rJ0005528;
+        Tue, 16 Oct 2018 20:05:53 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
+ Tue, 16 Oct 2018 20:05:53 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9GB5mZ6005512
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 16 Oct 2018 20:05:52 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms
+ without eligible tasks
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, guro@fb.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        rientjes@google.com, yang.s@alibaba-inc.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <6c0a57b3-bfd4-d832-b0bd-5dd3bcae460e@i-love.sakura.ne.jp>
+ <20181015133524.GM18839@dhcp22.suse.cz>
+ <201810160055.w9G0t62E045154@www262.sakura.ne.jp>
+ <20181016092043.GP18839@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <59b9bd23-ff75-0488-fd96-68ee7f049d00@i-love.sakura.ne.jp>
+Date:   Tue, 16 Oct 2018 20:05:47 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABPqkBTEOwKrq6ZJo3W-rZQi56OWorWo3VcOTwV17QxZBckS0Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 16 Oct 2018 11:03:44 +0000 (UTC)
+In-Reply-To: <20181016092043.GP18839@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 02:26:09PM -0700, Stephane Eranian wrote:
-> Hi,
+On 2018/10/16 18:20, Michal Hocko wrote:
+>> Anyway, I'm OK if we apply _BOTH_ your patch and my patch. Or I'm OK with simplified
+>> one shown below (because you don't like per memcg limit).
 > 
-> I am running into a perf stat issue with the -p option which allows you
-> to attach to a running process. If that process happens to terminate
-> while under monitoring
-> perf hangs in there and never terminates. The proper behavior would be to stop.
-> I can see the issue in that the attached process is not a child, so
-> wait() would not work.
+> My patch is adding a rate-limit! I really fail to see why we need yet
+> another one on top of it. This is just ridiculous. I can see reasons to
+> tune that rate limit but adding 2 different mechanisms is just wrong.
 > 
-> To reproduce:
->   $ sleep 10 &
->   $ perf stat -p $!
+> If your NAK to unify the ratelimit for dump_header for all paths
+> still holds then I do not care too much to push it forward. But I find
+> thiis way of the review feedback counter productive.
 > 
-> doing the same with perf record works, so there is a solution to this problem.
 
-yea, we don't poll for the event state change in perf stat,
-but we do that in perf record.. also because the perf poll
-code in kernel is originaly meant for tracking the ring
-buffer state
+Your patch is _NOT_ adding a rate-limit for
 
-maybe we could return EPOLLIN for alive events without ring
-buffer.. like below (totaly untested) and add polling for 
-event state into perf stat 
+  "%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n"
+  "Out of memory and no killable processes...\n"
 
-cc-ing perf folks
+lines!
 
-jirka
+[   97.519229] Out of memory and no killable processes...
+[   97.522060] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.525507] Out of memory and no killable processes...
+[   97.528817] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.532345] Out of memory and no killable processes...
+[   97.534813] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.538270] Out of memory and no killable processes...
+[   97.541449] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.546268] Out of memory and no killable processes...
+[   97.548823] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.552399] Out of memory and no killable processes...
+[   97.554939] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.558616] Out of memory and no killable processes...
+[   97.562257] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.565998] Out of memory and no killable processes...
+[   97.568642] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.572169] Out of memory and no killable processes...
+[   97.575200] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.579357] Out of memory and no killable processes...
+[   97.581912] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.585414] Out of memory and no killable processes...
+[   97.589191] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.593586] Out of memory and no killable processes...
+[   97.596527] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.600118] Out of memory and no killable processes...
+[   97.603237] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.606837] Out of memory and no killable processes...
+[   97.611550] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.615244] Out of memory and no killable processes...
+[   97.617859] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.621634] Out of memory and no killable processes...
+[   97.624884] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.629256] Out of memory and no killable processes...
+[   97.631885] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.635367] Out of memory and no killable processes...
+[   97.638033] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.641827] Out of memory and no killable processes...
+[   97.641993] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.648453] Out of memory and no killable processes...
+[   97.651481] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.655082] Out of memory and no killable processes...
+[   97.657941] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.663036] Out of memory and no killable processes...
+[   97.665890] a.out invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=-1000
+[   97.669473] Out of memory and no killable processes...
 
-
----
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 5a97f34bc14c..b9ee7e7803bf 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -4865,12 +4865,12 @@ static __poll_t perf_poll(struct file *file, poll_table *wait)
- {
- 	struct perf_event *event = file->private_data;
- 	struct ring_buffer *rb;
--	__poll_t events = EPOLLHUP;
-+	__poll_t events = EPOLLIN;
- 
- 	poll_wait(file, &event->waitq, wait);
- 
- 	if (is_event_hup(event))
--		return events;
-+		return EPOLLHUP;
- 
- 	/*
- 	 * Pin the event->rb by taking event->mmap_mutex; otherwise
+We don't need to print these lines every few milliseconds. Even if an exceptional case,
+this is a DoS for console users. Printing once (or a few times) per a minute will be
+enough. Otherwise, users cannot see what they are typing and what are printed.
