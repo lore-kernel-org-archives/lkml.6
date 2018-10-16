@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D59EC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2570EC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D80E62098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E56932098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDp6WT4r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D80E62098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rx9i4Zra"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E56932098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbeJQBCH (ORCPT
+        id S1727837AbeJQBCL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:02:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42506 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:02:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727669AbeJQBCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:02:07 -0400
+        id S1727669AbeJQBCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:02:10 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43F702089E;
-        Tue, 16 Oct 2018 17:10:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2036A20866;
+        Tue, 16 Oct 2018 17:10:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709844;
-        bh=t+v/u9IveNb6jrkU0xa8g9kC8usnEFqJZeyl0CYpX5k=;
+        s=default; t=1539709847;
+        bh=f4U+DfH5vzMMtKKNY6PrAHIuNSEjTVQLSlkfSYCFbuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BDp6WT4r3kD9KgEiMIoNMbdLHOrAEvli+R7HrBuUYrf/D/bGVyzephptEqKna+/YD
-         wi+SXxCXU18u7z8SZzFwtH76pMNC8poXqkhisekf+2DryxvuYBQoXc1x17mfRyYLog
-         CzZcj3YOhkBkFiD572jwsrhk4RkGboN/9qw4HZUM=
+        b=Rx9i4ZraHWG167rvt/P3qAGy0oCXUgoX7PHIN4NoxB8Q+y3P0wR/wDAQJWr9Wka1q
+         +X1l1ZHd3ja1SJizBYhDuC252vwX/DzoC9hesL+vLfSgkuxhZop4apHoSCG+/H3L+Z
+         Ymfm0HlR9YmteABkAZRcDAkCezltu1iibJtmpFAU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 016/135] net: sched: cls_u32: fix hnode refcounting
-Date:   Tue, 16 Oct 2018 19:04:06 +0200
-Message-Id: <20181016170516.477109260@linuxfoundation.org>
+Subject: [PATCH 4.18 017/135] net: systemport: Fix wake-up interrupt race during resume
+Date:   Tue, 16 Oct 2018 19:04:07 +0200
+Message-Id: <20181016170516.526706031@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -63,107 +62,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 6d4c407744dd0338da5d5d76f40dce5adabfb30a ]
+[ Upstream commit 45ec318578c0c22a11f5b9927d064418e1ab1905 ]
 
-cls_u32.c misuses refcounts for struct tc_u_hnode - it counts references
-via ->hlist and via ->tp_root together.  u32_destroy() drops the former
-and, in case when there had been links, leaves the sucker on the list.
-As the result, there's nothing to protect it from getting freed once links
-are dropped.
-That also makes the "is it busy" check incapable of catching the root
-hnode - it *is* busy (there's a reference from tp), but we don't see it as
-something separate.  "Is it our root?" check partially covers that, but
-the problem exists for others' roots as well.
+The AON_PM_L2 is normally used to trigger and identify the source of a
+wake-up event. Since the RX_SYS clock is no longer turned off, we also
+have an interrupt being sent to the SYSTEMPORT INTRL_2_0 controller, and
+that interrupt remains active up until the magic packet detector is
+disabled which happens much later during the driver resumption.
 
-AFAICS, the minimal fix preserving the existing behaviour (where it doesn't
-include oopsen, that is) would be this:
-        * count tp->root and tp_c->hlist as separate references.  I.e.
-have u32_init() set refcount to 2, not 1.
-	* in u32_destroy() we always drop the former;
-in u32_destroy_hnode() - the latter.
+The race happens if we have a CPU that is entering the SYSTEMPORT
+INTRL2_0 handler during resume, and another CPU has managed to clear the
+wake-up interrupt during bcm_sysport_resume_from_wol(). In that case, we
+have the first CPU stuck in the interrupt handler with an interrupt
+cause that has been cleared under its feet, and so we keep returning
+IRQ_NONE and we never make any progress.
 
-	That way we have *all* references contributing to refcount.  List
-removal happens in u32_destroy_hnode() (called only when ->refcnt is 1)
-an in u32_destroy() in case of tc_u_common going away, along with
-everything reachable from it.  IOW, that way we know that
-u32_destroy_key() won't free something still on the list (or pointed to by
-someone's ->root).
+This was not a problem before because we would always turn off the
+RX_SYS clock during WoL, so the SYSTEMPORT INTRL2_0 would also be turned
+off as well, thus not latching the interrupt.
 
-Reproducer:
+The fix is to make sure we do not enable either the MPD or
+BRCM_TAG_MATCH interrupts since those are redundant with what the
+AON_PM_L2 interrupt controller already processes and they would cause
+such a race to occur.
 
-tc qdisc add dev eth0 ingress
-tc filter add dev eth0 parent ffff: protocol ip prio 100 handle 1: \
-u32 divisor 1
-tc filter add dev eth0 parent ffff: protocol ip prio 200 handle 2: \
-u32 divisor 1
-tc filter add dev eth0 parent ffff: protocol ip prio 100 \
-handle 1:0:11 u32 ht 1: link 801: offset at 0 mask 0f00 shift 6 \
-plus 0 eat match ip protocol 6 ff
-tc filter delete dev eth0 parent ffff: protocol ip prio 200
-tc filter change dev eth0 parent ffff: protocol ip prio 100 \
-handle 1:0:11 u32 ht 1: link 0: offset at 0 mask 0f00 shift 6 plus 0 \
-eat match ip protocol 6 ff
-tc filter delete dev eth0 parent ffff: protocol ip prio 100
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Fixes: bb9051a2b230 ("net: systemport: Add support for WAKE_FILTER")
+Fixes: 83e82f4c706b ("net: systemport: add Wake-on-LAN support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/cls_u32.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/broadcom/bcmsysport.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---- a/net/sched/cls_u32.c
-+++ b/net/sched/cls_u32.c
-@@ -397,6 +397,7 @@ static int u32_init(struct tcf_proto *tp
- 	rcu_assign_pointer(tp_c->hlist, root_ht);
- 	root_ht->tp_c = tp_c;
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -1045,14 +1045,22 @@ static void bcm_sysport_resume_from_wol(
+ {
+ 	u32 reg;
  
-+	root_ht->refcnt++;
- 	rcu_assign_pointer(tp->root, root_ht);
- 	tp->data = tp_c;
+-	/* Stop monitoring MPD interrupt */
+-	intrl2_0_mask_set(priv, INTRL2_0_MPD);
+-
+ 	/* Clear the MagicPacket detection logic */
+ 	reg = umac_readl(priv, UMAC_MPD_CTRL);
+ 	reg &= ~MPD_EN;
+ 	umac_writel(priv, reg, UMAC_MPD_CTRL);
+ 
++	reg = intrl2_0_readl(priv, INTRL2_CPU_STATUS);
++	if (reg & INTRL2_0_MPD)
++		netdev_info(priv->netdev, "Wake-on-LAN (MPD) interrupt!\n");
++
++	if (reg & INTRL2_0_BRCM_MATCH_TAG) {
++		reg = rxchk_readl(priv, RXCHK_BRCM_TAG_MATCH_STATUS) &
++				  RXCHK_BRCM_TAG_MATCH_MASK;
++		netdev_info(priv->netdev,
++			    "Wake-on-LAN (filters 0x%02x) interrupt!\n", reg);
++	}
++
+ 	netif_dbg(priv, wol, priv->netdev, "resumed from WOL\n");
+ }
+ 
+@@ -1102,11 +1110,6 @@ static irqreturn_t bcm_sysport_rx_isr(in
+ 	if (priv->irq0_stat & INTRL2_0_TX_RING_FULL)
+ 		bcm_sysport_tx_reclaim_all(priv);
+ 
+-	if (priv->irq0_stat & INTRL2_0_MPD) {
+-		netdev_info(priv->netdev, "Wake-on-LAN interrupt!\n");
+-		bcm_sysport_resume_from_wol(priv);
+-	}
+-
+ 	if (!priv->is_lite)
+ 		goto out;
+ 
+@@ -2459,9 +2462,6 @@ static int bcm_sysport_suspend_to_wol(st
+ 	/* UniMAC receive needs to be turned on */
+ 	umac_enable_set(priv, CMD_RX_EN, 1);
+ 
+-	/* Enable the interrupt wake-up source */
+-	intrl2_0_mask_clear(priv, INTRL2_0_MPD);
+-
+ 	netif_dbg(priv, wol, ndev, "entered WOL mode\n");
+ 
  	return 0;
-@@ -608,7 +609,7 @@ static int u32_destroy_hnode(struct tcf_
- 	struct tc_u_hnode __rcu **hn;
- 	struct tc_u_hnode *phn;
- 
--	WARN_ON(ht->refcnt);
-+	WARN_ON(--ht->refcnt);
- 
- 	u32_clear_hnode(tp, ht, extack);
- 
-@@ -647,7 +648,7 @@ static void u32_destroy(struct tcf_proto
- 
- 	WARN_ON(root_ht == NULL);
- 
--	if (root_ht && --root_ht->refcnt == 0)
-+	if (root_ht && --root_ht->refcnt == 1)
- 		u32_destroy_hnode(tp, root_ht, extack);
- 
- 	if (--tp_c->refcnt == 0) {
-@@ -696,7 +697,6 @@ static int u32_delete(struct tcf_proto *
- 	}
- 
- 	if (ht->refcnt == 1) {
--		ht->refcnt--;
- 		u32_destroy_hnode(tp, ht, extack);
- 	} else {
- 		NL_SET_ERR_MSG_MOD(extack, "Can not delete in-use filter");
-@@ -706,11 +706,11 @@ static int u32_delete(struct tcf_proto *
- out:
- 	*last = true;
- 	if (root_ht) {
--		if (root_ht->refcnt > 1) {
-+		if (root_ht->refcnt > 2) {
- 			*last = false;
- 			goto ret;
- 		}
--		if (root_ht->refcnt == 1) {
-+		if (root_ht->refcnt == 2) {
- 			if (!ht_empty(root_ht)) {
- 				*last = false;
- 				goto ret;
 
 
