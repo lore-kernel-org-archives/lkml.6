@@ -2,176 +2,214 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23551C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5289AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEE30208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:51:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEE30208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E1B612089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:54:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="fKSsF79z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1B612089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbeJPKjd (ORCPT
+        id S1727032AbeJPKmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 06:39:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57728 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726928AbeJPKjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 06:39:33 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9F4015D66B;
-        Tue, 16 Oct 2018 02:51:27 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-24.pek2.redhat.com [10.72.12.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9E36477F25;
-        Tue, 16 Oct 2018 02:51:20 +0000 (UTC)
-Date:   Tue, 16 Oct 2018 10:51:16 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     bp@suse.de, thomas.lendacky@amd.com, brijesh.singh@amd.com,
-        Lianbo Jiang <lijiang@redhat.com>, bhe@redhat.com,
-        tiwai@suse.de, x86@kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        mingo@redhat.com, baiyaowei@cmss.chinamobile.com, hpa@zytor.com,
-        dan.j.williams@intel.com, tglx@linutronix.de,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH 1/3] x86/kexec: Correct KEXEC_BACKUP_SRC_END off-by-one
- error
-Message-ID: <20181016025116.GA14358@dhcp-128-65.nay.redhat.com>
-References: <153805773703.1157.14773321497580233478.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <153805811578.1157.6948388946904655969.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20180930092110.GB6950@dhcp-128-65.nay.redhat.com>
- <20180930092741.GC6950@dhcp-128-65.nay.redhat.com>
- <20181015045138.GA9719@dhcp-128-65.nay.redhat.com>
- <20181015134404.GA5906@bhelgaas-glaptop.roam.corp.google.com>
+        Tue, 16 Oct 2018 06:42:32 -0400
+Received: from mail-eopbgr20088.outbound.protection.outlook.com ([40.107.2.88]:36928
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726928AbeJPKmc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 06:42:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g8wHUaA3mQ0nie9fLqs92UgsJkuHGuwCDNPFiH6Pezc=;
+ b=fKSsF79z9NmfvnGUhtc/+Ju7CuBTA8lI0s+sLqZf4eQtjZoxHMqmfBUX7YhphEuVkxrB8W6pNFfdxpNFw0RKvZXojbMooau9oUUnEi/BPe4iEMCFVIqXHbG26Q1rr+tXciS+rg/OR9zoJzuXyDM0Brfh3Y3A7WiE2MWdEJusavA=
+Received: from AM4PR08MB2929.eurprd08.prod.outlook.com (10.171.191.158) by
+ AM4PR08MB0737.eurprd08.prod.outlook.com (10.164.82.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.23; Tue, 16 Oct 2018 02:54:20 +0000
+Received: from AM4PR08MB2929.eurprd08.prod.outlook.com
+ ([fe80::fc13:4daf:d472:2eb]) by AM4PR08MB2929.eurprd08.prod.outlook.com
+ ([fe80::fc13:4daf:d472:2eb%4]) with mapi id 15.20.1228.027; Tue, 16 Oct 2018
+ 02:54:20 +0000
+From:   "Haibo Xu (Arm Technology China)" <Haibo.Xu@arm.com>
+To:     Richard Weinberger <richard@nod.at>
+CC:     Will Deacon <Will.Deacon@arm.com>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>, "jdike@addtoit.com" <jdike@addtoit.com>,
+        "Bin Lu (Arm Technology China)" <Bin.Lu@arm.com>
+Subject: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSF0gYXJtNjQvcHRyYWNlOiBhZGQgUFRS?=
+ =?utf-8?B?QUNFX1NZU0VNVSBhbmQgUFRSQUNFX1NZU0VNVV9TSU5HTEVTVEVQIHN1cHBv?=
+ =?utf-8?Q?rt?=
+Thread-Topic: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIGFybTY0L3B0cmFjZTogYWRkIFBUUkFDRV9TWVNF?=
+ =?utf-8?B?TVUgYW5kIFBUUkFDRV9TWVNFTVVfU0lOR0xFU1RFUCBzdXBwb3J0?=
+Thread-Index: AQHUQ06Z76IemXQPGUiVctTXT3fxI6TewGWAgAACvYCAAASiAIAAldKQgAErWwCAQOJj8A==
+Date:   Tue, 16 Oct 2018 02:54:20 +0000
+Message-ID: <AM4PR08MB2929E6207681A78C615C174085FE0@AM4PR08MB2929.eurprd08.prod.outlook.com>
+References: <20180903062310.GA4524@haibo-VirtualBox>
+ <20180903165726.GJ6954@arm.com>
+ <AM4PR08MB29297B27FCC0E8696473523185030@AM4PR08MB2929.eurprd08.prod.outlook.com>
+ <3641125.aEYyuDiOni@blindfold>
+In-Reply-To: <3641125.aEYyuDiOni@blindfold>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Haibo.Xu@arm.com; 
+x-originating-ip: [113.29.88.7]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM4PR08MB0737;6:iIqRgAZsSb+V+Jm2IOJIS+aHn6+ryPlVGdLs17Q+gJfmP4R3vtaixizlQtqxLqkx6okAO0ONTgrug2XhZqbFFQmk8r3VvNhFZBbNeH56pDU5/4omaYqNWegsK9Z7tabQAD3FI16QbTpdlzA7dLHl0VLSFkSYSnWHeAebH/ytucu7SJttuhpe4ub7/ET+pGst6yjBq0CGvAfnZNI+kL/XlayfkWWjAjgy5ziaUlfaCLAlUv6d/pwV6ipVI/MlBZ8QmWEjLlOaSLjYcCDlvrE77DT6BUZcsD2ulmQOlxYNQhSUB+NDiGzaMmTmfTCsUp1VWVr56q5pDlmL71Fogd8CpH35Khwv3mQ1nXsc+0yNt2JhovFCyTd069BkJ30+P7VlyyCx7L1JVzeehQBbfT0kcYTzflBqKxJJRn9Dw26MOyfqI26/FvgHkAT4oDONUfyFM95MPgZLxjVQ11dxS4CMtQ==;5:0mS758xCJd3lShqKmghO8rsQKpGy1vWG/BjbOWrnI8k5262FmWo6o0DIup/zkrbqh2dArUIZ+oCAs3FB7hvzOXK58PnHebOpGOgYERTKZD36Mvc4vNQwkph0HqnDbLrrtyehVGBYElf8GJGu37w7kKoVVbNeoXeYeHPCTObhlMQ=;7:ChLisPVBCOpitsODQnsL+BqD3ARprYKJSaWjiMNE0rJynVeYa9XPBuXtF/n+RoEvdTdaYP4Ea0tDcM6hsKrhYGabscWQmY5b0H6U2f6I5vDfoVF5OJi6U+f3+VFp3wp8lDVoO+HwEMsSQ8pw6DFnJAYEkc8j0ak2rbz4EEitsL7+9DCjUqZfMFnhXtRdIqOwyYtSWBGQ5CKxzqdzuJaBG6ZN0qA8gO6SfBsWZeq75M2JIbcaiGtLG2cpFMABKz8g
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: faf6d8d8-adee-4db1-3bd3-08d63312aba8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(49563074)(7193020);SRVR:AM4PR08MB0737;
+x-ms-traffictypediagnostic: AM4PR08MB0737:
+x-microsoft-antispam-prvs: <AM4PR08MB073792643FBC71F8F569010585FE0@AM4PR08MB0737.eurprd08.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(258649278758335)(9452136761055)(180628864354917);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(4983020)(52105095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991067);SRVR:AM4PR08MB0737;BCL:0;PCL:0;RULEID:;SRVR:AM4PR08MB0737;
+x-forefront-prvs: 0827D7ACB9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(39860400002)(136003)(396003)(40434004)(189003)(199004)(68736007)(256004)(14444005)(486006)(5024004)(6506007)(476003)(305945005)(97736004)(7736002)(55236004)(4326008)(99286004)(86362001)(76176011)(14454004)(106356001)(7696005)(72206003)(93886005)(224303003)(105586002)(74316002)(25786009)(26005)(6916009)(71190400001)(71200400001)(54906003)(99936001)(6116002)(2900100001)(8936002)(5250100002)(478600001)(316002)(3846002)(186003)(66066001)(5660300001)(2906002)(55016002)(446003)(6436002)(53936002)(81166006)(81156014)(11346002)(33656002)(102836004)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR08MB0737;H:AM4PR08MB2929.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: NDqEApY22VJK0IvksYkbtNcZlQRXQV/AJsgN98VGbhLk4auFAt4DItN1aTUJIsfRHZUIfd/i2yRaCwnPHmv+MGDMxOlzUhBykmH5/H0ffAnfaSHKs9yz3OhS/x1bXp/Vsrmkui3IIlC0rQ9I0N4YNiaeAZc4/OVi6d5A/B2t4kY3IgZFknPdfX4Okcm1TZc7cCTjZtpV7SWpT+oAA6mOCfDU63MetePFmgy3FA3NuTsaFavBS8eCJzxxmHLtVx01A5WXUdksnUTu4jJBYnsN3xoA81LJfmTSLxgjv0OS9KWw5Z2OQE93jGFCuc6fPPSodFLTl5qePO6D+zawCH35dFYM3Lhwkl2Tia9xidhM178=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/mixed;
+        boundary="_002_AM4PR08MB2929E6207681A78C615C174085FE0AM4PR08MB2929eurp_"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181015134404.GA5906@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 16 Oct 2018 02:51:28 +0000 (UTC)
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: faf6d8d8-adee-4db1-3bd3-08d63312aba8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2018 02:54:20.1210
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR08MB0737
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/15/18 at 08:44am, Bjorn Helgaas wrote:
-> On Mon, Oct 15, 2018 at 12:51:38PM +0800, Dave Young wrote:
-> > On 09/30/18 at 05:27pm, Dave Young wrote:
-> > > On 09/30/18 at 05:21pm, Dave Young wrote:
-> > > > On 09/27/18 at 09:21am, Bjorn Helgaas wrote:
-> > > > > From: Bjorn Helgaas <bhelgaas@google.com>
-> > > > > 
-> > > > > The only use of KEXEC_BACKUP_SRC_END is as an argument to
-> > > > > walk_system_ram_res():
-> > > > > 
-> > > > >   int crash_load_segments(struct kimage *image)
-> > > > >   {
-> > > > >     ...
-> > > > >     walk_system_ram_res(KEXEC_BACKUP_SRC_START, KEXEC_BACKUP_SRC_END,
-> > > > >                         image, determine_backup_region);
-> > > > > 
-> > > > > walk_system_ram_res() expects "start, end" arguments that are inclusive,
-> > > > > i.e., the range to be walked includes both the start and end addresses.
-> > > > 
-> > > > Looking at the function comment of find_next_iomem_res,  the res->end
-> > > > should be exclusive, am I missing something?
-> > > 
-> > > Oops,  you fix it in 2nd patch, I apparently miss that.
-> > > 
-> > > Since the fix of checking the end is in another patch, probably merge
-> > > these two patches so that they are in one patch to avoid break bisect. 
-> > 
-> > Not sure if above comment was missed, Boris, would you mind to fold the
-> > patch 1 and 2?
-> 
-> Sorry, I did miss this comment.
-> 
-> Patch 2 was for the very specific case of a single-byte resource at
-> the end address, which we probably never see in practice.
-> 
-> For patch 1, the find_next_iomem_res() function comment had
-> "[res->start.res->end)", but I think the code actually treated it as
-> "[res->start.res->end]", so the comment was inaccurate.
-> 
-> Before my patches we had:
-> 
->   #define KEXEC_BACKUP_SRC_START  (0UL)
->   #define KEXEC_BACKUP_SRC_END    (640 * 1024UL)    # 0xa0000
-> 
-> The intention is to search for system RAM resources that intersect
-> this region:
-> 
->   [mem 0x0-0x9ffff]
-> 
-> The call is:
-> 
->   walk_system_ram_res(KEXEC_BACKUP_SRC_START, KEXEC_BACKUP_SRC_END,
->                       ..., determine_backup_region);
->   walk_system_ram_res(0, 0xa0000, ..., determine_backup_region);
-> 
-> Assume iomem_resource contains this system RAM resource:
-> 
->   [mem 0x90000-0xaffff]
-> 
-> In find_next_iomem_res(), the "res" input parameter is the region to
-> search:
-> 
->   res->start = 0;                          # KEXEC_BACKUP_SRC_START
->   res->end   = 0xa0000;                    # KEXEC_BACKUP_SRC_END
-> 
-> In one of the loop iterations we find the [mem 0x90000-0xaffff]
-> resource (p):
-> 
->   p->start = 0x90000;
->   p->end   = 0xaffff;
-> 
->   if (p->start > end)                      # 0x90000 > 0xa0000? false
->   if (p->end >= start && p->start < end)   # 0xaffff >= 0 ? true
->                                            # 0x90000 < 0xa0000 ? true
->     break;                                 # so we'll return part of "p"
-> 
->   if (res->start < p->start)               # 0x0 < 0x90000 ? true
->     res->start = 0x90000;                  # trim beginning to p->start
->   if (res->end > p->end)                   # 0xa0000 > 0xaffff ? false
-> 
-> So find_next_iomem_res() returns with this:
-> 
->   res->start = 0x90000;                    # trimmed to p->start
->   res->end   = 0xa0000;                    # unchanged from input
-> 
->   [mem 0x90000-0xa0000]                    # returned resource (res)
-> 
-> and we call determine_backup_region(res), which sets:
-> 
->   image->arch.backup_src_start = 0x90000;
->   image->arch.backup_src_sz = resource_size(res)  # 0xa0000 - 0x90000 + 1
->                                                   # (0x10001)
-> 
-> This is incorrect.  What we wanted was the part of [mem 0x90000-0xaffff]
-> that intersects the first 640K, i.e., [mem 0x90000-0x9ffff], but what
-> we got was [mem 0x90000-0xa0000], which is one byte too long.
-> 
-> The resource returned find_next_iomem_res() always ends at the
-> "res->end" supplied as an input parameter *unless* the input res->end
-> is strictly greater than the p->end, when it is truncated to p->end.
-> 
-> Bottom line, I don't think patches 1 and 2 need to be folded together
-> because they fix different problems.
-> 
-> Bjorn
+--_002_AM4PR08MB2929E6207681A78C615C174085FE0AM4PR08MB2929eurp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Bjorn,  thanks for the detail explanations,  it is very clear now to me.
-Indeed 2nd patch is for different issue, please ignore my comment :)
+T24gV2VkLCBTZXAgMDUsIDIwMTggYXQgMDM6NDU6NTFBTSArMDIwMCwgUmljaGFyZCBXZWluYmVy
+Z2VyIHdyb3RlOg0KPiBBbSBEaWVuc3RhZywgNC4gU2VwdGVtYmVyIDIwMTgsIDA0OjExOjA3IENF
+U1Qgc2NocmllYiBIYWlibyBYdSAoQXJtIFRlY2hub2xvZ3kgQ2hpbmEpOg0KPiA+IEhpIFJpY2hh
+cmQsDQo+ID4NCj4gPiBXaGF0IGRvIHlvdSBtZWFuIGJ5IGRvbmUgaXQgaW4gdGhlIGNvcmU/IG1v
+dmluZyBtYWNybyBkZWZpbml0aW9uIHRvIGluY2x1ZGUvdWFwaS9saW51eC9wdHJhY2UuaD8NCj4g
+PlRoZSBwYXRjaCBpcyBzdHJpY3RseSBmb2xsb3cgeDg2J3Mgc2VtYXRpYyBvbiBQVFJBQ0VfU1lT
+RU1VL1NJTkdMRVNURVAgc3VwcG9ydC4NCj4NCj4gV2VsbCwgdGhlIGZlYXR1cmUgaXRzZWxmIGlz
+IG5vdCByZWFsbHkgYXJjaGl0ZWN0dXJlIHNwZWNpZmljLg0KPiBKdXN0IGJlY2F1c2UgeDg2IGRv
+ZXMgaXQgaW4gYXJjaC94ODYsIGl0IGRvZXMgbm90IG1lYW4gdGhhdCB0aGlzIGlzIHRoZSBiZXN0
+IHdheS4NCj4gSSBndWVzcyB0aGlzIGlzIGFsc28gd2hhdCBXaWxsIHRyaWVkIHRvIHNheS4NCj4g
+SWYgd2UgY2FuLCB3ZSBzaG91bGQgaW1wbGVtZW50IFBUUkFDRV9TWVNFTVUgaW4gdGhlIGNvcmUg
+cHRyYWNlIGNvZGUgYW5kIG5vdCBwZXIgYXJjaGl0ZWN0dXJlLg0KPg0KDQpBZnRlciByZS1ldmFs
+dWF0aW5nIHRoZSB3b3JrbG9hZCB0byB1bmlmeSB0aGUgUFRSQUNFX1NZU0VNVSBpbiB0aGUgY29y
+ZSBwdHJhY2UgY29kZSBvbiBib3RoIEFSTSBhbmQgeDg2IGFyY2hpdGVjdHVyZSwNCldlIHRoaW5r
+IHdlIGFyZSBub3QgYWJsZSB0byB3b3JrIG9uIGl0IHJlY2VudGx5KHdlIG9ubHkgaGF2ZSAxLjUg
+cGVyc29uIHdvcmsgb24gdGhlIEd2aXNvciBwcm9qZWN0KS4NCg0KPiA+ID4gPiBJIHdvbmRlciB3
+aGF0IEhhaWJvIFh1IHdhbnQgdG8gZG8gd2l0aCBQVFJBQ0VfU1lTRU1VIG9uIGFybTY0Lg0KPiA+
+ID4gPiBBcmUgeW91IHBvcnRpbmcgVU1MIG9yIGd2aXNvciB0byBhcm02ND8NCj4gPiA+DQo+ID4g
+PiBUaGF0J3MgYSBnb29kIHF1ZXN0aW9uLiBIYWlibz8NCj4gPg0KPiA+IFRoZSBzdG9yeSBpcyB3
+ZSBhcmUgd29ya2luZyBvbiBhIGNvbnRhaW5lciBydW50aW1lKEdvb2dsZSBHdmlzb3IpDQo+ID4g
+c3VwcG9ydCBvbiBBUk02NCBwbGF0Zm9ybSwgYW5kIHRoZSBHdmlzb3IgZGVwZW5kIG9uIExpbnV4
+IGtlcm5lbCBQVFJBQ0VfU1lTRU1VL1NJTkdMRVNURVAgc3VwcG9ydC4NCj4NCj4gR3Zpc29yIGFs
+c28gc3VwcG9ydHMgYSBrdm0gYmFja2VuZCB3aGljaCBzaG91bGQgYmUgKm11Y2gqIGZhc3RlciB0
+aGFuIFBUUkFDRV9TWVNFTVUuDQo+IE90aGVyd2lzZSBndmlzb3Igc3VmZmVycyBmcm9tIHRoZSBz
+YW1lIHBlcmZvcm1hbmNlIGRyYXdiYWNrcyBhcyBVTUwgZG9lcy4NCj4gUGFnZWZhdWx0cyB2aWEg
+U0lHU0VHVi9tbWFwLCBzeXNjYWxsIGdhdGUgdmlhIHB0cmFjZSgpLg0KPg0KPiBEaWQgeW91IGNo
+ZWNrLCBpcyBQVFJBQ0VfU1lTRU1VIHJlYWxseSB0aGUgd2F5IHRvIGdvIGZvciBndmlzb3I/DQo+
+IExhc3QgdGltZSBJIGNoZWNrZWQgdGhlIEtWTSBiYWNrZW5kIGxvb2tlZCBwcm9taXNpbmcgYnV0
+IHN0aWxsIFdJUCwgdGhvdWdoLg0KPg0KDQpHdmlzb3IgZG8gc3VwcG9ydCB0d28gcGxhdGZvcm1z
+LCBwdHJhY2UgYW5kIGt2bS4gVG8gc3VwcG9ydCBwdHJhY2UgcGxhdGZvcm0gb24gQVJNNjQgaXMg
+b3VyIGZpcnN0IHN0ZXAuDQpGcm9tIHRoZSBsb25nIHJ1biwgS1ZNIHdvdWxkIGJlIGEgYmV0dGVy
+IGNob2ljZSwgYW5kIHdlIHdpbGwgd29yayBvbiBpdCBhZnRlciBwdHJhY2UgcGxhdGZvcm0gZ2V0
+IHdvcmtlZC4NCg0KQ3VycmVudGx5LCAgb3VyIGluaXRpYWwgcGF0Y2hlcyBmb3IgR3Zpc29yIEFS
+TTY0IHN1cHBvcnQgYXJlIHJlYWR5IGZvciB0aGUgc21hbGwgImhlbGxvLXdvcmxkIiBjb250YWlu
+ZXINCihwbGVhc2UgcmVmZXIgdG8gdGhlIGF0dGFjaG1lbnQgZm9yIHRoZSB0ZXN0IGxvZ3MpLCAg
+YW5kIHdlIGFyZSBpbiB0aGUgcHJvY2VzcyBvZiB1cHN0cmVhbWluZyB0aGUgY29kZS4NCkNvdWxk
+IHlvdSBoZWxwIG1lcmdlIHRoaXMgcGF0Y2ggdG8gdGhlIExpbnV4IGtlcm5lbCBmb3IgdGhlIHRp
+bWUgYmVpbmc/ICBXZSBjYW4gcmVzY2hlZHVsZSB0aGUgcmVzb3VyY2UNCnRvIHVuaWZ5IHRoZSBv
+dmVyYWxsIFB0cmFjZSBjb2RlcyBpbiB0aGUga2VybmVsIGxhdGUuDQoNCj4gSSBhbHNvIHdvbmRl
+ciB3aGV0aGVyIFBUUkFDRV9TWVNFTVUgaXMgcmVhbGx5IHRoZSBvbmx5IG1pc3NpbmcgYml0IHRv
+IHN1cHBvcnQgZ3Zpc29yIG9uIGFybTY0LiBEaWQgeW91IGNoZWNrIGhvdyB0byB3b3JrIGFyb3Vu
+ZCBWSVBUL1ZJVlQgY2FjaGluZyBpc3N1ZXM/DQo+IFVNTCAoYW5kIGd2aXNvciBpbiB0aGlzIGNv
+bnRleHQpIGhhdmUgbG90cyBvZiBpbXBsaWNpdCB4ODYgZGVwZW5kZW5jaWVzLg0KDQpBcyBmYXIg
+YXMgd2Uga25vdywgIFBUUkFDRV9TWVNFTVUgaXMgdGhlIG9ubHkgbWlzc2luZyBiaXQgdGhhdCBu
+ZWVkZWQgaW4gTGludXgga2VybmVsIHRvIHN1cHBvcnQgR3Zpc29yIHB0cmFjZSBwbGF0Zm9ybSBv
+biBBUk02NC4NCg0KVGhhbmtzLA0KDQpIYWlibw0KDQotLS0tLemCruS7tuWOn+S7ti0tLS0tDQrl
+j5Hku7bkuro6IFJpY2hhcmQgV2VpbmJlcmdlciA8cmljaGFyZEBub2QuYXQ+DQrlj5HpgIHml7bp
+l7Q6IDIwMTjlubQ55pyINeaXpSAzOjQ1DQrmlLbku7bkuro6IEhhaWJvIFh1IChBcm0gVGVjaG5v
+bG9neSBDaGluYSkgPEhhaWJvLlh1QGFybS5jb20+DQrmioTpgIE6IFdpbGwgRGVhY29uIDxXaWxs
+LkRlYWNvbkBhcm0uY29tPjsgQ2F0YWxpbiBNYXJpbmFzIDxDYXRhbGluLk1hcmluYXNAYXJtLmNv
+bT47IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZn
+ZXIua2VybmVsLm9yZzsgbmQgPG5kQGFybS5jb20+OyBqZGlrZUBhZGR0b2l0LmNvbQ0K5Li76aKY
+OiBSZTog562U5aSNOiBbUEFUQ0hdIGFybTY0L3B0cmFjZTogYWRkIFBUUkFDRV9TWVNFTVUgYW5k
+IFBUUkFDRV9TWVNFTVVfU0lOR0xFU1RFUCBzdXBwb3J0DQoNCkFtIERpZW5zdGFnLCA0LiBTZXB0
+ZW1iZXIgMjAxOCwgMDQ6MTE6MDcgQ0VTVCBzY2hyaWViIEhhaWJvIFh1IChBcm0gVGVjaG5vbG9n
+eSBDaGluYSk6DQo+IEhpIFJpY2hhcmQsDQo+DQo+IFdoYXQgZG8geW91IG1lYW4gYnkgZG9uZSBp
+dCBpbiB0aGUgY29yZT8gbW92aW5nIG1hY3JvIGRlZmluaXRpb24gdG8gaW5jbHVkZS91YXBpL2xp
+bnV4L3B0cmFjZS5oPw0KPiBUaGUgcGF0Y2ggaXMgc3RyaWN0bHkgZm9sbG93IHg4NidzIHNlbWF0
+aWMgb24gUFRSQUNFX1NZU0VNVS9TSU5HTEVTVEVQIHN1cHBvcnQuDQoNCldlbGwsIHRoZSBmZWF0
+dXJlIGl0c2VsZiBpcyBub3QgcmVhbGx5IGFyY2hpdGVjdHVyZSBzcGVjaWZpYy4NCkp1c3QgYmVj
+YXVzZSB4ODYgZG9lcyBpdCBpbiBhcmNoL3g4NiwgaXQgZG9lcyBub3QgbWVhbiB0aGF0IHRoaXMg
+aXMgdGhlIGJlc3Qgd2F5Lg0KSSBndWVzcyB0aGlzIGlzIGFsc28gd2hhdCBXaWxsIHRyaWVkIHRv
+IHNheS4NCklmIHdlIGNhbiwgd2Ugc2hvdWxkIGltcGxlbWVudCBQVFJBQ0VfU1lTRU1VIGluIHRo
+ZSBjb3JlIHB0cmFjZSBjb2RlIGFuZCBub3QgcGVyIGFyY2hpdGVjdHVyZS4NCg0KPiA+ID4gSSB3
+b25kZXIgd2hhdCBIYWlibyBYdSB3YW50IHRvIGRvIHdpdGggUFRSQUNFX1NZU0VNVSBvbiBhcm02
+NC4NCj4gPiA+IEFyZSB5b3UgcG9ydGluZyBVTUwgb3IgZ3Zpc29yIHRvIGFybTY0Pw0KPiA+DQo+
+ID4gVGhhdCdzIGEgZ29vZCBxdWVzdGlvbi4gSGFpYm8/DQo+DQo+IFRoZSBzdG9yeSBpcyB3ZSBh
+cmUgd29ya2luZyBvbiBhIGNvbnRhaW5lciBydW50aW1lKEdvb2dsZSBHdmlzb3IpDQo+IHN1cHBv
+cnQgb24gQVJNNjQgcGxhdGZvcm0sIGFuZCB0aGUgR3Zpc29yIGRlcGVuZCBvbiBMaW51eCBrZXJu
+ZWwgUFRSQUNFX1NZU0VNVS9TSU5HTEVTVEVQIHN1cHBvcnQuDQoNCkd2aXNvciBhbHNvIHN1cHBv
+cnRzIGEga3ZtIGJhY2tlbmQgd2hpY2ggc2hvdWxkIGJlICptdWNoKiBmYXN0ZXIgdGhhbiBQVFJB
+Q0VfU1lTRU1VLg0KT3RoZXJ3aXNlIGd2aXNvciBzdWZmZXJzIGZyb20gdGhlIHNhbWUgcGVyZm9y
+bWFuY2UgZHJhd2JhY2tzIGFzIFVNTCBkb2VzLg0KUGFnZWZhdWx0cyB2aWEgU0lHU0VHVi9tbWFw
+LCBzeXNjYWxsIGdhdGUgdmlhIHB0cmFjZSgpLg0KDQpEaWQgeW91IGNoZWNrLCBpcyBQVFJBQ0Vf
+U1lTRU1VIHJlYWxseSB0aGUgd2F5IHRvIGdvIGZvciBndmlzb3I/DQpMYXN0IHRpbWUgSSBjaGVj
+a2VkIHRoZSBLVk0gYmFja2VuZCBsb29rZWQgcHJvbWlzaW5nIGJ1dCBzdGlsbCBXSVAsIHRob3Vn
+aC4NCg0KSSBhbHNvIHdvbmRlciB3aGV0aGVyIFBUUkFDRV9TWVNFTVUgaXMgcmVhbGx5IHRoZSBv
+bmx5IG1pc3NpbmcgYml0IHRvIHN1cHBvcnQgZ3Zpc29yIG9uIGFybTY0LiBEaWQgeW91IGNoZWNr
+IGhvdyB0byB3b3JrIGFyb3VuZCBWSVBUL1ZJVlQgY2FjaGluZyBpc3N1ZXM/DQpVTUwgKGFuZCBn
+dmlzb3IgaW4gdGhpcyBjb250ZXh0KSBoYXZlIGxvdHMgb2YgaW1wbGljaXQgeDg2IGRlcGVuZGVu
+Y2llcy4NCg0KVGhhbmtzLA0KLy9yaWNoYXJkDQoNCg0KSU1QT1JUQU5UIE5PVElDRTogVGhlIGNv
+bnRlbnRzIG9mIHRoaXMgZW1haWwgYW5kIGFueSBhdHRhY2htZW50cyBhcmUgY29uZmlkZW50aWFs
+IGFuZCBtYXkgYWxzbyBiZSBwcml2aWxlZ2VkLiBJZiB5b3UgYXJlIG5vdCB0aGUgaW50ZW5kZWQg
+cmVjaXBpZW50LCBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIgaW1tZWRpYXRlbHkgYW5kIGRvIG5v
+dCBkaXNjbG9zZSB0aGUgY29udGVudHMgdG8gYW55IG90aGVyIHBlcnNvbiwgdXNlIGl0IGZvciBh
+bnkgcHVycG9zZSwgb3Igc3RvcmUgb3IgY29weSB0aGUgaW5mb3JtYXRpb24gaW4gYW55IG1lZGl1
+bS4gVGhhbmsgeW91Lg0K
 
-For the series:
-Reviewed-by: Dave Young <dyoung@redhat.com>
+--_002_AM4PR08MB2929E6207681A78C615C174085FE0AM4PR08MB2929eurp_
+Content-Type: text/plain; name="Gvisor logs.txt"
+Content-Description: Gvisor logs.txt
+Content-Disposition: attachment; filename="Gvisor logs.txt"; size=622;
+	creation-date="Tue, 16 Oct 2018 02:48:49 GMT";
+	modification-date="Tue, 16 Oct 2018 02:08:09 GMT"
+Content-Transfer-Encoding: base64
 
-Thanks
-Dave
+Wz8yMDE4Lz8xMC8/MTUgMTg6MTVdICBCaW4gTHUgKEFybSBUZWNobm9sb2d5IENoaW5hKTogIA0K
+cm9vdEBlbnRvczE6L2dvL3NyYy9naXRodWIuY29tL2dvb2dsZS9ndmlzb3IjIHVuYW1lIC1wDQph
+YXJjaDY0DQpyb290QGVudG9zMTovZ28vc3JjL2dpdGh1Yi5jb20vZ29vZ2xlL2d2aXNvciMgZG9j
+a2VyIHJ1biAtLXJ1bnRpbWU9cnVuc2MgaGVsbG8td29ybGQNClcxMDEwIDE3OjQ2OjE2LjUxMDU2
+MSAzMDM1OSB4OjBdIENvdWxkIG5vdCBwYXJzZSAvcHJvYy9jcHVpbmZvLCBpdCBpcyBlbXB0eSBv
+ciBkb2VzIG5vdCBjb250YWluIGNwdSBNSHoNClcxMDEwIDE3OjQ2OjE2LjUzNzAwNyAzMDM3MCB4
+OjBdIENvdWxkIG5vdCBwYXJzZSAvcHJvYy9jcHVpbmZvLCBpdCBpcyBlbXB0eSBvciBkb2VzIG5v
+dCBjb250YWluIGNwdSBNSHoNClcxMDEwIDE3OjQ2OjE2LjU1NjkxOSAzMDM3MCB4OjBdIENvdWxk
+IG5vdCBwYXJzZSAvcHJvYy9jcHVpbmZvLCBpdCBpcyBlbXB0eSBvciBkb2VzIG5vdCBjb250YWlu
+IGNwdSBNSHoNCg0KSGVsbG8gZnJvbSBEb2NrZXIhDQpUaGlzIG1lc3NhZ2Ugc2hvd3MgdGhhdCB5
+b3VyIGluc3RhbGxhdGlvbiBhcHBlYXJzIHRvIGJlIHdvcmtpbmcgY29ycmVjdGx5LiANCg==
+
+--_002_AM4PR08MB2929E6207681A78C615C174085FE0AM4PR08MB2929eurp_--
