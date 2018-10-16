@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BA6C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 417DBC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C25F12148D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:15:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A734214AB
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9JV1Uym"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25F12148D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RmY5R77u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A734214AB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730018AbeJPMES (ORCPT
+        id S1730035AbeJPMEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:04:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53086 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:04:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728972AbeJPMEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:04:15 -0400
+        id S1728972AbeJPMET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:04:19 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E94321477;
-        Tue, 16 Oct 2018 04:15:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C2A7214AB;
+        Tue, 16 Oct 2018 04:15:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663352;
-        bh=AJ/4Ekv5JPLIV76f5dzd6bNDw14tn7dfjFmQTt21jo4=;
+        s=default; t=1539663356;
+        bh=DyF6kO+K1rG2hPDtEni2CRE+qIuQehQuTjmvTqb+zlQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C9JV1UymwoFLImU5VdCi2h+lseRUE6GsPDE12Q7MQn5Xp4Kaw4HYAlxk52Kr5YA/V
-         WpDdWb37IluW1dE+6vHA/yUNEtWVpBcj2BcCqh+wgYSJhUV7/BU+IKH0hBcijRyyga
-         K4HztJLvgOD4Qa4mXph/Yz8yqeFcqH9O04zRmavk=
+        b=RmY5R77u0aMd5ab6ipv9ZJhdeRiEgED80tBbFB3wukp4Vrlp3r/hVm402MUPxncRH
+         aVcPHNPsKWEV1NRw9VYHmpl0yCl1NqCa4Hyyb2bYqCdgRwOtm2lC8XO1hDRNTNn57W
+         dOnGdaXh4a+reThthrz0mk2Hhp1qODzCzkZCpyFo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Edgar Cherkasov <echerkasov@dev.rtsoft.ru>,
-        Wolfram Sang <wsa@the-dreams.de>,
+Cc:     Rickard x Andersson <rickaran@axis.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 31/38] i2c: i2c-scmi: fix for i2c_smbus_write_block_data
-Date:   Tue, 16 Oct 2018 00:15:15 -0400
-Message-Id: <20181016041522.135789-31-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 34/38] net: fec: fix rare tx timeout
+Date:   Tue, 16 Oct 2018 00:15:18 -0400
+Message-Id: <20181016041522.135789-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041522.135789-1-sashal@kernel.org>
 References: <20181016041522.135789-1-sashal@kernel.org>
@@ -52,62 +52,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
+From: Rickard x Andersson <rickaran@axis.com>
 
-[ Upstream commit 08d9db00fe0e300d6df976e6c294f974988226dd ]
+[ Upstream commit 657ade07df72847f591ccdb36bd9b91ed0edbac3 ]
 
-The i2c-scmi driver crashes when the SMBus Write Block transaction is
-executed:
+During certain heavy network loads TX could time out
+with TX ring dump.
+TX is sometimes never restarted after reaching
+"tx_stop_threshold" because function "fec_enet_tx_queue"
+only tests the first queue.
 
-WARNING: CPU: 9 PID: 2194 at mm/page_alloc.c:3931 __alloc_pages_slowpath+0x9db/0xec0
- Call Trace:
-  ? get_page_from_freelist+0x49d/0x11f0
-  ? alloc_pages_current+0x6a/0xe0
-  ? new_slab+0x499/0x690
-  __alloc_pages_nodemask+0x265/0x280
-  alloc_pages_current+0x6a/0xe0
-  kmalloc_order+0x18/0x40
-  kmalloc_order_trace+0x24/0xb0
-  ? acpi_ut_allocate_object_desc_dbg+0x62/0x10c
-  __kmalloc+0x203/0x220
-  acpi_os_allocate_zeroed+0x34/0x36
-  acpi_ut_copy_eobject_to_iobject+0x266/0x31e
-  acpi_evaluate_object+0x166/0x3b2
-  acpi_smbus_cmi_access+0x144/0x530 [i2c_scmi]
-  i2c_smbus_xfer+0xda/0x370
-  i2cdev_ioctl_smbus+0x1bd/0x270
-  i2cdev_ioctl+0xaa/0x250
-  do_vfs_ioctl+0xa4/0x600
-  SyS_ioctl+0x79/0x90
-  do_syscall_64+0x73/0x130
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-ACPI Error: Evaluating _SBW: 4 (20170831/smbus_cmi-185)
+In addition the TX timeout callback function failed to
+recover because it also operated only on the first queue.
 
-This problem occurs because the length of ACPI Buffer object is not
-defined/initialized in the code before a corresponding ACPI method is
-called. The obvious patch below fixes this issue.
-
-Signed-off-by: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
-Acked-by: Viktor Krasnov <vkrasnov@dev.rtsoft.ru>
-Acked-by: Michael Brunner <Michael.Brunner@kontron.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Rickard x Andersson <rickaran@axis.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-scmi.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/freescale/fec_main.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-scmi.c b/drivers/i2c/busses/i2c-scmi.c
-index 7aa7b9cb6203..efefcfa24a4c 100644
---- a/drivers/i2c/busses/i2c-scmi.c
-+++ b/drivers/i2c/busses/i2c-scmi.c
-@@ -152,6 +152,7 @@ acpi_smbus_cmi_access(struct i2c_adapter *adap, u16 addr, unsigned short flags,
- 			mt_params[3].type = ACPI_TYPE_INTEGER;
- 			mt_params[3].integer.value = len;
- 			mt_params[4].type = ACPI_TYPE_BUFFER;
-+			mt_params[4].buffer.length = len;
- 			mt_params[4].buffer.pointer = data->block + 1;
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index fe00f71bc6b4..051ecc76a7ef 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -1152,7 +1152,7 @@ static void fec_enet_timeout_work(struct work_struct *work)
+ 		napi_disable(&fep->napi);
+ 		netif_tx_lock_bh(ndev);
+ 		fec_restart(ndev);
+-		netif_wake_queue(ndev);
++		netif_tx_wake_all_queues(ndev);
+ 		netif_tx_unlock_bh(ndev);
+ 		napi_enable(&fep->napi);
+ 	}
+@@ -1267,7 +1267,7 @@ fec_enet_tx_queue(struct net_device *ndev, u16 queue_id)
+ 
+ 		/* Since we have freed up a buffer, the ring is no longer full
+ 		 */
+-		if (netif_queue_stopped(ndev)) {
++		if (netif_tx_queue_stopped(nq)) {
+ 			entries_free = fec_enet_get_free_txdesc_num(txq);
+ 			if (entries_free >= txq->tx_wake_threshold)
+ 				netif_tx_wake_queue(nq);
+@@ -1744,7 +1744,7 @@ static void fec_enet_adjust_link(struct net_device *ndev)
+ 			napi_disable(&fep->napi);
+ 			netif_tx_lock_bh(ndev);
+ 			fec_restart(ndev);
+-			netif_wake_queue(ndev);
++			netif_tx_wake_all_queues(ndev);
+ 			netif_tx_unlock_bh(ndev);
+ 			napi_enable(&fep->napi);
  		}
- 		break;
+@@ -2247,7 +2247,7 @@ static int fec_enet_set_pauseparam(struct net_device *ndev,
+ 		napi_disable(&fep->napi);
+ 		netif_tx_lock_bh(ndev);
+ 		fec_restart(ndev);
+-		netif_wake_queue(ndev);
++		netif_tx_wake_all_queues(ndev);
+ 		netif_tx_unlock_bh(ndev);
+ 		napi_enable(&fep->napi);
+ 	}
 -- 
 2.17.1
 
