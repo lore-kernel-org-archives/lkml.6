@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCF9C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19406C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DB33205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5178205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:35:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0YjjH8L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DB33205F4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pxwlz+UZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5178205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeJPMBF (ORCPT
+        id S1728289AbeJPMXq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:01:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47814 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:23:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbeJPMBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:03 -0400
+        id S1727772AbeJPMBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A99D22147C;
-        Tue, 16 Oct 2018 04:12:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A7CB214C3;
+        Tue, 16 Oct 2018 04:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663161;
-        bh=U6taEyCAQrI++pLQ+VLrBJ2/MBGiV1ob0aFlBCWKyBI=;
+        s=default; t=1539663162;
+        bh=ce0VMcgALMtMRJFnoLQJxD1iK5FI4+NFV/r/SvxfQYo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k0YjjH8L7wBQY4ps3y/cJIJZOMv/ib8NvhrNGO/2r7RH8V9CiFalXODeHXXU0VR/Z
-         PcnFa4BwQclBp3TVzt5rLfVZqKS4TC1OGTfUNLFBfoc+u3AiynD/VJwJF97k+LGhH9
-         CrYv1VbCQqoeEAvKvDj0XAziErhuiY8O32eYNxoM=
+        b=Pxwlz+UZVECm3hpOd8v2QL2R/sjvMn7TRGuteJjQk/4qYWgnZAFH19fp76BjLFCfw
+         ZAYTiBvc9a+duiLz5PnV2l0LThcOa1EXBMRUnx4n0vMBDgrxgtnwHjuD1S9Cm9doKH
+         NXn9RIzKVMReMzVDqWrJBfrPe92BFJA0CgyHHgrc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Steve Capper <steve.capper@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 018/100] arm64: hugetlb: Fix handling of young ptes
-Date:   Tue, 16 Oct 2018 00:10:59 -0400
-Message-Id: <20181016041221.135528-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 020/100] net: macb: Clean 64b dma addresses if they are not detected
+Date:   Tue, 16 Oct 2018 00:11:01 -0400
+Message-Id: <20181016041221.135528-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -53,63 +53,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Capper <steve.capper@arm.com>
+From: Michal Simek <michal.simek@xilinx.com>
 
-[ Upstream commit 469ed9d823b7d240d6b9574f061ded7c3834c167 ]
+[ Upstream commit e1e5d8a9fe737d94ccc0ccbaf0c97f69a8f3e000 ]
 
-In the contiguous bit hugetlb break-before-make code we assume that all
-hugetlb pages are young.
+Clear ADDR64 dma bit in DMACFG register in case that HW_DMA_CAP_64B is
+not detected on 64bit system.
+The issue was observed when bootloader(u-boot) does not check macb
+feature at DCFG6 register (DAW64_OFFSET) and enabling 64bit dma support
+by default. Then macb driver is reading DMACFG register back and only
+adding 64bit dma configuration but not cleaning it out.
 
-In fact, remove_migration_pte is able to place an old hugetlb pte so
-this assumption is not valid.
-
-This patch fixes the contiguous hugetlb scanning code to preserve young
-ptes.
-
-Fixes: d8bdcff28764 ("arm64: hugetlb: Add break-before-make logic for contiguous entries")
-Signed-off-by: Steve Capper <steve.capper@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/mm/hugetlbpage.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/cadence/macb_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index 192b3ba07075..f85be2f8b140 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -117,11 +117,14 @@ static pte_t get_clear_flush(struct mm_struct *mm,
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index c4d7479938e2..c11bbf143544 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -2089,6 +2089,7 @@ static void macb_configure_dma(struct macb *bp)
+ 		else
+ 			dmacfg &= ~GEM_BIT(TXCOEN);
  
- 		/*
- 		 * If HW_AFDBM is enabled, then the HW could turn on
--		 * the dirty bit for any page in the set, so check
--		 * them all.  All hugetlb entries are already young.
-+		 * the dirty or accessed bit for any page in the set,
-+		 * so check them all.
- 		 */
- 		if (pte_dirty(pte))
- 			orig_pte = pte_mkdirty(orig_pte);
-+
-+		if (pte_young(pte))
-+			orig_pte = pte_mkyoung(orig_pte);
- 	}
- 
- 	if (valid) {
-@@ -340,10 +343,13 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 	if (!pte_same(orig_pte, pte))
- 		changed = 1;
- 
--	/* Make sure we don't lose the dirty state */
-+	/* Make sure we don't lose the dirty or young state */
- 	if (pte_dirty(orig_pte))
- 		pte = pte_mkdirty(pte);
- 
-+	if (pte_young(orig_pte))
-+		pte = pte_mkyoung(pte);
-+
- 	hugeprot = pte_pgprot(pte);
- 	for (i = 0; i < ncontig; i++, ptep++, addr += pgsize, pfn += dpfn)
- 		set_pte_at(vma->vm_mm, addr, ptep, pfn_pte(pfn, hugeprot));
++		dmacfg &= ~GEM_BIT(ADDR64);
+ #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+ 		if (bp->hw_dma_cap & HW_DMA_CAP_64B)
+ 			dmacfg |= GEM_BIT(ADDR64);
 -- 
 2.17.1
 
