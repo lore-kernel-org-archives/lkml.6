@@ -2,94 +2,127 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 185E4C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCCCC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1F372086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:55:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UdJ5Eggf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XiMqsblu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F372086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id DFE342086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:57:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE342086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727292AbeJPXq1 (ORCPT
+        id S1727175AbeJPXsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 19:46:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38592 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbeJPXq1 (ORCPT
+        Tue, 16 Oct 2018 19:48:19 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:34057 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbeJPXsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:46:27 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 503E761371; Tue, 16 Oct 2018 15:55:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539705322;
-        bh=HwANtpuqMIdsyUS4oA2YYWn7x6qZYsPoJD2MJ3yp3cE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UdJ5EggfSjZFR2lfZ4rH/Z43v0Mv8Zy0kOl8HHw9Bpbsdig1JY8cfM8AAGDo/AB+K
-         WjlwOAhnr/DZ2WKBXdoAHy7mzEcWASggHTngrgfHyuFRAshJd2+B4DZvyOjO2cGvjQ
-         T6FQKAayJ6Y477dK52o+6FuZ/Xv3qdUoLV7EVJYo=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 6762761330;
-        Tue, 16 Oct 2018 15:55:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539705319;
-        bh=HwANtpuqMIdsyUS4oA2YYWn7x6qZYsPoJD2MJ3yp3cE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XiMqsbluXzRayWXq4yhtduwlqM4Fx2hePUHu5OMmJLD1C4003uSVBoZThPzpMNnZL
-         b6Gj846bE5oyLhOiCgZvtpOf8oQEb8r4Vz9mghRi7e8XMysBNwTU0cAoA74eH/yE8z
-         UfXmRLQZxEeX+a0T/GTI9lZe6jyjofdXY4oRWgeE=
+        Tue, 16 Oct 2018 19:48:19 -0400
+Received: from [192.168.178.69] ([109.104.35.93]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 0MTsu0-1g3kX32pF2-00QRHK; Tue, 16 Oct 2018 17:56:49 +0200
+Received: from [192.168.178.69] ([109.104.35.93]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 0MTsu0-1g3kX32pF2-00QRHK; Tue, 16 Oct 2018 17:56:49 +0200
+Subject: Re: [PATCH 6/9] ASoC: dt-bindings: bcm2835-rpi: add onboard audio
+ bindings
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        gregkh@linuxfoundation.org
+Cc:     eric@anholt.net, linux-rpi-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, tiwai@suse.de
+References: <20181016150228.16994-1-nsaenzjulienne@suse.de>
+ <20181016150228.16994-7-nsaenzjulienne@suse.de>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <4039d99c-5e57-c9d3-3af5-bc160e1adb57@i2se.com>
+Date:   Tue, 16 Oct 2018 17:56:56 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20181016150228.16994-7-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 16 Oct 2018 21:25:19 +0530
-From:   Vikash Garodia <vgarodia@codeaurora.org>
-To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
-        mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, acourbot@chromium.org
-Subject: Re: [PATCH v11 0/5] Venus updates - PIL
-In-Reply-To: <1539005572-803-1-git-send-email-vgarodia@codeaurora.org>
-References: <1539005572-803-1-git-send-email-vgarodia@codeaurora.org>
-Message-ID: <fb81c8b7946898bc61e9b8c793c74184@codeaurora.org>
-X-Sender: vgarodia@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Language: de-DE
+X-Provags-ID: V03:K1:M8h8wd97nUDPG6AbvpytvBnYc3Oydrxl2/VfMosyEdFa8XYLf3T
+ 9wG3DWq7unxfvGWt10iS0mD25IIYh3BR6U8z0P1UxI2UjYs3Ss342anzJxcYY4UFEWcs5qD
+ IrAArC3owakm/3QFuMS1bGVLEs8GtE/TbiYRj9ex69l7h0zI8NRcoUPjDngFshIRGwEBUvE
+ Hv2hqTBgTdbk5tAhsG76A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3bFtnh4aac0=:DvK9tKRdsWdNTo3VxWwdUl
+ hPqGWRDfVhabzVOplSu2pQOWuvYI7EfFQRMj9D8llPoC8Hl/Gt6jC641ndCCmDXRrgaS062Sy
+ YkVtY6oLKCoTcpzna1Ww/BSsn5G88NdYDLjVCwQi3/HrMUtVXXJ7drok030xnrwBZUpI1Kjbh
+ jCs00AdgAVOtXp3pjhyM+l6tf3ZbPHA50DedI3Ugb3lC0fdCd1xr+LCDNB7un6uwygMNSLb2s
+ m0B9hHZXFzV2y2ri8fOHQmHJUToUNaUTGdCQ04b8vIUTIkbV1ysYK1THvpgRiJ/P13S20mo7d
+ g9MB4rEGXA2czYUDbTMXJSz/xgDvQt7ntmT8T27lgV74COQ9PkI7u443AoPoOpC5WymiMg/sT
+ ePzU87Fv5QwaMH059SAAM4FTrStOlqqV1+DOAyh+OKNikYcnZ7uvDyFfiMUx1xEmGGYbUf+tI
+ d+b14heTdsdZy5WeU2IdDR5ExpTpuE0jsUXGmfb9wSd5JSgY8LAJcvvw0V8ZnRDFHY9kIQpgZ
+ O7Y1WEVibJv4N156vQswbiKVEyPcASzn5W9JG6dwo1AyvANJtJ94Vi1tF6kyw8XMnn06IFpye
+ fak60xCZsRi6TZ2rycdkxfCsRcl0iqW9a7I+IH4b08OgATGGa/nNb3kX/z3895F7HUlyl3uiv
+ t8Sx0W6fJ3KD9d3vrt3h2Y1xJ/gkzBZQJIsqhK3W1a0mULaGz7dKLB7i8xPDahwLcAXerExaa
+ 2UKOBM86q26Ga8Sd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-<A Friendly reminder for review>
+Hi Nicolas,
 
-On 2018-10-08 19:02, Vikash Garodia wrote:
-> This version of the series
-> * extends the description of firmware subnode in documentation.
-> * renames the flag suggesting the presence of tz and update code
->   accordingly.
-> 
-> Stanimir Varbanov (1):
->   venus: firmware: register separate platform_device for firmware 
-> loader
-> 
-> Vikash Garodia (4):
->   venus: firmware: add routine to reset ARM9
->   venus: firmware: move load firmware in a separate function
->   venus: firmware: add no TZ boot and shutdown routine
->   dt-bindings: media: Document bindings for venus firmware device
-> 
->  .../devicetree/bindings/media/qcom,venus.txt       |  14 +-
->  drivers/media/platform/qcom/venus/core.c           |  24 ++-
->  drivers/media/platform/qcom/venus/core.h           |   6 +
->  drivers/media/platform/qcom/venus/firmware.c       | 235 
-> +++++++++++++++++++--
->  drivers/media/platform/qcom/venus/firmware.h       |  17 +-
->  drivers/media/platform/qcom/venus/hfi_venus.c      |  13 +-
->  drivers/media/platform/qcom/venus/hfi_venus_io.h   |   8 +
->  7 files changed, 274 insertions(+), 43 deletions(-)
+Am 16.10.2018 um 17:02 schrieb Nicolas Saenz Julienne:
+> Adds a device tree binding file for Raspberry pi's Headphones and HDMI
+> audio output devices.
+>
+> Based on raspberry's downstream kernel implementation:
+> https://github.com/raspberrypi/linux/blob/rpi-4.14.y/arch/arm/boot/dts/bcm2708-rpi.dtsi
+>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+>  .../bindings/sound/brcm,bcm2835-audio.txt         | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/brcm,bcm2835-audio.txt
+>
+> diff --git a/Documentation/devicetree/bindings/sound/brcm,bcm2835-audio.txt b/Documentation/devicetree/bindings/sound/brcm,bcm2835-audio.txt
+> new file mode 100644
+> index 000000000000..ee6fa085aaa9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/brcm,bcm2835-audio.txt
+> @@ -0,0 +1,15 @@
+> +Broadcom BCM283x audio device
+> +
+> +Required properties:
+> +
+> +- compatible: Should be "brcm,bcm2835-audio"
+> +- brcm,pwm-channels: number of PWM channels, they are behind RPi's Video Core
+> +		     IV, not actual Linux PWM devices.
+> +
+> +Example:
+> +
+> +audio: audio {
+> +	compatible = "brcm,bcm2835-audio";
+> +	brcm,pwm-channels = <8>;
+> +};
+> +
+
+i apologize but it seems to me that the TODO mentioned in the cover
+letter isn't update to date anymore.
+
+Phil Elwell posted an important bugfix for vchiq before [1], but only
+the driver part has been applied yet. After applying the DT changes i'm
+not sure if it still works.
+
+AFAIK the audio driver uses VCHIQ as a software interface and the
+binding doesn't describe the real hardware.
+
+Since the camera driver will be registered as a platform device [2], i
+prefer this way for the audio driver, too.
+
+I'm actually working on this here [3] (currently only compile tested).
+
+Stefan
+
+[1] - https://patchwork.ozlabs.org/cover/970434/
+[2] - https://lore.kernel.org/patchwork/patch/904411/
+[3] - https://github.com/anholt/linux/commits/bcm2835-audio
