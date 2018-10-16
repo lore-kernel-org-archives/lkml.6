@@ -2,170 +2,113 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7B1C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9F8C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1140B2083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:53:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1140B2083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A8A212086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:53:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="YbRLJotT";
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="YbRLJotT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A212086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbeJPQmn (ORCPT
+        id S1727449AbeJPQnK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 12:42:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60544 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726541AbeJPQmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 12:42:42 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 025B71766D2;
-        Tue, 16 Oct 2018 08:53:20 +0000 (UTC)
-Received: from [10.72.12.35] (ovpn-12-35.pek2.redhat.com [10.72.12.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 88A5C4C47F;
-        Tue, 16 Oct 2018 08:53:14 +0000 (UTC)
-Subject: Re: [PATCH] virtio_net: enable tx after resuming from suspend
-To:     ake <ake@igel.co.jp>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181011075127.2608-1-ake@igel.co.jp>
- <dd530053-efab-b661-3423-1faaab8fb12f@redhat.com>
- <7e87b140-79ae-c79e-40ed-dc76b38eeae4@igel.co.jp>
- <a156fd7e-e36e-e4e9-c240-3117ecc5b1b4@redhat.com>
- <b294cbba-24a0-939d-98e8-d1483e3688a1@igel.co.jp>
- <4918ed7c-4c63-6f19-530b-8e16b0c496d4@redhat.com>
- <1aff0ad2-9d63-6d38-6b25-5c681eafdfb2@igel.co.jp>
- <e2baaccc-4ead-e61d-fc1e-d79435012e1c@igel.co.jp>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <024619cc-9b1b-dac2-18cc-5d757a76b1e3@redhat.com>
-Date:   Tue, 16 Oct 2018 16:53:12 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 16 Oct 2018 12:43:10 -0400
+Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:36995 "EHLO
+        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726541AbeJPQnK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 12:43:10 -0400
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id C4F6721791;
+        Tue, 16 Oct 2018 11:53:44 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id ZxjR3eIYjD-ril4DhOI;
+        Tue, 16 Oct 2018 11:53:44 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1539680024; bh=4hAh7JEoaIX8K3feQAchPgL9Ih9RzxYXRxnhAu/DNKw=;
+        h=Subject:From:To:Date:Message-ID;
+        b=YbRLJotTyDpM+GMChONwGz1v9Sx2AiwGQ4nmnrYbZsSJ0LZN2fzrk9cS1jIvxxrXQ
+         z21xukjqlkoBLxObfPGQUU39w77drXjPKqEviIU/IXhkhnJ/Kz9F0N25Y4ksOH/WU8
+         thg4MshbQ9auWDEzS9G6bycYi6dJ7kA15g7Ffc5s=
+Received: from dynamic-vpn.dhcp.yndx.net (dynamic-vpn.dhcp.yndx.net [2a02:6b8:b010:d005::1:29])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id AfYdSvkeAI-riWaLQ6Q;
+        Tue, 16 Oct 2018 11:53:44 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1539680024; bh=4hAh7JEoaIX8K3feQAchPgL9Ih9RzxYXRxnhAu/DNKw=;
+        h=Subject:From:To:Date:Message-ID;
+        b=YbRLJotTyDpM+GMChONwGz1v9Sx2AiwGQ4nmnrYbZsSJ0LZN2fzrk9cS1jIvxxrXQ
+         z21xukjqlkoBLxObfPGQUU39w77drXjPKqEviIU/IXhkhnJ/Kz9F0N25Y4ksOH/WU8
+         thg4MshbQ9auWDEzS9G6bycYi6dJ7kA15g7Ffc5s=
+Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: [PATCH] block: fix comments about choosing request list
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
+Date:   Tue, 16 Oct 2018 11:53:41 +0300
+Message-ID: <153968002141.396220.12979757828960821275.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <e2baaccc-4ead-e61d-fc1e-d79435012e1c@igel.co.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 16 Oct 2018 08:53:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Request list is determined by blk_get_rl() and without queue_lock.
 
-On 2018/10/15 下午6:08, ake wrote:
->
-> On 2018年10月12日 18:18, ake wrote:
->>
->> On 2018年10月12日 17:23, Jason Wang wrote:
->>>
->>> On 2018年10月12日 12:30, ake wrote:
->>>> On 2018年10月11日 22:06, Jason Wang wrote:
->>>>> On 2018年10月11日 18:22, ake wrote:
->>>>>> On 2018年10月11日 18:44, Jason Wang wrote:
->>>>>>> On 2018年10月11日 15:51, Ake Koomsin wrote:
->>>>>>>> commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
->>>>>>>> disabled the virtio tx before going to suspend to avoid a use after
->>>>>>>> free.
->>>>>>>> However, after resuming, it causes the virtio_net device to lose its
->>>>>>>> network connectivity.
->>>>>>>>
->>>>>>>> To solve the issue, we need to enable tx after resuming.
->>>>>>>>
->>>>>>>> Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during
->>>>>>>> reset")
->>>>>>>> Signed-off-by: Ake Koomsin <ake@igel.co.jp>
->>>>>>>> ---
->>>>>>>>      drivers/net/virtio_net.c | 1 +
->>>>>>>>      1 file changed, 1 insertion(+)
->>>>>>>>
->>>>>>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->>>>>>>> index dab504ec5e50..3453d80f5f81 100644
->>>>>>>> --- a/drivers/net/virtio_net.c
->>>>>>>> +++ b/drivers/net/virtio_net.c
->>>>>>>> @@ -2256,6 +2256,7 @@ static int virtnet_restore_up(struct
->>>>>>>> virtio_device *vdev)
->>>>>>>>          }
->>>>>>>>            netif_device_attach(vi->dev);
->>>>>>>> +    netif_start_queue(vi->dev);
->>>>>>> I believe this is duplicated with netif_tx_wake_all_queues() in
->>>>>>> netif_device_attach() above?
->>>>>> Thank you for your review.
->>>>>>
->>>>>> If both netif_tx_wake_all_queues() and netif_start_queue() result in
->>>>>> clearing __QUEUE_STATE_DRV_XOFF, then is it possible that some
->>>>>> conditions in netif_device_attach() is not satisfied?
->>>>> Yes, maybe. One case I can see now is when the device is down, in this
->>>>> case netif_device_attach() won't try to wakeup the queue.
->>>>>
->>>>>>     Without
->>>>>> netif_start_queue(), the virtio_net device does not resume properly
->>>>>> after waking up.
->>>>> How do you trigger the issue? Just do suspend/resume?
->>>> Yes, simply suspend and resume.
->>>>
->>>> Here is how I trigger the issue:
->>>>
->>>> 1) Start the Virtual Machine Manager GUI program.
->>>> 2) Create a guest Linux OS. Make sure that the guest OS kernel is
->>>>      >= 4.12. Make sure that it uses virtio_net as its network device.
->>>>      In addition, make sure that the video adapter is VGA. Otherwise,
->>>>      waking up with the virtual power button does not work.
->>>> 3) After installing the guest OS, log in, and test the network
->>>>      connectivity by ping the host machine.
->>>> 4) Suspend. After this, the screen is blank.
->>>> 5) Resume by hitting the virtual power button. The login screen
->>>>      appears again.
->>>> 6) Log in again. The guest loses its network connection.
->>>>
->>>> In my test:
->>>> Guest: Ubuntu 16.04/18.04 with kernel 4.15.0-36-generic
->>>> Host: Ubuntu 16.04 with kernel 4.15.0-36-generic/4.4.0-137-generic
->>> I can not reproduce this issue if virtio-net interface is up in guest
->>> before the suspend. I'm using net-next.git and qemu master. But I do
->>> reproduce when virtio-net interface is down in guest before suspend,
->>> after resume, even if I make it up, the network is still lost.
->>>
->>> I think the interface is up in your case, but please confirm this.
->> If you mean the interface state before I hit the suspend button,
->> the answer is yes. The interface is up before I suspend the guest
->> machine.
->>
->> Note that my current QEMU version is QEMU emulator version 2.5.0
->> (Debian 1:2.5+dfsg-5ubuntu10.32).
->>
->> I will try with net-next.git and qemu master later and see if I can
->> reproduce the issue.
-> Update. I tried with net-next and qemu master. Interestingly, the result
-> is different from yours. The network is lost even if the virtio_net
-> interface is up before suspending.
->
-> Host: Ubuntu 16.04 with net-next kernel (default configuration)
-> Guest: Ubuntu 18.04 with net-next kernel (default configuration)
-> Qemu: master
-> Qemu command:
-> qemu-system-x86_64 -cpu host -m 2048 -enable-kvm \
-> -bios /usr/share/OVMF/OVMF_CODE.fd \
-> -drive file=/var/lib/libvirt/images/virtio_test.qcow2,if=virtio \
-> -netdev user,id=hostnet0 \
-> -device virtio-net-pci,netdev=hostnet0 \
-> -device VGA,id=video0,vgamem_mb=16 \
-> -global PIIX4_PM.disable_s3=1 \
-> -global PIIX4_PM.disable_s4=1 -monitor stdio
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ include/linux/blk-cgroup.h |    8 ++++----
+ include/linux/blkdev.h     |    9 +++++----
+ 2 files changed, 9 insertions(+), 8 deletions(-)
 
-
-Interesting, just notice you're using userspace network. To isolate the 
-issue, can you retry with e.g tap or e1000 to make sure it's not a fault 
-of slirp or virito-net?
-
-Thanks
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index 6d766a19f2bb..dbff5a25f810 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -520,10 +520,10 @@ static inline void blkg_put(struct blkcg_gq *blkg)
+  * @q: request_queue of interest
+  * @bio: bio which will be attached to the allocated request (may be %NULL)
+  *
+- * The caller wants to allocate a request from @q to use for @bio.  Find
+- * the request_list to use and obtain a reference on it.  Should be called
+- * under queue_lock.  This function is guaranteed to return non-%NULL
+- * request_list.
++ * The caller wants to allocate a request from @q to use for @bio.
++ * Find the request_list to use and obtain a reference on it.
++ *
++ * This function is guaranteed to return non-%NULL request_list.
+  */
+ static inline struct request_list *blk_get_rl(struct request_queue *q,
+ 					      struct bio *bio)
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 6980014357d4..b5fec0bc72f2 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -444,10 +444,11 @@ struct request_queue {
+ 	struct rq_qos		*rq_qos;
+ 
+ 	/*
+-	 * If blkcg is not used, @q->root_rl serves all requests.  If blkcg
+-	 * is used, root blkg allocates from @q->root_rl and all other
+-	 * blkgs from their own blkg->rl.  Which one to use should be
+-	 * determined using bio_request_list().
++	 * If blkcg is not used, @q->root_rl serves all requests.
++	 * If blkcg is used, root blkg allocates from @q->root_rl and
++	 * all other blkgs from their own blkg->rl.
++	 *
++	 * Which one to use should be determined using blk_get_rl().
+ 	 */
+ 	struct request_list	root_rl;
+ 
 
