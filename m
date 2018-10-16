@@ -2,116 +2,178 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D9CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64303C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5312F2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:53:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="lkNblePg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5312F2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id B70422086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:53:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B70422086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbeJPXos (ORCPT
+        id S1727262AbeJPXo7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 19:44:48 -0400
-Received: from imap.thunk.org ([74.207.234.97]:49258 "EHLO imap.thunk.org"
+        Tue, 16 Oct 2018 19:44:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:62883 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726986AbeJPXos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:44:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=7lyAPeRoBMlDxeDCiuP47JCtTdGPmc8m+et3nnv+BSc=; b=lkNblePgSczrWU1KXcgypsP2Ig
-        YNVu8TCY4pV4WJcmyQ74YJkH9cNBzvPQrpaL5rZce7ENraKyQicHz4OR1xXToFLWOBl2Vl+AiLSnZ
-        VgsAv2gqEtYiU8+Bb+1MILtJKa5vzrYMUQgubh8eQFHCch0Fbd/oi7yy7iD4rkxx3PYI=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gCRfC-0005zO-DX; Tue, 16 Oct 2018 15:53:42 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 536CD7A4986; Tue, 16 Oct 2018 11:53:41 -0400 (EDT)
-Date:   Tue, 16 Oct 2018 11:53:41 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+85da7ac734f7ba432ee4@syzkaller.appspotmail.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: WARNING in ext4_invalidatepage
-Message-ID: <20181016155341.GF8983@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+85da7ac734f7ba432ee4@syzkaller.appspotmail.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <0000000000002753c60577b9f707@google.com>
- <CACT4Y+bdR3ch9q_FCND4YmqjunYBVbEk3n167DT0r0GqzVKL-g@mail.gmail.com>
- <20181009013425.GB3369@thunk.org>
- <CACT4Y+a08tYAgXKEiTO+A-RDrSNk-RdhDxvGCM6bAbk5bckH6A@mail.gmail.com>
- <20181015180821.GE8983@thunk.org>
- <CACT4Y+bs72L4GKF7K6zHHqDGfURymzUke7UT6CKtakLWu+f94g@mail.gmail.com>
+        id S1726986AbeJPXo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 19:44:59 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 14820C037F90;
+        Tue, 16 Oct 2018 15:53:55 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0626E7A7DA;
+        Tue, 16 Oct 2018 15:53:53 +0000 (UTC)
+Subject: Re: [PATCH v1 2/2] sysctl: handle overflow for file-max
+To:     Christian Brauner <christian@brauner.io>
+Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
+        ebiederm@xmission.com, mcgrof@kernel.org,
+        akpm@linux-foundation.org, joe.lawrence@redhat.com,
+        linux@dominikbrodowski.net, viro@zeniv.linux.org.uk
+References: <20181015105544.4395-1-christian@brauner.io>
+ <20181015105544.4395-3-christian@brauner.io>
+ <22319ca1-6dab-fe36-40d5-9c88f7a175ee@redhat.com>
+ <20181016152100.zg2pmyk6puc5qsr5@brauner.io>
+ <11e172de-0953-2c46-c0f0-72c42ae9a910@redhat.com>
+ <20181016152955.vcjtzcx5rzlxeovh@brauner.io>
+ <4aa6ff1a-28c7-db85-1fea-fa0e4fc1ef2e@redhat.com>
+ <20181016154040.znumdxkhaudewlku@brauner.io>
+ <3b0dd3ae-4362-4996-eb86-99ff92659a59@redhat.com>
+ <20181016154729.sjw2atqxdo6yidh7@brauner.io>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <b511f438-e8e3-f2bb-d225-83f39d513631@redhat.com>
+Date:   Tue, 16 Oct 2018 11:53:53 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+bs72L4GKF7K6zHHqDGfURymzUke7UT6CKtakLWu+f94g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20181016154729.sjw2atqxdo6yidh7@brauner.io>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 16 Oct 2018 15:53:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 04:02:07PM +0200, Dmitry Vyukov wrote:
-> I am not sure how exactly this should be classified. To significant
-> degree these "$FOO" discriminations are informational and only really
-> affect the data format passed in.
+On 10/16/2018 11:47 AM, Christian Brauner wrote:
+> On Tue, Oct 16, 2018 at 11:44:40AM -0400, Waiman Long wrote:
+>> On 10/16/2018 11:40 AM, Christian Brauner wrote:
+>>> On Tue, Oct 16, 2018 at 11:34:07AM -0400, Waiman Long wrote:
+>>>> On 10/16/2018 11:29 AM, Christian Brauner wrote:
+>>>>> On Tue, Oct 16, 2018 at 11:25:42AM -0400, Waiman Long wrote:
+>>>>>> On 10/16/2018 11:21 AM, Christian Brauner wrote:
+>>>>>>> On Tue, Oct 16, 2018 at 11:13:28AM -0400, Waiman Long wrote:
+>>>>>>>> On 10/15/2018 06:55 AM, Christian Brauner wrote:
+>>>>>>>>> Currently, when writing
+>>>>>>>>>
+>>>>>>>>> echo 18446744073709551616 > /proc/sys/fs/file-max
+>>>>>>>>>
+>>>>>>>>> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
+>>>>>>>>> crashes the system.
+>>>>>>>>> This commit explicitly caps the value for file-max to ULONG_MAX.
+>>>>>>>>>
+>>>>>>>>> Note, this isn't technically necessary since proc_get_long() will already
+>>>>>>>>> return ULONG_MAX. However, two reason why we still should do this:
+>>>>>>>>> 1. it makes it explicit what the upper bound of file-max is instead of
+>>>>>>>>>    making readers of the code infer it from proc_get_long() themselves
+>>>>>>>>> 2. other tunebles than file-max may want to set a lower max value than
+>>>>>>>>>    ULONG_MAX and we need to enable __do_proc_doulongvec_minmax() to handle
+>>>>>>>>>    such cases too
+>>>>>>>>>
+>>>>>>>>> Cc: Kees Cook <keescook@chromium.org>
+>>>>>>>>> Signed-off-by: Christian Brauner <christian@brauner.io>
+>>>>>>>>> ---
+>>>>>>>>> v0->v1:
+>>>>>>>>> - if max value is < than ULONG_MAX use max as upper bound
+>>>>>>>>> - (Dominik) remove double "the" from commit message
+>>>>>>>>> ---
+>>>>>>>>>  kernel/sysctl.c | 4 ++++
+>>>>>>>>>  1 file changed, 4 insertions(+)
+>>>>>>>>>
+>>>>>>>>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+>>>>>>>>> index 97551eb42946..226d4eaf4b0e 100644
+>>>>>>>>> --- a/kernel/sysctl.c
+>>>>>>>>> +++ b/kernel/sysctl.c
+>>>>>>>>> @@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
+>>>>>>>>>  static int __maybe_unused two = 2;
+>>>>>>>>>  static int __maybe_unused four = 4;
+>>>>>>>>>  static unsigned long one_ul = 1;
+>>>>>>>>> +static unsigned long ulong_max = ULONG_MAX;
+>>>>>>>>>  static int one_hundred = 100;
+>>>>>>>>>  static int one_thousand = 1000;
+>>>>>>>>>  #ifdef CONFIG_PRINTK
+>>>>>>>>> @@ -1696,6 +1697,7 @@ static struct ctl_table fs_table[] = {
+>>>>>>>>>  		.maxlen		= sizeof(files_stat.max_files),
+>>>>>>>>>  		.mode		= 0644,
+>>>>>>>>>  		.proc_handler	= proc_doulongvec_minmax,
+>>>>>>>>> +		.extra2		= &ulong_max,
+>>>>>>>> What is the point of having a maximum value of ULONG_MAX anyway? No
+>>>>>>>> value you can put into a ulong type can be bigger than that.
+>>>>>>> This is changed in the new code to LONG_MAX. See the full thread for
+>>>>>>> context. There's also an additional explantion in the commit message.
+>>>>>>>
+>>>>>>>>>  	},
+>>>>>>>>>  	{
+>>>>>>>>>  		.procname	= "nr_open",
+>>>>>>>>> @@ -2795,6 +2797,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+>>>>>>>>>  				break;
+>>>>>>>>>  			if (neg)
+>>>>>>>>>  				continue;
+>>>>>>>>> +			if (max && val > *max)
+>>>>>>>>> +				val = *max;
+>>>>>>>>>  			val = convmul * val / convdiv;
+>>>>>>>>>  			if ((min && val < *min) || (max && val > *max))
+>>>>>>>>>  				continue;
+>>>>>>>> This does introduce a change in behavior. Previously the out-of-bound
+>>>>>>>> value is ignored, now it is capped at its maximum. This is a
+>>>>>>>> user-visible change.
+>>>>>>> Not completely true though. Try
+>>>>>>>
+>>>>>>> echo 18446744073709551616 > /proc/sys/fs/file-max
+>>>>>>>
+>>>>>>> on a system you find acceptable loosing.
+>>>>>>> So this is an acceptable user-visible change I'd say. But I'm open to
+>>>>>>> other suggestions.
+>>>>>> I am not saying this is unacceptable. I just say this is a user-visible
+>>>>>> change and so should be documented somehow. BTW, you cap the max value,
+>>>>> Sure, I'll update linux manpages and I can CC stable on the next round.
+>>>>>
+>>>>>> but not the min value. So there is inconsistency. I would say you either
+>>>>>> do both, or none of them.
+>>>>> The min value is 0. I don't think it needs to be set explicitly. I just
+>>>>> kept the max value because it is != ULONG_MAX but LONG_MAX for file-max.
+>>>> I think you are making the change with just one use case in mind. This
+>>>> is a generic function that can be used by many different callers. So any
+>>>> change you make has to be applicable to all use cases. You just can't
+>>>> assume min is always 0 in all the other use cases.
+>>> So, any caller that calls {do_}proc_doulongvec_minmax() must want an
+>>> unsigned long lest they are calling the wrong function.
+>>> The smallest value for an unsigned long is 0. So if any caller wants to
+>>> get into a situation where the caller needs to be capped they need to be
+>>> able to set the value to lower than 0 which they can't since they are
+>>> requesting an unsigned. So I'm not sure it makes sense.
+>>>
+>>> Christian
+>> There may be use cases where the developer may want a min value that is
+>> bigger than 0. As I said, you can't just make an assumption here.
+> Sorry, I'm not following your argument anymore. Why exactly is this
+> function not already handling this case and what exactly does break with
+> my changs?  And what exactly do we gain from setting file-max to extra1
+> = 0?
 
-The problem is that putting something which is simply and plainly
-*wrong* is going to be actively misleading.  You *have* to know what
-ioctl you are trying to be trying to execute because some of them
-require input data structures that you have to fill in, or that it
-requires a file descriptor as opposed to an integer or a pointer to a
-struct.  I assume you're not just picking ioctl numbers purely at
-random, right?
+OK, I am not talking about the file-max case. Your patch caps the
+maximum, but not the minimum. This is inconsistent as users will see
+different behavior depending on whether the input value is bigger than
+the maximum or smaller than the minimum.
 
-So I assume you had a table that said, this ioctl, 0x6611 takes a file
-descriptor, and has thus-and-so-a-name.  If that name is wrong, I'd
-say it's pretty clearly a bug, right?
-
-(I'll again gently point out that a tiny amount of work in making
-syzkaller a tiny bit more developer toil would make it much more
-effective, since all of this extra developer toil --- now I know I
-can't even trust the $FOO discriminators to be right --- makes
-syzkaller less scalable by pursuading developers that it's not
-worthwhile to pay attention...)
-
-> > The patch I referenced in my previous e-mail protects against
-> > additional scenarios where someone might be trying to punch a whole
-> > into a file that is being swapped into the bootloader ioctl.  This
-> > particular ioctl isn't yet being used by anyone, so it had some other
-> > issues as well, such as not interacting well with inline_data-enabled
-> > file systems --- not that any bootloader would be small enough that it
-> > would fit in an inline_data inode, but we're basically proofing the
-> > code against a malicious (or buggy) root-privileged program... such as
-> > syzbot.  :-)
-> 
-> ... or paving the way to opening all of this to non-root users. Why
-> not if not bugs? ;)
-
-The intent behind this particular ioctl is used to install a boot
-loader.  It will *never* be opened to non-root users.  It doesn't even
-make sense to make it available to pseudo-containers-root users.  :-)
-
-							- Ted
+Cheers,
+Longman
