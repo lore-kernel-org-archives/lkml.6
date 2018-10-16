@@ -2,238 +2,118 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2E6C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43667C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 953EB2145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03E6F2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:42:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="f8UEHrGy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953EB2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Krg6BOaW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03E6F2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbeJQEdf (ORCPT
+        id S1727088AbeJQEeI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 00:33:35 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39306 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726168AbeJQEde (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 00:33:34 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r9-v6so11405141pgv.6
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 13:41:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cDAz38rqSWZEMZJsggvonncLFKvAtEhJAuUaJpMxy74=;
-        b=f8UEHrGyJpVqEfjGd92DNzTWyngG0PsMqmHuTU33P0HMwSw5+8gVwocR0AOynlbcE6
-         zuu0q8nGDnBBtCR1fSFUc6Z39L0eVwZBl6oAewbzQljt4lPz1VgwbAv6MzO/AG+Y9oLV
-         XlYt38KAKwPscpzb4yVsmKn/S8mo4ExBtbxdo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cDAz38rqSWZEMZJsggvonncLFKvAtEhJAuUaJpMxy74=;
-        b=Mv6X67VLUQXCoTrokTGG6FLtX+UBD3HjvL+l4Ak71bzQ9fEENwDxyjH4v7a+l4UgUD
-         b3e/PMkhGvAVD6HcJgg9Lrpo6Rm+9FcOrR3ZXcxkuC/Jj+2wrwcHfDfaB2xvnB8ja+NE
-         wmTjgGh9YQ++MT3iZEBgTjK4tuOnnGe3B+4sQQht6Xxfiet1UUIJu+//sIrOPvGfCEOi
-         WVXznN82IDFwYhsK7pVC80UUoKrdxZCJvJT9SwXLtpg1FeWOKQErqjFS1vlN15xtr8zO
-         DWbP9J4PAafQrh/hi9yRgqeuIThIoiUYrxZNXh5ftxryqX9Vaiuwll/AjEdx5Ji9L6Tp
-         882A==
-X-Gm-Message-State: ABuFfogeG+CpNBXFSpoMSbemt6NQpon3qGMkWT08+iGVjGdiUCIKQQHP
-        08FjlWhv7e8owiwTvzTzgxu3449+940=
-X-Google-Smtp-Source: ACcGV63G6A+Fj5JTMfhGalA1hvGtsBXUH4m+Qfp3J4VLM8FOVU/vplApu7Es6qbGCuy4EanIZM/KBw==
-X-Received: by 2002:a63:d917:: with SMTP id r23-v6mr22018718pgg.0.1539722484850;
-        Tue, 16 Oct 2018 13:41:24 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id c21-v6sm29034309pfe.93.2018.10.16.13.41.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 13:41:23 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 13:41:22 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Nikolay Borisov <nborisov@suse.com>, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH RFC] doc: rcu: remove obsolete (non-)requirement about
- disabling preemption
-Message-ID: <20181016204122.GA8176@joelaf.mtv.corp.google.com>
-References: <20181015021349.GB217384@joelaf.mtv.corp.google.com>
- <20181015023328.GP2674@linux.ibm.com>
- <20181015024758.GA227989@joelaf.mtv.corp.google.com>
- <5151da01-343b-bb37-353e-b6652ae530f5@suse.com>
- <20181015112112.GT2674@linux.ibm.com>
- <20181015193951.GA33528@joelaf.mtv.corp.google.com>
- <20181015195426.GD2674@linux.ibm.com>
- <20181015201556.GA43575@joelaf.mtv.corp.google.com>
- <20181015210856.GE2674@linux.ibm.com>
- <20181016112611.GA27405@linux.ibm.com>
+        Wed, 17 Oct 2018 00:34:08 -0400
+Received: from ozlabs.org ([203.11.71.1]:43499 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726168AbeJQEeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 00:34:08 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42ZS0N5lcXz9sCW;
+        Wed, 17 Oct 2018 07:41:56 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539722517;
+        bh=g9HCIoAOTTUZcKSB4RMXCijCR4QTPLIl6zKivyuQ5EU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Krg6BOaWGqxDAtyZSY1tgySEsR1OhcAACed8YkzKdFFYYXfCBXJ6EDCnd386gt7wj
+         YEye7aVWjbGu22jErBuSMZJfTWELf7VSyxUkONbL0lUi1WJtdwYPfofVkFIf/tNnQi
+         Sb6Y3SaHMD7dPdsfP8GLMdFmni8rIlRwI3NOKmKwAK9e/6e7JIb7zQr5DrCwXJtvkA
+         AsrNzS9TMQ+GURamtb1jDy0xIBPfl119RE1smEr6GWmbjKoFZTvu11BZXdL2Muajub
+         O8T8UyoCISJfkf2ebl2wPP7jVVPpqcBjuZ4+mWbDZM0osKevabV9pGxYaAfCgMuMhS
+         n5D9sLQTF6lSw==
+Date:   Wed, 17 Oct 2018 07:41:49 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        Rob Herring <robherring2@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for Oct 15
+Message-ID: <20181017074149.4372a1a0@canb.auug.org.au>
+In-Reply-To: <20181016133656.GA10925@rapoport-lnx>
+References: <20181015192546.15faf3a1@canb.auug.org.au>
+        <20181015182637.GA16445@roeck-us.net>
+        <20181016071240.3f62816d@canb.auug.org.au>
+        <20181016072439.42613abd@canb.auug.org.au>
+        <20181015151319.3a443f0421c20bd7ed055cb9@linux-foundation.org>
+        <20181016133656.GA10925@rapoport-lnx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016112611.GA27405@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/pb3eVjDhw/.Jnl_hv2MTcRM"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 04:26:11AM -0700, Paul E. McKenney wrote:
-> On Mon, Oct 15, 2018 at 02:08:56PM -0700, Paul E. McKenney wrote:
-> > On Mon, Oct 15, 2018 at 01:15:56PM -0700, Joel Fernandes wrote:
-> > > On Mon, Oct 15, 2018 at 12:54:26PM -0700, Paul E. McKenney wrote:
-> > > [...]
-> > > > > > In any case, please don't spin for milliseconds with preemption disabled.
-> > > > > > The real-time guys are unlikely to be happy with you if you do this!
-> > > > > 
-> > > > > Well just to clarify, I was just running Oleg's test which did this. This
-> > > > > test was mentioned in the original documentation that I deleted. Ofcourse I
-> > > > > would not dare do such a thing in production code :-D. I guess to Oleg's
-> > > > > defense, he did it to very that synchronize_rcu() was not blocked on
-> > > > > preempt-disable sections which was a different test.
-> > > > 
-> > > > Understood!  Just pointing out that RCU's tolerating a given action does
-> > > > not necessarily mean that it is a good idea to take that action.  ;-)
-> > > 
-> > > Makes sense :-) thanks.
-> > 
-> > Don't worry, that won't happen again.  ;-)
-> > 
-> > > > > > > > +		pr_crit("SPIN done!\n");
-> > > > > > > > +		preempt_enable();
-> > > > > > > > +		break;
-> > > > > > > > +	case 777:
-> > > > > > > > +		pr_crit("SYNC start\n");
-> > > > > > > > +		synchronize_rcu();
-> > > > > > > > +		pr_crit("SYNC done!\n");
-> > > > > > > 
-> > > > > > > But you are using the console printing infrastructure which is rather
-> > > > > > > heavyweight. Try replacing pr_* calls with trace_printk so that you
-> > > > > > > write to the lock-free ring buffer, this will reduce the noise from the
-> > > > > > > heavy console printing infrastructure.
-> > > > > > 
-> > > > > > And this might be a problem as well.
-> > > > > 
-> > > > > This was not the issue (or atleast not fully the issue) since I saw the same
-> > > > > thing with trace_printk. It was exactly what you said - which is the
-> > > > > excessively long preempt disabled times.
-> > > > 
-> > > > One approach would be to apply this patch against (say) v4.18, which
-> > > > does not have consolidated grace periods.  You might then be able to
-> > > > tell if the pr_crit() calls make any difference.
-> > > 
-> > > I could do that, yeah. But since the original problem went away due to
-> > > disabling preempts for a short while, I will move on and continue to focus on
-> > > updating other parts of the documenation. Just to mention I
-> > > brought this up because I thought its better to do that than not to, just
-> > > incase there is any lurking issue with the consolidation. Sorry if that ended
-> > > up with me being noisy.
-> > 
-> > Not a problem, no need to apologize!
-> 
-> Besides, digging through the code did point out a reasonable optimization.
-> In the common case, this would buy 100s of microseconds rather than
-> milliseconds, but it seems simple enough to be worthwhile.  Thoughts?
+--Sig_/pb3eVjDhw/.Jnl_hv2MTcRM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Cool, thanks. One comment below:
+Hi Mike,
 
-> ------------------------------------------------------------------------
-> 
-> commit 07921e8720907f58f82b142f2027fc56d5abdbfd
-> Author: Paul E. McKenney <paulmck@linux.ibm.com>
-> Date:   Tue Oct 16 04:12:58 2018 -0700
-> 
->     rcu: Speed up expedited GPs when interrupting RCU reader
->     
->     In PREEMPT kernels, an expedited grace period might send an IPI to a
->     CPU that is executing an RCU read-side critical section.  In that case,
->     it would be nice if the rcu_read_unlock() directly interacted with the
->     RCU core code to immediately report the quiescent state.  And this does
->     happen in the case where the reader has been preempted.  But it would
->     also be a nice performance optimization if immediate reporting also
->     happened in the preemption-free case.
->     
->     This commit therefore adds an ->exp_hint field to the task_struct structure's
->     ->rcu_read_unlock_special field.  The IPI handler sets this hint when
->     it has interrupted an RCU read-side critical section, and this causes
->     the outermost rcu_read_unlock() call to invoke rcu_read_unlock_special(),
->     which, if preemption is enabled, reports the quiescent state immediately.
->     If preemption is disabled, then the report is required to be deferred
->     until preemption (or bottom halves or interrupts or whatever) is re-enabled.
->     
->     Because this is a hint, it does nothing for more complicated cases.  For
->     example, if the IPI interrupts an RCU reader, but interrupts are disabled
->     across the rcu_read_unlock(), but another rcu_read_lock() is executed
->     before interrupts are re-enabled, the hint will already have been cleared.
->     If you do crazy things like this, reporting will be deferred until some
->     later RCU_SOFTIRQ handler, context switch, cond_resched(), or similar.
->     
->     Reported-by: Joel Fernandes <joel@joelfernandes.org>
->     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 004ca21f7e80..64ce751b5fe9 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -571,8 +571,10 @@ union rcu_special {
->  	struct {
->  		u8			blocked;
->  		u8			need_qs;
-> +		u8			exp_hint; /* Hint for performance. */
-> +		u8			pad; /* No garbage from compiler! */
->  	} b; /* Bits. */
-> -	u16 s; /* Set of bits. */
-> +	u32 s; /* Set of bits. */
->  };
->  
->  enum perf_event_task_context {
-> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> index e669ccf3751b..928fe5893a57 100644
-> --- a/kernel/rcu/tree_exp.h
-> +++ b/kernel/rcu/tree_exp.h
-> @@ -692,8 +692,10 @@ static void sync_rcu_exp_handler(void *unused)
->  	 */
->  	if (t->rcu_read_lock_nesting > 0) {
->  		raw_spin_lock_irqsave_rcu_node(rnp, flags);
-> -		if (rnp->expmask & rdp->grpmask)
-> +		if (rnp->expmask & rdp->grpmask) {
->  			rdp->deferred_qs = true;
-> +			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
-> +		}
->  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
->  	}
->  
-> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> index 8b48bb7c224c..d6286eb6e77e 100644
-> --- a/kernel/rcu/tree_plugin.h
-> +++ b/kernel/rcu/tree_plugin.h
-> @@ -643,8 +643,9 @@ static void rcu_read_unlock_special(struct task_struct *t)
->  	local_irq_save(flags);
->  	irqs_were_disabled = irqs_disabled_flags(flags);
->  	if ((preempt_bh_were_disabled || irqs_were_disabled) &&
-> -	    t->rcu_read_unlock_special.b.blocked) {
-> +	    t->rcu_read_unlock_special.s) {
->  		/* Need to defer quiescent state until everything is enabled. */
-> +		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
->  		raise_softirq_irqoff(RCU_SOFTIRQ);
+On Tue, 16 Oct 2018 16:36:56 +0300 Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> After some more grepping and spatching I've found these:
+>=20
+> From 8b014bae53a78ab747dbb76b9aff7df4cefcb604 Mon Sep 17 00:00:00 2001
+> From: Mike Rapoport <rppt@linux.ibm.com>
+> Date: Tue, 16 Oct 2018 16:03:00 +0300
+> Subject: [PATCH] memblock: fix missed uses of implicit aligment
+>=20
+> A couple of memblock*alloc uses were missed during conversion from implic=
+it
+> alignment setting with 'align =3D 0' to explictly using SMP_CACHE_BYTES.
+> Fix them now.
+>=20
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 
-Still going through this patch, but it seems to me like the fact that
-rcu_read_unlock_special is called means someone has requested for a grace
-period. Then in that case, does it not make sense to raise the softirq
-for processing anyway?
+Thanks.
 
-thanks,
+I have added that to linux-next today as it should get rid of the stack
+trace we are seeing in PowerPC boots.
 
-- Joel
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/pb3eVjDhw/.Jnl_hv2MTcRM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvGTQ0ACgkQAVBC80lX
+0Gx71Qf+IGsZZmjIgk71d2ZkyIq2CE16ktyU4y8Z0t53j9oiVAtehFGc8uFztX1E
+zXnhMX/f5FALESg+78Gzcy95CMrUPIZ44c9/sb+6hE0s4nYd5piERjMXMH5hB8gS
+YiUm6B4SSiSk3Px1c0JNtY+1C+UwZIV9i+Ur9Snrb7vePlBEbQYj28rOBNN6mBOP
+ofshJmbh/Yx5Bnad5iPet+vOYsHu9a78HP27LEJWZPcFYePXvhnEN5P5SWf84TvT
+pE4cCByvjInZfTWkBzQwJqeihAI4LA7+Rts1w1qWc+PFP+CxrzaiDnRtesLZwnvJ
+fasRUAMaep6nMStMx5nD+f2tAJYMQA==
+=BIOR
+-----END PGP SIGNATURE-----
+
+--Sig_/pb3eVjDhw/.Jnl_hv2MTcRM--
