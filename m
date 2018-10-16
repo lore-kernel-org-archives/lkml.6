@@ -2,103 +2,3020 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D80C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA4AC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 388942086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:13:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388942086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id E66F820866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:13:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXAoEZ3B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66F820866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbeJPQCl (ORCPT
+        id S1727162AbeJPQDD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 12:02:41 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:59041 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726968AbeJPQCl (ORCPT
+        Tue, 16 Oct 2018 12:03:03 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46003 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727017AbeJPQDD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 12:02:41 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-22-UPK5rDeFOYeY9zcZOCvDkg-1; Tue, 16 Oct 2018 09:13:24 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 16 Oct 2018 09:13:25 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 16 Oct 2018 09:13:25 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Nick Desaulniers' <ndesaulniers@google.com>
-CC:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Eric Biggers" <ebiggers@google.com>,
-        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] KEYS: trusted: fix -Wvarags warning
-Thread-Topic: [PATCH] KEYS: trusted: fix -Wvarags warning
-Thread-Index: AQHUYaFtz6yVKVwaakuhVxq6kXztuKUgDL3QgADCWICAALy2IA==
-Date:   Tue, 16 Oct 2018 08:13:25 +0000
-Message-ID: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
-References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
- <20181011203126.15338-1-ndesaulniers@google.com>
- <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
- <CAKwvOdmXVY1iA-VAs-Ns3qVVnMTeU6v4RqxoS2=SJcSeQ23_og@mail.gmail.com>
-In-Reply-To: <CAKwvOdmXVY1iA-VAs-Ns3qVVnMTeU6v4RqxoS2=SJcSeQ23_og@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 16 Oct 2018 12:03:03 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v22-v6so4384636lfe.12
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 01:13:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=PxVv/shAja2HMkZyvL17ubQCK8hr5ubvby79NS1T3OU=;
+        b=VXAoEZ3BlgpJD/J35fOf1bGCiL2N+AL5IF9gUryZEJljtHmINmZQRMuZzomzOEdEpR
+         tPBi8uVvmRgdbEi2JU6yEKUaMNaFUV7MNqS9gCnIUEtBo8t+Ck4yCYZv6rff740YO+hH
+         tJkjbdNayAxsCrRy99x2lQdPio2TO8bEOo2hubYTJDh8FItroYizyrKAhZvQ5lKO1Wpl
+         uXm5iBNjChb1d3Qf2n20ySjPta/0sbO/uuGZ927B13pEcpiJv9FGc0fdIXYeprtm9QbX
+         z7gFsMwTFGR8AalnLbG1bLHH7RorjKynlZ8w9zEXJb44XaZTWuPB20etVZvc8PW0k7/A
+         wSaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=PxVv/shAja2HMkZyvL17ubQCK8hr5ubvby79NS1T3OU=;
+        b=k2vAwMkXtSFPaMje9B0lg4yYS0Sm9NjtTcqaM1Jv/AvovyTkpskjJtu4WecA0+WqIl
+         zKQlJa0cB8CzVhV2OdxW8k302v7nx5E5u8VnENs9M4Pkp06KVukvpeNTMdvqA4C1b5jd
+         rlokwVO6c2pWU0p1ilbbOgFVfRfDrXjUoa4PTCZseFsBE3PdJW9vY/LN1R9YHleWOEqx
+         JiVAdA9Ezixh1t9Qcj6+a6+kVPfUuT4eCBKtzI0IiD44XUrSNUDXoenEFBIuozckZUfU
+         dmxuvvgbOESuW8WuUffnhsf8zvlHZRds17mIDnogpg34ucE7T/NFzWBW/rY9WGj1GG7o
+         N68w==
+X-Gm-Message-State: ABuFfoiWiVTyBdgaLL4RMb8xUhJTLCMq9D6etjfWFkDPaBarwEHJP9vt
+        4mGTzjWbph0RLMrk+nSJT08=
+X-Google-Smtp-Source: ACcGV63o8HARBni4UmZ9TTjHoTF9syhF0okTjjRicozBH+lbxt813uOTJJNLfU4RxlItdH+s2NuoIg==
+X-Received: by 2002:a19:c98b:: with SMTP id z133-v6mr4211026lff.150.1539677620471;
+        Tue, 16 Oct 2018 01:13:40 -0700 (PDT)
+Received: from metis.ciupak.eu ([31.130.108.122])
+        by smtp.gmail.com with ESMTPSA id e8-v6sm3094120ljf.45.2018.10.16.01.13.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Oct 2018 01:13:39 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 12:17:47 +0200
+From:   Marcin Ciupak <marcin.s.ciupak@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        Joe Perches <joe@perches.com>
+Subject: [PATCH v2] staging: add nrf24 driver
+Message-ID: <20181016101747.ex6ftchhsiyzdjti@metis.ciupak.eu>
 MIME-Version: 1.0
-X-MC-Unique: UPK5rDeFOYeY9zcZOCvDkg-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTmljayBEZXNhdWxuaWVycw0KPiBTZW50OiAxNSBPY3RvYmVyIDIwMTggMjI6NTQNCj4g
-T24gTW9uLCBPY3QgMTUsIDIwMTggYXQgMjoyNiBBTSBEYXZpZCBMYWlnaHQgPERhdmlkLkxhaWdo
-dEBhY3VsYWIuY29tPiB3cm90ZToNCj4gPg0KPiA+IEZyb206IG5kZXNhdWxuaWVyc0Bnb29nbGUu
-Y29tDQo+ID4gPiBTZW50OiAxMSBPY3RvYmVyIDIwMTggMjE6MzENCj4gPiAuLi4NCj4gPiA+IGJ5
-IHN3YXBwaW5nIGgyIGFuZCBoMy4NCj4gPiA+DQo+ID4gPiBzZWN1cml0eS9rZXlzL3RydXN0ZWQu
-YzoxNDY6MTc6IHdhcm5pbmc6IHBhc3NpbmcgYW4gb2JqZWN0IHRoYXQNCj4gPiA+IHVuZGVyZ29l
-cyBkZWZhdWx0DQo+ID4gPiAgICAgICBhcmd1bWVudCBwcm9tb3Rpb24gdG8gJ3ZhX3N0YXJ0JyBo
-YXMgdW5kZWZpbmVkIGJlaGF2aW9yIFstV3ZhcmFyZ3NdDQo+ID4gPiAgICAgICAgIHZhX3N0YXJ0
-KGFyZ3AsIGgzKTsNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgXg0KPiA+ID4gc2VjdXJp
-dHkva2V5cy90cnVzdGVkLmM6MTI2OjM3OiBub3RlOiBwYXJhbWV0ZXIgb2YgdHlwZSAndW5zaWdu
-ZWQNCj4gPiA+IGNoYXInIGlzIGRlY2xhcmVkIGhlcmUNCj4gPiA+IHVuc2lnbmVkIGNoYXIgKmgy
-LCB1bnNpZ25lZCBjaGFyIGgzLCAuLi4pDQo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgXg0KPiA+ID4gU3BlY2lmaWNhbGx5LCBpdCBzZWVtcyB0aGF0IGJvdGggdGhlIEM5MCAo
-NC44LjEuMSkgYW5kIEMxMSAoNy4xNi4xLjQpDQo+ID4gPiBzdGFuZGFyZHMgZXhwbGljaXRseSBj
-YWxsIHRoaXMgb3V0IGFzIHVuZGVmaW5lZCBiZWhhdmlvcjoNCj4gPg0KPiA+IEkgZ3Vlc3MgdGhh
-dCBwcm9ibGVtcyBhcmlzZSB3aGVuIGFsbCB0aGUgYXJndW1lbnRzIGFyZSBzdGFja2VkDQo+ID4g
-YW5kIHZhX3N0YXJ0L3ZhX2FyZyB1c2UgbmFpdmUgcG9pbnRlciBtYW5pcHVsYXRpb24uDQo+ID4g
-SW4gdGhhdCBjYXNlICZoMyBtaWdodCBiZSA0biszIGFsaWduZWQgc28gdmFfYXJnKCkgd2lsbCBh
-Y2Nlc3MNCj4gPiBtaXNhbGlnbmVkIHN0YWNrIGxvY2F0aW9ucy4NCj4gPg0KPiA+IEkgZG91YnQg
-YW55IG1vZGVybiBjb21waWxlcnMgKHdoZXJlIHZhX3N0YXJ0IGFuZCB2YV9hcmcgYXJlIGJ1aWx0
-aW5zKQ0KPiA+IHdpbGwgZ2V0IHRoaXMgJ3dyb25nJyBldmVuIHdoZW4gYWxsIGFyZ3VtZW50cyBh
-cmUgc3RhY2tlZC4NCj4gPg0KPiA+IFNlZW1zIGNsYW5nIGlzIGJlaW5nIG92ZXIgY2F1dGlvdXMu
-DQo+IA0KPiBZZXM7IGRpZCB5b3UgaGF2ZSBmZWVkYmFjayBvbiB0aGUgRGVuaXMnIHByb3Bvc2Vk
-IGZpeCwgb3IgYW5vdGhlcj8NCg0KUGVyc29uYWxseSBJJ2QgYXZvaWQgY2hhciwgc2hvcnQgYW5k
-IGJvb2wgZm9yIGJvdGggZnVuY3Rpb24NCmFyZ3VtZW50cyBhbmQgcmVzdWx0cyBzaW5jZSB0aGV5
-IHR5cGljYWxseSByZXF1aXJlIGV4dHJhDQppbnN0cnVjdGlvbnMgZm9yIG1hc2tpbmcgdmFsdWVz
-IChldGMpLg0KYm9vbCBpcyBwYXJ0aWN1bGFybHkgb2Jub3hpb3VzLg0KDQpJbiB0aGF0IGNhc2Ug
-ZWl0aGVyIGludCBvciB1bnNpZ25lZCBpbnQgaXMgZ29vZC4NCg0KCURhdmlkDQoNCi0NClJlZ2lz
-dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
-S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+This patch adds driver for Nordic Semiconductor nRF24L01+ radio module.
+
+Signed-off-by: Marcin Ciupak <marcin.s.ciupak@gmail.com>
+---
+Changes in v2:
+  - add terminating newlines to all logging formats
+
+drivers/staging/Kconfig                       |   2 +
+ drivers/staging/Makefile                      |   1 +
+ drivers/staging/nrf24/Kconfig                 |  16 +
+ drivers/staging/nrf24/Makefile                |   3 +
+ drivers/staging/nrf24/TODO                    |   7 +
+ .../nrf24/devicetree/nrf24-spi0-overlay.dts   |  54 +
+ .../nrf24/devicetree/nrf24-spi1-overlay.dts   |  54 +
+ drivers/staging/nrf24/devicetree/nrf24.txt    |   1 +
+ drivers/staging/nrf24/nRF24L01.h              |  82 ++
+ drivers/staging/nrf24/nrf24_enums.h           |  60 ++
+ drivers/staging/nrf24/nrf24_hal.c             | 764 +++++++++++++++
+ drivers/staging/nrf24/nrf24_hal.h             |  54 +
+ drivers/staging/nrf24/nrf24_if.c              | 919 ++++++++++++++++++
+ drivers/staging/nrf24/nrf24_if.h              |  63 ++
+ drivers/staging/nrf24/nrf24_sysfs.c           | 707 ++++++++++++++
+ drivers/staging/nrf24/nrf24_sysfs.h           |  14 +
+ 16 files changed, 2801 insertions(+)
+ create mode 100644 drivers/staging/nrf24/Kconfig
+ create mode 100644 drivers/staging/nrf24/Makefile
+ create mode 100644 drivers/staging/nrf24/TODO
+ create mode 100644 drivers/staging/nrf24/devicetree/nrf24-spi0-overlay.dts
+ create mode 100644 drivers/staging/nrf24/devicetree/nrf24-spi1-overlay.dts
+ create mode 100644 drivers/staging/nrf24/devicetree/nrf24.txt
+ create mode 100644 drivers/staging/nrf24/nRF24L01.h
+ create mode 100644 drivers/staging/nrf24/nrf24_enums.h
+ create mode 100644 drivers/staging/nrf24/nrf24_hal.c
+ create mode 100644 drivers/staging/nrf24/nrf24_hal.h
+ create mode 100644 drivers/staging/nrf24/nrf24_if.c
+ create mode 100644 drivers/staging/nrf24/nrf24_if.h
+ create mode 100644 drivers/staging/nrf24/nrf24_sysfs.c
+ create mode 100644 drivers/staging/nrf24/nrf24_sysfs.h
+
+diff --git a/drivers/staging/Kconfig b/drivers/staging/Kconfig
+index 1abf76be2aa8..55d688f3112e 100644
+--- a/drivers/staging/Kconfig
++++ b/drivers/staging/Kconfig
+@@ -126,4 +126,6 @@ source "drivers/staging/axis-fifo/Kconfig"
+ 
+ source "drivers/staging/erofs/Kconfig"
+ 
++source "drivers/staging/nrf24/Kconfig"
++
+ endif # STAGING
+diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
+index ab0cbe8815b1..c18e74df03af 100644
+--- a/drivers/staging/Makefile
++++ b/drivers/staging/Makefile
+@@ -53,3 +53,4 @@ obj-$(CONFIG_SOC_MT7621)	+= mt7621-dts/
+ obj-$(CONFIG_STAGING_GASKET_FRAMEWORK)	+= gasket/
+ obj-$(CONFIG_XIL_AXIS_FIFO)	+= axis-fifo/
+ obj-$(CONFIG_EROFS_FS)		+= erofs/
++obj-$(CONFIG_NRF24)		+= nrf24/
+diff --git a/drivers/staging/nrf24/Kconfig b/drivers/staging/nrf24/Kconfig
+new file mode 100644
+index 000000000000..67ebf14dd982
+--- /dev/null
++++ b/drivers/staging/nrf24/Kconfig
+@@ -0,0 +1,16 @@
++config NRF24
++        tristate "nRF24L01+ 2.4GHz radio module support"
++        depends on SPI
++        help
++          This enables support for Nordic Semiconductor nRF24L01+ radio module,
++          with the following features:
++            - multiple radio module instances via nrfX
++            - dedicated /dev/nrfX.Y device per pipe per instance
++            - dynamic and static payload lengths
++            - configuration via sysfs (/sys/class/nrfX)
++            - poll mechanism
++            - 64kB RX FIFO per pipe
++            - 64kB TX FIFO
++
++          To compile this driver as a module, choose M here: the module will be
++          called nrf24.
+diff --git a/drivers/staging/nrf24/Makefile b/drivers/staging/nrf24/Makefile
+new file mode 100644
+index 000000000000..f5222567c632
+--- /dev/null
++++ b/drivers/staging/nrf24/Makefile
+@@ -0,0 +1,3 @@
++obj-$(CONFIG_NRF24) += nrf24.o
++
++nrf24-objs := nrf24_if.o nrf24_hal.o nrf24_sysfs.o
+diff --git a/drivers/staging/nrf24/TODO b/drivers/staging/nrf24/TODO
+new file mode 100644
+index 000000000000..a089e43faac5
+--- /dev/null
++++ b/drivers/staging/nrf24/TODO
+@@ -0,0 +1,7 @@
++Todo:
++- opening and closing pipes via sysfs
++- improve switching in between RX and TX
++- improve handling of MAX_RT interrupt
++- find and fix bugs
++- code cleanup
++
+diff --git a/drivers/staging/nrf24/devicetree/nrf24-spi0-overlay.dts b/drivers/staging/nrf24/devicetree/nrf24-spi0-overlay.dts
+new file mode 100644
+index 000000000000..130e6787b76d
+--- /dev/null
++++ b/drivers/staging/nrf24/devicetree/nrf24-spi0-overlay.dts
+@@ -0,0 +1,54 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//
++// Copyright (C) 2017 Marcin Ciupak <marcin.s.ciupak@gmail.com>
++//
++
++// Definitions for NRF24
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "bcm,bcm2835", "bcm,bcm2708", "bcm,bcm2709";
++
++	fragment@0 {
++		target = <&spi0>;
++		__overlay__ {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "okay";
++
++			spidev@0 {
++				status = "disabled";
++			};
++
++			nrf0: nrf0@0 {
++				compatible = "nordic,nrf24";
++				reg = <0>; /* CS0 */
++				pinctrl-names = "default";
++				pinctrl-0 = <&nrf0_pins>;
++				interrupt-parent = <&gpio>;
++				interrupts = <24 0x2>; /* falling edge */
++				irq-gpio = <&gpio 24 0>;
++				ce-gpio = <&gpio 25 0>;
++				spi-max-frequency = <5000000>;
++				status = "okay";
++			};
++		};
++	};
++
++	fragment@1 {
++		target = <&gpio>;
++		__overlay__ {
++			nrf0_pins: nrf0_pins {
++				brcm,pins = <24 25>;
++				brcm,function = <0 1>; /* in out */
++			};
++		};
++	};
++
++	__overrides__ {
++		int_pin = <&nrf0>, "interrupts:0", <&nrf0_pins>, "brcm,pins:0";
++		speed   = <&nrf0>, "spi-max-frequency:0";
++	};
++};
+diff --git a/drivers/staging/nrf24/devicetree/nrf24-spi1-overlay.dts b/drivers/staging/nrf24/devicetree/nrf24-spi1-overlay.dts
+new file mode 100644
+index 000000000000..ff07507d0a14
+--- /dev/null
++++ b/drivers/staging/nrf24/devicetree/nrf24-spi1-overlay.dts
+@@ -0,0 +1,54 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//
++// Copyright (C) 2017 Marcin Ciupak <marcin.s.ciupak@gmail.com>
++//
++
++/* Definitions for NRF24 */
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "bcm,bcm2835", "bcm,bcm2708", "bcm,bcm2709";
++
++	fragment@0 {
++		target = <&spi1>;
++		__overlay__ {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "okay";
++
++			spidev@0 {
++				status = "disabled";
++			};
++
++			nrf1: nrf1@0 {
++				compatible = "nordic,nrf24";
++				reg = <0>; /* CS0 */
++				pinctrl-names = "default";
++				pinctrl-0 = <&nrf1_pins>;
++				interrupt-parent = <&gpio>;
++				interrupts = <17 0x2>; /* falling edge */
++				irq-gpio = <&gpio 17 0>;
++				ce-gpio = <&gpio 27 0>;
++				spi-max-frequency = <5000000>;
++				status = "okay";
++			};
++		};
++	};
++
++	fragment@1 {
++		target = <&gpio>;
++		__overlay__ {
++			nrf1_pins: nrf1_pins {
++				brcm,pins = <17 27>;
++				brcm,function = <0 1>; // in out
++			};
++		};
++	};
++
++	__overrides__ {
++		int_pin = <&nrf1>, "interrupts:0", <&nrf1_pins>, "brcm,pins:0";
++		speed   = <&nrf1>, "spi-max-frequency:0";
++	};
++};
+diff --git a/drivers/staging/nrf24/devicetree/nrf24.txt b/drivers/staging/nrf24/devicetree/nrf24.txt
+new file mode 100644
+index 000000000000..0eff8bfae97f
+--- /dev/null
++++ b/drivers/staging/nrf24/devicetree/nrf24.txt
+@@ -0,0 +1 @@
++scripts/dtc/dtc -@ -I dts -O dtb -o nrf24-spi0.dtbo nrf24-spi0-overlay.dts
+diff --git a/drivers/staging/nrf24/nRF24L01.h b/drivers/staging/nrf24/nRF24L01.h
+new file mode 100644
+index 000000000000..ed7fac6c9c38
+--- /dev/null
++++ b/drivers/staging/nrf24/nRF24L01.h
+@@ -0,0 +1,82 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * Copyright (C) 2017 Marcin Ciupak <marcin.s.ciupak@gmail.com>
++ *
++ */
++
++#ifndef NRF24L01_H
++#define NRF24L01_H
++
++/* nRF24L01 Register map */
++
++#define CONFIG			0x00
++#define EN_AA			0x01
++#define EN_RXADDR		0x02
++#define SETUP_AW		0x03
++#define SETUP_RETR		0x04
++#define RF_CH			0x05
++#define RF_SETUP		0x06
++#define STATUS			0x07
++#define OBSERVE_TX		0x08
++#define	CD			0x09
++#define RX_ADDR_P0		0x0A
++#define RX_ADDR_P1		0x0B
++#define RX_ADDR_P2		0x0C
++#define RX_ADDR_P3		0x0D
++#define RX_ADDR_P4		0x0E
++#define RX_ADDR_P5		0x0F
++#define TX_ADDR			0x10
++#define RX_PW_P0		0x11
++#define RX_PW_P1		0x12
++#define RX_PW_P2		0x13
++#define RX_PW_P3		0x14
++#define RX_PW_P4		0x15
++#define RX_PW_P5		0x16
++#define FIFO_STATUS		0x17
++#define DYNPD			0x1C
++#define FEATURE			0x1D
++
++/* nRF24L01 Instruction Definitions */
++#define W_REGISTER		0x20
++#define R_RX_PL_WID		0x60
++#define R_RX_PAYLOAD		0x61
++#define W_TX_PAYLOAD		0xA0
++#define W_ACK_PAYLOAD		0xA8
++#define W_TX_PAYLOAD_NOACK	0xB0
++#define FLUSH_TX		0xE1
++#define FLUSH_RX		0xE2
++#define REUSE_TX_PL		0xE3
++#define LOCK_UNLOCK		0x50
++#define NOP			0xFF
++
++/* CONFIG 0x00 */
++#define MASK_RX_DR		0x40
++#define MASK_TX_DS		0x20
++#define MASK_MAX_RT		0x10
++#define EN_CRC			0x08
++#define CRCO			0x04
++#define PWR_UP			0x02
++#define PRIM_RX			0x01
++
++/* RF_SETUP 0x06 */
++#define RF_DR_LO		0x20
++#define PLL_LOCK		0x10
++#define RF_DR_HI		0x08
++#define RF_PWR1			0x04
++#define RF_PWR0			0x02
++
++/* STATUS 0x07 */
++#define RX_DR			0x40
++#define TX_DS			0x20
++#define MAX_RT			0x10
++#define TX_FULL			0x01
++
++/* FEATURE 0x1D */
++#define EN_DPL			0x04
++#define EN_ACK_PAY		0x02
++#define EN_DYN_ACK		0x01
++
++#define PLOAD_MAX		32
++
++#endif
+diff --git a/drivers/staging/nrf24/nrf24_enums.h b/drivers/staging/nrf24/nrf24_enums.h
+new file mode 100644
+index 000000000000..89f35db370b6
+--- /dev/null
++++ b/drivers/staging/nrf24/nrf24_enums.h
+@@ -0,0 +1,60 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * Copyright (C) 2017 Marcin Ciupak <marcin.s.ciupak@gmail.com>
++ *
++ */
++
++#ifndef NRF24_ENUMS_H
++#define NRF24_ENUMS_H
++
++enum nrf24_pipe_num {
++	NRF24_PIPE0,
++	NRF24_PIPE1,
++	NRF24_PIPE2,
++	NRF24_PIPE3,
++	NRF24_PIPE4,
++	NRF24_PIPE5,
++	NRF24_TX,
++	NRF24_PIPE_ALL = 0xFF
++};
++
++enum nrf24_crc_mode {
++	NRF24_CRC_OFF,
++	NRF24_CRC_8BIT = 2,
++	NRF24_CRC_16BIT
++};
++
++enum nrf24_address_width {
++	NRF24_AW_3 = 3,
++	NRF24_AW_4,
++	NRF24_AW_5
++};
++
++enum nrf24_pload {
++	NRF24_TX_PLOAD = 7,
++	NRF24_TX_PLOAD_NOACK,
++	NRF24_RX_PLOAD,
++	NRF24_ACK_PLOAD
++};
++
++enum nrf24_datarate {
++	NRF24_DATARATE_1MBPS,
++	NRF24_DATARATE_2MBPS,
++	NRF24_DATARATE_256KBPS
++};
++
++enum nrf24_mode {
++	NRF24_MODE_TX,
++	NRF24_MODE_RX
++};
++
++enum nrf24_rf_power {
++	NRF24_POWER_18DBM,
++	NRF24_POWER_12DBM,
++	NRF24_POWER_6DBM,
++	NRF24_POWER_0DBM
++};
++
++#endif
++
+diff --git a/drivers/staging/nrf24/nrf24_hal.c b/drivers/staging/nrf24/nrf24_hal.c
+new file mode 100644
+index 000000000000..0d2242276d40
+--- /dev/null
++++ b/drivers/staging/nrf24/nrf24_hal.c
+@@ -0,0 +1,764 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright (C) 2017 Marcin Ciupak <marcin.s.ciupak@gmail.com>
++ *
++ */
++
++#include <linux/types.h>
++#include <linux/spi/spi.h>
++
++#include "nrf24_hal.h"
++
++static ssize_t nrf24_read_reg(struct spi_device *spi, u8 addr)
++{
++	ssize_t ret;
++
++	ret = spi_w8r8(spi, addr);
++
++	if (ret < 0)
++		dev_dbg(&spi->dev, "%s: read 0x%X FAILED\n", __func__, addr);
++
++	return ret;
++}
++
++static ssize_t nrf24_write_reg(struct spi_device *spi, u8 addr, u8 val)
++{
++	ssize_t ret;
++	u8 buffer[2];
++
++	buffer[0] = addr;
++	buffer[1] = val;
++
++	if (addr < W_REGISTER) {
++		buffer[0] = buffer[0] + W_REGISTER;
++		ret = spi_write(spi, buffer, 2);
++	} else if (addr != FLUSH_TX &&
++		   addr != FLUSH_RX &&
++		   addr != REUSE_TX_PL) {
++		ret = spi_write(spi, buffer, 2);
++	} else {
++		ret = spi_write(spi, buffer, 1);
++	}
++	if (ret < 0)
++		dev_dbg(&spi->dev, "%s: write 0x%X to 0x%X  FAILED\n",
++			__func__, val, addr);
++
++	return ret;
++}
++
++static ssize_t nrf24_write_multireg(struct spi_device *spi,
++				    u8 reg,
++				    u8 *buf,
++				    u8 length)
++{
++	u8 buffer[PLOAD_MAX + 1];
++
++	if (!length)
++		return -EINVAL;
++
++	switch (reg) {
++	case NRF24_PIPE0:
++	case NRF24_PIPE1:
++	case NRF24_TX:
++		buffer[0] = W_REGISTER + RX_ADDR_P0 + reg;
++		break;
++	case NRF24_TX_PLOAD:
++		buffer[0] = W_TX_PAYLOAD;
++		break;
++	case NRF24_TX_PLOAD_NOACK:
++		buffer[0] = W_TX_PAYLOAD_NOACK;
++		break;
++	default:
++		dev_dbg(&spi->dev, "%s: invalid parameter\n", __func__);
++		return -EINVAL;
++	}
++
++	memcpy(buffer + 1, buf, length);
++
++	return spi_write(spi, buffer, length + 1);
++}
++
++static ssize_t nrf24_read_multireg(struct spi_device *spi, u8 reg, u8 *buf)
++{
++	ssize_t ret;
++	u8 reg_addr;
++	ssize_t length = 0;
++
++	switch (reg) {
++	case NRF24_PIPE0:
++	case NRF24_PIPE1:
++	case NRF24_TX:
++		length = nrf24_get_address_width(spi);
++		if (length < 0)
++			return length;
++		reg_addr = RX_ADDR_P0 + reg;
++		break;
++	case NRF24_RX_PLOAD:
++		ret = nrf24_get_rx_data_source(spi);
++		if (ret < 0)
++			return ret;
++
++		if (ret < NRF24_TX_PLOAD) {
++			length = nrf24_get_rx_pl_w(spi);
++			if (length < 0)
++				return length;
++			reg_addr = R_RX_PAYLOAD;
++		}
++		break;
++	default:
++		dev_dbg(&spi->dev, "%s: invalid parameter\n", __func__);
++		return -EINVAL;
++	}
++
++	if (length > 0) {
++		ret = spi_write_then_read(spi,
++					  &reg_addr,
++					  1,
++					  buf,
++					  length);
++
++		if (ret < 0)
++			return ret;
++	}
++
++	return length;
++}
++
++ssize_t nrf24_get_dynamic_pl(struct spi_device *spi)
++{
++	ssize_t feature;
++
++	feature = nrf24_read_reg(spi, FEATURE);
++	if (feature < 0)
++		return feature;
++
++	return (feature & EN_DPL) == EN_DPL;
++}
++
++ssize_t nrf24_enable_dynamic_pl(struct spi_device *spi)
++{
++	ssize_t feature;
++
++	feature = nrf24_read_reg(spi, FEATURE);
++	if (feature < 0)
++		return feature;
++	return nrf24_write_reg(spi, FEATURE, feature | EN_DPL);
++}
++
++ssize_t nrf24_disable_dynamic_pl(struct spi_device *spi)
++{
++	ssize_t feature;
++
++	feature = nrf24_read_reg(spi, FEATURE);
++	if (feature < 0)
++		return feature;
++	return nrf24_write_reg(spi, FEATURE, feature & ~EN_DPL);
++}
++
++static ssize_t nrf24_setup_dynamic_pl(struct spi_device *spi,
++				      u8 pipe,
++				      bool enable)
++{
++	ssize_t dynpd;
++	ssize_t ret;
++
++	if (pipe != NRF24_PIPE0 && enable) {
++		ret = nrf24_setup_dynamic_pl(spi, NRF24_PIPE0, enable);
++		if (ret < 0)
++			return ret;
++	}
++	dynpd = nrf24_read_reg(spi, DYNPD);
++	if (dynpd < 0)
++		return dynpd;
++
++	if (enable) {
++		ret = nrf24_setup_auto_ack(spi, pipe, enable);
++		if (ret < 0)
++			return ret;
++
++		dynpd |= BIT(pipe);
++	} else {
++		dynpd &= ~BIT(pipe);
++	}
++	ret = nrf24_write_reg(spi, DYNPD, dynpd);
++	if (ret < 0)
++		return ret;
++
++	if (dynpd)
++		ret = nrf24_enable_dynamic_pl(spi);
++	else
++		ret = nrf24_disable_dynamic_pl(spi);
++
++	return ret;
++}
++
++ssize_t nrf24_setup_auto_ack(struct spi_device *spi, u8 pipe, bool enable)
++{
++	ssize_t aa;
++
++	aa = nrf24_read_reg(spi, EN_AA);
++	if (aa < 0)
++		return aa;
++	if (enable)
++		aa |= BIT(pipe);
++	else
++		aa &= ~BIT(pipe);
++
++	return nrf24_write_reg(spi, EN_AA, aa);
++}
++
++static ssize_t nrf24_enable_pipe(struct spi_device *spi, u8 pipe)
++{
++	ssize_t rxaddr;
++
++	rxaddr = nrf24_read_reg(spi, EN_RXADDR);
++	if (rxaddr < 0)
++		return rxaddr;
++	return nrf24_write_reg(spi, EN_RXADDR, rxaddr | BIT(pipe));
++}
++
++static ssize_t nrf24_disable_pipe(struct spi_device *spi, u8 pipe)
++{
++	ssize_t rxaddr;
++
++	rxaddr = nrf24_read_reg(spi, EN_RXADDR);
++	if (rxaddr < 0)
++		return rxaddr;
++	return nrf24_write_reg(spi, EN_RXADDR, rxaddr & ~BIT(pipe));
++}
++
++ssize_t nrf24_open_pipe(struct spi_device *spi, enum nrf24_pipe_num pipe)
++{
++	ssize_t ret = -EINVAL;
++
++	switch (pipe) {
++	case NRF24_PIPE0:
++	case NRF24_PIPE1:
++	case NRF24_PIPE2:
++	case NRF24_PIPE3:
++	case NRF24_PIPE4:
++	case NRF24_PIPE5:
++		ret = nrf24_enable_pipe(spi, pipe);
++		break;
++	case NRF24_PIPE_ALL:
++		ret = nrf24_write_reg(spi, EN_RXADDR, 0x3F);
++		break;
++	default:
++		dev_dbg(&spi->dev, "%s: invalid parameter\n", __func__);
++	}
++
++	return ret;
++}
++
++ssize_t nrf24_close_pipe(struct spi_device *spi, enum nrf24_pipe_num pipe)
++{
++	ssize_t ret = -EINVAL;
++
++	switch (pipe) {
++	case NRF24_PIPE0:
++	case NRF24_PIPE1:
++	case NRF24_PIPE2:
++	case NRF24_PIPE3:
++	case NRF24_PIPE4:
++	case NRF24_PIPE5:
++		ret = nrf24_disable_pipe(spi, pipe);
++		if (ret < 0)
++			break;
++		ret = nrf24_setup_auto_ack(spi, pipe, false);
++		break;
++	case NRF24_PIPE_ALL:
++		ret = nrf24_write_reg(spi, EN_RXADDR, 0x00);
++		if (ret)
++			break;
++		ret = nrf24_write_reg(spi, EN_AA, 0x00);
++		break;
++	default:
++		dev_dbg(&spi->dev, "%s: invalid parameter\n", __func__);
++	}
++
++	return ret;
++}
++
++ssize_t nrf24_set_address(struct spi_device *spi,
++			  enum nrf24_pipe_num pipe,
++			  u8 *addr)
++{
++	ssize_t ret = -EINVAL;
++	ssize_t length;
++
++	switch (pipe) {
++	case NRF24_TX:
++	case NRF24_PIPE0:
++	case NRF24_PIPE1:
++		length = nrf24_get_address_width(spi);
++		if (length < 0)
++			return length;
++		ret = nrf24_write_multireg(spi, pipe, addr, length);
++		break;
++	case NRF24_PIPE2:
++	case NRF24_PIPE3:
++	case NRF24_PIPE4:
++	case NRF24_PIPE5:
++		ret = nrf24_write_reg(spi, RX_ADDR_P0 + pipe, *addr);
++		break;
++	default:
++		dev_dbg(&spi->dev, "%s: invalid parameter\n", __func__);
++	}
++
++	return ret;
++}
++
++ssize_t nrf24_get_address(struct spi_device *spi,
++			  enum nrf24_pipe_num pipe,
++			  u8 *addr)
++{
++	ssize_t ret;
++	ssize_t length;
++
++	switch (pipe) {
++	case NRF24_PIPE0:
++	case NRF24_PIPE1:
++	case NRF24_TX:
++		ret = nrf24_read_multireg(spi, pipe, addr);
++		if (ret < 0)
++			return ret;
++		break;
++	default:
++		length = nrf24_read_multireg(spi, NRF24_PIPE1, addr);
++		if (length < 0)
++			return length;
++		ret = nrf24_read_reg(spi, RX_ADDR_P0 + pipe);
++		if (ret < 0)
++			return ret;
++		*(addr) = ret;
++		break;
++	}
++
++	return nrf24_get_address_width(spi);
++}
++
++ssize_t nrf24_set_crc_mode(struct spi_device *spi, enum nrf24_crc_mode mode)
++{
++	ssize_t config;
++
++	config = nrf24_read_reg(spi, CONFIG);
++	if (config < 0)
++		return config;
++	config &= ~(EN_CRC | CRCO);
++	config |= (mode << 2);
++
++	config = nrf24_write_reg(spi, CONFIG, config);
++
++	return config;
++}
++
++ssize_t nrf24_get_crc_mode(struct spi_device *spi)
++{
++	ssize_t config;
++
++	config = nrf24_read_reg(spi, CONFIG);
++	if (config < 0)
++		return config;
++	config &= (EN_CRC | CRCO);
++	config >>= 2;
++
++	return config;
++}
++
++ssize_t nrf24_set_auto_retr_delay(struct spi_device *spi, u16 delay)
++{
++	ssize_t retr;
++
++	retr = nrf24_read_reg(spi, SETUP_RETR);
++	if (retr < 0)
++		return retr;
++
++	retr &= 0x0F;
++	retr |= (((delay / 250) - 1) << 4);
++
++	return nrf24_write_reg(spi, SETUP_RETR, retr);
++}
++
++ssize_t nrf24_get_auto_retr_delay(struct spi_device *spi)
++{
++	ssize_t retr;
++
++	retr = nrf24_read_reg(spi, SETUP_RETR);
++	if (retr < 0)
++		return retr;
++
++	return ((retr >> 4) + 1) * 250;
++}
++
++ssize_t nrf24_set_auto_retr_count(struct spi_device *spi, u8 count)
++{
++	ssize_t retr;
++
++	retr = nrf24_read_reg(spi, SETUP_RETR);
++	if (retr < 0)
++		return retr;
++
++	retr &= 0xF0;
++	retr |= (count & 0x0F);
++
++	return nrf24_write_reg(spi, SETUP_RETR, retr);
++}
++
++ssize_t nrf24_get_auto_retr_count(struct spi_device *spi)
++{
++	ssize_t retr;
++
++	retr = nrf24_read_reg(spi, SETUP_RETR);
++
++	if (retr < 0)
++		return retr;
++
++	return retr & 0x0F;
++}
++
++ssize_t nrf24_set_address_width(struct spi_device *spi,
++				enum nrf24_address_width aw)
++{
++	return nrf24_write_reg(spi, SETUP_AW, aw - 2);
++}
++
++ssize_t nrf24_get_address_width(struct spi_device *spi)
++{
++	return nrf24_read_reg(spi, SETUP_AW) + 2;
++}
++
++ssize_t nrf24_lock_unlock(struct spi_device *spi)
++{
++	return nrf24_write_reg(spi, LOCK_UNLOCK, 0x73);
++}
++
++ssize_t nrf24_set_datarate(struct spi_device *spi, enum nrf24_datarate datarate)
++{
++	ssize_t rf;
++
++	rf = nrf24_read_reg(spi, RF_SETUP);
++	if (rf < 0)
++		return rf;
++	if (datarate == NRF24_DATARATE_1MBPS)
++		rf &= ~RF_DR_HI;
++	else
++		rf |= RF_DR_HI;
++
++	return nrf24_write_reg(spi, RF_SETUP, rf);
++}
++
++ssize_t nrf24_get_datarate(struct spi_device *spi)
++{
++	ssize_t rf;
++	ssize_t lo;
++	ssize_t hi;
++
++	rf = nrf24_read_reg(spi, RF_SETUP);
++	if (rf < 0)
++		return rf;
++
++	lo = rf & RF_DR_LO;
++	hi = rf & RF_DR_HI;
++
++	if (lo && hi)
++		return -EINVAL;
++	if (lo)
++		return NRF24_DATARATE_256KBPS;
++	if (hi)
++		return NRF24_DATARATE_2MBPS;
++	return NRF24_DATARATE_1MBPS;
++}
++
++ssize_t nrf24_set_mode(struct spi_device *spi, enum nrf24_mode mode)
++{
++	ssize_t config;
++
++	config = nrf24_read_reg(spi, CONFIG);
++
++	if (config < 0)
++		return config;
++
++	if (mode == NRF24_MODE_RX)
++		config |= PRIM_RX;
++	else
++		config &= ~PRIM_RX;
++
++	return nrf24_write_reg(spi, CONFIG, config);
++}
++
++ssize_t nrf24_set_rf_power(struct spi_device *spi, enum nrf24_rf_power rf_pwr)
++{
++	ssize_t rf_setup;
++
++	rf_setup = nrf24_read_reg(spi, RF_SETUP);
++
++	if (rf_setup < 0)
++		return rf_setup;
++
++	rf_setup &= ~(RF_PWR1 | RF_PWR0);
++	rf_setup |= (rf_pwr << 1);
++
++	return nrf24_write_reg(spi, RF_SETUP, rf_setup);
++}
++
++ssize_t nrf24_get_rf_power(struct spi_device *spi)
++{
++	ssize_t rf;
++
++	rf = nrf24_read_reg(spi, RF_SETUP);
++
++	if (rf < 0)
++		return rf;
++
++	rf &= (RF_PWR1 | RF_PWR0);
++	rf >>= 1;
++
++	return rf;
++}
++
++//plw = 0 -> dynamic
++ssize_t nrf24_set_rx_pload_width(struct spi_device *spi, u8 pipe, u8 plw)
++{
++	ssize_t ret;
++
++	if (plw > PLOAD_MAX)
++		return -EINVAL;
++
++	ret = nrf24_write_reg(spi, RX_PW_P0 + pipe, plw);
++	if (ret < 0)
++		return ret;
++
++	return nrf24_setup_dynamic_pl(spi, pipe, plw == 0);
++}
++
++ssize_t nrf24_set_rf_channel(struct spi_device *spi, u8 channel)
++{
++	return nrf24_write_reg(spi, RF_CH, channel);
++}
++
++ssize_t nrf24_power_up(struct spi_device *spi)
++{
++	ssize_t config;
++
++	config = nrf24_read_reg(spi, CONFIG);
++
++	if (config < 0)
++		return config;
++
++	return nrf24_write_reg(spi, CONFIG, config | PWR_UP);
++}
++
++ssize_t nrf24_write_tx_pload(struct spi_device *dev, u8 *buf, u8 length)
++{
++	return nrf24_write_multireg(dev, NRF24_TX_PLOAD, buf, length);
++}
++
++ssize_t nrf24_write_tx_pload_noack(struct spi_device *dev, u8 *buf, u8 length)
++{
++	return nrf24_write_multireg(dev, NRF24_TX_PLOAD_NOACK, buf, length);
++}
++
++ssize_t nrf24_read_rx_pload(struct spi_device *spi, u8 *buf)
++{
++	return nrf24_read_multireg(spi, NRF24_RX_PLOAD, buf);
++}
++
++ssize_t nrf24_get_status(struct spi_device *spi)
++{
++	return nrf24_read_reg(spi, STATUS);
++}
++
++ssize_t nrf24_get_rx_data_source(struct spi_device *spi)
++{
++	ssize_t status;
++
++	status = nrf24_get_status(spi);
++	if (status < 0)
++		return status;
++	return (status & 0x0E) >> 1;
++}
++
++ssize_t nrf24_get_rx_pload_width(struct spi_device *spi, u8 pipe)
++{
++	return nrf24_read_reg(spi, RX_PW_P0 + pipe);
++}
++
++ssize_t nrf24_get_rx_pl_w(struct spi_device *spi)
++{
++	return nrf24_read_reg(spi, R_RX_PL_WID);
++}
++
++ssize_t nrf24_soft_reset(struct spi_device *spi)
++{
++	ssize_t ret;
++	u8 addr0[5] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
++	u8 addr1[5] = {0xC2, 0xC2, 0xC2, 0xC2, 0xC2};
++
++	ret = nrf24_write_reg(spi, CONFIG, 0x08);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, EN_AA, 0x3F);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, EN_RXADDR, 0x03);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, SETUP_AW, 0x03);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, SETUP_RETR, 0x03);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RF_CH, 0x02);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RF_SETUP, 0x07);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, STATUS, 0x70);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_set_address(spi, NRF24_PIPE0, addr0);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_set_address(spi, NRF24_PIPE1, addr1);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RX_ADDR_P2, 0xC3);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RX_ADDR_P3, 0xC4);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RX_ADDR_P4, 0xC5);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RX_ADDR_P5, 0xC6);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_set_address(spi, NRF24_TX, addr0);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RX_PW_P0, 0x00);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RX_PW_P1, 0x00);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RX_PW_P2, 0x00);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RX_PW_P3, 0x00);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RX_PW_P4, 0x00);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, RX_PW_P5, 0x00);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, DYNPD, 0x00);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_write_reg(spi, FEATURE, 0x00);
++	if (ret < 0)
++		return ret;
++
++	return ret;
++}
++
++ssize_t nrf24_clear_irq(struct spi_device *spi, u8 irq)
++{
++	return nrf24_write_reg(spi, STATUS, irq);
++}
++
++ssize_t nrf24_flush_fifo(struct spi_device *spi)
++{
++	ssize_t ret;
++
++	ret = nrf24_write_reg(spi, FLUSH_RX, 0);
++	if (ret < 0)
++		return ret;
++	return nrf24_write_reg(spi, FLUSH_TX, 0);
++}
++
++ssize_t nrf24_print_status(struct spi_device *spi)
++{
++const u8 nrf_reg[] = {
++	CONFIG,
++	EN_AA,
++	EN_RXADDR,
++	SETUP_AW,
++	SETUP_RETR,
++	RF_CH,
++	RF_SETUP,
++	STATUS,
++	OBSERVE_TX,
++	CD,
++	FIFO_STATUS,
++	DYNPD,
++	FEATURE
++};
++
++char *nrf_reg_name[] = {
++	"CONFIG",
++	"EN_AA",
++	"EN_RXADDR",
++	"SETUP_AW",
++	"SETUP_RETR",
++	"RF_CH",
++	"RF_SETUP",
++	"STATUS",
++	"OBSERVE_TX",
++	"CD",
++	"FIFO_STATUS",
++	"DYNPD",
++	"FEATURE"
++};
++
++	ssize_t loop;
++	ssize_t ret;
++
++	for (loop = 0; loop < 13; loop++) {
++		ret = spi_w8r8(spi, nrf_reg[loop]);
++		if (ret < 0)
++			return ret;
++
++		dev_dbg(&spi->dev,
++			"%s: %s = 0%02zx\n",
++			__func__,
++			nrf_reg_name[loop],
++			ret);
++	}
++
++	return 0;
++}
++
++ssize_t nrf24_get_auto_ack(struct spi_device *spi, u8 pipe)
++{
++	ssize_t aa;
++
++	aa = nrf24_read_reg(spi, EN_AA);
++	if (aa < 0)
++		return aa;
++
++	return (aa & BIT(pipe)) == BIT(pipe);
++}
++
++ssize_t nrf24_is_rx_fifo_empty(struct spi_device *spi)
++{
++	ssize_t fifo;
++
++	fifo = nrf24_read_reg(spi, FIFO_STATUS);
++	if (fifo < 0)
++		return fifo;
++
++	return fifo & 0x01;
++}
++
++ssize_t nrf24_reuse_tx_pl(struct spi_device *spi)
++{
++	return nrf24_write_reg(spi, REUSE_TX_PL, 0);
++}
++
+diff --git a/drivers/staging/nrf24/nrf24_hal.h b/drivers/staging/nrf24/nrf24_hal.h
+new file mode 100644
+index 000000000000..ce7fc190e286
+--- /dev/null
++++ b/drivers/staging/nrf24/nrf24_hal.h
+@@ -0,0 +1,54 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * Copyright (C) 2017 Marcin Ciupak <marcin.s.ciupak@gmail.com>
++ *
++ */
++
++#ifndef NRF24_HAL_H
++#define NRF24_HAL_H
++
++#include "nRF24L01.h"
++#include "nrf24_enums.h"
++
++ssize_t nrf24_open_pipe(struct spi_device *spi, enum nrf24_pipe_num pipe);
++ssize_t nrf24_close_pipe(struct spi_device *spi, enum nrf24_pipe_num pipe);
++ssize_t nrf24_set_address(struct spi_device *spi, enum nrf24_pipe_num pipe, u8 *addr);
++ssize_t nrf24_get_address(struct spi_device *spi, enum nrf24_pipe_num pipe, u8 *addr);
++ssize_t nrf24_set_crc_mode(struct spi_device *spi, enum nrf24_crc_mode mode);
++ssize_t nrf24_get_crc_mode(struct spi_device *spi);
++ssize_t nrf24_set_auto_retr_count(struct spi_device *spi, u8 count);
++ssize_t nrf24_get_auto_retr_count(struct spi_device *spi);
++ssize_t nrf24_set_auto_retr_delay(struct spi_device *spi, u16 delay);
++ssize_t nrf24_get_auto_retr_delay(struct spi_device *spi);
++ssize_t nrf24_set_address_width(struct spi_device *spi, enum nrf24_address_width aw);
++ssize_t nrf24_get_address_width(struct spi_device *spi);
++ssize_t nrf24_lock_unlock(struct spi_device *spi);
++ssize_t nrf24_set_datarate(struct spi_device *spi, enum nrf24_datarate datarate);
++ssize_t nrf24_get_datarate(struct spi_device *spi);
++ssize_t nrf24_set_mode(struct spi_device *spi, enum nrf24_mode mode);
++ssize_t nrf24_set_rf_power(struct spi_device *spi, enum nrf24_rf_power rf_pwr);
++ssize_t nrf24_get_rf_power(struct spi_device *spi);
++ssize_t nrf24_set_rx_pload_width(struct spi_device *spi, u8 pipe_no, u8 plw);
++ssize_t nrf24_set_rf_channel(struct spi_device *spi, u8 channel);
++ssize_t nrf24_write_tx_pload(struct spi_device *dev, u8 *buf, u8 length);
++ssize_t nrf24_write_tx_pload_noack(struct spi_device *dev, u8 *buf, u8 length);
++ssize_t nrf24_read_rx_pload(struct spi_device *spi, u8 *buf);
++ssize_t nrf24_power_up(struct spi_device *spi);
++ssize_t nrf24_get_status(struct spi_device *spi);
++ssize_t nrf24_get_rx_data_source(struct spi_device *spi);
++ssize_t nrf24_get_rx_pload_width(struct spi_device *spi, u8 pipe);
++ssize_t nrf24_soft_reset(struct spi_device *spi);
++ssize_t nrf24_clear_irq(struct spi_device *spi, u8 irq);
++ssize_t nrf24_flush_fifo(struct spi_device *spi);
++ssize_t nrf24_get_rx_pl_w(struct spi_device *spi);
++ssize_t nrf24_print_status(struct spi_device *spi);
++ssize_t nrf24_get_auto_ack(struct spi_device *spi, u8 pipe);
++ssize_t nrf24_setup_auto_ack(struct spi_device *spi, u8 pipe, bool enable);
++ssize_t nrf24_is_rx_fifo_empty(struct spi_device *spi);
++ssize_t nrf24_reuse_tx_pl(struct spi_device *spi);
++ssize_t nrf24_get_dynamic_pl(struct spi_device *spi);
++ssize_t nrf24_enable_dynamic_pl(struct spi_device *spi);
++ssize_t nrf24_disable_dynamic_pl(struct spi_device *spi);
++
++#endif
+diff --git a/drivers/staging/nrf24/nrf24_if.c b/drivers/staging/nrf24/nrf24_if.c
+new file mode 100644
+index 000000000000..834ac141bcbe
+--- /dev/null
++++ b/drivers/staging/nrf24/nrf24_if.c
+@@ -0,0 +1,919 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright (C) 2017 Marcin Ciupak <marcin.s.ciupak@gmail.com>
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/device.h>
++#include <linux/cdev.h>
++#include <linux/spi/spi.h>
++#include <linux/err.h>
++#include <linux/fs.h>
++#include <linux/uaccess.h>
++#include <linux/of.h>
++#include <linux/gpio/consumer.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/delay.h>
++#include <linux/spinlock.h>
++#include <linux/kfifo.h>
++#include <linux/wait.h>
++#include <linux/poll.h>
++#include <linux/list.h>
++
++#include "nrf24_if.h"
++#include "nrf24_sysfs.h"
++#include "nrf24_hal.h"
++
++#define N_NRF24_MINORS                  BIT(MINORBITS)
++
++static dev_t nrf24_dev;
++static DEFINE_IDA(nrf24_ida_pipe);
++static DEFINE_IDA(nrf24_ida_dev);
++static struct class *nrf24_class;
++
++ATTRIBUTE_GROUPS(nrf24_pipe);
++ATTRIBUTE_GROUPS(nrf24);
++
++static bool nrf24_is_rx_active(struct nrf24_device *device)
++{
++	struct nrf24_pipe *pipe;
++
++	bool active = false;
++
++	list_for_each_entry(pipe, &device->pipes, list)
++		active |= pipe->rx_size > 0;
++
++	return active;
++}
++
++static void nrf24_ce_hi(struct nrf24_device *device)
++{
++	gpiod_set_value(device->ce, 1);
++}
++
++static void nrf24_ce_lo(struct nrf24_device *device)
++{
++	gpiod_set_value(device->ce, 0);
++}
++
++static struct nrf24_pipe *nrf24_find_pipe_id(struct nrf24_device *device, int id)
++{
++	struct nrf24_pipe *pipe;
++
++	list_for_each_entry(pipe, &device->pipes, list)
++		if (pipe->id == id)
++			return pipe;
++
++	return ERR_PTR(-ENODEV);
++}
++
++static int nrf24_tx_thread(void *data)
++{
++	struct nrf24_device *device = data;
++	struct nrf24_pipe *p;
++	u8 pload[PLOAD_MAX];
++	int ret;
++	ssize_t size;
++	ssize_t n;
++	ssize_t sent = 0;
++	u8 *buf;
++	bool spl;
++	bool dpl = false;
++
++	while (true) {
++		dev_dbg(&device->dev,
++			"%s: waiting for new messages\n",
++			__func__);
++		wait_event_interruptible(device->tx_wait_queue,
++					 kthread_should_stop() ||
++					 (!nrf24_is_rx_active(device) && !kfifo_is_empty(&device->tx_fifo)));
++
++		if (kthread_should_stop())
++			return 0;
++
++		//clear flag
++		device->tx_done = false;
++
++		//lock fifo
++		//this is needed as write to tx fifo may be done by 6 pipes
++		mutex_lock(&device->tx_fifo_mutex);
++
++		//take address of pipe which is sending
++		ret = kfifo_out(&device->tx_fifo, &p, sizeof(p));
++		if (ret != sizeof(p)) {
++			dev_dbg(&device->dev, "get pipe from fifo failed\n");
++			mutex_unlock(&device->tx_fifo_mutex);
++			continue;
++		}
++
++		//take out size of data
++		ret = kfifo_out(&device->tx_fifo, &size, sizeof(size));
++		if (ret != sizeof(size)) {
++			dev_dbg(&device->dev, "get size from fifo failed\n");
++			mutex_unlock(&device->tx_fifo_mutex);
++			continue;
++		}
++
++		//alloc space for data
++		buf = kzalloc(size, GFP_KERNEL);
++		if (!buf) {
++			dev_dbg(&device->dev, "buf alloc failed\n");
++			mutex_unlock(&device->tx_fifo_mutex);
++			continue;
++		}
++
++		//take out size of data
++		ret = kfifo_out(&device->tx_fifo, buf, size);
++		if (ret != size) {
++			dev_dbg(&device->dev, "get buf from fifo failed\n");
++			mutex_unlock(&device->tx_fifo_mutex);
++			goto next;
++		}
++
++		//unlock tx fifo
++		mutex_unlock(&device->tx_fifo_mutex);
++
++		//enter Standby-I mode
++		nrf24_ce_lo(device);
++
++		//set TX MODE
++		ret = nrf24_set_mode(device->spi, NRF24_MODE_TX);
++		if (ret < 0)
++			goto next;
++
++		//set PIPE0 address
++		//this is needed to receive ACK
++		ret = nrf24_set_address(device->spi,
++					NRF24_PIPE0,
++					(u8 *)&p->cfg.address);
++		if (ret < 0) {
++			dev_dbg(&device->dev, "set PIPE0 address failed (%d)\n", ret);
++			goto next;
++		}
++
++		//set TX address
++		ret = nrf24_set_address(device->spi,
++					NRF24_TX,
++					(u8 *)&p->cfg.address);
++		if (ret < 0) {
++			dev_dbg(&device->dev, "set TX address failed (%d)\n", ret);
++			goto next;
++		}
++
++		//check if pipe uses static payload length
++		spl = p->cfg.plw != 0;
++
++		//check if dynamic payload length is enabled
++		dpl = nrf24_get_dynamic_pl(device->spi);
++
++		if (spl && dpl) {
++			//disable dynamic payload if pipe
++			//does not use dynamic payload
++			//and dynamic paload is enabled
++			ret = nrf24_disable_dynamic_pl(device->spi);
++			if (ret < 0)
++				goto next;
++		}
++
++		memset(pload, 0, PLOAD_MAX);
++		memcpy(pload, &size, sizeof(size));
++
++		//calculate payload length
++		n = spl ? p->cfg.plw : sizeof(size);
++
++		//send size
++		nrf24_write_tx_pload(device->spi, pload, n);
++		if (ret < 0) {
++			dev_dbg(&device->dev, "write TX PLOAD failed (%d)\n", ret);
++			goto next;
++		}
++
++		//enter TX MODE and start transmission
++		nrf24_ce_hi(device);
++
++		//wait for ACK
++		wait_event_interruptible(device->tx_done_wait_queue,
++					 (device->tx_done ||
++					 kthread_should_stop()));
++
++		if (kthread_should_stop())
++			goto abort;
++
++		//clear counter
++		sent = 0;
++
++		while (size > 0) {
++			n = spl ? p->cfg.plw : min_t(ssize_t, size, PLOAD_MAX);
++
++			dev_dbg(&device->dev, "tx %zd bytes\n", n);
++
++			memset(pload, 0, PLOAD_MAX);
++			memcpy(pload, buf + sent, n);
++
++			//write PLOAD to nRF FIFO
++			ret = nrf24_write_tx_pload(device->spi, pload, n);
++
++			if (ret < 0) {
++				dev_dbg(&device->dev,
++					"write TX PLOAD failed (%d)\n",
++					ret);
++				goto next;
++			}
++
++			sent += n;
++			size -= n;
++
++			device->tx_done = false;
++
++			//wait for ACK
++			wait_event_interruptible(device->tx_done_wait_queue,
++						 (device->tx_done ||
++						 kthread_should_stop()));
++
++			if (kthread_should_stop())
++				goto abort;
++		}
++next:
++		//free data buffer
++		kfree(buf);
++
++		//restore dynamic payload feature
++		if (dpl)
++			nrf24_enable_dynamic_pl(device->spi);
++
++		//if all sent enter RX MODE
++		if (kfifo_is_empty(&device->tx_fifo)) {
++			dev_dbg(&device->dev, "%s: NRF24_MODE_RX\n", __func__);
++
++			//enter Standby-I
++			nrf24_ce_lo(device);
++
++			p = nrf24_find_pipe_id(device, NRF24_PIPE0);
++			if (!IS_ERR(p)) {
++				//restore PIPE0 address
++				nrf24_set_address(device->spi,
++						  p->id,
++						  (u8 *)&p->cfg.address);
++			}
++			//set RX MODE
++			nrf24_set_mode(device->spi, NRF24_MODE_RX);
++
++			//enter RX MODE and start receiving
++			nrf24_ce_hi(device);
++		}
++	}
++abort:
++	kfree(buf);
++
++	return 0;
++}
++
++static int nrf24_rx_thread(void *data)
++{
++	struct nrf24_device *device = data;
++	ssize_t pipe;
++	ssize_t length;
++	u8 pload[PLOAD_MAX];
++	struct nrf24_pipe *p;
++
++	while (true) {
++		wait_event_interruptible(device->rx_wait_queue,
++					 (!nrf24_is_rx_fifo_empty(device->spi) ||
++					 kthread_should_stop()));
++		if (kthread_should_stop())
++			return 0;
++
++		pipe = nrf24_get_rx_data_source(device->spi);
++		if (pipe < 0) {
++			dev_dbg(&device->dev,
++				"%s: get pipe failed (err: %zd)\n",
++				__func__,
++				pipe);
++			continue;
++		}
++
++		if (pipe > NRF24_PIPE5) {
++			dev_dbg(&device->dev,
++				"%s: RX FIFO is empty!\n",
++				__func__);
++			continue;
++		}
++
++		p = nrf24_find_pipe_id(device, pipe);
++		if (IS_ERR(p))
++			continue;
++
++		memset(pload, 0, PLOAD_MAX);
++		length = nrf24_read_rx_pload(device->spi, pload);
++		if (length < 0) {
++			dev_dbg(&device->dev,
++				"%s: could not read pload (err = %zd)\n",
++				__func__,
++				length);
++			continue;
++		}
++
++		dev_dbg(p->dev, "rx %zd bytes\n", length);
++		if (p->rx_size <= 0) {
++			memcpy(&p->rx_size, pload, sizeof(p->rx_size));
++			dev_dbg(p->dev, "RX active\n");
++		} else {
++			//get length of remaining
++			length = p->rx_size < p->cfg.plw ? p->rx_size : length;
++
++			p->rx_size -= kfifo_in(&p->rx_fifo, &pload, length);
++
++			if (p->rx_size <= 0) {
++				dev_dbg(p->dev, "RX done\n");
++				wake_up_interruptible(&p->poll_wait_queue);
++			}
++		}
++
++		//start tx if all rx done and tx requested during rctive rx
++		if (!nrf24_is_rx_active(device) && !kfifo_is_empty(&device->tx_fifo)) {
++			dev_dbg(&device->dev, "wake up TX...\n");
++			wake_up_interruptible(&device->tx_wait_queue);
++		}
++	}
++}
++
++static void nrf24_isr_work_handler(struct work_struct *work)
++{
++	struct nrf24_device *device;
++	ssize_t status;
++
++	device = container_of(work, struct nrf24_device, isr_work);
++
++	status = nrf24_get_status(device->spi);
++	if (status < 0)
++		return;
++
++	if (status & RX_DR) {
++		dev_dbg(&device->dev, "%s: RX_DR\n", __func__);
++		nrf24_clear_irq(device->spi, RX_DR);
++		wake_up_interruptible(&device->rx_wait_queue);
++	}
++
++	if (status & TX_DS) {
++		dev_dbg(&device->dev, "%s: TX_DS\n", __func__);
++		nrf24_clear_irq(device->spi, TX_DS);
++		device->tx_done = true;
++		wake_up_interruptible(&device->tx_done_wait_queue);
++	}
++
++	if (status & MAX_RT) {
++		nrf24_ce_lo(device);
++		dev_dbg_ratelimited(&device->dev, "%s: MAX_RT\n", __func__);
++		nrf24_clear_irq(device->spi, MAX_RT);
++		nrf24_reuse_tx_pl(device->spi);
++		nrf24_ce_hi(device);
++	}
++}
++
++static irqreturn_t nrf24_isr(int irq, void *dev_id)
++{
++	unsigned long flags;
++	struct nrf24_device *device = dev_id;
++
++	spin_lock_irqsave(&device->lock, flags);
++
++	schedule_work(&device->isr_work);
++
++	spin_unlock_irqrestore(&device->lock, flags);
++
++	return IRQ_HANDLED;
++}
++
++static ssize_t nrf24_read(struct file *filp,
++			  char __user *buf,
++			  size_t size,
++			  loff_t *f_pos)
++{
++	struct nrf24_pipe *p;
++	unsigned int copied;
++	ssize_t n;
++
++	p = filp->private_data;
++
++	if (kfifo_is_empty(&p->rx_fifo) && (filp->f_flags & O_NONBLOCK))
++		return -EAGAIN;
++
++	n = kfifo_to_user(&p->rx_fifo, buf, size, &copied);
++	if (n)
++		return n;
++	return copied;
++}
++
++static ssize_t nrf24_write(struct file *filp,
++			   const char __user *buf,
++			   size_t size,
++			   loff_t *f_pos)
++{
++	struct nrf24_device *device;
++	struct nrf24_pipe *p;
++	ssize_t n;
++	unsigned int copied;
++
++	p = filp->private_data;
++	device = to_nrf24_device(p->dev->parent);
++
++	dev_dbg(p->dev, "write (%zd)\n", size);
++
++	mutex_lock(&device->tx_fifo_mutex);
++
++	//put pipe pointer in fifo
++	n = kfifo_in(&device->tx_fifo, &p, sizeof(p));
++	if (n != sizeof(p))
++		goto error;
++
++	//put size in fifo
++	n = kfifo_in(&device->tx_fifo, &size, sizeof(size));
++	if (n != sizeof(size))
++		goto error;
++
++	//put data to be sent into fifo
++	n = kfifo_from_user(&device->tx_fifo,
++			    buf,
++			    size,
++			    &copied);
++	if (n || size != copied)
++		goto error;
++
++	mutex_unlock(&device->tx_fifo_mutex);
++
++	wake_up_interruptible(&device->tx_wait_queue);
++
++	return copied;
++error:
++	kfifo_reset(&device->tx_fifo);
++	mutex_unlock(&device->tx_fifo_mutex);
++	return -EAGAIN;
++}
++
++static int nrf24_open(struct inode *inode, struct file *filp)
++{
++	struct nrf24_pipe *pipe;
++
++	pipe = container_of(inode->i_cdev, struct nrf24_pipe, cdev);
++
++	if (!pipe) {
++		pr_err("device: minor %d unknown.\n", iminor(inode));
++		return -ENODEV;
++	}
++
++	filp->private_data = pipe;
++	nonseekable_open(inode, filp);
++
++	return 0;
++}
++
++static int nrf24_release(struct inode *inode, struct file *filp)
++{
++	filp->private_data = NULL;
++
++	return 0;
++}
++
++static unsigned int nrf24_poll(struct file *filp,
++			       struct poll_table_struct *wait)
++{
++	struct nrf24_device *device;
++	struct nrf24_pipe *p;
++
++	p = filp->private_data;
++	device = to_nrf24_device(p->dev->parent);
++
++	dev_dbg(p->dev, "%s: waiting...\n", __func__);
++	poll_wait(filp, &p->poll_wait_queue, wait);
++	if (!kfifo_is_empty(&p->rx_fifo)) {
++		dev_dbg(p->dev, "%s: got data!\n", __func__);
++		return POLLIN | POLLRDNORM;
++	}
++	dev_dbg(p->dev, "%s: no data!\n", __func__);
++	return 0;
++}
++
++static void nrf24_destroy_devices(struct nrf24_device *device)
++{
++	struct nrf24_pipe *pipe, *temp;
++
++	list_for_each_entry_safe(pipe, temp, &device->pipes, list) {
++		cdev_del(&pipe->cdev);
++		device_destroy(nrf24_class, pipe->devt);
++		ida_simple_remove(&nrf24_ida_pipe, MINOR(pipe->devt));
++		list_del(&pipe->list);
++		kfree(pipe);
++	}
++}
++
++static const struct file_operations nrf24_fops = {
++	.owner = THIS_MODULE,
++	.open = nrf24_open,
++	.release = nrf24_release,
++	.read = nrf24_read,
++	.write = nrf24_write,
++	.llseek = no_llseek,
++	.poll = nrf24_poll,
++};
++
++static struct nrf24_pipe *nrf24_create_pipe(struct nrf24_device *device, int id)
++{
++	int ret;
++	struct nrf24_pipe *p;
++
++	//sets flags to false as well
++	p = kzalloc(sizeof(*p), GFP_KERNEL);
++	if (!p) {
++		ret = -ENOMEM;
++		goto error_alloc;
++	}
++
++	ret = ida_simple_get(&nrf24_ida_pipe, 0, 0, GFP_KERNEL);
++	if (ret < 0) {
++		dev_err(&device->dev, "%s: get_minor failed\n", __func__);
++		goto error_minor;
++	}
++
++	p->devt = MKDEV(MAJOR(nrf24_dev), ret);
++	p->id = id;
++
++	INIT_KFIFO(p->rx_fifo);
++	init_waitqueue_head(&p->poll_wait_queue);
++
++	p->dev = device_create_with_groups(nrf24_class,
++					   &device->dev,
++					   p->devt,
++					   p,
++					   nrf24_pipe_groups,
++					   "%s.%d",
++					   dev_name(&device->dev),
++					   id);
++
++	if (IS_ERR(p->dev)) {
++		dev_err(&device->dev,
++			"%s: device_create of '%s' failed\n",
++			__func__,
++			dev_name(p->dev));
++		ret = PTR_ERR(p->dev);
++		goto error_device;
++	}
++
++	cdev_init(&p->cdev, &nrf24_fops);
++	p->cdev.owner = THIS_MODULE;
++	ret = cdev_add(&p->cdev, p->devt, 1);
++	if (ret < 0) {
++		dev_err(&device->dev, "%s: cdev failed\n", __func__);
++		goto cdev_err;
++	}
++
++	dev_dbg(&device->dev,
++		"%s: device created: major(%d), minor(%d)\n",
++		__func__,
++		MAJOR(p->devt),
++		MINOR(p->devt));
++
++	return p;
++
++cdev_err:
++	device_destroy(nrf24_class, p->devt);
++error_device:
++	ida_simple_remove(&nrf24_ida_pipe, MINOR(p->devt));
++error_minor:
++	kfree(p);
++error_alloc:
++	return ERR_PTR(ret);
++}
++
++static void nrf24_gpio_free(struct nrf24_device *device)
++{
++	if (!IS_ERR(device->ce))
++		gpiod_put(device->ce);
++
++	free_irq(device->spi->irq, device);
++}
++
++static int nrf24_gpio_setup(struct nrf24_device *device)
++{
++	int ret;
++
++	device->ce = gpiod_get(&device->spi->dev, "ce", 0);
++
++	if (device->ce == ERR_PTR(-ENOENT))
++		dev_dbg(&device->dev, "%s: no entry for CE\n", __func__);
++	else if (device->ce == ERR_PTR(-EBUSY))
++		dev_dbg(&device->dev, "%s: CE is busy\n", __func__);
++
++	if (IS_ERR(device->ce)) {
++		ret = PTR_ERR(device->ce);
++		dev_err(&device->dev, "%s: CE gpio setup error\n", __func__);
++		return ret;
++	}
++
++	nrf24_ce_lo(device);
++
++	//irq
++	ret = request_irq(device->spi->irq,
++			  nrf24_isr,
++			  0,
++			  dev_name(&device->dev),
++			  device);
++	if (ret < 0) {
++		free_irq(device->spi->irq, device);
++		goto err;
++	}
++
++	return 0;
++
++err:
++	gpiod_put(device->ce);
++	return ret;
++}
++
++static void nrf24_dev_release(struct device *dev)
++{
++	struct nrf24_device *device = to_nrf24_device(dev);
++
++	ida_simple_remove(&nrf24_ida_dev, device->id);
++	kfree(device);
++}
++
++static struct device_type nrf24_dev_type = {
++	.name = "nrf24_device",
++	.release = nrf24_dev_release,
++};
++
++static struct nrf24_device *nrf24_dev_init(struct spi_device *spi)
++{
++	int ret;
++	struct nrf24_device *device;
++	int id;
++
++	id = ida_simple_get(&nrf24_ida_dev, 0, 0, GFP_KERNEL);
++	if (id < 0)
++		return ERR_PTR(id);
++
++	//sets flags to false as well
++	device = kzalloc(sizeof(*device), GFP_KERNEL);
++	if (!device) {
++		ida_simple_remove(&nrf24_ida_dev, id);
++		return ERR_PTR(-ENOMEM);
++	}
++	device->spi = spi;
++
++	dev_set_name(&device->dev, "nrf%d", id);
++	device->id = id;
++	device->dev.parent = &spi->dev;
++	device->dev.class = nrf24_class;
++	device->dev.type = &nrf24_dev_type;
++	device->dev.groups = nrf24_groups;
++	ret = device_register(&device->dev);
++	if (ret < 0) {
++		put_device(&device->dev);
++		return ERR_PTR(ret);
++	}
++
++	init_waitqueue_head(&device->tx_wait_queue);
++	init_waitqueue_head(&device->tx_done_wait_queue);
++	init_waitqueue_head(&device->rx_wait_queue);
++
++	INIT_WORK(&device->isr_work, nrf24_isr_work_handler);
++	INIT_KFIFO(device->tx_fifo);
++	spin_lock_init(&device->lock);
++	mutex_init(&device->tx_fifo_mutex);
++
++	INIT_LIST_HEAD(&device->pipes);
++
++	return device;
++}
++
++static int nrf24_hal_init(struct nrf24_device *device)
++{
++	int ret;
++	struct spi_device *spi = device->spi;
++	struct nrf24_pipe *pipe;
++
++	ret = nrf24_soft_reset(spi);
++	if (ret < 0)
++		return ret;
++
++	list_for_each_entry(pipe, &device->pipes, list) {
++		ret = nrf24_get_address(spi,
++					pipe->id,
++					(u8 *)&pipe->cfg.address);
++		if (ret < 0)
++			return ret;
++		ret = nrf24_get_auto_ack(spi, pipe->id);
++		if (ret < 0)
++			return ret;
++		pipe->cfg.ack = ret;
++
++		//0 -> dynamic pload
++		pipe->cfg.plw = 0;
++		ret = nrf24_set_rx_pload_width(spi, pipe->id, 0);
++		if (ret < 0)
++			return ret;
++	}
++
++	ret = nrf24_flush_fifo(spi);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_open_pipe(spi, NRF24_PIPE_ALL);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_lock_unlock(spi);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_set_mode(spi, NRF24_MODE_RX);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_set_crc_mode(spi, NRF24_CRC_16BIT);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_set_auto_retr_count(spi, 15);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_set_auto_retr_delay(spi, 4000);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_set_rf_power(spi, NRF24_POWER_0DBM);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_set_datarate(spi, NRF24_DATARATE_2MBPS);
++	if (ret < 0)
++		return ret;
++	ret = nrf24_power_up(spi);
++	if (ret < 0)
++		return ret;
++
++	nrf24_ce_hi(device);
++
++	return ret;
++}
++
++static int nrf24_probe(struct spi_device *spi)
++{
++	int ret;
++	struct nrf24_device *device;
++	struct nrf24_pipe *pipe;
++	int i;
++
++	spi->mode = SPI_MODE_0;
++	spi->bits_per_word = 8;
++
++	ret = spi_setup(spi);
++	if (ret < 0) {
++		dev_err(&spi->dev, "%s: spi_setup failed\n", __func__);
++		return ret;
++	}
++
++	device = nrf24_dev_init(spi);
++	if (IS_ERR(device)) {
++		dev_err(&device->spi->dev, "%s: dev_init failed\n", __func__);
++		return PTR_ERR(device);
++	}
++
++	ret = nrf24_gpio_setup(device);
++	if (ret < 0) {
++		dev_err(&device->dev, "%s: gpio_setup failed\n", __func__);
++		goto gpio_setup_err;
++	}
++
++	for (i = 0; i <= NRF24_PIPE5; i++) {
++		pipe = nrf24_create_pipe(device, i);
++		if (IS_ERR(pipe)) {
++			ret = PTR_ERR(pipe);
++			goto device_err;
++		}
++		list_add(&pipe->list, &device->pipes);
++	}
++
++	ret = nrf24_hal_init(device);
++	if (ret < 0)
++		goto hal_init_err;
++
++	/* start rx thread */
++	device->rx_task_struct = kthread_run(nrf24_rx_thread,
++					     device,
++					     "nrf%d_rx_thread",
++					     device->id);
++	if (IS_ERR(device->rx_task_struct)) {
++		dev_err(&device->dev, "start of tx thread failed\n");
++		goto rx_thread_err;
++	}
++
++	/* start tx thread */
++	device->tx_task_struct = kthread_run(nrf24_tx_thread,
++					     device,
++					     "nrf%d_tx_thread",
++					     device->id);
++	if (IS_ERR(device->tx_task_struct)) {
++		dev_err(&device->dev, "start of tx thread failed\n");
++		goto tx_thread_err;
++	}
++
++	spi_set_drvdata(spi, device);
++
++	return 0;
++
++tx_thread_err:
++	kthread_stop(device->rx_task_struct);
++rx_thread_err:
++hal_init_err:
++device_err:
++	nrf24_destroy_devices(device);
++	nrf24_gpio_free(device);
++gpio_setup_err:
++	device_unregister(&device->dev);
++	return ret;
++}
++
++static int nrf24_remove(struct spi_device *spi)
++{
++	struct nrf24_device *device = spi_get_drvdata(spi);
++
++	nrf24_gpio_free(device);
++
++	kthread_stop(device->tx_task_struct);
++	kthread_stop(device->rx_task_struct);
++
++	nrf24_destroy_devices(device);
++
++	device_unregister(&device->dev);
++
++	return 0;
++}
++
++static const struct of_device_id nrf24_dt_ids[] = {
++	{ .compatible = "nordic,nrf24" },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, nrf24_dt_ids);
++
++static  struct spi_driver nrf24_spi_driver = {
++	.driver = {
++		.name = "nrf24",
++		.owner = THIS_MODULE,
++		.of_match_table = of_match_ptr(nrf24_dt_ids),
++	},
++	.probe = nrf24_probe,
++	.remove = nrf24_remove,
++};
++
++static int __init nrf24_init(void)
++{
++	int ret;
++
++	ret = alloc_chrdev_region(&nrf24_dev, 0, N_NRF24_MINORS,
++				  nrf24_spi_driver.driver.name);
++	if (ret < 0) {
++		pr_err("Unable to alloc chrdev region\n");
++		goto chrdev_err;
++	}
++
++	nrf24_class = class_create(THIS_MODULE, nrf24_spi_driver.driver.name);
++	if (IS_ERR(nrf24_class)) {
++		pr_err("Unable to create class\n");
++		ret = PTR_ERR(nrf24_class);
++		goto class_err;
++	}
++
++	ret = spi_register_driver(&nrf24_spi_driver);
++	if (ret < 0) {
++		pr_err("Unable to register spi driver\n");
++		goto spi_err;
++	}
++
++	return 0;
++
++spi_err:
++	class_destroy(nrf24_class);
++class_err:
++	unregister_chrdev(MAJOR(nrf24_dev), nrf24_spi_driver.driver.name);
++chrdev_err:
++	ida_destroy(&nrf24_ida_dev);
++	ida_destroy(&nrf24_ida_pipe);
++
++	return ret;
++}
++module_init(nrf24_init);
++
++static void __exit nrf24_exit(void)
++{
++	spi_unregister_driver(&nrf24_spi_driver);
++	class_destroy(nrf24_class);
++	unregister_chrdev(MAJOR(nrf24_dev), nrf24_spi_driver.driver.name);
++	ida_destroy(&nrf24_ida_dev);
++	ida_destroy(&nrf24_ida_pipe);
++}
++module_exit(nrf24_exit);
++
++MODULE_AUTHOR("Marcin Ciupak <marcin.s.ciupak@gmail.com>");
++MODULE_DESCRIPTION("Driver for NRF24L01+");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("spi:nrf24");
++
+diff --git a/drivers/staging/nrf24/nrf24_if.h b/drivers/staging/nrf24/nrf24_if.h
+new file mode 100644
+index 000000000000..2d9b0a8eaedc
+--- /dev/null
++++ b/drivers/staging/nrf24/nrf24_if.h
+@@ -0,0 +1,63 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * Copyright (C) 2017 Marcin Ciupak <marcin.s.ciupak@gmail.com>
++ *
++ */
++
++#ifndef NRF24_IF_H
++#define NRF24_IF_H
++
++#define FIFO_SIZE			65536
++
++struct nrf24_pipe_cfg {
++	u64			address;
++	u8			ack;
++	ssize_t			plw;
++};
++
++struct nrf24_pipe {
++	dev_t			devt;
++	struct device		*dev;
++	struct cdev		cdev;
++	int			id;
++	struct nrf24_pipe_cfg	cfg;
++
++	STRUCT_KFIFO_REC_1(FIFO_SIZE) rx_fifo;
++	wait_queue_head_t	poll_wait_queue;
++	ssize_t			rx_size;
++
++	struct list_head list;
++};
++
++struct nrf24_device {
++	u32			id;
++	struct device		dev;
++	struct spi_device	*spi;
++	struct list_head	pipes;
++
++	struct gpio_desc	*ce;
++
++	/* for irqsave */
++	spinlock_t		lock;
++
++	struct work_struct	isr_work;
++
++	/* tx */
++	STRUCT_KFIFO_REC_2(FIFO_SIZE) tx_fifo;
++
++	/* tx fifo lock */
++	struct mutex		tx_fifo_mutex;
++	struct task_struct	*tx_task_struct;
++	wait_queue_head_t	tx_wait_queue;
++	wait_queue_head_t	tx_done_wait_queue;
++
++	struct task_struct	*rx_task_struct;
++	wait_queue_head_t	rx_wait_queue;
++
++	u8			tx_done;
++};
++
++#define to_nrf24_device(device)	container_of(device, struct nrf24_device, dev)
++
++#endif /* NRF24_IF_H */
+diff --git a/drivers/staging/nrf24/nrf24_sysfs.c b/drivers/staging/nrf24/nrf24_sysfs.c
+new file mode 100644
+index 000000000000..7d57c72496d5
+--- /dev/null
++++ b/drivers/staging/nrf24/nrf24_sysfs.c
+@@ -0,0 +1,707 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright (C) 2017 Marcin Ciupak <marcin.s.ciupak@gmail.com>
++ *
++ */
++
++#include <linux/types.h>
++#include <linux/device.h>
++#include <linux/cdev.h>
++#include <linux/err.h>
++#include <linux/kfifo.h>
++#include <linux/list.h>
++
++#include "nrf24_if.h"
++#include "nrf24_hal.h"
++#include "nrf24_enums.h"
++
++static struct nrf24_pipe *nrf24_find_pipe_ptr(struct device *dev)
++{
++	struct nrf24_device *device = to_nrf24_device(dev->parent);
++	struct nrf24_pipe *pipe;
++
++	list_for_each_entry(pipe, &device->pipes, list)
++		if (pipe->dev == dev)
++			return pipe;
++
++	return ERR_PTR(-ENODEV);
++}
++
++static ssize_t ack_show(struct device *dev,
++			struct device_attribute *attr,
++			char *buf)
++{
++	struct nrf24_device *device = to_nrf24_device(dev->parent);
++	int ret;
++	struct nrf24_pipe *pipe;
++
++	pipe = nrf24_find_pipe_ptr(dev);
++	if (IS_ERR(pipe))
++		return PTR_ERR(pipe);
++
++	ret = nrf24_get_auto_ack(device->spi, pipe->id);
++	if (ret < 0)
++		return ret;
++
++	return snprintf(buf, PAGE_SIZE, "%d\n", ret);
++}
++
++static ssize_t ack_store(struct device *dev,
++			 struct device_attribute *attr,
++			 const char *buf,
++			 size_t count)
++{
++	struct nrf24_device *device = to_nrf24_device(dev->parent);
++	int ret;
++	u8 new;
++	struct nrf24_pipe *pipe;
++
++	pipe = nrf24_find_pipe_ptr(dev);
++	if (IS_ERR(pipe))
++		return PTR_ERR(pipe);
++
++	ret = kstrtou8(buf, 10, &new);
++	if (ret < 0)
++		return ret;
++	if (new < 0 || new > 1)
++		return -EINVAL;
++
++	ret = nrf24_setup_auto_ack(device->spi, pipe->id, new);
++	if (ret < 0)
++		return ret;
++
++	return count;
++}
++
++static ssize_t plw_show(struct device *dev,
++			struct device_attribute *attr,
++			char *buf)
++{
++	struct nrf24_device *device = to_nrf24_device(dev->parent);
++	int ret;
++	struct nrf24_pipe *pipe;
++
++	pipe = nrf24_find_pipe_ptr(dev);
++	if (IS_ERR(pipe))
++		return PTR_ERR(pipe);
++
++	ret = nrf24_get_rx_pload_width(device->spi, pipe->id);
++	if (ret < 0)
++		return ret;
++
++	return snprintf(buf, PAGE_SIZE, "%d\n", ret);
++}
++
++static ssize_t plw_store(struct device *dev,
++			 struct device_attribute *attr,
++			 const char *buf,
++			 size_t count)
++{
++	struct nrf24_device *device = to_nrf24_device(dev->parent);
++	int ret;
++	u8 new;
++	u8 old;
++	struct nrf24_pipe *pipe;
++
++	pipe = nrf24_find_pipe_ptr(dev);
++	if (IS_ERR(pipe))
++		return PTR_ERR(pipe);
++
++	ret = kstrtou8(buf, 10, &new);
++	if (ret < 0)
++		return ret;
++
++	if (new < 0 || new > PLOAD_MAX)
++		return -EINVAL;
++	old = nrf24_get_rx_pload_width(device->spi, pipe->id);
++	if (old < 0)
++		return old;
++
++	if (old != new) {
++		ret = nrf24_set_rx_pload_width(device->spi, pipe->id, new);
++		if (ret < 0)
++			return ret;
++		pipe->cfg.plw = new;
++	}
++
++	return count;
++}
++
++static ssize_t address_show(struct device *dev,
++			    struct device_attribute *attr,
++			    char *buf)
++{
++	struct nrf24_device *device = to_nrf24_device(dev->parent);
++	u8 addr[16];
++	int ret;
++	int count;
++	int i;
++	struct nrf24_pipe *pipe;
++
++	pipe = nrf24_find_pipe_ptr(dev);
++	if (IS_ERR(pipe))
++		return PTR_ERR(pipe);
++
++	ret = nrf24_get_address(device->spi, pipe->id, addr);
++	if (ret < 0)
++		return ret;
++
++	count = snprintf(buf, PAGE_SIZE, "0x");
++	for (i = --ret; i >= 0; i--)
++		count += snprintf(buf + count, PAGE_SIZE, "%02X", addr[i]);
++	count += snprintf(buf + count, PAGE_SIZE, "\n");
++
++	return count;
++}
++
++static ssize_t address_store(struct device *dev,
++			     struct device_attribute *attr,
++			     const char *buf,
++			     size_t count)
++{
++	struct nrf24_device *device = to_nrf24_device(dev->parent);
++	int ret;
++	u64 address;
++	int len;
++	struct nrf24_pipe *pipe;
++
++	ret = kstrtoull(buf, 16, &address);
++	if (ret < 0)
++		return ret;
++
++	len = nrf24_get_address_width(device->spi);
++	if (len < 0)
++		return len;
++
++	if (address >= BIT_ULL(len * BITS_PER_BYTE))
++		return -EINVAL;
++
++	pipe = nrf24_find_pipe_ptr(dev);
++	if (IS_ERR(pipe))
++		return PTR_ERR(pipe);
++
++	ret = nrf24_set_address(device->spi, pipe->id, (u8 *)&address);
++	if (ret < 0)
++		return ret;
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(ack);
++static DEVICE_ATTR_RW(plw);
++static DEVICE_ATTR_RW(address);
++
++struct attribute *nrf24_pipe_attrs[] = {
++	&dev_attr_ack.attr,
++	&dev_attr_plw.attr,
++	&dev_attr_address.attr,
++	NULL,
++};
++
++static ssize_t tx_address_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
++{
++	struct nrf24_device *device = to_nrf24_device(dev);
++	u8 addr[16];
++	int ret;
++	int count;
++	int i;
++
++	ret = nrf24_get_address(device->spi, NRF24_TX, addr);
++	if (ret < 0)
++		return ret;
++
++	count = snprintf(buf, PAGE_SIZE, "0x");
++	for (i = --ret; i >= 0; i--)
++		count += snprintf(buf + count, PAGE_SIZE, "%02X", addr[i]);
++	count += snprintf(buf + count, PAGE_SIZE, "\n");
++
++	return count;
++}
++
++static ssize_t tx_address_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf,
++				size_t count)
++{
++	struct nrf24_device *device = to_nrf24_device(dev);
++	int ret;
++	u64 address;
++	int len;
++
++	ret = kstrtoull(buf, 16, &address);
++	if (ret < 0)
++		return ret;
++
++	len = nrf24_get_address_width(device->spi);
++	if (len < 0)
++		return len;
++
++	if (address >= BIT_ULL(len * BITS_PER_BYTE))
++		return -EINVAL;
++
++	ret = nrf24_set_address(device->spi, NRF24_TX, (u8 *)&address);
++	if (ret < 0)
++		return ret;
++
++	return count;
++}
++
++static ssize_t status_show(struct device *dev,
++			   struct device_attribute *attr,
++			   char *buf)
++{
++	int ret;
++	struct nrf24_device *device = to_nrf24_device(dev);
++
++	nrf24_print_status(device->spi);
++	ret = nrf24_get_status(device->spi);
++	if (ret < 0)
++		return ret;
++	return snprintf(buf, PAGE_SIZE, "STATUS = 0x%02X\n", ret);
++}
++
++static ssize_t available_crc_show(struct device *dev,
++				  struct device_attribute *attr,
++				  char *buf)
++{
++	return snprintf(buf, PAGE_SIZE, "0 8 16\n");
++}
++
++static ssize_t crc_show(struct device *dev,
++			struct device_attribute *attr,
++			char *buf)
++{
++	int ret;
++	struct nrf24_device *device = to_nrf24_device(dev);
++
++	ret = nrf24_get_crc_mode(device->spi);
++	if (ret < 0)
++		return ret;
++
++	switch (ret) {
++	case NRF24_CRC_OFF:
++		ret = snprintf(buf, PAGE_SIZE, "0\n");
++		break;
++	case NRF24_CRC_8BIT:
++		ret = snprintf(buf, PAGE_SIZE, "8\n");
++		break;
++	case NRF24_CRC_16BIT:
++		ret = snprintf(buf, PAGE_SIZE, "16\n");
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return ret;
++}
++
++static ssize_t crc_store(struct device *dev,
++			 struct device_attribute *attr,
++			 const char *buf,
++			 size_t count)
++{
++	int ret;
++	u8 new;
++	struct nrf24_device *device;
++
++	device = to_nrf24_device(dev);
++
++	ret = kstrtou8(buf, 10, &new);
++	if (ret < 0)
++		return ret;
++
++	switch (new) {
++	case 0:
++		new = NRF24_CRC_OFF;
++		break;
++	case 8:
++		new = NRF24_CRC_8BIT;
++		break;
++	case 16:
++		new = NRF24_CRC_16BIT;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	ret = nrf24_get_crc_mode(device->spi);
++	if (ret < 0)
++		return ret;
++
++	if (new != ret) {
++		ret = nrf24_set_crc_mode(device->spi, new);
++		if (ret < 0)
++			return ret;
++		dev_dbg(dev, "%s: new crc mode = %d\n", __func__, new);
++	}
++	return count;
++}
++
++static ssize_t available_address_width_show(struct device *dev,
++					    struct device_attribute *attr,
++					    char *buf)
++{
++	return snprintf(buf, PAGE_SIZE, "3 4 5\n");
++}
++
++static ssize_t address_width_show(struct device *dev,
++				  struct device_attribute *attr,
++				  char *buf)
++{
++	int ret;
++	struct nrf24_device *device = to_nrf24_device(dev);
++
++	ret = nrf24_get_address_width(device->spi);
++	if (ret < 0)
++		return ret;
++
++	return snprintf(buf, PAGE_SIZE, "%d\n", ret);
++}
++
++static ssize_t address_width_store(struct device *dev,
++				   struct device_attribute *attr,
++				   const char *buf,
++				   size_t count)
++{
++	int ret;
++	u8 new;
++	struct nrf24_device *device;
++
++	device = to_nrf24_device(dev);
++
++	ret = kstrtou8(buf, 10, &new);
++	if (ret < 0)
++		return ret;
++
++	if (new != NRF24_AW_3 &&
++	    new != NRF24_AW_4 &&
++	    new != NRF24_AW_5)
++		return -EINVAL;
++
++	ret = nrf24_get_address_width(device->spi);
++	if (ret < 0)
++		return ret;
++
++	if (new != ret) {
++		ret = nrf24_set_address_width(device->spi, new);
++		if (ret < 0)
++			return ret;
++		dev_dbg(dev, "%s: new address width = %d\n", __func__, new);
++	}
++	return count;
++}
++
++static ssize_t available_output_power_show(struct device *dev,
++					   struct device_attribute *attr,
++					   char *buf)
++{
++	return snprintf(buf, PAGE_SIZE, "0 -6 -12 -18\n");
++}
++
++static ssize_t rf_power_show(struct device *dev,
++			     struct device_attribute *attr,
++			     char *buf)
++{
++	int ret;
++	struct nrf24_device *device = to_nrf24_device(dev);
++
++	ret = nrf24_get_rf_power(device->spi);
++	if (ret < 0)
++		return ret;
++
++	switch (ret) {
++	case NRF24_POWER_0DBM:
++		ret = snprintf(buf, PAGE_SIZE, "0\n");
++		break;
++	case NRF24_POWER_6DBM:
++		ret = snprintf(buf, PAGE_SIZE, "-6\n");
++		break;
++	case NRF24_POWER_12DBM:
++		ret = snprintf(buf, PAGE_SIZE, "-12\n");
++		break;
++	case NRF24_POWER_18DBM:
++		ret = snprintf(buf, PAGE_SIZE, "-18\n");
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return ret;
++}
++
++static ssize_t rf_power_store(struct device *dev,
++			      struct device_attribute *attr,
++			      const char *buf,
++			      size_t count)
++{
++	int ret;
++	u8 new;
++	s8 tmp;
++	struct nrf24_device *device;
++
++	device = to_nrf24_device(dev);
++
++	ret = kstrtos8(buf, 10, &tmp);
++	if (ret < 0)
++		return ret;
++
++	switch (abs(tmp)) {
++	case 0:
++		new = NRF24_POWER_0DBM;
++		break;
++	case 6:
++		new = NRF24_POWER_6DBM;
++		break;
++	case 12:
++		new = NRF24_POWER_12DBM;
++		break;
++	case 18:
++		new = NRF24_POWER_18DBM;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	ret = nrf24_get_rf_power(device->spi);
++	if (ret < 0)
++		return ret;
++
++	if (new != ret) {
++		ret = nrf24_set_rf_power(device->spi, new);
++		if (ret < 0)
++			return ret;
++		dev_dbg(dev, "%s: new rf power level = %d\n", __func__, new);
++	}
++	return count;
++}
++
++static ssize_t available_data_rate_show(struct device *dev,
++					struct device_attribute *attr,
++					char *buf)
++{
++	return snprintf(buf, PAGE_SIZE, "256 1024 2048\n");
++}
++
++static ssize_t data_rate_show(struct device *dev,
++			      struct device_attribute *attr,
++			      char *buf)
++{
++	int ret;
++	struct nrf24_device *device = to_nrf24_device(dev);
++
++	ret = nrf24_get_datarate(device->spi);
++	if (ret < 0)
++		return ret;
++
++	switch (ret) {
++	case NRF24_DATARATE_256KBPS:
++		ret = snprintf(buf, PAGE_SIZE, "256\n");
++		break;
++	case NRF24_DATARATE_1MBPS:
++		ret = snprintf(buf, PAGE_SIZE, "1024\n");
++		break;
++	case NRF24_DATARATE_2MBPS:
++		ret = snprintf(buf, PAGE_SIZE, "2048\n");
++		break;
++	}
++
++	return ret;
++}
++
++static ssize_t data_rate_store(struct device *dev,
++			       struct device_attribute *attr,
++			       const char *buf,
++			       size_t count)
++{
++	int ret;
++	u8 new;
++	u16 tmp;
++	struct nrf24_device *device;
++
++	device = to_nrf24_device(dev);
++
++	ret = kstrtou16(buf, 10, &tmp);
++	if (ret < 0)
++		return ret;
++
++	switch (tmp) {
++	case 256:
++		new = NRF24_DATARATE_256KBPS;
++		break;
++	case 1024:
++		new = NRF24_DATARATE_1MBPS;
++		break;
++	case 2048:
++		new = NRF24_DATARATE_2MBPS;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	ret = nrf24_get_datarate(device->spi);
++	if (ret < 0)
++		return ret;
++
++	if (new != ret) {
++		ret = nrf24_set_datarate(device->spi, new);
++		if (ret < 0)
++			return ret;
++		dev_dbg(dev, "%s: new datarate = %d\n", __func__, new);
++	}
++	return count;
++}
++
++static ssize_t available_retr_delay_show(struct device *dev,
++					 struct device_attribute *attr,
++					 char *buf)
++{
++	int i;
++	int count = 0;
++
++	for (i = 1; i <= 16; i++)
++		count += snprintf(buf + count, PAGE_SIZE, "%d ", i * 250);
++	buf[count - 1] = '\n';
++
++	return count;
++}
++
++static ssize_t retr_delay_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
++{
++	int ret;
++	struct nrf24_device *device = to_nrf24_device(dev);
++
++	ret = nrf24_get_auto_retr_delay(device->spi);
++	if (ret < 0)
++		return ret;
++
++	return sprintf(buf, "%d\n", ret);
++}
++
++static ssize_t retr_delay_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf,
++				size_t count)
++{
++	int ret;
++	u16 new;
++	struct nrf24_device *device;
++
++	device = to_nrf24_device(dev);
++
++	ret = kstrtou16(buf, 10, &new);
++	if (ret < 0)
++		return ret;
++
++	if (new < 250 || new > 4000 || new % 250)
++		return -EINVAL;
++
++	ret = nrf24_get_auto_retr_delay(device->spi);
++	if (ret < 0)
++		return ret;
++
++	if (new != ret) {
++		ret = nrf24_set_auto_retr_delay(device->spi, new);
++		if (ret < 0)
++			return ret;
++		dev_dbg(dev, "%s: new autr retr delay = %d\n", __func__, new);
++	}
++	return count;
++}
++
++static ssize_t available_retr_count_show(struct device *dev,
++					 struct device_attribute *attr,
++					 char *buf)
++{
++	int i;
++	int count = 0;
++
++	for (i = 0; i < 16; i++)
++		count += snprintf(buf + count, PAGE_SIZE, "%d ", i);
++	buf[count - 1] = '\n';
++
++	return count;
++}
++
++static ssize_t retr_count_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
++{
++	int ret;
++	struct nrf24_device *device = to_nrf24_device(dev);
++
++	ret = nrf24_get_auto_retr_count(device->spi);
++	if (ret < 0)
++		return ret;
++
++	return snprintf(buf, PAGE_SIZE, "%d\n", ret);
++}
++
++static ssize_t retr_count_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf,
++				size_t count)
++{
++	int ret;
++	u16 new;
++	struct nrf24_device *device;
++
++	device = to_nrf24_device(dev);
++
++	ret = kstrtou16(buf, 10, &new);
++	if (ret < 0)
++		return ret;
++
++	if (new < 0 || new > 15)
++		return -EINVAL;
++
++	ret = nrf24_get_auto_retr_count(device->spi);
++	if (ret < 0)
++		return ret;
++
++	if (new != ret) {
++		ret = nrf24_set_auto_retr_count(device->spi, new);
++		if (ret < 0)
++			return ret;
++		dev_dbg(dev, "%s: new autr retr count = %d\n", __func__, new);
++	}
++	return count;
++}
++
++static DEVICE_ATTR_RW(tx_address);
++static DEVICE_ATTR_RO(status);
++static DEVICE_ATTR_RO(available_crc);
++static DEVICE_ATTR_RW(crc);
++static DEVICE_ATTR_RO(available_address_width);
++static DEVICE_ATTR_RW(address_width);
++static DEVICE_ATTR_RO(available_output_power);
++static DEVICE_ATTR_RW(rf_power);
++static DEVICE_ATTR_RO(available_data_rate);
++static DEVICE_ATTR_RW(data_rate);
++static DEVICE_ATTR_RO(available_retr_delay);
++static DEVICE_ATTR_RW(retr_delay);
++static DEVICE_ATTR_RO(available_retr_count);
++static DEVICE_ATTR_RW(retr_count);
++
++struct attribute *nrf24_attrs[] = {
++	&dev_attr_tx_address.attr,
++	&dev_attr_status.attr,
++	&dev_attr_crc.attr,
++	&dev_attr_available_crc.attr,
++	&dev_attr_address_width.attr,
++	&dev_attr_available_address_width.attr,
++	&dev_attr_rf_power.attr,
++	&dev_attr_available_output_power.attr,
++	&dev_attr_data_rate.attr,
++	&dev_attr_available_data_rate.attr,
++	&dev_attr_retr_delay.attr,
++	&dev_attr_available_retr_delay.attr,
++	&dev_attr_retr_count.attr,
++	&dev_attr_available_retr_count.attr,
++	NULL,
++};
++
+diff --git a/drivers/staging/nrf24/nrf24_sysfs.h b/drivers/staging/nrf24/nrf24_sysfs.h
+new file mode 100644
+index 000000000000..ae6575b13ffe
+--- /dev/null
++++ b/drivers/staging/nrf24/nrf24_sysfs.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * Copyright (C) 2017 Marcin Ciupak <marcin.s.ciupak@gmail.com>
++ *
++ */
++
++#ifndef NRF24_SYSFS_H
++#define NRF24_SYSFS_H
++
++extern struct attribute *nrf24_pipe_attrs[];
++extern struct attribute *nrf24_attrs[];
++
++#endif /* NRF24_SYSFS_H */
+-- 
+2.19.1
 
