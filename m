@@ -7,61 +7,62 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F4CC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDDAC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F1F62148D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D3932148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wt2CLAmZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F1F62148D
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YPx2z2OG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D3932148E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeJQHqy (ORCPT
+        id S1727577AbeJQHq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:46:54 -0400
-Received: from mail-it1-f202.google.com ([209.85.166.202]:44130 "EHLO
-        mail-it1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727506AbeJQHqx (ORCPT
+        Wed, 17 Oct 2018 03:46:57 -0400
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:52942 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727506AbeJQHqz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:46:53 -0400
-Received: by mail-it1-f202.google.com with SMTP id k69-v6so235612ite.9
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:04 -0700 (PDT)
+        Wed, 17 Oct 2018 03:46:55 -0400
+Received: by mail-vk1-f201.google.com with SMTP id o188-v6so6420367vke.19
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=uw9R47stJ0hTnKGMpz+45emoI+mx7jNptXF9kuz1348=;
-        b=Wt2CLAmZ01nzug3igoC7QMWBTWiNCk2KyQeIforWF4nlybC7ZEhAAyYRVdH1zxAtzd
-         pkOhW6g8H71Qvjbo+4UDKVWHR25ZLcCGnFZJlvKN2nXEE1zPb7NLvTY1IDQuohmg2Fxq
-         wM3p2EuCN/DKI+SvMDHbH5K8RZtXeJWOQ9/MkvXW3qxPyjQGRjIpq91SNprEskd7YUnG
-         MazK/PM7sdXZ1Y1eGs6Cf8sh7PODTkKGVurljr+88cCTY2JnkTNpnmCKZzSiRghYa4gw
-         5xBGJDMA7i2TQpHLnBIHS5pZz4COlFB+wDLnDM3KxhKGj89TVgGvSYScAe2JrawpCkhB
-         hmEg==
+        bh=QsZ3was/QkGUo6BYsP86tczumclzu/oVJ8cXDvZ38AM=;
+        b=YPx2z2OGVftv8Dgf9hsP/BheUOYZFFBIJGxjmrXiQJYj4a1tn1kaNN09vpi1NKcpm2
+         JAZ8twZJiDMzSLhE+Mh397wmrl9kofyv/dOYsA4HBUqYXjYVAc0ZT6pON/EHIJaYUT2B
+         9jwfmA2gJxOXt1amkDD6rO+kaCLxft4cJg2eyLovzY/K0a7FvFC2VmYJ/IRq8ioWyYER
+         G+9z/EDxYQMHTe5+Ld4lCNch12O10HzHmHkaRi5j/bLIhl/lKlSYzqW2f10LyWJ4n3XD
+         Uvj/JkYva3y5wiRudK4WLtPONTRM51xi4AMDENu5RyPMsKIxm3H8Dn2ACpQ9JTB3V+wW
+         iB7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=uw9R47stJ0hTnKGMpz+45emoI+mx7jNptXF9kuz1348=;
-        b=EJZmS0FkfriHXce2YU4YE+TdJ2s234fwxkP9LzGbPPrOSwXM10BMMJh/xquA3uM9nx
-         JskNAfIDyD6rti2NUpBgYsEPyj0pd/Dq2lpIHNspm8p5Xk7XPVgLbjwBoD5qQujYybLJ
-         F3Ue7C+t6fnM2xzMjd1Yiljm0t0DQv3T9xyJ4TUxaQoQmSxSthdGAD3ujf8bAX4wd5ri
-         xRMjSlyOrevCpymskImUrJFV/9ShrfcxDROFcXE0CBN1LuJp7iVVR6EZIfqzegRCX0nE
-         YyyLrYHzISYPYPWk4+p3Hrtqnn84esALLazN4G1dlGh4WE0ygZChEcItswrNnzCP6hcL
-         uTWw==
-X-Gm-Message-State: ABuFfohEr4e4Vfs9MKInVaotQGSjSxDBpyrLxwvfGec009SqPO4YXzRL
-        mB7ZkIPoTmLykiDDCDw6Bjjfg+wj9iZ0nA5HZvqYJw==
-X-Google-Smtp-Source: ACcGV61KdtPmTfcO7rEaKongwQUAt/iV2T/cpr8Eoi6ca+lQX2dvI0CMHPDnpwwbfq9++5sRsoyW2MyoUagwnWdjIHuwYA==
-X-Received: by 2002:a24:8082:: with SMTP id g124-v6mr223410itd.12.1539734043663;
- Tue, 16 Oct 2018 16:54:03 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 16:50:56 -0700
+        bh=QsZ3was/QkGUo6BYsP86tczumclzu/oVJ8cXDvZ38AM=;
+        b=rsGJqtMknCMh8iom54n5zCkeh5NaQq1dse0qiTV2p30+bJnQTLciifGZNcSUJqmohV
+         OIMI5cdS+AIEa7wA5el70M2jku1aEncf8+9PZURDB9fomylVP6g900n41TEmHXXPs2Fa
+         e6u1A4JVNCs5zV3mAK33UqngWRdmhKFVI/NG4Zm8mLVGTC8iMTEv2w7E4Ep99jgqtGn4
+         A9M8PF50cbmFC2quEDUw5K3l+p/l/sAnqXXBIb1qSZ9fMnsnJU6lW9v5/F3nDkQX86sW
+         RMMQEc+xo3PyHFtQ6japjaDQIALfvAX9bYftd+i5WByyZHcGr9LIJJWmqRD7jKsTAbsR
+         NnSg==
+X-Gm-Message-State: ABuFfoge7KqWhkWmlfzFmuuckbEkQLZM7DXbri24oM4hFdpMzVn2wOWH
+        2JK8JwNgdZUp12AFz0nYlBSBnoMzeGv65JeQ5oaNRQ==
+X-Google-Smtp-Source: ACcGV60TLAfJsKdTy2qQsKGEQgz5iDLsnZOMXyseSry9uD/hbZHFRPqzws3bKPdJyVvsNAbfBdbXDALvGPxOk4AAqTFd0g==
+X-Received: by 2002:a67:4551:: with SMTP id s78mr23044696vsa.12.1539734046197;
+ Tue, 16 Oct 2018 16:54:06 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 16:50:57 -0700
 In-Reply-To: <20181016235120.138227-1-brendanhiggins@google.com>
-Message-Id: <20181016235120.138227-8-brendanhiggins@google.com>
+Message-Id: <20181016235120.138227-9-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20181016235120.138227-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
-Subject: [RFC v1 07/31] kunit: test: added initial tests
+Subject: [RFC v1 08/31] arch: um: added shim to trap to allow installing a
+ fault catcher for tests
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
         shuah@kernel.org
@@ -77,208 +78,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added a test for string stream along with a more simple example.
+Added context to current thread that allows a test to specify that it
+wants to skip the normal checks to run an installed fault catcher.
 
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- kunit/Kconfig              | 12 ++++++
- kunit/Makefile             |  2 +
- kunit/example-test.c       | 88 ++++++++++++++++++++++++++++++++++++++
- kunit/string-stream-test.c | 61 ++++++++++++++++++++++++++
- 4 files changed, 163 insertions(+)
- create mode 100644 kunit/example-test.c
- create mode 100644 kunit/string-stream-test.c
+ arch/um/include/asm/processor-generic.h |  4 +++-
+ arch/um/kernel/trap.c                   | 15 +++++++++++----
+ 2 files changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/kunit/Kconfig b/kunit/Kconfig
-index 64480092b2c24..5cb500355c873 100644
---- a/kunit/Kconfig
-+++ b/kunit/Kconfig
-@@ -13,4 +13,16 @@ config KUNIT
- 	  special hardware. For more information, please see
- 	  Documentation/kunit/
+diff --git a/arch/um/include/asm/processor-generic.h b/arch/um/include/asm/processor-generic.h
+index b58b746d3f2ca..d566cd416ff02 100644
+--- a/arch/um/include/asm/processor-generic.h
++++ b/arch/um/include/asm/processor-generic.h
+@@ -27,6 +27,7 @@ struct thread_struct {
+ 	struct task_struct *prev_sched;
+ 	struct arch_thread arch;
+ 	jmp_buf switch_buf;
++	bool is_running_test;
+ 	struct {
+ 		int op;
+ 		union {
+@@ -51,7 +52,8 @@ struct thread_struct {
+ 	.fault_addr		= NULL, \
+ 	.prev_sched		= NULL, \
+ 	.arch			= INIT_ARCH_THREAD, \
+-	.request		= { 0 } \
++	.request		= { 0 }, \
++	.is_running_test	= false, \
+ }
  
-+config KUNIT_TEST
-+	bool "KUnit test for KUnit"
-+	depends on KUNIT
-+	help
-+	  Enables KUnit test to test KUnit.
-+
-+config KUNIT_EXAMPLE_TEST
-+	bool "Example test for KUnit"
-+	depends on KUNIT
-+	help
-+	  Enables example KUnit test to demo features of KUnit.
-+
- endmenu
-diff --git a/kunit/Makefile b/kunit/Makefile
-index 5b4562ea7f322..319eb9dc8be0e 100644
---- a/kunit/Makefile
-+++ b/kunit/Makefile
-@@ -1 +1,3 @@
- obj-$(CONFIG_KUNIT)		+= test.o string-stream.o test-stream.o
-+obj-$(CONFIG_KUNIT_TEST)		+= string-stream-test.o
-+obj-$(CONFIG_EXAMPLE_TEST)	+= example-test.o
-diff --git a/kunit/example-test.c b/kunit/example-test.c
-new file mode 100644
-index 0000000000000..e9bd2b41c5fd2
---- /dev/null
-+++ b/kunit/example-test.c
-@@ -0,0 +1,88 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Example KUnit test to show how to use KUnit.
-+ *
-+ * Copyright (C) 2018, Google LLC.
-+ * Author: Brendan Higgins <brendanhiggins@google.com>
-+ */
-+
-+#include <kunit/test.h>
-+
-+/*
-+ * This is the most fundamental element of KUnit, the test case. A test case
-+ * makes a set EXPECTATIONs and ASSERTIONs about the behavior of some code; if
-+ * any expectations or assertions are not met, the test fails; otherwise, the
-+ * test passes.
-+ *
-+ * In KUnit, a test case is just a function with the signature
-+ * `void (*)(struct test *)`. `struct test` is a context object that stores
-+ * information about the current test.
-+ */
-+static void example_simple_test(struct test *test)
+ static inline void release_thread(struct task_struct *task)
+diff --git a/arch/um/kernel/trap.c b/arch/um/kernel/trap.c
+index ec9a42c14c565..9b97712daf14f 100644
+--- a/arch/um/kernel/trap.c
++++ b/arch/um/kernel/trap.c
+@@ -201,6 +201,12 @@ void segv_handler(int sig, struct siginfo *unused_si, struct uml_pt_regs *regs)
+ 	segv(*fi, UPT_IP(regs), UPT_IS_USER(regs), regs);
+ }
+ 
++static void segv_run_catcher(jmp_buf *catcher, void *fault_addr)
 +{
-+	/*
-+	 * This is an EXPECTATION; it is how KUnit tests things. When you want
-+	 * to test a piece of code, you set some expectations about what the
-+	 * code should do. KUnit then runs the test and verifies that the code's
-+	 * behavior matched what was expected.
-+	 */
-+	TEST_EXPECT_EQ(test, 1 + 1, 2);
++	current->thread.fault_addr = fault_addr;
++	UML_LONGJMP(catcher, 1);
 +}
 +
-+/*
-+ * This is run once before each test case, see the comment on
-+ * example_test_module for more information.
-+ */
-+static int example_test_init(struct test *test)
-+{
-+	test_info(test, "initializing");
-+
-+	return 0;
-+}
-+
-+/*
-+ * Here we make a list of all the test cases we want to add to the test module
-+ * below.
-+ */
-+static struct test_case example_test_cases[] = {
-+	/*
-+	 * This is a helper to create a test case object from a test case
-+	 * function; its exact function is not important to understand how to
-+	 * use KUnit, just know that this is how you associate test cases with a
-+	 * test module.
-+	 */
-+	TEST_CASE(example_simple_test),
-+	{},
-+};
-+
-+/*
-+ * This defines a suite or grouping of tests.
-+ *
-+ * Test cases are defined as belonging to the suite by adding them to
-+ * `test_cases`.
-+ *
-+ * Often it is desirable to run some function which will set up things which
-+ * will be used by every test; this is accomplished with an `init` function
-+ * which runs before each test case is invoked. Similarly, an `exit` function
-+ * may be specified which runs after every test case and can be used to for
-+ * cleanup. For clarity, running tests in a test module would behave as follows:
-+ *
-+ * module.init(test);
-+ * module.test_case[0](test);
-+ * module.exit(test);
-+ * module.init(test);
-+ * module.test_case[1](test);
-+ * module.exit(test);
-+ * ...;
-+ */
-+static struct test_module example_test_module = {
-+	.name = "example",
-+	.init = example_test_init,
-+	.test_cases = example_test_cases,
-+};
-+
-+/*
-+ * This registers the above test module telling KUnit that this is a suite of
-+ * tests that need to be run.
-+ */
-+module_test(example_test_module);
-diff --git a/kunit/string-stream-test.c b/kunit/string-stream-test.c
-new file mode 100644
-index 0000000000000..07c626cbfffbf
---- /dev/null
-+++ b/kunit/string-stream-test.c
-@@ -0,0 +1,61 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * KUnit test for struct string_stream.
-+ *
-+ * Copyright (C) 2018, Google LLC.
-+ * Author: Brendan Higgins <brendanhiggins@google.com>
-+ */
-+
-+#include <linux/slab.h>
-+#include <kunit/test.h>
-+#include <kunit/string-stream.h>
-+
-+static void string_stream_test_get_string(struct test *test)
-+{
-+	struct string_stream *stream = new_string_stream();
-+	char *output;
-+
-+	stream->add(stream, "Foo");
-+	stream->add(stream, " %s", "bar");
-+
-+	output = stream->get_string(stream);
-+	TEST_EXPECT_STREQ(test, output, "Foo bar");
-+	kfree(output);
-+	destroy_string_stream(stream);
-+}
-+
-+static void string_stream_test_add_and_clear(struct test *test)
-+{
-+	struct string_stream *stream = new_string_stream();
-+	char *output;
-+	int i;
-+
-+	for (i = 0; i < 10; i++)
-+		stream->add(stream, "A");
-+
-+	output = stream->get_string(stream);
-+	TEST_EXPECT_STREQ(test, output, "AAAAAAAAAA");
-+	TEST_EXPECT_EQ(test, stream->length, 10);
-+	TEST_EXPECT_FALSE(test, stream->is_empty(stream));
-+	kfree(output);
-+
-+	stream->clear(stream);
-+
-+	output = stream->get_string(stream);
-+	TEST_EXPECT_STREQ(test, output, "");
-+	TEST_EXPECT_TRUE(test, stream->is_empty(stream));
-+	destroy_string_stream(stream);
-+}
-+
-+static struct test_case string_stream_test_cases[] = {
-+	TEST_CASE(string_stream_test_get_string),
-+	TEST_CASE(string_stream_test_add_and_clear),
-+	{}
-+};
-+
-+static struct test_module string_stream_test_module = {
-+	.name = "string-stream-test",
-+	.test_cases = string_stream_test_cases
-+};
-+module_test(string_stream_test_module);
-+
+ /*
+  * We give a *copy* of the faultinfo in the regs to segv.
+  * This must be done, since nesting SEGVs could overwrite
+@@ -219,7 +225,10 @@ unsigned long segv(struct faultinfo fi, unsigned long ip, int is_user,
+ 	if (!is_user && regs)
+ 		current->thread.segv_regs = container_of(regs, struct pt_regs, regs);
+ 
+-	if (!is_user && (address >= start_vm) && (address < end_vm)) {
++	catcher = current->thread.fault_catcher;
++	if (catcher && current->thread.is_running_test)
++		segv_run_catcher(catcher, (void *) address);
++	else if (!is_user && (address >= start_vm) && (address < end_vm)) {
+ 		flush_tlb_kernel_vm();
+ 		goto out;
+ 	}
+@@ -246,12 +255,10 @@ unsigned long segv(struct faultinfo fi, unsigned long ip, int is_user,
+ 		address = 0;
+ 	}
+ 
+-	catcher = current->thread.fault_catcher;
+ 	if (!err)
+ 		goto out;
+ 	else if (catcher != NULL) {
+-		current->thread.fault_addr = (void *) address;
+-		UML_LONGJMP(catcher, 1);
++		segv_run_catcher(catcher, (void *) address);
+ 	}
+ 	else if (current->thread.fault_addr != NULL)
+ 		panic("fault_addr set but no fault catcher");
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
