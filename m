@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D055C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B65C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC5ED2098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1BE72098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="erMa2KqP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5ED2098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="olDahVgK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1BE72098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731317AbeJQBOf (ORCPT
+        id S1731330AbeJQBOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:14:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32998 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:14:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730397AbeJQBOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:14:35 -0400
+        id S1730397AbeJQBOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:14:37 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B14F12098A;
-        Tue, 16 Oct 2018 17:23:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 667B420866;
+        Tue, 16 Oct 2018 17:23:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710589;
-        bh=cwsYEq8Fs8uPL+yD3hLe71xsMjx5Evw7jjhVdwt8RyI=;
+        s=default; t=1539710591;
+        bh=TveAc/FQmCnPxnbfVPxAc6xnACe3zB7WWXzsmPTsklA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=erMa2KqPCugV7cjI3yXMs13Wdl+iYy5fg2+Rf/SFa8yQSjksnbAcgCqQr0BEKyv/f
-         bBVqezu/nw5K1ND9OkSInGrwMeK0KduGBO9aL203mCGohOrgcUz46EM6CsLdCImqk1
-         c3aUf6rV3UaXWQnZkwEzvQu3iX/oWsqfTwZ5HTqk=
+        b=olDahVgK5fuFMXUz0ne7fyYpOchHqefOG0Jy7Pe6xC1ivbPI9FyE6M3fylb03jk65
+         oq5n+iU1zU4DCAerVBNpZn6R0yTcDr2T8rNqO3j7uWCmrJLi/EWxAglCdOnTjCiQ7q
+         t9eo/Jf0Z7fPFE4IpNsRD8YXVWVLubH6iQBIi86s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.9 19/71] mm: Preserve _PAGE_DEVMAP across mprotect() calls
-Date:   Tue, 16 Oct 2018 19:09:16 +0200
-Message-Id: <20181016170540.351359047@linuxfoundation.org>
+        stable@vger.kernel.org, Edgar Cherkasov <echerkasov@dev.rtsoft.ru>,
+        Viktor Krasnov <vkrasnov@dev.rtsoft.ru>,
+        Michael Brunner <Michael.Brunner@kontron.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.9 20/71] i2c: i2c-scmi: fix for i2c_smbus_write_block_data
+Date:   Tue, 16 Oct 2018 19:09:17 +0200
+Message-Id: <20181016170540.399994057@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
 References: <20181016170539.315587743@linuxfoundation.org>
@@ -63,86 +63,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
 
-commit 4628a64591e6cee181237060961e98c615c33966 upstream.
+commit 08d9db00fe0e300d6df976e6c294f974988226dd upstream.
 
-Currently _PAGE_DEVMAP bit is not preserved in mprotect(2) calls. As a
-result we will see warnings such as:
+The i2c-scmi driver crashes when the SMBus Write Block transaction is
+executed:
 
-BUG: Bad page map in process JobWrk0013  pte:800001803875ea25 pmd:7624381067
-addr:00007f0930720000 vm_flags:280000f9 anon_vma:          (null) mapping:ffff97f2384056f0 index:0
-file:457-000000fe00000030-00000009-000000ca-00000001_2001.fileblock fault:xfs_filemap_fault [xfs] mmap:xfs_file_mmap [xfs] readpage:          (null)
-CPU: 3 PID: 15848 Comm: JobWrk0013 Tainted: G        W          4.12.14-2.g7573215-default #1 SLE12-SP4 (unreleased)
-Hardware name: Intel Corporation S2600WFD/S2600WFD, BIOS SE5C620.86B.01.00.0833.051120182255 05/11/2018
-Call Trace:
- dump_stack+0x5a/0x75
- print_bad_pte+0x217/0x2c0
- ? enqueue_task_fair+0x76/0x9f0
- _vm_normal_page+0xe5/0x100
- zap_pte_range+0x148/0x740
- unmap_page_range+0x39a/0x4b0
- unmap_vmas+0x42/0x90
- unmap_region+0x99/0xf0
- ? vma_gap_callbacks_rotate+0x1a/0x20
- do_munmap+0x255/0x3a0
- vm_munmap+0x54/0x80
- SyS_munmap+0x1d/0x30
- do_syscall_64+0x74/0x150
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-...
+WARNING: CPU: 9 PID: 2194 at mm/page_alloc.c:3931 __alloc_pages_slowpath+0x9db/0xec0
+ Call Trace:
+  ? get_page_from_freelist+0x49d/0x11f0
+  ? alloc_pages_current+0x6a/0xe0
+  ? new_slab+0x499/0x690
+  __alloc_pages_nodemask+0x265/0x280
+  alloc_pages_current+0x6a/0xe0
+  kmalloc_order+0x18/0x40
+  kmalloc_order_trace+0x24/0xb0
+  ? acpi_ut_allocate_object_desc_dbg+0x62/0x10c
+  __kmalloc+0x203/0x220
+  acpi_os_allocate_zeroed+0x34/0x36
+  acpi_ut_copy_eobject_to_iobject+0x266/0x31e
+  acpi_evaluate_object+0x166/0x3b2
+  acpi_smbus_cmi_access+0x144/0x530 [i2c_scmi]
+  i2c_smbus_xfer+0xda/0x370
+  i2cdev_ioctl_smbus+0x1bd/0x270
+  i2cdev_ioctl+0xaa/0x250
+  do_vfs_ioctl+0xa4/0x600
+  SyS_ioctl+0x79/0x90
+  do_syscall_64+0x73/0x130
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+ACPI Error: Evaluating _SBW: 4 (20170831/smbus_cmi-185)
 
-when mprotect(2) gets used on DAX mappings. Also there is a wide variety
-of other failures that can result from the missing _PAGE_DEVMAP flag
-when the area gets used by get_user_pages() later.
+This problem occurs because the length of ACPI Buffer object is not
+defined/initialized in the code before a corresponding ACPI method is
+called. The obvious patch below fixes this issue.
 
-Fix the problem by including _PAGE_DEVMAP in a set of flags that get
-preserved by mprotect(2).
-
-Fixes: 69660fd797c3 ("x86, mm: introduce _PAGE_DEVMAP")
-Fixes: ebd31197931d ("powerpc/mm: Add devmap support for ppc64")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
+Acked-by: Viktor Krasnov <vkrasnov@dev.rtsoft.ru>
+Acked-by: Michael Brunner <Michael.Brunner@kontron.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/book3s/64/pgtable.h |    4 ++--
- arch/x86/include/asm/pgtable_types.h         |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-scmi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -53,7 +53,7 @@
-  */
- #define _HPAGE_CHG_MASK (PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
- 			 _PAGE_ACCESSED | H_PAGE_THP_HUGE | _PAGE_PTE | \
--			 _PAGE_SOFT_DIRTY)
-+			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
- /*
-  * user access blocked by key
-  */
-@@ -71,7 +71,7 @@
-  */
- #define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
- 			 _PAGE_ACCESSED | _PAGE_SPECIAL | _PAGE_PTE |	\
--			 _PAGE_SOFT_DIRTY)
-+			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
- /*
-  * Mask of bits returned by pte_pgprot()
-  */
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -134,7 +134,7 @@
-  */
- #define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
- 			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
--			 _PAGE_SOFT_DIRTY)
-+			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
- #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
- 
- /* The ASID is the lower 12 bits of CR3 */
+--- a/drivers/i2c/busses/i2c-scmi.c
++++ b/drivers/i2c/busses/i2c-scmi.c
+@@ -152,6 +152,7 @@ acpi_smbus_cmi_access(struct i2c_adapter
+ 			mt_params[3].type = ACPI_TYPE_INTEGER;
+ 			mt_params[3].integer.value = len;
+ 			mt_params[4].type = ACPI_TYPE_BUFFER;
++			mt_params[4].buffer.length = len;
+ 			mt_params[4].buffer.pointer = data->block + 1;
+ 		}
+ 		break;
 
 
