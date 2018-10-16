@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8273EC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C20C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BB7820866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72A8A2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKgsUA+S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BB7820866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y/31dg5x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72A8A2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730758AbeJQBMW (ORCPT
+        id S1730769AbeJQBMY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:12:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57816 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:12:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729296AbeJQBMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:12:21 -0400
+        id S1729296AbeJQBMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:12:23 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 816BF20866;
-        Tue, 16 Oct 2018 17:20:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4717A21476;
+        Tue, 16 Oct 2018 17:20:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710456;
-        bh=fHCI57UnZMTcDgX7PZqP/FIk9wRUyJrt3YjczipzSvo=;
+        s=default; t=1539710458;
+        bh=/M53Kq7OJLLG1idCZ3p5bMbj+JsmCBo4ptLDcGk4bMs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SKgsUA+SpCK+qx9fm/7mqh/4ilU0nKfo4f2AMkPMd0qZp+5xa+66Ztj37m+tS7DxD
-         RrsjnUbN4/mTdidBocN7wWZ78nfxkOv3HFI+UeAtZW31UqQiu4DextegNLOm1qJSf0
-         Xb2qO8TIsHvOPY3Ec9v6sOieJlf8BEUID4ZkH7+c=
+        b=y/31dg5x4806WhtkddqKfz5GMILV66yUmELvAAFtQI1LCC5BlJBC3TaJJuOpIwlkD
+         /HuAa16TyLa0/ODPwq3UgHNJuj/KH2n4i2kY0ZbIJOMVGslEdEhQ2Rk+MdCVIXDQx4
+         hGMQL03IlZKhoT5F/Bu7puacDARvpklnAbl/aw3Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 037/109] tcp/dccp: fix lockdep issue when SYN is backlogged
-Date:   Tue, 16 Oct 2018 19:05:05 +0200
-Message-Id: <20181016170527.030026128@linuxfoundation.org>
+        stable@vger.kernel.org, Edgar Cherkasov <echerkasov@dev.rtsoft.ru>,
+        Viktor Krasnov <vkrasnov@dev.rtsoft.ru>,
+        Michael Brunner <Michael.Brunner@kontron.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.14 078/109] i2c: i2c-scmi: fix for i2c_smbus_write_block_data
+Date:   Tue, 16 Oct 2018 19:05:46 +0200
+Message-Id: <20181016170529.149259351@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -63,85 +64,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
 
-[ Upstream commit 1ad98e9d1bdf4724c0a8532fabd84bf3c457c2bc ]
+commit 08d9db00fe0e300d6df976e6c294f974988226dd upstream.
 
-In normal SYN processing, packets are handled without listener
-lock and in RCU protected ingress path.
+The i2c-scmi driver crashes when the SMBus Write Block transaction is
+executed:
 
-But syzkaller is known to be able to trick us and SYN
-packets might be processed in process context, after being
-queued into socket backlog.
+WARNING: CPU: 9 PID: 2194 at mm/page_alloc.c:3931 __alloc_pages_slowpath+0x9db/0xec0
+ Call Trace:
+  ? get_page_from_freelist+0x49d/0x11f0
+  ? alloc_pages_current+0x6a/0xe0
+  ? new_slab+0x499/0x690
+  __alloc_pages_nodemask+0x265/0x280
+  alloc_pages_current+0x6a/0xe0
+  kmalloc_order+0x18/0x40
+  kmalloc_order_trace+0x24/0xb0
+  ? acpi_ut_allocate_object_desc_dbg+0x62/0x10c
+  __kmalloc+0x203/0x220
+  acpi_os_allocate_zeroed+0x34/0x36
+  acpi_ut_copy_eobject_to_iobject+0x266/0x31e
+  acpi_evaluate_object+0x166/0x3b2
+  acpi_smbus_cmi_access+0x144/0x530 [i2c_scmi]
+  i2c_smbus_xfer+0xda/0x370
+  i2cdev_ioctl_smbus+0x1bd/0x270
+  i2cdev_ioctl+0xaa/0x250
+  do_vfs_ioctl+0xa4/0x600
+  SyS_ioctl+0x79/0x90
+  do_syscall_64+0x73/0x130
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+ACPI Error: Evaluating _SBW: 4 (20170831/smbus_cmi-185)
 
-In commit 06f877d613be ("tcp/dccp: fix other lockdep splats
-accessing ireq_opt") I made a very stupid fix, that happened
-to work mostly because of the regular path being RCU protected.
+This problem occurs because the length of ACPI Buffer object is not
+defined/initialized in the code before a corresponding ACPI method is
+called. The obvious patch below fixes this issue.
 
-Really the thing protecting ireq->ireq_opt is RCU read lock,
-and the pseudo request refcnt is not relevant.
-
-This patch extends what I did in commit 449809a66c1d ("tcp/dccp:
-block BH for SYN processing") by adding an extra rcu_read_{lock|unlock}
-pair in the paths that might be taken when processing SYN from
-socket backlog (thus possibly in process context)
-
-Fixes: 06f877d613be ("tcp/dccp: fix other lockdep splats accessing ireq_opt")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
+Acked-by: Viktor Krasnov <vkrasnov@dev.rtsoft.ru>
+Acked-by: Michael Brunner <Michael.Brunner@kontron.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/inet_sock.h |    3 +--
- net/dccp/input.c        |    4 +++-
- net/ipv4/tcp_input.c    |    4 +++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
 
---- a/include/net/inet_sock.h
-+++ b/include/net/inet_sock.h
-@@ -131,8 +131,7 @@ static inline int inet_request_bound_dev
- 
- static inline struct ip_options_rcu *ireq_opt_deref(const struct inet_request_sock *ireq)
- {
--	return rcu_dereference_check(ireq->ireq_opt,
--				     refcount_read(&ireq->req.rsk_refcnt) > 0);
-+	return rcu_dereference(ireq->ireq_opt);
- }
- 
- struct inet_cork {
---- a/net/dccp/input.c
-+++ b/net/dccp/input.c
-@@ -605,11 +605,13 @@ int dccp_rcv_state_process(struct sock *
- 	if (sk->sk_state == DCCP_LISTEN) {
- 		if (dh->dccph_type == DCCP_PKT_REQUEST) {
- 			/* It is possible that we process SYN packets from backlog,
--			 * so we need to make sure to disable BH right there.
-+			 * so we need to make sure to disable BH and RCU right there.
- 			 */
-+			rcu_read_lock();
- 			local_bh_disable();
- 			acceptable = inet_csk(sk)->icsk_af_ops->conn_request(sk, skb) >= 0;
- 			local_bh_enable();
-+			rcu_read_unlock();
- 			if (!acceptable)
- 				return 1;
- 			consume_skb(skb);
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -5913,11 +5913,13 @@ int tcp_rcv_state_process(struct sock *s
- 			if (th->fin)
- 				goto discard;
- 			/* It is possible that we process SYN packets from backlog,
--			 * so we need to make sure to disable BH right there.
-+			 * so we need to make sure to disable BH and RCU right there.
- 			 */
-+			rcu_read_lock();
- 			local_bh_disable();
- 			acceptable = icsk->icsk_af_ops->conn_request(sk, skb) >= 0;
- 			local_bh_enable();
-+			rcu_read_unlock();
- 
- 			if (!acceptable)
- 				return 1;
+---
+ drivers/i2c/busses/i2c-scmi.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/i2c/busses/i2c-scmi.c
++++ b/drivers/i2c/busses/i2c-scmi.c
+@@ -152,6 +152,7 @@ acpi_smbus_cmi_access(struct i2c_adapter
+ 			mt_params[3].type = ACPI_TYPE_INTEGER;
+ 			mt_params[3].integer.value = len;
+ 			mt_params[4].type = ACPI_TYPE_BUFFER;
++			mt_params[4].buffer.length = len;
+ 			mt_params[4].buffer.pointer = data->block + 1;
+ 		}
+ 		break;
 
 
