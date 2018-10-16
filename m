@@ -2,539 +2,195 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C57AC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CABC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA7B72145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:27:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA7B72145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D52A208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:28:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="DifW7hw2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D52A208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbeJPNQT (ORCPT
+        id S1728062AbeJPNR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 09:16:19 -0400
-Received: from mx.socionext.com ([202.248.49.38]:29548 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbeJPNQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 09:16:18 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 16 Oct 2018 14:27:36 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 2FCCC18028D;
-        Tue, 16 Oct 2018 14:27:36 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 16 Oct 2018 14:27:36 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 54C141A131A;
-        Tue, 16 Oct 2018 14:27:35 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [RESEND PATCH v3 2/2] PCI: uniphier: Add UniPhier PCIe host controller support
-Date:   Tue, 16 Oct 2018 14:27:21 +0900
-Message-Id: <1539667641-26024-3-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539667641-26024-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1539667641-26024-1-git-send-email-hayashi.kunihiko@socionext.com>
+        Tue, 16 Oct 2018 09:17:28 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36284 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727280AbeJPNR1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 09:17:27 -0400
+Received: by mail-pf1-f193.google.com with SMTP id l81-v6so10849979pfg.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 22:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hT/WJu9STplUfy08+85ywKyPPy0EnpKa8gDq1HiCx6c=;
+        b=DifW7hw2g2OaNA52UpmUGCGQR7tzH8euxdssKf02hDixqLl7vMpco9tXXXrr9w2l9x
+         QyZ3+l0BitrAwEtMcwy2iVq+TEBO2JHkveMzCPCEycv7nDBh71q+p9nL2Mrnx+XVAysG
+         hPQQR2mOW1MGgufLyU2Pd1uUseD7Z5htozMUc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hT/WJu9STplUfy08+85ywKyPPy0EnpKa8gDq1HiCx6c=;
+        b=KgcLCiXpLbe8aKR/n+sf4l1rDzxAWDGu/cTCnYUFobp+EuPmkatVyolj/j0UGNsQo7
+         MxdgLJBTFh5JOk0MXtJ/9YgUAWApdxE2hLXvHl9t/DWW23xNDwsMRju57ruGrNtQ2ANa
+         kQpkC/mvYutekpexCItEYfkDJSxlcA5zNLZQeNDhaqA9FzlUtNYXLr77v0Tk9RzQZvdE
+         AILmDArbiFukITKTtzPcCwtfBdtzBrofqSP/t8V4t6NtyQr2QdDoAz/2M9CW6sX5/SbV
+         avuYhEEVzSa4sSC8UnFE3Qfw23b/HtExKux8rDIIg8+HSH/KxVZfQEI0Hmno/uN1SCHX
+         8uOQ==
+X-Gm-Message-State: ABuFfoje2Ct30dGh79//C5gmhs3Nm5Pz/2nSrcKdl6HWQV3rUGMHUfON
+        YAP2g2bfKWIMlx2tTep5JfgcMQ==
+X-Google-Smtp-Source: ACcGV622M9IQ8LPV9WJpnQWa+7u0pVVRhTpFEDyTbPuYZksvyfvc7fm2rSA8WWS+7OdhHwdQ83F+pg==
+X-Received: by 2002:a62:8f:: with SMTP id 137-v6mr20486712pfa.24.1539667726470;
+        Mon, 15 Oct 2018 22:28:46 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id j3-v6sm11552791pfn.175.2018.10.15.22.28.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 22:28:45 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 22:28:44 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        rostedt@goodmis.org
+Subject: Re: [RFC PATCH 12/30] rcu: Prepare rcu_read_[un]lock_bh() for
+ handling softirq mask
+Message-ID: <20181016052844.GA25151@joelaf.mtv.corp.google.com>
+References: <1539213137-13953-1-git-send-email-frederic@kernel.org>
+ <1539213137-13953-13-git-send-email-frederic@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539213137-13953-13-git-send-email-frederic@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces specific glue layer for UniPhier platform to support
-PCIe host controller that is based on the DesignWare PCIe core, and
-this driver supports Root Complex (host) mode.
+On Thu, Oct 11, 2018 at 01:11:59AM +0200, Frederic Weisbecker wrote:
+> This pair of function is implemented on top of local_bh_disable() that
+> is going to handle a softirq mask in order to apply finegrained vector
+> disablement. The lock function is going to return the previous vectors
+> enabled mask prior to the last call to local_bh_disable(), following a
+> similar model to that of local_irq_save/restore. Subsequent calls to
+> local_bh_disable() and friends can then stack up:
+> 
+> 	bh = local_bh_disable(vec_mask);
+> 		bh2 = rcu_read_lock_bh() {
+> 			bh2 = local_bh_disable(...)
+>             return bh2;
+> 		}
+> 		...
+> 		rcu_read_unlock_bh(bh2) {
+> 			local_bh_enable(bh2);
+> 		}
+> 	local_bh_enable(bh);
+> 
+> To prepare for that, make rcu_read_lock_bh() able to return a saved vector
+> enabled mask and pass it back to rcu_read_unlock_bh(). We'll plug it
+> to local_bh_disable() in a subsequent patch.
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
- drivers/pci/controller/dwc/Kconfig         |   9 +
- drivers/pci/controller/dwc/Makefile        |   1 +
- drivers/pci/controller/dwc/pcie-uniphier.c | 433 +++++++++++++++++++++++++++++
- 3 files changed, 443 insertions(+)
- create mode 100644 drivers/pci/controller/dwc/pcie-uniphier.c
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> ---
+>  crypto/pcrypt.c                           |  5 ++--
+>  drivers/infiniband/ulp/ipoib/ipoib_main.c |  5 ++--
+>  drivers/net/hyperv/rndis_filter.c         |  5 ++--
+>  drivers/net/macsec.c                      | 12 +++++----
+>  drivers/net/vrf.c                         | 19 ++++++++------
+>  drivers/vhost/net.c                       |  5 ++--
+>  include/linux/rcupdate.h                  |  5 ++--
+>  include/net/arp.h                         | 10 ++++---
+>  include/net/ip6_fib.h                     |  1 +
+>  include/net/ndisc.h                       | 10 ++++---
+>  include/net/neighbour.h                   |  1 +
+>  kernel/padata.c                           |  5 ++--
+>  kernel/rcu/rcuperf.c                      |  2 +-
+>  kernel/rcu/rcutorture.c                   |  2 +-
+>  net/caif/caif_dev.c                       |  5 ++--
+>  net/core/dev.c                            |  7 ++---
+>  net/core/neighbour.c                      | 37 +++++++++++++++-----------
+>  net/core/pktgen.c                         |  5 ++--
+>  net/decnet/dn_route.c                     | 27 +++++++++++--------
+>  net/ipv4/fib_semantics.c                  |  5 ++--
+>  net/ipv4/ip_output.c                      |  7 ++---
+>  net/ipv4/netfilter/ipt_CLUSTERIP.c        |  5 ++--
+>  net/ipv6/addrconf.c                       | 21 ++++++++-------
+>  net/ipv6/ip6_fib.c                        |  4 +--
+>  net/ipv6/ip6_flowlabel.c                  | 43 ++++++++++++++++++-------------
+>  net/ipv6/ip6_output.c                     | 12 +++++----
+>  net/ipv6/route.c                          | 15 ++++++-----
+>  net/ipv6/xfrm6_tunnel.c                   |  5 ++--
+>  net/l2tp/l2tp_core.c                      | 33 ++++++++++++++----------
+>  net/llc/llc_core.c                        |  5 ++--
+>  net/llc/llc_proc.c                        | 13 +++++++---
+>  net/llc/llc_sap.c                         |  5 ++--
+>  net/netfilter/ipset/ip_set_core.c         | 10 ++++---
+>  net/netfilter/ipset/ip_set_hash_gen.h     | 15 ++++++-----
+>  net/netfilter/nfnetlink_log.c             | 17 ++++++++----
+>  35 files changed, 229 insertions(+), 154 deletions(-)
+> 
+> diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
+> index f8ec3d4..490358c 100644
+> --- a/crypto/pcrypt.c
+> +++ b/crypto/pcrypt.c
+> @@ -73,12 +73,13 @@ struct pcrypt_aead_ctx {
+>  static int pcrypt_do_parallel(struct padata_priv *padata, unsigned int *cb_cpu,
+>  			      struct padata_pcrypt *pcrypt)
+>  {
+> +	unsigned int bh;
+>  	unsigned int cpu_index, cpu, i;
+>  	struct pcrypt_cpumask *cpumask;
+>  
+>  	cpu = *cb_cpu;
+>  
+> -	rcu_read_lock_bh();
+> +	bh = rcu_read_lock_bh();
+>  	cpumask = rcu_dereference_bh(pcrypt->cb_cpumask);
+>  	if (cpumask_test_cpu(cpu, cpumask->mask))
+>  			goto out;
+> @@ -95,7 +96,7 @@ static int pcrypt_do_parallel(struct padata_priv *padata, unsigned int *cb_cpu,
+>  	*cb_cpu = cpu;
+>  
+>  out:
+> -	rcu_read_unlock_bh();
+> +	rcu_read_unlock_bh(bh);
+>  	return padata_do_parallel(pcrypt->pinst, padata, cpu);
+>  }
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 91b0194..d8fdb02 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -193,4 +193,13 @@ config PCIE_HISI_STB
- 	help
-           Say Y here if you want PCIe controller support on HiSilicon STB SoCs
- 
-+config PCIE_UNIPHIER
-+	bool "Socionext UniPhier PCIe controllers"
-+	depends on OF && (ARCH_UNIPHIER || COMPILE_TEST)
-+	depends on PCI_MSI_IRQ_DOMAIN
-+	select PCIE_DW_HOST
-+	help
-+	  Say Y here if you want PCIe controller support on UniPhier SoCs.
-+	  This driver supports LD20 and PXs3 SoCs.
-+
- endmenu
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index 5d2ce72..cbde733 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
- obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
- obj-$(CONFIG_PCIE_KIRIN) += pcie-kirin.o
- obj-$(CONFIG_PCIE_HISI_STB) += pcie-histb.o
-+obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
- 
- # The following drivers are for devices that use the generic ACPI
- # pci_root.c driver but don't support standard ECAM config access.
-diff --git a/drivers/pci/controller/dwc/pcie-uniphier.c b/drivers/pci/controller/dwc/pcie-uniphier.c
-new file mode 100644
-index 0000000..2689449
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-uniphier.c
-@@ -0,0 +1,433 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PCIe host controller driver for UniPhier SoCs
-+ * Copyright 2018 Socionext Inc.
-+ * Author: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/module.h>
-+#include <linux/of_irq.h>
-+#include <linux/pci.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#include "pcie-designware.h"
-+
-+#define PCL_PINCTRL0			0x002c
-+#define PCL_PERST_PLDN_REGEN		BIT(12)
-+#define PCL_PERST_NOE_REGEN		BIT(11)
-+#define PCL_PERST_OUT_REGEN		BIT(8)
-+#define PCL_PERST_PLDN_REGVAL		BIT(4)
-+#define PCL_PERST_NOE_REGVAL		BIT(3)
-+#define PCL_PERST_OUT_REGVAL		BIT(0)
-+
-+#define PCL_PIPEMON			0x0044
-+#define PCL_PCLK_ALIVE			BIT(15)
-+
-+#define PCL_APP_READY_CTRL		0x8008
-+#define PCL_APP_LTSSM_ENABLE		BIT(0)
-+
-+#define PCL_APP_PM0			0x8078
-+#define PCL_SYS_AUX_PWR_DET		BIT(8)
-+
-+#define PCL_RCV_INT			0x8108
-+#define PCL_RCV_INT_ALL_ENABLE		GENMASK(20, 17)
-+#define PCL_CFG_BW_MGT_STATUS		BIT(4)
-+#define PCL_CFG_LINK_AUTO_BW_STATUS	BIT(3)
-+#define PCL_CFG_AER_RC_ERR_MSI_STATUS	BIT(2)
-+#define PCL_CFG_PME_MSI_STATUS		BIT(1)
-+
-+#define PCL_RCV_INTX			0x810c
-+#define PCL_RCV_INTX_ALL_ENABLE		GENMASK(19, 16)
-+#define PCL_RCV_INTX_ALL_STATUS		GENMASK(3, 0)
-+
-+#define PCL_STATUS_LINK			0x8140
-+#define PCL_RDLH_LINK_UP		BIT(1)
-+#define PCL_XMLH_LINK_UP		BIT(0)
-+
-+struct uniphier_pcie_priv {
-+	void __iomem *base;
-+	struct dw_pcie pci;
-+	struct clk *clk;
-+	struct reset_control *rst;
-+	struct phy *phy;
-+	struct irq_domain *legacy_irq_domain;
-+};
-+
-+#define to_uniphier_pcie(x)	dev_get_drvdata((x)->dev)
-+
-+static void uniphier_pcie_ltssm_enable(struct uniphier_pcie_priv *priv)
-+{
-+	u32 val;
-+
-+	val = readl(priv->base + PCL_APP_READY_CTRL);
-+	val |= PCL_APP_LTSSM_ENABLE;
-+	writel(val, priv->base + PCL_APP_READY_CTRL);
-+}
-+
-+static void uniphier_pcie_ltssm_disable(struct uniphier_pcie_priv *priv)
-+{
-+	u32 val;
-+
-+	val = readl(priv->base + PCL_APP_READY_CTRL);
-+	val &= ~PCL_APP_LTSSM_ENABLE;
-+	writel(val, priv->base + PCL_APP_READY_CTRL);
-+}
-+
-+static void uniphier_pcie_init_rc(struct uniphier_pcie_priv *priv)
-+{
-+	u32 val;
-+
-+	/* use auxiliary power detection */
-+	val = readl(priv->base + PCL_APP_PM0);
-+	val |= PCL_SYS_AUX_PWR_DET;
-+	writel(val, priv->base + PCL_APP_PM0);
-+
-+	/* assert PERST# */
-+	val = readl(priv->base + PCL_PINCTRL0);
-+	val &= ~(PCL_PERST_NOE_REGVAL | PCL_PERST_OUT_REGVAL
-+		 | PCL_PERST_PLDN_REGVAL);
-+	val |= PCL_PERST_NOE_REGEN | PCL_PERST_OUT_REGEN
-+		| PCL_PERST_PLDN_REGEN;
-+	writel(val, priv->base + PCL_PINCTRL0);
-+
-+	uniphier_pcie_ltssm_disable(priv);
-+
-+	usleep_range(100000, 200000);
-+
-+	/* deassert PERST# */
-+	val = readl(priv->base + PCL_PINCTRL0);
-+	val |= PCL_PERST_OUT_REGVAL | PCL_PERST_OUT_REGEN;
-+	writel(val, priv->base + PCL_PINCTRL0);
-+}
-+
-+static int uniphier_pcie_wait_rc(struct uniphier_pcie_priv *priv)
-+{
-+	u32 status;
-+	int ret;
-+
-+	/* wait PIPE clock */
-+	ret = readl_poll_timeout(priv->base + PCL_PIPEMON, status,
-+				 status & PCL_PCLK_ALIVE, 100000, 1000000);
-+	if (ret) {
-+		dev_err(priv->pci.dev,
-+			"Failed to initialize controller in RC mode\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int uniphier_pcie_link_up(struct dw_pcie *pci)
-+{
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	u32 val, mask;
-+
-+	val = readl(priv->base + PCL_STATUS_LINK);
-+	mask = PCL_RDLH_LINK_UP | PCL_XMLH_LINK_UP;
-+
-+	return (val & mask) == mask;
-+}
-+
-+static int uniphier_pcie_establish_link(struct dw_pcie *pci)
-+{
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	int ret;
-+
-+	if (dw_pcie_link_up(pci))
-+		return 0;
-+
-+	uniphier_pcie_ltssm_enable(priv);
-+
-+	ret = dw_pcie_wait_for_link(pci);
-+	if (ret == -ETIMEDOUT)
-+		dev_warn(pci->dev, "Link not up\n");
-+
-+	return ret;
-+}
-+
-+static void uniphier_pcie_stop_link(struct dw_pcie *pci)
-+{
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+
-+	uniphier_pcie_ltssm_disable(priv);
-+}
-+
-+static int uniphier_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
-+				  irq_hw_number_t hwirq)
-+{
-+	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
-+	irq_set_chip_data(irq, domain->host_data);
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops uniphier_intx_domain_ops = {
-+	.map = uniphier_pcie_intx_map,
-+	.xlate = pci_irqd_intx_xlate,
-+};
-+
-+static void uniphier_pcie_irq_enable(struct uniphier_pcie_priv *priv)
-+{
-+	writel(PCL_RCV_INT_ALL_ENABLE, priv->base + PCL_RCV_INT);
-+	writel(PCL_RCV_INTX_ALL_ENABLE, priv->base + PCL_RCV_INTX);
-+}
-+
-+static void uniphier_pcie_irq_disable(struct uniphier_pcie_priv *priv)
-+{
-+	writel(0, priv->base + PCL_RCV_INT);
-+	writel(0, priv->base + PCL_RCV_INTX);
-+}
-+
-+static void uniphier_pcie_irq_handler(struct irq_desc *desc)
-+{
-+	struct pcie_port *pp = irq_desc_get_handler_data(desc);
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	unsigned long reg;
-+	u32 val, bit, virq;
-+
-+	/* INT for debug */
-+	val = readl(priv->base + PCL_RCV_INT);
-+
-+	if (val & PCL_CFG_BW_MGT_STATUS)
-+		dev_dbg(pci->dev, "Link Bandwidth Management Event\n");
-+	if (val & PCL_CFG_LINK_AUTO_BW_STATUS)
-+		dev_dbg(pci->dev, "Link Autonomous Bandwidth Event\n");
-+	if (val & PCL_CFG_AER_RC_ERR_MSI_STATUS)
-+		dev_dbg(pci->dev, "Root Error\n");
-+	if (val & PCL_CFG_PME_MSI_STATUS)
-+		dev_dbg(pci->dev, "PME Interrupt\n");
-+
-+	writel(val, priv->base + PCL_RCV_INT);
-+
-+	/* INTx */
-+	chained_irq_enter(chip, desc);
-+
-+	val = readl(priv->base + PCL_RCV_INTX);
-+	reg = FIELD_GET(PCL_RCV_INTX_ALL_STATUS, val);
-+
-+	for_each_set_bit(bit, &reg, PCI_NUM_INTX) {
-+		virq = irq_linear_revmap(priv->legacy_irq_domain, bit);
-+		generic_handle_irq(virq);
-+	}
-+
-+	writel(val, priv->base + PCL_RCV_INTX);
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static int uniphier_pcie_config_legacy_irq(struct pcie_port *pp)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	struct device_node *np = pci->dev->of_node;
-+	struct device_node *np_intc;
-+
-+	np_intc = of_get_child_by_name(np, "legacy-interrupt-controller");
-+	if (!np_intc) {
-+		dev_err(pci->dev, "Failed to get legacy-interrupt-controller node\n");
-+		return -EINVAL;
-+	}
-+
-+	pp->irq = irq_of_parse_and_map(np_intc, 0);
-+	if (!pp->irq) {
-+		dev_err(pci->dev, "Failed to get an IRQ entry in legacy-interrupt-controller\n");
-+		return -EINVAL;
-+	}
-+	irq_set_chained_handler_and_data(pp->irq, uniphier_pcie_irq_handler,
-+					 pp);
-+
-+	priv->legacy_irq_domain = irq_domain_add_linear(np_intc, PCI_NUM_INTX,
-+						&uniphier_intx_domain_ops, pp);
-+	if (!priv->legacy_irq_domain) {
-+		dev_err(pci->dev, "Failed to get INTx domain\n");
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static int uniphier_pcie_host_init(struct pcie_port *pp)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	int ret;
-+
-+	ret = uniphier_pcie_config_legacy_irq(pp);
-+	if (ret)
-+		return ret;
-+
-+	uniphier_pcie_irq_enable(priv);
-+
-+	dw_pcie_setup_rc(pp);
-+	ret = uniphier_pcie_establish_link(pci);
-+	if (ret)
-+		return ret;
-+
-+	if (IS_ENABLED(CONFIG_PCI_MSI))
-+		dw_pcie_msi_init(pp);
-+
-+	return 0;
-+}
-+
-+static const struct dw_pcie_host_ops uniphier_pcie_host_ops = {
-+	.host_init = uniphier_pcie_host_init,
-+};
-+
-+static int uniphier_add_pcie_port(struct uniphier_pcie_priv *priv,
-+				  struct platform_device *pdev)
-+{
-+	struct dw_pcie *pci = &priv->pci;
-+	struct pcie_port *pp = &pci->pp;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	pp->ops = &uniphier_pcie_host_ops;
-+
-+	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-+		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
-+		if (pp->msi_irq < 0)
-+			return pp->msi_irq;
-+	}
-+
-+	ret = dw_pcie_host_init(pp);
-+	if (ret) {
-+		dev_err(dev, "Failed to initialize host (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int uniphier_pcie_host_enable(struct uniphier_pcie_priv *priv)
-+{
-+	int ret;
-+
-+	ret = clk_prepare_enable(priv->clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = reset_control_deassert(priv->rst);
-+	if (ret)
-+		goto out_clk_disable;
-+
-+	uniphier_pcie_init_rc(priv);
-+
-+	ret = phy_init(priv->phy);
-+	if (ret)
-+		goto out_rst_assert;
-+
-+	ret = uniphier_pcie_wait_rc(priv);
-+	if (ret)
-+		goto out_phy_exit;
-+
-+	return 0;
-+
-+out_phy_exit:
-+	phy_exit(priv->phy);
-+out_rst_assert:
-+	reset_control_assert(priv->rst);
-+out_clk_disable:
-+	clk_disable_unprepare(priv->clk);
-+
-+	return ret;
-+}
-+
-+static void uniphier_pcie_host_disable(struct uniphier_pcie_priv *priv)
-+{
-+	uniphier_pcie_irq_disable(priv);
-+	phy_exit(priv->phy);
-+	reset_control_assert(priv->rst);
-+	clk_disable_unprepare(priv->clk);
-+}
-+
-+static const struct dw_pcie_ops dw_pcie_ops = {
-+	.start_link = uniphier_pcie_establish_link,
-+	.stop_link = uniphier_pcie_stop_link,
-+	.link_up = uniphier_pcie_link_up,
-+};
-+
-+static int uniphier_pcie_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct uniphier_pcie_priv *priv;
-+	struct resource *res;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->pci.dev = dev;
-+	priv->pci.ops = &dw_pcie_ops;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
-+	priv->pci.dbi_base = devm_pci_remap_cfg_resource(dev, res);
-+	if (IS_ERR(priv->pci.dbi_base))
-+		return PTR_ERR(priv->pci.dbi_base);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "link");
-+	priv->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	priv->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(priv->clk))
-+		return PTR_ERR(priv->clk);
-+
-+	priv->rst = devm_reset_control_get_shared(dev, NULL);
-+	if (IS_ERR(priv->rst))
-+		return PTR_ERR(priv->rst);
-+
-+	priv->phy = devm_phy_optional_get(dev, "pcie-phy");
-+	if (IS_ERR(priv->phy))
-+		return PTR_ERR(priv->phy);
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	ret = uniphier_pcie_host_enable(priv);
-+	if (ret)
-+		return ret;
-+
-+	return uniphier_add_pcie_port(priv, pdev);
-+}
-+
-+static int uniphier_pcie_remove(struct platform_device *pdev)
-+{
-+	struct uniphier_pcie_priv *priv = platform_get_drvdata(pdev);
-+
-+	uniphier_pcie_host_disable(priv);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id uniphier_pcie_match[] = {
-+	{ .compatible = "socionext,uniphier-pcie", },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, uniphier_pcie_match);
-+
-+static struct platform_driver uniphier_pcie_driver = {
-+	.probe  = uniphier_pcie_probe,
-+	.remove = uniphier_pcie_remove,
-+	.driver = {
-+		.name = "uniphier-pcie",
-+		.of_match_table = uniphier_pcie_match,
-+	},
-+};
-+builtin_platform_driver(uniphier_pcie_driver);
-+
-+MODULE_AUTHOR("Kunihiko Hayashi <hayashi.kunihiko@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier PCIe host controller driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+This complicates the RCU API for -bh and doesn't look pretty at all. Is there
+anything better we can do so we don't have to touch existing readers at all?
+
+Also, I thought softirqs were kind of a thing of the past, and threaded
+interrupts are the more preferred interrupt bottom halves these days,
+especially for -rt. Maybe that was just wishful thinking on my part :-)
+
+thanks,
+
+ - Joel
 
