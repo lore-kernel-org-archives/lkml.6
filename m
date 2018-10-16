@@ -2,411 +2,208 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3206DC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9607DC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:27:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B465D20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38EF02089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:27:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mmy5W/KF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B465D20866
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLFav5XK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38EF02089E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeJPUP1 (ORCPT
+        id S1727154AbeJPURy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 16:15:27 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42415 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbeJPUP1 (ORCPT
+        Tue, 16 Oct 2018 16:17:54 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38919 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbeJPURy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 16:15:27 -0400
-Received: by mail-wr1-f67.google.com with SMTP id g15-v6so25265977wru.9;
-        Tue, 16 Oct 2018 05:25:10 -0700 (PDT)
+        Tue, 16 Oct 2018 16:17:54 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r9-v6so10791270pgv.6;
+        Tue, 16 Oct 2018 05:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=PZjJCxSQgL9GGnXiwiXtIxUZa+r3Ji/nLyiCES4xWFM=;
-        b=Mmy5W/KF69wujNwpOVwtx4EYW3K2h//oYJNAYbqA4l6Ym+zUY3awCwj1rdOPej/CVD
-         c8PwQc2GoeTbPRXNnbjdZpX4S6IEvnf+JJwnxIl589JtQ5zAd3Ju09BePaszmkpNoSOm
-         JzxsbP8PqfQwOl6DYb6c0eN34WK70DlJIgGXsaCzLyKcLV5aWzTNyustuANInP+fbvo2
-         AxCYM5GKBWuwPYu2xDTbl09Ls6S4wUaOg6BLFL8WihQbv8e1Y9AjAutvFZJYtvLpxFTp
-         FNHWtEVO0CV41/a2gPSB+Nyn1SojAiMDTLFD3R9zuEr0jgpwEAaQ+pCWBAfuSfBUEv7M
-         ENvw==
+        bh=jnqmgdEnIZu5pO808ibRJWMJO0X2TOwKIXEq6NIihPg=;
+        b=FLFav5XKxhjOrbVyitGYOchyPjMB25xRi1kf8V6JnvEe1Ak/Q22umPcD11XTRkllGt
+         l3NUVCiXdNyfIgq3Yxb7/UksEw5EBRuRjN1vAQErg0252GS7ZHJzA8AdUQfMQNtzhB++
+         v0cfmwT+uUMowlIqZSPSvSUgf+mUGd+ivRaLanZAK9JR180fMCdnCcI5WfsfRF25Tfpz
+         T3JSEZIkC7bNtvnGFCao0jaAZZnGLPzEQYTekfI8JEBDhbzwQEWX3yOl9xlWaMPq9L5V
+         w41ZAeQgKmnC0iiqkhJAgf3pn4vW3YLKQKfwUMSkMyhMqdUwhle6lmaUYrW+pAJKhXYS
+         a7FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PZjJCxSQgL9GGnXiwiXtIxUZa+r3Ji/nLyiCES4xWFM=;
-        b=gXKDwcxaupApv7zAiW6CgC/FoX2qFfiJajcnGhwp6DnaJp3deOfgpXvWwWw+Gb5bS8
-         vGhw7A+wdEyJmaXcJMs8eI6thjTVVetRmV6TAYIniSmQp16e9S6lBU0gdeOQBkiXQCfk
-         AW+y9CUWL5MvWaOvcHHnYMle8OpckDyfD27kqsixYLtKfe+/sOwGDQjfcE2HCgyWty9c
-         MfvVdV3/rNXQGMSa7TGHwHhsgXHJexSzf87fn81jz7vj9SZEGt2bjg5b1ETqA49wlzDf
-         TptaW1wFFn6zMiC7+0gD07lDOjKG6JQyTUZxT78bNwPxI8uXPqlwNRR2h97do7TrsqVz
-         tCDQ==
-X-Gm-Message-State: ABuFfoiGmAZP4JOpd13HbekCohpjCW1/j4+wR4+KnTxcQKo2km2KCC8M
-        E4NpITmWpuP94HYskVPRJH8=
-X-Google-Smtp-Source: ACcGV625U2kDht0+0O1UtUNbIrSCHacDHbfICZ9Krecq+v5m+P+JqbARyjfZ2FYU+g8n70zLN9qU9g==
-X-Received: by 2002:adf:9d26:: with SMTP id k38-v6mr19585286wre.18.1539692710065;
-        Tue, 16 Oct 2018 05:25:10 -0700 (PDT)
-Received: from localhost (pD9E5106D.dip0.t-ipconnect.de. [217.229.16.109])
-        by smtp.gmail.com with ESMTPSA id o201-v6sm14962248wmg.16.2018.10.16.05.25.08
+        bh=jnqmgdEnIZu5pO808ibRJWMJO0X2TOwKIXEq6NIihPg=;
+        b=PVDVRvTNzErMPSdeVN1ATDQmRNwnF5hlTpH2F8Fph6CDeug694Z3wHXngRaDJTMcHd
+         oeOepwaPfjr/s7xm9wlg/qG5BLk42HKeFooqdjx47HHfoPGdRNbf+HVrYG+UygjpR3N3
+         e7j1XPyWACqgkVuyOwK7241HdFK3JUDoHzKVOFjYFIOtNRh0fRf8sAX5xTm9f1wawCcy
+         a6wdk4wotb/yHA0X0PhrBL+MK4jfx6gGb9GhGss6U3ODn0dQOlHC9fNwi7WDv/hnTgQf
+         RIZE2QKrSMlecu1PDXxbSaIfZtdcjoHFA2T13QrLVVV3/hxsynu4bXld3Kzl+c5cjMjM
+         gNAg==
+X-Gm-Message-State: ABuFfog/7JBZSFzmf6bPIIEZWMWWZby2WptIRl7XJZm5tYnQH2NRZGHQ
+        PzjpCvLqztjW2E32MZTJgz0=
+X-Google-Smtp-Source: ACcGV63dto2vAuSIKn7oi5z/JVThvOAAGCUSYhePZxjm8HqJ90ZV6jBXGsMd/Xp1twe1BRTq/bnaXA==
+X-Received: by 2002:a62:67c3:: with SMTP id t64-v6mr14496433pfj.76.1539692859351;
+        Tue, 16 Oct 2018 05:27:39 -0700 (PDT)
+Received: from localhost ([175.223.10.117])
+        by smtp.gmail.com with ESMTPSA id d197-v6sm21174914pga.1.2018.10.16.05.27.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 05:25:09 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 14:25:08 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     shc_work@mail.ru, robh+dt@kernel.org, mark.rutland@arm.com,
-        corbet@lwn.net, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [RESEND PATCH v5 1/9] pwm: extend PWM framework with PWM modes
-Message-ID: <20181016122508.GH8852@ulmo>
-References: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
- <1535461286-12308-2-git-send-email-claudiu.beznea@microchip.com>
+        Tue, 16 Oct 2018 05:27:38 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 21:27:34 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCHv2 2/4] printk: move printk_safe macros to printk
+ header
+Message-ID: <20181016122734.GA1259@jagdpanzerIV>
+References: <20181016050428.17966-1-sergey.senozhatsky@gmail.com>
+ <20181016050428.17966-3-sergey.senozhatsky@gmail.com>
+ <20181016072719.GB4030@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jRdC2OsRnuV8iIl8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1535461286-12308-2-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <20181016072719.GB4030@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On (10/16/18 09:27), Peter Zijlstra wrote:
+> 
+> So I really _really_ hate all this. Utterly detest it.
 
---jRdC2OsRnuV8iIl8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I learned a new word today - detest. I can haz re-entrant consoles now please?
 
-On Tue, Aug 28, 2018 at 04:01:18PM +0300, Claudiu Beznea wrote:
-> Add basic PWM modes: normal and complementary. These modes should
-> differentiate the single output PWM channels from two outputs PWM
-> channels. These modes could be set as follow:
-> 1. PWM channels with one output per channel:
-> - normal mode
-> 2. PWM channels with two outputs per channel:
-> - normal mode
-> - complementary mode
-> Since users could use a PWM channel with two output as one output PWM
-> channel, the PWM normal mode is allowed to be set for PWM channels with
-> two outputs; in fact PWM normal mode should be supported by all PWMs.
->=20
-> The PWM capabilities were implemented per PWM channel. Every PWM controll=
-er
-> will register a function to get PWM capabilities. If this is not explicit=
-ly
-> set by the driver a default function will be used to retrieve the PWM
-> capabilities (in this case the PWM capabilities will contain only PWM
-> normal mode). This function is set in pwmchip_add_with_polarity() as a
-> member of "struct pwm_chip". To retrieve capabilities the pwm_get_caps()
-> function could be used.
->=20
-> Every PWM channel have associated a mode in the PWM state. Proper
-> support was added to get/set PWM mode. The mode could also be set
-> from DT via flag cells. The valid DT modes are located in
-> include/dt-bindings/pwm/pwm.h. Only modes supported by PWM channel could =
-be
-> set. If nothing is specified for a PWM channel, via DT, the first availab=
-le
-> mode will be used (normally, this will be PWM normal mode).
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  drivers/pwm/core.c  | 124 ++++++++++++++++++++++++++++++++++++++++++++++=
-++++--
->  drivers/pwm/sysfs.c |  61 ++++++++++++++++++++++++++
->  include/linux/pwm.h |  39 +++++++++++++++++
->  3 files changed, 221 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index 1581f6ab1b1f..59a9df9120de 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -136,6 +136,7 @@ struct pwm_device *
->  of_pwm_xlate_with_flags(struct pwm_chip *pc, const struct of_phandle_arg=
-s *args)
->  {
->  	struct pwm_device *pwm;
-> +	int modebit;
-> =20
->  	/* check, whether the driver supports a third cell for flags */
->  	if (pc->of_pwm_n_cells < 3)
-> @@ -154,9 +155,23 @@ of_pwm_xlate_with_flags(struct pwm_chip *pc, const s=
-truct of_phandle_args *args)
-> =20
->  	pwm->args.period =3D args->args[1];
->  	pwm->args.polarity =3D PWM_POLARITY_NORMAL;
-> +	pwm->args.mode =3D pwm_mode_get_valid(pc, pwm);
-> =20
-> -	if (args->args_count > 2 && args->args[2] & PWM_POLARITY_INVERTED)
-> -		pwm->args.polarity =3D PWM_POLARITY_INVERSED;
-> +	if (args->args_count > 2) {
-> +		if (args->args[2] & PWM_POLARITY_INVERTED)
-> +			pwm->args.polarity =3D PWM_POLARITY_INVERSED;
-> +
-> +		for (modebit =3D PWMC_MODE_COMPLEMENTARY_BIT;
-> +		     modebit < PWMC_MODE_CNT; modebit++) {
-> +			unsigned long mode =3D BIT(modebit);
-> +
-> +			if ((args->args[2] & mode) &&
-> +			    pwm_mode_valid(pwm, mode)) {
-> +				pwm->args.mode =3D mode;
-> +				break;
-> +			}
-> +		}
-> +	}
-> =20
->  	return pwm;
->  }
-> @@ -183,6 +198,7 @@ of_pwm_simple_xlate(struct pwm_chip *pc, const struct=
- of_phandle_args *args)
->  		return pwm;
-> =20
->  	pwm->args.period =3D args->args[1];
-> +	pwm->args.mode =3D pwm_mode_get_valid(pc, pwm);
-> =20
->  	return pwm;
->  }
-> @@ -250,6 +266,97 @@ static bool pwm_ops_check(const struct pwm_ops *ops)
->  }
-> =20
->  /**
-> + * pwm_get_caps() - get PWM capabilities of a PWM device
-> + * @chip: PWM chip
-> + * @pwm: PWM device to get the capabilities for
-> + * @caps: returned capabilities
-> + *
-> + * Returns: 0 on success or a negative error code on failure
-> + */
-> +int pwm_get_caps(struct pwm_chip *chip, struct pwm_device *pwm,
-> +		 struct pwm_caps *caps)
-> +{
-> +	if (!chip || !pwm || !caps)
-> +		return -EINVAL;
-> +
-> +	if (chip->ops && chip->ops->get_caps)
-> +		pwm->chip->ops->get_caps(chip, pwm, caps);
-> +	else if (chip->get_default_caps)
-> +		chip->get_default_caps(caps);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(pwm_get_caps);
+> That whole magic 'safe' printk buffer crap is just that crap.
 
-I'm confused by the way ->get_default_caps() is used here. This always
-points at pwmchip_get_default_caps() if I understand correctly, so why
-bother with the indirection?
+No, I don't see it this way; printk_safe is *semi-magic* at best! :)
 
-I think it would be better to either export pwmchip_get_default_caps()
-as a default implementation of ->get_caps(), something like:
+> Instead of this tinkering around the edges, why don't you make the main
+> logbuf a lockless ringbuffer and then delegate the actual printing of
+> that buffer to a kthread, except for earlycon, which can do synchronous
+> output.
 
-	void pwm_get_default_caps(struct pwm_chip *chip, struct pwm_device *pwm,
-				  struct pwm_caps *caps)
+Well, hmm. These are good questions. Let me think.
+
+per-CPU printk_safe _semi-magic_ makes some things simple to handle.
+We can't just remove per-CPU buffers and add a wake_up_process() at
+the bottom of vprintk_emit(). Because this will deadlock:
+
+  printk()
+   wake_up_process()
+    try_to_wake_up()
+     raw_spin_lock_irqsave()
+ <NMI>
+      printk()
+       wake_up_process()
+        try_to_wake_up()
+         raw_spin_lock_irqsave()
+
+So we still need some amount of per-CPU printk() semi-magic anyway.
+
+And printk-kthread offloding will not eliminate the need of
+printk_deferred(). Which is very hard to use in the right places, like
+always; and we don't have any ways to find out that a random innocently
+looking printk() may actually be invoked from somewhere deep in the
+call-chain with rq lock or pi_lock being locked some 5 frames ago, until
+that printk() actually gets invoked and possibly deadlocks the system.
+
+Having "unprotected" wake_up_process() in vprintk_emit(), in fact,
+will make the need for printk_deferred() even bigger.
+
+On the other hand, we have wake_up_klogd_work_func() in printk, which
+uses irq work, so we, may be, can wakeup printk_kthread from there and,
+thus, remove all the external locks from printk()... But I doubt it that
+anyone will ever ACK such a patch.
+
+Speaking of lockless logbuf,
+logbuf buffer and logbuf_lock are the smallest of the problems printk
+currently has. Mainly because of lockless semi-magical printk_safe
+buffers. Replacing one lockless buffer with another lockless buffer will
+not simplify things in this department. We probably additionally will
+have some nasty screw ups, e.g. when NMI printk on CPUA interrupts normal
+printk on the same CPUA and now we have mixed in characters; and so on.
+per-CPU printk_safe at least keeps us on the safe side in these cases and
+looks fairly simple. I also sort of like that logbuf_lock lets us to have
+a single static textbuf buffer which we use to vscnprintf() printk messages,
+and how printk_safe helps us to get recursive errors/warnings from
+vscnprintf(). So printk_safe/printk_nmi things are not _entirely_ crappy,
+I guess.
+
+We do, however, have loads of problems with all those dependencies which
+come from serial drivers and friends: timekeeping, scheduler (scheduler
+is brilliant and cool, but we do have some deadlocks in printk because of
+it ;), tty, net, MM, wq, etc. So I generally like the idea of "detached
+serial consoles" (that's what I call it). IOW, elimination of the direct
+printk -> serial console path. I don't hate the idea of a complete printk
+re-work. But some people do, tho. And they have their points. Some people
+like the synchronous printk nature and see scheduler dependency as a
+"regression".
+
+The current approach - use the existing printk_safe mechanism and
+case-by-case, manually, break dependencies which can deadlock us is
+a lazy approach, yes; and not very convenient. I'm aware of it.
+
+So, unless I'm missing something, things are not entirely that simple:
+- throw away printk_safe semi-magic
+- add a lockless logbuf
+- add wake_up_process() to vprintk_emit().
+
+It does not completely remove dependency on "external" locks - scheduler,
+etc. And as long as we have them - printk can deadlock.
+
+Am I missing something?
+
+
+Another idea, which I had like a year ago, was to treat printk logbuf
+messages in serial consoles the same way they treat uart xmit buffer.
+Each console has an IRQ handler, which reads pending messages from xmit
+buffer and prints them to the console:
+
+	int serial_foo_irq(...)
 	{
-		...
-	}
-	EXPORT_SYMBOL_GPL(pwm_get_default_caps);
+		unsigned int max_count = TX_FIFO_DEPTH;
 
-This could be used by the individual drivers as the implementation if
-they don't support any modes.
+		while (max_count) {
+			unsigned int c;
 
-Another, probably simpler approach would be to just get rid of the
-chip->get_default_caps() pointer and directly call
-pwmchip_get_default_caps() from pwm_get_caps():
+			if (uart_circ_empty(xmit))
+				break;
 
-	int pwm_get_caps(...)
-	{
-		/*
-		 * Note that you don't need the check for chip->ops because
-		 * the core checks for that upon registration of the chip.
-		 */
-		if (chip->ops->get_caps)
-			return chip->ops->get_caps(...);
-
-		return pwm_get_default_caps(...);
+			c = xmit->buf[xmit->tail];
+			writel(port, UART_TX, c);
+			xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
+			max_count--;
+		}
 	}
 
-And if we do that, might as well fold pwm_get_default_caps() into
-pwm_get_caps().
+We can do the same for printk logbuf. Each console can have last_seen_idx.
+And read logbuf messages (poll logbuf) starting from that per-console
+last_seen_idx in IRQ handler; we don't have to call into scheduler, net,
+etc. printk() will simply add messages to logbuf, consoles will poll pending
+messages from IRQs handlers; and everyone is happy... And we will do direct
+printk -> console_drivers only for early_con or when in panic().
 
-> +/**
-> + * pwm_mode_get_valid() - get the first available valid mode for PWM
-> + * @chip: PWM chip
-> + * @pwm: PWM device to get the valid mode for
-> + *
-> + * Returns: first valid mode for PWM device
-> + */
-> +unsigned long pwm_mode_get_valid(struct pwm_chip *chip, struct pwm_devic=
-e *pwm)
-
-This is a little ambiguous. Perhaps pwm_get_default_mode()?
-
-> +/**
-> + * pwm_mode_valid() - check if mode is valid for PWM device
-> + * @pwm: PWM device
-> + * @mode: PWM mode to check if valid
-> + *
-> + * Returns: true if mode is valid and false otherwise
-> + */
-> +bool pwm_mode_valid(struct pwm_device *pwm, unsigned long mode)
-
-Again, this is slightly ambiguous because the name suggests that it
-merely tests a mode for validity, not that it is really supported by the
-given device. Perhaps something like pwm_supports_mode()?
-
-> +const char *pwm_mode_desc(struct pwm_device *pwm, unsigned long mode)
-> +{
-> +	static const char * const modes[] =3D {
-> +		"invalid",
-> +		"normal",
-> +		"complementary",
-> +	};
-> +
-> +	if (!pwm_mode_valid(pwm, mode))
-> +		return modes[0];
-> +
-> +	return modes[ffs(mode)];
-> +}
-
-Do we really need to be able to get the name of the mode in the context
-of a given PWM channel? Couldn't we drop the pwm parameter and simply
-return the name (pwm_get_mode_name()?) and at the same time remove the
-extra "invalid" mode in there? I'm not sure what the use-case here is,
-but it seems to me like the code should always check for supported modes
-first before reporting their names in any way.
-
-> +/**
->   * pwmchip_add_with_polarity() - register a new PWM chip
->   * @chip: the PWM chip to add
->   * @polarity: initial polarity of PWM channels
-> @@ -275,6 +382,8 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
-> =20
->  	mutex_lock(&pwm_lock);
-> =20
-> +	chip->get_default_caps =3D pwmchip_get_default_caps;
-> +
->  	ret =3D alloc_pwms(chip->base, chip->npwm);
->  	if (ret < 0)
->  		goto out;
-> @@ -294,6 +403,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
->  		pwm->pwm =3D chip->base + i;
->  		pwm->hwpwm =3D i;
->  		pwm->state.polarity =3D polarity;
-> +		pwm->state.mode =3D pwm_mode_get_valid(chip, pwm);
-> =20
->  		if (chip->ops->get_state)
->  			chip->ops->get_state(chip, pwm, &pwm->state);
-> @@ -469,7 +579,8 @@ int pwm_apply_state(struct pwm_device *pwm, struct pw=
-m_state *state)
->  	int err;
-> =20
->  	if (!pwm || !state || !state->period ||
-> -	    state->duty_cycle > state->period)
-> +	    state->duty_cycle > state->period ||
-> +	    !pwm_mode_valid(pwm, state->mode))
->  		return -EINVAL;
-> =20
->  	if (!memcmp(state, &pwm->state, sizeof(*state)))
-> @@ -530,6 +641,9 @@ int pwm_apply_state(struct pwm_device *pwm, struct pw=
-m_state *state)
-> =20
->  			pwm->state.enabled =3D state->enabled;
->  		}
-> +
-> +		/* No mode support for non-atomic PWM. */
-> +		pwm->state.mode =3D state->mode;
-
-That comment seems misplaced. This is actually part of atomic PWM, so
-maybe just reverse the logic and say "mode support only for atomic PWM"
-or something. I would personally just leave it away. The legacy API has
-no way of setting the mode, which is indication enough that we don't
-support it.
-
-> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> index 56518adc31dd..a4ce4ad7edf0 100644
-> --- a/include/linux/pwm.h
-> +++ b/include/linux/pwm.h
-> @@ -26,9 +26,32 @@ enum pwm_polarity {
->  };
-> =20
->  /**
-> + * PWM modes capabilities
-> + * @PWMC_MODE_NORMAL_BIT: PWM has one output
-> + * @PWMC_MODE_COMPLEMENTARY_BIT: PWM has 2 outputs with opposite polarit=
-ies
-> + * @PWMC_MODE_CNT: PWM modes count
-> + */
-> +enum {
-> +	PWMC_MODE_NORMAL_BIT,
-> +	PWMC_MODE_COMPLEMENTARY_BIT,
-> +	PWMC_MODE_CNT,
-> +};
-> +
-> +#define PWMC_MODE(name)		BIT(PWMC_MODE_##name##_BIT)
-
-Why the C in the prefix? Why not just PWM_MODE_* for all of the above?
-
-> +
-> +/**
-> + * struct pwm_caps - PWM capabilities
-> + * @modes: PWM modes
-
-This should probably say that it's a bitmask of PWM_MODE_*.
-
-> +struct pwm_caps {
-> +	unsigned long modes;
-> +};
-> +
-> +/**
->   * struct pwm_args - board-dependent PWM arguments
->   * @period: reference period
->   * @polarity: reference polarity
-> + * @mode: reference mode
-
-As discussed in my reply to the cover letter, what is the use for the
-reference mode? Drivers want to use either normal or some other mode.
-What good is it to get this from board-dependent arguments if the
-driver already knows which one it wants or needs?
-
-> @@ -300,6 +331,7 @@ struct pwm_chip {
-> =20
->  	struct pwm_device * (*of_xlate)(struct pwm_chip *pc,
->  					const struct of_phandle_args *args);
-> +	void (*get_default_caps)(struct pwm_caps *caps);
-
-As mentioned above, I don't think we need this.
-
-Thierry
-
---jRdC2OsRnuV8iIl8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvF2KEACgkQ3SOs138+
-s6FInQ//dCrrajHRK2UhdVBR9LxxWy0fdBPpQngnitnBEiuIUj5b8ZpshFeuFUqX
-4r6v1M/z34agLbm4sn8rdGOxNrjqdigtNt9l/ig0BvqhC5TWgSRALC+fTdIihIkx
-t/N0utliojPi/tLBgxR6w1lg39wEMCI4wfr9UxOb73JY9CDrI7IpbPciund1wn9b
-CLoMiGDzHE+1RiES+1SfRlnyXXq57Ow9s6aBB/SQyviI/+qtl0gRrv3lNorpqIsc
-EFUwJ0uOTBCa1uQA/KR5rAIBBt8iYATrmhyv+UyOhNERrpV83pdj54BH5uPqqREa
-8kYyOo5Fw5GMRZwqF3FhcUNkzHKmNG9ghZLMt8gZFUucZg/hFfps3OL6+d6Pb+G9
-GPAzE7rO4Ss/GkaoPWlLHxLGzycJwUeQbZV4M6ah2ixRHePSXKzoCQsVvEpWJZja
-i40AxqcO0PmQZK7iVIZAb43tABtKxowbA/D4hpmYX2/7zZil8vEEfFsRtvn113Zi
-OrFn8w/aGU0WwFzX5v1aZqRTi6VGykAl0JIEvYCQCrMuHQQnCzV5jJnIjCFA6KbH
-ZzpwFyRA1/g1KQShgOYtLkasYmRpRed9pmWDwDR+wDZz1DRvqeTsetyYHBT2ezKU
-odNVBYVW0DGZdl/HI+8rzMQl+4ZpAyk0NTs/FAX+jc/EFAhgr2U=
-=gGpY
------END PGP SIGNATURE-----
-
---jRdC2OsRnuV8iIl8--
+	-ss
