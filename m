@@ -2,134 +2,85 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 417A4C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D52C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07C8120869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:03:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07C8120869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 98CA720869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:03:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BaSN2tzf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98CA720869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbeJPPwb (ORCPT
+        id S1727210AbeJPPwf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 11:52:31 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:64395 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbeJPPwb (ORCPT
+        Tue, 16 Oct 2018 11:52:35 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45903 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727061AbeJPPwe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 11:52:31 -0400
-Received: from 79.184.253.168.ipv4.supernova.orange.pl (79.184.253.168) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
- id 8bfcff45647198a2; Tue, 16 Oct 2018 10:03:16 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Doug Smythies <dsmythies@telus.net>
-Cc:     "'Rafael J. Wysocki'" <rafael@kernel.org>,
-        'Srinivas Pandruvada' <srinivas.pandruvada@linux.intel.com>,
-        'Peter Zijlstra' <peterz@infradead.org>,
-        'Linux Kernel Mailing List' <linux-kernel@vger.kernel.org>,
-        'Frederic Weisbecker' <frederic@kernel.org>,
-        'Mel Gorman' <mgorman@suse.de>,
-        'Giovanni Gherdovich' <ggherdovich@suse.cz>,
-        'Daniel Lezcano' <daniel.lezcano@linaro.org>,
-        'Linux PM' <linux-pm@vger.kernel.org>
-Subject: Re: [RFC/RFT/[PATCH] cpuidle: New timer events oriented governor for tickless systems
-Date:   Tue, 16 Oct 2018 10:00:02 +0200
-Message-ID: <3128524.UsqAxBK4jd@aspire.rjw.lan>
-In-Reply-To: <001101d464fc$65623c60$3026b520$@net>
-References: <000e01d4638a$91a20c60$b4e62520$@net> <001101d464fc$65623c60$3026b520$@net>
+        Tue, 16 Oct 2018 11:52:34 -0400
+Received: by mail-qt1-f194.google.com with SMTP id e10-v6so24611907qtq.12
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 01:03:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XebpuBAa/N4I5t+WvllZVz7C8W/X4EjhR10vqZfRn+A=;
+        b=BaSN2tzfRKI/l7WHVCWs2Cfy+PUdpQJpebR7aDaJHKFKiBVqA0pN4HemsvzuPlRrS3
+         wAsBVrtTPnnppdNjcUI0u14HxsPG7VwkWw11jhmmtj3gSFRqRIGeqRMnCX5Rlj7B05oc
+         VIIV9FazeFjBLa5r69FFwiiIRzg2ZiQntziT8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XebpuBAa/N4I5t+WvllZVz7C8W/X4EjhR10vqZfRn+A=;
+        b=riIKuBwTrF9qgjVEoLN3cdnsklyXKBTwJlb8OAZ+IYmYS4LtDQlcOBwq0g1hGsflzi
+         TK6H5enxh6BofWzqko6tq6vCw92xxMtxI1PA6BkIAvIqDVvJ8/nkGYrOAifUzKMC5NTB
+         ro7DgbmQjDrakvMDgQVCwUKUCPSpfp4SmHxrbrJxxWVOFfqjhTG6INFzp3Qm/mXqvepf
+         V+tCKwIy3VhRxWqZuK0LHM+6kqPU5lkGCiFQBlRhNhk4qvmnCAqM2/MmSz26rns2AKSq
+         t5pb5F1yFIfLlw+rEi2UL64I9GPwgzSfnbyao4Zc+wGhffMW8NHswh8V3YkwAEDXim4v
+         JtaQ==
+X-Gm-Message-State: ABuFfojfixbDLr/M5T+LPPOBxihQ/aw84Q4M2ffbzDqG1CWkpVPHDvI4
+        SfWHUz76I6FAVi3SfN7fh/36mCrnCMvi61biUd9++0Zv
+X-Google-Smtp-Source: ACcGV62HbK3VyeFbb4UP6g0XL39kqd70WFcUi/GzaElTz/72KJ9f0EwApmN/WwWunLqXC6ixCtnxTK7+YLyARgnd3OU=
+X-Received: by 2002:ac8:435b:: with SMTP id a27-v6mr19126291qtn.295.1539677001028;
+ Tue, 16 Oct 2018 01:03:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <1539663093-15923-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1539663093-15923-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 16 Oct 2018 10:03:09 +0200
+Message-ID: <CACRpkda-0nM1BHRza91=4tG5cKA7qL4H8wC3Syn9g37OJ0dUHQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: uniphier: include <linux/bits.h> instead of <linux/bitops.h>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, October 16, 2018 5:00:19 AM CEST Doug Smythies wrote:
-> On 2018.10.15 00:52 Rafael J. Wysocki wrote:
-> > On Sun, Oct 14, 2018 at 8:53 AM Doug Smythies <dsmythies@telus.net> wrote:
-> >> On 2018.10.11 14:02 Rafael J. Wysocki wrote:
-> >
-> > ...[cut]...
-> >
-> >>> Overall, it selects deeper idle states than menu more often, but
-> >>> that doesn't seem to make a significant difference in the majority
-> >>> of cases.
-> >>
-> >> Not always, that viscous powernightmare sweep test that I run used
-> >> way way more processor package power and spent a staggering amount
-> >> of time in idle state 0. [1].
-> >
-> > Can you please remind me what exactly the workload is in that test?
-> 
-> The problem with my main test computer is that I have never had a good
-> way to make it use idle state 0 and/or idle state 1 a significant amount,
-> while not setting the need-resched flag. Due to the minimum overheads
-> involved, in a tight loop c program calling nanosleep with an only 1
-> nanosecond argument, will result in about 50 (44 to 57 measured)
-> microseconds, or much too long to invoke idle state 0 or 1 (at least
-> on my test computer). So, for my 8 CPU older model i7-2600K, the idea
-> is to spin out 40 threads doing short sleeps in an attempt to pile up
-> events such that the shallower idle states are invoked more often.
-> 
-> Why 40 threads, one might wonder? This was many months ago now, but
-> I tested quite a number of threads, and 40 seemed to provide the
-> most interesting results for this type of work. I have not rechecked
-> it since (probably should).
-> 
-> For the testing I did in August for this:
-> 
-> "[PATCH] cpuidle: menu: Retain tick when shallow state is selected"
-> [2].
-> The thinking was to sweep through a wide range of sleep times,
-> and see if anything odd shows up. The test description is copied
-> here:
-> 
-> In [2] Doug wrote:
-> > Test 1: A Thomas Ilsche type "powernightmare" test:
-> > (forever ((10 times - variable usec sleep) 0.999 seconds sleep) X 40 staggered
-> > threads. Where the "variable" was from 0.05 to 5 in steps of 0.05, for the first ~200
-> > minutes of the test. (note: overheads mean that actual loop times are quite
-> > different.) And then from 5 to 500 in steps of 1, for the remaining 1000 minutes of
-> > the test. Each step ran for 2 minutes. The system was idle for 1 minute at the start,
-> > and a few minutes at the end of the graphs.
-> > While called "kernel 4.18", the baseline was actually from mainline at head =
-> > df2def4, or just after Rafael's linux-pm "pm-4.19-rc1-2" merge.
-> > (actually after the next acpi merge).
-> > Reference kernel = df2def4 with the two patches reverted.
-> 
-> However, that description was flawed, because there actually was never
-> a long sleep (incompetence on my part, but it doesn't really matter).
-> That test was 1200 minutes, and is worth looking at [3].
-> Notice how, as the test progresses, a migration through the idle
-> states can be observed, just as expected.
-> 
-> The next old reference of this test was the 8 patch set on top of
-> Kernel 4.19-rc6 [4], from a week ago. However, I shortened the test
-> by 900 minutes. Why? Well, there is only so much time in a day.
-> 
-> So now, back to the test this thread is about [1]. It might be
-> argued that maybe the TEO governor should be spending more time
-> in idle state 0 near the start of test, as the test shows. Trace
-> data does, maybe, support such an argument, but I haven't had
-> time to dig into it.
-> 
-> I also wonder if some of the weirdness later in the test is
-> repeatable or not (re: discussion elsewhere on this thread,
-> now cut, about lack of repeatability). However, I have not
-> had time to repeat the test.
-> 
-> Hope this helps, and sorry for any confusion and this long e-mail.
+On Tue, Oct 16, 2018 at 6:12 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-Yes, it helps, many thanks again and no worries about long emails. :-)
+> The reason of including <linux/bitops.h> here is just for BIT() and
+> GENMASK macros.
+>
+> Since commit 8bd9cb51daac8 ("locking/atomics, asm-generic: Move some
+> macros from <linux/bitops.h> to a new <linux/bits.h> file"),
+> <linux/bits.h> is enough for such compile-time macros.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-I'm going to make some changes to the new governor to take your observations
-into account.
+Patch applied.
 
-Cheers,
-Rafael
-
+Yours,
+Linus Walleij
