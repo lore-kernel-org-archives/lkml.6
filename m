@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB7DC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2592DC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D51121477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E37402098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SeQ2VHav"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D51121477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWGR8Ion"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E37402098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbeJQBCQ (ORCPT
+        id S1727953AbeJQBCS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:02:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42842 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:02:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727669AbeJQBCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:02:15 -0400
+        id S1727669AbeJQBCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:02:17 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A28D32089E;
-        Tue, 16 Oct 2018 17:10:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 423E420866;
+        Tue, 16 Oct 2018 17:10:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709853;
-        bh=DnxFLUoL0A034E6i/p1C9SpI3oofMLNOKYIEdN/HZk0=;
+        s=default; t=1539709855;
+        bh=Wi3se2lzye4AxfY60XzcQ3X91qZ14qBea2xnxDirdHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SeQ2VHavwZ17apTOr95pRr2sYxpUc/BfjK7sPyVsiyzCef3GGR+iraYhhLY7Eco/c
-         whAx638n1kWvayOGbJxndfkpLcryU0TrpHi8J2caHLTwIlx/WJVQ6HApUC04SQz3WL
-         pHQh0SIIxsJ06W64UMmg0SW8/hqc9kykzqfGDhrY=
+        b=LWGR8IonS0Pc/iDqKEa7/We+5n6MphS9h1WbGCUWwLe+bhdjnflIBPeNKWyZTbOYM
+         PWm1OfzAdv10Lmpq4bqxoWWctTUcyo35iQeX7q50b9qIQQ3ycIA/+wXLj8b1r91gjo
+         bG2IX4riFbF2qGF+cY4pMHFOVEwmyyBn5GLNOG4k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shahed Shaikh <shahed.shaikh@cavium.com>,
+        stable@vger.kernel.org,
+        Venkat Duvvuru <venkatkumar.duvvuru@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 019/135] qlcnic: fix Tx descriptor corruption on 82xx devices
-Date:   Tue, 16 Oct 2018 19:04:09 +0200
-Message-Id: <20181016170516.618917135@linuxfoundation.org>
+Subject: [PATCH 4.18 002/135] bnxt_en: free hwrm resources, if driver probe fails.
+Date:   Tue, 16 Oct 2018 19:03:52 +0200
+Message-Id: <20181016170515.692948304@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -62,149 +63,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shahed Shaikh <shahed.shaikh@cavium.com>
+From: Venkat Duvvuru <venkatkumar.duvvuru@broadcom.com>
 
-[ Upstream commit c333fa0c4f220f8f7ea5acd6b0ebf3bf13fd684d ]
+[ Upstream commit a2bf74f4e1b82395dad2b08d2a911d9151db71c1 ]
 
-In regular NIC transmission flow, driver always configures MAC using
-Tx queue zero descriptor as a part of MAC learning flow.
-But with multi Tx queue supported NIC, regular transmission can occur on
-any non-zero Tx queue and from that context it uses
-Tx queue zero descriptor to configure MAC, at the same time TX queue
-zero could be used by another CPU for regular transmission
-which could lead to Tx queue zero descriptor corruption and cause FW
-abort.
+When the driver probe fails, all the resources that were allocated prior
+to the failure must be freed. However, hwrm dma response memory is not
+getting freed.
 
-This patch fixes this in such a way that driver always configures
-learned MAC address from the same Tx queue which is used for
-regular transmission.
+This patch fixes the problem described above.
 
-Fixes: 7e2cf4feba05 ("qlcnic: change driver hardware interface mechanism")
-Signed-off-by: Shahed Shaikh <shahed.shaikh@cavium.com>
+Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
+Signed-off-by: Venkat Duvvuru <venkatkumar.duvvuru@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic.h         |    8 +++++---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c |    3 ++-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h |    3 ++-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h      |    3 ++-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c      |   12 ++++++------
- 5 files changed, 17 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
-@@ -1800,7 +1800,8 @@ struct qlcnic_hardware_ops {
- 	int (*config_loopback) (struct qlcnic_adapter *, u8);
- 	int (*clear_loopback) (struct qlcnic_adapter *, u8);
- 	int (*config_promisc_mode) (struct qlcnic_adapter *, u32);
--	void (*change_l2_filter) (struct qlcnic_adapter *, u64 *, u16);
-+	void (*change_l2_filter)(struct qlcnic_adapter *adapter, u64 *addr,
-+				 u16 vlan, struct qlcnic_host_tx_ring *tx_ring);
- 	int (*get_board_info) (struct qlcnic_adapter *);
- 	void (*set_mac_filter_count) (struct qlcnic_adapter *);
- 	void (*free_mac_list) (struct qlcnic_adapter *);
-@@ -2064,9 +2065,10 @@ static inline int qlcnic_nic_set_promisc
- }
- 
- static inline void qlcnic_change_filter(struct qlcnic_adapter *adapter,
--					u64 *addr, u16 id)
-+					u64 *addr, u16 vlan,
-+					struct qlcnic_host_tx_ring *tx_ring)
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -3015,10 +3015,11 @@ static void bnxt_free_hwrm_resources(str
  {
--	adapter->ahw->hw_ops->change_l2_filter(adapter, addr, id);
-+	adapter->ahw->hw_ops->change_l2_filter(adapter, addr, vlan, tx_ring);
- }
+ 	struct pci_dev *pdev = bp->pdev;
  
- static inline int qlcnic_get_board_info(struct qlcnic_adapter *adapter)
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-@@ -2135,7 +2135,8 @@ out:
- }
+-	dma_free_coherent(&pdev->dev, PAGE_SIZE, bp->hwrm_cmd_resp_addr,
+-			  bp->hwrm_cmd_resp_dma_addr);
+-
+-	bp->hwrm_cmd_resp_addr = NULL;
++	if (bp->hwrm_cmd_resp_addr) {
++		dma_free_coherent(&pdev->dev, PAGE_SIZE, bp->hwrm_cmd_resp_addr,
++				  bp->hwrm_cmd_resp_dma_addr);
++		bp->hwrm_cmd_resp_addr = NULL;
++	}
+ 	if (bp->hwrm_dbg_resp_addr) {
+ 		dma_free_coherent(&pdev->dev, HWRM_DBG_REG_BUF_SIZE,
+ 				  bp->hwrm_dbg_resp_addr,
+@@ -8931,6 +8932,7 @@ init_err_cleanup_tc:
+ 	bnxt_clear_int_mode(bp);
  
- void qlcnic_83xx_change_l2_filter(struct qlcnic_adapter *adapter, u64 *addr,
--				  u16 vlan_id)
-+				  u16 vlan_id,
-+				  struct qlcnic_host_tx_ring *tx_ring)
- {
- 	u8 mac[ETH_ALEN];
- 	memcpy(&mac, addr, ETH_ALEN);
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h
-@@ -550,7 +550,8 @@ int qlcnic_83xx_wrt_reg_indirect(struct
- int qlcnic_83xx_nic_set_promisc(struct qlcnic_adapter *, u32);
- int qlcnic_83xx_config_hw_lro(struct qlcnic_adapter *, int);
- int qlcnic_83xx_config_rss(struct qlcnic_adapter *, int);
--void qlcnic_83xx_change_l2_filter(struct qlcnic_adapter *, u64 *, u16);
-+void qlcnic_83xx_change_l2_filter(struct qlcnic_adapter *adapter, u64 *addr,
-+				  u16 vlan, struct qlcnic_host_tx_ring *ring);
- int qlcnic_83xx_get_pci_info(struct qlcnic_adapter *, struct qlcnic_pci_info *);
- int qlcnic_83xx_set_nic_info(struct qlcnic_adapter *, struct qlcnic_info *);
- void qlcnic_83xx_initialize_nic(struct qlcnic_adapter *, int);
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h
-@@ -173,7 +173,8 @@ int qlcnic_82xx_napi_add(struct qlcnic_a
- 			 struct net_device *netdev);
- void qlcnic_82xx_get_beacon_state(struct qlcnic_adapter *);
- void qlcnic_82xx_change_filter(struct qlcnic_adapter *adapter,
--			       u64 *uaddr, u16 vlan_id);
-+			       u64 *uaddr, u16 vlan_id,
-+			       struct qlcnic_host_tx_ring *tx_ring);
- int qlcnic_82xx_config_intr_coalesce(struct qlcnic_adapter *,
- 				     struct ethtool_coalesce *);
- int qlcnic_82xx_set_rx_coalesce(struct qlcnic_adapter *);
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
-@@ -268,13 +268,12 @@ static void qlcnic_add_lb_filter(struct
- }
+ init_err_pci_clean:
++	bnxt_free_hwrm_resources(bp);
+ 	bnxt_cleanup_pci(bp);
  
- void qlcnic_82xx_change_filter(struct qlcnic_adapter *adapter, u64 *uaddr,
--			       u16 vlan_id)
-+			       u16 vlan_id, struct qlcnic_host_tx_ring *tx_ring)
- {
- 	struct cmd_desc_type0 *hwdesc;
- 	struct qlcnic_nic_req *req;
- 	struct qlcnic_mac_req *mac_req;
- 	struct qlcnic_vlan_req *vlan_req;
--	struct qlcnic_host_tx_ring *tx_ring = adapter->tx_ring;
- 	u32 producer;
- 	u64 word;
- 
-@@ -301,7 +300,8 @@ void qlcnic_82xx_change_filter(struct ql
- 
- static void qlcnic_send_filter(struct qlcnic_adapter *adapter,
- 			       struct cmd_desc_type0 *first_desc,
--			       struct sk_buff *skb)
-+			       struct sk_buff *skb,
-+			       struct qlcnic_host_tx_ring *tx_ring)
- {
- 	struct vlan_ethhdr *vh = (struct vlan_ethhdr *)(skb->data);
- 	struct ethhdr *phdr = (struct ethhdr *)(skb->data);
-@@ -335,7 +335,7 @@ static void qlcnic_send_filter(struct ql
- 		    tmp_fil->vlan_id == vlan_id) {
- 			if (jiffies > (QLCNIC_READD_AGE * HZ + tmp_fil->ftime))
- 				qlcnic_change_filter(adapter, &src_addr,
--						     vlan_id);
-+						     vlan_id, tx_ring);
- 			tmp_fil->ftime = jiffies;
- 			return;
- 		}
-@@ -350,7 +350,7 @@ static void qlcnic_send_filter(struct ql
- 	if (!fil)
- 		return;
- 
--	qlcnic_change_filter(adapter, &src_addr, vlan_id);
-+	qlcnic_change_filter(adapter, &src_addr, vlan_id, tx_ring);
- 	fil->ftime = jiffies;
- 	fil->vlan_id = vlan_id;
- 	memcpy(fil->faddr, &src_addr, ETH_ALEN);
-@@ -766,7 +766,7 @@ netdev_tx_t qlcnic_xmit_frame(struct sk_
- 	}
- 
- 	if (adapter->drv_mac_learn)
--		qlcnic_send_filter(adapter, first_desc, skb);
-+		qlcnic_send_filter(adapter, first_desc, skb, tx_ring);
- 
- 	tx_ring->tx_stats.tx_bytes += skb->len;
- 	tx_ring->tx_stats.xmit_called++;
+ init_err_free:
 
 
