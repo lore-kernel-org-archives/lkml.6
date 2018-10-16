@@ -2,129 +2,124 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FB4C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C0DC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B2E320869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:56:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B2E320869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 02E3420869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:57:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="b67N66qY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02E3420869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbeJPTrD (ORCPT
+        id S1727257AbeJPTrO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 15:47:03 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48162 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727006AbeJPTrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 15:47:01 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id ADF2D3CBB291C;
-        Tue, 16 Oct 2018 19:56:47 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Tue, 16 Oct 2018 19:56:43 +0800
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <huangdaode@hisilicon.com>, <xuwei5@hisilicon.com>,
-        <liguozhu@hisilicon.com>, <Yisen.Zhuang@huawei.com>,
-        <john.garry@huawei.com>, <linuxarm@huawei.com>,
-        <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
-        <lipeng321@huawei.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next 5/5] net: hns3: fix for multiple unmapping DMA problem
-Date:   Tue, 16 Oct 2018 19:58:52 +0800
-Message-ID: <1539691132-158455-6-git-send-email-linyunsheng@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1539691132-158455-1-git-send-email-linyunsheng@huawei.com>
-References: <1539691132-158455-1-git-send-email-linyunsheng@huawei.com>
+        Tue, 16 Oct 2018 15:47:14 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39132 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727002AbeJPTrO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 15:47:14 -0400
+Received: by mail-ed1-f67.google.com with SMTP id d15-v6so21022244edq.6
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 04:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gIQobr/MsuX+iW/Aneb0dR7d9vo4B4vgjtKsuW0y+m4=;
+        b=b67N66qYzFcvR1ujwdnBHc6PERhJG4Z8leXGV4xRjZMY7RzWbgDNx7UVOrk5tGIId+
+         QMj8/S+WicAwj+FQkzwGdUjNVKBedWurP+TdFLANrs7lclpFwnlUHaGXYg02jqJgyMx2
+         WEO00qqTJnGRgGJAjgAUB/Dt6izQWCkie0WGs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gIQobr/MsuX+iW/Aneb0dR7d9vo4B4vgjtKsuW0y+m4=;
+        b=WbZjqSC/4/Oe1dBuEfJPPmElxupznraRSChf7JZx5lumW72xnT4pdTdQAKkgzXFkcp
+         8+hxzMEE7Zmmldw4B0+zRdmlWTyZhdVlWpOsRC8iMj+zvRyAj5PTbGB16if2pzdSh9bA
+         X6/1NG0Bi1TJ7XgFdAN2323vGDQhCB8IHoG8Ex7NjlFWhZWnjNk3pmcJ7cTr27TyWtUG
+         2CZXFEU4CvrVNA8g7bMVKTozSsIxcH6yCKd+ciysO/EKNbW1xUoRcVE6w252QXBCAXGw
+         t85syasmwmO8WX0xNgH4lPJQK/itQJL77rPbbDeXbJ7q8EIQfQw8u8b7Hdj8XQ+oFmhC
+         9+Uw==
+X-Gm-Message-State: ABuFfoh/IKMtI0Vgn58AwYipRRo0FJHQt2b/qQ/+s0eov/Y4DpDvg4gb
+        LAEsOrT55G8UBK8yM/Skm+/Q7IFHPXXX3ok8+9YJlg==
+X-Google-Smtp-Source: ACcGV62wdy0YGQQBuf8dgPdOjkT3Jtszr0cKXYa20ouTg026mFdjyGdWn2lV3sKClHq2r1fB7IY9w2+/Duo7QGa2slk=
+X-Received: by 2002:a17:906:4054:: with SMTP id y20-v6mr23192497ejj.30.1539691025160;
+ Tue, 16 Oct 2018 04:57:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+References: <1538850861-26882-1-git-send-email-wang6495@umn.edu>
+In-Reply-To: <1538850861-26882-1-git-send-email-wang6495@umn.edu>
+From:   Sumit Saxena <sumit.saxena@broadcom.com>
+Date:   Tue, 16 Oct 2018 17:26:54 +0530
+Message-ID: <CAL2rwxqeeJgSz=DePWZvh8sr15MJK8Gqta7EbfjwAUMUcvvMJA@mail.gmail.com>
+Subject: Re: [PATCH] scsi: megaraid_sas: fix a missing-check bug
+To:     wang6495@umn.edu
+Cc:     kjlu@umn.edu, Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fuyun Liang <liangfuyun1@huawei.com>
+On Sun, Oct 7, 2018 at 12:04 AM Wenwen Wang <wang6495@umn.edu> wrote:
+>
+> In megasas_mgmt_compat_ioctl_fw(), to handle the structure
+> compat_megasas_iocpacket 'cioc', a user-space structure megasas_iocpacket
+> 'ioc' is allocated before megasas_mgmt_ioctl_fw() is invoked to handle the
+> packet. Since the two data structures have different fields, the data is
+> copied from 'cioc' to 'ioc' field by field. In the copy process,
+> 'sense_ptr' is prepared if the field 'sense_len' is not null, because it
+> will be used in megasas_mgmt_ioctl_fw(). To prepare 'sense_ptr', the
+> user-space data 'ioc->sense_off' and 'cioc->sense_off' are copied and saved
+> to kernel-space variables 'local_sense_off' and 'user_sense_off'
+> respectively. Given that 'ioc->sense_off' is also copied from
+> 'cioc->sense_off', 'local_sense_off' and 'user_sense_off' should have the
+> same value. However, 'cioc' is in the user space and a malicious user can
+> race to change the value of 'cioc->sense_off' after it is copied to
+> 'ioc->sense_off' but before it is copied to 'user_sense_off'. By doing so,
+> the attacker can inject different values into 'local_sense_off' and
+> 'user_sense_off'. This can cause undefined behavior in the following
+> execution, because the two variables are supposed to be same.
+>
+> This patch enforces a check on the two kernel variables 'local_sense_off'
+> and 'user_sense_off' to make sure they are the same after the copy. In case
+> they are not, an error code EINVAL will be returned.
+>
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> ---
+>  drivers/scsi/megaraid/megaraid_sas_base.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+> index 9aa9590..f6de752 100644
+> --- a/drivers/scsi/megaraid/megaraid_sas_base.c
+> +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+> @@ -7523,6 +7523,9 @@ static int megasas_mgmt_compat_ioctl_fw(struct file *file, unsigned long arg)
+>                 get_user(user_sense_off, &cioc->sense_off))
+>                 return -EFAULT;
+>
+> +       if (local_sense_off != user_sense_off)
+> +               return -EINVAL;
+> +
+>         if (local_sense_len) {
+>                 void __user **sense_ioc_ptr =
+>                         (void __user **)((u8 *)((unsigned long)&ioc->frame.raw) + local_sense_off);
 
-When sending a big fragment using multiple buffer descriptor,
-hns3 does one maping, but do multiple unmapping when tx is done,
-which may cause unmapping problem.
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
 
-To fix it, this patch makes sure the value of desc_cb.length of
-the non-first bd is zero. If desc_cb.length is zero, we do not
-unmap the buffer.
-
-Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
-Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 74e592d..76ce2f2 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1051,6 +1051,8 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
- 		return -ENOMEM;
- 	}
- 
-+	desc_cb->length = size;
-+
- 	frag_buf_num = (size + HNS3_MAX_BD_SIZE - 1) / HNS3_MAX_BD_SIZE;
- 	sizeoflast = size % HNS3_MAX_BD_SIZE;
- 	sizeoflast = sizeoflast ? sizeoflast : HNS3_MAX_BD_SIZE;
-@@ -1059,15 +1061,14 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
- 	for (k = 0; k < frag_buf_num; k++) {
- 		/* The txbd's baseinfo of DESC_TYPE_PAGE & DESC_TYPE_SKB */
- 		desc_cb->priv = priv;
--		desc_cb->length = (k == frag_buf_num - 1) ?
--					sizeoflast : HNS3_MAX_BD_SIZE;
- 		desc_cb->dma = dma + HNS3_MAX_BD_SIZE * k;
- 		desc_cb->type = (type == DESC_TYPE_SKB && !k) ?
- 					DESC_TYPE_SKB : DESC_TYPE_PAGE;
- 
- 		/* now, fill the descriptor */
- 		desc->addr = cpu_to_le64(dma + HNS3_MAX_BD_SIZE * k);
--		desc->tx.send_size = cpu_to_le16((u16)desc_cb->length);
-+		desc->tx.send_size = cpu_to_le16((k == frag_buf_num - 1) ?
-+				(u16)sizeoflast : (u16)HNS3_MAX_BD_SIZE);
- 		hns3_set_txbd_baseinfo(&bdtp_fe_sc_vld_ra_ri,
- 				       frag_end && (k == frag_buf_num - 1) ?
- 						1 : 0);
-@@ -1150,12 +1151,14 @@ static void hns3_clear_desc(struct hns3_enet_ring *ring, int next_to_use_orig)
- 					 ring->desc_cb[ring->next_to_use].dma,
- 					ring->desc_cb[ring->next_to_use].length,
- 					DMA_TO_DEVICE);
--		else
-+		else if (ring->desc_cb[ring->next_to_use].length)
- 			dma_unmap_page(dev,
- 				       ring->desc_cb[ring->next_to_use].dma,
- 				       ring->desc_cb[ring->next_to_use].length,
- 				       DMA_TO_DEVICE);
- 
-+		ring->desc_cb[ring->next_to_use].length = 0;
-+
- 		/* rollback one */
- 		ring_ptr_move_bw(ring, next_to_use);
- 	}
-@@ -1874,7 +1877,7 @@ static void hns3_unmap_buffer(struct hns3_enet_ring *ring,
- 	if (cb->type == DESC_TYPE_SKB)
- 		dma_unmap_single(ring_to_dev(ring), cb->dma, cb->length,
- 				 ring_to_dma_dir(ring));
--	else
-+	else if (cb->length)
- 		dma_unmap_page(ring_to_dev(ring), cb->dma, cb->length,
- 			       ring_to_dma_dir(ring));
- }
--- 
-1.9.1
-
+> --
+> 2.7.4
+>
