@@ -2,88 +2,141 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B64CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4DBC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D2BA20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:02:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D2BA20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 32DBE20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:02:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32DBE20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbeJPRv5 (ORCPT
+        id S1727097AbeJPRwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 13:51:57 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40324 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeJPRv5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 13:51:57 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 0204F263AA6
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel@collabora.com, Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] PM / devfreq: Fix static checker warning in try_then_request_governor
-Date:   Tue, 16 Oct 2018 12:02:03 +0200
-Message-Id: <20181016100203.18624-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.19.1
+        Tue, 16 Oct 2018 13:52:32 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13663 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726083AbeJPRwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 13:52:31 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 0575FB4336185;
+        Tue, 16 Oct 2018 18:02:47 +0800 (CST)
+Received: from [127.0.0.1] (10.177.23.164) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Tue, 16 Oct 2018
+ 18:02:42 +0800
+Subject: Re: [PATCH 1/1] iommu/arm-smmu-v3: eliminate a potential memory
+ corruption on Hi16xx soc
+To:     Andrew Murray <andrew.murray@arm.com>
+References: <1539592576-24352-1-git-send-email-thunder.leizhen@huawei.com>
+ <20181015124617.GA12972@e119886-lin.cambridge.arm.com>
+CC:     Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LinuxArm <linuxarm@huawei.com>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5BC5B741.4020801@huawei.com>
+Date:   Tue, 16 Oct 2018 18:02:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181015124617.GA12972@e119886-lin.cambridge.arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch 23c7b54ca1cd: "PM / devfreq: Fix devfreq_add_device() when
-drivers are built as modules." leads to the following static checker
-warning:
 
-    drivers/devfreq/devfreq.c:1043 governor_store()
-    warn: 'governor' can also be NULL
 
-The reason is that the try_then_request_governor() function returns both
-error pointers and NULL. It should just return error pointers, so fix
-this by returning a ERR_PTR to the error intead of returning NULL.
+On 2018/10/15 20:46, Andrew Murray wrote:
+> Hi Zhen,
+> 
+> On Mon, Oct 15, 2018 at 04:36:16PM +0800, Zhen Lei wrote:
+>> ITS translation register map:
+>> 0x0000-0x003C	Reserved
+>> 0x0040		GITS_TRANSLATER
+>> 0x0044-0xFFFC	Reserved
+>>
+>> The standard GITS_TRANSLATER register in ITS is only 4 bytes, but Hisilicon
+>> expands the next 4 bytes to carry some IMPDEF information. That means, 8 bytes
+>> data will be written to MSIAddress each time.
+>>
+>> MSIAddr: |----4bytes----|----4bytes----|
+>> 	 |    MSIData   |    IMPDEF    |
+>>
+>> There is no problem for ITS, because the next 4 bytes space is reserved in ITS.
+>> But it will overwrite the 4 bytes memory following "sync_count". It's very
+>> luckly that the previous and the next neighbour of "sync_count" are both aligned
+>> by 8 bytes, so no problem is met now.
+> 
+> My understanding is that MSI's are 32bit memory writes and as such the SMMU
+> performs a 32bit write in response to the MSI. If so then what is different
+> with the Hi16xx that causes a problem? Have you been able to able to adjust
+> the layout of the arm_smmu_device struct to demonstrate this?
 
-Fixes: 23c7b54ca1cd ("PM / devfreq: Fix devfreq_add_device() when drivers are built as modules.")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+In normal, only 32bits MSIdata will be written into sync_count:
+|----4bytes----|----4bytes----|
+|  sync_count  |     xxxx     |
 
- drivers/devfreq/devfreq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+But for Hi16xx, the ITS hardware will write extra 32bits IMDDEF data into "xxxx". If
+"xxxx" is the space of the next struct member, its value will be overwritten.
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 62ead442a872..b10124c7308f 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -231,7 +231,7 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
-  * if is not found. This can happen when both drivers (the governor driver
-  * and the driver that call devfreq_add_device) are built as modules.
-  * devfreq_list_lock should be held by the caller. Returns the matched
-- * governor's pointer.
-+ * governor's pointer or an error pointer.
-  */
- static struct devfreq_governor *try_then_request_governor(const char *name)
- {
-@@ -257,7 +257,7 @@ static struct devfreq_governor *try_then_request_governor(const char *name)
- 		/* Restore previous state before return */
- 		mutex_lock(&devfreq_list_lock);
- 		if (err)
--			return NULL;
-+			return ERR_PTR(err);
- 
- 		governor = find_devfreq_governor(name);
- 	}
+> 
+> Thanks,
+> 
+> Andrew Murray
+> 
+>>
+>> It's good to explicitly add a workaround:
+>> 1. Add gcc __attribute__((aligned(8))) to make sure that "sync_count" is always
+>>    aligned by 8 bytes.
+>> 2. Add a "u64" union member to make sure the 4 bytes padding is always exist.
+>>
+>> There is no functional change.
+>>
+>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>> ---
+>>  drivers/iommu/arm-smmu-v3.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+>> index 5059d09..a07bc0d 100644
+>> --- a/drivers/iommu/arm-smmu-v3.c
+>> +++ b/drivers/iommu/arm-smmu-v3.c
+>> @@ -586,7 +586,10 @@ struct arm_smmu_device {
+>>  
+>>  	struct arm_smmu_strtab_cfg	strtab_cfg;
+>>  
+>> +	union {
+>> +	u64				padding; /* workaround for Hisilicon */
+>>  	u32				sync_count;
+>> +	} __attribute__((aligned(8)));
+>>  
+>>  	/* IOMMU core code handle */
+>>  	struct iommu_device		iommu;
+>> -- 
+>> 1.8.3
+>>
+>>
+>> _______________________________________________
+>> iommu mailing list
+>> iommu@lists.linux-foundation.org
+>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> 
+> .
+> 
+
 -- 
-2.19.1
+Thanks!
+BestRegards
 
