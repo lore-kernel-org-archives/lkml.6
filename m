@@ -2,223 +2,151 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73028C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0651FC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D00B205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:19:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B19092086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:21:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=orbital-systems-com.20150623.gappssmtp.com header.i=@orbital-systems-com.20150623.gappssmtp.com header.b="FIFv9mF1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D00B205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=orbital-systems.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bLytGm88"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B19092086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbeJPWKJ (ORCPT
+        id S1727105AbeJPWM2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:10:09 -0400
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:42707 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727075AbeJPWKJ (ORCPT
+        Tue, 16 Oct 2018 18:12:28 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45700 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbeJPWM2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:10:09 -0400
-Received: by mail-vk1-f194.google.com with SMTP id s129so456294vke.9
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 07:19:28 -0700 (PDT)
+        Tue, 16 Oct 2018 18:12:28 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u12-v6so11518791pfn.12
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 07:21:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=orbital-systems-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=lGUG5ILzEdj8i+d2ziAO67cZztPLKU6+lT4ER+ot0HQ=;
-        b=FIFv9mF1VYlvIp/1SjVMaw1n/7X6jQOdR4J9GlfmAnpgLM+4b6cif5+dl60AC8VHbw
-         AhpywmKv4Jvh8ec9OPRHnbyYwWv2LPwgwxxOLP9Xqj4qq/+dCjOo0sH0zmOdfy6zFUno
-         5NyrNbUDDVpX9LUk15b8Kx225mOUS4Uxyap9G8XniyDfpYR5182Mk/HMSN8XL1K3bnHN
-         MNTJwA1DsXe3dtx96sFqwExx/YQs3/B7yy+hoqYJfuRw7h7Y7vkcPMfmRgaKn7kZTPdR
-         YFpUug14RiRR9tA4IxSZJwSTvbMFYKp7gKuMqaHmLFKkBMgYbnb+hr5+8flPl4QnCQBQ
-         Sf/w==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+x5n83alBln1p8uwt58LcByYw3gX8JlkNuH56G5W06k=;
+        b=bLytGm88me1DCa9ReKcoFq7lOdBw1xV4xtP3Gc+DOZNEul30cXogMjSE3rY7faTGlL
+         DvWyL4DYjmoLsQkZlylDJLa8PIMgGtUt+2w/HCp4CGPrUmQKly7XrAjB6O4SoY6wskoY
+         D9QE1IzzLfKzJmLzyV0h3YoA9MOCt6CtpGipA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lGUG5ILzEdj8i+d2ziAO67cZztPLKU6+lT4ER+ot0HQ=;
-        b=WHb6e+x+nqPg/QpIjHCokXzLDdxjE4/11RBpuO5uJQfJPEvinwWo2nVcighv69cn05
-         JaRMLK6wZ8s5Vtx4ZPEOBUdw1mzyoLqfviVB73PA0KmoMCC2wk/gnc/m5aW+9oeXyIIm
-         oJoeFHFwXiF5huiAo96/DKWvFTNcbtq0lTXYO/Fex4gA62BtQvYRHQ1eQiPcnx34IrWC
-         GzDF9lvLWR0xakNDP32IcgOwk5Kk95S3GGuyt/6IhEJhnFip7vmcJ+5sxD6RU2Ke5Epz
-         Y3JVFsGDvalps3PsZAkM9NvcOQf9BBYRRvOYNyW9rXH3XQNAzc8ncXGj/zHfOArJb1FH
-         TnIg==
-X-Gm-Message-State: ABuFfogdazZa3u6OM/S+BI335SpBNFKsQL8rPwXWN30fB7IjyGebMqZd
-        N16LR5pvkneal5GUGFnwiv2gc5dgYG6p7QSFqjkc5w==
-X-Google-Smtp-Source: ACcGV616tjKgEf1bxxdvQfwBasxYKjBNaw2yC1gVFG1vIybXlWqo3ZzEub8ArZrHNwZEYuWqHZTxRRMFY5GFCbu1ZK0=
-X-Received: by 2002:a1f:8252:: with SMTP id e79mr8599085vkd.62.1539699567378;
- Tue, 16 Oct 2018 07:19:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+x5n83alBln1p8uwt58LcByYw3gX8JlkNuH56G5W06k=;
+        b=WC0/M0+swj4tU0aY84lN0ghWUKnzvxAZdnsNaSMDKo6SxfPZUG3/Kn8hbvEBybbETR
+         HqHNiFCTozJ4eeIpmEoK6U2Qr4Fhu1ARxOCjlNgpP4lXHeXABFcChiXi0XP9n7do32K3
+         d2mEd1590jN8jd0KU7spYuFpFzy6GYrtPly6e2PfnCjECKFrCkYxlHFo6NHb2vEWNNic
+         TroaoQve0V/cISSFaaqJmD3RA+cGbC3wovWGfoMOzWV4pMSDmuikQu7m5+YeO1bDmBso
+         zHJhoNa9iLebU3z9hkMr+2+J6CgiqR2a4DHW4o/fc/aS+0wPZffvA4QO4d8QVUq4Pm4l
+         sEXA==
+X-Gm-Message-State: ABuFfohmHDsHZ5iSOKB0C0ue645imdooR1PPz0lu0+/Kb9Jbxjl4EC8H
+        HCgDi5b6DM/lqVdpGOTm6Lnd
+X-Google-Smtp-Source: ACcGV62HRwAUENeFxD7bAREKyJjCTrChaIUwX8khc93PvAf80Yn9H5oxAjVA7VECxkPBdbzRxcraNw==
+X-Received: by 2002:a62:104b:: with SMTP id y72-v6mr22422985pfi.113.1539699706898;
+        Tue, 16 Oct 2018 07:21:46 -0700 (PDT)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id h5-v6sm17498913pfo.135.2018.10.16.07.21.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 07:21:46 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 19:51:38 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     heiko@sntech.de, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/Rockchip SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC support" 
+        <linux-rockchip@lists.infradead.org>
+Subject: Re: [PATCH] DT: rockchip: Fix stability issues with the
+ 'performance' governor on rock960
+Message-ID: <20181016142138.GA24727@mani>
+References: <1539698431-12616-1-git-send-email-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-References: <20181007125815.8392-1-jonas@threetimestwo.org> <4836921.pHbLXnhTfm@ws-140106>
-In-Reply-To: <4836921.pHbLXnhTfm@ws-140106>
-From:   Jonas Danielsson <jonas@orbital-systems.com>
-Date:   Tue, 16 Oct 2018 16:19:15 +0200
-Message-ID: <CALDOjzh4+gtFk2ezvY4MYCT_rhjUdhfjdYgNFakA=TaXk5Oo2Q@mail.gmail.com>
-Subject: Re: [PATCH] power: reset: at91-reset: enable I-cache for at91sam9260_reset
-To:     alexander.stein@systec-electronic.com
-Cc:     linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539698431-12616-1-git-send-email-daniel.lezcano@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 4:03 PM Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
->
-> Do you have CONFIG_CPU_ICACHE_DISABLE enabled?
-> I wonder why I-cache is disabled. I know about this errata, AT91SAM9G20 i=
-s affected as well.
->
+On Tue, Oct 16, 2018 at 04:00:20PM +0200, Daniel Lezcano wrote:
+> When the performance governor is set as default, the rock960 hangs
+> around one minute after booting, whatever the activity is (idle, key
+> pressed, loaded, ...).
+> 
+> Based on the commit log found at https://patchwork.kernel.org/patch/10092377/
+> 
+> "vdd_log has no consumer and therefore will not be set to a specific
+> voltage. Still the PWM output pin gets configured and thence the vdd_log
+> output voltage will changed from it's default. Depending on the idle
+> state of the PWM this will slightly over or undervoltage the logic supply
+> of the RK3399 and cause instability with GbE (undervoltage) and PCIe
+> (overvoltage). Since the default value set by a voltage divider is the
+> correct supply voltage and we don't need to change it during runtime we
+> remove the rail from the devicetree completely so the PWM pin will not
+> be configured."
+> 
+> After removing the vdd-log from the rock960's specific DT, the board
+> does no longer hang and shows a stable behavior.
+> 
+> Apply the same change for the rock960 by removing the vdd-log from the
+> DT.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Hi Alexander!
+Tested on Rock960 v1.2 board, hence
 
-I just checked, we do not have CONFIG_CPU_ICACHE_DISABLE enabled.
-I wonder as well! If you have any idea I can try them out on my board tomor=
-row!
+Tested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-The effect of enabling them is real. I have managed over 1000 reboots
-with this patch.
-And at the most 20 without.
+Thanks a ton!
 
-> Best regards,
-> Alexander
+Regards,
+Mani
 
-Jonas
-
->
-> On Sunday, October 7, 2018, 2:57:45 PM CEST Jonas Danielsson wrote:
-> > From: Jonas Danielsson <jonas@orbital-systems.com>
-> >
-> > This fixes a bug where our embedded system (AT91SAM9260 based) would
-> > hang at reboot. At the most we managed 16 boot loops without a hang.
-> >
-> > With this patch applied the problem has not been observed and the board
-> > has managed above 250 boot loops.
-> >
-> > The AT91SAM9260 datasheet tells us that with the instruction cache
-> > disabled all instructions are fetched from SDRAM. And we have an errata
-> > telling us we must power down the SDRAM before issuing cpu reset.
-> >
-> > This means we need the instruction cache enabled in at91sam9260_reset()
-> > At the moment it is being disabled in cpu_proc_fin() which is called fr=
-om
-> > arch/arm/kernel/reboot.c.
-> >
-> > Signed-off-by: Jonas Danielsson <jonas@orbital-systems.com>
-> > ---
-> >  drivers/power/reset/at91-reset.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/power/reset/at91-reset.c b/drivers/power/reset/at9=
-1-reset.c
-> > index f44a9ffcc2ab..78972bba64df 100644
-> > --- a/drivers/power/reset/at91-reset.c
-> > +++ b/drivers/power/reset/at91-reset.c
-> > @@ -50,14 +50,24 @@ static void __iomem *at91_ramc_base[2], *at91_rstc_=
-base;
-> >  static struct clk *sclk;
-> >
-> >  /*
-> > -* unless the SDRAM is cleanly shutdown before we hit the
-> > +* Errata 43.1.7.1 RSTC: Reset during SDRAM Accesses
-> > +*
-> > +* Unless the SDRAM is cleanly shutdown before we hit the
-> >  * reset register it can be left driving the data bus and
-> >  * killing the chance of a subsequent boot from NAND
-> > +*
-> > +* Since we are disabling SDRAM need to make sure that the
-> > +* instruction cache is enabled.
-> >  */
-> >  static int at91sam9260_restart(struct notifier_block *this, unsigned l=
-ong mode,
-> >                              void *cmd)
-> >  {
-> >       asm volatile(
-> > +             /* Enable I-cache */
-> > +             "mrc    p15, 0, r0, c1, c0, 0\n\t"
-> > +             "orr    r0, r0, #4096\n\t" /* CR_I (bit 12) */
-> > +             "mcr    p15, 0, r0, c1, c0, 0\n\t"
-> > +
-> >               /* Align to cache lines */
-> >               ".balign 32\n\t"
-> >
-> >
->
->
-> --
-> SYS TEC electronic GmbH
-> Am Windrad 2
-> 08468 Heinsdorfergrund
-> Germany
-> Telefon : +49 (0) 3765 38600-0
-> Fax     : +49 (0) 3765 38600-4100
-> Email   : alexander.stein@systec-electronic.com
-> Website : http://www.systec-electronic.com
->
-> Managing Director   : Dipl.-Phys. Siegmar Schmidt
-> Commercial registry : Amtsgericht Chemnitz, HRB 28082
-> USt.-Id Nr.         : DE150534010
->
-> Diese E-Mail enth=C3=A4lt vertrauliche und/oder rechtlich gesch=C3=BCtzte=
- Informationen.
-> Wenn Sie nicht der richtige Adressat sind oder diese E-Mail irrt=C3=BCmli=
-ch erhalten haben, informieren Sie bitte sofort den Absender und vernichten=
- Sie diese Mail.
-> Das unerlaubte Kopieren sowie die unbefugte Weitergabe dieser Mail sind n=
-icht gestattet.
->
-> This e-mail may contain confidential and/or privileged information.
-> If you are not the intended recipient (or have received this e-mail in er=
-ror) please notify the sender immediately and destroy this e-mail.
-> Any unauthorized copying, disclosure or distribution of the material in t=
-his e-mail is strictly forbidden.
->
->
-
-
---=20
-
-
-
-
-
-
-JONAS DANIELSSON
-Software Developer
-
-+46 72 361 5022
-Malm=C3=B6 - Sweden
-
-ORBITAL SYSTEMS
-orbital-systems.com
-
-
-
-
-The information contained in this message is intended for the personal
-and confidential use of the designated recipients named above and may
-contain confidential and/or privileged material. If the reader of this
-message is not the intended recipient or an agent responsible for
-delivering it to the intended recipient, you are hereby notified that
-you have received this document in error, and that any review,
-dissemination, distribution, or copying of this message is strictly
-prohibited. If you have received this communication in error, please
-notify the sender immediately and delete this e-mail from your system.
-
-Although this transmission and any attachments are believed to be free
-of any virus or other defect that might affect any computer system
-into which it is received and opened, it is the responsibility of the
-recipient to ensure that it is virus free and no responsibility is
-accepted by ORBITAL SYSTEMS AB, its subsidiaries and affiliates, as
-applicable, for any loss or damage arising in any way.
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi | 12 ------------
+>  1 file changed, 12 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+> index 6c8c4ab..56abbb0 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+> @@ -57,18 +57,6 @@
+>  		regulator-always-on;
+>  		vin-supply = <&vcc_sys>;
+>  	};
+> -
+> -	vdd_log: vdd-log {
+> -		compatible = "pwm-regulator";
+> -		pwms = <&pwm2 0 25000 0>;
+> -		regulator-name = "vdd_log";
+> -		regulator-min-microvolt = <800000>;
+> -		regulator-max-microvolt = <1400000>;
+> -		regulator-always-on;
+> -		regulator-boot-on;
+> -		vin-supply = <&vcc_sys>;
+> -	};
+> -
+>  };
+>  
+>  &cpu_l0 {
+> -- 
+> 2.7.4
+> 
