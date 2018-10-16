@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFBEC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12291C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34C672089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1D0021471
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdjjPOHz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34C672089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJW+NTLN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1D0021471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727712AbeJQBB6 (ORCPT
+        id S1727754AbeJQBCB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:01:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42258 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:02:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727669AbeJQBB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:01:57 -0400
+        id S1727669AbeJQBCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:02:00 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB85220866;
-        Tue, 16 Oct 2018 17:10:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 234EF20866;
+        Tue, 16 Oct 2018 17:10:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709835;
-        bh=i3z56OuLX6fzgFD9YR14UBCxnzs5IYtoJ/H4roWB2EI=;
+        s=default; t=1539709838;
+        bh=U0MGVEG0RIw8j93yNMkHOlukfXYfFgjUURTPJk21Y0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EdjjPOHzYv89o7iNWh+0wxfXuYbKDbII9KeiD4GQD8UfDqvnlfOl+YTXiy3M58ZF4
-         9P2Y1UvL2DoGuM/xEL52MbsRP3w0OSgUE5EpqfO01SgXhvVYED3Q3wMLSr/GC/zoVp
-         mh7A9BP+cWRMT4yQo6g3MqjMMDiZLigCb3B3olOQ=
+        b=tJW+NTLN/IM54FofeSTYda0dGobz29HSKVhtMgFs4/PBg66H5TaI8kJ4xvosIx3a8
+         Rgse2pwkqIDfYam1lheRUdsnXPnmd7O3304w/I3yibtbRZz2FSZzUX1aZoyibtmVqQ
+         M7/q31E/OiIm0+ASqeoWJMNYPSYwuyKyw+gMreys=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        stable@vger.kernel.org, Stefan Chulski <stefanc@marvell.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 013/135] net: mvpp2: Extract the correct ethtype from the skb for tx csum offload
-Date:   Tue, 16 Oct 2018 19:04:03 +0200
-Message-Id: <20181016170516.328437839@linuxfoundation.org>
+Subject: [PATCH 4.18 014/135] net: mvpp2: fix a txq_done race condition
+Date:   Tue, 16 Oct 2018 19:04:04 +0200
+Message-Id: <20181016170516.379781809@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -63,66 +63,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+From: Antoine Tenart <antoine.tenart@bootlin.com>
 
-[ Upstream commit 35f3625c21852ad839f20c91c7d81c4c1101e207 ]
+[ Upstream commit 774268f3e51b53ed432a1ec516574fd5ba469398 ]
 
-When offloading the L3 and L4 csum computation on TX, we need to extract
-the l3_proto from the ethtype, independently of the presence of a vlan
-tag.
+When no Tx IRQ is available, the txq_done() routine (called from
+tx_done()) shouldn't be called from the polling function, as in such
+case it is already called in the Tx path thanks to an hrtimer. This
+mostly occurred when using PPv2.1, as the engine then do not have Tx
+IRQs.
 
-The actual driver uses skb->protocol as-is, resulting in packets with
-the wrong L4 checksum being sent when there's a vlan tag in the packet
-header and checksum offloading is enabled.
-
-This commit makes use of vlan_protocol_get() to get the correct ethtype
-regardless the presence of a vlan tag.
-
-Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Fixes: edc660fa09e2 ("net: mvpp2: replace TX coalescing interrupts with hrtimer")
+Reported-by: Stefan Chulski <stefanc@marvell.com>
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
 +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -1725,7 +1725,7 @@ static void mvpp2_txq_desc_put(struct mv
- }
- 
- /* Set Tx descriptors fields relevant for CSUM calculation */
--static u32 mvpp2_txq_desc_csum(int l3_offs, int l3_proto,
-+static u32 mvpp2_txq_desc_csum(int l3_offs, __be16 l3_proto,
- 			       int ip_hdr_len, int l4_proto)
- {
- 	u32 command;
-@@ -2600,14 +2600,15 @@ static u32 mvpp2_skb_tx_csum(struct mvpp
- 	if (skb->ip_summed == CHECKSUM_PARTIAL) {
- 		int ip_hdr_len = 0;
- 		u8 l4_proto;
-+		__be16 l3_proto = vlan_get_protocol(skb);
- 
--		if (skb->protocol == htons(ETH_P_IP)) {
-+		if (l3_proto == htons(ETH_P_IP)) {
- 			struct iphdr *ip4h = ip_hdr(skb);
- 
- 			/* Calculate IPv4 checksum and L4 checksum */
- 			ip_hdr_len = ip4h->ihl;
- 			l4_proto = ip4h->protocol;
--		} else if (skb->protocol == htons(ETH_P_IPV6)) {
-+		} else if (l3_proto == htons(ETH_P_IPV6)) {
- 			struct ipv6hdr *ip6h = ipv6_hdr(skb);
- 
- 			/* Read l4_protocol from one of IPv6 extra headers */
-@@ -2619,7 +2620,7 @@ static u32 mvpp2_skb_tx_csum(struct mvpp
- 		}
- 
- 		return mvpp2_txq_desc_csum(skb_network_offset(skb),
--				skb->protocol, ip_hdr_len, l4_proto);
-+					   l3_proto, ip_hdr_len, l4_proto);
+@@ -3056,10 +3056,12 @@ static int mvpp2_poll(struct napi_struct
+ 				   cause_rx_tx & ~MVPP2_CAUSE_MISC_SUM_MASK);
  	}
  
- 	return MVPP2_TXD_L4_CSUM_NOT | MVPP2_TXD_IP_CSUM_DISABLE;
+-	cause_tx = cause_rx_tx & MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_MASK;
+-	if (cause_tx) {
+-		cause_tx >>= MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_OFFSET;
+-		mvpp2_tx_done(port, cause_tx, qv->sw_thread_id);
++	if (port->has_tx_irqs) {
++		cause_tx = cause_rx_tx & MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_MASK;
++		if (cause_tx) {
++			cause_tx >>= MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_OFFSET;
++			mvpp2_tx_done(port, cause_tx, qv->sw_thread_id);
++		}
+ 	}
+ 
+ 	/* Process RX packets */
 
 
