@@ -4,47 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FB0C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602BAC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E56CC20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:33:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D58220866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:33:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZjRjiqa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E56CC20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zmmDkPB0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D58220866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728470AbeJPMVi (ORCPT
+        id S1728177AbeJPMBY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:21:38 -0400
+        Tue, 16 Oct 2018 08:01:24 -0400
 Received: from mail.kernel.org ([198.145.29.99]:48426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728116AbeJPMBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:25 -0400
+        id S1728116AbeJPMBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:24 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CB9D21480;
-        Tue, 16 Oct 2018 04:13:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1212221470;
+        Tue, 16 Oct 2018 04:13:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663183;
-        bh=vrKmmGvPmH/M435BKZztrrefj/UWy+fS9qJ064rGaA0=;
+        s=default; t=1539663181;
+        bh=398jYv9gPuKS21PGMRoNHhlP/g9cJKhkfZpoz1S2dXQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kZjRjiqaKn1O6xjetEnC7m4EuLueVIFTd8b/WWta0R9FS9YnCFZAiJD+i01TqgdHN
-         BhrKkWxWP41YShpbDWi27EA9jkKj8o03AF4+9qQIrBUEgMmRB2h/s4W7rjKunp+wrQ
-         i9zce05Sj/gPJXFCtNhmh55dV+jp6W5jkMxMCmQc=
+        b=zmmDkPB0W4hCtMACKumxLvlw5yQ4QWF6NQnvQ+5cxV427q7BT29FuwtWCndy4zcqp
+         VYdewfjZRyAJhfgjn1fBeZeK0PUky1pd/nzmFjcLAc6snpHW1+mU9kA70qo7ZSmcOj
+         KO1rERpCrQcBId0FdpXh+ixcYRZWGD3cfE3wC4Wk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+Cc:     David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 044/100] netfilter: nft_set_rbtree: add missing rb_erase() in GC routine
-Date:   Tue, 16 Oct 2018 00:11:25 -0400
-Message-Id: <20181016041221.135528-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 042/100] rxrpc: Fix transport sockopts to get IPv4 errors on an IPv6 socket
+Date:   Tue, 16 Oct 2018 00:11:23 -0400
+Message-Id: <20181016041221.135528-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -53,162 +51,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit a13f814a67b12a2f29d1decf4b4f4e700658a517 ]
+[ Upstream commit 37a675e768d7606fe8a53e0c459c9b53e121ac20 ]
 
-The nft_set_gc_batch_check() checks whether gc buffer is full.
-If gc buffer is full, gc buffer is released by
-the nft_set_gc_batch_complete() internally.
-In case of rbtree, the rb_erase() should be called before calling the
-nft_set_gc_batch_complete(). therefore the rb_erase() should
-be called before calling the nft_set_gc_batch_check() too.
+It seems that enabling IPV6_RECVERR on an IPv6 socket doesn't also turn on
+IP_RECVERR, so neither local errors nor ICMP-transported remote errors from
+IPv4 peer addresses are returned to the AF_RXRPC protocol.
 
-test commands:
-   table ip filter {
-	   set set1 {
-		   type ipv4_addr; flags interval, timeout;
-		   gc-interval 10s;
-		   timeout 1s;
-		   elements = {
-			   1-2,
-			   3-4,
-			   5-6,
-			   ...
-			   10000-10001,
-		   }
-	   }
-   }
-   %nft -f test.nft
+Make the sockopt setting code in rxrpc_open_socket() fall through from the
+AF_INET6 case to the AF_INET case to turn on all the AF_INET options too in
+the AF_INET6 case.
 
-splat looks like:
-[  430.273885] kasan: GPF could be caused by NULL-ptr deref or user memory access
-[  430.282158] general protection fault: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
-[  430.283116] CPU: 1 PID: 190 Comm: kworker/1:2 Tainted: G    B             4.18.0+ #7
-[  430.283116] Workqueue: events_power_efficient nft_rbtree_gc [nf_tables_set]
-[  430.313559] RIP: 0010:rb_next+0x81/0x130
-[  430.313559] Code: 08 49 bd 00 00 00 00 00 fc ff df 48 bb 00 00 00 00 00 fc ff df 48 85 c0 75 05 eb 58 48 89 d4
-[  430.313559] RSP: 0018:ffff88010cdb7680 EFLAGS: 00010207
-[  430.313559] RAX: 0000000000b84854 RBX: dffffc0000000000 RCX: ffffffff83f01973
-[  430.313559] RDX: 000000000017090c RSI: 0000000000000008 RDI: 0000000000b84864
-[  430.313559] RBP: ffff8801060d4588 R08: fffffbfff09bc349 R09: fffffbfff09bc349
-[  430.313559] R10: 0000000000000001 R11: fffffbfff09bc348 R12: ffff880100f081a8
-[  430.313559] R13: dffffc0000000000 R14: ffff880100ff8688 R15: dffffc0000000000
-[  430.313559] FS:  0000000000000000(0000) GS:ffff88011b400000(0000) knlGS:0000000000000000
-[  430.313559] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  430.313559] CR2: 0000000001551008 CR3: 000000005dc16000 CR4: 00000000001006e0
-[  430.313559] Call Trace:
-[  430.313559]  nft_rbtree_gc+0x112/0x5c0 [nf_tables_set]
-[  430.313559]  process_one_work+0xc13/0x1ec0
-[  430.313559]  ? _raw_spin_unlock_irq+0x29/0x40
-[  430.313559]  ? pwq_dec_nr_in_flight+0x3c0/0x3c0
-[  430.313559]  ? set_load_weight+0x270/0x270
-[  430.313559]  ? __switch_to_asm+0x34/0x70
-[  430.313559]  ? __switch_to_asm+0x40/0x70
-[  430.313559]  ? __switch_to_asm+0x34/0x70
-[  430.313559]  ? __switch_to_asm+0x34/0x70
-[  430.313559]  ? __switch_to_asm+0x40/0x70
-[  430.313559]  ? __switch_to_asm+0x34/0x70
-[  430.313559]  ? __switch_to_asm+0x40/0x70
-[  430.313559]  ? __switch_to_asm+0x34/0x70
-[  430.313559]  ? __switch_to_asm+0x34/0x70
-[  430.313559]  ? __switch_to_asm+0x40/0x70
-[  430.313559]  ? __switch_to_asm+0x34/0x70
-[  430.313559]  ? __schedule+0x6d3/0x1f50
-[  430.313559]  ? find_held_lock+0x39/0x1c0
-[  430.313559]  ? __sched_text_start+0x8/0x8
-[  430.313559]  ? cyc2ns_read_end+0x10/0x10
-[  430.313559]  ? save_trace+0x300/0x300
-[  430.313559]  ? sched_clock_local+0xd4/0x140
-[  430.313559]  ? find_held_lock+0x39/0x1c0
-[  430.313559]  ? worker_thread+0x353/0x1120
-[  430.313559]  ? worker_thread+0x353/0x1120
-[  430.313559]  ? lock_contended+0xe70/0xe70
-[  430.313559]  ? __lock_acquire+0x4500/0x4500
-[  430.535635]  ? do_raw_spin_unlock+0xa5/0x330
-[  430.535635]  ? do_raw_spin_trylock+0x101/0x1a0
-[  430.535635]  ? do_raw_spin_lock+0x1f0/0x1f0
-[  430.535635]  ? _raw_spin_lock_irq+0x10/0x70
-[  430.535635]  worker_thread+0x15d/0x1120
-[ ... ]
-
-Fixes: 8d8540c4f5e0 ("netfilter: nft_set_rbtree: add timeout support")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: f2aeed3a591f ("rxrpc: Fix error reception on AF_INET6 sockets")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_set_rbtree.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ net/rxrpc/local_object.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/net/netfilter/nft_set_rbtree.c b/net/netfilter/nft_set_rbtree.c
-index 9873d734b494..8ad78b82c8e2 100644
---- a/net/netfilter/nft_set_rbtree.c
-+++ b/net/netfilter/nft_set_rbtree.c
-@@ -355,12 +355,11 @@ static void nft_rbtree_walk(const struct nft_ctx *ctx,
- 
- static void nft_rbtree_gc(struct work_struct *work)
- {
-+	struct nft_rbtree_elem *rbe, *rbe_end = NULL, *rbe_prev = NULL;
- 	struct nft_set_gc_batch *gcb = NULL;
--	struct rb_node *node, *prev = NULL;
--	struct nft_rbtree_elem *rbe;
- 	struct nft_rbtree *priv;
-+	struct rb_node *node;
- 	struct nft_set *set;
--	int i;
- 
- 	priv = container_of(work, struct nft_rbtree, gc_work.work);
- 	set  = nft_set_container_of(priv);
-@@ -371,7 +370,7 @@ static void nft_rbtree_gc(struct work_struct *work)
- 		rbe = rb_entry(node, struct nft_rbtree_elem, node);
- 
- 		if (nft_rbtree_interval_end(rbe)) {
--			prev = node;
-+			rbe_end = rbe;
- 			continue;
- 		}
- 		if (!nft_set_elem_expired(&rbe->ext))
-@@ -379,29 +378,30 @@ static void nft_rbtree_gc(struct work_struct *work)
- 		if (nft_set_elem_mark_busy(&rbe->ext))
- 			continue;
- 
-+		if (rbe_prev) {
-+			rb_erase(&rbe_prev->node, &priv->root);
-+			rbe_prev = NULL;
-+		}
- 		gcb = nft_set_gc_batch_check(set, gcb, GFP_ATOMIC);
- 		if (!gcb)
- 			break;
- 
- 		atomic_dec(&set->nelems);
- 		nft_set_gc_batch_add(gcb, rbe);
-+		rbe_prev = rbe;
- 
--		if (prev) {
--			rbe = rb_entry(prev, struct nft_rbtree_elem, node);
-+		if (rbe_end) {
- 			atomic_dec(&set->nelems);
--			nft_set_gc_batch_add(gcb, rbe);
--			prev = NULL;
-+			nft_set_gc_batch_add(gcb, rbe_end);
-+			rb_erase(&rbe_end->node, &priv->root);
-+			rbe_end = NULL;
- 		}
- 		node = rb_next(node);
- 		if (!node)
- 			break;
+diff --git a/net/rxrpc/local_object.c b/net/rxrpc/local_object.c
+index 5d89ea5c1976..386dc1f20c73 100644
+--- a/net/rxrpc/local_object.c
++++ b/net/rxrpc/local_object.c
+@@ -135,10 +135,10 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
  	}
--	if (gcb) {
--		for (i = 0; i < gcb->head.cnt; i++) {
--			rbe = gcb->elems[i];
--			rb_erase(&rbe->node, &priv->root);
--		}
--	}
-+	if (rbe_prev)
-+		rb_erase(&rbe_prev->node, &priv->root);
- 	write_seqcount_end(&priv->count);
- 	write_unlock_bh(&priv->lock);
  
+ 	switch (local->srx.transport.family) {
+-	case AF_INET:
+-		/* we want to receive ICMP errors */
++	case AF_INET6:
++		/* we want to receive ICMPv6 errors */
+ 		opt = 1;
+-		ret = kernel_setsockopt(local->socket, SOL_IP, IP_RECVERR,
++		ret = kernel_setsockopt(local->socket, SOL_IPV6, IPV6_RECVERR,
+ 					(char *) &opt, sizeof(opt));
+ 		if (ret < 0) {
+ 			_debug("setsockopt failed");
+@@ -146,19 +146,22 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
+ 		}
+ 
+ 		/* we want to set the don't fragment bit */
+-		opt = IP_PMTUDISC_DO;
+-		ret = kernel_setsockopt(local->socket, SOL_IP, IP_MTU_DISCOVER,
++		opt = IPV6_PMTUDISC_DO;
++		ret = kernel_setsockopt(local->socket, SOL_IPV6, IPV6_MTU_DISCOVER,
+ 					(char *) &opt, sizeof(opt));
+ 		if (ret < 0) {
+ 			_debug("setsockopt failed");
+ 			goto error;
+ 		}
+-		break;
+ 
+-	case AF_INET6:
++		/* Fall through and set IPv4 options too otherwise we don't get
++		 * errors from IPv4 packets sent through the IPv6 socket.
++		 */
++
++	case AF_INET:
+ 		/* we want to receive ICMP errors */
+ 		opt = 1;
+-		ret = kernel_setsockopt(local->socket, SOL_IPV6, IPV6_RECVERR,
++		ret = kernel_setsockopt(local->socket, SOL_IP, IP_RECVERR,
+ 					(char *) &opt, sizeof(opt));
+ 		if (ret < 0) {
+ 			_debug("setsockopt failed");
+@@ -166,8 +169,8 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
+ 		}
+ 
+ 		/* we want to set the don't fragment bit */
+-		opt = IPV6_PMTUDISC_DO;
+-		ret = kernel_setsockopt(local->socket, SOL_IPV6, IPV6_MTU_DISCOVER,
++		opt = IP_PMTUDISC_DO;
++		ret = kernel_setsockopt(local->socket, SOL_IP, IP_MTU_DISCOVER,
+ 					(char *) &opt, sizeof(opt));
+ 		if (ret < 0) {
+ 			_debug("setsockopt failed");
 -- 
 2.17.1
 
