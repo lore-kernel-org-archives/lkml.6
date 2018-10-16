@@ -4,48 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D13D4C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8AEC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88EC42089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52FC121477
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q/pxQKRY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88EC42089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnrKYg+K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52FC121477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbeJQBEh (ORCPT
+        id S1728802AbeJQBEk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:04:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47356 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:04:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbeJQBEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:04:35 -0400
+        id S1727280AbeJQBEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:04:39 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE48220866;
-        Tue, 16 Oct 2018 17:13:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45EE420866;
+        Tue, 16 Oct 2018 17:13:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709993;
-        bh=AW8z7YG7CFc15JvWSGF6zoW9GcZUrjTnv5seam/j0aA=;
+        s=default; t=1539709996;
+        bh=ISgU5XRekJZGLFPz8HMAHfeHY4QWlEr0LBwrIa6kAEU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q/pxQKRYmaKhyudm/y583M9WMWjhcowD8AsW0HqfXlkBIFR8s3AEDoC2YYjJ7wpOR
-         kTGtiQZ3AC+mYG0nrc3PhhTSXF0AiAKj5AOi6/x/ai7DeO/puaFKZqphBeXoKYtjk2
-         2CfmaB3N/DER0/v6FPNUCLucqpaauw7T80bQEDCw=
+        b=dnrKYg+KvySf0cZAtK6xv0H8DEFwde7SW+fA1cnJp8JxjPp0Iau4RuyvV6/ZCnJpH
+         4I++/TgJbauQC1x5Qy5gZvX4pZjFSdjqI4TWQSU3xgc95NQHsR6Sn2UhAoq1tt8573
+         kNne4kjHJXvUz3aS0hhwKuC1lj80Y2+j2g4ViUi4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 067/135] selftests: kselftest: Remove outdated comment
-Date:   Tue, 16 Oct 2018 19:04:57 +0200
-Message-Id: <20181016170519.155196554@linuxfoundation.org>
+        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Joao Pinto <jpinto@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH 4.18 041/135] net: stmmac: Rework coalesce timer and fix multi-queue races
+Date:   Tue, 16 Oct 2018 19:04:31 +0200
+Message-Id: <20181016170517.682135148@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -63,32 +69,540 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-[ Upstream commit c31d02d1290e1e82a08015199e408228e152991f ]
+[ Upstream commit 8fce3331702316d4bcfeb0771c09ac75d2192bbc ]
 
-Commit 3c07aaef6598 ("selftests: kselftest: change KSFT_SKIP=4 instead of
-KSFT_PASS") reverted commit 11867a77eb85 ("selftests: kselftest framework:
-change skip exit code to 0") but missed removing the comment which that
-commit added, so do that now.
+This follows David Miller advice and tries to fix coalesce timer in
+multi-queue scenarios.
 
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+We are now using per-queue coalesce values and per-queue TX timer.
+
+Coalesce timer default values was changed to 1ms and the coalesce frames
+to 25.
+
+Tested in B2B setup between XGMAC2 and GMAC5.
+
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Fixes: 	ce736788e8a ("net: stmmac: adding multiple buffers for TX")
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/kselftest.h |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/common.h      |    4 
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h      |   14 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |  234 ++++++++++++----------
+ include/linux/stmmac.h                            |    1 
+ 4 files changed, 146 insertions(+), 107 deletions(-)
 
---- a/tools/testing/selftests/kselftest.h
-+++ b/tools/testing/selftests/kselftest.h
-@@ -19,7 +19,6 @@
- #define KSFT_FAIL  1
- #define KSFT_XFAIL 2
- #define KSFT_XPASS 3
--/* Treat skip as pass */
- #define KSFT_SKIP  4
+--- a/drivers/net/ethernet/stmicro/stmmac/common.h
++++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+@@ -256,10 +256,10 @@ struct stmmac_safety_stats {
+ #define MAX_DMA_RIWT		0xff
+ #define MIN_DMA_RIWT		0x20
+ /* Tx coalesce parameters */
+-#define STMMAC_COAL_TX_TIMER	40000
++#define STMMAC_COAL_TX_TIMER	1000
+ #define STMMAC_MAX_COAL_TX_TICK	100000
+ #define STMMAC_TX_MAX_FRAMES	256
+-#define STMMAC_TX_FRAMES	64
++#define STMMAC_TX_FRAMES	25
  
- /* counters */
+ /* Packets types */
+ enum packets_types {
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+@@ -48,6 +48,8 @@ struct stmmac_tx_info {
+ 
+ /* Frequently used values are kept adjacent for cache effect */
+ struct stmmac_tx_queue {
++	u32 tx_count_frames;
++	struct timer_list txtimer;
+ 	u32 queue_index;
+ 	struct stmmac_priv *priv_data;
+ 	struct dma_extended_desc *dma_etx ____cacheline_aligned_in_smp;
+@@ -73,7 +75,14 @@ struct stmmac_rx_queue {
+ 	u32 rx_zeroc_thresh;
+ 	dma_addr_t dma_rx_phy;
+ 	u32 rx_tail_addr;
++};
++
++struct stmmac_channel {
+ 	struct napi_struct napi ____cacheline_aligned_in_smp;
++	struct stmmac_priv *priv_data;
++	u32 index;
++	int has_rx;
++	int has_tx;
+ };
+ 
+ struct stmmac_tc_entry {
+@@ -109,14 +118,12 @@ struct stmmac_pps_cfg {
+ 
+ struct stmmac_priv {
+ 	/* Frequently used values are kept adjacent for cache effect */
+-	u32 tx_count_frames;
+ 	u32 tx_coal_frames;
+ 	u32 tx_coal_timer;
+ 
+ 	int tx_coalesce;
+ 	int hwts_tx_en;
+ 	bool tx_path_in_lpi_mode;
+-	struct timer_list txtimer;
+ 	bool tso;
+ 
+ 	unsigned int dma_buf_sz;
+@@ -137,6 +144,9 @@ struct stmmac_priv {
+ 	/* TX Queue */
+ 	struct stmmac_tx_queue tx_queue[MTL_MAX_TX_QUEUES];
+ 
++	/* Generic channel for NAPI */
++	struct stmmac_channel channel[STMMAC_CH_MAX];
++
+ 	bool oldlink;
+ 	int speed;
+ 	int oldduplex;
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -147,12 +147,14 @@ static void stmmac_verify_args(void)
+ static void stmmac_disable_all_queues(struct stmmac_priv *priv)
+ {
+ 	u32 rx_queues_cnt = priv->plat->rx_queues_to_use;
++	u32 tx_queues_cnt = priv->plat->tx_queues_to_use;
++	u32 maxq = max(rx_queues_cnt, tx_queues_cnt);
+ 	u32 queue;
+ 
+-	for (queue = 0; queue < rx_queues_cnt; queue++) {
+-		struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
++	for (queue = 0; queue < maxq; queue++) {
++		struct stmmac_channel *ch = &priv->channel[queue];
+ 
+-		napi_disable(&rx_q->napi);
++		napi_disable(&ch->napi);
+ 	}
+ }
+ 
+@@ -163,12 +165,14 @@ static void stmmac_disable_all_queues(st
+ static void stmmac_enable_all_queues(struct stmmac_priv *priv)
+ {
+ 	u32 rx_queues_cnt = priv->plat->rx_queues_to_use;
++	u32 tx_queues_cnt = priv->plat->tx_queues_to_use;
++	u32 maxq = max(rx_queues_cnt, tx_queues_cnt);
+ 	u32 queue;
+ 
+-	for (queue = 0; queue < rx_queues_cnt; queue++) {
+-		struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
++	for (queue = 0; queue < maxq; queue++) {
++		struct stmmac_channel *ch = &priv->channel[queue];
+ 
+-		napi_enable(&rx_q->napi);
++		napi_enable(&ch->napi);
+ 	}
+ }
+ 
+@@ -1822,18 +1826,18 @@ static void stmmac_dma_operation_mode(st
+  * @queue: TX queue index
+  * Description: it reclaims the transmit resources after transmission completes.
+  */
+-static void stmmac_tx_clean(struct stmmac_priv *priv, u32 queue)
++static int stmmac_tx_clean(struct stmmac_priv *priv, int budget, u32 queue)
+ {
+ 	struct stmmac_tx_queue *tx_q = &priv->tx_queue[queue];
+ 	unsigned int bytes_compl = 0, pkts_compl = 0;
+-	unsigned int entry;
++	unsigned int entry, count = 0;
+ 
+-	netif_tx_lock(priv->dev);
++	__netif_tx_lock_bh(netdev_get_tx_queue(priv->dev, queue));
+ 
+ 	priv->xstats.tx_clean++;
+ 
+ 	entry = tx_q->dirty_tx;
+-	while (entry != tx_q->cur_tx) {
++	while ((entry != tx_q->cur_tx) && (count < budget)) {
+ 		struct sk_buff *skb = tx_q->tx_skbuff[entry];
+ 		struct dma_desc *p;
+ 		int status;
+@@ -1849,6 +1853,8 @@ static void stmmac_tx_clean(struct stmma
+ 		if (unlikely(status & tx_dma_own))
+ 			break;
+ 
++		count++;
++
+ 		/* Make sure descriptor fields are read after reading
+ 		 * the own bit.
+ 		 */
+@@ -1916,7 +1922,10 @@ static void stmmac_tx_clean(struct stmma
+ 		stmmac_enable_eee_mode(priv);
+ 		mod_timer(&priv->eee_ctrl_timer, STMMAC_LPI_T(eee_timer));
+ 	}
+-	netif_tx_unlock(priv->dev);
++
++	__netif_tx_unlock_bh(netdev_get_tx_queue(priv->dev, queue));
++
++	return count;
+ }
+ 
+ /**
+@@ -1999,6 +2008,33 @@ static bool stmmac_safety_feat_interrupt
+ 	return false;
+ }
+ 
++static int stmmac_napi_check(struct stmmac_priv *priv, u32 chan)
++{
++	int status = stmmac_dma_interrupt_status(priv, priv->ioaddr,
++						 &priv->xstats, chan);
++	struct stmmac_channel *ch = &priv->channel[chan];
++	bool needs_work = false;
++
++	if ((status & handle_rx) && ch->has_rx) {
++		needs_work = true;
++	} else {
++		status &= ~handle_rx;
++	}
++
++	if ((status & handle_tx) && ch->has_tx) {
++		needs_work = true;
++	} else {
++		status &= ~handle_tx;
++	}
++
++	if (needs_work && napi_schedule_prep(&ch->napi)) {
++		stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
++		__napi_schedule(&ch->napi);
++	}
++
++	return status;
++}
++
+ /**
+  * stmmac_dma_interrupt - DMA ISR
+  * @priv: driver private structure
+@@ -2013,57 +2049,14 @@ static void stmmac_dma_interrupt(struct
+ 	u32 channels_to_check = tx_channel_count > rx_channel_count ?
+ 				tx_channel_count : rx_channel_count;
+ 	u32 chan;
+-	bool poll_scheduled = false;
+ 	int status[max_t(u32, MTL_MAX_TX_QUEUES, MTL_MAX_RX_QUEUES)];
+ 
+ 	/* Make sure we never check beyond our status buffer. */
+ 	if (WARN_ON_ONCE(channels_to_check > ARRAY_SIZE(status)))
+ 		channels_to_check = ARRAY_SIZE(status);
+ 
+-	/* Each DMA channel can be used for rx and tx simultaneously, yet
+-	 * napi_struct is embedded in struct stmmac_rx_queue rather than in a
+-	 * stmmac_channel struct.
+-	 * Because of this, stmmac_poll currently checks (and possibly wakes)
+-	 * all tx queues rather than just a single tx queue.
+-	 */
+ 	for (chan = 0; chan < channels_to_check; chan++)
+-		status[chan] = stmmac_dma_interrupt_status(priv, priv->ioaddr,
+-				&priv->xstats, chan);
+-
+-	for (chan = 0; chan < rx_channel_count; chan++) {
+-		if (likely(status[chan] & handle_rx)) {
+-			struct stmmac_rx_queue *rx_q = &priv->rx_queue[chan];
+-
+-			if (likely(napi_schedule_prep(&rx_q->napi))) {
+-				stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
+-				__napi_schedule(&rx_q->napi);
+-				poll_scheduled = true;
+-			}
+-		}
+-	}
+-
+-	/* If we scheduled poll, we already know that tx queues will be checked.
+-	 * If we didn't schedule poll, see if any DMA channel (used by tx) has a
+-	 * completed transmission, if so, call stmmac_poll (once).
+-	 */
+-	if (!poll_scheduled) {
+-		for (chan = 0; chan < tx_channel_count; chan++) {
+-			if (status[chan] & handle_tx) {
+-				/* It doesn't matter what rx queue we choose
+-				 * here. We use 0 since it always exists.
+-				 */
+-				struct stmmac_rx_queue *rx_q =
+-					&priv->rx_queue[0];
+-
+-				if (likely(napi_schedule_prep(&rx_q->napi))) {
+-					stmmac_disable_dma_irq(priv,
+-							priv->ioaddr, chan);
+-					__napi_schedule(&rx_q->napi);
+-				}
+-				break;
+-			}
+-		}
+-	}
++		status[chan] = stmmac_napi_check(priv, chan);
+ 
+ 	for (chan = 0; chan < tx_channel_count; chan++) {
+ 		if (unlikely(status[chan] & tx_hard_error_bump_tc)) {
+@@ -2211,6 +2204,13 @@ static int stmmac_init_dma_engine(struct
+ 	return ret;
+ }
+ 
++static void stmmac_tx_timer_arm(struct stmmac_priv *priv, u32 queue)
++{
++	struct stmmac_tx_queue *tx_q = &priv->tx_queue[queue];
++
++	mod_timer(&tx_q->txtimer, STMMAC_COAL_TIMER(priv->tx_coal_timer));
++}
++
+ /**
+  * stmmac_tx_timer - mitigation sw timer for tx.
+  * @data: data pointer
+@@ -2219,13 +2219,14 @@ static int stmmac_init_dma_engine(struct
+  */
+ static void stmmac_tx_timer(struct timer_list *t)
+ {
+-	struct stmmac_priv *priv = from_timer(priv, t, txtimer);
+-	u32 tx_queues_count = priv->plat->tx_queues_to_use;
+-	u32 queue;
++	struct stmmac_tx_queue *tx_q = from_timer(tx_q, t, txtimer);
++	struct stmmac_priv *priv = tx_q->priv_data;
++	struct stmmac_channel *ch;
+ 
+-	/* let's scan all the tx queues */
+-	for (queue = 0; queue < tx_queues_count; queue++)
+-		stmmac_tx_clean(priv, queue);
++	ch = &priv->channel[tx_q->queue_index];
++
++	if (likely(napi_schedule_prep(&ch->napi)))
++		__napi_schedule(&ch->napi);
+ }
+ 
+ /**
+@@ -2238,11 +2239,17 @@ static void stmmac_tx_timer(struct timer
+  */
+ static void stmmac_init_tx_coalesce(struct stmmac_priv *priv)
+ {
++	u32 tx_channel_count = priv->plat->tx_queues_to_use;
++	u32 chan;
++
+ 	priv->tx_coal_frames = STMMAC_TX_FRAMES;
+ 	priv->tx_coal_timer = STMMAC_COAL_TX_TIMER;
+-	timer_setup(&priv->txtimer, stmmac_tx_timer, 0);
+-	priv->txtimer.expires = STMMAC_COAL_TIMER(priv->tx_coal_timer);
+-	add_timer(&priv->txtimer);
++
++	for (chan = 0; chan < tx_channel_count; chan++) {
++		struct stmmac_tx_queue *tx_q = &priv->tx_queue[chan];
++
++		timer_setup(&tx_q->txtimer, stmmac_tx_timer, 0);
++	}
+ }
+ 
+ static void stmmac_set_rings_length(struct stmmac_priv *priv)
+@@ -2570,6 +2577,7 @@ static void stmmac_hw_teardown(struct ne
+ static int stmmac_open(struct net_device *dev)
+ {
+ 	struct stmmac_priv *priv = netdev_priv(dev);
++	u32 chan;
+ 	int ret;
+ 
+ 	stmmac_check_ether_addr(priv);
+@@ -2666,7 +2674,9 @@ irq_error:
+ 	if (dev->phydev)
+ 		phy_stop(dev->phydev);
+ 
+-	del_timer_sync(&priv->txtimer);
++	for (chan = 0; chan < priv->plat->tx_queues_to_use; chan++)
++		del_timer_sync(&priv->tx_queue[chan].txtimer);
++
+ 	stmmac_hw_teardown(dev);
+ init_error:
+ 	free_dma_desc_resources(priv);
+@@ -2686,6 +2696,7 @@ dma_desc_error:
+ static int stmmac_release(struct net_device *dev)
+ {
+ 	struct stmmac_priv *priv = netdev_priv(dev);
++	u32 chan;
+ 
+ 	if (priv->eee_enabled)
+ 		del_timer_sync(&priv->eee_ctrl_timer);
+@@ -2700,7 +2711,8 @@ static int stmmac_release(struct net_dev
+ 
+ 	stmmac_disable_all_queues(priv);
+ 
+-	del_timer_sync(&priv->txtimer);
++	for (chan = 0; chan < priv->plat->tx_queues_to_use; chan++)
++		del_timer_sync(&priv->tx_queue[chan].txtimer);
+ 
+ 	/* Free the IRQ lines */
+ 	free_irq(dev->irq, dev);
+@@ -2914,14 +2926,13 @@ static netdev_tx_t stmmac_tso_xmit(struc
+ 	priv->xstats.tx_tso_nfrags += nfrags;
+ 
+ 	/* Manage tx mitigation */
+-	priv->tx_count_frames += nfrags + 1;
+-	if (likely(priv->tx_coal_frames > priv->tx_count_frames)) {
+-		mod_timer(&priv->txtimer,
+-			  STMMAC_COAL_TIMER(priv->tx_coal_timer));
+-	} else {
+-		priv->tx_count_frames = 0;
++	tx_q->tx_count_frames += nfrags + 1;
++	if (priv->tx_coal_frames <= tx_q->tx_count_frames) {
+ 		stmmac_set_tx_ic(priv, desc);
+ 		priv->xstats.tx_set_ic_bit++;
++		tx_q->tx_count_frames = 0;
++	} else {
++		stmmac_tx_timer_arm(priv, queue);
+ 	}
+ 
+ 	skb_tx_timestamp(skb);
+@@ -3125,14 +3136,13 @@ static netdev_tx_t stmmac_xmit(struct sk
+ 	 * This approach takes care about the fragments: desc is the first
+ 	 * element in case of no SG.
+ 	 */
+-	priv->tx_count_frames += nfrags + 1;
+-	if (likely(priv->tx_coal_frames > priv->tx_count_frames)) {
+-		mod_timer(&priv->txtimer,
+-			  STMMAC_COAL_TIMER(priv->tx_coal_timer));
+-	} else {
+-		priv->tx_count_frames = 0;
++	tx_q->tx_count_frames += nfrags + 1;
++	if (priv->tx_coal_frames <= tx_q->tx_count_frames) {
+ 		stmmac_set_tx_ic(priv, desc);
+ 		priv->xstats.tx_set_ic_bit++;
++		tx_q->tx_count_frames = 0;
++	} else {
++		stmmac_tx_timer_arm(priv, queue);
+ 	}
+ 
+ 	skb_tx_timestamp(skb);
+@@ -3300,6 +3310,7 @@ static inline void stmmac_rx_refill(stru
+ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ {
+ 	struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
++	struct stmmac_channel *ch = &priv->channel[queue];
+ 	unsigned int entry = rx_q->cur_rx;
+ 	int coe = priv->hw->rx_csum;
+ 	unsigned int next_entry;
+@@ -3469,7 +3480,7 @@ static int stmmac_rx(struct stmmac_priv
+ 			else
+ 				skb->ip_summed = CHECKSUM_UNNECESSARY;
+ 
+-			napi_gro_receive(&rx_q->napi, skb);
++			napi_gro_receive(&ch->napi, skb);
+ 
+ 			priv->dev->stats.rx_packets++;
+ 			priv->dev->stats.rx_bytes += frame_len;
+@@ -3492,27 +3503,33 @@ static int stmmac_rx(struct stmmac_priv
+  *  Description :
+  *  To look at the incoming frames and clear the tx resources.
+  */
+-static int stmmac_poll(struct napi_struct *napi, int budget)
++static int stmmac_napi_poll(struct napi_struct *napi, int budget)
+ {
+-	struct stmmac_rx_queue *rx_q =
+-		container_of(napi, struct stmmac_rx_queue, napi);
+-	struct stmmac_priv *priv = rx_q->priv_data;
+-	u32 tx_count = priv->plat->tx_queues_to_use;
+-	u32 chan = rx_q->queue_index;
+-	int work_done = 0;
+-	u32 queue;
++	struct stmmac_channel *ch =
++		container_of(napi, struct stmmac_channel, napi);
++	struct stmmac_priv *priv = ch->priv_data;
++	int work_done = 0, work_rem = budget;
++	u32 chan = ch->index;
+ 
+ 	priv->xstats.napi_poll++;
+ 
+-	/* check all the queues */
+-	for (queue = 0; queue < tx_count; queue++)
+-		stmmac_tx_clean(priv, queue);
+-
+-	work_done = stmmac_rx(priv, budget, rx_q->queue_index);
+-	if (work_done < budget) {
+-		napi_complete_done(napi, work_done);
+-		stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
++	if (ch->has_tx) {
++		int done = stmmac_tx_clean(priv, work_rem, chan);
++
++		work_done += done;
++		work_rem -= done;
++	}
++
++	if (ch->has_rx) {
++		int done = stmmac_rx(priv, work_rem, chan);
++
++		work_done += done;
++		work_rem -= done;
+ 	}
++
++	if (work_done < budget && napi_complete_done(napi, work_done))
++		stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
++
+ 	return work_done;
+ }
+ 
+@@ -4172,8 +4189,8 @@ int stmmac_dvr_probe(struct device *devi
+ {
+ 	struct net_device *ndev = NULL;
+ 	struct stmmac_priv *priv;
++	u32 queue, maxq;
+ 	int ret = 0;
+-	u32 queue;
+ 
+ 	ndev = alloc_etherdev_mqs(sizeof(struct stmmac_priv),
+ 				  MTL_MAX_TX_QUEUES,
+@@ -4293,11 +4310,22 @@ int stmmac_dvr_probe(struct device *devi
+ 			 "Enable RX Mitigation via HW Watchdog Timer\n");
+ 	}
+ 
+-	for (queue = 0; queue < priv->plat->rx_queues_to_use; queue++) {
+-		struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
++	/* Setup channels NAPI */
++	maxq = max(priv->plat->rx_queues_to_use, priv->plat->tx_queues_to_use);
+ 
+-		netif_napi_add(ndev, &rx_q->napi, stmmac_poll,
+-			       (8 * priv->plat->rx_queues_to_use));
++	for (queue = 0; queue < maxq; queue++) {
++		struct stmmac_channel *ch = &priv->channel[queue];
++
++		ch->priv_data = priv;
++		ch->index = queue;
++
++		if (queue < priv->plat->rx_queues_to_use)
++			ch->has_rx = true;
++		if (queue < priv->plat->tx_queues_to_use)
++			ch->has_tx = true;
++
++		netif_napi_add(ndev, &ch->napi, stmmac_napi_poll,
++			       NAPI_POLL_WEIGHT);
+ 	}
+ 
+ 	mutex_init(&priv->lock);
+@@ -4343,10 +4371,10 @@ error_netdev_register:
+ 	    priv->hw->pcs != STMMAC_PCS_RTBI)
+ 		stmmac_mdio_unregister(ndev);
+ error_mdio_register:
+-	for (queue = 0; queue < priv->plat->rx_queues_to_use; queue++) {
+-		struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
++	for (queue = 0; queue < maxq; queue++) {
++		struct stmmac_channel *ch = &priv->channel[queue];
+ 
+-		netif_napi_del(&rx_q->napi);
++		netif_napi_del(&ch->napi);
+ 	}
+ error_hw_init:
+ 	destroy_workqueue(priv->wq);
+--- a/include/linux/stmmac.h
++++ b/include/linux/stmmac.h
+@@ -30,6 +30,7 @@
+ 
+ #define MTL_MAX_RX_QUEUES	8
+ #define MTL_MAX_TX_QUEUES	8
++#define STMMAC_CH_MAX		8
+ 
+ #define STMMAC_RX_COE_NONE	0
+ #define STMMAC_RX_COE_TYPE1	1
 
 
