@@ -6,156 +6,158 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD3DC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3332CC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E745D205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:13:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E745D205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id F16AD205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:13:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F16AD205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbeJPRCj (ORCPT
+        id S1727127AbeJPRDH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 13:02:39 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:63301 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726711AbeJPRCj (ORCPT
+        Tue, 16 Oct 2018 13:03:07 -0400
+Received: from gateway36.websitewelcome.com ([192.185.198.13]:15291 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726083AbeJPRDH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 13:02:39 -0400
-Received: from 79.184.253.168.ipv4.supernova.orange.pl (79.184.253.168) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
- id aba0c3c8793e45b5; Tue, 16 Oct 2018 11:13:10 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Anson Huang <Anson.Huang@nxp.com>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH V4] cpufreq: imx6q: read OCOTP through nvmem for imx6ul/imx6ull
-Date:   Tue, 16 Oct 2018 11:09:56 +0200
-Message-ID: <3002020.tALnatBSDD@aspire.rjw.lan>
-In-Reply-To: <20181008061508.m3u7acg2q76jljay@vireshk-i7>
-References: <1538978854-9678-1-git-send-email-Anson.Huang@nxp.com> <20181008061508.m3u7acg2q76jljay@vireshk-i7>
+        Tue, 16 Oct 2018 13:03:07 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 5DC0C400C9AA3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 02:58:55 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id CL4mg94gAtz4jCL4vgGrXJ; Tue, 16 Oct 2018 03:51:55 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:59140 helo=[192.168.1.41])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gCL4l-0048RE-Uv; Tue, 16 Oct 2018 03:51:40 -0500
+Subject: Re: [PATCH net-next v2 1/2] net: phy: mscc: fix signedness bug in
+ vsc85xx_downshift_get
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+References: <cover.1539159556.git.gustavo@embeddedor.com>
+ <ed7a48646940771a09ede1202ed19f13773c7723.1539159556.git.gustavo@embeddedor.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <380aac12-05b4-3f77-f583-fb72ec98a8ab@embeddedor.com>
+Date:   Tue, 16 Oct 2018 10:51:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <ed7a48646940771a09ede1202ed19f13773c7723.1539159556.git.gustavo@embeddedor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gCL4l-0048RE-Uv
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:59140
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, October 8, 2018 8:15:08 AM CEST Viresh Kumar wrote:
-> On 08-10-18, 14:07, Anson Huang wrote:
-> > On i.MX6UL/i.MX6ULL, accessing OCOTP directly is wrong because
-> > the ocotp clock needs to be enabled first. Add support for reading
-> > OCOTP through the nvmem API, and keep the old method there to
-> > support old dtb.
-> > 
-> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > ---
-> > changes since V3:
-> > 	put node earlier to save one line code.
-> >  drivers/cpufreq/imx6q-cpufreq.c | 52 +++++++++++++++++++++++++++--------------
-> >  1 file changed, 35 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
-> > index b2ff423..8cfee0a 100644
-> > --- a/drivers/cpufreq/imx6q-cpufreq.c
-> > +++ b/drivers/cpufreq/imx6q-cpufreq.c
-> > @@ -12,6 +12,7 @@
-> >  #include <linux/cpu_cooling.h>
-> >  #include <linux/err.h>
-> >  #include <linux/module.h>
-> > +#include <linux/nvmem-consumer.h>
-> >  #include <linux/of.h>
-> >  #include <linux/of_address.h>
-> >  #include <linux/pm_opp.h>
-> > @@ -290,20 +291,32 @@ static void imx6q_opp_check_speed_grading(struct device *dev)
-> >  #define OCOTP_CFG3_6ULL_SPEED_792MHZ	0x2
-> >  #define OCOTP_CFG3_6ULL_SPEED_900MHZ	0x3
-> >  
-> > -static void imx6ul_opp_check_speed_grading(struct device *dev)
-> > +static int imx6ul_opp_check_speed_grading(struct device *dev)
-> >  {
-> > -	struct device_node *np;
-> > -	void __iomem *base;
-> >  	u32 val;
-> > +	int ret = 0;
-> >  
-> > -	np = of_find_compatible_node(NULL, NULL, "fsl,imx6ul-ocotp");
-> > -	if (!np)
-> > -		return;
-> > +	if (of_find_property(dev->of_node, "nvmem-cells", NULL)) {
-> > +		ret = nvmem_cell_read_u32(dev, "speed_grade", &val);
-> > +		if (ret)
-> > +			return ret;
-> > +	} else {
-> > +		struct device_node *np;
-> > +		void __iomem *base;
-> > +
-> > +		np = of_find_compatible_node(NULL, NULL, "fsl,imx6ul-ocotp");
-> > +		if (!np)
-> > +			return -ENOENT;
-> > +
-> > +		base = of_iomap(np, 0);
-> > +		of_node_put(np);
-> > +		if (!base) {
-> > +			dev_err(dev, "failed to map ocotp\n");
-> > +			return -EFAULT;
-> > +		}
-> >  
-> > -	base = of_iomap(np, 0);
-> > -	if (!base) {
-> > -		dev_err(dev, "failed to map ocotp\n");
-> > -		goto put_node;
-> > +		val = readl_relaxed(base + OCOTP_CFG3);
-> > +		iounmap(base);
-> >  	}
-> >  
-> >  	/*
-> > @@ -314,7 +327,6 @@ static void imx6ul_opp_check_speed_grading(struct device *dev)
-> >  	 * 2b'11: 900000000Hz on i.MX6ULL only;
-> >  	 * We need to set the max speed of ARM according to fuse map.
-> >  	 */
-> > -	val = readl_relaxed(base + OCOTP_CFG3);
-> >  	val >>= OCOTP_CFG3_SPEED_SHIFT;
-> >  	val &= 0x3;
-> >  
-> > @@ -334,9 +346,7 @@ static void imx6ul_opp_check_speed_grading(struct device *dev)
-> >  				dev_warn(dev, "failed to disable 900MHz OPP\n");
-> >  	}
-> >  
-> > -	iounmap(base);
-> > -put_node:
-> > -	of_node_put(np);
-> > +	return ret;
-> >  }
-> >  
-> >  static int imx6q_cpufreq_probe(struct platform_device *pdev)
-> > @@ -394,10 +404,18 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
-> >  	}
-> >  
-> >  	if (of_machine_is_compatible("fsl,imx6ul") ||
-> > -	    of_machine_is_compatible("fsl,imx6ull"))
-> > -		imx6ul_opp_check_speed_grading(cpu_dev);
-> > -	else
-> > +	    of_machine_is_compatible("fsl,imx6ull")) {
-> > +		ret = imx6ul_opp_check_speed_grading(cpu_dev);
-> > +		if (ret == -EPROBE_DEFER)
-> > +			return ret;
-> > +		if (ret) {
-> > +			dev_err(cpu_dev, "failed to read ocotp: %d\n",
-> > +				ret);
-> > +			return ret;
-> > +		}
-> > +	} else {
-> >  		imx6q_opp_check_speed_grading(cpu_dev);
-> > +	}
-> >  
-> >  	/* Because we have added the OPPs here, we must free them */
-> >  	free_opp = true;
+Hi,
+
+On 10/10/18 10:30 AM, Gustavo A. R. Silva wrote:
+> Currently, the error handling for the call to function
+> phy_read_paged() doesn't work because *reg_val* is of
+> type u16 (16 bits, unsigned), which makes it impossible
+> for it to hold a value less than 0.
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Fix this by changing the type of variable *reg_val* to int.
+> 
+> Addresses-Coverity-ID: 1473970 ("Unsigned compared against 0")
+> Fixes: 6a0bfbbe20b0 ("net: phy: mscc: migrate to phy_select/restore_page functions")
+> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+> Changes in v2:
+>  - Add Quentin's Reviewed-by to the commit log.
+> 
+>  drivers/net/phy/mscc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+> index bffe077..bff56c3 100644
+> --- a/drivers/net/phy/mscc.c
+> +++ b/drivers/net/phy/mscc.c
+> @@ -522,7 +522,7 @@ static int vsc85xx_mdix_set(struct phy_device *phydev, u8 mdix)
+>  
+>  static int vsc85xx_downshift_get(struct phy_device *phydev, u8 *count)
+>  {
+> -	u16 reg_val;
+> +	int reg_val;
+>  
+>  	reg_val = phy_read_paged(phydev, MSCC_PHY_PAGE_EXTENDED,
+>  				 MSCC_PHY_ACTIPHY_CNTL);
+> 
 
-Patch applied, thanks!
+Friendly ping. Dave, can you take this?
 
+Thanks!
+--
+Gustavo
