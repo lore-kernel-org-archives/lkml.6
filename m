@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45869C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A2FC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AE38204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:55:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AE38204EC
+	by mail.kernel.org (Postfix) with ESMTP id 5EE03205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:57:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EE03205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbeJPVp4 (ORCPT
+        id S1727132AbeJPVr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:45:56 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:38630 "EHLO leonov.paulk.fr"
+        Tue, 16 Oct 2018 17:47:56 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:38654 "EHLO leonov.paulk.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbeJPVpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 17:45:55 -0400
+        id S1727006AbeJPVr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 17:47:56 -0400
 Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 9ADBFBFE9C
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 15:55:19 +0200 (CEST)
+        by leonov.paulk.fr (Postfix) with ESMTPS id 97712BFE9C
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 15:57:19 +0200 (CEST)
 Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id 1BD94C1026; Tue, 16 Oct 2018 15:55:19 +0200 (CEST)
+        id 183CEC1036; Tue, 16 Oct 2018 15:57:19 +0200 (CEST)
 Received: from collins (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id 58B19C101E;
-        Tue, 16 Oct 2018 15:55:11 +0200 (CEST)
-Message-ID: <9f96548a1b79f841130f3bf31b6eae8966fe0baf.camel@paulk.fr>
-Subject: Re: [PATCH 04/10] drm/sun4i: Explicitly list and check formats
- supported by the backend
+        by gagarine.paulk.fr (Postfix) with ESMTPSA id 8E38FC102F;
+        Tue, 16 Oct 2018 15:57:09 +0200 (CEST)
+Message-ID: <23f66de8a3e55cba253b89328f0f268a7c4df29d.camel@paulk.fr>
+Subject: Re: [PATCH 05/10] drm/sun4i: Explicitly list and check formats
+ supported by the frontend
 From:   Paul Kocialkowski <contact@paulk.fr>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
@@ -41,15 +41,13 @@ Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         Daniel Vetter <daniel.vetter@intel.com>,
         Gustavo Padovan <gustavo@padovan.org>,
         Sean Paul <seanpaul@chromium.org>
-Date:   Tue, 16 Oct 2018 15:55:40 +0200
-In-Reply-To: <20180329075621.it3xltsqw4tbgeyu@flea>
+Date:   Tue, 16 Oct 2018 15:57:41 +0200
+In-Reply-To: <20180323100659.vojpyt7eazioevdj@flea>
 References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
-         <20180321152904.22411-5-paul.kocialkowski@bootlin.com>
-         <20180323100330.2sijtsp5bdyyel5a@flea>
-         <1522138128.1110.11.camel@bootlin.com>
-         <20180329075621.it3xltsqw4tbgeyu@flea>
+         <20180321152904.22411-6-paul.kocialkowski@bootlin.com>
+         <20180323100659.vojpyt7eazioevdj@flea>
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-hCWXvblWWxxaYsvlGiZv"
+        protocol="application/pgp-signature"; boundary="=-ccw5O2IjhWAC8Q6cOR/7"
 User-Agent: Evolution 3.30.1 
 Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,144 +56,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-hCWXvblWWxxaYsvlGiZv
+--=-ccw5O2IjhWAC8Q6cOR/7
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-Le jeudi 29 mars 2018 =C3=A0 09:56 +0200, Maxime Ripard a =C3=A9crit :
-> On Tue, Mar 27, 2018 at 10:08:48AM +0200, Paul Kocialkowski wrote:
-> > On Fri, 2018-03-23 at 11:03 +0100, Maxime Ripard wrote:
-> > > On Wed, Mar 21, 2018 at 04:28:58PM +0100, Paul Kocialkowski wrote:
-> > > > In order to check whether the backend supports a specific format, a=
-n
-> > > > explicit list and a related helper are introduced.
-> > > >=20
-> > > > They are then used to determine whether the frontend should be used
-> > > > for
-> > > > a layer, when the format is not supported by the backend.
-> > > >=20
-> > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > > > ---
-> > > >  drivers/gpu/drm/sun4i/sun4i_backend.c | 48
-> > > > ++++++++++++++++++++++++++++++++++-
-> > > >  drivers/gpu/drm/sun4i/sun4i_backend.h |  1 +
-> > > >  2 files changed, 48 insertions(+), 1 deletion(-)
-> > > >=20
-> > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c
-> > > > b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> > > > index 274a1db6fa8e..7703ba989743 100644
-> > > > --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-> > > > +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> > > > @@ -172,6 +172,39 @@ static int
-> > > > sun4i_backend_drm_format_to_layer(u32 format, u32 *mode)
-> > > >  	return 0;
-> > > >  }
-> > > > =20
-> > > > +static const uint32_t sun4i_backend_formats[] =3D {
-> > > > +	/* RGB */
-> > > > +	DRM_FORMAT_ARGB4444,
-> > > > +	DRM_FORMAT_RGBA4444,
-> > > > +	DRM_FORMAT_ARGB1555,
-> > > > +	DRM_FORMAT_RGBA5551,
-> > > > +	DRM_FORMAT_RGB565,
-> > > > +	DRM_FORMAT_RGB888,
-> > > > +	DRM_FORMAT_XRGB8888,
-> > > > +	DRM_FORMAT_BGRX8888,
-> > > > +	DRM_FORMAT_ARGB8888,
-> > > > +	/* YUV422 */
-> > > > +	DRM_FORMAT_YUYV,
-> > > > +	DRM_FORMAT_YVYU,
-> > > > +	DRM_FORMAT_UYVY,
-> > > > +	DRM_FORMAT_VYUY,
-> > >=20
-> > > Ordering them by alphabetical order would be better.
+Le vendredi 23 mars 2018 =C3=A0 11:06 +0100, Maxime Ripard a =C3=A9crit :
+> On Wed, Mar 21, 2018 at 04:28:59PM +0100, Paul Kocialkowski wrote:
+> > In order to check whether the frontend supports a specific format, an
+> > explicit list and a related helper are introduced.
 > >=20
-> > Frankly I find it a lot harder to read when the formats are not grouped
-> > by "family". This is the drm_fourcc enumeration order, which has some
-> > kind of logic behind it. What is the advantage of alphabetical ordering
-> > here?
->=20
-> It's self-sufficient and self-explanatory. The sorting here, while it
-> would make sense lack both: you need to refer to the drm_fourcc.h file
-> to get the sorting right (which makes it harder to edit and review,
-> and thus more error prone), and it assumes that the editor knows about
-> that sorting in the first place.
->=20
-> And it's an assumption we can't really make, since some people will
-> edit that structure in the first place without any background at all
-> with DRM, or even graphics in general.
->=20
-> While the assumption you have to make for the alphabetical order is
-> that one knows the latin alphabet, which is a pretty obvious one when
-> you're doing C programming.
->=20
-> > > > +	 */
-> > > > +	if (!sun4i_backend_format_is_supported(fb->format->format))
-> > > > +		return true;
-> > >=20
-> > > Even though there's a comment, this is not really natural. We are
-> > > checking whether the frontend supports the current plane_state, so it
-> > > just makes more sense to check whether the frontend supports the
-> > > format, rather than if the backend doesn't support them.
+> > They are then used to determine whether the frontend can actually suppo=
+rt
+> > the requested format when it was selected to be used.
 > >=20
-> > The rationale behind this logic is that we should try to use the backen=
-d
-> > first and only use the frontend as a last resort. Some formats are
-> > supported by both and checking that the backend supports a format first
-> > ensures that we don't bring up the frontend without need.
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun4i_backend.c  |  5 ++++
+> >  drivers/gpu/drm/sun4i/sun4i_frontend.c | 44 ++++++++++++++++++++++++++=
+++++++++
+> >  drivers/gpu/drm/sun4i/sun4i_frontend.h |  1 +
+> >  3 files changed, 50 insertions(+)
+> >=20
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/su=
+n4i/sun4i_backend.c
+> > index 7703ba989743..1fad0714c70e 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > @@ -532,6 +532,11 @@ static int sun4i_backend_atomic_check(struct sunxi=
+_engine *engine,
+> >  		struct drm_format_name_buf format_name;
+> > =20
+> >  		if (sun4i_backend_plane_uses_frontend(plane_state)) {
+> > +			if (!sun4i_frontend_format_is_supported(fb->format->format)) {
+> > +				DRM_DEBUG_DRIVER("Frontend plane check failed\n");
+> > +				return -EINVAL;
+> > +			}
+> > +
 >=20
-> You can achieve pretty much the same thing by doing:
+> So you're checking if the frontend doesn't support it and if the
+> backend doesn't support it. Who supports it then? :)
 >=20
-> if (!sun4i_frontend_format_is_supported())
-> 	return false;
+> Like I was saying, this should be moved to the previous patch, within
+> sun4i_backend_plane_uses_frontend.
+
+You're right, this isn't the right place to put it.
+sun4i_backend_plane_uses_frontend should definitely guarantee that the
+format is supported.
+
+> > +static const uint32_t sun4i_frontend_formats[] =3D {
+> > +	/* RGB */
+> > +	DRM_FORMAT_XRGB8888,
+> > +	DRM_FORMAT_BGRX8888,
+> > +	/* YUV444 */
+> > +	DRM_FORMAT_YUV444,
+> > +	DRM_FORMAT_YVU444,
+> > +	/* YUV422 */
+> > +	DRM_FORMAT_YUYV,
+> > +	DRM_FORMAT_YVYU,
+> > +	DRM_FORMAT_UYVY,
+> > +	DRM_FORMAT_VYUY,
+> > +	DRM_FORMAT_NV16,
+> > +	DRM_FORMAT_NV61,
+> > +	DRM_FORMAT_YUV422,
+> > +	DRM_FORMAT_YVU422,
+> > +	/* YUV420 */
+> > +	DRM_FORMAT_NV12,
+> > +	DRM_FORMAT_NV21,
+> > +	DRM_FORMAT_YUV420,
+> > +	DRM_FORMAT_YVU420,
+> > +	/* YUV411 */
+> > +	DRM_FORMAT_YUV411,
+> > +	DRM_FORMAT_YVU411,
+> > +};
 >=20
-> if (!using_scaling)
-> 	return false;
->=20
-> if (using_2x_or_4x_scaling)
-> 	return false;
->=20
-> return true;
->=20
-> This is really about whitelisting vs blacklisting, so I'm not sure
-> what that would really change in the case you described above.
+> I think this list should reflect what the driver currently supports,
+> not what the hardware supports.
 
-These sequential tests for blacklisting don't fit the bill here. For
-instance, it would always return false when not using scaling for a
-format supported only by the frontend, while we'd need to use the
-frontend for it.
-
-We still need to know whether the format is supported or not for both
-the frontend or the backend, because one is not sufficient to describe
-the other and both are involved in the decision to use the frontend.
-
-That is, the set of formats supported by the frontend is not the=20
-complementary of the sets of formats supported by the backend (some
-formats are supported by both), so we can't exchange one with the
-negation of the other in the initial statement.
-
-I agree with the inital comment though, that it seems more natural to
-check that the frontend supports a format first.
-
-I think the following combination would be the most comprehensive:
-
-if (!sun4i_frontend_format_is_supported())
-	return false;
-
-if (!sun4i_backend_format_is_supported())
-	return true;
-
-if (using_2x_or_4x_scaling)
-	return false;
-
-if (using_scaling)
-	return true;
-
-return false;
-
-What do you think?
+Agreed, this should be updated with the follow-up patch that adds YUV
+support.
 
 Cheers,
 
@@ -208,27 +148,27 @@ Website: https://www.paulk.fr/
 Coding blog: https://code.paulk.fr/
 Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
 
---=-hCWXvblWWxxaYsvlGiZv
+--=-ccw5O2IjhWAC8Q6cOR/7
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlvF7dwACgkQhP3B6o/u
-lQx23g/+NGQ/Fk5iDrpAWYpTQCx7gKpkzbCxt6dLn48fm3lcS4ngZ0V2/8QMkPw6
-EYUERF6yo6o148Uvc5VoHr529mNTw9jq9I/SLR1pImiFEmW+SOkwq5J/DJD0AZbg
-QGrDzPZtCGK3DlmmlnFiFLVErqoN5aPwh2GcQYEm2X0wYrSmHdIg7oMqYDgR/uZO
-sc4bdYNmrzqDZkKmHN8ZogtSoryv6qvDAXRIqCPBdvx/QEmAMBAHtjORmVwVuDeV
-4Xi5OBbNc5EGxmSbYzurKT4o7F8Rmzgx07hWjw0iZS8LRx2iSjB8jyxfnorTOlYp
-pEN5iqkqrg2faDZN0kS/DL6jUWxjHdWc84pZnWLuukIzDImBerG4WV+53kNIwDYI
-2+ct4sPYFjIkhWo8KAZTbfeai6WQaQhpaqB1YgkU19eWRfCsqQJOurLzzvf5MFen
-bLBcDGFjU1zTQelJ+ZmAVT7/tYDC3OUpuKoCh9y0CeSd/VwhyzcdRlhJrv+MLBa2
-bEIU6CRo3v9r1QVqTkqvIa2OEKsJmxkfjkahkZ1BCNvhbQjwOyllO+bCN4Q1wP2i
-XYhnTamx7ki9nV6bHlG6GRfHlTmY3X3VEwUG5zYsbTxntP/ija98pOVkhKTGcEau
-NugRL9RMQqZwLV48J6Dtb+ybJoMlHzGavaevjlySz9WVtPzj9/E=
-=tlep
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlvF7lUACgkQhP3B6o/u
+lQxHKg/9EE9HsCWeYxoBsubeXu6sLBRG5Hkrh/op4WBc+wNotPE6Kgs9XQINWGpq
+AUKG2VShYqUseW8bes0v0Vv2h5CIW0zgoudnT+HKuqg3RtxgcMib6ZGea8swUqCA
+cBBlzEDDMUvyQ9/6JdDAREGmXrSPAkI8vkCtCGQzLmw9yYgtcYG2aBFqie/hUQGn
+REob+cOCZA4ATOev8TVV0HJoElK5BwMGxLdcZMl3HndiX0WcpJDbMLtRCZQptRN2
+2eovzGpoMENMOxQwUBp+TZP85dlq0FbJFZWuGB9TcXKIl1zWzT2nILfM/ieTDuR2
+KYRMBRfy496Z0/k36V03ec9QPkz9x7dTcWlcNSDXtcVF8tDX6i8Wwof3EYcLGScM
+KtMhqoCdsbsX454LKpZbneUycJ/a7VoLc5uy3k9UZ/GG7PQYmdsA1PVSwc+QCEPX
+D0jpCdn757DDM6XjEZprhtUSAXfHqWF0u5+gIY+hvLRmQvssMMt8y5dqJpb2Ffqh
+76iQdKs1JYzFRIRLgBdKKT9HTPuSaWLMR6jD3WmPc68JOiElsgP5bDKGYg0TbCVH
+iTAdQ5s4AWkVgzLBjeh/pIAJS2K+Ufw7eB1kdofjrEuqJgW9k+gzi1ap4I/KWvdL
+9h0Ih8X/41SVHqW6BxhEGPUYnhavNHnloYJwCd1swxYSu6kVLtg=
+=Hfjb
 -----END PGP SIGNATURE-----
 
---=-hCWXvblWWxxaYsvlGiZv--
+--=-ccw5O2IjhWAC8Q6cOR/7--
 
