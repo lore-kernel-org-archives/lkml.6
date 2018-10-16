@@ -2,99 +2,54 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 331D4C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16529C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5B2421471
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:13:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5B2421471
+	by mail.kernel.org (Postfix) with ESMTP id BAF9121477
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:16:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAF9121477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbeJQCEl (ORCPT
+        id S1727270AbeJQCHt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 22:04:41 -0400
-Received: from gateway30.websitewelcome.com ([192.185.198.26]:33220 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727006AbeJQCEk (ORCPT
+        Tue, 16 Oct 2018 22:07:49 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.210]:39713 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727097AbeJQCHt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 22:04:40 -0400
+        Tue, 16 Oct 2018 22:07:49 -0400
 Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id B1DCB103B3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 13:13:00 -0500 (CDT)
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 6FFCF57FE58
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 13:14:04 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id CTpmgZIPZtz4jCTpugh1Zd; Tue, 16 Oct 2018 13:13:00 -0500
+        id CTqngZKgrtz4jCTqwgh3pz; Tue, 16 Oct 2018 13:14:03 -0500
 X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:43744 helo=[192.168.1.41])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:46738 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gCTpm-001I7Q-7f; Tue, 16 Oct 2018 13:12:46 -0500
-Subject: Re: [PATCH] Input: uinput - fix Spectre v1 vulnerability
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181016111313.GA28307@embeddedor.com>
- <20181016172107.GA230131@dtor-ws>
- <ead3e95a-1acb-362a-0ee2-d02dbc4f378c@embeddedor.com>
- <26EEA6BC-43B0-42F7-A237-572D32EB2309@gmail.com>
+        id 1gCTqm-001Ig0-Hj; Tue, 16 Oct 2018 13:13:48 -0500
+Date:   Tue, 16 Oct 2018 20:13:46 +0200
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <2856297d-9af0-e005-f926-e9596d437fad@embeddedor.com>
-Date:   Tue, 16 Oct 2018 20:12:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+To:     Don Brace <don.brace@microsemi.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Willem Riede <osst@riede.org>,
+        Kai =?iso-8859-1?Q?M=E4kisara?= <Kai.Makisara@kolumbus.fi>
+Cc:     esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, osst-users@lists.sourceforge.net,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH v2] scsi: mark expected switch fall-throughs
+Message-ID: <20181016181346.GA26469@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <26EEA6BC-43B0-42F7-A237-572D32EB2309@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -103,13 +58,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 86.245.173.13
 X-Source-L: No
-X-Exim-ID: 1gCTpm-001I7Q-7f
+X-Exim-ID: 1gCTqm-001Ig0-Hj
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:43744
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:46738
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
+X-Email-Count: 11
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -117,17 +72,177 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
+Addresses-Coverity-ID: 1195463 ("Missing break in switch")
+Addresses-Coverity-ID: 1195464 ("Missing break in switch")
+Addresses-Coverity-ID: 1195465 ("Missing break in switch")
+Addresses-Coverity-ID: 1195466 ("Missing break in switch")
+Addresses-Coverity-ID: 114973 ("Missing break in switch")
+Addresses-Coverity-ID: 114983 ("Missing break in switch")
+Addresses-Coverity-ID: 114984 ("Missing break in switch")
+Addresses-Coverity-ID: 114985 ("Missing break in switch")
+Addresses-Coverity-ID: 114988 ("Missing break in switch")
+Addresses-Coverity-ID: 114994 ("Missing break in switch")
+Addresses-Coverity-ID: 114995 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Remove drivers/scsi/ips.c from this patch, as it turned out to be
+   an actual bug in that driver. So, a separate patch to address such
+   bug has already been sent:
+	
+	https://lore.kernel.org/patchwork/patch/1000333/
 
-On 10/16/18 8:09 PM, Dmitry Torokhov wrote:
+ drivers/scsi/hpsa.c | 5 +++++
+ drivers/scsi/osst.c | 6 ++++++
+ drivers/scsi/ppa.c  | 1 +
+ drivers/scsi/st.c   | 4 ++++
+ 4 files changed, 16 insertions(+)
 
-> 
-> /dev/uinput 
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index f903983..fb6a356 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -4662,6 +4662,7 @@ static int fixup_ioaccel_cdb(u8 *cdb, int *cdb_len)
+ 	case WRITE_6:
+ 	case WRITE_12:
+ 		is_write = 1;
++		/* fall through */
+ 	case READ_6:
+ 	case READ_12:
+ 		if (*cdb_len == 6) {
+@@ -5092,6 +5093,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
+ 	switch (cmd->cmnd[0]) {
+ 	case WRITE_6:
+ 		is_write = 1;
++		/* fall through */
+ 	case READ_6:
+ 		first_block = (((cmd->cmnd[1] & 0x1F) << 16) |
+ 				(cmd->cmnd[2] << 8) |
+@@ -5102,6 +5104,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
+ 		break;
+ 	case WRITE_10:
+ 		is_write = 1;
++		/* fall through */
+ 	case READ_10:
+ 		first_block =
+ 			(((u64) cmd->cmnd[2]) << 24) |
+@@ -5114,6 +5117,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
+ 		break;
+ 	case WRITE_12:
+ 		is_write = 1;
++		/* fall through */
+ 	case READ_12:
+ 		first_block =
+ 			(((u64) cmd->cmnd[2]) << 24) |
+@@ -5128,6 +5132,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
+ 		break;
+ 	case WRITE_16:
+ 		is_write = 1;
++		/* fall through */
+ 	case READ_16:
+ 		first_block =
+ 			(((u64) cmd->cmnd[2]) << 56) |
+diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
+index 7a1a1ed..8af608d 100644
+--- a/drivers/scsi/osst.c
++++ b/drivers/scsi/osst.c
+@@ -216,12 +216,14 @@ static void osst_analyze_sense(struct osst_request *SRpnt, struct st_cmdstatus *
+ 		switch (sense[0] & 0x7f) {
+ 		case 0x71:
+ 			s->deferred = 1;
++			/* fall through */
+ 		case 0x70:
+ 			s->fixed_format = 1;
+ 			s->flags = sense[2] & 0xe0;
+ 			break;
+ 		case 0x73:
+ 			s->deferred = 1;
++			/* fall through */
+ 		case 0x72:
+ 			s->fixed_format = 0;
+ 			ucp = scsi_sense_desc_find(sense, SCSI_SENSE_BUFFERSIZE, 4);
+@@ -591,6 +593,7 @@ static void osst_init_aux(struct osst_tape * STp, int frame_type, int frame_seq_
+ 		dat->dat_list[0].flags    = frame_type==OS_FRAME_TYPE_MARKER?
+ 							OS_DAT_FLAGS_MARK:OS_DAT_FLAGS_DATA;
+ 		dat->dat_list[0].reserved = 0;
++		/* fall through */
+ 	  case	OS_FRAME_TYPE_EOD:
+ 		aux->update_frame_cntr    = htonl(0);
+ 		par->partition_num        = OS_DATA_PARTITION;
+@@ -4086,6 +4089,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
+ 	switch (cmd_in) {
+ 	 case MTFSFM:
+ 		chg_eof = 0; /* Changed from the FSF after this */
++		/* fall through */
+ 	 case MTFSF:
+ 		if (STp->raw)
+ 		   return (-EIO);
+@@ -4101,6 +4105,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
+ 
+ 	 case MTBSF:
+ 		chg_eof = 0; /* Changed from the FSF after this */
++		/* fall through */
+ 	 case MTBSFM:
+ 		if (STp->raw)
+ 		   return (-EIO);
+@@ -4312,6 +4317,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
+ 					   name, STp->block_size);
+ 			 return 0;
+ 		 }
++		/* fall through */
+ 	 case MTSETDENSITY:       /* Set tape density */
+ 	 case MTSETDRVBUFFER:     /* Set drive buffering */
+ 	 case SET_DENS_AND_BLK:   /* Set density and block size */
+diff --git a/drivers/scsi/ppa.c b/drivers/scsi/ppa.c
+index ee86a0c..d29999b 100644
+--- a/drivers/scsi/ppa.c
++++ b/drivers/scsi/ppa.c
+@@ -717,6 +717,7 @@ static int ppa_engine(ppa_struct *dev, struct scsi_cmnd *cmd)
+ 			}
+ 			cmd->SCp.phase++;
+ 		}
++		/* fall through */
+ 
+ 	case 2:		/* Phase 2 - We are now talking to the scsi bus */
+ 		if (!ppa_select(dev, scmd_id(cmd))) {
+diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
+index 307df2f..f1351ec 100644
+--- a/drivers/scsi/st.c
++++ b/drivers/scsi/st.c
+@@ -337,12 +337,14 @@ static void st_analyze_sense(struct st_request *SRpnt, struct st_cmdstatus *s)
+ 		switch (sense[0] & 0x7f) {
+ 		case 0x71:
+ 			s->deferred = 1;
++			/* fall through */
+ 		case 0x70:
+ 			s->fixed_format = 1;
+ 			s->flags = sense[2] & 0xe0;
+ 			break;
+ 		case 0x73:
+ 			s->deferred = 1;
++			/* fall through */
+ 		case 0x72:
+ 			s->fixed_format = 0;
+ 			ucp = scsi_sense_desc_find(sense, SCSI_SENSE_BUFFERSIZE, 4);
+@@ -2721,6 +2723,7 @@ static int st_int_ioctl(struct scsi_tape *STp, unsigned int cmd_in, unsigned lon
+ 	switch (cmd_in) {
+ 	case MTFSFM:
+ 		chg_eof = 0;	/* Changed from the FSF after this */
++		/* fall through */
+ 	case MTFSF:
+ 		cmd[0] = SPACE;
+ 		cmd[1] = 0x01;	/* Space FileMarks */
+@@ -2735,6 +2738,7 @@ static int st_int_ioctl(struct scsi_tape *STp, unsigned int cmd_in, unsigned lon
+ 		break;
+ 	case MTBSFM:
+ 		chg_eof = 0;	/* Changed from the FSF after this */
++		/* fall through */
+ 	case MTBSF:
+ 		cmd[0] = SPACE;
+ 		cmd[1] = 0x01;	/* Space FileMarks */
+-- 
+2.7.4
 
-I've got it. This explains it all. :)
-
-> must be 0600, or accessible to equally privileged user, or you'll be opening your system to much mischief.
-> 
-Thanks, Dmitry.
---
-Gustavo
