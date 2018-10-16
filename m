@@ -2,100 +2,121 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48346C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04435C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF9FB20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:18:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YbrprRvQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF9FB20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C4CFD20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:18:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4CFD20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbeJPUIQ (ORCPT
+        id S1727191AbeJPUIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 16:08:16 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55012 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727032AbeJPUIQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 16:08:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lkv7F9s3yd7+Qk29xEzWEIVuX+bu8QpDsmIzDEjojUI=; b=YbrprRvQhICGlYOLnwiYpZyPc
-        1pw2paX0Io75uVQfJ3FSE6ngBHm+/RXf2BioOS3W5sONYpwMJALS7pzYpRGhXDphfUhQ+F00R8OyX
-        sSxvUHpTZy3YOA7mt8v79Mhe/vL6RY94YAd6UiOHLWd4zdwd6bAnAj548U7eZkEewnxUb7jGKtHRt
-        9aD/D0D2b9jrpE0BQGVBw1SZLlLl27pZABUmwUZ8PaS4wwCp90obSkxTuedyRrlZh8Kg/2qUWythB
-        aSLu+mMsOnu8KXTW0sFc/FYopSZ2XEk/JlpgvTsttXBKSQqmU2ECoD+aZAXC01uXisq+FWZwcVbpX
-        oy+229+uA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gCOIL-0001e2-N7; Tue, 16 Oct 2018 12:17:54 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2A49020297B7B; Tue, 16 Oct 2018 14:17:52 +0200 (CEST)
-Date:   Tue, 16 Oct 2018 14:17:52 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCHv2 2/4] printk: move printk_safe macros to printk
- header
-Message-ID: <20181016121752.GA2537@hirez.programming.kicks-ass.net>
-References: <20181016050428.17966-1-sergey.senozhatsky@gmail.com>
- <20181016050428.17966-3-sergey.senozhatsky@gmail.com>
- <20181016072719.GB4030@hirez.programming.kicks-ass.net>
- <20181016114006.6q5atyaitapcwbud@pathway.suse.cz>
+        Tue, 16 Oct 2018 16:08:20 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44704 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727032AbeJPUIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 16:08:19 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C26BE20794; Tue, 16 Oct 2018 14:18:03 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-7-245.w90-88.abo.wanadoo.fr [90.88.129.245])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 632A6206A1;
+        Tue, 16 Oct 2018 14:17:53 +0200 (CEST)
+Date:   Tue, 16 Oct 2018 14:17:54 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>
+Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
+ SPI NOR flash memories
+Message-ID: <20181016141754.38dfcf90@bbrezillon>
+In-Reply-To: <20181016140411.3f06e449@bbrezillon>
+References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
+        <20180911154007.17195-2-tudor.ambarus@microchip.com>
+        <VI1PR04MB103888BC18F3C5AD0C02DEF699FE0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <20181016140411.3f06e449@bbrezillon>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016114006.6q5atyaitapcwbud@pathway.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 01:40:06PM +0200, Petr Mladek wrote:
-> On Tue 2018-10-16 09:27:19, Peter Zijlstra wrote:
+On Tue, 16 Oct 2018 14:04:11 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-> > Instead of this tinkering around the edges, why don't you make the main
-> > logbuf a lockless ringbuffer and then delegate the actual printing of
-> > that buffer to a kthread, except for earlycon, which can do synchronous
-> > output.
+> On Tue, 16 Oct 2018 09:51:47 +0000
+> Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
 > 
-> In fact, there is no problem with printk log buffer. This patchset
-> tries to avoid deadlock caused by console-specific locks
-> used by console->write() methods.
+> > Hi Tudor,
+> > 
+> > This patch is breaking the 1-4-4 Read protocol for the spansion flash "s25fl512s".
+> > 
+> > Without this patch read request command for Quad mode, 4-byte enable, is coming as 0xEC i.e. SPINOR_OP_READ_1_4_4_4B.
+> > But after applying this patch, read request command for Quad mode is coming as 0x6C i.e. SPINOR_OP_READ_1_1_4_4B.
+> > 
+> > This flash also supports non-uniform erase.
+> > Can you please check and provide some suggestion?  
 > 
-> By other words, we neither need printk_safe or lockless log buffer
-> to fix this prolem. Instead, we need either printk_deferred context
-> or lockless consoles.
+> Are you sure the regression comes from this patch? I suspect your bug
+> comes from 41fe242979e4 ("mtd: spi-nor: fsl-quadspi: fix read error for
+> flash size larger than 16MB").
 
-If you have a lockless buffer and a trailing printk thread, that's
-deferred.
+I guess you're testing with an fsl-qspi controller, right? Can you try
+with this patch?
 
-And earlycon _should_ be lockless (yes, I know, some suck)
+--->8---
 
-But if you do this deferred nonsense that's currently in printk, then
-you risk never seeing the message -- the same problem I have with the
-whole printk_safe thing too.
-
-Printing _after_ the fact is horrible for robustness.
+diff --git a/drivers/mtd/spi-nor/fsl-quadspi.c b/drivers/mtd/spi-nor/fsl-quadspi.c
+index 1ff3430f82c8..c47fe70c9f98 100644
+--- a/drivers/mtd/spi-nor/fsl-quadspi.c
++++ b/drivers/mtd/spi-nor/fsl-quadspi.c
+@@ -477,9 +477,6 @@ static void fsl_qspi_init_lut(struct fsl_qspi *q)
+ static int fsl_qspi_get_seqid(struct fsl_qspi *q, u8 cmd)
+ {
+        switch (cmd) {
+-       case SPINOR_OP_READ_1_1_4:
+-       case SPINOR_OP_READ_1_1_4_4B:
+-               return SEQID_READ;
+        case SPINOR_OP_WREN:
+                return SEQID_WREN;
+        case SPINOR_OP_WRDI:
+@@ -490,8 +487,6 @@ static int fsl_qspi_get_seqid(struct fsl_qspi *q, u8 cmd)
+                return SEQID_SE;
+        case SPINOR_OP_CHIP_ERASE:
+                return SEQID_CHIP_ERASE;
+-       case SPINOR_OP_PP:
+-               return SEQID_PP;
+        case SPINOR_OP_RDID:
+                return SEQID_RDID;
+        case SPINOR_OP_WRSR:
+@@ -503,7 +498,11 @@ static int fsl_qspi_get_seqid(struct fsl_qspi *q, u8 cmd)
+        case SPINOR_OP_BRWR:
+                return SEQID_BRWR;
+        default:
+-               if (cmd == q->nor[0].erase_opcode)
++               if (cmd == q->nor[0].read_opcode)
++                       return SEQID_READ;
++               else if (cmd == q->nor[0].program_opcode)
++                       return SEQID_PP;
++               else if (cmd == q->nor[0].erase_opcode)
+                        return SEQID_SE;
+                dev_err(q->dev, "Unsupported cmd 0x%.2x\n", cmd);
+                break;
