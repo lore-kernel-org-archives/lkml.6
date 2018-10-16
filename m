@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0BBC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA50C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 194612089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55B4821476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqdAJ5n0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 194612089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GtnuIfpm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B4821476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730246AbeJQBKX (ORCPT
+        id S1730258AbeJQBK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:10:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55388 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:10:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbeJQBKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:10:22 -0400
+        id S1727562AbeJQBKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:10:25 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE4F32089E;
-        Tue, 16 Oct 2018 17:18:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C40F20866;
+        Tue, 16 Oct 2018 17:19:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710338;
-        bh=QZjdmlaG8OZSoYrrFGAg9HcNK8W+wSgGVu0if0Mny+c=;
+        s=default; t=1539710341;
+        bh=ZPqf9oJI0yabXWoN39mL9bYNhVGPdJyCWjrCmKxu7Hc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NqdAJ5n0/H16ljC4hTGF3WY2h/ghHmkEALDiHY2AA1LUVRZrR92+JR/GzO8V3RoIA
-         FXM4LMh6u9ET+msDWvSUJak/2i2oy9dUI/KsZkc28dp9qfmFsGzu+4bNETHWTQHGTS
-         hO3umALYih/DRJFEIEbAH+hPX8aO+6CJ2a3aDcjM=
+        b=GtnuIfpmsUbaqL0rLbwrSRry6Kt/McLA37UD9cjxn2jgABQGDB/nQa33tRyhQbPkB
+         Uze/rfQ34R8NheWwkmbiKxoAVrlN8RDdJCvX50i06bULi3mRVZLEavQ5k66s+JaZiD
+         TY5KK72sovGvRTjtluAgIenygrgOMERN6BMk+cFI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 008/109] net: dsa: bcm_sf2: Call setup during switch resume
-Date:   Tue, 16 Oct 2018 19:04:36 +0200
-Message-Id: <20181016170525.283437944@linuxfoundation.org>
+Subject: [PATCH 4.14 009/109] net: hns: fix for unmapping problem when SMMU is on
+Date:   Tue, 16 Oct 2018 19:04:37 +0200
+Message-Id: <20181016170525.373353480@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -62,47 +65,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit 54baca096386d862d19c10f58f34bf787c6b3cbe ]
+[ Upstream commit 2e9361efa707e186d91b938e44f9e326725259f7 ]
 
-There is no reason to open code what the switch setup function does, in
-fact, because we just issued a switch reset, we would make all the
-register get their default values, including for instance, having unused
-port be enabled again and wasting power and leading to an inappropriate
-switch core clock being selected.
+If SMMU is on, there is more likely that skb_shinfo(skb)->frags[i]
+can not send by a single BD. when this happen, the
+hns_nic_net_xmit_hw function map the whole data in a frags using
+skb_frag_dma_map, but unmap each BD' data individually when tx is
+done, which causes problem when SMMU is on.
 
-Fixes: 8cfa94984c9c ("net: dsa: bcm_sf2: add suspend/resume callbacks")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+This patch fixes this problem by ummapping the whole data in a
+frags when tx is done.
+
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Reviewed-by: Yisen Zhuang <yisen.zhuang@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/bcm_sf2.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hnae.c     |    2 -
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c |   30 ++++++++++++++++----------
+ 2 files changed, 20 insertions(+), 12 deletions(-)
 
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -772,7 +772,6 @@ static int bcm_sf2_sw_suspend(struct dsa
- static int bcm_sf2_sw_resume(struct dsa_switch *ds)
- {
- 	struct bcm_sf2_priv *priv = bcm_sf2_to_priv(ds);
--	unsigned int port;
- 	int ret;
- 
- 	ret = bcm_sf2_sw_rst(priv);
-@@ -784,12 +783,7 @@ static int bcm_sf2_sw_resume(struct dsa_
- 	if (priv->hw_params.num_gphy == 1)
- 		bcm_sf2_gphy_enable_set(ds, true);
- 
--	for (port = 0; port < DSA_MAX_PORTS; port++) {
--		if ((1 << port) & ds->enabled_port_mask)
--			bcm_sf2_port_setup(ds, port, NULL);
--		else if (dsa_is_cpu_port(ds, port))
--			bcm_sf2_imp_setup(ds, port);
--	}
-+	ds->ops->setup(ds);
- 
- 	return 0;
+--- a/drivers/net/ethernet/hisilicon/hns/hnae.c
++++ b/drivers/net/ethernet/hisilicon/hns/hnae.c
+@@ -84,7 +84,7 @@ static void hnae_unmap_buffer(struct hna
+ 	if (cb->type == DESC_TYPE_SKB)
+ 		dma_unmap_single(ring_to_dev(ring), cb->dma, cb->length,
+ 				 ring_to_dma_dir(ring));
+-	else
++	else if (cb->length)
+ 		dma_unmap_page(ring_to_dev(ring), cb->dma, cb->length,
+ 			       ring_to_dma_dir(ring));
  }
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -40,9 +40,9 @@
+ #define SKB_TMP_LEN(SKB) \
+ 	(((SKB)->transport_header - (SKB)->mac_header) + tcp_hdrlen(SKB))
+ 
+-static void fill_v2_desc(struct hnae_ring *ring, void *priv,
+-			 int size, dma_addr_t dma, int frag_end,
+-			 int buf_num, enum hns_desc_type type, int mtu)
++static void fill_v2_desc_hw(struct hnae_ring *ring, void *priv, int size,
++			    int send_sz, dma_addr_t dma, int frag_end,
++			    int buf_num, enum hns_desc_type type, int mtu)
+ {
+ 	struct hnae_desc *desc = &ring->desc[ring->next_to_use];
+ 	struct hnae_desc_cb *desc_cb = &ring->desc_cb[ring->next_to_use];
+@@ -64,7 +64,7 @@ static void fill_v2_desc(struct hnae_rin
+ 	desc_cb->type = type;
+ 
+ 	desc->addr = cpu_to_le64(dma);
+-	desc->tx.send_size = cpu_to_le16((u16)size);
++	desc->tx.send_size = cpu_to_le16((u16)send_sz);
+ 
+ 	/* config bd buffer end */
+ 	hnae_set_bit(rrcfv, HNSV2_TXD_VLD_B, 1);
+@@ -133,6 +133,14 @@ static void fill_v2_desc(struct hnae_rin
+ 	ring_ptr_move_fw(ring, next_to_use);
+ }
+ 
++static void fill_v2_desc(struct hnae_ring *ring, void *priv,
++			 int size, dma_addr_t dma, int frag_end,
++			 int buf_num, enum hns_desc_type type, int mtu)
++{
++	fill_v2_desc_hw(ring, priv, size, size, dma, frag_end,
++			buf_num, type, mtu);
++}
++
+ static const struct acpi_device_id hns_enet_acpi_match[] = {
+ 	{ "HISI00C1", 0 },
+ 	{ "HISI00C2", 0 },
+@@ -289,15 +297,15 @@ static void fill_tso_desc(struct hnae_ri
+ 
+ 	/* when the frag size is bigger than hardware, split this frag */
+ 	for (k = 0; k < frag_buf_num; k++)
+-		fill_v2_desc(ring, priv,
+-			     (k == frag_buf_num - 1) ?
++		fill_v2_desc_hw(ring, priv, k == 0 ? size : 0,
++				(k == frag_buf_num - 1) ?
+ 					sizeoflast : BD_MAX_SEND_SIZE,
+-			     dma + BD_MAX_SEND_SIZE * k,
+-			     frag_end && (k == frag_buf_num - 1) ? 1 : 0,
+-			     buf_num,
+-			     (type == DESC_TYPE_SKB && !k) ?
++				dma + BD_MAX_SEND_SIZE * k,
++				frag_end && (k == frag_buf_num - 1) ? 1 : 0,
++				buf_num,
++				(type == DESC_TYPE_SKB && !k) ?
+ 					DESC_TYPE_SKB : DESC_TYPE_PAGE,
+-			     mtu);
++				mtu);
+ }
+ 
+ netdev_tx_t hns_nic_net_xmit_hw(struct net_device *ndev,
 
 
