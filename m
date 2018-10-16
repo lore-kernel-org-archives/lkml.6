@@ -2,139 +2,90 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C7AC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A698C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0ACB2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJg4guWz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0ACB2089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 43F822089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F822089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbeJQBDH (ORCPT
+        id S1728292AbeJQBDH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 16 Oct 2018 21:03:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727246AbeJQBDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:03:05 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AB402098A;
+Received: from smtprelay0106.hostedemail.com ([216.40.44.106]:42909 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727263AbeJQBDH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:03:07 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 219C01804A321;
+        Tue, 16 Oct 2018 17:11:44 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: wish21_8372314a88721
+X-Filterd-Recvd-Size: 2392
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
         Tue, 16 Oct 2018 17:11:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709903;
-        bh=sq7o5lKFdorBXv09dH4SpoSm+AniY+F0y7JJ6nvf+yI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nJg4guWze9cdnnO2+KDSCLecFYJq2kViyJE/ucJtNUNnEoncwPv7+ugidmoah7xye
-         ZE8pvJ2bDTi4a7c4cH51vaQ03g8Di0YpctK4FgRzTPbHGiMSXWUKIZmw31uuRrMRev
-         PHgi6iVsTbf8h0ko2UvYjdSzTtrq44R8+PzQzwIM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jianfeng Tan <jianfeng.tan@linux.alibaba.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 034/135] net/packet: fix packet drop as of virtio gso
-Date:   Tue, 16 Oct 2018 19:04:24 +0200
-Message-Id: <20181016170517.343252259@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
-References: <20181016170515.447235311@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <bbef856ec1671776f7b72107620beb6b4b2b16f5.camel@perches.com>
+Subject: Re: patch "staging: MAINTAINERS: remove obsolete IPX staging
+ directory" added to staging-testing
+From:   Joe Perches <joe@perches.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Date:   Tue, 16 Oct 2018 10:11:41 -0700
+In-Reply-To: <20181016115137.GA28641@kroah.com>
+References: <15396867728666@kroah.com>
+         <249981aa5af26de07565946fbe806e3c01f26c07.camel@perches.com>
+         <20181016115137.GA28641@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+On Tue, 2018-10-16 at 13:51 +0200, Greg KH wrote:
+> On Tue, Oct 16, 2018 at 04:43:30AM -0700, Joe Perches wrote:
+> > On Tue, 2018-10-16 at 12:46 +0200, gregkh@linuxfoundation.org wrote:
+> > > This is a note to let you know that I've just added the patch titled
+> > > 
+> > >     staging: MAINTAINERS: remove obsolete IPX staging directoryts
+> > []
+> > > From dd71c89b2c1ae049d2018107e9d7a41261db3f7b Mon Sep 17 00:00:00 2001
+> > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Date: Tue, 16 Oct 2018 12:45:13 +0200
+> > > Subject: staging: MAINTAINERS: remove obsolete IPX staging directory
+> > > 
+> > > The IPX code was removed from staging back in November 2017, but the
+> > > MAINTAINERS entry stuck around.  Remove the invalid directory from the
+> > > file as it does not actually point to anything anymore.
+> > 
+> > As the uapi ipx file still exists but the functionality
+> > has been removed, perhaps some compiler message like
+> > 
+> > #pragma message "IPX functionality removed as of linux kernel v4.18"
+> > 
+> > should be added to the uapi file.
+> 
+> Eventually those files should be removed by the networking developers.
+> It will take a bit of work for them to do it, it's not a straight
+> "delete the file" work.
 
-------------------
+I understand that, but it's not the point.
 
-From: Jianfeng Tan <jianfeng.tan@linux.alibaba.com>
-
-[ Upstream commit 9d2f67e43b73e8af7438be219b66a5de0cfa8bd9 ]
-
-When we use raw socket as the vhost backend, a packet from virito with
-gso offloading information, cannot be sent out in later validaton at
-xmit path, as we did not set correct skb->protocol which is further used
-for looking up the gso function.
-
-To fix this, we set this field according to virito hdr information.
-
-Fixes: e858fae2b0b8f4 ("virtio_net: use common code for virtio_net_hdr and skb GSO conversion")
-Signed-off-by: Jianfeng Tan <jianfeng.tan@linux.alibaba.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/virtio_net.h |   18 ++++++++++++++++++
- net/packet/af_packet.c     |   11 +++++++----
- 2 files changed, 25 insertions(+), 4 deletions(-)
-
---- a/include/linux/virtio_net.h
-+++ b/include/linux/virtio_net.h
-@@ -5,6 +5,24 @@
- #include <linux/if_vlan.h>
- #include <uapi/linux/virtio_net.h>
- 
-+static inline int virtio_net_hdr_set_proto(struct sk_buff *skb,
-+					   const struct virtio_net_hdr *hdr)
-+{
-+	switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
-+	case VIRTIO_NET_HDR_GSO_TCPV4:
-+	case VIRTIO_NET_HDR_GSO_UDP:
-+		skb->protocol = cpu_to_be16(ETH_P_IP);
-+		break;
-+	case VIRTIO_NET_HDR_GSO_TCPV6:
-+		skb->protocol = cpu_to_be16(ETH_P_IPV6);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
- 					const struct virtio_net_hdr *hdr,
- 					bool little_endian)
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2712,10 +2712,12 @@ tpacket_error:
- 			}
- 		}
- 
--		if (po->has_vnet_hdr && virtio_net_hdr_to_skb(skb, vnet_hdr,
--							      vio_le())) {
--			tp_len = -EINVAL;
--			goto tpacket_error;
-+		if (po->has_vnet_hdr) {
-+			if (virtio_net_hdr_to_skb(skb, vnet_hdr, vio_le())) {
-+				tp_len = -EINVAL;
-+				goto tpacket_error;
-+			}
-+			virtio_net_hdr_set_proto(skb, vnet_hdr);
- 		}
- 
- 		skb->destructor = tpacket_destruct_skb;
-@@ -2911,6 +2913,7 @@ static int packet_snd(struct socket *soc
- 		if (err)
- 			goto out_free;
- 		len += sizeof(vnet_hdr);
-+		virtio_net_hdr_set_proto(skb, &vnet_hdr);
- 	}
- 
- 	skb_probe_transport_header(skb, reserve);
+#pragma message might still be useful because,
+in the meantime, anyone
+actually including the
+uapi file would get some heads-up notification
+that IPX doesn't work here anymore.
 
 
