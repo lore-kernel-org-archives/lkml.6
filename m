@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C12BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CF5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B510A20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:40:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CA0E208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:40:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmbiegdY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B510A20869
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OaiPvwD2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA0E208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbeJPK20 (ORCPT
+        id S1727433AbeJPK2k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 06:28:26 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34669 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727016AbeJPK12 (ORCPT
+        Tue, 16 Oct 2018 06:28:40 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42630 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbeJPK1Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 06:27:28 -0400
-Received: by mail-pf1-f194.google.com with SMTP id f78-v6so4887818pfe.1;
-        Mon, 15 Oct 2018 19:39:24 -0700 (PDT)
+        Tue, 16 Oct 2018 06:27:24 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i4-v6so10069466pgq.9;
+        Mon, 15 Oct 2018 19:39:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8rdAtrhgVyi6Idogrfim0+bEai+yITDjSwhFdlBmD7Y=;
-        b=YmbiegdYLklN5/9bAGuguRxu5eclad8PvHFzU3iKCosGLQnfrylAQcPRdl7Zlxztp/
-         4czZTm666ZKcb12zkutShKMOiqvMYkjqFJZfohVxQ8EviuE2IOuzB6PYug2HiyCusjc3
-         umfzBawMGXrnFOTrazt9LVhxY4RkOCOJDPAMwRN1w6U3FnNczBRZrJdZDExA7pPnV1V9
-         UcqNAcHDEX7MCnCrZ7jSe7iflFp+6lwZQD25mEmWgymIJcV704vrLi7vtnoVuOgIUuXH
-         95yqz5hzfZJ4Y9C4Ozq4s/Qtnb7at21eNbA+6G+YcsIu50z8bOkAhlU/UpVBmxEj74ZP
-         jZ+g==
+        bh=k3NmJ/BND4BSxo8ekIb0GkfOMcrXW/U/Gc8POw3t3ig=;
+        b=OaiPvwD2plx5vYUSDpsUGWs6tzYyUjWreHYu+XdKfwBAlhsu3Q3eb2Rv0hY8fzQRwJ
+         z7Yk+FjvhywQV2WSV4zDj5Mh4BDJax+OE2YsMA23u4+KLKtcz0qRqyJalx5bq7E1quwK
+         z4EDorVOpK6Y6T38JJ24T9ocJFFcqv882VNZawoXSaRjHbBTEiW5iEmpdjyBaoy+JjwV
+         q+JgRCExj9IAg9yU3nWSBc/mYEtjYHexrR8AUUja24MeQX9nqKPuFRQ3iV5GSXKtnQvW
+         l9H6T5HxJFEo/1zsM1op0nRFSDKW6l2eSNWmnXp03wZB+EGEXqQuU2uMWvdMUPh1KfUR
+         DyfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=8rdAtrhgVyi6Idogrfim0+bEai+yITDjSwhFdlBmD7Y=;
-        b=OnYWS/fYco1QExGj66cOd5RxDC/QW8o/6IjfJ86up/L2Cw1nTcLjMb2WnyyTuH/vGO
-         Igy4kihAEKcWiU23cYAozJlBBtXBilVk4/ABGQb6g9t1vgHzfcNM6aJgd6A4tjS3eEht
-         Fq7otTXdRVz/hopznuPlbemZ7O+UDuxSQgaiDmaG5kV1DgArGDyyiLV4QU8OhpZgcJMD
-         lXYvSG2aztaw7Zxsrmj7N0ZBap5QGQ76LCZ5GYCIrgiSTBcQ5nuumTRcx3RjE+2xmUTk
-         yRm3nEKr6RVq0ML5Iik+ie226Z3Vo7hJwXnT6wk0gmKqRd+xlMX38LD3EvbG/WZhzdrW
-         cCzg==
-X-Gm-Message-State: ABuFfohTTGiS+GWYE0yLlEpI0CN544Bi+xRJnge13wpLc2syiUCDfH+P
-        qSGGFOfX9Ln9jAgb+2n02hU=
-X-Google-Smtp-Source: ACcGV60JdzVhetJ75MQECTdqsHhSnWMs4quVhWGlUDPXWXLRlPpjgzd66tpbWDDtKnmCykGAQHJrHQ==
-X-Received: by 2002:a62:384c:: with SMTP id f73-v6mr20171193pfa.242.1539657563837;
-        Mon, 15 Oct 2018 19:39:23 -0700 (PDT)
+        bh=k3NmJ/BND4BSxo8ekIb0GkfOMcrXW/U/Gc8POw3t3ig=;
+        b=EjTFpC/FP8hlc1S7Y1QjRMqDVosGUCddok17SASbgNDQexfZwKdkDRbvYyzXDwm0m4
+         jB9dBz/QpRVXOc+sBvC4KFjAKtIdb2izDeIpO/D1zwQg/xUH30IgsRR+3QCedJt5/IG3
+         9Bv5UtPAUGdyTJ2AHjQWmQI/gKtY+Ud/NaSwN4l3nq/5Ms19PnFiEgRwcmrDI5BIMeWL
+         9dzWZVRwAdBRuLsSHFOGmNypiKolXVW2Z7pnEgX65w0XH7X9ASu6pj6AC37tYf9NjssO
+         1icFRGhPo3zt0PUZ68wzlAubCpV8wkGresXj7n/umpAIxZZpASVj2PBkXOxnHsaRaM5/
+         nRQA==
+X-Gm-Message-State: ABuFfoizeRJlmT+G6osQTqNBfX/rKUn+PelmR1xd5fQh2zTI2ro9yssr
+        UyqCyIsSCi7md7fwxaGAWHU=
+X-Google-Smtp-Source: ACcGV608fFf0DCYd0Cm3FGyMjFYvcB6NFvBCvQ+y0xOskeOusXL98LiKZDE/pKTOkc++NiCO6xlBJg==
+X-Received: by 2002:a62:1c06:: with SMTP id c6-v6mr20404340pfc.41.1539657560194;
+        Mon, 15 Oct 2018 19:39:20 -0700 (PDT)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id u79-v6sm18620287pfd.117.2018.10.15.19.39.22
+        by smtp.gmail.com with ESMTPSA id u79-v6sm18620287pfd.117.2018.10.15.19.39.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 15 Oct 2018 19:39:23 -0700 (PDT)
+        Mon, 15 Oct 2018 19:39:19 -0700 (PDT)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -68,9 +68,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v4 10/18] of: overlay: make all pr_debug() and pr_err() messages unique
-Date:   Mon, 15 Oct 2018 19:37:30 -0700
-Message-Id: <1539657458-24401-11-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v4 07/18] of: dynamic: change type of of_{at,de}tach_node() to void
+Date:   Mon, 15 Oct 2018 19:37:27 -0700
+Message-Id: <1539657458-24401-8-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
 References: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
@@ -81,65 +81,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-Make overlay.c debug and error messages unique so that they can be
-unambiguously found by grep.
+of_attach_node() and of_detach_node() always return zero, so
+their return value is meaningless.  Change their type to void
+and fix all callers to ignore return value.
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- drivers/of/overlay.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ arch/powerpc/platforms/pseries/dlpar.c    | 13 ++-----------
+ arch/powerpc/platforms/pseries/reconfig.c |  6 +-----
+ drivers/of/dynamic.c                      |  9 ++-------
+ include/linux/of.h                        |  4 ++--
+ 4 files changed, 7 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 3e1e519c12f0..34396d6db1b3 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -517,7 +517,7 @@ static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
- 	for_each_property_of_node(overlay_symbols_node, prop) {
- 		ret = add_changeset_property(ovcs, target, prop, 1);
- 		if (ret) {
--			pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
-+			pr_debug("Failed to apply symbols prop @%pOF/%s, err=%d\n",
- 				 target->np, prop->name, ret);
- 			return ret;
- 		}
-@@ -561,7 +561,8 @@ static int build_changeset(struct overlay_changeset *ovcs)
- 		ret = build_changeset_next_level(ovcs, &target,
- 						 fragment->overlay);
- 		if (ret) {
--			pr_debug("apply failed '%pOF'\n", fragment->target);
-+			pr_debug("fragment apply failed '%pOF'\n",
-+				 fragment->target);
- 			return ret;
- 		}
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index e3010b14aea5..0027eea94a8b 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -244,15 +244,9 @@ struct device_node *dlpar_configure_connector(__be32 drc_index,
+ 
+ int dlpar_attach_node(struct device_node *dn, struct device_node *parent)
+ {
+-	int rc;
+-
+ 	dn->parent = parent;
+ 
+-	rc = of_attach_node(dn);
+-	if (rc) {
+-		printk(KERN_ERR "Failed to add device node %pOF\n", dn);
+-		return rc;
+-	}
++	of_attach_node(dn);
+ 
+ 	return 0;
+ }
+@@ -260,7 +254,6 @@ int dlpar_attach_node(struct device_node *dn, struct device_node *parent)
+ int dlpar_detach_node(struct device_node *dn)
+ {
+ 	struct device_node *child;
+-	int rc;
+ 
+ 	child = of_get_next_child(dn, NULL);
+ 	while (child) {
+@@ -268,9 +261,7 @@ int dlpar_detach_node(struct device_node *dn)
+ 		child = of_get_next_child(dn, child);
  	}
-@@ -574,7 +575,8 @@ static int build_changeset(struct overlay_changeset *ovcs)
- 		ret = build_changeset_symbols_node(ovcs, &target,
- 						   fragment->overlay);
- 		if (ret) {
--			pr_debug("apply failed '%pOF'\n", fragment->target);
-+			pr_debug("symbols fragment apply failed '%pOF'\n",
-+				 fragment->target);
- 			return ret;
- 		}
+ 
+-	rc = of_detach_node(dn);
+-	if (rc)
+-		return rc;
++	of_detach_node(dn);
+ 
+ 	of_node_put(dn);
+ 
+diff --git a/arch/powerpc/platforms/pseries/reconfig.c b/arch/powerpc/platforms/pseries/reconfig.c
+index 0e0208117e77..0b72098da454 100644
+--- a/arch/powerpc/platforms/pseries/reconfig.c
++++ b/arch/powerpc/platforms/pseries/reconfig.c
+@@ -47,11 +47,7 @@ static int pSeries_reconfig_add_node(const char *path, struct property *proplist
+ 		goto out_err;
  	}
-@@ -883,7 +885,7 @@ static int of_overlay_apply(const void *fdt, struct device_node *tree,
  
- 	ret = __of_changeset_apply_notify(&ovcs->cset);
- 	if (ret)
--		pr_err("overlay changeset entry notify error %d\n", ret);
-+		pr_err("overlay apply changeset entry notify error %d\n", ret);
- 	/* notify failure is not fatal, continue */
+-	err = of_attach_node(np);
+-	if (err) {
+-		printk(KERN_ERR "Failed to add device node %s\n", path);
+-		goto out_err;
+-	}
++	of_attach_node(np);
  
- 	list_add_tail(&ovcs->ovcs_list, &ovcs_list);
-@@ -1142,7 +1144,7 @@ int of_overlay_remove(int *ovcs_id)
+ 	of_node_put(np->parent);
  
- 	ret = __of_changeset_revert_notify(&ovcs->cset);
- 	if (ret)
--		pr_err("overlay changeset entry notify error %d\n", ret);
-+		pr_err("overlay remove changeset entry notify error %d\n", ret);
- 	/* notify failure is not fatal, continue */
+diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+index fe8816cca99b..a94f727ec3da 100644
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -224,7 +224,7 @@ static void __of_attach_node(struct device_node *np)
+ /**
+  * of_attach_node() - Plug a device node into the tree and global list.
+  */
+-int of_attach_node(struct device_node *np)
++void of_attach_node(struct device_node *np)
+ {
+ 	struct of_reconfig_data rd;
+ 	unsigned long flags;
+@@ -241,8 +241,6 @@ int of_attach_node(struct device_node *np)
+ 	mutex_unlock(&of_mutex);
  
- 	*ovcs_id = 0;
+ 	of_reconfig_notify(OF_RECONFIG_ATTACH_NODE, &rd);
+-
+-	return 0;
+ }
+ 
+ void __of_detach_node(struct device_node *np)
+@@ -273,11 +271,10 @@ void __of_detach_node(struct device_node *np)
+ /**
+  * of_detach_node() - "Unplug" a node from the device tree.
+  */
+-int of_detach_node(struct device_node *np)
++void of_detach_node(struct device_node *np)
+ {
+ 	struct of_reconfig_data rd;
+ 	unsigned long flags;
+-	int rc = 0;
+ 
+ 	memset(&rd, 0, sizeof(rd));
+ 	rd.dn = np;
+@@ -291,8 +288,6 @@ int of_detach_node(struct device_node *np)
+ 	mutex_unlock(&of_mutex);
+ 
+ 	of_reconfig_notify(OF_RECONFIG_DETACH_NODE, &rd);
+-
+-	return rc;
+ }
+ EXPORT_SYMBOL_GPL(of_detach_node);
+ 
+diff --git a/include/linux/of.h b/include/linux/of.h
+index aa1dafaec6ae..72c593455019 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -406,8 +406,8 @@ extern int of_phandle_iterator_args(struct of_phandle_iterator *it,
+ #define OF_RECONFIG_REMOVE_PROPERTY	0x0004
+ #define OF_RECONFIG_UPDATE_PROPERTY	0x0005
+ 
+-extern int of_attach_node(struct device_node *);
+-extern int of_detach_node(struct device_node *);
++extern void of_attach_node(struct device_node *np);
++extern void of_detach_node(struct device_node *np);
+ 
+ #define of_match_ptr(_ptr)	(_ptr)
+ 
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
