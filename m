@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEA1C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E93C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0BDE21470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A76F21470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:13:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hv9WU8cl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0BDE21470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UjBaxquW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A76F21470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbeJPMBf (ORCPT
+        id S1728405AbeJPMBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:01:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48730 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:01:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728162AbeJPMBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:34 -0400
+        id S1728370AbeJPMBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08D9B20869;
-        Tue, 16 Oct 2018 04:13:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAC04214C3;
+        Tue, 16 Oct 2018 04:13:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663191;
-        bh=H6R5E5jNTVowy+32w0oiC3ig8qYjbJs5hbljn82A8qo=;
+        s=default; t=1539663193;
+        bh=L5xBlSWW3Ap/C6nHXgo3ZBVVZZhUESoahcIm/JEYgCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hv9WU8cl7oVC1kpTobiY76ksPm2jsZviVNVVSFc6twJ4OhvNRWT+F/Efah96I4Sp2
-         Vr+/es4SmomRUyy4D2PDEiNxqEQ8o+jwOjNpq8fi4/mjtE50Yv2KRu2wvQD6q/lZmO
-         /sCogkdayrWQJdv/gtgQoVJAE3/XbBWfN/mpmIYM=
+        b=UjBaxquW4aTkmbx5k0xwd4qeoP8Pajg5GtDM/X8IIzxwXv1nCyjIIhj9lzI1fNxAK
+         COMqBaPA8bIeKhTF0H8OtU5/oQWuzgnCYonUvLTDBefk93sxaCKHhQbKFUFZpQATPZ
+         bAqhtMdPc3LLJXgftlOuQt6EWNuD5W3e3oUVjFAY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Shahed Shaikh <shahed.shaikh@cavium.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Yu Zhao <yuzhao@google.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 054/100] qlcnic: fix Tx descriptor corruption on 82xx devices
-Date:   Tue, 16 Oct 2018 00:11:35 -0400
-Message-Id: <20181016041221.135528-54-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 056/100] cfg80211: fix use-after-free in reg_process_hint()
+Date:   Tue, 16 Oct 2018 00:11:37 -0400
+Message-Id: <20181016041221.135528-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -53,160 +53,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shahed Shaikh <shahed.shaikh@cavium.com>
+From: Yu Zhao <yuzhao@google.com>
 
-[ Upstream commit c333fa0c4f220f8f7ea5acd6b0ebf3bf13fd684d ]
+[ Upstream commit 1db58529454742f67ebd96e3588315e880b72837 ]
 
-In regular NIC transmission flow, driver always configures MAC using
-Tx queue zero descriptor as a part of MAC learning flow.
-But with multi Tx queue supported NIC, regular transmission can occur on
-any non-zero Tx queue and from that context it uses
-Tx queue zero descriptor to configure MAC, at the same time TX queue
-zero could be used by another CPU for regular transmission
-which could lead to Tx queue zero descriptor corruption and cause FW
-abort.
+reg_process_hint_country_ie() can free regulatory_request and return
+REG_REQ_ALREADY_SET. We shouldn't use regulatory_request after it's
+called. KASAN error was observed when this happens.
 
-This patch fixes this in such a way that driver always configures
-learned MAC address from the same Tx queue which is used for
-regular transmission.
+BUG: KASAN: use-after-free in reg_process_hint+0x839/0x8aa [cfg80211]
+Read of size 4 at addr ffff8800c430d434 by task kworker/1:3/89
+<snipped>
+Workqueue: events reg_todo [cfg80211]
+Call Trace:
+ dump_stack+0xc1/0x10c
+ ? _atomic_dec_and_lock+0x1ad/0x1ad
+ ? _raw_spin_lock_irqsave+0xa0/0xd2
+ print_address_description+0x86/0x26f
+ ? reg_process_hint+0x839/0x8aa [cfg80211]
+ kasan_report+0x241/0x29b
+ reg_process_hint+0x839/0x8aa [cfg80211]
+ reg_todo+0x204/0x5b9 [cfg80211]
+ process_one_work+0x55f/0x8d0
+ ? worker_detach_from_pool+0x1b5/0x1b5
+ ? _raw_spin_unlock_irq+0x65/0xdd
+ ? _raw_spin_unlock_irqrestore+0xf3/0xf3
+ worker_thread+0x5dd/0x841
+ ? kthread_parkme+0x1d/0x1d
+ kthread+0x270/0x285
+ ? pr_cont_work+0xe3/0xe3
+ ? rcu_read_unlock_sched_notrace+0xca/0xca
+ ret_from_fork+0x22/0x40
 
-Fixes: 7e2cf4feba05 ("qlcnic: change driver hardware interface mechanism")
-Signed-off-by: Shahed Shaikh <shahed.shaikh@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Allocated by task 2718:
+ set_track+0x63/0xfa
+ __kmalloc+0x119/0x1ac
+ regulatory_hint_country_ie+0x38/0x329 [cfg80211]
+ __cfg80211_connect_result+0x854/0xadd [cfg80211]
+ cfg80211_rx_assoc_resp+0x3bc/0x4f0 [cfg80211]
+smsc95xx v1.0.6
+ ieee80211_sta_rx_queued_mgmt+0x1803/0x7ed5 [mac80211]
+ ieee80211_iface_work+0x411/0x696 [mac80211]
+ process_one_work+0x55f/0x8d0
+ worker_thread+0x5dd/0x841
+ kthread+0x270/0x285
+ ret_from_fork+0x22/0x40
+
+Freed by task 89:
+ set_track+0x63/0xfa
+ kasan_slab_free+0x6a/0x87
+ kfree+0xdc/0x470
+ reg_process_hint+0x31e/0x8aa [cfg80211]
+ reg_todo+0x204/0x5b9 [cfg80211]
+ process_one_work+0x55f/0x8d0
+ worker_thread+0x5dd/0x841
+ kthread+0x270/0x285
+ ret_from_fork+0x22/0x40
+<snipped>
+
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic.h         |  8 +++++---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c |  3 ++-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h |  3 ++-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h      |  3 ++-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c      | 12 ++++++------
- 5 files changed, 17 insertions(+), 12 deletions(-)
+ net/wireless/reg.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
-index 81312924df14..0c443ea98479 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
-@@ -1800,7 +1800,8 @@ struct qlcnic_hardware_ops {
- 	int (*config_loopback) (struct qlcnic_adapter *, u8);
- 	int (*clear_loopback) (struct qlcnic_adapter *, u8);
- 	int (*config_promisc_mode) (struct qlcnic_adapter *, u32);
--	void (*change_l2_filter) (struct qlcnic_adapter *, u64 *, u16);
-+	void (*change_l2_filter)(struct qlcnic_adapter *adapter, u64 *addr,
-+				 u16 vlan, struct qlcnic_host_tx_ring *tx_ring);
- 	int (*get_board_info) (struct qlcnic_adapter *);
- 	void (*set_mac_filter_count) (struct qlcnic_adapter *);
- 	void (*free_mac_list) (struct qlcnic_adapter *);
-@@ -2064,9 +2065,10 @@ static inline int qlcnic_nic_set_promisc(struct qlcnic_adapter *adapter,
- }
- 
- static inline void qlcnic_change_filter(struct qlcnic_adapter *adapter,
--					u64 *addr, u16 id)
-+					u64 *addr, u16 vlan,
-+					struct qlcnic_host_tx_ring *tx_ring)
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 765dedb12361..24cfa2776f50 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -2661,11 +2661,12 @@ static void reg_process_hint(struct regulatory_request *reg_request)
  {
--	adapter->ahw->hw_ops->change_l2_filter(adapter, addr, id);
-+	adapter->ahw->hw_ops->change_l2_filter(adapter, addr, vlan, tx_ring);
- }
+ 	struct wiphy *wiphy = NULL;
+ 	enum reg_request_treatment treatment;
++	enum nl80211_reg_initiator initiator = reg_request->initiator;
  
- static inline int qlcnic_get_board_info(struct qlcnic_adapter *adapter)
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-index 569d54ededec..a79d84f99102 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-@@ -2135,7 +2135,8 @@ int qlcnic_83xx_sre_macaddr_change(struct qlcnic_adapter *adapter, u8 *addr,
- }
+ 	if (reg_request->wiphy_idx != WIPHY_IDX_INVALID)
+ 		wiphy = wiphy_idx_to_wiphy(reg_request->wiphy_idx);
  
- void qlcnic_83xx_change_l2_filter(struct qlcnic_adapter *adapter, u64 *addr,
--				  u16 vlan_id)
-+				  u16 vlan_id,
-+				  struct qlcnic_host_tx_ring *tx_ring)
- {
- 	u8 mac[ETH_ALEN];
- 	memcpy(&mac, addr, ETH_ALEN);
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h
-index b75a81246856..73fe2f64491d 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h
-@@ -550,7 +550,8 @@ int qlcnic_83xx_wrt_reg_indirect(struct qlcnic_adapter *, ulong, u32);
- int qlcnic_83xx_nic_set_promisc(struct qlcnic_adapter *, u32);
- int qlcnic_83xx_config_hw_lro(struct qlcnic_adapter *, int);
- int qlcnic_83xx_config_rss(struct qlcnic_adapter *, int);
--void qlcnic_83xx_change_l2_filter(struct qlcnic_adapter *, u64 *, u16);
-+void qlcnic_83xx_change_l2_filter(struct qlcnic_adapter *adapter, u64 *addr,
-+				  u16 vlan, struct qlcnic_host_tx_ring *ring);
- int qlcnic_83xx_get_pci_info(struct qlcnic_adapter *, struct qlcnic_pci_info *);
- int qlcnic_83xx_set_nic_info(struct qlcnic_adapter *, struct qlcnic_info *);
- void qlcnic_83xx_initialize_nic(struct qlcnic_adapter *, int);
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h
-index 4bb33af8e2b3..56a3bd9e37dc 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h
-@@ -173,7 +173,8 @@ int qlcnic_82xx_napi_add(struct qlcnic_adapter *adapter,
- 			 struct net_device *netdev);
- void qlcnic_82xx_get_beacon_state(struct qlcnic_adapter *);
- void qlcnic_82xx_change_filter(struct qlcnic_adapter *adapter,
--			       u64 *uaddr, u16 vlan_id);
-+			       u64 *uaddr, u16 vlan_id,
-+			       struct qlcnic_host_tx_ring *tx_ring);
- int qlcnic_82xx_config_intr_coalesce(struct qlcnic_adapter *,
- 				     struct ethtool_coalesce *);
- int qlcnic_82xx_set_rx_coalesce(struct qlcnic_adapter *);
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
-index 84dd83031a1b..9647578cbe6a 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
-@@ -268,13 +268,12 @@ static void qlcnic_add_lb_filter(struct qlcnic_adapter *adapter,
- }
- 
- void qlcnic_82xx_change_filter(struct qlcnic_adapter *adapter, u64 *uaddr,
--			       u16 vlan_id)
-+			       u16 vlan_id, struct qlcnic_host_tx_ring *tx_ring)
- {
- 	struct cmd_desc_type0 *hwdesc;
- 	struct qlcnic_nic_req *req;
- 	struct qlcnic_mac_req *mac_req;
- 	struct qlcnic_vlan_req *vlan_req;
--	struct qlcnic_host_tx_ring *tx_ring = adapter->tx_ring;
- 	u32 producer;
- 	u64 word;
- 
-@@ -301,7 +300,8 @@ void qlcnic_82xx_change_filter(struct qlcnic_adapter *adapter, u64 *uaddr,
- 
- static void qlcnic_send_filter(struct qlcnic_adapter *adapter,
- 			       struct cmd_desc_type0 *first_desc,
--			       struct sk_buff *skb)
-+			       struct sk_buff *skb,
-+			       struct qlcnic_host_tx_ring *tx_ring)
- {
- 	struct vlan_ethhdr *vh = (struct vlan_ethhdr *)(skb->data);
- 	struct ethhdr *phdr = (struct ethhdr *)(skb->data);
-@@ -335,7 +335,7 @@ static void qlcnic_send_filter(struct qlcnic_adapter *adapter,
- 		    tmp_fil->vlan_id == vlan_id) {
- 			if (jiffies > (QLCNIC_READD_AGE * HZ + tmp_fil->ftime))
- 				qlcnic_change_filter(adapter, &src_addr,
--						     vlan_id);
-+						     vlan_id, tx_ring);
- 			tmp_fil->ftime = jiffies;
- 			return;
- 		}
-@@ -350,7 +350,7 @@ static void qlcnic_send_filter(struct qlcnic_adapter *adapter,
- 	if (!fil)
- 		return;
- 
--	qlcnic_change_filter(adapter, &src_addr, vlan_id);
-+	qlcnic_change_filter(adapter, &src_addr, vlan_id, tx_ring);
- 	fil->ftime = jiffies;
- 	fil->vlan_id = vlan_id;
- 	memcpy(fil->faddr, &src_addr, ETH_ALEN);
-@@ -766,7 +766,7 @@ netdev_tx_t qlcnic_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
+-	switch (reg_request->initiator) {
++	switch (initiator) {
+ 	case NL80211_REGDOM_SET_BY_CORE:
+ 		treatment = reg_process_hint_core(reg_request);
+ 		break;
+@@ -2683,7 +2684,7 @@ static void reg_process_hint(struct regulatory_request *reg_request)
+ 		treatment = reg_process_hint_country_ie(wiphy, reg_request);
+ 		break;
+ 	default:
+-		WARN(1, "invalid initiator %d\n", reg_request->initiator);
++		WARN(1, "invalid initiator %d\n", initiator);
+ 		goto out_free;
  	}
  
- 	if (adapter->drv_mac_learn)
--		qlcnic_send_filter(adapter, first_desc, skb);
-+		qlcnic_send_filter(adapter, first_desc, skb, tx_ring);
- 
- 	tx_ring->tx_stats.tx_bytes += skb->len;
- 	tx_ring->tx_stats.xmit_called++;
+@@ -2698,7 +2699,7 @@ static void reg_process_hint(struct regulatory_request *reg_request)
+ 	 */
+ 	if (treatment == REG_REQ_ALREADY_SET && wiphy &&
+ 	    wiphy->regulatory_flags & REGULATORY_STRICT_REG) {
+-		wiphy_update_regulatory(wiphy, reg_request->initiator);
++		wiphy_update_regulatory(wiphy, initiator);
+ 		wiphy_all_share_dfs_chan_state(wiphy);
+ 		reg_check_channels();
+ 	}
 -- 
 2.17.1
 
