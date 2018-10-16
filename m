@@ -2,96 +2,79 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CAAC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A3CC5ACCD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:51:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA03A2148C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:50:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E06842148D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:51:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eYm44XIl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA03A2148C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ty1TEPzl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E06842148D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727396AbeJQHnB (ORCPT
+        id S1727374AbeJQHoH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:43:01 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44331 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbeJQHnB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:43:01 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 63-v6so27482413wra.11
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=hPIoSrvRcbSJCz3GHNF0wOBtHTQ3lAluXDKcZbwwSrs=;
-        b=eYm44XIl7KwakrfWqtvampCEsK8d1lgWQrMXMTLD/QEmXFEwUoSEoDxQ5IFdD/0krn
-         ZkExuLjHF+6UKuOQ3BEwmlkK9Y5okwOuCHggCErkx6WcO4aIPg16fnn3vT1rjVNkZvf7
-         w3VY0jGmG0O+OW5YTuyVORfbbcuEm0Co0JzYY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=hPIoSrvRcbSJCz3GHNF0wOBtHTQ3lAluXDKcZbwwSrs=;
-        b=tx/0J/C2QE/ECCBl6dBx82YR4DfZPSeCnNREUfhXmYrOQtylS0NglkkwhE6p9q6kAS
-         lx6w1O6T2Vhd1EIOrK34XRV4TaUltOooUVxetjdVPHYzEmGD/zBVU+IMl9zbVL5H81Xg
-         ipmv97wO4/Tdy8eVEXmu6q4LCbQJIsM5g8lOOpNslfJV3YHok0izCUn47oUy675JbLxy
-         B16RXi4ZPUCI3awFTZzY8jGfzEXEQekcaTHk3faIGWSFaKTkAIlsYpQzLX3i5MxUV66h
-         /GgKwlEcYReagcLcTCoEFj7XwNzfReVAtVmPVWxsbFHHhz1zeCL6EOaPZNdBai+8xNhd
-         ktyQ==
-X-Gm-Message-State: ABuFfojooACIeMEgEaWDqOMKAksbmHzt7qaDlOmFJ8uh5IT5Oj54bBxE
-        QJ8B7VVbFS0o2UA8t49/TWCoOT1uSdgZPfcYUz6GTQ==
-X-Google-Smtp-Source: ACcGV60ad4W/ZrREyTlmFc1segtd+WpFCss9bRsW9Y9fCT9TNoIJYahDq+qVDx2DxIBjjDUZ0Nd1VABRQZRwdEVwSYM=
-X-Received: by 2002:adf:a194:: with SMTP id u20-v6mr13092008wru.50.1539733811673;
- Tue, 16 Oct 2018 16:50:11 -0700 (PDT)
+        Wed, 17 Oct 2018 03:44:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727088AbeJQHoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 03:44:07 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE3A12148C;
+        Tue, 16 Oct 2018 23:51:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539733878;
+        bh=KAjQLG4gba45Z89y69IXYD4/VU7gmuJ8Jb7gk8YMbC0=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=ty1TEPzlTr8NdpBkTx/1F94tLIUAPCRPD4mu0eEh3gYzHktTgXmMHUzH2Gy5TJu4j
+         nLvzmxn9EAiHXW5NCR7bEReiZj4xKkxOLLvoEqZghJz0oJsvw0++pxmWYPmSpKm9Jz
+         P61EGB78v/XkoO1nUPmvOYM7e6oKdpQG4G+9mAFA=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:a1c:b485:0:0:0:0:0 with HTTP; Tue, 16 Oct 2018 16:50:10
- -0700 (PDT)
-In-Reply-To: <CALAqxLXYTZZ12haKHGwnTBqPgkv_JF8=fiiJrD9OWRFdcXf0Sw@mail.gmail.com>
-References: <1538434698-1042-1-git-send-email-john.stultz@linaro.org>
- <yq17eiiwobx.fsf@oracle.com> <CALAqxLXYTZZ12haKHGwnTBqPgkv_JF8=fiiJrD9OWRFdcXf0Sw@mail.gmail.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Tue, 16 Oct 2018 16:50:10 -0700
-Message-ID: <CALAqxLX0Q3Yo-75CDdG4g7i5G=i5OPi01ApYyJO6wTn4CSCkPA@mail.gmail.com>
-Subject: Re: [RESEND][PATCH] scsi: ufs: Fix hynix ufs bug with quirk on hi36xx SoC
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>, Wei Li <liwei213@huawei.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181010181838.26923-1-gregory.clement@bootlin.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+References: <20181010181838.26923-1-gregory.clement@bootlin.com>
+Message-ID: <153973387816.5275.3801197644507437368@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2] clk: mvebu: armada-37xx-tbg: Switch to clk_get and balance it
+ in probe
+Date:   Tue, 16 Oct 2018 16:51:18 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 3:48 PM, John Stultz <john.stultz@linaro.org> wrote:
-> On Mon, Oct 15, 2018 at 8:41 PM, Martin K. Petersen
-> <martin.petersen@oracle.com> wrote:
->>
->> John,
->>
->>> Hynix ufs has deviations on hi36xx platform which will result in ufs
->>> bursts transfer failures.
->>
->> Is this specific to the particular implementation on hi36xx or all SK
->> Hynix implementations?
->
-> I'd have to defer to Wei Li on that question.
->
-> Wei Li?
+Quoting Gregory CLEMENT (2018-10-10 11:18:38)
+> The parent clock is get only to have its name, and then the clock is no
+> more used, so we can safely free it using clk_put. Furthermore as between
+> the successful devm_clk_get() and the devm_clk_put() call we don't exit
+> the probe function in error so I can use non managed version of clk_get()
+> and clk_put().
+> =
 
-Just to short-cut things a bit, as this is probably an obvious
-followup: if it is hi36xx specific, how would you suggest a such a
-targeted quirk be added?  I'm not sure I see how to get to the
-ufs_dev_desc from the ufs-hisi.c code.
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
 
-thanks
--john
+Applied to clk-next
+
