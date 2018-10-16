@@ -2,97 +2,143 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D680C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65666C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6292F208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:46:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6292F208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 292C32083C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:46:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E8BClnVv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 292C32083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbeJPPfU (ORCPT
+        id S1727114AbeJPPf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 11:35:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56844 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726729AbeJPPfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 11:35:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A7184AF43;
-        Tue, 16 Oct 2018 07:46:09 +0000 (UTC)
-Date:   Tue, 16 Oct 2018 08:46:06 +0100
-From:   Mel Gorman <mgorman@suse.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Argangeli <andrea@kernel.org>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
- mappings
-Message-ID: <20181016074606.GH6931@suse.de>
-References: <20181005232155.GA2298@redhat.com>
- <alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com>
- <20181009094825.GC6931@suse.de>
- <20181009122745.GN8528@dhcp22.suse.cz>
- <20181009130034.GD6931@suse.de>
- <20181009142510.GU8528@dhcp22.suse.cz>
- <20181009230352.GE9307@redhat.com>
- <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
- <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
+        Tue, 16 Oct 2018 11:35:59 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36200 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbeJPPf6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 11:35:58 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a8-v6so22064395wmf.1;
+        Tue, 16 Oct 2018 00:46:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Xv8gWVy3wd6+MpNgWaYlvfQsA9AhGYjwhXzQYX59txQ=;
+        b=E8BClnVv02W1JldN1APp+pSQAZXVUI8VY5xjeFT2mB2J46l1sjTWhdef8etfWlmS3I
+         Qolj7qkFn9sHEJ+/qSrBSpuunGd72XQXJT9dW4hc6/GNgamx9K60xD1/OuiNsGwLKoTu
+         BFjvV9iq2Kct+iQSc1dHncjc6p4lkmTGOhG71/c/Y563PDQ8NzQEMKASG3KGpa/INc8U
+         WQBwjIZsidZXM2JmwKLhmITX3yB4zn5U732ne80ymma/0kAoBGVB7MW8JdmV6WxoHeol
+         2OySg/7w+tmX6LEVEaaZMHYkTxcXIVuM/6yDGZsP9WzbwBx4C1O4b52wJisHJIutdamj
+         cwWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Xv8gWVy3wd6+MpNgWaYlvfQsA9AhGYjwhXzQYX59txQ=;
+        b=n1DjBdgU0mEX9tv5NzV60KPzODqLUV+n9jWJGjuBFFELczz5w33m9z3aQ2bzTGlNNo
+         KUoE8c5VfwjdYzELJOxpZl85aXE5pOkWdc/MDBhFGXFKAhw76kMu+VHBThxZIczjlLaG
+         zzhFRpAMTvz9Q87bUHanoXA08BuLnQsd3X09c7+afBCtkXf4ONDh5X6aLbGWJX5pwywh
+         +KIH2GYjq38rZI2uVkbecCoACUUWxK7AJVAoYtq+gLtc75dB3GMbuZtZ7h9zxWln8BJB
+         aSpVH5yvht0UrrathRosbGRBM4sqAOqkrhxddTIp3BHtBbi9UO9Fv2jjSz9V6ohTXafv
+         DlmA==
+X-Gm-Message-State: ABuFfojViKkcTEopPVv4ukG7eWdHD1hOIZ6oTD1F2h2atKORWVoL6jzy
+        jz7bIsyY4mprs5JNofXO7dCNlRP5
+X-Google-Smtp-Source: ACcGV62KQRGUxRIYKkkSrKxWuHVKn3RTeQCuuMRrzF7dmNYtqeP97NTAsrkfNWC5KW9GbikxLHTXWA==
+X-Received: by 2002:a1c:3c4:: with SMTP id 187-v6mr15450217wmd.90.1539676008291;
+        Tue, 16 Oct 2018 00:46:48 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id h78-v6sm13564906wmd.4.2018.10.16.00.46.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 00:46:47 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 09:46:45 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Message-ID: <20181016074645.GA41162@gmail.com>
+References: <20181008190341.5e396491@canb.auug.org.au>
+ <20181015181445.19448cbc@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181015181445.19448cbc@canb.auug.org.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 03:44:59PM -0700, Andrew Morton wrote:
-> On Mon, 15 Oct 2018 15:30:17 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
-> 
-> > At the risk of beating a dead horse that has already been beaten, what are 
-> > the plans for this patch when the merge window opens?
-> 
-> I'll hold onto it until we've settled on something.  Worst case,
-> Andrea's original is easily backportable.
-> 
 
-I consider this to be an unfortunate outcome. On the one hand, we have a
-problem that three people can trivially reproduce with known test cases
-and a patch shown to resolve the problem. Two of those three people work
-on distributions that are exposed to a large number of users. On the
-other, we have a problem that requires the system to be in a specific
-state and an unknown workload that suffers badly from the remote access
-penalties with a patch that has review concerns and has not been proven
-to resolve the trivial cases. In the case of distributions, the first
-patch addresses concerns with a common workload where on the other hand
-we have an internal workload of a single company that is affected --
-which indirectly affects many users admittedly but only one entity directly.
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-At the absolute minimum, a test case for the "system fragmentation incurs
-access penalties for a workload" scenario that could both replicate the
-fragmentation and demonstrate the problem should have been available before
-the patch was rejected.  With the test case, there would be a chance that
-others could analyse the problem and prototype some fixes. The test case
-was requested in the thread and never produced so even if someone were to
-prototype fixes, it would be dependant on a third party to test and produce
-data which is a time-consuming loop. Instead, we are more or less in limbo.
+> Hi all,
+> 
+> On Mon, 8 Oct 2018 19:03:41 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the akpm tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > arch/x86/mm/kaslr.c:26:10: fatal error: linux/bootmem.h: No such file or directory
+> >  #include <linux/bootmem.h>
+> >           ^~~~~~~~~~~~~~~~~
+> > 
+> > Caused by patch
+> > 
+> >   "mm: remove include/linux/bootmem.h"
+> > 
+> > interacting with commit
+> > 
+> >   3a387c6d96e6 ("x86/kaslr, ACPI/NUMA: Fix KASLR build error")
+> > 
+> > from the tip tree.
+> > 
+> > I have added the following patch for today:
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 8 Oct 2018 18:57:00 +1100
+> > Subject: [PATCH] x86/kaslr, ACPI/NUMA: fix for linux/bootmem.h removal
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  arch/x86/mm/kaslr.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+> > index b3471388288d..ad80bdc690c1 100644
+> > --- a/arch/x86/mm/kaslr.c
+> > +++ b/arch/x86/mm/kaslr.c
+> > @@ -23,7 +23,7 @@
+> >  #include <linux/kernel.h>
+> >  #include <linux/init.h>
+> >  #include <linux/random.h>
+> > -#include <linux/bootmem.h>
+> > +#include <linux/memblock.h>
+> >  
+> >  #include <asm/pgalloc.h>
+> >  #include <asm/pgtable.h>
+> > -- 
+> 
+> So the above tip tree patch no longer exists, so this one is also no
+> longer needed and I have removed it from the akpm tree today.
 
--- 
-Mel Gorman
-SUSE Labs
+Yeah, we are reworking this series in WIP.x86/boot, it probably won't 
+make v4.20 so I removed it from -next.
+
+Thanks,
+
+	Ingo
