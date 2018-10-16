@@ -2,104 +2,103 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D730EC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E770C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CFCB2083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:45:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CFCB2083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id B93FF2083C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:46:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B93FF2083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbeJPWgS (ORCPT
+        id S1727220AbeJPWhN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:36:18 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58261 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbeJPWgS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:36:18 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gCQai-0007Ov-Ko; Tue, 16 Oct 2018 16:45:00 +0200
-Date:   Tue, 16 Oct 2018 16:45:00 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Juri Lelli <juri.lelli@gmail.com>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        nstange@suse.de, syzkaller-bugs@googlegroups.com,
-        juri.lelli@redhat.com
-Subject: Re: INFO: rcu detected stall in do_idle
-In-Reply-To: <20181016144045.GF9130@localhost.localdomain>
-Message-ID: <alpine.DEB.2.21.1810161643540.7787@nanos.tec.linutronix.de>
-References: <000000000000a4ee200578172fde@google.com> <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de> <20181016140322.GB3121@hirez.programming.kicks-ass.net> <20181016144045.GF9130@localhost.localdomain>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 16 Oct 2018 18:37:13 -0400
+Received: from mga09.intel.com ([134.134.136.24]:8924 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727032AbeJPWhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 18:37:13 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 07:46:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,388,1534834800"; 
+   d="scan'208";a="99673630"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 16 Oct 2018 07:46:23 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 16 Oct 2018 17:46:22 +0300
+Date:   Tue, 16 Oct 2018 17:46:22 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/5] device property: Introducing software nodes
+Message-ID: <20181016144622.GG24771@kuha.fi.intel.com>
+References: <20181012113934.29942-1-heikki.krogerus@linux.intel.com>
+ <CAHp75VcWu_6jco6k5to1x1QNG8Ad893J81TPpTbJkLcqw=RR=g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VcWu_6jco6k5to1x1QNG8Ad893J81TPpTbJkLcqw=RR=g@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Oct 2018, Juri Lelli wrote:
-> On 16/10/18 16:03, Peter Zijlstra wrote:
-> > On Tue, Oct 16, 2018 at 03:24:06PM +0200, Thomas Gleixner wrote:
-> > > It does reproduce here but with a kworker stall. Looking at the reproducer:
-> > > 
-> > >   *(uint32_t*)0x20000000 = 0;
-> > >   *(uint32_t*)0x20000004 = 6;
-> > >   *(uint64_t*)0x20000008 = 0;
-> > >   *(uint32_t*)0x20000010 = 0;
-> > >   *(uint32_t*)0x20000014 = 0;
-> > >   *(uint64_t*)0x20000018 = 0x9917;
-> > >   *(uint64_t*)0x20000020 = 0xffff;
-> > >   *(uint64_t*)0x20000028 = 0;
-> > >   syscall(__NR_sched_setattr, 0, 0x20000000, 0);
-> > > 
-> > > which means:
-> > > 
-> > >   struct sched_attr {
-> > >   	 .size		= 0,
-> > > 	 .policy	= 6,
-> > > 	 .flags		= 0,
-> > > 	 .nice		= 0,
-> > > 	 .priority	= 0,
-> > > 	 .deadline	= 0x9917,
-> > > 	 .runtime	= 0xffff,
-> > > 	 .period	= 0,
-> > >   }
-> > > 
-> > > policy 6 is SCHED_DEADLINE
-> > > 
-> > > That makes the thread hog the CPU and prevents all kind of stuff to run.
-> > > 
-> > > Peter, is that expected behaviour?
-> > 
-> > Sorta, just like FIFO-99 while(1);. Except we should be rejecting the
-> > above configuration, because of the rule:
-> > 
-> >   runtime <= deadline <= period
-> > 
-> > Juri, where were we supposed to check that?
+On Tue, Oct 16, 2018 at 05:35:50PM +0300, Andy Shevchenko wrote:
+> On Fri, Oct 12, 2018 at 2:41 PM Heikki Krogerus
+> <heikki.krogerus@linux.intel.com> wrote:
+> >
+> > Hi guys,
+> >
+> > To continue the discussion started by Dmitry [1], this is my proposal
+> > that I mentioned in my last mail. In short, the idea is that instead
+> > of trying to extend the support for the currently used struct
+> > property_set, I'm proposing that we introduce a completely new,
+> > independent type of fwnode, and replace the struct property_set with
+> > it. I'm calling the type "software node" here.
+> >
+> > The reason for a complete separation of the software nodes from the
+> > generic property handling code is the need to be able to create the
+> > nodes independently from the devices that they are bind to.
+> >
+> > The way this works is that every node that is created will have a
+> > kobject registered. That will take care the ref counting for us, and
+> > also allow us to for example display the properties in sysfs.
+> >
+> > There are a few more details in patch 3/5 about the software nodes in
+> > the commit message.
+> >
+> > [1] https://lkml.org/lkml/2018/9/17/1067
 > 
-> Not if period == 0.
+> In private discussion I brought a concern that we exposed properties
+> as a part of ABI, but at the same time we have not strict rules which
+> might lead to ambiguous reading, e.g. there is no type exported and
+> thus no possibility to tell what kind of property it is.
 > 
-> https://elixir.bootlin.com/linux/latest/source/kernel/sched/deadline.c#L2632
-> https://elixir.bootlin.com/linux/latest/source/kernel/sched/deadline.c#L2515
+> Examples:
+> 1. 0x1 and 0x1 ??? are they of the same type?
+> 2. 0x1 ??? is it an array or single value?
+> 3. 0x12345678 ??? is it string or hex?
+> 4. 25 ??? is it hex or decimal?
 > 
-> Now, maybe we should be checking also against the default 95% cap?
+> Until these will not be solved, better to not to expose properties to userspace.
 
-If the cap is active, then yes. But you want to use the actual
-configuration not the default.
+I agree. I'll drop that part from my final version.
 
-Thanks,
 
-	tglx
+Thanks Andy,
+
+-- 
+heikki
