@@ -2,127 +2,151 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA7EC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1211C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14FF62145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:49:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14FF62145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7485721470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 20:51:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5QyBWaK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7485721470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeJQElx (ORCPT
+        id S1727127AbeJQEnV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 00:41:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41906 "EHLO mx1.redhat.com"
+        Wed, 17 Oct 2018 00:43:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726048AbeJQElx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 00:41:53 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726048AbeJQEnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 00:43:21 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6754F3084259;
-        Tue, 16 Oct 2018 20:49:42 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B126663BA3;
-        Tue, 16 Oct 2018 20:49:37 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] sysctl: handle overflow for file-max
-To:     Christian Brauner <christian@brauner.io>, keescook@chromium.org,
-        linux-kernel@vger.kernel.org
-Cc:     ebiederm@xmission.com, mcgrof@kernel.org,
-        akpm@linux-foundation.org, joe.lawrence@redhat.com,
-        linux@dominikbrodowski.net, viro@zeniv.linux.org.uk,
-        adobriyan@gmail.com, linux-api@vger.kernel.org
-References: <20181016195337.2440-1-christian@brauner.io>
- <20181016195337.2440-3-christian@brauner.io>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <e8d3d39a-6880-486b-84fc-7fd0848bb4a3@redhat.com>
-Date:   Tue, 16 Oct 2018 16:49:37 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 120E62145D;
+        Tue, 16 Oct 2018 20:51:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539723069;
+        bh=PDOqq6tG0BdvR+bbHD3tslL8kNeYxtxJZOpmO2xD98s=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=J5QyBWaKO6T42/97kirKrluHZvc1PtzbaJdzLw4j0m78HuR8QmRE8ST4LOFYD+HHs
+         fFbK/GfXkb9AmMrLAbUQwZgPhg5Uaylt7GD74yBeZwXK6OnUKJXVKkAZZ5EWUNmZ46
+         GuhaNU+pI31zuztsrj2eRqONEtoqUNjRr0wsT5jU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20181016195337.2440-3-christian@brauner.io>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 16 Oct 2018 20:49:42 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <0b014d85-9988-0bf5-7b72-911dbbcdadfc@codeaurora.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Joel Fernandes \(Google\)" <joel@joelfernandes.org>,
+        Geliang Tang <geliangtang@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pramod Gurav <gpramod@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
+ <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
+ <20181016141610.639b9000@gandalf.local.home>
+ <accdce6d-8fd2-9f15-d4cd-704cbf0b32eb@codeaurora.org>
+ <20181016144123.24c47b38@gandalf.local.home>
+ <7781815e-cba2-9e36-db6d-268298747876@codeaurora.org>
+ <20181016150328.3450d718@gandalf.local.home>
+ <c94103d2-ed5d-bf43-fc71-c60e108f303e@codeaurora.org>
+ <20181016151516.786b16cc@gandalf.local.home>
+ <0b014d85-9988-0bf5-7b72-911dbbcdadfc@codeaurora.org>
+Message-ID: <153972306834.5275.7510298070540576604@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
+Date:   Tue, 16 Oct 2018 13:51:08 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/2018 03:53 PM, Christian Brauner wrote:
-> Currently, when writing
->
-> echo 18446744073709551616 > /proc/sys/fs/file-max
->
-> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
-> crashes the system.
-> This commit sets the max and min value for file-max and returns -EINVAL
-> when a long int is exceeded. Any higher value cannot currently be used as
-> the percpu counters are long ints and not unsigned integers. This behavior
-> also aligns with other tuneables that return -EINVAL when their range is
-> exceeded. See e.g. [1], [2] and others.
->
-> [1]: fb910c42cceb ("sysctl: check for UINT_MAX before unsigned int min/max")
-> [2]: 196851bed522 ("s390/topology: correct topology mode proc handler")
->
-> Cc: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Christian Brauner <christian@brauner.io>
-> ---
-> v2->v1:
-> - consistenly fail on overflow
-> v0->v1:
-> - if max value is < than ULONG_MAX use max as upper bound
-> - (Dominik) remove double "the" from commit message
-> ---
->  kernel/sysctl.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 7d98e02e5d72..0874001e5435 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
->  static int __maybe_unused two = 2;
->  static int __maybe_unused four = 4;
->  static unsigned long one_ul = 1;
-> +static unsigned long long_max = LONG_MAX;
->  static int one_hundred = 100;
->  static int one_thousand = 1000;
->  #ifdef CONFIG_PRINTK
-> @@ -1696,6 +1697,8 @@ static struct ctl_table fs_table[] = {
->  		.maxlen		= sizeof(files_stat.max_files),
->  		.mode		= 0644,
->  		.proc_handler	= proc_doulongvec_minmax,
-> +		.extra1		= &zero,
-> +		.extra2		= &long_max,
->  	},
->  	{
->  		.procname	= "nr_open",
-> @@ -2797,6 +2800,10 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
->  				break;
->  			if (neg)
->  				continue;
-> +			if ((max && val > *max) || (min && val < *min)) {
-> +				err = -EINVAL;
-> +				break;
-> +			}
->  			val = convmul * val / convdiv;
+Quoting Sai Prakash Ranjan (2018-10-16 12:35:57)
+> On 10/17/2018 12:45 AM, Steven Rostedt wrote:
+> > On Wed, 17 Oct 2018 00:36:05 +0530
+> > Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
+> > =
 
-Should the conversion be done before the min/max check?
+> >> On 10/17/2018 12:33 AM, Steven Rostedt wrote:
+> >>> On Wed, 17 Oct 2018 00:31:03 +0530
+> >>> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
+> >>>    =
 
->  			if ((min && val < *min) || (max && val > *max))
->  				continue;
+> >>>> Haa seems like you are right! With "ftrace=3Dfunction
+> >>>> ftrace_filter=3Dmsm_read" , I can trigger the crash, but
+> >>>> sadly "ftrace_notrace=3Dmsm_read" also crashes.
+> >>>
+> >>> So there's more than one problem area.
+> >>>
+> >>> What about ftrace_notrace=3Dm*
+> >>>
+> >>> ?
+> >>>    =
 
-You may be able to drop the above statement.
+> >>
+> >> That too crashes.
+> >>
+> > =
 
-Cheers,
-Longman
+> > Which compiler are you using and can you send me your config.
+> > =
+
+> Config attached.
+> =
+
+> Compiler: aarch64-linux-gnu-gcc (Linaro GCC 6.3-2017.02) 6.3.1 20170109
+> =
+
+> > I wonder if there's something screwing up with the way ftrace nops are
+> > working on this board.
+> > =
+
+> > A couple things of note, 1) it works fine after boot up. 2) it crashes
+> > in the initcall code, so it's not due to ftrace being enabled too early.
+> > =
+
+> > I'd like to see the full command line as well. I bet if you remove the
+> > qcom,msm-uartdm from the command line, and had just ftrace=3Dfunction, =
+it
+> > may also boot fine too. Can you try that?
+> > =
+
+> =
+
+> Kernel command line: root=3D/dev/disk/by-partlabel/rootfs rw rootwait =
+
+> ftrace=3Dfunction ftrace_notrace=3Dm* earlycon console=3DttyMSM0,115200n8
+> =
+
+> qcom,msm-uartdm is not in command line, it is the earlycon. So without =
+
+> earlycon(bootconsole), board boots fine as we discussed earlier.
+> =
+
+
+Have you tried with earlycon and no ftrace things on the commandline?
+
+ root=3D/dev/disk/by-partlabel/rootfs rw rootwait earlycon console=3DttyMSM=
+0,115200n8
+
+If earlycon is causing problems, it sounds like this may be another case
+of earlycon uart handing off to the uart driver and that failing because
+something gets printed while the uart is transitioning from the earlycon
+console to the kernel boot console. I recall the uart would trample on
+itself in interesting ways.
 
