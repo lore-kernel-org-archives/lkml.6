@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 187EDC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9B6C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D520A2098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4A8B2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFHEDxjg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D520A2098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtNIzq3y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4A8B2089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729361AbeJQBGp (ORCPT
+        id S1729380AbeJQBGr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:06:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50774 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:06:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728331AbeJQBGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:06:44 -0400
+        id S1727182AbeJQBGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:06:46 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB30020866;
-        Tue, 16 Oct 2018 17:15:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8664220866;
+        Tue, 16 Oct 2018 17:15:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710120;
-        bh=TfCXKbXHcpaFlDe/Odv7RXaZihUGvRRbNNKBGr4yBjY=;
+        s=default; t=1539710123;
+        bh=W/ZaNt1vcv3XCCHC19Z0meflUBvX4y+pZQwwMCDR1G8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uFHEDxjgYQznyQ4evcrYDO9WHCDCwTIJDwzf1XIVq9gjYKMNyRsCZBiU9rChY9Ee9
-         PTB1+p1kiy/j//n1/pleJoOZ4Nfg1ATSmJcsHWn9dXHqbYJP20LT566NnS4YP2BBvR
-         ov5dyJnlSvbrWkLap379s+yIyTxOb2Osw13oee2E=
+        b=JtNIzq3y2VZ+pF4AbBR5J5QP1MIUeJyTH8LW2abm9yBR99l6ewV4rHpiajlu3B6vK
+         +t7FZzgtPwKLpYGG7VLCKC6enYVq0SQ7s1M0bLafjbfL1JyqslCltqPgPgNiHJzVkd
+         2c9DYlUDkAeg1mBvLXT9d+jzyfa60l7qWg9Bzsbc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        Yong Zhao <Yong.Zhao@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
+        stable@vger.kernel.org, Johan Hedberg <johan.hedberg@intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 108/135] drm/amdkfd: Fix ATS capablity was not reported correctly on some APUs
-Date:   Tue, 16 Oct 2018 19:05:38 +0200
-Message-Id: <20181016170522.803349109@linuxfoundation.org>
+Subject: [PATCH 4.18 082/135] Bluetooth: SMP: Fix trying to use non-existent local OOB data
+Date:   Tue, 16 Oct 2018 19:05:12 +0200
+Message-Id: <20181016170520.860885266@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -64,103 +63,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yong Zhao <Yong.Zhao@amd.com>
+From: Johan Hedberg <johan.hedberg@intel.com>
 
-[ Upstream commit 44d8cc6f1a905e4bb1d4221a898abb0d7e9d100a ]
+[ Upstream commit 94f14e4728125f979629b2b020d31cd718191626 ]
 
-Because CRAT_CU_FLAGS_IOMMU_PRESENT was not set in some BIOS crat, we
-need to workaround this.
+A remote device may claim that it has received our OOB data, even
+though we never geneated it. Add a new flag to track whether we
+actually have OOB data, and ignore the remote peer's flag if haven't
+generated OOB data.
 
-For future compatibility, we also overwrite the bit in capability according
-to the value of needs_iommu_device.
-
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Yong Zhao <Yong.Zhao@amd.com>
-Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_iommu.c    |   13 ++++++++++++-
- drivers/gpu/drm/amd/amdkfd/kfd_priv.h     |    1 +
- drivers/gpu/drm/amd/amdkfd/kfd_topology.c |   21 ++++++++++++++++-----
- 3 files changed, 29 insertions(+), 6 deletions(-)
+ net/bluetooth/smp.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdkfd/kfd_iommu.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_iommu.c
-@@ -62,9 +62,20 @@ int kfd_iommu_device_init(struct kfd_dev
- 	struct amd_iommu_device_info iommu_info;
- 	unsigned int pasid_limit;
- 	int err;
-+	struct kfd_topology_device *top_dev;
+--- a/net/bluetooth/smp.c
++++ b/net/bluetooth/smp.c
+@@ -83,6 +83,7 @@ enum {
  
--	if (!kfd->device_info->needs_iommu_device)
-+	top_dev = kfd_topology_device_by_id(kfd->id);
-+
-+	/*
-+	 * Overwrite ATS capability according to needs_iommu_device to fix
-+	 * potential missing corresponding bit in CRAT of BIOS.
-+	 */
-+	if (!kfd->device_info->needs_iommu_device) {
-+		top_dev->node_props.capability &= ~HSA_CAP_ATS_PRESENT;
- 		return 0;
-+	}
-+
-+	top_dev->node_props.capability |= HSA_CAP_ATS_PRESENT;
+ struct smp_dev {
+ 	/* Secure Connections OOB data */
++	bool			local_oob;
+ 	u8			local_pk[64];
+ 	u8			local_rand[16];
+ 	bool			debug_key;
+@@ -599,6 +600,8 @@ int smp_generate_oob(struct hci_dev *hde
  
- 	iommu_info.flags = 0;
- 	err = amd_iommu_device_info(kfd->pdev, &iommu_info);
---- a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
-@@ -796,6 +796,7 @@ int kfd_topology_add_device(struct kfd_d
- int kfd_topology_remove_device(struct kfd_dev *gpu);
- struct kfd_topology_device *kfd_topology_device_by_proximity_domain(
- 						uint32_t proximity_domain);
-+struct kfd_topology_device *kfd_topology_device_by_id(uint32_t gpu_id);
- struct kfd_dev *kfd_device_by_id(uint32_t gpu_id);
- struct kfd_dev *kfd_device_by_pci_dev(const struct pci_dev *pdev);
- int kfd_topology_enum_kfd_devices(uint8_t idx, struct kfd_dev **kdev);
---- a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
-@@ -63,22 +63,33 @@ struct kfd_topology_device *kfd_topology
- 	return device;
+ 	memcpy(rand, smp->local_rand, 16);
+ 
++	smp->local_oob = true;
++
+ 	return 0;
  }
  
--struct kfd_dev *kfd_device_by_id(uint32_t gpu_id)
-+struct kfd_topology_device *kfd_topology_device_by_id(uint32_t gpu_id)
- {
--	struct kfd_topology_device *top_dev;
--	struct kfd_dev *device = NULL;
-+	struct kfd_topology_device *top_dev = NULL;
-+	struct kfd_topology_device *ret = NULL;
+@@ -1785,7 +1788,7 @@ static u8 smp_cmd_pairing_req(struct l2c
+ 	 * successfully received our local OOB data - therefore set the
+ 	 * flag to indicate that local OOB is in use.
+ 	 */
+-	if (req->oob_flag == SMP_OOB_PRESENT)
++	if (req->oob_flag == SMP_OOB_PRESENT && SMP_DEV(hdev)->local_oob)
+ 		set_bit(SMP_FLAG_LOCAL_OOB, &smp->flags);
  
- 	down_read(&topology_lock);
+ 	/* SMP over BR/EDR requires special treatment */
+@@ -1967,7 +1970,7 @@ static u8 smp_cmd_pairing_rsp(struct l2c
+ 	 * successfully received our local OOB data - therefore set the
+ 	 * flag to indicate that local OOB is in use.
+ 	 */
+-	if (rsp->oob_flag == SMP_OOB_PRESENT)
++	if (rsp->oob_flag == SMP_OOB_PRESENT && SMP_DEV(hdev)->local_oob)
+ 		set_bit(SMP_FLAG_LOCAL_OOB, &smp->flags);
  
- 	list_for_each_entry(top_dev, &topology_device_list, list)
- 		if (top_dev->gpu_id == gpu_id) {
--			device = top_dev->gpu;
-+			ret = top_dev;
- 			break;
- 		}
+ 	smp->prsp[0] = SMP_CMD_PAIRING_RSP;
+@@ -3230,6 +3233,7 @@ static struct l2cap_chan *smp_add_cid(st
+ 		return ERR_CAST(tfm_ecdh);
+ 	}
  
- 	up_read(&topology_lock);
- 
--	return device;
-+	return ret;
-+}
-+
-+struct kfd_dev *kfd_device_by_id(uint32_t gpu_id)
-+{
-+	struct kfd_topology_device *top_dev;
-+
-+	top_dev = kfd_topology_device_by_id(gpu_id);
-+	if (!top_dev)
-+		return NULL;
-+
-+	return top_dev->gpu;
- }
- 
- struct kfd_dev *kfd_device_by_pci_dev(const struct pci_dev *pdev)
++	smp->local_oob = false;
+ 	smp->tfm_aes = tfm_aes;
+ 	smp->tfm_cmac = tfm_cmac;
+ 	smp->tfm_ecdh = tfm_ecdh;
 
 
