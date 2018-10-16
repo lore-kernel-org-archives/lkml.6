@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BA7C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C31F2C070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FBC621476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 840AA2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPi5KINl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FBC621476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1KOzjt9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 840AA2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729142AbeJPMCl (ORCPT
+        id S1729171AbeJPMCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50638 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729122AbeJPMCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:39 -0400
+        id S1729132AbeJPMCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:41 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D1C621477;
-        Tue, 16 Oct 2018 04:14:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEB3F21480;
+        Tue, 16 Oct 2018 04:14:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663256;
-        bh=U6WaY/cuWgCQ//b/Mq00UtTjCGrnHHW/WgTN/OrIwpg=;
+        s=default; t=1539663258;
+        bh=MVDFGPWpiCUbM8AepxT504T9IP1nkkq+OdXQufTCqC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IPi5KINlFhJha0U/7BWf+vRVqa26yvZz59kCfhSLwI6nLClr7vFK38hYQMueb1XKy
-         NFf2F1BDaBJ6pjgrmuOpDTH5NPB+SlrnwYVma7F3vp1VETeTNLVWWghw5yuHfdBbEV
-         hWBraZYloDXWs3C2leEk0BxdSBlbYfZA61SAEBlQ=
+        b=F1KOzjt9BuvRqnxkJ/0bxg1iWOSa45JS+pf4eo+kZaOJni93AsxS8bW4zRI9CFU/0
+         QKJ+j8PZTo09xmP0ml05K4s6Hctul000iagsUlT0L1Njb9nMJrB5MC2vDQKuVUX308
+         cXGqBPacEiwjUIslzQ0AWJsfSduWhQPw9D3fKMVY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sean Tranchetti <stranche@codeaurora.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+Cc:     Steve Capper <steve.capper@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 13/61] xfrm: validate template mode
-Date:   Tue, 16 Oct 2018 00:13:15 -0400
-Message-Id: <20181016041403.135678-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 15/61] arm64: hugetlb: Fix handling of young ptes
+Date:   Tue, 16 Oct 2018 00:13:17 -0400
+Message-Id: <20181016041403.135678-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -53,64 +53,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Tranchetti <stranche@codeaurora.org>
+From: Steve Capper <steve.capper@arm.com>
 
-[ Upstream commit 32bf94fb5c2ec4ec842152d0e5937cd4bb6738fa ]
+[ Upstream commit 469ed9d823b7d240d6b9574f061ded7c3834c167 ]
 
-XFRM mode parameters passed as part of the user templates
-in the IP_XFRM_POLICY are never properly validated. Passing
-values other than valid XFRM modes can cause stack-out-of-bounds
-reads to occur later in the XFRM processing:
+In the contiguous bit hugetlb break-before-make code we assume that all
+hugetlb pages are young.
 
-[  140.535608] ================================================================
-[  140.543058] BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x17e4/0x1cc4
-[  140.550306] Read of size 4 at addr ffffffc0238a7a58 by task repro/5148
-[  140.557369]
-[  140.558927] Call trace:
-[  140.558936] dump_backtrace+0x0/0x388
-[  140.558940] show_stack+0x24/0x30
-[  140.558946] __dump_stack+0x24/0x2c
-[  140.558949] dump_stack+0x8c/0xd0
-[  140.558956] print_address_description+0x74/0x234
-[  140.558960] kasan_report+0x240/0x264
-[  140.558963] __asan_report_load4_noabort+0x2c/0x38
-[  140.558967] xfrm_state_find+0x17e4/0x1cc4
-[  140.558971] xfrm_resolve_and_create_bundle+0x40c/0x1fb8
-[  140.558975] xfrm_lookup+0x238/0x1444
-[  140.558977] xfrm_lookup_route+0x48/0x11c
-[  140.558984] ip_route_output_flow+0x88/0xc4
-[  140.558991] raw_sendmsg+0xa74/0x266c
-[  140.558996] inet_sendmsg+0x258/0x3b0
-[  140.559002] sock_sendmsg+0xbc/0xec
-[  140.559005] SyS_sendto+0x3a8/0x5a8
-[  140.559008] el0_svc_naked+0x34/0x38
-[  140.559009]
-[  140.592245] page dumped because: kasan: bad access detected
-[  140.597981] page_owner info is not active (free page?)
-[  140.603267]
-[  140.653503] ================================================================
+In fact, remove_migration_pte is able to place an old hugetlb pte so
+this assumption is not valid.
 
-Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+This patch fixes the contiguous hugetlb scanning code to preserve young
+ptes.
+
+Fixes: d8bdcff28764 ("arm64: hugetlb: Add break-before-make logic for contiguous entries")
+Signed-off-by: Steve Capper <steve.capper@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/mm/hugetlbpage.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 4292347bf45e..4e8319766f2b 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1449,6 +1449,9 @@ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
- 		    (ut[i].family != prev_family))
- 			return -EINVAL;
+diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+index 6cb0fa92a651..9f6ae9686dac 100644
+--- a/arch/arm64/mm/hugetlbpage.c
++++ b/arch/arm64/mm/hugetlbpage.c
+@@ -118,11 +118,14 @@ static pte_t get_clear_flush(struct mm_struct *mm,
  
-+		if (ut[i].mode >= XFRM_MODE_MAX)
-+			return -EINVAL;
+ 		/*
+ 		 * If HW_AFDBM is enabled, then the HW could turn on
+-		 * the dirty bit for any page in the set, so check
+-		 * them all.  All hugetlb entries are already young.
++		 * the dirty or accessed bit for any page in the set,
++		 * so check them all.
+ 		 */
+ 		if (pte_dirty(pte))
+ 			orig_pte = pte_mkdirty(orig_pte);
 +
- 		prev_family = ut[i].family;
++		if (pte_young(pte))
++			orig_pte = pte_mkyoung(orig_pte);
+ 	}
  
- 		switch (ut[i].family) {
+ 	if (valid)
+@@ -347,10 +350,13 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 	if (!pte_same(orig_pte, pte))
+ 		changed = 1;
+ 
+-	/* Make sure we don't lose the dirty state */
++	/* Make sure we don't lose the dirty or young state */
+ 	if (pte_dirty(orig_pte))
+ 		pte = pte_mkdirty(pte);
+ 
++	if (pte_young(orig_pte))
++		pte = pte_mkyoung(pte);
++
+ 	hugeprot = pte_pgprot(pte);
+ 	for (i = 0; i < ncontig; i++, ptep++, addr += pgsize, pfn += dpfn)
+ 		set_pte_at(vma->vm_mm, addr, ptep, pfn_pte(pfn, hugeprot));
 -- 
 2.17.1
 
