@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C416C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6FDC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 165B22089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 157DF2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+5VxWS/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 165B22089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhzK7o+h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157DF2089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbeJQBEL (ORCPT
+        id S1728683AbeJQBEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:04:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46670 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:04:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727734AbeJQBEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:04:11 -0400
+        id S1727734AbeJQBEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:04:14 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ED7720866;
-        Tue, 16 Oct 2018 17:12:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDD3C20866;
+        Tue, 16 Oct 2018 17:12:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709968;
-        bh=4sP+66H4p21i5G4qg8cESRE/ri5v0a7QCqUxTQl5b1c=;
+        s=default; t=1539709971;
+        bh=5Vabquq2TbjKYVF8K3irGQbxt82XtFltD9AhwC+QYbM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L+5VxWS/sPSLTig62hPwQznehdlOrH3xQg77/UD8AKEQC6aV4KZQEs+WMlhpthRis
-         hNTIyPe4VfqXwX4dNjxawfn9wcz0pOnJUscWsBAFDuTHg4+klIwOSDqqVz1AwJjWxA
-         2dQNPs5LIaxSyjlFJArZfoVq95ul4etnMWmIWXSE=
+        b=HhzK7o+hyfrfwgNkHDqzar0RtrnzNk0kivpjTBfoPaIcbuY6yMJY5Dfm8vuibrFyi
+         P8dxjw/WGqYI5ZjGrhXLbPn23gczxA2xiP+kWEwM49xt2WRX95TT1+a2AHIOR0UJ+z
+         zFLqqwawT6Yo6lVr6/J7Ee7U2jpwd7aL/Mdb8n1s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 058/135] net: mscc: fix the frame extraction into the skb
-Date:   Tue, 16 Oct 2018 19:04:48 +0200
-Message-Id: <20181016170518.572328578@linuxfoundation.org>
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Michal Kalderon <Michal.Kalderon@cavium.com>
+Subject: [PATCH 4.18 059/135] qed: Fix shmem structure inconsistency between driver and the mfw.
+Date:   Tue, 16 Oct 2018 19:04:49 +0200
+Message-Id: <20181016170518.617034126@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -62,59 +62,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 652ef42c134da1bbb03bd4c9b4291dfaf8d7febb ]
+[ Upstream commit 5f672090e44f4951084c5e1d6b0668a5fc422af8 ]
 
-When extracting frames from the Ocelot switch, the frame check sequence
-(FCS) is present at the end of the data extracted. The FCS was put into
-the sk buffer which introduced some issues (as length related ones), as
-the FCS shouldn't be part of an Rx sk buffer.
+The structure shared between driver and the management FW (mfw) differ in
+sizes. This would lead to issues when driver try to access the structure
+members which are not-aligned with the mfw copy e.g., data_ptr usage in the
+case of mfw_tlv request.
+Align the driver structure with mfw copy, add reserved field(s) to driver
+structure for the members not used by the driver.
 
-This patch fixes the Ocelot switch extraction behaviour by discarding
-the FCS.
-
-Fixes: a556c76adc05 ("net: mscc: Add initial Ocelot switch support")
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: dd006921d67f ("qed: Add MFW interfaces for TLV request support.)
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mscc/ocelot_board.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_hsi.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/mscc/ocelot_board.c
-+++ b/drivers/net/ethernet/mscc/ocelot_board.c
-@@ -91,7 +91,7 @@ static irqreturn_t ocelot_xtr_irq_handle
- 		struct sk_buff *skb;
- 		struct net_device *dev;
- 		u32 *buf;
--		int sz, len;
-+		int sz, len, buf_len;
- 		u32 ifh[4];
- 		u32 val;
- 		struct frame_info info;
-@@ -116,14 +116,20 @@ static irqreturn_t ocelot_xtr_irq_handle
- 			err = -ENOMEM;
- 			break;
- 		}
--		buf = (u32 *)skb_put(skb, info.len);
-+		buf_len = info.len - ETH_FCS_LEN;
-+		buf = (u32 *)skb_put(skb, buf_len);
- 
- 		len = 0;
- 		do {
- 			sz = ocelot_rx_frame_word(ocelot, grp, false, &val);
- 			*buf++ = val;
- 			len += sz;
--		} while ((sz == 4) && (len < info.len));
-+		} while (len < buf_len);
-+
-+		/* Read the FCS and discard it */
-+		sz = ocelot_rx_frame_word(ocelot, grp, false, &val);
-+		/* Update the statistics if part of the FCS was read before */
-+		len -= ETH_FCS_LEN - sz;
- 
- 		if (sz < 0) {
- 			err = sz;
+--- a/drivers/net/ethernet/qlogic/qed/qed_hsi.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_hsi.h
+@@ -11987,6 +11987,7 @@ struct public_global {
+ 	u32 running_bundle_id;
+ 	s32 external_temperature;
+ 	u32 mdump_reason;
++	u64 reserved;
+ 	u32 data_ptr;
+ 	u32 data_size;
+ };
 
 
