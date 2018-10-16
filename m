@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B31C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D94C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 524AB21476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6921921477
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AoWSDyiR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524AB21476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QERjHmrF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6921921477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730275AbeJQBKc (ORCPT
+        id S1730288AbeJQBKe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:10:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55552 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:10:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbeJQBKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:10:31 -0400
+        id S1727562AbeJQBKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:10:33 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 027332098A;
-        Tue, 16 Oct 2018 17:19:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91C0320866;
+        Tue, 16 Oct 2018 17:19:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710346;
-        bh=NFs5ntUiX5hted+eH05Oz17LncGsTAEsIdkfs1S0kpw=;
+        s=default; t=1539710349;
+        bh=OJWs6gc8JoLMu59QsQ59qBWKPQoPPCXg8aD+Xjxol4k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AoWSDyiRKp/17FZJkGQOHOIbw2hwzGEFB6fmK6K6iodFaG+JRdW4KQqoseqz9Walc
-         mWzGXNpzjlGzUkYC9+GXF7cbTvbu7VBw6NEY0dWLWlLrzdzctmbBMaWbD5HbVFcpG4
-         7GrtdAfUyvOpwYQEw8Qq2EqcnxZGtZ4Miks3NDFY=
+        b=QERjHmrFIfOeGFD9ZDVUk9SqvLCQsAYd/ELI+sEGM+QYPkbZPXKLe1Dn8BPL2Md3q
+         3pCubQEaI/hzSL3NCEhEM++sYYDjvAx/W93ibEJE0PPxpYtP1W4sa2S8hccmjUnRAN
+         qGgsyyz/7ylIywYTB2XGIv9SOMj60RrZw6LeLeiQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 038/109] inet: make sure to grab rcu_read_lock before using ireq->ireq_opt
-Date:   Tue, 16 Oct 2018 19:05:06 +0200
-Message-Id: <20181016170527.087160169@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 047/109] mfd: omap-usb-host: Fix dts probe of children
+Date:   Tue, 16 Oct 2018 19:05:15 +0200
+Message-Id: <20181016170527.530305827@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -63,101 +64,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 2ab2ddd301a22ca3c5f0b743593e4ad2953dfa53 ]
+[ Upstream commit 10492ee8ed9188d6d420e1f79b2b9bdbc0624e65 ]
 
-Timer handlers do not imply rcu_read_lock(), so my recent fix
-triggered a LOCKDEP warning when SYNACK is retransmit.
+It currently only works if the parent bus uses "simple-bus". We
+currently try to probe children with non-existing compatible values.
+And we're missing .probe.
 
-Lets add rcu_read_lock()/rcu_read_unlock() pairs around ireq->ireq_opt
-usages instead of guessing what is done by callers, since it is
-not worth the pain.
+I noticed this while testing devices configured to probe using ti-sysc
+interconnect target module driver. For that we also may want to rebind
+the driver, so let's remove __init and __exit.
 
-Get rid of ireq_opt_deref() helper since it hides the logic
-without real benefit, since it is now a standard rcu_dereference().
-
-Fixes: 1ad98e9d1bdf ("tcp/dccp: fix lockdep issue when SYN is backlogged")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/inet_sock.h         |    5 -----
- net/dccp/ipv4.c                 |    4 +++-
- net/ipv4/inet_connection_sock.c |    5 ++++-
- net/ipv4/tcp_ipv4.c             |    4 +++-
- 4 files changed, 10 insertions(+), 8 deletions(-)
+ drivers/mfd/omap-usb-host.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/include/net/inet_sock.h
-+++ b/include/net/inet_sock.h
-@@ -129,11 +129,6 @@ static inline int inet_request_bound_dev
- 	return sk->sk_bound_dev_if;
+--- a/drivers/mfd/omap-usb-host.c
++++ b/drivers/mfd/omap-usb-host.c
+@@ -548,8 +548,8 @@ static int usbhs_omap_get_dt_pdata(struc
  }
  
--static inline struct ip_options_rcu *ireq_opt_deref(const struct inet_request_sock *ireq)
--{
--	return rcu_dereference(ireq->ireq_opt);
--}
--
- struct inet_cork {
- 	unsigned int		flags;
- 	__be32			addr;
---- a/net/dccp/ipv4.c
-+++ b/net/dccp/ipv4.c
-@@ -493,9 +493,11 @@ static int dccp_v4_send_response(const s
+ static const struct of_device_id usbhs_child_match_table[] = {
+-	{ .compatible = "ti,omap-ehci", },
+-	{ .compatible = "ti,omap-ohci", },
++	{ .compatible = "ti,ehci-omap", },
++	{ .compatible = "ti,ohci-omap3", },
+ 	{ }
+ };
  
- 		dh->dccph_checksum = dccp_v4_csum_finish(skb, ireq->ir_loc_addr,
- 							      ireq->ir_rmt_addr);
-+		rcu_read_lock();
- 		err = ip_build_and_send_pkt(skb, sk, ireq->ir_loc_addr,
- 					    ireq->ir_rmt_addr,
--					    ireq_opt_deref(ireq));
-+					    rcu_dereference(ireq->ireq_opt));
-+		rcu_read_unlock();
- 		err = net_xmit_eval(err);
- 	}
+@@ -875,6 +875,7 @@ static struct platform_driver usbhs_omap
+ 		.pm		= &usbhsomap_dev_pm_ops,
+ 		.of_match_table = usbhs_omap_dt_ids,
+ 	},
++	.probe		= usbhs_omap_probe,
+ 	.remove		= usbhs_omap_remove,
+ };
  
---- a/net/ipv4/inet_connection_sock.c
-+++ b/net/ipv4/inet_connection_sock.c
-@@ -542,7 +542,8 @@ struct dst_entry *inet_csk_route_req(con
- 	struct ip_options_rcu *opt;
- 	struct rtable *rt;
+@@ -884,9 +885,9 @@ MODULE_ALIAS("platform:" USBHS_DRIVER_NA
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("usb host common core driver for omap EHCI and OHCI");
  
--	opt = ireq_opt_deref(ireq);
-+	rcu_read_lock();
-+	opt = rcu_dereference(ireq->ireq_opt);
- 
- 	flowi4_init_output(fl4, ireq->ir_iif, ireq->ir_mark,
- 			   RT_CONN_FLAGS(sk), RT_SCOPE_UNIVERSE,
-@@ -556,11 +557,13 @@ struct dst_entry *inet_csk_route_req(con
- 		goto no_route;
- 	if (opt && opt->opt.is_strictroute && rt->rt_uses_gateway)
- 		goto route_err;
-+	rcu_read_unlock();
- 	return &rt->dst;
- 
- route_err:
- 	ip_rt_put(rt);
- no_route:
-+	rcu_read_unlock();
- 	__IP_INC_STATS(net, IPSTATS_MIB_OUTNOROUTES);
- 	return NULL;
+-static int __init omap_usbhs_drvinit(void)
++static int omap_usbhs_drvinit(void)
+ {
+-	return platform_driver_probe(&usbhs_omap_driver, usbhs_omap_probe);
++	return platform_driver_register(&usbhs_omap_driver);
  }
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -875,9 +875,11 @@ static int tcp_v4_send_synack(const stru
- 	if (skb) {
- 		__tcp_v4_send_check(skb, ireq->ir_loc_addr, ireq->ir_rmt_addr);
  
-+		rcu_read_lock();
- 		err = ip_build_and_send_pkt(skb, sk, ireq->ir_loc_addr,
- 					    ireq->ir_rmt_addr,
--					    ireq_opt_deref(ireq));
-+					    rcu_dereference(ireq->ireq_opt));
-+		rcu_read_unlock();
- 		err = net_xmit_eval(err);
- 	}
+ /*
+@@ -898,7 +899,7 @@ static int __init omap_usbhs_drvinit(voi
+  */
+ fs_initcall_sync(omap_usbhs_drvinit);
  
+-static void __exit omap_usbhs_drvexit(void)
++static void omap_usbhs_drvexit(void)
+ {
+ 	platform_driver_unregister(&usbhs_omap_driver);
+ }
 
 
