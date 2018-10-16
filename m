@@ -2,96 +2,119 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 752C4C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0A8C169D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C1BD20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:49:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A32D820869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:49:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=infinera.com header.i=@infinera.com header.b="MAm8W5yH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1BD20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=infinera.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="utd1Rlfl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A32D820869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbeJPUji (ORCPT
+        id S1727178AbeJPUjn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 16:39:38 -0400
-Received: from mail-bl2nam02on0044.outbound.protection.outlook.com ([104.47.38.44]:20571
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726778AbeJPUji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 16:39:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infinera.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RrbHE3Bf9hG7APS2/HK9vC5IOf+GnWPxqqvOnEBYd/g=;
- b=MAm8W5yHm/uG+VhF4mbHnkDBLoDh9xJOrVNMwVP6TYFkNZwNGXferNTDAr924FmJvRtZXzMU7NHUyuCqbbFMTxiREVd2vi5yXk8oc4HgEdXcFLGHwaFR8v3JmUtWhaE9wLNKq09PCJOH+KpsQE5myssTQQdb7yoLaXXntGf+obo=
-Received: from SN1PR10MB0736.namprd10.prod.outlook.com (10.163.206.15) by
- SN1PR10MB0400.namprd10.prod.outlook.com (10.162.102.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.24; Tue, 16 Oct 2018 12:49:15 +0000
-Received: from SN1PR10MB0736.namprd10.prod.outlook.com
- ([fe80::b517:3cf8:a1ee:e732]) by SN1PR10MB0736.namprd10.prod.outlook.com
- ([fe80::b517:3cf8:a1ee:e732%2]) with mapi id 15.20.1250.020; Tue, 16 Oct 2018
- 12:49:15 +0000
-From:   Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
-To:     "christophe.leroy@c-s.fr" <christophe.leroy@c-s.fr>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>
-CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] powerpc/io: remove old GCC version implementation
-Thread-Topic: [PATCH] powerpc/io: remove old GCC version implementation
-Thread-Index: AQHUZUzrSLuQCVp/oEaybjzPZbsXMqUh0qwA
-Date:   Tue, 16 Oct 2018 12:49:15 +0000
-Message-ID: <8eb877e31130aee531409d18e19894d64690163d.camel@infinera.com>
-References: <199ae2a28f14f944ee9ae2770a3f1dd030e762bc.1539693039.git.christophe.leroy@c-s.fr>
-In-Reply-To: <199ae2a28f14f944ee9ae2770a3f1dd030e762bc.1539693039.git.christophe.leroy@c-s.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [88.131.87.201]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN1PR10MB0400;6:6hrmju49xYDb1bneHjcEsMKVK6HfPlAqBtmykp5enP2UZMgdKVo2L0EIz8AtSzZLxi7OoVPkGihJ/r+gYE4ex/B82/4Zv7WrqoA39WV4p8HOkrgOMz1WCgjP11TVOacTy1ccMw7MQ5Pfjtb9zth0Vo3rGLBiUOzGj1QNKScnNbGQ9hdqdlLdfLwqAuZUa+blDrmg2lyJ9r6igQjQppjBcpWJT4VL1YcVKOAiqEZz3Mi64a23kDqKw/wMBvY5e8wlvTV67a6HQlYNXeZz+gMonZYvIt5wF/+SoZACeVHbfs7HhHDgrGnwvIXBiBdHuuk2yyTdGWZBlkMv1HX/rfb4RCUDQGD3VhhTzjeYGi7zf95rC8+BR0s9c55od0UHhLtDDjk+PpUDq6ijvWvvqGShoimNzVOYs7z2dTIHv9xroaJLzrFWQPeHzzmUj4fbbt0sYKidtPYlBlRp0zNfyQxtD4d5xGEllZpKhoSmtFGYJb0=;5:OEwUwk2TASg3uPALvobi2lZUOKZ1UyQqVrA1AwvtzR5STx2xQlo4ydkFu2JO4zWePudGzcvxJcvkBd0rUTYzTFARggbTd5Pju+UW1RV/pAg3e5BXR3dJMxMCZIiXZLcEAw96znKioQznwYqT4Zxwx3URB8WUZEHRPYQ8U/033vg=;7:Vn1/LVnGQO1CGX8dCX+4Lt3MLJSITcs3fZ8tXiBqGdxcBLFBfwRTtNmQoiEsKas+wCtIkPY7NB2bzqTsIIeOanaqm4M+oQQXHBHJx8ppH6DOtjUZY7fgifOpEZLT9rIcTbNfF/tdj4tETIKxQwtITArZ57EL2aCWJXGy2l4UYSsGEq+1EoXW5odNOsAObjrtHgVNOiLPdgjE8MhGhZUkkwBo9a5f3Q1xhw8wtWiU7YEBsURMdMXjtSqfK9OdD0Yg
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: da2a9fc5-c0a8-4d9e-d780-08d63365c7b2
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN1PR10MB0400;
-x-ms-traffictypediagnostic: SN1PR10MB0400:
-x-microsoft-antispam-prvs: <SN1PR10MB04005E8958C6FF91A43EF984F4FE0@SN1PR10MB0400.namprd10.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991067);SRVR:SN1PR10MB0400;BCL:0;PCL:0;RULEID:;SRVR:SN1PR10MB0400;
-x-forefront-prvs: 0827D7ACB9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(346002)(376002)(39860400002)(189003)(199004)(446003)(25786009)(5250100002)(3846002)(486006)(316002)(2900100001)(97736004)(478600001)(6436002)(68736007)(256004)(2201001)(6246003)(106356001)(2501003)(86362001)(4326008)(6116002)(14454004)(71200400001)(71190400001)(36756003)(2616005)(105586002)(4001150100001)(6346003)(118296001)(305945005)(5660300001)(72206003)(186003)(110136005)(229853002)(8676002)(66066001)(476003)(7736002)(558084003)(102836004)(99286004)(81166006)(6506007)(81156014)(54906003)(6512007)(26005)(8936002)(11346002)(2906002)(6486002)(76176011)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR10MB0400;H:SN1PR10MB0736.namprd10.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: infinera.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Joakim.Tjernlund@infinera.com; 
-x-microsoft-antispam-message-info: B35dpeJeJz0F/9iTEh9pOQB5sH9VaORfGQDf4wQwAvf++w+VFeniFR0Zq7YxpwghkxhMxRq2TK4kq9339jshKS670eSmUzhJ7IwnMkjrrWrNTz969HEiSQqEDTJwn40Q+Z6j5Dagc+1m1budmU3TiMdvnfCjQm3/NstIrAefwMIglqbKuJlPXM+vhXAKbWVqfyOf6uVOO0LYrjASAPdIW5pIJmea0iXFC88f5AnHkiOu6gOwKIiYElHldKjluFwOIKmGblCYC71NqYi2xkB0wbbfiOIMTV3DkQfBz1uat/wZOM6sAyPFjZY4rh5aRnNM6MhlRLwRIkXfWR0zmmciIhcKxMDnFXEWT0GVN96s6iU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B130CED99D5E6D4AAD2C6506EEBB5C3F@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 16 Oct 2018 16:39:43 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43905 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726778AbeJPUjm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 16:39:42 -0400
+Received: by mail-ed1-f68.google.com with SMTP id y20-v6so21174141eds.10;
+        Tue, 16 Oct 2018 05:49:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oU4tykwryFt2NLgxTnkWtuLA8r8oRanCLqtsye+zUDw=;
+        b=utd1RlflLrXeX3Rh8gjvSCbCKYqxLVLYNHQmrZi44/8/hOaqram92eZjYkxLwppLXu
+         fE2nEbW4+XP1IOAXFc7MwMjngUf1LWplOkCZCM/IZnrOLMgC/fbUxDCAmtcZjM9kGsnQ
+         5SVLz5iXd4PrazX4QoaeTVZl7nVx1FCxImyD3o2Qi0qlzNIwjvE9Q39jSOWfp0IBG5DN
+         ulnjlevlacIPePcdcSzOkZ00wezBuCnEfNE+XIgnnwcnVNqf/inei7g2NBxcRpXhOKO6
+         7B1tlFZuxsJfAmwfJYPKknk55NZe+0Xw8OfuzlggXEDojo/1iA8XAMBuGiNlbB/KEvGn
+         VnFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oU4tykwryFt2NLgxTnkWtuLA8r8oRanCLqtsye+zUDw=;
+        b=JFbavpilj9SPT7HB6K5HBVBgrATvNFVVmjuGk5Y1g2Yb32VHexzC0MvEqpXeLkr/ba
+         CHI93ymWsZlUUAPEb3NMFgQ3XpUVnDauw/CEffBd3/9pqUoDnF3Cz+MY8jsG+iOd5Irz
+         gkrP+yktdgb4gtdmHV5L5vhDtnasp3YXDszX04Dy7o7wkYllYsoR7oGYVsScA/rhluFo
+         +uN/tN7DI30irux0rY2Fng464ZnNaX2Ila81hJLjvleHYZRdIPhMLxbY0ypIBtf4WM6L
+         l7kOG35ruN+u+K8zXZ32pTrD82OHKTUjf1GUBBslw/TqIRuXGs2cbcO5GJrrWRwji7h3
+         00nA==
+X-Gm-Message-State: ABuFfojUE1YU3viDb8NneOyeozNJW6r00QMsBOlt5Kwg17h3VJg5FV/I
+        AdMpMazguagG7+L17+L1MUg=
+X-Google-Smtp-Source: ACcGV62hsU+/eBQSHlGalbrshvjGyGqHiYtUtA7kG+AmRNT67jDszMepxRqZq0TIc94bLAuFfThnfw==
+X-Received: by 2002:a50:eb97:: with SMTP id y23-v6mr29755184edr.38.1539694161360;
+        Tue, 16 Oct 2018 05:49:21 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id t19-v6sm5675568edd.68.2018.10.16.05.49.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 05:49:20 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 12:49:19 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Peng Hao <peng.hao2@zte.com.cn>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
+        x86@kernel.org, hpa@zytor.com, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v2]  kvm:x86 :remove unnecessary recalculate_apic_map
+Message-ID: <20181016124919.3qgn6a4g7y2srd7k@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <1539681150-9374-1-git-send-email-peng.hao2@zte.com.cn>
 MIME-Version: 1.0
-X-OriginatorOrg: infinera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da2a9fc5-c0a8-4d9e-d780-08d63365c7b2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2018 12:49:15.3963
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 285643de-5f5b-4b03-a153-0ae2dc8aaf77
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR10MB0400
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539681150-9374-1-git-send-email-peng.hao2@zte.com.cn>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTEwLTE2IGF0IDEyOjMzICswMDAwLCBDaHJpc3RvcGhlIExlcm95IHdyb3Rl
-Og0KPiANCj4gDQo+IEdDQyA0LjYgaXMgdGhlIG1pbmltdW0gc3VwcG9ydGVkIG5vdy4NCg0KT3Vj
-aCwgZnJvbSBrZXJuZWwgNC4xOSBvciBlYXJsaWVyIGV2ZW4gPw0KDQogSm9ja2UNCg==
+On Tue, Oct 16, 2018 at 05:12:30PM +0800, Peng Hao wrote:
+>In the previous code, the variable sw_apic_disabled influences
+>recalculate_apic_map. But in "KVM: x86: simplify kvm_apic_map"
+>(commit:3b5a5ffa928a3f875b0d5dd284eeb7c322e1688a),
+>the access to sw_apic_disabled in recalculate_apic_map has been
+>deleted.
+
+s/sw_apic_disabled/apic_sw_disabled/ ?
+
+>
+>Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+>---
+> arch/x86/kvm/lapic.c | 5 ++---
+> 1 file changed, 2 insertions(+), 3 deletions(-)
+>
+>diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+>index 70dcb55..0380e37 100644
+>--- a/arch/x86/kvm/lapic.c
+>+++ b/arch/x86/kvm/lapic.c
+>@@ -246,10 +246,9 @@ static inline void apic_set_spiv(struct kvm_lapic *apic, u32 val)
+> 
+> 	if (enabled != apic->sw_enabled) {
+> 		apic->sw_enabled = enabled;
+>-		if (enabled) {
+>+		if (enabled)
+> 			static_key_slow_dec_deferred(&apic_sw_disabled);
+>-			recalculate_apic_map(apic->vcpu->kvm);
+>-		} else
+>+		else
+> 			static_key_slow_inc(&apic_sw_disabled.key);
+> 	}
+> }
+>-- 
+>1.8.3.1
+
+-- 
+Wei Yang
+Help you, Help me
