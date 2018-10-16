@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA059C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DB3C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B34B021477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BBC22147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfHrpF4D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B34B021477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWAH+crj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BBC22147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728818AbeJQBEm (ORCPT
+        id S1728833AbeJQBEp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:04:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47516 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:04:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbeJQBEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:04:41 -0400
+        id S1727280AbeJQBEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:04:44 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37F4D2098A;
-        Tue, 16 Oct 2018 17:13:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1CC520866;
+        Tue, 16 Oct 2018 17:13:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709998;
-        bh=MwZkWSfpphUA48rb4LlAInZeTEttD43J/tmPL4Br0/Y=;
+        s=default; t=1539710001;
+        bh=DutE/NqEcymI5we6Z3votG4V2wbJ0TpTaIhcFhx9s6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kfHrpF4D+cmWzcCVC9Lk3BfXTM+jDxMzhLQlJsBJDSAoKbg74byFjFPCj5n2n0P/z
-         I4XJDjeNOvGsJOQH0RPwkbLApyf30NHE9NIvae7Re/b6B4LraUga1i5vNJ3tRSl6vR
-         jJF/mK8rQx442eo76q9EIers7L2OipUGNfEsZg+g=
+        b=cWAH+crjNViftbWkhFJ8NqTUR/O9c6qihpyIoNXfvrwh8thU+Lb6VaNNzRP/p6BcU
+         EyJpRT+AztOJ1R3mGJ2gvK6BwdkHONWda88jGb7lc+Y1JJida+7hrIZGCIGJg8Ja8r
+         5yPFPDb03KFf7QATCpetjLsnSx0z+Elgry3FqlsQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ryan Lee <ryans.lee@maximintegrated.com>,
+        stable@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 068/135] ASoC: max98373: Added 10ms sleep after amp software reset
-Date:   Tue, 16 Oct 2018 19:04:58 +0200
-Message-Id: <20181016170519.270818105@linuxfoundation.org>
+Subject: [PATCH 4.18 069/135] ASoC: wm8804: Add ACPI support
+Date:   Tue, 16 Oct 2018 19:04:59 +0200
+Message-Id: <20181016170519.391086962@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -63,35 +65,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ryan Lee <ryans.lee@maximintegrated.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-[ Upstream commit ca917f9fe1a0fab3dde41bba4bbd173c5a3c5805 ]
+[ Upstream commit 960cdd50ca9fdfeb82c2757107bcb7f93c8d7d41 ]
 
-Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
+HID made of either Wolfson/CirrusLogic PCI ID + 8804 identifier.
+
+This helps enumerate the HifiBerry Digi+ HAT boards on the Up2 platform.
+
+The scripts at https://github.com/thesofproject/acpi-scripts can be
+used to add the ACPI initrd overlays.
+
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/codecs/max98373.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/codecs/wm8804-i2c.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
---- a/sound/soc/codecs/max98373.c
-+++ b/sound/soc/codecs/max98373.c
-@@ -729,6 +729,7 @@ static int max98373_probe(struct snd_soc
- 	/* Software Reset */
- 	regmap_write(max98373->regmap,
- 		MAX98373_R2000_SW_RESET, MAX98373_SOFT_RESET);
-+	usleep_range(10000, 11000);
+--- a/sound/soc/codecs/wm8804-i2c.c
++++ b/sound/soc/codecs/wm8804-i2c.c
+@@ -13,6 +13,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/i2c.h>
++#include <linux/acpi.h>
  
- 	/* IV default slot configuration */
- 	regmap_write(max98373->regmap,
-@@ -817,6 +818,7 @@ static int max98373_resume(struct device
+ #include "wm8804.h"
  
- 	regmap_write(max98373->regmap,
- 		MAX98373_R2000_SW_RESET, MAX98373_SOFT_RESET);
-+	usleep_range(10000, 11000);
- 	regcache_cache_only(max98373->regmap, false);
- 	regcache_sync(max98373->regmap);
- 	return 0;
+@@ -40,17 +41,29 @@ static const struct i2c_device_id wm8804
+ };
+ MODULE_DEVICE_TABLE(i2c, wm8804_i2c_id);
+ 
++#if defined(CONFIG_OF)
+ static const struct of_device_id wm8804_of_match[] = {
+ 	{ .compatible = "wlf,wm8804", },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, wm8804_of_match);
++#endif
++
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id wm8804_acpi_match[] = {
++	{ "1AEC8804", 0 }, /* Wolfson PCI ID + part ID */
++	{ "10138804", 0 }, /* Cirrus Logic PCI ID + part ID */
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, wm8804_acpi_match);
++#endif
+ 
+ static struct i2c_driver wm8804_i2c_driver = {
+ 	.driver = {
+ 		.name = "wm8804",
+ 		.pm = &wm8804_pm,
+-		.of_match_table = wm8804_of_match,
++		.of_match_table = of_match_ptr(wm8804_of_match),
++		.acpi_match_table = ACPI_PTR(wm8804_acpi_match),
+ 	},
+ 	.probe = wm8804_i2c_probe,
+ 	.remove = wm8804_i2c_remove,
 
 
