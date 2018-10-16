@@ -2,225 +2,578 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5FAC070C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7945DC070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56D8D2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:15:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=igel-co-jp.20150623.gappssmtp.com header.i=@igel-co-jp.20150623.gappssmtp.com header.b="0jOgB6IE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56D8D2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=igel.co.jp
+	by mail.kernel.org (Postfix) with ESMTP id 312C82089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:15:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 312C82089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbeJPSFP (ORCPT
+        id S1727158AbeJPSFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 14:05:15 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44714 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbeJPSFP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 14:05:15 -0400
-Received: by mail-pg1-f196.google.com with SMTP id g2-v6so10619279pgu.11
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 03:15:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=igel-co-jp.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IUVCMKvetlwAwJywpB3C8dJqDf0eAgED2WQE8oEFMDs=;
-        b=0jOgB6IE3JEkhkB7mo3yKi5tn6d+2GXYYq5xfIbu7HCtIiHsrLhTxP9m55QgCVABbH
-         BtdaLC81i92+dJqVOf3IFZNzz6UwSZxCaD4KTY4wuoObi3tkmfvqBsuvte4/U4aplz2P
-         HoI/KiQLrdYeZLKCTA5HwL1lt4jFdkO3OTU3NTDRe6EdUp4kzFMYjETQT5x+NYCBRk98
-         /qJHv32+AM7Ol0HYgxr+aWXmipWtuWQ9e6/3HAiOPW0fEd3Naje2yGPUa8N9vbumMUke
-         lZgZPBRLZ28s1g2rWqEBrMfoAL683TgqBScZulmRvwfgRhZLXLVoTLMVO86si9BOE28o
-         +d2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IUVCMKvetlwAwJywpB3C8dJqDf0eAgED2WQE8oEFMDs=;
-        b=m/73HGJuIokJDmTJMTOTCwwwjlAY1XfzjFJcv/+8whwfckJQDapxkyHkRoiEnBV8Ml
-         bPNAFRWjNX3Jl0qfRzBl3quypy5o41G9ZZBJ3ACNYIjT6nBaQknFEWyR8ICgk4ClI6dV
-         DkJnPLW2B3BsXnpebbaS8KWdZHrakfeOyakqTmNH58bOvA2AJ3FNJMugl6XAkobfNDua
-         iXPLbCwf2C31Z3gneLWAgu57LIb9Leq1RswgDRU9wdBGAJNANhHXg8UzmVq5hTXYjaaG
-         MM8aTegn9rawxLgBk5q3jKsMn8vFDJzvDbTAJjm3D6QJTEqfhyJ3IyN0g5/U6rnPBLh8
-         UVow==
-X-Gm-Message-State: ABuFfohyuv7u2+3C34pdAONljGySDlyYoo4JLzdNfRcRwKtofIiX71mE
-        aWD/hG/8uovEo749YySxdTun7gfXLK9J9g==
-X-Google-Smtp-Source: ACcGV60aoMJPUiLu5oQ7RP5QmWMjuBAZfL36/5Brc5baPwB7+PpOZbEgUm6wMYSwpLGAPlHpT1gOKg==
-X-Received: by 2002:a63:fd09:: with SMTP id d9-v6mr20062119pgh.164.1539684931822;
-        Tue, 16 Oct 2018 03:15:31 -0700 (PDT)
-Received: from [10.16.144.1] (napt.igel.co.jp. [219.106.231.132])
-        by smtp.gmail.com with ESMTPSA id b3-v6sm21221151pfc.178.2018.10.16.03.15.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 03:15:31 -0700 (PDT)
-Subject: Re: [PATCH] virtio_net: enable tx after resuming from suspend
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181011075127.2608-1-ake@igel.co.jp>
- <dd530053-efab-b661-3423-1faaab8fb12f@redhat.com>
- <7e87b140-79ae-c79e-40ed-dc76b38eeae4@igel.co.jp>
- <a156fd7e-e36e-e4e9-c240-3117ecc5b1b4@redhat.com>
- <b294cbba-24a0-939d-98e8-d1483e3688a1@igel.co.jp>
- <4918ed7c-4c63-6f19-530b-8e16b0c496d4@redhat.com>
- <1aff0ad2-9d63-6d38-6b25-5c681eafdfb2@igel.co.jp>
- <e2baaccc-4ead-e61d-fc1e-d79435012e1c@igel.co.jp>
- <024619cc-9b1b-dac2-18cc-5d757a76b1e3@redhat.com>
-From:   ake <ake@igel.co.jp>
-Message-ID: <0e8b0747-cc9f-8863-2ee1-2b032d6c0fae@igel.co.jp>
-Date:   Tue, 16 Oct 2018 19:15:28 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 16 Oct 2018 14:05:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33764 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727082AbeJPSFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 14:05:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5714CED1;
+        Tue, 16 Oct 2018 03:15:37 -0700 (PDT)
+Received: from queper01-lin.local (unknown [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 21E493F59C;
+        Tue, 16 Oct 2018 03:15:32 -0700 (PDT)
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org,
+        quentin.perret@arm.com
+Subject: [PATCH v8 03/15] PM: Introduce an Energy Model management framework
+Date:   Tue, 16 Oct 2018 11:15:01 +0100
+Message-Id: <20181016101513.26919-4-quentin.perret@arm.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181016101513.26919-1-quentin.perret@arm.com>
+References: <20181016101513.26919-1-quentin.perret@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <024619cc-9b1b-dac2-18cc-5d757a76b1e3@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Several subsystems in the kernel (task scheduler and/or thermal at the
+time of writing) can benefit from knowing about the energy consumed by
+CPUs. Yet, this information can come from different sources (DT or
+firmware for example), in different formats, hence making it hard to
+exploit without a standard API.
 
+As an attempt to address this, introduce a centralized Energy Model
+(EM) management framework which aggregates the power values provided
+by drivers into a table for each performance domain in the system. The
+power cost tables are made available to interested clients (e.g. task
+scheduler or thermal) via platform-agnostic APIs. The overall design
+is represented by the diagram below (focused on Arm-related drivers as
+an example, but applicable to any architecture):
 
-On 2018年10月16日 17:53, Jason Wang wrote:
-> 
-> On 2018/10/15 下午6:08, ake wrote:
->>
->> On 2018年10月12日 18:18, ake wrote:
->>>
->>> On 2018年10月12日 17:23, Jason Wang wrote:
->>>>
->>>> On 2018年10月12日 12:30, ake wrote:
->>>>> On 2018年10月11日 22:06, Jason Wang wrote:
->>>>>> On 2018年10月11日 18:22, ake wrote:
->>>>>>> On 2018年10月11日 18:44, Jason Wang wrote:
->>>>>>>> On 2018年10月11日 15:51, Ake Koomsin wrote:
->>>>>>>>> commit 713a98d90c5e ("virtio-net: serialize tx routine during
->>>>>>>>> reset")
->>>>>>>>> disabled the virtio tx before going to suspend to avoid a use
->>>>>>>>> after
->>>>>>>>> free.
->>>>>>>>> However, after resuming, it causes the virtio_net device to
->>>>>>>>> lose its
->>>>>>>>> network connectivity.
->>>>>>>>>
->>>>>>>>> To solve the issue, we need to enable tx after resuming.
->>>>>>>>>
->>>>>>>>> Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine
->>>>>>>>> during
->>>>>>>>> reset")
->>>>>>>>> Signed-off-by: Ake Koomsin <ake@igel.co.jp>
->>>>>>>>> ---
->>>>>>>>>      drivers/net/virtio_net.c | 1 +
->>>>>>>>>      1 file changed, 1 insertion(+)
->>>>>>>>>
->>>>>>>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->>>>>>>>> index dab504ec5e50..3453d80f5f81 100644
->>>>>>>>> --- a/drivers/net/virtio_net.c
->>>>>>>>> +++ b/drivers/net/virtio_net.c
->>>>>>>>> @@ -2256,6 +2256,7 @@ static int virtnet_restore_up(struct
->>>>>>>>> virtio_device *vdev)
->>>>>>>>>          }
->>>>>>>>>            netif_device_attach(vi->dev);
->>>>>>>>> +    netif_start_queue(vi->dev);
->>>>>>>> I believe this is duplicated with netif_tx_wake_all_queues() in
->>>>>>>> netif_device_attach() above?
->>>>>>> Thank you for your review.
->>>>>>>
->>>>>>> If both netif_tx_wake_all_queues() and netif_start_queue() result in
->>>>>>> clearing __QUEUE_STATE_DRV_XOFF, then is it possible that some
->>>>>>> conditions in netif_device_attach() is not satisfied?
->>>>>> Yes, maybe. One case I can see now is when the device is down, in
->>>>>> this
->>>>>> case netif_device_attach() won't try to wakeup the queue.
->>>>>>
->>>>>>>     Without
->>>>>>> netif_start_queue(), the virtio_net device does not resume properly
->>>>>>> after waking up.
->>>>>> How do you trigger the issue? Just do suspend/resume?
->>>>> Yes, simply suspend and resume.
->>>>>
->>>>> Here is how I trigger the issue:
->>>>>
->>>>> 1) Start the Virtual Machine Manager GUI program.
->>>>> 2) Create a guest Linux OS. Make sure that the guest OS kernel is
->>>>>      >= 4.12. Make sure that it uses virtio_net as its network device.
->>>>>      In addition, make sure that the video adapter is VGA. Otherwise,
->>>>>      waking up with the virtual power button does not work.
->>>>> 3) After installing the guest OS, log in, and test the network
->>>>>      connectivity by ping the host machine.
->>>>> 4) Suspend. After this, the screen is blank.
->>>>> 5) Resume by hitting the virtual power button. The login screen
->>>>>      appears again.
->>>>> 6) Log in again. The guest loses its network connection.
->>>>>
->>>>> In my test:
->>>>> Guest: Ubuntu 16.04/18.04 with kernel 4.15.0-36-generic
->>>>> Host: Ubuntu 16.04 with kernel 4.15.0-36-generic/4.4.0-137-generic
->>>> I can not reproduce this issue if virtio-net interface is up in guest
->>>> before the suspend. I'm using net-next.git and qemu master. But I do
->>>> reproduce when virtio-net interface is down in guest before suspend,
->>>> after resume, even if I make it up, the network is still lost.
->>>>
->>>> I think the interface is up in your case, but please confirm this.
->>> If you mean the interface state before I hit the suspend button,
->>> the answer is yes. The interface is up before I suspend the guest
->>> machine.
->>>
->>> Note that my current QEMU version is QEMU emulator version 2.5.0
->>> (Debian 1:2.5+dfsg-5ubuntu10.32).
->>>
->>> I will try with net-next.git and qemu master later and see if I can
->>> reproduce the issue.
->> Update. I tried with net-next and qemu master. Interestingly, the result
->> is different from yours. The network is lost even if the virtio_net
->> interface is up before suspending.
->>
->> Host: Ubuntu 16.04 with net-next kernel (default configuration)
->> Guest: Ubuntu 18.04 with net-next kernel (default configuration)
->> Qemu: master
->> Qemu command:
->> qemu-system-x86_64 -cpu host -m 2048 -enable-kvm \
->> -bios /usr/share/OVMF/OVMF_CODE.fd \
->> -drive file=/var/lib/libvirt/images/virtio_test.qcow2,if=virtio \
->> -netdev user,id=hostnet0 \
->> -device virtio-net-pci,netdev=hostnet0 \
->> -device VGA,id=video0,vgamem_mb=16 \
->> -global PIIX4_PM.disable_s3=1 \
->> -global PIIX4_PM.disable_s4=1 -monitor stdio
-> 
-> 
-> Interesting, just notice you're using userspace network. To isolate the
-> issue, can you retry with e.g tap or e1000 to make sure it's not a fault
-> of slirp or virito-net?
+     +---------------+  +-----------------+  +-------------+
+     | Thermal (IPA) |  | Scheduler (EAS) |  |    Other    |
+     +---------------+  +-----------------+  +-------------+
+             |                   | em_pd_energy()   |
+             |                   | em_cpu_get()     |
+             +-----------+       |         +--------+
+                         |       |         |
+                         v       v         v
+                      +---------------------+
+                      |                     |
+                      |    Energy Model     |
+                      |                     |
+                      |     Framework       |
+                      |                     |
+                      +---------------------+
+                         ^       ^       ^
+                         |       |       | em_register_perf_domain()
+              +----------+       |       +---------+
+              |                  |                 |
+      +---------------+  +---------------+  +--------------+
+      |  cpufreq-dt   |  |   arm_scmi    |  |    Other     |
+      +---------------+  +---------------+  +--------------+
+              ^                  ^                 ^
+              |                  |                 |
+      +--------------+   +---------------+  +--------------+
+      | Device Tree  |   |   Firmware    |  |      ?       |
+      +--------------+   +---------------+  +--------------+
 
-I will try.
+Drivers (typically, but not limited to, CPUFreq drivers) can register
+data in the EM framework using the em_register_perf_domain() API. The
+calling driver must provide a callback function with a standardized
+signature that will be used by the EM framework to build the power
+cost tables of the performance domain. This design should offer a lot of
+flexibility to calling drivers which are free of reading information
+from any location and to use any technique to compute power costs.
+Moreover, the capacity states registered by drivers in the EM framework
+are not required to match real performance states of the target. This
+is particularly important on targets where the performance states are
+not known by the OS.
 
-> Thanks
-> 
+The power cost coefficients managed by the EM framework are specified in
+milli-watts. Although the two potential users of those coefficients (IPA
+and EAS) only need relative correctness, IPA specifically needs to
+compare the power of CPUs with the power of other components (GPUs, for
+example), which are still expressed in absolute terms in their
+respective subsystems. Hence, specifying the power of CPUs in
+milli-watts should help transitioning IPA to using the EM framework
+without introducing new problems by keeping units comparable across
+sub-systems.
+On the longer term, the EM of other devices than CPUs could also be
+managed by the EM framework, which would enable to remove the absolute
+unit. However, this is not absolutely required as a first step, so this
+extension of the EM framework is left for later.
 
-There is another thing that I want to discuss. I notice that
-netif_device_detach() should result in setting __QUEUE_STATE_DRV_XOFF if
-the network interface is running. By calling netif_tx_disable() after
-netif_device_detach(), isn't it redundant in case of the network
-interface is running? If the goal is to serialize tx routine, would
-netif_tx_lock() and net_tx_unlock() are more appropriate? Like this:
+On the client side, the EM framework offers APIs to access the power
+cost tables of a CPU (em_cpu_get()), and to estimate the energy
+consumed by the CPUs of a performance domain (em_pd_energy()). Clients
+such as the task scheduler can then use these APIs to access the shared
+data structures holding the Energy Model of CPUs.
 
-netif_tx_lock(vi->dev);
-netif_device_detach(vi->dev);
-netif_tx_unlock(vi->dev);
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+---
+ include/linux/energy_model.h | 187 ++++++++++++++++++++++++++++++++
+ kernel/power/Kconfig         |  15 +++
+ kernel/power/Makefile        |   2 +
+ kernel/power/energy_model.c  | 201 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 405 insertions(+)
+ create mode 100644 include/linux/energy_model.h
+ create mode 100644 kernel/power/energy_model.c
 
-Currently, netif_tx_disable() seems to disturb the symmetry of
-netif_device_detach() and netif_device_attach(). That is the reason
-why you can reproduce the problem when the interface is down before
-suspending.
+diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
+new file mode 100644
+index 000000000000..aa027f7bcb3e
+--- /dev/null
++++ b/include/linux/energy_model.h
+@@ -0,0 +1,187 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_ENERGY_MODEL_H
++#define _LINUX_ENERGY_MODEL_H
++#include <linux/cpumask.h>
++#include <linux/jump_label.h>
++#include <linux/kobject.h>
++#include <linux/rcupdate.h>
++#include <linux/sched/cpufreq.h>
++#include <linux/sched/topology.h>
++#include <linux/types.h>
++
++#ifdef CONFIG_ENERGY_MODEL
++/**
++ * em_cap_state - Capacity state of a performance domain
++ * @frequency:	The CPU frequency in KHz, for consistency with CPUFreq
++ * @power:	The power consumed by 1 CPU at this level, in milli-watts
++ * @cost:	The cost coefficient associated with this level, used during
++ *		energy calculation. Equal to: power * max_frequency / frequency
++ */
++struct em_cap_state {
++	unsigned long frequency;
++	unsigned long power;
++	unsigned long cost;
++};
++
++/**
++ * em_perf_domain - Performance domain
++ * @table:		List of capacity states, in ascending order
++ * @nr_cap_states:	Number of capacity states
++ * @cpus:		Cpumask covering the CPUs of the domain
++ *
++ * A "performance domain" represents a group of CPUs whose performance is
++ * scaled together. All CPUs of a performance domain must have the same
++ * micro-architecture. Performance domains often have a 1-to-1 mapping with
++ * CPUFreq policies.
++ */
++struct em_perf_domain {
++	struct em_cap_state *table;
++	int nr_cap_states;
++	unsigned long cpus[0];
++};
++
++#define EM_CPU_MAX_POWER 0xFFFF
++
++struct em_data_callback {
++	/**
++	 * active_power() - Provide power at the next capacity state of a CPU
++	 * @power	: Active power at the capacity state in mW (modified)
++	 * @freq	: Frequency at the capacity state in kHz (modified)
++	 * @cpu		: CPU for which we do this operation
++	 *
++	 * active_power() must find the lowest capacity state of 'cpu' above
++	 * 'freq' and update 'power' and 'freq' to the matching active power
++	 * and frequency.
++	 *
++	 * The power is the one of a single CPU in the domain, expressed in
++	 * milli-watts. It is expected to fit in the [0, EM_CPU_MAX_POWER]
++	 * range.
++	 *
++	 * Return 0 on success.
++	 */
++	int (*active_power)(unsigned long *power, unsigned long *freq, int cpu);
++};
++#define EM_DATA_CB(_active_power_cb) { .active_power = &_active_power_cb }
++
++struct em_perf_domain *em_cpu_get(int cpu);
++int em_register_perf_domain(cpumask_t *span, unsigned int nr_states,
++						struct em_data_callback *cb);
++
++/**
++ * em_pd_energy() - Estimates the energy consumed by the CPUs of a perf. domain
++ * @pd		: performance domain for which energy has to be estimated
++ * @max_util	: highest utilization among CPUs of the domain
++ * @sum_util	: sum of the utilization of all CPUs in the domain
++ *
++ * Return: the sum of the energy consumed by the CPUs of the domain assuming
++ * a capacity state satisfying the max utilization of the domain.
++ */
++static inline unsigned long em_pd_energy(struct em_perf_domain *pd,
++				unsigned long max_util, unsigned long sum_util)
++{
++	unsigned long freq, scale_cpu;
++	struct em_cap_state *cs;
++	int i, cpu;
++
++	/*
++	 * In order to predict the capacity state, map the utilization of the
++	 * most utilized CPU of the performance domain to a requested frequency,
++	 * like schedutil.
++	 */
++	cpu = cpumask_first(to_cpumask(pd->cpus));
++	scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
++	cs = &pd->table[pd->nr_cap_states - 1];
++	freq = map_util_freq(max_util, cs->frequency, scale_cpu);
++
++	/*
++	 * Find the lowest capacity state of the Energy Model above the
++	 * requested frequency.
++	 */
++	for (i = 0; i < pd->nr_cap_states; i++) {
++		cs = &pd->table[i];
++		if (cs->frequency >= freq)
++			break;
++	}
++
++	/*
++	 * The capacity of a CPU in the domain at that capacity state (cs)
++	 * can be computed as:
++	 *
++	 *             cs->freq * scale_cpu
++	 *   cs->cap = --------------------                          (1)
++	 *                 cpu_max_freq
++	 *
++	 * So, ignoring the costs of idle states (which are not available in
++	 * the EM), the energy consumed by this CPU at that capacity state is
++	 * estimated as:
++	 *
++	 *             cs->power * cpu_util
++	 *   cpu_nrg = --------------------                          (2)
++	 *                   cs->cap
++	 *
++	 * since 'cpu_util / cs->cap' represents its percentage of busy time.
++	 *
++	 *   NOTE: Although the result of this computation actually is in
++	 *         units of power, it can be manipulated as an energy value
++	 *         over a scheduling period, since it is assumed to be
++	 *         constant during that interval.
++	 *
++	 * By injecting (1) in (2), 'cpu_nrg' can be re-expressed as a product
++	 * of two terms:
++	 *
++	 *             cs->power * cpu_max_freq   cpu_util
++	 *   cpu_nrg = ------------------------ * ---------          (3)
++	 *                    cs->freq            scale_cpu
++	 *
++	 * The first term is static, and is stored in the em_cap_state struct
++	 * as 'cs->cost'.
++	 *
++	 * Since all CPUs of the domain have the same micro-architecture, they
++	 * share the same 'cs->cost', and the same CPU capacity. Hence, the
++	 * total energy of the domain (which is the simple sum of the energy of
++	 * all of its CPUs) can be factorized as:
++	 *
++	 *            cs->cost * \Sum cpu_util
++	 *   pd_nrg = ------------------------                       (4)
++	 *                  scale_cpu
++	 */
++	return cs->cost * sum_util / scale_cpu;
++}
++
++/**
++ * em_pd_nr_cap_states() - Get the number of capacity states of a perf. domain
++ * @pd		: performance domain for which this must be done
++ *
++ * Return: the number of capacity states in the performance domain table
++ */
++static inline int em_pd_nr_cap_states(struct em_perf_domain *pd)
++{
++	return pd->nr_cap_states;
++}
++
++#else
++struct em_perf_domain {};
++struct em_data_callback {};
++#define EM_DATA_CB(_active_power_cb) { }
++
++static inline int em_register_perf_domain(cpumask_t *span,
++			unsigned int nr_states, struct em_data_callback *cb)
++{
++	return -EINVAL;
++}
++static inline struct em_perf_domain *em_cpu_get(int cpu)
++{
++	return NULL;
++}
++static inline unsigned long em_pd_energy(struct em_perf_domain *pd,
++			unsigned long max_util, unsigned long sum_util)
++{
++	return 0;
++}
++static inline int em_pd_nr_cap_states(struct em_perf_domain *pd)
++{
++	return 0;
++}
++#endif
++
++#endif
+diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
+index 3a6c2f87699e..f8fe57d1022e 100644
+--- a/kernel/power/Kconfig
++++ b/kernel/power/Kconfig
+@@ -298,3 +298,18 @@ config PM_GENERIC_DOMAINS_OF
+ 
+ config CPU_PM
+ 	bool
++
++config ENERGY_MODEL
++	bool "Energy Model for CPUs"
++	depends on SMP
++	depends on CPU_FREQ
++	default n
++	help
++	  Several subsystems (thermal and/or the task scheduler for example)
++	  can leverage information about the energy consumed by CPUs to make
++	  smarter decisions. This config option enables the framework from
++	  which subsystems can access the energy models.
++
++	  The exact usage of the energy model is subsystem-dependent.
++
++	  If in doubt, say N.
+diff --git a/kernel/power/Makefile b/kernel/power/Makefile
+index a3f79f0eef36..e7e47d9be1e5 100644
+--- a/kernel/power/Makefile
++++ b/kernel/power/Makefile
+@@ -15,3 +15,5 @@ obj-$(CONFIG_PM_AUTOSLEEP)	+= autosleep.o
+ obj-$(CONFIG_PM_WAKELOCKS)	+= wakelock.o
+ 
+ obj-$(CONFIG_MAGIC_SYSRQ)	+= poweroff.o
++
++obj-$(CONFIG_ENERGY_MODEL)	+= energy_model.o
+diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+new file mode 100644
+index 000000000000..d9dc2c38764a
+--- /dev/null
++++ b/kernel/power/energy_model.c
+@@ -0,0 +1,201 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Energy Model of CPUs
++ *
++ * Copyright (c) 2018, Arm ltd.
++ * Written by: Quentin Perret, Arm ltd.
++ */
++
++#define pr_fmt(fmt) "energy_model: " fmt
++
++#include <linux/cpu.h>
++#include <linux/cpumask.h>
++#include <linux/energy_model.h>
++#include <linux/sched/topology.h>
++#include <linux/slab.h>
++
++/* Mapping of each CPU to the performance domain to which it belongs. */
++static DEFINE_PER_CPU(struct em_perf_domain *, em_data);
++
++/*
++ * Mutex serializing the registrations of performance domains and letting
++ * callbacks defined by drivers sleep.
++ */
++static DEFINE_MUTEX(em_pd_mutex);
++
++static struct em_perf_domain *em_create_pd(cpumask_t *span, int nr_states,
++						struct em_data_callback *cb)
++{
++	unsigned long opp_eff, prev_opp_eff = ULONG_MAX;
++	unsigned long power, freq, prev_freq = 0;
++	int i, ret, cpu = cpumask_first(span);
++	struct em_cap_state *table;
++	struct em_perf_domain *pd;
++	u64 fmax;
++
++	if (!cb->active_power)
++		return NULL;
++
++	pd = kzalloc(sizeof(*pd) + cpumask_size(), GFP_KERNEL);
++	if (!pd)
++		return NULL;
++
++	table = kcalloc(nr_states, sizeof(*table), GFP_KERNEL);
++	if (!table)
++		goto free_pd;
++
++	/* Build the list of capacity states for this performance domain */
++	for (i = 0, freq = 0; i < nr_states; i++, freq++) {
++		/*
++		 * active_power() is a driver callback which ceils 'freq' to
++		 * lowest capacity state of 'cpu' above 'freq' and updates
++		 * 'power' and 'freq' accordingly.
++		 */
++		ret = cb->active_power(&power, &freq, cpu);
++		if (ret) {
++			pr_err("pd%d: invalid cap. state: %d\n", cpu, ret);
++			goto free_cs_table;
++		}
++
++		/*
++		 * We expect the driver callback to increase the frequency for
++		 * higher capacity states.
++		 */
++		if (freq <= prev_freq) {
++			pr_err("pd%d: non-increasing freq: %lu\n", cpu, freq);
++			goto free_cs_table;
++		}
++
++		/*
++		 * The power returned by active_state() is expected to be
++		 * positive, in milli-watts and to fit into 16 bits.
++		 */
++		if (!power || power > EM_CPU_MAX_POWER) {
++			pr_err("pd%d: invalid power: %lu\n", cpu, power);
++			goto free_cs_table;
++		}
++
++		table[i].power = power;
++		table[i].frequency = prev_freq = freq;
++
++		/*
++		 * The hertz/watts efficiency ratio should decrease as the
++		 * frequency grows on sane platforms. But this isn't always
++		 * true in practice so warn the user if a higher OPP is more
++		 * power efficient than a lower one.
++		 */
++		opp_eff = freq / power;
++		if (opp_eff >= prev_opp_eff)
++			pr_warn("pd%d: hertz/watts ratio non-monotonically decreasing: em_cap_state %d >= em_cap_state%d\n",
++					cpu, i, i - 1);
++		prev_opp_eff = opp_eff;
++	}
++
++	/* Compute the cost of each capacity_state. */
++	fmax = (u64) table[nr_states - 1].frequency;
++	for (i = 0; i < nr_states; i++) {
++		table[i].cost = div64_u64(fmax * table[i].power,
++					  table[i].frequency);
++	}
++
++	pd->table = table;
++	pd->nr_cap_states = nr_states;
++	cpumask_copy(to_cpumask(pd->cpus), span);
++
++	return pd;
++
++free_cs_table:
++	kfree(table);
++free_pd:
++	kfree(pd);
++
++	return NULL;
++}
++
++/**
++ * em_cpu_get() - Return the performance domain for a CPU
++ * @cpu : CPU to find the performance domain for
++ *
++ * Return: the performance domain to which 'cpu' belongs, or NULL if it doesn't
++ * exist.
++ */
++struct em_perf_domain *em_cpu_get(int cpu)
++{
++	return READ_ONCE(per_cpu(em_data, cpu));
++}
++EXPORT_SYMBOL_GPL(em_cpu_get);
++
++/**
++ * em_register_perf_domain() - Register the Energy Model of a performance domain
++ * @span	: Mask of CPUs in the performance domain
++ * @nr_states	: Number of capacity states to register
++ * @cb		: Callback functions providing the data of the Energy Model
++ *
++ * Create Energy Model tables for a performance domain using the callbacks
++ * defined in cb.
++ *
++ * If multiple clients register the same performance domain, all but the first
++ * registration will be ignored.
++ *
++ * Return 0 on success
++ */
++int em_register_perf_domain(cpumask_t *span, unsigned int nr_states,
++						struct em_data_callback *cb)
++{
++	unsigned long cap, prev_cap = 0;
++	struct em_perf_domain *pd;
++	int cpu, ret = 0;
++
++	if (!span || !nr_states || !cb)
++		return -EINVAL;
++
++	/*
++	 * Use a mutex to serialize the registration of performance domains and
++	 * let the driver-defined callback functions sleep.
++	 */
++	mutex_lock(&em_pd_mutex);
++
++	for_each_cpu(cpu, span) {
++		/* Make sure we don't register again an existing domain. */
++		if (READ_ONCE(per_cpu(em_data, cpu))) {
++			ret = -EEXIST;
++			goto unlock;
++		}
++
++		/*
++		 * All CPUs of a domain must have the same micro-architecture
++		 * since they all share the same table.
++		 */
++		cap = arch_scale_cpu_capacity(NULL, cpu);
++		if (prev_cap && prev_cap != cap) {
++			pr_err("CPUs of %*pbl must have the same capacity\n",
++							cpumask_pr_args(span));
++			ret = -EINVAL;
++			goto unlock;
++		}
++		prev_cap = cap;
++	}
++
++	/* Create the performance domain and add it to the Energy Model. */
++	pd = em_create_pd(span, nr_states, cb);
++	if (!pd) {
++		ret = -EINVAL;
++		goto unlock;
++	}
++
++	for_each_cpu(cpu, span) {
++		/*
++		 * The per-cpu array can be read concurrently from em_cpu_get().
++		 * The barrier enforces the ordering needed to make sure readers
++		 * can only access well formed em_perf_domain structs.
++		 */
++		smp_store_release(per_cpu_ptr(&em_data, cpu), pd);
++	}
++
++	pr_debug("Created perf domain %*pbl\n", cpumask_pr_args(span));
++unlock:
++	mutex_unlock(&em_pd_mutex);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(em_register_perf_domain);
+-- 
+2.19.1
+
