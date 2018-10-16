@@ -2,143 +2,84 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A25C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2E0C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B71F20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:01:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39A9520869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:02:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jay/3zTm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B71F20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N2rKGnk9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A9520869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbeJPPvH (ORCPT
+        id S1727119AbeJPPvo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 11:51:07 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51357 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbeJPPvH (ORCPT
+        Tue, 16 Oct 2018 11:51:44 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41251 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbeJPPvn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 11:51:07 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 143-v6so21249549wmf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 01:01:54 -0700 (PDT)
+        Tue, 16 Oct 2018 11:51:43 -0400
+Received: by mail-qt1-f196.google.com with SMTP id l41-v6so24606799qtl.8
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 01:02:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pDUVmeEQiqqxdme6fOBk8uoBFCRSa0ohT4Z+HJ5SZNc=;
-        b=Jay/3zTmKr086Wc3YWoiJylnOWwv4wVCf/giA/8IV+lUUlSG44ODfItBRNUBvsqD21
-         sZPEoRIQGc8sQB8P7GaDcle90U3R+/BEGN3f2w18DaJIN5Uf+zcTDt2LVQsLnWQ38fV+
-         PyPzSfamclhqx8yFaLCK+aUKp59MrDzgv7fwU/C+KLUaGyJztP0trYcr+wQ9BUkdIY7P
-         2DcJhmc/Q/ZkOX557dd3wqgXbzOk7Q1LoWAHYTfJBaP1Sq75Bt7yz3scNIdLHHq6IeSH
-         JvPnB7PK0wH77JCl5KtPO7z6XFbepfSmE0PUO9fTPkjS1lLOyGNoCugFhdCimd5ggxAi
-         41zQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nL+rl0AgL+S+0rJp5k2vnfDOBVCoZeAXF0pBRsUjNPc=;
+        b=N2rKGnk9v+eQV1c2YYWEOuSOOU5OYBd689PJh9Lw9XP5rnHjTK7WBRYI+n2mXs8/yT
+         0K6DOsckjNx/o6IyFA2ml7MueNu8aPYha+kVFI+qMrrUi+CbrtFL9vweEg1eUbMF7G4z
+         Xbk+P62gGIWkKKTA1Z+9GEsg4NS5BDvXpLaFY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pDUVmeEQiqqxdme6fOBk8uoBFCRSa0ohT4Z+HJ5SZNc=;
-        b=n9tEkoKL24NxOiEfOtddPjV5g1YIGVRLyRA8WeOhFRGIHECrd8ignfHa37d4hv2+vw
-         jE8vxh65obfWw27G/0FSzJaCOi/45p9DT9Y7hflWDin6az1mLR2FSWqYoP0nJasLZMzZ
-         kHmdzf5xkHMqhy0cudFyF8DyiDWqX3YyNviQ/fTGJ1l5OZ2EUVr/ZU+WSa1UbKgbMg8/
-         Zkoq5jCB6bFqotQj+4KluXwfL6BPscLGKQztaQJNJvS7iJYmQWGnBgbhLp7uCaWll482
-         tPu0DyB9GE//YfQZt+EjiPVJA8HQ9vZmLFWgxXZHodm2MeA8lNpctqnIN7sizlYnLp2R
-         JUaw==
-X-Gm-Message-State: ABuFfoiQKDGo47nYOV4pNggmcReA+K45qdmIdeMW4NMaK7qOVus4yTXb
-        Coi8szu3V7vyM/nUx62337g=
-X-Google-Smtp-Source: ACcGV61q0Hd3UQncYmQ+MAP6kXC1Q7rDYpDzNNRydfS3g2+RO3mZpJM2U/pPiK5P7Zo36WWw+vyiAw==
-X-Received: by 2002:a1c:c64c:: with SMTP id w73-v6mr14903915wmf.21.1539676913207;
-        Tue, 16 Oct 2018 01:01:53 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id x16-v6sm9750096wro.28.2018.10.16.01.01.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 01:01:52 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 10:01:50 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Juergen Gross <jgross@suse.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
-Subject: Re: [PATCH] x86: modify inline asm constraints in __cmpxchg_double()
-Message-ID: <20181016080150.GB41162@gmail.com>
-References: <20181015084802.30934-1-jgross@suse.com>
- <20181016062556.GA56841@gmail.com>
- <e43d18fd-22c0-5c59-5cb6-3d7c8da71d8e@suse.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nL+rl0AgL+S+0rJp5k2vnfDOBVCoZeAXF0pBRsUjNPc=;
+        b=dReOP0EDpoghkg06gkvkymGVRymlj7di6NluvXJ8WIT4Kldqt438qbZk5AQGUhyhn7
+         rcM4n69okQb68G2IaxqdCfgOpy/mOa2ToTZiRX+3I+y+s+ARHLXlNMyBMtNr9R/Gef1y
+         tQ8Kn0qZZyx9k1xw9sooRSO6pIX+Xi5xzw2gF0ngXWtUgoZ671EP6LNkgYEys/dse5Oz
+         L1TwFmwRBbr/mavFipCjWrG5hV7cLg5q6u1vI/tprvOJGuMR3haJD9FSHeeTAcO/oZtf
+         kj8sYb7HQ+ygNj35zxvLCMk2Z0KUFouFEe66moJ6TUgJOKG68ft5F/C0mGH+2fs9TsrD
+         atwQ==
+X-Gm-Message-State: ABuFfogYHJOTZfrPoFimD3CzaQ7uf/HKbuJJPSW2rgwot1rFhgOgRt07
+        +rOiscr3sryE1/nnNAaOK6Bh0ADgywyxvXznM3YlcA==
+X-Google-Smtp-Source: ACcGV60ZYg+WrU3Rf3TZvWqYkOW3zowIyzPqt7gDdTFuWInm8z435AnQLmHZPfxwmQvuGbvC6gMzbfsn9cKayxutuxI=
+X-Received: by 2002:ac8:440d:: with SMTP id j13-v6mr18837148qtn.257.1539676951443;
+ Tue, 16 Oct 2018 01:02:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e43d18fd-22c0-5c59-5cb6-3d7c8da71d8e@suse.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1539662998-15467-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1539662998-15467-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 16 Oct 2018 10:02:19 +0200
+Message-ID: <CACRpkdZSDyTu3HJ-3MCgsRVizvuUsyLfPg08-Q5tZeZKTovNGA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: uniphier: include <linux/bits.h> instead of <linux/bitops.h>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 16, 2018 at 6:10 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-* Juergen Gross <jgross@suse.com> wrote:
+> The reason of including <linux/bitops.h> here is just for BIT() macro.
+>
+> Since commit 8bd9cb51daac8 ("locking/atomics, asm-generic: Move some
+> macros from <linux/bitops.h> to a new <linux/bits.h> file"),
+> <linux/bits.h> is enough for such compile-time macros.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-> On 16/10/2018 08:25, Ingo Molnar wrote:
-> > 
-> > * Juergen Gross <jgross@suse.com> wrote:
-> > 
-> >> Some gcc versions seem to have problems with the constraints in
-> >> __cmpxchg_double() as they suddenly issue a build error when random
-> >> parts of sources calling __cmpxchg_double() are modified, like e.g.
-> >> slub.c. This has been observed on Debian systems only so far.
-> >>
-> >> Using "0" instead of "a" in the input constraints has the same
-> >> semantics while avoiding that build error.
-> >>
-> >> Signed-off-by: Juergen Gross <jgross@suse.com>
-> >> ---
-> >> I should note that I have observed gcc hangs instead sometimes. Not
-> >> taking any patches modifying users of __cmpxchg_double() due to a gcc
-> >> bug which seems to be distro-specific is a bad move IMO.
-> >>
-> >> I'd rather make it clear from build behavior that this is a bug in gcc
-> >> by letting the build hang instead of throwing error warnings not in any
-> >> way related to changes in the code.
-> >>
-> >> The gcc bug is filed under:
-> >>
-> >> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=908154
-> >> ---
-> >>  arch/x86/include/asm/cmpxchg.h | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
-> >> index a55d79b233d3..b3b4d61a8969 100644
-> >> --- a/arch/x86/include/asm/cmpxchg.h
-> >> +++ b/arch/x86/include/asm/cmpxchg.h
-> >> @@ -245,7 +245,7 @@ extern void __add_wrong_size(void)
-> >>  	asm volatile(pfx "cmpxchg%c4b %2; sete %0"			\
-> >>  		     : "=a" (__ret), "+d" (__old2),			\
-> >>  		       "+m" (*(p1)), "+m" (*(p2))			\
-> >> -		     : "i" (2 * sizeof(long)), "a" (__old1),		\
-> >> +		     : "i" (2 * sizeof(long)), "0" (__old1),		\
-> >>  		       "b" (__new1), "c" (__new2));			\
-> > 
-> > This got changed to +a in -tip:
-> > 
-> >   c808c09b527c: x86/asm: Use CC_SET()/CC_OUT() in __cmpxchg_double()
-> > 
-> > Mind sending a patch on top of -tip?
-> 
-> No, I think you can drop my patch.
-> 
-> c808c09b527c: x86/asm: Use CC_SET()/CC_OUT() in __cmpxchg_double()
-> has the same effect as my patch: the build failure is replaced by
-> gcc hanging instead in the critical configuration.
+Patch applied.
 
-Ok. No sane workaround we can do to avoid the hang I suspect, right?
-
-Should we propagate the fix/enhancement to x86/urgent? It's currently in 
-x86/asm for a v4.20 merge.
-
-Thanks,
-
-	Ingo
+Yours,
+Linus Walleij
