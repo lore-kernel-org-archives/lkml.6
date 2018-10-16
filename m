@@ -3,75 +3,138 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2AAC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE11C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C19B02089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:59:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C19B02089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4FE27208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:59:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FE27208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbeJPVuQ (ORCPT
+        id S1727217AbeJPVud (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:50:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57034 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbeJPVuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 17:50:15 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0059B308624F;
-        Tue, 16 Oct 2018 13:59:40 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.34.244.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 39C2B62489;
-        Tue, 16 Oct 2018 13:59:37 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Cc:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
+        Tue, 16 Oct 2018 17:50:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39964 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727184AbeJPVud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 17:50:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F23DBADF2;
+        Tue, 16 Oct 2018 13:59:54 +0000 (UTC)
+Subject: Re: [PATCH v2] mm: don't warn about large allocations for slab
+To:     Dmitry Vyukov <dvyukov@gmail.com>, cl@linux.com,
+        penberg@kernel.org, akpm@linux-foundation.org, rientjes@google.com,
+        iamjoonsoo.kim@lge.com
+Cc:     Dmitry Vyukov <dvyukov@google.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 09/12] x86/kvm/nVMX: allow bare VMXON state migration
-In-Reply-To: <8d6b85c4-16c6-cbde-22ec-ee61df0c49fd@redhat.com>
-References: <20180913170522.24876-1-vkuznets@redhat.com> <20180913170522.24876-10-vkuznets@redhat.com> <8d6b85c4-16c6-cbde-22ec-ee61df0c49fd@redhat.com>
-Date:   Tue, 16 Oct 2018 15:59:35 +0200
-Message-ID: <87zhvernzs.fsf@vitty.brq.redhat.com>
+References: <20180927171502.226522-1-dvyukov@gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <12881182-2459-910a-8f3a-04b3e85f08b6@suse.cz>
+Date:   Tue, 16 Oct 2018 15:59:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 16 Oct 2018 13:59:40 +0000 (UTC)
+In-Reply-To: <20180927171502.226522-1-dvyukov@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
+On 9/27/18 7:15 PM, Dmitry Vyukov wrote:
+> From: Dmitry Vyukov <dvyukov@google.com>
+> 
+> Slub does not call kmalloc_slab() for sizes > KMALLOC_MAX_CACHE_SIZE,
+> instead it falls back to kmalloc_large().
+> For slab KMALLOC_MAX_CACHE_SIZE == KMALLOC_MAX_SIZE and it calls
+> kmalloc_slab() for all allocations relying on NULL return value
+> for over-sized allocations.
+> This inconsistency leads to unwanted warnings from kmalloc_slab()
+> for over-sized allocations for slab. Returning NULL for failed
+> allocations is the expected behavior.
+> 
+> Make slub and slab code consistent by checking size >
+> KMALLOC_MAX_CACHE_SIZE in slab before calling kmalloc_slab().
+> 
+> While we are here also fix the check in kmalloc_slab().
+> We should check against KMALLOC_MAX_CACHE_SIZE rather than
+> KMALLOC_MAX_SIZE. It all kinda worked because for slab the
+> constants are the same, and slub always checks the size against
+> KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().
+> But if we get there with size > KMALLOC_MAX_CACHE_SIZE anyhow
+> bad things will happen. For example, in case of a newly introduced
+> bug in slub code.
+> 
+> Also move the check in kmalloc_slab() from function entry
+> to the size > 192 case. This partially compensates for the additional
+> check in slab code and makes slub code a bit faster
+> (at least theoretically).
+> 
+> Also drop __GFP_NOWARN in the warning check.
+> This warning means a bug in slab code itself,
+> user-passed flags have nothing to do with it.
+> 
+> Nothing of this affects slob.
+> 
+> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Pekka Enberg <penberg@kernel.org>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
+> Reported-by: syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com
+> Reported-by: syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com
+> Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
+> Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
 
-> On 13/09/2018 19:05, Vitaly Kuznetsov wrote:
->> It is perfectly valid for a guest to do VMXON and not do VMPTRLD. This
->> state needs to be preserved on migration.
->> 
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->
-> Please cover this in state-test.c too.
->
-
-Sure, this is kind of tested in the newly introduced evmcs_test but
-makes perfect sense to do this in state_test too.
-
-The series also got rotten and requires a rebase, will do that.
-
-Thanks,
-
--- 
-Vitaly
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
