@@ -2,221 +2,141 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A23CAC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4558C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 494B52083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:21:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KovgdnSc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 494B52083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7D94120881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:23:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D94120881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbeJPTLA (ORCPT
+        id S1727026AbeJPTNj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 15:11:00 -0400
-Received: from mail-wm1-f52.google.com ([209.85.128.52]:34763 "EHLO
-        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726711AbeJPTK7 (ORCPT
+        Tue, 16 Oct 2018 15:13:39 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.144]:23509 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726595AbeJPTNj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 15:10:59 -0400
-Received: by mail-wm1-f52.google.com with SMTP id z25-v6so25083990wmf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 04:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=miJRYa4OC/q4RJzNHvO/FqAYiI7+VgyY9ERUymu8wS8=;
-        b=KovgdnScUXuH+lsC7uQWzNq3MrgqnSVwixMgtYzN/NCPFevN8CcVIdBb1marZn+O1o
-         VmY1A+6r/QOSBOdGmU7cm2J3OoPxU51FKNc+P1LLlVMdEkgDwt+BN2uy4OCktEQ1VsAT
-         kK+i1owpO10aCt+DVN9Tlz1rh2Sg7Ko3y4p1Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=miJRYa4OC/q4RJzNHvO/FqAYiI7+VgyY9ERUymu8wS8=;
-        b=TT6AhatuzdVFSRSZmuwRKomYLjOlJ0uhWXvqrzFuU08fkgmvd0G78x0Grwu6CsIM0R
-         Z6xeL5f1RVWhdAcqzCWgiivbYXob3VBVL6Php+D030YUf+q7nZ8461QcA04uh+yyNZKL
-         rbHMO0URfHV7l3EJmvKeYbfcmmebxsUpvg4WbsztFGa0eE9RtVn7ejzeMYBSs650HjSY
-         qRQwEPCdSHVFOAdCtbOX6QNrsCBBEMyvGyvxEelA40VqJCd6pOpmqlQa3ClFI9Z/aI6C
-         5d4YIcGajw4yZGsmdECzGDWVZjBZyNxJ9QN0A0WyV8WlAoz0ONEdWTuyms9HxmfJvLeS
-         4DZw==
-X-Gm-Message-State: ABuFfogQE6nDg2XvhgOETXbrXZ+2kbQM1Ndg3nI/ERsVKUUCUMxZ0YUE
-        EGymCkFbpM5bylrAHM2DHKsBoQ==
-X-Google-Smtp-Source: ACcGV61/WAm+h6wuPLZYrO2EK1yW4Zg9MIccgBiCYaW23WajJnHiVgH17RYc0nVojHR/FrFvrwBysw==
-X-Received: by 2002:a1c:84cd:: with SMTP id g196-v6mr16312898wmd.38.1539688859017;
-        Tue, 16 Oct 2018 04:20:59 -0700 (PDT)
-Received: from [192.168.0.40] (221.56.88.92.rev.sfr.net. [92.88.56.221])
-        by smtp.googlemail.com with ESMTPSA id i6-v6sm11575286wrq.4.2018.10.16.04.20.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 04:20:58 -0700 (PDT)
-Subject: Re: [PATCH] thermal: qoriq: add multiple sensors support
-To:     Andy Tang <andy.tang@nxp.com>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>
-Cc:     "edubezval@gmail.com" <edubezval@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20180927024204.17314-1-andy.tang@nxp.com>
- <3d1f8304-9005-23f3-2e0e-ef9c962c9f6e@linaro.org>
- <DB5PR0401MB2213D4C1874291B87F231547F3FD0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
- <cf157e9f-a4cb-6d7d-f51d-8b9d91f3335c@linaro.org>
- <DB5PR0401MB2213E291AC455D61ED15AF4AF3FE0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <77993e69-db55-a2a0-799f-5225d5ffb010@linaro.org>
-Date:   Tue, 16 Oct 2018 13:20:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 16 Oct 2018 15:13:39 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 026351FEE2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 06:23:40 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id CNRrgjU6IRPojCNRrg0RqU; Tue, 16 Oct 2018 06:23:40 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:33830 helo=[192.168.1.41])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gCNRr-001467-Ib; Tue, 16 Oct 2018 06:23:39 -0500
+Subject: Re: [PATCH] signal: Mark expected switch fall-throughs
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181013114847.GA3160@embeddedor.com>
+ <CAGXu5jK-1DYcU3Aij9=spJa9d7ch2-mjXDZVEhmcWCVhWtE8NQ@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <7f629a5a-b4e6-9daa-6ec3-f2d77027138c@embeddedor.com>
+Date:   Tue, 16 Oct 2018 13:23:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <DB5PR0401MB2213E291AC455D61ED15AF4AF3FE0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+In-Reply-To: <CAGXu5jK-1DYcU3Aij9=spJa9d7ch2-mjXDZVEhmcWCVhWtE8NQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gCNRr-001467-Ib
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:33830
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 14
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/10/2018 05:01, Andy Tang wrote:
-> Hi Daniel,
+
+
+On 10/15/18 11:29 PM, Kees Cook wrote:
+> On Sat, Oct 13, 2018 at 4:48 AM, Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > 
-> Please see my reply inline.
+> Yes, please. :) I love every step closer we get to being able to use
+> -Wimplicit-fallthrough.
 > 
->> -----Original Message-----
 
-[ ... ]
+Yep. We are getting there. :D
 
->> I'm proposing to move struct qoriq_tmu_site_regs inside the struct
->> qoriq_sensor.
->>
->>
->> We end up with:
->>
->> struct qoriq_sensor {
->>    struct thermal_zone_device *tzd;
->>    struct struct qoriq_tmu_site_regs *regs;
->>    struct qoriq_tmu_data *qdata;
->>    int id;
->> };
-> [Andy] I see your point. If I add a *regs member to qoriq_sensor struct, then I can speed up the access to the register.
-> But I don't think it is better. Currently I can access sensor register by: qdata->regs->site[qsensor->id].
-> The whole point here is we can't MOVE struct qoriq_tmu_site_regs to the struct qoriq_sensor. We can only COPY
-> it to struct qoriq_sensor. 
+> Acked-by: Kees Cook <keescook@chromium.org>
 > 
-> This is the TMU module memory map:
-> struct qoriq_tmu_regs {
-> ......
->         u32 tscfgr;             /* Sensor Configuration Register */
->         u8 res4[0x78];
->         struct qoriq_tmu_site_regs site[SITES_MAX];
->         u8 res5[0x9f8];
->         u32 ipbrr0;             /* IP Block Revision Register 0 */
->         u32 ipbrr1;             /* IP Block Revision Register 1 */
-> .......}
-> struct qoriq_tmu_site_regs site[SITES_MAX] is part of the memory
-> map.
-> It can't be removed or we have to define a similar struct to fill it up.
 
-Mmh, I see. Thanks for the clarification.
-
-A consolidation around this would have been nice but it means a DT
-change (reduce the size of the map). So I guess we can leave it as it is.
-
-
->>>>> -	if (sensor_specs.args_count >= 1) {
->>>>> -		id = sensor_specs.args[0];
->>>>> -		WARN(sensor_specs.args_count > 1,
->>>>> -				"%s: too many cells in sensor specifier %d\n",
->>>>> -				sensor_specs.np->name,
->> sensor_specs.args_count);
->>>>> -	} else {
->>>>> -		id = 0;
->>>>> +		if (id > SITES_MAX)
->>>>> +			return -EINVAL;
->>>>> +
->>>>> +		qdata->sensor[id] = devm_kzalloc(&pdev->dev,
->>>>> +				sizeof(struct qoriq_sensor), GFP_KERNEL);
->>>>> +		if (!qdata->sensor[id])
->>>>> +			return -ENOMEM;
->>>>> +
->>>>> +		qdata->sensor[id]->id = id;
->>>>> +		qdata->sensor[id]->qdata = qdata;
->>>>> +
->>>>> +		qdata->sensor[id]->tzd =
->>>> devm_thermal_zone_of_sensor_register(
->>>>> +				&pdev->dev, id, qdata->sensor[id], &tmu_tz_ops);
->>>>> +
->>>>> +		if (IS_ERR(qdata->sensor[id]->tzd)) {
->>>>> +			ret = PTR_ERR(qdata->sensor[id]->tzd);
->>>>> +			dev_err(&pdev->dev,
->>>>> +				"Failed to register thermal zone device.\n");
->>>>> +			return -ENODEV;
->>>>> +		}
->>>>> +
->>>>> +		sites |= 0x1 << (15 - id);
->>>>
->>>> The current code is reading the DT in order to get the sensor id and
->>>> initialize it. IOW, the DT gives the sensors to use.
->>>>
->>>> IMO, it would be more self contained if the driver initializes all
->>>> the sensors without taking care of the DT and let the of- code to do
->>>> the binding when the thermal zone, no ?
->>> [Andy] could you please explain more about this way? I am not sure how
->> to implement it.
->>> But one thing is for sure: we must get the sensor IDs explicitly so
->>> that we can enable them by the following command:  tmu_write(qdata,
->>> sites | TMR_ME | TMR_ALPF, &qdata->regs->tmr);
->>
->> What I meant is about code separation between the driver itself and the
->> of-thermal code.
->>
->> The code above re-inspect the DT to find out the sensor ids in order to
->> enable them and somehow this is not wrong but breaks the self
->> encapsulation of the driver. I was suggesting if it isn't possible to enable all
->> the sensors without taking care of digging into the DT.
-> 
-> [Andy] I don't want to re-parse the DT here too. But I have to.
-> This driver will be used by all our SOCs with different sensor IDs and number.
-> For example: there are 2 sensors on ls1088a platform with ID 0 and 1.
-> While on ls1043a there are 6 sensors with ID 0, 1, 2, 3, 4, 5.
-> If we don't scan the DT we would not know how many sensors it is and what are the sensor's IDs,
-> unless we hardcode it in driver.
-
-Yes, you are not the only one in this situation IMO and the drivers
-supporting multiple sensors are increasing, so this will repeat again
-and again.
-
-That could be hardcoded in the driver by using the compatible string but
-it will be nicer if we can fix that in the DT.
-
-[Cc'ing Rob]
-
-What is missing is a description of the sensors id in the temperature
-device node. We have the <thermal-sensor-cells> with 0 or 1 telling if
-there is one or several sensors but we can't specify which sensor ids we
-have. The only alternative is to parse the thermal zones to found out
-which sensors are in use and use them to initialize the driver, an
-approach which breaks the self-encapsulation: the of-thermal framework
-is the one in charge of doing the link between the thermal zone and a
-sensor id.
-
-Is it acceptable to add the list of the sensors id in the temp device
-node, so the driver can initialize these sensors without parsing the
-thermal zone in the DT ?
-
-
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Thanks
+--
+Gustavo
