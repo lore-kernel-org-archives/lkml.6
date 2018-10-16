@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C01F5C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 188F6C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C70D20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D481E21477
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2Qok7mAN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C70D20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LuvCXPsF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D481E21477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730118AbeJQBJx (ORCPT
+        id S1730128AbeJQBJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:09:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54626 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:09:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729161AbeJQBJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:09:52 -0400
+        id S1728680AbeJQBJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:09:57 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D20C20866;
-        Tue, 16 Oct 2018 17:18:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F09E520866;
+        Tue, 16 Oct 2018 17:18:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710308;
-        bh=IeuBVkdMiHwY2wlnmIQu2hRR1ALt3IRpmNfbvyF8eNs=;
+        s=default; t=1539710313;
+        bh=Nkz7lFYY4qbVA/rRSLDDy5fI6XoxoNQeOQJoydlBWgw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Qok7mANXAuSV7eouvDIQ1CC2m/fsAXUVIwOVO/GuNH9DBZAU7jSlYz9c04vsZTRV
-         J20OotlT8qZg418RI/yGqXriPsEoCSehT0JWios61JgWQ+zJjRdaz6Em9dAZn3D/PK
-         mV8N7WzEHnVZ8VUUkoINiLVUrbcnLOffnPCzBfMY=
+        b=LuvCXPsFvOn3R2lTivThr975smie/hyULQPRjvItlripv0Efs+MXE8WsCuGkuh+I+
+         /51MoZQLUWKs4tEyfJjbd/PK2RfdABQb9NgzhQi3iWDh2hs0xBNKPiaTQCOD/fhcXL
+         bgQv0K+RVuDbevKCH5dd0zJpkgF14RWCowZooKKk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 031/109] net/mlx5: E-Switch, Fix out of bound access when setting vport rate
-Date:   Tue, 16 Oct 2018 19:04:59 +0200
-Message-Id: <20181016170526.758258078@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Soltys <soltys@ziu.info>,
+        Mahesh Bandewar <maheshb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 032/109] bonding: pass link-local packets to bonding master also.
+Date:   Tue, 16 Oct 2018 19:05:00 +0200
+Message-Id: <20181016170526.795958040@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -62,46 +63,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eran Ben Elisha <eranbe@mellanox.com>
+From: Mahesh Bandewar <maheshb@google.com>
 
-[ Upstream commit 11aa5800ed66ed0415b7509f02881c76417d212a ]
+[ Upstream commit 6a9e461f6fe4434e6172304b69774daff9a3ac4c ]
 
-The code that deals with eswitch vport bw guarantee was going beyond the
-eswitch vport array limit, fix that.  This was pointed out by the kernel
-address sanitizer (KASAN).
+Commit b89f04c61efe ("bonding: deliver link-local packets with
+skb->dev set to link that packets arrived on") changed the behavior
+of how link-local-multicast packets are processed. The change in
+the behavior broke some legacy use cases where these packets are
+expected to arrive on bonding master device also.
 
-The error from KASAN log:
-[2018-09-15 15:04:45] BUG: KASAN: slab-out-of-bounds in
-mlx5_eswitch_set_vport_rate+0x8c1/0xae0 [mlx5_core]
+This patch passes the packet to the stack with the link it arrived
+on as well as passes to the bonding-master device to preserve the
+legacy use case.
 
-Fixes: c9497c98901c ("net/mlx5: Add support for setting VF min rate")
-Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
-Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: b89f04c61efe ("bonding: deliver link-local packets with skb->dev set to link that packets arrived on")
+Reported-by: Michal Soltys <soltys@ziu.info>
+Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/bonding/bond_main.c |   21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -1922,7 +1922,7 @@ static u32 calculate_vports_min_rate_div
- 	u32 max_guarantee = 0;
- 	int i;
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1177,9 +1177,26 @@ static rx_handler_result_t bond_handle_f
+ 		}
+ 	}
  
--	for (i = 0; i <= esw->total_vports; i++) {
-+	for (i = 0; i < esw->total_vports; i++) {
- 		evport = &esw->vports[i];
- 		if (!evport->enabled || evport->info.min_rate < max_guarantee)
- 			continue;
-@@ -1942,7 +1942,7 @@ static int normalize_vports_min_rate(str
- 	int err;
- 	int i;
+-	/* don't change skb->dev for link-local packets */
+-	if (is_link_local_ether_addr(eth_hdr(skb)->h_dest))
++	/* Link-local multicast packets should be passed to the
++	 * stack on the link they arrive as well as pass them to the
++	 * bond-master device. These packets are mostly usable when
++	 * stack receives it with the link on which they arrive
++	 * (e.g. LLDP) they also must be available on master. Some of
++	 * the use cases include (but are not limited to): LLDP agents
++	 * that must be able to operate both on enslaved interfaces as
++	 * well as on bonds themselves; linux bridges that must be able
++	 * to process/pass BPDUs from attached bonds when any kind of
++	 * STP version is enabled on the network.
++	 */
++	if (is_link_local_ether_addr(eth_hdr(skb)->h_dest)) {
++		struct sk_buff *nskb = skb_clone(skb, GFP_ATOMIC);
++
++		if (nskb) {
++			nskb->dev = bond->dev;
++			netif_rx(nskb);
++		}
+ 		return RX_HANDLER_PASS;
++	}
+ 	if (bond_should_deliver_exact_match(skb, slave, bond))
+ 		return RX_HANDLER_EXACT;
  
--	for (i = 0; i <= esw->total_vports; i++) {
-+	for (i = 0; i < esw->total_vports; i++) {
- 		evport = &esw->vports[i];
- 		if (!evport->enabled)
- 			continue;
 
 
