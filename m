@@ -4,47 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876BEC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F880C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5115A20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:17:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DACE220866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:17:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcLFYbiB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5115A20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KVTETHnu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DACE220866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729988AbeJQBJK (ORCPT
+        id S1730002AbeJQBJN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:09:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53946 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:09:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728441AbeJQBJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:09:09 -0400
+        id S1728441AbeJQBJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:09:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84E5320866;
-        Tue, 16 Oct 2018 17:17:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C23A2098A;
+        Tue, 16 Oct 2018 17:17:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710265;
-        bh=r+157hG99obExurC1598oA9ZjBDqMGEeFnpVf6fqnao=;
+        s=default; t=1539710268;
+        bh=85H2dJrllWFOGUxQsFKkr6J/sO+3bWQP1ViI+aa2drM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KcLFYbiBlEfMDgsvCJ4AWGzh9KfEGiJcWQCCwYO06Usd5DAbVdd488jZnkBLXI28I
-         1snLt60f+GlIK9an4fRa/I0FIiLYymX3S8eSP1Uwb51WkeDI7OSFVGUmMH53iu48E7
-         DMm/3RwGDyX7o4ckwX1gvsEx1hlPSXmx1Mu5DAbs=
+        b=KVTETHnuGkPkuIMUQ7NzIzSGdPwsohCFw1kS5cLpjKgn8jD6Iz8Rcgkofqpgq6Qql
+         WePZsbxbVtCBEv4UqIHNNBJ9hAF5V6/zV+Q9jlaKs5jdV7Y2jkJEGRQD9JBS1Thrde
+         7b9E1xr1cdLvadus8RZBof4LdHnAZGjOTihY/gME=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org, ian.periam@dialogic.com,
+        Xin Long <lucien.xin@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 021/109] rtnl: limit IFLA_NUM_TX_QUEUES and IFLA_NUM_RX_QUEUES to 4096
-Date:   Tue, 16 Oct 2018 19:04:49 +0200
-Message-Id: <20181016170526.236751970@linuxfoundation.org>
+Subject: [PATCH 4.14 022/109] sctp: update dst pmtu with the correct daddr
+Date:   Tue, 16 Oct 2018 19:04:50 +0200
+Message-Id: <20181016170526.301320442@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -62,54 +64,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 0e1d6eca5113858ed2caea61a5adc03c595f6096 ]
+[ Upstream commit d7ab5cdce54da631f0c8c11e506c974536a3581e ]
 
-We have an impressive number of syzkaller bugs that are linked
-to the fact that syzbot was able to create a networking device
-with millions of TX (or RX) queues.
+When processing pmtu update from an icmp packet, it calls .update_pmtu
+with sk instead of skb in sctp_transport_update_pmtu.
 
-Let's limit the number of RX/TX queues to 4096, this really should
-cover all known cases.
+However for sctp, the daddr in the transport might be different from
+inet_sock->inet_daddr or sk->sk_v6_daddr, which is used to update or
+create the route cache. The incorrect daddr will cause a different
+route cache created for the path.
 
-A separate patch will add various cond_resched() in the loops
-handling sysfs entries at device creation and dismantle.
+So before calling .update_pmtu, inet_sock->inet_daddr/sk->sk_v6_daddr
+should be updated with the daddr in the transport, and update it back
+after it's done.
 
-Tested:
+The issue has existed since route exceptions introduction.
 
-lpaa6:~# ip link add gre-4097 numtxqueues 4097 numrxqueues 4097 type ip6gretap
-RTNETLINK answers: Invalid argument
-
-lpaa6:~# time ip link add gre-4096 numtxqueues 4096 numrxqueues 4096 type ip6gretap
-
-real	0m0.180s
-user	0m0.000s
-sys	0m0.107s
-
-Fixes: 76ff5cc91935 ("rtnl: allow to specify number of rx and tx queues on device creation")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 4895c771c7f0 ("ipv4: Add FIB nexthop exceptions.")
+Reported-by: ian.periam@dialogic.com
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/rtnetlink.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ net/sctp/transport.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -2430,6 +2430,12 @@ struct net_device *rtnl_create_link(stru
- 	else if (ops->get_num_rx_queues)
- 		num_rx_queues = ops->get_num_rx_queues();
+--- a/net/sctp/transport.c
++++ b/net/sctp/transport.c
+@@ -254,6 +254,7 @@ void sctp_transport_pmtu(struct sctp_tra
+ bool sctp_transport_update_pmtu(struct sctp_transport *t, u32 pmtu)
+ {
+ 	struct dst_entry *dst = sctp_transport_dst_check(t);
++	struct sock *sk = t->asoc->base.sk;
+ 	bool change = true;
  
-+	if (num_tx_queues < 1 || num_tx_queues > 4096)
-+		return ERR_PTR(-EINVAL);
+ 	if (unlikely(pmtu < SCTP_DEFAULT_MINSEGMENT)) {
+@@ -265,12 +266,19 @@ bool sctp_transport_update_pmtu(struct s
+ 	pmtu = SCTP_TRUNC4(pmtu);
+ 
+ 	if (dst) {
+-		dst->ops->update_pmtu(dst, t->asoc->base.sk, NULL, pmtu);
++		struct sctp_pf *pf = sctp_get_pf_specific(dst->ops->family);
++		union sctp_addr addr;
 +
-+	if (num_rx_queues < 1 || num_rx_queues > 4096)
-+		return ERR_PTR(-EINVAL);
++		pf->af->from_sk(&addr, sk);
++		pf->to_sk_daddr(&t->ipaddr, sk);
++		dst->ops->update_pmtu(dst, sk, NULL, pmtu);
++		pf->to_sk_daddr(&addr, sk);
 +
- 	dev = alloc_netdev_mqs(ops->priv_size, ifname, name_assign_type,
- 			       ops->setup, num_tx_queues, num_rx_queues);
- 	if (!dev)
+ 		dst = sctp_transport_dst_check(t);
+ 	}
+ 
+ 	if (!dst) {
+-		t->af_specific->get_dst(t, &t->saddr, &t->fl, t->asoc->base.sk);
++		t->af_specific->get_dst(t, &t->saddr, &t->fl, sk);
+ 		dst = t->dst;
+ 	}
+ 
 
 
