@@ -2,190 +2,336 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 630B0C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1400BC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AFB32089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:54:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A37462089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:57:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aqL/1weJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AFB32089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ozlabs-ru.20150623.gappssmtp.com header.i=@ozlabs-ru.20150623.gappssmtp.com header.b="uxPHrdPy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37462089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ozlabs.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbeJPMmq (ORCPT
+        id S1727503AbeJPMpz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:42:46 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36980 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbeJPMmq (ORCPT
+        Tue, 16 Oct 2018 08:45:55 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46660 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727103AbeJPMpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:42:46 -0400
-Received: by mail-wr1-f66.google.com with SMTP id y11-v6so23744446wrd.4;
-        Mon, 15 Oct 2018 21:54:11 -0700 (PDT)
+        Tue, 16 Oct 2018 08:45:54 -0400
+Received: by mail-pg1-f195.google.com with SMTP id a5-v6so10217274pgv.13
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 21:57:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=4RTbRxsDJCzmWQwMBiR5E1tOA3tl/s4MT9DXmaGA/kU=;
-        b=aqL/1weJMDrL/H2GKHmrv77f2RiXWGEEWOh+Baizc71+7kbk2kS9unYtjFkNm4xqcO
-         v6oWQQutNz0kWK4AWL9eAX/D1updyAaAzR7CijrhADwYdbcn27a8sAS+QMqrQH+K+vju
-         wUQ9THQlrjHDrLjIhwxcqXOSIlpRYzd6XaLAEpBeTTW2abrCIvYONmKJ38saYNKaBAjw
-         XY9ANoU7Ye3azK01opnTwOX3xol3fPImQ7I/wkWb6fU/WrKH2k2nOUkTyXDoU3pkB/9T
-         y1M3pwZAv9mv+FIaToynnS7KZ+WFcIcUj9OsgCWl4mu07P+0z0v+Z6WwASQGJUbtz6sc
-         32tQ==
+        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qM5d6gTT0jIW9CBbSJWE9YPy77mIQ69zPuEmKoZdxZw=;
+        b=uxPHrdPyJlbT/9w4vVWdcNLH+chBVAIWS9k0PyOZ3xrllIeCzTTER/dw63+vlq9K02
+         lgBowprdWaXYYJN0O2QSqEwnQRYw8fsrEUds+XG7fzL9iM5WIuK5kT+dnK3vdI06PvtA
+         MRqPFannzchnNYP29RzTCTWdS97eCgxzFxU0INHMYHj2XFCdIWf82Ju59Wz/tHenllRL
+         2woVIMfcQr9bwjOTwEdTS6rWummTDCw9Lr+u6gcJjZRFqnv8tnqwt9OioSDGq51dF+wA
+         GhtauvzWhCJvlXKZO5j/KLzy6/MxjUan8jUrup/kQIWMggV2/KehicDmcAPzr6HQnbSQ
+         RIvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=4RTbRxsDJCzmWQwMBiR5E1tOA3tl/s4MT9DXmaGA/kU=;
-        b=Oi83a2lUHNVAZRLTxzixICaLyccL4rowFlqyS6sY/P/Gk0iP/O6h8YHGQfc4FYfFmH
-         xDgXtGYO+N4686A11cbv+wexsDLzUTWnWfG5U2DTp7AIiHFk9hNqYxWoRDOmjBnJqxui
-         eHBnjwVVSLLTgXuIQUUCMeAoVfH/zGpVfThTPfxjPHilmBdIWMNoPV2Ru6hSSHj6sSUG
-         k/ZuU4uF2Qy3y2PaPwEHIlJpHm2mZ9us7HwJgCEe/kbbMmjNURd4nO5KJlWCSxipQmhe
-         Qu4Z0QR9l2xvyqko2fpx0iDOosxFBVDcY6gNYUs/7Jp3ZFDsqGwrokleojcX+vljeTPh
-         23yw==
-X-Gm-Message-State: ABuFfojRtzVqkVcmH8ZmdQ1d10WBPF9y/DFgwZ22bT1ddkluAwm7xgvz
-        T8Z03ndHXOaFd0zH7gj9YzM=
-X-Google-Smtp-Source: ACcGV602hE29hsHiup7T9fnI186jwpUvwBypXVqUUBsA7n6jXibqYau9lF459PJpDNCwZphlBPQtCA==
-X-Received: by 2002:a5d:6242:: with SMTP id m2-v6mr16999498wrv.162.1539665650976;
-        Mon, 15 Oct 2018 21:54:10 -0700 (PDT)
-Received: from [172.16.20.20] ([94.204.252.234])
-        by smtp.gmail.com with ESMTPSA id d16-v6sm9674559wrw.78.2018.10.15.21.54.08
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=qM5d6gTT0jIW9CBbSJWE9YPy77mIQ69zPuEmKoZdxZw=;
+        b=jSuOTIEshmsehxHFy3vYpFDj3sDLyG5LjBVGP2jlaqFDjMfYnI6HHQoTdt1tZgKPEq
+         SBAG5cVgX1uCLjiL30hPZJRmhHavOBNh9WAAqsBcLq5vB2gkFGPfgn7ZZsjycGC+3Avc
+         3sNrtQ/TxXxgs5tFk6K7QiiXOQUC0NFj4Wb357iL5hJYuLNUMoxGhPdk5f5CeHZMPplT
+         Dq6kbBRT2ueaE1UbkTHpO2ZDFu2MOjMN5PvBjIzCnN+k1B/Hj6isgE7RFvaVbh8rSmsc
+         muvi/nyYVCpx1r7psHKFWYklU3M1kE3EvcQp6Oa4Q/4VUwft8pRv5d5ZfdpeB0mhpzp9
+         ViQQ==
+X-Gm-Message-State: ABuFfoh7u2pL9nSZTLMK0pp/pHXymAQU/iq3dLzuxg9DCWU/FzvIJcHE
+        WaCBl62HL0Bc77yNUYZYjKLIxO/F8D8=
+X-Google-Smtp-Source: ACcGV60n46prdX3qb5TFgpW7Sj9457092yCcaTnF+RW4uGmRWXWtUP2o2rOYOZftYPZ3x8V6FSMbZw==
+X-Received: by 2002:a62:5e02:: with SMTP id s2-v6mr21148986pfb.146.1539665840378;
+        Mon, 15 Oct 2018 21:57:20 -0700 (PDT)
+Received: from [10.61.2.175] ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id k63-v6sm13451493pga.36.2018.10.15.21.57.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 21:54:10 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
-From:   Christian Hewitt <christianshewitt@gmail.com>
-In-Reply-To: <ed6a889eeec4e2809f0840c9e8188b5e4b24fa76.camel@baylibre.com>
-Date:   Tue, 16 Oct 2018 08:54:05 +0400
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8A3A1316-DC7F-4C5A-9DD8-C115EBB613BB@gmail.com>
-References: <1539425086-10997-1-git-send-email-christianshewitt@gmail.com>
- <20181013160810.88481.14237@resonance>
- <ed6a889eeec4e2809f0840c9e8188b5e4b24fa76.camel@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Mon, 15 Oct 2018 21:57:19 -0700 (PDT)
+Subject: Re: [PATCH V3 2/2] powerpc/mm/iommu: Allow migration of cma allocated
+ pages during mm_iommu_get
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
+        mpe@ellerman.id.au
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <20180918115839.22154-1-aneesh.kumar@linux.ibm.com>
+ <20180918115839.22154-3-aneesh.kumar@linux.ibm.com>
+From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+Openpgp: preference=signencrypt
+Autocrypt: addr=aik@ozlabs.ru; keydata=
+ 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
+Message-ID: <ed52bfcd-9440-9f1f-202c-5b51d31c7cf1@ozlabs.ru>
+Date:   Tue, 16 Oct 2018 15:57:13 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20180918115839.22154-3-aneesh.kumar@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15 Oct 2018, at 9:07 pm, Jerome Brunet <jbrunet@baylibre.com> wrote:
->=20
-> On Sat, 2018-10-13 at 18:08 +0200, Michael Turquette wrote:
->> Quoting Christian Hewitt (2018-10-13 12:04:46)
->>> On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
->>> with reboot; e.g. a ~60 second delay between issuing reboot and the
->>> board power cycling (and in some OS configurations reboot will fail
->>> and require manual power cycling).
->>>=20
->>> Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
->>> meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
->>> Co-Processor seems to depend on FCLK_DIV3 being operational.
->>>=20
->>> Bisect gives 'commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
->>> meson: add fdiv clock gates") between 4.16 and 4.16-rc1 as the first
->>> bad commit. This added support for the missing clock gates before =
-the
->>> fixed PLL fixed dividers (FCLK_DIVx) and the clock framework which
->>> disabled all the unused fixed dividers, thus it disabled a critical
->>> clock path for the SCPI Co-Processor.
->>>=20
->>> This change simply sets the FCLK_DIV3 gate as critical to ensure
->>> nothing can disable it.
->>=20
->> I'm a bit skeptical of this. If FCLK_DIV3 is gated at run-time, there =
-is
->> no side effect other than long and/or failed reboot?
->>=20
->> Seems like someone should be managing this clock, and simply leaving =
-it
->> on all the time isn't necessarily the right approach. Any chance that
->> you can dig into this behavior to better understand it?
->>=20
->> It's easy to solve issues by leaving clocks on all the time, but this
->> becomes a problem later on when trying to tune a device for power.
->=20
-> Hi Mike,
->=20
-> I totally agree with you and, in perfect a world, I would prefer not =
-to use this
-> CLK_IS_CRITICAL at all. It looks like a cheap fix for:
->=20
-> "this is required, I don't for what but it is, so please leave it on"
->=20
-> The problem is this issue is a regression. We added a few gates to =
-better model
-> the clock tree a while ago. Before, those those clock were left =
-enabled by the
-> bootloader.
->=20
-> Now that linux turn them off, we are learning a few things about what =
-the FWs
-> are doing behind our backs.
->=20
-> Among the 5 clocks which got a new gates, only 2 needs to back the old =
-way using
-> CLK_IS_CRITICAL, so this is still an improvement.
->=20
->>=20
->> Also, if this commit really is the right fix, it should include a
->> comment for FCLK_DIV3 stating why the CLK_IS_CRITICAL flag was set,
->> which may be helpful later on to know if it is safe to remove it. =
-Same
->> is true for FCLK_DIV2 in c987ac6f1f088663b6dad39281071aeb31d450a8.
->=20
-> +1 There should be FIXME notice in the driver explaining why we put =
-that flag in
-> the first place, so we can remove it as soon as a driver properly =
-handle this
-> clock.
->=20
-> Christian, is Ok if I amend your patch, or do you prefer to post a v2 =
-?
-> Mike, with explained, is this change OK with you ?
 
-I=E2=80=99m happy for you to amend, it=E2=80=99s easier for me.
-Christian
 
->>=20
->> Regards,
->> Mike
->>=20
->>>=20
->>> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
->>> ---
->>> drivers/clk/meson/gxbb.c | 1 +
->>> 1 file changed, 1 insertion(+)
->>>=20
->>> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
->>> index 86d3ae5..4c8925d 100644
->>> --- a/drivers/clk/meson/gxbb.c
->>> +++ b/drivers/clk/meson/gxbb.c
->>> @@ -509,6 +509,7 @@ static struct clk_fixed_factor =
-gxbb_fclk_div3_div =3D {
->>>                .ops =3D &clk_fixed_factor_ops,
->>>                .parent_names =3D (const char *[]){ "fixed_pll" },
->>>                .num_parents =3D 1,
->>> +               .flags =3D CLK_IS_CRITICAL,
->>>        },
->>> };
->>>=20
->>> --=20
->>> 2.7.4
+On 18/09/2018 21:58, Aneesh Kumar K.V wrote:
+> Current code doesn't do page migration if the page allocated is a compound page.
+> With HugeTLB migration support, we can end up allocating hugetlb pages from
+> CMA region. Also THP pages can be allocated from CMA region. This patch updates
+> the code to handle compound pages correctly.
+> 
+> This use the new helper get_user_pages_cma_migrate. It does one get_user_pages
+> with right count, instead of doing one get_user_pages per page. That avoids
+> reading page table multiple times.
+> 
+> The patch also convert the hpas member of mm_iommu_table_group_mem_t to a union.
+> We use the same storage location to store pointers to struct page. We cannot
+> update alll the code path use struct page *, because we access hpas in real mode
+> and we can't do that struct page * to pfn conversion in real mode.
+> 
+> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> ---
+>  arch/powerpc/mm/mmu_context_iommu.c | 120 ++++++++--------------------
+>  1 file changed, 35 insertions(+), 85 deletions(-)
+> 
+> diff --git a/arch/powerpc/mm/mmu_context_iommu.c b/arch/powerpc/mm/mmu_context_iommu.c
+> index c9ee9e23845f..f0d8645872cb 100644
+> --- a/arch/powerpc/mm/mmu_context_iommu.c
+> +++ b/arch/powerpc/mm/mmu_context_iommu.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/swap.h>
+>  #include <asm/mmu_context.h>
+>  #include <asm/pte-walk.h>
+> +#include <linux/mm_inline.h>
+>  
+>  static DEFINE_MUTEX(mem_list_mutex);
+>  
+> @@ -30,8 +31,18 @@ struct mm_iommu_table_group_mem_t {
+>  	atomic64_t mapped;
+>  	unsigned int pageshift;
+>  	u64 ua;			/* userspace address */
+> -	u64 entries;		/* number of entries in hpas[] */
+> -	u64 *hpas;		/* vmalloc'ed */
+> +	u64 entries;		/* number of entries in hpages[] */
+> +	/*
+> +	 * in mm_iommu_get we temporarily use this to store
+> +	 * struct page address.
+> +	 *
+> +	 * We need to convert ua to hpa in real mode. Make it
+> +	 * simpler by storing physicall address.
+> +	 */
+> +	union {
+> +		struct page **hpages;	/* vmalloc'ed */
+> +		phys_addr_t *hpas;
 
+
+It could always be hpages. Now it is slightly complicated though because
+of MM_IOMMU_TABLE_GROUP_PAGE_DIRTY...
+
+> +	};
+>  };
+>  
+>  static long mm_iommu_adjust_locked_vm(struct mm_struct *mm,
+> @@ -74,63 +85,14 @@ bool mm_iommu_preregistered(struct mm_struct *mm)
+>  }
+>  EXPORT_SYMBOL_GPL(mm_iommu_preregistered);
+>  
+> -/*
+> - * Taken from alloc_migrate_target with changes to remove CMA allocations
+> - */
+> -struct page *new_iommu_non_cma_page(struct page *page, unsigned long private)
+> -{
+> -	gfp_t gfp_mask = GFP_USER;
+> -	struct page *new_page;
+> -
+> -	if (PageCompound(page))
+> -		return NULL;
+> -
+> -	if (PageHighMem(page))
+> -		gfp_mask |= __GFP_HIGHMEM;
+> -
+> -	/*
+> -	 * We don't want the allocation to force an OOM if possibe
+> -	 */
+> -	new_page = alloc_page(gfp_mask | __GFP_NORETRY | __GFP_NOWARN);
+> -	return new_page;
+> -}
+> -
+> -static int mm_iommu_move_page_from_cma(struct page *page)
+> -{
+> -	int ret = 0;
+> -	LIST_HEAD(cma_migrate_pages);
+> -
+> -	/* Ignore huge pages for now */
+> -	if (PageCompound(page))
+> -		return -EBUSY;
+> -
+> -	lru_add_drain();
+> -	ret = isolate_lru_page(page);
+> -	if (ret)
+> -		return ret;
+> -
+> -	list_add(&page->lru, &cma_migrate_pages);
+> -	put_page(page); /* Drop the gup reference */
+> -
+> -	ret = migrate_pages(&cma_migrate_pages, new_iommu_non_cma_page,
+> -				NULL, 0, MIGRATE_SYNC, MR_CONTIG_RANGE);
+> -	if (ret) {
+> -		if (!list_empty(&cma_migrate_pages))
+> -			putback_movable_pages(&cma_migrate_pages);
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  long mm_iommu_get(struct mm_struct *mm, unsigned long ua, unsigned long entries,
+>  		struct mm_iommu_table_group_mem_t **pmem)
+>  {
+>  	struct mm_iommu_table_group_mem_t *mem;
+> -	long i, j, ret = 0, locked_entries = 0;
+> +	long i, ret = 0, locked_entries = 0;
+>  	unsigned int pageshift;
+>  	unsigned long flags;
+>  	unsigned long cur_ua;
+> -	struct page *page = NULL;
+>  
+>  	mutex_lock(&mem_list_mutex);
+>  
+> @@ -177,41 +139,24 @@ long mm_iommu_get(struct mm_struct *mm, unsigned long ua, unsigned long entries,
+>  		goto unlock_exit;
+>  	}
+>  
+> +	ret = get_user_pages_cma_migrate(ua, entries, 1, mem->hpages);
+> +	if (ret != entries) {
+> +		/* free the reference taken */
+> +		for (i = 0; i < ret; i++)
+> +			put_page(mem->hpages[i]);
+> +
+> +		vfree(mem->hpas);
+> +		kfree(mem);
+> +		ret = -EFAULT;
+> +		goto unlock_exit;
+> +	} else
+
+Do not need "else".
+
+
+> +		ret = 0;
+> +
+> +	pageshift = PAGE_SHIFT;
+>  	for (i = 0; i < entries; ++i) {
+> +		struct page *page = mem->hpages[i];
+>  		cur_ua = ua + (i << PAGE_SHIFT);
+> -		if (1 != get_user_pages_fast(cur_ua,
+> -					1/* pages */, 1/* iswrite */, &page)) {
+> -			ret = -EFAULT;
+> -			for (j = 0; j < i; ++j)
+> -				put_page(pfn_to_page(mem->hpas[j] >>
+> -						PAGE_SHIFT));
+> -			vfree(mem->hpas);
+> -			kfree(mem);
+> -			goto unlock_exit;
+> -		}
+> -		/*
+> -		 * If we get a page from the CMA zone, since we are going to
+> -		 * be pinning these entries, we might as well move them out
+> -		 * of the CMA zone if possible. NOTE: faulting in + migration
+> -		 * can be expensive. Batching can be considered later
+> -		 */
+> -		if (is_migrate_cma_page(page)) {
+> -			if (mm_iommu_move_page_from_cma(page))
+> -				goto populate;
+> -			if (1 != get_user_pages_fast(cur_ua,
+> -						1/* pages */, 1/* iswrite */,
+> -						&page)) {
+> -				ret = -EFAULT;
+> -				for (j = 0; j < i; ++j)
+> -					put_page(pfn_to_page(mem->hpas[j] >>
+> -								PAGE_SHIFT));
+> -				vfree(mem->hpas);
+> -				kfree(mem);
+> -				goto unlock_exit;
+> -			}
+> -		}
+> -populate:
+> -		pageshift = PAGE_SHIFT;
+> +
+>  		if (mem->pageshift > PAGE_SHIFT && PageCompound(page)) {
+>  			pte_t *pte;
+>  			struct page *head = compound_head(page);
+> @@ -229,7 +174,12 @@ long mm_iommu_get(struct mm_struct *mm, unsigned long ua, unsigned long entries,
+>  			local_irq_restore(flags);
+>  		}
+>  		mem->pageshift = min(mem->pageshift, pageshift);
+> +		/*
+> +		 * We don't need struct page reference any more, switch
+> +		 * physicall address.
+> +		 */
+>  		mem->hpas[i] = page_to_pfn(page) << PAGE_SHIFT;
+> +
+
+nit: do not need an empty line here.
+
+
+>  	}
+>  
+>  	atomic64_set(&mem->mapped, 1);
+> 
+
+-- 
+Alexey
