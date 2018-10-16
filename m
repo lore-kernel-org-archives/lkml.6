@@ -2,90 +2,275 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C78DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93702C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 544D920869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:52:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 341FE20869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:02:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="iac40Rx+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 544D920869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NmBqzlcx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 341FE20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbeJPJkB (ORCPT
+        id S1727008AbeJPJuR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 05:40:01 -0400
-Received: from imap.thunk.org ([74.207.234.97]:45588 "EHLO imap.thunk.org"
+        Tue, 16 Oct 2018 05:50:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:35585 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726191AbeJPJkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 05:40:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=0awaBIrNlz+LZ/rdVVLaloUEdaqZ8nWryIPbg9MybVA=; b=iac40Rx+YA7fJnhuSHhyhUAPrf
-        Kc3Rs30VMusL9c9/0/+ZZUu5PuOKonl/aBn2gACt8x11ZYIJy2LcMdo+BAXvuQIUld+WkkHpiFm2c
-        PTudARD+XRLnYn6Kt8NOiXGyMI03sqMttuKpKNMUsfNlyqESq0jcA9jvJWhH8ZYoVyIw=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gCEWh-0004G4-EZ; Tue, 16 Oct 2018 01:52:03 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 7BA447A4986; Mon, 15 Oct 2018 21:52:01 -0400 (EDT)
-Date:   Mon, 15 Oct 2018 21:52:01 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     valdis.kletnieks@vt.edu
-Cc:     Dennis Zhou <dennisszhou@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [BUG] ext4/block null pointer crashes in linux-next
-Message-ID: <20181016015201.GB18547@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        valdis.kletnieks@vt.edu, Dennis Zhou <dennisszhou@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-References: <13987.1539646128@turing-police.cc.vt.edu>
+        id S1726914AbeJPJuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 05:50:17 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42Yz8T24sqz9sC2;
+        Tue, 16 Oct 2018 13:02:17 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539655337;
+        bh=uMu1Jps7YVEpDy66HAo/hOq3sNhIlG8my7PcMOdLt8I=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=NmBqzlcx7C+miSBotqAh8KJ+FX+o5XCoHfM6uzUdzA8kr3ik83cVvwJMgJSc31fDf
+         JEZ4+6lHVHvVR2sexqJ5AFVu5cMcrZf6HuH7PH+qCKHxUym6LRRwcS0uccw2HKqbTI
+         OgdtSRVjle92wNJqr6eb+u/9BWV4V4DyTOQf2vPTrAC61U4ccUZjX41BVgcpEZ+moF
+         FfLx2/r4GLfqYImXKaZDVjp1CmVJfE46CjA40BxdVseoA3hyJLGTBHA+BZJyf0pl0C
+         fVu38ZiJOCzcHIt5IjAgKtmf9ywICpNylleRVFM1aqM2yIGUJhYVorM4OrVgNav6AZ
+         jR4mGMIHKE9Lg==
+Date:   Tue, 16 Oct 2018 13:02:16 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: linux-next: Tree for Oct 15
+Message-ID: <20181016130216.3a417381@canb.auug.org.au>
+In-Reply-To: <20181015222213.GA31415@roeck-us.net>
+References: <20181015192546.15faf3a1@canb.auug.org.au>
+        <20181015193914.GA9881@roeck-us.net>
+        <20181016073359.3fa7bb32@canb.auug.org.au>
+        <20181015222213.GA31415@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <13987.1539646128@turing-police.cc.vt.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Yr/J__N5BmtrbhvJJbwUGSe"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 07:28:48PM -0400, valdis.kletnieks@vt.edu wrote:
-> 
-> Traceback of the rm crash (I have *no* idea why it has systemd-tmpfile as Comm:
-> as none of the tmpfile config reference /usr/src at all, and the config says it
-> shouldn't have been running at the time of the crash, and I can't replicate as
-> the directory is now empty...)
+--Sig_/Yr/J__N5BmtrbhvJJbwUGSe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Given the commit that it bisected down to, I very much doubt it has
-anything to do with a specific directory or pathname.  Either you or
-your distribution has enabled blk cgroup for I/O throttling, and
-there's some race that you're tripping across.  What ext4 file or
-directory happens to be accessed when you trip across the problem is
-probably just pure luck.
+Hi all,
 
-If you can disable the block I/O throttling configuration (which may
-very well be distro-specific), the problem will probably go away.  I
-don't use blkcg at all, personally, and on a personal laptop
-(especially if you have an SSD), I really don't see the point.
+On Mon, 15 Oct 2018 15:22:13 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On Tue, Oct 16, 2018 at 07:33:59AM +1100, Stephen Rothwell wrote:
+> >=20
+> > On Mon, 15 Oct 2018 12:39:14 -0700 Guenter Roeck <linux@roeck-us.net> w=
+rote: =20
+> > >
+> > > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote: =20
+> > > > Hi all,
+> > > >=20
+> > > > Changes since 20181012:
+> > > >=20
+> > > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
+> > > >    =20
+> > >=20
+> > > Bisect log:
+> > >  =20
+>=20
+> Trying again. Not very useful since some of the steps fail with compile e=
+rrors.
+> The problem does seem to be related to the bootmem changes, though.
 
-Still, I'm sure the people who *do* use blkcg for real (mostly in data
-centers, in my experience) will probably thank you for being a great
-guinea pig.  :-)
+OK, I managed to do the bisect:
 
-						- Ted
+fe3d2a45e8079fdd7d4da1ff07f4b40bc3cb499f is the first bad commit
+commit fe3d2a45e8079fdd7d4da1ff07f4b40bc3cb499f
+Author: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Date:   Sat Oct 13 14:05:51 2018 +1100
+
+    memblock: stop using implicit alignment to SMP_CACHE_BYTES
+   =20
+    When a memblock allocation APIs are called with align =3D 0, the alignm=
+ent
+    is implicitly set to SMP_CACHE_BYTES.
+   =20
+    Implicit alignment is done deep in the memblock allocator and it can
+    come as a surprise.  Not that such an alignment would be wrong even
+    when used incorrectly but it is better to be explicit for the sake of
+    clarity and the prinicple of the least surprise.
+   =20
+    Replace all such uses of memblock APIs with the 'align' parameter
+    explicitly set to SMP_CACHE_BYTES and stop implicit alignment assignment
+    in the memblock internal allocation functions.
+   =20
+    For the case when memblock APIs are used via helper functions, e.g.  li=
+ke
+    iommu_arena_new_node() in Alpha, the helper functions were detected with
+    Coccinelle's help and then manually examined and updated where
+    appropriate.
+   =20
+    The direct memblock APIs users were updated using the semantic patch be=
+low:
+   =20
+    @@
+    expression size, min_addr, max_addr, nid;
+    @@
+    (
+    |
+    - memblock_alloc_try_nid_raw(size, 0, min_addr, max_addr, nid)
+    + memblock_alloc_try_nid_raw(size, SMP_CACHE_BYTES, min_addr, max_addr,
+    nid)
+    |
+    - memblock_alloc_try_nid_nopanic(size, 0, min_addr, max_addr, nid)
+    + memblock_alloc_try_nid_nopanic(size, SMP_CACHE_BYTES, min_addr, max_a=
+ddr,
+    nid)
+    |
+    - memblock_alloc_try_nid(size, 0, min_addr, max_addr, nid)
+    + memblock_alloc_try_nid(size, SMP_CACHE_BYTES, min_addr, max_addr, nid)
+    |
+    - memblock_alloc(size, 0)
+    + memblock_alloc(size, SMP_CACHE_BYTES)
+    |
+    - memblock_alloc_raw(size, 0)
+    + memblock_alloc_raw(size, SMP_CACHE_BYTES)
+    |
+    - memblock_alloc_from(size, 0, min_addr)
+    + memblock_alloc_from(size, SMP_CACHE_BYTES, min_addr)
+    |
+    - memblock_alloc_nopanic(size, 0)
+    + memblock_alloc_nopanic(size, SMP_CACHE_BYTES)
+    |
+    - memblock_alloc_low(size, 0)
+    + memblock_alloc_low(size, SMP_CACHE_BYTES)
+    |
+    - memblock_alloc_low_nopanic(size, 0)
+    + memblock_alloc_low_nopanic(size, SMP_CACHE_BYTES)
+    |
+    - memblock_alloc_from_nopanic(size, 0, min_addr)
+    + memblock_alloc_from_nopanic(size, SMP_CACHE_BYTES, min_addr)
+    |
+    - memblock_alloc_node(size, 0, nid)
+    + memblock_alloc_node(size, SMP_CACHE_BYTES, nid)
+    )
+   =20
+    [mhocko@suse.com: changelog update]
+    Link: http://lkml.kernel.org/r/1538687224-17535-1-git-send-email-rppt@l=
+inux.vnet.ibm.com
+    Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+    Suggested-by: Michal Hocko <mhocko@suse.com>
+    Acked-by: Paul Burton <paul.burton@mips.com>    [MIPS]
+    Acked-by: Michael Ellerman <mpe@ellerman.id.au> [powerpc]
+    Acked-by: Michal Hocko <mhocko@suse.com>
+    Cc: Catalin Marinas <catalin.marinas@arm.com>
+    Cc: Chris Zankel <chris@zankel.net>
+    Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+    Cc: Guan Xuetao <gxt@pku.edu.cn>
+    Cc: Ingo Molnar <mingo@redhat.com>
+    Cc: Matt Turner <mattst88@gmail.com>
+    Cc: Michal Simek <monstr@monstr.eu>
+    Cc: Richard Weinberger <richard@nod.at>
+    Cc: Russell King <linux@armlinux.org.uk>
+    Cc: Thomas Gleixner <tglx@linutronix.de>
+    Cc: Tony Luck <tony.luck@intel.com>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+:040000 040000 9fdad987cc69ffad8de2d0d621facc66b096aac1 c9959a9199e01f282d1=
+d291a6280b203a8561e7a M	arch
+:040000 040000 de303e4a0ad2b500de3fca2f65c8943c12c0b077 1581aed934cfb96b270=
+6df9bfa7746edfadffea6 M	drivers
+:040000 040000 f9179d8189f08e3575031a76181a64eedd148db5 293bc953dcfc2b718f5=
+c7cdd58722284f4393dec M	include
+:040000 040000 3019b5f917a20420537ac5cf4dc90b3c7f1aa56f 1b88f0791341d17abd2=
+59d7a8d2e0cc55147d8f6 M	init
+:040000 040000 8819d52ce4e6463fc95a2e841baeeddbc9fb8c52 dc167f38bd8c4a80e0a=
+c84ecc981e95b98703393 M	kernel
+:040000 040000 30c64583e66fc20181d7ce2b6ced9d7e060e1042 4e57b31864cef4e921b=
+bd73150f63637a819e3c4 M	lib
+:040000 040000 1b341ab0dd034f0fef37c234a771419924e0ecc9 9c489ba60978950733b=
+f678191833fdb9689bdab M	mm
+
+# bad: [ca0591d03a2d373e0019ad357fbbee69c8272381] Add linux-next specific f=
+iles for 20181015
+# good: [3a27203102ebfa67bd0bced05b1def499bb59db2] Merge tag 'libnvdimm-fix=
+es-4.19-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm
+git bisect start 'HEAD' 'remotes/origin/stable'
+# good: [5a09f4fbf98e45de8341bc8176e62afaac8405f6] Merge remote-tracking br=
+anch 'crypto/master'
+git bisect good 5a09f4fbf98e45de8341bc8176e62afaac8405f6
+# good: [a54eefdf4d208f6904da9e836ff32d7dde0c9516] Merge remote-tracking br=
+anch 'tip/auto-latest'
+git bisect good a54eefdf4d208f6904da9e836ff32d7dde0c9516
+# good: [d71e0d25be750d02a3d04500aeb151bb94465811] Merge remote-tracking br=
+anch 'staging/staging-next'
+git bisect good d71e0d25be750d02a3d04500aeb151bb94465811
+# good: [7961c8ea9d81f927a78e30bb7c194310ed6b7c1d] Merge remote-tracking br=
+anch 'pinctrl/for-next'
+git bisect good 7961c8ea9d81f927a78e30bb7c194310ed6b7c1d
+# good: [c3d392e6aae57d54fdc683f7432c3e248602bebb] Merge remote-tracking br=
+anch 'xarray/xarray'
+git bisect good c3d392e6aae57d54fdc683f7432c3e248602bebb
+# good: [880c1034475c873963d6250eb95ebbbf5604a281] userfaultfd: selftest: c=
+leanup help messages
+git bisect good 880c1034475c873963d6250eb95ebbbf5604a281
+# good: [9f1fa0ab60f7b09d335bbaf33db9116241059708] reiserfs: propagate erro=
+rs from fill_with_dentries() properly
+git bisect good 9f1fa0ab60f7b09d335bbaf33db9116241059708
+# good: [596046ffd571f32fa3d3e7ffdf7861b71a258552] memblock: replace alloc_=
+bootmem_low with memblock_alloc_low (2)
+git bisect good 596046ffd571f32fa3d3e7ffdf7861b71a258552
+# good: [979961b3058df1a6d24ab423dd6fa6f20982f591] memblock: replace BOOTME=
+M_ALLOC_* with MEMBLOCK variants
+git bisect good 979961b3058df1a6d24ab423dd6fa6f20982f591
+# bad: [8fab7180e6cd3126f7be81e8e33c8152b99f046b] mm/memory_hotplug: make a=
+dd_memory() take the device_hotplug_lock
+git bisect bad 8fab7180e6cd3126f7be81e8e33c8152b99f046b
+# bad: [fe3d2a45e8079fdd7d4da1ff07f4b40bc3cb499f] memblock: stop using impl=
+icit alignment to SMP_CACHE_BYTES
+git bisect bad fe3d2a45e8079fdd7d4da1ff07f4b40bc3cb499f
+# good: [2b130e2ae5fdc482305c6d23b05a532addda7c40] powerpc: fix up for remo=
+val of linux/bootmem.h
+git bisect good 2b130e2ae5fdc482305c6d23b05a532addda7c40
+# good: [699f0940861c958f2397c727d80fe324b6d88b06] docs/boot-time-mm: remov=
+e bootmem documentation
+git bisect good 699f0940861c958f2397c727d80fe324b6d88b06
+# first bad commit: [fe3d2a45e8079fdd7d4da1ff07f4b40bc3cb499f] memblock: st=
+op using implicit alignment to SMP_CACHE_BYTES
+
+Reverting fe3d2a45e8079fdd7d4da1ff07f4b40bc3cb499f (and the following 2
+commits) produces a kernel that boots.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Yr/J__N5BmtrbhvJJbwUGSe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFRqgACgkQAVBC80lX
+0GycSAf/bBQrI8BaM4XJ9Ao9pik26B2YnXrF4u3VOfl+J8+qd12N/Ap9cr51FoaG
+SS7zyC6+dtRedoCqnMfZ6lHT2ypcQb9yOdgvj+oD9gRMhtiV6mX2kdChedXHXLn7
+rtUfqH7hMuv3HVrdQHUCao+xPuT2qvJyZC7aMNqSbeLqmr/En7b7lqqlrF3qOsfY
+uaXGymu1VmMG9dRlUGEzerCuZWIyXhgLoPEzNdLqjKrB3YoJFVdVOjWCyQaGoeQT
+rQe59W2IQJa2sj6/AI2QMTj8DuBfVCAUHDesvtvDwAXS8acKm36x/IvEk4jvB7FY
+CoyaSWlqrCYwxEbMI8Y78vsLvFzuRQ==
+=snrg
+-----END PGP SIGNATURE-----
+
+--Sig_/Yr/J__N5BmtrbhvJJbwUGSe--
