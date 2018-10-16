@@ -2,153 +2,131 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD537C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8003CC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 980ED208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:34:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980ED208E4
+	by mail.kernel.org (Postfix) with ESMTP id 42FF5208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:36:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42FF5208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbeJPXZL (ORCPT
+        id S1727197AbeJPX1N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 19:25:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40854 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727075AbeJPXZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:25:11 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6CF0A88E4F;
-        Tue, 16 Oct 2018 15:34:11 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2DACB7A7B2;
-        Tue, 16 Oct 2018 15:34:08 +0000 (UTC)
-Subject: Re: [PATCH v1 2/2] sysctl: handle overflow for file-max
-To:     Christian Brauner <christian@brauner.io>
-Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, mcgrof@kernel.org,
-        akpm@linux-foundation.org, joe.lawrence@redhat.com,
-        linux@dominikbrodowski.net, viro@zeniv.linux.org.uk
-References: <20181015105544.4395-1-christian@brauner.io>
- <20181015105544.4395-3-christian@brauner.io>
- <22319ca1-6dab-fe36-40d5-9c88f7a175ee@redhat.com>
- <20181016152100.zg2pmyk6puc5qsr5@brauner.io>
- <11e172de-0953-2c46-c0f0-72c42ae9a910@redhat.com>
- <20181016152955.vcjtzcx5rzlxeovh@brauner.io>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <4aa6ff1a-28c7-db85-1fea-fa0e4fc1ef2e@redhat.com>
-Date:   Tue, 16 Oct 2018 11:34:07 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Tue, 16 Oct 2018 19:27:13 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33501 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbeJPX1M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 19:27:12 -0400
+Received: by mail-ed1-f68.google.com with SMTP id l14-v6so12802036edq.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 08:36:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GMwVivKnYTJZn41LIhLhei8kG5cQW1CKVdW3eGMkEFs=;
+        b=lVwL3xF1oE3FBDPieb4tRaDg1yTQAkvKU7ELw2py2sYQfb6zSPB/8CwcW9xPGo0ZoL
+         cQL5Ks/LBU3cRa0YbZBkbd386kuG9YrbXR2Gh/QQKrjGfBVb4/1wFzCqZjWJcrEE90I+
+         TlvkAnFiq8ktO68tZwybcg27/xmGsi1CVO5n5bmKFeE0VChD2MbIAC5kVWWdBS1BPZLs
+         bRB1F240X8dBFY7lRQXm8f8UPs6kMUwShQovW9N0OkCNKmqYm28n6S2ahvuKO/ykZw8m
+         j11f4P97kEPuSEY0GR+gownlsrzHgK0qqb4A15o+7adov6xu+O6CHnvrtGQUM3wNOz6T
+         1PJQ==
+X-Gm-Message-State: ABuFfoiw2vXIo7nxGM8poLdyhAJBqaJwS6Fcu5OQx/8auuE0df3db6hP
+        FGzrWmuTFhCS2XURaqp9JcDIqzvLFdxsaA==
+X-Google-Smtp-Source: ACcGV61auh7eNJ6OKIEiWywtS/Zb5Pr1mo9pSkrEgG37lsHYURYRNpdxvGlRuwZh9EWBp9aG6W4ELg==
+X-Received: by 2002:a50:a643:: with SMTP id d61-v6mr31757776edc.281.1539704171439;
+        Tue, 16 Oct 2018 08:36:11 -0700 (PDT)
+Received: from localhost.localdomain (p200300EF2BD0F03569FD0D231D8C2067.dip0.t-ipconnect.de. [2003:ef:2bd0:f035:69fd:d23:1d8c:2067])
+        by smtp.gmail.com with ESMTPSA id o13-v6sm2946124ejb.34.2018.10.16.08.36.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 08:36:10 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 17:36:08 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Juri Lelli <juri.lelli@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        nstange@suse.de, syzkaller-bugs@googlegroups.com
+Subject: Re: INFO: rcu detected stall in do_idle
+Message-ID: <20181016153608.GH9130@localhost.localdomain>
+References: <000000000000a4ee200578172fde@google.com>
+ <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
+ <20181016140322.GB3121@hirez.programming.kicks-ass.net>
+ <20181016144045.GF9130@localhost.localdomain>
+ <alpine.DEB.2.21.1810161643540.7787@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20181016152955.vcjtzcx5rzlxeovh@brauner.io>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 16 Oct 2018 15:34:11 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1810161643540.7787@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/2018 11:29 AM, Christian Brauner wrote:
-> On Tue, Oct 16, 2018 at 11:25:42AM -0400, Waiman Long wrote:
->> On 10/16/2018 11:21 AM, Christian Brauner wrote:
->>> On Tue, Oct 16, 2018 at 11:13:28AM -0400, Waiman Long wrote:
->>>> On 10/15/2018 06:55 AM, Christian Brauner wrote:
->>>>> Currently, when writing
->>>>>
->>>>> echo 18446744073709551616 > /proc/sys/fs/file-max
->>>>>
->>>>> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
->>>>> crashes the system.
->>>>> This commit explicitly caps the value for file-max to ULONG_MAX.
->>>>>
->>>>> Note, this isn't technically necessary since proc_get_long() will already
->>>>> return ULONG_MAX. However, two reason why we still should do this:
->>>>> 1. it makes it explicit what the upper bound of file-max is instead of
->>>>>    making readers of the code infer it from proc_get_long() themselves
->>>>> 2. other tunebles than file-max may want to set a lower max value than
->>>>>    ULONG_MAX and we need to enable __do_proc_doulongvec_minmax() to handle
->>>>>    such cases too
->>>>>
->>>>> Cc: Kees Cook <keescook@chromium.org>
->>>>> Signed-off-by: Christian Brauner <christian@brauner.io>
->>>>> ---
->>>>> v0->v1:
->>>>> - if max value is < than ULONG_MAX use max as upper bound
->>>>> - (Dominik) remove double "the" from commit message
->>>>> ---
->>>>>  kernel/sysctl.c | 4 ++++
->>>>>  1 file changed, 4 insertions(+)
->>>>>
->>>>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
->>>>> index 97551eb42946..226d4eaf4b0e 100644
->>>>> --- a/kernel/sysctl.c
->>>>> +++ b/kernel/sysctl.c
->>>>> @@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
->>>>>  static int __maybe_unused two = 2;
->>>>>  static int __maybe_unused four = 4;
->>>>>  static unsigned long one_ul = 1;
->>>>> +static unsigned long ulong_max = ULONG_MAX;
->>>>>  static int one_hundred = 100;
->>>>>  static int one_thousand = 1000;
->>>>>  #ifdef CONFIG_PRINTK
->>>>> @@ -1696,6 +1697,7 @@ static struct ctl_table fs_table[] = {
->>>>>  		.maxlen		= sizeof(files_stat.max_files),
->>>>>  		.mode		= 0644,
->>>>>  		.proc_handler	= proc_doulongvec_minmax,
->>>>> +		.extra2		= &ulong_max,
->>>> What is the point of having a maximum value of ULONG_MAX anyway? No
->>>> value you can put into a ulong type can be bigger than that.
->>> This is changed in the new code to LONG_MAX. See the full thread for
->>> context. There's also an additional explantion in the commit message.
->>>
->>>>>  	},
->>>>>  	{
->>>>>  		.procname	= "nr_open",
->>>>> @@ -2795,6 +2797,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
->>>>>  				break;
->>>>>  			if (neg)
->>>>>  				continue;
->>>>> +			if (max && val > *max)
->>>>> +				val = *max;
->>>>>  			val = convmul * val / convdiv;
->>>>>  			if ((min && val < *min) || (max && val > *max))
->>>>>  				continue;
->>>> This does introduce a change in behavior. Previously the out-of-bound
->>>> value is ignored, now it is capped at its maximum. This is a
->>>> user-visible change.
->>> Not completely true though. Try
->>>
->>> echo 18446744073709551616 > /proc/sys/fs/file-max
->>>
->>> on a system you find acceptable loosing.
->>> So this is an acceptable user-visible change I'd say. But I'm open to
->>> other suggestions.
->> I am not saying this is unacceptable. I just say this is a user-visible
->> change and so should be documented somehow. BTW, you cap the max value,
-> Sure, I'll update linux manpages and I can CC stable on the next round.
->
->> but not the min value. So there is inconsistency. I would say you either
->> do both, or none of them.
-> The min value is 0. I don't think it needs to be set explicitly. I just
-> kept the max value because it is != ULONG_MAX but LONG_MAX for file-max.
+On 16/10/18 16:45, Thomas Gleixner wrote:
+> On Tue, 16 Oct 2018, Juri Lelli wrote:
+> > On 16/10/18 16:03, Peter Zijlstra wrote:
+> > > On Tue, Oct 16, 2018 at 03:24:06PM +0200, Thomas Gleixner wrote:
+> > > > It does reproduce here but with a kworker stall. Looking at the reproducer:
+> > > > 
+> > > >   *(uint32_t*)0x20000000 = 0;
+> > > >   *(uint32_t*)0x20000004 = 6;
+> > > >   *(uint64_t*)0x20000008 = 0;
+> > > >   *(uint32_t*)0x20000010 = 0;
+> > > >   *(uint32_t*)0x20000014 = 0;
+> > > >   *(uint64_t*)0x20000018 = 0x9917;
+> > > >   *(uint64_t*)0x20000020 = 0xffff;
+> > > >   *(uint64_t*)0x20000028 = 0;
+> > > >   syscall(__NR_sched_setattr, 0, 0x20000000, 0);
+> > > > 
+> > > > which means:
+> > > > 
+> > > >   struct sched_attr {
+> > > >   	 .size		= 0,
+> > > > 	 .policy	= 6,
+> > > > 	 .flags		= 0,
+> > > > 	 .nice		= 0,
+> > > > 	 .priority	= 0,
+> > > > 	 .deadline	= 0x9917,
+> > > > 	 .runtime	= 0xffff,
+> > > > 	 .period	= 0,
+> > > >   }
+> > > > 
+> > > > policy 6 is SCHED_DEADLINE
+> > > > 
+> > > > That makes the thread hog the CPU and prevents all kind of stuff to run.
+> > > > 
+> > > > Peter, is that expected behaviour?
+> > > 
+> > > Sorta, just like FIFO-99 while(1);. Except we should be rejecting the
+> > > above configuration, because of the rule:
+> > > 
+> > >   runtime <= deadline <= period
+> > > 
+> > > Juri, where were we supposed to check that?
+> > 
+> > Not if period == 0.
+> > 
+> > https://elixir.bootlin.com/linux/latest/source/kernel/sched/deadline.c#L2632
+> > https://elixir.bootlin.com/linux/latest/source/kernel/sched/deadline.c#L2515
+> > 
+> > Now, maybe we should be checking also against the default 95% cap?
+> 
+> If the cap is active, then yes. But you want to use the actual
+> configuration not the default.
 
-I think you are making the change with just one use case in mind. This
-is a generic function that can be used by many different callers. So any
-change you make has to be applicable to all use cases. You just can't
-assume min is always 0 in all the other use cases.
+Sure.
 
-Cheers,
-Longman
-
+Although DEADLINE bandwidth is "replicated" across the CPUs of a domain,
+so we can still admit a while(1) on multi-CPUs domains. Mmm, guess we
+should be able to fix this however if we limit also the per-task maximum
+bandwidth considering rt_runtime/rt_period.
