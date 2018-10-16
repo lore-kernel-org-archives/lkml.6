@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A94C070C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCF9C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4967F20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:35:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DB33205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:35:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjHT3xXS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4967F20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0YjjH8L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DB33205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbeJPMXZ (ORCPT
+        id S1727791AbeJPMBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:23:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47930 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:01:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727813AbeJPMBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:08 -0400
+        id S1726729AbeJPMBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D96021477;
-        Tue, 16 Oct 2018 04:12:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A99D22147C;
+        Tue, 16 Oct 2018 04:12:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663165;
-        bh=DIcvI1x1xhB226EQNNh5mu3KeEqb8PA2L/sKHvtQpzs=;
+        s=default; t=1539663161;
+        bh=U6taEyCAQrI++pLQ+VLrBJ2/MBGiV1ob0aFlBCWKyBI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tjHT3xXSOUjJWn2uR8b2ZhutLRyxSzPHpHjfqYS7Wh3xVUGRk22hpjVy4vF8hG3Dt
-         Gxo+b4+EKItDypL8s0+L8ElYgyKI1ExD54Qajk7RTLSno1GYFSM/FItFn71kWoK9Sw
-         9VwIhUBZcFu6rRyxI78RDhVA8qmGqGDeQCnPz1AM=
+        b=k0YjjH8L7wBQY4ps3y/cJIJZOMv/ib8NvhrNGO/2r7RH8V9CiFalXODeHXXU0VR/Z
+         PcnFa4BwQclBp3TVzt5rLfVZqKS4TC1OGTfUNLFBfoc+u3AiynD/VJwJF97k+LGhH9
+         CrYv1VbCQqoeEAvKvDj0XAziErhuiY8O32eYNxoM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Zhao Qiang <qiang.zhao@nxp.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Li Yang <leoyang.li@nxp.com>, Olof Johansson <olof@lixom.net>,
+Cc:     Steve Capper <steve.capper@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 023/100] soc: fsl: qe: Fix copy/paste bug in ucc_get_tdm_sync_shift()
-Date:   Tue, 16 Oct 2018 00:11:04 -0400
-Message-Id: <20181016041221.135528-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 018/100] arm64: hugetlb: Fix handling of young ptes
+Date:   Tue, 16 Oct 2018 00:10:59 -0400
+Message-Id: <20181016041221.135528-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -53,37 +53,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhao Qiang <qiang.zhao@nxp.com>
+From: Steve Capper <steve.capper@arm.com>
 
-[ Upstream commit 96fc74333f84cfdf8d434c6c07254e215e2aad00 ]
+[ Upstream commit 469ed9d823b7d240d6b9574f061ded7c3834c167 ]
 
-There is a copy and paste bug so we accidentally use the RX_ shift when
-we're in TX_ mode.
+In the contiguous bit hugetlb break-before-make code we assume that all
+hugetlb pages are young.
 
-Fixes: bb8b2062aff3 ("fsl/qe: setup clock source for TDM mode")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Zhao Qiang <qiang.zhao@nxp.com>
-Signed-off-by: Li Yang <leoyang.li@nxp.com>
-(cherry picked from commit 3cb31b634052ed458922e0c8e2b4b093d7fb60b9)
-Signed-off-by: Olof Johansson <olof@lixom.net>
+In fact, remove_migration_pte is able to place an old hugetlb pte so
+this assumption is not valid.
+
+This patch fixes the contiguous hugetlb scanning code to preserve young
+ptes.
+
+Fixes: d8bdcff28764 ("arm64: hugetlb: Add break-before-make logic for contiguous entries")
+Signed-off-by: Steve Capper <steve.capper@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/fsl/qe/ucc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/mm/hugetlbpage.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/ucc.c b/drivers/soc/fsl/qe/ucc.c
-index c646d8713861..681f7d4b7724 100644
---- a/drivers/soc/fsl/qe/ucc.c
-+++ b/drivers/soc/fsl/qe/ucc.c
-@@ -626,7 +626,7 @@ static u32 ucc_get_tdm_sync_shift(enum comm_dir mode, u32 tdm_num)
- {
- 	u32 shift;
+diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+index 192b3ba07075..f85be2f8b140 100644
+--- a/arch/arm64/mm/hugetlbpage.c
++++ b/arch/arm64/mm/hugetlbpage.c
+@@ -117,11 +117,14 @@ static pte_t get_clear_flush(struct mm_struct *mm,
  
--	shift = (mode == COMM_DIR_RX) ? RX_SYNC_SHIFT_BASE : RX_SYNC_SHIFT_BASE;
-+	shift = (mode == COMM_DIR_RX) ? RX_SYNC_SHIFT_BASE : TX_SYNC_SHIFT_BASE;
- 	shift -= tdm_num * 2;
+ 		/*
+ 		 * If HW_AFDBM is enabled, then the HW could turn on
+-		 * the dirty bit for any page in the set, so check
+-		 * them all.  All hugetlb entries are already young.
++		 * the dirty or accessed bit for any page in the set,
++		 * so check them all.
+ 		 */
+ 		if (pte_dirty(pte))
+ 			orig_pte = pte_mkdirty(orig_pte);
++
++		if (pte_young(pte))
++			orig_pte = pte_mkyoung(orig_pte);
+ 	}
  
- 	return shift;
+ 	if (valid) {
+@@ -340,10 +343,13 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 	if (!pte_same(orig_pte, pte))
+ 		changed = 1;
+ 
+-	/* Make sure we don't lose the dirty state */
++	/* Make sure we don't lose the dirty or young state */
+ 	if (pte_dirty(orig_pte))
+ 		pte = pte_mkdirty(pte);
+ 
++	if (pte_young(orig_pte))
++		pte = pte_mkyoung(pte);
++
+ 	hugeprot = pte_pgprot(pte);
+ 	for (i = 0; i < ncontig; i++, ptep++, addr += pgsize, pfn += dpfn)
+ 		set_pte_at(vma->vm_mm, addr, ptep, pfn_pte(pfn, hugeprot));
 -- 
 2.17.1
 
