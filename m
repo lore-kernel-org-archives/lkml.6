@@ -2,302 +2,110 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E407AC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFE6C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F49208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:14:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F49208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 82385205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:15:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82385205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbeJQAFx (ORCPT
+        id S1727376AbeJQAGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:05:53 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39252 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbeJQAFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:05:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8BB3341;
-        Tue, 16 Oct 2018 09:14:43 -0700 (PDT)
-Received: from [10.1.197.21] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 956C13F71C;
-        Tue, 16 Oct 2018 09:14:40 -0700 (PDT)
-From:   Kristina Martsenko <kristina.martsenko@arm.com>
-Subject: Re: [PATCH v5 11/17] arm64: docs: document pointer authentication
-To:     Ramana Radhakrishnan <ramana.radhakrishnan@foss.arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Cc:     Adam Wallis <awallis@codeaurora.org>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Christoffer Dall <Christoffer.Dall@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Suzuki Poulose <Suzuki.Poulose@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
- <20181005084754.20950-12-kristina.martsenko@arm.com>
- <9acb0cd2-66b0-1c41-b1a8-7c70608e9a9b@foss.arm.com>
-Message-ID: <7b0de19b-45b9-f4df-25d1-c7e80fab49dc@arm.com>
-Date:   Tue, 16 Oct 2018 17:14:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 16 Oct 2018 20:06:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51608 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727061AbeJQAGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 20:06:49 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CEA6C3F72C;
+        Tue, 16 Oct 2018 16:15:39 +0000 (UTC)
+Received: from treble (ovpn-125-6.rdu2.redhat.com [10.10.125.6])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5A7D25D9C8;
+        Tue, 16 Oct 2018 16:15:38 +0000 (UTC)
+Date:   Tue, 16 Oct 2018 11:15:36 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Borislav Petkov <bp@suse.de>, Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] objtool: move libelf check out of top Makefile
+Message-ID: <20181016161536.pnek3dnyem6mspwr@treble>
+References: <1539681053-24388-1-git-send-email-yamada.masahiro@socionext.com>
+ <1539681053-24388-3-git-send-email-yamada.masahiro@socionext.com>
+ <20181016142540.pxlwu3ft6n2b4pgj@treble>
+ <CAK7LNARLW4NmeY0Rq19Bj_5kOFbp6YDtsUDhNaAfVXjL85cAMg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <9acb0cd2-66b0-1c41-b1a8-7c70608e9a9b@foss.arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARLW4NmeY0Rq19Bj_5kOFbp6YDtsUDhNaAfVXjL85cAMg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 16 Oct 2018 16:15:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/10/2018 10:04, Ramana Radhakrishnan wrote:
-> On 05/10/2018 09:47, Kristina Martsenko wrote:
->> From: Mark Rutland <mark.rutland@arm.com>
->>
->> Now that we've added code to support pointer authentication, add some
->> documentation so that people can figure out if/how to use it.
->>
->> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
->> [kristina: update cpu-feature-registers.txt]
->> Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
->> Cc: Andrew Jones <drjones@redhat.com>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> ---
->>   Documentation/arm64/booting.txt                |  8 +++
->>   Documentation/arm64/cpu-feature-registers.txt  |  4 ++
->>   Documentation/arm64/elf_hwcaps.txt             |  5 ++
->>   Documentation/arm64/pointer-authentication.txt | 84
->> ++++++++++++++++++++++++++
->>   4 files changed, 101 insertions(+)
->>   create mode 100644 Documentation/arm64/pointer-authentication.txt
->>
->> diff --git a/Documentation/arm64/booting.txt
->> b/Documentation/arm64/booting.txt
->> index 8d0df62c3fe0..8df9f4658d6f 100644
->> --- a/Documentation/arm64/booting.txt
->> +++ b/Documentation/arm64/booting.txt
->> @@ -205,6 +205,14 @@ Before jumping into the kernel, the following
->> conditions must be met:
->>       ICC_SRE_EL2.SRE (bit 0) must be initialised to 0b0.
->>     - The DT or ACPI tables must describe a GICv2 interrupt controller.
->>   +  For CPUs with pointer authentication functionality:
->> +  - If EL3 is present:
->> +    SCR_EL3.APK (bit 16) must be initialised to 0b1
->> +    SCR_EL3.API (bit 17) must be initialised to 0b1
->> +  - If the kernel is entered at EL1:
->> +    HCR_EL2.APK (bit 40) must be initialised to 0b1
->> +    HCR_EL2.API (bit 41) must be initialised to 0b1
->> +
->>   The requirements described above for CPU mode, caches, MMUs,
->> architected
->>   timers, coherency and system registers apply to all CPUs.  All CPUs
->> must
->>   enter the kernel in the same exception level.
->> diff --git a/Documentation/arm64/cpu-feature-registers.txt
->> b/Documentation/arm64/cpu-feature-registers.txt
->> index 7964f03846b1..b165677ffab9 100644
->> --- a/Documentation/arm64/cpu-feature-registers.txt
->> +++ b/Documentation/arm64/cpu-feature-registers.txt
->> @@ -190,6 +190,10 @@ infrastructure:
->>        |--------------------------------------------------|
->>        | JSCVT                        | [15-12] |    y    |
->>        |--------------------------------------------------|
->> +     | API                          | [11-8]  |    y    |
->> +     |--------------------------------------------------|
->> +     | APA                          | [7-4]   |    y    |
->> +     |--------------------------------------------------|
->>        | DPB                          | [3-0]   |    y    |
->>        x--------------------------------------------------x
->>   diff --git a/Documentation/arm64/elf_hwcaps.txt
->> b/Documentation/arm64/elf_hwcaps.txt
->> index d6aff2c5e9e2..95509a7b0ffe 100644
->> --- a/Documentation/arm64/elf_hwcaps.txt
->> +++ b/Documentation/arm64/elf_hwcaps.txt
->> @@ -178,3 +178,8 @@ HWCAP_ILRCPC
->>   HWCAP_FLAGM
->>         Functionality implied by ID_AA64ISAR0_EL1.TS == 0b0001.
->> +
->> +HWCAP_APIA
->> +
->> +    EL0 AddPac and Auth functionality using APIAKey_EL1 is enabled, as
->> +    described by Documentation/arm64/pointer-authentication.txt.
->> diff --git a/Documentation/arm64/pointer-authentication.txt
->> b/Documentation/arm64/pointer-authentication.txt
->> new file mode 100644
->> index 000000000000..8a9cb5713770
->> --- /dev/null
->> +++ b/Documentation/arm64/pointer-authentication.txt
->> @@ -0,0 +1,84 @@
->> +Pointer authentication in AArch64 Linux
->> +=======================================
->> +
->> +Author: Mark Rutland <mark.rutland@arm.com>
->> +Date: 2017-07-19
->> +
->> +This document briefly describes the provision of pointer authentication
->> +functionality in AArch64 Linux.
->> +
->> +
->> +Architecture overview
->> +---------------------
->> +
->> +The ARMv8.3 Pointer Authentication extension adds primitives that can be
->> +used to mitigate certain classes of attack where an attacker can corrupt
->> +the contents of some memory (e.g. the stack).
->> +
->> +The extension uses a Pointer Authentication Code (PAC) to determine
->> +whether pointers have been modified unexpectedly. A PAC is derived from
->> +a pointer, another value (such as the stack pointer), and a secret key
->> +held in system registers.
->> +
->> +The extension adds instructions to insert a valid PAC into a pointer,
->> +and to verify/remove the PAC from a pointer. The PAC occupies a number
->> +of high-order bits of the pointer, which varies dependent on the
->> +configured virtual address size and whether pointer tagging is in use.
+On Wed, Oct 17, 2018 at 12:51:40AM +0900, Masahiro Yamada wrote:
+> > ifdef CONFIG_UNWINDER_ORC
+> >
+> > chk_unwinder_orc = echo "int main() {}" | $(HOSTCC) -xc -o /dev/null -lelf -
+> > msg_unwinder_orc = "Cannot build objtool to generate ORC metadata for CONFIG_UNWINDER_ORC=y.  " \
+> >                        "Please install libelf-dev, libelf-devel or elfutils-libelf-devel."
+> > toolcheck-$(CONFIG_UNWINDER_ORC) += unwinder_orc
+> >
+> > else
+> >
+> > chk_stack_validation = echo "int main() {}" | $(HOSTCC) -xc -o /dev/null -lelf -
+> > msg_stack_validation = "Cannot build objtool for CONFIG_STACK_VALIDATION=y.  " \
+> >                        "Please install libelf-dev, libelf-devel or elfutils-libelf-devel."
+> > toolcheck-$(CONFIG_STACK_VALIDATION) += stack_validation
+> >
+> > endif
+> >
+> >
+> > What do you think?
 > 
-> s/pointer tagging/top byte ignore unless that's the terminology in the
-> rest of the kernel documentation ?
-
-The rest of the kernel documentation calls them "tagged pointers", and
-doesn't use "top byte ignore", for example
-Documentation/arm64/tagged-pointers.txt:
-https://elixir.bootlin.com/linux/latest/source/Documentation/arm64/tagged-pointers.txt
-
 > 
->> +
->> +A subset of these instructions have been allocated from the HINT
->> +encoding space. In the absence of the extension (or when disabled),
->> +these instructions behave as NOPs. Applications and libraries using
->> +these instructions operate correctly regardless of the presence of the
->> +extension.
->> +
->> +
->> +Basic support
->> +-------------
->> +
->> +When CONFIG_ARM64_PTR_AUTH is selected, and relevant HW support is
->> +present, the kernel will assign a random APIAKey value to each process
->> +at exec*() time. This key is shared by all threads within the process,
->> +and the key is preserved across fork(). Presence of functionality using
->> +APIAKey is advertised via HWCAP_APIA.
->> +
->> +Recent versions of GCC can compile code with APIAKey-based return
->> +address protection when passed the -msign-return-address option. This
->> +uses instructions in the HINT space, and such code can run on systems
->> +without the pointer authentication extension.
+> It is ugly.
 > 
-> Just a clarification.
+> Do you need such detailed information like ORC metadata stuff here?
 > 
-> This uses instructions in the hint space for architecture levels less
-> than armv8.3-a by default. If folks use -march=armv8.3-a you will start
-> seeing the combined forms of retaa appear.
+> This Makefile aims to error out, showing why the build failed.
+> That's it.
 
-I'll amend this to:
+Yeah, it is kind of ugly.  But the "showing why the build failed" part
+is important.  I was trying to give the user a clear error message,
+similar to what we have today.
 
-"This uses instructions in the HINT space (unless -march=armv8.3-a or
-higher is also passed), and such code can run on systems without the
-pointer authentication extension."
+Without context, the user won't know what objtool is, or why it needs to
+be built.
 
-> 
->> +
->> +The remaining instruction and data keys (APIBKey, APDAKey, APDBKey) are
->> +reserved for future use, and instructions using these keys must not be
->> +used by software until a purpose and scope for their use has been
->> +decided. To enable future software using these keys to function on
->> +contemporary kernels, where possible, instructions using these keys are
->> +made to behave as NOPs.
->> +
->> +The generic key (APGAKey) is currently unsupported. Instructions using
->> +the generic key must not be used by software.
->> +
->> +
->> +Debugging
->> +---------
->> +
->> +When CONFIG_ARM64_PTR_AUTH is selected, and relevant HW support is
->> +present, the kernel will expose the position of TTBR0 PAC bits in the
->> +NT_ARM_PAC_MASK regset (struct user_pac_mask), which userspace can
->> +acqure via PTRACE_GETREGSET.
->> +
->> +Separate masks are exposed for data pointers and instruction pointers,
->> +as the set of PAC bits can vary between the two. Debuggers should not
->> +expect that HWCAP_APIA implies the presence (or non-presence) of this
->> +regset -- in future the kernel may support the use of APIBKey, APDAKey,
->> +and/or APBAKey, even in the absence of APIAKey.
->> +
->> +Note that the masks apply to TTBR0 addresses, and are not valid to apply
->> +to TTBR1 addresses (e.g. kernel pointers).
->> +
->> +
->> +Virtualization
->> +--------------
->> +
->> +Pointer authentication is not currently supported in KVM guests. KVM
->> +will mask the feature bits from ID_AA64ISAR1_EL1, and attempted use of
->> +the feature will result in an UNDEFINED exception being injected into
->> +the guest.
-> 
-> However applications using instructions from the hint space will
-> continue to work albeit without any protection (as they would just be
-> nops) ?
+If we have just a single error message for all cases, it should at least
+mention the config option.  Like
 
-Mostly, yes. If the guest leaves SCTLR_EL1.EnIA unset (and
-EnIB/EnDA/EnDB), then PAC* and AUT* instructions in the HINT space will
-execute as NOPs. If the guest sets EnIA, then PAC*/AUT* instructions
-will trap and KVM will inject an "Unknown reason" exception into the
-guest (which will cause a Linux guest to send a SIGILL to the application).
+   "Cannot build objtool for CONFIG_STACK_VALIDATION."
 
-In the latter case we could instead pretend the instruction was a NOP
-and not inject an exception, but trapping twice per every function would
-probably be terrible for performance. The guest shouldn't be setting
-EnIA anyway if ID_AA64ISAR1_EL1 reports that pointer authentication is
-not present (because KVM has hidden it).
+But then, most users will only have that enabled because of ORC.  So an
+ORC-specific message would be more appropriate in most cases.
 
-The other special case is the XPACLRI instruction, which is also in the
-HINT space. Currently it will trap and KVM will inject an exception into
-the guest. We should probably change this to NOP instead, as that's what
-applications will expect. Unfortunately there is no EnIA-like control to
-make it NOP.
+So maybe it can just be something more vague:
 
-One option is for KVM to pretend the instruction was a NOP and return to
-the guest. But if XPACLRI gets executed frequently, then the constant
-trapping might hurt performance. I don't know how frequently it might
-get used, as I don't know of any applications currently using it. From
-what I understand, it may be used by userspace stack unwinders.
+msg_stack_validation = "Cannot build objtool for CONFIG_UNWINDER_ORC and/or CONFIG_STACK_VALIDATION.  " \
+		       "Please install libelf-dev, libelf-devel or elfutils-libelf-devel."
 
-(Also worth noting - as far as I can tell there is no easy way for KVM
-to know which pointer authentication instruction caused the trap, so we
-may have to do something unusual like use "at s12e1r" to read guest
-memory and check for XPACLRI.)
+That would probably be good enough.  Then we could drop the ugly ifdef.
 
-The other option is to turn off trapping entirely. However then on a
-big.LITTLE system with mismatched pointer authentication support
-instructions will work intermittently on some CPUs but not others.
-
-Thoughts?
-
-> 
-> Reviewed-by: Ramana Radhakrishnan  <ramana.radhakrishnan@arm.com>
-
-Thanks!
-
-Kristina
+-- 
+Josh
