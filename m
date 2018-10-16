@@ -2,397 +2,186 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86493C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C95C3C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 358C9208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 358C9208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 69A98208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CprU3anZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A98208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbeJPKWF (ORCPT
+        id S1726988AbeJPK1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 06:22:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53510 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726917AbeJPKWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 06:22:05 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 786593082AF5;
-        Tue, 16 Oct 2018 02:34:01 +0000 (UTC)
-Received: from malachite.redhat.com (ovpn-120-2.rdu2.redhat.com [10.10.120.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 893E07FC31;
-        Tue, 16 Oct 2018 02:33:55 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, stable@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/atomic_helper: Stop modesets on unregistered connectors harder
-Date:   Mon, 15 Oct 2018 22:33:06 -0400
-Message-Id: <20181016023306.27417-1-lyude@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 16 Oct 2018 02:34:01 +0000 (UTC)
+        Tue, 16 Oct 2018 06:27:15 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38107 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbeJPK1P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 06:27:15 -0400
+Received: by mail-pf1-f195.google.com with SMTP id f29-v6so10657553pff.5;
+        Mon, 15 Oct 2018 19:39:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Z8Pa5S74QnhACppW56tfiG6NUGrruO4AXQrEks17+Eg=;
+        b=CprU3anZ9X9fFxPqhsiWC4DJ6jIdpli14t2bdh3CeWsP1J92VIfpr1lchoHcrmrbnz
+         mIPALq7RVC1jBSQ6mBBYK10YYS6iBAgdnC69Z+eZaSw6tolyQJGNUDmim8b/QvkmtA5D
+         apgvR6Kb2vm6nek4JczGGWCQRApAiuagBi0V5MikNQ8IbZm+1wOc+6jDtx4bdBPnOT+4
+         /FnnHfGkEcfxd3gyeq4Na5an5OXCz8W4NUYVelhRMeHZYMKTaLnf6Ul9zBZ11xNkvULY
+         lwLppWhxajzYgbEWChyODEg4gilCwaBc6zHXYXA6vFPqGH67iiGNFogwfEzwHpgV2ZK1
+         rtDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Z8Pa5S74QnhACppW56tfiG6NUGrruO4AXQrEks17+Eg=;
+        b=hkdV1k6MdSzUrtwle4Q4IEB3eb1X+Zz9AEVBbLhIaECQRbqZEZdG5dtpZzo/oZcW6L
+         vbnub84oIksBVZbl4Q7cNN2E6W6nfSpSoDLxPDeofoVznL6C1iRaaalBFCSkFOnnMkCd
+         jfTm1Y2pVHt9Jrz/jyTndTeVnNPju3hHK7m987G68oPJjMlIdWpz4SijvD29eYdjfOW/
+         AfX4Uu+CEWnhynRDw7LsgnbSUho2+KbtURHN4a/tjHzzt7nRVfn8dM5BHJV2HaIeGM7L
+         IRU0geU09zgtxqJFdv/Sa8AqcmScElm5mzcb4PYLKNZlK7ehG08x0uSKeTjjkoXZKFRM
+         ojUQ==
+X-Gm-Message-State: ABuFfoilyYbtoKdk4DplwpLctLKMjVASVOxSF6yy7KlPsmOxAL5RW8a4
+        xqBHrRbtEJmkXfznTQM1DGzORy/w
+X-Google-Smtp-Source: ACcGV60L3L63iuIPXlGsqBSKsrwgIXvKM/MIvU8iy8a15PWyXi7DUJ+EJgQQ3JEGnCXZhVW7rE74fQ==
+X-Received: by 2002:a62:c186:: with SMTP id i128-v6mr20204723pfg.248.1539657550997;
+        Mon, 15 Oct 2018 19:39:10 -0700 (PDT)
+Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id u79-v6sm18620287pfd.117.2018.10.15.19.39.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 15 Oct 2018 19:39:10 -0700 (PDT)
+From:   frowand.list@gmail.com
+To:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: [PATCH v4 00/18] of: overlay: validation checks, subsequent fixes
+Date:   Mon, 15 Oct 2018 19:37:20 -0700
+Message-Id: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unfortunately, it appears our fix in:
-commit b5d29843d8ef ("drm/atomic_helper: Allow DPMS On<->Off changes
-for unregistered connectors")
+From: Frank Rowand <frank.rowand@sony.com>
 
-Which attempted to work around the problems introduced by:
-commit 4d80273976bf ("drm/atomic_helper: Disallow new modesets on
-unregistered connectors")
+Add checks to (1) overlay apply process and (2) memory freeing
+triggered by overlay release.  The checks are intended to detect
+possible memory leaks and invalid overlays.
 
-Is still not the right solution, as modesets can still be triggered
-outside of drm_atomic_set_crtc_for_connector().
+The checks revealed bugs in existing code.  Fixed the bugs.
 
-So in order to fix this, while still being careful that we don't break
-modesets that a driver may perform before being registered with
-userspace, we replace connector->registered with a tristate member,
-connector->registration_state. This allows us to keep track of whether
-or not a connector is still initializing and hasn't been exposed to
-userspace, is currently registered and exposed to userspace, or has been
-legitimately removed from the system after having once been present.
+While fixing bugs, noted other issues, which are fixed in
+separate patches.
 
-Using this info, we can prevent userspace from performing new modesets
-on unregistered connectors while still allowing the driver to perform
-modesets on unregistered connectors before the driver has finished being
-registered.
+*****  Powerpc folks: I was not able to test the patches that
+*****  directly impact Powerpc systems that use dynamic
+*****  devicetree.  Please review that code carefully and
+*****  test.  The specific patches are: 03/16, 04/16, 07/16
 
-Fixes: b5d29843d8ef ("drm/atomic_helper: Allow DPMS On<->Off changes for unregistered connectors")
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: stable@vger.kernel.org
-Cc: David Airlie <airlied@linux.ie>
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/gpu/drm/drm_atomic_helper.c | 60 +++++++++++++++++++++----
- drivers/gpu/drm/drm_atomic_uapi.c   | 21 ---------
- drivers/gpu/drm/drm_connector.c     | 10 ++---
- drivers/gpu/drm/i915/intel_dp_mst.c |  8 ++--
- include/drm/drm_connector.h         | 68 ++++++++++++++++++++++++++++-
- 5 files changed, 127 insertions(+), 40 deletions(-)
+FPGA folks:
 
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 6f66777dca4b..6cadeaf28ae4 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -529,6 +529,35 @@ mode_valid(struct drm_atomic_state *state)
- 	return 0;
- }
- 
-+static int
-+unregistered_connector_check(struct drm_atomic_state *state,
-+			     struct drm_connector *connector,
-+			     struct drm_connector_state *old_conn_state,
-+			     struct drm_connector_state *new_conn_state)
-+{
-+	struct drm_crtc_state *crtc_state;
-+	struct drm_crtc *crtc;
-+
-+	if (!drm_connector_unregistered(connector))
-+		return 0;
-+
-+	crtc = new_conn_state->crtc;
-+	if (!crtc)
-+		return 0;
-+
-+	crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
-+	if (!crtc_state || !drm_atomic_crtc_needs_modeset(crtc_state))
-+		return 0;
-+
-+	if (crtc_state->mode_changed) {
-+		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] can't change mode on unregistered connector\n",
-+				 connector->base.id, connector->name);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * drm_atomic_helper_check_modeset - validate state object for modeset changes
-  * @dev: DRM device
-@@ -684,18 +713,33 @@ drm_atomic_helper_check_modeset(struct drm_device *dev,
- 			return ret;
- 	}
- 
--	/*
--	 * Iterate over all connectors again, to make sure atomic_check()
--	 * has been called on them when a modeset is forced.
--	 */
- 	for_each_oldnew_connector_in_state(state, connector, old_connector_state, new_connector_state, i) {
- 		const struct drm_connector_helper_funcs *funcs = connector->helper_private;
- 
--		if (connectors_mask & BIT(i))
--			continue;
-+		/* Make sure atomic_check() is called on any unchecked
-+		 * connectors when a modeset has been forced
-+		 */
-+		if (connectors_mask & BIT(i) && funcs->atomic_check) {
-+			ret = funcs->atomic_check(connector,
-+						  new_connector_state);
-+			if (ret)
-+				return ret;
-+		}
- 
--		if (funcs->atomic_check)
--			ret = funcs->atomic_check(connector, new_connector_state);
-+		/*
-+		 * Prevent userspace from turning on new displays or setting
-+		 * new modes using connectors which have been removed from
-+		 * userspace. This is racy since an unplug could happen at any
-+		 * time including after this check, but that's OK: we only
-+		 * care about preventing userspace from trying to set invalid
-+		 * state using destroyed connectors that it's been notified
-+		 * about. No one can save us after the atomic check completes
-+		 * but ourselves.
-+		 */
-+		ret = unregistered_connector_check(state,
-+						   connector,
-+						   old_connector_state,
-+						   new_connector_state);
- 		if (ret)
- 			return ret;
- 	}
-diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
-index a22d6f269b07..d5b7f315098c 100644
---- a/drivers/gpu/drm/drm_atomic_uapi.c
-+++ b/drivers/gpu/drm/drm_atomic_uapi.c
-@@ -299,27 +299,6 @@ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
- 	struct drm_connector *connector = conn_state->connector;
- 	struct drm_crtc_state *crtc_state;
- 
--	/*
--	 * For compatibility with legacy users, we want to make sure that
--	 * we allow DPMS On<->Off modesets on unregistered connectors, since
--	 * legacy modesetting users will not be expecting these to fail. We do
--	 * not however, want to allow legacy users to assign a connector
--	 * that's been unregistered from sysfs to another CRTC, since doing
--	 * this with a now non-existent connector could potentially leave us
--	 * in an invalid state.
--	 *
--	 * Since the connector can be unregistered at any point during an
--	 * atomic check or commit, this is racy. But that's OK: all we care
--	 * about is ensuring that userspace can't use this connector for new
--	 * configurations after it's been notified that the connector is no
--	 * longer present.
--	 */
--	if (!READ_ONCE(connector->registered) && crtc) {
--		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
--				 connector->base.id, connector->name);
--		return -EINVAL;
--	}
--
- 	if (conn_state->crtc == crtc)
- 		return 0;
- 
-diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-index 5d01414ec9f7..79943102fe18 100644
---- a/drivers/gpu/drm/drm_connector.c
-+++ b/drivers/gpu/drm/drm_connector.c
-@@ -396,7 +396,7 @@ void drm_connector_cleanup(struct drm_connector *connector)
- 	/* The connector should have been removed from userspace long before
- 	 * it is finally destroyed.
- 	 */
--	if (WARN_ON(connector->registered))
-+	if (WARN_ON(!drm_connector_unregistered(connector)))
- 		drm_connector_unregister(connector);
- 
- 	if (connector->tile_group) {
-@@ -453,7 +453,7 @@ int drm_connector_register(struct drm_connector *connector)
- 		return 0;
- 
- 	mutex_lock(&connector->mutex);
--	if (connector->registered)
-+	if (connector->registration_state != DRM_CONNECTOR_INITIALIZING)
- 		goto unlock;
- 
- 	ret = drm_sysfs_connector_add(connector);
-@@ -473,7 +473,7 @@ int drm_connector_register(struct drm_connector *connector)
- 
- 	drm_mode_object_register(connector->dev, &connector->base);
- 
--	connector->registered = true;
-+	connector->registration_state = DRM_CONNECTOR_REGISTERED;
- 	goto unlock;
- 
- err_debugfs:
-@@ -495,7 +495,7 @@ EXPORT_SYMBOL(drm_connector_register);
- void drm_connector_unregister(struct drm_connector *connector)
- {
- 	mutex_lock(&connector->mutex);
--	if (!connector->registered) {
-+	if (connector->registration_state != DRM_CONNECTOR_REGISTERED) {
- 		mutex_unlock(&connector->mutex);
- 		return;
- 	}
-@@ -506,7 +506,7 @@ void drm_connector_unregister(struct drm_connector *connector)
- 	drm_sysfs_connector_remove(connector);
- 	drm_debugfs_connector_remove(connector);
- 
--	connector->registered = false;
-+	connector->registration_state = DRM_CONNECTOR_UNREGISTERED;
- 	mutex_unlock(&connector->mutex);
- }
- EXPORT_SYMBOL(drm_connector_unregister);
-diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-index b268bdd71bd3..ad367309e10b 100644
---- a/drivers/gpu/drm/i915/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -78,7 +78,7 @@ static bool intel_dp_mst_compute_config(struct intel_encoder *encoder,
- 	pipe_config->pbn = mst_pbn;
- 
- 	/* Zombie connectors can't have VCPI slots */
--	if (READ_ONCE(connector->registered)) {
-+	if (!drm_connector_unregistered(connector)) {
- 		slots = drm_dp_atomic_find_vcpi_slots(state,
- 						      &intel_dp->mst_mgr,
- 						      port,
-@@ -314,7 +314,7 @@ static int intel_dp_mst_get_ddc_modes(struct drm_connector *connector)
- 	struct edid *edid;
- 	int ret;
- 
--	if (!READ_ONCE(connector->registered))
-+	if (drm_connector_unregistered(connector))
- 		return intel_connector_update_modes(connector, NULL);
- 
- 	edid = drm_dp_mst_get_edid(connector, &intel_dp->mst_mgr, intel_connector->port);
-@@ -330,7 +330,7 @@ intel_dp_mst_detect(struct drm_connector *connector, bool force)
- 	struct intel_connector *intel_connector = to_intel_connector(connector);
- 	struct intel_dp *intel_dp = intel_connector->mst_port;
- 
--	if (!READ_ONCE(connector->registered))
-+	if (drm_connector_unregistered(connector))
- 		return connector_status_disconnected;
- 	return drm_dp_mst_detect_port(connector, &intel_dp->mst_mgr,
- 				      intel_connector->port);
-@@ -361,7 +361,7 @@ intel_dp_mst_mode_valid(struct drm_connector *connector,
- 	int bpp = 24; /* MST uses fixed bpp */
- 	int max_rate, mode_rate, max_lanes, max_link_clock;
- 
--	if (!READ_ONCE(connector->registered))
-+	if (drm_connector_unregistered(connector))
- 		return MODE_ERROR;
- 
- 	if (mode->flags & DRM_MODE_FLAG_DBLSCAN)
-diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-index 5b3cf909fd5e..5f3e4a37bcd2 100644
---- a/include/drm/drm_connector.h
-+++ b/include/drm/drm_connector.h
-@@ -82,6 +82,51 @@ enum drm_connector_status {
- 	connector_status_unknown = 3,
- };
- 
-+/**
-+ * enum drm_connector_registration_status - userspace registration status for
-+ * a &drm_connector
-+ *
-+ * This enum is used to track the status of initializing a connector and
-+ * registering it with userspace, so that DRM can prevent bogus modesets on
-+ * connectors that no longer exist.
-+ */
-+enum drm_connector_registration_state {
-+	/**
-+	 * @DRM_CONNECTOR_INITIALIZING: The connector has just been created,
-+	 * but has yet to be exposed to userspace. There should be no
-+	 * additional restrictions to how the state of this connector may be
-+	 * modified. connector to a new CRTC.
-+	 */
-+	DRM_CONNECTOR_INITIALIZING = 0,
-+
-+	/**
-+	 * @DRM_CONNECTOR_REGISTERED: The connector has been fully initialized
-+	 * and registered with sysfs, as such it has been exposed to
-+	 * userspace. There should be no additional restrictions to how the
-+	 * state of this connector may be modified.
-+	 */
-+	DRM_CONNECTOR_REGISTERED = 1,
-+
-+	/**
-+	 * @DRM_CONNECTOR_UNREGISTERED: The connector has either been exposed
-+	 * to userspace and has since been unregistered and removed from
-+	 * userspace, or the connector was destroyed before it had a chance to
-+	 * be exposed to userspace. There are additional restrictions to how
-+	 * the state of an unregistered connector may be modified:
-+	 *
-+	 * - The current display mode as exposed to userspace must remain the
-+	 *   same as it was when the connector was unregistered.
-+	 * - The connector's currently assigned CRTC may be unassigned from
-+	 *   this connector. Unassigning the connector's CRTC must be
-+	 *   permanent.
-+	 * - New CRTCs must not be assigned to this connector.
-+	 * - The DPMS state of the connector (for compatibility with legacy
-+	 *   modesetting) may modified freely, so long as doing so does not
-+	 *   cause the new atomic state to violate any of these rules.
-+	 */
-+	DRM_CONNECTOR_UNREGISTERED = 2,
-+};
-+
- enum subpixel_order {
- 	SubPixelUnknown = 0,
- 	SubPixelHorizontalRGB,
-@@ -853,10 +898,12 @@ struct drm_connector {
- 	bool ycbcr_420_allowed;
- 
- 	/**
--	 * @registered: Is this connector exposed (registered) with userspace?
-+	 * @registration_state: Is this connector initializing, exposed
-+	 * (registered) with userspace, or unregistered?
-+	 *
- 	 * Protected by @mutex.
- 	 */
--	bool registered;
-+	enum drm_connector_registration_state registration_state;
- 
- 	/**
- 	 * @modes:
-@@ -1167,6 +1214,23 @@ static inline void drm_connector_unreference(struct drm_connector *connector)
- 	drm_connector_put(connector);
- }
- 
-+/**
-+ * drm_connector_unregistered - has the connector been unregistered from
-+ * userspace?
-+ * @connector: DRM connector
-+ *
-+ * Checks whether or not @connector has been unregistered from userspace.
-+ *
-+ * Returns:
-+ * True if the connector was unregistered, false if the connector is
-+ * registered or has not yet been registered with userspace.
-+ */
-+static inline bool drm_connector_unregistered(struct drm_connector *connector)
-+{
-+	return READ_ONCE(connector->registration_state) ==
-+		DRM_CONNECTOR_UNREGISTERED;
-+}
-+
- const char *drm_get_connector_status_name(enum drm_connector_status status);
- const char *drm_get_subpixel_order_name(enum subpixel_order order);
- const char *drm_get_dpms_name(int val);
+  I made the validation checks that should result in an
+  invalid live devicetree report "ERROR" and cause the overlay apply
+  to fail.
+
+  I made the memory leak validation tests report "WARNING" and allow
+  the overlay apply to complete successfully.  Please let me know
+  if you encounter the warnings.  There are at least two paths
+  forward to deal with the cases that trigger the warning: (1) change
+  the warning to an error and fail the overlay apply, or (2) find a
+  way to detect the potential memory leaks and free the memory
+  appropriately.
+
+ALL people:
+
+  The validations do _not_ address another major concern I have with
+  releasing overlays, which is use after free errors.
+
+Changes since v3:
+  - 01/18: Add expected value of refcount for destroy cset entry error.  Also
+    explain the cause of the error.
+
+  - 09/18: for errors of an overlay changing the value of #size-cells or
+    #address-cells, return -EINVAL so that overlay apply will fail
+  - 09/18: for errors of an overlay changing the value of #size-cells or
+    #address-cells, make the message more direct.
+    Old message:
+      OF: overlay: ERROR: overlay and/or live tree #size-cells invalid in node /soc/base_fpga_region
+    New message:
+      OF: overlay: ERROR: changing value of /soc/base_fpga_region/#size-cells not allowed
+
+  - 13/18: Update patch comment header to state that this patch modifies the
+    previous patch to not return immediately on fragment error and
+    explain this is not a performance issue.
+  - 13/18: remove redundant "overlay" from two error messages.  "OF: overlay:"
+    is already present in pr_fmt()
+
+Changes since v2:
+
+  - 13/18: Use continue to reduce indentation in find_dup_cset_node_entry()
+    and find_dup_cset_prop()
+
+Changes since v1:
+
+  - move patch 16/16 to 17/18
+  - move patch 15/16 to 18/18
+  - new patch 15/18
+  - new patch 16/18
+
+  - 05/18: add_changeset_node() header comment: incorrect comment for @target
+
+  - 18/18: add same fix for of_parse_phandle_with_args()
+  - 18/18: add same fix for of_parse_phandle_with_args_map()
+
+Frank Rowand (18):
+  of: overlay: add tests to validate kfrees from overlay removal
+  of: overlay: add missing of_node_put() after add new node to changeset
+  of: overlay: add missing of_node_get() in __of_attach_node_sysfs
+  powerpc/pseries: add of_node_put() in dlpar_detach_node()
+  of: overlay: use prop add changeset entry for property in new nodes
+  of: overlay: do not duplicate properties from overlay for new nodes
+  of: dynamic: change type of of_{at,de}tach_node() to void
+  of: overlay: reorder fields in struct fragment
+  of: overlay: validate overlay properties #address-cells and
+    #size-cells
+  of: overlay: make all pr_debug() and pr_err() messages unique
+  of: overlay: test case of two fragments adding same node
+  of: overlay: check prevents multiple fragments add or delete same node
+  of: overlay: check prevents multiple fragments touching same property
+  of: unittest: remove unused of_unittest_apply_overlay() argument
+  of: overlay: set node fields from properties when add new overlay node
+  of: unittest: allow base devicetree to have symbol metadata
+  of: unittest: find overlays[] entry by name instead of index
+  of: unittest: initialize args before calling of_*parse_*()
+
+ arch/powerpc/platforms/pseries/dlpar.c             |  15 +-
+ arch/powerpc/platforms/pseries/reconfig.c          |   6 +-
+ drivers/of/dynamic.c                               |  68 +++--
+ drivers/of/kobj.c                                  |   4 +-
+ drivers/of/overlay.c                               | 302 ++++++++++++++++-----
+ drivers/of/unittest-data/Makefile                  |   2 +
+ .../of/unittest-data/overlay_bad_add_dup_node.dts  |  28 ++
+ .../of/unittest-data/overlay_bad_add_dup_prop.dts  |  24 ++
+ drivers/of/unittest-data/overlay_base.dts          |   1 +
+ drivers/of/unittest.c                              |  96 +++++--
+ include/linux/of.h                                 |  19 +-
+ 11 files changed, 443 insertions(+), 122 deletions(-)
+ create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_node.dts
+ create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_prop.dts
+
 -- 
-2.17.2
+Frank Rowand <frank.rowand@sony.com>
 
