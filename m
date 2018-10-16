@@ -2,268 +2,172 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D233AC169D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89509C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 958C02089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:51:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 958C02089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 33F562089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:54:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BYbgcSeo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33F562089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbeJPUlt (ORCPT
+        id S1727071AbeJPUor (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 16:41:49 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38763 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727229AbeJPUlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 16:41:49 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E3AC1B4B1B353;
-        Tue, 16 Oct 2018 20:51:24 +0800 (CST)
-Received: from S00345302A-PC.china.huawei.com (10.202.227.237) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.399.0; Tue, 16 Oct 2018 20:51:18 +0800
-From:   Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-To:     <lorenzo.pieralisi@arm.com>, <robin.murphy@arm.com>,
-        <jean-philippe.brucker@arm.com>
-CC:     <will.deacon@arm.com>, <mark.rutland@arm.com>,
-        <guohanjun@huawei.com>, <john.garry@huawei.com>,
-        <pabba@codeaurora.org>, <vkilari@codeaurora.org>,
-        <rruigrok@codeaurora.org>, <linux-acpi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>,
-        <neil.m.leeder@gmail.com>
-Subject: [PATCH v4 4/4] perf/smmuv3_pmu: Enable HiSilicon Erratum 162001800 quirk
-Date:   Tue, 16 Oct 2018 13:49:20 +0100
-Message-ID: <20181016124920.24708-5-shameerali.kolothum.thodi@huawei.com>
-X-Mailer: git-send-email 2.12.0.windows.1
-In-Reply-To: <20181016124920.24708-1-shameerali.kolothum.thodi@huawei.com>
-References: <20181016124920.24708-1-shameerali.kolothum.thodi@huawei.com>
+        Tue, 16 Oct 2018 16:44:47 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55554 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbeJPUor (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 16:44:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3kq1AaMWv0oBC6tWjZTnnIzjgOgV2CGHc7jyTyWjRxU=; b=BYbgcSeo2DBaZBsu00ZQyBfLO
+        P1u58NDTz63BoMC63gzX+E9NNzLrxjjVCmEBx0WdX8u7b9q0g79c2mWrs5XUwv21RZjbiFyTUI8ct
+        3dn8H3aQlehANhGI1zZN6S/yKyH0uK/m/dpcHWwJ6HCv0t56g81bvOsP3Z1mbrx1gguLuUNkCW671
+        m6gqrKHoYH0iGXEme0tHtM/yTnrs/1ieogKEQVhK4ydRXnsbBfXxkYk6GlUZUlkhW/dlhz7IAQSNF
+        kx9KUTZIb0In/Qry46zn/AgNRygq8mUIfHHIU5KpCWS6eLznsgwVCsTrp6jKyZ4qZHjiGP9NtZ0H6
+        NMnT6e9qg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gCOra-0001nQ-8E; Tue, 16 Oct 2018 12:54:18 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C27A120297B77; Tue, 16 Oct 2018 14:54:15 +0200 (CEST)
+Date:   Tue, 16 Oct 2018 14:54:15 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCHv2 2/4] printk: move printk_safe macros to printk
+ header
+Message-ID: <20181016125415.GA3121@hirez.programming.kicks-ass.net>
+References: <20181016050428.17966-1-sergey.senozhatsky@gmail.com>
+ <20181016050428.17966-3-sergey.senozhatsky@gmail.com>
+ <20181016072719.GB4030@hirez.programming.kicks-ass.net>
+ <20181016122734.GA1259@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.227.237]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016122734.GA1259@jagdpanzerIV>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HiSilicon erratum 162001800 describes the limitation of
-SMMUv3 PMCG implementation on HiSilicon Hip08 platforms.
+On Tue, Oct 16, 2018 at 09:27:34PM +0900, Sergey Senozhatsky wrote:
+> per-CPU printk_safe _semi-magic_ makes some things simple to handle.
+> We can't just remove per-CPU buffers and add a wake_up_process() at
+> the bottom of vprintk_emit(). Because this will deadlock:
+> 
+>   printk()
+>    wake_up_process()
+>     try_to_wake_up()
+>      raw_spin_lock_irqsave()
+>  <NMI>
+>       printk()
+>        wake_up_process()
+>         try_to_wake_up()
+>          raw_spin_lock_irqsave()
+> 
+> So we still need some amount of per-CPU printk() semi-magic anyway.
 
-On these platforms, the PMCG event counter registers
-(SMMU_PMCG_EVCNTRn) are read only and as a result it is
-not possible to set the initial counter period value on
-event monitor start.
+All we need is 4 max-line-length buffers per-CPU. Nothing more.
 
-To work around this, the current value of the counter is
-read and is used for delta calculations. This increases
-the possibility of reporting incorrect values if counter
-overflow happens and counter passes the initial value.
+The above trainwreck is the direct result of forcing synchronous
+printk'ing (which I'm otherwise a big fan of, but regular console
+drivers stink and are unfixable).
 
-OEM information from ACPI header is used to identify the
-affected hardware platform.
+> And printk-kthread offloding will not eliminate the need of
+> printk_deferred().
 
-Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
----
- drivers/perf/arm_smmuv3_pmu.c | 137 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 130 insertions(+), 7 deletions(-)
+Why not? printk() will reduce to a lockless buffer insert. IOW _all_
+printk is deferred.
 
-diff --git a/drivers/perf/arm_smmuv3_pmu.c b/drivers/perf/arm_smmuv3_pmu.c
-index d927ef8..519545e 100644
---- a/drivers/perf/arm_smmuv3_pmu.c
-+++ b/drivers/perf/arm_smmuv3_pmu.c
-@@ -96,6 +96,8 @@
- 
- #define SMMU_PA_SHIFT                   12
- 
-+#define SMMU_PMU_OPT_EVCNTR_RDONLY	(1 << 0)
-+
- static int cpuhp_state_num;
- 
- struct smmu_pmu {
-@@ -111,10 +113,55 @@ struct smmu_pmu {
- 	struct device *dev;
- 	void __iomem *reg_base;
- 	void __iomem *reloc_base;
-+	u32 options;
- 	u64 counter_present_mask;
- 	u64 counter_mask;
- };
- 
-+struct erratum_acpi_oem_info {
-+	char oem_id[ACPI_OEM_ID_SIZE + 1];
-+	char oem_table_id[ACPI_OEM_TABLE_ID_SIZE + 1];
-+	u32 oem_revision;
-+};
-+
-+static struct erratum_acpi_oem_info hisi_162001800_oem_info[] = {
-+	/*
-+	 * Note that trailing spaces are required to properly match
-+	 * the OEM table information.
-+	 */
-+	{
-+		.oem_id         = "HISI  ",
-+		.oem_table_id   = "HIP08   ",
-+		.oem_revision   = 0,
-+	},
-+	{ /* Sentinel indicating the end of the OEM array */ },
-+};
-+
-+enum smmu_pmu_erratum_match_type {
-+	se_match_acpi_oem,
-+};
-+
-+void hisi_erratum_evcntr_rdonly(struct smmu_pmu *smmu_pmu)
-+{
-+	smmu_pmu->options |= SMMU_PMU_OPT_EVCNTR_RDONLY;
-+}
-+
-+struct smmu_pmu_erratum_wa {
-+	enum smmu_pmu_erratum_match_type match_type;
-+	const void *id;	/* Indicate the Erratum ID */
-+	const char *desc_str;
-+	void (*enable)(struct smmu_pmu *smmu_pmu);
-+};
-+
-+static const struct smmu_pmu_erratum_wa smmu_pmu_wa[] = {
-+	{
-+		.match_type = se_match_acpi_oem,
-+		.id = hisi_162001800_oem_info,
-+		.desc_str = "HiSilicon erratum 162001800",
-+		.enable = hisi_erratum_evcntr_rdonly,
-+	},
-+};
-+
- #define to_smmu_pmu(p) (container_of(p, struct smmu_pmu, pmu))
- 
- #define SMMU_PMU_EVENT_ATTR_EXTRACTOR(_name, _config, _start, _end)        \
-@@ -224,15 +271,20 @@ static void smmu_pmu_set_period(struct smmu_pmu *smmu_pmu,
- 	u32 idx = hwc->idx;
- 	u64 new;
- 
--	/*
--	 * We limit the max period to half the max counter value of the counter
--	 * size, so that even in the case of extreme interrupt latency the
--	 * counter will (hopefully) not wrap past its initial value.
--	 */
--	new = smmu_pmu->counter_mask >> 1;
-+	if (smmu_pmu->options & SMMU_PMU_OPT_EVCNTR_RDONLY) {
-+		new = smmu_pmu_counter_get_value(smmu_pmu, idx);
-+	} else {
-+		/*
-+		 * We limit the max period to half the max counter value
-+		 * of the counter size, so that even in the case of extreme
-+		 * interrupt latency the counter will (hopefully) not wrap
-+		 * past its initial value.
-+		 */
-+		new = smmu_pmu->counter_mask >> 1;
-+		smmu_pmu_counter_set_value(smmu_pmu, idx, new);
-+	}
- 
- 	local64_set(&hwc->prev_count, new);
--	smmu_pmu_counter_set_value(smmu_pmu, idx, new);
- }
- 
- static void smmu_pmu_get_event_filter(struct perf_event *event, u32 *span,
-@@ -670,6 +722,69 @@ static void smmu_pmu_reset(struct smmu_pmu *smmu_pmu)
- 		       smmu_pmu->reloc_base + SMMU_PMCG_OVSCLR0);
- }
- 
-+typedef bool (*se_match_fn_t)(const struct smmu_pmu_erratum_wa *,
-+			      const void *);
-+
-+bool smmu_pmu_check_acpi_erratum(const struct smmu_pmu_erratum_wa *wa,
-+				const void *arg)
-+{
-+	static const struct erratum_acpi_oem_info empty_oem_info = {};
-+	const struct erratum_acpi_oem_info *info = wa->id;
-+	const struct acpi_table_header *hdr = arg;
-+
-+	/* Iterate over the ACPI OEM info array, looking for a match */
-+	while (memcmp(info, &empty_oem_info, sizeof(*info))) {
-+		if (!memcmp(info->oem_id, hdr->oem_id, ACPI_OEM_ID_SIZE) &&
-+		    !memcmp(info->oem_table_id, hdr->oem_table_id, ACPI_OEM_TABLE_ID_SIZE) &&
-+		    info->oem_revision == hdr->oem_revision)
-+			return true;
-+
-+		info++;
-+	}
-+
-+	return false;
-+
-+}
-+
-+static void smmu_pmu_enable_errata(struct smmu_pmu *smmu_pmu,
-+				enum smmu_pmu_erratum_match_type type,
-+				se_match_fn_t match_fn,
-+				void *arg)
-+{
-+	const struct smmu_pmu_erratum_wa *wa = smmu_pmu_wa;
-+
-+	for (; wa->desc_str; wa++) {
-+		if (wa->match_type != type)
-+			continue;
-+
-+		if (match_fn(wa, arg)) {
-+			if (wa->enable) {
-+				wa->enable(smmu_pmu);
-+				dev_info(smmu_pmu->dev,
-+					"Enabling workaround for %s\n",
-+					 wa->desc_str);
-+			}
-+		}
-+	}
-+}
-+
-+static void smmu_pmu_check_workarounds(struct smmu_pmu *smmu_pmu,
-+				  enum smmu_pmu_erratum_match_type type,
-+				  void *arg)
-+{
-+	se_match_fn_t match_fn = NULL;
-+
-+	switch (type) {
-+	case se_match_acpi_oem:
-+		match_fn = smmu_pmu_check_acpi_erratum;
-+		break;
-+	default:
-+		return;
-+	}
-+
-+	smmu_pmu_enable_errata(smmu_pmu, type, match_fn, arg);
-+}
-+
- static int smmu_pmu_probe(struct platform_device *pdev)
- {
- 	struct smmu_pmu *smmu_pmu;
-@@ -678,6 +793,7 @@ static int smmu_pmu_probe(struct platform_device *pdev)
- 	u64 ceid_64[2];
- 	int irq, err;
- 	char *name;
-+	struct acpi_table_header *table;
- 	struct device *dev = &pdev->dev;
- 
- 	smmu_pmu = devm_kzalloc(dev, sizeof(*smmu_pmu), GFP_KERNEL);
-@@ -749,6 +865,13 @@ static int smmu_pmu_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
-+	if (ACPI_FAILURE(acpi_get_table(ACPI_SIG_IORT, 0, &table))) {
-+		dev_err(dev, "IORT get failed, PMU @%pa\n", &res_0->start);
-+		return -EINVAL;
-+	}
-+
-+	smmu_pmu_check_workarounds(smmu_pmu, se_match_acpi_oem, table);
-+
- 	/* Pick one CPU to be the preferred one to use */
- 	smmu_pmu->on_cpu = get_cpu();
- 	WARN_ON(irq_set_affinity(smmu_pmu->irq, cpumask_of(smmu_pmu->on_cpu)));
--- 
-2.7.4
+All you need are 4 max-line-length buffers per CPU and a global/shared
+lockless buffer.
+
+printk will determine the current context:
+
+  task, softirq, hardirq or NMI
+
+and pick the corresponding per-cpu line buffer and do the vsnprintf()
+thing. Then we have the actual line length and content. With the length
+we reserve the bytes from the global buffer, we memcpy into the buffer
+and commit.
+
+Done.
+
+The printk thread will observe it lags behind the buffer head and will
+start printk-ing crud from task context.
+
+> Speaking of lockless logbuf,
+> logbuf buffer and logbuf_lock are the smallest of the problems printk
+> currently has. Mainly because of lockless semi-magical printk_safe
+> buffers.
+
+Which are rubbish. You now have two buffers with duplicated
+functionality and wildly different semantics.
+
+Why not have a single buffer that does it all?
+
+> Replacing one lockless buffer with another lockless buffer will
+> not simplify things in this department. We probably additionally will
+> have some nasty screw ups, e.g. when NMI printk on CPUA interrupts normal
+> printk on the same CPUA and now we have mixed in characters; and so on.
+
+Line buffers fix that. You don't need anything fancy for that.
+
+> per-CPU printk_safe at least keeps us on the safe side in these cases and
+> looks fairly simple.
+
+printk_safe is an abomination, it fixes something that shouldn't need
+fixing. See above.
+
+> We do, however, have loads of problems with all those dependencies which
+> come from serial drivers and friends: timekeeping, scheduler (scheduler
+> is brilliant and cool, but we do have some deadlocks in printk because of
+> it ;), tty, net, MM, wq, etc. So I generally like the idea of "detached
+> serial consoles" (that's what I call it). IOW, elimination of the direct
+> printk -> serial console path. 
+
+Right; we need to get rid of that in the generic case. Only allow
+lockless consoles (earlycon) to be used synchonously. With maybe a
+special case for the BUG/PANIC case to push things out ASAP.
+
+But given 'fine' console drivers like USB-serial, or DRM-framebuffer, I
+don't know if it makes much difference to wake a thread and rely on that
+or call it directly and deadlock :/
+
+> The current approach - use the existing printk_safe mechanism and
+> case-by-case, manually, break dependencies which can deadlock us is
+> a lazy approach, yes; and not very convenient. I'm aware of it.
+
+It's ugly and pushes ugly all over :/
+
+> So, unless I'm missing something, things are not entirely that simple:
+> - throw away printk_safe semi-magic
+> - add a lockless logbuf
+> - add wake_up_process() to vprintk_emit().
+
+No, no wakups. irq_work to wake the printk-thread, at most.
 
 
