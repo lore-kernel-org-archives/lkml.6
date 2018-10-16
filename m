@@ -2,176 +2,106 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F17C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BC6C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 955542089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:37:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 955542089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A4DBE20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:40:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4DBE20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbeJPV1j (ORCPT
+        id S1727157AbeJPVaj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:27:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57056 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727002AbeJPV1i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 17:27:38 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9GDZ0dq063922
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 09:37:07 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n5dywgyx1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 09:37:06 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 16 Oct 2018 14:37:05 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 16 Oct 2018 14:37:00 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9GDaxqa53870692
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 16 Oct 2018 13:36:59 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D5E9E11C064;
-        Tue, 16 Oct 2018 16:36:28 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1E40511C058;
-        Tue, 16 Oct 2018 16:36:28 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.72])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 16 Oct 2018 16:36:28 +0100 (BST)
-Date:   Tue, 16 Oct 2018 16:36:56 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Rob Herring <robherring2@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for Oct 15
-References: <20181015192546.15faf3a1@canb.auug.org.au>
- <20181015182637.GA16445@roeck-us.net>
- <20181016071240.3f62816d@canb.auug.org.au>
- <20181016072439.42613abd@canb.auug.org.au>
- <20181015151319.3a443f0421c20bd7ed055cb9@linux-foundation.org>
+        Tue, 16 Oct 2018 17:30:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727002AbeJPVaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 17:30:39 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECCE320881;
+        Tue, 16 Oct 2018 13:40:06 +0000 (UTC)
+Date:   Tue, 16 Oct 2018 09:40:05 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] tracing: Use trace_clock_local() for looping in
+ preemptirq_delay_test.c
+Message-ID: <20181016094005.654275a9@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181015151319.3a443f0421c20bd7ed055cb9@linux-foundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18101613-4275-0000-0000-000002CCD285
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101613-4276-0000-0000-000037D7DB10
-Message-Id: <20181016133656.GA10925@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810160116
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 03:13:19PM -0700, Andrew Morton wrote:
-> On Tue, 16 Oct 2018 07:24:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > On Tue, 16 Oct 2018 07:12:40 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > On Mon, 15 Oct 2018 11:26:37 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
-> > > >
-> > > > ALl ppc qemu tests (including big endian pseries) also generate a warning.
-> > > > 
-> > > > WARNING: CPU: 0 PID: 0 at mm/memblock.c:1301 .memblock_alloc_range_nid+0x20/0x68
-> > 
-> > That is:
-> > 
-> > static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
-> >                                         phys_addr_t align, phys_addr_t start,
-> >                                         phys_addr_t end, int nid,
-> >                                         enum memblock_flags flags)
-> > {
-> >        if (WARN_ON_ONCE(!align))
-> >                 align = SMP_CACHE_BYTES;
-> > 
-> > Looks like patch
-> > 
-> >   "memblock: stop using implicit alignment to SMP_CACHE_BYTES"
-> > 
-> > missed some places ...
-> 
-> To be expected, I guess.  I'm pretty relaxed about this ;) Let's do
-> another sweep in a week or so, after which we'll have a couple of
-> months to mop up any leftovers.
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-After some more grepping and spatching I've found these:
+The preemptirq_delay_test module is used for the ftrace selftest code that
+tests the latency tracers. The problem is that it uses ktime for the delay
+loop, and then checks the tracer to see if the delay loop is caught, but the
+tracer uses trace_clock_local() which uses various different other clocks to
+measure the latency. As ktime uses the clock cycles, and the code then
+converts that to nanoseconds, it causes rounding errors, and the preemptirq
+latency tests are failing due to being off by 1 (it expects to see a delay
+of 500000 us, but the delay is only 499999 us). This is happening due to a
+rounding error in the ktime (which is totally legit). The purpose of the
+test is to see if it can catch the delay, not to test the accuracy between
+trace_clock_local() and ktime_get(). Best to use apples to apples, and have
+the delay loop use the same clock as the latency tracer does.
 
-From 8b014bae53a78ab747dbb76b9aff7df4cefcb604 Mon Sep 17 00:00:00 2001
-From: Mike Rapoport <rppt@linux.ibm.com>
-Date: Tue, 16 Oct 2018 16:03:00 +0300
-Subject: [PATCH] memblock: fix missed uses of implicit aligment
-
-A couple of memblock*alloc uses were missed during conversion from implicit
-alignment setting with 'align = 0' to explictly using SMP_CACHE_BYTES.
-Fix them now.
-
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Joel Fernandes (Google) <joel@joelfernandes.org>
+Cc: stable@vger.kernel.org
+Fixes: f96e8577da102 ("lib: Add module for testing preemptoff/irqsoff latency tracers")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/powerpc/kernel/paca.c    | 2 +-
- drivers/firmware/efi/memmap.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/preemptirq_delay_test.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/kernel/paca.c b/arch/powerpc/kernel/paca.c
-index f331a00..913bfca 100644
---- a/arch/powerpc/kernel/paca.c
-+++ b/arch/powerpc/kernel/paca.c
-@@ -198,7 +198,7 @@ void __init allocate_paca_ptrs(void)
- 	paca_nr_cpu_ids = nr_cpu_ids;
+diff --git a/kernel/trace/preemptirq_delay_test.c b/kernel/trace/preemptirq_delay_test.c
+index f704390db9fc..d8765c952fab 100644
+--- a/kernel/trace/preemptirq_delay_test.c
++++ b/kernel/trace/preemptirq_delay_test.c
+@@ -5,12 +5,12 @@
+  * Copyright (C) 2018 Joel Fernandes (Google) <joel@joelfernandes.org>
+  */
  
- 	paca_ptrs_size = sizeof(struct paca_struct *) * nr_cpu_ids;
--	paca_ptrs = __va(memblock_phys_alloc(paca_ptrs_size, 0));
-+	paca_ptrs = __va(memblock_phys_alloc(paca_ptrs_size, SMP_CACHE_BYTES));
- 	memset(paca_ptrs, 0x88, paca_ptrs_size);
- }
++#include <linux/trace_clock.h>
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/kernel.h>
+ #include <linux/kthread.h>
+-#include <linux/ktime.h>
+ #include <linux/module.h>
+ #include <linux/printk.h>
+ #include <linux/string.h>
+@@ -25,13 +25,13 @@ MODULE_PARM_DESC(test_mode, "Mode of the test such as preempt or irq (default ir
  
-diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-index ef618bc..fa2904f 100644
---- a/drivers/firmware/efi/memmap.c
-+++ b/drivers/firmware/efi/memmap.c
-@@ -15,7 +15,7 @@
- 
- static phys_addr_t __init __efi_memmap_alloc_early(unsigned long size)
+ static void busy_wait(ulong time)
  {
--	return memblock_phys_alloc(size, 0);
-+	return memblock_phys_alloc(size, SMP_CACHE_BYTES);
+-	ktime_t start, end;
+-	start = ktime_get();
++	u64 start, end;
++	start = trace_clock_local();
+ 	do {
+-		end = ktime_get();
++		end = trace_clock_local();
+ 		if (kthread_should_stop())
+ 			break;
+-	} while (ktime_to_ns(ktime_sub(end, start)) < (time * 1000));
++	} while ((end - start) < (time * 1000));
  }
  
- static phys_addr_t __init __efi_memmap_alloc_late(unsigned long size)
+ static int preemptirq_delay_run(void *data)
 -- 
-2.7.4
-
- 
-
--- 
-Sincerely yours,
-Mike.
+2.13.6
 
