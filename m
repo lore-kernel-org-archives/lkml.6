@@ -2,151 +2,150 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0651FC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95CAC169D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B19092086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FA9B2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:21:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bLytGm88"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B19092086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SGfQBrjI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TnUPHp2E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA9B2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbeJPWM2 (ORCPT
+        id S1727181AbeJPWMb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:12:28 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45700 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726978AbeJPWM2 (ORCPT
+        Tue, 16 Oct 2018 18:12:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52274 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbeJPWM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:12:28 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u12-v6so11518791pfn.12
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 07:21:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+x5n83alBln1p8uwt58LcByYw3gX8JlkNuH56G5W06k=;
-        b=bLytGm88me1DCa9ReKcoFq7lOdBw1xV4xtP3Gc+DOZNEul30cXogMjSE3rY7faTGlL
-         DvWyL4DYjmoLsQkZlylDJLa8PIMgGtUt+2w/HCp4CGPrUmQKly7XrAjB6O4SoY6wskoY
-         D9QE1IzzLfKzJmLzyV0h3YoA9MOCt6CtpGipA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+x5n83alBln1p8uwt58LcByYw3gX8JlkNuH56G5W06k=;
-        b=WC0/M0+swj4tU0aY84lN0ghWUKnzvxAZdnsNaSMDKo6SxfPZUG3/Kn8hbvEBybbETR
-         HqHNiFCTozJ4eeIpmEoK6U2Qr4Fhu1ARxOCjlNgpP4lXHeXABFcChiXi0XP9n7do32K3
-         d2mEd1590jN8jd0KU7spYuFpFzy6GYrtPly6e2PfnCjECKFrCkYxlHFo6NHb2vEWNNic
-         TroaoQve0V/cISSFaaqJmD3RA+cGbC3wovWGfoMOzWV4pMSDmuikQu7m5+YeO1bDmBso
-         zHJhoNa9iLebU3z9hkMr+2+J6CgiqR2a4DHW4o/fc/aS+0wPZffvA4QO4d8QVUq4Pm4l
-         sEXA==
-X-Gm-Message-State: ABuFfohmHDsHZ5iSOKB0C0ue645imdooR1PPz0lu0+/Kb9Jbxjl4EC8H
-        HCgDi5b6DM/lqVdpGOTm6Lnd
-X-Google-Smtp-Source: ACcGV62HRwAUENeFxD7bAREKyJjCTrChaIUwX8khc93PvAf80Yn9H5oxAjVA7VECxkPBdbzRxcraNw==
-X-Received: by 2002:a62:104b:: with SMTP id y72-v6mr22422985pfi.113.1539699706898;
-        Tue, 16 Oct 2018 07:21:46 -0700 (PDT)
-Received: from mani ([103.59.133.81])
-        by smtp.gmail.com with ESMTPSA id h5-v6sm17498913pfo.135.2018.10.16.07.21.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 07:21:46 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 19:51:38 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     heiko@sntech.de, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/Rockchip SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC support" 
-        <linux-rockchip@lists.infradead.org>
-Subject: Re: [PATCH] DT: rockchip: Fix stability issues with the
- 'performance' governor on rock960
-Message-ID: <20181016142138.GA24727@mani>
-References: <1539698431-12616-1-git-send-email-daniel.lezcano@linaro.org>
+        Tue, 16 Oct 2018 18:12:29 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 554A56058E; Tue, 16 Oct 2018 14:21:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539699708;
+        bh=/Cosd0wxpPMboZIsSE8NtnmKOUskNl/I+7z5CBIEChI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SGfQBrjIatTz95S6DjMS5vOfyKoKhCUep2hMOAhT9PtC68R0t+woIWDjEmwnu0R2I
+         nt2Y5SaCRoELyduFBE5jcmQTZF8g0psRSVZqm+KZkkZgVcWk9iFyTVCU8tMr9kMr3D
+         JHqi8jK5KuZyzu54PFWqhJmV4CTNCCU12LuXw+g0=
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D06AF6058E;
+        Tue, 16 Oct 2018 14:21:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539699707;
+        bh=/Cosd0wxpPMboZIsSE8NtnmKOUskNl/I+7z5CBIEChI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TnUPHp2E2x52zPoyc7c39GuQagAROyP8UEc0cO1RQR60E2OKZQXrMvDbbHirR4URZ
+         92JmWMgt6eEL4V2ytdh8z6oR7GWaSvkUN11/XLkD0LGnW1nJf9exDDt5KQ1JIcLmle
+         sUn9ErABQfX+4KN/GYDgpvQADNTRhVb5cUfZ4U0Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D06AF6058E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, c-hbandi@codeaurora.orhg,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Harish Bandi <c-hbandi@codeaurora.org>
+Subject: [PATCH v3] Bluetooth: hci_qca: Add support for controller debug logs.
+Date:   Tue, 16 Oct 2018 19:51:35 +0530
+Message-Id: <20181016142135.16480-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1539698431-12616-1-git-send-email-daniel.lezcano@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 04:00:20PM +0200, Daniel Lezcano wrote:
-> When the performance governor is set as default, the rock960 hangs
-> around one minute after booting, whatever the activity is (idle, key
-> pressed, loaded, ...).
-> 
-> Based on the commit log found at https://patchwork.kernel.org/patch/10092377/
-> 
-> "vdd_log has no consumer and therefore will not be set to a specific
-> voltage. Still the PWM output pin gets configured and thence the vdd_log
-> output voltage will changed from it's default. Depending on the idle
-> state of the PWM this will slightly over or undervoltage the logic supply
-> of the RK3399 and cause instability with GbE (undervoltage) and PCIe
-> (overvoltage). Since the default value set by a voltage divider is the
-> correct supply voltage and we don't need to change it during runtime we
-> remove the rail from the devicetree completely so the PWM pin will not
-> be configured."
-> 
-> After removing the vdd-log from the rock960's specific DT, the board
-> does no longer hang and shows a stable behavior.
-> 
-> Apply the same change for the rock960 by removing the vdd-log from the
-> DT.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+This patch will prevent error messages splashing on console.
 
-Tested on Rock960 v1.2 board, hence
+[   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+[   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+[   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+[   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
 
-Tested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+QCA wcn3990 will send the debug logs in the form of ACL packets.
+While decoding packet in qca_recv(), marking the received debug log
+packet as diagnostic packet.
 
-Thanks a ton!
+Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
+Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+---
+v3:
+  * used get_unaligned_le16() instead of checking individual bytes
+v2: 
+  * Addressed reviewer comments.
+v1: 
+  * initial patch
+---
+ drivers/bluetooth/hci_qca.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-Regards,
-Mani
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 9f1392fc7105..f036c8f98ea3 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -40,6 +40,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/serdev.h>
++#include <asm/unaligned.h>
+ 
+ #include <net/bluetooth/bluetooth.h>
+ #include <net/bluetooth/hci_core.h>
+@@ -63,6 +64,9 @@
+ /* susclk rate */
+ #define SUSCLK_RATE_32KHZ	32768
+ 
++/* Controller debug log header */
++#define QCA_DEBUG_HANDLE	0x2EDC
++
+ /* HCI_IBS transmit side sleep protocol states */
+ enum tx_ibs_states {
+ 	HCI_IBS_TX_ASLEEP,
+@@ -849,6 +853,19 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, struct sk_buff *skb)
+ 	return 0;
+ }
+ 
++static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff *skb)
++{
++	/* We receive debug logs from chip as an ACL packets.
++	 * Instead of sending the data to ACL to decode the
++	 * received data, we are pushing them to the above layers
++	 * as a diagnostic packet.
++	 */
++	if (get_unaligned_le16(skb->data) == QCA_DEBUG_HANDLE)
++		return hci_recv_diag(hdev, skb);
++
++	return hci_recv_frame(hdev, skb);
++}
++
+ #define QCA_IBS_SLEEP_IND_EVENT \
+ 	.type = HCI_IBS_SLEEP_IND, \
+ 	.hlen = 0, \
+@@ -871,7 +888,7 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, struct sk_buff *skb)
+ 	.maxlen = HCI_MAX_IBS_SIZE
+ 
+ static const struct h4_recv_pkt qca_recv_pkts[] = {
+-	{ H4_RECV_ACL,             .recv = hci_recv_frame    },
++	{ H4_RECV_ACL,             .recv = qca_recv_acl_data },
+ 	{ H4_RECV_SCO,             .recv = hci_recv_frame    },
+ 	{ H4_RECV_EVENT,           .recv = hci_recv_frame    },
+ 	{ QCA_IBS_WAKE_IND_EVENT,  .recv = qca_ibs_wake_ind  },
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi | 12 ------------
->  1 file changed, 12 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> index 6c8c4ab..56abbb0 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> @@ -57,18 +57,6 @@
->  		regulator-always-on;
->  		vin-supply = <&vcc_sys>;
->  	};
-> -
-> -	vdd_log: vdd-log {
-> -		compatible = "pwm-regulator";
-> -		pwms = <&pwm2 0 25000 0>;
-> -		regulator-name = "vdd_log";
-> -		regulator-min-microvolt = <800000>;
-> -		regulator-max-microvolt = <1400000>;
-> -		regulator-always-on;
-> -		regulator-boot-on;
-> -		vin-supply = <&vcc_sys>;
-> -	};
-> -
->  };
->  
->  &cpu_l0 {
-> -- 
-> 2.7.4
-> 
