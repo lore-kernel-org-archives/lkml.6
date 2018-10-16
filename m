@@ -4,109 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA680C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21140C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81BCA20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA79D20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:28:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvswTSg7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81BCA20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lylDilyQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA79D20866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbeJPMCa (ORCPT
+        id S1729149AbeJPMRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50378 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:17:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727449AbeJPMC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:29 -0400
+        id S1728864AbeJPMCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:15 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3728E2145D;
-        Tue, 16 Oct 2018 04:14:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C50E21477;
+        Tue, 16 Oct 2018 04:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663246;
-        bh=hMFtkzAhQrrhJVdOlbsa5sIsVrw/sVgNzcSP7+RY2Vg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TvswTSg7/tZMyTvPh7GSVE4nNMbNkhD2ZxRg/KaG/mAZP657GNNCxHzW5VXp2A85b
-         /NAjjyNKWCLnCc6HBNrBWFWC5INGpPyiFeVv7YPz8YrhFQG5caHALU5EqtV73HjrfV
-         y+E/+6vlupsuMlr4CnlP0VBFsaYaSkCUL+JXfAX8=
+        s=default; t=1539663232;
+        bh=uXzBaHbNhaAUhSIBUQf7BZrbigfY4sD6WEAZKjEa0YI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lylDilyQI6IZgHTIxK1dfeYac8RAs+WAwwB4GUKc9/V2M3r4aE5bc0+dVjiyxzIL6
+         qFogl+9VQnLbAwmfYrkdBc4z2n11yw/Mz1u8jeoTDEuLfXneOYoYyJTYyqbbBRsvwC
+         xedJy3tg+UYXSZ2mRahdxEWN7ORcYI7hQk2dJ14k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 01/61] xfrm: Validate address prefix lengths in the xfrm selector.
-Date:   Tue, 16 Oct 2018 00:13:03 -0400
-Message-Id: <20181016041403.135678-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 096/100] mm/gup_benchmark: fix unsigned comparison to zero in __gup_benchmark_ioctl
+Date:   Tue, 16 Oct 2018 00:12:17 -0400
+Message-Id: <20181016041221.135528-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
+References: <20181016041221.135528-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steffen Klassert <steffen.klassert@secunet.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 07bf7908950a8b14e81aa1807e3c667eab39287a ]
+[ Upstream commit 51896864579d5a3349740847083f4db5c6487164 ]
 
-We don't validate the address prefix lengths in the xfrm
-selector we got from userspace. This can lead to undefined
-behaviour in the address matching functions if the prefix
-is too big for the given address family. Fix this by checking
-the prefixes and refuse SA/policy insertation when a prefix
-is invalid.
+get_user_pages_fast() will return negative value if no pages were pinned,
+then be converted to a unsigned, which is compared to zero, giving the
+wrong result.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: Air Icy <icytxw@gmail.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Link: http://lkml.kernel.org/r/20180921095015.26088-1-yuehaibing@huawei.com
+Fixes: 09e35a4a1ca8 ("mm/gup_benchmark: handle gup failures")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ mm/gup_benchmark.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 5554d28a32eb..4292347bf45e 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -151,10 +151,16 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
- 	err = -EINVAL;
- 	switch (p->family) {
- 	case AF_INET:
-+		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
-+			goto out;
-+
- 		break;
+diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
+index 6a473709e9b6..7405c9d89d65 100644
+--- a/mm/gup_benchmark.c
++++ b/mm/gup_benchmark.c
+@@ -19,7 +19,8 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
+ 		struct gup_benchmark *gup)
+ {
+ 	ktime_t start_time, end_time;
+-	unsigned long i, nr, nr_pages, addr, next;
++	unsigned long i, nr_pages, addr, next;
++	int nr;
+ 	struct page **pages;
  
- 	case AF_INET6:
- #if IS_ENABLED(CONFIG_IPV6)
-+		if (p->sel.prefixlen_d > 128 || p->sel.prefixlen_s > 128)
-+			goto out;
-+
- 		break;
- #else
- 		err = -EAFNOSUPPORT;
-@@ -1353,10 +1359,16 @@ static int verify_newpolicy_info(struct xfrm_userpolicy_info *p)
- 
- 	switch (p->sel.family) {
- 	case AF_INET:
-+		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
-+			return -EINVAL;
-+
- 		break;
- 
- 	case AF_INET6:
- #if IS_ENABLED(CONFIG_IPV6)
-+		if (p->sel.prefixlen_d > 128 || p->sel.prefixlen_s > 128)
-+			return -EINVAL;
-+
- 		break;
- #else
- 		return  -EAFNOSUPPORT;
+ 	nr_pages = gup->size / PAGE_SIZE;
 -- 
 2.17.1
 
