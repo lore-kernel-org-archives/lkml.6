@@ -2,110 +2,135 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB98C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A60E6C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB7B02148C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:49:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7B02148C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 65F972148C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:49:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="dZ6W55be"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65F972148C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbeJQHmL (ORCPT
+        id S1727364AbeJQHmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:42:11 -0400
-Received: from mga07.intel.com ([134.134.136.100]:14574 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727064AbeJQHmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:42:11 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 16:49:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,389,1534834800"; 
-   d="scan'208";a="241889366"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga004.jf.intel.com with ESMTP; 16 Oct 2018 16:49:22 -0700
-Date:   Tue, 16 Oct 2018 16:45:56 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     "Moger, Babu" <Babu.Moger@amd.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "jannh@google.com" <jannh@google.com>,
-        "dima@arista.com" <dima@arista.com>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>
-Subject: Re: [PATCH v4 08/13] arch/x86: Bring few more functions into the
- resource structure
-Message-ID: <20181016234556.GB39177@romley-ivt3.sc.intel.com>
-References: <20181015205514.25387-1-babu.moger@amd.com>
- <20181015205514.25387-9-babu.moger@amd.com>
+        Wed, 17 Oct 2018 03:42:21 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41871 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727165AbeJQHmV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 03:42:21 -0400
+Received: by mail-pl1-f196.google.com with SMTP id q17-v6so11751906plr.8
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:49:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+EflfE4YgAWJlhl7tu6DdVfYqYVIqQFBVpO0h8yn7rc=;
+        b=dZ6W55beiBZv18z7snb/8HaQXlusDeygkew33lGBelYRe+OnDLLIuxAwgyM6DIGw39
+         YkLeEn9My07fnZylnnyX3UwIqfZ5d0BLXlTbzjTXrwYiK4MGnR7+c4YkvdTWnkY80QCV
+         3XdCyuax/iJGLXKsRUt8puxLM1dpjnCoMw7/k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+EflfE4YgAWJlhl7tu6DdVfYqYVIqQFBVpO0h8yn7rc=;
+        b=kJbT55yDVLVWwxcv4sNsMgnXeGoa9229ckRMfxgRE5kHiBaMXW9VDWrcYPv33vXN50
+         i3bN6g/fZCp73XcNZ6kDkZH/OFKizX4nUNairVkCnKOLdCtzPdYeIKzUbtUmVmQwT56S
+         AwguXeIcjGIDvWfkEOzUzmDR+EQr9QrkkDUF94nRa133STe82FfeijaFKzSpg1Ua9nge
+         6UxkW0wREuqpNBfxQIwUbn5/wFxvq2+0bH084FLXXbpbA78nAqKnmLJiAsa8NBzaSH/A
+         oCTWotQh7rdowEoCVWKkrRL5IGM/pAWWV0LfH03vFSZfcaJ/vvPpyVxsIdKNr61rC+Vb
+         lGEA==
+X-Gm-Message-State: ABuFfoiIuyY3ttKRoBZckahSrnF25P4ZPFQ/s8OZgbCzE1UVORk6mSeu
+        TeSUDfC7qi9gbS8V8NEsBhec0Q==
+X-Google-Smtp-Source: ACcGV63Xnv8omeYNeHPeK+BgaSlL3f5R3VQZT2uFsCmSSw3hpmLiVKDy6c6tOcJ2TIFDcujBLBtuog==
+X-Received: by 2002:a17:902:bc49:: with SMTP id t9-v6mr23654255plz.210.1539733772992;
+        Tue, 16 Oct 2018 16:49:32 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id n64-v6sm22681928pfi.185.2018.10.16.16.49.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 16:49:31 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 16:49:30 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     stable@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        dmaengine@vger.kernel.org,
+        "moderated list:ARM/STM32 ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH 0/7] NULL pointer deref fix for stm32-dma
+Message-ID: <20181016234930.GB140578@joelaf.mtv.corp.google.com>
+References: <20181009054752.145978-1-joel@joelfernandes.org>
+ <20181016161129.GB17066@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181015205514.25387-9-babu.moger@amd.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181016161129.GB17066@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 08:55:49PM +0000, Moger, Babu wrote:
-> update_mba_bw : Feedback loop bandwidth update functionality is not
->                 needed for AMD.
+On Tue, Oct 16, 2018 at 06:11:29PM +0200, Greg KH wrote:
+> On Mon, Oct 08, 2018 at 10:47:45PM -0700, Joel Fernandes (Google) wrote:
+> > Hi Greg,
+> > 
+> > While looking at android-4.14, I found a NULL pointer deref with
+> > stm32-dma driver using Coccicheck errors. I found that upstream had a
+> > bunch of patches on stm32-dma that have fixed this and other issues, I
+> > applied these patches cleanly onto Android 4.14. I believe these should
+> > goto stable and flow into Android 4.14 from there, but I haven't tested
+> > this since I have no hardware to do so.
+> > 
+> > Atleast I can say that the coccicheck error below goes away when running:
+> > make coccicheck MODE=report
+> > ./drivers/dma/stm32-dma.c:567:18-24: ERROR: chan -> desc is NULL but dereferenced.
+> > 
+> > Anyway, please consider this series for 4.14 stable, I have CC'd the
+> > author and others, thanks.
+> > 
+> > Pierre Yves MORDRET (7):
+> >   dmaengine: stm32-dma: threshold manages with bitfield feature
+> >   dmaengine: stm32-dma: fix incomplete configuration in cyclic mode
+> >   dmaengine: stm32-dma: fix typo and reported checkpatch warnings
+> >   dmaengine: stm32-dma: Improve memory burst management
+> >   dmaengine: stm32-dma: fix DMA IRQ status handling
+> >   dmaengine: stm32-dma: fix max items per transfer
+> >   dmaengine: stm32-dma: properly mask irq bits
+> > 
+> >  drivers/dma/stm32-dma.c | 287 +++++++++++++++++++++++++++++++++-------
+> >  1 file changed, 240 insertions(+), 47 deletions(-)
+> 
+> 
+> I need git commit ids for all of these for what the patch in mainline
+> is.
+> 
+> Can you fix that up and resend them?
+> 
 
-Will you implement update_mba_bw() for AMD in future?
+Vinod raised a concern in the other thread that he does not want all of the
+"feature patches" that I posted in these series into -stable, since not
+everything is a fix.
 
->  		list_for_each_entry(crgrp, head, mon.crdtgrp_list)
->  			mbm_update(d, crgrp->mon.rmid);
->  
-> -		if (is_mba_sc(NULL))
-> -			update_mba_bw(prgrp, d);
-> +		if (is_mba_sc(NULL)) {
-> +			r_mba = &rdt_resources_all[RDT_RESOURCE_MBA];
-> +			if (r_mba->update_mba_bw)
-> +				r_mba->update_mba_bw(prgrp, d);
-> +		}
+So what I'll do is I'll only repost:
+dmaengine: stm32-dma: fix incomplete configuration in cyclic mode
 
-Mount option "mba_MBps" is not implemented on AMD. Then don't
-call set_mba_sc(true) in parse_rdtgroupfs_options().
+which fixes the null pointer issue that raised the coccinelle error I found
+and reported.
 
-Thus, you don't need to change this code here because is_mba_sc(NULL) is
-false on AMD.
+I'll let Vinod/Pierre decide on posting the other fixes to stable since they
+may have more background on whether something is a fix or not.
 
-Thanks.
+thanks,
 
--Fenghua
+ - Joel
+
