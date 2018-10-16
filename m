@@ -2,122 +2,121 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6BDC18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 520FCC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED3320881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:45:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ED3320881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 147122089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:47:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147122089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbeJPSf3 (ORCPT
+        id S1727141AbeJPShQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 14:35:29 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:5135 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727045AbeJPSew (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 14:34:52 -0400
-X-UUID: 3160a475f52e48909605d76f7b9f6ab4-20181016
-X-UUID: 3160a475f52e48909605d76f7b9f6ab4-20181016
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1106135180; Tue, 16 Oct 2018 18:44:55 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 16 Oct 2018 18:44:53 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 16 Oct 2018 18:44:52 +0800
-From:   <honghui.zhang@mediatek.com>
-To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>
-CC:     <ulf.hansson@linaro.org>, <marc.zyngier@arm.com>,
-        <matthias.bgg@gmail.com>, <devicetree@vger.kernel.org>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>,
-        <yt.shen@mediatek.com>, <jianjun.wang@mediatek.com>
-Subject: [PATCH v9 1/9] PCI: mediatek: Using slot's devfn for compare to fix mtk_pcie_find_port logic
-Date:   Tue, 16 Oct 2018 18:44:42 +0800
-Message-ID: <1539686690-24068-2-git-send-email-honghui.zhang@mediatek.com>
-X-Mailer: git-send-email 2.6.4
-In-Reply-To: <1539686690-24068-1-git-send-email-honghui.zhang@mediatek.com>
-References: <1539686690-24068-1-git-send-email-honghui.zhang@mediatek.com>
+        Tue, 16 Oct 2018 14:37:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35198 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726581AbeJPShQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 14:37:16 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B7B8283F46;
+        Tue, 16 Oct 2018 10:47:26 +0000 (UTC)
+Received: from krava (unknown [10.43.17.150])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3FCB610018FB;
+        Tue, 16 Oct 2018 10:47:23 +0000 (UTC)
+Date:   Tue, 16 Oct 2018 12:47:22 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] perf tools: Store ids for events with their own cpus
+ perf_event__synthesize_event_update_cpus
+Message-ID: <20181016104722.GA18450@krava>
+References: <20181002111621.GA6357@krava>
+ <20181003113643.GA31725@krava>
+ <594506a2-8cb3-3d09-82ab-5cb6d8c31ed0@huawei.com>
+ <20181003141627.GA6341@krava>
+ <20181003212052.GA32371@krava>
+ <d071bb27-5533-da2f-9f8f-808183e04794@huawei.com>
+ <20181009100049.GF6499@krava>
+ <31101407-0bcd-2fbf-361e-43cbcb81cd19@huawei.com>
+ <20181015191502.GA2398@kernel.org>
+ <d1cc40ee-4b09-35a8-86d2-bfc0eb78b9d5@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 826833B6E5DF223E8E66B8C01491BA2C951C3DA2F9CBFA6028F1CF6380AE946F2000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d1cc40ee-4b09-35a8-86d2-bfc0eb78b9d5@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 16 Oct 2018 10:47:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honghui Zhang <honghui.zhang@mediatek.com>
+On Tue, Oct 16, 2018 at 10:10:20AM +0100, John Garry wrote:
+> On 15/10/2018 20:15, Arnaldo Carvalho de Melo wrote:
+> > Em Fri, Oct 12, 2018 at 02:25:49PM +0100, John Garry escreveu:
+> > > On 09/10/2018 11:00, Jiri Olsa wrote:
+> > > > On Thu, Oct 04, 2018 at 10:20:39AM +0100, John Garry wrote:
+> > > > 
+> > > > SNIP
+> > > > 
+> > > > > > We synthesize an update event that needs to touch the evsel
+> > > > > > id array, which is not defined at that time. Fixing this by
+> > > > > > forcing the id allocation for events with theeir own cpus.
+> > > 
+> > > /s/theeir/their/
+> > > 
+> > > > > > 
+> > > > > > Reported-by: John Garry <john.garry@huawei.com>
+> > > > > > Link: http://lkml.kernel.org/n/tip-8x4n7o34yheigoxm1jibflm6@git.kernel.org
+> > > > > 
+> > > > > Tested-by: John Garry <john.garry@huawei.com>
+> > > > > 
+> > > > > In terms of adding to stable, LT v4.14 is not affected, but 4.18.x is.
+> > > > > 
+> > > > > Thanks,
+> > > > > John
+> > > > 
+> > > > Arnaldo, could you please pick up this one
+> > > > 
+> > > 
+> > > Just a friendly reminder on this patch.
+> > > 
+> > > How about re-send with an updated commit message also?
+> > 
+> > I'll fix up the commit message and apply, thanks.
+> > 
+> 
+> Much appreciated.
+> 
+> BTW, I think that we should add a fixes tag. But I'm not sure if this patch
+> fixes the commit I bisected to earlier (bfd8f72c2778f5bd63d), or that same
+> commit just exposed some latent bug.
+> 
+> Jirka, Andi, Do you know?
 
-The Mediatek's host controller has two slots, each with it's own control
-registers. The host driver need to identify which slot was connected
-in order to access the device's configuration space. There's problem
-for current host driver to find out which slot was connected to for
-a given EP device.
+yes, that commit moved it to record, which resulted in this fault
 
-Assuming each slot have connect with one EP device as below:
+Arnaldo, could you please add:
+Fixes: bfd8f72c2778 ("perf record: Synthesize unit/scale/... in event update")
 
-                host bridge
-  bus 0 --> __________|_______
-           |                  |
-           |                  |
-         slot 0             slot 1
-  bus 1 -->|        bus 2 --> |
-           |                  |
-         EP 0               EP 1
-
-During PCI enumeration, system software will scan all the PCI device
-starting from devfn 0. So it will get the proper port for slot0 and
-slot1 device when using PCI_SLOT(devfn) for match. But it will get
-the wrong slot for EP1: The devfn will be start from 0 when scanning
-EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
-for port0's slot value. So the host driver should not using EP's devfn
-but the slot's devfn(the slot which EP was connected to) for match.
-
-This patch fix the mtk_pcie_find_port's logic by using the slot's
-devfn for match if finding device connected to the subordinate bus.
-
-Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-Acked-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/pci/controller/pcie-mediatek.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 9999dae..288b8e2 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -337,6 +337,17 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
- {
- 	struct mtk_pcie *pcie = bus->sysdata;
- 	struct mtk_pcie_port *port;
-+	struct pci_dev *dev = NULL;
-+
-+	/*
-+	 * Walk the bus hierarchy to get the devfn value
-+	 * of the port in the root bus.
-+	 */
-+	while (bus && bus->number) {
-+		dev = bus->self;
-+		bus = dev->bus;
-+		devfn = dev->devfn;
-+	}
- 
- 	list_for_each_entry(port, &pcie->ports, list)
- 		if (port->slot == PCI_SLOT(devfn))
--- 
-2.6.4
-
+thanks,
+jirka
