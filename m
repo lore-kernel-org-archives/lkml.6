@@ -2,227 +2,754 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB3D5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DDBC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CD04208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:03:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="xBtIxRd5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD04208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AD76208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:06:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD76208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbeJPKuL (ORCPT
+        id S1727035AbeJPKya (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 06:50:11 -0400
-Received: from mail-eopbgr50077.outbound.protection.outlook.com ([40.107.5.77]:63024
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727154AbeJPKuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 06:50:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zauY+cpPA0NzXrXmp62V0BvB5XCaCJP5WYwrg6rCVTE=;
- b=xBtIxRd54eG4KyGXxJqNKO5LOjoySIamDDBf+D/tLcze6HRYBS4fmdPeA1bVQaU0bZSuxFOWBhfKeaENrZEkx6DD72G1yLe6XYQln9SH42RmJBIgKoV8+rKqr8ASIIRGP6mA7Phqhj7+rJVq5m2m3K6kreBjd3kWpdJmsNLgq1o=
-Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com (10.166.173.8) by
- DB5PR0401MB1797.eurprd04.prod.outlook.com (10.165.5.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.26; Tue, 16 Oct 2018 03:01:58 +0000
-Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com
- ([fe80::c0b5:26f1:bc9e:5a31]) by DB5PR0401MB2213.eurprd04.prod.outlook.com
- ([fe80::c0b5:26f1:bc9e:5a31%6]) with mapi id 15.20.1228.027; Tue, 16 Oct 2018
- 03:01:58 +0000
-From:   Andy Tang <andy.tang@nxp.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>
-CC:     "edubezval@gmail.com" <edubezval@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] thermal: qoriq: add multiple sensors support
-Thread-Topic: [PATCH] thermal: qoriq: add multiple sensors support
-Thread-Index: AQHUVgwqs1dc/YvhnUCR91KdT64vpqUdvnSAgAHhzUCAAH1WAIABJW0Q
-Date:   Tue, 16 Oct 2018 03:01:58 +0000
-Message-ID: <DB5PR0401MB2213E291AC455D61ED15AF4AF3FE0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
-References: <20180927024204.17314-1-andy.tang@nxp.com>
- <3d1f8304-9005-23f3-2e0e-ef9c962c9f6e@linaro.org>
- <DB5PR0401MB2213D4C1874291B87F231547F3FD0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
- <cf157e9f-a4cb-6d7d-f51d-8b9d91f3335c@linaro.org>
-In-Reply-To: <cf157e9f-a4cb-6d7d-f51d-8b9d91f3335c@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=andy.tang@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB5PR0401MB1797;6:8b9pq93t+5tK4xSFO2FnbH7WaeMdqiIYEaujOrfEj+hNWhWQMdNniHJb44UeiGmx14zbKKPC17lhq78MpWVXrJsiMmqG3dTUTF+53//GxZa1OcPj/bMX+4G1aaDEx7fge7MfQVNM268wVVPwmaQMyKBVL6jdsCt+yQURSzAXxStuho818eWBD6rPpv6QbYJhRw9iTVyMgLJFkn85kVwVqRzvSV8vk/MYy8/qLxzpKtAP8GIYbJkfHxDCcZ2KtyRI7j3B4DZUFxrRgZWODIExL+C7l5TAjB07QpRPit3rbctYnot9X+OD2LNLVVdFxm8VOrQKVDPcVKgYIjm0kX7ZSx3uGPETNViUAhfUBmkZu2RFXEp+r76fe5wUceboZXjlG5Yr9tGz5qpl/A3UAXWmuf/rqNF6arwYAJXtXUGVBu/7p6ip3E3c/ZTU38ZRcVPijZsMRvYLJ9Yzg9YReDQUSQ==;5:x0Ome+Q81eXNMAeHmR9EF1+IzoQSe2hVWpdCvPkMaK1rfm+AmK6Z58GVUA+11iwzhQupHFcvvmgUwZ+EQLzwOTwPeQY86YiKsteqwgD9dooN2weBrXWG4e3V4DWSIehoUzot27RymSrgI2XedTKHVWs/ZsLjpGpNh0uCH/UakYk=;7:uYf9DJP9gZMhKVURZ3Tw08U6E+3DPCKPM/c8/agD69xcHTlrHqKSAK9eiWyf6gjz0rIfz8btU6sQPqMnBeg0D1KN+tDNqSQtxDJYPAS3NrrgsRiRPm7h6SyvIfm7c+M9tqrXiFah3iW2sNcbjGUnbHSqlIgQSMvWoCYmkoSgiqV8+6tw65FxXkGKjfPVw9o5Gq/0xMevh3bT0RmJD18HG8/271mbCjC5Hryfi4BWq/E+TlX78C8Y02cqL1lAhOQS
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 8ad655bd-8c42-43b1-b368-08d63313bcc4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB5PR0401MB1797;
-x-ms-traffictypediagnostic: DB5PR0401MB1797:
-x-microsoft-antispam-prvs: <DB5PR0401MB1797E49D1CFB8713C9E1C8F6F3FE0@DB5PR0401MB1797.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(85827821059158)(9452136761055)(17755550239193)(86561027422486)(64217206974132)(81227570615382)(148322886591682)(185117386973197)(45079756050767);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:DB5PR0401MB1797;BCL:0;PCL:0;RULEID:;SRVR:DB5PR0401MB1797;
-x-forefront-prvs: 0827D7ACB9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(136003)(346002)(376002)(199004)(189003)(13464003)(476003)(11346002)(446003)(2900100001)(99286004)(71200400001)(7696005)(2906002)(71190400001)(33656002)(14454004)(15974865002)(3846002)(76176011)(97736004)(6116002)(6246003)(81166006)(486006)(54906003)(2501003)(110136005)(81156014)(8676002)(39060400002)(8936002)(5250100002)(44832011)(4326008)(68736007)(25786009)(26005)(229853002)(53936002)(6506007)(6306002)(53546011)(102836004)(55016002)(93886005)(6436002)(9686003)(186003)(5660300001)(7736002)(74316002)(305945005)(575784001)(86362001)(14444005)(105586002)(256004)(478600001)(106356001)(316002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR0401MB1797;H:DB5PR0401MB2213.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 0e4v9D71HcRDumMGUAyxDFdmruRqYwv/7bMVnPXggW3PPd8S+rct5R0I4CeX53zaNFtQanNUrVkuMpi0q/WTgGX2g45efd0Kb5R5BRcEuOu/qiGvrcaYwOa9e3aUutyo4kXQdpV0f/nnjI6UhtxduPT4PwbrFBqi6sdjoWLoSUZVgcyJXZzycmqxSKxEuSTNFixa6fMnB4O6IvZ0rF0TFjYvsXkwgMUXDPg6sOz4zDtho1xXdZQnxruzugZ2apqIQ1F728fZQD3y13h9Qulc5gqQqD4NgYyQ6eH5vfQV4zj4dmNAiz7D/abQP6bVd0RkcvBugC4CN3IjMsLPXatb4bfVwELo2rC3z75UAiE3akU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ad655bd-8c42-43b1-b368-08d63313bcc4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2018 03:01:58.2895
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR0401MB1797
+        Tue, 16 Oct 2018 06:54:30 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:56251 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726954AbeJPKya (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 06:54:30 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0760891|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03306;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.D2ex4FK_1539659145;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D2ex4FK_1539659145)
+          by smtp.aliyun-inc.com(10.147.42.241);
+          Tue, 16 Oct 2018 11:05:45 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, hch@infradead.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, peterz@infradead.org,
+        robh@kernel.org, tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH V9 14/21] csky: User access
+Date:   Tue, 16 Oct 2018 10:58:33 +0800
+Message-Id: <1c0d8cddcdf15e5f397b3e42b76461e97d6e34ad.1539655732.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1539655731.git.ren_guo@c-sky.com>
+References: <cover.1539655731.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1539655731.git.ren_guo@c-sky.com>
+References: <cover.1539655731.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgRGFuaWVsLA0KDQpQbGVhc2Ugc2VlIG15IHJlcGx5IGlubGluZS4NCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVsLmxlemNhbm9A
-bGluYXJvLm9yZz4NCj4gU2VudDogMjAxOOW5tDEw5pyIMTXml6UgMTY6NTYNCj4gVG86IEFuZHkg
-VGFuZyA8YW5keS50YW5nQG54cC5jb20+OyBydWkuemhhbmdAaW50ZWwuY29tDQo+IENjOiBlZHVi
-ZXp2YWxAZ21haWwuY29tOyBsaW51eC1wbUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5l
-bEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gdGhlcm1hbDogcW9yaXE6
-IGFkZCBtdWx0aXBsZSBzZW5zb3JzIHN1cHBvcnQNCj4gPiA+DQo+ID4+DQo+ID4+PiBTaWduZWQt
-b2ZmLWJ5OiBUYW5nIFl1YW50aWFuIDxhbmR5LnRhbmdAbnhwLmNvbT4NCj4gPj4+IC0tLQ0KPiA+
-Pj4gIGRyaXZlcnMvdGhlcm1hbC9xb3JpcV90aGVybWFsLmMgfCAgMTE3DQo+ID4+PiArKysrKysr
-KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0NCj4gPj4+ICAxIGZpbGVzIGNoYW5nZWQs
-IDcwIGluc2VydGlvbnMoKyksIDQ3IGRlbGV0aW9ucygtKQ0KPiA+Pj4NCj4gPj4+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL3RoZXJtYWwvcW9yaXFfdGhlcm1hbC5jDQo+ID4+PiBiL2RyaXZlcnMvdGhl
-cm1hbC9xb3JpcV90aGVybWFsLmMgaW5kZXggYzg2NmNjMS4uN2MxZTg4YSAxMDA2NDQNCj4gPj4+
-IC0tLSBhL2RyaXZlcnMvdGhlcm1hbC9xb3JpcV90aGVybWFsLmMNCj4gPj4+ICsrKyBiL2RyaXZl
-cnMvdGhlcm1hbC9xb3JpcV90aGVybWFsLmMNCj4gPj4+IEBAIC02OSwxNCArNjksMjEgQEAgc3Ry
-dWN0IHFvcmlxX3RtdV9yZWdzIHsNCj4gPj4+ICAJdTMyIHR0cjNjcjsJCS8qIFRlbXBlcmF0dXJl
-IFJhbmdlIDMgQ29udHJvbCBSZWdpc3RlciAqLw0KPiA+Pj4gIH07DQo+ID4+Pg0KPiA+Pj4gK3N0
-cnVjdCBxb3JpcV90bXVfZGF0YTsNCj4gPj4+ICsNCj4gPj4+ICAvKg0KPiA+Pj4gICAqIFRoZXJt
-YWwgem9uZSBkYXRhDQo+ID4+PiAgICovDQo+ID4+PiArc3RydWN0IHFvcmlxX3NlbnNvciB7DQo+
-ID4+PiArCXN0cnVjdCB0aGVybWFsX3pvbmVfZGV2aWNlCSp0emQ7DQo+ID4+PiArCXN0cnVjdCBx
-b3JpcV90bXVfZGF0YQkJKnFkYXRhOw0KPiA+Pj4gKwlpbnQJCQkJaWQ7DQo+ID4+PiArfTsNCj4g
-Pj4NCj4gPj4gQ2FuIHlvdSBtb3ZlIHRoZSBxb3JpcV90bXVfc2l0ZV9yZWdzIHN0cnVjdHVyZSBj
-b250ZW50IGluc2lkZSB0aGUNCj4gPj4gcW9yaXFfc2Vuc29yIHN0cnVjdHVyZSBhbmQga2lsbCB0
-aGUgJ3NpdGVzJyBmaWVsZCBpbiB0aGUNCj4gPj4gcW9yaXFfdG11X3JlZ3Mgc3RydWN0dXJlID8g
-T3RoZXJ3aXNlIHdlIGVuZCB1cCB3aXRoIGEgU0lURVNfTUFYDQo+IGFycmF5DQo+ID4+IGluIHRo
-ZSBxb3JpcV90bXVfZGF0YSBzdHJ1Y3R1cmUgYW5kIGFub3RoZXIgb25lIGluIHRoZQ0KPiBxb3Jp
-cV90bXVfcmVncw0KPiA+PiBzdHJ1Y3R1cmUuDQo+ID4gW0FuZHldIEkgYW0gYWZyYWlkIEkgY2Fu
-J3QuDQo+ID4gcW9yaXFfdG11X3NpdGVfcmVncyBzdHJ1Y3R1cmUgaXMgdG8gZGVmaW5lIHRoZSBy
-ZWdpc3RlcnMuIEFmdGVyIGlvbWFwLA0KPiBUTVUgY2FuIGJlIGFjY2Vzc2VkLg0KPiA+IHFvcmlx
-X3NlbnNvciBzdHJ1Y3R1cmUgaXMgdXNlZCBmb3IgZWFjaCBzZW5zb3IuIEl0IERPTk9UIGluY2x1
-ZGUgdGhlDQo+IHJlZ2lzdGVyIGRlZmluZXMuDQo+ID4gcW9yaXFfdG11X2RhdGEgc3RydWN0dXJl
-IGlzIHVzZWQgZm9yIGdsb2JhbCBUTVUgZGF0ZS4NCj4gPiBTbyB0aGVyZSBpcyBubyBhbnkgZHVw
-bGljYXRlZCBvciByZWR1bmRhbnQgZGF0YSBoZXJlLg0KPiANCj4gSXQgaXMgbm90IGFib3V0IGR1
-cGxpY2F0ZSBidXQganVzdCBjb2RlIHJlb3JnLg0KPiANCj4gVGhpcyBwYXRjaCBjaGFuZ2VzIHRo
-ZSBzdHJ1Y3R1cmUgYXM6DQo+IA0KPiBzdHJ1Y3QgcW9yaXFfdG11X2RhdGEgew0KPiAtCXN0cnVj
-dCB0aGVybWFsX3pvbmVfZGV2aWNlICp0ejsNCj4gIAlzdHJ1Y3QgcW9yaXFfdG11X3JlZ3MgX19p
-b21lbSAqcmVnczsNCj4gLQlpbnQgc2Vuc29yX2lkOw0KPiAgCWJvb2wgbGl0dGxlX2VuZGlhbjsN
-Cj4gKwlzdHJ1Y3QgcW9yaXFfc2Vuc29yCSpzZW5zb3JbU0lURVNfTUFYXTsNCj4gIH07DQo+IA0K
-PiANCj4gU28gd2UgaGF2ZToNCj4gDQo+IHN0cnVjdCBxb3JpcV90bXVfZGF0YQ0KPiAgID0+IHN0
-cnVjdCBxb3JpcV9zZW5zb3JbU0lURVNfTUFYXQ0KPiAgID0+IHN0cnVjdCBxb3JpcV90bXVfcmVn
-cw0KPiAgICAgID0+IHN0cnVjdCBxb3JpcV90bXVfc2l0ZV9yZWdzW1NJVEVTX01BWF0NCj4gDQo+
-IEknbSBwcm9wb3NpbmcgdG8gbW92ZSBzdHJ1Y3QgcW9yaXFfdG11X3NpdGVfcmVncyBpbnNpZGUg
-dGhlIHN0cnVjdA0KPiBxb3JpcV9zZW5zb3IuDQo+IA0KPiANCj4gV2UgZW5kIHVwIHdpdGg6DQo+
-IA0KPiBzdHJ1Y3QgcW9yaXFfc2Vuc29yIHsNCj4gICAgc3RydWN0IHRoZXJtYWxfem9uZV9kZXZp
-Y2UgKnR6ZDsNCj4gICAgc3RydWN0IHN0cnVjdCBxb3JpcV90bXVfc2l0ZV9yZWdzICpyZWdzOw0K
-PiAgICBzdHJ1Y3QgcW9yaXFfdG11X2RhdGEgKnFkYXRhOw0KPiAgICBpbnQgaWQ7DQo+IH07DQpb
-QW5keV0gSSBzZWUgeW91ciBwb2ludC4gSWYgSSBhZGQgYSAqcmVncyBtZW1iZXIgdG8gcW9yaXFf
-c2Vuc29yIHN0cnVjdCwgdGhlbiBJIGNhbiBzcGVlZCB1cCB0aGUgYWNjZXNzIHRvIHRoZSByZWdp
-c3Rlci4NCkJ1dCBJIGRvbid0IHRoaW5rIGl0IGlzIGJldHRlci4gQ3VycmVudGx5IEkgY2FuIGFj
-Y2VzcyBzZW5zb3IgcmVnaXN0ZXIgYnk6IHFkYXRhLT5yZWdzLT5zaXRlW3FzZW5zb3ItPmlkXS4N
-ClRoZSB3aG9sZSBwb2ludCBoZXJlIGlzIHdlIGNhbid0IE1PVkUgc3RydWN0IHFvcmlxX3RtdV9z
-aXRlX3JlZ3MgdG8gdGhlIHN0cnVjdCBxb3JpcV9zZW5zb3IuIFdlIGNhbiBvbmx5IENPUFkNCml0
-IHRvIHN0cnVjdCBxb3JpcV9zZW5zb3IuIA0KDQpUaGlzIGlzIHRoZSBUTVUgbW9kdWxlIG1lbW9y
-eSBtYXA6DQpzdHJ1Y3QgcW9yaXFfdG11X3JlZ3Mgew0KLi4uLi4uDQogICAgICAgIHUzMiB0c2Nm
-Z3I7ICAgICAgICAgICAgIC8qIFNlbnNvciBDb25maWd1cmF0aW9uIFJlZ2lzdGVyICovDQogICAg
-ICAgIHU4IHJlczRbMHg3OF07DQogICAgICAgIHN0cnVjdCBxb3JpcV90bXVfc2l0ZV9yZWdzIHNp
-dGVbU0lURVNfTUFYXTsNCiAgICAgICAgdTggcmVzNVsweDlmOF07DQogICAgICAgIHUzMiBpcGJy
-cjA7ICAgICAgICAgICAgIC8qIElQIEJsb2NrIFJldmlzaW9uIFJlZ2lzdGVyIDAgKi8NCiAgICAg
-ICAgdTMyIGlwYnJyMTsgICAgICAgICAgICAgLyogSVAgQmxvY2sgUmV2aXNpb24gUmVnaXN0ZXIg
-MSAqLw0KLi4uLi4uLn0NCnN0cnVjdCBxb3JpcV90bXVfc2l0ZV9yZWdzIHNpdGVbU0lURVNfTUFY
-XSBpcyBwYXJ0IG9mIHRoZSBtZW1vcnkgbWFwLiBJdCBjYW4ndCBiZSByZW1vdmVkIG9yIHdlIGhh
-dmUgdG8gZGVmaW5lIGEgc2ltaWxhciBzdHJ1Y3QgdG8gZmlsbCBpdCB1cC4NCg0KDQo+IA0KPiAN
-Cj4gPj4+IC0JaWYgKHNlbnNvcl9zcGVjcy5hcmdzX2NvdW50ID49IDEpIHsNCj4gPj4+IC0JCWlk
-ID0gc2Vuc29yX3NwZWNzLmFyZ3NbMF07DQo+ID4+PiAtCQlXQVJOKHNlbnNvcl9zcGVjcy5hcmdz
-X2NvdW50ID4gMSwNCj4gPj4+IC0JCQkJIiVzOiB0b28gbWFueSBjZWxscyBpbiBzZW5zb3Igc3Bl
-Y2lmaWVyICVkXG4iLA0KPiA+Pj4gLQkJCQlzZW5zb3Jfc3BlY3MubnAtPm5hbWUsDQo+IHNlbnNv
-cl9zcGVjcy5hcmdzX2NvdW50KTsNCj4gPj4+IC0JfSBlbHNlIHsNCj4gPj4+IC0JCWlkID0gMDsN
-Cj4gPj4+ICsJCWlmIChpZCA+IFNJVEVTX01BWCkNCj4gPj4+ICsJCQlyZXR1cm4gLUVJTlZBTDsN
-Cj4gPj4+ICsNCj4gPj4+ICsJCXFkYXRhLT5zZW5zb3JbaWRdID0gZGV2bV9remFsbG9jKCZwZGV2
-LT5kZXYsDQo+ID4+PiArCQkJCXNpemVvZihzdHJ1Y3QgcW9yaXFfc2Vuc29yKSwgR0ZQX0tFUk5F
-TCk7DQo+ID4+PiArCQlpZiAoIXFkYXRhLT5zZW5zb3JbaWRdKQ0KPiA+Pj4gKwkJCXJldHVybiAt
-RU5PTUVNOw0KPiA+Pj4gKw0KPiA+Pj4gKwkJcWRhdGEtPnNlbnNvcltpZF0tPmlkID0gaWQ7DQo+
-ID4+PiArCQlxZGF0YS0+c2Vuc29yW2lkXS0+cWRhdGEgPSBxZGF0YTsNCj4gPj4+ICsNCj4gPj4+
-ICsJCXFkYXRhLT5zZW5zb3JbaWRdLT50emQgPQ0KPiA+PiBkZXZtX3RoZXJtYWxfem9uZV9vZl9z
-ZW5zb3JfcmVnaXN0ZXIoDQo+ID4+PiArCQkJCSZwZGV2LT5kZXYsIGlkLCBxZGF0YS0+c2Vuc29y
-W2lkXSwgJnRtdV90el9vcHMpOw0KPiA+Pj4gKw0KPiA+Pj4gKwkJaWYgKElTX0VSUihxZGF0YS0+
-c2Vuc29yW2lkXS0+dHpkKSkgew0KPiA+Pj4gKwkJCXJldCA9IFBUUl9FUlIocWRhdGEtPnNlbnNv
-cltpZF0tPnR6ZCk7DQo+ID4+PiArCQkJZGV2X2VycigmcGRldi0+ZGV2LA0KPiA+Pj4gKwkJCQki
-RmFpbGVkIHRvIHJlZ2lzdGVyIHRoZXJtYWwgem9uZSBkZXZpY2UuXG4iKTsNCj4gPj4+ICsJCQly
-ZXR1cm4gLUVOT0RFVjsNCj4gPj4+ICsJCX0NCj4gPj4+ICsNCj4gPj4+ICsJCXNpdGVzIHw9IDB4
-MSA8PCAoMTUgLSBpZCk7DQo+ID4+DQo+ID4+IFRoZSBjdXJyZW50IGNvZGUgaXMgcmVhZGluZyB0
-aGUgRFQgaW4gb3JkZXIgdG8gZ2V0IHRoZSBzZW5zb3IgaWQgYW5kDQo+ID4+IGluaXRpYWxpemUg
-aXQuIElPVywgdGhlIERUIGdpdmVzIHRoZSBzZW5zb3JzIHRvIHVzZS4NCj4gPj4NCj4gPj4gSU1P
-LCBpdCB3b3VsZCBiZSBtb3JlIHNlbGYgY29udGFpbmVkIGlmIHRoZSBkcml2ZXIgaW5pdGlhbGl6
-ZXMgYWxsDQo+ID4+IHRoZSBzZW5zb3JzIHdpdGhvdXQgdGFraW5nIGNhcmUgb2YgdGhlIERUIGFu
-ZCBsZXQgdGhlIG9mLSBjb2RlIHRvIGRvDQo+ID4+IHRoZSBiaW5kaW5nIHdoZW4gdGhlIHRoZXJt
-YWwgem9uZSwgbm8gPw0KPiA+IFtBbmR5XSBjb3VsZCB5b3UgcGxlYXNlIGV4cGxhaW4gbW9yZSBh
-Ym91dCB0aGlzIHdheT8gSSBhbSBub3Qgc3VyZSBob3cNCj4gdG8gaW1wbGVtZW50IGl0Lg0KPiA+
-IEJ1dCBvbmUgdGhpbmcgaXMgZm9yIHN1cmU6IHdlIG11c3QgZ2V0IHRoZSBzZW5zb3IgSURzIGV4
-cGxpY2l0bHkgc28NCj4gPiB0aGF0IHdlIGNhbiBlbmFibGUgdGhlbSBieSB0aGUgZm9sbG93aW5n
-IGNvbW1hbmQ6ICB0bXVfd3JpdGUocWRhdGEsDQo+ID4gc2l0ZXMgfCBUTVJfTUUgfCBUTVJfQUxQ
-RiwgJnFkYXRhLT5yZWdzLT50bXIpOw0KPiANCj4gV2hhdCBJIG1lYW50IGlzIGFib3V0IGNvZGUg
-c2VwYXJhdGlvbiBiZXR3ZWVuIHRoZSBkcml2ZXIgaXRzZWxmIGFuZCB0aGUNCj4gb2YtdGhlcm1h
-bCBjb2RlLg0KPiANCj4gVGhlIGNvZGUgYWJvdmUgcmUtaW5zcGVjdCB0aGUgRFQgdG8gZmluZCBv
-dXQgdGhlIHNlbnNvciBpZHMgaW4gb3JkZXIgdG8NCj4gZW5hYmxlIHRoZW0gYW5kIHNvbWVob3cg
-dGhpcyBpcyBub3Qgd3JvbmcgYnV0IGJyZWFrcyB0aGUgc2VsZg0KPiBlbmNhcHN1bGF0aW9uIG9m
-IHRoZSBkcml2ZXIuIEkgd2FzIHN1Z2dlc3RpbmcgaWYgaXQgaXNuJ3QgcG9zc2libGUgdG8gZW5h
-YmxlIGFsbA0KPiB0aGUgc2Vuc29ycyB3aXRob3V0IHRha2luZyBjYXJlIG9mIGRpZ2dpbmcgaW50
-byB0aGUgRFQuDQoNCltBbmR5XSBJIGRvbid0IHdhbnQgdG8gcmUtcGFyc2UgdGhlIERUIGhlcmUg
-dG9vLiBCdXQgSSBoYXZlIHRvLg0KVGhpcyBkcml2ZXIgd2lsbCBiZSB1c2VkIGJ5IGFsbCBvdXIg
-U09DcyB3aXRoIGRpZmZlcmVudCBzZW5zb3IgSURzIGFuZCBudW1iZXIuDQpGb3IgZXhhbXBsZTog
-dGhlcmUgYXJlIDIgc2Vuc29ycyBvbiBsczEwODhhIHBsYXRmb3JtIHdpdGggSUQgMCBhbmQgMS4N
-CldoaWxlIG9uIGxzMTA0M2EgdGhlcmUgYXJlIDYgc2Vuc29ycyB3aXRoIElEIDAsIDEsIDIsIDMs
-IDQsIDUuDQpJZiB3ZSBkb24ndCBzY2FuIHRoZSBEVCB3ZSB3b3VsZCBub3Qga25vdyBob3cgbWFu
-eSBzZW5zb3JzIGl0IGlzIGFuZCB3aGF0IGFyZSB0aGUgc2Vuc29yJ3MgSURzLA0KdW5sZXNzIHdl
-IGhhcmRjb2RlIGl0IGluIGRyaXZlci4NCg0KQlIsDQpBbmR5IA0KDQo+IA0KPiANCj4gDQo+IA0K
-PiAtLQ0KPiANCj4gPGh0dHBzOi8vZW1lYTAxLnNhZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2su
-Y29tLz91cmw9aHR0cCUzQSUyRiUyRg0KPiB3d3cubGluYXJvLm9yZyUyRiZhbXA7ZGF0YT0wMiU3
-QzAxJTdDYW5keS50YW5nJTQwbnhwLmNvbSU3QzM4DQo+IDkzMzhlYjViYzQ0ZDZjMjY4MzA4ZDYz
-MjdiZmMxYyU3QzY4NmVhMWQzYmMyYjRjNmZhOTJjZDk5YzVjDQo+IDMwMTYzNSU3QzAlN0MwJTdD
-NjM2NzUxOTA1NDI5NTM3MzM2JmFtcDtzZGF0YT1JS3pPMEhOcXVObQ0KPiBCUHJ2eGlrRGlJQkZj
-aHZkdGc4SHBxSml1WWtxbzElMkY0JTNEJmFtcDtyZXNlcnZlZD0wPiBMaW5hcm8ub3JnDQo+IOKU
-giBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MNCj4gDQo+IEZvbGxvdyBMaW5hcm86
-DQo+IDxodHRwczovL2VtZWEwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNvbS8/dXJs
-PWh0dHAlM0ElMkYlMkYNCj4gd3d3LmZhY2Vib29rLmNvbSUyRnBhZ2VzJTJGTGluYXJvJmFtcDtk
-YXRhPTAyJTdDMDElN0NhbmR5LnRhbg0KPiBnJTQwbnhwLmNvbSU3QzM4OTMzOGViNWJjNDRkNmMy
-NjgzMDhkNjMyN2JmYzFjJTdDNjg2ZWExZDNiDQo+IGMyYjRjNmZhOTJjZDk5YzVjMzAxNjM1JTdD
-MCU3QzAlN0M2MzY3NTE5MDU0Mjk1MzczMzYmYW1wO3MNCj4gZGF0YT12ZFI3bEMxUSUyRmJIVWdK
-WGx3bExhb1pVZGZhd3JBQ09RVU05NHloUGZXVkElM0QmYW1wOw0KPiByZXNlcnZlZD0wPiBGYWNl
-Ym9vayB8DQo+IDxodHRwczovL2VtZWEwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNv
-bS8/dXJsPWh0dHAlM0ElMkYlMkZ0DQo+IHdpdHRlci5jb20lMkYlMjMhJTJGbGluYXJvb3JnJmFt
-cDtkYXRhPTAyJTdDMDElN0NhbmR5LnRhbmclNDBuDQo+IHhwLmNvbSU3QzM4OTMzOGViNWJjNDRk
-NmMyNjgzMDhkNjMyN2JmYzFjJTdDNjg2ZWExZDNiYzJiNGMNCj4gNmZhOTJjZDk5YzVjMzAxNjM1
-JTdDMCU3QzAlN0M2MzY3NTE5MDU0Mjk1NDczNDUmYW1wO3NkYXRhPQ0KPiBrMlFVdDE1Z3Y4Tkk0
-ZnlxUFlGb0ZWTiUyRmlNN1hLT3poNDVlYXglMkYyZTJIayUzRCZhbXA7cmVzZQ0KPiBydmVkPTA+
-IFR3aXR0ZXIgfA0KPiA8aHR0cHM6Ly9lbWVhMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9v
-ay5jb20vP3VybD1odHRwJTNBJTJGJTJGDQo+IHd3dy5saW5hcm8ub3JnJTJGbGluYXJvLWJsb2cl
-MkYmYW1wO2RhdGE9MDIlN0MwMSU3Q2FuZHkudGFuZyU0MA0KPiBueHAuY29tJTdDMzg5MzM4ZWI1
-YmM0NGQ2YzI2ODMwOGQ2MzI3YmZjMWMlN0M2ODZlYTFkM2JjMmI0DQo+IGM2ZmE5MmNkOTljNWMz
-MDE2MzUlN0MwJTdDMCU3QzYzNjc1MTkwNTQyOTU0NzM0NSZhbXA7c2RhdGENCj4gPWNiVElFdWFZ
-UDRsJTJGTFpSNDVNMjUzUVJmcWdYYlpQdzg3JTJCbzVFZndUenlzJTNEJmFtcDtyZXMNCj4gZXJ2
-ZWQ9MD4gQmxvZw0KDQo=
+The patch adds "user access from kernel" codes.
+
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/csky/include/asm/uaccess.h | 416 ++++++++++++++++++++++++++++++++++++++++
+ arch/csky/lib/usercopy.c        | 262 +++++++++++++++++++++++++
+ 2 files changed, 678 insertions(+)
+ create mode 100644 arch/csky/include/asm/uaccess.h
+ create mode 100644 arch/csky/lib/usercopy.c
+
+diff --git a/arch/csky/include/asm/uaccess.h b/arch/csky/include/asm/uaccess.h
+new file mode 100644
+index 0000000..acaf0e210
+--- /dev/null
++++ b/arch/csky/include/asm/uaccess.h
+@@ -0,0 +1,416 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#ifndef __ASM_CSKY_UACCESS_H
++#define __ASM_CSKY_UACCESS_H
++
++/*
++ * User space memory access functions
++ */
++#include <linux/compiler.h>
++#include <linux/errno.h>
++#include <linux/types.h>
++#include <linux/sched.h>
++#include <linux/mm.h>
++#include <linux/string.h>
++#include <linux/version.h>
++#include <asm/segment.h>
++
++#define VERIFY_READ	0
++#define VERIFY_WRITE	1
++
++static inline int access_ok(int type, const void *addr, unsigned long size)
++{
++	unsigned long limit = current_thread_info()->addr_limit.seg;
++
++	return (((unsigned long)addr < limit) &&
++		((unsigned long)(addr + size) < limit));
++}
++
++static inline int verify_area(int type, const void *addr, unsigned long size)
++{
++	return access_ok(type, addr, size) ? 0 : -EFAULT;
++}
++
++#define __addr_ok(addr) (access_ok(VERIFY_READ, addr, 0))
++
++extern int __put_user_bad(void);
++
++/*
++ * Tell gcc we read from memory instead of writing: this is because
++ * we do not write to any memory gcc knows about, so there are no
++ * aliasing issues.
++ */
++
++/*
++ * These are the main single-value transfer routines.  They automatically
++ * use the right size if we just have the right pointer type.
++ *
++ * This gets kind of ugly. We want to return _two_ values in "get_user()"
++ * and yet we don't want to do any pointers, because that is too much
++ * of a performance impact. Thus we have a few rather ugly macros here,
++ * and hide all the ugliness from the user.
++ *
++ * The "__xxx" versions of the user access functions are versions that
++ * do not verify the address space, that must have been done previously
++ * with a separate "access_ok()" call (this is used when we do multiple
++ * accesses to the same area of user memory).
++ *
++ * As we use the same address space for kernel and user data on
++ * Ckcore, we can just do these as direct assignments.  (Of course, the
++ * exception handling means that it's no longer "just"...)
++ */
++
++#define put_user(x, ptr) \
++	__put_user_check((x), (ptr), sizeof(*(ptr)))
++
++#define __put_user(x, ptr) \
++	__put_user_nocheck((x), (ptr), sizeof(*(ptr)))
++
++#define __ptr(x) ((unsigned long *)(x))
++
++#define get_user(x, ptr) \
++	__get_user_check((x), (ptr), sizeof(*(ptr)))
++
++#define __get_user(x, ptr) \
++	__get_user_nocheck((x), (ptr), sizeof(*(ptr)))
++
++#define __put_user_nocheck(x, ptr, size)				\
++({									\
++	long __pu_err = 0;						\
++	typeof(*(ptr)) *__pu_addr = (ptr);				\
++	typeof(*(ptr)) __pu_val = (typeof(*(ptr)))(x);			\
++	if (__pu_addr)							\
++		__put_user_size(__pu_val, (__pu_addr), (size),		\
++				__pu_err);				\
++	__pu_err;							\
++})
++
++#define __put_user_check(x, ptr, size)					\
++({									\
++	long __pu_err = -EFAULT;					\
++	typeof(*(ptr)) *__pu_addr = (ptr);				\
++	typeof(*(ptr)) __pu_val = (typeof(*(ptr)))(x);			\
++	if (access_ok(VERIFY_WRITE, __pu_addr, size) && __pu_addr)	\
++		__put_user_size(__pu_val, __pu_addr, (size), __pu_err);	\
++	__pu_err;							\
++})
++
++#define __put_user_size(x, ptr, size, retval)		\
++do {							\
++	retval = 0;					\
++	switch (size) {                                 \
++	case 1:						\
++		__put_user_asm_b(x, ptr, retval);	\
++		break;					\
++	case 2:						\
++		__put_user_asm_h(x, ptr, retval);	\
++		break;					\
++	case 4:						\
++		__put_user_asm_w(x, ptr, retval);	\
++		break;					\
++	case 8:						\
++		__put_user_asm_64(x, ptr, retval);	\
++		break;					\
++	default:					\
++		__put_user_bad();			\
++	}	                                        \
++} while (0)
++
++/*
++ * We don't tell gcc that we are accessing memory, but this is OK
++ * because we do not write to any memory gcc knows about, so there
++ * are no aliasing issues.
++ *
++ * Note that PC at a fault is the address *after* the faulting
++ * instruction.
++ */
++#define __put_user_asm_b(x, ptr, err)			\
++do {							\
++	int errcode;					\
++	asm volatile(					\
++	"1:     stb   %1, (%2,0)	\n"		\
++	"       br    3f		\n"		\
++	"2:     mov   %0, %3		\n"		\
++	"       br    3f		\n"		\
++	".section __ex_table, \"a\"	\n"		\
++	".align   2			\n"		\
++	".long    1b,2b			\n"		\
++	".previous			\n"		\
++	"3:				\n"		\
++	: "=r"(err), "=r"(x), "=r"(ptr), "=r"(errcode)	\
++	: "0"(err), "1"(x), "2"(ptr), "3"(-EFAULT)	\
++	: "memory");					\
++} while (0)
++
++#define __put_user_asm_h(x, ptr, err)			\
++do {							\
++	int errcode;					\
++	asm volatile(					\
++	"1:     sth   %1, (%2,0)	\n"		\
++	"       br    3f		\n"		\
++	"2:     mov   %0, %3		\n"		\
++	"       br    3f		\n"		\
++	".section __ex_table, \"a\"	\n"		\
++	".align   2			\n"		\
++	".long    1b,2b			\n"		\
++	".previous			\n"		\
++	"3:				\n"		\
++	: "=r"(err), "=r"(x), "=r"(ptr), "=r"(errcode)	\
++	: "0"(err), "1"(x), "2"(ptr), "3"(-EFAULT)	\
++	: "memory");					\
++} while (0)
++
++#define __put_user_asm_w(x, ptr, err)			\
++do {							\
++	int errcode;					\
++	asm volatile(					\
++	"1:     stw   %1, (%2,0)	\n"		\
++	"       br    3f		\n"		\
++	"2:     mov   %0, %3		\n"		\
++	"       br    3f		\n"		\
++	".section __ex_table,\"a\"	\n"		\
++	".align   2			\n"		\
++	".long    1b, 2b		\n"		\
++	".previous			\n"		\
++	"3:				\n"		\
++	: "=r"(err), "=r"(x), "=r"(ptr), "=r"(errcode)	\
++	: "0"(err), "1"(x), "2"(ptr), "3"(-EFAULT)	\
++	: "memory");					\
++} while (0)
++
++#define __put_user_asm_64(x, ptr, err)				\
++do {								\
++	int tmp;						\
++	int errcode;						\
++	typeof(*(ptr))src = (typeof(*(ptr)))x;			\
++	typeof(*(ptr))*psrc = &src;				\
++								\
++	asm volatile(						\
++	"     ldw     %3, (%1, 0)     \n"			\
++	"1:   stw     %3, (%2, 0)     \n"			\
++	"     ldw     %3, (%1, 4)     \n"			\
++	"2:   stw     %3, (%2, 4)     \n"			\
++	"     br      4f              \n"			\
++	"3:   mov     %0, %4          \n"			\
++	"     br      4f              \n"			\
++	".section __ex_table, \"a\"   \n"			\
++	".align   2                   \n"			\
++	".long    1b, 3b              \n"			\
++	".long    2b, 3b              \n"			\
++	".previous                    \n"			\
++	"4:                           \n"			\
++	: "=r"(err), "=r"(psrc), "=r"(ptr),			\
++	  "=r"(tmp), "=r"(errcode)				\
++	: "0"(err), "1"(psrc), "2"(ptr), "3"(0), "4"(-EFAULT)	\
++	: "memory");						\
++} while (0)
++
++#define __get_user_nocheck(x, ptr, size)			\
++({								\
++	long  __gu_err;						\
++	__get_user_size(x, (ptr), (size), __gu_err);		\
++	__gu_err;						\
++})
++
++#define __get_user_check(x, ptr, size)				\
++({								\
++	int __gu_err = -EFAULT;					\
++	const __typeof__(*(ptr)) __user *__gu_ptr = (ptr);	\
++	if (access_ok(VERIFY_READ, __gu_ptr, size) && __gu_ptr)	\
++		__get_user_size(x, __gu_ptr, size, __gu_err);	\
++	__gu_err;						\
++})
++
++#define __get_user_size(x, ptr, size, retval)			\
++do {								\
++	switch (size) {						\
++	case 1:							\
++		__get_user_asm_common((x), ptr, "ldb", retval);	\
++		break;						\
++	case 2:							\
++		__get_user_asm_common((x), ptr, "ldh", retval);	\
++		break;						\
++	case 4:							\
++		__get_user_asm_common((x), ptr, "ldw", retval);	\
++		break;						\
++	default:						\
++		x = 0;						\
++		(retval) = __get_user_bad();			\
++	}							\
++} while (0)
++
++#define __get_user_asm_common(x, ptr, ins, err)			\
++do {								\
++	int errcode;						\
++	asm volatile(						\
++	"1:   " ins " %1, (%4,0)	\n"			\
++	"       br    3f		\n"			\
++	/* Fix up codes */					\
++	"2:     mov   %0, %2		\n"			\
++	"       movi  %1, 0		\n"			\
++	"       br    3f		\n"			\
++	".section __ex_table,\"a\"      \n"			\
++	".align   2			\n"			\
++	".long    1b, 2b		\n"			\
++	".previous			\n"			\
++	"3:				\n" 			\
++	: "=r"(err), "=r"(x), "=r"(errcode)			\
++	: "0"(0), "r"(ptr), "2"(-EFAULT)			\
++	: "memory");						\
++} while (0)
++
++extern int __get_user_bad(void);
++
++#define __copy_user(to, from, n)			\
++do {							\
++	int w0, w1, w2, w3;				\
++	asm volatile(					\
++	"0:     cmpnei  %1, 0           \n"		\
++	"       bf      8f              \n"		\
++	"       mov     %3, %1          \n"		\
++	"       or      %3, %2          \n"		\
++	"       andi    %3, 3           \n"		\
++	"       cmpnei  %3, 0           \n"		\
++	"       bf      1f              \n"		\
++	"       br      5f              \n"		\
++	"1:     cmplti  %0, 16          \n" /* 4W */	\
++	"       bt      3f              \n"		\
++	"       ldw     %3, (%2, 0)     \n"		\
++	"       ldw     %4, (%2, 4)     \n"		\
++	"       ldw     %5, (%2, 8)     \n"		\
++	"       ldw     %6, (%2, 12)    \n"		\
++	"2:     stw     %3, (%1, 0)     \n"		\
++	"9:     stw     %4, (%1, 4)     \n"		\
++	"10:    stw     %5, (%1, 8)     \n"		\
++	"11:    stw     %6, (%1, 12)    \n"		\
++	"       addi    %2, 16          \n"		\
++	"       addi    %1, 16          \n"		\
++	"       subi    %0, 16          \n"		\
++	"       br      1b              \n"		\
++	"3:     cmplti  %0, 4           \n" /* 1W */	\
++	"       bt      5f              \n"		\
++	"       ldw     %3, (%2, 0)     \n"		\
++	"4:     stw     %3, (%1, 0)     \n"		\
++	"       addi    %2, 4           \n"		\
++	"       addi    %1, 4           \n"		\
++	"       subi    %0, 4           \n"		\
++	"       br      3b              \n"		\
++	"5:     cmpnei  %0, 0           \n"  /* 1B */   \
++	"       bf      8f              \n"		\
++	"       ldb     %3, (%2, 0)     \n"		\
++	"6:     stb     %3, (%1, 0)     \n"		\
++	"       addi    %2,  1          \n"		\
++	"       addi    %1,  1          \n"		\
++	"       subi    %0,  1          \n"		\
++	"       br      5b              \n"		\
++	"7:     br      8f              \n"		\
++	".section __ex_table, \"a\"     \n"		\
++	".align   2                     \n"		\
++	".long    2b, 7b                \n"		\
++	".long    9b, 7b                \n"		\
++	".long   10b, 7b                \n"		\
++	".long   11b, 7b                \n"		\
++	".long    4b, 7b                \n"		\
++	".long    6b, 7b                \n"		\
++	".previous                      \n"		\
++	"8:                             \n"		\
++	: "=r"(n), "=r"(to), "=r"(from), "=r"(w0),	\
++	  "=r"(w1), "=r"(w2), "=r"(w3)			\
++	: "0"(n), "1"(to), "2"(from)			\
++	: "memory");					\
++} while (0)
++
++#define __copy_user_zeroing(to, from, n)		\
++do {							\
++	int tmp;					\
++	int nsave;					\
++	asm volatile(					\
++	"0:     cmpnei  %1, 0           \n"		\
++	"       bf      7f              \n"		\
++	"       mov     %3, %1          \n"		\
++	"       or      %3, %2          \n"		\
++	"       andi    %3, 3           \n"		\
++	"       cmpnei  %3, 0           \n"		\
++	"       bf      1f              \n"		\
++	"       br      5f              \n"		\
++	"1:     cmplti  %0, 16          \n"		\
++	"       bt      3f              \n"		\
++	"2:     ldw     %3, (%2, 0)     \n"		\
++	"10:    ldw     %4, (%2, 4)     \n"		\
++	"       stw     %3, (%1, 0)     \n"		\
++	"       stw     %4, (%1, 4)     \n"		\
++	"11:    ldw     %3, (%2, 8)     \n"		\
++	"12:    ldw     %4, (%2, 12)    \n"		\
++	"       stw     %3, (%1, 8)     \n"		\
++	"       stw     %4, (%1, 12)    \n"		\
++	"       addi    %2, 16          \n"		\
++	"       addi    %1, 16          \n"		\
++	"       subi    %0, 16          \n"		\
++	"       br      1b              \n"		\
++	"3:     cmplti  %0, 4           \n"		\
++	"       bt      5f              \n"		\
++	"4:     ldw     %3, (%2, 0)     \n"		\
++	"       stw     %3, (%1, 0)     \n"		\
++	"       addi    %2, 4           \n"		\
++	"       addi    %1, 4           \n"		\
++	"       subi    %0, 4           \n"		\
++	"       br      3b              \n"		\
++	"5:     cmpnei  %0, 0           \n"		\
++	"       bf      7f              \n"		\
++	"6:     ldb     %3, (%2, 0)     \n"		\
++	"       stb     %3, (%1, 0)     \n"		\
++	"       addi    %2,  1          \n"		\
++	"       addi    %1,  1          \n"		\
++	"       subi    %0,  1          \n"		\
++	"       br      5b              \n"		\
++	"8:     mov     %3, %0          \n"		\
++	"       movi    %4, 0           \n"		\
++	"9:     stb     %4, (%1, 0)     \n"		\
++	"       addi    %1, 1           \n"		\
++	"       subi    %3, 1           \n"		\
++	"       cmpnei  %3, 0           \n"		\
++	"       bt      9b              \n"		\
++	"       br      7f              \n"		\
++	".section __ex_table, \"a\"     \n"		\
++	".align   2                     \n"		\
++	".long    2b, 8b                \n"		\
++	".long   10b, 8b                \n"		\
++	".long   11b, 8b                \n"		\
++	".long   12b, 8b                \n"		\
++	".long    4b, 8b                \n"		\
++	".long    6b, 8b                \n"		\
++	".previous                      \n"		\
++	"7:                             \n"		\
++	: "=r"(n), "=r"(to), "=r"(from), "=r"(nsave),	\
++	  "=r"(tmp)					\
++	: "0"(n), "1"(to), "2"(from)			\
++	: "memory");					\
++} while (0)
++
++unsigned long raw_copy_from_user(void *to, const void *from, unsigned long n);
++unsigned long raw_copy_to_user(void *to, const void *from, unsigned long n);
++
++unsigned long clear_user(void *to, unsigned long n);
++unsigned long __clear_user(void __user *to, unsigned long n);
++
++long strncpy_from_user(char *dst, const char *src, long count);
++long __strncpy_from_user(char *dst, const char *src, long count);
++
++/*
++ * Return the size of a string (including the ending 0)
++ *
++ * Return 0 on exception, a value greater than N if too long
++ */
++long strnlen_user(const char *src, long n);
++
++#define strlen_user(str) strnlen_user(str, 32767)
++
++struct exception_table_entry {
++	unsigned long insn;
++	unsigned long nextinsn;
++};
++
++extern int fixup_exception(struct pt_regs *regs);
++
++#endif /* __ASM_CSKY_UACCESS_H */
+diff --git a/arch/csky/lib/usercopy.c b/arch/csky/lib/usercopy.c
+new file mode 100644
+index 0000000..ac9170e
+--- /dev/null
++++ b/arch/csky/lib/usercopy.c
+@@ -0,0 +1,262 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/uaccess.h>
++#include <linux/types.h>
++
++unsigned long raw_copy_from_user(void *to, const void *from,
++			unsigned long n)
++{
++	if (access_ok(VERIFY_READ, from, n))
++		__copy_user_zeroing(to, from, n);
++	else
++		memset(to, 0, n);
++	return n;
++}
++EXPORT_SYMBOL(raw_copy_from_user);
++
++unsigned long raw_copy_to_user(void *to, const void *from,
++			unsigned long n)
++{
++	if (access_ok(VERIFY_WRITE, to, n))
++		__copy_user(to, from, n);
++	return n;
++}
++EXPORT_SYMBOL(raw_copy_to_user);
++
++
++/*
++ * copy a null terminated string from userspace.
++ */
++#define __do_strncpy_from_user(dst, src, count, res)	\
++do {							\
++	int tmp;					\
++	long faultres;					\
++	asm volatile(					\
++	"       cmpnei  %3, 0           \n"		\
++	"       bf      4f              \n"		\
++	"1:     cmpnei  %1, 0          	\n"		\
++	"       bf      5f              \n"		\
++	"2:     ldb     %4, (%3, 0)     \n"		\
++	"       stb     %4, (%2, 0)     \n"		\
++	"       cmpnei  %4, 0           \n"		\
++	"       bf      3f              \n"		\
++	"       addi    %3,  1          \n"		\
++	"       addi    %2,  1          \n"		\
++	"       subi    %1,  1          \n"		\
++	"       br      1b              \n"		\
++	"3:     subu	%0, %1          \n"		\
++	"       br      5f              \n"		\
++	"4:     mov     %0, %5          \n"		\
++	"       br      5f              \n"		\
++	".section __ex_table, \"a\"     \n"		\
++	".align   2                     \n"		\
++	".long    2b, 4b                \n"		\
++	".previous                      \n"		\
++	"5:                             \n"		\
++	: "=r"(res), "=r"(count), "=r"(dst),		\
++	  "=r"(src), "=r"(tmp),   "=r"(faultres)	\
++	: "5"(-EFAULT), "0"(count), "1"(count),		\
++	  "2"(dst), "3"(src)				\
++	: "memory", "cc");				\
++} while (0)
++
++/*
++ * __strncpy_from_user: - Copy a NUL terminated string from userspace,
++ * with less checking.
++ * @dst:   Destination address, in kernel space.  This buffer must be at
++ *         least @count bytes long.
++ * @src:   Source address, in user space.
++ * @count: Maximum number of bytes to copy, including the trailing NUL.
++ *
++ * Copies a NUL-terminated string from userspace to kernel space.
++ * Caller must check the specified block with access_ok() before calling
++ * this function.
++ *
++ * On success, returns the length of the string (not including the trailing
++ * NUL).
++ *
++ * If access to userspace fails, returns -EFAULT (some data may have been
++ * copied).
++ *
++ * If @count is smaller than the length of the string, copies @count bytes
++ * and returns @count.
++ */
++long __strncpy_from_user(char *dst, const char *src, long count)
++{
++	long res;
++
++	__do_strncpy_from_user(dst, src, count, res);
++	return res;
++}
++EXPORT_SYMBOL(__strncpy_from_user);
++
++/*
++ * strncpy_from_user: - Copy a NUL terminated string from userspace.
++ * @dst:   Destination address, in kernel space.  This buffer must be at
++ *         least @count bytes long.
++ * @src:   Source address, in user space.
++ * @count: Maximum number of bytes to copy, including the trailing NUL.
++ *
++ * Copies a NUL-terminated string from userspace to kernel space.
++ *
++ * On success, returns the length of the string (not including the trailing
++ * NUL).
++ *
++ * If access to userspace fails, returns -EFAULT (some data may have been
++ * copied).
++ *
++ * If @count is smaller than the length of the string, copies @count bytes
++ * and returns @count.
++ */
++long strncpy_from_user(char *dst, const char *src, long count)
++{
++	long res = -EFAULT;
++
++	if (access_ok(VERIFY_READ, src, 1))
++		__do_strncpy_from_user(dst, src, count, res);
++	return res;
++}
++EXPORT_SYMBOL(strncpy_from_user);
++
++/*
++ * strlen_user: - Get the size of a string in user space.
++ * @str: The string to measure.
++ * @n:   The maximum valid length
++ *
++ * Get the size of a NUL-terminated string in user space.
++ *
++ * Returns the size of the string INCLUDING the terminating NUL.
++ * On exception, returns 0.
++ * If the string is too long, returns a value greater than @n.
++ */
++long strnlen_user(const char *s, long n)
++{
++	unsigned long res, tmp;
++
++	if (s == NULL)
++		return 0;
++
++	asm volatile(
++	"       cmpnei  %1, 0           \n"
++	"       bf      3f              \n"
++	"1:     cmpnei  %0, 0           \n"
++	"       bf      3f              \n"
++	"2:     ldb     %3, (%1, 0)     \n"
++	"       cmpnei  %3, 0           \n"
++	"       bf      3f              \n"
++	"       subi    %0,  1          \n"
++	"       addi    %1,  1          \n"
++	"       br      1b              \n"
++	"3:     subu    %2, %0          \n"
++	"       addi    %2,  1          \n"
++	"       br      5f              \n"
++	"4:     movi    %0, 0           \n"
++	"       br      5f              \n"
++	".section __ex_table, \"a\"     \n"
++	".align   2                     \n"
++	".long    2b, 4b                \n"
++	".previous                      \n"
++	"5:                             \n"
++	: "=r"(n), "=r"(s), "=r"(res), "=r"(tmp)
++	: "0"(n), "1"(s), "2"(n)
++	: "memory", "cc");
++
++	return res;
++}
++EXPORT_SYMBOL(strnlen_user);
++
++#define __do_clear_user(addr, size)			\
++do {							\
++	int __d0, zvalue, tmp;				\
++							\
++	asm volatile(					\
++	"0:     cmpnei  %1, 0           \n"		\
++	"       bf      7f              \n"		\
++	"       mov     %3, %1          \n"		\
++	"       andi    %3, 3           \n"		\
++	"       cmpnei  %3, 0           \n"		\
++	"       bf      1f              \n"		\
++	"       br      5f              \n"		\
++	"1:     cmplti  %0, 32          \n" /* 4W */	\
++	"       bt      3f              \n"		\
++	"8:     stw     %2, (%1, 0)     \n"		\
++	"10:    stw     %2, (%1, 4)     \n"		\
++	"11:    stw     %2, (%1, 8)     \n"		\
++	"12:    stw     %2, (%1, 12)    \n"		\
++	"13:    stw     %2, (%1, 16)    \n"		\
++	"14:    stw     %2, (%1, 20)    \n"		\
++	"15:    stw     %2, (%1, 24)    \n"		\
++	"16:    stw     %2, (%1, 28)    \n"		\
++	"       addi    %1, 32          \n"		\
++	"       subi    %0, 32          \n"		\
++	"       br      1b              \n"		\
++	"3:     cmplti  %0, 4           \n" /* 1W */	\
++	"       bt      5f              \n"		\
++	"4:     stw     %2, (%1, 0)     \n"		\
++	"       addi    %1, 4           \n"		\
++	"       subi    %0, 4           \n"		\
++	"       br      3b              \n"		\
++	"5:     cmpnei  %0, 0           \n" /* 1B */	\
++	"9:     bf      7f              \n"		\
++	"6:     stb     %2, (%1, 0)     \n"		\
++	"       addi    %1,  1          \n"		\
++	"       subi    %0,  1          \n"		\
++	"       br      5b              \n"		\
++	".section __ex_table,\"a\"      \n"		\
++	".align   2                     \n"		\
++	".long    8b, 9b                \n"		\
++	".long    10b, 9b               \n"		\
++	".long    11b, 9b               \n"		\
++	".long    12b, 9b               \n"		\
++	".long    13b, 9b               \n"		\
++	".long    14b, 9b               \n"		\
++	".long    15b, 9b               \n"		\
++	".long    16b, 9b               \n"		\
++	".long    4b, 9b                \n"		\
++	".long    6b, 9b                \n"		\
++	".previous                      \n"		\
++	"7:                             \n"		\
++	: "=r"(size), "=r" (__d0),			\
++	  "=r"(zvalue), "=r"(tmp)			\
++	: "0"(size), "1"(addr), "2"(0)			\
++	: "memory", "cc");				\
++} while (0)
++
++/*
++ * clear_user: - Zero a block of memory in user space.
++ * @to:   Destination address, in user space.
++ * @n:    Number of bytes to zero.
++ *
++ * Zero a block of memory in user space.
++ *
++ * Returns number of bytes that could not be cleared.
++ * On success, this will be zero.
++ */
++unsigned long
++clear_user(void __user *to, unsigned long n)
++{
++	if (access_ok(VERIFY_WRITE, to, n))
++		__do_clear_user(to, n);
++	return n;
++}
++EXPORT_SYMBOL(clear_user);
++
++/*
++ * __clear_user: - Zero a block of memory in user space, with less checking.
++ * @to:   Destination address, in user space.
++ * @n:    Number of bytes to zero.
++ *
++ * Zero a block of memory in user space.  Caller must check
++ * the specified block with access_ok() before calling this function.
++ *
++ * Returns number of bytes that could not be cleared.
++ * On success, this will be zero.
++ */
++unsigned long
++__clear_user(void __user *to, unsigned long n)
++{
++	__do_clear_user(to, n);
++	return n;
++}
++EXPORT_SYMBOL(__clear_user);
+-- 
+2.7.4
+
