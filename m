@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFD3C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A93C4C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89A1A20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 730A82089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xez4IxU6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A1A20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxSXKMnl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 730A82089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730791AbeJQBPl (ORCPT
+        id S1731634AbeJQBPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:15:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34306 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:15:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbeJQBPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:15:40 -0400
+        id S1730396AbeJQBPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:15:43 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CBE820866;
-        Tue, 16 Oct 2018 17:24:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47F2E2098A;
+        Tue, 16 Oct 2018 17:24:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710654;
-        bh=Kyh2juH6oCMOnimIbhG+Bbfw2sQrFN8mhDFTP44IVOY=;
+        s=default; t=1539710656;
+        bh=zaRwU2hpEdeZ1ZkbcMvV2VPJuOewjd1Pz3CsEvj3cNc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xez4IxU6DbT7OZy6Vz5XH9m+AmTpHPTjbVRfTrzGTIM3MO60vCr3/B6KZMoxIYLJj
-         zGZOquA1k3MNIHmqYbaeZ8lrDnnILSY+Bd/isi2s+uAPN9CVtZUT/o7JZVIinIt/EP
-         chEv2HJrMPRm+K0MyXUvCiUy6isuA6UirQ5Xvidc=
+        b=YxSXKMnlAej2BkFO0g+yUrryobWUER/mCjVmjVRQuNh1NSHsuCrTmVYCJ+LbAvTuv
+         uPELM7U+khzjhvsjTh4a8nWT5mrLSJiAlhKBkLB+LXO/A/gA0B6NOAxN2WI7DtSxRh
+         Eav7UjS00Hm3xmGLJe1zd77i7/zNqf8YWRRAfh/Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        Willem de Bruijn <willemb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 41/71] tcp/dccp: fix lockdep issue when SYN is backlogged
-Date:   Tue, 16 Oct 2018 19:09:38 +0200
-Message-Id: <20181016170541.435801460@linuxfoundation.org>
+Subject: [PATCH 4.9 42/71] inet: make sure to grab rcu_read_lock before using ireq->ireq_opt
+Date:   Tue, 16 Oct 2018 19:09:39 +0200
+Message-Id: <20181016170541.488790000@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
 References: <20181016170539.315587743@linuxfoundation.org>
@@ -65,83 +64,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 1ad98e9d1bdf4724c0a8532fabd84bf3c457c2bc ]
+[ Upstream commit 2ab2ddd301a22ca3c5f0b743593e4ad2953dfa53 ]
 
-In normal SYN processing, packets are handled without listener
-lock and in RCU protected ingress path.
+Timer handlers do not imply rcu_read_lock(), so my recent fix
+triggered a LOCKDEP warning when SYNACK is retransmit.
 
-But syzkaller is known to be able to trick us and SYN
-packets might be processed in process context, after being
-queued into socket backlog.
+Lets add rcu_read_lock()/rcu_read_unlock() pairs around ireq->ireq_opt
+usages instead of guessing what is done by callers, since it is
+not worth the pain.
 
-In commit 06f877d613be ("tcp/dccp: fix other lockdep splats
-accessing ireq_opt") I made a very stupid fix, that happened
-to work mostly because of the regular path being RCU protected.
+Get rid of ireq_opt_deref() helper since it hides the logic
+without real benefit, since it is now a standard rcu_dereference().
 
-Really the thing protecting ireq->ireq_opt is RCU read lock,
-and the pseudo request refcnt is not relevant.
-
-This patch extends what I did in commit 449809a66c1d ("tcp/dccp:
-block BH for SYN processing") by adding an extra rcu_read_{lock|unlock}
-pair in the paths that might be taken when processing SYN from
-socket backlog (thus possibly in process context)
-
-Fixes: 06f877d613be ("tcp/dccp: fix other lockdep splats accessing ireq_opt")
+Fixes: 1ad98e9d1bdf ("tcp/dccp: fix lockdep issue when SYN is backlogged")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Reported-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/inet_sock.h |    3 +--
- net/dccp/input.c        |    4 +++-
- net/ipv4/tcp_input.c    |    4 +++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
+ include/net/inet_sock.h         |    5 -----
+ net/dccp/ipv4.c                 |    4 +++-
+ net/ipv4/inet_connection_sock.c |    5 ++++-
+ net/ipv4/tcp_ipv4.c             |    4 +++-
+ 4 files changed, 10 insertions(+), 8 deletions(-)
 
 --- a/include/net/inet_sock.h
 +++ b/include/net/inet_sock.h
-@@ -134,8 +134,7 @@ static inline int inet_request_bound_dev
- 
- static inline struct ip_options_rcu *ireq_opt_deref(const struct inet_request_sock *ireq)
- {
--	return rcu_dereference_check(ireq->ireq_opt,
--				     atomic_read(&ireq->req.rsk_refcnt) > 0);
-+	return rcu_dereference(ireq->ireq_opt);
+@@ -132,11 +132,6 @@ static inline int inet_request_bound_dev
+ 	return sk->sk_bound_dev_if;
  }
  
+-static inline struct ip_options_rcu *ireq_opt_deref(const struct inet_request_sock *ireq)
+-{
+-	return rcu_dereference(ireq->ireq_opt);
+-}
+-
  struct inet_cork {
---- a/net/dccp/input.c
-+++ b/net/dccp/input.c
-@@ -605,11 +605,13 @@ int dccp_rcv_state_process(struct sock *
- 	if (sk->sk_state == DCCP_LISTEN) {
- 		if (dh->dccph_type == DCCP_PKT_REQUEST) {
- 			/* It is possible that we process SYN packets from backlog,
--			 * so we need to make sure to disable BH right there.
-+			 * so we need to make sure to disable BH and RCU right there.
- 			 */
-+			rcu_read_lock();
- 			local_bh_disable();
- 			acceptable = inet_csk(sk)->icsk_af_ops->conn_request(sk, skb) >= 0;
- 			local_bh_enable();
-+			rcu_read_unlock();
- 			if (!acceptable)
- 				return 1;
- 			consume_skb(skb);
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -5978,11 +5978,13 @@ int tcp_rcv_state_process(struct sock *s
- 			if (th->fin)
- 				goto discard;
- 			/* It is possible that we process SYN packets from backlog,
--			 * so we need to make sure to disable BH right there.
-+			 * so we need to make sure to disable BH and RCU right there.
- 			 */
-+			rcu_read_lock();
- 			local_bh_disable();
- 			acceptable = icsk->icsk_af_ops->conn_request(sk, skb) >= 0;
- 			local_bh_enable();
-+			rcu_read_unlock();
+ 	unsigned int		flags;
+ 	__be32			addr;
+--- a/net/dccp/ipv4.c
++++ b/net/dccp/ipv4.c
+@@ -493,9 +493,11 @@ static int dccp_v4_send_response(const s
  
- 			if (!acceptable)
- 				return 1;
+ 		dh->dccph_checksum = dccp_v4_csum_finish(skb, ireq->ir_loc_addr,
+ 							      ireq->ir_rmt_addr);
++		rcu_read_lock();
+ 		err = ip_build_and_send_pkt(skb, sk, ireq->ir_loc_addr,
+ 					    ireq->ir_rmt_addr,
+-					    ireq_opt_deref(ireq));
++					    rcu_dereference(ireq->ireq_opt));
++		rcu_read_unlock();
+ 		err = net_xmit_eval(err);
+ 	}
+ 
+--- a/net/ipv4/inet_connection_sock.c
++++ b/net/ipv4/inet_connection_sock.c
+@@ -410,7 +410,8 @@ struct dst_entry *inet_csk_route_req(con
+ 	struct ip_options_rcu *opt;
+ 	struct rtable *rt;
+ 
+-	opt = ireq_opt_deref(ireq);
++	rcu_read_lock();
++	opt = rcu_dereference(ireq->ireq_opt);
+ 
+ 	flowi4_init_output(fl4, ireq->ir_iif, ireq->ir_mark,
+ 			   RT_CONN_FLAGS(sk), RT_SCOPE_UNIVERSE,
+@@ -424,11 +425,13 @@ struct dst_entry *inet_csk_route_req(con
+ 		goto no_route;
+ 	if (opt && opt->opt.is_strictroute && rt->rt_uses_gateway)
+ 		goto route_err;
++	rcu_read_unlock();
+ 	return &rt->dst;
+ 
+ route_err:
+ 	ip_rt_put(rt);
+ no_route:
++	rcu_read_unlock();
+ 	__IP_INC_STATS(net, IPSTATS_MIB_OUTNOROUTES);
+ 	return NULL;
+ }
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -859,9 +859,11 @@ static int tcp_v4_send_synack(const stru
+ 	if (skb) {
+ 		__tcp_v4_send_check(skb, ireq->ir_loc_addr, ireq->ir_rmt_addr);
+ 
++		rcu_read_lock();
+ 		err = ip_build_and_send_pkt(skb, sk, ireq->ir_loc_addr,
+ 					    ireq->ir_rmt_addr,
+-					    ireq_opt_deref(ireq));
++					    rcu_dereference(ireq->ireq_opt));
++		rcu_read_unlock();
+ 		err = net_xmit_eval(err);
+ 	}
+ 
 
 
