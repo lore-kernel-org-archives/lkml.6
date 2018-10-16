@@ -4,102 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF39C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B37C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C9602145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2FBE2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nBPxrj4y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C9602145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0bKwKJUw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2FBE2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbeJPMCU (ORCPT
+        id S1728975AbeJPMCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50198 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728930AbeJPMCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:19 -0400
+        id S1728877AbeJPMCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EECB621470;
-        Tue, 16 Oct 2018 04:13:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B6E52147E;
+        Tue, 16 Oct 2018 04:13:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1539663237;
-        bh=XfljaKByoWDObBdXbx3ZYB2bEonZh0L1Z2kr2OkmbHc=;
+        bh=icBnnG8mNzghWrTrXuCBXd4S8RTha6Mg06jqC6h7gyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nBPxrj4yEe0jI0+clmDUenPYYFw3cGa+y6r2FawBtu4WkHRwQgMQQ/eWWJ5yI1prC
-         cJS9kKMmeVdAs3t9jVeO5yiqbOTCEPH52PX4sx0UZbrPSM8zPx5t6raDkG2OVWzHhx
-         OKX0IAAwrMHm6hVM+VZ0hVRRK6FXp+nB6sW+UWVQ=
+        b=0bKwKJUwPuwmpeVSHpr3O4hkoaDewJttJeRfipmmMsgGsVwsxu30F7wbd0o1PO+ZC
+         87iQ4HR+UTzxxlxjaPK7or4OpKjJKElacqjdy5R1PBZDqg0rPtv+eW94h9z5S2ebIy
+         +lHrqwWYy4R706bA5hzfrLwuqwP9UiDizIV0Laoc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alok Kataria <akataria@vmware.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        virtualization@lists.linux-foundation.org,
-        kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 099/100] x86/paravirt: Fix some warning messages
-Date:   Tue, 16 Oct 2018 00:12:20 -0400
-Message-Id: <20181016041221.135528-99-sashal@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 100/100] clk: mvebu: armada-37xx-periph: Remove unused var num_parents
+Date:   Tue, 16 Oct 2018 00:12:21 -0400
+Message-Id: <20181016041221.135528-100-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
+[ Upstream commit 8927c27b32703e28041ae19bf25ea53461be83a1 ]
 
-The first argument to WARN_ONCE() is a condition.
+When building armada-37xx-periph, num_parents isn't used in function
+clk_pm_cpu_get_parent:
+drivers/clk/mvebu/armada-37xx-periph.c: In function ‘clk_pm_cpu_get_parent’:
+drivers/clk/mvebu/armada-37xx-periph.c:419:6: warning: unused variable ‘num_parents’ [-Wunused-variable]
+  int num_parents = clk_hw_get_num_parents(hw);
+      ^~~~~~~~~~~
+Remove the declaration of num_parents to dispose the warning.
 
-Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: virtualization@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
+Fixes: 616bf80d381d ("clk: mvebu: armada-37xx-periph: Fix wrong return value in get_parent")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/paravirt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/mvebu/armada-37xx-periph.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 930c88341e4e..1fbf38dde84c 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index 6f7637b19738..e764dfdea53f 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -419,7 +419,6 @@ static unsigned int armada_3700_pm_dvfs_get_cpu_parent(struct regmap *base)
+ static u8 clk_pm_cpu_get_parent(struct clk_hw *hw)
+ {
+ 	struct clk_pm_cpu *pm_cpu = to_clk_pm_cpu(hw);
+-	int num_parents = clk_hw_get_num_parents(hw);
+ 	u32 val;
  
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
-@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
- 
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
+ 	if (armada_3700_pm_dvfs_is_enabled(pm_cpu->nb_pm_base)) {
 -- 
 2.17.1
 
