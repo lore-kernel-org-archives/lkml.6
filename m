@@ -2,112 +2,134 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BE0C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EC0C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3490204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:35:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3490204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id B70A22098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:36:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fepBcalZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iJAq2gyM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B70A22098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbeJQB05 (ORCPT
+        id S1727402AbeJQB2H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:26:57 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.182]:47679 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727233AbeJQB04 (ORCPT
+        Tue, 16 Oct 2018 21:28:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44476 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbeJQB2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:26:56 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id CE96C313CB9
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 12:35:26 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id CTFRg68aNaSeyCTFYgQw8E; Tue, 16 Oct 2018 12:35:26 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:46070 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gCTFQ-000vXD-Ru; Tue, 16 Oct 2018 12:35:12 -0500
-Date:   Tue, 16 Oct 2018 19:35:11 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        netdev@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next v3 1/2] net: phy: mscc: fix signedness bug in
- vsc85xx_downshift_get
-Message-ID: <454db44c56f4981a56c02f87de80f860e142545a.1539710647.git.gustavo@embeddedor.com>
-References: <cover.1539710647.git.gustavo@embeddedor.com>
+        Tue, 16 Oct 2018 21:28:06 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9CA576130B; Tue, 16 Oct 2018 17:36:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539711396;
+        bh=5XEKdceFiuof2Vb6IDeQI+TFQvuemiZNmdNhEvXtgaI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fepBcalZOzyUi9hZx8oFvA+FIeOjtk601eszx65uP0N0QJfbWqAK1BQVHjex9vGx7
+         f4gMVChFs3FuYv/C9OxQX5/26PjYBaOl8DKsc8KLu0JfPTdAgJmU45jm3rOcEuZHDn
+         XXUf3wB12XUPDTkjGFl/SuJsmFZExgxvdFpKgUhs=
+Received: from [192.168.43.47] (unknown [223.227.22.91])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 29FF46021C;
+        Tue, 16 Oct 2018 17:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539711395;
+        bh=5XEKdceFiuof2Vb6IDeQI+TFQvuemiZNmdNhEvXtgaI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iJAq2gyM32cP97m7YM5HuGON7ZfPBWwkBOJPI1rx4xjWdwIEA1ldZbTewaKv6E1Uu
+         CkeCIAxJj9eehRJRk/KwJcNjmVbYQ4zlu2GEtD8SsmeyD3QfA6jKIpPtG/csDxX1bt
+         w4QcwSKp7PB5c0cyQjWfbWNLsuHxFtvqZG37/AqQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 29FF46021C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Geliang Tang <geliangtang@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pramod Gurav <gpramod@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
+ <20181016112928.4b52afb5@gandalf.local.home>
+ <8c2fb318-813d-81f1-1e2f-cdbc68353077@codeaurora.org>
+ <20181016125721.236ada82@gandalf.local.home>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <cab1be04-be06-6f53-7fe9-159936893fc8@codeaurora.org>
+Date:   Tue, 16 Oct 2018 23:06:24 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1539710647.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gCTFQ-000vXD-Ru
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:46070
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20181016125721.236ada82@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the error handling for the call to function
-phy_read_paged() doesn't work because *reg_val* is of
-type u16 (16 bits, unsigned), which makes it impossible
-for it to hold a value less than 0.
+On 10/16/2018 10:27 PM, Steven Rostedt wrote:
+> 
+> OK, can you add to the command line:
+> 
+>   ftrace=function ftrace_filter=*schedule*
+> 
+> to see if it's a specific function that may be causing the issue (but
+> hopefully it's not one of the scheduling functions that caused it).
+> 
 
-Fix this by changing the type of variable *reg_val* to int.
+Target boots fine with this. So its not scheduling functions that is 
+causing it. Also I tried with ftrace_filter=*msm* just to be sure if
+tracing driver functions is causing any issue but its NOT.
 
-Addresses-Coverity-ID: 1473970 ("Unsigned compared against 0")
-Fixes: 6a0bfbbe20b0 ("net: phy: mscc: migrate to phy_select/restore_page functions")
-Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v3:
- - Post patch to netdev.
 
-Changes in v2:
- - Add Quentin's Reviewed-by to the commit log.
+>>> Does it break if the crypto is not initialized? Perhaps add a command
+>>> line flag to have it happen earlier:
+>>>   
+>>
+>> I didnt see any breakage, have been using ramoops with postcore_initcall
+>> for sometime now.
+>>
+>>>    ramoops=earlyinit
+>>>
+>>> and add a postcore_initcall that checks if that flag is set, and if so,
+>>> it does the work then, and the late_initcall() will do nothing.
+>>>
+>>> That way, you can still have unmodified kernels use pstore when it
+>>> crashes at boot up.
+>>>    
+>>
+>> Sounds good.
+> 
+> Great, I guess you can write a patch to do that ;-)
+> 
 
- drivers/net/phy/mscc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sure I can :) but as Kees said it would be better if we could
+find a way to make it work with a late initialization of compression.
+I will try on that.
 
-diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index bffe077..bff56c3 100644
---- a/drivers/net/phy/mscc.c
-+++ b/drivers/net/phy/mscc.c
-@@ -522,7 +522,7 @@ static int vsc85xx_mdix_set(struct phy_device *phydev, u8 mdix)
- 
- static int vsc85xx_downshift_get(struct phy_device *phydev, u8 *count)
- {
--	u16 reg_val;
-+	int reg_val;
- 
- 	reg_val = phy_read_paged(phydev, MSCC_PHY_PAGE_EXTENDED,
- 				 MSCC_PHY_ACTIPHY_CNTL);
+Thanks,
+
 -- 
-2.7.4
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
