@@ -2,131 +2,122 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D98A4C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F39DC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D50B21479
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:31:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C4172098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Tij+a/vV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D50B21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qBEFWXy5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4172098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbeJQBXN (ORCPT
+        id S1727197AbeJQBYT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:23:13 -0400
-Received: from mail-pf1-f180.google.com ([209.85.210.180]:44922 "EHLO
-        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbeJQBXN (ORCPT
+        Tue, 16 Oct 2018 21:24:19 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39190 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbeJQBYR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:23:13 -0400
-Received: by mail-pf1-f180.google.com with SMTP id r9-v6so11788337pff.11
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 10:31:45 -0700 (PDT)
+        Tue, 16 Oct 2018 21:24:17 -0400
+Received: by mail-pl1-f193.google.com with SMTP id e67-v6so2365313plb.6;
+        Tue, 16 Oct 2018 10:32:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=Nz+s1fq47X5/tu2PUFqFtpaCvyk5Jvn12B4Jt34WfdQ=;
-        b=Tij+a/vVR5UJBfRbD6QFNoeWPVM2vyWEpbGPdFnqbc953KwSPSBHllc0LpN+l7p1V2
-         GfLeEW6EWm15937hAwEgD3hdlP0HOkz3vLJfvv3PH0/SxX/QlkiagpYTvj9UvKNNWmGO
-         cQ7S2QIVFA7sb4yV0ajys/4alqPPVURvqAxFgKUQ9He8bQSgE6XD01oNBJ3dsEiRTjQ9
-         uB8/ha24w4d/bguUY49WcTjTtaUHtizXoD9xNa/yGswfP6ShcRA0LGRm4QAwXyp+POV3
-         1y1Fgc/WdT0xzdqZd4vdmelogWubL997KVtSs6z+cQDC8VLLwdOnyGX1GHNIKu2Sl06c
-         Scvg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=y1w0FJdINzv8gNqozV1Vu9E1dyRS5C9BvaJd60sGdYg=;
+        b=qBEFWXy5JNqkNzxO81sCCemT2BsVU7C2EphkTH/VvvRWcQWA+1tZbV8Q440FWochcl
+         JRwNqIiA/9dpJE6uYcJooektXcjSL9zV14MZWoLBg/nhuxgFPggcmGmeO8HmjkD8eyEB
+         N0E2W1HHU4qLJwcW/Zn/maMh0NTsIUonzMeGReF3p5R6BOmqYv36QmLUFFj778tE1yKf
+         V21LpmmU77dOtVoT/LpARZWXmJayShobquL0yK5nGu2cAOmSTzUNZy33tyVN+bRQOKol
+         2qag6XOkml6yH9mbh19FAVbYAVeEwVffqV0jzXP9XLB3K+Pwtv/H2gW7kGnJ3Sfve14M
+         fang==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Nz+s1fq47X5/tu2PUFqFtpaCvyk5Jvn12B4Jt34WfdQ=;
-        b=KRf6+re9xenT5U5uAF2mJXu6GfF+yRi+vQaoi3wSYyxwo/8bc2a1cCSHfzDPQsLgjb
-         g6O06DI7SunTypb4ckyYTNJVld3WOtCoQ9Y7A2tqJZRxlX+55oWlSJnChhesw4nyeryZ
-         A1Jd/3Zyjm6AInLFJ3g+0FMS+Jp71pkkddJaNfbLvTTX3d6CdptV2ps/Pjzt6EwkSMcC
-         TTJPWEtMRAULckC4eUrOPH/wIxlktKp9eZNTalj+4b872gNpPSgRVJx//m7l5TSiujLA
-         aTC078xSNYj0p21Bz2UheZIn5JQjFnMsr2gkBG8gjZXGrsdJ0Sg1PCoMgsJQsY8gY04d
-         ztIw==
-X-Gm-Message-State: ABuFfohw+GgbT/v0S1UMC1h8UFi9e7rjcH5gp1Evmknqlc7H7lEhMHUD
-        kUj2EC+7Tp0l8BuKEchH+Vz2vw==
-X-Google-Smtp-Source: ACcGV60oxet49enyexZROKkznZaXNAJF9gjKNfM0xepagrr3RD+J8+ysVC3L2ifXD852nBgFipG4Mg==
-X-Received: by 2002:a62:2845:: with SMTP id o66-v6mr22895541pfo.17.1539711104628;
-        Tue, 16 Oct 2018 10:31:44 -0700 (PDT)
-Received: from [192.168.0.21] (97-120-178-141.ptld.qwest.net. [97.120.178.141])
-        by smtp.gmail.com with ESMTPSA id z15-v6sm18183925pfn.170.2018.10.16.10.31.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 10:31:44 -0700 (PDT)
-Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM
- Controller.
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     mark.rutland@arm.com, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, Wesley Terpstra <wesley@sifive.com>,
-        linus.walleij@linaro.org, palmer@sifive.com,
-        linux-kernel@vger.kernel.org, hch@infradead.org,
-        linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
- <1539111085-25502-2-git-send-email-atish.patra@wdc.com>
- <20181010134926.GD21134@ulmo> <25758ab9-eb36-741b-6264-42412b3ddd8e@wdc.com>
- <20181016110142.GC8852@ulmo>
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-Message-ID: <6e108e3c-15c1-b13b-ac3e-60c5eb209c7b@sifive.com>
-Date:   Tue, 16 Oct 2018 10:31:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=y1w0FJdINzv8gNqozV1Vu9E1dyRS5C9BvaJd60sGdYg=;
+        b=TiIK7o3UKO1oDPxNpBCs+vcAldERUoqXGicqK3vvJq9bGnEAUntrGPZI+VenAuPRp0
+         LmIH0o96PX7WauIRQSO4opNe0EA84rKUZZAVohJmZyHVE5E6c38qV9U3J9hAICM+CqCK
+         Ymy5FC7mkV0Twn6nlBFnIBycyIM256vlmv715cH1yXCPCODWcKG/NLRrGtT9jjJlxHyw
+         7acRDlgGUO2THEiRV7aJfK4EKUfQvDiTqVLiRrBXsiWFyqaEBSZKsQLmlzwf13LGCv7I
+         55m1v+z0U9G0crM13/yhLbwmA4KsclywG+KV94akAvboGgHVy1rAJwmzgzdRoRueesQb
+         hNZw==
+X-Gm-Message-State: ABuFfohiy2A3ls6sFDAk6MIMlY+2AAvKqSNH2MwzE6gxq+w/2uJnPhE8
+        XxSBj06nur+YK2PT+DXubkQ=
+X-Google-Smtp-Source: ACcGV622G9yue09V80MDbbP/gixbDsT0T0c/i7XXfoIZ23rAFznJCBa8HTXo6EcA5ZPXPlklwXppVg==
+X-Received: by 2002:a17:902:9004:: with SMTP id a4-v6mr22051104plp.166.1539711168545;
+        Tue, 16 Oct 2018 10:32:48 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id a14-v6sm17524344pgi.75.2018.10.16.10.32.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 10:32:47 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 10:32:44 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [RFC PATCH 0/5] device property: Introducing software nodes
+Message-ID: <20181016173244.GB230131@dtor-ws>
+References: <20181012113934.29942-1-heikki.krogerus@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181016110142.GC8852@ulmo>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012113934.29942-1-heikki.krogerus@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Heikki,
 
-On 10/16/18 4:01 AM, Thierry Reding wrote:
-> On Mon, Oct 15, 2018 at 03:57:35PM -0700, Atish Patra wrote:
->> On 10/10/18 6:49 AM, Thierry Reding wrote:
->>> On Tue, Oct 09, 2018 at 11:51:22AM -0700, Atish Patra wrote:
->>>> +Required properties:
->>>> +- compatible: should be one of
->>>> +	"sifive,fu540-c000-pwm0","sifive,pwm0".
->>> What's the '0' in here? A version number?
->>>
->> I think yes. Since fu540 is the first Linux capable RISC-V core, SiFive Guys
->> decided mark it as version 0.
->>
->> @Wesly: Please correct me if I am wrong.
-> It seems fairly superfluous to me to have a version number in additon to
-> the fu540-c000, which already seems to be the core plus some sort of
-> part number. Do you really expect there to be any changes in the SoC
-> that would require a different compatible string at this point? If the
-> SoC has taped out, how will you ever get a different version of the PWM
-> IP in it?
->
-> I would expect any improvements or changes to the PWM IP to show up in a
-> different SoC generation, at which point it would be something like
-> "sifive,fu640-c000" maybe, or perhaps "sifive,fu540-d000", or whatever
-> the numbering is.
+On Fri, Oct 12, 2018 at 02:39:29PM +0300, Heikki Krogerus wrote:
+> Hi guys,
+> 
+> To continue the discussion started by Dmitry [1], this is my proposal
+> that I mentioned in my last mail. In short, the idea is that instead
+> of trying to extend the support for the currently used struct
+> property_set, I'm proposing that we introduce a completely new,
+> independent type of fwnode, and replace the struct property_set with
+> it. I'm calling the type "software node" here.
+> 
+> The reason for a complete separation of the software nodes from the
+> generic property handling code is the need to be able to create the
+> nodes independently from the devices that they are bind to.
 
+It would be great it you would provide an example of creating these
+sowftware property sets separately from devices. How do you tie device
+and its properties if they are not created together? For OF we have
+compatibles and phandles for references, ACPI has HIDs and CIDs and
+notion of references as well. What do we use here, especially when
+software node is created in one subsystem (let's say
+drivers/platform/x86), but device is created somewhere else?
 
-The "0" suffix refers to a revision number for the underlying PWM IP block.
+Another issue that is not clear to me: looking at the USB connector it
+seems you want to have references to fwnodes. How do you resolve them
+when there are nodes of different class. I.e. how do you express
+software fwnode referencing ACPI or DT node when you are supplementing
+ACPI or DT description of a system with these custom/secondary nodes?
+What about the other direction? I.e. can I have a DT system with USB
+connector and augment USB set up with static nodes? Not only
+basic/scalar properties, but links as well?
 
-It's certainly important to keep that version number on the 
-"sifive,pwm0" compatible string that doesn't have the chip name 
-associated with it.
+As I said, having and example of using this new code to achieve your
+goal with regard to USB connector would be awesome and clear a lot of my
+questions.
 
-As to whether there could ever be a FU540-C000 part with different IP 
-block versions on it: FU540-C000 is ultimately a marketing name.  While 
-theoretically we shouldn't have another "FU540-C000" chip with different 
-peripheral IP block versions on it, I don't think any engineer can 
-guarantee that it won't happen.
+Thanks!
 
-
-- Paul
-
+-- 
+Dmitry
