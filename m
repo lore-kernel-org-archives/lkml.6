@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A7DC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 695BBC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62A7E20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:29:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C6C9208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:30:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pynu7SSU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A7E20881
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LrXPfAHg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C6C9208B3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbeJPPSI (ORCPT
+        id S1727067AbeJPPTR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 11:18:08 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44471 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbeJPPSH (ORCPT
+        Tue, 16 Oct 2018 11:19:17 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:43462 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbeJPPTR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 11:18:07 -0400
-Received: by mail-qk1-f195.google.com with SMTP id y8-v6so13483272qka.11
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 00:29:02 -0700 (PDT)
+        Tue, 16 Oct 2018 11:19:17 -0400
+Received: by mail-qt1-f193.google.com with SMTP id q41-v6so24530554qtq.10
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 00:30:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6YGoyIv8Y7NP1EMmyeHW0ReacWSLXCdpbY7VA2DTm2A=;
-        b=Pynu7SSUn7E22hLiF5ahQCV5gVQ2QnFbYWQNPuKhuRE12nnmCXpE/B3hj9A+BuegSV
-         ccLBblTce50Wig7VaJfXgYcjQwKh9P74T4j4hUmu9aBzNbUalk09PsPQQPsR3I8/0i2y
-         BELlnEAMWYIRDdRlUz/cykcobbk3UkGzOOTJs=
+        bh=h6LoBoRFgCvRapU0Kj82C/RUkpCby0NviBiWvvnysNs=;
+        b=LrXPfAHg0o1fGbmANLMAUcfMt4LYa6LnLR5dYZjU3frWFkNTp6AD9F8cXfOZ2iYU//
+         5Ou3DVDdujHeWzUfPFoCMByvxaL58FUlismZZHWeMBRMYiza2G6aYfUSsxNzV+KPue06
+         eIxzFbsmRNGKoG7EXX0Y623cQG+elkA4zhIOE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6YGoyIv8Y7NP1EMmyeHW0ReacWSLXCdpbY7VA2DTm2A=;
-        b=fFuYyf+a3wqU6iuPl7ExF5CqNrK2/cCZU8zVMmvfcSPjUifF6iiFjLrjNpIuXaeI8I
-         K1BfaPQjxro+bU0IyRt2U8cwusmSI1yULiF4TtHad6tf4wHBghi+CtkuuTAWVtcIvWL2
-         Hzsu+ws2e4Pss4mx8TO4CmDvi7AloVh92pG2pQqQgllzreum8vrMIWy58YXBYrf7F25J
-         clWkednAJw3rjZRdciSvoCnyF4JbzUx76ieNcOChp+8gCNmOOpdENNp4RbyQFbiiGabT
-         gMVdEbaC+rBkuWVtsahdEB08ijadJIC/YDWj10Vld5bFSsMSOWPnUqAD9kn4zOeEie/5
-         w2vA==
-X-Gm-Message-State: ABuFfojxCyq6CX46loONxsczAugtHJRmqSjbPua2EEGIDfEz9YBy8aCI
-        WNLzpoFMxHxc403j4Zb6M8sdN8rLxvd6R4yJNYk6yA==
-X-Google-Smtp-Source: ACcGV63yr2Z+5z+/ibXD+qm246NSF/QOI0yV6dsVkfCDfGaUGpAH7owq9SkdIAQowD2AdsHmmZFAZXgVflTjzO4M8sE=
-X-Received: by 2002:a37:5185:: with SMTP id f127-v6mr19405563qkb.44.1539674941981;
- Tue, 16 Oct 2018 00:29:01 -0700 (PDT)
+        bh=h6LoBoRFgCvRapU0Kj82C/RUkpCby0NviBiWvvnysNs=;
+        b=ti+gtFUjIpnUh+dHCgaz4/PeoluNmbguSzAmISybRHUAb2ZKN0pDCPfAlBk+jKmZjT
+         kEHJVqrXWngTafyOG8pHEat/+Lt5Ovv9bkG4eeHB80aLS5MHcOjOYFWu4/pKZDvjCz95
+         SDWgomxXRP7+wPaIXMxeY29HMzIA5C7o1ChPGZXbSh6fcfjtDZEo/jCQ2z8sTPpzQlR1
+         /7CsovHRTLEmbyAMA2wkCdTPy+f6JK6BV27i/hUTh3x5SMre/+/6Wy9Jh2dmjHrvIFr2
+         sYJ9tspY1q9eNaowWVd0f5EL3EheDnKF6QsH3foj1t3BSzloOXomLUtjTkbCseApI+Pn
+         vcCw==
+X-Gm-Message-State: ABuFfoh05rjIU0T6GVon0D0RSfU1HvZ2rTtttuoq1fqsw5aaSwEvKNdH
+        B1pl07neSwxAmtdhxCjxE9jL31bv90c7/LOAh4xBIA==
+X-Google-Smtp-Source: ACcGV62myHepaN86cRaHeXlJpdJyP4/ZE5o8ljMA+Qri1RVyoXARNqAb6yu62RV1b7eqdhxrbBZ8xTJGKIsf+gcVGN0=
+X-Received: by 2002:a0c:9689:: with SMTP id a9mr418331qvd.103.1539675011119;
+ Tue, 16 Oct 2018 00:30:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181008163216.97436-1-swboyd@chromium.org> <20181008163216.97436-3-swboyd@chromium.org>
-In-Reply-To: <20181008163216.97436-3-swboyd@chromium.org>
+References: <20181008163216.97436-1-swboyd@chromium.org> <20181008163216.97436-4-swboyd@chromium.org>
+In-Reply-To: <20181008163216.97436-4-swboyd@chromium.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 16 Oct 2018 09:28:50 +0200
-Message-ID: <CACRpkdYtZEiTcWs61HSmZjy0rgLbos=7Mo9N=OCpJDvf+Jhw1A@mail.gmail.com>
-Subject: Re: [PATCH 2/4] gpio: Drop parent irq assignment during cascade setup
+Date:   Tue, 16 Oct 2018 09:29:59 +0200
+Message-ID: <CACRpkdYmzRHcF=Bap=zjMoFRuEobqBibChQVCNiD0XrE+Kc_nw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] gpio: Remove unused 'irqchip' argument to gpiochip_set_cascaded_irqchip()
 To:     Stephen Boyd <swboyd@chromium.org>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
@@ -71,28 +71,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Oct 8, 2018 at 6:32 PM Stephen Boyd <swboyd@chromium.org> wrote:
 
-> We want to set the irq parent for interrupts that we're setting up to be
-> cascaded from another interrupt controller, but we may or may not have
-> already mapped the gpiochip irqs into the kernel's virtual irq number
-> space at this point. If we have mapped irqs before calling here, then
-> we've gone through gpiochip_irq_map() and called irq_set_parent()
-> already. If we haven't mapped irqs, then the gpiochip is dynamically
-> mapping irqs and we can rely on gpiochip_irq_map() or the gpio driver's
-> irqdomain ops to setup the irq parent properly.
->
-> Either way, setting the parent here when cascading the gpiochip doesn't
-> make much sense because it should be done at irq mapping time. In the
-> dynamic mapping case, this code is mapping virq 0 to some parent virq in
-> a loop. While that's benign, let's drop this code to simplify.
+> This argument hasn't ever been used since it was introduced in commit
+> 1425052097b5 ("gpio: add IRQ chip helpers in gpiolib"). Let's drop it to
+> reduce reading confusion.
 >
 > Cc: Evan Green <evgreen@chromium.org>
 > Cc: Thierry Reding <treding@nvidia.com>
 > Cc: Grygorii Strashko <grygorii.strashko@ti.com>
 > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-Yep this is some leftover from the past.
-
-Patch applied!
+Patch applied. Good catch.
 
 Yours,
 Linus Walleij
