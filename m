@@ -2,185 +2,227 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AC1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB3D5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ADDB2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:03:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CD04208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:03:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="wFAcg1yh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ADDB2089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="xBtIxRd5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD04208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbeJPKvJ (ORCPT
+        id S1727211AbeJPKuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 06:51:09 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:45922 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727360AbeJPKun (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 06:50:43 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id w9G31q7F017707;
-        Tue, 16 Oct 2018 12:01:53 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w9G31q7F017707
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1539658914;
-        bh=0jExx5vDSGpy/qM7ZAif6aEaMMZKi5fc6yONUDddKPc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wFAcg1yhovR2BD7Pa1BaDM4Iwz5LBV8e8+Scpc+tokw5T1tsVE+y0f4GF3PfuaFYW
-         ALMTN4QAsCTmGD548ePzCImxsg7YQ89yWEEHheqmeByeO9wrq4DPAXBuKFYFCnlyWK
-         7ezAJf4tV1ttEVMsvIi+vYxuqCDHzBRfK8MrpuLGAtc15d1MNdC1sXPAoqMCw6WZu8
-         VIyrMhOCHqo0yvFRZqoN1koxjhwQbSOL/5EbbMx41qaQzUxoqGxqT5M396Ly4FGiUU
-         3mpUrT63Xx7lwxnKKvZJ5o55eFL3gXtPQcefyuhsV7EwbuMQk6KUPDlRJwN6Lovt8E
-         DA/jlMzPRkUyA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] i2c: uniphier-f: fix occasional timeout error
-Date:   Tue, 16 Oct 2018 12:01:48 +0900
-Message-Id: <1539658909-26691-3-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539658909-26691-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1539658909-26691-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 16 Oct 2018 06:50:11 -0400
+Received: from mail-eopbgr50077.outbound.protection.outlook.com ([40.107.5.77]:63024
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727154AbeJPKuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 06:50:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zauY+cpPA0NzXrXmp62V0BvB5XCaCJP5WYwrg6rCVTE=;
+ b=xBtIxRd54eG4KyGXxJqNKO5LOjoySIamDDBf+D/tLcze6HRYBS4fmdPeA1bVQaU0bZSuxFOWBhfKeaENrZEkx6DD72G1yLe6XYQln9SH42RmJBIgKoV8+rKqr8ASIIRGP6mA7Phqhj7+rJVq5m2m3K6kreBjd3kWpdJmsNLgq1o=
+Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com (10.166.173.8) by
+ DB5PR0401MB1797.eurprd04.prod.outlook.com (10.165.5.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.26; Tue, 16 Oct 2018 03:01:58 +0000
+Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com
+ ([fe80::c0b5:26f1:bc9e:5a31]) by DB5PR0401MB2213.eurprd04.prod.outlook.com
+ ([fe80::c0b5:26f1:bc9e:5a31%6]) with mapi id 15.20.1228.027; Tue, 16 Oct 2018
+ 03:01:58 +0000
+From:   Andy Tang <andy.tang@nxp.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>
+CC:     "edubezval@gmail.com" <edubezval@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] thermal: qoriq: add multiple sensors support
+Thread-Topic: [PATCH] thermal: qoriq: add multiple sensors support
+Thread-Index: AQHUVgwqs1dc/YvhnUCR91KdT64vpqUdvnSAgAHhzUCAAH1WAIABJW0Q
+Date:   Tue, 16 Oct 2018 03:01:58 +0000
+Message-ID: <DB5PR0401MB2213E291AC455D61ED15AF4AF3FE0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+References: <20180927024204.17314-1-andy.tang@nxp.com>
+ <3d1f8304-9005-23f3-2e0e-ef9c962c9f6e@linaro.org>
+ <DB5PR0401MB2213D4C1874291B87F231547F3FD0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+ <cf157e9f-a4cb-6d7d-f51d-8b9d91f3335c@linaro.org>
+In-Reply-To: <cf157e9f-a4cb-6d7d-f51d-8b9d91f3335c@linaro.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=andy.tang@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB5PR0401MB1797;6:8b9pq93t+5tK4xSFO2FnbH7WaeMdqiIYEaujOrfEj+hNWhWQMdNniHJb44UeiGmx14zbKKPC17lhq78MpWVXrJsiMmqG3dTUTF+53//GxZa1OcPj/bMX+4G1aaDEx7fge7MfQVNM268wVVPwmaQMyKBVL6jdsCt+yQURSzAXxStuho818eWBD6rPpv6QbYJhRw9iTVyMgLJFkn85kVwVqRzvSV8vk/MYy8/qLxzpKtAP8GIYbJkfHxDCcZ2KtyRI7j3B4DZUFxrRgZWODIExL+C7l5TAjB07QpRPit3rbctYnot9X+OD2LNLVVdFxm8VOrQKVDPcVKgYIjm0kX7ZSx3uGPETNViUAhfUBmkZu2RFXEp+r76fe5wUceboZXjlG5Yr9tGz5qpl/A3UAXWmuf/rqNF6arwYAJXtXUGVBu/7p6ip3E3c/ZTU38ZRcVPijZsMRvYLJ9Yzg9YReDQUSQ==;5:x0Ome+Q81eXNMAeHmR9EF1+IzoQSe2hVWpdCvPkMaK1rfm+AmK6Z58GVUA+11iwzhQupHFcvvmgUwZ+EQLzwOTwPeQY86YiKsteqwgD9dooN2weBrXWG4e3V4DWSIehoUzot27RymSrgI2XedTKHVWs/ZsLjpGpNh0uCH/UakYk=;7:uYf9DJP9gZMhKVURZ3Tw08U6E+3DPCKPM/c8/agD69xcHTlrHqKSAK9eiWyf6gjz0rIfz8btU6sQPqMnBeg0D1KN+tDNqSQtxDJYPAS3NrrgsRiRPm7h6SyvIfm7c+M9tqrXiFah3iW2sNcbjGUnbHSqlIgQSMvWoCYmkoSgiqV8+6tw65FxXkGKjfPVw9o5Gq/0xMevh3bT0RmJD18HG8/271mbCjC5Hryfi4BWq/E+TlX78C8Y02cqL1lAhOQS
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 8ad655bd-8c42-43b1-b368-08d63313bcc4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB5PR0401MB1797;
+x-ms-traffictypediagnostic: DB5PR0401MB1797:
+x-microsoft-antispam-prvs: <DB5PR0401MB1797E49D1CFB8713C9E1C8F6F3FE0@DB5PR0401MB1797.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699)(85827821059158)(9452136761055)(17755550239193)(86561027422486)(64217206974132)(81227570615382)(148322886591682)(185117386973197)(45079756050767);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:DB5PR0401MB1797;BCL:0;PCL:0;RULEID:;SRVR:DB5PR0401MB1797;
+x-forefront-prvs: 0827D7ACB9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(136003)(346002)(376002)(199004)(189003)(13464003)(476003)(11346002)(446003)(2900100001)(99286004)(71200400001)(7696005)(2906002)(71190400001)(33656002)(14454004)(15974865002)(3846002)(76176011)(97736004)(6116002)(6246003)(81166006)(486006)(54906003)(2501003)(110136005)(81156014)(8676002)(39060400002)(8936002)(5250100002)(44832011)(4326008)(68736007)(25786009)(26005)(229853002)(53936002)(6506007)(6306002)(53546011)(102836004)(55016002)(93886005)(6436002)(9686003)(186003)(5660300001)(7736002)(74316002)(305945005)(575784001)(86362001)(14444005)(105586002)(256004)(478600001)(106356001)(316002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR0401MB1797;H:DB5PR0401MB2213.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 0e4v9D71HcRDumMGUAyxDFdmruRqYwv/7bMVnPXggW3PPd8S+rct5R0I4CeX53zaNFtQanNUrVkuMpi0q/WTgGX2g45efd0Kb5R5BRcEuOu/qiGvrcaYwOa9e3aUutyo4kXQdpV0f/nnjI6UhtxduPT4PwbrFBqi6sdjoWLoSUZVgcyJXZzycmqxSKxEuSTNFixa6fMnB4O6IvZ0rF0TFjYvsXkwgMUXDPg6sOz4zDtho1xXdZQnxruzugZ2apqIQ1F728fZQD3y13h9Qulc5gqQqD4NgYyQ6eH5vfQV4zj4dmNAiz7D/abQP6bVd0RkcvBugC4CN3IjMsLPXatb4bfVwELo2rC3z75UAiE3akU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ad655bd-8c42-43b1-b368-08d63313bcc4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2018 03:01:58.2895
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR0401MB1797
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, a timeout error could happen at a repeated START condition.
-
-For a (non-repeated) START condition, the controller starts sending
-data when the UNIPHIER_FI2C_CR_STA bit is set. However, for a repeated
-START condition, the hardware starts running when the slave address is
-written to the TX FIFO - the write to the UNIPHIER_FI2C_CR register is
-actually unneeded.
-
-Because the hardware is already running before the IRQ is enabled for
-a repeated START, the driver may miss the IRQ event. In most cases,
-this problem does not show up since modern CPUs are much faster than
-the I2C transfer. However, it is still possible that a context switch
-happens after the controller starts, but before the IRQ register is
-set up.
-
-To fix this,
-
- - Do not write UNIPHIER_FI2C_CR for repeated START conditions.
-
- - Enable IRQ *before* writing the slave address to the TX FIFO.
-
- - Disable IRQ for the current CPU while queuing up the TX FIFO;
-   If the CPU is interrupted by some task, the interrupt handler
-   might be invoked due to the empty TX FIFO before completing the
-   setup.
-
-Fixes: 6a62974b667f ("i2c: uniphier_f: add UniPhier FIFO-builtin I2C driver")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- drivers/i2c/busses/i2c-uniphier-f.c | 33 +++++++++++++++++++++++++--------
- 1 file changed, 25 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-uniphier-f.c b/drivers/i2c/busses/i2c-uniphier-f.c
-index 200dfd1..0677153 100644
---- a/drivers/i2c/busses/i2c-uniphier-f.c
-+++ b/drivers/i2c/busses/i2c-uniphier-f.c
-@@ -260,6 +260,8 @@ static irqreturn_t uniphier_fi2c_interrupt(int irq, void *dev_id)
- static void uniphier_fi2c_tx_init(struct uniphier_fi2c_priv *priv, u16 addr)
- {
- 	priv->enabled_irqs |= UNIPHIER_FI2C_INT_TE;
-+	uniphier_fi2c_set_irqs(priv);
-+
- 	/* do not use TX byte counter */
- 	writel(0, priv->membase + UNIPHIER_FI2C_TBC);
- 	/* set slave address */
-@@ -292,6 +294,8 @@ static void uniphier_fi2c_rx_init(struct uniphier_fi2c_priv *priv, u16 addr)
- 		priv->enabled_irqs |= UNIPHIER_FI2C_INT_RF;
- 	}
- 
-+	uniphier_fi2c_set_irqs(priv);
-+
- 	/* set slave address with RD bit */
- 	writel(UNIPHIER_FI2C_DTTX_CMD | UNIPHIER_FI2C_DTTX_RD | addr << 1,
- 	       priv->membase + UNIPHIER_FI2C_DTTX);
-@@ -315,14 +319,16 @@ static void uniphier_fi2c_recover(struct uniphier_fi2c_priv *priv)
- }
- 
- static int uniphier_fi2c_master_xfer_one(struct i2c_adapter *adap,
--					 struct i2c_msg *msg, bool stop)
-+					 struct i2c_msg *msg, bool repeat,
-+					 bool stop)
- {
- 	struct uniphier_fi2c_priv *priv = i2c_get_adapdata(adap);
- 	bool is_read = msg->flags & I2C_M_RD;
- 	unsigned long time_left, flags;
- 
--	dev_dbg(&adap->dev, "%s: addr=0x%02x, len=%d, stop=%d\n",
--		is_read ? "receive" : "transmit", msg->addr, msg->len, stop);
-+	dev_dbg(&adap->dev, "%s: addr=0x%02x, len=%d, repeat=%d, stop=%d\n",
-+		is_read ? "receive" : "transmit", msg->addr, msg->len,
-+		repeat, stop);
- 
- 	priv->len = msg->len;
- 	priv->buf = msg->buf;
-@@ -338,16 +344,24 @@ static int uniphier_fi2c_master_xfer_one(struct i2c_adapter *adap,
- 	writel(UNIPHIER_FI2C_RST_TBRST | UNIPHIER_FI2C_RST_RBRST,
- 	       priv->membase + UNIPHIER_FI2C_RST);	/* reset TX/RX FIFO */
- 
-+	spin_lock_irqsave(&priv->lock, flags);
-+
- 	if (is_read)
- 		uniphier_fi2c_rx_init(priv, msg->addr);
- 	else
- 		uniphier_fi2c_tx_init(priv, msg->addr);
- 
--	uniphier_fi2c_set_irqs(priv);
--
- 	dev_dbg(&adap->dev, "start condition\n");
--	writel(UNIPHIER_FI2C_CR_MST | UNIPHIER_FI2C_CR_STA,
--	       priv->membase + UNIPHIER_FI2C_CR);
-+	/*
-+	 * For a repeated START condition, writing a slave address to the FIFO
-+	 * kicks the controller. So, the UNIPHIER_FI2C_CR register should be
-+	 * written only for a non-repeated START condition.
-+	 */
-+	if (!repeat)
-+		writel(UNIPHIER_FI2C_CR_MST | UNIPHIER_FI2C_CR_STA,
-+		       priv->membase + UNIPHIER_FI2C_CR);
-+
-+	spin_unlock_irqrestore(&priv->lock, flags);
- 
- 	time_left = wait_for_completion_timeout(&priv->comp, adap->timeout);
- 
-@@ -408,6 +422,7 @@ static int uniphier_fi2c_master_xfer(struct i2c_adapter *adap,
- 				     struct i2c_msg *msgs, int num)
- {
- 	struct i2c_msg *msg, *emsg = msgs + num;
-+	bool repeat = false;
- 	int ret;
- 
- 	ret = uniphier_fi2c_check_bus_busy(adap);
-@@ -418,9 +433,11 @@ static int uniphier_fi2c_master_xfer(struct i2c_adapter *adap,
- 		/* Emit STOP if it is the last message or I2C_M_STOP is set. */
- 		bool stop = (msg + 1 == emsg) || (msg->flags & I2C_M_STOP);
- 
--		ret = uniphier_fi2c_master_xfer_one(adap, msg, stop);
-+		ret = uniphier_fi2c_master_xfer_one(adap, msg, repeat, stop);
- 		if (ret)
- 			return ret;
-+
-+		repeat = !stop;
- 	}
- 
- 	return num;
--- 
-2.7.4
-
+SGkgRGFuaWVsLA0KDQpQbGVhc2Ugc2VlIG15IHJlcGx5IGlubGluZS4NCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVsLmxlemNhbm9A
+bGluYXJvLm9yZz4NCj4gU2VudDogMjAxOOW5tDEw5pyIMTXml6UgMTY6NTYNCj4gVG86IEFuZHkg
+VGFuZyA8YW5keS50YW5nQG54cC5jb20+OyBydWkuemhhbmdAaW50ZWwuY29tDQo+IENjOiBlZHVi
+ZXp2YWxAZ21haWwuY29tOyBsaW51eC1wbUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5l
+bEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gdGhlcm1hbDogcW9yaXE6
+IGFkZCBtdWx0aXBsZSBzZW5zb3JzIHN1cHBvcnQNCj4gPiA+DQo+ID4+DQo+ID4+PiBTaWduZWQt
+b2ZmLWJ5OiBUYW5nIFl1YW50aWFuIDxhbmR5LnRhbmdAbnhwLmNvbT4NCj4gPj4+IC0tLQ0KPiA+
+Pj4gIGRyaXZlcnMvdGhlcm1hbC9xb3JpcV90aGVybWFsLmMgfCAgMTE3DQo+ID4+PiArKysrKysr
+KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0NCj4gPj4+ICAxIGZpbGVzIGNoYW5nZWQs
+IDcwIGluc2VydGlvbnMoKyksIDQ3IGRlbGV0aW9ucygtKQ0KPiA+Pj4NCj4gPj4+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL3RoZXJtYWwvcW9yaXFfdGhlcm1hbC5jDQo+ID4+PiBiL2RyaXZlcnMvdGhl
+cm1hbC9xb3JpcV90aGVybWFsLmMgaW5kZXggYzg2NmNjMS4uN2MxZTg4YSAxMDA2NDQNCj4gPj4+
+IC0tLSBhL2RyaXZlcnMvdGhlcm1hbC9xb3JpcV90aGVybWFsLmMNCj4gPj4+ICsrKyBiL2RyaXZl
+cnMvdGhlcm1hbC9xb3JpcV90aGVybWFsLmMNCj4gPj4+IEBAIC02OSwxNCArNjksMjEgQEAgc3Ry
+dWN0IHFvcmlxX3RtdV9yZWdzIHsNCj4gPj4+ICAJdTMyIHR0cjNjcjsJCS8qIFRlbXBlcmF0dXJl
+IFJhbmdlIDMgQ29udHJvbCBSZWdpc3RlciAqLw0KPiA+Pj4gIH07DQo+ID4+Pg0KPiA+Pj4gK3N0
+cnVjdCBxb3JpcV90bXVfZGF0YTsNCj4gPj4+ICsNCj4gPj4+ICAvKg0KPiA+Pj4gICAqIFRoZXJt
+YWwgem9uZSBkYXRhDQo+ID4+PiAgICovDQo+ID4+PiArc3RydWN0IHFvcmlxX3NlbnNvciB7DQo+
+ID4+PiArCXN0cnVjdCB0aGVybWFsX3pvbmVfZGV2aWNlCSp0emQ7DQo+ID4+PiArCXN0cnVjdCBx
+b3JpcV90bXVfZGF0YQkJKnFkYXRhOw0KPiA+Pj4gKwlpbnQJCQkJaWQ7DQo+ID4+PiArfTsNCj4g
+Pj4NCj4gPj4gQ2FuIHlvdSBtb3ZlIHRoZSBxb3JpcV90bXVfc2l0ZV9yZWdzIHN0cnVjdHVyZSBj
+b250ZW50IGluc2lkZSB0aGUNCj4gPj4gcW9yaXFfc2Vuc29yIHN0cnVjdHVyZSBhbmQga2lsbCB0
+aGUgJ3NpdGVzJyBmaWVsZCBpbiB0aGUNCj4gPj4gcW9yaXFfdG11X3JlZ3Mgc3RydWN0dXJlID8g
+T3RoZXJ3aXNlIHdlIGVuZCB1cCB3aXRoIGEgU0lURVNfTUFYDQo+IGFycmF5DQo+ID4+IGluIHRo
+ZSBxb3JpcV90bXVfZGF0YSBzdHJ1Y3R1cmUgYW5kIGFub3RoZXIgb25lIGluIHRoZQ0KPiBxb3Jp
+cV90bXVfcmVncw0KPiA+PiBzdHJ1Y3R1cmUuDQo+ID4gW0FuZHldIEkgYW0gYWZyYWlkIEkgY2Fu
+J3QuDQo+ID4gcW9yaXFfdG11X3NpdGVfcmVncyBzdHJ1Y3R1cmUgaXMgdG8gZGVmaW5lIHRoZSBy
+ZWdpc3RlcnMuIEFmdGVyIGlvbWFwLA0KPiBUTVUgY2FuIGJlIGFjY2Vzc2VkLg0KPiA+IHFvcmlx
+X3NlbnNvciBzdHJ1Y3R1cmUgaXMgdXNlZCBmb3IgZWFjaCBzZW5zb3IuIEl0IERPTk9UIGluY2x1
+ZGUgdGhlDQo+IHJlZ2lzdGVyIGRlZmluZXMuDQo+ID4gcW9yaXFfdG11X2RhdGEgc3RydWN0dXJl
+IGlzIHVzZWQgZm9yIGdsb2JhbCBUTVUgZGF0ZS4NCj4gPiBTbyB0aGVyZSBpcyBubyBhbnkgZHVw
+bGljYXRlZCBvciByZWR1bmRhbnQgZGF0YSBoZXJlLg0KPiANCj4gSXQgaXMgbm90IGFib3V0IGR1
+cGxpY2F0ZSBidXQganVzdCBjb2RlIHJlb3JnLg0KPiANCj4gVGhpcyBwYXRjaCBjaGFuZ2VzIHRo
+ZSBzdHJ1Y3R1cmUgYXM6DQo+IA0KPiBzdHJ1Y3QgcW9yaXFfdG11X2RhdGEgew0KPiAtCXN0cnVj
+dCB0aGVybWFsX3pvbmVfZGV2aWNlICp0ejsNCj4gIAlzdHJ1Y3QgcW9yaXFfdG11X3JlZ3MgX19p
+b21lbSAqcmVnczsNCj4gLQlpbnQgc2Vuc29yX2lkOw0KPiAgCWJvb2wgbGl0dGxlX2VuZGlhbjsN
+Cj4gKwlzdHJ1Y3QgcW9yaXFfc2Vuc29yCSpzZW5zb3JbU0lURVNfTUFYXTsNCj4gIH07DQo+IA0K
+PiANCj4gU28gd2UgaGF2ZToNCj4gDQo+IHN0cnVjdCBxb3JpcV90bXVfZGF0YQ0KPiAgID0+IHN0
+cnVjdCBxb3JpcV9zZW5zb3JbU0lURVNfTUFYXQ0KPiAgID0+IHN0cnVjdCBxb3JpcV90bXVfcmVn
+cw0KPiAgICAgID0+IHN0cnVjdCBxb3JpcV90bXVfc2l0ZV9yZWdzW1NJVEVTX01BWF0NCj4gDQo+
+IEknbSBwcm9wb3NpbmcgdG8gbW92ZSBzdHJ1Y3QgcW9yaXFfdG11X3NpdGVfcmVncyBpbnNpZGUg
+dGhlIHN0cnVjdA0KPiBxb3JpcV9zZW5zb3IuDQo+IA0KPiANCj4gV2UgZW5kIHVwIHdpdGg6DQo+
+IA0KPiBzdHJ1Y3QgcW9yaXFfc2Vuc29yIHsNCj4gICAgc3RydWN0IHRoZXJtYWxfem9uZV9kZXZp
+Y2UgKnR6ZDsNCj4gICAgc3RydWN0IHN0cnVjdCBxb3JpcV90bXVfc2l0ZV9yZWdzICpyZWdzOw0K
+PiAgICBzdHJ1Y3QgcW9yaXFfdG11X2RhdGEgKnFkYXRhOw0KPiAgICBpbnQgaWQ7DQo+IH07DQpb
+QW5keV0gSSBzZWUgeW91ciBwb2ludC4gSWYgSSBhZGQgYSAqcmVncyBtZW1iZXIgdG8gcW9yaXFf
+c2Vuc29yIHN0cnVjdCwgdGhlbiBJIGNhbiBzcGVlZCB1cCB0aGUgYWNjZXNzIHRvIHRoZSByZWdp
+c3Rlci4NCkJ1dCBJIGRvbid0IHRoaW5rIGl0IGlzIGJldHRlci4gQ3VycmVudGx5IEkgY2FuIGFj
+Y2VzcyBzZW5zb3IgcmVnaXN0ZXIgYnk6IHFkYXRhLT5yZWdzLT5zaXRlW3FzZW5zb3ItPmlkXS4N
+ClRoZSB3aG9sZSBwb2ludCBoZXJlIGlzIHdlIGNhbid0IE1PVkUgc3RydWN0IHFvcmlxX3RtdV9z
+aXRlX3JlZ3MgdG8gdGhlIHN0cnVjdCBxb3JpcV9zZW5zb3IuIFdlIGNhbiBvbmx5IENPUFkNCml0
+IHRvIHN0cnVjdCBxb3JpcV9zZW5zb3IuIA0KDQpUaGlzIGlzIHRoZSBUTVUgbW9kdWxlIG1lbW9y
+eSBtYXA6DQpzdHJ1Y3QgcW9yaXFfdG11X3JlZ3Mgew0KLi4uLi4uDQogICAgICAgIHUzMiB0c2Nm
+Z3I7ICAgICAgICAgICAgIC8qIFNlbnNvciBDb25maWd1cmF0aW9uIFJlZ2lzdGVyICovDQogICAg
+ICAgIHU4IHJlczRbMHg3OF07DQogICAgICAgIHN0cnVjdCBxb3JpcV90bXVfc2l0ZV9yZWdzIHNp
+dGVbU0lURVNfTUFYXTsNCiAgICAgICAgdTggcmVzNVsweDlmOF07DQogICAgICAgIHUzMiBpcGJy
+cjA7ICAgICAgICAgICAgIC8qIElQIEJsb2NrIFJldmlzaW9uIFJlZ2lzdGVyIDAgKi8NCiAgICAg
+ICAgdTMyIGlwYnJyMTsgICAgICAgICAgICAgLyogSVAgQmxvY2sgUmV2aXNpb24gUmVnaXN0ZXIg
+MSAqLw0KLi4uLi4uLn0NCnN0cnVjdCBxb3JpcV90bXVfc2l0ZV9yZWdzIHNpdGVbU0lURVNfTUFY
+XSBpcyBwYXJ0IG9mIHRoZSBtZW1vcnkgbWFwLiBJdCBjYW4ndCBiZSByZW1vdmVkIG9yIHdlIGhh
+dmUgdG8gZGVmaW5lIGEgc2ltaWxhciBzdHJ1Y3QgdG8gZmlsbCBpdCB1cC4NCg0KDQo+IA0KPiAN
+Cj4gPj4+IC0JaWYgKHNlbnNvcl9zcGVjcy5hcmdzX2NvdW50ID49IDEpIHsNCj4gPj4+IC0JCWlk
+ID0gc2Vuc29yX3NwZWNzLmFyZ3NbMF07DQo+ID4+PiAtCQlXQVJOKHNlbnNvcl9zcGVjcy5hcmdz
+X2NvdW50ID4gMSwNCj4gPj4+IC0JCQkJIiVzOiB0b28gbWFueSBjZWxscyBpbiBzZW5zb3Igc3Bl
+Y2lmaWVyICVkXG4iLA0KPiA+Pj4gLQkJCQlzZW5zb3Jfc3BlY3MubnAtPm5hbWUsDQo+IHNlbnNv
+cl9zcGVjcy5hcmdzX2NvdW50KTsNCj4gPj4+IC0JfSBlbHNlIHsNCj4gPj4+IC0JCWlkID0gMDsN
+Cj4gPj4+ICsJCWlmIChpZCA+IFNJVEVTX01BWCkNCj4gPj4+ICsJCQlyZXR1cm4gLUVJTlZBTDsN
+Cj4gPj4+ICsNCj4gPj4+ICsJCXFkYXRhLT5zZW5zb3JbaWRdID0gZGV2bV9remFsbG9jKCZwZGV2
+LT5kZXYsDQo+ID4+PiArCQkJCXNpemVvZihzdHJ1Y3QgcW9yaXFfc2Vuc29yKSwgR0ZQX0tFUk5F
+TCk7DQo+ID4+PiArCQlpZiAoIXFkYXRhLT5zZW5zb3JbaWRdKQ0KPiA+Pj4gKwkJCXJldHVybiAt
+RU5PTUVNOw0KPiA+Pj4gKw0KPiA+Pj4gKwkJcWRhdGEtPnNlbnNvcltpZF0tPmlkID0gaWQ7DQo+
+ID4+PiArCQlxZGF0YS0+c2Vuc29yW2lkXS0+cWRhdGEgPSBxZGF0YTsNCj4gPj4+ICsNCj4gPj4+
+ICsJCXFkYXRhLT5zZW5zb3JbaWRdLT50emQgPQ0KPiA+PiBkZXZtX3RoZXJtYWxfem9uZV9vZl9z
+ZW5zb3JfcmVnaXN0ZXIoDQo+ID4+PiArCQkJCSZwZGV2LT5kZXYsIGlkLCBxZGF0YS0+c2Vuc29y
+W2lkXSwgJnRtdV90el9vcHMpOw0KPiA+Pj4gKw0KPiA+Pj4gKwkJaWYgKElTX0VSUihxZGF0YS0+
+c2Vuc29yW2lkXS0+dHpkKSkgew0KPiA+Pj4gKwkJCXJldCA9IFBUUl9FUlIocWRhdGEtPnNlbnNv
+cltpZF0tPnR6ZCk7DQo+ID4+PiArCQkJZGV2X2VycigmcGRldi0+ZGV2LA0KPiA+Pj4gKwkJCQki
+RmFpbGVkIHRvIHJlZ2lzdGVyIHRoZXJtYWwgem9uZSBkZXZpY2UuXG4iKTsNCj4gPj4+ICsJCQly
+ZXR1cm4gLUVOT0RFVjsNCj4gPj4+ICsJCX0NCj4gPj4+ICsNCj4gPj4+ICsJCXNpdGVzIHw9IDB4
+MSA8PCAoMTUgLSBpZCk7DQo+ID4+DQo+ID4+IFRoZSBjdXJyZW50IGNvZGUgaXMgcmVhZGluZyB0
+aGUgRFQgaW4gb3JkZXIgdG8gZ2V0IHRoZSBzZW5zb3IgaWQgYW5kDQo+ID4+IGluaXRpYWxpemUg
+aXQuIElPVywgdGhlIERUIGdpdmVzIHRoZSBzZW5zb3JzIHRvIHVzZS4NCj4gPj4NCj4gPj4gSU1P
+LCBpdCB3b3VsZCBiZSBtb3JlIHNlbGYgY29udGFpbmVkIGlmIHRoZSBkcml2ZXIgaW5pdGlhbGl6
+ZXMgYWxsDQo+ID4+IHRoZSBzZW5zb3JzIHdpdGhvdXQgdGFraW5nIGNhcmUgb2YgdGhlIERUIGFu
+ZCBsZXQgdGhlIG9mLSBjb2RlIHRvIGRvDQo+ID4+IHRoZSBiaW5kaW5nIHdoZW4gdGhlIHRoZXJt
+YWwgem9uZSwgbm8gPw0KPiA+IFtBbmR5XSBjb3VsZCB5b3UgcGxlYXNlIGV4cGxhaW4gbW9yZSBh
+Ym91dCB0aGlzIHdheT8gSSBhbSBub3Qgc3VyZSBob3cNCj4gdG8gaW1wbGVtZW50IGl0Lg0KPiA+
+IEJ1dCBvbmUgdGhpbmcgaXMgZm9yIHN1cmU6IHdlIG11c3QgZ2V0IHRoZSBzZW5zb3IgSURzIGV4
+cGxpY2l0bHkgc28NCj4gPiB0aGF0IHdlIGNhbiBlbmFibGUgdGhlbSBieSB0aGUgZm9sbG93aW5n
+IGNvbW1hbmQ6ICB0bXVfd3JpdGUocWRhdGEsDQo+ID4gc2l0ZXMgfCBUTVJfTUUgfCBUTVJfQUxQ
+RiwgJnFkYXRhLT5yZWdzLT50bXIpOw0KPiANCj4gV2hhdCBJIG1lYW50IGlzIGFib3V0IGNvZGUg
+c2VwYXJhdGlvbiBiZXR3ZWVuIHRoZSBkcml2ZXIgaXRzZWxmIGFuZCB0aGUNCj4gb2YtdGhlcm1h
+bCBjb2RlLg0KPiANCj4gVGhlIGNvZGUgYWJvdmUgcmUtaW5zcGVjdCB0aGUgRFQgdG8gZmluZCBv
+dXQgdGhlIHNlbnNvciBpZHMgaW4gb3JkZXIgdG8NCj4gZW5hYmxlIHRoZW0gYW5kIHNvbWVob3cg
+dGhpcyBpcyBub3Qgd3JvbmcgYnV0IGJyZWFrcyB0aGUgc2VsZg0KPiBlbmNhcHN1bGF0aW9uIG9m
+IHRoZSBkcml2ZXIuIEkgd2FzIHN1Z2dlc3RpbmcgaWYgaXQgaXNuJ3QgcG9zc2libGUgdG8gZW5h
+YmxlIGFsbA0KPiB0aGUgc2Vuc29ycyB3aXRob3V0IHRha2luZyBjYXJlIG9mIGRpZ2dpbmcgaW50
+byB0aGUgRFQuDQoNCltBbmR5XSBJIGRvbid0IHdhbnQgdG8gcmUtcGFyc2UgdGhlIERUIGhlcmUg
+dG9vLiBCdXQgSSBoYXZlIHRvLg0KVGhpcyBkcml2ZXIgd2lsbCBiZSB1c2VkIGJ5IGFsbCBvdXIg
+U09DcyB3aXRoIGRpZmZlcmVudCBzZW5zb3IgSURzIGFuZCBudW1iZXIuDQpGb3IgZXhhbXBsZTog
+dGhlcmUgYXJlIDIgc2Vuc29ycyBvbiBsczEwODhhIHBsYXRmb3JtIHdpdGggSUQgMCBhbmQgMS4N
+CldoaWxlIG9uIGxzMTA0M2EgdGhlcmUgYXJlIDYgc2Vuc29ycyB3aXRoIElEIDAsIDEsIDIsIDMs
+IDQsIDUuDQpJZiB3ZSBkb24ndCBzY2FuIHRoZSBEVCB3ZSB3b3VsZCBub3Qga25vdyBob3cgbWFu
+eSBzZW5zb3JzIGl0IGlzIGFuZCB3aGF0IGFyZSB0aGUgc2Vuc29yJ3MgSURzLA0KdW5sZXNzIHdl
+IGhhcmRjb2RlIGl0IGluIGRyaXZlci4NCg0KQlIsDQpBbmR5IA0KDQo+IA0KPiANCj4gDQo+IA0K
+PiAtLQ0KPiANCj4gPGh0dHBzOi8vZW1lYTAxLnNhZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2su
+Y29tLz91cmw9aHR0cCUzQSUyRiUyRg0KPiB3d3cubGluYXJvLm9yZyUyRiZhbXA7ZGF0YT0wMiU3
+QzAxJTdDYW5keS50YW5nJTQwbnhwLmNvbSU3QzM4DQo+IDkzMzhlYjViYzQ0ZDZjMjY4MzA4ZDYz
+MjdiZmMxYyU3QzY4NmVhMWQzYmMyYjRjNmZhOTJjZDk5YzVjDQo+IDMwMTYzNSU3QzAlN0MwJTdD
+NjM2NzUxOTA1NDI5NTM3MzM2JmFtcDtzZGF0YT1JS3pPMEhOcXVObQ0KPiBCUHJ2eGlrRGlJQkZj
+aHZkdGc4SHBxSml1WWtxbzElMkY0JTNEJmFtcDtyZXNlcnZlZD0wPiBMaW5hcm8ub3JnDQo+IOKU
+giBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MNCj4gDQo+IEZvbGxvdyBMaW5hcm86
+DQo+IDxodHRwczovL2VtZWEwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNvbS8/dXJs
+PWh0dHAlM0ElMkYlMkYNCj4gd3d3LmZhY2Vib29rLmNvbSUyRnBhZ2VzJTJGTGluYXJvJmFtcDtk
+YXRhPTAyJTdDMDElN0NhbmR5LnRhbg0KPiBnJTQwbnhwLmNvbSU3QzM4OTMzOGViNWJjNDRkNmMy
+NjgzMDhkNjMyN2JmYzFjJTdDNjg2ZWExZDNiDQo+IGMyYjRjNmZhOTJjZDk5YzVjMzAxNjM1JTdD
+MCU3QzAlN0M2MzY3NTE5MDU0Mjk1MzczMzYmYW1wO3MNCj4gZGF0YT12ZFI3bEMxUSUyRmJIVWdK
+WGx3bExhb1pVZGZhd3JBQ09RVU05NHloUGZXVkElM0QmYW1wOw0KPiByZXNlcnZlZD0wPiBGYWNl
+Ym9vayB8DQo+IDxodHRwczovL2VtZWEwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNv
+bS8/dXJsPWh0dHAlM0ElMkYlMkZ0DQo+IHdpdHRlci5jb20lMkYlMjMhJTJGbGluYXJvb3JnJmFt
+cDtkYXRhPTAyJTdDMDElN0NhbmR5LnRhbmclNDBuDQo+IHhwLmNvbSU3QzM4OTMzOGViNWJjNDRk
+NmMyNjgzMDhkNjMyN2JmYzFjJTdDNjg2ZWExZDNiYzJiNGMNCj4gNmZhOTJjZDk5YzVjMzAxNjM1
+JTdDMCU3QzAlN0M2MzY3NTE5MDU0Mjk1NDczNDUmYW1wO3NkYXRhPQ0KPiBrMlFVdDE1Z3Y4Tkk0
+ZnlxUFlGb0ZWTiUyRmlNN1hLT3poNDVlYXglMkYyZTJIayUzRCZhbXA7cmVzZQ0KPiBydmVkPTA+
+IFR3aXR0ZXIgfA0KPiA8aHR0cHM6Ly9lbWVhMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9v
+ay5jb20vP3VybD1odHRwJTNBJTJGJTJGDQo+IHd3dy5saW5hcm8ub3JnJTJGbGluYXJvLWJsb2cl
+MkYmYW1wO2RhdGE9MDIlN0MwMSU3Q2FuZHkudGFuZyU0MA0KPiBueHAuY29tJTdDMzg5MzM4ZWI1
+YmM0NGQ2YzI2ODMwOGQ2MzI3YmZjMWMlN0M2ODZlYTFkM2JjMmI0DQo+IGM2ZmE5MmNkOTljNWMz
+MDE2MzUlN0MwJTdDMCU3QzYzNjc1MTkwNTQyOTU0NzM0NSZhbXA7c2RhdGENCj4gPWNiVElFdWFZ
+UDRsJTJGTFpSNDVNMjUzUVJmcWdYYlpQdzg3JTJCbzVFZndUenlzJTNEJmFtcDtyZXMNCj4gZXJ2
+ZWQ9MD4gQmxvZw0KDQo=
