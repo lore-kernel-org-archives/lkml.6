@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5F6C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FA2C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADC632087B
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B586C2087B
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cdL/WTHG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADC632087B
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jObYhDzd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B586C2087B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbeJQHrb (ORCPT
+        id S1727940AbeJQHrd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:47:31 -0400
-Received: from mail-it1-f201.google.com ([209.85.166.201]:58263 "EHLO
-        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727526AbeJQHra (ORCPT
+        Wed, 17 Oct 2018 03:47:33 -0400
+Received: from mail-io1-f74.google.com ([209.85.166.74]:48010 "EHLO
+        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727526AbeJQHrc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:47:30 -0400
-Received: by mail-it1-f201.google.com with SMTP id d7-v6so222721itf.7
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:40 -0700 (PDT)
+        Wed, 17 Oct 2018 03:47:32 -0400
+Received: by mail-io1-f74.google.com with SMTP id c21-v6so23253260ioi.14
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=wDfUjpTFuScKe5JOSK0jo+HGTTRhetz+kQRVWENyJS0=;
-        b=cdL/WTHGLGFeVRZQPi0GA7VS9QWPA39qDWYUDKxfj0K8ZnvYhzXxc0dlKh9zoNK+/8
-         5NFq0ybqzXiW0oX3Fxu5zsNkAMag+bGBLsqFd9DPf6Ek3o3qnboiaUx8FjDoVKr/BTPD
-         cZvXDqLB1jf9twv3snl37NsoHfY6BW/TWQKNrQ8BSycAHI+3piQFPzSSLw+XfX2++QDB
-         Lv99kVOuYqcHnwPtn2fJ+8KtvIHPFpCqOZ2x7bj5PRM1ax1/wVH4ZvchOWxBWxAIFnol
-         HidUOJebWRxgtkIziwgrCLseGFjSw/xLl4pGOpfVkOfMcFX6zoGWTDd9dzRp2sYe4PwB
-         xKqg==
+        bh=FPIYCn6EOx1XsTWZ4p6VpTMVblaLhIfS9g7PdcTELME=;
+        b=jObYhDzdAodeqbMaupPyJOZrepJm1v4ub0X324PwVojcSD6LzyRBYEJlGkf5WJ/4iO
+         xFCcn4TF+vvga75ygcFE5OqkwSSNioPrAG5NtFTrZpiOcyiNYFFwjREjywoR6FdAnR6o
+         mvym6+WDHPTe2YlVpA4vkRw1McojScwQZB/0y11Ox51mDiFrxxPrMNXDI6/7O2i0MJbs
+         NyzyQUUgpacKymiZ+cJRCrU4qhwH+yr4D9/IhS5eaPOcgCAp7ts/9oaCvgk4NTW/Cqn9
+         QXAEmzv9NWz/ypXUomOiaLdlMowNBH7nzRHi+j5kKS4EimsM22xRppfl76ZVeacwtf5P
+         i3xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=wDfUjpTFuScKe5JOSK0jo+HGTTRhetz+kQRVWENyJS0=;
-        b=dqQYKbdgY0IXnYBLNoJCQ4O8P35maU7JClPSYut/ojkX8I+ZxGGd/36udEj1/KNHDg
-         hWgVf6xhgiZ0UMZyoam6Zwopz6TIQledB4uOOWTb+8Kw1PtzTjziWIqEdXToOF75KlvK
-         hMHrSA+UklUtRhCViZMcpop9oj+HObVDw3vVrtGWspVM95FQ2kOBBSb9GoY4AlrS2gXZ
-         DtLwJEgEaSz1/w6XQBsCWo4/waUaJOsKuvaSTiiJCcaO9m1OxuYpXtaYz0Iyr8MeUlKK
-         LnL6FGHG/QCyKJgDbyYiW169Uoely1PYT6G5eLVnmprFkGPVhVmDuvb1lilYI5KIyEBi
-         cMGw==
-X-Gm-Message-State: ABuFfohHOpfVkUyQq2UWWTGFKSTC3ejHnmD9mYaA5b5jToeit5j+Ccb/
-        +X+pGSajhc+iMREyUQtbc561VetUyguJjJ2G+JfYWA==
-X-Google-Smtp-Source: ACcGV60fnn6vyQbvIqsJoUCyM0HIqt275NDvsjCWheXNCV4cPttX975jId2HpGF/Krthsvf7AvK26S6Z857gbtlbIDPNog==
-X-Received: by 2002:a24:fe01:: with SMTP id w1-v6mr224481ith.0.1539734080433;
- Tue, 16 Oct 2018 16:54:40 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 16:51:11 -0700
+        bh=FPIYCn6EOx1XsTWZ4p6VpTMVblaLhIfS9g7PdcTELME=;
+        b=aWsQYWsdUvcCKEU8byUHHjbzCir+4BM1pHQmvx1WZwvKeLf3bgNZ9mReCJ96eR7YZW
+         TWP/qtQkHNJ/7SfXd9H17QbLoEe54x+pUvngcahRjBS3ydYCk6xMUwrdIdozZ4ZvAE0H
+         JtCc01RDFeWQSOnVvBeYZWpN+gXGHOu6szQ9TpXplL4tokMW+/J730pnx10C9CulAjXw
+         8EcSBsMKNyUm0fVNDjObJ8YeBguXKB4l4fuHHT1NO3r+BDekIoDY5Oj7yVCZJdP1s2Ky
+         sQO5SVglx9AAvEJMFD4xJMu8d04HcTx2L7XmvkxzHH6VnltRlRkPV874JS2+GDGmnvdG
+         8Q/g==
+X-Gm-Message-State: ABuFfoh22RYYskgzS6Jz6bShR1rPdEd5fApVC+2QDnOi2+uty4hbFzIy
+        fnqhJv0WJOb2seG79JsN45dInsolvIoresLpq+DZGw==
+X-Google-Smtp-Source: ACcGV62ehVJ8AHeD9ZnEiqipPbKj1hD4xI+nJJKTsv8DRZBI3hKxGL6otUBF/c4WZRoECtmpAv/O5TQ2IAmPVzpPgWWMTg==
+X-Received: by 2002:a24:8903:: with SMTP id s3-v6mr211702itd.26.1539734082598;
+ Tue, 16 Oct 2018 16:54:42 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 16:51:12 -0700
 In-Reply-To: <20181016235120.138227-1-brendanhiggins@google.com>
-Message-Id: <20181016235120.138227-23-brendanhiggins@google.com>
+Message-Id: <20181016235120.138227-24-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20181016235120.138227-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
-Subject: [RFC v1 22/31] kunit: mock: add the concept of spyable functions
+Subject: [RFC v1 23/31] kunit: mock: add parameter capturers
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
         shuah@kernel.org
@@ -77,234 +77,198 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds the concept of spying like in Mockito
-(http://static.javadoc.io/org.mockito/mockito-core/2.20.0/org/mockito/Mockito.html#spy-T-).
-This allows a function declaration to be labled as spyable which allows
-the function to be mocked *and* to allow the mock to invoke the original
-function definition.
+Adds the concept of an argument capturer which, when used with a matcher
+in an EXPECT_CALL(...), will capture the value of the matching argument.
 
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- include/kunit/mock.h | 123 ++++++++++++++++++++++++++++++++++++++++++-
- kunit/common-mocks.c |  36 +++++++++++++
- 2 files changed, 158 insertions(+), 1 deletion(-)
+ include/kunit/mock.h | 83 ++++++++++++++++++++++++++++++++++++++++++++
+ kunit/common-mocks.c | 78 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 161 insertions(+)
 
 diff --git a/include/kunit/mock.h b/include/kunit/mock.h
-index b58e30ba02ce2..c3615e80d96ee 100644
+index c3615e80d96ee..0e1aa568709a1 100644
 --- a/include/kunit/mock.h
 +++ b/include/kunit/mock.h
-@@ -284,6 +284,13 @@ static inline bool is_naggy_mock(struct mock *mock)
- 		DECLARE_MOCK_CLIENT(name, return_type, param_types);	       \
- 		DECLARE_MOCK_MASTER(name, handle_index, param_types)
- 
-+#define DECLARE_SPYABLE(name, return_type, param_types...)		       \
-+		return_type REAL_ID(name)(param_types);			       \
-+		return_type name(param_types);				       \
-+		void *INVOKE_ID(name)(struct test *test,		       \
-+				      const void *params[],		       \
-+				      int len)
-+
- #define DECLARE_MOCK_FUNC_CLIENT(name, return_type, param_types...) \
- 		DECLARE_MOCK_CLIENT(name, return_type, param_types)
- 
-@@ -465,6 +472,100 @@ static inline bool is_naggy_mock(struct mock *mock)
- 			RETURN(return_type, retval);			       \
- 		}
- 
-+#if IS_ENABLED(CONFIG_KUNIT)
-+#define DEFINE_INVOKABLE(name, return_type, RETURN_ASSIGN, param_types...)     \
-+		void *INVOKE_ID(name)(struct test *test,		       \
-+				      const void *params[],		       \
-+				      int len) {			       \
-+			return_type *retval;				       \
-+									       \
-+			TEST_ASSERT_EQ(test, NUM_VA_ARGS(param_types), len);   \
-+			retval = test_kzalloc(test,			       \
-+					      sizeof(*retval),		       \
-+					      GFP_KERNEL);		       \
-+			TEST_ASSERT_NOT_ERR_OR_NULL(test, retval);	       \
-+			RETURN_ASSIGN() REAL_ID(name)(			       \
-+					ARRAY_ACCESSORS_FROM_TYPES(	       \
-+							param_types));	       \
-+			return retval;					       \
-+		}
-+#else
-+#define DEFINE_INVOKABLE(name, return_type, RETURN_ASSIGN, param_types...)
-+#endif
-+
-+#define DEFINE_SPYABLE_COMMON(name,					       \
-+			      return_type,				       \
-+			      RETURN_ASSIGN,				       \
-+			      param_types...)				       \
-+		return_type REAL_ID(name)(param_types);			       \
-+		return_type name(param_types) __mockable_alias(REAL_ID(name)); \
-+		DEFINE_INVOKABLE(name, return_type, RETURN_ASSIGN, param_types);
-+
-+#define ASSIGN() *retval =
-+
-+/**
-+ * DEFINE_SPYABLE()
-+ * @name: name of the function
-+ * @return_type: return type of the function
-+ * @param_types: parameter types of the function
-+ *
-+ * Used to define a function which is *redirect-mockable*, which allows the
-+ * function to be mocked and refer to the original definition via
-+ * INVOKE_REAL().
-+ *
-+ * Example:
-+ *
-+ * .. code-block:: c
-+ *
-+ *	DEFINE_SPYABLE(i2c_add_adapter,
-+ *	               RETURNS(int), PARAMS(struct i2c_adapter *));
-+ *	int REAL_ID(i2c_add_adapter)(struct i2c_adapter *adapter)
-+ *	{
-+ *		...
-+ *	}
-+ *
-+ *	static int aspeed_i2c_test_init(struct test *test)
-+ *	{
-+ *		struct mock_param_capturer *adap_capturer;
-+ *		struct mock_expectation *handle;
-+ *		struct aspeed_i2c_test *ctx;
-+ *		int ret;
-+ *
-+ *		ctx = test_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-+ *		if (!ctx)
-+ *			return -ENOMEM;
-+ *		test->priv = ctx;
-+ *
-+ *		handle = TEST_EXPECT_CALL(
-+ *				i2c_add_adapter(capturer_to_matcher(
-+ *						adap_capturer)));
-+ *		handle->action = INVOKE_REAL(test, i2c_add_adapter);
-+ *		ret = of_fake_probe_platform_by_name(test,
-+ *						     "aspeed-i2c-bus",
-+ *						     "test-i2c-bus");
-+ *		if (ret < 0)
-+ *			return ret;
-+ *
-+ *		TEST_ASSERT_PARAM_CAPTURED(test, adap_capturer);
-+ *		ctx->adap = mock_capturer_get(adap_capturer,
-+ *					      struct i2c_adapter *);
-+ *
-+ *		return 0;
-+ *	}
-+ */
-+#define DEFINE_SPYABLE(name, return_type, param_types...)		       \
-+		DEFINE_SPYABLE_COMMON(name,				       \
-+						return_type,		       \
-+						ASSIGN,			       \
-+						param_types)
-+
-+#define NO_ASSIGN()
-+#define DEFINE_SPYABLE_VOID_RETURN(name, param_types)			       \
-+		DEFINE_SPYABLE_COMMON(name,				       \
-+				      void,				       \
-+				      NO_ASSIGN,			       \
-+				      param_types)
-+
- #define CLASS_MOCK_CLIENT_SOURCE(ctx, handle_index) ctx(arg##handle_index)
- #define DEFINE_MOCK_METHOD_CLIENT_COMMON(name,				       \
- 					 handle_index,			       \
-@@ -745,7 +846,7 @@ DECLARE_STRUCT_CLASS_MOCK_INIT(void);
-  * @...: parameter types of the function
-  *
-  * Same as DEFINE_STRUCT_CLASS_MOCK() except can be used to mock any function
-- * declared %__mockable or DEFINE_REDIRECT_MOCKABLE()
-+ * declared %__mockable or DEFINE_SPYABLE()
-  */
- #define DEFINE_FUNCTION_MOCK(name, return_type, param_types...) \
- 		DEFINE_FUNCTION_MOCK_INTERNAL(name, return_type, param_types)
-@@ -777,6 +878,7 @@ DECLARE_STRUCT_CLASS_MOCK_INIT(void);
-  *	int __mockable example(int arg) { ... }
-  */
- #define __mockable __weak
-+#define __mockable_alias(id) __weak __alias(id)
- 
- /**
-  * __visible_for_testing - Makes a static function visible when testing.
-@@ -788,6 +890,7 @@ DECLARE_STRUCT_CLASS_MOCK_INIT(void);
- #define __visible_for_testing
- #else
- #define __mockable
-+#define __mockable_alias(id) __alias(id)
- #define __visible_for_testing static
- #endif
- 
-@@ -1069,6 +1172,24 @@ struct mock_param_matcher *test_struct_cmp(
+@@ -1172,6 +1172,89 @@ struct mock_param_matcher *test_struct_cmp(
  		const char *struct_name,
  		struct mock_struct_matcher_entry *entries);
  
-+struct mock_action *invoke(struct test *test,
-+			   void *(*invokable)(struct test *,
-+					      const void *params[],
-+					      int len));
-+
 +/**
-+ * INVOKE_REAL()
-+ * @test: associated test
-+ * @func_name: name of the function
++ * struct mock_param_capturer - used to capture parameter when matching
 + *
-+ * See DEFINE_SPYABLE() for an example.
++ * Use the associated helper macros to access relevant fields.
++ * Example:
 + *
-+ * Return: &struct mock_action that makes the associated mock method or function
-+ *         call the original function definition of a redirect-mockable
-+ *         function.
++ * .. code-block::c
++ *
++ *	static int some_test(struct test *test)
++ *	{
++ *		// imagine a mocked function: int add(int a, int b)
++ *		struct mock_param_capturer *capturer =
++ *			mock_int_capturer_create(test, any(test));
++ *		TEST_EXPECT_CALL(add(any(test), capturer_to_matcher(capturer)));
++ *		TEST_ASSERT_PARAM_CAPTURED(test, capturer);
++ *
++ *		int captured_value = mock_capturer_get(capturer, int);
++ *	}
 + */
-+#define INVOKE_REAL(test, func_name) invoke(test, INVOKE_ID(func_name))
-+
- struct mock_struct_formatter_entry {
- 	size_t member_offset;
- 	struct mock_param_formatter *formatter;
-diff --git a/kunit/common-mocks.c b/kunit/common-mocks.c
-index 1c52522808cab..ce0159923814d 100644
---- a/kunit/common-mocks.c
-+++ b/kunit/common-mocks.c
-@@ -386,6 +386,42 @@ DEFINE_RETURN_ACTION_WITH_TYPENAME(longlong, long long);
- DEFINE_RETURN_ACTION_WITH_TYPENAME(ulonglong, unsigned long long);
- DEFINE_RETURN_ACTION_WITH_TYPENAME(ptr, void *);
- 
-+struct mock_invoke_action {
-+	struct mock_action action;
-+	struct test *test;
-+	void *(*invokable)(struct test *test, const void *params[], int len);
++struct mock_param_capturer {
++	/* private: internal use only. */
++	struct mock_param_matcher matcher;
++	struct mock_param_matcher *child_matcher;
++	void *(*capture_param)(struct test *test, const void *param);
++	void *captured_param;
 +};
 +
-+static void *do_invoke(struct mock_action *paction,
-+		       const void *params[],
-+		       int len)
-+{
-+	struct mock_invoke_action *action =
-+			container_of(paction,
-+				     struct mock_invoke_action,
-+				     action);
++struct mock_param_capturer *mock_param_capturer_create(
++		struct test *test,
++		struct mock_param_matcher *child_matcher,
++		void *(*capture_param)(struct test *, const void *));
 +
-+	return action->invokable(action->test, params, len);
++/**
++ * mock_int_capturer_create() - creates a int parameter capturer
++ * @test: associated test
++ * @child_matcher: matcher used to match the integer
++ *
++ * The capturer will capture the value if the matcher is satisfied.
++ */
++struct mock_param_capturer *mock_int_capturer_create(
++		struct test *test, struct mock_param_matcher *child_matcher);
++
++/**
++ * mock_int_capturer_create() - creates a generic pointer parameter capturer
++ * @test: associated test
++ * @child_matcher: matcher used to match the pointer
++ *
++ * The capturer will capture the value if the matcher is satisfied
++ */
++struct mock_param_capturer *mock_ptr_capturer_create(
++		struct test *test, struct mock_param_matcher *child_matcher);
++
++/**
++ * capturer_to_matcher()
++ * @capturer: the param capturer
++ *
++ * Use this function when passing a capturer into an EXPECT_CALL() where a
++ * matcher would be expected. See the example for &struct mock_param_capturer.
++ */
++#define capturer_to_matcher(capturer) (&(capturer)->matcher)
++
++/**
++ * TEST_ASSERT_PARAM_CAPTURED(): Asserts that a parameter has been captured.
++ * @test: the associated test
++ * @capturer: the param capturer
++ *
++ * See &struct mock_param_capturer for an example.
++ */
++#define TEST_ASSERT_PARAM_CAPTURED(test, capturer)			       \
++		TEST_ASSERT(test,					       \
++		       !IS_ERR_OR_NULL((capturer)->captured_param),	       \
++		       "Asserted " #capturer " captured param, but did not.")
++
++/**
++ * mock_capturer_get(): Returns the value captured by ``capturer``
++ * @capturer: the param capturer
++ * @type: the type of the value
++ *
++ * See &struct mock_param_capturer for an example.
++ */
++#define mock_capturer_get(capturer, type) \
++		CONVERT_TO_ACTUAL_TYPE(type, (capturer)->captured_param)
++
+ struct mock_action *invoke(struct test *test,
+ 			   void *(*invokable)(struct test *,
+ 					      const void *params[],
+diff --git a/kunit/common-mocks.c b/kunit/common-mocks.c
+index ce0159923814d..62528b7df83c6 100644
+--- a/kunit/common-mocks.c
++++ b/kunit/common-mocks.c
+@@ -323,6 +323,84 @@ struct mock_param_matcher *test_struct_cmp(
+ 	return &matcher->matcher;
+ }
+ 
++static bool match_and_capture_param(struct mock_param_matcher *pmatcher,
++				    struct test_stream *stream,
++				    const void *param)
++{
++	struct mock_param_capturer *capturer =
++			container_of(pmatcher,
++				     struct mock_param_capturer,
++				     matcher);
++	struct mock_param_matcher *child_matcher = capturer->child_matcher;
++	bool matches;
++
++	matches = child_matcher->match(child_matcher, stream, param);
++	if (matches)
++		capturer->captured_param = capturer->capture_param(stream->test,
++								   param);
++
++	return matches;
 +}
 +
-+struct mock_action *invoke(struct test *test,
-+			   void *(*invokable)(struct test *,
-+					      const void *params[],
-+					      int len))
++struct mock_param_capturer *mock_param_capturer_create(
++		struct test *test,
++		struct mock_param_matcher *child_matcher,
++		void *(*capture_param)(struct test *, const void *))
 +{
-+	struct mock_invoke_action *action;
++	struct mock_param_capturer *capturer;
 +
-+	action = test_kmalloc(test, sizeof(*action), GFP_KERNEL);
-+	if (!action)
++	capturer = test_kzalloc(test, sizeof(*capturer), GFP_KERNEL);
++	if (!capturer)
 +		return NULL;
 +
-+	action->action.do_action = do_invoke;
-+	action->test = test;
-+	action->invokable = invokable;
++	capturer->matcher.match = match_and_capture_param;
++	capturer->child_matcher = child_matcher;
++	capturer->capture_param = capture_param;
++	capturer->captured_param = NULL;
 +
-+	return &action->action;
++	return capturer;
 +}
 +
- struct mock_param_integer_formatter {
- 	struct mock_param_formatter formatter;
- 	const char *fmt_str;
++static void *mock_capture_int(struct test *test, const void *param)
++{
++	int value = CONVERT_TO_ACTUAL_TYPE(int, param);
++	int *pvalue;
++
++	pvalue = test_kzalloc(test, sizeof(*pvalue), GFP_KERNEL);
++	if (!pvalue)
++		return NULL;
++	*pvalue = value;
++
++	return pvalue;
++}
++
++struct mock_param_capturer *mock_int_capturer_create(
++		struct test *test, struct mock_param_matcher *child_matcher)
++{
++	return mock_param_capturer_create(test,
++					  child_matcher,
++					  mock_capture_int);
++}
++
++static void *mock_capture_ptr(struct test *test, const void *param)
++{
++	void *ptr = CONVERT_TO_ACTUAL_TYPE(void *, param);
++	void **pptr;
++
++	pptr = test_kzalloc(test, sizeof(*pptr), GFP_KERNEL);
++	*pptr = ptr;
++
++	return pptr;
++}
++
++struct mock_param_capturer *mock_ptr_capturer_create(
++		struct test *test, struct mock_param_matcher *child_matcher)
++{
++	return mock_param_capturer_create(test,
++					  child_matcher,
++					  mock_capture_ptr);
++}
++
+ #define DEFINE_RETURN_ACTION_STRUCT(type_name, type)			       \
+ 		struct mock_##type_name##_action {			       \
+ 			struct mock_action action;			       \
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
