@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4028C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F6AC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:14:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2AC20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:13:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D19152089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:14:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="irzvmnCZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2AC20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2u1mEjIK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D19152089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbeJQBFS (ORCPT
+        id S1729027AbeJQBFV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:05:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48554 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:05:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbeJQBFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:05:17 -0400
+        id S1727280AbeJQBFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:05:20 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05E9620866;
-        Tue, 16 Oct 2018 17:13:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F69421477;
+        Tue, 16 Oct 2018 17:13:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710034;
-        bh=rE1iPSM7JRQONVBZi5I1HTPB+863oL079uf/lhsatmM=;
+        s=default; t=1539710037;
+        bh=1/Nlq49b31EVc0tWvedHsnUami2pjzeBwcwNeqi9GJA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=irzvmnCZHf0//oJaEhNbL1/1RozXhtHNZwWkyk1V1q+gfoai6Rwge9oijIJl1LUuD
-         bqQ+t7sS28OfuAevQKV3qQ3mgsG5c9T+tft1LNH84Hzk6fYoysmWA44HAZknS5Nnje
-         N7m0G8BlUQrUzvVF9p6ZYsc6Z7ZBnGR+d/adYa1A=
+        b=2u1mEjIKfbc906z3C1RNbz3r7H2lfD4B6nZi7azrQ9hmtkqZDxTbbhfbP3d7umB5s
+         NxzsT8dhb0w5ov0Ca764dvTlf3B7IO3jJh1io74R0Ed5e+Ep4cA6tfvj3gYpUg7Ix3
+         5TnDcmAm5H2yfhAv9TEbWVgoOZ6LMgSRsL9Cviyk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>
-Subject: [PATCH 4.18 044/135] net-ethtool: ETHTOOL_GUFO did not and should not require CAP_NET_ADMIN
-Date:   Tue, 16 Oct 2018 19:04:34 +0200
-Message-Id: <20181016170517.824538847@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Baruch Siach <baruch@tkos.co.il>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 045/135] net: phy: phylink: fix SFP interface autodetection
+Date:   Tue, 16 Oct 2018 19:04:35 +0200
+Message-Id: <20181016170517.876127514@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -62,47 +63,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Maciej Żenczykowski" <maze@google.com>
+From: Baruch Siach <baruch@tkos.co.il>
 
-[ Upstream commit 474ff2600889e16280dbc6ada8bfecb216169a70 ]
+[ Upstream commit 7e4183752735deb7543e179a44f4f4b44917cd6f ]
 
-So it should not fail with EPERM even though it is no longer implemented...
+When connecting SFP PHY to phylink use the detected interface.
+Otherwise, the link fails to come up when the configured 'phy-mode'
+differs from the SFP detected mode.
 
-This is a fix for:
-  (userns)$ egrep ^Cap /proc/self/status
-  CapInh: 0000003fffffffff
-  CapPrm: 0000003fffffffff
-  CapEff: 0000003fffffffff
-  CapBnd: 0000003fffffffff
-  CapAmb: 0000003fffffffff
+Move most of phylink_connect_phy() into __phylink_connect_phy(), and
+leave phylink_connect_phy() as a wrapper. phylink_sfp_connect_phy() can
+now pass the SFP detected PHY interface to __phylink_connect_phy().
 
-  (userns)$ tcpdump -i usb_rndis0
-  tcpdump: WARNING: usb_rndis0: SIOCETHTOOL(ETHTOOL_GUFO) ioctl failed: Operation not permitted
-  Warning: Kernel filter failed: Bad file descriptor
-  tcpdump: can't remove kernel filter: Bad file descriptor
+This fixes 1GB SFP module link up on eth3 of the Macchiatobin board that
+is configured in the DT to "2500base-x" phy-mode.
 
-With this change it returns EOPNOTSUPP instead of EPERM.
-
-See also https://github.com/the-tcpdump-group/libpcap/issues/689
-
-Fixes: 08a00fea6de2 "net: Remove references to NETIF_F_UFO from ethtool."
-Cc: David S. Miller <davem@davemloft.net>
-Signed-off-by: Maciej Żenczykowski <maze@google.com>
+Fixes: 9525ae83959b6 ("phylink: add phylink infrastructure")
+Suggested-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/ethtool.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/phy/phylink.c |   48 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 28 insertions(+), 20 deletions(-)
 
---- a/net/core/ethtool.c
-+++ b/net/core/ethtool.c
-@@ -2623,6 +2623,7 @@ int dev_ethtool(struct net *net, struct
- 	case ETHTOOL_GPHYSTATS:
- 	case ETHTOOL_GTSO:
- 	case ETHTOOL_GPERMADDR:
-+	case ETHTOOL_GUFO:
- 	case ETHTOOL_GGSO:
- 	case ETHTOOL_GGRO:
- 	case ETHTOOL_GFLAGS:
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -717,6 +717,30 @@ static int phylink_bringup_phy(struct ph
+ 	return 0;
+ }
+ 
++static int __phylink_connect_phy(struct phylink *pl, struct phy_device *phy,
++		phy_interface_t interface)
++{
++	int ret;
++
++	if (WARN_ON(pl->link_an_mode == MLO_AN_FIXED ||
++		    (pl->link_an_mode == MLO_AN_INBAND &&
++		     phy_interface_mode_is_8023z(interface))))
++		return -EINVAL;
++
++	if (pl->phydev)
++		return -EBUSY;
++
++	ret = phy_attach_direct(pl->netdev, phy, 0, interface);
++	if (ret)
++		return ret;
++
++	ret = phylink_bringup_phy(pl, phy);
++	if (ret)
++		phy_detach(phy);
++
++	return ret;
++}
++
+ /**
+  * phylink_connect_phy() - connect a PHY to the phylink instance
+  * @pl: a pointer to a &struct phylink returned from phylink_create()
+@@ -734,31 +758,13 @@ static int phylink_bringup_phy(struct ph
+  */
+ int phylink_connect_phy(struct phylink *pl, struct phy_device *phy)
+ {
+-	int ret;
+-
+-	if (WARN_ON(pl->link_an_mode == MLO_AN_FIXED ||
+-		    (pl->link_an_mode == MLO_AN_INBAND &&
+-		     phy_interface_mode_is_8023z(pl->link_interface))))
+-		return -EINVAL;
+-
+-	if (pl->phydev)
+-		return -EBUSY;
+-
+ 	/* Use PHY device/driver interface */
+ 	if (pl->link_interface == PHY_INTERFACE_MODE_NA) {
+ 		pl->link_interface = phy->interface;
+ 		pl->link_config.interface = pl->link_interface;
+ 	}
+ 
+-	ret = phy_attach_direct(pl->netdev, phy, 0, pl->link_interface);
+-	if (ret)
+-		return ret;
+-
+-	ret = phylink_bringup_phy(pl, phy);
+-	if (ret)
+-		phy_detach(phy);
+-
+-	return ret;
++	return __phylink_connect_phy(pl, phy, pl->link_interface);
+ }
+ EXPORT_SYMBOL_GPL(phylink_connect_phy);
+ 
+@@ -1672,7 +1678,9 @@ static void phylink_sfp_link_up(void *up
+ 
+ static int phylink_sfp_connect_phy(void *upstream, struct phy_device *phy)
+ {
+-	return phylink_connect_phy(upstream, phy);
++	struct phylink *pl = upstream;
++
++	return __phylink_connect_phy(upstream, phy, pl->link_config.interface);
+ }
+ 
+ static void phylink_sfp_disconnect_phy(void *upstream)
 
 
