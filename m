@@ -4,45 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB7FCC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AC6C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6908D20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:26:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51EBD20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:26:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJ6b1dX1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6908D20869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PoV51GvC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51EBD20866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729160AbeJPMCm (ORCPT
+        id S1729416AbeJPMPR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50732 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:15:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729122AbeJPMCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:41 -0400
+        id S1729154AbeJPMCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:42 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA3DF21476;
-        Tue, 16 Oct 2018 04:14:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D1702145D;
+        Tue, 16 Oct 2018 04:14:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663259;
-        bh=XyePttqO5ci93MoZpPcXXmtl0FDXoQlMhLSURljSlfo=;
+        s=default; t=1539663260;
+        bh=/KbeZPtHZ+vTHNuort622oR41w455A7HjTDUPMIt2aI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NJ6b1dX1cC//wm5NDUQNwCXiG1HNE1zymFpF7l9/1++M5uUW3UbhYQkuyJCcs0T71
-         y3EDWlTU2hOAtWZdgl5o6XbzNrOXRJT60IsMuDEvYFuthG43s2vReFNa+RalOaLLyU
-         eaoG7nqsiAzRvqo9G9CI/ZnsSfiqeurxFTU/0Be4=
+        b=PoV51GvCt10zy49oL+rAixuy/InvnGz/JkOGay1jzutl60N2wO8AR56lD3yyqk6Dc
+         FjQQ2LdvOH1LNEqPfLx9weTpumCm3bVHkFl3x6tBPixceCV+2N7RT2QwnQ7Y6h6KXD
+         lKcyfVEChrpdSFsQDNrdkC6aGl9Yun31gvD9KNzE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 16/61] ARM: dts: BCM63xx: Fix incorrect interrupt specifiers
-Date:   Tue, 16 Oct 2018 00:13:18 -0400
-Message-Id: <20181016041403.135678-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 17/61] net: macb: Clean 64b dma addresses if they are not detected
+Date:   Tue, 16 Oct 2018 00:13:19 -0400
+Message-Id: <20181016041403.135678-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -51,79 +53,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Michal Simek <michal.simek@xilinx.com>
 
-[ Upstream commit 3ab97942d0213b6583a5408630a8cbbfbf54730f ]
+[ Upstream commit e1e5d8a9fe737d94ccc0ccbaf0c97f69a8f3e000 ]
 
-A number of our interrupts were incorrectly specified, fix both the PPI
-and SPI interrupts to be correct.
+Clear ADDR64 dma bit in DMACFG register in case that HW_DMA_CAP_64B is
+not detected on 64bit system.
+The issue was observed when bootloader(u-boot) does not check macb
+feature at DCFG6 register (DAW64_OFFSET) and enabling 64bit dma support
+by default. Then macb driver is reading DMACFG register back and only
+adding 64bit dma configuration but not cleaning it out.
 
-Fixes: b5762cacc411 ("ARM: bcm63138: add NAND DT support")
-Fixes: 46d4bca0445a ("ARM: BCM63XX: add BCM63138 minimal Device Tree")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/bcm63138.dtsi | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/cadence/macb_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
-index 43ee992ccdcf..6df61518776f 100644
---- a/arch/arm/boot/dts/bcm63138.dtsi
-+++ b/arch/arm/boot/dts/bcm63138.dtsi
-@@ -106,21 +106,23 @@
- 		global_timer: timer@1e200 {
- 			compatible = "arm,cortex-a9-global-timer";
- 			reg = <0x1e200 0x20>;
--			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_PPI 11 IRQ_TYPE_EDGE_RISING>;
- 			clocks = <&axi_clk>;
- 		};
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index c1787be6a258..aaf450e2ecc5 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -2000,6 +2000,7 @@ static void macb_configure_dma(struct macb *bp)
+ 		else
+ 			dmacfg &= ~GEM_BIT(TXCOEN);
  
- 		local_timer: local-timer@1e600 {
- 			compatible = "arm,cortex-a9-twd-timer";
- 			reg = <0x1e600 0x20>;
--			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_EDGE_RISING)>;
- 			clocks = <&axi_clk>;
- 		};
- 
- 		twd_watchdog: watchdog@1e620 {
- 			compatible = "arm,cortex-a9-twd-wdt";
- 			reg = <0x1e620 0x20>;
--			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_HIGH)>;
- 		};
- 
- 		armpll: armpll {
-@@ -158,7 +160,7 @@
- 		serial0: serial@600 {
- 			compatible = "brcm,bcm6345-uart";
- 			reg = <0x600 0x1b>;
--			interrupts = <GIC_SPI 32 0>;
-+			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&periph_clk>;
- 			clock-names = "periph";
- 			status = "disabled";
-@@ -167,7 +169,7 @@
- 		serial1: serial@620 {
- 			compatible = "brcm,bcm6345-uart";
- 			reg = <0x620 0x1b>;
--			interrupts = <GIC_SPI 33 0>;
-+			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&periph_clk>;
- 			clock-names = "periph";
- 			status = "disabled";
-@@ -180,7 +182,7 @@
- 			reg = <0x2000 0x600>, <0xf0 0x10>;
- 			reg-names = "nand", "nand-int-base";
- 			status = "disabled";
--			interrupts = <GIC_SPI 38 0>;
-+			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "nand";
- 		};
- 
++		dmacfg &= ~GEM_BIT(ADDR64);
+ #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+ 		if (bp->hw_dma_cap & HW_DMA_CAP_64B)
+ 			dmacfg |= GEM_BIT(ADDR64);
 -- 
 2.17.1
 
