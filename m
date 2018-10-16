@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B16EC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76470C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE3E220869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2761F20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:23:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxNUJbmi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE3E220869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l07eMoI3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2761F20866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729995AbeJPMLO (ORCPT
+        id S1730000AbeJPML0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:11:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52538 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:11:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729738AbeJPMDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:03:54 -0400
+        id S1729721AbeJPMDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:03:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B1BD2148D;
-        Tue, 16 Oct 2018 04:15:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B6C720866;
+        Tue, 16 Oct 2018 04:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663331;
-        bh=Ps2eGwNseGaNhLWnnzxV5d5bMyU/9f/LEvv1j2x05tA=;
+        s=default; t=1539663329;
+        bh=1IlUiw3aPSkPTp47I1mJfGXbX6SjnwBY9aUfdNdq0Rs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dxNUJbmiaABfeFFUYGWh8wKFCKSq/zubpeaBOI1cwVuWZWx9x0znw9aRUUK5/oSYm
-         r2g/ygiKhphkCRJE9atHHYDGRfdNXxl1PBGIuahBeJqk/oQ6fXaMf22MT+BF8GjrPd
-         O9ICae31+L/3UPUYjlCa4fM741jSUBKJTvaZeo8o=
+        b=l07eMoI3NjAFM0NjdkyduUwViVXQ1qSx22ETKFt+CEygL7mOhvuK3GiPEokR8qIyB
+         cqiPu9T+JI/PQUPrdcMZPBQbteS8Kr0BIWb8c51AeJdJRiq79rTZIM3LKp6sc1LDI4
+         ACPO7kbIozmUNDppPPGz9PURBpfEunw97zTM4vbc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Johannes Berg <johannes.berg@intel.com>,
+Cc:     Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 07/38] mac80211: TDLS: fix skb queue/priority assignment
-Date:   Tue, 16 Oct 2018 00:14:51 -0400
-Message-Id: <20181016041522.135789-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 04/38] cfg80211: reg: Init wiphy_idx in regulatory_hint_core()
+Date:   Tue, 16 Oct 2018 00:14:48 -0400
+Message-Id: <20181016041522.135789-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041522.135789-1-sashal@kernel.org>
 References: <20181016041522.135789-1-sashal@kernel.org>
@@ -52,55 +54,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
 
-[ Upstream commit cb59bc14e830028d2244861216df038165d7625d ]
+[ Upstream commit 24f33e64fcd0d50a4b1a8e5b41bd0257aa66b0e8 ]
 
-If the TDLS setup happens over a connection to an AP that
-doesn't have QoS, we nevertheless assign a non-zero TID
-(skb->priority) and queue mapping, which may confuse us or
-drivers later.
+Core regulatory hints didn't set wiphy_idx to WIPHY_IDX_INVALID. Since
+the regulatory request is zeroed, wiphy_idx was always implicitly set to
+0. This resulted in updating only phy #0.
+Fix that.
 
-Fix it by just assigning the special skb->priority and then
-using ieee80211_select_queue() just like other data frames
-would go through.
-
+Fixes: 806a9e39670b ("cfg80211: make regulatory_request use wiphy_idx instead of wiphy")
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+[add fixes tag]
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/tdls.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/wireless/reg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/mac80211/tdls.c b/net/mac80211/tdls.c
-index f20dcf1b1830..c64ae68ae4f8 100644
---- a/net/mac80211/tdls.c
-+++ b/net/mac80211/tdls.c
-@@ -16,6 +16,7 @@
- #include "ieee80211_i.h"
- #include "driver-ops.h"
- #include "rate.h"
-+#include "wme.h"
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 5dbac3749738..36d1d25082e3 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -2298,6 +2298,7 @@ static int regulatory_hint_core(const char *alpha2)
+ 	request->alpha2[0] = alpha2[0];
+ 	request->alpha2[1] = alpha2[1];
+ 	request->initiator = NL80211_REGDOM_SET_BY_CORE;
++	request->wiphy_idx = WIPHY_IDX_INVALID;
  
- /* give usermode some time for retries in setting up the TDLS session */
- #define TDLS_PEER_SETUP_TIMEOUT	(15 * HZ)
-@@ -1019,14 +1020,13 @@ ieee80211_tdls_prep_mgmt_packet(struct wiphy *wiphy, struct net_device *dev,
- 	switch (action_code) {
- 	case WLAN_TDLS_SETUP_REQUEST:
- 	case WLAN_TDLS_SETUP_RESPONSE:
--		skb_set_queue_mapping(skb, IEEE80211_AC_BK);
--		skb->priority = 2;
-+		skb->priority = 256 + 2;
- 		break;
- 	default:
--		skb_set_queue_mapping(skb, IEEE80211_AC_VI);
--		skb->priority = 5;
-+		skb->priority = 256 + 5;
- 		break;
- 	}
-+	skb_set_queue_mapping(skb, ieee80211_select_queue(sdata, skb));
+ 	queue_regulatory_request(request);
  
- 	/*
- 	 * Set the WLAN_TDLS_TEARDOWN flag to indicate a teardown in progress.
 -- 
 2.17.1
 
