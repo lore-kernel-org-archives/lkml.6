@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81EEBC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9545FC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E32921479
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D0CF2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:22:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="okObfftN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E32921479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVa3PJ6o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D0CF2089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731166AbeJQBOB (ORCPT
+        id S1731180AbeJQBOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:14:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60294 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:14:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729116AbeJQBOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:14:00 -0400
+        id S1729116AbeJQBOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:14:03 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E43A20658;
-        Tue, 16 Oct 2018 17:22:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 756FC20658;
+        Tue, 16 Oct 2018 17:22:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710555;
-        bh=xmqqmEsPA+Vs3GwsfXUvyaXEltPEQeWQkeGuaDmuQ3Y=;
+        s=default; t=1539710558;
+        bh=YJDdC9982jhdeQwDy2i57bI66sfv1fu0wuFPZxjpf3I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=okObfftNKp0BbEN7vZ0Zx+O0Adb/q5PsVQVq2cAC1WKfGC3EoNHAhv/2yN3XOaP4T
-         WDNM/gWXCaK0z8dINBbHPvn0orONKStUIkgA5XUoWLbKBuqiSXiV6JPP9qX/cAUtYF
-         eveCfdgaHJ3n/ne+cUhhqvdXeQMZZY5EYKzDqcKA=
+        b=hVa3PJ6oYZc4GKfQSQE/Xl+dswdciBkYJmzYm3SyF22CpqoO2iofP41tYQ8yqvnRL
+         jukvW9aGA6FVtU/BpkFLCcZsS1ejSHxv/TOk5CofZE1Q1A1K9M+sMN1AfPNVZf7T/n
+         xu2oknBIIsPgtl+8IKN41kIzGFcl9Evivydid46A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.14 077/109] mm: Preserve _PAGE_DEVMAP across mprotect() calls
-Date:   Tue, 16 Oct 2018 19:05:45 +0200
-Message-Id: <20181016170529.077156063@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 01/71] ASoC: wm8804: Add ACPI support
+Date:   Tue, 16 Oct 2018 19:08:58 +0200
+Message-Id: <20181016170539.395580941@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
-References: <20181016170524.530541524@linuxfoundation.org>
+In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
+References: <20181016170539.315587743@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -60,90 +60,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-commit 4628a64591e6cee181237060961e98c615c33966 upstream.
+[ Upstream commit 960cdd50ca9fdfeb82c2757107bcb7f93c8d7d41 ]
 
-Currently _PAGE_DEVMAP bit is not preserved in mprotect(2) calls. As a
-result we will see warnings such as:
+HID made of either Wolfson/CirrusLogic PCI ID + 8804 identifier.
 
-BUG: Bad page map in process JobWrk0013  pte:800001803875ea25 pmd:7624381067
-addr:00007f0930720000 vm_flags:280000f9 anon_vma:          (null) mapping:ffff97f2384056f0 index:0
-file:457-000000fe00000030-00000009-000000ca-00000001_2001.fileblock fault:xfs_filemap_fault [xfs] mmap:xfs_file_mmap [xfs] readpage:          (null)
-CPU: 3 PID: 15848 Comm: JobWrk0013 Tainted: G        W          4.12.14-2.g7573215-default #1 SLE12-SP4 (unreleased)
-Hardware name: Intel Corporation S2600WFD/S2600WFD, BIOS SE5C620.86B.01.00.0833.051120182255 05/11/2018
-Call Trace:
- dump_stack+0x5a/0x75
- print_bad_pte+0x217/0x2c0
- ? enqueue_task_fair+0x76/0x9f0
- _vm_normal_page+0xe5/0x100
- zap_pte_range+0x148/0x740
- unmap_page_range+0x39a/0x4b0
- unmap_vmas+0x42/0x90
- unmap_region+0x99/0xf0
- ? vma_gap_callbacks_rotate+0x1a/0x20
- do_munmap+0x255/0x3a0
- vm_munmap+0x54/0x80
- SyS_munmap+0x1d/0x30
- do_syscall_64+0x74/0x150
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-...
+This helps enumerate the HifiBerry Digi+ HAT boards on the Up2 platform.
 
-when mprotect(2) gets used on DAX mappings. Also there is a wide variety
-of other failures that can result from the missing _PAGE_DEVMAP flag
-when the area gets used by get_user_pages() later.
+The scripts at https://github.com/thesofproject/acpi-scripts can be
+used to add the ACPI initrd overlays.
 
-Fix the problem by including _PAGE_DEVMAP in a set of flags that get
-preserved by mprotect(2).
-
-Fixes: 69660fd797c3 ("x86, mm: introduce _PAGE_DEVMAP")
-Fixes: ebd31197931d ("powerpc/mm: Add devmap support for ppc64")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/powerpc/include/asm/book3s/64/pgtable.h |    4 ++--
- arch/x86/include/asm/pgtable_types.h         |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/codecs/wm8804-i2c.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -102,7 +102,7 @@
-  */
- #define _HPAGE_CHG_MASK (PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
- 			 _PAGE_ACCESSED | H_PAGE_THP_HUGE | _PAGE_PTE | \
--			 _PAGE_SOFT_DIRTY)
-+			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
- /*
-  * user access blocked by key
-  */
-@@ -120,7 +120,7 @@
-  */
- #define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
- 			 _PAGE_ACCESSED | _PAGE_SPECIAL | _PAGE_PTE |	\
--			 _PAGE_SOFT_DIRTY)
-+			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
- /*
-  * Mask of bits returned by pte_pgprot()
-  */
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -124,7 +124,7 @@
-  */
- #define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
- 			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
--			 _PAGE_SOFT_DIRTY)
-+			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
- #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
+--- a/sound/soc/codecs/wm8804-i2c.c
++++ b/sound/soc/codecs/wm8804-i2c.c
+@@ -13,6 +13,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/i2c.h>
++#include <linux/acpi.h>
  
- /*
+ #include "wm8804.h"
+ 
+@@ -40,17 +41,29 @@ static const struct i2c_device_id wm8804
+ };
+ MODULE_DEVICE_TABLE(i2c, wm8804_i2c_id);
+ 
++#if defined(CONFIG_OF)
+ static const struct of_device_id wm8804_of_match[] = {
+ 	{ .compatible = "wlf,wm8804", },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, wm8804_of_match);
++#endif
++
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id wm8804_acpi_match[] = {
++	{ "1AEC8804", 0 }, /* Wolfson PCI ID + part ID */
++	{ "10138804", 0 }, /* Cirrus Logic PCI ID + part ID */
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, wm8804_acpi_match);
++#endif
+ 
+ static struct i2c_driver wm8804_i2c_driver = {
+ 	.driver = {
+ 		.name = "wm8804",
+ 		.pm = &wm8804_pm,
+-		.of_match_table = wm8804_of_match,
++		.of_match_table = of_match_ptr(wm8804_of_match),
++		.acpi_match_table = ACPI_PTR(wm8804_acpi_match),
+ 	},
+ 	.probe = wm8804_i2c_probe,
+ 	.remove = wm8804_i2c_remove,
 
 
