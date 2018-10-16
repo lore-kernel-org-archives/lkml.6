@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2205BC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EDDC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7E9521476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B25A42089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:12:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQ/gNMal"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7E9521476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3NxRSgD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B25A42089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728540AbeJQBDp (ORCPT
+        id S1728553AbeJQBDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:03:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45964 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:03:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727263AbeJQBDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:03:44 -0400
+        id S1727263AbeJQBDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:03:47 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA3B420866;
-        Tue, 16 Oct 2018 17:12:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65A3A20866;
+        Tue, 16 Oct 2018 17:12:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709942;
-        bh=bwSPM5fkf2iDDRN02VgyLeLQFc0Iq3dl8nB8fqDRzHE=;
+        s=default; t=1539709944;
+        bh=uyUBVmW0oq+jLo0TYzr194fC/RPTOwk3mekCXbjzxZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hQ/gNMalKgdmimtUknfBb+6pqslSYzWblzISXuAGzrqowmu6zX9Chgz+FiSOw2Oda
-         BQU5AnfPxBrQ+1+N++4wyr6VN/wJCz9IRG6Nm8vet3pdBP9/2hTMpJZzI3UHhr6TGQ
-         yB2NIUbbqCuWbTCGJ/3Ukrldcg/4esjXFPjqgU1U=
+        b=O3NxRSgDXExYVxFWkVSgxrUSMc03h9mu7HHGvhSJeiMSZJEK8boCyhpk8NoZCZf+v
+         yV5A9mNDcuhp/aZvgV6cw5wU5Bi5bXxYQSmOaenGdNyOZL8EIOQroKRJ60e9BnMbmF
+         MfyhbpRsmTILqG3YhzZRWWX7h2m3Pn9+Bu2+MvAc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 050/135] rtnetlink: Fail dump if target netnsid is invalid
-Date:   Tue, 16 Oct 2018 19:04:40 +0200
-Message-Id: <20181016170518.120355219@linuxfoundation.org>
+Subject: [PATCH 4.18 051/135] bnxt_en: Fix VNIC reservations on the PF.
+Date:   Tue, 16 Oct 2018 19:04:41 +0200
+Message-Id: <20181016170518.175043239@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -61,36 +61,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit 893626d6a353d1356528f94e081246ecf233d77a ]
+[ Upstream commit dbe80d446c859873820eedfff4abc61c71f1927b ]
 
-Link dumps can return results from a target namespace. If the namespace id
-is invalid, then the dump request should fail if get_target_net fails
-rather than continuing with a dump of the current namespace.
+The enables bit for VNIC was set wrong when calling the HWRM_FUNC_CFG
+firmware call to reserve VNICs.  This has the effect that the firmware
+will keep a large number of VNICs for the PF, and having very few for
+VFs.  DPDK driver running on the VFs, which requires more VNICs, may not
+work properly as a result.
 
-Fixes: 79e1ad148c844 ("rtnetlink: use netnsid to query interface")
-Signed-off-by: David Ahern <dsahern@gmail.com>
+Fixes: 674f50a5b026 ("bnxt_en: Implement new method to reserve rings.")
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/rtnetlink.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1848,10 +1848,8 @@ static int rtnl_dump_ifinfo(struct sk_bu
- 		if (tb[IFLA_IF_NETNSID]) {
- 			netnsid = nla_get_s32(tb[IFLA_IF_NETNSID]);
- 			tgt_net = get_target_net(skb->sk, netnsid);
--			if (IS_ERR(tgt_net)) {
--				tgt_net = net;
--				netnsid = -1;
--			}
-+			if (IS_ERR(tgt_net))
-+				return PTR_ERR(tgt_net);
- 		}
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -4651,7 +4651,7 @@ __bnxt_hwrm_reserve_pf_rings(struct bnxt
+ 				      FUNC_CFG_REQ_ENABLES_NUM_STAT_CTXS : 0;
+ 		enables |= ring_grps ?
+ 			   FUNC_CFG_REQ_ENABLES_NUM_HW_RING_GRPS : 0;
+-		enables |= vnics ? FUNC_VF_CFG_REQ_ENABLES_NUM_VNICS : 0;
++		enables |= vnics ? FUNC_CFG_REQ_ENABLES_NUM_VNICS : 0;
  
- 		if (tb[IFLA_EXT_MASK])
+ 		req->num_rx_rings = cpu_to_le16(rx_rings);
+ 		req->num_hw_ring_grps = cpu_to_le16(ring_grps);
 
 
