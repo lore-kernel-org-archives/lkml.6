@@ -2,99 +2,208 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB9CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE809C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EBBD20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:40:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EBBD20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A7A0920869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:41:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A0920869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeJPQaP (ORCPT
+        id S1727331AbeJPQbD convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 12:30:15 -0400
-Received: from mga11.intel.com ([192.55.52.93]:5298 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727053AbeJPQaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 12:30:15 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 01:40:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,387,1534834800"; 
-   d="scan'208";a="99587410"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 16 Oct 2018 01:40:51 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 16 Oct 2018 11:40:50 +0300
-Date:   Tue, 16 Oct 2018 11:40:50 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/5] device property: Introducing software nodes
-Message-ID: <20181016084050.GF24771@kuha.fi.intel.com>
-References: <20181012113934.29942-1-heikki.krogerus@linux.intel.com>
- <CACRpkdZddvkgL1qwO=35y_Jps0+=QD3nPKQwgMEH+zcCH2NPdg@mail.gmail.com>
- <CAJZ5v0h3uENUqbcb=0HH1wT_0MYQzcHct2d19tiarvXEdRay+Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0h3uENUqbcb=0HH1wT_0MYQzcHct2d19tiarvXEdRay+Q@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 16 Oct 2018 12:31:03 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57959 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727304AbeJPQbD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 12:31:03 -0400
+Received: from mail-pf1-f199.google.com ([209.85.210.199])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1gCKv7-0004DN-JS
+        for linux-kernel@vger.kernel.org; Tue, 16 Oct 2018 08:41:41 +0000
+Received: by mail-pf1-f199.google.com with SMTP id 87-v6so22572540pfq.8
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 01:41:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=G9JSyH4qZVAFDWWUTzZGZRoFp+fvZMsvXK6KwRxR/kk=;
+        b=G9kg7r0QdrcSKBPPmduUKB3TtUbgVZUbyNGJyNeyllro6JRlJ2B8TV1z/kDqUdo2Xk
+         M4mpf9Fs8+umnkCFnyjF5Y8QxrKFtfkAdCTNNhp1NIbAzTMJiUbYUu6fzotgl7VWyqSF
+         ISHkYwEUl0hFUQPXs80uUBuqlnxXfQ13XIMg9HMJvdLnAgzLN2LaxL3M2QpJTHqeg8Qj
+         subyzkb5ykj5gPZ5vAgHm/ZEgt7XkbM4H7cSPHsXVh5IRc7O34Hl71aCeqjo9maFh2U9
+         YnE8oj0+LXl8rAEhwceeqYz1g56eGk2NtpR+b7CuGpChTF8RXTVtleCcjt0S1b9sVQKN
+         qbMw==
+X-Gm-Message-State: ABuFfojeW42Qz8FN+IQs+zf7cD/BInyDSPLauGOu309a46zz7DBWed6Z
+        5czojILGaFVVS59/57i7CDoKSUkZAg3phGkxoeHagwxrzbZwJmEnHgBePYpeu1hein6LDeaJJoX
+        eC1ShNgEO1n+qxDgDay8wrTC/gN7hFPOZwNXYAtc8MA==
+X-Received: by 2002:a62:fc13:: with SMTP id e19-v6mr21374591pfh.101.1539679300187;
+        Tue, 16 Oct 2018 01:41:40 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV60joAWDKcb7kGnMX1uoq1pVP8/F1aC3TlfomVbGhCzIdg9LB8BUVygnHSrRKMNFffR6bYCrLg==
+X-Received: by 2002:a62:fc13:: with SMTP id e19-v6mr21374571pfh.101.1539679299831;
+        Tue, 16 Oct 2018 01:41:39 -0700 (PDT)
+Received: from 2001-b011-380f-17e9-687d-9aa5-a32c-0681.dynamic-ip6.hinet.net (2001-b011-380f-17e9-687d-9aa5-a32c-0681.dynamic-ip6.hinet.net. [2001:b011:380f:17e9:687d:9aa5:a32c:681])
+        by smtp.gmail.com with ESMTPSA id 84-v6sm21577350pfs.108.2018.10.16.01.41.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Oct 2018 01:41:39 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: [PATCH v2] HID: i2c-hid: Add a small delay after sleep command
+ for Raydium touchpanel
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <CAO-hwJJACzB4MmPxeyT1ERLyifeC06tg_DU+1PZwOruBf-42TQ@mail.gmail.com>
+Date:   Tue, 16 Oct 2018 16:41:36 +0800
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <742ABBBD-BA86-47CB-B8D2-36CB2979F5F3@canonical.com>
+References: <20181005044629.26286-1-kai.heng.feng@canonical.com>
+ <CAO-hwJJACzB4MmPxeyT1ERLyifeC06tg_DU+1PZwOruBf-42TQ@mail.gmail.com>
+To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
+X-Mailer: Apple Mail (2.3445.100.39)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 09:36:33AM +0200, Rafael J. Wysocki wrote:
-> On Tue, Oct 16, 2018 at 9:35 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> >
-> > On Fri, Oct 12, 2018 at 1:39 PM Heikki Krogerus
-> > <heikki.krogerus@linux.intel.com> wrote:
-> >
-> > > To continue the discussion started by Dmitry [1], this is my proposal
-> > > that I mentioned in my last mail. In short, the idea is that instead
-> > > of trying to extend the support for the currently used struct
-> > > property_set, I'm proposing that we introduce a completely new,
-> > > independent type of fwnode, and replace the struct property_set with
-> > > it. I'm calling the type "software node" here.
-> >
-> > I'm a big fan of this approach.
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > for all patches.
-> >
-> > I don't know who can finally review and merge this though,
-> > I guess Rafael?
+
+
+> On Oct 15, 2018, at 16:04, Benjamin Tissoires <benjamin.tissoires@redhat.com> wrote:
 > 
-> Yes, that would be me. :-)
+> On Fri, Oct 5, 2018 at 6:46 AM Kai-Heng Feng
+> <kai.heng.feng@canonical.com> wrote:
+>> 
+>> Raydium touchpanel (2386:4B33) sometimes does not work in desktop session
+>> although it works in display manager.
+>> 
+>> During user logging, the display manager exits, close the HID device,
+>> then the device gets runtime suspended and powered off. The desktop
+>> session begins shortly after, opens the HID device, then the device gets
+>> runtime resumed and powered on.
+>> 
+>> If the trasition from display manager to desktop sesesion is fast, the
+>> touchpanel cannot switch from powered off to powered on in short
+>> timeframe. So add a small delay to workaround the issue.
+>> 
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>> ---
+>> v2:
+>> - Use quirk to only match affected touchpanel
+>> - Only delay the next power on if the time hasn't elapsed
 > 
-> I no one speaks up against them, I'll pick them up.
+> Hi,
+> 
+> I like the patch much better. And I even would be tempted to have this
+> unconditionally enabled now that the general path doesn't have the
+> msleep in the middle.
+> 
+> So how about we merge this patch now, and if in the long run we see
+> more devices that require this quirk, then we can probably remove the
+> specific quirk and make it mandatory?
 
-Let me send a final version of these.
+Of course, that’s totally makes sense.
 
-I need to add one more patch to the series where I remove an extra
-device_remove_properties() call from platform_device_del().
+Thanks for the review.
 
-It's unnecessary in any case as device_del() calls
-device_remove_properties() for every device, but as the properties are
-removed there before the device is removed, we're unable to deduct
-the final ref count in the "remove" platform notification since our
-node is no longer bind to the device.
+Kai-Heng
 
+> 
+> Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> 
+> Cheers,
+> Benjamin
+> 
+>> 
+>> drivers/hid/hid-ids.h              |  3 +++
+>> drivers/hid/i2c-hid/i2c-hid-core.c | 19 +++++++++++++++++++
+>> 2 files changed, 22 insertions(+)
+>> 
+>> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+>> index 16342188df19..c1b5f03eb630 100644
+>> --- a/drivers/hid/hid-ids.h
+>> +++ b/drivers/hid/hid-ids.h
+>> @@ -926,6 +926,9 @@
+>> #define USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3003                0x3003
+>> #define USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3008                0x3008
+>> 
+>> +#define I2C_VENDOR_ID_RAYDIUM          0x2386
+>> +#define I2C_PRODUCT_ID_RAYDIUM_4B33    0x4b33
+>> +
+>> #define USB_VENDOR_ID_RAZER            0x1532
+>> #define USB_DEVICE_ID_RAZER_BLADE_14   0x011D
+>> 
+>> diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+>> index 4aab96cf0818..3cde7c1b9c33 100644
+>> --- a/drivers/hid/i2c-hid/i2c-hid-core.c
+>> +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+>> @@ -49,6 +49,7 @@
+>> #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV       BIT(0)
+>> #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET       BIT(1)
+>> #define I2C_HID_QUIRK_NO_RUNTIME_PM            BIT(2)
+>> +#define I2C_HID_QUIRK_DELAY_AFTER_SLEEP                BIT(3)
+>> 
+>> /* flags */
+>> #define I2C_HID_STARTED                0
+>> @@ -158,6 +159,8 @@ struct i2c_hid {
+>> 
+>>        bool                    irq_wake_enabled;
+>>        struct mutex            reset_lock;
+>> +
+>> +       unsigned long           sleep_delay;
+>> };
+>> 
+>> static const struct i2c_hid_quirks {
+>> @@ -172,6 +175,8 @@ static const struct i2c_hid_quirks {
+>>        { I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
+>>                I2C_HID_QUIRK_NO_IRQ_AFTER_RESET |
+>>                I2C_HID_QUIRK_NO_RUNTIME_PM },
+>> +       { I2C_VENDOR_ID_RAYDIUM, I2C_PRODUCT_ID_RAYDIUM_4B33,
+>> +               I2C_HID_QUIRK_DELAY_AFTER_SLEEP },
+>>        { 0, 0 }
+>> };
+>> 
+>> @@ -387,6 +392,7 @@ static int i2c_hid_set_power(struct i2c_client *client, int power_state)
+>> {
+>>        struct i2c_hid *ihid = i2c_get_clientdata(client);
+>>        int ret;
+>> +       unsigned long now, delay;
+>> 
+>>        i2c_hid_dbg(ihid, "%s\n", __func__);
+>> 
+>> @@ -404,9 +410,22 @@ static int i2c_hid_set_power(struct i2c_client *client, int power_state)
+>>                        goto set_pwr_exit;
+>>        }
+>> 
+>> +       if (ihid->quirks & I2C_HID_QUIRK_DELAY_AFTER_SLEEP &&
+>> +           power_state == I2C_HID_PWR_ON) {
+>> +               now = jiffies;
+>> +               if (time_after(ihid->sleep_delay, now)) {
+>> +                       delay = jiffies_to_usecs(ihid->sleep_delay - now);
+>> +                       usleep_range(delay, delay + 1);
+>> +               }
+>> +       }
+>> +
+>>        ret = __i2c_hid_command(client, &hid_set_power_cmd, power_state,
+>>                0, NULL, 0, NULL, 0);
+>> 
+>> +       if (ihid->quirks & I2C_HID_QUIRK_DELAY_AFTER_SLEEP &&
+>> +           power_state == I2C_HID_PWR_SLEEP)
+>> +               ihid->sleep_delay = jiffies + msecs_to_jiffies(20);
+>> +
+>>        if (ret)
+>>                dev_err(&client->dev, "failed to change power setting.\n");
+>> 
+>> --
+>> 2.17.1
 
-Thanks,
-
--- 
-heikki
