@@ -2,538 +2,168 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4FEC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45938C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB89F2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:26:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB89F2089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A53B2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:27:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AGV1XvNq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A53B2089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbeJPJOM (ORCPT
+        id S1727099AbeJPJPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 05:14:12 -0400
-Received: from mx.socionext.com ([202.248.49.38]:26267 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbeJPJOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 05:14:11 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 16 Oct 2018 10:26:18 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 7355718028D;
-        Tue, 16 Oct 2018 10:26:18 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 16 Oct 2018 10:26:18 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 682DC1A1210;
-        Tue, 16 Oct 2018 10:26:17 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH v3 2/2] PCI: uniphier: Add UniPhier PCIe host controller support
-Date:   Tue, 16 Oct 2018 10:26:08 +0900
-Message-Id: <1539653168-22862-3-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539653168-22862-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1539653168-22862-1-git-send-email-hayashi.kunihiko@socionext.com>
+        Tue, 16 Oct 2018 05:15:02 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:50348 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726051AbeJPJPB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 05:15:01 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20181016012705epoutp0225888379ac6c61e63115bb53c9f28c6c~d8nOGHMNV1116611166epoutp02f;
+        Tue, 16 Oct 2018 01:27:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20181016012705epoutp0225888379ac6c61e63115bb53c9f28c6c~d8nOGHMNV1116611166epoutp02f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539653225;
+        bh=bXxRE/I7x6z+yjfyKZKvxQow6zgfe2J+B7T+aiUaG+8=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=AGV1XvNqxvyAVei/eObf28dRZvE/2DTUW8DjwdEt6XruTzmnro/5Lkdt+6o4gws+x
+         v9o+VzRMMgihXkxQrzDw+HSd9aZz47Nt7iUzr2Dr8IsWfO5lYKpOBF0uqcsHEr1BQw
+         K5VVRKnbweXhLEuq2rNcE54rhcKgYyOod0Ntct84=
+Received: from epsmges2p1.samsung.com (unknown [182.195.40.156]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20181016012702epcas1p3c3959b89bc86ce908960b10cc30ba1a7~d8nLDipv30246402464epcas1p32;
+        Tue, 16 Oct 2018 01:27:02 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9E.05.04015.66E35CB5; Tue, 16 Oct 2018 10:27:02 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20181016012701epcas2p2e294d37d3346c4b47338566d784813ed~d8nKZlvyQ3023030230epcas2p2v;
+        Tue, 16 Oct 2018 01:27:01 +0000 (GMT)
+X-AuditID: b6c32a45-6a9ff70000000faf-a2-5bc53e6662be
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        12.8E.03633.56E35CB5; Tue, 16 Oct 2018 10:27:01 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PGO00G4K4119M40@mmp1.samsung.com>; Tue, 16 Oct 2018 10:27:01 +0900 (KST)
+Message-id: <5BC53E65.7050500@samsung.com>
+Date:   Tue, 16 Oct 2018 10:27:01 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 2/6] clocksource: exynos_mct: Fix error path in timer
+ resources initialization
+In-reply-to: <20181015123112.9379-3-m.szyprowski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju29nOjubsdLz0pVjrgIWGtjmnZ+Wki8kgISmi0EAPepribuxs
+        kUHkBbqM0FVUa1iplT/WYjq7qVm0GdrNUaFd1Aots6y0kgrC1rZD5L/nfXie73vf530xhLCh
+        cVi5zsQYdbSGRMP517xJmSm7su8WSk4/m0+12VwCaqrlCKDOfk+gjr228imfr1VIuccGBdTT
+        zgaUsvlu8ajLPSNCanb4D0q1u08g1Ievffy1ESrnWSdQuR2HUdXw4E1U9aW/X6hqv7BfVXfF
+        AVTf3UvyhQUVWWUMXcoYxYyuRF9arlMryU1bizYUyTMk0hSpgsokxTpayyjJnLz8lNxyTaBP
+        Uryb1pgDVD7NsuSq7Cyj3mxixGV61qQkGUOpxqAwpLK0ljXr1Kkleu1qqUSSJg8IiyvKpobq
+        eIaqiD0jzY94VWAqzALCMIinw96+U4gFhGMEfgPA6he1fK74CaDrXZ/AArCQ6vzTfRzfBeCx
+        5m9I0C3CF8Jfx1/xgxoEXwp7nlQEaQRPgle7XEJOPwKgv/skn9MnQ6evhhfEfDwRDnb8EAQx
+        GuBvTzxHg3gBvgwO/BoDQRyD74Ad536EHorG7QDWfz4OggWCP+LBV90DIUcUroa+5wOhjsJw
+        JbzorQs5IO5Hoc8xjXKD5sDrM60Ih6Pgx94rQg7Hw3FHG+AMBwGcmagVcIUVwOn77TxOJYPj
+        TRYeN10kPOSdFXLBiOChAwQnUUHrpabQBwTuBdA2KrGCBPucmOz/Y7LPiakRIA4QyxhYrZph
+        0wzSuftzg9BVJm+8AWz9eR6AY4CMEDUO9BQSAno3W6n1AIghZLSoeChAiUrpyr2MUV9kNGsY
+        1gPkgZSPInExJfrAjetMRVJ5mkwmo+SZCplEQS4SjcafKSRwNW1iKhjGwBj/+XhYWFwVGG/u
+        rt/+7KolN+phrbWho1O4uT96Yvp980xjxt5IQ+yoeY0zg3AeSFTEpFbuvPcmd3Y02y8V31nR
+        tAEr+PJWUxNzpm050fhYTmwfWnftQapn62u7zFUw+XKLNDy9qvrTkgWrW7xK8frhedt+L46c
+        nvQbh0SudWqTozca+j22lZtIPltGS5MRI0v/BRj0bKyrAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPLMWRmVeSWpSXmKPExsVy+t9jAd1Uu6PRBvNmq1psnLGe1eL9sh5G
+        i3mfZS0m3Z/AYnH+/AZ2i02Pr7FaXN41h81ixvl9TBZrj9xlt/h75x+bxeZNU5ktXn48weLA
+        47Fm3hpGj02rOtk87lzbw+bx7tw5do/NS+o9+rasYvT4vEkugD2KyyYlNSezLLVI3y6BK+P9
+        7T6mggaeiruLzjI1ML7n7GLk4JAQMJFYfLm2i5GLQ0hgJ6PE47VNbF2MnBy8AoISPybfYwGp
+        YRaQlzhyKRskzCygLjFp3iJmiPr7jBJLtxxjgajXklhzvokJxGYRUJW4tvMbK4jNBhTf/+IG
+        2Ex+AUWJqz8eM4LMFBWIkOg+UQkyR0RgFqPE894VbBALLjJJ/LjPDGILC6RLnL9xFWrZYUaJ
+        Wf1tYAlOAVuJpYf72CcwArUi3DoL4dZZSG5dwMi8ilEytaA4Nz232KjAKC+1XK84Mbe4NC9d
+        Lzk/dxMjMFq2Hdbq38H4eEn8IUYBDkYlHt4FV49EC7EmlhVX5h5ilOBgVhLhTbgNFOJNSays
+        Si3Kjy8qzUktPsQozcGiJM7Ln38sUkggPbEkNTs1tSC1CCbLxMEp1cBYZv12h9Lq3eIbZ56b
+        /bj1UXDxjQNpxe82rxL155zxImb/Vcf7B/4k3RM9H1F4+5ZdxLkpOybkLnVae93wUaBvzQFm
+        q7Qge+dzWu4FkU3v11279WhaqfLl13WhEg11Yd9iXGo+HVoWK6RyoWhvqkijpm6axrK6GC77
+        t4wzhVY4fHQ8d9sn7LyCEktxRqKhFnNRcSIAbFlbJ5ICAAA=
+X-CMS-MailID: 20181016012701epcas2p2e294d37d3346c4b47338566d784813ed
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181015123135eucas1p18df135504c9476cead8da6463226cdec
+References: <20181015123112.9379-1-m.szyprowski@samsung.com>
+        <CGME20181015123135eucas1p18df135504c9476cead8da6463226cdec@eucas1p1.samsung.com>
+        <20181015123112.9379-3-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces specific glue layer for UniPhier platform to support
-PCIe host controller that is based on the DesignWare PCIe core, and
-this driver supports Root Complex (host) mode.
+Dear Marek,
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
- drivers/pci/controller/dwc/Kconfig         |   9 +
- drivers/pci/controller/dwc/Makefile        |   1 +
- drivers/pci/controller/dwc/pcie-uniphier.c | 432 +++++++++++++++++++++++++++++
- 3 files changed, 442 insertions(+)
- create mode 100644 drivers/pci/controller/dwc/pcie-uniphier.c
+On 2018년 10월 15일 21:31, Marek Szyprowski wrote:
+> While freeing interrupt handlers in error path, don't assume that all
+> requested interrupts are per-processor interrupts and properly release
+> standard interrupts too.
+> 
+> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clocksource/exynos_mct.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index 43b335ff4a96..a379f11fad2d 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -562,7 +562,19 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+>  	return 0;
+>  
+>  out_irq:
+> -	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
+> +	if (mct_int_type == MCT_INT_PPI) {
+> +		free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
+> +	} else {
+> +		for_each_possible_cpu(cpu) {
+> +			struct mct_clock_event_device *pcpu_mevt =
+> +				per_cpu_ptr(&percpu_mct_tick, cpu);
+> +
+> +			if (pcpu_mevt->evt.irq != -1) {
+> +				free_irq(pcpu_mevt->evt.irq, pcpu_mevt);
+> +				pcpu_mevt->evt.irq = -1;
+> +			}
+> +		}
+> +	}
+>  	return err;
+>  }
+>  
+> 
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 91b0194..d8fdb02 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -193,4 +193,13 @@ config PCIE_HISI_STB
- 	help
-           Say Y here if you want PCIe controller support on HiSilicon STB SoCs
- 
-+config PCIE_UNIPHIER
-+	bool "Socionext UniPhier PCIe controllers"
-+	depends on OF && (ARCH_UNIPHIER || COMPILE_TEST)
-+	depends on PCI_MSI_IRQ_DOMAIN
-+	select PCIE_DW_HOST
-+	help
-+	  Say Y here if you want PCIe controller support on UniPhier SoCs.
-+	  This driver supports LD20 and PXs3 SoCs.
-+
- endmenu
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index 5d2ce72..cbde733 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
- obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
- obj-$(CONFIG_PCIE_KIRIN) += pcie-kirin.o
- obj-$(CONFIG_PCIE_HISI_STB) += pcie-histb.o
-+obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
- 
- # The following drivers are for devices that use the generic ACPI
- # pci_root.c driver but don't support standard ECAM config access.
-diff --git a/drivers/pci/controller/dwc/pcie-uniphier.c b/drivers/pci/controller/dwc/pcie-uniphier.c
-new file mode 100644
-index 0000000..3b39468
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-uniphier.c
-@@ -0,0 +1,432 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PCIe host controller driver for UniPhier SoCs
-+ * Copyright 2018 Socionext Inc.
-+ * Author: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/module.h>
-+#include <linux/of_irq.h>
-+#include <linux/pci.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#include "pcie-designware.h"
-+
-+#define PCL_PINCTRL0			0x002c
-+#define PCL_PERST_PLDN_REGEN		BIT(12)
-+#define PCL_PERST_NOE_REGEN		BIT(11)
-+#define PCL_PERST_OUT_REGEN		BIT(8)
-+#define PCL_PERST_PLDN_REGVAL		BIT(4)
-+#define PCL_PERST_NOE_REGVAL		BIT(3)
-+#define PCL_PERST_OUT_REGVAL		BIT(0)
-+
-+#define PCL_PIPEMON			0x0044
-+#define PCL_PCLK_ALIVE			BIT(15)
-+
-+#define PCL_APP_READY_CTRL		0x8008
-+#define PCL_APP_LTSSM_ENABLE		BIT(0)
-+
-+#define PCL_APP_PM0			0x8078
-+#define PCL_SYS_AUX_PWR_DET		BIT(8)
-+
-+#define PCL_RCV_INT			0x8108
-+#define PCL_RCV_INT_ALL_ENABLE		GENMASK(20, 17)
-+#define PCL_CFG_BW_MGT_STATUS		BIT(4)
-+#define PCL_CFG_LINK_AUTO_BW_STATUS	BIT(3)
-+#define PCL_CFG_AER_RC_ERR_MSI_STATUS	BIT(2)
-+#define PCL_CFG_PME_MSI_STATUS		BIT(1)
-+
-+#define PCL_RCV_INTX			0x810c
-+#define PCL_RCV_INTX_ALL_ENABLE		GENMASK(19, 16)
-+#define PCL_RCV_INTX_ALL_STATUS		GENMASK(3, 0)
-+
-+#define PCL_STATUS_LINK			0x8140
-+#define PCL_RDLH_LINK_UP		BIT(1)
-+#define PCL_XMLH_LINK_UP		BIT(0)
-+
-+struct uniphier_pcie_priv {
-+	void __iomem *base;
-+	struct dw_pcie pci;
-+	struct clk *clk;
-+	struct reset_control *rst;
-+	struct phy *phy;
-+	struct irq_domain *legacy_irq_domain;
-+};
-+
-+#define to_uniphier_pcie(x)	dev_get_drvdata((x)->dev)
-+
-+static void uniphier_pcie_ltssm_enable(struct uniphier_pcie_priv *priv)
-+{
-+	u32 val;
-+
-+	val = readl(priv->base + PCL_APP_READY_CTRL);
-+	val |= PCL_APP_LTSSM_ENABLE;
-+	writel(val, priv->base + PCL_APP_READY_CTRL);
-+}
-+
-+static void uniphier_pcie_ltssm_disable(struct uniphier_pcie_priv *priv)
-+{
-+	u32 val;
-+
-+	val = readl(priv->base + PCL_APP_READY_CTRL);
-+	val &= ~PCL_APP_LTSSM_ENABLE;
-+	writel(val, priv->base + PCL_APP_READY_CTRL);
-+}
-+
-+static void uniphier_pcie_init_rc(struct uniphier_pcie_priv *priv)
-+{
-+	u32 val;
-+
-+	/* use auxiliary power detection */
-+	val = readl(priv->base + PCL_APP_PM0);
-+	val |= PCL_SYS_AUX_PWR_DET;
-+	writel(val, priv->base + PCL_APP_PM0);
-+
-+	/* assert PERST# */
-+	val = readl(priv->base + PCL_PINCTRL0);
-+	val &= ~(PCL_PERST_NOE_REGVAL | PCL_PERST_OUT_REGVAL
-+		 | PCL_PERST_PLDN_REGVAL);
-+	val |= PCL_PERST_NOE_REGEN | PCL_PERST_OUT_REGEN
-+		| PCL_PERST_PLDN_REGEN;
-+	writel(val, priv->base + PCL_PINCTRL0);
-+
-+	uniphier_pcie_ltssm_disable(priv);
-+
-+	usleep_range(100000, 200000);
-+
-+	/* deassert PERST# */
-+	val = readl(priv->base + PCL_PINCTRL0);
-+	val |= PCL_PERST_OUT_REGVAL | PCL_PERST_OUT_REGEN;
-+	writel(val, priv->base + PCL_PINCTRL0);
-+}
-+
-+static int uniphier_pcie_wait_rc(struct uniphier_pcie_priv *priv)
-+{
-+	u32 status;
-+	int ret;
-+
-+	/* wait PIPE clock */
-+	ret = readl_poll_timeout(priv->base + PCL_PIPEMON, status,
-+				 status & PCL_PCLK_ALIVE, 100000, 1000000);
-+	if (ret) {
-+		dev_err(priv->pci.dev,
-+			"Failed to initialize controller in RC mode\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int uniphier_pcie_link_up(struct dw_pcie *pci)
-+{
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	u32 val, mask;
-+
-+	val = readl(priv->base + PCL_STATUS_LINK);
-+	mask = PCL_RDLH_LINK_UP | PCL_XMLH_LINK_UP;
-+
-+	return (val & mask) == mask;
-+}
-+
-+static int uniphier_pcie_establish_link(struct dw_pcie *pci)
-+{
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	int ret;
-+
-+	if (dw_pcie_link_up(pci))
-+		return 0;
-+
-+	uniphier_pcie_ltssm_enable(priv);
-+
-+	ret = dw_pcie_wait_for_link(pci);
-+	if (ret == -ETIMEDOUT)
-+		dev_warn(pci->dev, "Link not up\n");
-+
-+	return ret;
-+}
-+
-+static void uniphier_pcie_stop_link(struct dw_pcie *pci)
-+{
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+
-+	uniphier_pcie_ltssm_disable(priv);
-+}
-+
-+static int uniphier_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
-+				  irq_hw_number_t hwirq)
-+{
-+	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
-+	irq_set_chip_data(irq, domain->host_data);
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops uniphier_intx_domain_ops = {
-+	.map = uniphier_pcie_intx_map,
-+	.xlate = pci_irqd_intx_xlate,
-+};
-+
-+static void uniphier_pcie_irq_enable(struct uniphier_pcie_priv *priv)
-+{
-+	writel(PCL_RCV_INT_ALL_ENABLE, priv->base + PCL_RCV_INT);
-+	writel(PCL_RCV_INTX_ALL_ENABLE, priv->base + PCL_RCV_INTX);
-+}
-+
-+static void uniphier_pcie_irq_disable(struct uniphier_pcie_priv *priv)
-+{
-+	writel(0, priv->base + PCL_RCV_INT);
-+	writel(0, priv->base + PCL_RCV_INTX);
-+}
-+
-+static void uniphier_pcie_irq_handler(struct irq_desc *desc)
-+{
-+	struct pcie_port *pp = irq_desc_get_handler_data(desc);
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	unsigned long reg;
-+	u32 val, bit, virq;
-+
-+	/* INT for debug */
-+	val = readl(priv->base + PCL_RCV_INT);
-+
-+	if (val & PCL_CFG_BW_MGT_STATUS)
-+		dev_dbg(pci->dev, "Link Bandwidth Management Event\n");
-+	if (val & PCL_CFG_LINK_AUTO_BW_STATUS)
-+		dev_dbg(pci->dev, "Link Autonomous Bandwidth Event\n");
-+	if (val & PCL_CFG_AER_RC_ERR_MSI_STATUS)
-+		dev_dbg(pci->dev, "Root Error\n");
-+	if (val & PCL_CFG_PME_MSI_STATUS)
-+		dev_dbg(pci->dev, "PME Interrupt\n");
-+
-+	writel(val, priv->base + PCL_RCV_INT);
-+
-+	/* INTx */
-+	chained_irq_enter(chip, desc);
-+
-+	val = readl(priv->base + PCL_RCV_INTX);
-+	reg = FIELD_GET(PCL_RCV_INTX_ALL_STATUS, val);
-+
-+	for_each_set_bit(bit, &reg, PCI_NUM_INTX) {
-+		virq = irq_linear_revmap(priv->legacy_irq_domain, bit);
-+		generic_handle_irq(virq);
-+	}
-+
-+	writel(val, priv->base + PCL_RCV_INTX);
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static int uniphier_pcie_config_legacy_irq(struct pcie_port *pp)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	struct device_node *np = pci->dev->of_node;
-+	struct device_node *np_intc;
-+
-+	np_intc = of_get_child_by_name(np, "legacy-interrupt-controller");
-+	if (!np_intc) {
-+		dev_err(pci->dev, "Failed to get legacy-interrupt-controller node\n");
-+		return -EINVAL;
-+	}
-+
-+	pp->irq = irq_of_parse_and_map(np_intc, 0);
-+	if (!pp->irq) {
-+		dev_err(pci->dev, "Failed to get an IRQ entry in legacy-interrupt-controller\n");
-+		return -EINVAL;
-+	}
-+	irq_set_chained_handler_and_data(pp->irq, uniphier_pcie_irq_handler,
-+					 pp);
-+
-+	priv->legacy_irq_domain = irq_domain_add_linear(np_intc, PCI_NUM_INTX,
-+						 &uniphier_intx_domain_ops, pp);
-+	if (!priv->legacy_irq_domain) {
-+		dev_err(pci->dev, "Failed to get INTx domain\n");
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static int uniphier_pcie_host_init(struct pcie_port *pp)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	int ret;
-+
-+	ret = uniphier_pcie_config_legacy_irq(pp);
-+	if (ret)
-+		return ret;
-+
-+	uniphier_pcie_irq_enable(priv);
-+
-+	dw_pcie_setup_rc(pp);
-+	ret = uniphier_pcie_establish_link(pci);
-+	if (ret)
-+		return ret;
-+
-+	if (IS_ENABLED(CONFIG_PCI_MSI))
-+		dw_pcie_msi_init(pp);
-+
-+	return 0;
-+}
-+
-+static const struct dw_pcie_host_ops uniphier_pcie_host_ops = {
-+	.host_init = uniphier_pcie_host_init,
-+};
-+
-+static int uniphier_add_pcie_port(struct uniphier_pcie_priv *priv,
-+				  struct platform_device *pdev)
-+{
-+	struct dw_pcie *pci = &priv->pci;
-+	struct pcie_port *pp = &pci->pp;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	pp->ops = &uniphier_pcie_host_ops;
-+
-+	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-+		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
-+		if (pp->msi_irq < 0)
-+			return pp->msi_irq;
-+	}
-+
-+	ret = dw_pcie_host_init(pp);
-+	if (ret) {
-+		dev_err(dev, "Failed to initialize host (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int uniphier_pcie_host_enable(struct uniphier_pcie_priv *priv)
-+{
-+	int ret;
-+
-+	ret = clk_prepare_enable(priv->clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = reset_control_deassert(priv->rst);
-+	if (ret)
-+		goto out_clk_disable;
-+
-+	uniphier_pcie_init_rc(priv);
-+
-+	ret = phy_init(priv->phy);
-+	if (ret)
-+		goto out_rst_assert;
-+
-+	ret = uniphier_pcie_wait_rc(priv);
-+	if (ret)
-+		goto out_phy_exit;
-+
-+	return 0;
-+
-+out_phy_exit:
-+	phy_exit(priv->phy);
-+out_rst_assert:
-+	reset_control_assert(priv->rst);
-+out_clk_disable:
-+	clk_disable_unprepare(priv->clk);
-+
-+	return ret;
-+}
-+
-+static void uniphier_pcie_host_disable(struct uniphier_pcie_priv *priv)
-+{
-+	uniphier_pcie_irq_disable(priv);
-+	phy_exit(priv->phy);
-+	reset_control_assert(priv->rst);
-+	clk_disable_unprepare(priv->clk);
-+}
-+
-+static const struct dw_pcie_ops dw_pcie_ops = {
-+	.start_link = uniphier_pcie_establish_link,
-+	.stop_link = uniphier_pcie_stop_link,
-+	.link_up = uniphier_pcie_link_up,
-+};
-+
-+static int uniphier_pcie_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct uniphier_pcie_priv *priv;
-+	struct resource *res;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->pci.dev = dev;
-+	priv->pci.ops = &dw_pcie_ops;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
-+	priv->pci.dbi_base = devm_pci_remap_cfg_resource(dev, res);
-+	if (IS_ERR(priv->pci.dbi_base))
-+		return PTR_ERR(priv->pci.dbi_base);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "link");
-+	priv->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	priv->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(priv->clk))
-+		return PTR_ERR(priv->clk);
-+
-+	priv->rst = devm_reset_control_get_shared(dev, NULL);
-+	if (IS_ERR(priv->rst))
-+		return PTR_ERR(priv->rst);
-+
-+	priv->phy = devm_phy_optional_get(dev, "pcie-phy");
-+	if (IS_ERR(priv->phy))
-+		return PTR_ERR(priv->phy);
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	ret = uniphier_pcie_host_enable(priv);
-+	if (ret)
-+		return ret;
-+
-+	return uniphier_add_pcie_port(priv, pdev);
-+}
-+
-+static int uniphier_pcie_remove(struct platform_device *pdev)
-+{
-+	struct uniphier_pcie_priv *priv = platform_get_drvdata(pdev);
-+
-+	uniphier_pcie_host_disable(priv);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id uniphier_pcie_match[] = {
-+	{ .compatible = "socionext,uniphier-pcie", },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, uniphier_pcie_match);
-+
-+static struct platform_driver uniphier_pcie_driver = {
-+	.probe  = uniphier_pcie_probe,
-+	.remove = uniphier_pcie_remove,
-+	.driver = {
-+		.name = "uniphier-pcie",
-+		.of_match_table = uniphier_pcie_match,
-+	},
-+};
-+builtin_platform_driver(uniphier_pcie_driver);
-+
-+MODULE_AUTHOR("Kunihiko Hayashi <hayashi.kunihiko@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier PCIe host controller driver");
-+MODULE_LICENSE("GPL v2");
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-2.7.4
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
