@@ -7,106 +7,84 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1D8C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1BAC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA8E120866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D1EE20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zOMnwhvc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA8E120866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yfSRWpGW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1EE20866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730123AbeJPMEe (ORCPT
+        id S1730137AbeJPMEf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:04:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53462 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:04:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729125AbeJPMEc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:04:32 -0400
+        id S1729125AbeJPMEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:04:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D431A20866;
-        Tue, 16 Oct 2018 04:16:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 586A9214AB;
+        Tue, 16 Oct 2018 04:16:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663369;
-        bh=kXKFaZU4EQry42NfDhFE9lPZa0gxGxjbhKSNg0gQS0g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=zOMnwhvcKZPjs3lojGjE+0QLw3isJSw3Gej7tMxxms3dTilSHmQSf9y4A2HNtrO5t
-         yTWIVHSuaASTQ4g542mFsmtWtoxOFSsP77a7rOgr+ihUYbv1AjukCIRMKd9fLxi5e7
-         0Cm9cIMN3NJPz1+T3h21RWkJDPHhf43EhBLHPD8s=
+        s=default; t=1539663372;
+        bh=qPRCtA8k03NdbKS8quRWD1AA5Fc8Z7kWDvUoCSr6QKA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=yfSRWpGWATFNr2iU1ltJ3pDjmLuWle7bzDaBsg+3LsH72SvEiSO0IzZm7/T47vK19
+         JipZASf3JflODdNh/wD0UywoBELG0HxpCheMiJ+r+3DQMei8q0y3sfl8CcFGu9E4QR
+         fw8uan5quo0PfQ8PbSoh0nrzo4Cl4iQbZCM8dVFg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+Cc:     Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 01/25] xfrm: Validate address prefix lengths in the xfrm selector.
-Date:   Tue, 16 Oct 2018 00:15:42 -0400
-Message-Id: <20181016041606.135876-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 04/25] cfg80211: reg: Init wiphy_idx in regulatory_hint_core()
+Date:   Tue, 16 Oct 2018 00:15:45 -0400
+Message-Id: <20181016041606.135876-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181016041606.135876-1-sashal@kernel.org>
+References: <20181016041606.135876-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steffen Klassert <steffen.klassert@secunet.com>
+From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
 
-[ Upstream commit 07bf7908950a8b14e81aa1807e3c667eab39287a ]
+[ Upstream commit 24f33e64fcd0d50a4b1a8e5b41bd0257aa66b0e8 ]
 
-We don't validate the address prefix lengths in the xfrm
-selector we got from userspace. This can lead to undefined
-behaviour in the address matching functions if the prefix
-is too big for the given address family. Fix this by checking
-the prefixes and refuse SA/policy insertation when a prefix
-is invalid.
+Core regulatory hints didn't set wiphy_idx to WIPHY_IDX_INVALID. Since
+the regulatory request is zeroed, wiphy_idx was always implicitly set to
+0. This resulted in updating only phy #0.
+Fix that.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: Air Icy <icytxw@gmail.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: 806a9e39670b ("cfg80211: make regulatory_request use wiphy_idx instead of wiphy")
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+[add fixes tag]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ net/wireless/reg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index a9b4491a3cc4..c2e98dcba9fe 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -151,10 +151,16 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
- 	err = -EINVAL;
- 	switch (p->family) {
- 	case AF_INET:
-+		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
-+			goto out;
-+
- 		break;
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 06d050da0d94..50dffd183cc6 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -2367,6 +2367,7 @@ static int regulatory_hint_core(const char *alpha2)
+ 	request->alpha2[0] = alpha2[0];
+ 	request->alpha2[1] = alpha2[1];
+ 	request->initiator = NL80211_REGDOM_SET_BY_CORE;
++	request->wiphy_idx = WIPHY_IDX_INVALID;
  
- 	case AF_INET6:
- #if IS_ENABLED(CONFIG_IPV6)
-+		if (p->sel.prefixlen_d > 128 || p->sel.prefixlen_s > 128)
-+			goto out;
-+
- 		break;
- #else
- 		err = -EAFNOSUPPORT;
-@@ -1312,10 +1318,16 @@ static int verify_newpolicy_info(struct xfrm_userpolicy_info *p)
+ 	queue_regulatory_request(request);
  
- 	switch (p->sel.family) {
- 	case AF_INET:
-+		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
-+			return -EINVAL;
-+
- 		break;
- 
- 	case AF_INET6:
- #if IS_ENABLED(CONFIG_IPV6)
-+		if (p->sel.prefixlen_d > 128 || p->sel.prefixlen_s > 128)
-+			return -EINVAL;
-+
- 		break;
- #else
- 		return  -EAFNOSUPPORT;
 -- 
 2.17.1
 
