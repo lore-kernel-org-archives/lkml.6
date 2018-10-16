@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C84BC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A20C04EBE
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 206732098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA1F2147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s+gjKCjK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 206732098A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4lp5Dcj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AA1F2147C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeJPK1d (ORCPT
+        id S1727262AbeJPK1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 06:27:33 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35626 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbeJPK1c (ORCPT
+        Tue, 16 Oct 2018 06:27:34 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36640 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727169AbeJPK1e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 06:27:32 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v133-v6so10083886pgb.2;
-        Mon, 15 Oct 2018 19:39:27 -0700 (PDT)
+        Tue, 16 Oct 2018 06:27:34 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y11-v6so10214303plt.3;
+        Mon, 15 Oct 2018 19:39:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=W6OQtM5x+M6/MHxf/Fmfu8/SRoC/Z78xGPwSkOY7yIE=;
-        b=s+gjKCjKzQr7lZaAQyyFGfmQZX9zLl2kn2ULL9yQNQ3ycz6GJZMa/VuZU9SOfoXdt0
-         yGHC8N0ZVJHt9aRf7RnEhkRHMmTB7UxM8r8yCS9RTPf9vCEt5YvrxudpTu8XAWmk36YX
-         1FOWCWlYSeT51+CmCdmJct2wa+GfErtAkP8RRRreo13ahiD04eOCM17IFgJ84HF1/lnt
-         asDaYCGEe/g66eeWK4ttvu1b26kTREo6SyTW01d43o67g4V2nj/w2L6gtCGaq17KpfJG
-         aPUE1Mb+e1G07sS9U2wj0FB7yMbX1ijcSRtIG5o+q6067tLI2wj20qEaPHw1cUefthaA
-         kBEg==
+        bh=ZU22ELPXEDk7hK8IMh4HSxAwkt1z8zH1FWohOQL9WT8=;
+        b=E4lp5DcjD9TdbUkMm/MOty7cd2JHe+RP9yKnZrAmFkK7BgbHkOc6i0FCKUcgSHMnZ3
+         t7kGJXDjz3r0fuPc+vFbi/sV5Awv2L9BqxIQ1l6Cxz7Fic6WrqIROmKD3Gm3ePgwc8am
+         3NLpf94tkCelwlm8ufry8WT7mp4eC2HpH9rIEQDTM5brLfbhtKXhnaCYaRzjzcxycRlr
+         eho7y7PFAiXP/cYe0AcYItt6puCLjdaT5URoHWnlNWBkZb36Tgo9uoD2HiSuf4LyWawO
+         bDdKSKiikjekopHkkCuR8K20XUs4x7up7Zm9YWOE+OOgBUpzOytLc6WULS0ilgqi7H91
+         fjvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=W6OQtM5x+M6/MHxf/Fmfu8/SRoC/Z78xGPwSkOY7yIE=;
-        b=VEMVI2KEAzgFdco/pdGKWlrP4dGMEvBc+meFiaezOY9muCxaMWPKqloY+en/i2W6K9
-         cgpbDEvPUxFNDnvphQJsvvvPwClOT+36xHgUcFzAaUf3mZKbg7YwvMUkBgZ+K5PWtvsj
-         8X+gitZrpBOycqClBeGRDhX7szz+JcrdQ/1vFgPqV8QeY+eLJgwI2C8ZE0eb4rlgj+RJ
-         WvyaREZd5RETovqCUo0qSiD5cVwQQRRt1SKN0iRgJ3RWStBSE/FPR9hv4Ncks5VbV0bg
-         Zpbxz8vfmBdCWavwyfFPTqg969lZVlLuCtddFXXch/2Iv8z7nCyt2Q0PuWpK+MOuy02A
-         SeFA==
-X-Gm-Message-State: ABuFfohKqxoXGMicYHVIRDzO/ZsBcd4IWMxWpTdOQEESzAY8XD31zN0X
-        E0XeICIRn5Fd6DV6UyzD99w=
-X-Google-Smtp-Source: ACcGV60GYDYX2uoWBJBzyF/zHPy4bkXhRmfOIC2K/YDVvL8MHMkzyaLG32XEv8BBkGd7rq8jyxiGEA==
-X-Received: by 2002:a62:22c7:: with SMTP id p68-v6mr20232205pfj.53.1539657567529;
-        Mon, 15 Oct 2018 19:39:27 -0700 (PDT)
+        bh=ZU22ELPXEDk7hK8IMh4HSxAwkt1z8zH1FWohOQL9WT8=;
+        b=PQTJji8zLf8Vpnyi7d3phOOv8FzEy7HWkVzQrRlQTGri7ASGY3bbbxiEucWpTHcDWj
+         ax8PXAG+y9lLm/iNjM9A5Aaqh7bjl8c3XgDCxep35BauM0xICQDvsB6nTpZTxrFjLYk3
+         jHM3KmBYET684+GT0PbMGEmLaDSGMDZ0zjVRQe08aEJWMQ/9/A7hSR6NuFoWO0kG1QC/
+         szPTAZo9R6LcU/gD60wd4fWKiRw2D8Jlhb5avWxt53PLk/WkuVDqnJ3m9NAIiVrHkzl/
+         X1GTNBY5l1lSprCLKDeDs00ey++kyuoJ2L36UpTR5BHzS9a+yXrxhgyHyd6r7IAdLLKP
+         r6MQ==
+X-Gm-Message-State: ABuFfoj/adTL3VBMlRcU/YECEWLZRqHL3WnO9xY2lqxpHyuKY7Fc08Di
+        /fjniJeZMIugBCPo4FRs8WY=
+X-Google-Smtp-Source: ACcGV60lihNo4mjsoti91LSPguLVAD5VZfuB/JOSDkTzex9IS4Dx41SdzicWLnwZ9/PZruG3iNJFgg==
+X-Received: by 2002:a17:902:b907:: with SMTP id bf7-v6mr19886883plb.127.1539657570008;
+        Mon, 15 Oct 2018 19:39:30 -0700 (PDT)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id u79-v6sm18620287pfd.117.2018.10.15.19.39.26
+        by smtp.gmail.com with ESMTPSA id u79-v6sm18620287pfd.117.2018.10.15.19.39.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 15 Oct 2018 19:39:27 -0700 (PDT)
+        Mon, 15 Oct 2018 19:39:29 -0700 (PDT)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -67,9 +67,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v4 13/18] of: overlay: check prevents multiple fragments touching same property
-Date:   Mon, 15 Oct 2018 19:37:33 -0700
-Message-Id: <1539657458-24401-14-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v4 15/18] of: overlay: set node fields from properties when add new overlay node
+Date:   Mon, 15 Oct 2018 19:37:35 -0700
+Message-Id: <1539657458-24401-16-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
 References: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
@@ -80,281 +80,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-Add test case of two fragments updating the same property.  After
-adding the test case, the system hangs at end of boot, after
-after slub stack dumps from kfree() in crypto modprobe code.
+Overlay nodes added by add_changeset_node() do not have the node
+fields name, phandle, and type set.
 
-Multiple overlay fragments adding, modifying, or deleting the same
-property is not supported.  Add check to detect the attempt and fail
-the overlay apply.
+The node passed to __of_attach_node() when the add node changeset
+entry is processed does not contain any properties.  The node's
+properties are located in add property changeset entries that will
+be processed after the add node changeset is applied.
 
-Before this patch, the first fragment error would terminate
-processing.  Allow fragment checking to proceed and report all
-of the fragment errors before terminating the overlay apply. This
-is not a hot path, thus not a performance issue (the error is not
-transient and requires fixing the overlay before attempting to
-apply it again).
+Set the node's fields in the node contained in the add node
+changeset entry and do not set them to incorrect values in
+add_changeset_node().
 
-After applying this patch, the devicetree unittest messages will
-include:
-
-   OF: overlay: ERROR: multiple fragments add, update, and/or delete property /testcase-data-2/substation@100/motor-1/rpm_avail
-
-   ...
-
-   ### dt-test ### end of unittest - 212 passed, 0 failed
-
-The check to detect two fragments updating the same property is
-folded into the patch that created the test case to maintain
-bisectability.
+A visible symptom that is fixed by this patch is the names of nodes
+added by overlays that have an entry in /sys/bus/platform/drivers/*/
+will contain the unit-address but the node-name will be <NULL>,  for
+example, "fc4ab000.<NULL>".  After applying the patch the name, in
+this example, for node restart@fc4ab000 is "fc4ab000.restart".
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
-Changes since v3:
-  - Update patch comment header to state that this patch modifies the
-    previous patch to not return immediately on fragment error and
-    explain this is not a performance issue.
-  - remove redundant "overlay" from two error messages.  "OF: overlay:"
-    is already present in pr_fmt()
+ drivers/of/dynamic.c | 27 ++++++++++++++++++---------
+ drivers/of/overlay.c | 29 ++++++++++++++++++++++++-----
+ 2 files changed, 42 insertions(+), 14 deletions(-)
 
- drivers/of/overlay.c                               | 118 ++++++++++++++-------
- drivers/of/unittest-data/Makefile                  |   1 +
- .../of/unittest-data/overlay_bad_add_dup_prop.dts  |  24 +++++
- drivers/of/unittest-data/overlay_base.dts          |   1 +
- drivers/of/unittest.c                              |   5 +
- 5 files changed, 112 insertions(+), 37 deletions(-)
- create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_prop.dts
-
+diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+index a94f727ec3da..a9f5d5fb3f25 100644
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -205,15 +205,24 @@ static void __of_attach_node(struct device_node *np)
+ 	const __be32 *phandle;
+ 	int sz;
+ 
+-	np->name = __of_get_property(np, "name", NULL) ? : "<NULL>";
+-	np->type = __of_get_property(np, "device_type", NULL) ? : "<NULL>";
+-
+-	phandle = __of_get_property(np, "phandle", &sz);
+-	if (!phandle)
+-		phandle = __of_get_property(np, "linux,phandle", &sz);
+-	if (IS_ENABLED(CONFIG_PPC_PSERIES) && !phandle)
+-		phandle = __of_get_property(np, "ibm,phandle", &sz);
+-	np->phandle = (phandle && (sz >= 4)) ? be32_to_cpup(phandle) : 0;
++	if (!of_node_check_flag(np, OF_OVERLAY)) {
++		np->name = __of_get_property(np, "name", NULL);
++		np->type = __of_get_property(np, "device_type", NULL);
++		if (!np->name)
++			np->name = "<NULL>";
++		if (!np->type)
++			np->type = "<NULL>";
++
++		phandle = __of_get_property(np, "phandle", &sz);
++		if (!phandle)
++			phandle = __of_get_property(np, "linux,phandle", &sz);
++		if (IS_ENABLED(CONFIG_PPC_PSERIES) && !phandle)
++			phandle = __of_get_property(np, "ibm,phandle", &sz);
++		if (phandle && (sz >= 4))
++			np->phandle = be32_to_cpup(phandle);
++		else
++			np->phandle = 0;
++	}
+ 
+ 	np->child = NULL;
+ 	np->sibling = np->parent->child;
 diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 0dc7452e2ed5..01afd22566ed 100644
+index 01afd22566ed..d011177e5aaa 100644
 --- a/drivers/of/overlay.c
 +++ b/drivers/of/overlay.c
-@@ -518,52 +518,96 @@ static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
- 	return 0;
- }
+@@ -307,10 +307,11 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+ 	int ret = 0;
+ 	bool check_for_non_overlay_node = false;
  
-+static int find_dup_cset_node_entry(struct overlay_changeset *ovcs,
-+		struct of_changeset_entry *ce_1)
-+{
-+	struct of_changeset_entry *ce_2;
-+	char *fn_1, *fn_2;
-+	int node_path_match;
-+
-+	if (ce_1->action != OF_RECONFIG_ATTACH_NODE &&
-+	    ce_1->action != OF_RECONFIG_DETACH_NODE)
-+		return 0;
-+
-+	ce_2 = ce_1;
-+	list_for_each_entry_continue(ce_2, &ovcs->cset.entries, node) {
-+		if ((ce_2->action != OF_RECONFIG_ATTACH_NODE &&
-+		     ce_2->action != OF_RECONFIG_DETACH_NODE) ||
-+		    of_node_cmp(ce_1->np->full_name, ce_2->np->full_name))
-+			continue;
-+
-+		fn_1 = kasprintf(GFP_KERNEL, "%pOF", ce_1->np);
-+		fn_2 = kasprintf(GFP_KERNEL, "%pOF", ce_2->np);
-+		node_path_match = !strcmp(fn_1, fn_2);
-+		kfree(fn_1);
-+		kfree(fn_2);
-+		if (node_path_match) {
-+			pr_err("ERROR: multiple fragments add and/or delete node %pOF\n",
-+			       ce_1->np);
-+			return -EINVAL;
+-	if (!of_prop_cmp(overlay_prop->name, "name") ||
+-	    !of_prop_cmp(overlay_prop->name, "phandle") ||
+-	    !of_prop_cmp(overlay_prop->name, "linux,phandle"))
+-		return 0;
++	if (target->in_livetree)
++		if (!of_prop_cmp(overlay_prop->name, "name") ||
++		    !of_prop_cmp(overlay_prop->name, "phandle") ||
++		    !of_prop_cmp(overlay_prop->name, "linux,phandle"))
++			return 0;
+ 
+ 	if (target->in_livetree)
+ 		prop = of_find_property(target->np, overlay_prop->name, NULL);
+@@ -331,6 +332,10 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+ 	if (!prop) {
+ 
+ 		check_for_non_overlay_node = true;
++		if (!target->in_livetree) {
++			new_prop->next = target->np->deadprops;
++			target->np->deadprops = new_prop;
 +		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int find_dup_cset_prop(struct overlay_changeset *ovcs,
-+		struct of_changeset_entry *ce_1)
-+{
-+	struct of_changeset_entry *ce_2;
-+	char *fn_1, *fn_2;
-+	int node_path_match;
-+
-+	if (ce_1->action != OF_RECONFIG_ADD_PROPERTY &&
-+	    ce_1->action != OF_RECONFIG_REMOVE_PROPERTY &&
-+	    ce_1->action != OF_RECONFIG_UPDATE_PROPERTY)
-+		return 0;
-+
-+	ce_2 = ce_1;
-+	list_for_each_entry_continue(ce_2, &ovcs->cset.entries, node) {
-+		if ((ce_2->action != OF_RECONFIG_ADD_PROPERTY &&
-+		     ce_2->action != OF_RECONFIG_REMOVE_PROPERTY &&
-+		     ce_2->action != OF_RECONFIG_UPDATE_PROPERTY) ||
-+		    of_node_cmp(ce_1->np->full_name, ce_2->np->full_name))
-+			continue;
-+
-+		fn_1 = kasprintf(GFP_KERNEL, "%pOF", ce_1->np);
-+		fn_2 = kasprintf(GFP_KERNEL, "%pOF", ce_2->np);
-+		node_path_match = !strcmp(fn_1, fn_2);
-+		kfree(fn_1);
-+		kfree(fn_2);
-+		if (node_path_match &&
-+		    !of_prop_cmp(ce_1->prop->name, ce_2->prop->name)) {
-+			pr_err("ERROR: multiple fragments add, update, and/or delete property %pOF/%s\n",
-+			       ce_1->np, ce_1->prop->name);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- /**
-- * check_changeset_dup_add_node() - changeset validation: duplicate add node
-+ * changeset_dup_entry_check() - check for duplicate entries
-  * @ovcs:	Overlay changeset
-  *
-- * Check changeset @ovcs->cset for multiple add node entries for the same
-- * node.
-+ * Check changeset @ovcs->cset for multiple {add or delete} node entries for
-+ * the same node or duplicate {add, delete, or update} properties entries
-+ * for the same property.
-  *
-- * Returns 0 on success, -ENOMEM if memory allocation failure, or -EINVAL if
-- * invalid overlay in @ovcs->fragments[].
-+ * Returns 0 on success, or -EINVAL if duplicate changeset entry found.
-  */
--static int check_changeset_dup_add_node(struct overlay_changeset *ovcs)
-+static int changeset_dup_entry_check(struct overlay_changeset *ovcs)
+ 		ret = of_changeset_add_property(&ovcs->cset, target->np,
+ 						new_prop);
+ 
+@@ -410,9 +415,10 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 		struct target *target, struct device_node *node)
  {
--	struct of_changeset_entry *ce_1, *ce_2;
--	char *fn_1, *fn_2;
--	int name_match;
-+	struct of_changeset_entry *ce_1;
-+	int dup_entry = 0;
+ 	const char *node_kbasename;
++	const __be32 *phandle;
+ 	struct device_node *tchild;
+ 	struct target target_child;
+-	int ret = 0;
++	int ret = 0, size;
  
- 	list_for_each_entry(ce_1, &ovcs->cset.entries, node) {
--
--		if (ce_1->action == OF_RECONFIG_ATTACH_NODE ||
--		    ce_1->action == OF_RECONFIG_DETACH_NODE) {
--
--			ce_2 = ce_1;
--			list_for_each_entry_continue(ce_2, &ovcs->cset.entries, node) {
--				if (ce_2->action == OF_RECONFIG_ATTACH_NODE ||
--				    ce_2->action == OF_RECONFIG_DETACH_NODE) {
--					/* inexpensive name compare */
--					if (!of_node_cmp(ce_1->np->full_name,
--					    ce_2->np->full_name)) {
--						/* expensive full path name compare */
--						fn_1 = kasprintf(GFP_KERNEL, "%pOF", ce_1->np);
--						fn_2 = kasprintf(GFP_KERNEL, "%pOF", ce_2->np);
--						name_match = !strcmp(fn_1, fn_2);
--						kfree(fn_1);
--						kfree(fn_2);
--						if (name_match) {
--							pr_err("ERROR: multiple overlay fragments add and/or delete node %pOF\n",
--							       ce_1->np);
--							return -EINVAL;
--						}
--					}
--				}
--			}
--		}
-+		dup_entry |= find_dup_cset_node_entry(ovcs, ce_1);
-+		dup_entry |= find_dup_cset_prop(ovcs, ce_1);
- 	}
+ 	node_kbasename = kbasename(node->full_name);
  
--	return 0;
-+	return dup_entry ? -EINVAL : 0;
- }
+@@ -426,6 +432,19 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 			return -ENOMEM;
  
- /**
-@@ -621,7 +665,7 @@ static int build_changeset(struct overlay_changeset *ovcs)
- 		}
- 	}
- 
--	return check_changeset_dup_add_node(ovcs);
-+	return changeset_dup_entry_check(ovcs);
- }
- 
- /*
-diff --git a/drivers/of/unittest-data/Makefile b/drivers/of/unittest-data/Makefile
-index 166dbdbfd1c5..9b6807065827 100644
---- a/drivers/of/unittest-data/Makefile
-+++ b/drivers/of/unittest-data/Makefile
-@@ -18,6 +18,7 @@ obj-$(CONFIG_OF_OVERLAY) += overlay.dtb.o \
- 			    overlay_13.dtb.o \
- 			    overlay_15.dtb.o \
- 			    overlay_bad_add_dup_node.dtb.o \
-+			    overlay_bad_add_dup_prop.dtb.o \
- 			    overlay_bad_phandle.dtb.o \
- 			    overlay_bad_symbol.dtb.o \
- 			    overlay_base.dtb.o
-diff --git a/drivers/of/unittest-data/overlay_bad_add_dup_prop.dts b/drivers/of/unittest-data/overlay_bad_add_dup_prop.dts
-new file mode 100644
-index 000000000000..c190da54f175
---- /dev/null
-+++ b/drivers/of/unittest-data/overlay_bad_add_dup_prop.dts
-@@ -0,0 +1,24 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
+ 		tchild->parent = target->np;
++		tchild->name = __of_get_property(node, "name", NULL);
++		tchild->type = __of_get_property(node, "device_type", NULL);
 +
-+/*
-+ * &electric_1/motor-1 and &spin_ctrl_1 are the same node:
-+ *   /testcase-data-2/substation@100/motor-1
-+ *
-+ * Thus the property "rpm_avail" in each fragment will
-+ * result in an attempt to update the same property twice.
-+ * This will result in an error and the overlay apply
-+ * will fail.
-+ */
++		if (!tchild->name)
++			tchild->name = "<NULL>";
++		if (!tchild->type)
++			tchild->type = "<NULL>";
 +
-+&electric_1 {
++		/* ignore obsolete "linux,phandle" */
++		phandle = __of_get_property(node, "phandle", &size);
++		if (phandle && (size == 4))
++			tchild->phandle = be32_to_cpup(phandle);
 +
-+	motor-1 {
-+		rpm_avail = < 100 >;
-+	};
-+};
-+
-+&spin_ctrl_1 {
-+		rpm_avail = < 100 200 >;
-+};
-diff --git a/drivers/of/unittest-data/overlay_base.dts b/drivers/of/unittest-data/overlay_base.dts
-index 820b79ca378a..99ab9d12d00b 100644
---- a/drivers/of/unittest-data/overlay_base.dts
-+++ b/drivers/of/unittest-data/overlay_base.dts
-@@ -30,6 +30,7 @@
- 			spin_ctrl_1: motor-1 {
- 				compatible = "ot,ferris-wheel-motor";
- 				spin = "clockwise";
-+				rpm_avail = < 50 >;
- 			};
+ 		of_node_set_flag(tchild, OF_OVERLAY);
  
- 			spin_ctrl_2: motor-8 {
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 471b8eb6e842..efd9c947f192 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -2148,6 +2148,7 @@ struct overlay_info {
- OVERLAY_INFO_EXTERN(overlay_13);
- OVERLAY_INFO_EXTERN(overlay_15);
- OVERLAY_INFO_EXTERN(overlay_bad_add_dup_node);
-+OVERLAY_INFO_EXTERN(overlay_bad_add_dup_prop);
- OVERLAY_INFO_EXTERN(overlay_bad_phandle);
- OVERLAY_INFO_EXTERN(overlay_bad_symbol);
- 
-@@ -2171,6 +2172,7 @@ struct overlay_info {
- 	OVERLAY_INFO(overlay_13, 0),
- 	OVERLAY_INFO(overlay_15, 0),
- 	OVERLAY_INFO(overlay_bad_add_dup_node, -EINVAL),
-+	OVERLAY_INFO(overlay_bad_add_dup_prop, -EINVAL),
- 	OVERLAY_INFO(overlay_bad_phandle, -EINVAL),
- 	OVERLAY_INFO(overlay_bad_symbol, -EINVAL),
- 	{}
-@@ -2418,6 +2420,9 @@ static __init void of_unittest_overlay_high_level(void)
- 	unittest(overlay_data_apply("overlay_bad_add_dup_node", NULL),
- 		 "Adding overlay 'overlay_bad_add_dup_node' failed\n");
- 
-+	unittest(overlay_data_apply("overlay_bad_add_dup_prop", NULL),
-+		 "Adding overlay 'overlay_bad_add_dup_prop' failed\n");
-+
- 	unittest(overlay_data_apply("overlay_bad_phandle", NULL),
- 		 "Adding overlay 'overlay_bad_phandle' failed\n");
- 
+ 		ret = of_changeset_attach_node(&ovcs->cset, tchild);
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
