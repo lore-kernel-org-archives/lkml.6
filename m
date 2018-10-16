@@ -2,110 +2,60 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DB1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B6DC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C5EB208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:40:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C5EB208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by mail.kernel.org (Postfix) with ESMTP id 4B5EC208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 05:40:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B5EC208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbeJPN2m (ORCPT
+        id S1728294AbeJPN33 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 09:28:42 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57196 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728054AbeJPN2F (ORCPT
+        Tue, 16 Oct 2018 09:29:29 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:43954 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727438AbeJPN33 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 09:28:05 -0400
-Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 590B827FFA; Tue, 16 Oct 2018 01:39:21 -0400 (EDT)
-To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <41d39fdc25ed8ee608369a1ed956e635921dc2eb.1539667885.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1539667885.git.fthain@telegraphics.com.au>
-References: <cover.1539667885.git.fthain@telegraphics.com.au>
-From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v3 2/6] esp_scsi: Track residual for PIO transfers
-Date:   Tue, 16 Oct 2018 16:31:25 +1100
+        Tue, 16 Oct 2018 09:29:29 -0400
+Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id A82B6120A8DE6;
+        Mon, 15 Oct 2018 22:40:45 -0700 (PDT)
+Date:   Mon, 15 Oct 2018 22:40:45 -0700 (PDT)
+Message-Id: <20181015.224045.2147031121153042741.davem@davemloft.net>
+To:     colin.king@canonical.com
+Cc:     Ariel.Elior@cavium.com, everest-linux-l2@cavium.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] qed: fix spelling mistake "Ireelevant" -> "Irrelevant"
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181013154825.6285-1-colin.king@canonical.com>
+References: <20181013154825.6285-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 15 Oct 2018 22:40:46 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a target disconnects during a PIO data transfer the command may
-fail when the target reconnects:
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 13 Oct 2018 16:48:25 +0100
 
-scsi host1: DMA length is zero!
-scsi host1: cur adr[04380000] len[00000000]
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in DP_INFO message
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The scsi bus is then reset. This happens because the residual reached
-zero before the transfer was completed.
-
-The usual residual calculation relies on the Transfer Count registers.
-That works for DMA transfers but not for PIO transfers. Fix the problem
-by storing the PIO transfer residual and using that to correctly
-calculate bytes_sent.
-
-Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
----
-Changed since v2:
- - Declare send_cmd_residual as u32 instead of int.
----
- drivers/scsi/esp_scsi.c | 1 +
- drivers/scsi/esp_scsi.h | 2 ++
- drivers/scsi/mac_esp.c  | 2 ++
- 3 files changed, 5 insertions(+)
-
-diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
-index c3fc34b9964d..9e5d3f7d29ae 100644
---- a/drivers/scsi/esp_scsi.c
-+++ b/drivers/scsi/esp_scsi.c
-@@ -1338,6 +1338,7 @@ static int esp_data_bytes_sent(struct esp *esp, struct esp_cmd_entry *ent,
- 
- 	bytes_sent = esp->data_dma_len;
- 	bytes_sent -= ecount;
-+	bytes_sent -= esp->send_cmd_residual;
- 
- 	/*
- 	 * The am53c974 has a DMA 'pecularity'. The doc states:
-diff --git a/drivers/scsi/esp_scsi.h b/drivers/scsi/esp_scsi.h
-index 8163dca2071b..a77772777a30 100644
---- a/drivers/scsi/esp_scsi.h
-+++ b/drivers/scsi/esp_scsi.h
-@@ -540,6 +540,8 @@ struct esp {
- 
- 	void			*dma;
- 	int			dmarev;
-+
-+	u32			send_cmd_residual;
- };
- 
- /* A front-end driver for the ESP chip should do the following in
-diff --git a/drivers/scsi/mac_esp.c b/drivers/scsi/mac_esp.c
-index eb551f3cc471..71879f2207e0 100644
---- a/drivers/scsi/mac_esp.c
-+++ b/drivers/scsi/mac_esp.c
-@@ -427,6 +427,8 @@ static void mac_esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
- 			scsi_esp_cmd(esp, ESP_CMD_TI);
- 		}
- 	}
-+
-+	esp->send_cmd_residual = esp_count;
- }
- 
- static int mac_esp_irq_pending(struct esp *esp)
--- 
-2.18.1
-
+Applied.
