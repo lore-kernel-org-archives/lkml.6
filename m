@@ -2,211 +2,134 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEC6C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 136FDC169D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5B512086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:01:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HijZaiu5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5B512086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BD48D2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:01:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD48D2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbeJPSvk (ORCPT
+        id S1727262AbeJPSvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 14:51:40 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43954 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726581AbeJPSvj (ORCPT
+        Tue, 16 Oct 2018 14:51:45 -0400
+Received: from gateway36.websitewelcome.com ([192.185.199.121]:44806 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726718AbeJPSvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 14:51:39 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n1-v6so24963599wrt.10;
-        Tue, 16 Oct 2018 04:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fnGCS83Z0SZAGsiz42xG0H+2VU7WB1tZuj9DdgTIoQQ=;
-        b=HijZaiu5sP3vZtlCbpQZqyDsGFpqIRHQgyMltErHDYKNDutFb6azEo8VWcnZxd2HPx
-         x3idSsHg0FEecmvOeEtF+ayf1448eR/5B4WThHpMoY2b51hdjAqJhfR7CnPBk4MYl8KX
-         lQmCEkKamsvEETtB/xtK07w1qfQpxsS3idFMb32Yph9yC1kPRbPu7PXEbraYL232zBkb
-         2Vj61TBwHnC5+A1SqriQa/PP4xuZ/lKezYqu4HdgqDAcHpoBhHQGawH2pgc1tE5veLoY
-         DAF3XE+qtpJsX0RMLiCJrWEwiZM+IzIG6eqv+NEoHydy3uXzjvkQSk/f5y3CMOATWM3U
-         yfgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fnGCS83Z0SZAGsiz42xG0H+2VU7WB1tZuj9DdgTIoQQ=;
-        b=NPx0cBO4g5NagfbQUX/WI1xQ88zIIuA2ET4UuhOvHxgCsODzlSNiJtv4JEblCFvfZM
-         gRGEC7jYPQLOm4FuyE6oVJFmMkOT9QvA/tuaYMVNFUCV3hvudp8UM+xphj/RUnsgKxBX
-         WaAx6gj8y8aGJ5bpc5TeCuZ89MWZ1gXEccLxiTo5ypzrJaNtuHbfzv/5JOPJIo59S9dg
-         N8YFfq7ZOz/WECwJlne2T3eSXOcj5cmRRslyO47ox7vjs+ZmJRcQ7uqlOAHJYtukbdNJ
-         mTyvbWQhzaKNGYwGttro4+KeBv9A9vt+jhQ5GC2v9ukSrMIkojL7UGwn6sB+IcFd59Hz
-         oEEg==
-X-Gm-Message-State: ABuFfogLde/Mx/MfeBICpULfbbo7FIf7iNw3oBhr7DDEzhmfJfF9CBCw
-        QyJZfGQz3WswXYmS7eegmK8=
-X-Google-Smtp-Source: ACcGV60XPHlPvtT49HYyLOubtJz18+BHFeC1YnHOQgMbaW99bDWRvBFlBT3htyhCBzTfO1CtCq3UIg==
-X-Received: by 2002:a5d:4208:: with SMTP id n8-v6mr17033485wrq.260.1539687704113;
-        Tue, 16 Oct 2018 04:01:44 -0700 (PDT)
-Received: from localhost (pD9E5106D.dip0.t-ipconnect.de. [217.229.16.109])
-        by smtp.gmail.com with ESMTPSA id 126-v6sm11977018wme.48.2018.10.16.04.01.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 04:01:43 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 13:01:42 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Atish Patra <atish.patra@wdc.com>, Rob Herring <robh+dt@kernel.org>
-Cc:     Wesley Terpstra <wesley@sifive.com>, palmer@sifive.com,
-        linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, hch@infradead.org
-Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM
- Controller.
-Message-ID: <20181016110142.GC8852@ulmo>
-References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
- <1539111085-25502-2-git-send-email-atish.patra@wdc.com>
- <20181010134926.GD21134@ulmo>
- <25758ab9-eb36-741b-6264-42412b3ddd8e@wdc.com>
+        Tue, 16 Oct 2018 14:51:40 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 546FF400C9785
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 05:08:45 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id CN6fgDhqIFxNhCN6fgXIPV; Tue, 16 Oct 2018 06:01:45 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:33260 helo=[192.168.1.41])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gCN6f-000s1y-4q; Tue, 16 Oct 2018 06:01:45 -0500
+Subject: Re: [PATCH] iio: dpot-dac: mark expected switch fall-through
+To:     Jonathan Cameron <jic23@kernel.org>, Peter Rosin <peda@axentia.se>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181008173528.GA31787@embeddedor.com>
+ <ded46d23-0ec9-3fc8-3fc2-fa8003639272@axentia.se>
+ <20181013133831.7dbd31e8@archlinux>
+ <43e89449-d693-3e1b-711c-7c9c139d288d@axentia.se>
+ <20181014180134.287c0a66@archlinux>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <6fe3f1f5-5bf6-2552-b322-90e766e6e5a2@embeddedor.com>
+Date:   Tue, 16 Oct 2018 13:01:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Pk6IbRAofICFmK5e"
-Content-Disposition: inline
-In-Reply-To: <25758ab9-eb36-741b-6264-42412b3ddd8e@wdc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181014180134.287c0a66@archlinux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gCN6f-000s1y-4q
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:33260
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Pk6IbRAofICFmK5e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 15, 2018 at 03:57:35PM -0700, Atish Patra wrote:
-> On 10/10/18 6:49 AM, Thierry Reding wrote:
-> > On Tue, Oct 09, 2018 at 11:51:22AM -0700, Atish Patra wrote:
-> > > From: "Wesley W. Terpstra" <wesley@sifive.com>
-> > >=20
-> > > DT documentation for PWM controller added with updated compatible
-> > > string.
-> > >=20
-> > > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> > > [Atish: Compatible string update]
-> > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> > > ---
-> > >   .../devicetree/bindings/pwm/pwm-sifive.txt         | 32 +++++++++++=
-+++++++++++
-> > >   1 file changed, 32 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive=
-=2Etxt
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/D=
-ocumentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > new file mode 100644
-> > > index 00000000..532b10fc
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > @@ -0,0 +1,32 @@
-> > > +SiFive PWM controller
-> > > +
-> > > +Unlike most other PWM controllers, the SiFive PWM controller current=
-ly only
-> > > +supports one period for all channels in the PWM. This is set globall=
-y in DTS.
-> > > +The period also has significant restrictions on the values it can ac=
-hieve,
-> > > +which the driver rounds to the nearest achievable frequency.
-> >=20
-> > What restrictions are these? If "nearest achievable" is too far off the
-> > target period it might be preferable to error out.
-> >=20
->=20
-> @Wes: Any comments?
->=20
-> > > +Required properties:
-> > > +- compatible: should be one of
-> > > +	"sifive,fu540-c000-pwm0","sifive,pwm0".
-> >=20
-> > What's the '0' in here? A version number?
-> >=20
->=20
-> I think yes. Since fu540 is the first Linux capable RISC-V core, SiFive G=
-uys
-> decided mark it as version 0.
->=20
-> @Wesly: Please correct me if I am wrong.
+On 10/14/18 7:01 PM, Jonathan Cameron wrote:
 
-It seems fairly superfluous to me to have a version number in additon to
-the fu540-c000, which already seems to be the core plus some sort of
-part number. Do you really expect there to be any changes in the SoC
-that would require a different compatible string at this point? If the
-SoC has taped out, how will you ever get a different version of the PWM
-IP in it?
+> 
+> Done the first of the above...
+> 
 
-I would expect any improvements or changes to the PWM IP to show up in a
-different SoC generation, at which point it would be something like
-"sifive,fu640-c000" maybe, or perhaps "sifive,fu540-d000", or whatever
-the numbering is.
-
-> > > +	PWM controller is HiFive Unleashed specific chip which warrants a
-> > > +	specific compatible string. The second string is kept for backward
-> > > +	compatibility until a firmware update with latest compatible string.
-> > > +- reg: physical base address and length of the controller's registers
-> > > +- clocks: The frequency the controller runs at
-> > > +- #pwm-cells: Should be 2.
-> > > +  The first cell is the PWM channel number
-> > > +  The second cell is the PWM polarity
-> > > +- sifive,approx-period: the driver will get as close to this period =
-as it can
-> >=20
-> > Given the above comment, maybe "sifive,period"?
-> >=20
->=20
-> ok.
-> In Unleashed board, the DT is loaded by FSBL (first stage boot loader).
-> Thus, changing device tree entries requires a FSBL update. If we update t=
-his
-> string, we need to update the driver to parse both properties so that
-> existing devices with older firmware continue to work.
->=20
-> This is probably ok as we anyways do that for compatible strings. Just
-> wanted to update that here for the record.
-
-I'm going to defer to Rob on this. He's said in the past that he doesn't
-care about existing bindings that haven't been vetted through upstream,
-even if that means that bootloaders may have to be updated. I know he's
-been fairly strict on this in the past, but let's see if there is room
-for exceptions.
-
-Thierry
-
---Pk6IbRAofICFmK5e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvFxRMACgkQ3SOs138+
-s6GhURAAmC6vuSADDLFab6WEqwRLFGoo9to8KJZ7D+7hu7qf/bAwo8RXJ30UXWyE
-72UmII/bY4sTDaBAPU0e4LhN7fwp4TaOWqV03FN2zalTxPeeVF7zEE7elulhsZNp
-9UuSTvIAXvHK8FmE3mFoGXduSaDAfpDmx2CzLZrHtJ14JSK2xpRr6z7K2OX2XdWP
-YsPglyv40v1e/x8p/GlsiO8fo8+AtOFyyCvIq/IcI+o3ynQZXwyYsGOdSrtPYHTj
-51ZDLXJK4dAxLijoJ/MPpZGq50BNbtSlgsylEkHV/7iLhGqskQkjXlUlM1zPBTeX
-VWHK+/akjOzlEhase3MaBA4wNgZZ0JPXWn+pUWIK4CjL9A6sTbxWEiVGBK9Heo5O
-3ghb8BcJolWVgS0Z9xnamcs1SXODhqwQzZhVNNSW2xQTsdEW0+OKcwWuNANOOzrr
-a7yZQYL55G+C3cBL74Kc4n82gjlIsl+q85OD0XMyhpoVRPd2SvLFqy7nHXVRl50K
-PGEJNwLIFYgKzFcHUQI7uO+wBAo9Lx92QPBVtUJCrbBwJxcgkCXwwWMQqLyR5WbL
-Uaw2K5rb6ICdIxzlsd4C97alXe/7xCU0tSLiUmieno02appctkBQEoceKqeVAbOZ
-A2+T8lVGEmPg3ugVzeSyvJxDXo679KUNQAGHz7GgTg3yJmDhraI=
-=UizH
------END PGP SIGNATURE-----
-
---Pk6IbRAofICFmK5e--
+Thank you, Jonathan.
+--
+Gustavo
