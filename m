@@ -2,477 +2,280 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A789CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2879C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5F1205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:39:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5F1205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DC8C21476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:39:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RkUgJd4X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DC8C21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbeJQBa3 (ORCPT
+        id S1727455AbeJQBbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:30:29 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40562 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727103AbeJQBa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:30:28 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8A8180D;
-        Tue, 16 Oct 2018 10:38:57 -0700 (PDT)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3256C3F71C;
-        Tue, 16 Oct 2018 10:38:56 -0700 (PDT)
-Subject: Re: [PATCH 2/2] irqchip: add driver for imx-irqsteer controller
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        kernel@pengutronix.de, patchwork-lst@pengutronix.de
-References: <20181016164218.3736-1-l.stach@pengutronix.de>
- <20181016164218.3736-2-l.stach@pengutronix.de>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <d3aa8a2e-7b98-2f7c-ffa6-dbbc4d336752@arm.com>
-Date:   Tue, 16 Oct 2018 18:38:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 16 Oct 2018 21:31:07 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38538 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727032AbeJQBbG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:31:06 -0400
+Received: by mail-pl1-f195.google.com with SMTP id q19-v6so8279731pll.5;
+        Tue, 16 Oct 2018 10:39:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=pkuHJt+fSq9QL8V1hOpl+hs5fE2TEWjgqL5N0xigV74=;
+        b=RkUgJd4XJg+fbzsJ3jcdB+ijVFYunUPqcKyQv18x5R/P0z2thvw0IJK0bnC4ysHOYH
+         ukQ7aGyvvhqvwFcijfyWLq/c0SurAuqz/HSFyZAaR7zE4a+unlXOzUtQkPJyrwqiog59
+         quiBfqB0a7Cu7VRo6KSLl+4gIhIz7cvr45LlS/lVF+TTxwfPwYa15GLUmpL1cTn6ZZP6
+         /fr9u44B1pCnZxI7CZAn/ErXcDRJCElNdTCoI9GydGZO++ka5UnhQYPbZfIMK2Ylhhms
+         R+s6yfih+LR1PLZwqHxubqXaLuX0LRSfDZ1339nxQfHULntdt9YMKITP4+vEYm2BfDRP
+         5S8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=pkuHJt+fSq9QL8V1hOpl+hs5fE2TEWjgqL5N0xigV74=;
+        b=B+HwoAlpr6M/ifiTuRTOJvxnkT2cHdq/5KiDTYJIEuHyvpvQep5F00U7QUkfcHbaB/
+         WnHmLCJpVd/FuOp3UGSWXXIihQtKdX67PPhAAYlG6QBxFYGx8G8Kt4ge7txco3gP2pH5
+         7ujSSCPYq98YRcNCQnOsYzbvSpmFVuizUmnReptLspHjK6A7hFQLYN97WJWgS+jsqJON
+         cJwl3h0ibJX96+L4N30myP/urBwHdxF0B69NSsf5Z0mwRfq4wGSvWteVmuSJ1oHgpaMe
+         Y1gNrnASVUPCxClKfppKOiZ3FoadLceCwMtA4QzVaHuSsYv+G3ZzfRNtQ8Ifg6FjVnQe
+         BKuw==
+X-Gm-Message-State: ABuFfoizjRKYZc9Fxg3P8d6CZ7QRSybXdD/ssTaI7rmExJDo7pXarPdp
+        BLu12U4/CXF8XJtH6IM/cUg=
+X-Google-Smtp-Source: ACcGV639ro3Mz43jJw+VmCAwBTo+hDp0OpQ+X2Ba2/LYxSUkQlKN6KqbWtFmGr4u9iGEXnOyBFX88g==
+X-Received: by 2002:a17:902:5602:: with SMTP id h2-v6mr22195065pli.220.1539711575330;
+        Tue, 16 Oct 2018 10:39:35 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id a5-v6sm17084663pfo.53.2018.10.16.10.39.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 10:39:34 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 10:39:31 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Richard Leitner <richard.leitner@skidata.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] Input: sx8654 - add reset-gpio support
+Message-ID: <20181016173931.GC230131@dtor-ws>
+References: <20181016091653.26896-1-richard.leitner@skidata.com>
+ <20181016091653.26896-3-richard.leitner@skidata.com>
 MIME-Version: 1.0
-In-Reply-To: <20181016164218.3736-2-l.stach@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181016091653.26896-3-richard.leitner@skidata.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lucas,
+Hi Richard,
 
-On 16/10/18 17:42, Lucas Stach wrote:
-> The irqsteer block is a interrupt multiplexer/remapper found on the
-> i.MX8 line of SoCs.
+On Tue, Oct 16, 2018 at 11:16:48AM +0200, Richard Leitner wrote:
+> The sx8654 features a NRST input which may be connected to a GPIO.
+> Therefore add support for hard-resetting the sx8654 via this NRST.
 > 
-> Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
-> This submission is a heavily cleaned up version of the downstream driver.
-> ---
->  drivers/irqchip/Kconfig            |   8 +
->  drivers/irqchip/Makefile           |   1 +
->  drivers/irqchip/irq-imx-irqsteer.c | 281 +++++++++++++++++++++++++++++
->  3 files changed, 290 insertions(+)
->  create mode 100644 drivers/irqchip/irq-imx-irqsteer.c
+> If the reset-gpio property is provided the sx8654 is resetted via NRST
+> instead of the soft-reset via I2C.
 > 
-> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-> index 383e7b70221d..07290b30abd2 100644
-> --- a/drivers/irqchip/Kconfig
-> +++ b/drivers/irqchip/Kconfig
-> @@ -371,6 +371,14 @@ config QCOM_PDC
->  	  Power Domain Controller driver to manage and configure wakeup
->  	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
+> Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
+> ---
+>  drivers/input/touchscreen/sx8654.c | 88 ++++++++++++++++++++++++++++++++------
+>  1 file changed, 74 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/sx8654.c b/drivers/input/touchscreen/sx8654.c
+> index ed29db3ec731..059127490c8d 100644
+> --- a/drivers/input/touchscreen/sx8654.c
+> +++ b/drivers/input/touchscreen/sx8654.c
+> @@ -33,6 +33,8 @@
+>  #include <linux/i2c.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/delay.h>
 >  
-> +config IMX_IRQSTEER
-> +	bool "i.MX IRQSTEER support"
-> +	depends on ARCH_MXC || COMPILE_TEST
-> +	default ARCH_MXC
-> +	select IRQ_DOMAIN
-> +	help
-> +	  Support for the i.MX IRQSTEER interrupt multiplexer/remapper.
-> +
->  endmenu
+>  /* register addresses */
+>  #define I2C_REG_TOUCH0			0x00
+> @@ -74,6 +76,7 @@
+>  struct sx8654 {
+>  	struct input_dev *input;
+>  	struct i2c_client *client;
+> +	struct gpio_desc *gpio_reset;
+>  };
 >  
->  config SIFIVE_PLIC
-> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> index fbd1ec8070ef..2c77ba4cc3cc 100644
-> --- a/drivers/irqchip/Makefile
-> +++ b/drivers/irqchip/Makefile
-> @@ -88,3 +88,4 @@ obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
->  obj-$(CONFIG_NDS32)			+= irq-ativic32.o
->  obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
->  obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
-> +obj-$(CONFIG_IMX_IRQSTEER)		+= irq-imx-irqsteer.o
-> diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-imx-irqsteer.c
-> new file mode 100644
-> index 000000000000..3ff0698ea7bd
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-imx-irqsteer.c
-> @@ -0,0 +1,281 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright 2017 NXP
-> + * Copyright (C) 2018 Pengutronix, Lucas Stach <kernel@pengutronix.de>
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/clk.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqchip/chained_irq.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/spinlock.h>
-> +
-> +#define CHANREG_OFF(_t)	(_t * 4)
-> +#define CHANCTRL		0x0
-> +#define CHANMASK(n, t)		(0x4 + (0x4 * (n)) + (CHANREG_OFF(t) * 0))
-> +#define CHANSET(n, t)		(0x4 + (0x4 * (n)) + (CHANREG_OFF(t) * 1))
-> +#define CHANSTATUS(n, t)	(0x4 + (0x4 * (n)) + (CHANREG_OFF(t) * 2))
-> +#define CHAN_MINTDIS(t)		(0x4 + (CHANREG_OFF(t) * 3))
-> +#define CHAN_MASTRSTAT(t)	(0x8 + (CHANREG_OFF(t) * 3))
-> +
-> +struct irqsteer_irqchip_data {
-> +	spinlock_t lock;
-
-raw_spinlock_t, please.
-
-> +	struct platform_device *pdev;
-> +	void __iomem *regs;
-> +	struct clk *ipg_clk;
-> +	int irq;
-> +	int channum;
-> +	int big_endian;
-
-bool?
-
-> +	struct irq_domain *domain;
-> +	int *saved_reg;
-> +};
-> +
-> +static int imx_irqsteer_get_reg_index(struct irqsteer_irqchip_data *data,
-> +				      unsigned long irqnum)
+>  static irqreturn_t sx8654_irq(int irq, void *handle)
+> @@ -124,6 +127,27 @@ static irqreturn_t sx8654_irq(int irq, void *handle)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static int sx8654_reset(struct sx8654 *ts)
 > +{
-> +	if (data->big_endian)
-> +		return (data->channum - irqnum / 32 - 1);
-> +	else
-> +		return irqnum / 32;
-> +}
+> +	int err;
 > +
-> +static void imx_irqsteer_irq_unmask(struct irq_data *d)
-> +{
-> +	struct irqsteer_irqchip_data *data = d->chip_data;
-> +	int idx = imx_irqsteer_get_reg_index(data, d->hwirq);
-> +	u32 val;
+> +	if (ts->gpio_reset) {
+> +		gpiod_set_value_cansleep(ts->gpio_reset, 1);
+> +		udelay(2); /* Tpulse > 1µs */
+> +		gpiod_set_value_cansleep(ts->gpio_reset, 0);
 > +
-> +	spin_lock(&data->lock);
-> +	val = readl_relaxed(data->regs + CHANMASK(idx, data->channum));
-> +	val |= 1 << (d->hwirq % 32);
-> +	writel_relaxed(val, data->regs + CHANMASK(idx, data->channum));
-> +	spin_unlock(&data->lock);
-
-If you take an interrupt within this sequence (because a driver is
-calling enable_irq/disable_irq, for example), and that you try to mask
-or unmask (which your flow handler will do), you're in for a nice
-deadlock. Consider using the irqsave/irqrestore variants.
-
-> +}
-> +
-> +static void imx_irqsteer_irq_mask(struct irq_data *d)
-> +{
-> +	struct irqsteer_irqchip_data *data = d->chip_data;
-> +	int idx = imx_irqsteer_get_reg_index(data, d->hwirq);
-> +	u32 val;
-> +
-> +	spin_lock(&data->lock);
-> +	val = readl_relaxed(data->regs + CHANMASK(idx, data->channum));
-> +	val &= ~(1 << (d->hwirq % 32));
-> +	writel_relaxed(val, data->regs + CHANMASK(idx, data->channum));
-> +	spin_unlock(&data->lock);
-> +}
-> +
-> +static int imx_irqsteer_set_type(struct irq_data *data, unsigned int flow_type)
-> +{
-> +	if ((flow_type & IRQ_TYPE_SENSE_MASK) == IRQ_TYPE_LEVEL_HIGH)
 > +		return 0;
+> +	}
 > +
-> +	return -EINVAL;
-> +}
-> +
-> +static struct irq_chip imx_irqsteer_irq_chip = {
-> +	.name		= "irqsteer",
-> +	.irq_eoi	= irq_chip_eoi_parent,
+> +	dev_dbg(&ts->client->dev, "NRST unavailable, try softreset\n");
+> +	err = i2c_smbus_write_byte_data(ts->client, I2C_REG_SOFTRESET,
+> +					SOFTRESET_VALUE);
+> +	if (err)
+> +		return err;
 
-What does it mean to call into the parent while this is a chained
-interrupt controller which, by definition, doesn't have any parent?
+Have this in an "else" branch?
 
-> +	.irq_mask	= imx_irqsteer_irq_mask,
-> +	.irq_unmask	= imx_irqsteer_irq_unmask,
-> +	.irq_set_type	= imx_irqsteer_set_type,
-> +};
-> +
-> +static int imx_irqsteer_irq_map(struct irq_domain *h, unsigned int irq,
-> +				irq_hw_number_t hwirq)
-> +{
-> +	irq_set_chip_data(irq, h->host_data);
-> +	irq_set_chip_and_handler(irq, &imx_irqsteer_irq_chip, handle_level_irq);
 > +
 > +	return 0;
 > +}
 > +
-> +static const struct irq_domain_ops imx_irqsteer_domain_ops = {
-> +	.map		= imx_irqsteer_irq_map,
-> +	.xlate		= irq_domain_xlate_twocell,
-> +};
-> +
-> +static void imx_irqsteer_irq_handler(struct irq_desc *desc)
+>  static int sx8654_open(struct input_dev *dev)
+>  {
+>  	struct sx8654 *sx8654 = input_get_drvdata(dev);
+> @@ -171,6 +195,44 @@ static void sx8654_close(struct input_dev *dev)
+>  	}
+>  }
+>  
+> +#ifdef CONFIG_OF
+> +static int sx8654_get_ofdata(struct sx8654 *ts)
 > +{
-> +	struct irqsteer_irqchip_data *data = irq_desc_get_handler_data(desc);
-> +	u32 val;
-> +	int i;
+> +	struct device *dev = &ts->client->dev;
+> +	struct device_node *node = dev->of_node;
+> +	int err;
 > +
-> +	chained_irq_enter(irq_desc_get_chip(desc), desc);
-> +
-> +	val = readl_relaxed(data->regs + CHAN_MASTRSTAT(data->channum));
-> +	if (!val)
-> +		goto out;
-> +
-> +	for (i = 0; i < data->channum; i++) {
-> +		int idx = data->big_endian ? (data->channum - i - 1) : i;
-
-How about reusing your imx_irqsteer_get_reg_index helper here?
-
-Also what is the use of val? Shouldn't you only read the status register
-for channels that have interrupts pending (assuming I understand how
-this thing works)?
-
-> +		unsigned long irqmap;
-> +		int pos, virq;
-> +
-> +		irqmap = readl_relaxed(data->regs +
-> +				       CHANSTATUS(idx, data->channum));
-> +
-> +		for_each_set_bit(pos, &irqmap, 32) {
-> +			virq = irq_find_mapping(data->domain, pos);
-> +			if (virq)
-> +				generic_handle_irq(virq);
-> +		}
+> +	if (!node) {
+> +		ts->gpio_reset = NULL;
+> +		return 0;
 > +	}
-> +
-> +out:
-> +	chained_irq_exit(irq_desc_get_chip(desc), desc);
 
-I guess you can have a local variable caching this irq_desc_get_chip().
+There is no need to wrap this into CONFIG_OF or test "node". Just use
+devm_gpiod_get_optional() and it will work equally well on DT, ACPI, and
+static board systems.
 
-> +}
 > +
-> +static int imx_irqsteer_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct irqsteer_irqchip_data *data;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	data->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(data->regs)) {
-> +		dev_err(&pdev->dev, "failed to initialize reg\n");
-> +		return PTR_ERR(data->regs);
+> +	ts->gpio_reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+> +	if (PTR_ERR(ts->gpio_reset) == -EPROBE_DEFER) {
+> +		return -EPROBE_DEFER;
+> +	} else if (IS_ERR(ts->gpio_reset)) {
+> +		err = PTR_ERR(ts->gpio_reset);
+
+I'd do:
+
+		if (err != -EPROBE_DEFER)
+			dev_err(...)
+
+here instead of separate branch.
+
+> +		dev_err(dev, "unable to request GPIO reset pin (%d)\n", err);
+> +		return err;
 > +	}
-> +
-> +	data->irq = platform_get_irq(pdev, 0);
-> +	if (data->irq <= 0) {
-> +		dev_err(&pdev->dev, "failed to get irq\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	data->ipg_clk = devm_clk_get(&pdev->dev, "ipg");
-> +	if (IS_ERR(data->ipg_clk)) {
-> +		ret = PTR_ERR(data->ipg_clk);
-> +		dev_err(&pdev->dev, "failed to get ipg clk: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/* default to 1 channel and little endian */
-> +	data->channum = 1;
-> +	data->big_endian  = 0;
+> +	dev_dbg(dev, "got GPIO reset pin\n");
 
-s/0/false/
+Also, I'd move all this code directly into probe() since all this
+#ifdefery is not needed.
 
-> +	data->pdev = pdev;
-> +	spin_lock_init(&data->lock);
-> +
-> +	of_property_read_u32(np, "fsl,channel", &data->channum);
-> +	of_property_read_u32(np, "fsl,endian", &data->big_endian);
-
-If you're reading a u32, please use the same type in the data structure.
-
-> +
-> +	if (IS_ENABLED(CONFIG_PM_SLEEP)) {
-> +		data->saved_reg = devm_kzalloc(&pdev->dev,
-> +					       sizeof(u32) * data->channum + 1,
-> +					       GFP_KERNEL);
-
-Use the appropriate type for saved_reg.
-
-> +		if (!data->saved_reg)
-> +			return -ENOMEM;
-> +	}
-> +
-> +	ret = clk_prepare_enable(data->ipg_clk);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to enable ipg clk: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/* enable channel 1 by default */
-> +	writel_relaxed(1, data->regs + CHANCTRL);
-
-Is that channel 1? or channel 0? Also, who enables the other channels? I
-have the feeling that this driver is unable to service more than the
-first 32 interrupts... But again, I'm guessing how the HW works here.
-
-> +
-> +	data->domain = irq_domain_add_linear(np, data->channum * 32,
-> +					     &imx_irqsteer_domain_ops, data);
-> +	if (!data->domain) {
-> +		dev_err(&data->pdev->dev, "failed to create IRQ domain\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	irq_set_chained_handler_and_data(data->irq, imx_irqsteer_irq_handler,
-> +					 data);
-> +
-> +	platform_set_drvdata(pdev, data);
 > +
 > +	return 0;
 > +}
 > +
-> +static int imx_irqsteer_remove(struct platform_device *pdev)
+> +static const struct of_device_id sx8654_of_match[] = {
+> +	{ .compatible = "semtech,sx8654", },
+> +	{ },
+> +};
+
+Please keep the device table wehere it was.
+
+> +MODULE_DEVICE_TABLE(of, sx8654_of_match);
+> +#else /* CONFIG_OF */
+> +static int sx8654_get_ofdata(struct sx8654 *ts)
 > +{
-> +	struct irqsteer_irqchip_data *irqsteer_data = platform_get_drvdata(pdev);
-> +
-> +	irq_set_chained_handler_and_data(irqsteer_data->irq, NULL, NULL);
-> +	irq_domain_remove(irqsteer_data->domain);
-> +
-> +	clk_disable_unprepare(irqsteer_data->ipg_clk);
-> +
+> +	ts->gpio_reset = NULL;
 > +	return 0;
 > +}
+> +#endif /* CONFIG_OF */
 > +
-> +#ifdef CONFIG_PM_SLEEP
-> +static void imx_irqsteer_save_regs(struct irqsteer_irqchip_data *data)
-> +{
-> +	int num;
+>  static int sx8654_probe(struct i2c_client *client,
+>  			const struct i2c_device_id *id)
+>  {
+> @@ -186,10 +248,20 @@ static int sx8654_probe(struct i2c_client *client,
+>  	if (!sx8654)
+>  		return -ENOMEM;
+>  
+> +	sx8654->client = client;
 > +
-> +	data->saved_reg[0] = readl_relaxed(data->regs + CHANCTRL);
-> +	for (num = 0; num < data->channum; num++)
-> +		data->saved_reg[num + 1] = readl_relaxed(data->regs +
-> +						CHANMASK(num, data->channum));
-> +}
-> +
-> +static void imx_irqsteer_restore_regs(struct irqsteer_irqchip_data *data)
-> +{
-> +	int num;
-> +
-> +	writel_relaxed(data->saved_reg[0], data->regs + CHANCTRL);
-> +	for (num = 0; num < data->channum; num++)
-> +		writel_relaxed(data->saved_reg[num + 1],
-> +			       data->regs + CHANMASK(num, data->channum));
-> +}
-> +
-> +static int imx_irqsteer_suspend(struct device *dev)
-> +{
-> +	struct irqsteer_irqchip_data *irqsteer_data = dev_get_drvdata(dev);
-> +
-> +	imx_irqsteer_save_regs(irqsteer_data);
-> +	clk_disable_unprepare(irqsteer_data->ipg_clk);
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_irqsteer_resume(struct device *dev)
-> +{
-> +	struct irqsteer_irqchip_data *irqsteer_data = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(irqsteer_data->ipg_clk);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable ipg clk: %d\n", ret);
-> +		return ret;
+> +	error = sx8654_get_ofdata(sx8654);
+> +	if (error) {
+> +		dev_err(&client->dev, "get_ofdata failed: %d\n", error);
+> +		return error;
 > +	}
-> +	imx_irqsteer_restore_regs(irqsteer_data);
 > +
-> +	return 0;
-> +}
-> +#endif
+>  	input = devm_input_allocate_device(&client->dev);
+>  	if (!input)
+>  		return -ENOMEM;
+>  
+> +	sx8654->input = input;
 > +
-> +static const struct dev_pm_ops imx_irqsteer_pm_ops = {
-> +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx_irqsteer_suspend, imx_irqsteer_resume)
-> +};
-> +
-> +static const struct of_device_id imx_irqsteer_dt_ids[] = {
-> +	{ .compatible = "fsl,imx-irqsteer", },
-> +	{},
-> +};
-> +
-> +static struct platform_driver imx_irqsteer_driver = {
-> +	.driver = {
-> +		.name = "imx-irqsteer",
-> +		.of_match_table = imx_irqsteer_dt_ids,
-> +		.pm = &imx_irqsteer_pm_ops,
-> +	},
-> +	.probe = imx_irqsteer_probe,
-> +	.remove = imx_irqsteer_remove,
-> +};
-> +builtin_platform_driver(imx_irqsteer_driver);
+>  	input->name = "SX8654 I2C Touchscreen";
+>  	input->id.bustype = BUS_I2C;
+>  	input->dev.parent = &client->dev;
+> @@ -201,15 +273,11 @@ static int sx8654_probe(struct i2c_client *client,
+>  	input_set_abs_params(input, ABS_X, 0, MAX_12BIT, 0, 0);
+>  	input_set_abs_params(input, ABS_Y, 0, MAX_12BIT, 0, 0);
+>  
+> -	sx8654->client = client;
+> -	sx8654->input = input;
+> -
+
+Why do we need to move this?
+
+>  	input_set_drvdata(sx8654->input, sx8654);
+>  
+> -	error = i2c_smbus_write_byte_data(client, I2C_REG_SOFTRESET,
+> -					  SOFTRESET_VALUE);
+> +	error = sx8654_reset(sx8654);
+>  	if (error) {
+> -		dev_err(&client->dev, "writing softreset value failed");
+> +		dev_err(&client->dev, "reset failed");
+>  		return error;
+>  	}
+>  
+> @@ -256,14 +324,6 @@ static int sx8654_probe(struct i2c_client *client,
+>  	return 0;
+>  }
+>  
+> -#ifdef CONFIG_OF
+> -static const struct of_device_id sx8654_of_match[] = {
+> -	{ .compatible = "semtech,sx8654", },
+> -	{ },
+> -};
+> -MODULE_DEVICE_TABLE(of, sx8654_of_match);
+> -#endif
+> -
+>  static const struct i2c_device_id sx8654_id_table[] = {
+>  	{ "semtech_sx8654", 0 },
+>  	{ },
+> -- 
+> 2.11.0
 > 
 
-Thanks,
+Thanks.
 
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+Dmitry
