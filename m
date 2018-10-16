@@ -3,50 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1F1C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C588EC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49E642098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:06:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49E642098A
+	by mail.kernel.org (Postfix) with ESMTP id 88B6C2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:06:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B6C2089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbeJPX5g (ORCPT
+        id S1727400AbeJPX5k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 19:57:36 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57365 "EHLO
+        Tue, 16 Oct 2018 19:57:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34121 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbeJPX5g (ORCPT
+        with ESMTP id S1726986AbeJPX5i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:57:36 -0400
+        Tue, 16 Oct 2018 19:57:38 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9GG5Wro4158778
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9GG64Oq4158990
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 16 Oct 2018 09:05:32 -0700
+        Tue, 16 Oct 2018 09:06:04 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9GG5WwT4158775;
-        Tue, 16 Oct 2018 09:05:32 -0700
-Date:   Tue, 16 Oct 2018 09:05:32 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9GG64Oo4158987;
+        Tue, 16 Oct 2018 09:06:04 -0700
+Date:   Tue, 16 Oct 2018 09:06:04 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-288e4521f0f6717909933116563e66bb894ae2af@git.kernel.org>
-Cc:     brgerst@gmail.com, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, bp@alien8.de, luto@amacapital.net,
-        hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org
-Reply-To: torvalds@linux-foundation.org, luto@amacapital.net,
-          hpa@zytor.com, tglx@linutronix.de, bp@alien8.de,
-          brgerst@gmail.com, dvlasenk@redhat.com, peterz@infradead.org,
-          linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <20181003130957.108960094@infradead.org>
-References: <20181003130957.108960094@infradead.org>
+Message-ID: <tip-7aa54be2976550f17c11a1c3e3630002dea39303@git.kernel.org>
+Cc:     will.deacon@arm.com, mingo@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, peterz@infradead.org
+Reply-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+          will.deacon@arm.com, mingo@kernel.org, hpa@zytor.com,
+          peterz@infradead.org, tglx@linutronix.de
+In-Reply-To: <20181003130957.183726335@infradead.org>
+References: <20181003130957.183726335@infradead.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] x86/asm: 'Simplify' GEN_*_RMWcc() macros
-Git-Commit-ID: 288e4521f0f6717909933116563e66bb894ae2af
+Subject: [tip:locking/core] locking/qspinlock, x86: Provide liveness
+ guarantee
+Git-Commit-ID: 7aa54be2976550f17c11a1c3e3630002dea39303
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,355 +59,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  288e4521f0f6717909933116563e66bb894ae2af
-Gitweb:     https://git.kernel.org/tip/288e4521f0f6717909933116563e66bb894ae2af
+Commit-ID:  7aa54be2976550f17c11a1c3e3630002dea39303
+Gitweb:     https://git.kernel.org/tip/7aa54be2976550f17c11a1c3e3630002dea39303
 Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Wed, 3 Oct 2018 12:34:10 +0200
+AuthorDate: Wed, 26 Sep 2018 13:01:20 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 16 Oct 2018 17:33:54 +0200
 
-x86/asm: 'Simplify' GEN_*_RMWcc() macros
+locking/qspinlock, x86: Provide liveness guarantee
 
-Currently the GEN_*_RMWcc() macros include a return statement, which
-pretty much mandates we directly wrap them in a (inline) function.
+On x86 we cannot do fetch_or() with a single instruction and thus end up
+using a cmpxchg loop, this reduces determinism. Replace the fetch_or()
+with a composite operation: tas-pending + load.
 
-Macros with return statements are tricky and, as per the above, limit
-use, so remove the return statement and make them
-statement-expressions. This allows them to be used more widely.
+Using two instructions of course opens a window we previously did not
+have. Consider the scenario:
 
-Also, shuffle the arguments a bit. Place the @cc argument as 3rd, this
-makes it consistent between UNARY and BINARY, but more importantly, it
-makes the @arg0 argument last.
+	CPU0		CPU1		CPU2
 
-Since the @arg0 argument is now last, we can do CPP trickery and make
-it an optional argument, simplifying the users; 17 out of 18
-occurences do not need this argument.
+ 1)	lock
+	  trylock -> (0,0,1)
 
-Finally, change to asm symbolic names, instead of the numeric ordering
-of operands, which allows us to get rid of __BINARY_RMWcc_ARG and get
-cleaner code overall.
+ 2)			lock
+			  trylock /* fail */
 
+ 3)	unlock -> (0,0,0)
+
+ 4)					lock
+					  trylock -> (0,0,1)
+
+ 5)			  tas-pending -> (0,1,1)
+			  load-val <- (0,1,0) from 3
+
+ 6)			  clear-pending-set-locked -> (0,0,1)
+
+			  FAIL: _2_ owners
+
+where 5) is our new composite operation. When we consider each part of
+the qspinlock state as a separate variable (as we can when
+_Q_PENDING_BITS == 8) then the above is entirely possible, because
+tas-pending will only RmW the pending byte, so the later load is able
+to observe prior tail and lock state (but not earlier than its own
+trylock, which operates on the whole word, due to coherence).
+
+To avoid this we need 2 things:
+
+ - the load must come after the tas-pending (obviously, otherwise it
+   can trivially observe prior state).
+
+ - the tas-pending must be a full word RmW instruction, it cannot be an XCHGB for
+   example, such that we cannot observe other state prior to setting
+   pending.
+
+On x86 we can realize this by using "LOCK BTS m32, r32" for
+tas-pending followed by a regular load.
+
+Note that observing later state is not a problem:
+
+ - if we fail to observe a later unlock, we'll simply spin-wait for
+   that store to become visible.
+
+ - if we observe a later xchg_tail(), there is no difference from that
+   xchg_tail() having taken place before the tas-pending.
+
+Suggested-by: Will Deacon <will.deacon@arm.com>
+Reported-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: JBeulich@suse.com
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
+Reviewed-by: Will Deacon <will.deacon@arm.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: hpa@linux.intel.com
-Link: https://lkml.kernel.org/r/20181003130957.108960094@infradead.org
+Cc: andrea.parri@amarulasolutions.com
+Cc: longman@redhat.com
+Fixes: 59fb586b4a07 ("locking/qspinlock: Remove unbounded cmpxchg() loop from locking slowpath")
+Link: https://lkml.kernel.org/r/20181003130957.183726335@infradead.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/atomic.h      |  8 ++---
- arch/x86/include/asm/atomic64_64.h |  8 ++---
- arch/x86/include/asm/bitops.h      |  9 ++---
- arch/x86/include/asm/local.h       |  8 ++---
- arch/x86/include/asm/preempt.h     |  2 +-
- arch/x86/include/asm/refcount.h    | 13 +++----
- arch/x86/include/asm/rmwcc.h       | 69 ++++++++++++++++++++++----------------
- 7 files changed, 64 insertions(+), 53 deletions(-)
+ arch/x86/include/asm/qspinlock.h | 15 +++++++++++++++
+ kernel/locking/qspinlock.c       | 16 +++++++++++++++-
+ 2 files changed, 30 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
-index ce84388e540c..ea3d95275b43 100644
---- a/arch/x86/include/asm/atomic.h
-+++ b/arch/x86/include/asm/atomic.h
-@@ -82,7 +82,7 @@ static __always_inline void arch_atomic_sub(int i, atomic_t *v)
-  */
- static __always_inline bool arch_atomic_sub_and_test(int i, atomic_t *v)
- {
--	GEN_BINARY_RMWcc(LOCK_PREFIX "subl", v->counter, "er", i, "%0", e);
-+	return GEN_BINARY_RMWcc(LOCK_PREFIX "subl", v->counter, e, "er", i);
- }
- #define arch_atomic_sub_and_test arch_atomic_sub_and_test
+diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
+index 3e70bed8a978..87623c6b13db 100644
+--- a/arch/x86/include/asm/qspinlock.h
++++ b/arch/x86/include/asm/qspinlock.h
+@@ -6,9 +6,24 @@
+ #include <asm/cpufeature.h>
+ #include <asm-generic/qspinlock_types.h>
+ #include <asm/paravirt.h>
++#include <asm/rmwcc.h>
  
-@@ -122,7 +122,7 @@ static __always_inline void arch_atomic_dec(atomic_t *v)
-  */
- static __always_inline bool arch_atomic_dec_and_test(atomic_t *v)
- {
--	GEN_UNARY_RMWcc(LOCK_PREFIX "decl", v->counter, "%0", e);
-+	return GEN_UNARY_RMWcc(LOCK_PREFIX "decl", v->counter, e);
- }
- #define arch_atomic_dec_and_test arch_atomic_dec_and_test
+ #define _Q_PENDING_LOOPS	(1 << 9)
  
-@@ -136,7 +136,7 @@ static __always_inline bool arch_atomic_dec_and_test(atomic_t *v)
-  */
- static __always_inline bool arch_atomic_inc_and_test(atomic_t *v)
- {
--	GEN_UNARY_RMWcc(LOCK_PREFIX "incl", v->counter, "%0", e);
-+	return GEN_UNARY_RMWcc(LOCK_PREFIX "incl", v->counter, e);
++#define queued_fetch_set_pending_acquire queued_fetch_set_pending_acquire
++static __always_inline u32 queued_fetch_set_pending_acquire(struct qspinlock *lock)
++{
++	u32 val = 0;
++
++	if (GEN_BINARY_RMWcc(LOCK_PREFIX "btsl", lock->val.counter, c,
++			     "I", _Q_PENDING_OFFSET))
++		val |= _Q_PENDING_VAL;
++
++	val |= atomic_read(&lock->val) & ~_Q_PENDING_MASK;
++
++	return val;
++}
++
+ #ifdef CONFIG_PARAVIRT_SPINLOCKS
+ extern void native_queued_spin_lock_slowpath(struct qspinlock *lock, u32 val);
+ extern void __pv_init_lock_hash(void);
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index 47cb99787e4d..341ca666bc60 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -231,6 +231,20 @@ static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
  }
- #define arch_atomic_inc_and_test arch_atomic_inc_and_test
+ #endif /* _Q_PENDING_BITS == 8 */
  
-@@ -151,7 +151,7 @@ static __always_inline bool arch_atomic_inc_and_test(atomic_t *v)
-  */
- static __always_inline bool arch_atomic_add_negative(int i, atomic_t *v)
- {
--	GEN_BINARY_RMWcc(LOCK_PREFIX "addl", v->counter, "er", i, "%0", s);
-+	return GEN_BINARY_RMWcc(LOCK_PREFIX "addl", v->counter, s, "er", i);
- }
- #define arch_atomic_add_negative arch_atomic_add_negative
- 
-diff --git a/arch/x86/include/asm/atomic64_64.h b/arch/x86/include/asm/atomic64_64.h
-index 5f851d92eecd..dadc20adba21 100644
---- a/arch/x86/include/asm/atomic64_64.h
-+++ b/arch/x86/include/asm/atomic64_64.h
-@@ -73,7 +73,7 @@ static inline void arch_atomic64_sub(long i, atomic64_t *v)
-  */
- static inline bool arch_atomic64_sub_and_test(long i, atomic64_t *v)
- {
--	GEN_BINARY_RMWcc(LOCK_PREFIX "subq", v->counter, "er", i, "%0", e);
-+	return GEN_BINARY_RMWcc(LOCK_PREFIX "subq", v->counter, e, "er", i);
- }
- #define arch_atomic64_sub_and_test arch_atomic64_sub_and_test
- 
-@@ -115,7 +115,7 @@ static __always_inline void arch_atomic64_dec(atomic64_t *v)
-  */
- static inline bool arch_atomic64_dec_and_test(atomic64_t *v)
- {
--	GEN_UNARY_RMWcc(LOCK_PREFIX "decq", v->counter, "%0", e);
-+	return GEN_UNARY_RMWcc(LOCK_PREFIX "decq", v->counter, e);
- }
- #define arch_atomic64_dec_and_test arch_atomic64_dec_and_test
- 
-@@ -129,7 +129,7 @@ static inline bool arch_atomic64_dec_and_test(atomic64_t *v)
-  */
- static inline bool arch_atomic64_inc_and_test(atomic64_t *v)
- {
--	GEN_UNARY_RMWcc(LOCK_PREFIX "incq", v->counter, "%0", e);
-+	return GEN_UNARY_RMWcc(LOCK_PREFIX "incq", v->counter, e);
- }
- #define arch_atomic64_inc_and_test arch_atomic64_inc_and_test
- 
-@@ -144,7 +144,7 @@ static inline bool arch_atomic64_inc_and_test(atomic64_t *v)
-  */
- static inline bool arch_atomic64_add_negative(long i, atomic64_t *v)
- {
--	GEN_BINARY_RMWcc(LOCK_PREFIX "addq", v->counter, "er", i, "%0", s);
-+	return GEN_BINARY_RMWcc(LOCK_PREFIX "addq", v->counter, s, "er", i);
- }
- #define arch_atomic64_add_negative arch_atomic64_add_negative
- 
-diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
-index 9f645ba57dbb..124f9195eb3e 100644
---- a/arch/x86/include/asm/bitops.h
-+++ b/arch/x86/include/asm/bitops.h
-@@ -217,8 +217,7 @@ static __always_inline void change_bit(long nr, volatile unsigned long *addr)
-  */
- static __always_inline bool test_and_set_bit(long nr, volatile unsigned long *addr)
- {
--	GEN_BINARY_RMWcc(LOCK_PREFIX __ASM_SIZE(bts),
--	                 *addr, "Ir", nr, "%0", c);
-+	return GEN_BINARY_RMWcc(LOCK_PREFIX __ASM_SIZE(bts), *addr, c, "Ir", nr);
- }
- 
++/**
++ * queued_fetch_set_pending_acquire - fetch the whole lock value and set pending
++ * @lock : Pointer to queued spinlock structure
++ * Return: The previous lock value
++ *
++ * *,*,* -> *,1,*
++ */
++#ifndef queued_fetch_set_pending_acquire
++static __always_inline u32 queued_fetch_set_pending_acquire(struct qspinlock *lock)
++{
++	return atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
++}
++#endif
++
  /**
-@@ -264,8 +263,7 @@ static __always_inline bool __test_and_set_bit(long nr, volatile unsigned long *
-  */
- static __always_inline bool test_and_clear_bit(long nr, volatile unsigned long *addr)
- {
--	GEN_BINARY_RMWcc(LOCK_PREFIX __ASM_SIZE(btr),
--	                 *addr, "Ir", nr, "%0", c);
-+	return GEN_BINARY_RMWcc(LOCK_PREFIX __ASM_SIZE(btr), *addr, c, "Ir", nr);
- }
+  * set_locked - Set the lock bit and own the lock
+  * @lock: Pointer to queued spinlock structure
+@@ -328,7 +342,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ 	 *
+ 	 * 0,0,* -> 0,1,* -> 0,0,1 pending, trylock
+ 	 */
+-	val = atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
++	val = queued_fetch_set_pending_acquire(lock);
  
- /**
-@@ -318,8 +316,7 @@ static __always_inline bool __test_and_change_bit(long nr, volatile unsigned lon
-  */
- static __always_inline bool test_and_change_bit(long nr, volatile unsigned long *addr)
- {
--	GEN_BINARY_RMWcc(LOCK_PREFIX __ASM_SIZE(btc),
--	                 *addr, "Ir", nr, "%0", c);
-+	return GEN_BINARY_RMWcc(LOCK_PREFIX __ASM_SIZE(btc), *addr, c, "Ir", nr);
- }
- 
- static __always_inline bool constant_test_bit(long nr, const volatile unsigned long *addr)
-diff --git a/arch/x86/include/asm/local.h b/arch/x86/include/asm/local.h
-index c91083c59845..349a47acaa4a 100644
---- a/arch/x86/include/asm/local.h
-+++ b/arch/x86/include/asm/local.h
-@@ -53,7 +53,7 @@ static inline void local_sub(long i, local_t *l)
-  */
- static inline bool local_sub_and_test(long i, local_t *l)
- {
--	GEN_BINARY_RMWcc(_ASM_SUB, l->a.counter, "er", i, "%0", e);
-+	return GEN_BINARY_RMWcc(_ASM_SUB, l->a.counter, e, "er", i);
- }
- 
- /**
-@@ -66,7 +66,7 @@ static inline bool local_sub_and_test(long i, local_t *l)
-  */
- static inline bool local_dec_and_test(local_t *l)
- {
--	GEN_UNARY_RMWcc(_ASM_DEC, l->a.counter, "%0", e);
-+	return GEN_UNARY_RMWcc(_ASM_DEC, l->a.counter, e);
- }
- 
- /**
-@@ -79,7 +79,7 @@ static inline bool local_dec_and_test(local_t *l)
-  */
- static inline bool local_inc_and_test(local_t *l)
- {
--	GEN_UNARY_RMWcc(_ASM_INC, l->a.counter, "%0", e);
-+	return GEN_UNARY_RMWcc(_ASM_INC, l->a.counter, e);
- }
- 
- /**
-@@ -93,7 +93,7 @@ static inline bool local_inc_and_test(local_t *l)
-  */
- static inline bool local_add_negative(long i, local_t *l)
- {
--	GEN_BINARY_RMWcc(_ASM_ADD, l->a.counter, "er", i, "%0", s);
-+	return GEN_BINARY_RMWcc(_ASM_ADD, l->a.counter, s, "er", i);
- }
- 
- /**
-diff --git a/arch/x86/include/asm/preempt.h b/arch/x86/include/asm/preempt.h
-index 7f2dbd91fc74..90cb2f36c042 100644
---- a/arch/x86/include/asm/preempt.h
-+++ b/arch/x86/include/asm/preempt.h
-@@ -88,7 +88,7 @@ static __always_inline void __preempt_count_sub(int val)
-  */
- static __always_inline bool __preempt_count_dec_and_test(void)
- {
--	GEN_UNARY_RMWcc("decl", __preempt_count, __percpu_arg(0), e);
-+	return GEN_UNARY_RMWcc("decl", __preempt_count, e, __percpu_arg([var]));
- }
- 
- /*
-diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-index c92909da0686..a8b5e1e13319 100644
---- a/arch/x86/include/asm/refcount.h
-+++ b/arch/x86/include/asm/refcount.h
-@@ -79,16 +79,17 @@ static __always_inline void refcount_dec(refcount_t *r)
- static __always_inline __must_check
- bool refcount_sub_and_test(unsigned int i, refcount_t *r)
- {
--	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
--				  "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
--				  r->refs.counter, "er", i, "%0", e, "cx");
-+
-+	return GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
-+					 "REFCOUNT_CHECK_LT_ZERO counter=\"%[var]\"",
-+					 r->refs.counter, e, "er", i, "cx");
- }
- 
- static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
- {
--	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
--				 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
--				 r->refs.counter, "%0", e, "cx");
-+	return GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
-+					"REFCOUNT_CHECK_LT_ZERO counter=\"%[var]\"",
-+					r->refs.counter, e, "cx");
- }
- 
- static __always_inline __must_check
-diff --git a/arch/x86/include/asm/rmwcc.h b/arch/x86/include/asm/rmwcc.h
-index 4914a3e7c803..46ac84b506f5 100644
---- a/arch/x86/include/asm/rmwcc.h
-+++ b/arch/x86/include/asm/rmwcc.h
-@@ -2,56 +2,69 @@
- #ifndef _ASM_X86_RMWcc
- #define _ASM_X86_RMWcc
- 
-+/* This counts to 12. Any more, it will return 13th argument. */
-+#define __RMWcc_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _n, X...) _n
-+#define RMWcc_ARGS(X...) __RMWcc_ARGS(, ##X, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-+
-+#define __RMWcc_CONCAT(a, b) a ## b
-+#define RMWcc_CONCAT(a, b) __RMWcc_CONCAT(a, b)
-+
- #define __CLOBBERS_MEM(clb...)	"memory", ## clb
- 
- #if !defined(__GCC_ASM_FLAG_OUTPUTS__) && defined(CC_HAVE_ASM_GOTO)
- 
- /* Use asm goto */
- 
--#define __GEN_RMWcc(fullop, var, cc, clobbers, ...)			\
--do {									\
-+#define __GEN_RMWcc(fullop, _var, cc, clobbers, ...)			\
-+({									\
-+	bool c = false;							\
- 	asm_volatile_goto (fullop "; j" #cc " %l[cc_label]"		\
--			: : [counter] "m" (var), ## __VA_ARGS__		\
-+			: : [var] "m" (_var), ## __VA_ARGS__		\
- 			: clobbers : cc_label);				\
--	return 0;							\
--cc_label:								\
--	return 1;							\
--} while (0)
--
--#define __BINARY_RMWcc_ARG	" %1, "
--
-+	if (0) {							\
-+cc_label:	c = true;						\
-+	}								\
-+	c;								\
-+})
- 
- #else /* defined(__GCC_ASM_FLAG_OUTPUTS__) || !defined(CC_HAVE_ASM_GOTO) */
- 
- /* Use flags output or a set instruction */
- 
--#define __GEN_RMWcc(fullop, var, cc, clobbers, ...)			\
--do {									\
-+#define __GEN_RMWcc(fullop, _var, cc, clobbers, ...)			\
-+({									\
- 	bool c;								\
- 	asm volatile (fullop CC_SET(cc)					\
--			: [counter] "+m" (var), CC_OUT(cc) (c)		\
-+			: [var] "+m" (_var), CC_OUT(cc) (c)		\
- 			: __VA_ARGS__ : clobbers);			\
--	return c;							\
--} while (0)
--
--#define __BINARY_RMWcc_ARG	" %2, "
-+	c;								\
-+})
- 
- #endif /* defined(__GCC_ASM_FLAG_OUTPUTS__) || !defined(CC_HAVE_ASM_GOTO) */
- 
--#define GEN_UNARY_RMWcc(op, var, arg0, cc)				\
-+#define GEN_UNARY_RMWcc_4(op, var, cc, arg0)				\
- 	__GEN_RMWcc(op " " arg0, var, cc, __CLOBBERS_MEM())
- 
--#define GEN_UNARY_SUFFIXED_RMWcc(op, suffix, var, arg0, cc, clobbers...)\
--	__GEN_RMWcc(op " " arg0 "\n\t" suffix, var, cc,			\
--		    __CLOBBERS_MEM(clobbers))
-+#define GEN_UNARY_RMWcc_3(op, var, cc)					\
-+	GEN_UNARY_RMWcc_4(op, var, cc, "%[var]")
- 
--#define GEN_BINARY_RMWcc(op, var, vcon, val, arg0, cc)			\
--	__GEN_RMWcc(op __BINARY_RMWcc_ARG arg0, var, cc,		\
--		    __CLOBBERS_MEM(), vcon (val))
-+#define GEN_UNARY_RMWcc(X...) RMWcc_CONCAT(GEN_UNARY_RMWcc_, RMWcc_ARGS(X))(X)
-+
-+#define GEN_BINARY_RMWcc_6(op, var, cc, vcon, _val, arg0)		\
-+	__GEN_RMWcc(op " %[val], " arg0, var, cc,			\
-+		    __CLOBBERS_MEM(), [val] vcon (_val))
-+
-+#define GEN_BINARY_RMWcc_5(op, var, cc, vcon, val)			\
-+	GEN_BINARY_RMWcc_6(op, var, cc, vcon, val, "%[var]")
-+
-+#define GEN_BINARY_RMWcc(X...) RMWcc_CONCAT(GEN_BINARY_RMWcc_, RMWcc_ARGS(X))(X)
-+
-+#define GEN_UNARY_SUFFIXED_RMWcc(op, suffix, var, cc, clobbers...)	\
-+	__GEN_RMWcc(op " %[var]\n\t" suffix, var, cc,			\
-+		    __CLOBBERS_MEM(clobbers))
- 
--#define GEN_BINARY_SUFFIXED_RMWcc(op, suffix, var, vcon, val, arg0, cc,	\
--				  clobbers...)				\
--	__GEN_RMWcc(op __BINARY_RMWcc_ARG arg0 "\n\t" suffix, var, cc,	\
--		    __CLOBBERS_MEM(clobbers), vcon (val))
-+#define GEN_BINARY_SUFFIXED_RMWcc(op, suffix, var, cc, vcon, _val, clobbers...)\
-+	__GEN_RMWcc(op " %[val], %[var]\n\t" suffix, var, cc,		\
-+		    __CLOBBERS_MEM(clobbers), [val] vcon (_val))
- 
- #endif /* _ASM_X86_RMWcc */
+ 	/*
+ 	 * If we observe contention, there is a concurrent locker.
