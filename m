@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C530FC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E66C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AB922148D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B2BA2087B
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HUzm2Rzp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB922148D
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B9kdliPt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2BA2087B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbeJQHrI (ORCPT
+        id S1727368AbeJQHrL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:47:08 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:50992 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727462AbeJQHrH (ORCPT
+        Wed, 17 Oct 2018 03:47:11 -0400
+Received: from mail-io1-f73.google.com ([209.85.166.73]:40873 "EHLO
+        mail-io1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727443AbeJQHrK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:47:07 -0400
-Received: by mail-pl1-f202.google.com with SMTP id ba5-v6so15685521plb.17
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:18 -0700 (PDT)
+        Wed, 17 Oct 2018 03:47:10 -0400
+Received: by mail-io1-f73.google.com with SMTP id p22-v6so22733902ioh.7
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=Ji1t0J8eGmzbl7MSzcr9XutVhXSRB1rerFRgUj/ivO8=;
-        b=HUzm2RzpAf7KqyFVBvVTe4BrOZbQ0+Amgf4b325MRKc69JUHL0InN6yTxbKrDPXae9
-         GrJ49aePoJpXuAWZzrm0bMlPZ3nu7a30ZIIEFQfLF9tnJ8BiPMoAWKkTszzXfvnWw6yZ
-         Jnx10o+coULr4DUsEYbRN9xuBYwcNB05bM+IQBGYIJcClrTrkfTXzibvxalBmDNokaSk
-         OZ5S+j3QprSngUeIyKL8RhESjw2zJ0MNkrcPJtSkWUTtQLCCfjWvJrA830tS5nMelJOW
-         1+aWEPAjABYCIrbz+J1Wv+n52G3IU44cWeXtmAbpxjCcJwHJswuvYsHM04CB8SN0iGcD
-         D9bQ==
+        bh=2nQLxz37HjUkuxUdygmRZnfP5MQCOlygPN6h14eHwdw=;
+        b=B9kdliPtLkssRcDNBO20RpbwwI987uXusttn+Q36tcmnUTC7qDFs3Yo/15XuSDIcUh
+         JD2McpsO2rXUn+6He3Subar9wT3HYpzhEC+bCE5ot9wvISC5vxgBy6X9sIEF7Mbz1kCZ
+         qq6dB+bLtKFiQuVU6IMAvLYq808mPvEm/+x82/m7nT3GUJeuiCKUk+vEYyi3hEFGwqPS
+         sZr84Hwtb3hVFyER/iiWkkmDYq1QUrhKE73wvtePsg1OAp1VjHpk//vPUJ+7l7X8x48Z
+         Pu8QykfuIHC/zNb9GTm5VZowq1JL2mMTMv5WjPJAcQJGUF13s0cTxVMK5IVLXgeXiGJ2
+         Jo+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=Ji1t0J8eGmzbl7MSzcr9XutVhXSRB1rerFRgUj/ivO8=;
-        b=hq6on/FG8t7T61m/6OzOcfkayUG4x3BmUgvQUeO7qMU307MxvXDKpopzUjv486Ocgr
-         pM7kmKMNGGZwg4v/7s9NfQgTUXez5UvK7znfABhOrn6aXsmiDT4DVtBP6/g1BnX5zHiX
-         y6Cmxh4HZo2FSsSfJxQkKi46kFt3Ilkf8lQlwrcKs7A0Iu1L+/40TVYJQ06Laa6O1dJn
-         +ykCBnEnRBPSRY6I9YZwju4FRLvUW8dVUL0W6o8DDSja0MgBcaE7sJJUk/d3U66VNc1+
-         20JOsKupg2dUYkvkM1xXyQTP1XvZGH+2Zvy9aCwhM9O+JPUfnS7LhU0cG19ZCmf+fTHS
-         zRLg==
-X-Gm-Message-State: ABuFfohcAzVXQfwIxs7p2+nMjyrHLjh0I/OsOYqmoN239mXgYMkTPxmL
-        nIjy85HQL4VIMC6ws7ADs4TAzlGXMjfz/quA0fZnSA==
-X-Google-Smtp-Source: ACcGV61O5ZEPCWXnN8I0E+VNPClekZmLZJGbUygjOMJ+Av+8wDP8THabU2aj1USBxJfOKwZfSYWL2aUGXLcnSyvUpkoVzA==
-X-Received: by 2002:a65:60cc:: with SMTP id r12-v6mr11893684pgv.78.1539734058465;
- Tue, 16 Oct 2018 16:54:18 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 16:51:02 -0700
+        bh=2nQLxz37HjUkuxUdygmRZnfP5MQCOlygPN6h14eHwdw=;
+        b=nKICYv9ctmPRzZfbOWHCwupKevbmL/17/Pl7RZ+jJlrncMvYZx8szxb0ZmWThLL3aZ
+         88PwKnImwLBwHIisLzKi5dc6Zw27CqqZTJuVITN4QVl7DI7bS/KrSils5DAYoLXhf/x5
+         xYmepeXDvCzdTNJDPMm5DLpfQ0qkg3UcC3fiabLiDIVVymhklTwm9j+Wq0MOMYZ7W4Kb
+         V5gv7yNlP3HMUFccazVKzZgvGLHEp20oMKAWRO9szSAJLmEC5jExc6IAbV6C82WVKo+x
+         Iwms73jDugBB62s11m/98YSbyvcRf73enc4e5ygE0RjeajLPdzeMywOlJcyIoTF5/XCt
+         vJgA==
+X-Gm-Message-State: ABuFfogpOdck/drsXZpyCKSJqR+0rNf8Vda2Xpp3EWrKCJTrpL/9GGrR
+        X+aNIGfgKb8LVPHcD+hYYh0qaNw8/i8fde5vp8rdxQ==
+X-Google-Smtp-Source: ACcGV62LSCvUVvKuQcKAzN7Zy7BphoHPZ6h3wkJ7rRKFgGJjkjCaPIHSivbsxMPzvUQJ2xCUfWyjfRwMQGlX3sis4gFhgA==
+X-Received: by 2002:a24:3949:: with SMTP id l70-v6mr221173ita.6.1539734061067;
+ Tue, 16 Oct 2018 16:54:21 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 16:51:03 -0700
 In-Reply-To: <20181016235120.138227-1-brendanhiggins@google.com>
-Message-Id: <20181016235120.138227-14-brendanhiggins@google.com>
+Message-Id: <20181016235120.138227-15-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20181016235120.138227-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
-Subject: [RFC v1 13/31] kunit: mock: added parameter list minipulation macros
+Subject: [RFC v1 14/31] kunit: mock: added internal mock infrastructure
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
         shuah@kernel.org
@@ -77,493 +77,527 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds macros for parsing and manipulating parameter lists needed for
-generating mocks.
+Adds the core internal mechanisms that mocks are implemented with; in
+particular, this adds the mechanisms by which expectation on mocks are
+validated and by which actions may be supplied and then executed when
+mocks are called.
 
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- include/kunit/params.h  | 305 ++++++++++++++++++++++++++++++++++++++++
- kunit/Makefile          |   2 +-
- kunit/mock-macro-test.c | 149 ++++++++++++++++++++
- 3 files changed, 455 insertions(+), 1 deletion(-)
- create mode 100644 include/kunit/params.h
- create mode 100644 kunit/mock-macro-test.c
+ include/kunit/mock.h | 125 +++++++++++++++
+ kunit/Makefile       |   5 +-
+ kunit/mock.c         | 359 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 487 insertions(+), 2 deletions(-)
+ create mode 100644 include/kunit/mock.h
+ create mode 100644 kunit/mock.c
 
-diff --git a/include/kunit/params.h b/include/kunit/params.h
+diff --git a/include/kunit/mock.h b/include/kunit/mock.h
 new file mode 100644
-index 0000000000000..f9692d3cd703f
+index 0000000000000..1a35c5702cb15
 --- /dev/null
-+++ b/include/kunit/params.h
-@@ -0,0 +1,305 @@
++++ b/include/kunit/mock.h
+@@ -0,0 +1,125 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Macros for parsing and manipulating parameter lists needed for generating
-+ * mocks.
++ * Mocking API for KUnit.
 + *
 + * Copyright (C) 2018, Google LLC.
 + * Author: Brendan Higgins <brendanhiggins@google.com>
 + */
 +
-+#ifndef _KUNIT_PARAMS_H
-+#define _KUNIT_PARAMS_H
++#ifndef _KUNIT_MOCK_H
++#define _KUNIT_MOCK_H
 +
-+#define NUM_VA_ARGS_IMPL(__dummy,					       \
-+			 __1,						       \
-+			 __2,						       \
-+			 __3,						       \
-+			 __4,						       \
-+			 __5,						       \
-+			 __6,						       \
-+			 __7,						       \
-+			 __8,						       \
-+			 __9,						       \
-+			 __10,						       \
-+			 __11,						       \
-+			 __12,						       \
-+			 __13,						       \
-+			 __14,						       \
-+			 __15,						       \
-+			 __16,						       \
-+			 __nargs, args...) __nargs
-+
-+#define NUM_VA_ARGS(args...) NUM_VA_ARGS_IMPL(__dummy, ##args,		       \
-+					  16,				       \
-+					  15,				       \
-+					  14,				       \
-+					  13,				       \
-+					  12,				       \
-+					  11,				       \
-+					  10,				       \
-+					  9,				       \
-+					  8,				       \
-+					  7,				       \
-+					  6,				       \
-+					  5,				       \
-+					  4,				       \
-+					  3,				       \
-+					  2,				       \
-+					  1,				       \
-+					  0)
-+
-+#define CONCAT_INTERNAL(left, right) left##right
-+#define CONCAT(left, right) CONCAT_INTERNAL(left, right)
-+
-+#define EMPTY()
-+
-+/*
-+ * Takes the name of a function style macro such as FOO() and prevents it from
-+ * being evaluated on the current pass.
-+ *
-+ * This is useful when you need to write a "recursive" macro since a macro name
-+ * becomes painted after it is pasted. If a different macro is pasted, this
-+ * different macro won't be pasted; if we then defer the evaluation of the this
-+ * "indirection macro", we can prevent the original definition from getting
-+ * painted.
-+ *
-+ * Example:
-+ *   #define EXAMPLE EXPAND(FOO()) // FOO() is evaluated on 1st pass.
-+ *   #define EXAMPLE EXPAND(DEFER(FOO)()) // FOO() is evaluated on the second
-+ *					  // pass.
-+ */
-+#define DEFER(macro_id) macro_id EMPTY()
-+
-+/*
-+ * Takes the name of a function style macro such as FOO() and prevents it from
-+ * being evaluated on the current or following pass.
-+ *
-+ * This is useful when you need to DEFER inside an operation which causes an
-+ * extra pass, like IF.
-+ *
-+ * Example:
-+ *   #define EXAMPLE EXPAND(FOO()) // FOO() is evaluated on 1st pass.
-+ *   #define EXAMPLE EXPAND(DEFER(FOO)()) // FOO() is evaluated on the second
-+ *					  // pass.
-+ *   #define EXAMPLE EXPAND(OBSTRUCT(FOO)()) // FOO() is evaluated on the third
-+ *					     // pass.
-+ */
-+#define OBSTRUCT(macro_id) macro_id DEFER(EMPTY)()
-+
-+#define EXPAND_1(args...) args
-+#define EXPAND_2(args...) EXPAND_1(EXPAND_1(args))
-+#define EXPAND_4(args...) EXPAND_2(EXPAND_2(args))
-+#define EXPAND_8(args...) EXPAND_4(EXPAND_4(args))
-+#define EXPAND_16(args...) EXPAND_8(EXPAND_8(args))
-+
-+/*
-+ * Causes multiple evaluation passes of a macro.
-+ *
-+ * CPP is implemented as a push down automaton. It consumes a stream of tokens
-+ * and as it comes across macros, it either evaluates them and pastes the
-+ * result, or if the macro is a function macro, it pushes the macro to a stack,
-+ * it evaluates the input to the function macro, pops the state from the stack
-+ * and continues.
-+ *
-+ * This macro serves the function of making the cursor return to the beginging
-+ * of a macro that requires mulitple passes to evaluate. It is most useful when
-+ * used with DEFER(...) and OBSTRUCT(...).
-+ */
-+#define EXPAND(args...) EXPAND_16(args)
-+
-+#define INC(id) INC_##id
-+#define INC_0  1
-+#define INC_1  2
-+#define INC_2  3
-+#define INC_3  4
-+#define INC_4  5
-+#define INC_5  6
-+#define INC_6  7
-+#define INC_7  8
-+#define INC_8  9
-+#define INC_9  10
-+#define INC_10 11
-+#define INC_11 12
-+#define INC_12 13
-+#define INC_13 14
-+#define INC_14 15
-+#define INC_15 16
-+#define INC_16 17
-+
-+#define DEC(id) DEC_##id
-+#define DEC_1  0
-+#define DEC_2  1
-+#define DEC_3  2
-+#define DEC_4  3
-+#define DEC_5  4
-+#define DEC_6  5
-+#define DEC_7  6
-+#define DEC_8  7
-+#define DEC_9  8
-+#define DEC_10 9
-+#define DEC_11 10
-+#define DEC_12 11
-+#define DEC_13 12
-+#define DEC_14 13
-+#define DEC_15 14
-+#define DEC_16 15
-+
-+#define DROP_FIRST_ARG_INTERNAL(dropped, x, args...) x
-+#define DROP_FIRST_ARG(args...) DROP_FIRST_ARG_INTERNAL(args)
-+
-+#define EQUAL(left, right) EQUAL_##left##_##right
-+#define EQUAL_0_0 dropped, 1
-+#define EQUAL_1_1 dropped, 1
-+#define EQUAL_2_2 dropped, 1
-+#define EQUAL_3_3 dropped, 1
-+#define EQUAL_4_4 dropped, 1
-+#define EQUAL_5_5 dropped, 1
-+#define EQUAL_6_6 dropped, 1
-+#define EQUAL_7_7 dropped, 1
-+#define EQUAL_8_8 dropped, 1
-+#define EQUAL_9_9 dropped, 1
-+#define EQUAL_10_10 dropped, 1
-+#define EQUAL_11_11 dropped, 1
-+#define EQUAL_12_12 dropped, 1
-+#define EQUAL_13_13 dropped, 1
-+#define EQUAL_14_14 dropped, 1
-+#define EQUAL_15_15 dropped, 1
-+#define EQUAL_16_16 dropped, 1
-+
-+#define IS_EQUAL(left, right) DROP_FIRST_ARG(EQUAL(left, right), 0)
-+
-+#define NOT_INTERNAL(condition) NOT_##condition
-+#define NOT(condition) NOT_INTERNAL(condition)
-+#define NOT_0 1
-+#define NOT_1 0
-+
-+#define IS_NOT_EQUAL(left, right) NOT(IS_EQUAL(left, right))
-+
-+#define EMPTY_IMPL(tokens) CONCAT(EMPTY_, tokens)
-+#define IS_EMPTY(tokens)
-+
-+#define OR_INTERNAL(left, right) OR_##left##_##right
-+#define OR(left, right) OR_INTERNAL(left, right)
-+#define OR_0_0 0
-+#define OR_0_1 1
-+#define OR_1_0 1
-+#define OR_1_1 1
-+
-+#define IF(condition) CONCAT(IF_, condition)
-+#define IF_0(body)
-+#define IF_1(body) body
-+
-+#define COMMA() ,
-+
-+#define APPLY_TOKENS_INTERNAL(tokens, yield_token, seen_token) \
-+		IF(yield_token)(IF(seen_token)(COMMA()) tokens)
-+#define APPLY_TOKENS(tokens, yield_token, seen_token) \
-+		APPLY_TOKENS_INTERNAL(tokens, yield_token, seen_token)
-+
-+/*
-+ * Provides the indirection to keep the PARAM_LIST_RECURSE_INTERNAL from getting
-+ * pasted, only useful if used with DEFER(...) or OBSTRUCT(...).
-+ */
-+#define PARAM_LIST_RECURSE_INDIRECT() PARAM_LIST_RECURSE_INTERNAL
-+
-+/*
-+ * Given a starting index, a number of args, a MACRO to apply, and a list of
-+ * types (with at least one element) this will call MACRO with the first type in
-+ * the list and index; it will then call itself again on all remaining types, if
-+ * any, while incrementing index, and decrementing nargs.
-+ *
-+ * Assumes nargs is the number of types in the list.
-+ */
-+#define PARAM_LIST_RECURSE_INTERNAL(index,				       \
-+				    nargs,				       \
-+				    MACRO,				       \
-+				    FILTER,				       \
-+				    context,				       \
-+				    seen_token,				       \
-+				    type,				       \
-+				    args...)				       \
-+		APPLY_TOKENS(MACRO(context, type, index),		       \
-+			     FILTER(context, type, index),		       \
-+			     seen_token)				       \
-+		IF(IS_NOT_EQUAL(nargs, 1))				       \
-+			(OBSTRUCT(PARAM_LIST_RECURSE_INDIRECT)()	       \
-+			 (INC(index), DEC(nargs),			       \
-+			  MACRO, FILTER, context,			       \
-+			  OR(seen_token, FILTER(context, type, index)),	       \
-+			  args))
-+
-+#define PARAM_LIST_RECURSE(index, nargs, MACRO, FILTER, context, args...)      \
-+		IF(IS_NOT_EQUAL(nargs, 0))				       \
-+			(OBSTRUCT(PARAM_LIST_RECURSE_INTERNAL)(index,	       \
-+							       nargs,	       \
-+							       MACRO,	       \
-+							       FILTER,	       \
-+							       context,	       \
-+							       0,	       \
-+							       args))
-+
-+#define FILTER_NONE(context, type, index) 1
-+
-+#define FILTER_INDEX_INTERNAL(index_to_drop, type, index) \
-+		IS_NOT_EQUAL(index, index_to_drop)
-+#define FILTER_INDEX(index_to_drop, type, index) \
-+		FILTER_INDEX_INTERNAL(index_to_drop, type, index)
-+
-+/*
-+ * Applies a MACRO which takes a type and the index of the type and outputs a
-+ * sequence of tokens to a list of types.
-+ */
-+#define FOR_EACH_PARAM(MACRO, FILTER, context, args...) \
-+		EXPAND(PARAM_LIST_RECURSE(0,\
-+					  NUM_VA_ARGS(args),\
-+					  MACRO,\
-+					  FILTER,\
-+					  context,\
-+					  args))
-+
-+#define PRODUCE_TYPE_AND_ARG(context, type, index) type arg##index
-+#define PARAM_LIST_FROM_TYPES(args...)					       \
-+		FOR_EACH_PARAM(PRODUCE_TYPE_AND_ARG,			       \
-+			       FILTER_NONE,				       \
-+			       not_used,				       \
-+			       args)
-+
-+#define PRODUCE_TYPE_NAME(context, type, index) #type
-+#define TYPE_NAMES_FROM_TYPES(handle_index, args...)			       \
-+		FOR_EACH_PARAM(PRODUCE_TYPE_NAME,			       \
-+			       FILTER_INDEX,				       \
-+			       handle_index,				       \
-+			       args)
-+
-+#define PRODUCE_PTR_TO_ARG(context, type, index) &arg##index
-+#define PTR_TO_ARG_FROM_TYPES(handle_index, args...)			       \
-+		FOR_EACH_PARAM(PRODUCE_PTR_TO_ARG,			       \
-+			       FILTER_INDEX,				       \
-+			       handle_index,				       \
-+			       args)
-+
-+#define PRODUCE_MATCHER_AND_ARG(ctrl_index, type, index)		       \
-+		IF(IS_EQUAL(index, ctrl_index))(struct mock *arg##ctrl_index)  \
-+		IF(IS_NOT_EQUAL(index, ctrl_index))(			       \
-+				struct mock_param_matcher *arg##index)
-+#define MATCHER_PARAM_LIST_FROM_TYPES(ctrl_index, args...)		       \
-+		FOR_EACH_PARAM(PRODUCE_MATCHER_AND_ARG,			       \
-+			       FILTER_NONE,				       \
-+			       ctrl_index,				       \
-+			       args)
-+
-+#define PRODUCE_ARG(context, type, index) arg##index
-+#define ARG_NAMES_FROM_TYPES(ctrl_index, args...)			       \
-+		FOR_EACH_PARAM(PRODUCE_ARG,				       \
-+			       FILTER_INDEX,				       \
-+			       ctrl_index,				       \
-+			       args)
-+
-+#define PRODUCE_ARRAY_ACCESSOR(context, type, index) *((type *) params[index])
-+#define ARRAY_ACCESSORS_FROM_TYPES(args...)				       \
-+		FOR_EACH_PARAM(PRODUCE_ARRAY_ACCESSOR,			       \
-+			       FILTER_NONE,				       \
-+			       not_used,				       \
-+			       args)
-+
-+#endif /* _KUNIT_PARAMS_H */
-diff --git a/kunit/Makefile b/kunit/Makefile
-index 2f1c069e165cb..f72a02cb9f23d 100644
---- a/kunit/Makefile
-+++ b/kunit/Makefile
-@@ -1,3 +1,3 @@
- obj-$(CONFIG_KUNIT)		+= test.o string-stream.o test-stream.o
--obj-$(CONFIG_KUNIT_TEST)		+= test-test.o string-stream-test.o
-+obj-$(CONFIG_KUNIT_TEST)		+= test-test.o mock-macro-test.o string-stream-test.o
- obj-$(CONFIG_EXAMPLE_TEST)	+= example-test.o
-diff --git a/kunit/mock-macro-test.c b/kunit/mock-macro-test.c
-new file mode 100644
-index 0000000000000..c30b859ff2b14
---- /dev/null
-+++ b/kunit/mock-macro-test.c
-@@ -0,0 +1,149 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * KUnit test for parameter list parsing macros.
-+ *
-+ * Copyright (C) 2018, Google LLC.
-+ * Author: Brendan Higgins <brendanhiggins@google.com>
-+ */
-+
++#include <linux/types.h>
++#include <linux/tracepoint.h> /* For PARAMS(...) */
 +#include <kunit/test.h>
++#include <kunit/test-stream.h>
 +#include <kunit/params.h>
 +
-+#define TO_STR_INTERNAL(...) #__VA_ARGS__
-+#define TO_STR(...) TO_STR_INTERNAL(__VA_ARGS__)
-+
-+static void mock_macro_is_equal(struct test *test)
-+{
-+	TEST_EXPECT_STREQ(test, "dropped, 1", TO_STR(EQUAL(1, 1)));
-+	TEST_EXPECT_EQ(test, 1, DROP_FIRST_ARG(dropped, 1, 0));
-+	TEST_EXPECT_EQ(test, 0, DROP_FIRST_ARG(1, 0));
-+	TEST_EXPECT_EQ(test, 0, DROP_FIRST_ARG(EQUAL(1, 0), 0));
-+	TEST_EXPECT_EQ(test, 1, IS_EQUAL(1, 1));
-+	TEST_EXPECT_EQ(test, 0, IS_EQUAL(1, 0));
-+}
-+
-+static void mock_macro_if(struct test *test)
-+{
-+	TEST_EXPECT_STREQ(test, "body", ""IF(1)("body"));
-+	TEST_EXPECT_STREQ(test, "", ""IF(0)("body"));
-+	TEST_EXPECT_STREQ(test, "body", ""IF(IS_EQUAL(1, 1))("body"));
-+	TEST_EXPECT_STREQ(test, "", ""IF(IS_EQUAL(0, 1))("body"));
-+}
-+
-+static void mock_macro_apply_tokens(struct test *test)
-+{
-+	TEST_EXPECT_STREQ(test, "type", TO_STR(APPLY_TOKENS(type, 1, 0)));
-+	TEST_EXPECT_STREQ(test, ", type", TO_STR(APPLY_TOKENS(type, 1, 1)));
-+	TEST_EXPECT_STREQ(test, "", TO_STR(APPLY_TOKENS(type, 0, 1)));
-+}
-+
-+#define IDENTITY(context, type, index) type
-+
-+static void mock_macro_param_list_recurse(struct test *test)
-+{
-+	TEST_EXPECT_STREQ(test, "", TO_STR(PARAM_LIST_RECURSE(0,
-+							      0,
-+							      IDENTITY,
-+							      FILTER_NONE,
-+							      not_used)));
-+	TEST_EXPECT_STREQ(test,
-+			  "type",
-+			  TO_STR(EXPAND(PARAM_LIST_RECURSE(0,
-+							   1,
-+							   IDENTITY,
-+							   FILTER_NONE,
-+							   not_used,
-+							   type))));
-+	TEST_EXPECT_STREQ(test,
-+			  "type0 , type1 , type2 , type3 , type4 , type5 , "
-+			  "type6 , type7 , type8 , type9 , type10 , type11 , "
-+			  "type12 , type13 , type14 , type15",
-+			  TO_STR(EXPAND(PARAM_LIST_RECURSE(0, 16,
-+							   IDENTITY,
-+							   FILTER_NONE,
-+							   not_used,
-+							   type0, type1, type2,
-+							   type3, type4, type5,
-+							   type6, type7, type8,
-+							   type9, type10,
-+							   type11, type12,
-+							   type13, type14,
-+							   type15))));
-+}
-+
-+static void mock_macro_for_each_param(struct test *test)
-+{
-+	TEST_EXPECT_STREQ(test,
-+			  "type0 , type1",
-+			  TO_STR(FOR_EACH_PARAM(IDENTITY,
-+						FILTER_NONE,
-+						not_used,
-+						type0,
-+						type1)));
-+	TEST_EXPECT_STREQ(test,
-+			  "type1",
-+			  TO_STR(FOR_EACH_PARAM(IDENTITY,
-+						FILTER_INDEX,
-+						0,
-+						type0,
-+						type1)));
-+}
-+
-+static void mock_macro_param_list_from_types_basic(struct test *test)
-+{
-+	TEST_EXPECT_STREQ(test, "", TO_STR(PARAM_LIST_FROM_TYPES()));
-+	TEST_EXPECT_STREQ(test, "int arg0", TO_STR(PARAM_LIST_FROM_TYPES(int)));
-+	TEST_EXPECT_STREQ(test, "struct test_struct * arg0 , int arg1",
-+			  TO_STR(PARAM_LIST_FROM_TYPES(struct test_struct *,
-+						       int)));
-+	TEST_EXPECT_STREQ(test,
-+			  "type0 arg0 , type1 arg1 , type2 arg2 , type3 arg3 , "
-+			  "type4 arg4 , type5 arg5 , type6 arg6 , type7 arg7 , "
-+			  "type8 arg8 , type9 arg9 , type10 arg10 , "
-+			  "type11 arg11 , type12 arg12 , type13 arg13 , "
-+			  "type14 arg14 , type15 arg15",
-+			  TO_STR(PARAM_LIST_FROM_TYPES(type0, type1, type2,
-+						       type3, type4, type5,
-+						       type6, type7, type8,
-+						       type9, type10, type11,
-+						       type12, type13, type14,
-+						       type15)));
-+}
-+
-+static void mock_macro_arg_names_from_types(struct test *test)
-+{
-+	TEST_EXPECT_STREQ(test, "", TO_STR(ARG_NAMES_FROM_TYPES(0)));
-+	TEST_EXPECT_STREQ(test, "", TO_STR(ARG_NAMES_FROM_TYPES(0, int)));
-+	TEST_EXPECT_STREQ(test,
-+			  "arg1",
-+			  TO_STR(ARG_NAMES_FROM_TYPES(0,
-+						      struct test_struct *,
-+						      int)));
-+	TEST_EXPECT_STREQ(test,
-+			  "arg0 , arg1 , arg3 , arg4 , arg5 , arg6 , arg7 , "
-+			  "arg8 , arg9 , arg10 , arg11 , arg12 , arg13 , "
-+			  "arg14 , arg15",
-+			  TO_STR(ARG_NAMES_FROM_TYPES(2, type0, type1, type2,
-+						      type3, type4, type5,
-+						      type6, type7, type8,
-+						      type9, type10, type11,
-+						      type12, type13, type14,
-+						      type15)));
-+}
-+
-+static struct test_case mock_macro_test_cases[] = {
-+	TEST_CASE(mock_macro_is_equal),
-+	TEST_CASE(mock_macro_if),
-+	TEST_CASE(mock_macro_apply_tokens),
-+	TEST_CASE(mock_macro_param_list_recurse),
-+	TEST_CASE(mock_macro_for_each_param),
-+	TEST_CASE(mock_macro_param_list_from_types_basic),
-+	TEST_CASE(mock_macro_arg_names_from_types),
-+	{},
++/**
++ * struct mock_param_matcher - represents a matcher used in a *call expectation*
++ * @match: the function that performs the matching
++ *
++ * The matching function takes a couple of parameters:
++ *
++ * - ``this``: refers to the parent struct
++ * - ``stream``: a &test_stream to which a detailed message should be added as
++ *   to why the parameter matches or not
++ * - ``param``: a pointer to the parameter to check for a match
++ *
++ * The matching function should return whether or not the passed parameter
++ * matches.
++ */
++struct mock_param_matcher {
++	bool (*match)(struct mock_param_matcher *this,
++		      struct test_stream *stream,
++		      const void *param);
 +};
 +
-+static struct test_module mock_macro_test_module = {
-+	.name = "mock-macro-test",
-+	.test_cases = mock_macro_test_cases,
++#define MOCK_MAX_PARAMS 255
++
++struct mock_matcher {
++	struct mock_param_matcher *matchers[MOCK_MAX_PARAMS];
++	int num;
 +};
-+module_test(mock_macro_test_module);
++
++/**
++ * struct mock_action - Represents an action that a mock performs when
++ *                      expectation is matched
++ * @do_action: the action to perform
++ *
++ * The action function is given some parameters:
++ *
++ * - ``this``: refers to the parent struct
++ * - ``params``: an array of pointers to the params passed into the mocked
++ *   method or function. **The class argument is excluded for a mocked class
++ *   method.**
++ * - ``len``: size of ``params``
++ *
++ * The action function returns a pointer to the value that the mocked method
++ * or function should be returning.
++ */
++struct mock_action {
++	void *(*do_action)(struct mock_action *this,
++			   const void **params,
++			   int len);
++};
++
++/**
++ * struct mock_expectation - represents a *call expectation* on a function.
++ * @action: A &struct mock_action to perform when the function is called.
++ * @max_calls_expected: maximum number of times an expectation may be called.
++ * @min_calls_expected: minimum number of times an expectation may be called.
++ * @retire_on_saturation: no longer match once ``max_calls_expected`` is
++ *			  reached.
++ *
++ * Represents a *call expectation* on a function created with EXPECT_CALL().
++ */
++struct mock_expectation {
++	struct mock_action *action;
++	int max_calls_expected;
++	int min_calls_expected;
++	bool retire_on_saturation;
++	/* private: internal use only. */
++	const char *expectation_name;
++	struct list_head node;
++	struct mock_matcher *matcher;
++	int times_called;
++};
++
++struct mock_method {
++	struct list_head node;
++	const char *method_name;
++	const void *method_ptr;
++	struct mock_action *default_action;
++	struct list_head expectations;
++};
++
++struct mock {
++	struct test_post_condition parent;
++	struct test *test;
++	struct list_head methods;
++	/* TODO(brendanhiggins@google.com): add locking to do_expect. */
++	const void *(*do_expect)(struct mock *mock,
++				 const char *method_name,
++				 const void *method_ptr,
++				 const char * const *param_types,
++				 const void **params,
++				 int len);
++};
++
++void mock_init_ctrl(struct test *test, struct mock *mock);
++
++void mock_validate_expectations(struct mock *mock);
++
++int mock_set_default_action(struct mock *mock,
++			    const char *method_name,
++			    const void *method_ptr,
++			    struct mock_action *action);
++
++struct mock_expectation *mock_add_matcher(struct mock *mock,
++					  const char *method_name,
++					  const void *method_ptr,
++					  struct mock_param_matcher *matchers[],
++					  int len);
++
++#endif /* _KUNIT_MOCK_H */
+diff --git a/kunit/Makefile b/kunit/Makefile
+index f72a02cb9f23d..ad58110de695c 100644
+--- a/kunit/Makefile
++++ b/kunit/Makefile
+@@ -1,3 +1,4 @@
+-obj-$(CONFIG_KUNIT)		+= test.o string-stream.o test-stream.o
+-obj-$(CONFIG_KUNIT_TEST)		+= test-test.o mock-macro-test.o string-stream-test.o
++obj-$(CONFIG_KUNIT)		+= test.o mock.o string-stream.o test-stream.o
++obj-$(CONFIG_KUNIT_TEST)		+= \
++  test-test.o mock-macro-test.o string-stream-test.o
+ obj-$(CONFIG_EXAMPLE_TEST)	+= example-test.o
+diff --git a/kunit/mock.c b/kunit/mock.c
+new file mode 100644
+index 0000000000000..424c612de553b
+--- /dev/null
++++ b/kunit/mock.c
+@@ -0,0 +1,359 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Mocking API for KUnit.
++ *
++ * Copyright (C) 2018, Google LLC.
++ * Author: Brendan Higgins <brendanhiggins@google.com>
++ */
++
++#include <kunit/mock.h>
++
++static bool mock_match_params(struct mock_matcher *matcher,
++		       struct test_stream *stream,
++		       const void **params,
++		       int len)
++{
++	struct mock_param_matcher *param_matcher;
++	bool ret = true, tmp;
++	int i;
++
++	BUG_ON(matcher->num != len);
++
++	for (i = 0; i < matcher->num; i++) {
++		param_matcher = matcher->matchers[i];
++		stream->add(stream, "\t");
++		tmp = param_matcher->match(param_matcher, stream, params[i]);
++		ret = ret && tmp;
++		stream->add(stream, "\n");
++	}
++
++	return ret;
++}
++
++static const void *mock_do_expect(struct mock *mock,
++				  const char *method_name,
++				  const void *method_ptr,
++				  const char * const *type_names,
++				  const void **params,
++				  int len);
++
++void mock_validate_expectations(struct mock *mock)
++{
++	struct mock_expectation *expectation, *expectation_safe;
++	struct mock_method *method;
++	struct test_stream *stream;
++	int times_called;
++
++	stream = test_new_stream(mock->test);
++	list_for_each_entry(method, &mock->methods, node) {
++		list_for_each_entry_safe(expectation, expectation_safe,
++					 &method->expectations, node) {
++			times_called = expectation->times_called;
++			if (!(expectation->min_calls_expected <= times_called &&
++			      times_called <= expectation->max_calls_expected)
++			    ) {
++				stream->add(stream,
++					    "Expectation was not called the specified number of times:\n\t");
++				stream->add(stream,
++					    "Function: %s, min calls: %d, max calls: %d, actual calls: %d",
++					    method->method_name,
++					    expectation->min_calls_expected,
++					    expectation->max_calls_expected,
++					    times_called);
++				mock->test->fail(mock->test, stream);
++			}
++			list_del(&expectation->node);
++		}
++	}
++}
++
++static void mock_validate_wrapper(struct test_post_condition *condition)
++{
++	struct mock *mock = container_of(condition, struct mock, parent);
++
++	mock_validate_expectations(mock);
++}
++
++void mock_init_ctrl(struct test *test, struct mock *mock)
++{
++	mock->test = test;
++	INIT_LIST_HEAD(&mock->methods);
++	mock->do_expect = mock_do_expect;
++	mock->parent.validate = mock_validate_wrapper;
++	list_add_tail(&mock->parent.node, &test->post_conditions);
++}
++
++static struct mock_method *mock_lookup_method(struct mock *mock,
++					      const void *method_ptr)
++{
++	struct mock_method *ret;
++
++	list_for_each_entry(ret, &mock->methods, node) {
++		if (ret->method_ptr == method_ptr)
++			return ret;
++	}
++
++	return NULL;
++}
++
++static struct mock_method *mock_add_method(struct mock *mock,
++					   const char *method_name,
++					   const void *method_ptr)
++{
++	struct mock_method *method;
++
++	method = test_kzalloc(mock->test, sizeof(*method), GFP_KERNEL);
++	if (!method)
++		return NULL;
++
++	INIT_LIST_HEAD(&method->expectations);
++	method->method_name = method_name;
++	method->method_ptr = method_ptr;
++	list_add_tail(&method->node, &mock->methods);
++
++	return method;
++}
++
++static int mock_add_expectation(struct mock *mock,
++				const char *method_name,
++				const void *method_ptr,
++				struct mock_expectation *expectation)
++{
++	struct mock_method *method;
++
++	method = mock_lookup_method(mock, method_ptr);
++	if (!method) {
++		method = mock_add_method(mock, method_name, method_ptr);
++		if (!method)
++			return -ENOMEM;
++	}
++
++	list_add_tail(&expectation->node, &method->expectations);
++
++	return 0;
++}
++
++struct mock_expectation *mock_add_matcher(struct mock *mock,
++					  const char *method_name,
++					  const void *method_ptr,
++					  struct mock_param_matcher *matchers[],
++					  int len)
++{
++	struct mock_expectation *expectation;
++	struct mock_matcher *matcher;
++	int ret;
++
++	expectation = test_kzalloc(mock->test,
++				   sizeof(*expectation),
++				   GFP_KERNEL);
++	if (!expectation)
++		return NULL;
++
++	matcher = test_kmalloc(mock->test, sizeof(*matcher), GFP_KERNEL);
++	if (!matcher)
++		return NULL;
++
++	memcpy(&matcher->matchers, matchers, sizeof(*matchers) * len);
++	matcher->num = len;
++
++	expectation->matcher = matcher;
++	expectation->max_calls_expected = 1;
++	expectation->min_calls_expected = 1;
++
++	ret = mock_add_expectation(mock, method_name, method_ptr, expectation);
++	if (ret < 0)
++		return NULL;
++
++	return expectation;
++}
++
++int mock_set_default_action(struct mock *mock,
++			    const char *method_name,
++			    const void *method_ptr,
++			    struct mock_action *action)
++{
++	struct mock_method *method;
++
++	method = mock_lookup_method(mock, method_ptr);
++	if (!method) {
++		method = mock_add_method(mock, method_name, method_ptr);
++		if (!method)
++			return -ENOMEM;
++	}
++
++	method->default_action = action;
++
++	return 0;
++}
++
++static void mock_format_param(struct test_stream *stream,
++			      const char *type_name,
++			      const void *param)
++{
++	/*
++	 * Cannot find formatter, so just print the pointer of the
++	 * symbol.
++	 */
++	stream->add(stream, "<%pS>", param);
++}
++
++static void mock_add_method_declaration_to_stream(
++		struct test_stream *stream,
++		const char *function_name,
++		const char * const *type_names,
++		const void **params,
++		int len)
++{
++	int i;
++
++	stream->add(stream, "%s(", function_name);
++	for (i = 0; i < len; i++) {
++		mock_format_param(stream, type_names[i], params[i]);
++		if (i < len - 1)
++			stream->add(stream, ", ");
++	}
++	stream->add(stream, ")\n");
++}
++
++static struct test_stream *mock_initialize_failure_message(
++		struct test *test,
++		const char *function_name,
++		const char * const *type_names,
++		const void **params,
++		int len)
++{
++	struct test_stream *stream;
++
++	stream = test_new_stream(test);
++	if (!stream)
++		return NULL;
++
++	stream->add(stream, "EXPECTATION FAILED: no expectation for call: ");
++	mock_add_method_declaration_to_stream(stream,
++					      function_name,
++					      type_names,
++					      params,
++					      len);
++	return stream;
++}
++
++static bool mock_is_expectation_retired(struct mock_expectation *expectation)
++{
++	return expectation->retire_on_saturation &&
++			expectation->times_called ==
++			expectation->max_calls_expected;
++}
++
++static void mock_add_method_expectation_error(struct test *test,
++					      struct test_stream *stream,
++					      char *message,
++					      struct mock *mock,
++					      struct mock_method *method,
++					      const char * const *type_names,
++					      const void **params,
++					      int len)
++{
++	stream->clear(stream);
++	stream->set_level(stream, KERN_WARNING);
++	stream->add(stream, message);
++	mock_add_method_declaration_to_stream(stream,
++		method->method_name, type_names, params, len);
++}
++
++static struct mock_expectation *mock_apply_expectations(
++		struct mock *mock,
++		struct mock_method *method,
++		const char * const *type_names,
++		const void **params,
++		int len)
++{
++	struct test *test = mock->test;
++	struct mock_expectation *ret;
++	struct test_stream *attempted_matching_stream;
++	bool expectations_all_saturated = true;
++
++	struct test_stream *stream = test_new_stream(test);
++
++	if (list_empty(&method->expectations)) {
++		mock_add_method_expectation_error(test, stream,
++			"Method was called with no expectations declared: ",
++			mock, method, type_names, params, len);
++		stream->commit(stream);
++		return NULL;
++	}
++
++	attempted_matching_stream = mock_initialize_failure_message(
++			test,
++			method->method_name,
++			type_names,
++			params,
++			len);
++
++	list_for_each_entry(ret, &method->expectations, node) {
++		if (mock_is_expectation_retired(ret))
++			continue;
++		expectations_all_saturated = false;
++
++		attempted_matching_stream->add(attempted_matching_stream,
++			"Tried expectation: %s, but\n", ret->expectation_name);
++		if (mock_match_params(ret->matcher,
++			attempted_matching_stream, params, len)) {
++			/*
++			 * Matcher was found; we won't print, so clean up the
++			 * log.
++			 */
++			attempted_matching_stream->clear(
++					attempted_matching_stream);
++			return ret;
++		}
++	}
++
++	if (expectations_all_saturated) {
++		mock_add_method_expectation_error(test, stream,
++			"Method was called with fully saturated expectations: ",
++			mock, method, type_names, params, len);
++	} else {
++		mock_add_method_expectation_error(test, stream,
++			"Method called that did not match any expectations: ",
++			mock, method, type_names, params, len);
++		stream->append(stream, attempted_matching_stream);
++	}
++	test->fail(test, stream);
++	attempted_matching_stream->clear(attempted_matching_stream);
++	return NULL;
++}
++
++static const void *mock_do_expect(struct mock *mock,
++				  const char *method_name,
++				  const void *method_ptr,
++				  const char * const *param_types,
++				  const void **params,
++				  int len)
++{
++	struct mock_expectation *expectation;
++	struct mock_method *method;
++	struct mock_action *action;
++
++	method = mock_lookup_method(mock, method_ptr);
++	if (!method)
++		return NULL;
++
++	expectation = mock_apply_expectations(mock,
++					      method,
++					      param_types,
++					      params,
++					      len);
++	if (!expectation) {
++		action = method->default_action;
++	} else {
++		expectation->times_called++;
++		if (expectation->action)
++			action = expectation->action;
++		else
++			action = method->default_action;
++	}
++	if (!action)
++		return NULL;
++
++	return action->do_action(action, params, len);
++}
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
