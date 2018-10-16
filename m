@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A876CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:16:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881ECC070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 614A32086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:16:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 614A32086E
+	by mail.kernel.org (Postfix) with ESMTP id 58341208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:16:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58341208B3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbeJPSGJ (ORCPT
+        id S1727523AbeJPSGM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 14:06:09 -0400
-Received: from foss.arm.com ([217.140.101.70]:34100 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726553AbeJPSGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 14:06:08 -0400
+        Tue, 16 Oct 2018 14:06:12 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34134 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726553AbeJPSGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 14:06:12 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5FC7880D;
-        Tue, 16 Oct 2018 03:16:25 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9230B341;
+        Tue, 16 Oct 2018 03:16:29 -0700 (PDT)
 Received: from queper01-lin.local (unknown [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2AEA73F59C;
-        Tue, 16 Oct 2018 03:16:21 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 810C33F59C;
+        Tue, 16 Oct 2018 03:16:25 -0700 (PDT)
 From:   Quentin Perret <quentin.perret@arm.com>
 To:     peterz@infradead.org, rjw@rjwysocki.net,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
@@ -42,9 +42,9 @@ Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
         edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
         currojerez@riseup.net, javi.merino@kernel.org,
         quentin.perret@arm.com
-Subject: [PATCH v8 14/15] sched/fair: Select an energy-efficient CPU on task wake-up
-Date:   Tue, 16 Oct 2018 11:15:12 +0100
-Message-Id: <20181016101513.26919-15-quentin.perret@arm.com>
+Subject: [PATCH v8 15/15] OPTIONAL: cpufreq: dt: Register an Energy Model
+Date:   Tue, 16 Oct 2018 11:15:13 +0100
+Message-Id: <20181016101513.26919-16-quentin.perret@arm.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016101513.26919-1-quentin.perret@arm.com>
 References: <20181016101513.26919-1-quentin.perret@arm.com>
@@ -55,192 +55,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If an Energy Model (EM) is available and if the system isn't
-overutilized, re-route waking tasks into an energy-aware placement
-algorithm. The selection of an energy-efficient CPU for a task
-is achieved by estimating the impact on system-level active energy
-resulting from the placement of the task on the CPU with the highest
-spare capacity in each performance domain. This strategy spreads tasks
-in a performance domain and avoids overly aggressive task packing. The
-best CPU energy-wise is then selected if it saves a large enough amount
-of energy with respect to prev_cpu.
+*******************************************************************
+* This patch illustrates the usage of the newly introduced Energy *
+* Model framework and isn't supposed to be merged as-is.          *
+*******************************************************************
 
-Although it has already shown significant benefits on some existing
-targets, this approach cannot scale to platforms with numerous CPUs.
-This is an attempt to do something useful as writing a fast heuristic
-that performs reasonably well on a broad spectrum of architectures isn't
-an easy task. As such, the scope of usability of the energy-aware
-wake-up path is restricted to systems with the SD_ASYM_CPUCAPACITY flag
-set, and where the EM isn't too complex.
+The Energy Model framework provides an API to register the active power
+of CPUs. Call this API from the cpufreq-dt driver with an estimation
+of the power as P = C * V^2 * f with C, V, and f respectively the
+capacitance of the CPU and the voltage and frequency of the OPP.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
+The CPU capacitance is read from the "dynamic-power-coefficient" DT
+binding (originally introduced for thermal/IPA), and the voltage and
+frequency values from PM_OPP.
+
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 ---
- kernel/sched/fair.c | 143 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 141 insertions(+), 2 deletions(-)
+ drivers/cpufreq/cpufreq-dt.c | 48 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 47 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 89dd58dbc89f..93a477c5829a 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6384,6 +6384,137 @@ compute_energy(struct task_struct *p, int dst_cpu, struct perf_domain *pd)
- 	return energy;
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index 0a9ebf00be46..15ac9754afa2 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -16,6 +16,7 @@
+ #include <linux/cpu_cooling.h>
+ #include <linux/cpufreq.h>
+ #include <linux/cpumask.h>
++#include <linux/energy_model.h>
+ #include <linux/err.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -149,8 +150,50 @@ static int resources_available(void)
+ 	return 0;
  }
  
-+/*
-+ * find_energy_efficient_cpu(): Find most energy-efficient target CPU for the
-+ * waking task. find_energy_efficient_cpu() looks for the CPU with maximum
-+ * spare capacity in each performance domain and uses it as a potential
-+ * candidate to execute the task. Then, it uses the Energy Model to figure
-+ * out which of the CPU candidates is the most energy-efficient.
-+ *
-+ * The rationale for this heuristic is as follows. In a performance domain,
-+ * all the most energy efficient CPU candidates (according to the Energy
-+ * Model) are those for which we'll request a low frequency. When there are
-+ * several CPUs for which the frequency request will be the same, we don't
-+ * have enough data to break the tie between them, because the Energy Model
-+ * only includes active power costs. With this model, if we assume that
-+ * frequency requests follow utilization (e.g. using schedutil), the CPU with
-+ * the maximum spare capacity in a performance domain is guaranteed to be among
-+ * the best candidates of the performance domain.
-+ *
-+ * In practice, it could be preferable from an energy standpoint to pack
-+ * small tasks on a CPU in order to let other CPUs go in deeper idle states,
-+ * but that could also hurt our chances to go cluster idle, and we have no
-+ * ways to tell with the current Energy Model if this is actually a good
-+ * idea or not. So, find_energy_efficient_cpu() basically favors
-+ * cluster-packing, and spreading inside a cluster. That should at least be
-+ * a good thing for latency, and this is consistent with the idea that most
-+ * of the energy savings of EAS come from the asymmetry of the system, and
-+ * not so much from breaking the tie between identical CPUs. That's also the
-+ * reason why EAS is enabled in the topology code only for systems where
-+ * SD_ASYM_CPUCAPACITY is set.
-+ *
-+ * NOTE: Forkees are not accepted in the energy-aware wake-up path because
-+ * they don't have any useful utilization data yet and it's not possible to
-+ * forecast their impact on energy consumption. Consequently, they will be
-+ * placed by find_idlest_cpu() on the least loaded CPU, which might turn out
-+ * to be energy-inefficient in some use-cases. The alternative would be to
-+ * bias new tasks towards specific types of CPUs first, or to try to infer
-+ * their util_avg from the parent task, but those heuristics could hurt
-+ * other use-cases too. So, until someone finds a better way to solve this,
-+ * let's keep things simple by re-using the existing slow path.
-+ */
-+
-+static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
++static int __maybe_unused of_est_power(unsigned long *mW, unsigned long *KHz,
++				       int cpu)
 +{
-+	unsigned long prev_energy = ULONG_MAX, best_energy = ULONG_MAX;
-+	struct root_domain *rd = cpu_rq(smp_processor_id())->rd;
-+	int cpu, best_energy_cpu = prev_cpu;
-+	struct perf_domain *head, *pd;
-+	unsigned long cpu_cap, util;
-+	struct sched_domain *sd;
++	unsigned long mV, Hz, MHz;
++	struct device *cpu_dev;
++	struct dev_pm_opp *opp;
++	struct device_node *np;
++	u32 cap;
++	u64 tmp;
 +
-+	rcu_read_lock();
-+	pd = rcu_dereference(rd->pd);
-+	if (!pd || READ_ONCE(rd->overutilized))
-+		goto fail;
-+	head = pd;
++	cpu_dev = get_cpu_device(cpu);
++	if (!cpu_dev)
++		return -ENODEV;
 +
-+	/*
-+	 * Energy-aware wake-up happens on the lowest sched_domain starting
-+	 * from sd_asym_cpucapacity spanning over this_cpu and prev_cpu.
-+	 */
-+	sd = rcu_dereference(*this_cpu_ptr(&sd_asym_cpucapacity));
-+	while (sd && !cpumask_test_cpu(prev_cpu, sched_domain_span(sd)))
-+		sd = sd->parent;
-+	if (!sd)
-+		goto fail;
++	np = of_node_get(cpu_dev->of_node);
++	if (!np)
++		return -EINVAL;
 +
-+	sync_entity_load_avg(&p->se);
-+	if (!task_util_est(p))
-+		goto unlock;
++	if (of_property_read_u32(np, "dynamic-power-coefficient", &cap))
++		return -EINVAL;
 +
-+	for (; pd; pd = pd->next) {
-+		unsigned long cur_energy, spare_cap, max_spare_cap = 0;
-+		int max_spare_cap_cpu = -1;
++	Hz = *KHz * 1000;
++	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &Hz);
++	if (IS_ERR(opp))
++		return -EINVAL;
 +
-+		for_each_cpu_and(cpu, perf_domain_span(pd), sched_domain_span(sd)) {
-+			if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
-+				continue;
++	mV = dev_pm_opp_get_voltage(opp) / 1000;
++	dev_pm_opp_put(opp);
++	if (!mV)
++		return -EINVAL;
 +
-+			/* Skip CPUs that will be overutilized. */
-+			util = cpu_util_next(cpu, p, cpu);
-+			cpu_cap = capacity_of(cpu);
-+			if (cpu_cap * 1024 < util * capacity_margin)
-+				continue;
++	MHz = Hz / 1000000;
++	tmp = (u64)cap * mV * mV * MHz;
++	do_div(tmp, 1000000000);
 +
-+			/* Always use prev_cpu as a candidate. */
-+			if (cpu == prev_cpu) {
-+				prev_energy = compute_energy(p, prev_cpu, head);
-+				best_energy = min(best_energy, prev_energy);
-+				continue;
-+			}
++	*mW = (unsigned long)tmp;
++	*KHz = Hz / 1000;
 +
-+			/*
-+			 * Find the CPU with the maximum spare capacity in
-+			 * the performance domain
-+			 */
-+			spare_cap = cpu_cap - util;
-+			if (spare_cap > max_spare_cap) {
-+				max_spare_cap = spare_cap;
-+				max_spare_cap_cpu = cpu;
-+			}
-+		}
-+
-+		/* Evaluate the energy impact of using this CPU. */
-+		if (max_spare_cap_cpu >= 0) {
-+			cur_energy = compute_energy(p, max_spare_cap_cpu, head);
-+			if (cur_energy < best_energy) {
-+				best_energy = cur_energy;
-+				best_energy_cpu = max_spare_cap_cpu;
-+			}
-+		}
-+	}
-+unlock:
-+	rcu_read_unlock();
-+
-+	/*
-+	 * Pick the best CPU if prev_cpu cannot be used, or if it saves at
-+	 * least 6% of the energy used by prev_cpu.
-+	 */
-+	if (prev_energy == ULONG_MAX)
-+		return best_energy_cpu;
-+
-+	if ((prev_energy - best_energy) > (prev_energy >> 4))
-+		return best_energy_cpu;
-+
-+	return prev_cpu;
-+
-+fail:
-+	rcu_read_unlock();
-+
-+	return -1;
++	return 0;
 +}
 +
- /*
-  * select_task_rq_fair: Select target runqueue for the waking task in domains
-  * that have the 'sd_flag' flag set. In practice, this is SD_BALANCE_WAKE,
-@@ -6407,8 +6538,16 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+ static int cpufreq_init(struct cpufreq_policy *policy)
+ {
++	struct em_data_callback em_cb = EM_DATA_CB(of_est_power);
+ 	struct cpufreq_frequency_table *freq_table;
+ 	struct opp_table *opp_table = NULL;
+ 	struct private_data *priv;
+@@ -159,7 +202,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	unsigned int transition_latency;
+ 	bool fallback = false;
+ 	const char *name;
+-	int ret;
++	int ret, nr_opp;
  
- 	if (sd_flag & SD_BALANCE_WAKE) {
- 		record_wakee(p);
--		want_affine = !wake_wide(p) && !wake_cap(p, cpu, prev_cpu)
--			      && cpumask_test_cpu(cpu, &p->cpus_allowed);
-+
-+		if (static_branch_unlikely(&sched_energy_present)) {
-+			new_cpu = find_energy_efficient_cpu(p, prev_cpu);
-+			if (new_cpu >= 0)
-+				return new_cpu;
-+			new_cpu = prev_cpu;
-+		}
-+
-+		want_affine = !wake_wide(p) && !wake_cap(p, cpu, prev_cpu) &&
-+			      cpumask_test_cpu(cpu, &p->cpus_allowed);
+ 	cpu_dev = get_cpu_device(policy->cpu);
+ 	if (!cpu_dev) {
+@@ -226,6 +269,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 		ret = -EPROBE_DEFER;
+ 		goto out_free_opp;
  	}
++	nr_opp = ret;
  
- 	rcu_read_lock();
+ 	if (fallback) {
+ 		cpumask_setall(policy->cpus);
+@@ -278,6 +322,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	policy->cpuinfo.transition_latency = transition_latency;
+ 	policy->dvfs_possible_from_any_cpu = true;
+ 
++	em_register_perf_domain(policy->cpus, nr_opp, &em_cb);
++
+ 	return 0;
+ 
+ out_free_cpufreq_table:
 -- 
 2.19.1
 
