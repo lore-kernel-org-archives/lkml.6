@@ -2,139 +2,88 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBCDC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331AAC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:45:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5E2C2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E96C32083C
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:45:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFO55fqw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E2C2089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="C8UUzVHt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E96C32083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbeJPWf3 (ORCPT
+        id S1727186AbeJPWfw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:35:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53890 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726778AbeJPWf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:35:28 -0400
-Received: from localhost (unknown [106.201.39.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 001C420881;
-        Tue, 16 Oct 2018 14:44:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539701080;
-        bh=Sjz7AQg4FaRW/zW/lu2tkgAJUc8msJopx4zqoSr5M3o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uFO55fqwC0/IZrY09rEohld2CuNVu5IErt62Mv94PJYs++MN/GFo1bppa6kPcrgob
-         ERGAuBC43HGix0378yWqubZAp2O1PCQ+ZpdzbESgLOGvlThC7oTSToXCfzEYclCcOw
-         wQ870Cy10cARg7j9DGHrwBk4w1jlyaYM+4KpcwTw=
-Date:   Tue, 16 Oct 2018 20:14:32 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] dmaengine: stm32-dma: Add DMA/MDMA chaining
- support
-Message-ID: <20181016144432.GR2400@vkoul-mobl>
-References: <1538139715-24406-1-git-send-email-pierre-yves.mordret@st.com>
- <1538139715-24406-5-git-send-email-pierre-yves.mordret@st.com>
- <20181007160030.GB2372@vkoul-mobl>
- <e9cedfdd-ad90-9123-03bb-34a2e84059c5@st.com>
- <20181010040343.GO2372@vkoul-mobl>
- <d64da587-a680-20c4-7139-f59fd1f299bc@st.com>
- <20181015171403.GM2400@vkoul-mobl>
- <9a375fd3-964f-3d57-9d18-b010e20a4d42@st.com>
+        Tue, 16 Oct 2018 18:35:52 -0400
+Received: from mail-it1-f181.google.com ([209.85.166.181]:50921 "EHLO
+        mail-it1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726778AbeJPWfw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 18:35:52 -0400
+Received: by mail-it1-f181.google.com with SMTP id k206-v6so27356543ite.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 07:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=EjXo5QGpKawGStlNQE4itapExiS6VjB4JIjFjFQnM7s=;
+        b=C8UUzVHtr2GYiEkrdTHcO1rAGNeB3ezVeAbgxmfCPVKYlcO/uuAuUzNuS1qAxoRbmr
+         VnpilIHuDY6UQ1s6BLJmhz52W4gyDmrQfy7wEx86Zx/daff1cwRsJnKF1s18xzmIQZBn
+         EyKucu3FDJOHPPY73WfAxllMRxvoSNQ4aSqnb61Qge0by4+q1pWr9wDD03ce7LeuL3c+
+         yE0tZCCGmN4CY1tgxsS4bRkScK2OECMZ2k7qyEqTIRLSkwMgvvB2BihFWtS/IzbQnz2f
+         0F632j+QZIVXInP44AQzISUyErg6nxSHJG3zHHG0qZT1Twh3YK29dAd9odno6zGClr9q
+         heHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EjXo5QGpKawGStlNQE4itapExiS6VjB4JIjFjFQnM7s=;
+        b=NOGAI5oTrAHblKvYsGZm8AFIWC+tNs5+wwqwJuMdBucKx+EkHZpH/fWb5x4+FzKUMB
+         MPyfm2AISHqSd7C3JkRBTx3Vo3VxU5AtC+n+hhw+G4K3LYinHm+iL0rgAoj7QOh2EvW7
+         qsphwuFoQslIZLTNptKlRa0zJHZ/oVmwk9egCkiFoMRiK4xp8fs1k6NA9rz1w2pgg9RF
+         SRkkYOeGGjeAyI02rjTCcAOwPqevqSUdQdH4t8/2QCw4WfnDCMR7HKs6G7R+Xeq2V3Bo
+         R5NToAPAP1212Czt+To99UWgzYKZKIFClJoSIgU3nf4L52EqvEIfU+pjhvc+k8lBzN75
+         p6zw==
+X-Gm-Message-State: ABuFfohRKfNLpn+5N15OTnWRmNPT81XQdPPEYAp57z9CE/POKzTerfpi
+        Jv6oY5CTCZ/kyy5joTXyJlaC+M+Asd0=
+X-Google-Smtp-Source: ACcGV62UoZnOv5JaeGE9Q6K7zObByGyvTpqFx7S1Xm847/UAD/cq24FHACVXVwrp1I6rWJD0FBSR1A==
+X-Received: by 2002:a24:1cc7:: with SMTP id c190-v6mr17624522itc.30.1539701104407;
+        Tue, 16 Oct 2018 07:45:04 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id k6-v6sm3124766iom.45.2018.10.16.07.45.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Oct 2018 07:45:02 -0700 (PDT)
+Subject: Re: [PATCH] block: fix comments about choosing request list
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-kernel@vger.kernel.org
+References: <153968002141.396220.12979757828960821275.stgit@buzz>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5f5b7f16-b4cd-7c8f-519f-7ddbbea1ba41@kernel.dk>
+Date:   Tue, 16 Oct 2018 08:45:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a375fd3-964f-3d57-9d18-b010e20a4d42@st.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <153968002141.396220.12979757828960821275.stgit@buzz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16-10-18, 11:19, Pierre Yves MORDRET wrote:
-> 
-> 
-> On 10/15/18 7:14 PM, Vinod wrote:
-> > On 10-10-18, 09:02, Pierre Yves MORDRET wrote:
-> >>
-> >>
-> >> On 10/10/2018 06:03 AM, Vinod wrote:
-> >>> On 09-10-18, 10:40, Pierre Yves MORDRET wrote:
-> >>>>
-> >>>>
-> >>>> On 10/07/2018 06:00 PM, Vinod wrote:
-> >>>>> On 28-09-18, 15:01, Pierre-Yves MORDRET wrote:
-> >>>>>> This patch adds support of DMA/MDMA chaining support.
-> >>>>>> It introduces an intermediate transfer between peripherals and STM32 DMA.
-> >>>>>> This intermediate transfer is triggered by SW for single M2D transfer and
-> >>>>>> by STM32 DMA IP for all other modes (sg, cyclic) and direction (D2M).
-> >>>>>>
-> >>>>>> A generic SRAM allocator is used for this intermediate buffer
-> >>>>>> Each DMA channel will be able to define its SRAM needs to achieve chaining
-> >>>>>> feature : (2 ^ order) * PAGE_SIZE.
-> >>>>>> For cyclic, SRAM buffer is derived from period length (rounded on
-> >>>>>> PAGE_SIZE).
-> >>>>>
-> >>>>> So IIUC, you chain two dma txns together and transfer data via an SRAM?
-> >>>>
-> >>>> Correct. one DMA is DMAv2 (stm32-dma) and the other is MDMA(stm32-mdma).
-> >>>> Intermediate transfer is between device and memory.
-> >>>> This intermediate transfer is using SDRAM.
-> >>>
-> >>> Ah so you use dma calls to setup mdma xtfers? I dont think that is a
-> >>> good idea. How do you know you should use mdma for subsequent transfer?
-> >>>
-> >>
-> >> When user bindings told to setup chaining intermediate MDMA transfers are always
-> >> triggers.
-> >> For instance if a user requests a Dev2Mem transfer with chaining. From client
-> >> pov this is still a prep_slave_sg. Internally DMAv2 is setup in cyclic mode (in
-> >> double buffer mode indeed => 2 buffer of PAGE_SIZE/2) and destination is SDRAM.
-> >> DMAv2 will flip/flop on those 2 buffers.
-> >> At the same time DMAv2 driver prepares a MDMA SG that will fetch data from those
-> >> 2 buffers in SDRAM and fills final destination memory.
-> > 
-> > I am not able to follow is why does it need to be internal, why should
-> > the client not set the two transfers and trigger them?
-> > 
-> 
-> Client may use or not chaining: defined within DT. API and dynamic are same at
+On 10/16/18 2:53 AM, Konstantin Khlebnikov wrote:
+> Request list is determined by blk_get_rl() and without queue_lock.
 
-That should be upto client... As a dmaengine driver you should enable
-data transfer from src to dstn.
-
-> driver client level. Moreover driver exposes only DMAv2 and not both DMAv2 and
-> MDMA. This is totally hidden for client. If client sets both this would imply
-
-Why should a controller be hidden from user, I dont see why that would
-be a good thing
-
-> changing all drivers that may want use chaining. Even more to deal with DMAv2
-> and MDMA at its level.
-> Since DMAv2 deals with MDMA, all drivers are same as before. no changes required.
-
-It is not about changes, it is about the SW model you want to have.
-
-The intermediate SRAM transfers should not be made within DMAengine
-driver, client can chose to have two transfers and couple or not, it is
-upto them to choose. Sorry I do not like this abstraction and would like
-to see a cleaner approach
+This code is going away shortly, so let's just leave the comment
+alone.
 
 -- 
-~Vinod
+Jens Axboe
+
