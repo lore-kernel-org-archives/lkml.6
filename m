@@ -6,43 +6,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4801EC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0700C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 118D521477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEB8C21476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:15:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5u3LSr6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 118D521477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrrB23bS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB8C21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729432AbeJQBG6 (ORCPT
+        id S1729449AbeJQBHB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:06:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51126 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:07:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728422AbeJQBG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:06:58 -0400
+        id S1728422AbeJQBHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:07:00 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 333592089E;
-        Tue, 16 Oct 2018 17:15:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 199D62089E;
+        Tue, 16 Oct 2018 17:15:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710133;
-        bh=TbY17Jf0SnyPu7F6grMWhfbxNs3GPunck/oCLjLMdfU=;
+        s=default; t=1539710136;
+        bh=wmPdhtzpAGAX/GabuZk1t53+G79BPXWMX8QiR5XZ2xw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e5u3LSr6TktQAJSFM1ZOA1Azxmn5ONZEFt8o5QtggmkpmYX2Nz9hR8D5EeXLcoMz5
-         TCaV3NLkGhF35CLWs0mUw4dAiTRLhEG8KbXHabxYRpXIdyXG1/aZtscTi7A0vR/1w8
-         jQC7vQUMoXJ+txoyI2+ICc/oO0UnwDuWWFNlczMU=
+        b=OrrB23bS4G5YJQpP9H3ZFBgn1mBiKtvbIyr7wDQ1k8NXsHun85ayvN1hYDgfute4X
+         EoXL+ywEY+77AmDxiwMd4KQ8kTmz6DCNfH8nMMJ/0hhnbiBK7LHpBBStS09xOsFRuZ
+         kg6aZjKRiReAKsVeZ8T75FDJql7q5rljmbG8oEsY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.18 112/135] afs: Fix clearance of reply
-Date:   Tue, 16 Oct 2018 19:05:42 +0200
-Message-Id: <20181016170523.063427203@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jaedon Shin <jaedon.shin@gmail.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-mips@linux-mips.org
+Subject: [PATCH 4.18 113/135] MIPS: Fix CONFIG_CMDLINE handling
+Date:   Tue, 16 Oct 2018 19:05:43 +0200
+Message-Id: <20181016170523.124003229@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -60,78 +65,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit f0a7d1883d9f78ae7bf15fc258bf9a2b20f35b76 upstream.
+commit 951d223c6c16ed5d2a71a4d1f13c1e65d6882156 upstream.
 
-The recent patch to fix the afs_server struct leak didn't actually fix the
-bug, but rather fixed some of the symptoms.  The problem is that an
-asynchronous call that holds a resource pointed to by call->reply[0] will
-find the pointer cleared in the call destructor, thereby preventing the
-resource from being cleaned up.
+Commit 8ce355cf2e38 ("MIPS: Setup boot_command_line before
+plat_mem_setup") fixed a problem for systems which have
+CONFIG_CMDLINE_BOOL=y & use a DT with a chosen node that has either no
+bootargs property or an empty one. In this configuration
+early_init_dt_scan_chosen() copies CONFIG_CMDLINE into
+boot_command_line, but the MIPS code doesn't know this so it appends
+CONFIG_CMDLINE (via builtin_cmdline) to boot_command_line again. The
+result is that boot_command_line contains the arguments from
+CONFIG_CMDLINE twice.
 
-In the case of the server record leak, the afs_fs_get_capabilities()
-function in devel code sets up a call with reply[0] pointing at the server
-record that should be altered when the result is obtained, but this was
-being cleared before the destructor was called, so the put in the
-destructor does nothing and the record is leaked.
+That commit took the approach of simply setting up boot_command_line
+from the MIPS code before early_init_dt_scan_chosen() runs, causing it
+not to copy CONFIG_CMDLINE to boot_command_line if a chosen node with no
+bootargs property is found.
 
-Commit f014ffb025c1 removed the additional ref obtained by
-afs_install_server(), but the removal of this ref is actually used by the
-garbage collector to mark a server record as being defunct after the record
-has expired through lack of use.
+Unfortunately this is problematic for systems which do have a non-empty
+bootargs property & CONFIG_CMDLINE_BOOL=y. There
+early_init_dt_scan_chosen() will overwrite boot_command_line with the
+arguments from DT, which means we lose those from CONFIG_CMDLINE
+entirely. This breaks CONFIG_MIPS_CMDLINE_DTB_EXTEND. If we have
+CONFIG_MIPS_CMDLINE_FROM_BOOTLOADER or
+CONFIG_MIPS_CMDLINE_BUILTIN_EXTEND selected and the DT has a bootargs
+property which we should ignore, it will instead be honoured breaking
+those configurations too.
 
-The offending clearance of call->reply[0] upon completion in
-afs_process_async_call() has been there from the origin of the code, but
-none of the asynchronous calls actually use that pointer currently, so it
-should be safe to remove (note that synchronous calls don't involve this
-function).
+Fix this by reverting commit 8ce355cf2e38 ("MIPS: Setup
+boot_command_line before plat_mem_setup") to restore the former
+behaviour, and fixing the CONFIG_CMDLINE duplication issue by
+initializing boot_command_line to a non-empty string that
+early_init_dt_scan_chosen() will not overwrite with CONFIG_CMDLINE.
 
-Fix this by the following means:
+This is a little ugly, but cleanup in this area is on its way. In the
+meantime this is at least easy to backport & contains the ugliness
+within arch/mips/.
 
- (1) Revert commit f014ffb025c1.
-
- (2) Remove the clearance of reply[0] from afs_process_async_call().
-
-Without this, afs_manage_servers() will suffer an assertion failure if it
-sees a server record that didn't get used because the usage count is not 1.
-
-Fixes: f014ffb025c1 ("afs: Fix afs_server struct leak")
-Fixes: 08e0e7c82eea ("[AF_RXRPC]: Make the in-kernel AFS filesystem use AF_RXRPC.")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 8ce355cf2e38 ("MIPS: Setup boot_command_line before plat_mem_setup")
+References: https://patchwork.linux-mips.org/patch/18804/
+Patchwork: https://patchwork.linux-mips.org/patch/20813/
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Jaedon Shin <jaedon.shin@gmail.com>
+Cc: Mathieu Malaterre <malat@debian.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org # v4.16+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/afs/rxrpc.c  |    2 --
- fs/afs/server.c |    2 --
- 2 files changed, 4 deletions(-)
+ arch/mips/kernel/setup.c |   48 +++++++++++++++++++++++++++--------------------
+ 1 file changed, 28 insertions(+), 20 deletions(-)
 
---- a/fs/afs/rxrpc.c
-+++ b/fs/afs/rxrpc.c
-@@ -690,8 +690,6 @@ static void afs_process_async_call(struc
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -835,6 +835,34 @@ static void __init arch_mem_init(char **
+ 	struct memblock_region *reg;
+ 	extern void plat_mem_setup(void);
+ 
++	/*
++	 * Initialize boot_command_line to an innocuous but non-empty string in
++	 * order to prevent early_init_dt_scan_chosen() from copying
++	 * CONFIG_CMDLINE into it without our knowledge. We handle
++	 * CONFIG_CMDLINE ourselves below & don't want to duplicate its
++	 * content because repeating arguments can be problematic.
++	 */
++	strlcpy(boot_command_line, " ", COMMAND_LINE_SIZE);
++
++	/* call board setup routine */
++	plat_mem_setup();
++
++	/*
++	 * Make sure all kernel memory is in the maps.  The "UP" and
++	 * "DOWN" are opposite for initdata since if it crosses over
++	 * into another memory section you don't want that to be
++	 * freed when the initdata is freed.
++	 */
++	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
++			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
++			 BOOT_MEM_RAM);
++	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
++			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
++			 BOOT_MEM_INIT_RAM);
++
++	pr_info("Determined physical RAM map:\n");
++	print_memory_map();
++
+ #if defined(CONFIG_CMDLINE_BOOL) && defined(CONFIG_CMDLINE_OVERRIDE)
+ 	strlcpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
+ #else
+@@ -862,26 +890,6 @@ static void __init arch_mem_init(char **
  	}
- 
- 	if (call->state == AFS_CALL_COMPLETE) {
--		call->reply[0] = NULL;
+ #endif
+ #endif
 -
- 		/* We have two refs to release - one from the alloc and one
- 		 * queued with the work item - and we can't just deallocate the
- 		 * call because the work item may be queued again.
---- a/fs/afs/server.c
-+++ b/fs/afs/server.c
-@@ -199,11 +199,9 @@ static struct afs_server *afs_install_se
+-	/* call board setup routine */
+-	plat_mem_setup();
+-
+-	/*
+-	 * Make sure all kernel memory is in the maps.  The "UP" and
+-	 * "DOWN" are opposite for initdata since if it crosses over
+-	 * into another memory section you don't want that to be
+-	 * freed when the initdata is freed.
+-	 */
+-	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
+-			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
+-			 BOOT_MEM_RAM);
+-	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
+-			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
+-			 BOOT_MEM_INIT_RAM);
+-
+-	pr_info("Determined physical RAM map:\n");
+-	print_memory_map();
+-
+ 	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
  
- 	write_sequnlock(&net->fs_addr_lock);
- 	ret = 0;
--	goto out;
- 
- exists:
- 	afs_get_server(server);
--out:
- 	write_sequnlock(&net->fs_lock);
- 	return server;
- }
+ 	*cmdline_p = command_line;
 
 
