@@ -2,103 +2,116 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3C6C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72006C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC8F20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:25:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="MPiW+ydO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC8F20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 35E1D20869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:27:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35E1D20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbeJPRPR (ORCPT
+        id S1727059AbeJPRQ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 13:15:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57572 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeJPRPR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 13:15:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gQzTgNwonnE2BgYAb/eqjvVAa1rT4OYhHFeFhe6JftM=; b=MPiW+ydO98+HUl3wsUIiseV9o
-        LUuFv2lImmBCXxRIs+kvjEgAf5ecdea8fU+uIFRsthrOWCw4sWboYgK0joE49mBwd+7PN8YlvYsQr
-        Lp6oUrM43OFSsNEhIisuEELARB8hzZuh/fdVn8YUZmtpMdCWsKnvVLm+Uo7pFW64d/P84=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gCLbe-0004l9-6K; Tue, 16 Oct 2018 09:25:38 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D90CB11223A4; Tue, 16 Oct 2018 10:25:37 +0100 (BST)
-Date:   Tue, 16 Oct 2018 10:25:37 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, andy.shevchenko@gmail.com
-Subject: Re: [PATCH 2/3] driver core: add deferring probe reason to
- devices_deferred property
-Message-ID: <20181016092537.GC7449@sirena.org.uk>
-References: <20181016072244.1216-1-a.hajda@samsung.com>
- <CGME20181016072249eucas1p28855602564eb74a771fe521712962680@eucas1p2.samsung.com>
- <20181016072244.1216-3-a.hajda@samsung.com>
+        Tue, 16 Oct 2018 13:16:56 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48999 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726083AbeJPRQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 13:16:56 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id F04B0338B896A;
+        Tue, 16 Oct 2018 17:27:21 +0800 (CST)
+Received: from [127.0.0.1] (10.177.23.164) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Tue, 16 Oct 2018
+ 17:27:16 +0800
+Subject: Re: [PATCH 1/1] iommu/arm-smmu-v3: eliminate a potential memory
+ corruption on Hi16xx soc
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1539592576-24352-1-git-send-email-thunder.leizhen@huawei.com>
+ <db0943c2-7a20-d0f9-0a2c-e37b57618761@arm.com>
+CC:     LinuxArm <linuxarm@huawei.com>, <nd@arm.com>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5BC5AEF2.9030505@huawei.com>
+Date:   Tue, 16 Oct 2018 17:27:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="MnLPg7ZWsaic7Fhd"
-Content-Disposition: inline
-In-Reply-To: <20181016072244.1216-3-a.hajda@samsung.com>
-X-Cookie: Huh?
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <db0943c2-7a20-d0f9-0a2c-e37b57618761@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---MnLPg7ZWsaic7Fhd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Oct 16, 2018 at 09:22:43AM +0200, Andrzej Hajda wrote:
-> /sys/kernel/debug/devices_deferred property contains list of deferred devices.
-> This list does not contain reason why the driver deferred probe, the patch
-> improves it.
-> The natural place to set the reason is probe_err function introduced recently,
-> ie. if probe_err will be called with -EPROBE_DEFER instead of printk the message
-> will be attached to deferred device and printed when user read devices_deferred
-> property.
+On 2018/10/15 21:52, Robin Murphy wrote:
+> On 15/10/18 09:36, Zhen Lei wrote:
+>> ITS translation register map:
+>> 0x0000-0x003C    Reserved
+>> 0x0040        GITS_TRANSLATER
+>> 0x0044-0xFFFC    Reserved
+>>
+>> The standard GITS_TRANSLATER register in ITS is only 4 bytes, but Hisilicon
+>> expands the next 4 bytes to carry some IMPDEF information. That means, 8 bytes
+>> data will be written to MSIAddress each time.
+>>
+>> MSIAddr: |----4bytes----|----4bytes----|
+>>      |    MSIData   |    IMPDEF    |
+>>
+>> There is no problem for ITS, because the next 4 bytes space is reserved in ITS.
+>> But it will overwrite the 4 bytes memory following "sync_count". It's very
+>> luckly that the previous and the next neighbour of "sync_count" are both aligned
+>> by 8 bytes, so no problem is met now.
+>>
+>> It's good to explicitly add a workaround:
+>> 1. Add gcc __attribute__((aligned(8))) to make sure that "sync_count" is always
+>>     aligned by 8 bytes.
+>> 2. Add a "u64" union member to make sure the 4 bytes padding is always exist.
+> 
+> Surely the u64 member inherently makes the union, and thus the u32 member as well, 64-bit-aligned anyway?
 
-Nice!
+Yes, we really only need one step, "1." or "2.". As John Garry suggested, I will change it to "struct" mode.
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+> 
+> Robin.
+> 
+>> There is no functional change.
+>>
+>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>> ---
+>>   drivers/iommu/arm-smmu-v3.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+>> index 5059d09..a07bc0d 100644
+>> --- a/drivers/iommu/arm-smmu-v3.c
+>> +++ b/drivers/iommu/arm-smmu-v3.c
+>> @@ -586,7 +586,10 @@ struct arm_smmu_device {
+>>         struct arm_smmu_strtab_cfg    strtab_cfg;
+>>   +    union {
+>> +    u64                padding; /* workaround for Hisilicon */
+>>       u32                sync_count;
+>> +    } __attribute__((aligned(8)));
+>>         /* IOMMU core code handle */
+>>       struct iommu_device        iommu;
+>>
+> 
+> 
 
---MnLPg7ZWsaic7Fhd
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Thanks!
+BestRegards
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvFrpEACgkQJNaLcl1U
-h9CbIgf9Fqzk0pxepYySE69XTPCrVnmprj6birPABbDFD553PCZsbvhoGdZTFpE+
-18+Wu8KAzkLSWAE7Ll5zstpSaEIXm/9KRsjkhWDxst5T/F9Q7yB6Yd3vGNzbBiwn
-1B9eUfXYMPYlGogVNrT+T3hViBEBzeQ2V1QaAAR1fAK/xgREdo5l8EQsMgUzOAua
-TyZ6mNeCElrNo5XuLcT3JQpE75vxeZ+1QShCCP7S/jXYpJRhUs2IrL4nBH9T0M1N
-ChIrKHq7YEE6nena7vbce8chBQXhV6Pb7R6qZvuY1x8cUYxUquLzuxt4XCjhHQ9k
-2k5a+byuBeXD0+SYrha4EBXe2pH0FQ==
-=vgHN
------END PGP SIGNATURE-----
-
---MnLPg7ZWsaic7Fhd--
