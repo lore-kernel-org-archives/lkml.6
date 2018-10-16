@@ -2,113 +2,107 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9F8C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3186EC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8A212086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:53:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="YbRLJotT";
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="YbRLJotT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A212086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
+	by mail.kernel.org (Postfix) with ESMTP id ED4BB2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:55:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED4BB2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbeJPQnK (ORCPT
+        id S1727451AbeJPQoh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 12:43:10 -0400
-Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:36995 "EHLO
-        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726541AbeJPQnK (ORCPT
+        Tue, 16 Oct 2018 12:44:37 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36957 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727026AbeJPQoh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 12:43:10 -0400
-Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
-        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id C4F6721791;
-        Tue, 16 Oct 2018 11:53:44 +0300 (MSK)
-Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
-        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id ZxjR3eIYjD-ril4DhOI;
-        Tue, 16 Oct 2018 11:53:44 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1539680024; bh=4hAh7JEoaIX8K3feQAchPgL9Ih9RzxYXRxnhAu/DNKw=;
-        h=Subject:From:To:Date:Message-ID;
-        b=YbRLJotTyDpM+GMChONwGz1v9Sx2AiwGQ4nmnrYbZsSJ0LZN2fzrk9cS1jIvxxrXQ
-         z21xukjqlkoBLxObfPGQUU39w77drXjPKqEviIU/IXhkhnJ/Kz9F0N25Y4ksOH/WU8
-         thg4MshbQ9auWDEzS9G6bycYi6dJ7kA15g7Ffc5s=
-Received: from dynamic-vpn.dhcp.yndx.net (dynamic-vpn.dhcp.yndx.net [2a02:6b8:b010:d005::1:29])
-        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id AfYdSvkeAI-riWaLQ6Q;
-        Tue, 16 Oct 2018 11:53:44 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1539680024; bh=4hAh7JEoaIX8K3feQAchPgL9Ih9RzxYXRxnhAu/DNKw=;
-        h=Subject:From:To:Date:Message-ID;
-        b=YbRLJotTyDpM+GMChONwGz1v9Sx2AiwGQ4nmnrYbZsSJ0LZN2fzrk9cS1jIvxxrXQ
-         z21xukjqlkoBLxObfPGQUU39w77drXjPKqEviIU/IXhkhnJ/Kz9F0N25Y4ksOH/WU8
-         thg4MshbQ9auWDEzS9G6bycYi6dJ7kA15g7Ffc5s=
-Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: [PATCH] block: fix comments about choosing request list
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
-Date:   Tue, 16 Oct 2018 11:53:41 +0300
-Message-ID: <153968002141.396220.12979757828960821275.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Tue, 16 Oct 2018 12:44:37 -0400
+Received: by mail-oi1-f194.google.com with SMTP id e17-v6so17397303oib.4;
+        Tue, 16 Oct 2018 01:55:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rAc4DQ4g6pTctg6U1LF51BeAUwiIMWWioDKKMAAuBr0=;
+        b=JTwZI8hsEQMPMgiinCRdIm8QyHKz014ybn9aO1bq/Kpy9VJwbJlKMalyClROQOPEFH
+         zVLekhaoQfnd7X2LRtE+56M0xK4SspScnBMPNjx1SFcxEqGs0o7zAYl61qjuELQH3LK0
+         NZaKEFD5eZuDwh2hJgelIHZVPo+vmpYZtjVCYKXvUP7By9UYOcUv9gWfaVVysNQfoiJU
+         9AcanqwoCYAo30vofmTeXkwCRrBczgJMs6CF7mZ9VN34XXa4auckkHCgGelI3ZqNoCX0
+         X2EE2guAlqgzm3FXHjwZGKlnH2vp45Xu++/G1WpBPyyz46i581jrXR8wKXzHaljyFqZr
+         RqfQ==
+X-Gm-Message-State: ABuFfohYkZSLOgLq/5IGU7l351JFuSR6vePevFhiexKuSEt8BFLi5NX8
+        PsbtFhtU+BXoN0pBkCFUcFY2vmzM2WefiLkLViM=
+X-Google-Smtp-Source: ACcGV60Svv8+hzcskAtXddWyJGKE8Hb3WnWsLycduqbpOMcVZw4zPqfAAQDjb2jqmrIYXNion7kVdtDAaPIP3NsvhF8=
+X-Received: by 2002:aca:d785:: with SMTP id o127-v6mr11307953oig.33.1539679497273;
+ Tue, 16 Oct 2018 01:44:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20181012113934.29942-1-heikki.krogerus@linux.intel.com>
+ <CACRpkdZddvkgL1qwO=35y_Jps0+=QD3nPKQwgMEH+zcCH2NPdg@mail.gmail.com>
+ <CAJZ5v0h3uENUqbcb=0HH1wT_0MYQzcHct2d19tiarvXEdRay+Q@mail.gmail.com> <20181016084050.GF24771@kuha.fi.intel.com>
+In-Reply-To: <20181016084050.GF24771@kuha.fi.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 16 Oct 2018 10:44:45 +0200
+Message-ID: <CAJZ5v0gYk1=jOkmF5z2WCCyHCu6ZWX8zOoLSkStvYqHMY2PZnA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/5] device property: Introducing software nodes
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Request list is determined by blk_get_rl() and without queue_lock.
+On Tue, Oct 16, 2018 at 10:40 AM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+>
+> On Tue, Oct 16, 2018 at 09:36:33AM +0200, Rafael J. Wysocki wrote:
+> > On Tue, Oct 16, 2018 at 9:35 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > >
+> > > On Fri, Oct 12, 2018 at 1:39 PM Heikki Krogerus
+> > > <heikki.krogerus@linux.intel.com> wrote:
+> > >
+> > > > To continue the discussion started by Dmitry [1], this is my proposal
+> > > > that I mentioned in my last mail. In short, the idea is that instead
+> > > > of trying to extend the support for the currently used struct
+> > > > property_set, I'm proposing that we introduce a completely new,
+> > > > independent type of fwnode, and replace the struct property_set with
+> > > > it. I'm calling the type "software node" here.
+> > >
+> > > I'm a big fan of this approach.
+> > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > > for all patches.
+> > >
+> > > I don't know who can finally review and merge this though,
+> > > I guess Rafael?
+> >
+> > Yes, that would be me. :-)
+> >
+> > I no one speaks up against them, I'll pick them up.
+>
+> Let me send a final version of these.
+>
+> I need to add one more patch to the series where I remove an extra
+> device_remove_properties() call from platform_device_del().
+>
+> It's unnecessary in any case as device_del() calls
+> device_remove_properties() for every device, but as the properties are
+> removed there before the device is removed, we're unable to deduct
+> the final ref count in the "remove" platform notification since our
+> node is no longer bind to the device.
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- include/linux/blk-cgroup.h |    8 ++++----
- include/linux/blkdev.h     |    9 +++++----
- 2 files changed, 9 insertions(+), 8 deletions(-)
+OK, I'll wait for an update, then.
 
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index 6d766a19f2bb..dbff5a25f810 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -520,10 +520,10 @@ static inline void blkg_put(struct blkcg_gq *blkg)
-  * @q: request_queue of interest
-  * @bio: bio which will be attached to the allocated request (may be %NULL)
-  *
-- * The caller wants to allocate a request from @q to use for @bio.  Find
-- * the request_list to use and obtain a reference on it.  Should be called
-- * under queue_lock.  This function is guaranteed to return non-%NULL
-- * request_list.
-+ * The caller wants to allocate a request from @q to use for @bio.
-+ * Find the request_list to use and obtain a reference on it.
-+ *
-+ * This function is guaranteed to return non-%NULL request_list.
-  */
- static inline struct request_list *blk_get_rl(struct request_queue *q,
- 					      struct bio *bio)
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 6980014357d4..b5fec0bc72f2 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -444,10 +444,11 @@ struct request_queue {
- 	struct rq_qos		*rq_qos;
- 
- 	/*
--	 * If blkcg is not used, @q->root_rl serves all requests.  If blkcg
--	 * is used, root blkg allocates from @q->root_rl and all other
--	 * blkgs from their own blkg->rl.  Which one to use should be
--	 * determined using bio_request_list().
-+	 * If blkcg is not used, @q->root_rl serves all requests.
-+	 * If blkcg is used, root blkg allocates from @q->root_rl and
-+	 * all other blkgs from their own blkg->rl.
-+	 *
-+	 * Which one to use should be determined using blk_get_rl().
- 	 */
- 	struct request_list	root_rl;
- 
-
+Thanks,
+Rafael
