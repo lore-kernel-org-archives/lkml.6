@@ -2,120 +2,114 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA118C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97748C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 796F020866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:22:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=chavero.com.mx header.i=@chavero.com.mx header.b="VxGQY4Io";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=chavero.com.mx header.i=@chavero.com.mx header.b="A6Tdhcrj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 796F020866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chavero.com.mx
+	by mail.kernel.org (Postfix) with ESMTP id 3ACC720866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 12:24:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ACC720866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbeJPUMZ (ORCPT
+        id S1727164AbeJPUOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 16:12:25 -0400
-Received: from salida.aumenta.com.mx ([209.139.208.81]:50828 "EHLO
-        salida.aumenta.com.mx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727035AbeJPUMY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 16:12:24 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by salida.aumenta.com.mx (Postfix) with ESMTP id 118FCC80273;
-        Tue, 16 Oct 2018 06:20:36 -0600 (MDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=chavero.com.mx;
-        s=mail; t=1539692436;
-        bh=7U7/zCOj4qUEsqhbRoOHsb4E+CUoGzHuVJIinTEQHII=;
-        h=Subject:From:To:Cc:Date:References:In-Reply-To;
-        b=VxGQY4IoFLet+kzEFaclrArKXn5T7STdfbl52D3NkVjMLp+ezs4J8CpfN5kV9/+yE
-         MctceRvFdnvTXGzJxunCQa2hc/lMMsWZULW78tcn/A/5hTtqHokBgTmfTSi75hbNIe
-         3hHVOzwFTCFa7ubnY7eS8DlowNwRHfLTSZ9ndcBw=
-X-Virus-Scanned: amavisd-new at aumenta.com.mx
-Received: from salida.aumenta.com.mx ([127.0.0.1])
-        by localhost (trefilp.aumenta.com.mx [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id uuCENbOTMBo1; Tue, 16 Oct 2018 06:20:35 -0600 (MDT)
-Received: from airsk8 (unknown [189.146.205.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ichavero@seispistos.com.mx)
-        by salida.aumenta.com.mx (Postfix) with ESMTPSA id 35DF1C8006D;
-        Tue, 16 Oct 2018 06:20:34 -0600 (MDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=chavero.com.mx;
-        s=mail; t=1539692435;
-        bh=7U7/zCOj4qUEsqhbRoOHsb4E+CUoGzHuVJIinTEQHII=;
-        h=Subject:From:To:Cc:Date:References:In-Reply-To;
-        b=A6Tdhcrj1gwVAXTVxFSfmKhoBdmiXPo9+z8mt1HXLl8lh0zGxr1gw9wzLuwubou8t
-         y39DhTCSt8YoH1krc4fTWtCNfrqiaELuRzeTftb+XbkbsB57JDQASF+y2DcDERTfwP
-         9gGVwV+tIH85R4E807evZZ8Ml5Wyd7g2y0cmB2Eg=
-Message-ID: <5cd87f8299de9fa0d2726a2d3fa2bdae349281be.camel@chavero.com.mx>
-Subject: Re: [PATCH] Fix Code of Conduct ambiguities
-From:   =?ISO-8859-1?Q?Iv=E1n?= Chavero <ichavero@chavero.com.mx>
-To:     Joe Perches <joe@perches.com>, corbet@lwn.net
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org
-Date:   Tue, 16 Oct 2018 07:21:42 -0500
-References: <20181014185241.4085197-1-ichavero@chavero.com.mx>
-         <97e8ce1370ed45b771538c67712920322ecdd3aa.camel@perches.com>
-In-Reply-To: <97e8ce1370ed45b771538c67712920322ecdd3aa.camel@perches.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 16 Oct 2018 16:14:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46670 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727026AbeJPUOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 16:14:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 41944ACF3;
+        Tue, 16 Oct 2018 12:24:02 +0000 (UTC)
+Subject: Re: [patch] mm, page_alloc: set num_movable in move_freepages()
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>
+Cc:     Greg Thelen <gthelen@google.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <alpine.DEB.2.21.1810051355490.212229@chino.kir.corp.google.com>
+ <20181005142143.30032b7a4fb9dc2b587a8c21@linux-foundation.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <31b62d5d-11f6-6a68-fa04-889c98b66d9b@suse.cz>
+Date:   Tue, 16 Oct 2018 14:24:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20181005142143.30032b7a4fb9dc2b587a8c21@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-El 14/10/18 a las 8:46 p. m., Joe Perches escribió:
-> On Sun, 2018-10-14 at 13:52 -0500, Ivan Chavero wrote:
-> > The language and focus of the CoC has some ambiguities that
-> > could lead to conflicts that might distract maintainers and
-> > contributors attention from the technical nature of the
-> > Linux kernel.
-> > This patch aims to clarify this problems and focus the document
-> > to a more possitive, healthy and technical standpoint.
+On 10/5/18 11:21 PM, Andrew Morton wrote:
+> On Fri, 5 Oct 2018 13:56:39 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
 > 
-> []
-> > diff --git a/Documentation/process/code-of-conduct.rst
-> > b/Documentation/process/code-of-conduct.rst
+>> If move_freepages() returns 0 because zone_spans_pfn(), *num_movable can
 > 
-> []
-> > @@ -17,23 +19,22 @@ Our Standards
-> >   Examples of behavior that contributes to creating a positive
-> > environment
-> >   include:
-> >   
-> > -* Using welcoming and inclusive language
-> > -* Being respectful of differing viewpoints and experiences
-> > -* Gracefully accepting constructive criticism
-> > -* Focusing on what is best for the community
-> > -* Showing empathy towards other community members
-> > +* Using welcoming and inclusive language.
-> > +* Being respectful of differing viewpoints and experiences.
-> > +* Gracefully accepting constructive criticism.
-> > +* Focusing on what is best for the community:.
-> > +* Showing empathy towards other community members.
-> > +* Use facts instead of opinions.
+>      move_free_pages_block()?           !zone_spans_pfn()?
+
+Also the subject would be more accurate if it said "initialize
+num_movable in move_freepages_block()" ?
+
+Otherwise,
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+>> hold the value from the stack because it does not get initialized in
+>> move_freepages().
+>>
+>> Move the initialization to move_freepages_block() to guarantee the value
+>> actually makes sense.
+>>
+>> This currently doesn't affect its only caller where num_movable != NULL,
+>> so no bug fix, but just more robust.
+>>
+>> ...
 > 
-> trivia:
-> 
-> bullet points do not need periods.
-> 
-> 
-
-When there are complete sentences the period is optional according to 
-the Oxford dictionary [1]
-
-if it's bad form i can remove them.
-
-
-[1] https://en.oxforddictionaries.com/punctuation/bullet-points
-
-
 
