@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 433AEC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 998C6C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02A3C2098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 568F32147E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtoGb8pg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02A3C2098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pB+of07k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 568F32147E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbeJPMC5 (ORCPT
+        id S1729387AbeJPMC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51144 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729340AbeJPMC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:56 -0400
+        id S1729340AbeJPMC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:58 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D82D21470;
-        Tue, 16 Oct 2018 04:14:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CC3321470;
+        Tue, 16 Oct 2018 04:14:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663273;
-        bh=NLDRErPHUGVU6AJ6yqtHlDs0En8ukSv5Y2M8TWgYplA=;
+        s=default; t=1539663275;
+        bh=1KYQvCa/NSXk9QlTgoTm7oX2I32+EqX1R3NQyV5oYXU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rtoGb8pg+8fvlbRBhbb6nlYghzXwei2Z5kQgppjMzVcS1cWC8hgo2mjd0SPAtlr6i
-         gib9+klfJZWKR+DPA0BMdhuxxN9JYd97xE7hgvbR+j4rCQu3qSxiMuTvuKB9Ql4ZQJ
-         A8yjUCG+xtnuOs8XiISEdfqhu4YI4GzaAvb9Vby4=
+        b=pB+of07kdQ+T2FPiwZKa3QZbN/6F7zIFafAm9JNDZaUvZ48Bik93S11x9tc0CRuw5
+         yfaIHoD80CHK0IbMFtcvhwndbY4uLskJU1BJQWZy+V6EKLAeq1l4h/mcVTWv2i/keQ
+         pW9tFnl3lIE2U7tkEiptXAw7MN+Q0d/hqjSxQSt4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Masashi Honma <masashi.honma@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 33/61] nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds
-Date:   Tue, 16 Oct 2018 00:13:35 -0400
-Message-Id: <20181016041403.135678-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 35/61] ax88179_178a: Check for supported Wake-on-LAN modes
+Date:   Tue, 16 Oct 2018 00:13:37 -0400
+Message-Id: <20181016041403.135678-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -53,60 +53,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masashi Honma <masashi.honma@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 1222a16014888ed9733c11e221730d4a8196222b ]
+[ Upstream commit 5ba6b4aa9a410c5e2c6417df52b5e2118ea9b467 ]
 
-Use array_index_nospec() to sanitize i with respect to speculation.
+The driver currently silently accepts unsupported Wake-on-LAN modes
+(other than WAKE_PHY or WAKE_MAGIC) without reporting that to the user,
+which is confusing.
 
-Note that the user doesn't control i directly, but can make it out
-of bounds by not finding a threshold in the array.
-
-Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
-[add note about user control, as explained by Masashi]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: e2ca90c276e1 ("ax88179_178a: ASIX AX88179_178A USB 3.0/2.0 to gigabit ethernet adapter driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/nl80211.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/net/usb/ax88179_178a.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index 5e7c9b361e8a..46e9812d13c0 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -9720,7 +9720,7 @@ static int cfg80211_cqm_rssi_update(struct cfg80211_registered_device *rdev,
- 	struct wireless_dev *wdev = dev->ieee80211_ptr;
- 	s32 last, low, high;
- 	u32 hyst;
--	int i, n;
-+	int i, n, low_index;
- 	int err;
+diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
+index f32261ecd215..0f69b77e8502 100644
+--- a/drivers/net/usb/ax88179_178a.c
++++ b/drivers/net/usb/ax88179_178a.c
+@@ -566,6 +566,9 @@ ax88179_set_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
+ 	struct usbnet *dev = netdev_priv(net);
+ 	u8 opt = 0;
  
- 	/* RSSI reporting disabled? */
-@@ -9757,10 +9757,19 @@ static int cfg80211_cqm_rssi_update(struct cfg80211_registered_device *rdev,
- 		if (last < wdev->cqm_config->rssi_thresholds[i])
- 			break;
- 
--	low = i > 0 ?
--		(wdev->cqm_config->rssi_thresholds[i - 1] - hyst) : S32_MIN;
--	high = i < n ?
--		(wdev->cqm_config->rssi_thresholds[i] + hyst - 1) : S32_MAX;
-+	low_index = i - 1;
-+	if (low_index >= 0) {
-+		low_index = array_index_nospec(low_index, n);
-+		low = wdev->cqm_config->rssi_thresholds[low_index] - hyst;
-+	} else {
-+		low = S32_MIN;
-+	}
-+	if (i < n) {
-+		i = array_index_nospec(i, n);
-+		high = wdev->cqm_config->rssi_thresholds[i] + hyst - 1;
-+	} else {
-+		high = S32_MAX;
-+	}
- 
- 	return rdev_set_cqm_rssi_range_config(rdev, dev, low, high);
- }
++	if (wolinfo->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
++		return -EINVAL;
++
+ 	if (wolinfo->wolopts & WAKE_PHY)
+ 		opt |= AX_MONITOR_MODE_RWLC;
+ 	if (wolinfo->wolopts & WAKE_MAGIC)
 -- 
 2.17.1
 
