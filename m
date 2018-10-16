@@ -2,145 +2,127 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 215F1C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADCFC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C81482148D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5526821471
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 22:42:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YRf3d2BS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81482148D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="rv6/KXGm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5526821471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbeJQGeB (ORCPT
+        id S1727245AbeJQGeg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 02:34:01 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:41281 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbeJQGeB (ORCPT
+        Wed, 17 Oct 2018 02:34:36 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:16413 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbeJQGeg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 02:34:01 -0400
-Received: by mail-yw1-f67.google.com with SMTP id 135-v6so9580455ywo.8
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 15:41:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=T8CxYADkKTTOTmBYbAGVXU1YKmiIKH184LC05Mu8yIg=;
-        b=YRf3d2BSY22FPSAxkOZg6jB+Zb8udoszkat49lrZ2OB8CJeP/SiiNxIuFzvoIfSRsz
-         jbD3/WZLGked3th3bCiwOhYZSK5lzbuJeoflbgXxzr/XjfXNs8ylFpa64P24q5HMR2EQ
-         4QXkIAgjXmUVORViwCA5FfguW9jvRbhsWWVXo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=T8CxYADkKTTOTmBYbAGVXU1YKmiIKH184LC05Mu8yIg=;
-        b=rfnJCwFcuOikqkZ8lsNtL9Q3HsjQitOek1iwSMCUgpRYiqDXhJH+COL8GDfk3d9y08
-         hvx8mDoqjpCxo+mUTDBN11kNW5PDYzlVhsbhUMBD9zEfg7463Xw+uwFqPoYO0PsRl+Hm
-         wJOFXCAKKRHD+E9CX1uAK1WdUoOKPa14jSzHAl2NRJyzLaZi+NFSCopPVhAmJX238APq
-         3SlkKFZYHrQhLSotungR3rC5Gp6/yV0dEdlTD0RL8LDtOX9xufcOqG51BkYk9v87ff3W
-         f2fUIlCjIvwxgZS31sT5BQvtB9ucSLRIVUsK6Ol0Q+NYsLWxENDjaoLO/DuwCaFNOQ1E
-         3P9w==
-X-Gm-Message-State: ABuFfog4z3L+3nK3B0Oa56e5Ih12AcudFmt132z9p8kUJdjFw1WbSg1J
-        YI199KxLGDf8Fwqkvp7v4Ts0pebNs40=
-X-Google-Smtp-Source: ACcGV63UdQ3PBafrEqxWaK/FZAzNj7tN8xrkrtT09liIwVvsOY3UkW0/8gzNyQXyAAP5oVpdWUDj2Q==
-X-Received: by 2002:a81:85c6:: with SMTP id v189-v6mr13554779ywf.295.1539729686865;
-        Tue, 16 Oct 2018 15:41:26 -0700 (PDT)
-Received: from mail-yw1-f51.google.com (mail-yw1-f51.google.com. [209.85.161.51])
-        by smtp.gmail.com with ESMTPSA id g14-v6sm3756725ywk.94.2018.10.16.15.41.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 15:41:25 -0700 (PDT)
-Received: by mail-yw1-f51.google.com with SMTP id l79-v6so9587114ywc.7
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 15:41:25 -0700 (PDT)
-X-Received: by 2002:a81:9b83:: with SMTP id s125-v6mr12756806ywg.47.1539729685069;
- Tue, 16 Oct 2018 15:41:25 -0700 (PDT)
+        Wed, 17 Oct 2018 02:34:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1539729729; x=1571265729;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=bIKrHmJ5r6oX+d3ZG6SZwoyMJNUWYLEyxfD0C4trCHo=;
+  b=rv6/KXGmMUkRI2YRI8Q+kpKzfZRJTNopwUlsC0vsab5bRZYdUJvLyo9B
+   XnB9lg3l/LPIRt5oeWGgM54to8kKRN/eJffoZ3q6OydC0aVRYoTfAeShn
+   AEOc/AdZ0+vKz2j2PdiL225gfEfYIfhyZgIq9ufx8ws3d5xxNJssF4eIT
+   SWOiq1UUcCVQo+I8gt1vhPsctuP8YA7mA00yc5mug39jN3YkD3dpreZWt
+   fq7GT75ppFVOBzDet3gLjp4VHyrWCpCMIVodhspimUaHzzjxQbzlTwAE2
+   z7cmhxdtqzfHjhl07PiDhyGJW3nXbTiH18aSmThvZ473xV4UY/4mWTFIS
+   A==;
+X-IronPort-AV: E=Sophos;i="5.54,389,1534780800"; 
+   d="scan'208";a="189794714"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Oct 2018 06:42:08 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 16 Oct 2018 15:26:34 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.73.114]) ([10.111.73.114])
+  by uls-op-cesaip02.wdc.com with ESMTP; 16 Oct 2018 15:42:01 -0700
+Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM
+ Controller.
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Wesley Terpstra <wesley@sifive.com>, palmer@sifive.com,
+        linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        hch@infradead.org
+References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
+ <1539111085-25502-2-git-send-email-atish.patra@wdc.com>
+ <20181010135109.GE21134@ulmo> <ef19e79a-d975-bde4-1692-65389ead7c15@wdc.com>
+ <20181016105103.GB8852@ulmo>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <c702cf04-a565-dc76-a3bb-dbed922a9c80@wdc.com>
+Date:   Tue, 16 Oct 2018 15:42:00 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Tue, 16 Oct 2018 15:41:24
- -0700 (PDT)
-In-Reply-To: <CAGXu5j+rLGyGCozaSMqFV0p+cHoJFmJBXWXHz5WfYEaDkHJdGw@mail.gmail.com>
-References: <20181013115646.GA3516@embeddedor.com> <CAGXu5j+rLGyGCozaSMqFV0p+cHoJFmJBXWXHz5WfYEaDkHJdGw@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 16 Oct 2018 15:41:24 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+Bv5LMBJw_W0w5VHk-zWNzWb=1cev0G+TrX_65YPy1XA@mail.gmail.com>
-Message-ID: <CAGXu5j+Bv5LMBJw_W0w5VHk-zWNzWb=1cev0G+TrX_65YPy1XA@mail.gmail.com>
-Subject: Re: [PATCH] skbuff: Mark expected switch fall-throughs
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181016105103.GB8852@ulmo>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 2:30 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Sat, Oct 13, 2018 at 4:56 AM, Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
+On 10/16/18 3:51 AM, Thierry Reding wrote:
+> On Mon, Oct 15, 2018 at 03:45:46PM -0700, Atish Patra wrote:
+>> On 10/10/18 6:51 AM, Thierry Reding wrote:
+>>> On Tue, Oct 09, 2018 at 11:51:22AM -0700, Atish Patra wrote:
+>>> [...]
+>>>> +- interrupts: one interrupt per PWM channel (currently unused in the driver)
+>>>
+>>> This should probably say what the interrupt is used for. And once you
+>>> have that, remove the comment about it being unused in the driver. DT
+>>> is OS agnostic, so "driver" is very unspecific and your claim may
+>>> actually be false.
+>>>
+>>> Thierry
+>>>
+>> As per my understanding, they are generated by hardware but no usage of pwm
+>> interrupts as of now.
+> 
+> It might be useful to say when they are generated. Are they generated
+> once per period? At the beginning or the end of the period? That kind
+> of thing.
+> 
+
+Sure. I might have over simplified the statement above.
+I could only find this about pwm interrupts in spec.
+"The PWM can be configured to provide periodic counter interrupts by 
+enabling auto-zeroing of the count register when a comparator 0 fires"
+
+I may be wrong here but it looks like we need to configure the hardware 
+to generate periodic interrupts. I will confirm with Wesly and update it 
+in v2.
+
+>> I am not sure if removing the entire entry is a good idea.
+>> What would be the best way to represent that information ?
 >>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->
-> Acked-by: Kees Cook <keescook@chromium.org>
-
-Actually, since this is skbuff, can you resend this to netdev instead?
-Andrew took the other two, but this one seems like it should go via
-David Miller.
-
-Thanks!
-
--Kees
-
->
-> -Kees
->
->> ---
->>  include/linux/skbuff.h | 6 ++++++
->>  1 file changed, 6 insertions(+)
+>> May be this ?
 >>
->> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
->> index 119d092..92ec346 100644
->> --- a/include/linux/skbuff.h
->> +++ b/include/linux/skbuff.h
->> @@ -3505,13 +3505,19 @@ static inline bool __skb_metadata_differs(const struct sk_buff *skb_a,
->>  #define __it(x, op) (x -= sizeof(u##op))
->>  #define __it_diff(a, b, op) (*(u##op *)__it(a, op)) ^ (*(u##op *)__it(b, op))
->>         case 32: diffs |= __it_diff(a, b, 64);
->> +               /* fall through */
->>         case 24: diffs |= __it_diff(a, b, 64);
->> +               /* fall through */
->>         case 16: diffs |= __it_diff(a, b, 64);
->> +               /* fall through */
->>         case  8: diffs |= __it_diff(a, b, 64);
->>                 break;
->>         case 28: diffs |= __it_diff(a, b, 64);
->> +               /* fall through */
->>         case 20: diffs |= __it_diff(a, b, 64);
->> +               /* fall through */
->>         case 12: diffs |= __it_diff(a, b, 64);
->> +               /* fall through */
->>         case  4: diffs |= __it_diff(a, b, 32);
->>                 break;
->>         }
->> --
->> 2.7.4
->>
->
->
->
-> --
-> Kees Cook
-> Pixel Security
+>> +-interrupts: one interrupt per PWM channel. No usage in HiFive Unleashed
+>> SoC.
+> 
+> Why do you think you need to say that they are unused? If the hardware
+> generates these interrupts, then they are "used". If no driver currently
+> has a use for them, that's driver specific and doesn't belong in the DT
+> bindings.
+> 
 
+Sounds good. I will update accordingly.
 
+Regards,
+Atish
+> Thierry
+> 
 
--- 
-Kees Cook
-Pixel Security
