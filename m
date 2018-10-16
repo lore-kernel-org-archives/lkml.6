@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE29C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3F4C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:15:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5DDA20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:15:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2641A21470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:15:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKWCI1e6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5DDA20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uthvMjV4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2641A21470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729921AbeJPMEI (ORCPT
+        id S1729934AbeJPMEJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:04:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52846 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:04:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729864AbeJPMEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:04:05 -0400
+        id S1728950AbeJPMEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:04:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62D2D21480;
-        Tue, 16 Oct 2018 04:15:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8864521470;
+        Tue, 16 Oct 2018 04:15:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663342;
-        bh=tpmf+LwCK1482QF2F/EaZtKJXL2h60HRNZzxQz6UbVc=;
+        s=default; t=1539663346;
+        bh=7G1tEYnG2teJ3megoY9VdGCB0OMDKLhqgbixMpvWQfU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dKWCI1e66B/psMHUJ8372RoM2PGdLLXOZ049X9mh9F/jnYmPCw5vkWsO/ixAb36td
-         dpUvQhZp8TJfSqSuegc9PS6mSFwcjnY3pcWiHWiPnJL/kg/XRmEeBG5g1Su4SXg6fn
-         wy8OOV2Rzbi9NWaVtHzbF96gjemHTzLLjztBViVY=
+        b=uthvMjV43FrIWfhlGlx2SsUnUSF/Xn1e7GGsx0cZ2w6uGI8QvH3jE/FciC0WXwuHc
+         ykvJa7wjNmgQgZEHoTd1gPmZVE+p/EId5eRB5Is2d7w4WGCjwf/i0fOGV5Gv9BMDtw
+         ad+c/RN0LlGxSGHQwJ/RKOJhSSuSJAU4yZxxiOPs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 19/38] qed: Avoid implicit enum conversion in qed_roce_mode_to_flavor
-Date:   Tue, 16 Oct 2018 00:15:03 -0400
-Message-Id: <20181016041522.135789-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 24/38] ax88179_178a: Check for supported Wake-on-LAN modes
+Date:   Tue, 16 Oct 2018 00:15:08 -0400
+Message-Id: <20181016041522.135789-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041522.135789-1-sashal@kernel.org>
 References: <20181016041522.135789-1-sashal@kernel.org>
@@ -52,72 +52,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit d3a315795b4ce8b105a64a90699103121bde04a8 ]
+[ Upstream commit 5ba6b4aa9a410c5e2c6417df52b5e2118ea9b467 ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+The driver currently silently accepts unsupported Wake-on-LAN modes
+(other than WAKE_PHY or WAKE_MAGIC) without reporting that to the user,
+which is confusing.
 
-drivers/net/ethernet/qlogic/qed/qed_roce.c:153:12: warning: implicit
-conversion from enumeration type 'enum roce_mode' to different
-enumeration type 'enum roce_flavor' [-Wenum-conversion]
-                flavor = ROCE_V2_IPV6;
-                       ~ ^~~~~~~~~~~~
-drivers/net/ethernet/qlogic/qed/qed_roce.c:156:12: warning: implicit
-conversion from enumeration type 'enum roce_mode' to different
-enumeration type 'enum roce_flavor' [-Wenum-conversion]
-                flavor = MAX_ROCE_MODE;
-                       ~ ^~~~~~~~~~~~~
-2 warnings generated.
-
-Use the appropriate values from the expected type, roce_flavor:
-
-ROCE_V2_IPV6 = RROCE_IPV6 = 2
-MAX_ROCE_MODE = MAX_ROCE_FLAVOR = 3
-
-While we're add it, ditch the local variable flavor, we can just return
-the value directly from the switch statement.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/125
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Fixes: e2ca90c276e1 ("ax88179_178a: ASIX AX88179_178A USB 3.0/2.0 to gigabit ethernet adapter driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_roce.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/net/usb/ax88179_178a.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_roce.c b/drivers/net/ethernet/qlogic/qed/qed_roce.c
-index d9dcb0d1714c..07783d13df71 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_roce.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_roce.c
-@@ -1059,23 +1059,16 @@ static void qed_rdma_copy_gids(struct qed_rdma_qp *qp, __le32 *src_gid,
+diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
+index 8a6675d92b98..559af8e6ad90 100644
+--- a/drivers/net/usb/ax88179_178a.c
++++ b/drivers/net/usb/ax88179_178a.c
+@@ -566,6 +566,9 @@ ax88179_set_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
+ 	struct usbnet *dev = netdev_priv(net);
+ 	u8 opt = 0;
  
- static enum roce_flavor qed_roce_mode_to_flavor(enum roce_mode roce_mode)
- {
--	enum roce_flavor flavor;
--
- 	switch (roce_mode) {
- 	case ROCE_V1:
--		flavor = PLAIN_ROCE;
--		break;
-+		return PLAIN_ROCE;
- 	case ROCE_V2_IPV4:
--		flavor = RROCE_IPV4;
--		break;
-+		return RROCE_IPV4;
- 	case ROCE_V2_IPV6:
--		flavor = ROCE_V2_IPV6;
--		break;
-+		return RROCE_IPV6;
- 	default:
--		flavor = MAX_ROCE_MODE;
--		break;
-+		return MAX_ROCE_FLAVOR;
- 	}
--	return flavor;
- }
- 
- static int qed_roce_alloc_cid(struct qed_hwfn *p_hwfn, u16 *cid)
++	if (wolinfo->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
++		return -EINVAL;
++
+ 	if (wolinfo->wolopts & WAKE_PHY)
+ 		opt |= AX_MONITOR_MODE_RWLC;
+ 	if (wolinfo->wolopts & WAKE_MAGIC)
 -- 
 2.17.1
 
