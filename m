@@ -7,51 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5DFC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B827C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5383820866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 158AD20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HeT5Bt+R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5383820866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1N+/iVRR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 158AD20866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbeJPMEV (ORCPT
+        id S1730344AbeJPMIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:04:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53188 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:08:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729950AbeJPMET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730019AbeJPMET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 16 Oct 2018 08:04:19 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DC33214DA;
-        Tue, 16 Oct 2018 04:15:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FB012147E;
+        Tue, 16 Oct 2018 04:15:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663355;
-        bh=YKWNT0pIHwQBFjRYMuZqDabIOvUoQ6Ls3x4kZ6tqr9M=;
+        s=default; t=1539663356;
+        bh=bu1eCM17r7+G9bnWOrkkE8Xid33ZpOhth6ZOWIojbKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HeT5Bt+R8cvta0xGqiAgwZNaSC79o2qFxFtISusarm0gbaE6a3k4k3GKWN3cOdnMw
-         cr4MkYrQUwDFGbjCAVnBhvgRyID4oiKymAAcatRFIjame5W53j02sQWC4BumfoCr65
-         Erq5Zbb8W0cWzOjRbWz6qO5kkWmZOXgd9L7XmjIE=
+        b=1N+/iVRRyoRzMIhGWkZ71JI10Cx+4H1u22VfU1mNXFReJ67t+3KjuQNVLAdB3nowg
+         22NSOrd+k4Nt2M8Xo+y2jco5Ykk9Kydb0jjwgto9rn4N0zJnHdnShK3DMqVlw4m7kG
+         D71ANyIyZVtov+K9t7PA+N6Mp0JDQAar10AfqKD0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 33/38] perf/x86/intel/uncore: Fix PCI BDF address of M3UPI on SKX
-Date:   Tue, 16 Oct 2018 00:15:17 -0400
-Message-Id: <20181016041522.135789-33-sashal@kernel.org>
+Cc:     "Maciej W. Rozycki" <macro@linux-mips.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 35/38] declance: Fix continuation with the adapter identification message
+Date:   Tue, 16 Oct 2018 00:15:19 -0400
+Message-Id: <20181016041522.135789-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041522.135789-1-sashal@kernel.org>
 References: <20181016041522.135789-1-sashal@kernel.org>
@@ -60,66 +53,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
 
-[ Upstream commit 9d92cfeaf5215158d26d2991be7f7ff865cb98f3 ]
+[ Upstream commit fe3a83af6a50199bf250fa331e94216912f79395 ]
 
-The counters on M3UPI Link 0 and Link 3 don't count properly, and writing
-0 to these counters may causes system crash on some machines.
+Fix a commit 4bcc595ccd80 ("printk: reinstate KERN_CONT for printing
+continuation lines") regression with the `declance' driver, which caused
+the adapter identification message to be split between two lines, e.g.:
 
-The PCI BDF addresses of the M3UPI in the current code are incorrect.
+declance.c: v0.011 by Linux MIPS DECstation task force
+tc6: PMAD-AA
+, addr = 08:00:2b:1b:2a:6a, irq = 14
+tc6: registered as eth0.
 
-The correct addresses should be:
+Address that properly, by printing identification with a single call,
+making the messages now look like:
 
-  D18:F1	0x204D
-  D18:F2	0x204E
-  D18:F5	0x204D
+declance.c: v0.011 by Linux MIPS DECstation task force
+tc6: PMAD-AA, addr = 08:00:2b:1b:2a:6a, irq = 14
+tc6: registered as eth0.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore support")
-Link: http://lkml.kernel.org/r/1537538826-55489-1-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+Fixes: 4bcc595ccd80 ("printk: reinstate KERN_CONT for printing continuation lines")
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/uncore_snbep.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/amd/declance.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 6bc36944a8c1..8c2a9fa0caf3 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3767,16 +3767,16 @@ static const struct pci_device_id skx_uncore_pci_ids[] = {
- 		.driver_data = UNCORE_PCI_DEV_FULL_DATA(21, 5, SKX_PCI_UNCORE_M2PCIE, 3),
- 	},
- 	{ /* M3UPI0 Link 0 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 0, SKX_PCI_UNCORE_M3UPI, 0),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 0),
- 	},
- 	{ /* M3UPI0 Link 1 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 1),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204E),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 2, SKX_PCI_UNCORE_M3UPI, 1),
- 	},
- 	{ /* M3UPI1 Link 2 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 4, SKX_PCI_UNCORE_M3UPI, 2),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 5, SKX_PCI_UNCORE_M3UPI, 2),
- 	},
- 	{ /* end: all zeroes */ }
- };
+diff --git a/drivers/net/ethernet/amd/declance.c b/drivers/net/ethernet/amd/declance.c
+index b799c7ac899b..9e80a76c3dfe 100644
+--- a/drivers/net/ethernet/amd/declance.c
++++ b/drivers/net/ethernet/amd/declance.c
+@@ -1030,6 +1030,7 @@ static int dec_lance_probe(struct device *bdev, const int type)
+ 	int i, ret;
+ 	unsigned long esar_base;
+ 	unsigned char *esar;
++	const char *desc;
+ 
+ 	if (dec_lance_debug && version_printed++ == 0)
+ 		printk(version);
+@@ -1215,19 +1216,20 @@ static int dec_lance_probe(struct device *bdev, const int type)
+ 	 */
+ 	switch (type) {
+ 	case ASIC_LANCE:
+-		printk("%s: IOASIC onboard LANCE", name);
++		desc = "IOASIC onboard LANCE";
+ 		break;
+ 	case PMAD_LANCE:
+-		printk("%s: PMAD-AA", name);
++		desc = "PMAD-AA";
+ 		break;
+ 	case PMAX_LANCE:
+-		printk("%s: PMAX onboard LANCE", name);
++		desc = "PMAX onboard LANCE";
+ 		break;
+ 	}
+ 	for (i = 0; i < 6; i++)
+ 		dev->dev_addr[i] = esar[i * 4];
+ 
+-	printk(", addr = %pM, irq = %d\n", dev->dev_addr, dev->irq);
++	printk("%s: %s, addr = %pM, irq = %d\n",
++	       name, desc, dev->dev_addr, dev->irq);
+ 
+ 	dev->netdev_ops = &lance_netdev_ops;
+ 	dev->watchdog_timeo = 5*HZ;
 -- 
 2.17.1
 
