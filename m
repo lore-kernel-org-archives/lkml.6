@@ -7,44 +7,53 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D04A5C070C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73799C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9264221470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EC3421470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:17:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGOyC52i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9264221470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMSssJQq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC3421470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730499AbeJPMF1 (ORCPT
+        id S1730513AbeJPMF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:05:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54646 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:05:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730439AbeJPMF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:05:26 -0400
+        id S1730439AbeJPMF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:05:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68C20214AB;
-        Tue, 16 Oct 2018 04:17:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4353A20866;
+        Tue, 16 Oct 2018 04:17:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663423;
-        bh=AJ/4Ekv5JPLIV76f5dzd6bNDw14tn7dfjFmQTt21jo4=;
+        s=default; t=1539663424;
+        bh=kb1GE91htJ4I3ZwcxFRxtQybNQJW4EiHwvg60ro4lcc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XGOyC52ijXvrQO3RwTLhjd0O/qOa0wA3wZgx/Nef/CPuxoRBghb6VL/wacFau3yv8
-         LxT0Dcji9DIJfUAbYWJbBE32pmR5Osng/Urz63KOry3eJBTmOaB8pjOkodwPUq0mTq
-         /n2s58IW3hxEG8fKskkILfeKtMV+l/pJCEmDkp8s=
+        b=oMSssJQqNgRBjtZRH0nSUKRHYErl9BMF8g/Y/wRZAq2VRR2rOTsoyrlmXTRKQlBzv
+         8YYbR9rQY+sLAga51mpxJ2X3dxukAlul5T07D6QqlD7Sa08lBhogKO+nXeZPIlxbnz
+         3S1+LQLefzAKosOHwcUqW1v6r2iiG2g2OpBd1xDo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Edgar Cherkasov <echerkasov@dev.rtsoft.ru>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 12/15] i2c: i2c-scmi: fix for i2c_smbus_write_block_data
-Date:   Tue, 16 Oct 2018 00:16:47 -0400
-Message-Id: <20181016041650.135958-12-sashal@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Vagin <avagin@openvz.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 13/15] perf/ring_buffer: Prevent concurent ring buffer access
+Date:   Tue, 16 Oct 2018 00:16:48 -0400
+Message-Id: <20181016041650.135958-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041650.135958-1-sashal@kernel.org>
 References: <20181016041650.135958-1-sashal@kernel.org>
@@ -53,62 +62,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
+From: Jiri Olsa <jolsa@redhat.com>
 
-[ Upstream commit 08d9db00fe0e300d6df976e6c294f974988226dd ]
+[ Upstream commit cd6fb677ce7e460c25bdd66f689734102ec7d642 ]
 
-The i2c-scmi driver crashes when the SMBus Write Block transaction is
-executed:
+Some of the scheduling tracepoints allow the perf_tp_event
+code to write to ring buffer under different cpu than the
+code is running on.
 
-WARNING: CPU: 9 PID: 2194 at mm/page_alloc.c:3931 __alloc_pages_slowpath+0x9db/0xec0
- Call Trace:
-  ? get_page_from_freelist+0x49d/0x11f0
-  ? alloc_pages_current+0x6a/0xe0
-  ? new_slab+0x499/0x690
-  __alloc_pages_nodemask+0x265/0x280
-  alloc_pages_current+0x6a/0xe0
-  kmalloc_order+0x18/0x40
-  kmalloc_order_trace+0x24/0xb0
-  ? acpi_ut_allocate_object_desc_dbg+0x62/0x10c
-  __kmalloc+0x203/0x220
-  acpi_os_allocate_zeroed+0x34/0x36
-  acpi_ut_copy_eobject_to_iobject+0x266/0x31e
-  acpi_evaluate_object+0x166/0x3b2
-  acpi_smbus_cmi_access+0x144/0x530 [i2c_scmi]
-  i2c_smbus_xfer+0xda/0x370
-  i2cdev_ioctl_smbus+0x1bd/0x270
-  i2cdev_ioctl+0xaa/0x250
-  do_vfs_ioctl+0xa4/0x600
-  SyS_ioctl+0x79/0x90
-  do_syscall_64+0x73/0x130
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-ACPI Error: Evaluating _SBW: 4 (20170831/smbus_cmi-185)
+This results in corrupted ring buffer data demonstrated in
+following perf commands:
 
-This problem occurs because the length of ACPI Buffer object is not
-defined/initialized in the code before a corresponding ACPI method is
-called. The obvious patch below fixes this issue.
+  # perf record -e 'sched:sched_switch,sched:sched_wakeup' perf bench sched messaging
+  # Running 'sched/messaging' benchmark:
+  # 20 sender and receiver processes per group
+  # 10 groups == 400 processes run
 
-Signed-off-by: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
-Acked-by: Viktor Krasnov <vkrasnov@dev.rtsoft.ru>
-Acked-by: Michael Brunner <Michael.Brunner@kontron.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+       Total time: 0.383 [sec]
+  [ perf record: Woken up 8 times to write data ]
+  0x42b890 [0]: failed to process type: -1765585640
+  [ perf record: Captured and wrote 4.825 MB perf.data (29669 samples) ]
+
+  # perf report --stdio
+  0x42b890 [0]: failed to process type: -1765585640
+
+The reason for the corruption are some of the scheduling tracepoints,
+that have __perf_task dfined and thus allow to store data to another
+cpu ring buffer:
+
+  sched_waking
+  sched_wakeup
+  sched_wakeup_new
+  sched_stat_wait
+  sched_stat_sleep
+  sched_stat_iowait
+  sched_stat_blocked
+
+The perf_tp_event function first store samples for current cpu
+related events defined for tracepoint:
+
+    hlist_for_each_entry_rcu(event, head, hlist_entry)
+      perf_swevent_event(event, count, &data, regs);
+
+And then iterates events of the 'task' and store the sample
+for any task's event that passes tracepoint checks:
+
+  ctx = rcu_dereference(task->perf_event_ctxp[perf_sw_context]);
+
+  list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
+    if (event->attr.type != PERF_TYPE_TRACEPOINT)
+      continue;
+    if (event->attr.config != entry->type)
+      continue;
+
+    perf_swevent_event(event, count, &data, regs);
+  }
+
+Above code can race with same code running on another cpu,
+ending up with 2 cpus trying to store under the same ring
+buffer, which is specifically not allowed.
+
+This patch prevents the problem, by allowing only events with the same
+current cpu to receive the event.
+
+NOTE: this requires the use of (per-task-)per-cpu buffers for this
+feature to work; perf-record does this.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+[peterz: small edits to Changelog]
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrew Vagin <avagin@openvz.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: e6dab5ffab59 ("perf/trace: Add ability to set a target task for events")
+Link: http://lkml.kernel.org/r/20180923161343.GB15054@krava
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-scmi.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/events/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-scmi.c b/drivers/i2c/busses/i2c-scmi.c
-index 7aa7b9cb6203..efefcfa24a4c 100644
---- a/drivers/i2c/busses/i2c-scmi.c
-+++ b/drivers/i2c/busses/i2c-scmi.c
-@@ -152,6 +152,7 @@ acpi_smbus_cmi_access(struct i2c_adapter *adap, u16 addr, unsigned short flags,
- 			mt_params[3].type = ACPI_TYPE_INTEGER;
- 			mt_params[3].integer.value = len;
- 			mt_params[4].type = ACPI_TYPE_BUFFER;
-+			mt_params[4].buffer.length = len;
- 			mt_params[4].buffer.pointer = data->block + 1;
- 		}
- 		break;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 1f08f691de59..98ec8186b7d6 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6351,6 +6351,8 @@ void perf_tp_event(u64 addr, u64 count, void *record, int entry_size,
+ 			goto unlock;
+ 
+ 		list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
++			if (event->cpu != smp_processor_id())
++				continue;
+ 			if (event->attr.type != PERF_TYPE_TRACEPOINT)
+ 				continue;
+ 			if (event->attr.config != entry->type)
 -- 
 2.17.1
 
