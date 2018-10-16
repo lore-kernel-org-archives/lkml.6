@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD56C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29487C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA9BA2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E52472098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUfxgA9k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA9BA2089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9aBSaMY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52472098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbeJQBBv (ORCPT
+        id S1727658AbeJQBBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:01:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41938 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:01:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727132AbeJQBBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:01:51 -0400
+        id S1727132AbeJQBBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:01:54 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98A0020866;
-        Tue, 16 Oct 2018 17:10:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B02A820866;
+        Tue, 16 Oct 2018 17:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709829;
-        bh=nKoNpDmx8AhYbwunu7p9nbRAjvQMAzIoap93vwRQcOM=;
+        s=default; t=1539709832;
+        bh=MR/SRZFGCExWoGGbd5jxfLCi66yxMimSSCe53j19oMk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cUfxgA9k5CW1p9FaiqtYRbymi+QDNaG+vnVNmxehWdVDd9ZDKa1rBrNS30gKcMojb
-         gyFM0+8FZTHGlxZ+LOLhUYrITtYb7/f8I2qpM1huiQ1D3rXlQBP6xjb1MY9WU7Guop
-         zZL34W9uDf8g4AgPTdPcJ2pSm7B4TsepYVNuT3sk=
+        b=b9aBSaMYhpOKJ90QKmIxsWBl11WlzxuTCEV6vlbM9Pf9xksAmxRqEvQo+kbtf+W1k
+         VbOyyu/Dq8aeeJGuXZ1bBz+vb3hefPGgKwaozrC4i4fUtlHi32pKc2DWvjiyJPGwzW
+         DQixeXN8dtk1z0zwJC5JiSssGuj3IqPkJDo1h2YI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Barnhill <0xeffeff@gmail.com>,
+        stable@vger.kernel.org, Sean Tranchetti <stranche@codeaurora.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 011/135] net/ipv6: Display all addresses in output of /proc/net/if_inet6
-Date:   Tue, 16 Oct 2018 19:04:01 +0200
-Message-Id: <20181016170516.196231665@linuxfoundation.org>
+Subject: [PATCH 4.18 012/135] netlabel: check for IPV4MASK in addrinfo_get
+Date:   Tue, 16 Oct 2018 19:04:02 +0200
+Message-Id: <20181016170516.282782128@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -62,61 +62,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeff Barnhill <0xeffeff@gmail.com>
+From: Sean Tranchetti <stranche@codeaurora.org>
 
-[ Upstream commit 86f9bd1ff61c413a2a251fa736463295e4e24733 ]
+[ Upstream commit f88b4c01b97e09535505cf3c327fdbce55c27f00 ]
 
-The backend handling for /proc/net/if_inet6 in addrconf.c doesn't properly
-handle starting/stopping the iteration.  The problem is that at some point
-during the iteration, an overflow is detected and the process is
-subsequently stopped.  The item being shown via seq_printf() when the
-overflow occurs is not actually shown, though.  When start() is
-subsequently called to resume iterating, it returns the next item, and
-thus the item that was being processed when the overflow occurred never
-gets printed.
+netlbl_unlabel_addrinfo_get() assumes that if it finds the
+NLBL_UNLABEL_A_IPV4ADDR attribute, it must also have the
+NLBL_UNLABEL_A_IPV4MASK attribute as well. However, this is
+not necessarily the case as the current checks in
+netlbl_unlabel_staticadd() and friends are not sufficent to
+enforce this.
 
-Alter the meaning of the private data member "offset".  Currently, when it
-is not 0 (which only happens at the very beginning), "offset" represents
-the next hlist item to be printed.  After this change, "offset" always
-represents the current item.
+If passed a netlink message with NLBL_UNLABEL_A_IPV4ADDR,
+NLBL_UNLABEL_A_IPV6ADDR, and NLBL_UNLABEL_A_IPV6MASK attributes,
+these functions will all call netlbl_unlabel_addrinfo_get() which
+will then attempt dereference NULL when fetching the non-existent
+NLBL_UNLABEL_A_IPV4MASK attribute:
 
-This is also consistent with the private data member "bucket", which
-represents the current bucket, and also the use of "pos" as defined in
-seq_file.txt:
-    The pos passed to start() will always be either zero, or the most
-    recent pos used in the previous session.
+Unable to handle kernel NULL pointer dereference at virtual address 0
+Process unlab (pid: 31762, stack limit = 0xffffff80502d8000)
+Call trace:
+	netlbl_unlabel_addrinfo_get+0x44/0xd8
+	netlbl_unlabel_staticremovedef+0x98/0xe0
+	genl_rcv_msg+0x354/0x388
+	netlink_rcv_skb+0xac/0x118
+	genl_rcv+0x34/0x48
+	netlink_unicast+0x158/0x1f0
+	netlink_sendmsg+0x32c/0x338
+	sock_sendmsg+0x44/0x60
+	___sys_sendmsg+0x1d0/0x2a8
+	__sys_sendmsg+0x64/0xb4
+	SyS_sendmsg+0x34/0x4c
+	el0_svc_naked+0x34/0x38
+Code: 51001149 7100113f 540000a0 f9401508 (79400108)
+---[ end trace f6438a488e737143 ]---
+Kernel panic - not syncing: Fatal exception
 
-Signed-off-by: Jeff Barnhill <0xeffeff@gmail.com>
+Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
+
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/addrconf.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/netlabel/netlabel_unlabeled.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -4203,7 +4203,6 @@ static struct inet6_ifaddr *if6_get_firs
- 				p++;
- 				continue;
- 			}
--			state->offset++;
- 			return ifa;
- 		}
+--- a/net/netlabel/netlabel_unlabeled.c
++++ b/net/netlabel/netlabel_unlabeled.c
+@@ -781,7 +781,8 @@ static int netlbl_unlabel_addrinfo_get(s
+ {
+ 	u32 addr_len;
  
-@@ -4227,13 +4226,12 @@ static struct inet6_ifaddr *if6_get_next
- 		return ifa;
- 	}
- 
-+	state->offset = 0;
- 	while (++state->bucket < IN6_ADDR_HSIZE) {
--		state->offset = 0;
- 		hlist_for_each_entry_rcu(ifa,
- 				     &inet6_addr_lst[state->bucket], addr_lst) {
- 			if (!net_eq(dev_net(ifa->idev->dev), net))
- 				continue;
--			state->offset++;
- 			return ifa;
- 		}
- 	}
+-	if (info->attrs[NLBL_UNLABEL_A_IPV4ADDR]) {
++	if (info->attrs[NLBL_UNLABEL_A_IPV4ADDR] &&
++	    info->attrs[NLBL_UNLABEL_A_IPV4MASK]) {
+ 		addr_len = nla_len(info->attrs[NLBL_UNLABEL_A_IPV4ADDR]);
+ 		if (addr_len != sizeof(struct in_addr) &&
+ 		    addr_len != nla_len(info->attrs[NLBL_UNLABEL_A_IPV4MASK]))
 
 
