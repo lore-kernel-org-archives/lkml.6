@@ -3,71 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9090C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D103C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73750208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:39:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73750208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ECC112086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 11:40:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECC112086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbeJPT3N (ORCPT
+        id S1727100AbeJPTaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 15:29:13 -0400
-Received: from mga11.intel.com ([192.55.52.93]:19640 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726711AbeJPT3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 15:29:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 04:39:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,388,1534834800"; 
-   d="scan'208";a="99621276"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.61])
-  by fmsmga001.fm.intel.com with ESMTP; 16 Oct 2018 04:39:09 -0700
-From:   Jani Nikula <jani.nikula@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 1/2] sysfs: constify sysfs create/remove files harder
-In-Reply-To: <20181016104845.GB4768@kroah.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20181004143750.30880-1-jani.nikula@intel.com> <20181016104845.GB4768@kroah.com>
-Date:   Tue, 16 Oct 2018 14:38:53 +0300
-Message-ID: <87pnwakto2.fsf@intel.com>
+        Tue, 16 Oct 2018 15:30:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39748 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726711AbeJPTaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 15:30:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 70AA1ACB7;
+        Tue, 16 Oct 2018 11:39:58 +0000 (UTC)
+From:   Thomas Renninger <trenn@suse.de>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, rafael@kernel.org
+Subject: Re: [PATCH] tools/power/cpupower: fix compilation with STATIC=true
+Date:   Tue, 16 Oct 2018 13:39:57 +0200
+Message-ID: <2028892.8FmI4CMcI5@house>
+In-Reply-To: <153968018626.397151.17942194042449956995.stgit@buzz>
+References: <153968018626.397151.17942194042449956995.stgit@buzz>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Oct 2018, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> On Thu, Oct 04, 2018 at 05:37:49PM +0300, Jani Nikula wrote:
->> Let the passed in array be const (and thus placed in rodata) instead of
->> a mutable array of const pointers.
->> 
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
->> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
->> ---
->>  fs/sysfs/file.c       | 4 ++--
->>  include/linux/sysfs.h | 8 ++++----
->>  2 files changed, 6 insertions(+), 6 deletions(-)
->
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On Tuesday, October 16, 2018 10:56:26 AM CEST Konstantin Khlebnikov wrote:
+> Rename duplicate sysfs_read_file into cpupower_read_sysfs and fix linking.
+> 
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-Thanks; who should pick them up?
+Acked-by: Thomas Renninger <trenn@suse.de>
 
-BR,
-Jani.
+Thanks!
 
+> -       $(OUTPUT)../lib/cpufreq.o $(OUTPUT)../lib/sysfs.o
+> +       $(OUTPUT)../lib/cpufreq.o $(OUTPUT)../lib/cpupower.o
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+I also looked at this and would only have fixed half of it (overseeing above
+old leftover from cpupower lib introduction).
+I guess, this patch from Konstantin is better and the correct solution.
