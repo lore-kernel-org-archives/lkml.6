@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 916FBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A01DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5776F208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61816208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PfCb+n7S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5776F208E4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="msottjjT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61816208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbeJPK1S (ORCPT
+        id S1727076AbeJPK1T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 06:27:18 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33657 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727016AbeJPK1S (ORCPT
+        Tue, 16 Oct 2018 06:27:19 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38113 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727016AbeJPK1T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 06:27:18 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y18-v6so10094709pge.0;
-        Mon, 15 Oct 2018 19:39:14 -0700 (PDT)
+        Tue, 16 Oct 2018 06:27:19 -0400
+Received: by mail-pf1-f193.google.com with SMTP id f29-v6so10657629pff.5;
+        Mon, 15 Oct 2018 19:39:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6jwtNAKUA0bImQ+OzjBieSYaakSLUGtiTllRPSG9WlA=;
-        b=PfCb+n7SPWybcVF+ENhWNNQeAbHWxVp087paajc+P1UcxIsL61AfFbqKZM4/DCZ8Wg
-         pcXNv9h/+ZwiuJg19t/alKps71XwafwL73++Ow1sDcb5wDb7/8j0mjd//KTaQFhm7Qfa
-         By/pXBWPPIg3tX1irLch02z+VoxagT/vIvSCl0a3Gl6HVk1MqA69glokpvt142LJk9nC
-         etFpdLy37aJWqy4mX9OBUTlFjQ2doXsHkVqjaftykg5BTYQP4CmjFiEbUGHNZSYCGEav
-         kf0136rNDXgf6Tbusj2xY/Sh9JPhyYMkkcy7XdP4vIf47orpIS+NXXbcV8lNgTOUZoIp
-         K2jg==
+        bh=NBR84y3mbc7GWOaSoRjimr7kNqkK04efsf5Z6wzYUy8=;
+        b=msottjjT7t57byr3yNiOwhXhMihvPQXQigcvhD5f5pbFKd/ThIFvO8wHGibRyVHpRL
+         Ub5ey294l0Pr4x3AV2gBbzJcMxky3UEdVbfQ2dcPwEMUS+fSuIiqyYEcSJtLdNxz+h4l
+         H+mkwxYhtvAVvzrrc7fgzJj8ONhLwA+gbBEltr1BdtFbY1m51zbnw1sXTLEqNWjvTQTI
+         fKgiGnrp01wg+cYHx3LuVuLrYy3R6jtGS4fonenuSzvXd3H5Ts5LIrv9TH5eELD0Lwlp
+         NUvLm/OpUGQis62W0stkC3RS26QwXJf5caSTUCqX1bWBVph/VhekQTMy8t3V7nA+EEg8
+         ypwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6jwtNAKUA0bImQ+OzjBieSYaakSLUGtiTllRPSG9WlA=;
-        b=bGy3b1f8bPghPtaSrC34p6M/ef75x5ZxKxg7if7tV+MV/ap42SAJ6nb0r7wvGNA43q
-         I4PQkt4evd1CQGJQv2eNn1zS1SHEO5J0W72iGVWPk/neSaNS2Y55p93xFgDe9sUh5URs
-         jCCeUohnX2BsKVbHIYeYKLEbkS2rRgDU8wHodU2DWn+vBhKJJnIfQOhoIIc94aP8xW9P
-         CxPQ8ER2Fx3KDQInVi0MorpKpCb8mX20iSaI9z/GsIugMYyN/N82yLe0jGC1f+uGAt4f
-         +78bYIl5/i5ySGGbI4vwo3+lbbSbAlH9CxmyvSJDQFBIxZzaeM9rrFpTVewF6znjzjxT
-         7z/Q==
-X-Gm-Message-State: ABuFfog7etPa6a+BUMTLpOzgB7G3L9B1L1SqF2IDvsazWzELjDF5Vy+7
-        cUVX+/xxCAgtoGs6PqL9bNI=
-X-Google-Smtp-Source: ACcGV60a93Uk9Vf9y1ELaanVjQ0ckmAPo3W6mw6/cN+T00j9hArFUmjSH2qR7XY3dPjW1EGopBzEPg==
-X-Received: by 2002:a62:fc13:: with SMTP id e19-v6mr20352542pfh.101.1539657553847;
-        Mon, 15 Oct 2018 19:39:13 -0700 (PDT)
+        bh=NBR84y3mbc7GWOaSoRjimr7kNqkK04efsf5Z6wzYUy8=;
+        b=jp+NNpcAVrKMlxfU+tzGr9mDhxhim4N7bFlzaC7ceF+auzN/377sg45YJ7a1fgQ3uJ
+         l+u644h2I7+BpXy+wuNpJHy36w+J49+9ZdWxpodkNq7D3cAoVLtUH1yDg4c1MkPGPZq9
+         C1DkkCx9fmkumQJaNMUGw8pW98+ARNEfRAAKBJYhlYPSuMB6nmTX5sWDTXJ8PJMp1fLw
+         W5+G1ddS0X60eYw/BWS3EeYcJ9OyHhs8ITTc00uMB87KakOaeAPHIJTvLMY3cDVgHztd
+         8CSn251J29BJt7Azhazi6Cxv9mkRCKDnph3TpeZuymxQoDb8e+3mjfQWVrNi23zr1gvj
+         KX7g==
+X-Gm-Message-State: ABuFfoj7jTIgHEIhSWrfgUXPDV6BeHRxTvd0z1DX8SXS7Yd+PJKOG5Y4
+        AjKo9TfnOlMPysKllRZ8xx0=
+X-Google-Smtp-Source: ACcGV63OmN7WqcG9CbRZcHfri79HYMduxEyb95IIxSnJQLDhYJ3RfxSaOJnquiDr6rz5Ik9c5EcugQ==
+X-Received: by 2002:a63:d64b:: with SMTP id d11-v6mr18251971pgj.450.1539657555084;
+        Mon, 15 Oct 2018 19:39:15 -0700 (PDT)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id u79-v6sm18620287pfd.117.2018.10.15.19.39.12
+        by smtp.gmail.com with ESMTPSA id u79-v6sm18620287pfd.117.2018.10.15.19.39.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 15 Oct 2018 19:39:13 -0700 (PDT)
+        Mon, 15 Oct 2018 19:39:14 -0700 (PDT)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -68,9 +68,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v4 02/18] of: overlay: add missing of_node_put() after add new node to changeset
-Date:   Mon, 15 Oct 2018 19:37:22 -0700
-Message-Id: <1539657458-24401-3-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v4 03/18] of: overlay: add missing of_node_get() in __of_attach_node_sysfs
+Date:   Mon, 15 Oct 2018 19:37:23 -0700
+Message-Id: <1539657458-24401-4-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
 References: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
@@ -81,62 +81,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-The refcount of a newly added overlay node decrements to one
-(instead of zero) when the overlay changeset is destroyed.  This
-change will cause the final decrement be to zero.
+There is a matching of_node_put() in __of_detach_node_sysfs()
 
-After applying this patch, new validation warnings will be
-reported from the devicetree unittest during boot due to
-a pre-existing devicetree bug.  The warnings will be similar to:
+Remove misleading comment from function header comment for
+of_detach_node().
 
-  OF: ERROR: memory leak of_node_release() overlay node /testcase-data/overlay-node/test-bus/test-unittest4 before free overlay changeset
-
-This pre-existing devicetree bug will also trigger a WARN_ONCE() from
-refcount_sub_and_test_checked() when an overlay changeset is
-destroyed without having first been applied.  This scenario occurs
-when an error in the overlay is detected during the overlay changeset
-creation:
-
-  WARNING: CPU: 0 PID: 1 at lib/refcount.c:187 refcount_sub_and_test_checked+0xa8/0xbc
-  refcount_t: underflow; use-after-free.
-
-  (unwind_backtrace) from (show_stack+0x10/0x14)
-  (show_stack) from (dump_stack+0x6c/0x8c)
-  (dump_stack) from (__warn+0xdc/0x104)
-  (__warn) from (warn_slowpath_fmt+0x44/0x6c)
-  (warn_slowpath_fmt) from (refcount_sub_and_test_checked+0xa8/0xbc)
-  (refcount_sub_and_test_checked) from (kobject_put+0x24/0x208)
-  (kobject_put) from (of_changeset_destroy+0x2c/0xb4)
-  (of_changeset_destroy) from (free_overlay_changeset+0x1c/0x9c)
-  (free_overlay_changeset) from (of_overlay_remove+0x284/0x2cc)
-  (of_overlay_remove) from (of_unittest_apply_revert_overlay_check.constprop.4+0xf8/0x1e8)
-  (of_unittest_apply_revert_overlay_check.constprop.4) from (of_unittest_overlay+0x960/0xed8)
-  (of_unittest_overlay) from (of_unittest+0x1cc4/0x2138)
-  (of_unittest) from (do_one_initcall+0x4c/0x28c)
-  (do_one_initcall) from (kernel_init_freeable+0x29c/0x378)
-  (kernel_init_freeable) from (kernel_init+0x8/0x110)
-  (kernel_init) from (ret_from_fork+0x14/0x2c)
+This patch may result in memory leaks from code that directly calls
+the dynamic node add and delete functions directly instead of
+using changesets.
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- drivers/of/overlay.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 1176cb4b6e4e..32cfee68f2e3 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -379,7 +379,9 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
- 		if (ret)
- 			return ret;
+This patch should result in powerpc systems that dynamically
+allocate a node, then later deallocate the node to have a
+memory leak when the node is deallocated.
+
+The next patch in the series will fix the leak.
+
+ drivers/of/dynamic.c | 3 ---
+ drivers/of/kobj.c    | 4 +++-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+index 24c97b7a050f..fe8816cca99b 100644
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -272,9 +272,6 @@ void __of_detach_node(struct device_node *np)
  
--		return build_changeset_next_level(ovcs, tchild, node);
-+		ret = build_changeset_next_level(ovcs, tchild, node);
-+		of_node_put(tchild);
-+		return ret;
+ /**
+  * of_detach_node() - "Unplug" a node from the device tree.
+- *
+- * The caller must hold a reference to the node.  The memory associated with
+- * the node is not freed until its refcount goes to zero.
+  */
+ int of_detach_node(struct device_node *np)
+ {
+diff --git a/drivers/of/kobj.c b/drivers/of/kobj.c
+index 7a0a18980b98..c72eef988041 100644
+--- a/drivers/of/kobj.c
++++ b/drivers/of/kobj.c
+@@ -133,6 +133,9 @@ int __of_attach_node_sysfs(struct device_node *np)
+ 	}
+ 	if (!name)
+ 		return -ENOMEM;
++
++	of_node_get(np);
++
+ 	rc = kobject_add(&np->kobj, parent, "%s", name);
+ 	kfree(name);
+ 	if (rc)
+@@ -159,6 +162,5 @@ void __of_detach_node_sysfs(struct device_node *np)
+ 		kobject_del(&np->kobj);
  	}
  
- 	if (node->phandle && tchild->phandle)
+-	/* finally remove the kobj_init ref */
+ 	of_node_put(np);
+ }
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
