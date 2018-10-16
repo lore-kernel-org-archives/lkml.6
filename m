@@ -2,166 +2,132 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CBBC5ACC8
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331D4C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84A9821470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:10:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oWYB9rr0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A9821470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id E5B2421471
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:13:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5B2421471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbeJQCCE (ORCPT
+        id S1727186AbeJQCEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 22:02:04 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45222 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbeJQCCD (ORCPT
+        Tue, 16 Oct 2018 22:04:41 -0400
+Received: from gateway30.websitewelcome.com ([192.185.198.26]:33220 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727006AbeJQCEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 22:02:03 -0400
-Received: by mail-wr1-f68.google.com with SMTP id q5-v6so26656904wrw.12
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 11:10:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PMdqnSb9m/F9k8AXy5iOjzXITHV9FGY3Ks/LXRYr2CY=;
-        b=oWYB9rr0hyAwH8gus/nUge6mDbC0SF/7c/xAbiz2GDSJKLOBrTKGhLRfMjNqAcX/7r
-         I6pp4TREWFPp/1+xzXNWgqt0sKtcVI8u7ObITUTi2NY67SLaHI9FRZbhnQKGfJH/2XIN
-         eQF5YEYErwHhXMbSsLHmyLNTk+rrWa8lSRFX5mItLpcNssQq8MdMlKeLK0xmrQn7PvSW
-         hXsU2LX+vaVMyl4OfK2w2X7RrdjZKev8wGbLh5hciZ+WPNE0vPdARwxdgkHanW+ZQWeA
-         Hrw0jkDvahxz+425QupJc6zRxeC8+EHJmKIAX0tg0gMats0tMztTYWPBVf2zvVSues+m
-         tx3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PMdqnSb9m/F9k8AXy5iOjzXITHV9FGY3Ks/LXRYr2CY=;
-        b=UTquhdLuq0dtUwfggH+en7knfjixKR+/e1RQDFqvU9CkDsd/bFLuWfoT+7YadWLtzC
-         RZ9jz6Uqe6tTR7s7pBVIQI5xAj3BOJcxFDYQ6ovLGuHJn/WiM5LsQCTGbjIUV9FHUgW8
-         HYjXNexlNCi++5Alr8UFdelwK2s6wTsVxotplsiTSBXP4vHsL0kp0OzP2mRV8zfPvbsY
-         elzX//oyDT6QmTsZ9xLA5WTMdVYLz92aFosFL6znFP9kI4HW3zw2HQO8X02U7tCY8vd0
-         3PZGSdq1Y9Yke5a5Pmpkv6lwGEmCJKomiaIHe8F6T401qVHYlA2VQ8yEPPxIboOjz3VJ
-         naqQ==
-X-Gm-Message-State: ABuFfojE4bZVqCnBjLN5OLLIqx5yD2McWEMWubNF/7t9aGNkJVRYUITB
-        Uwv93XlbHWccHG805RJhJD5hDbQurJanPQhVYRXntQ==
-X-Google-Smtp-Source: ACcGV62pF0oMDw8sJe6U9odSJ8qxQjEE+SsaPoOmd/WZmolFVCtM6idv/aY+Z4yd5SfMoCe+Wz2yn7HYUZQxpRsDlpo=
-X-Received: by 2002:a5d:438e:: with SMTP id i14-v6mr21179528wrq.156.1539713423528;
- Tue, 16 Oct 2018 11:10:23 -0700 (PDT)
+        Tue, 16 Oct 2018 22:04:40 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id B1DCB103B3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 13:13:00 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id CTpmgZIPZtz4jCTpugh1Zd; Tue, 16 Oct 2018 13:13:00 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:43744 helo=[192.168.1.41])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gCTpm-001I7Q-7f; Tue, 16 Oct 2018 13:12:46 -0500
+Subject: Re: [PATCH] Input: uinput - fix Spectre v1 vulnerability
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181016111313.GA28307@embeddedor.com>
+ <20181016172107.GA230131@dtor-ws>
+ <ead3e95a-1acb-362a-0ee2-d02dbc4f378c@embeddedor.com>
+ <26EEA6BC-43B0-42F7-A237-572D32EB2309@gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <2856297d-9af0-e005-f926-e9596d437fad@embeddedor.com>
+Date:   Tue, 16 Oct 2018 20:12:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CABPqkBTEOwKrq6ZJo3W-rZQi56OWorWo3VcOTwV17QxZBckS0Q@mail.gmail.com>
- <20181016110341.GB18450@krava> <20181016162554.GD6631@krava>
-In-Reply-To: <20181016162554.GD6631@krava>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Tue, 16 Oct 2018 11:10:12 -0700
-Message-ID: <CABPqkBTWZA7k+7qu0SD5CTaS-e5NnkQoFwBX1q4HnBArzKaqTw@mail.gmail.com>
-Subject: Re: [BUG] perf stat: hangs with -p and process completes
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <26EEA6BC-43B0-42F7-A237-572D32EB2309@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gCTpm-001I7Q-7f
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:43744
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jiri,
-
-Thanks for looking into this.
-Yeah, I don't think you need a kernel patch to make this work.
-You can poll in the app.
-Let me try this out.
 
 
-On Tue, Oct 16, 2018 at 9:25 AM Jiri Olsa <jolsa@redhat.com> wrote:
->
-> On Tue, Oct 16, 2018 at 01:03:41PM +0200, Jiri Olsa wrote:
-> > On Fri, Oct 12, 2018 at 02:26:09PM -0700, Stephane Eranian wrote:
-> > > Hi,
-> > >
-> > > I am running into a perf stat issue with the -p option which allows you
-> > > to attach to a running process. If that process happens to terminate
-> > > while under monitoring
-> > > perf hangs in there and never terminates. The proper behavior would be to stop.
-> > > I can see the issue in that the attached process is not a child, so
-> > > wait() would not work.
-> > >
-> > > To reproduce:
-> > >   $ sleep 10 &
-> > >   $ perf stat -p $!
-> > >
-> > > doing the same with perf record works, so there is a solution to this problem.
-> >
-> > yea, we don't poll for the event state change in perf stat,
-> > but we do that in perf record.. also because the perf poll
-> > code in kernel is originaly meant for tracking the ring
-> > buffer state
-> >
-> > maybe we could return EPOLLIN for alive events without ring
-> > buffer.. like below (totaly untested) and add polling for
-> > event state into perf stat
-> >
-> > cc-ing perf folks
-> >
->
-> on the second thought attached patch works as well
-> without kernel change
->
-> jirka
->
->
-> ---
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index b86aba1c8028..d1028d7755bb 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -409,6 +409,28 @@ static struct perf_evsel *perf_evsel__reset_weak_group(struct perf_evsel *evsel)
->         return leader;
->  }
->
-> +static bool is_target_alive(struct target *_target,
-> +                           struct thread_map *threads)
-> +{
-> +       struct stat st;
-> +       int i;
-> +
-> +       if (!target__has_task(_target))
-> +               return true;
-> +
-> +       for (i = 0; i < threads->nr; i++) {
-> +               char path[PATH_MAX];
-> +
-> +               scnprintf(path, PATH_MAX, "%s/%d", procfs__mountpoint(),
-> +                         threads->map[i].pid);
-> +
-> +               if (!stat(path, &st))
-> +                       return true;
-> +       }
-> +
-> +       return false;
-> +}
-> +
->  static int __run_perf_stat(int argc, const char **argv, int run_idx)
->  {
->         int interval = stat_config.interval;
-> @@ -579,6 +601,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->                 enable_counters();
->                 while (!done) {
->                         nanosleep(&ts, NULL);
-> +                       if (!is_target_alive(&target, evsel_list->threads))
-> +                               break;
->                         if (timeout)
->                                 break;
->                         if (interval) {
+On 10/16/18 8:09 PM, Dmitry Torokhov wrote:
+
+> 
+> /dev/uinput 
+
+I've got it. This explains it all. :)
+
+> must be 0600, or accessible to equally privileged user, or you'll be opening your system to much mischief.
+> 
+Thanks, Dmitry.
+--
+Gustavo
