@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80873C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C824C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3171F2148D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44F662148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OBvgp0mJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3171F2148D
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SkamGQ8F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44F662148E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbeJQHre (ORCPT
+        id S1727979AbeJQHrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:47:34 -0400
-Received: from mail-it1-f201.google.com ([209.85.166.201]:53828 "EHLO
-        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbeJQHre (ORCPT
+        Wed, 17 Oct 2018 03:47:39 -0400
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:37805 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727959AbeJQHri (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:47:34 -0400
-Received: by mail-it1-f201.google.com with SMTP id f79-v6so233773ita.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:45 -0700 (PDT)
+        Wed, 17 Oct 2018 03:47:38 -0400
+Received: by mail-vk1-f202.google.com with SMTP id w65-v6so2434404vkw.4
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=/cIwxaWjuX5zXpExKbickYNnSKyceHv4B+fk4+zCXKw=;
-        b=OBvgp0mJoUKBhNDc6ja0qaG2wAkB/90CV8v/Kg64dnb5uhOHYgNt0vzASZj3BC/gFI
-         w5LcxMMLMCl5Pwqlt2IMQ1RMPA36CUqknXp1erMIeAw1MbwYapX+oAVc5l4lND9WHFo9
-         b/ix6YlvXa1qVgmRZnDewfyU7zeaO8zdj00glgldVCmtP8JZ89aX+Sfgq9tPXoY/Y1Xy
-         Cq9liBf5Fw4Huhl4Rr/5/zZ/6lIIejypwAIRx87X/mHqG7psjzMbKN6ED08PYfCArJwt
-         4TjkiQL5HNW274WbipUOqzDrjbYgMiR/DZfHkvBJaTbNtYquCqmH9u27BlLfYYT4rbFV
-         Ahug==
+        bh=v7Vdu6qIuJDj39fxhnwZmKq9fD4gFEoXGX/BaHbf6WY=;
+        b=SkamGQ8FhTSHorjRljiJ6OFjD1m25IP36W7aMKtTvCYBTsCiHMQ+g6OFZ5CrW0Upqi
+         7mPFJKchLsgfdjOW+QOJbhaJfZoUjNBWn9pxuTZBLRFB/G3iYschPGYmqGTRLXnWXe56
+         E+Ku6Hy4CgqEyeNB+DFizdSn/TCDkQ73T+lJA0qmOY+SQIGxS8zbc7Yu8SDw01YaZYbQ
+         3c7PRNsuK6UycYb0zxh8yXy4612Ntg8n3d0GWgXfEUqF0cnDN9FCfxwow5Au5BXO1w+l
+         5vR1oqiR6EH4rgQ6FYCUHMk9hG+r+Vwcq9dCw+Vig44hEnQNg09IjV8bDhM4LIW0YOUH
+         z6+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=/cIwxaWjuX5zXpExKbickYNnSKyceHv4B+fk4+zCXKw=;
-        b=r86/xJJefFLLnISANatMdqGcpIY7jvKuWnVwjRbvmqANzk5NAdvNvPcMRPOGq5ETQU
-         nLnOt+Am6n5g9icy1xmYMIvu78EjGVUAaQC8hsGsr3s3pe3RZkPxdJUkEG/UWjNQRIiD
-         0DUfAF9oA/L/AYBAq6nENh6vIfvrt4qubZksxTePqu9+6WmI5JuL2Mup83CqEnPJ3dUe
-         50Fvu3oQCRI80NGugvXBDzo0H9qNf3cHKeQ17FlzBtO/DB+syWfXUjJWeobkSmlrsfSW
-         W+EGRoQexnwrDpa5TSB4wKRCuaa8/36EGOHmW8Xo9B/njGxY+fHhNk15BbdoeJQv96gS
-         TQKg==
-X-Gm-Message-State: ABuFfohBP3L+eGS6EszhSK+78sDSdEe0GZRC7PhvwQFO3DsGtXW8m07W
-        ULu12UpKTEo3NQjbBq2Naf46BD+h3Hjyurac5XyaSg==
-X-Google-Smtp-Source: ACcGV62l5qWluLUdWqzgSRINvFIqAn0zVr+2iNoYAcJiT8V6kuklivgL4UhosQ3bkbFHrilEw3E9ehC0f6RUy2ud4LHt7A==
-X-Received: by 2002:a24:fe01:: with SMTP id w1-v6mr224693ith.0.1539734085013;
- Tue, 16 Oct 2018 16:54:45 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 16:51:13 -0700
+        bh=v7Vdu6qIuJDj39fxhnwZmKq9fD4gFEoXGX/BaHbf6WY=;
+        b=HdMBDQ6W+sCI32KupvR9EzJoEaTwy1W7cFjVhE/wA5hqBf57GsOjlpprE1H2GzI/7O
+         NYeM82OMJEPwJ25sH9JEaqTfqbusw5o6V6RQEqbXjiqMwndsi2j+86kshd3Z6KiLD5gO
+         kKdhNQeH8d7NQoR1JWTGY0ZRnJkEn3pG+QEYsBp70fnBuxnzWmXQnke8aPkSrfWVRBvV
+         tGQ7lJslvMNlsrqtjDfVkJdVRKez2XGDJGZ0jX2Ydt40vT9yDCAhwp1Xn7EMoGJkO77r
+         SljUVI1gRXTXDK8/B4O5tE6aRFErB4CvsS7qoXau6t6FQbQI9Qcqust6T3+BVYXhOMCx
+         JD5A==
+X-Gm-Message-State: ABuFfohl8OIa+FwKxEKuZZkLBjE5//SZwYKstMSR9XHwiURXb00vQtjz
+        Lxh7u1q2XetphHZXeFLYkqFSoWD+b/aA0mW/pX/itg==
+X-Google-Smtp-Source: ACcGV624pVPucriQYprUzO/GVEaPpNRkvZ/3eMhUsnZvHlDsB/kz5iwwgeHbsp39vDToO03LzP5qRgwLVX6LGUat1s5cMA==
+X-Received: by 2002:a67:7ec5:: with SMTP id z188mr18417863vsc.30.1539734087634;
+ Tue, 16 Oct 2018 16:54:47 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 16:51:14 -0700
 In-Reply-To: <20181016235120.138227-1-brendanhiggins@google.com>
-Message-Id: <20181016235120.138227-25-brendanhiggins@google.com>
+Message-Id: <20181016235120.138227-26-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20181016235120.138227-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
-Subject: [RFC v1 24/31] kunit: improved sigsegv stack trace printing
+Subject: [RFC v1 25/31] kunit: added concept of platform mocking
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
         shuah@kernel.org
@@ -77,65 +77,172 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sacrificed the control of printing stack trace within the crash handler
-in the test runner for getting a better stack trace; this is still not
-ideal, but much better than before.
+Platform mocking is the mocking of all platform specific functions that
+interact directly with hardware. In effect, this provides the ability to
+mock any hardware behavior.
 
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- arch/um/kernel/trap.c | 11 ++++++++++-
- kunit/test.c          | 13 +++++++++----
- 2 files changed, 19 insertions(+), 5 deletions(-)
+ drivers/base/Makefile                |  1 +
+ drivers/base/platform-mock.c         | 65 ++++++++++++++++++++++++++++
+ include/linux/platform_device_mock.h | 64 +++++++++++++++++++++++++++
+ 3 files changed, 130 insertions(+)
+ create mode 100644 drivers/base/platform-mock.c
+ create mode 100644 include/linux/platform_device_mock.h
 
-diff --git a/arch/um/kernel/trap.c b/arch/um/kernel/trap.c
-index 9b97712daf14f..c3ff8346800c4 100644
---- a/arch/um/kernel/trap.c
-+++ b/arch/um/kernel/trap.c
-@@ -226,8 +226,17 @@ unsigned long segv(struct faultinfo fi, unsigned long ip, int is_user,
- 		current->thread.segv_regs = container_of(regs, struct pt_regs, regs);
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index 704f442958103..77cc599daa020 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -23,6 +23,7 @@ obj-$(CONFIG_PINCTRL) += pinctrl.o
+ obj-$(CONFIG_DEV_COREDUMP) += devcoredump.o
+ obj-$(CONFIG_GENERIC_MSI_IRQ_DOMAIN) += platform-msi.o
+ obj-$(CONFIG_GENERIC_ARCH_TOPOLOGY) += arch_topology.o
++obj-$(CONFIG_PLATFORM_MOCK) += platform-mock.o
  
- 	catcher = current->thread.fault_catcher;
--	if (catcher && current->thread.is_running_test)
-+	if (catcher && current->thread.is_running_test) {
-+		/*
-+		 * TODO(b/77223210): Right now we don't have a way to store a
-+		 * copy of the stack, or a copy of information from the stack,
-+		 * so we need to print it now; otherwise, the stack will be
-+		 * destroyed by segv_run_catcher which works by popping off
-+		 * stack frames.
-+		 */
-+		show_stack(NULL, NULL);
- 		segv_run_catcher(catcher, (void *) address);
-+	}
- 	else if (!is_user && (address >= start_vm) && (address < end_vm)) {
- 		flush_tlb_kernel_vm();
- 		goto out;
-diff --git a/kunit/test.c b/kunit/test.c
-index 6ea60059b4918..5d78f76b421af 100644
---- a/kunit/test.c
-+++ b/kunit/test.c
-@@ -210,12 +210,17 @@ static void test_handle_test_crash(struct test *test,
- 				   struct test_module *module,
- 				   struct test_case *test_case)
- {
--	test_err(test, "%s crashed", test_case->name);
- 	/*
--	 * TODO(brendanhiggins@google.com): This prints the stack trace up
--	 * through this frame, not up to the frame that caused the crash.
-+	 * TODO(brendanhiggins@google.com): Right now we don't have a way to
-+	 * store a copy of the stack, or a copy of information from the stack,
-+	 * so we need to print it in the "trap" handler; otherwise, the stack
-+	 * will be destroyed when it returns to us by popping off the
-+	 * appropriate stack frames (see longjmp).
-+	 *
-+	 * Ideally we would print the stack trace here, but we do not have the
-+	 * ability to do so with meaningful information at this time.
- 	 */
--	show_stack(NULL, NULL);
-+	test_err(test, "%s crashed", test_case->name);
+ obj-y			+= test/
  
- 	test_case_internal_cleanup(test);
- }
+diff --git a/drivers/base/platform-mock.c b/drivers/base/platform-mock.c
+new file mode 100644
+index 0000000000000..3df9f1b0bb50f
+--- /dev/null
++++ b/drivers/base/platform-mock.c
+@@ -0,0 +1,65 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Fake platform device API for unit testing platform drivers.
++ *
++ * Copyright (C) 2018, Google LLC.
++ * Author: Brendan Higgins <brendanhiggins@google.com>
++ */
++
++#include <linux/platform_device_mock.h>
++#include <linux/of_platform.h>
++
++struct device_node *of_fake_node(struct test *test, const char *name)
++{
++	struct device_node *node;
++
++	node = test_kzalloc(test, sizeof(*node), GFP_KERNEL);
++	if (!node)
++		return NULL;
++
++	of_node_init(node);
++
++	return node;
++}
++
++struct platform_device *
++of_fake_probe_platform(struct test *test,
++		       const struct platform_driver *driver,
++		       const char *node_name)
++{
++	struct platform_device *pdev;
++	struct device_node *of_node;
++	int ret;
++
++	of_node = of_fake_node(test, node_name);
++	if (!of_node)
++		return ERR_PTR(-ENOMEM);
++
++	test_info(test, "Creating device");
++	pdev = of_platform_device_create(of_node, node_name, NULL);
++	if (!pdev)
++		return ERR_PTR(-ENODEV);
++
++	test_info(test, "Probing");
++	ret = driver->probe(pdev);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return pdev;
++}
++
++struct platform_device *of_fake_probe_platform_by_name(struct test *test,
++						       const char *driver_name,
++						       const char *node_name)
++{
++	const struct device_driver *driver;
++
++	test_info(test, "Locating driver by name");
++	driver = driver_find(driver_name, &platform_bus_type);
++	if (!driver)
++		return ERR_PTR(-ENODEV);
++
++	return of_fake_probe_platform(test,
++				      to_platform_driver(driver),
++				      node_name);
++}
+diff --git a/include/linux/platform_device_mock.h b/include/linux/platform_device_mock.h
+new file mode 100644
+index 0000000000000..898539d166f66
+--- /dev/null
++++ b/include/linux/platform_device_mock.h
+@@ -0,0 +1,64 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Fake platform device API for unit testing platform drivers.
++ *
++ * Copyright (C) 2018, Google LLC.
++ * Author: Brendan Higgins <brendanhiggins@google.com>
++ */
++
++#include <linux/platform_device.h>
++#include <kunit/mock.h>
++
++static inline struct platform_driver *platform_driver_find(const char *name)
++{
++	struct device_driver *driver;
++
++	driver = driver_find(name, &platform_bus_type);
++	if (!driver)
++		return NULL;
++
++	return to_platform_driver(driver);
++}
++
++/**
++ * of_fake_node()
++ * @test: the test to associate node with
++ * @name: name of the node
++ *
++ * The &struct device_node returned is allocated as a root node with the given
++ * name and otherwise behaves as a real &struct device_node.
++ *
++ * Returns: the faked &struct device_node
++ */
++struct device_node *of_fake_node(struct test *test, const char *name);
++
++/**
++ * of_fake_probe_platform()
++ * @test: the test to associate the fake platform device with
++ * @driver: driver to probe
++ * @node_name: name of the device node created
++ *
++ * Creates a &struct platform_device and an associated &struct device_node,
++ * probes the provided &struct platform_driver with the &struct platform_device.
++ *
++ * Returns: the &struct platform_device that was created
++ */
++struct platform_device *
++of_fake_probe_platform(struct test *test,
++		       const struct platform_driver *driver,
++		       const char *node_name);
++
++/**
++ * of_fake_probe_platform_by_name()
++ * @test: the test to associate the fake platform device with
++ * @driver_name: name of the driver to probe
++ * @node_name: name of the device node created
++ *
++ * Same as of_fake_probe_platform() but looks up the &struct platform_driver by
++ * the provided name.
++ *
++ * Returns: the &struct platform_device that was created
++ */
++struct platform_device *of_fake_probe_platform_by_name(struct test *test,
++						       const char *driver_name,
++						       const char *node_name);
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
