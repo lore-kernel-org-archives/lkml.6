@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B89BDC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30747C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 740AE20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:21:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E24F020869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:21:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNpkTKJL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740AE20869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tz4oByVY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24F020869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729910AbeJPMEI (ORCPT
+        id S1729896AbeJPMEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:04:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729809AbeJPMEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 16 Oct 2018 08:04:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729881AbeJPMEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:04:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3952521486;
+        by mail.kernel.org (Postfix) with ESMTPSA id 110C1214C3;
         Tue, 16 Oct 2018 04:15:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663342;
-        bh=mQ8crZNUyYjYVGa9WbUelyGsnzKicst3MEBGNQ6b3rY=;
+        s=default; t=1539663343;
+        bh=nTg5CTeDmKTs5gF6cDU1w9G0DtBl7UnSx8ETYBSKIEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gNpkTKJLdC0DuII+FmYpsXBKOKMWBuDeCkJUhuax666srMcGmLjv3uzrbpaS0e+GI
-         vkaO1aVGV5dtPIJcNycAOayeRAjTpLIoGQkt2dFhJgC8xg7zyH7Wz0JsdL4SeE8P3Q
-         QJ4iu7BZq/QS0NuQoD/14gZqH5c0cjE7fih6Jcfs=
+        b=Tz4oByVY6nBD6aMy/VOaWdD1BmRt7HBzH9VWIb4sxTKUXEUSTVuIrHcdQGclSYmsN
+         mELQ2chSdgd4dEfn9STEJk7sKboU3tyyu4yR/Xsp2a+jDuu5Ofki8osfbjecj3U8Zh
+         8mRcexGrfYXjToDLiEWzmv3OROcRejHO7mLWq4ck=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mahesh Bandewar <maheshb@google.com>,
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 20/38] bonding: avoid possible dead-lock
-Date:   Tue, 16 Oct 2018 00:15:04 -0400
-Message-Id: <20181016041522.135789-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 21/38] qed: Avoid constant logical operation warning in qed_vf_pf_acquire
+Date:   Tue, 16 Oct 2018 00:15:05 -0400
+Message-Id: <20181016041522.135789-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041522.135789-1-sashal@kernel.org>
 References: <20181016041522.135789-1-sashal@kernel.org>
@@ -52,250 +53,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit d4859d749aa7090ffb743d15648adb962a1baeae ]
+[ Upstream commit 1c492a9d55ba99079210ed901dd8a5423f980487 ]
 
-Syzkaller reported this on a slightly older kernel but it's still
-applicable to the current kernel -
+Clang warns when a constant is used in a boolean context as it thinks a
+bitwise operation may have been intended.
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.18.0-next-20180823+ #46 Not tainted
-------------------------------------------------------
-syz-executor4/26841 is trying to acquire lock:
-00000000dd41ef48 ((wq_completion)bond_dev->name){+.+.}, at: flush_workqueue+0x2db/0x1e10 kernel/workqueue.c:2652
+drivers/net/ethernet/qlogic/qed/qed_vf.c:415:27: warning: use of logical
+'&&' with constant operand [-Wconstant-logical-operand]
+        if (!p_iov->b_pre_fp_hsi &&
+                                 ^
+drivers/net/ethernet/qlogic/qed/qed_vf.c:415:27: note: use '&' for a
+bitwise operation
+        if (!p_iov->b_pre_fp_hsi &&
+                                 ^~
+                                 &
+drivers/net/ethernet/qlogic/qed/qed_vf.c:415:27: note: remove constant
+to silence this warning
+        if (!p_iov->b_pre_fp_hsi &&
+                                ~^~
+1 warning generated.
 
-but task is already holding lock:
-00000000768ab431 (rtnl_mutex){+.+.}, at: rtnl_lock net/core/rtnetlink.c:77 [inline]
-00000000768ab431 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x412/0xc30 net/core/rtnetlink.c:4708
+This has been here since commit 1fe614d10f45 ("qed: Relax VF firmware
+requirements") and I am not entirely sure why since 0 isn't a special
+case. Just remove the statement causing Clang to warn since it isn't
+required.
 
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (rtnl_mutex){+.+.}:
-       __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-       __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
-       mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
-       rtnl_lock+0x17/0x20 net/core/rtnetlink.c:77
-       bond_netdev_notify drivers/net/bonding/bond_main.c:1310 [inline]
-       bond_netdev_notify_work+0x44/0xd0 drivers/net/bonding/bond_main.c:1320
-       process_one_work+0xc73/0x1aa0 kernel/workqueue.c:2153
-       worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-       kthread+0x35a/0x420 kernel/kthread.c:246
-       ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-
--> #1 ((work_completion)(&(&nnw->work)->work)){+.+.}:
-       process_one_work+0xc0b/0x1aa0 kernel/workqueue.c:2129
-       worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-       kthread+0x35a/0x420 kernel/kthread.c:246
-       ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-
--> #0 ((wq_completion)bond_dev->name){+.+.}:
-       lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
-       flush_workqueue+0x30a/0x1e10 kernel/workqueue.c:2655
-       drain_workqueue+0x2a9/0x640 kernel/workqueue.c:2820
-       destroy_workqueue+0xc6/0x9d0 kernel/workqueue.c:4155
-       __alloc_workqueue_key+0xef9/0x1190 kernel/workqueue.c:4138
-       bond_init+0x269/0x940 drivers/net/bonding/bond_main.c:4734
-       register_netdevice+0x337/0x1100 net/core/dev.c:8410
-       bond_newlink+0x49/0xa0 drivers/net/bonding/bond_netlink.c:453
-       rtnl_newlink+0xef4/0x1d50 net/core/rtnetlink.c:3099
-       rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4711
-       netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
-       rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4729
-       netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
-       netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
-       netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
-       sock_sendmsg_nosec net/socket.c:622 [inline]
-       sock_sendmsg+0xd5/0x120 net/socket.c:632
-       ___sys_sendmsg+0x7fd/0x930 net/socket.c:2115
-       __sys_sendmsg+0x11d/0x290 net/socket.c:2153
-       __do_sys_sendmsg net/socket.c:2162 [inline]
-       __se_sys_sendmsg net/socket.c:2160 [inline]
-       __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2160
-       do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-  (wq_completion)bond_dev->name --> (work_completion)(&(&nnw->work)->work) --> rtnl_mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(rtnl_mutex);
-                               lock((work_completion)(&(&nnw->work)->work));
-                               lock(rtnl_mutex);
-  lock((wq_completion)bond_dev->name);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor4/26841:
-
-stack backtrace:
-CPU: 1 PID: 26841 Comm: syz-executor4 Not tainted 4.18.0-next-20180823+ #46
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
- print_circular_bug.isra.34.cold.55+0x1bd/0x27d kernel/locking/lockdep.c:1222
- check_prev_add kernel/locking/lockdep.c:1862 [inline]
- check_prevs_add kernel/locking/lockdep.c:1975 [inline]
- validate_chain kernel/locking/lockdep.c:2416 [inline]
- __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3412
- lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
- flush_workqueue+0x30a/0x1e10 kernel/workqueue.c:2655
- drain_workqueue+0x2a9/0x640 kernel/workqueue.c:2820
- destroy_workqueue+0xc6/0x9d0 kernel/workqueue.c:4155
- __alloc_workqueue_key+0xef9/0x1190 kernel/workqueue.c:4138
- bond_init+0x269/0x940 drivers/net/bonding/bond_main.c:4734
- register_netdevice+0x337/0x1100 net/core/dev.c:8410
- bond_newlink+0x49/0xa0 drivers/net/bonding/bond_netlink.c:453
- rtnl_newlink+0xef4/0x1d50 net/core/rtnetlink.c:3099
- rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4711
- netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
- rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4729
- netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
- netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
- netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
- sock_sendmsg_nosec net/socket.c:622 [inline]
- sock_sendmsg+0xd5/0x120 net/socket.c:632
- ___sys_sendmsg+0x7fd/0x930 net/socket.c:2115
- __sys_sendmsg+0x11d/0x290 net/socket.c:2153
- __do_sys_sendmsg net/socket.c:2162 [inline]
- __se_sys_sendmsg net/socket.c:2160 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2160
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f2df20a5c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f2df20a66d4 RCX: 0000000000457089
-RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000003
-RBP: 0000000000930140 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d40b8 R14: 00000000004c8ad8 R15: 0000000000000001
-
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/126
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/bonding/bond_main.c | 43 +++++++++++++--------------------
- include/net/bonding.h           |  7 +-----
- 2 files changed, 18 insertions(+), 32 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_vf.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index 8a5e0ae4e4c0..b1ea29d8ad1a 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -216,6 +216,7 @@ static struct rtnl_link_stats64 *bond_get_stats(struct net_device *bond_dev,
- static void bond_slave_arr_handler(struct work_struct *work);
- static bool bond_time_in_interval(struct bonding *bond, unsigned long last_act,
- 				  int mod);
-+static void bond_netdev_notify_work(struct work_struct *work);
- 
- /*---------------------------- General routines -----------------------------*/
- 
-@@ -1250,6 +1251,8 @@ static struct slave *bond_alloc_slave(struct bonding *bond)
- 			return NULL;
- 		}
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+index faf8215872de..9cc02b94328a 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_vf.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+@@ -295,7 +295,6 @@ static int qed_vf_pf_acquire(struct qed_hwfn *p_hwfn)
  	}
-+	INIT_DELAYED_WORK(&slave->notify_work, bond_netdev_notify_work);
-+
- 	return slave;
- }
  
-@@ -1257,6 +1260,7 @@ static void bond_free_slave(struct slave *slave)
- {
- 	struct bonding *bond = bond_get_bond_by_slave(slave);
- 
-+	cancel_delayed_work_sync(&slave->notify_work);
- 	if (BOND_MODE(bond) == BOND_MODE_8023AD)
- 		kfree(SLAVE_AD_INFO(slave));
- 
-@@ -1278,39 +1282,26 @@ static void bond_fill_ifslave(struct slave *slave, struct ifslave *info)
- 	info->link_failure_count = slave->link_failure_count;
- }
- 
--static void bond_netdev_notify(struct net_device *dev,
--			       struct netdev_bonding_info *info)
--{
--	rtnl_lock();
--	netdev_bonding_info_change(dev, info);
--	rtnl_unlock();
--}
--
- static void bond_netdev_notify_work(struct work_struct *_work)
- {
--	struct netdev_notify_work *w =
--		container_of(_work, struct netdev_notify_work, work.work);
-+	struct slave *slave = container_of(_work, struct slave,
-+					   notify_work.work);
-+
-+	if (rtnl_trylock()) {
-+		struct netdev_bonding_info binfo;
- 
--	bond_netdev_notify(w->dev, &w->bonding_info);
--	dev_put(w->dev);
--	kfree(w);
-+		bond_fill_ifslave(slave, &binfo.slave);
-+		bond_fill_ifbond(slave->bond, &binfo.master);
-+		netdev_bonding_info_change(slave->dev, &binfo);
-+		rtnl_unlock();
-+	} else {
-+		queue_delayed_work(slave->bond->wq, &slave->notify_work, 1);
-+	}
- }
- 
- void bond_queue_slave_event(struct slave *slave)
- {
--	struct bonding *bond = slave->bond;
--	struct netdev_notify_work *nnw = kzalloc(sizeof(*nnw), GFP_ATOMIC);
--
--	if (!nnw)
--		return;
--
--	dev_hold(slave->dev);
--	nnw->dev = slave->dev;
--	bond_fill_ifslave(slave, &nnw->bonding_info.slave);
--	bond_fill_ifbond(bond, &nnw->bonding_info.master);
--	INIT_DELAYED_WORK(&nnw->work, bond_netdev_notify_work);
--
--	queue_delayed_work(slave->bond->wq, &nnw->work, 0);
-+	queue_delayed_work(slave->bond->wq, &slave->notify_work, 0);
- }
- 
- void bond_lower_state_changed(struct slave *slave)
-diff --git a/include/net/bonding.h b/include/net/bonding.h
-index 714428c54c68..8750c2c4871a 100644
---- a/include/net/bonding.h
-+++ b/include/net/bonding.h
-@@ -139,12 +139,6 @@ struct bond_parm_tbl {
- 	int mode;
- };
- 
--struct netdev_notify_work {
--	struct delayed_work	work;
--	struct net_device	*dev;
--	struct netdev_bonding_info bonding_info;
--};
--
- struct slave {
- 	struct net_device *dev; /* first - useful for panic debug */
- 	struct bonding *bond; /* our master */
-@@ -171,6 +165,7 @@ struct slave {
- #ifdef CONFIG_NET_POLL_CONTROLLER
- 	struct netpoll *np;
- #endif
-+	struct delayed_work notify_work;
- 	struct kobject kobj;
- 	struct rtnl_link_stats64 slave_stats;
- };
+ 	if (!p_iov->b_pre_fp_hsi &&
+-	    ETH_HSI_VER_MINOR &&
+ 	    (resp->pfdev_info.minor_fp_hsi < ETH_HSI_VER_MINOR)) {
+ 		DP_INFO(p_hwfn,
+ 			"PF is using older fastpath HSI; %02x.%02x is configured\n",
 -- 
 2.17.1
 
