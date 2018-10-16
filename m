@@ -2,227 +2,97 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B799C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D680C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4FBC208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:45:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="UcD8Mjm9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4FBC208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 6292F208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:46:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6292F208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbeJPPeS (ORCPT
+        id S1727095AbeJPPfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 11:34:18 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:52844 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbeJPPeS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 11:34:18 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 0D26010C0F32;
-        Tue, 16 Oct 2018 00:45:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1539675909; bh=B6euikt3OsfL/gR6Kn7Eitd/hSUbsMnwOUiR9rZOibM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UcD8Mjm9e0pomoykNrrkttJH9dnXRqt44xrDrhmj9fCf38kI6cPGc+dY1QUt5xCSS
-         sfvvMSFA9+BBr4Gvmq7gTrP4Z5GQM/3DIhtz62+X1KgEu4okfUCggdxGONn4HedWoF
-         SNNIoRT9yBCBuXYZFKEss5uk2WUgrIuJw512WjWNiac3WL6f5c/gzkNtWpV6v7d3YD
-         ZO+gEEDNwzniKYlTIMYAIczBeKL6BxpIDq8Ods/MUceCy2YpvyREtivoQZM5c//xE5
-         rNUcmk6hhV9CGxiDwSBTEJ2wF0LgSzVzjV04oFiTHmrPasr3dc/HauiF48WF/riOIt
-         f5VAZ6trU/GTw==
-Received: from abrodkin-7480l.internal.synopsys.com (abrodkin-7480l.internal.synopsys.com [10.121.8.88])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 47A713762;
-        Tue, 16 Oct 2018 00:45:06 -0700 (PDT)
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-snps-arc@lists.infradead.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] clocksource/drivers/arc_timer: Utilize generic sched_clock
-Date:   Tue, 16 Oct 2018 10:45:04 +0300
-Message-Id: <20181016074504.2042-1-abrodkin@synopsys.com>
-X-Mailer: git-send-email 2.17.2
+        Tue, 16 Oct 2018 11:35:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56844 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726729AbeJPPfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 11:35:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A7184AF43;
+        Tue, 16 Oct 2018 07:46:09 +0000 (UTC)
+Date:   Tue, 16 Oct 2018 08:46:06 +0100
+From:   Mel Gorman <mgorman@suse.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
+ mappings
+Message-ID: <20181016074606.GH6931@suse.de>
+References: <20181005232155.GA2298@redhat.com>
+ <alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com>
+ <20181009094825.GC6931@suse.de>
+ <20181009122745.GN8528@dhcp22.suse.cz>
+ <20181009130034.GD6931@suse.de>
+ <20181009142510.GU8528@dhcp22.suse.cz>
+ <20181009230352.GE9307@redhat.com>
+ <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
+ <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It turned out we used to use default implementation of sched_clock()
-from kernel/sched/clock.c which was as precise as 1/HZ, i.e.
-by default we had 10 msec granularity of time measurement.
+On Mon, Oct 15, 2018 at 03:44:59PM -0700, Andrew Morton wrote:
+> On Mon, 15 Oct 2018 15:30:17 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
+> 
+> > At the risk of beating a dead horse that has already been beaten, what are 
+> > the plans for this patch when the merge window opens?
+> 
+> I'll hold onto it until we've settled on something.  Worst case,
+> Andrea's original is easily backportable.
+> 
 
-Now given ARC built-in timers are clocked with the same frequency as
-CPU cores we may get much higher precision of time tracking.
+I consider this to be an unfortunate outcome. On the one hand, we have a
+problem that three people can trivially reproduce with known test cases
+and a patch shown to resolve the problem. Two of those three people work
+on distributions that are exposed to a large number of users. On the
+other, we have a problem that requires the system to be in a specific
+state and an unknown workload that suffers badly from the remote access
+penalties with a patch that has review concerns and has not been proven
+to resolve the trivial cases. In the case of distributions, the first
+patch addresses concerns with a common workload where on the other hand
+we have an internal workload of a single company that is affected --
+which indirectly affects many users admittedly but only one entity directly.
 
-Thus we switch to generic sched_clock which really reads ARC hardware
-counters.
+At the absolute minimum, a test case for the "system fragmentation incurs
+access penalties for a workload" scenario that could both replicate the
+fragmentation and demonstrate the problem should have been available before
+the patch was rejected.  With the test case, there would be a chance that
+others could analyse the problem and prototype some fixes. The test case
+was requested in the thread and never produced so even if someone were to
+prototype fixes, it would be dependant on a third party to test and produce
+data which is a time-consuming loop. Instead, we are more or less in limbo.
 
-This is especially helpful for measuring short events.
-That's what we used to have:
------------------------------->8------------------------
-$ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
-
- Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
-
-         10.000000      task-clock (msec)         #    2.832 CPUs utilized
-                 1      context-switches          #    0.100 K/sec
-                 1      cpu-migrations            #    0.100 K/sec
-                63      page-faults               #    0.006 M/sec
-           3049480      cycles                    #    0.305 GHz
-           1091259      instructions              #    0.36  insn per cycle
-            256828      branches                  #   25.683 M/sec
-             27026      branch-misses             #   10.52% of all branches
-
-       0.003530687 seconds time elapsed
-
-       0.000000000 seconds user
-       0.010000000 seconds sys
------------------------------->8------------------------
-
-And now we'll see:
------------------------------->8------------------------
-$ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
-
- Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
-
-          3.004322      task-clock (msec)         #    0.865 CPUs utilized
-                 1      context-switches          #    0.333 K/sec
-                 1      cpu-migrations            #    0.333 K/sec
-                63      page-faults               #    0.021 M/sec
-           2986734      cycles                    #    0.994 GHz
-           1087466      instructions              #    0.36  insn per cycle
-            255209      branches                  #   84.947 M/sec
-             26002      branch-misses             #   10.19% of all branches
-
-       0.003474829 seconds time elapsed
-
-       0.003519000 seconds user
-       0.000000000 seconds sys
------------------------------->8------------------------
-
-Note how much more meaningful is the second output - time spent for
-execution pretty much matches number of cycles spent (we're runnign
-@ 1GHz here).
-
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
- arch/arc/Kconfig                |  1 +
- drivers/clocksource/Kconfig     |  1 +
- drivers/clocksource/arc_timer.c | 22 ++++++++++++++++++++++
- 3 files changed, 24 insertions(+)
-
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index 5151d81476a1..714f769389a4 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -9,6 +9,7 @@
- config ARC
- 	def_bool y
- 	select ARC_TIMERS
-+	select GENERIC_SCHED_CLOCK
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_HAS_SG_CHAIN
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index dec0dd88ec15..3268dad4effe 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -290,6 +290,7 @@ config CLKSRC_MPS2
- 
- config ARC_TIMERS
- 	bool "Support for 32-bit TIMERn counters in ARC Cores" if COMPILE_TEST
-+	depends on GENERIC_SCHED_CLOCK
- 	select TIMER_OF
- 	help
- 	  These are legacy 32-bit TIMER0 and TIMER1 counters found on all ARC cores
-diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
-index 20da9b1d7f7d..6d0ebf64a1c5 100644
---- a/drivers/clocksource/arc_timer.c
-+++ b/drivers/clocksource/arc_timer.c
-@@ -23,6 +23,7 @@
- #include <linux/cpu.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
-+#include <linux/sched_clock.h>
- 
- #include <soc/arc/timers.h>
- #include <soc/arc/mcip.h>
-@@ -88,6 +89,11 @@ static u64 arc_read_gfrc(struct clocksource *cs)
- 	return (((u64)h) << 32) | l;
- }
- 
-+static u64 arc_gfrc_clock_read(void)
-+{
-+	return arc_read_gfrc(NULL);
-+}
-+
- static struct clocksource arc_counter_gfrc = {
- 	.name   = "ARConnect GFRC",
- 	.rating = 400,
-@@ -111,6 +117,8 @@ static int __init arc_cs_setup_gfrc(struct device_node *node)
- 	if (ret)
- 		return ret;
- 
-+	sched_clock_register(arc_gfrc_clock_read, 64, arc_timer_freq);
-+
- 	return clocksource_register_hz(&arc_counter_gfrc, arc_timer_freq);
- }
- TIMER_OF_DECLARE(arc_gfrc, "snps,archs-timer-gfrc", arc_cs_setup_gfrc);
-@@ -139,6 +147,11 @@ static u64 arc_read_rtc(struct clocksource *cs)
- 	return (((u64)h) << 32) | l;
- }
- 
-+static u64 arc_rtc_clock_read(void)
-+{
-+	return arc_read_rtc(NULL);
-+}
-+
- static struct clocksource arc_counter_rtc = {
- 	.name   = "ARCv2 RTC",
- 	.rating = 350,
-@@ -170,6 +183,8 @@ static int __init arc_cs_setup_rtc(struct device_node *node)
- 
- 	write_aux_reg(AUX_RTC_CTRL, 1);
- 
-+	sched_clock_register(arc_rtc_clock_read, 64, arc_timer_freq);
-+
- 	return clocksource_register_hz(&arc_counter_rtc, arc_timer_freq);
- }
- TIMER_OF_DECLARE(arc_rtc, "snps,archs-timer-rtc", arc_cs_setup_rtc);
-@@ -185,6 +200,11 @@ static u64 arc_read_timer1(struct clocksource *cs)
- 	return (u64) read_aux_reg(ARC_REG_TIMER1_CNT);
- }
- 
-+static u64 arc_timer1_clock_read(void)
-+{
-+	return arc_read_timer1(NULL);
-+}
-+
- static struct clocksource arc_counter_timer1 = {
- 	.name   = "ARC Timer1",
- 	.rating = 300,
-@@ -209,6 +229,8 @@ static int __init arc_cs_setup_timer1(struct device_node *node)
- 	write_aux_reg(ARC_REG_TIMER1_CNT, 0);
- 	write_aux_reg(ARC_REG_TIMER1_CTRL, TIMER_CTRL_NH);
- 
-+	sched_clock_register(arc_timer1_clock_read, 64, arc_timer_freq);
-+
- 	return clocksource_register_hz(&arc_counter_timer1, arc_timer_freq);
- }
- 
 -- 
-2.17.2
-
+Mel Gorman
+SUSE Labs
