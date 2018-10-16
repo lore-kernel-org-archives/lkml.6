@@ -2,104 +2,106 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31821C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626AFC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E453320881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:03:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YdSVxBda"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E453320881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 29B9C20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 06:03:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29B9C20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJPNw2 (ORCPT
+        id S1727334AbeJPNw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 16 Oct 2018 09:52:28 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:34090 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727148AbeJPNwU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 09:52:20 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9G63J4K045382;
-        Tue, 16 Oct 2018 01:03:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539669799;
-        bh=bGL9tg1iQ7771FPd/rXQTrEE194mVUB29ZiqXa4qRlc=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=YdSVxBdaO05CLtV9b2ZslCg2Ozw831DDdgFb4QJ95jn7SYJy5rVqxbuoQg0wlZowO
-         ROkN1iEp3PqCTuFBrB+Vuu2B/nGELEVu92Qe/7Nlg8qSuuQlC9aLk6MbnrZ4z+MWG5
-         lFee02cx3cE6XuLmJpb8B1DBMTMEShP1ppZkCxaU=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9G63J8r017253;
-        Tue, 16 Oct 2018 01:03:19 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 16
- Oct 2018 01:03:19 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 16 Oct 2018 01:03:19 -0500
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9G63Bol027391;
-        Tue, 16 Oct 2018 01:03:17 -0500
-From:   Vignesh R <vigneshr@ti.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>, <linux-pwm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vignesh R <vigneshr@ti.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Andrew Davis <afd@ti.com>
-Subject: [PATCH v2 2/2] pwm: Kconfig: Enable TI ECAP driver for ARCH_K3
-Date:   Tue, 16 Oct 2018 11:34:02 +0530
-Message-ID: <20181016060402.18756-3-vigneshr@ti.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181016060402.18756-1-vigneshr@ti.com>
-References: <20181016060402.18756-1-vigneshr@ti.com>
+Received: from mout.gmx.net ([212.227.17.22]:58523 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726986AbeJPNw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 09:52:26 -0400
+Received: from ls3530.fritz.box ([92.116.157.151]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0LqV4f-1fhLLV1ue9-00e7MK; Tue, 16
+ Oct 2018 08:03:28 +0200
+Received: from ls3530.fritz.box ([92.116.157.151]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0LqV4f-1fhLLV1ue9-00e7MK; Tue, 16
+ Oct 2018 08:03:28 +0200
+Date:   Tue, 16 Oct 2018 08:03:24 +0200
+From:   Helge Deller <deller@gmx.de>
+To:     Adam Borowski <kilobyte@angband.pl>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        John David Anglin <dave.anglin@bell.net>
+Subject: [PATCH] extract-vmlinux: Check for uncompressed image as fallback
+Message-ID: <20181016060324.GA10928@ls3530.fritz.box>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Provags-ID: V03:K1:3LD6VWcVSZLWL9kuwnFJZhNhrNSuerLp3xcpjk6M0bROoS7bkDx
+ DjAyy4TPKpG4f2pKNwA6qIFLc5cIYqQUmx7bRBVugRNJigH86uTSWklsSNYr1sBp4cEuMx+
+ ZZPZdAkJ8U3BOu5z7SMx/36CdpbViNNd0bifOIi5dkykwpgv0nDKBEG+/yOOJGDNMgACV5o
+ TytuCsc/b+Yu1raOm3M/Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:tJQ9YFWuCMM=:k2DJmOJRH6aGUhJZmxPCxr
+ 2lzUooxp+IhDQDNpSwtwXM6LN1BL2HVUCxak5EmOxLEZ+Xg57xplbsLw9AgGuM+EihRNw7HE+
+ sZME1sdYRDwPLj8ix/bCZkwTM4IDQUeQ3/gsqt8iNv68UvuET00Bk8ao4+K7Jj+0mq3YKpGAR
+ sh77dt1FgGYqepSpH2OFQipcEqXbURoJktP8e2zKuGUDXbZmCfqfdtAFZgqveb25Ylu/oeUUa
+ q5EgSTdvgNDxrICRvSoBKOzmNsCkK2gtSJZNsVIiSxdMy/dSIfC4bQsngq1g+9DBzVH0Vgx/3
+ /vXBcyyaTtXS+4pr+BFAtUG9EAnrD5w7AcT8qkVt0MJ6Ntevaiul65UB84Gxssbn9EiRm2CZA
+ leY4xU5au1mC8uorKXtvLc0X5+6bI73oeyVQ0aaNUbQobdsk+ktTxwa7QsoKXF+llePbI87UC
+ O/jSMjuRCGYnHRd5nOiydcvh/3cpb8s8VV0wVTXLNaE8WfMr/edGtH+4VDPHcZMMCu4I9h8Nk
+ P41gnzf3jHd6BsHSV7ztqtAH4D/oOd7+4RsAdRmhVlkl1A4kkiYGNdgwzJpmAr27vDHoUDvFU
+ XgKf4rCg4GoA0ZBDvzQyC66h1zwEmto83wMrukFQQVPiIthCiAZ5CgARlPT3sHlr8x75KBKX0
+ oVJaMm5oS7yBo3zeFwuo8UWH4tl/ltx5F5x77kDj9y6tCJDEo3wdQR1O/pk43yHOoRnwNOeZz
+ GVj4Le4pIjhDDKtkje4zgNlph33THZgb4+J0WI6dA88TUrS54FAmHF+WTgRJCr/n9gRL+4OO1
+ IXBTSexAhIV6op5z6e1UvmyAgrK0g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-K3 devices have the same ECAP IP as OMAP SoCs. Enable driver to be built
-for K3 devices. Also, drop reference to AM33xx in help text, as IP is
-found on multiple TI SoCs.
+As on x86-64 and other architectures, the boot kernel on parisc (vmlinuz
+and bzImage) contains a full compressed copy of the final kernel
+executable (vmlinux.bin.gz), which one should be able to extract with
+the extract-vmlinux script.
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
-v2: Update help text to drop AM33xx as suggested by Andrew
+But on parisc extracting the kernel with extract-vmlinux fails.
+Currently the script first checks if the given file is an ELF file
+(which is true on parisc) and if so returns it.  Thus on parisc we
+unexpectedly get back the vmlinuz boot file instead of the uncompressed
+vmlinux image.
 
- drivers/pwm/Kconfig | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+This patch fixes this issue by reverting the logic. It now first tries
+to find a compression signature in the given file and if that fails it
+checks the file itself as fallback.
 
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 504d252716f2..27e5dd47a01f 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -447,10 +447,9 @@ config PWM_TEGRA
+Signed-off-by: Helge Deller <deller@gmx.de>
+
+diff --git a/scripts/extract-vmlinux b/scripts/extract-vmlinux
+index e6239f39abad..85e1f32fb4a0 100755
+--- a/scripts/extract-vmlinux
++++ b/scripts/extract-vmlinux
+@@ -48,9 +48,6 @@ fi
+ tmp=$(mktemp /tmp/vmlinux-XXX)
+ trap "rm -f $tmp" 0
  
- config  PWM_TIECAP
- 	tristate "ECAP PWM support"
--	depends on ARCH_OMAP2PLUS || ARCH_DAVINCI_DA8XX || ARCH_KEYSTONE
-+	depends on ARCH_OMAP2PLUS || ARCH_DAVINCI_DA8XX || ARCH_KEYSTONE || ARCH_K3
- 	help
--	  PWM driver support for the ECAP APWM controller found on AM33XX
--	  TI SOC
-+	  PWM driver support for the ECAP APWM controller found on TI SOCs
+-# Initial attempt for uncompressed images or objects:
+-check_vmlinux $img
+-
+ # That didn't work, so retry after decompression.
+ try_decompress '\037\213\010' xy    gunzip
+ try_decompress '\3757zXZ\000' abcde unxz
+@@ -60,5 +57,8 @@ try_decompress '\211\114\132' xy    'lzop -d'
+ try_decompress '\002!L\030'   xxx   'lz4 -d'
+ try_decompress '(\265/\375'   xxx   unzstd
  
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called pwm-tiecap.
--- 
-2.19.1
-
++# Finally check for uncompressed images or objects:
++check_vmlinux $img
++
+ # Bail out:
+ echo "$me: Cannot find vmlinux." >&2
