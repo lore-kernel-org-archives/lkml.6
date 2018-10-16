@@ -2,158 +2,111 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0717C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9D9C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67CD2208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:42:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4geUWXU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67CD2208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 56B1820881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:46:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B1820881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbeJPVd1 (ORCPT
+        id S1727166AbeJPVgd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:33:27 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:36779 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbeJPVd1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 17:33:27 -0400
-Received: by mail-qk1-f193.google.com with SMTP id a85-v6so14111272qkg.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 06:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ew/LKuRyPRsNQImcIzn1HrgKz5B1mML4J0IHGOGkhyY=;
-        b=G4geUWXUmd2BhaBGuSEl26RJpQPn8MXJlcCVbqfRVU085dAdQ/EYkJiAJtqWm+ybjD
-         7J89Zogcc1XAVwmFjiqqN0mPfVlur7UWkec/UDfZJavC0wWbDsRvw1vUVrTnpuXbGy9x
-         8f3J2YXFfbYkOSz4+jHEKu0n5onmT4+xy9EUE9UoAJv/W58b4QJP2fEz1LdDMjTOp+Xb
-         bWjLTXVFacoXPfovXUiZvEfnd9pAOJKd3q1ZYCMpXYTtAi4Uuoc64SVVQwqDNYdSv3ay
-         gXriRL9roLH05qDJlBjy6ChT4L8kB9dE05knN09gjqGaHEGdS8CbryDiaoNFLLYb167b
-         IVPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ew/LKuRyPRsNQImcIzn1HrgKz5B1mML4J0IHGOGkhyY=;
-        b=X2NrRvmqay1evjHbFyJaW2GvS0yMJmUeldAkAWmgCmu9DC4IpSHVXqrTJ7iMo+Gh3b
-         2fMcYp0+BuQloo42wFANZqaFD9hIJ6Fz76TWeDmfPzQbnwlHK4S91wcugXmVjyM/EdOt
-         EqbkvSbDMeE28gg4K45HhqQ6FnU42JJx6TRyqulqg/9zS9RSbHiRdIIueQk4GUir7FN2
-         8L5OWFEyUS/hk6D2lx+N/Y/MGLgFZUlrVrRxhPb+ypjfw/6GJZTFgxt4EM09vRH0d1/m
-         Lz35y2f+DJshPUmcmxapi6Txb5GqOax4T4sCxb3433w0C3wlqu4e0QOcdPn7B/zR/APf
-         nQZA==
-X-Gm-Message-State: ABuFfogqVkRM7iebPJDE503V2WSxQpwVQ+vywJx6ccffVAfZlTmiV301
-        +xOEPsPmOkWECPatnLWnnqMGJOFOie8fTH0MfNN42hQbc5U=
-X-Google-Smtp-Source: ACcGV63c11UiYZT8V6eX+Di8q7cU12BsMspI9o9q9HAgPaSL48LNagsaRZjqExNDqyow7tmimu6rpqDIZtKXWHGAqY8=
-X-Received: by 2002:ae9:f40b:: with SMTP id y11-v6mr20915015qkl.137.1539697373775;
- Tue, 16 Oct 2018 06:42:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20181016072249eucas1p28855602564eb74a771fe521712962680@eucas1p2.samsung.com>
- <20181016072244.1216-1-a.hajda@samsung.com> <20181016072244.1216-3-a.hajda@samsung.com>
-In-Reply-To: <20181016072244.1216-3-a.hajda@samsung.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 16 Oct 2018 16:42:41 +0300
-Message-ID: <CAHp75VefP2qit3=s9E_uuOg4+J0Zk2OD-XjpVsWM7X3s2g-0wA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] driver core: add deferring probe reason to
- devices_deferred property
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 16 Oct 2018 17:36:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40930 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727002AbeJPVgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 17:36:33 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7199B88E5A;
+        Tue, 16 Oct 2018 13:46:00 +0000 (UTC)
+Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 894722E64A;
+        Tue, 16 Oct 2018 13:45:57 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
+Subject: [PATCH 1/2] locking/qspinlock_stat: Count instances of nested lock slowpaths
+Date:   Tue, 16 Oct 2018 09:45:06 -0400
+Message-Id: <1539697507-28084-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 16 Oct 2018 13:46:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 10:22 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
->
-> /sys/kernel/debug/devices_deferred property contains list of deferred devices.
-> This list does not contain reason why the driver deferred probe, the patch
-> improves it.
-> The natural place to set the reason is probe_err function introduced recently,
-> ie. if probe_err will be called with -EPROBE_DEFER instead of printk the message
-> will be attached to deferred device and printed when user read devices_deferred
-> property.
+Queued spinlock supports up to 4 levels of lock slowpath nesting -
+user context, soft IRQ, hard IRQ and NMI. However, we are not sure how
+often the nesting happens. So 3 more per-cpu stat counters are added
+to track the number of instances where nesting index goes to 1, 2 and
+3 respectively.
 
+On a dual-socket 64-core 128-thread Zen server, the following were stat
+counter values under different circumstances.
 
-> -       if (err != -EPROBE_DEFER) {
-> -               va_start(args, fmt);
-> +       va_start(args, fmt);
->
-> -               vaf.fmt = fmt;
-> -               vaf.va = &args;
-> +       vaf.fmt = fmt;
-> +       vaf.va = &args;
->
-> +       if (err != -EPROBE_DEFER)
->                 __dev_printk(KERN_ERR, dev, &vaf);
-> -               va_end(args);
-> -       }
-> +       else
-> +               __deferred_probe_set_msg(dev, fmt, args);
-> +
-> +       va_end(args);
+         State                      slowpath   index1   index2   index3
+         -----                      --------   ------   ------   -------
+  After bootup                      1,012,150    82       0        0
+  After parallel build + perf-top 125,195,009    82       0        0
 
-Yeah, ping-pong style of programming (one patch "amends" something
-which had been introduced by another).
-That's why better to follow my comment for the patch 1.
+So the chance of needing more than 2 levels of nesting is extremely rare.
 
-> +/*
-> + * __deferred_probe_set_msg() - Set defer probe reason message for device
-> + */
-> +void __deferred_probe_set_msg(const struct device *dev, const char *fmt,
-> +                                    va_list args)
-> +{
-> +       const int size = 128;
-> +       char **p;
-> +       int n;
-> +
-> +       mutex_lock(&deferred_probe_mutex);
-> +
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/locking/qspinlock.c      | 5 +++++
+ kernel/locking/qspinlock_stat.h | 6 ++++++
+ 2 files changed, 11 insertions(+)
 
-
-> +       p = &dev->p->deferred_probe_msg;
-> +       if (!*p) {
-> +               *p = kmalloc(size, GFP_KERNEL);
-> +               if (!*p)
-> +                       goto end;
-> +       }
-> +       n = snprintf(*p, size, "%s %s: ", dev_driver_string(dev), dev_name(dev));
-> +       if (n < size)
-> +               vsnprintf(*p + n, size - n, fmt, args);
-
-Perhaps kasprintf() instead of this huge plays around the size and allocation?
-
->         list_for_each_entry(curr, &deferred_probe_pending_list, deferred_probe)
-> -               seq_printf(s, "%s\n", dev_name(curr->device));
-> +               if (curr->device->p->deferred_probe_msg)
-> +                       seq_puts(s, curr->device->p->deferred_probe_msg);
-> +               else
-> +                       seq_printf(s, "%s\n", dev_name(curr->device));
-
-I wouldn't care (much) about debugfs, though better to keep some order
-here, i.e. always print device name.
-
-Something like
-
-seq_printf(s, "%s\t%s\n", dev_name(), deferred_probe_msg ?: "");
-
-and remove that part from above __deferred_probe_set_msg().
-
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index bfaeb05..7099bbe 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -378,6 +378,11 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ 	node += idx;
+ 
+ 	/*
++	 * Keep counts of non-zero index values
++	 */
++	qstat_inc(qstat_lock_idx1 + idx - 1, idx);
++
++	/*
+ 	 * Ensure that we increment the head node->count before initialising
+ 	 * the actual node. If the compiler is kind enough to reorder these
+ 	 * stores, then an IRQ could overwrite our assignments.
+diff --git a/kernel/locking/qspinlock_stat.h b/kernel/locking/qspinlock_stat.h
+index 6bd78c0..42d3d8d 100644
+--- a/kernel/locking/qspinlock_stat.h
++++ b/kernel/locking/qspinlock_stat.h
+@@ -55,6 +55,9 @@ enum qlock_stats {
+ 	qstat_pv_wait_node,
+ 	qstat_lock_pending,
+ 	qstat_lock_slowpath,
++	qstat_lock_idx1,
++	qstat_lock_idx2,
++	qstat_lock_idx3,
+ 	qstat_num,	/* Total number of statistical counters */
+ 	qstat_reset_cnts = qstat_num,
+ };
+@@ -82,6 +85,9 @@ enum qlock_stats {
+ 	[qstat_pv_wait_node]       = "pv_wait_node",
+ 	[qstat_lock_pending]       = "lock_pending",
+ 	[qstat_lock_slowpath]      = "lock_slowpath",
++	[qstat_lock_idx1]	   = "lock_index1",
++	[qstat_lock_idx2]	   = "lock_index2",
++	[qstat_lock_idx3]	   = "lock_index3",
+ 	[qstat_reset_cnts]         = "reset_counters",
+ };
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+1.8.3.1
+
