@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D8FC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43079C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B8542098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA25F2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:11:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEZLt+xb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B8542098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="A+DTm/5O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA25F2089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbeJQBCV (ORCPT
+        id S1727999AbeJQBCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:02:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43112 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:02:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727669AbeJQBCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:02:20 -0400
+        id S1727669AbeJQBCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:02:24 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D306F20866;
-        Tue, 16 Oct 2018 17:10:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE68A2089E;
+        Tue, 16 Oct 2018 17:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709858;
-        bh=9V8qaN8QByOExhTVUHjrmL3OImk9XDEmwIwjFUzlnO0=;
+        s=default; t=1539709861;
+        bh=MtzOl1z9O6CQ3K+SXVWBlAbTPgvRVdY58/FpK8FTz9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HEZLt+xbrG5f0bXwQ3DGftPDyx6ZAMQJ3dGXlGMPJe/DhtYVZk1/Mpfp5dqVeG1Rw
-         4WYbTVg/B8VJKn3fcZxKod+XdQACyYn1CUSpvz0VaCCkTiMPMfPHwgloq3uPEYJgIX
-         He3gZ9TwuLCx3CHwaysqmr/3UNJHWOI61jl1vmLM=
+        b=A+DTm/5OB1/t+T/6i1cJk4VlgBZSFhmthO56JS5XU4sN2Z6vXvcbr+GTwikG26uUq
+         ROpLCbwGiAMcv29WS1mfmk4mCzjXt8n0nWFG6Oo6ENJJ25NkZ9hJ2wUrzA4Le8qZIy
+         Gn6V2mkIdLAz5f4WaanjfGbMqKh56xFzpYNXyFOI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Giacinto Cifelli <gciofono@gmail.com>,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+        stable@vger.kernel.org, Aidan Obley <aobley@pivotal.io>,
+        Mauricio Faria de Oliveira <mfo@canonical.com>,
+        David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 020/135] qmi_wwan: Added support for Gemaltos Cinterion ALASxx WWAN interface
-Date:   Tue, 16 Oct 2018 19:04:10 +0200
-Message-Id: <20181016170516.668164411@linuxfoundation.org>
+Subject: [PATCH 4.18 021/135] rtnetlink: fix rtnl_fdb_dump() for ndmsg header
+Date:   Tue, 16 Oct 2018 19:04:11 +0200
+Message-Id: <20181016170516.732527186@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -62,30 +63,167 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Giacinto Cifelli <gciofono@gmail.com>
+From: Mauricio Faria de Oliveira <mfo@canonical.com>
 
-[ Upstream commit 4f7617705bfff84d756fe4401a1f4f032f374984 ]
+[ Upstream commit bd961c9bc66497f0c63f4ba1d02900bb85078366 ]
 
-Added support for Gemalto's Cinterion ALASxx WWAN interfaces
-by adding QMI_FIXED_INTF with Cinterion's VID and PID.
+Currently, rtnl_fdb_dump() assumes the family header is 'struct ifinfomsg',
+which is not always true -- 'struct ndmsg' is used by iproute2 ('ip neigh').
 
-Signed-off-by: Giacinto Cifelli <gciofono@gmail.com>
-Acked-by: Bjørn Mork <bjorn@mork.no>
+The problem is, the function bails out early if nlmsg_parse() fails, which
+does occur for iproute2 usage of 'struct ndmsg' because the payload length
+is shorter than the family header alone (as 'struct ifinfomsg' is assumed).
+
+This breaks backward compatibility with userspace -- nothing is sent back.
+
+Some examples with iproute2 and netlink library for go [1]:
+
+ 1) $ bridge fdb show
+    33:33:00:00:00:01 dev ens3 self permanent
+    01:00:5e:00:00:01 dev ens3 self permanent
+    33:33:ff:15:98:30 dev ens3 self permanent
+
+      This one works, as it uses 'struct ifinfomsg'.
+
+      fdb_show() @ iproute2/bridge/fdb.c
+        """
+        .n.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
+        ...
+        if (rtnl_dump_request(&rth, RTM_GETNEIGH, [...]
+        """
+
+ 2) $ ip --family bridge neigh
+    RTNETLINK answers: Invalid argument
+    Dump terminated
+
+      This one fails, as it uses 'struct ndmsg'.
+
+      do_show_or_flush() @ iproute2/ip/ipneigh.c
+        """
+        .n.nlmsg_type = RTM_GETNEIGH,
+        .n.nlmsg_len = NLMSG_LENGTH(sizeof(struct ndmsg)),
+        """
+
+ 3) $ ./neighlist
+    < no output >
+
+      This one fails, as it uses 'struct ndmsg'-based.
+
+      neighList() @ netlink/neigh_linux.go
+        """
+        req := h.newNetlinkRequest(unix.RTM_GETNEIGH, [...]
+        msg := Ndmsg{
+        """
+
+The actual breakage was introduced by commit 0ff50e83b512 ("net: rtnetlink:
+bail out from rtnl_fdb_dump() on parse error"), because nlmsg_parse() fails
+if the payload length (with the _actual_ family header) is less than the
+family header length alone (which is assumed, in parameter 'hdrlen').
+This is true in the examples above with struct ndmsg, with size and payload
+length shorter than struct ifinfomsg.
+
+However, that commit just intends to fix something under the assumption the
+family header is indeed an 'struct ifinfomsg' - by preventing access to the
+payload as such (via 'ifm' pointer) if the payload length is not sufficient
+to actually contain it.
+
+The assumption was introduced by commit 5e6d24358799 ("bridge: netlink dump
+interface at par with brctl"), to support iproute2's 'bridge fdb' command
+(not 'ip neigh') which indeed uses 'struct ifinfomsg', thus is not broken.
+
+So, in order to unbreak the 'struct ndmsg' family headers and still allow
+'struct ifinfomsg' to continue to work, check for the known message sizes
+used with 'struct ndmsg' in iproute2 (with zero or one attribute which is
+not used in this function anyway) then do not parse the data as ifinfomsg.
+
+Same examples with this patch applied (or revert/before the original fix):
+
+    $ bridge fdb show
+    33:33:00:00:00:01 dev ens3 self permanent
+    01:00:5e:00:00:01 dev ens3 self permanent
+    33:33:ff:15:98:30 dev ens3 self permanent
+
+    $ ip --family bridge neigh
+    dev ens3 lladdr 33:33:00:00:00:01 PERMANENT
+    dev ens3 lladdr 01:00:5e:00:00:01 PERMANENT
+    dev ens3 lladdr 33:33:ff:15:98:30 PERMANENT
+
+    $ ./neighlist
+    netlink.Neigh{LinkIndex:2, Family:7, State:128, Type:0, Flags:2, IP:net.IP(nil), HardwareAddr:net.HardwareAddr{0x33, 0x33, 0x0, 0x0, 0x0, 0x1}, LLIPAddr:net.IP(nil), Vlan:0, VNI:0}
+    netlink.Neigh{LinkIndex:2, Family:7, State:128, Type:0, Flags:2, IP:net.IP(nil), HardwareAddr:net.HardwareAddr{0x1, 0x0, 0x5e, 0x0, 0x0, 0x1}, LLIPAddr:net.IP(nil), Vlan:0, VNI:0}
+    netlink.Neigh{LinkIndex:2, Family:7, State:128, Type:0, Flags:2, IP:net.IP(nil), HardwareAddr:net.HardwareAddr{0x33, 0x33, 0xff, 0x15, 0x98, 0x30}, LLIPAddr:net.IP(nil), Vlan:0, VNI:0}
+
+Tested on mainline (v4.19-rc6) and net-next (3bd09b05b068).
+
+References:
+
+[1] netlink library for go (test-case)
+    https://github.com/vishvananda/netlink
+
+    $ cat ~/go/src/neighlist/main.go
+    package main
+    import ("fmt"; "syscall"; "github.com/vishvananda/netlink")
+    func main() {
+        neighs, _ := netlink.NeighList(0, syscall.AF_BRIDGE)
+        for _, neigh := range neighs { fmt.Printf("%#v\n", neigh) }
+    }
+
+    $ export GOPATH=~/go
+    $ go get github.com/vishvananda/netlink
+    $ go build neighlist
+    $ ~/go/src/neighlist/neighlist
+
+Thanks to David Ahern for suggestions to improve this patch.
+
+Fixes: 0ff50e83b512 ("net: rtnetlink: bail out from rtnl_fdb_dump() on parse error")
+Fixes: 5e6d24358799 ("bridge: netlink dump interface at par with brctl")
+Reported-by: Aidan Obley <aobley@pivotal.io>
+Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/qmi_wwan.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/core/rtnetlink.c |   29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
 
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1234,6 +1234,7 @@ static const struct usb_device_id produc
- 	{QMI_FIXED_INTF(0x0b3c, 0xc00b, 4)},	/* Olivetti Olicard 500 */
- 	{QMI_FIXED_INTF(0x1e2d, 0x0060, 4)},	/* Cinterion PLxx */
- 	{QMI_FIXED_INTF(0x1e2d, 0x0053, 4)},	/* Cinterion PHxx,PXxx */
-+	{QMI_FIXED_INTF(0x1e2d, 0x0063, 10)},	/* Cinterion ALASxx (1 RmNet) */
- 	{QMI_FIXED_INTF(0x1e2d, 0x0082, 4)},	/* Cinterion PHxx,PXxx (2 RmNet) */
- 	{QMI_FIXED_INTF(0x1e2d, 0x0082, 5)},	/* Cinterion PHxx,PXxx (2 RmNet) */
- 	{QMI_FIXED_INTF(0x1e2d, 0x0083, 4)},	/* Cinterion PHxx,PXxx (1 RmNet + USB Audio)*/
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -3694,16 +3694,27 @@ static int rtnl_fdb_dump(struct sk_buff
+ 	int err = 0;
+ 	int fidx = 0;
+ 
+-	err = nlmsg_parse(cb->nlh, sizeof(struct ifinfomsg), tb,
+-			  IFLA_MAX, ifla_policy, NULL);
+-	if (err < 0) {
+-		return -EINVAL;
+-	} else if (err == 0) {
+-		if (tb[IFLA_MASTER])
+-			br_idx = nla_get_u32(tb[IFLA_MASTER]);
+-	}
++	/* A hack to preserve kernel<->userspace interface.
++	 * Before Linux v4.12 this code accepted ndmsg since iproute2 v3.3.0.
++	 * However, ndmsg is shorter than ifinfomsg thus nlmsg_parse() bails.
++	 * So, check for ndmsg with an optional u32 attribute (not used here).
++	 * Fortunately these sizes don't conflict with the size of ifinfomsg
++	 * with an optional attribute.
++	 */
++	if (nlmsg_len(cb->nlh) != sizeof(struct ndmsg) &&
++	    (nlmsg_len(cb->nlh) != sizeof(struct ndmsg) +
++	     nla_attr_size(sizeof(u32)))) {
++		err = nlmsg_parse(cb->nlh, sizeof(struct ifinfomsg), tb,
++				  IFLA_MAX, ifla_policy, NULL);
++		if (err < 0) {
++			return -EINVAL;
++		} else if (err == 0) {
++			if (tb[IFLA_MASTER])
++				br_idx = nla_get_u32(tb[IFLA_MASTER]);
++		}
+ 
+-	brport_idx = ifm->ifi_index;
++		brport_idx = ifm->ifi_index;
++	}
+ 
+ 	if (br_idx) {
+ 		br_dev = __dev_get_by_index(net, br_idx);
 
 
