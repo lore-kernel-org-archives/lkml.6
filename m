@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0123BC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A070C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C01902098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4448E2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBLOqQ07"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C01902098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dq7tDEVm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4448E2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730050AbeJQBJZ (ORCPT
+        id S1730065AbeJQBJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:09:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54230 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:09:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728441AbeJQBJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:09:24 -0400
+        id S1728441AbeJQBJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:09:26 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC0FA2089E;
-        Tue, 16 Oct 2018 17:17:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61D1420866;
+        Tue, 16 Oct 2018 17:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710280;
-        bh=WuFK3JVrToevEogrBHPba/MZjBbua3kHCgtJU67UFW4=;
+        s=default; t=1539710282;
+        bh=tKYADQEp7Xk73J8KfVcQ1l6Dx1VPKOch1iTr+K0+NyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QBLOqQ07Vt034haOgo76m8ZWzTPtHnpnZOAOBjQFFsvFngPNXfNX+g8b8yLE5sVsU
-         QhKhmDQUhOdpA7MGX+sthmPAGpGatE9mdekpjpoms+aYngtddpG0gv8u9FDNOU7DZj
-         hz6oGEjW2YLuhKcWmm+qeG30uvvzdCCxhkjjCvT8=
+        b=Dq7tDEVmKtmJppip25ibXBrEygcR6FtmBXBCuskDQHQ9ArbjiE9yYQvKxhG4wRW7d
+         GjUAy9WxutjQv1wBiiYslhPJpUioPZ4d5DMUwtST88lnYPpNNsdZpeCngUCTNJiBJU
+         sW8Y/opQpiJAriPgG9rHjg5AsIDkaRl/JRgwn2sc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Joao Pinto <jpinto@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH 4.14 026/109] net: stmmac: Fixup the tail addr setting in xmit path
-Date:   Tue, 16 Oct 2018 19:04:54 +0200
-Message-Id: <20181016170526.521519874@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jianfeng Tan <jianfeng.tan@linux.alibaba.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 027/109] net/packet: fix packet drop as of virtio gso
+Date:   Tue, 16 Oct 2018 19:04:55 +0200
+Message-Id: <20181016170526.560142909@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -64,66 +62,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
+From: Jianfeng Tan <jianfeng.tan@linux.alibaba.com>
 
-[ Upstream commit 0431100b3d82c509729ece1ab22ada2484e209c1 ]
+[ Upstream commit 9d2f67e43b73e8af7438be219b66a5de0cfa8bd9 ]
 
-Currently we are always setting the tail address of descriptor list to
-the end of the pre-allocated list.
+When we use raw socket as the vhost backend, a packet from virito with
+gso offloading information, cannot be sent out in later validaton at
+xmit path, as we did not set correct skb->protocol which is further used
+for looking up the gso function.
 
-According to databook this is not correct. Tail address should point to
-the last available descriptor + 1, which means we have to update the
-tail address everytime we call the xmit function.
+To fix this, we set this field according to virito hdr information.
 
-This should make no impact in older versions of MAC but in newer
-versions there are some DMA features which allows the IP to fetch
-descriptors in advance and in a non sequential order so its critical
-that we set the tail address correctly.
-
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Fixes: f748be531d70 ("stmmac: support new GMAC4")
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Fixes: e858fae2b0b8f4 ("virtio_net: use common code for virtio_net_hdr and skb GSO conversion")
+Signed-off-by: Jianfeng Tan <jianfeng.tan@linux.alibaba.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ include/linux/virtio_net.h |   18 ++++++++++++++++++
+ net/packet/af_packet.c     |   11 +++++++----
+ 2 files changed, 25 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2190,8 +2190,7 @@ static int stmmac_init_dma_engine(struct
- 						    priv->plat->dma_cfg,
- 						    tx_q->dma_tx_phy, chan);
+--- a/include/linux/virtio_net.h
++++ b/include/linux/virtio_net.h
+@@ -5,6 +5,24 @@
+ #include <linux/if_vlan.h>
+ #include <uapi/linux/virtio_net.h>
  
--			tx_q->tx_tail_addr = tx_q->dma_tx_phy +
--				    (DMA_TX_SIZE * sizeof(struct dma_desc));
-+			tx_q->tx_tail_addr = tx_q->dma_tx_phy;
- 			priv->hw->dma->set_tx_tail_ptr(priv->ioaddr,
- 						       tx_q->tx_tail_addr,
- 						       chan);
-@@ -2963,6 +2962,7 @@ static netdev_tx_t stmmac_tso_xmit(struc
- 
- 	netdev_tx_sent_queue(netdev_get_tx_queue(dev, queue), skb->len);
- 
-+	tx_q->tx_tail_addr = tx_q->dma_tx_phy + (tx_q->cur_tx * sizeof(*desc));
- 	priv->hw->dma->set_tx_tail_ptr(priv->ioaddr, tx_q->tx_tail_addr,
- 				       queue);
- 
-@@ -3178,9 +3178,11 @@ static netdev_tx_t stmmac_xmit(struct sk
- 
- 	if (priv->synopsys_id < DWMAC_CORE_4_00)
- 		priv->hw->dma->enable_dma_transmission(priv->ioaddr);
--	else
-+	else {
-+		tx_q->tx_tail_addr = tx_q->dma_tx_phy + (tx_q->cur_tx * sizeof(*desc));
- 		priv->hw->dma->set_tx_tail_ptr(priv->ioaddr, tx_q->tx_tail_addr,
- 					       queue);
++static inline int virtio_net_hdr_set_proto(struct sk_buff *skb,
++					   const struct virtio_net_hdr *hdr)
++{
++	switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
++	case VIRTIO_NET_HDR_GSO_TCPV4:
++	case VIRTIO_NET_HDR_GSO_UDP:
++		skb->protocol = cpu_to_be16(ETH_P_IP);
++		break;
++	case VIRTIO_NET_HDR_GSO_TCPV6:
++		skb->protocol = cpu_to_be16(ETH_P_IPV6);
++		break;
++	default:
++		return -EINVAL;
 +	}
++
++	return 0;
++}
++
+ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
+ 					const struct virtio_net_hdr *hdr,
+ 					bool little_endian)
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2753,10 +2753,12 @@ tpacket_error:
+ 			}
+ 		}
  
- 	return NETDEV_TX_OK;
+-		if (po->has_vnet_hdr && virtio_net_hdr_to_skb(skb, vnet_hdr,
+-							      vio_le())) {
+-			tp_len = -EINVAL;
+-			goto tpacket_error;
++		if (po->has_vnet_hdr) {
++			if (virtio_net_hdr_to_skb(skb, vnet_hdr, vio_le())) {
++				tp_len = -EINVAL;
++				goto tpacket_error;
++			}
++			virtio_net_hdr_set_proto(skb, vnet_hdr);
+ 		}
  
+ 		skb->destructor = tpacket_destruct_skb;
+@@ -2952,6 +2954,7 @@ static int packet_snd(struct socket *soc
+ 		if (err)
+ 			goto out_free;
+ 		len += sizeof(vnet_hdr);
++		virtio_net_hdr_set_proto(skb, &vnet_hdr);
+ 	}
+ 
+ 	skb_probe_transport_header(skb, reserve);
 
 
