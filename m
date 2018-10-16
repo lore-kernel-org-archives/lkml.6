@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D429C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0115CC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56ABA21479
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:44:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFF3920645
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:44:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g5uP2ofi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56ABA21479
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VZZhVILC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF3920645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbeJQBfq (ORCPT
+        id S1727635AbeJQBfy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:35:46 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39304 "EHLO
+        Tue, 16 Oct 2018 21:35:54 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45577 "EHLO
         mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727433AbeJQBfq (ORCPT
+        with ESMTP id S1727213AbeJQBfx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:35:46 -0400
-Received: by mail-lf1-f68.google.com with SMTP id n14-v6so5794494lfe.6
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 10:44:13 -0700 (PDT)
+        Tue, 16 Oct 2018 21:35:53 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v22-v6so5847668lfe.12
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 10:44:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mEkDkq8SSZbY2c+Iu2qL96meHyq3EfhnFHqS9BV+RyA=;
-        b=g5uP2ofiPqj7kaR3JdlcXzMjwPGUOxnbP9LuWSWLU0jBtolgmcyY2aQ2VLEoB41F+v
-         2X+hTlP/n3gPiZBmCKytkBl8NeRQifio25fWMbV91vATKtctT2Qe2uRVQXw1tcNWbPG8
-         FZiWaF+cbzXqE0dKTSXyU7vBKNdzHz9/FpeSs=
+        bh=bzoh24FV/7+GlpJwWqjLaXQi/cwzbPAc9pGvjk3V9fU=;
+        b=VZZhVILCqYnAIQ0Py1aB7+7AmPOkaeE42RVE8Jhj5JjdVWhdRtXT5WK3yofvwHmQVn
+         PGP0OpMO7hf88Xvqbfs4AHKY8iJ2C67Wy3FUjpwdP8boe7g6qsahf16u9vpsP4Wzskb2
+         eD+ckhpDdC0AbactZRmfpNBMf2wOQArMz1fbo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mEkDkq8SSZbY2c+Iu2qL96meHyq3EfhnFHqS9BV+RyA=;
-        b=srWDpCbBaPAQbVyaMB91MtC5JMvC507IQjCl9CCITFnzR3+LVJNm6OIEgWwcpxLCOh
-         9VnKdCnRfaYp9XqM7BobUaTItsSLPe+0DO7Isyid9fFo/zcqQSxVufUtjSxdUqI012uC
-         fXY1u2PbBwoybXpDRNhgZe/BDMu5ARU3nzg9DYxznMq5sV4L7mA9tT9e3hH8iO9UJCOk
-         qZ4k2IJOImdw+6AN4tJTKzwyRAH0HVFQjoN/apAkuSwTa9z8r5x1JWwS4yqeYVasY+Yl
-         S4hmSaFfjS3bcebAJRJjE69DzReq62rd4TPh83oiMbBylg3mIBh5M1PQP0T6uMz/4d+m
-         hf4w==
-X-Gm-Message-State: ABuFfog8B8wcYROu3q33rOhK5io2mv4LqFBm2mUOhy6vcrOhrdrHWy22
-        QGEVfNc6egk0SvLrGxNnva4DBjmWopYY
-X-Google-Smtp-Source: ACcGV60nFbvwikFVXSESF2pguXxrdXPNIzbYkIPGv8k7PlEXBKDFDkUR+r0nBXDDysEQ1HlkaJEG/g==
-X-Received: by 2002:a19:6803:: with SMTP id d3-v6mr1916502lfc.45.1539711852067;
-        Tue, 16 Oct 2018 10:44:12 -0700 (PDT)
+        bh=bzoh24FV/7+GlpJwWqjLaXQi/cwzbPAc9pGvjk3V9fU=;
+        b=N9pZTHueF1RjZaQ40BMNQZ6zLc8X0ZoErmCUWduJ6ocv99XF+p/+jB8cnOfZWIPmnp
+         w536+HWqApf7L30hHGzfB81JNtTKoS22pEHZYPz9vFjsMtkJPccAINlyjv/uiijJj11W
+         E/WHaKMoEvUSZJqa54L04SZVn/27Dl/J7F8H3JIiblRnzriNw3TFc2lR3Cjlugp9pXX+
+         KdhDm8qV9qy7ch+senX8JvHQQWahFabkI00bNpXdQ0K50pbHGiUFnXOSCoRYXN0ltLix
+         UL7V55PtCk3znThE6ujkna/W6viy45WI6QC/xM4dTmUtsxkWOHHtlxODWb3z15PHX/Dt
+         QBEQ==
+X-Gm-Message-State: ABuFfogMiDczUFyiCzJ+Bw/herYi9UvlUsN+Xj0NRe95Xc/i8CtZ3S7b
+        vVyZy70uCwGNl60O04VTM9SkBx00+Fj6
+X-Google-Smtp-Source: ACcGV62NYrZwT28IR8MFmwZZbGFLRCdcvOqrPlbCNvCo/CrBJwnz8ZmnbPe9xxOhhusMsEOHtDlhMQ==
+X-Received: by 2002:a19:8fce:: with SMTP id s75mr1747685lfk.151.1539711859597;
+        Tue, 16 Oct 2018 10:44:19 -0700 (PDT)
 Received: from vovoy-z840.tpe.corp.google.com ([2401:fa00:1:b:d89e:cfa6:3c8:e61b])
-        by smtp.gmail.com with ESMTPSA id r4-v6sm3358752ljg.12.2018.10.16.10.44.06
+        by smtp.gmail.com with ESMTPSA id r4-v6sm3358752ljg.12.2018.10.16.10.44.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 10:44:11 -0700 (PDT)
+        Tue, 16 Oct 2018 10:44:19 -0700 (PDT)
 From:   Kuo-Hsin Yang <vovoy@chromium.org>
 To:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         linux-mm@kvack.org
@@ -64,9 +64,9 @@ Cc:     mhocko@suse.com, akpm@linux-foundation.org,
         dave.hansen@intel.com, corbet@lwn.net, hughd@google.com,
         joonas.lahtinen@linux.intel.com, marcheu@chromium.org,
         hoegsberg@chromium.org, Kuo-Hsin Yang <vovoy@chromium.org>
-Subject: [PATCH 1/2] shmem: export shmem_unlock_mapping
-Date:   Wed, 17 Oct 2018 01:42:59 +0800
-Message-Id: <20181016174300.197906-2-vovoy@chromium.org>
+Subject: [PATCH 2/2] drm/i915: Mark pinned shmemfs pages as unevictable
+Date:   Wed, 17 Oct 2018 01:43:00 +0800
+Message-Id: <20181016174300.197906-3-vovoy@chromium.org>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
 In-Reply-To: <20181016174300.197906-1-vovoy@chromium.org>
 References: <20181016174300.197906-1-vovoy@chromium.org>
@@ -77,61 +77,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By exporting this function, drivers can mark/unmark a shmemfs address
-space as unevictable in the following way: 1. mark an address space as
-unevictable with mapping_set_unevictable(), pages in the address space
-will be moved to unevictable list in vmscan. 2. mark an address space
-evictable with mapping_clear_unevictable(), and move these pages back to
-evictable list with shmem_unlock_mapping().
+The i915 driver use shmemfs to allocate backing storage for gem objects.
+These shmemfs pages can be pinned (increased ref count) by
+shmem_read_mapping_page_gfp(). When a lot of pages are pinned, vmscan
+wastes a lot of time scanning these pinned pages. Mark these pinned
+pages as unevictable to speed up vmscan.
 
 Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
 ---
- Documentation/vm/unevictable-lru.rst | 4 +++-
- mm/shmem.c                           | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/i915_gem.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/vm/unevictable-lru.rst b/Documentation/vm/unevictable-lru.rst
-index fdd84cb8d511..a812fb55136d 100644
---- a/Documentation/vm/unevictable-lru.rst
-+++ b/Documentation/vm/unevictable-lru.rst
-@@ -143,7 +143,7 @@ using a number of wrapper functions:
- 	Query the address space, and return true if it is completely
- 	unevictable.
- 
--These are currently used in two places in the kernel:
-+These are currently used in three places in the kernel:
- 
-  (1) By ramfs to mark the address spaces of its inodes when they are created,
-      and this mark remains for the life of the inode.
-@@ -154,6 +154,8 @@ These are currently used in two places in the kernel:
-      swapped out; the application must touch the pages manually if it wants to
-      ensure they're in memory.
- 
-+ (3) By the i915 driver to mark pinned address space until it's unpinned.
-+
- 
- Detecting Unevictable Pages
- ---------------------------
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 446942677cd4..d1ce34c09df6 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -786,6 +786,7 @@ void shmem_unlock_mapping(struct address_space *mapping)
- 		cond_resched();
- 	}
- }
-+EXPORT_SYMBOL_GPL(shmem_unlock_mapping);
- 
- /*
-  * Remove range of pages and swap entries from radix tree, and free them.
-@@ -3874,6 +3875,7 @@ int shmem_lock(struct file *file, int lock, struct user_struct *user)
- void shmem_unlock_mapping(struct address_space *mapping)
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index fcc73a6ab503..e0ff5b736128 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -2390,6 +2390,7 @@ i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
  {
- }
-+EXPORT_SYMBOL_GPL(shmem_unlock_mapping);
+ 	struct sgt_iter sgt_iter;
+ 	struct page *page;
++	struct address_space *mapping;
  
- #ifdef CONFIG_MMU
- unsigned long shmem_get_unmapped_area(struct file *file,
+ 	__i915_gem_object_release_shmem(obj, pages, true);
+ 
+@@ -2409,6 +2410,10 @@ i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
+ 	}
+ 	obj->mm.dirty = false;
+ 
++	mapping = file_inode(obj->base.filp)->i_mapping;
++	mapping_clear_unevictable(mapping);
++	shmem_unlock_mapping(mapping);
++
+ 	sg_free_table(pages);
+ 	kfree(pages);
+ }
+@@ -2551,6 +2556,7 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
+ 	 * Fail silently without starting the shrinker
+ 	 */
+ 	mapping = obj->base.filp->f_mapping;
++	mapping_set_unevictable(mapping);
+ 	noreclaim = mapping_gfp_constraint(mapping, ~__GFP_RECLAIM);
+ 	noreclaim |= __GFP_NORETRY | __GFP_NOWARN;
+ 
+@@ -2664,6 +2670,8 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
+ err_pages:
+ 	for_each_sgt_page(page, sgt_iter, st)
+ 		put_page(page);
++	mapping_clear_unevictable(mapping);
++	shmem_unlock_mapping(mapping);
+ 	sg_free_table(st);
+ 	kfree(st);
+ 
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
