@@ -2,87 +2,115 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB0DC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 115ACC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C4DA2098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:47:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8EE02145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:54:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="4jtThpC2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C4DA2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="OXGPk2sx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EE02145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbeJQDjd (ORCPT
+        id S1727364AbeJQDqF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 23:39:33 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50542 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbeJQDjd (ORCPT
+        Tue, 16 Oct 2018 23:46:05 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38205 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbeJQDqF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 23:39:33 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9GJd7ob062322;
-        Tue, 16 Oct 2018 19:47:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=+aY9NMr6wjskO0hYOFbLA4z0xNqLDUd5UGqLhvYHQGI=;
- b=4jtThpC2LnqrQACV42cApF5Th2ymcIhUF3+hVEm1Ek82Fp7oMIqHMcPZ/IyzIXxaUZnh
- Pa5oQt9M0tZN80mZrR2/SO6aDFgKUfbiOj2gEgi2ow/7Q8FvQwNuqB7QpADFKdSuyH/k
- oUPhUtNW/vA1Hgasz67MS0ab4wY6xu6ubpoboDBGlf7EYpPqa6jBcxZIKKE+rs7Cm15N
- tBe/CA9IYpIKUhpjWDMKUz5F+WOfZiNp3HGLnIBvxfXiSUTBRANkT1DK9okyCVNqJIiz
- ShDbRVYfUDEuR6sX5PsVWUGsWAQlf8m180IPTui4jUiIOpN9wb/Gr8Mox9/u7inA6cSm QA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2n39brau05-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Oct 2018 19:47:03 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9GJl3l5003867
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Oct 2018 19:47:03 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9GJl1bA006256;
-        Tue, 16 Oct 2018 19:47:01 GMT
-Received: from mwanda (/129.205.6.86)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 16 Oct 2018 12:47:01 -0700
-Date:   Tue, 16 Oct 2018 22:46:50 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Dhaval Giani <dhaval.giani@gmail.com>
-Cc:     alexander.levin@microsoft.com, LKML <linux-kernel@vger.kernel.org>,
-        gregkh@linuxfoundation.org, alice.ferrazzi@gmail.com,
-        Kevin Hilman <khilman@baylibre.com>,
-        Tim Bird <tbird20d@gmail.com>, dvyukov@google.com,
-        Laura Abbott <labbott@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        gustavo.padovan@collabora.co.uk, willy@infradead.org,
-        knut.omang@oracle.com
-Subject: Re: [Announce] LPC 2018: Testing and Fuzzing Microconference
-Message-ID: <20181016194650.ncspol2n5pgrythg@mwanda>
-References: <CAPhKKr9vWJ4d8yV7N4=XqaEyKEjC_ZiPX_2RJSR9ZiR9k6yS1w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPhKKr9vWJ4d8yV7N4=XqaEyKEjC_ZiPX_2RJSR9ZiR9k6yS1w@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9048 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=678
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810160163
+        Tue, 16 Oct 2018 23:46:05 -0400
+Received: by mail-wr1-f68.google.com with SMTP id a13-v6so26982982wrt.5
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 12:54:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ji5fKAzLq0buVOw4yaeXjM+jOK4dIJ3CBUY5Jb6GnFQ=;
+        b=OXGPk2sxb93zqyXMpYuNJ3ftuY0P3sA+CV2Z1M07m1Qp/nBkfrL6nZzshljDRQ23uC
+         AaVj+tzCemKEfK9CESwHu0fyqQmqjW3D15zjmZAyypX6un7Kr1Yfs5MVhzT8OsFZvLEJ
+         Y4V8Ljrl0kC6ABLPjql34cPYZrKPro5K6aIoMybDLJSI+HFW1wnxT0lguMCfdU0jG7c6
+         oxZWiEM7U+B4Sn7+y6Q8+I2K9bMqWzpwNliXCtn6U1l0Fu+szxuh8+tJRGiOLplb1SrS
+         MoXSaKtYHVsGB3gu/wuVwnVZ0almJAsMCIqjpoMztAslgWVshm1G3oKIJIdsVBThTq6H
+         JMeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ji5fKAzLq0buVOw4yaeXjM+jOK4dIJ3CBUY5Jb6GnFQ=;
+        b=qjT2YXNPwflxhnmA5W/ebDPZK1MYK6VPbaj0Yni+nnXKrg6weqAhsx8QfGFsQ7ROYg
+         s4J2e4J9oRPhvyj8krwsSf6JoCXV5fnHycCr6uv5ts3spgpDqT5ydDybUqdsz8UBeHY4
+         haSpApI2jlZcGgamIJIi08vI5+ofPZrttHHeWWip6lCTBk5kOCuTqOvfJEknmKSP4MLv
+         gw40izL+U/Nfy4Fpqq0G0f/FamslkK7czV2XG05E/S1mZUUDZPnFTIBhAaO4P3Gh7hVH
+         XBWGFHPXIIFJtM82C7ArOhixe66ER4UxRcsjWFSdsAwr9iTsm/GwMYu0UANeFlmwTvtK
+         N6hA==
+X-Gm-Message-State: ABuFfoh3uwBQLoSkh1mDSmAgMra1KKEdxYSwR/MmtyI+xkc/53L7GqyR
+        Cs67flfA4gcqjhuY9mp5a2PF3A==
+X-Google-Smtp-Source: ACcGV607/FhjDtItjspVOlFX6m4irKde33ZhAgfCvoIeOEcMHY2FCw21ic9T00D0sLpML1/W/s1dQg==
+X-Received: by 2002:a5d:6450:: with SMTP id d16-v6mr18657867wrw.64.1539719643025;
+        Tue, 16 Oct 2018 12:54:03 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8070:8895:9700:8197:8849:535a:4f00])
+        by smtp.gmail.com with ESMTPSA id z2-v6sm10958588wrh.8.2018.10.16.12.54.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Oct 2018 12:54:02 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     keescook@chromium.org, linux-kernel@vger.kernel.org
+Cc:     ebiederm@xmission.com, mcgrof@kernel.org,
+        akpm@linux-foundation.org, joe.lawrence@redhat.com,
+        longman@redhat.com, linux@dominikbrodowski.net,
+        viro@zeniv.linux.org.uk, adobriyan@gmail.com,
+        linux-api@vger.kernel.org, Christian Brauner <christian@brauner.io>
+Subject: [PATCH v2 0/2] sysctl: handle overflow for file-max
+Date:   Tue, 16 Oct 2018 21:53:35 +0200
+Message-Id: <20181016195337.2440-1-christian@brauner.io>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I would like to talk about Smatch, if I could.  Especially the Spectre
-work and the improvements to cross function tracking.
+Hey,
 
-regards,
-dan carpenter
+Here is v2 of this patchset. Changelogs are in the individual commits.
+This is a new approach after I have done more reasoning about it.
+
+Currently, when writing
+
+echo 18446744073709551616 > /proc/sys/fs/file-max
+
+/proc/sys/fs/file-max will overflow and be set to 0. That quickly
+crashes the system.
+
+The first version of this patch intended to detect the overflow and cap
+at ULONG_MAX. However, we should not do this and rather return EINVAL on
+overflow. The reasons are:
+- this aligns with other sysctl handlers that simply reject overflows
+  (cf. [1], [2], and a bunch of others)
+- we already do a partial fail on overflow right now
+  Namely, when the TMPBUFLEN is exceeded. So we already reject values
+  such as 184467440737095516160 (21 chars) but accept values such as
+  18446744073709551616 (20 chars) but both are overflows. So we should
+  just always reject 64bit overflows and not special-case this based on
+  the number of chars.
+
+(This patchset is in reference to https://lkml.org/lkml/2018/10/11/585.)
+
+Thanks!
+Christian
+
+[1]: fb910c42cceb ("sysctl: check for UINT_MAX before unsigned int min/max")
+[2]: 196851bed522 ("s390/topology: correct topology mode proc handler")
+
+Christian Brauner (2):
+  sysctl: handle overflow in proc_get_long
+  sysctl: handle overflow for file-max
+
+ kernel/sysctl.c | 31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
+
+-- 
+2.17.1
+
