@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4B1C5ACC8
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 973F8C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8234621479
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6693B2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:16:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wNqgDDa5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8234621479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMnF30S2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6693B2089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbeJQBHf (ORCPT
+        id S1729617AbeJQBHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:07:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51948 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:07:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728636AbeJQBHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:07:34 -0400
+        id S1728636AbeJQBHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:07:36 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B05E21476;
-        Tue, 16 Oct 2018 17:16:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA67721477;
+        Tue, 16 Oct 2018 17:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710170;
-        bh=9xkzSRajvSMPiszLu1KAISVoRjyhjYXMeCC/gwHWbf0=;
+        s=default; t=1539710173;
+        bh=loArrn47hVwwHyMAZogRw8onwxOzEAUVC++YgN1CTdk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wNqgDDa5fev6CrzOD9GjR5nAqXcZ10NYhMrgKm+6lQOHSkUgYYx0F/ZlEzVeCSzCe
-         kQbKZdC+xbYZdnmJxudaVC9X74ygiPetm/XF3cVw+vXmyx6iN3rHAL+HLn6sREJYlr
-         pa/x3tT0qqFsA+tFC7txiLPYdayWTvy+1kLSQ//s=
+        b=iMnF30S273HOiZdLmOoU4BeQR1A+fbCn3Mg5gyPQxQ5wtZem1znTuNyOXp21fsTNk
+         9lFG3vB92u89lwjaUJ+menqs2Ac6nschQ27SfG380D5oL9P9O/ojNw0sYBw1p5OZtg
+         ftIxOMGhkmtgEiGexk78YWAIgcx1cHOLnne9WEmA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jay Kamat <jgkamat@fb.com>,
-        Roman Gushchin <guro@fb.com>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 079/135] Add tests for memory.oom.group
-Date:   Tue, 16 Oct 2018 19:05:09 +0200
-Message-Id: <20181016170520.617155900@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Farman <farman@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: [PATCH 4.18 120/135] s390/cio: Fix how vfio-ccw checks pinned pages
+Date:   Tue, 16 Oct 2018 19:05:50 +0200
+Message-Id: <20181016170523.580157844@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -64,296 +62,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jay Kamat <jgkamat@fb.com>
+From: Eric Farman <farman@linux.ibm.com>
 
-[ Upstream commit a987785dcd6c8ae2915460582aebd6481c81eb67 ]
+commit 24abf2901b18bf941b9f21ea2ce5791f61097ae4 upstream.
 
-Add tests for memory.oom.group for the following cases:
-- Killing all processes in a leaf cgroup, but leaving the
-  parent untouched
-- Killing all processes in a parent and leaf cgroup
-- Keeping processes marked by OOM_SCORE_ADJ_MIN alive when considered
-  for being killed by the group oom killer.
+We have two nested loops to check the entries within the pfn_array_table
+arrays.  But we mistakenly use the outer array as an index in our check,
+and completely ignore the indexing performed by the inner loop.
 
-Signed-off-by: Jay Kamat <jgkamat@fb.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Farman <farman@linux.ibm.com>
+Message-Id: <20181002010235.42483-1-farman@linux.ibm.com>
+Signed-off-by: Cornelia Huck <cohuck@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/testing/selftests/cgroup/cgroup_util.c     |   21 ++
- tools/testing/selftests/cgroup/cgroup_util.h     |    1 
- tools/testing/selftests/cgroup/test_memcontrol.c |  205 +++++++++++++++++++++++
- 3 files changed, 227 insertions(+)
 
---- a/tools/testing/selftests/cgroup/cgroup_util.c
-+++ b/tools/testing/selftests/cgroup/cgroup_util.c
-@@ -340,3 +340,24 @@ int is_swap_enabled(void)
+---
+ drivers/s390/cio/vfio_ccw_cp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/s390/cio/vfio_ccw_cp.c
++++ b/drivers/s390/cio/vfio_ccw_cp.c
+@@ -163,7 +163,7 @@ static bool pfn_array_table_iova_pinned(
  
- 	return cnt > 1;
- }
-+
-+int set_oom_adj_score(int pid, int score)
-+{
-+	char path[PATH_MAX];
-+	int fd, len;
-+
-+	sprintf(path, "/proc/%d/oom_score_adj", pid);
-+
-+	fd = open(path, O_WRONLY | O_APPEND);
-+	if (fd < 0)
-+		return fd;
-+
-+	len = dprintf(fd, "%d", score);
-+	if (len < 0) {
-+		close(fd);
-+		return len;
-+	}
-+
-+	close(fd);
-+	return 0;
-+}
---- a/tools/testing/selftests/cgroup/cgroup_util.h
-+++ b/tools/testing/selftests/cgroup/cgroup_util.h
-@@ -39,3 +39,4 @@ extern int get_temp_fd(void);
- extern int alloc_pagecache(int fd, size_t size);
- extern int alloc_anon(const char *cgroup, void *arg);
- extern int is_swap_enabled(void);
-+extern int set_oom_adj_score(int pid, int score);
---- a/tools/testing/selftests/cgroup/test_memcontrol.c
-+++ b/tools/testing/selftests/cgroup/test_memcontrol.c
-@@ -2,6 +2,7 @@
- #define _GNU_SOURCE
+ 	for (i = 0; i < pat->pat_nr; i++, pa++)
+ 		for (j = 0; j < pa->pa_nr; j++)
+-			if (pa->pa_iova_pfn[i] == iova_pfn)
++			if (pa->pa_iova_pfn[j] == iova_pfn)
+ 				return true;
  
- #include <linux/limits.h>
-+#include <linux/oom.h>
- #include <fcntl.h>
- #include <stdio.h>
- #include <stdlib.h>
-@@ -202,6 +203,36 @@ static int alloc_pagecache_50M_noexit(co
- 	return 0;
- }
- 
-+static int alloc_anon_noexit(const char *cgroup, void *arg)
-+{
-+	int ppid = getppid();
-+
-+	if (alloc_anon(cgroup, arg))
-+		return -1;
-+
-+	while (getppid() == ppid)
-+		sleep(1);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Wait until processes are killed asynchronously by the OOM killer
-+ * If we exceed a timeout, fail.
-+ */
-+static int cg_test_proc_killed(const char *cgroup)
-+{
-+	int limit;
-+
-+	for (limit = 10; limit > 0; limit--) {
-+		if (cg_read_strcmp(cgroup, "cgroup.procs", "") == 0)
-+			return 0;
-+
-+		usleep(100000);
-+	}
-+	return -1;
-+}
-+
- /*
-  * First, this test creates the following hierarchy:
-  * A       memory.min = 50M,  memory.max = 200M
-@@ -964,6 +995,177 @@ cleanup:
- 	return ret;
- }
- 
-+/*
-+ * This test disables swapping and tries to allocate anonymous memory
-+ * up to OOM with memory.group.oom set. Then it checks that all
-+ * processes in the leaf (but not the parent) were killed.
-+ */
-+static int test_memcg_oom_group_leaf_events(const char *root)
-+{
-+	int ret = KSFT_FAIL;
-+	char *parent, *child;
-+
-+	parent = cg_name(root, "memcg_test_0");
-+	child = cg_name(root, "memcg_test_0/memcg_test_1");
-+
-+	if (!parent || !child)
-+		goto cleanup;
-+
-+	if (cg_create(parent))
-+		goto cleanup;
-+
-+	if (cg_create(child))
-+		goto cleanup;
-+
-+	if (cg_write(parent, "cgroup.subtree_control", "+memory"))
-+		goto cleanup;
-+
-+	if (cg_write(child, "memory.max", "50M"))
-+		goto cleanup;
-+
-+	if (cg_write(child, "memory.swap.max", "0"))
-+		goto cleanup;
-+
-+	if (cg_write(child, "memory.oom.group", "1"))
-+		goto cleanup;
-+
-+	cg_run_nowait(parent, alloc_anon_noexit, (void *) MB(60));
-+	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
-+	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
-+	if (!cg_run(child, alloc_anon, (void *)MB(100)))
-+		goto cleanup;
-+
-+	if (cg_test_proc_killed(child))
-+		goto cleanup;
-+
-+	if (cg_read_key_long(child, "memory.events", "oom_kill ") <= 0)
-+		goto cleanup;
-+
-+	if (cg_read_key_long(parent, "memory.events", "oom_kill ") != 0)
-+		goto cleanup;
-+
-+	ret = KSFT_PASS;
-+
-+cleanup:
-+	if (child)
-+		cg_destroy(child);
-+	if (parent)
-+		cg_destroy(parent);
-+	free(child);
-+	free(parent);
-+
-+	return ret;
-+}
-+
-+/*
-+ * This test disables swapping and tries to allocate anonymous memory
-+ * up to OOM with memory.group.oom set. Then it checks that all
-+ * processes in the parent and leaf were killed.
-+ */
-+static int test_memcg_oom_group_parent_events(const char *root)
-+{
-+	int ret = KSFT_FAIL;
-+	char *parent, *child;
-+
-+	parent = cg_name(root, "memcg_test_0");
-+	child = cg_name(root, "memcg_test_0/memcg_test_1");
-+
-+	if (!parent || !child)
-+		goto cleanup;
-+
-+	if (cg_create(parent))
-+		goto cleanup;
-+
-+	if (cg_create(child))
-+		goto cleanup;
-+
-+	if (cg_write(parent, "memory.max", "80M"))
-+		goto cleanup;
-+
-+	if (cg_write(parent, "memory.swap.max", "0"))
-+		goto cleanup;
-+
-+	if (cg_write(parent, "memory.oom.group", "1"))
-+		goto cleanup;
-+
-+	cg_run_nowait(parent, alloc_anon_noexit, (void *) MB(60));
-+	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
-+	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
-+
-+	if (!cg_run(child, alloc_anon, (void *)MB(100)))
-+		goto cleanup;
-+
-+	if (cg_test_proc_killed(child))
-+		goto cleanup;
-+	if (cg_test_proc_killed(parent))
-+		goto cleanup;
-+
-+	ret = KSFT_PASS;
-+
-+cleanup:
-+	if (child)
-+		cg_destroy(child);
-+	if (parent)
-+		cg_destroy(parent);
-+	free(child);
-+	free(parent);
-+
-+	return ret;
-+}
-+
-+/*
-+ * This test disables swapping and tries to allocate anonymous memory
-+ * up to OOM with memory.group.oom set. Then it checks that all
-+ * processes were killed except those set with OOM_SCORE_ADJ_MIN
-+ */
-+static int test_memcg_oom_group_score_events(const char *root)
-+{
-+	int ret = KSFT_FAIL;
-+	char *memcg;
-+	int safe_pid;
-+
-+	memcg = cg_name(root, "memcg_test_0");
-+
-+	if (!memcg)
-+		goto cleanup;
-+
-+	if (cg_create(memcg))
-+		goto cleanup;
-+
-+	if (cg_write(memcg, "memory.max", "50M"))
-+		goto cleanup;
-+
-+	if (cg_write(memcg, "memory.swap.max", "0"))
-+		goto cleanup;
-+
-+	if (cg_write(memcg, "memory.oom.group", "1"))
-+		goto cleanup;
-+
-+	safe_pid = cg_run_nowait(memcg, alloc_anon_noexit, (void *) MB(1));
-+	if (set_oom_adj_score(safe_pid, OOM_SCORE_ADJ_MIN))
-+		goto cleanup;
-+
-+	cg_run_nowait(memcg, alloc_anon_noexit, (void *) MB(1));
-+	if (!cg_run(memcg, alloc_anon, (void *)MB(100)))
-+		goto cleanup;
-+
-+	if (cg_read_key_long(memcg, "memory.events", "oom_kill ") != 3)
-+		goto cleanup;
-+
-+	if (kill(safe_pid, SIGKILL))
-+		goto cleanup;
-+
-+	ret = KSFT_PASS;
-+
-+cleanup:
-+	if (memcg)
-+		cg_destroy(memcg);
-+	free(memcg);
-+
-+	return ret;
-+}
-+
-+
- #define T(x) { x, #x }
- struct memcg_test {
- 	int (*fn)(const char *root);
-@@ -978,6 +1180,9 @@ struct memcg_test {
- 	T(test_memcg_oom_events),
- 	T(test_memcg_swap_max),
- 	T(test_memcg_sock),
-+	T(test_memcg_oom_group_leaf_events),
-+	T(test_memcg_oom_group_parent_events),
-+	T(test_memcg_oom_group_score_events),
- };
- #undef T
- 
+ 	return false;
 
 
