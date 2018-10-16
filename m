@@ -2,210 +2,95 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A10C0C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B6BC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6348F20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:03:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6348F20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BC3AE20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:03:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC3AE20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbeJPWya (ORCPT
+        id S1727187AbeJPWys (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:54:30 -0400
-Received: from mga14.intel.com ([192.55.52.115]:37563 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbeJPWya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:54:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 08:03:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,388,1534834800"; 
-   d="scan'208";a="272881009"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Oct 2018 08:03:37 -0700
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gCQsh-0000UC-Sd; Tue, 16 Oct 2018 18:03:35 +0300
-Date:   Tue, 16 Oct 2018 18:03:35 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>, Joe Perches <joe@perches.com>
-Subject: Re: [PATCH] lib: Fix ia64 bootloader linkage
-Message-ID: <20181016150335.GZ15943@smile.fi.intel.com>
-References: <201810161649.o89WBjtC%fengguang.wu@intel.com>
- <20181016111340.8046-1-alexander.shishkin@linux.intel.com>
+        Tue, 16 Oct 2018 18:54:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55620 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726760AbeJPWys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 18:54:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 25C46AF68;
+        Tue, 16 Oct 2018 15:03:55 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     gregkh@linuxfoundation.org
+Cc:     eric@anholt.net, stefan.wahren@i2se.com,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org, tiwai@suse.de,
+        nsaenzjulienne@suse.de
+Subject: [PATCH 0/9] staging: bcm2835-audio: Cleanups and upgrades
+Date:   Tue, 16 Oct 2018 17:02:19 +0200
+Message-Id: <20181016150228.16994-1-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016111340.8046-1-alexander.shishkin@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 02:13:40PM +0300, Alexander Shishkin wrote:
-> kbuild robot reports that since commit ce76d938dd98 ("lib: Add memcat_p():
-> paste 2 pointer arrays together") the ia64/hp/sim/boot fails to link:
-> 
-> > LD      arch/ia64/hp/sim/boot/bootloader
-> > lib/string.o: In function `__memcat_p':
-> > string.c:(.text+0x1f22): undefined reference to `__kmalloc'
-> > string.c:(.text+0x1ff2): undefined reference to `__kmalloc'
-> > make[1]: *** [arch/ia64/hp/sim/boot/Makefile:37: arch/ia64/hp/sim/boot/bootloader] Error 1
-> 
-> The reason is, the above commit, via __memcat_p(), adds a call to
-> __kmalloc to string.o, which happens to be used in the bootloader, but
-> there's no kmalloc or slab or anything.
-> 
-> Since the linker would only pull in objects that contain referenced
-> symbols, moving __memcat_p() to a different compilation unit solves the
-> problem.
-> 
+Hi,
 
-Oh, nice catch!
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+I just received a RPi3B+ and decided to have a go at fixing stuff in
+the audio driver:
 
-Perhaps checkpatch.pl can somehow catch these...
+The first half of the patchset are just random fixes found while reading
+the code.
 
-> Fixes: ce76d938dd98 ("lib: Add memcat_p(): paste 2 pointer arrays together")
-> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Cc: Fenghua Yu <fenghua.yu@intel.com>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Joe Perches <joe@perches.com>
-> ---
->  lib/Makefile        |  2 +-
->  lib/memcat_p.c      | 34 ++++++++++++++++++++++++++++++++++
->  lib/string.c        | 30 ------------------------------
->  lib/test_memcat_p.c |  2 +-
->  4 files changed, 36 insertions(+), 32 deletions(-)
->  create mode 100644 lib/memcat_p.c
-> 
-> diff --git a/lib/Makefile b/lib/Makefile
-> index c2588a2d7b1e..40e79f88c3cd 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -24,7 +24,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
->  	 flex_proportions.o ratelimit.o show_mem.o \
->  	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
->  	 earlycpio.o seq_buf.o siphash.o dec_and_lock.o \
-> -	 nmi_backtrace.o nodemask.o win_minmax.o
-> +	 nmi_backtrace.o nodemask.o win_minmax.o memcat_p.o
->  
->  lib-$(CONFIG_PRINTK) += dump_stack.o
->  lib-$(CONFIG_MMU) += ioremap.o
-> diff --git a/lib/memcat_p.c b/lib/memcat_p.c
-> new file mode 100644
-> index 000000000000..b810fbc66962
-> --- /dev/null
-> +++ b/lib/memcat_p.c
-> @@ -0,0 +1,34 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/slab.h>
-> +
-> +/*
-> + * Merge two NULL-terminated pointer arrays into a newly allocated
-> + * array, which is also NULL-terminated. Nomenclature is inspired by
-> + * memset_p() and memcat() found elsewhere in the kernel source tree.
-> + */
-> +void **__memcat_p(void **a, void **b)
-> +{
-> +	void **p = a, **new;
-> +	int nr;
-> +
-> +	/* count the elements in both arrays */
-> +	for (nr = 0, p = a; *p; nr++, p++)
-> +		;
-> +	for (p = b; *p; nr++, p++)
-> +		;
-> +	/* one for the NULL-terminator */
-> +	nr++;
-> +
-> +	new = kmalloc_array(nr, sizeof(void *), GFP_KERNEL);
-> +	if (!new)
-> +		return NULL;
-> +
-> +	/* nr -> last index; p points to NULL in b[] */
-> +	for (nr--; nr >= 0; nr--, p = p == b ? &a[nr] : p - 1)
-> +		new[nr] = *p;
-> +
-> +	return new;
-> +}
-> +EXPORT_SYMBOL_GPL(__memcat_p);
-> +
-> diff --git a/lib/string.c b/lib/string.c
-> index 453f35994eb6..38e4ca08e757 100644
-> --- a/lib/string.c
-> +++ b/lib/string.c
-> @@ -891,36 +891,6 @@ void *memscan(void *addr, int c, size_t size)
->  EXPORT_SYMBOL(memscan);
->  #endif
->  
-> -/*
-> - * Merge two NULL-terminated pointer arrays into a newly allocated
-> - * array, which is also NULL-terminated. Nomenclature is inspired by
-> - * memset_p() and memcat() found elsewhere in the kernel source tree.
-> - */
-> -void **__memcat_p(void **a, void **b)
-> -{
-> -	void **p = a, **new;
-> -	int nr;
-> -
-> -	/* count the elements in both arrays */
-> -	for (nr = 0, p = a; *p; nr++, p++)
-> -		;
-> -	for (p = b; *p; nr++, p++)
-> -		;
-> -	/* one for the NULL-terminator */
-> -	nr++;
-> -
-> -	new = kmalloc_array(nr, sizeof(void *), GFP_KERNEL);
-> -	if (!new)
-> -		return NULL;
-> -
-> -	/* nr -> last index; p points to NULL in b[] */
-> -	for (nr--; nr >= 0; nr--, p = p == b ? &a[nr] : p - 1)
-> -		new[nr] = *p;
-> -
-> -	return new;
-> -}
-> -EXPORT_SYMBOL_GPL(__memcat_p);
-> -
->  #ifndef __HAVE_ARCH_STRSTR
->  /**
->   * strstr - Find the first substring in a %NUL terminated string
-> diff --git a/lib/test_memcat_p.c b/lib/test_memcat_p.c
-> index 2b163a749ecb..849c477d49d0 100644
-> --- a/lib/test_memcat_p.c
-> +++ b/lib/test_memcat_p.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
-> - * Test cases for memcat_p() in lib/string.c
-> + * Test cases for memcat_p() in lib/memcat_p.c
->   */
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
-> -- 
-> 2.19.1
-> 
+The second half provides devicetree bindings for bcm2835-audio and fixes
+the probe sequence so it fails gracefully if VCHIQ isn't there (as per
+TODO).
+
+The series was developed on top of linux-next and tested on a RPi2B and
+RPi3B+. Sadly I don't have an HDMI monitor with sound so I only tested
+the mini jack output.
+
+Thanks,
+Nicolas
+
+===
+
+Nicolas Saenz Julienne (9):
+  staging: bcm2835-audio: unify FOURCC command definitions
+  staging: bcm2835-audio: don't initialize memory twice
+  staging: bcm2835-audio: reorder variable declarations & remove trivial
+    comments
+  staging: bcm2835-audio: use anonymous union in struct vc_audio_msg
+  staging: bcm2835-audio: more generic probe function name
+  ASoC: dt-bindings: bcm2835-rpi: add onboard audio bindings
+  ARM: dts: bcm2835-rpi: add onboard audio device
+  staging: vchiq_arm: add function to check if probe was successful
+  staging: bcm2835-audio: check for VCHIQ during probe
+
+ .../bindings/sound/brcm,bcm2835-audio.txt     | 15 +++++++
+ arch/arm/boot/dts/bcm2835-rpi.dtsi            |  5 +++
+ .../vc04_services/bcm2835-audio/bcm2835-pcm.c | 10 +----
+ .../bcm2835-audio/bcm2835-vchiq.c             | 39 ++++++++-----------
+ .../vc04_services/bcm2835-audio/bcm2835.c     | 30 ++++++++------
+ .../bcm2835-audio/vc_vchi_audioserv_defs.h    |  6 ++-
+ .../vc04_services/interface/vchi/vchi.h       |  3 ++
+ .../interface/vchiq_arm/vchiq_2835_arm.c      |  2 +
+ .../interface/vchiq_arm/vchiq_arm.c           | 16 ++++++++
+ .../interface/vchiq_arm/vchiq_arm.h           |  1 +
+ .../interface/vchiq_arm/vchiq_if.h            |  4 ++
+ .../interface/vchiq_arm/vchiq_shim.c          |  7 ++++
+ 12 files changed, 95 insertions(+), 43 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/brcm,bcm2835-audio.txt
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.19.1
 
