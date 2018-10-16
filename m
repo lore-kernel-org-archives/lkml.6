@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 572B3C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC10C070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A96021477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1642021470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zbte4DLk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A96021477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOQmbmem"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1642021470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbeJPMA4 (ORCPT
+        id S1727689AbeJPMA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:00:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47546 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:00:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727553AbeJPMAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:00:55 -0400
+        id S1727593AbeJPMA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:00:57 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B37C208E4;
-        Tue, 16 Oct 2018 04:12:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8D4D2145D;
+        Tue, 16 Oct 2018 04:12:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663152;
-        bh=NlsynKfolTPu7+MZGAtuVfjxecweit57c6+7i1EXZUk=;
+        s=default; t=1539663154;
+        bh=/PxwctX5QfF56OX0z6CJb1Vl+UKtwz4vOI1hGyKLzKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zbte4DLknnkEt5WUybYHsfR2I54jH60zZkSuad2D/i7vfpmMSSY7+/Y6fbODwK2+r
-         7H1AWRKr7Gzlj5TzMe9NEv1FyNoKAK0H2wH/05uhLdRwFDCGVsbXm9jR0LfRPqCuPY
-         q2VgAemW3MhaPmofcXp7pHcyehKao8H4Ex6Bt1Hk=
+        b=TOQmbmemyL0Xzsf5o+U9Vib96TlfbwEx817KF0HInEE7B3usT6uGH+3tPqj/R57No
+         z1KGb3hlX79NLLRPqgdwtnVRpuXw2cp+3SY++HgrNbbYedAxS3uSdk1isYGCqnAYpE
+         Jg8itpa+OfXKRjmB7ne6HHFBRWgYdWTe6DaX8b6Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jouni Malinen <jouni@codeaurora.org>,
+Cc:     Yuan-Chi Pang <fu3mo6goo@gmail.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 008/100] cfg80211: Address some corner cases in scan result channel updating
-Date:   Tue, 16 Oct 2018 00:10:49 -0400
-Message-Id: <20181016041221.135528-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 010/100] mac80211: fix TX status reporting for ieee80211s
+Date:   Tue, 16 Oct 2018 00:10:51 -0400
+Message-Id: <20181016041221.135528-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -52,140 +52,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jouni Malinen <jouni@codeaurora.org>
+From: Yuan-Chi Pang <fu3mo6goo@gmail.com>
 
-[ Upstream commit 119f94a6fefcc76d47075b83d2b73d04c895df78 ]
+[ Upstream commit c42055105785580563535e6d3143cad95c7ac7ee ]
 
-cfg80211_get_bss_channel() is used to update the RX channel based on the
-available frame payload information (channel number from DSSS Parameter
-Set element or HT Operation element). This is needed on 2.4 GHz channels
-where frames may be received on neighboring channels due to overlapping
-frequency range.
+TX status reporting to ieee80211s is through ieee80211s_update_metric.
+There are two problems about ieee80211s_update_metric:
 
-This might of some use on the 5 GHz band in some corner cases, but
-things are more complex there since there is no n:1 or 1:n mapping
-between channel numbers and frequencies due to multiple different
-starting frequencies in different operating classes. This could result
-in ieee80211_channel_to_frequency() returning incorrect frequency and
-ieee80211_get_channel() returning incorrect channel information (or
-indication of no match). In the previous implementation, this could
-result in some scan results being dropped completely, e.g., for the 4.9
-GHz channels. That prevented connection to such BSSs.
+1. The purpose is to estimate the fail probability
+to a specific link. No need to restrict to data frame.
 
-Fix this by using the driver-provided channel pointer if
-ieee80211_get_channel() does not find matching channel data for the
-channel number in the frame payload and if the scan is done with 5 MHz
-or 10 MHz channel bandwidth. While doing this, also add comments
-describing what the function is trying to achieve to make it easier to
-understand what happens here and why.
+2. Current implementation does not work if wireless driver does not
+pass tx_status with skb.
 
-Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
+Fix this by removing ieee80211_is_data condition, passing
+ieee80211_tx_status directly to ieee80211s_update_metric, and
+putting it in both __ieee80211_tx_status and ieee80211_tx_status_ext.
+
+Signed-off-by: Yuan-Chi Pang <fu3mo6goo@gmail.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/scan.c | 58 ++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 49 insertions(+), 9 deletions(-)
+ net/mac80211/mesh.h      | 3 ++-
+ net/mac80211/mesh_hwmp.c | 9 +++------
+ net/mac80211/status.c    | 4 +++-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/net/wireless/scan.c b/net/wireless/scan.c
-index d36c3eb7b931..d0e7472dd9fd 100644
---- a/net/wireless/scan.c
-+++ b/net/wireless/scan.c
-@@ -1058,13 +1058,23 @@ cfg80211_bss_update(struct cfg80211_registered_device *rdev,
- 	return NULL;
+diff --git a/net/mac80211/mesh.h b/net/mac80211/mesh.h
+index ee56f18cad3f..21526630bf65 100644
+--- a/net/mac80211/mesh.h
++++ b/net/mac80211/mesh.h
+@@ -217,7 +217,8 @@ void mesh_rmc_free(struct ieee80211_sub_if_data *sdata);
+ int mesh_rmc_init(struct ieee80211_sub_if_data *sdata);
+ void ieee80211s_init(void);
+ void ieee80211s_update_metric(struct ieee80211_local *local,
+-			      struct sta_info *sta, struct sk_buff *skb);
++			      struct sta_info *sta,
++			      struct ieee80211_tx_status *st);
+ void ieee80211_mesh_init_sdata(struct ieee80211_sub_if_data *sdata);
+ void ieee80211_mesh_teardown_sdata(struct ieee80211_sub_if_data *sdata);
+ int ieee80211_start_mesh(struct ieee80211_sub_if_data *sdata);
+diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
+index daf9db3c8f24..6950cd0bf594 100644
+--- a/net/mac80211/mesh_hwmp.c
++++ b/net/mac80211/mesh_hwmp.c
+@@ -295,15 +295,12 @@ int mesh_path_error_tx(struct ieee80211_sub_if_data *sdata,
  }
  
-+/*
-+ * Update RX channel information based on the available frame payload
-+ * information. This is mainly for the 2.4 GHz band where frames can be received
-+ * from neighboring channels and the Beacon frames use the DSSS Parameter Set
-+ * element to indicate the current (transmitting) channel, but this might also
-+ * be needed on other bands if RX frequency does not match with the actual
-+ * operating channel of a BSS.
-+ */
- static struct ieee80211_channel *
- cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
--			 struct ieee80211_channel *channel)
-+			 struct ieee80211_channel *channel,
-+			 enum nl80211_bss_scan_width scan_width)
+ void ieee80211s_update_metric(struct ieee80211_local *local,
+-		struct sta_info *sta, struct sk_buff *skb)
++			      struct sta_info *sta,
++			      struct ieee80211_tx_status *st)
  {
- 	const u8 *tmp;
- 	u32 freq;
- 	int channel_number = -1;
-+	struct ieee80211_channel *alt_channel;
+-	struct ieee80211_tx_info *txinfo = IEEE80211_SKB_CB(skb);
+-	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb->data;
++	struct ieee80211_tx_info *txinfo = st->info;
+ 	int failed;
  
- 	tmp = cfg80211_find_ie(WLAN_EID_DS_PARAMS, ie, ielen);
- 	if (tmp && tmp[1] == 1) {
-@@ -1078,16 +1088,45 @@ cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
+-	if (!ieee80211_is_data(hdr->frame_control))
+-		return;
+-
+ 	failed = !(txinfo->flags & IEEE80211_TX_STAT_ACK);
+ 
+ 	/* moving average, scaled to 100.
+diff --git a/net/mac80211/status.c b/net/mac80211/status.c
+index 001a869c059c..91d7c0cd1882 100644
+--- a/net/mac80211/status.c
++++ b/net/mac80211/status.c
+@@ -808,7 +808,7 @@ static void __ieee80211_tx_status(struct ieee80211_hw *hw,
+ 
+ 		rate_control_tx_status(local, sband, status);
+ 		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
+-			ieee80211s_update_metric(local, sta, skb);
++			ieee80211s_update_metric(local, sta, status);
+ 
+ 		if (!(info->flags & IEEE80211_TX_CTL_INJECTED) && acked)
+ 			ieee80211_frame_acked(sta, skb);
+@@ -969,6 +969,8 @@ void ieee80211_tx_status_ext(struct ieee80211_hw *hw,
  		}
+ 
+ 		rate_control_tx_status(local, sband, status);
++		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
++			ieee80211s_update_metric(local, sta, status);
  	}
  
--	if (channel_number < 0)
-+	if (channel_number < 0) {
-+		/* No channel information in frame payload */
- 		return channel;
-+	}
- 
- 	freq = ieee80211_channel_to_frequency(channel_number, channel->band);
--	channel = ieee80211_get_channel(wiphy, freq);
--	if (!channel)
--		return NULL;
--	if (channel->flags & IEEE80211_CHAN_DISABLED)
-+	alt_channel = ieee80211_get_channel(wiphy, freq);
-+	if (!alt_channel) {
-+		if (channel->band == NL80211_BAND_2GHZ) {
-+			/*
-+			 * Better not allow unexpected channels when that could
-+			 * be going beyond the 1-11 range (e.g., discovering
-+			 * BSS on channel 12 when radio is configured for
-+			 * channel 11.
-+			 */
-+			return NULL;
-+		}
-+
-+		/* No match for the payload channel number - ignore it */
-+		return channel;
-+	}
-+
-+	if (scan_width == NL80211_BSS_CHAN_WIDTH_10 ||
-+	    scan_width == NL80211_BSS_CHAN_WIDTH_5) {
-+		/*
-+		 * Ignore channel number in 5 and 10 MHz channels where there
-+		 * may not be an n:1 or 1:n mapping between frequencies and
-+		 * channel numbers.
-+		 */
-+		return channel;
-+	}
-+
-+	/*
-+	 * Use the channel determined through the payload channel number
-+	 * instead of the RX channel reported by the driver.
-+	 */
-+	if (alt_channel->flags & IEEE80211_CHAN_DISABLED)
- 		return NULL;
--	return channel;
-+	return alt_channel;
- }
- 
- /* Returned bss is reference counted and must be cleaned up appropriately. */
-@@ -1112,7 +1151,8 @@ cfg80211_inform_bss_data(struct wiphy *wiphy,
- 		    (data->signal < 0 || data->signal > 100)))
- 		return NULL;
- 
--	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan);
-+	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan,
-+					   data->scan_width);
- 	if (!channel)
- 		return NULL;
- 
-@@ -1210,7 +1250,7 @@ cfg80211_inform_bss_frame_data(struct wiphy *wiphy,
- 		return NULL;
- 
- 	channel = cfg80211_get_bss_channel(wiphy, mgmt->u.beacon.variable,
--					   ielen, data->chan);
-+					   ielen, data->chan, data->scan_width);
- 	if (!channel)
- 		return NULL;
- 
+ 	if (acked || noack_success) {
 -- 
 2.17.1
 
