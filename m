@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D0DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4EBC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F2B921470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F39A02145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:12:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORp1Ql0C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2B921470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLmnfMG+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39A02145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbeJPMBC (ORCPT
+        id S1727809AbeJPMBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:01:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47774 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:01:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727593AbeJPMBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:01:02 -0400
+        id S1727593AbeJPMBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05CE521476;
-        Tue, 16 Oct 2018 04:12:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8628920869;
+        Tue, 16 Oct 2018 04:12:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663159;
-        bh=/kTS/enFDEyigw1n7Z/THJDyOjInKIVSC+hEKNOUO/M=;
+        s=default; t=1539663162;
+        bh=XyePttqO5ci93MoZpPcXXmtl0FDXoQlMhLSURljSlfo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ORp1Ql0CHqaXBjft0kvlZKlW3V5cf/iaiSFAY9+tJ+I5YqoLKNkGrmRZ9OgBVs1s4
-         QAkwTRT4qalX6+PRIV5CT5r2d9EdcE7/VNst23mrb4NYVfDweFS+o6CgCu1TzWCeAR
-         b9jc2pJS9jDfxLb/1LsoCTQAkgXSZT3as/5U0XnY=
+        b=bLmnfMG++2M7d3U6NHB0j8a4dWm5ozTyVKPmhAfkicTOwJ8zIQC9tMIrmfSIAehSv
+         CZXsZ+SLAaqQMOdLYmKm0Kg1YOH7mYfqotuijvev+LFZqmRog9MnTHFs7OgVCW6s7H
+         PtEZKumhiINVs7Xzf+efsKGZjiJIjne8b1YiS19I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     David Ahern <dsahern@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 016/100] netfilter: bridge: Don't sabotage nf_hook calls from an l3mdev
-Date:   Tue, 16 Oct 2018 00:10:57 -0400
-Message-Id: <20181016041221.135528-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 019/100] ARM: dts: BCM63xx: Fix incorrect interrupt specifiers
+Date:   Tue, 16 Oct 2018 00:11:00 -0400
+Message-Id: <20181016041221.135528-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -52,55 +51,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Ahern <dsahern@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit a173f066c7cfc031acb8f541708041e009fc9812 ]
+[ Upstream commit 3ab97942d0213b6583a5408630a8cbbfbf54730f ]
 
-For starters, the bridge netfilter code registers operations that
-are invoked any time nh_hook is called. Specifically, ip_sabotage_in
-watches for nested calls for NF_INET_PRE_ROUTING when a bridge is in
-the stack.
+A number of our interrupts were incorrectly specified, fix both the PPI
+and SPI interrupts to be correct.
 
-Packet wise, the bridge netfilter hook runs first. br_nf_pre_routing
-allocates nf_bridge, sets in_prerouting to 1 and calls NF_HOOK for
-NF_INET_PRE_ROUTING. It's finish function, br_nf_pre_routing_finish,
-then resets in_prerouting flag to 0 and the packet continues up the
-stack. The packet eventually makes it to the VRF driver and it invokes
-nf_hook for NF_INET_PRE_ROUTING in case any rules have been added against
-the vrf device.
-
-Because of the registered operations the call to nf_hook causes
-ip_sabotage_in to be invoked. That function sees the nf_bridge on the
-skb and that in_prerouting is not set. Thinking it is an invalid nested
-call it steals (drops) the packet.
-
-Update ip_sabotage_in to recognize that the bridge or one of its upper
-devices (e.g., vlan) can be enslaved to a VRF (L3 master device) and
-allow the packet to go through the nf_hook a second time.
-
-Fixes: 73e20b761acf ("net: vrf: Add support for PREROUTING rules on vrf device")
-Reported-by: D'Souza, Nelson <ndsouza@ciena.com>
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: b5762cacc411 ("ARM: bcm63138: add NAND DT support")
+Fixes: 46d4bca0445a ("ARM: BCM63XX: add BCM63138 minimal Device Tree")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/br_netfilter_hooks.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/bcm63138.dtsi | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/net/bridge/br_netfilter_hooks.c b/net/bridge/br_netfilter_hooks.c
-index 9b16eaf33819..58240cc185e7 100644
---- a/net/bridge/br_netfilter_hooks.c
-+++ b/net/bridge/br_netfilter_hooks.c
-@@ -834,7 +834,8 @@ static unsigned int ip_sabotage_in(void *priv,
- 				   struct sk_buff *skb,
- 				   const struct nf_hook_state *state)
- {
--	if (skb->nf_bridge && !skb->nf_bridge->in_prerouting) {
-+	if (skb->nf_bridge && !skb->nf_bridge->in_prerouting &&
-+	    !netif_is_l3_master(skb->dev)) {
- 		state->okfn(state->net, state->sk, skb);
- 		return NF_STOLEN;
- 	}
+diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
+index 43ee992ccdcf..6df61518776f 100644
+--- a/arch/arm/boot/dts/bcm63138.dtsi
++++ b/arch/arm/boot/dts/bcm63138.dtsi
+@@ -106,21 +106,23 @@
+ 		global_timer: timer@1e200 {
+ 			compatible = "arm,cortex-a9-global-timer";
+ 			reg = <0x1e200 0x20>;
+-			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_PPI 11 IRQ_TYPE_EDGE_RISING>;
+ 			clocks = <&axi_clk>;
+ 		};
+ 
+ 		local_timer: local-timer@1e600 {
+ 			compatible = "arm,cortex-a9-twd-timer";
+ 			reg = <0x1e600 0x20>;
+-			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_EDGE_RISING)>;
+ 			clocks = <&axi_clk>;
+ 		};
+ 
+ 		twd_watchdog: watchdog@1e620 {
+ 			compatible = "arm,cortex-a9-twd-wdt";
+ 			reg = <0x1e620 0x20>;
+-			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
+ 		armpll: armpll {
+@@ -158,7 +160,7 @@
+ 		serial0: serial@600 {
+ 			compatible = "brcm,bcm6345-uart";
+ 			reg = <0x600 0x1b>;
+-			interrupts = <GIC_SPI 32 0>;
++			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&periph_clk>;
+ 			clock-names = "periph";
+ 			status = "disabled";
+@@ -167,7 +169,7 @@
+ 		serial1: serial@620 {
+ 			compatible = "brcm,bcm6345-uart";
+ 			reg = <0x620 0x1b>;
+-			interrupts = <GIC_SPI 33 0>;
++			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&periph_clk>;
+ 			clock-names = "periph";
+ 			status = "disabled";
+@@ -180,7 +182,7 @@
+ 			reg = <0x2000 0x600>, <0xf0 0x10>;
+ 			reg-names = "nand", "nand-int-base";
+ 			status = "disabled";
+-			interrupts = <GIC_SPI 38 0>;
++			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "nand";
+ 		};
+ 
 -- 
 2.17.1
 
