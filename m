@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA03C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF0AC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 668B121476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 042A521476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:14:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wTTa6mYC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 668B121476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9BpW4n3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 042A521476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729196AbeJQBGG (ORCPT
+        id S1729211AbeJQBGJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:06:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49832 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:06:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbeJQBGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:06:06 -0400
+        id S1727007AbeJQBGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:06:08 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69D4E2098A;
-        Tue, 16 Oct 2018 17:14:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E0072098A;
+        Tue, 16 Oct 2018 17:14:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710083;
-        bh=sOJ/UajUmnEGoiBtN86Khg9UtFclB4ByvkLT8VnK2XI=;
+        s=default; t=1539710085;
+        bh=9cmA7ld7gAq4FCLBrfaXBHrLXnj/JhYbG1/3TNIZAd8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wTTa6mYC78kXhuB1rN76m1/U6b9HFcjI+cACexiZ7OuqrLJlryF642RRd6qCTmtOs
-         +OKmRYQr7v01ZcojNKP4C6y2e5hcoNkKxfgibD3ukuQsKOVuVtkx55Z1O/Nc3EKMnL
-         ZFlRvJraOkeSUZJS9SW6ymFjznRHgjprsDkRmk28=
+        b=p9BpW4n3vKRYMt78fBCoDtEhvGXBup7zOMbXQI8e5NiKLZjL+tF3fN6y65tN9aJqY
+         R8KKZq8uxEhJLS9X26X+JpadyMfrpPsspytZM2Vfhpd+GD+mXGzgnx0esWF7KLg2mq
+         jHsjo9LegBFULwUPSSGftAc0TZ+8+LMwxrQXHncc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>,
+        stable@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 097/135] net: ethernet: ti: add missing GENERIC_ALLOCATOR dependency
-Date:   Tue, 16 Oct 2018 19:05:27 +0200
-Message-Id: <20181016170522.053263682@linuxfoundation.org>
+Subject: [PATCH 4.18 098/135] net: macb: disable scatter-gather for macb on sama5d3
+Date:   Tue, 16 Oct 2018 19:05:28 +0200
+Message-Id: <20181016170522.102293587@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -62,47 +63,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Corentin Labbe <clabbe@baylibre.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-[ Upstream commit f025571e96caa95ffc3c1792f762a584893de582 ]
+[ Upstream commit eb4ed8e2d7fecb5f40db38e4498b9ee23cddf196 ]
 
-This patch mades TI_DAVINCI_CPDMA select GENERIC_ALLOCATOR.
-without that, the following sparc64 build failure happen
+Create a new configuration for the sama5d3-macb new compatibility string.
+This configuration disables scatter-gather because we experienced lock down
+of the macb interface of this particular SoC under very high load.
 
-drivers/net/ethernet/ti/davinci_cpdma.o: In function `cpdma_check_free_tx_desc':
-(.text+0x278): undefined reference to `gen_pool_avail'
-drivers/net/ethernet/ti/davinci_cpdma.o: In function `cpdma_chan_submit':
-(.text+0x340): undefined reference to `gen_pool_alloc'
-(.text+0x5c4): undefined reference to `gen_pool_free'
-drivers/net/ethernet/ti/davinci_cpdma.o: In function `__cpdma_chan_free':
-davinci_cpdma.c:(.text+0x64c): undefined reference to `gen_pool_free'
-drivers/net/ethernet/ti/davinci_cpdma.o: In function `cpdma_desc_pool_destroy.isra.6':
-davinci_cpdma.c:(.text+0x17ac): undefined reference to `gen_pool_size'
-davinci_cpdma.c:(.text+0x17b8): undefined reference to `gen_pool_avail'
-davinci_cpdma.c:(.text+0x1824): undefined reference to `gen_pool_size'
-davinci_cpdma.c:(.text+0x1830): undefined reference to `gen_pool_avail'
-drivers/net/ethernet/ti/davinci_cpdma.o: In function `cpdma_ctlr_create':
-(.text+0x19f8): undefined reference to `devm_gen_pool_create'
-(.text+0x1a90): undefined reference to `gen_pool_add_virt'
-Makefile:1011: recipe for target 'vmlinux' failed
-
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ti/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/cadence/macb_main.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/net/ethernet/ti/Kconfig
-+++ b/drivers/net/ethernet/ti/Kconfig
-@@ -41,6 +41,7 @@ config TI_DAVINCI_MDIO
- config TI_DAVINCI_CPDMA
- 	tristate "TI DaVinci CPDMA Support"
- 	depends on ARCH_DAVINCI || ARCH_OMAP2PLUS || COMPILE_TEST
-+	select GENERIC_ALLOCATOR
- 	---help---
- 	  This driver supports TI's DaVinci CPDMA dma engine.
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -3765,6 +3765,13 @@ static const struct macb_config at91sam9
+ 	.init = macb_init,
+ };
  
++static const struct macb_config sama5d3macb_config = {
++	.caps = MACB_CAPS_SG_DISABLED
++	      | MACB_CAPS_USRIO_HAS_CLKEN | MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII,
++	.clk_init = macb_clk_init,
++	.init = macb_init,
++};
++
+ static const struct macb_config pc302gem_config = {
+ 	.caps = MACB_CAPS_SG_DISABLED | MACB_CAPS_GIGABIT_MODE_AVAILABLE,
+ 	.dma_burst_length = 16,
+@@ -3832,6 +3839,7 @@ static const struct of_device_id macb_dt
+ 	{ .compatible = "cdns,gem", .data = &pc302gem_config },
+ 	{ .compatible = "atmel,sama5d2-gem", .data = &sama5d2_config },
+ 	{ .compatible = "atmel,sama5d3-gem", .data = &sama5d3_config },
++	{ .compatible = "atmel,sama5d3-macb", .data = &sama5d3macb_config },
+ 	{ .compatible = "atmel,sama5d4-gem", .data = &sama5d4_config },
+ 	{ .compatible = "cdns,at91rm9200-emac", .data = &emac_config },
+ 	{ .compatible = "cdns,emac", .data = &emac_config },
 
 
