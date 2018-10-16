@@ -2,123 +2,183 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 197D8C5ACCD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AF2C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCEAC214C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D0832148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e414aq1P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCEAC214C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yx0djIaN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D0832148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbeJQHq6 (ORCPT
+        id S1727632AbeJQHrB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:46:58 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:36147 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727583AbeJQHq5 (ORCPT
+        Wed, 17 Oct 2018 03:47:01 -0400
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:46655 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727605AbeJQHrA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:46:57 -0400
-Received: by mail-ua1-f66.google.com with SMTP id b3so4081898uak.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:08 -0700 (PDT)
+        Wed, 17 Oct 2018 03:47:00 -0400
+Received: by mail-qk1-f201.google.com with SMTP id p128-v6so25870119qke.13
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=17qu82h3OB19L2KrrszeKs/sjgDAuoCFgIzWO1FpFYw=;
-        b=e414aq1PbGeLPTHEABkD+t1BtIDpAdIRVRkNRzK3EdhxE3l284xVPxE1+nE92jo9Tu
-         oj7OM4owlGaNeP5ja+pk66kFjtnrpRXNMi9KqTeBZZJRItzWbbqchWiahPHkNPVuJgkS
-         tvWfQTcRi3Pjh/6H9tH7njXJ88gv4DBbmUAD0=
+        bh=d9RWd340hsvL8f+86Hq8ZYiuwlmFywi6LURyY+fbx2M=;
+        b=Yx0djIaN7qGsKbKVWcYTEqjXtuCt5mJzBG+llgMyRaDxHH9Nk2+9u04slBVXvfc3wS
+         WWJHLZ4Cy0qql1s9KGSUtvIF+PX0aE7H32+1XHTQwloMetji6MM1GrYxeoWsHDNEyHme
+         26sRpezs791PHz4VTxdpWVRBV4zsZkpnI+T4tVqgNpfWT3JVKRx9VCbofy90SGD86rNZ
+         CVw0KoKkl9sSfkCpgdn4xhVAM4qWEBIHZA6zZhx9yOE/i8xtzOj5GcVO+gq7diSY3OG3
+         3aJXOMLC0d6eKbLtdgSbwRXBJ4WRK0n7XsIsJ8o1UnMToMe3XRTQjSJFXuGQOvz9UjCu
+         IUHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=17qu82h3OB19L2KrrszeKs/sjgDAuoCFgIzWO1FpFYw=;
-        b=ONhQ64c4DaeoOBVZ1dhzekb0+6QNaOYI+wBXhHEeogR9wsj8KAxZbCJBkodyTQcfLg
-         68yaXTgfywEIGITFvoOjlS5f9xQdRlO3yl+xiPahBdtz7l6QzwlXtY+RoYsf5JeNiC3L
-         TL0xuuMrescMKMjQxyiwXcV/zuTCAfVG1x71TDhwyBtQOr8eBa/W5aed81MyOZxwErHu
-         zHqEXEWkamjrRfgHW2xQTJ5TFblddIp/DIJvvN7xPpjYjjOP7ZeXLiTww0GYRaftYwPx
-         T00zBFdDXKwKMdf148e4uw6yV5RPH4zRG0ZJ7xfx1xp0Wvvtj7r3AOL5Wo9reo/00s/0
-         W5+w==
-X-Gm-Message-State: ABuFfohOMeUih5vlMms5hi6+OLeXirqiRcPYcXvz043OyXh1USj50+ZJ
-        gLxn3C+CeXQbWV6J1ESO1IGMo7bL+YY=
-X-Google-Smtp-Source: ACcGV60G9x53fFhy05mAepwaDCGdbl/+gVvR5oWKizsIWxiyjzAWArNvqTVrVMtiQzDsuTDAHKX9FQ==
-X-Received: by 2002:ab0:5e8f:: with SMTP id y15mr9860062uag.21.1539734048164;
-        Tue, 16 Oct 2018 16:54:08 -0700 (PDT)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
-        by smtp.gmail.com with ESMTPSA id w39sm2497356uac.0.2018.10.16.16.54.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 16:54:07 -0700 (PDT)
-Received: by mail-vk1-f177.google.com with SMTP id h20-v6so5899433vke.7
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:06 -0700 (PDT)
-X-Received: by 2002:a1f:310c:: with SMTP id x12mr5717814vkx.79.1539734046397;
- Tue, 16 Oct 2018 16:54:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181013005504.46399-1-briannorris@chromium.org> <20181013005504.46399-4-briannorris@chromium.org>
-In-Reply-To: <20181013005504.46399-4-briannorris@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 16 Oct 2018 16:53:52 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XFUeyYZ-LQwYHeQH=b0kBf_wM5ZywpQDS74+_zqeDhEw@mail.gmail.com>
-Message-ID: <CAD=FV=XFUeyYZ-LQwYHeQH=b0kBf_wM5ZywpQDS74+_zqeDhEw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] ath10k: snoc: fix unbalanced clock error handling
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     kvalo@qca.qualcomm.com, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org,
-        Govind Singh <govinds@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=d9RWd340hsvL8f+86Hq8ZYiuwlmFywi6LURyY+fbx2M=;
+        b=Ue9NyxMK2O02s/Wg6BA9psRtOX7heql7x8BX+wg9jqegaJkpO6ViGJN7KnuKfQMzMV
+         PD7EyNrw+NJe1LnHmguQWYXTrT7HvXodb25cF+4qnlOtWutpE7DJf0DmPoTrpXurAlkq
+         dv/mGW8aqmUx+OkeD4WcTH8cyZVWsgzi1FD6lHscrAZUJYnb0/KbZE5mp8rZ3+YaNtH4
+         zl2hvMzQBM2CMwte9AR7K2JXP4U+WebOQaZqUpgACjN/SRQmuoZRoVxxDrRQhqcVYuHt
+         J9s3/q1r+cruyD2DuHQ0w+YhyXQ8PxLw5KRuvwE3NXoGjn4/5O3CRs5xb+jGO3CiAweu
+         p+0Q==
+X-Gm-Message-State: ABuFfog/Q+Ol+cVQJCJB5WqSlsbAYNwO95dAodXdNImrfG02Jy0QaGOI
+        N6kSZdrivP3NHZP9ASsKiRQnPX+Qn8MmB5+NdypMyw==
+X-Google-Smtp-Source: ACcGV60dfjopFdXI57rHANuj2fTuNIbfr0UGtI22ZYmJqsrCuYMIb093FrDiq5/oUqMydOfiaVQ+Y58DAxIqLJV1QYBy9g==
+X-Received: by 2002:ac8:8d4:: with SMTP id y20-v6mr20143675qth.9.1539734050869;
+ Tue, 16 Oct 2018 16:54:10 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 16:50:59 -0700
+In-Reply-To: <20181016235120.138227-1-brendanhiggins@google.com>
+Message-Id: <20181016235120.138227-11-brendanhiggins@google.com>
+Mime-Version: 1.0
+References: <20181016235120.138227-1-brendanhiggins@google.com>
+X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
+Subject: [RFC v1 10/31] kunit: test: added concept of initcalls
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
+        shuah@kernel.org
+Cc:     joel@jms.id.au, mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
+        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
+        julia.lawall@lip6.fr, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        Brendan Higgins <brendanhiggins@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Fri, Oct 12, 2018 at 5:55 PM Brian Norris <briannorris@chromium.org> wrote:
->
-> Similar to regulator error handling, we should only start tearing down
-> the 'i - 1' clock when clock 'i' fails to enable. Otherwise, we might
-> end up with an unbalanced clock, where we never successfully enabled the
-> clock, but we try to disable it anyway.
->
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+Added a way to add plugins that require a test module to be loaded
+during initialization.
 
-Presumably you could have a Fixes tag just to help folks, like:
+Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+---
+ include/kunit/test.h | 19 +++++++++++++++++++
+ kunit/test.c         | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 48 insertions(+)
 
-Fixes: a6a793f98786 ("ath10k: vote for hardware resources for WCN3990")
+diff --git a/include/kunit/test.h b/include/kunit/test.h
+index 49a9d6e43992c..58dbe2aee423f 100644
+--- a/include/kunit/test.h
++++ b/include/kunit/test.h
+@@ -152,6 +152,12 @@ struct test_module {
+ 	struct test_case *test_cases;
+ };
+ 
++struct test_initcall {
++	struct list_head node;
++	int (*init)(struct test_initcall *this, struct test *test);
++	void (*exit)(struct test_initcall *this);
++};
++
+ /**
+  * struct test - represents a running instance of a test.
+  * @priv: for user to store arbitrary data. Commonly used to pass data created
+@@ -183,6 +189,19 @@ int test_init_test(struct test *test, const char *name);
+ 
+ int test_run_tests(struct test_module *module);
+ 
++void test_install_initcall(struct test_initcall *initcall);
++
++#define test_pure_initcall(fn) postcore_initcall(fn)
++
++#define test_register_initcall(initcall) \
++		static int register_test_initcall_##initcall(void) \
++		{ \
++			test_install_initcall(&initcall); \
++			\
++			return 0; \
++		} \
++		test_pure_initcall(register_test_initcall_##initcall)
++
+ /**
+  * module_test() - used to register a &struct test_module with KUnit.
+  * @module: a statically allocated &struct test_module.
+diff --git a/kunit/test.c b/kunit/test.c
+index f89cfaaf5eb79..9737465fb0568 100644
+--- a/kunit/test.c
++++ b/kunit/test.c
+@@ -53,6 +53,19 @@ static void test_set_death_test(struct test *test, bool death_test)
+ 	spin_unlock_irqrestore(&test->lock, flags);
+ }
+ 
++struct test_global_context {
++	struct list_head initcalls;
++};
++
++static struct test_global_context test_global_context = {
++	.initcalls = LIST_HEAD_INIT(test_global_context.initcalls),
++};
++
++void test_install_initcall(struct test_initcall *initcall)
++{
++	list_add_tail(&initcall->node, &test_global_context.initcalls);
++}
++
+ static int test_vprintk_emit(const struct test *test,
+ 			     int level,
+ 			     const char *fmt,
+@@ -130,8 +143,18 @@ static void test_run_case_internal(struct test *test,
+ 				   struct test_module *module,
+ 				   struct test_case *test_case)
+ {
++	struct test_initcall *initcall;
+ 	int ret;
+ 
++	list_for_each_entry(initcall, &test_global_context.initcalls, node) {
++		ret = initcall->init(initcall, test);
++		if (ret) {
++			test_err(test, "failed to initialize: %d", ret);
++			test->success = false;
++			return;
++		}
++	}
++
+ 	if (module->init) {
+ 		ret = module->init(test);
+ 		if (ret) {
+@@ -146,6 +169,12 @@ static void test_run_case_internal(struct test *test,
+ 
+ static void test_case_internal_cleanup(struct test *test)
+ {
++	struct test_initcall *initcall;
++
++	list_for_each_entry(initcall, &test_global_context.initcalls, node) {
++		initcall->exit(initcall);
++	}
++
+ 	test_cleanup(test);
+ }
+ 
+-- 
+2.19.1.331.ge82ca0e54c-goog
 
-> ---
->  drivers/net/wireless/ath/ath10k/snoc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
-> index 5a8e87339df2..a835599a8d55 100644
-> --- a/drivers/net/wireless/ath/ath10k/snoc.c
-> +++ b/drivers/net/wireless/ath/ath10k/snoc.c
-> @@ -1470,7 +1470,7 @@ static int ath10k_snoc_clk_init(struct ath10k *ar)
->         return 0;
->
->  err_clock_config:
-> -       for (; i >= 0; i--) {
-> +       for (i = i - 1; i >= 0; i--) {
-
-I see no problem with this and it's a good / easy to backport fix.
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
-For extra credit, though, you could change this to not duplicate the
-"clk_bulk" APIs and just use 'em.  I already mentioned to someone else
-that maybe the clk_bulk APIs could probably be improved to handle
-optional clocks, but I don't think anyone has posted a patch for it.
-Bonus points if you remember that "NULL" is a valid clock so you
-really only need special case code in clk_bulk_get().  :-P
-
-
--Doug
