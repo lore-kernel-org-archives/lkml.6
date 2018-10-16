@@ -2,94 +2,125 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5EAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4901DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20C1D208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:39:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C1D208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 0A73620869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:40:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sbnB9x9b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A73620869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbeJPK1w (ORCPT
+        id S1727365AbeJPK2H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 06:27:52 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:41624 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbeJPK1w (ORCPT
+        Tue, 16 Oct 2018 06:28:07 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33766 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727043AbeJPK1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 06:27:52 -0400
-Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id ABFA21449BE5F;
-        Mon, 15 Oct 2018 19:39:47 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 19:39:45 -0700 (PDT)
-Message-Id: <20181015.193945.304905055642913000.davem@davemloft.net>
-To:     gregkh@linuxfoundation.org
-CC:     akpm@linux-foundation.org, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Sparc
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 15 Oct 2018 19:39:48 -0700 (PDT)
+        Tue, 16 Oct 2018 06:27:33 -0400
+Received: by mail-pf1-f193.google.com with SMTP id 78-v6so8272593pfq.0;
+        Mon, 15 Oct 2018 19:39:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=PMEoU3Gz26JMyroIsJaDweM2uFKnZxU+TruAPOzAvDQ=;
+        b=sbnB9x9bvtv7VDSSAMjGXcvQrF/l5xTHVstk6hAqmIcw9mpARCvX+OSlzY+cTE4Mma
+         KMS4zR9x4FmFVDJbdrcV0X/GNMauQwLPdWKTne2JC5vP7p90HgWviUHwTT1y0BR1alBK
+         VZpkPZmiV/8TnDwQnAO6RGFeBtaMPw7dy9kdXbl7p53JOUCFYuu6PSINQKYFi5vgNar5
+         LpXEQC+MMbhR5Zo6Hb6Gqao0AwgKg9DiysMQDx6VzLtLrkgijOaat+k7kmMI/rQu60vY
+         msULaOcHlWZh3Hlzr/bop9t/+HfHVn3nizZioIcXc94bw6K9n/vgaB9TrjdlP+AIu4gf
+         1hsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=PMEoU3Gz26JMyroIsJaDweM2uFKnZxU+TruAPOzAvDQ=;
+        b=Ub898HN4Ci4ED2fSZEJnb1ax6oPK4hA6UB7yS8ZKfKFOdQhjYsajl9uXP1E/Q8xBAb
+         iAq1OXS+AClSTn0UzEJLTJWhdNJcBrX/KG1+9PvivbuQvyxbgwZthE0GNIREBSRR3GSU
+         ayrOtokXG+p6h5GHcpGJpg/TaxXmfXeBt9H4cLfRIfeQooR4kmH5eMVwOGH4f27GnUW7
+         yx0dKTZFtoV9I0GS9Nf9p8EpfjPqE8DCOCMZMvIbW6kfjUVYftmYzlmAXkJTWhwyYo9W
+         ayOLBI5z0dU1u9EAbPDgPjP3knXNdkLXVqxWUMMk4TSqYQHzd18fHuxoGQuVOn1fXm//
+         cVpg==
+X-Gm-Message-State: ABuFfohu7ZopGmt/Dm997J0tgmv1xVAkacj5NhCnclfhzUnSrh3/X6/Q
+        XvZKONmYuCHkxO1jQmMb2jvkVWeM
+X-Google-Smtp-Source: ACcGV60FD4fY0+Jn0o7r8yLIuM412dd62zBkLv/B/k5hkURgwi0u29Z2lyncfamSUpkqJziuE7nGZw==
+X-Received: by 2002:a62:ff09:: with SMTP id b9-v6mr20045355pfn.46.1539657568819;
+        Mon, 15 Oct 2018 19:39:28 -0700 (PDT)
+Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id u79-v6sm18620287pfd.117.2018.10.15.19.39.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 15 Oct 2018 19:39:28 -0700 (PDT)
+From:   frowand.list@gmail.com
+To:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: [PATCH v4 14/18] of: unittest: remove unused of_unittest_apply_overlay() argument
+Date:   Mon, 15 Oct 2018 19:37:34 -0700
+Message-Id: <1539657458-24401-15-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
+References: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Frank Rowand <frank.rowand@sony.com>
 
-1) Revert the %pOF change, it causes regressions.
+Argument unittest_nr is not used in of_unittest_apply_overlay(),
+remove it.
 
-2) Wire up io_pgetevents().
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+---
+ drivers/of/unittest.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-3) Fix perf events on single-PCR sparc64 cpus.
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index efd9c947f192..6d80f474c8f2 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -1419,8 +1419,7 @@ static void of_unittest_destroy_tracked_overlays(void)
+ 	} while (defers > 0);
+ }
+ 
+-static int __init of_unittest_apply_overlay(int overlay_nr, int unittest_nr,
+-		int *overlay_id)
++static int __init of_unittest_apply_overlay(int overlay_nr, int *overlay_id)
+ {
+ 	const char *overlay_name;
+ 
+@@ -1453,7 +1452,7 @@ static int __init of_unittest_apply_overlay_check(int overlay_nr,
+ 	}
+ 
+ 	ovcs_id = 0;
+-	ret = of_unittest_apply_overlay(overlay_nr, unittest_nr, &ovcs_id);
++	ret = of_unittest_apply_overlay(overlay_nr, &ovcs_id);
+ 	if (ret != 0) {
+ 		/* of_unittest_apply_overlay already called unittest() */
+ 		return ret;
+@@ -1489,7 +1488,7 @@ static int __init of_unittest_apply_revert_overlay_check(int overlay_nr,
+ 
+ 	/* apply the overlay */
+ 	ovcs_id = 0;
+-	ret = of_unittest_apply_overlay(overlay_nr, unittest_nr, &ovcs_id);
++	ret = of_unittest_apply_overlay(overlay_nr, &ovcs_id);
+ 	if (ret != 0) {
+ 		/* of_unittest_apply_overlay already called unittest() */
+ 		return ret;
+-- 
+Frank Rowand <frank.rowand@sony.com>
 
-4) Do proper perf event throttling like arm and x86.
-
-Please pull, thanks a lot!
-
-The following changes since commit 0854ba5ff5c938307cd783e996b62c83f1ce923b:
-
-  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc (2018-10-08 16:25:01 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git 
-
-for you to fetch changes up to a06ecbfe784ceb22e56ae3cd75fe77138e7cfa0b:
-
-  Revert "sparc: Convert to using %pOFn instead of device_node.name" (2018-10-15 18:32:54 -0700)
-
-----------------------------------------------------------------
-David S. Miller (6):
-      sparc: Wire up io_pgetevents system call.
-      sparc: Fix single-pcr perf event counter management.
-      sparc: Throttle perf events properly.
-      sparc64: Make proc_id signed.
-      sparc64: Set %l4 properly on trap return after handling signals.
-      Revert "sparc: Convert to using %pOFn instead of device_node.name"
-
-Kees Cook (1):
-      sunvdc: Remove VLA usage
-
- arch/sparc/include/asm/cpudata_64.h  |  2 +-
- arch/sparc/include/uapi/asm/unistd.h |  3 ++-
- arch/sparc/kernel/auxio_64.c         |  4 ++--
- arch/sparc/kernel/perf_event.c       | 26 ++++++++++++++++++++++----
- arch/sparc/kernel/power.c            |  4 ++--
- arch/sparc/kernel/prom_32.c          | 26 +++++++++++++-------------
- arch/sparc/kernel/prom_64.c          | 68 ++++++++++++++++++++++++++++++++++----------------------------------
- arch/sparc/kernel/rtrap_64.S         |  3 ++-
- arch/sparc/kernel/systbls_32.S       |  2 +-
- arch/sparc/kernel/systbls_64.S       |  4 ++--
- drivers/block/sunvdc.c               | 14 ++++++++++----
- 11 files changed, 91 insertions(+), 65 deletions(-)
