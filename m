@@ -2,247 +2,76 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16529C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1A1C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAF9121477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:16:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAF9121477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 75B9C21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 18:16:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75B9C21471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbeJQCHt (ORCPT
+        id S1727536AbeJQCHy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 22:07:49 -0400
-Received: from gateway33.websitewelcome.com ([192.185.146.210]:39713 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727097AbeJQCHt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 22:07:49 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 6FFCF57FE58
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 13:14:04 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id CTqngZKgrtz4jCTqwgh3pz; Tue, 16 Oct 2018 13:14:03 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:46738 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gCTqm-001Ig0-Hj; Tue, 16 Oct 2018 13:13:48 -0500
-Date:   Tue, 16 Oct 2018 20:13:46 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Don Brace <don.brace@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Willem Riede <osst@riede.org>,
-        Kai =?iso-8859-1?Q?M=E4kisara?= <Kai.Makisara@kolumbus.fi>
-Cc:     esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, osst-users@lists.sourceforge.net,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v2] scsi: mark expected switch fall-throughs
-Message-ID: <20181016181346.GA26469@embeddedor.com>
+        Tue, 16 Oct 2018 22:07:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50504 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727097AbeJQCHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 22:07:53 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFE3B21471;
+        Tue, 16 Oct 2018 18:16:11 +0000 (UTC)
+Date:   Tue, 16 Oct 2018 14:16:10 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Geliang Tang <geliangtang@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pramod Gurav <gpramod@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
+Message-ID: <20181016141610.639b9000@gandalf.local.home>
+In-Reply-To: <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
+References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
+        <20181016112928.4b52afb5@gandalf.local.home>
+        <8c2fb318-813d-81f1-1e2f-cdbc68353077@codeaurora.org>
+        <20181016125721.236ada82@gandalf.local.home>
+        <cab1be04-be06-6f53-7fe9-159936893fc8@codeaurora.org>
+        <20181016134803.1b9260c1@gandalf.local.home>
+        <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gCTqm-001Ig0-Hj
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:46738
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
 
-Addresses-Coverity-ID: 1195463 ("Missing break in switch")
-Addresses-Coverity-ID: 1195464 ("Missing break in switch")
-Addresses-Coverity-ID: 1195465 ("Missing break in switch")
-Addresses-Coverity-ID: 1195466 ("Missing break in switch")
-Addresses-Coverity-ID: 114973 ("Missing break in switch")
-Addresses-Coverity-ID: 114983 ("Missing break in switch")
-Addresses-Coverity-ID: 114984 ("Missing break in switch")
-Addresses-Coverity-ID: 114985 ("Missing break in switch")
-Addresses-Coverity-ID: 114988 ("Missing break in switch")
-Addresses-Coverity-ID: 114994 ("Missing break in switch")
-Addresses-Coverity-ID: 114995 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v2:
- - Remove drivers/scsi/ips.c from this patch, as it turned out to be
-   an actual bug in that driver. So, a separate patch to address such
-   bug has already been sent:
-	
-	https://lore.kernel.org/patchwork/patch/1000333/
+[ Removed ivan.ivanov@linaro.org due to getting mail delivery errors ]
 
- drivers/scsi/hpsa.c | 5 +++++
- drivers/scsi/osst.c | 6 ++++++
- drivers/scsi/ppa.c  | 1 +
- drivers/scsi/st.c   | 4 ++++
- 4 files changed, 16 insertions(+)
+On Tue, 16 Oct 2018 23:35:00 +0530
+Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
 
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index f903983..fb6a356 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -4662,6 +4662,7 @@ static int fixup_ioaccel_cdb(u8 *cdb, int *cdb_len)
- 	case WRITE_6:
- 	case WRITE_12:
- 		is_write = 1;
-+		/* fall through */
- 	case READ_6:
- 	case READ_12:
- 		if (*cdb_len == 6) {
-@@ -5092,6 +5093,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
- 	switch (cmd->cmnd[0]) {
- 	case WRITE_6:
- 		is_write = 1;
-+		/* fall through */
- 	case READ_6:
- 		first_block = (((cmd->cmnd[1] & 0x1F) << 16) |
- 				(cmd->cmnd[2] << 8) |
-@@ -5102,6 +5104,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
- 		break;
- 	case WRITE_10:
- 		is_write = 1;
-+		/* fall through */
- 	case READ_10:
- 		first_block =
- 			(((u64) cmd->cmnd[2]) << 24) |
-@@ -5114,6 +5117,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
- 		break;
- 	case WRITE_12:
- 		is_write = 1;
-+		/* fall through */
- 	case READ_12:
- 		first_block =
- 			(((u64) cmd->cmnd[2]) << 24) |
-@@ -5128,6 +5132,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
- 		break;
- 	case WRITE_16:
- 		is_write = 1;
-+		/* fall through */
- 	case READ_16:
- 		first_block =
- 			(((u64) cmd->cmnd[2]) << 56) |
-diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
-index 7a1a1ed..8af608d 100644
---- a/drivers/scsi/osst.c
-+++ b/drivers/scsi/osst.c
-@@ -216,12 +216,14 @@ static void osst_analyze_sense(struct osst_request *SRpnt, struct st_cmdstatus *
- 		switch (sense[0] & 0x7f) {
- 		case 0x71:
- 			s->deferred = 1;
-+			/* fall through */
- 		case 0x70:
- 			s->fixed_format = 1;
- 			s->flags = sense[2] & 0xe0;
- 			break;
- 		case 0x73:
- 			s->deferred = 1;
-+			/* fall through */
- 		case 0x72:
- 			s->fixed_format = 0;
- 			ucp = scsi_sense_desc_find(sense, SCSI_SENSE_BUFFERSIZE, 4);
-@@ -591,6 +593,7 @@ static void osst_init_aux(struct osst_tape * STp, int frame_type, int frame_seq_
- 		dat->dat_list[0].flags    = frame_type==OS_FRAME_TYPE_MARKER?
- 							OS_DAT_FLAGS_MARK:OS_DAT_FLAGS_DATA;
- 		dat->dat_list[0].reserved = 0;
-+		/* fall through */
- 	  case	OS_FRAME_TYPE_EOD:
- 		aux->update_frame_cntr    = htonl(0);
- 		par->partition_num        = OS_DATA_PARTITION;
-@@ -4086,6 +4089,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
- 	switch (cmd_in) {
- 	 case MTFSFM:
- 		chg_eof = 0; /* Changed from the FSF after this */
-+		/* fall through */
- 	 case MTFSF:
- 		if (STp->raw)
- 		   return (-EIO);
-@@ -4101,6 +4105,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
- 
- 	 case MTBSF:
- 		chg_eof = 0; /* Changed from the FSF after this */
-+		/* fall through */
- 	 case MTBSFM:
- 		if (STp->raw)
- 		   return (-EIO);
-@@ -4312,6 +4317,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
- 					   name, STp->block_size);
- 			 return 0;
- 		 }
-+		/* fall through */
- 	 case MTSETDENSITY:       /* Set tape density */
- 	 case MTSETDRVBUFFER:     /* Set drive buffering */
- 	 case SET_DENS_AND_BLK:   /* Set density and block size */
-diff --git a/drivers/scsi/ppa.c b/drivers/scsi/ppa.c
-index ee86a0c..d29999b 100644
---- a/drivers/scsi/ppa.c
-+++ b/drivers/scsi/ppa.c
-@@ -717,6 +717,7 @@ static int ppa_engine(ppa_struct *dev, struct scsi_cmnd *cmd)
- 			}
- 			cmd->SCp.phase++;
- 		}
-+		/* fall through */
- 
- 	case 2:		/* Phase 2 - We are now talking to the scsi bus */
- 		if (!ppa_select(dev, scmd_id(cmd))) {
-diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
-index 307df2f..f1351ec 100644
---- a/drivers/scsi/st.c
-+++ b/drivers/scsi/st.c
-@@ -337,12 +337,14 @@ static void st_analyze_sense(struct st_request *SRpnt, struct st_cmdstatus *s)
- 		switch (sense[0] & 0x7f) {
- 		case 0x71:
- 			s->deferred = 1;
-+			/* fall through */
- 		case 0x70:
- 			s->fixed_format = 1;
- 			s->flags = sense[2] & 0xe0;
- 			break;
- 		case 0x73:
- 			s->deferred = 1;
-+			/* fall through */
- 		case 0x72:
- 			s->fixed_format = 0;
- 			ucp = scsi_sense_desc_find(sense, SCSI_SENSE_BUFFERSIZE, 4);
-@@ -2721,6 +2723,7 @@ static int st_int_ioctl(struct scsi_tape *STp, unsigned int cmd_in, unsigned lon
- 	switch (cmd_in) {
- 	case MTFSFM:
- 		chg_eof = 0;	/* Changed from the FSF after this */
-+		/* fall through */
- 	case MTFSF:
- 		cmd[0] = SPACE;
- 		cmd[1] = 0x01;	/* Space FileMarks */
-@@ -2735,6 +2738,7 @@ static int st_int_ioctl(struct scsi_tape *STp, unsigned int cmd_in, unsigned lon
- 		break;
- 	case MTBSFM:
- 		chg_eof = 0;	/* Changed from the FSF after this */
-+		/* fall through */
- 	case MTBSF:
- 		cmd[0] = SPACE;
- 		cmd[1] = 0x01;	/* Space FileMarks */
--- 
-2.7.4
+> Ok got it, this sounds fun. I'll give it a try.
 
+Awesome, I'm looking forward to seeing what you come up with.
+
+-- Steve
