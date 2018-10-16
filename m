@@ -2,162 +2,73 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3332CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1976EC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F16AD205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:13:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F16AD205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id D233D205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:15:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D233D205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbeJPRDH (ORCPT
+        id S1727067AbeJPREy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 13:03:07 -0400
-Received: from gateway36.websitewelcome.com ([192.185.198.13]:15291 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726083AbeJPRDH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 13:03:07 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 5DC0C400C9AA3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 02:58:55 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id CL4mg94gAtz4jCL4vgGrXJ; Tue, 16 Oct 2018 03:51:55 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:59140 helo=[192.168.1.41])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gCL4l-0048RE-Uv; Tue, 16 Oct 2018 03:51:40 -0500
-Subject: Re: [PATCH net-next v2 1/2] net: phy: mscc: fix signedness bug in
- vsc85xx_downshift_get
-To:     linux-kernel@vger.kernel.org
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Quentin Schulz <quentin.schulz@bootlin.com>
-References: <cover.1539159556.git.gustavo@embeddedor.com>
- <ed7a48646940771a09ede1202ed19f13773c7723.1539159556.git.gustavo@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <380aac12-05b4-3f77-f583-fb72ec98a8ab@embeddedor.com>
-Date:   Tue, 16 Oct 2018 10:51:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 16 Oct 2018 13:04:54 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44689 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726083AbeJPREy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 13:04:54 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 956C475DB3A2E;
+        Tue, 16 Oct 2018 17:15:23 +0800 (CST)
+Received: from localhost (10.177.19.219) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.399.0; Tue, 16 Oct 2018
+ 17:15:18 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <yangyingliang@huawei.com>, <marc.zyngier@arm.com>,
+        <tglx@linutronix.de>, <guohanjun@huawei.com>
+Subject: [PATCH 0/4] add support for MBIGEN generating message based SPIs
+Date:   Tue, 16 Oct 2018 17:15:12 +0800
+Message-ID: <1539681316-19300-1-git-send-email-yangyingliang@huawei.com>
+X-Mailer: git-send-email 1.9.5.msysgit.1
 MIME-Version: 1.0
-In-Reply-To: <ed7a48646940771a09ede1202ed19f13773c7723.1539159556.git.gustavo@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gCL4l-0048RE-Uv
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:59140
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+X-Originating-IP: [10.177.19.219]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Now MBIGENs have pins that used to generate SPIs,
+with
+5052875 ("irqchip/gic-v3: Add support for Message Based Interrupts as an MSI controller"),
+we can support MBIGEN to generate message based SPIs by writing
+GICD_SETSPIR. This patchset add support for MBIGEN generating
+message based SPIs and a bugfix for MBI driver.
 
-On 10/10/18 10:30 AM, Gustavo A. R. Silva wrote:
-> Currently, the error handling for the call to function
-> phy_read_paged() doesn't work because *reg_val* is of
-> type u16 (16 bits, unsigned), which makes it impossible
-> for it to hold a value less than 0.
-> 
-> Fix this by changing the type of variable *reg_val* to int.
-> 
-> Addresses-Coverity-ID: 1473970 ("Unsigned compared against 0")
-> Fixes: 6a0bfbbe20b0 ("net: phy: mscc: migrate to phy_select/restore_page functions")
-> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
-> Changes in v2:
->  - Add Quentin's Reviewed-by to the commit log.
-> 
->  drivers/net/phy/mscc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-> index bffe077..bff56c3 100644
-> --- a/drivers/net/phy/mscc.c
-> +++ b/drivers/net/phy/mscc.c
-> @@ -522,7 +522,7 @@ static int vsc85xx_mdix_set(struct phy_device *phydev, u8 mdix)
->  
->  static int vsc85xx_downshift_get(struct phy_device *phydev, u8 *count)
->  {
-> -	u16 reg_val;
-> +	int reg_val;
->  
->  	reg_val = phy_read_paged(phydev, MSCC_PHY_PAGE_EXTENDED,
->  				 MSCC_PHY_ACTIPHY_CNTL);
-> 
 
-Friendly ping. Dave, can you take this?
+Patch #1 is a bugfix for MBI driver.
+Pathc #2 ~ #4 is support for MBIGEN generating message based SPIs.
 
-Thanks!
---
-Gustavo
+Yang Yingliang (4):
+  irqchip/gic-v3-mbi: fix uninitialized mbi_lock
+  irqchip/mbigen: rename register marcros
+  irqchip/mbigen: add support for a MBIGEN generating SPIs
+  dt-bindings/irqchip/mbigen: add example of MBIGEN generate SPIs
+
+ .../interrupt-controller/hisilicon,mbigen-v2.txt   | 17 +++++++++-
+ drivers/irqchip/irq-gic-v3-mbi.c                   |  2 +-
+ drivers/irqchip/irq-mbigen.c                       | 39 ++++++++++++++++------
+ 3 files changed, 45 insertions(+), 13 deletions(-)
+
+-- 
+1.8.3
+
+
