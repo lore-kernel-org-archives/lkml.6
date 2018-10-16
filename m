@@ -7,44 +7,53 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B827C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44AB5C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 158AD20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D52020866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:20:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1N+/iVRR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 158AD20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UjLG5IdX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D52020866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730344AbeJPMIv (ORCPT
+        id S1730005AbeJPMES (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:08:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53230 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:04:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730019AbeJPMET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:04:19 -0400
+        id S1729950AbeJPMER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:04:17 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FB012147E;
-        Tue, 16 Oct 2018 04:15:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 456CE21486;
+        Tue, 16 Oct 2018 04:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663356;
-        bh=bu1eCM17r7+G9bnWOrkkE8Xid33ZpOhth6ZOWIojbKo=;
+        s=default; t=1539663353;
+        bh=x0ih823H3WiNkSxgitsZ3tr8quU2lYoje+jYf/wdsus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1N+/iVRRyoRzMIhGWkZ71JI10Cx+4H1u22VfU1mNXFReJ67t+3KjuQNVLAdB3nowg
-         22NSOrd+k4Nt2M8Xo+y2jco5Ykk9Kydb0jjwgto9rn4N0zJnHdnShK3DMqVlw4m7kG
-         D71ANyIyZVtov+K9t7PA+N6Mp0JDQAar10AfqKD0=
+        b=UjLG5IdXy517/pLvpN/NYFOsJ3gWM4XBrcIS3l8sprQlvlqyquhquTJz9gI2+yr2N
+         p2fZpAAGjz+IdROe1+XIegVxoo+Uv6z6zAaZyHj3dBaPWSvbhR/amyAPf1AKPUMKgt
+         Od/HFTVTGn+9yfvjcc9OMupygOhD/HTe+lPKwrcA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Maciej W. Rozycki" <macro@linux-mips.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 35/38] declance: Fix continuation with the adapter identification message
-Date:   Tue, 16 Oct 2018 00:15:19 -0400
-Message-Id: <20181016041522.135789-35-sashal@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Vagin <avagin@openvz.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 32/38] perf/ring_buffer: Prevent concurent ring buffer access
+Date:   Tue, 16 Oct 2018 00:15:16 -0400
+Message-Id: <20181016041522.135789-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041522.135789-1-sashal@kernel.org>
 References: <20181016041522.135789-1-sashal@kernel.org>
@@ -53,71 +62,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
+From: Jiri Olsa <jolsa@redhat.com>
 
-[ Upstream commit fe3a83af6a50199bf250fa331e94216912f79395 ]
+[ Upstream commit cd6fb677ce7e460c25bdd66f689734102ec7d642 ]
 
-Fix a commit 4bcc595ccd80 ("printk: reinstate KERN_CONT for printing
-continuation lines") regression with the `declance' driver, which caused
-the adapter identification message to be split between two lines, e.g.:
+Some of the scheduling tracepoints allow the perf_tp_event
+code to write to ring buffer under different cpu than the
+code is running on.
 
-declance.c: v0.011 by Linux MIPS DECstation task force
-tc6: PMAD-AA
-, addr = 08:00:2b:1b:2a:6a, irq = 14
-tc6: registered as eth0.
+This results in corrupted ring buffer data demonstrated in
+following perf commands:
 
-Address that properly, by printing identification with a single call,
-making the messages now look like:
+  # perf record -e 'sched:sched_switch,sched:sched_wakeup' perf bench sched messaging
+  # Running 'sched/messaging' benchmark:
+  # 20 sender and receiver processes per group
+  # 10 groups == 400 processes run
 
-declance.c: v0.011 by Linux MIPS DECstation task force
-tc6: PMAD-AA, addr = 08:00:2b:1b:2a:6a, irq = 14
-tc6: registered as eth0.
+       Total time: 0.383 [sec]
+  [ perf record: Woken up 8 times to write data ]
+  0x42b890 [0]: failed to process type: -1765585640
+  [ perf record: Captured and wrote 4.825 MB perf.data (29669 samples) ]
 
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-Fixes: 4bcc595ccd80 ("printk: reinstate KERN_CONT for printing continuation lines")
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  # perf report --stdio
+  0x42b890 [0]: failed to process type: -1765585640
+
+The reason for the corruption are some of the scheduling tracepoints,
+that have __perf_task dfined and thus allow to store data to another
+cpu ring buffer:
+
+  sched_waking
+  sched_wakeup
+  sched_wakeup_new
+  sched_stat_wait
+  sched_stat_sleep
+  sched_stat_iowait
+  sched_stat_blocked
+
+The perf_tp_event function first store samples for current cpu
+related events defined for tracepoint:
+
+    hlist_for_each_entry_rcu(event, head, hlist_entry)
+      perf_swevent_event(event, count, &data, regs);
+
+And then iterates events of the 'task' and store the sample
+for any task's event that passes tracepoint checks:
+
+  ctx = rcu_dereference(task->perf_event_ctxp[perf_sw_context]);
+
+  list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
+    if (event->attr.type != PERF_TYPE_TRACEPOINT)
+      continue;
+    if (event->attr.config != entry->type)
+      continue;
+
+    perf_swevent_event(event, count, &data, regs);
+  }
+
+Above code can race with same code running on another cpu,
+ending up with 2 cpus trying to store under the same ring
+buffer, which is specifically not allowed.
+
+This patch prevents the problem, by allowing only events with the same
+current cpu to receive the event.
+
+NOTE: this requires the use of (per-task-)per-cpu buffers for this
+feature to work; perf-record does this.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+[peterz: small edits to Changelog]
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrew Vagin <avagin@openvz.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: e6dab5ffab59 ("perf/trace: Add ability to set a target task for events")
+Link: http://lkml.kernel.org/r/20180923161343.GB15054@krava
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amd/declance.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ kernel/events/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/amd/declance.c b/drivers/net/ethernet/amd/declance.c
-index b799c7ac899b..9e80a76c3dfe 100644
---- a/drivers/net/ethernet/amd/declance.c
-+++ b/drivers/net/ethernet/amd/declance.c
-@@ -1030,6 +1030,7 @@ static int dec_lance_probe(struct device *bdev, const int type)
- 	int i, ret;
- 	unsigned long esar_base;
- 	unsigned char *esar;
-+	const char *desc;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 95bd00d9f2c3..3caf1a863a0b 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -7737,6 +7737,8 @@ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
+ 			goto unlock;
  
- 	if (dec_lance_debug && version_printed++ == 0)
- 		printk(version);
-@@ -1215,19 +1216,20 @@ static int dec_lance_probe(struct device *bdev, const int type)
- 	 */
- 	switch (type) {
- 	case ASIC_LANCE:
--		printk("%s: IOASIC onboard LANCE", name);
-+		desc = "IOASIC onboard LANCE";
- 		break;
- 	case PMAD_LANCE:
--		printk("%s: PMAD-AA", name);
-+		desc = "PMAD-AA";
- 		break;
- 	case PMAX_LANCE:
--		printk("%s: PMAX onboard LANCE", name);
-+		desc = "PMAX onboard LANCE";
- 		break;
- 	}
- 	for (i = 0; i < 6; i++)
- 		dev->dev_addr[i] = esar[i * 4];
- 
--	printk(", addr = %pM, irq = %d\n", dev->dev_addr, dev->irq);
-+	printk("%s: %s, addr = %pM, irq = %d\n",
-+	       name, desc, dev->dev_addr, dev->irq);
- 
- 	dev->netdev_ops = &lance_netdev_ops;
- 	dev->watchdog_timeo = 5*HZ;
+ 		list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
++			if (event->cpu != smp_processor_id())
++				continue;
+ 			if (event->attr.type != PERF_TYPE_TRACEPOINT)
+ 				continue;
+ 			if (event->attr.config != entry->type)
 -- 
 2.17.1
 
