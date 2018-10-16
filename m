@@ -2,179 +2,140 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA74CC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6141C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EE2C2083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:23:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWBHDtpb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EE2C2083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5B40C2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 15:25:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B40C2089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbeJPXOX (ORCPT
+        id S1727155AbeJPXQp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 19:14:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40986 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 19:16:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48432 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727059AbeJPXOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:14:23 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727006AbeJPXQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 19:16:45 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 475722083C;
-        Tue, 16 Oct 2018 15:23:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539703405;
-        bh=DwH8KqH45PiHPa8CGcwn0lTSybp6ax7F0hgAy/D28+o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oWBHDtpbZmIWpKvYembHi8rCcO/4t3589PmiuY6Epn4ArpMJddvt1Z3rfXh3Tzaq8
-         rhp6mpPKxfQxqPFsaRKwiB7q9mi6N5t/Z5QBbGJnlGw30KNWPZTQQN3b6A8XzKciE0
-         gSo78w3PZiUKgX+L1HQdqH167YHDv2c2bdqZaDhA=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 77223142C5E; Tue, 16 Oct 2018 12:23:22 -0300 (-03)
-Date:   Tue, 16 Oct 2018 12:23:22 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: Re: [PATCH] perf tools: Fix tracing_path_mount proper path
-Message-ID: <20181016152322.GC3849@kernel.org>
-References: <20181016114818.3595-1-jolsa@kernel.org>
- <20181016151813.GB3849@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 1488012F8ED;
+        Tue, 16 Oct 2018 15:25:48 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A14987AE18;
+        Tue, 16 Oct 2018 15:25:42 +0000 (UTC)
+Subject: Re: [PATCH v1 2/2] sysctl: handle overflow for file-max
+To:     Christian Brauner <christian@brauner.io>
+Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
+        ebiederm@xmission.com, mcgrof@kernel.org,
+        akpm@linux-foundation.org, joe.lawrence@redhat.com,
+        linux@dominikbrodowski.net, viro@zeniv.linux.org.uk
+References: <20181015105544.4395-1-christian@brauner.io>
+ <20181015105544.4395-3-christian@brauner.io>
+ <22319ca1-6dab-fe36-40d5-9c88f7a175ee@redhat.com>
+ <20181016152100.zg2pmyk6puc5qsr5@brauner.io>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <11e172de-0953-2c46-c0f0-72c42ae9a910@redhat.com>
+Date:   Tue, 16 Oct 2018 11:25:42 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016151813.GB3849@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181016152100.zg2pmyk6puc5qsr5@brauner.io>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 16 Oct 2018 15:25:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Oct 16, 2018 at 12:18:13PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Tue, Oct 16, 2018 at 01:48:18PM +0200, Jiri Olsa escreveu:
-> > If there's no tracefs (RHEL7) support the tracing_path_mount
-> > returns debugfs path which results in following fail:
-> > 
-> >   # perf probe sys_write
-> >   kprobe_events file does not exist - please rebuild kernel with CONFIG_KPROBE_EVENTS.
-> >   Error: Failed to add events.
-> > 
-> > In tracing_path_debugfs_mount function we need to return the
-> > 'tracing' path instead of just the mount to make it work:
-> > 
-> >   # perf probe sys_write
-> >   Added new event:
-> >     probe:sys_write      (on sys_write)
-> > 
-> >   You can now use it in all perf tools, such as:
-> > 
-> >           perf record -e probe:sys_write -aR sleep 1
-> > 
-> > Adding the 'return tracing_path;' also to tracing_path_tracefs_mount
-> > function just for consistency with tracing_path_debugfs_mount.
-> > 
-> > Upstream keeps working, because it has the tracefs support.
-> > 
-> > Link: http://lkml.kernel.org/n/tip-yiwkzexq9fk1ey1xg3gnjlw4@git.kernel.org
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  tools/lib/api/fs/tracing_path.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/tools/lib/api/fs/tracing_path.c b/tools/lib/api/fs/tracing_path.c
-> > index 120037496f77..5afb11b30fca 100644
-> > --- a/tools/lib/api/fs/tracing_path.c
-> > +++ b/tools/lib/api/fs/tracing_path.c
-> > @@ -36,7 +36,7 @@ static const char *tracing_path_tracefs_mount(void)
-> >  
-> >  	__tracing_path_set("", mnt);
-> >  
-> > -	return mnt;
-> > +	return tracing_path;
-> >  }
-> >  
-> >  static const char *tracing_path_debugfs_mount(void)
-> > @@ -49,7 +49,7 @@ static const char *tracing_path_debugfs_mount(void)
-> >  
-> >  	__tracing_path_set("tracing/", mnt);
-> >  
-> > -	return mnt;
-> > +	return tracing_path;
-> 
-> Humm, colour me confused, by the name of the function I expected
-> tracing_path_debugfs_mount() to return the debugfs mount.
-> 
-> tracing_path_tracefs_mount() would return the tracefs mount point, so,
-> there, returning tracing_path would be ok.
-> 
-> Is there some other way to figure out that tracefs isn't available and
-> thus we should use debugfs_mount + "/tracing/" for the "tracefs" mount?
-> 
-> This may well be just the naming confusion... lemme read this a bit
-> more...
+On 10/16/2018 11:21 AM, Christian Brauner wrote:
+> On Tue, Oct 16, 2018 at 11:13:28AM -0400, Waiman Long wrote:
+>> On 10/15/2018 06:55 AM, Christian Brauner wrote:
+>>> Currently, when writing
+>>>
+>>> echo 18446744073709551616 > /proc/sys/fs/file-max
+>>>
+>>> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
+>>> crashes the system.
+>>> This commit explicitly caps the value for file-max to ULONG_MAX.
+>>>
+>>> Note, this isn't technically necessary since proc_get_long() will already
+>>> return ULONG_MAX. However, two reason why we still should do this:
+>>> 1. it makes it explicit what the upper bound of file-max is instead of
+>>>    making readers of the code infer it from proc_get_long() themselves
+>>> 2. other tunebles than file-max may want to set a lower max value than
+>>>    ULONG_MAX and we need to enable __do_proc_doulongvec_minmax() to handle
+>>>    such cases too
+>>>
+>>> Cc: Kees Cook <keescook@chromium.org>
+>>> Signed-off-by: Christian Brauner <christian@brauner.io>
+>>> ---
+>>> v0->v1:
+>>> - if max value is < than ULONG_MAX use max as upper bound
+>>> - (Dominik) remove double "the" from commit message
+>>> ---
+>>>  kernel/sysctl.c | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+>>> index 97551eb42946..226d4eaf4b0e 100644
+>>> --- a/kernel/sysctl.c
+>>> +++ b/kernel/sysctl.c
+>>> @@ -127,6 +127,7 @@ static int __maybe_unused one = 1;
+>>>  static int __maybe_unused two = 2;
+>>>  static int __maybe_unused four = 4;
+>>>  static unsigned long one_ul = 1;
+>>> +static unsigned long ulong_max = ULONG_MAX;
+>>>  static int one_hundred = 100;
+>>>  static int one_thousand = 1000;
+>>>  #ifdef CONFIG_PRINTK
+>>> @@ -1696,6 +1697,7 @@ static struct ctl_table fs_table[] = {
+>>>  		.maxlen		= sizeof(files_stat.max_files),
+>>>  		.mode		= 0644,
+>>>  		.proc_handler	= proc_doulongvec_minmax,
+>>> +		.extra2		= &ulong_max,
+>> What is the point of having a maximum value of ULONG_MAX anyway? No
+>> value you can put into a ulong type can be bigger than that.
+> This is changed in the new code to LONG_MAX. See the full thread for
+> context. There's also an additional explantion in the commit message.
+>
+>>>  	},
+>>>  	{
+>>>  		.procname	= "nr_open",
+>>> @@ -2795,6 +2797,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+>>>  				break;
+>>>  			if (neg)
+>>>  				continue;
+>>> +			if (max && val > *max)
+>>> +				val = *max;
+>>>  			val = convmul * val / convdiv;
+>>>  			if ((min && val < *min) || (max && val > *max))
+>>>  				continue;
+>> This does introduce a change in behavior. Previously the out-of-bound
+>> value is ignored, now it is capped at its maximum. This is a
+>> user-visible change.
+> Not completely true though. Try
+>
+> echo 18446744073709551616 > /proc/sys/fs/file-max
+>
+> on a system you find acceptable loosing.
+> So this is an acceptable user-visible change I'd say. But I'm open to
+> other suggestions.
 
-Indeed, naming confusion, these are static things, used only by:
+I am not saying this is unacceptable. I just say this is a user-visible
+change and so should be documented somehow. BTW, you cap the max value,
+but not the min value. So there is inconsistency. I would say you either
+do both, or none of them.
 
-const char *tracing_path_mount(void)
-{
-        const char *mnt;
-
-        mnt = tracing_path_tracefs_mount();
-        if (mnt)
-                return mnt;
-
-        mnt = tracing_path_debugfs_mount();
-
-        return mnt;
-}
-
-This one could as well just return tracing_path and the return be used
-just to figure if it managed to read the mount point for tracefs or
-debugfs...
-
-Something like:
-
-static int tracing_path_tracefs_mount(void)
-{
-	const char *mnt = tracefs__mount();
-	if (!mnt)
-		return -1;
-
-	__tracing_path_set("", mnt);
-	return 0;
-}
-
-static const char *tracing_path_debugfs_mount(void)
-{
-	const char *mnt = debugfs__mount();
-	if (!mnt)
-		return -1;
-
-	__tracing_path_set("tracing/", mnt);
-	return 0;
-}
-
-const char *tracing_path_mount(void)
-{
-	if (tracing_path_tracefs_mount() < 0 &&
-	    tracing_path_debugfs_mount() < 0)
-		return NULL;
-
-	return tracing_path;
-}
-
-But anyway, your patch fixes things, applying...
-
-- Arnaldo
+Cheers,
+Longman
