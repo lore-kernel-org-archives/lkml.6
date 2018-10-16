@@ -2,201 +2,127 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237F3C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A67C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB66E2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:35:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB66E2089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
+	by mail.kernel.org (Postfix) with ESMTP id 9734E20869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:36:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9734E20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbeJPV0X (ORCPT
+        id S1727294AbeJPV0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:26:23 -0400
-Received: from foss.arm.com ([217.140.101.70]:36446 "EHLO foss.arm.com"
+        Tue, 16 Oct 2018 17:26:55 -0400
+Received: from mga01.intel.com ([192.55.52.88]:20967 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727003AbeJPV0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 17:26:23 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8B2415AB;
-        Tue, 16 Oct 2018 06:35:52 -0700 (PDT)
-Received: from sugar.kfn.arm.com (unknown [10.50.4.176])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D6563F5D3;
-        Tue, 16 Oct 2018 06:35:50 -0700 (PDT)
-From:   Gilad Ben-Yossef <gilad@benyossef.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Ofir Drang <Ofir.Drang@arm.com>, Yael Chemla <Yael.Chemla@arm.com>,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] crypto: ccree: add SM4 support
-Date:   Tue, 16 Oct 2018 14:35:33 +0100
-Message-Id: <1539696935-4433-4-git-send-email-gilad@benyossef.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539696935-4433-1-git-send-email-gilad@benyossef.com>
-References: <1539696935-4433-1-git-send-email-gilad@benyossef.com>
+        id S1727002AbeJPV0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 17:26:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 06:36:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,388,1534834800"; 
+   d="scan'208";a="95675238"
+Received: from tletko-mobl3.ger.corp.intel.com (HELO [10.252.39.57]) ([10.252.39.57])
+  by fmsmga002.fm.intel.com with ESMTP; 16 Oct 2018 06:36:21 -0700
+Subject: Re: [PATCH v2] drm/drm_vblank: Change EINVAL by the correct errno
+To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20181015170529.dgzpbm37hbuvqatc@smtp.gmail.com>
+From:   Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Message-ID: <57b40f9f-24d2-27de-4895-5a76ff267643@linux.intel.com>
+Date:   Tue, 16 Oct 2018 15:36:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181015170529.dgzpbm37hbuvqatc@smtp.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for SM4 cipher in CryptoCell 713.
+Op 15-10-18 om 19:05 schreef Rodrigo Siqueira:
+> For historical reason, the function drm_wait_vblank_ioctl always return
+> -EINVAL if something gets wrong. This scenario limits the flexibility
+> for the userspace make detailed verification of the problem and take
+> some action. In particular, the validation of “if (!dev->irq_enabled)”
+> in the drm_wait_vblank_ioctl is responsible for checking if the driver
+> support vblank or not. If the driver does not support VBlank, the
+> function drm_wait_vblank_ioctl returns EINVAL which does not represent
+> the real issue; this patch changes this behavior by return EOPNOTSUPP.
+> Additionally, some operations are unsupported by this function, and
+> returns EINVAL; this patch also changes the return value to EOPNOTSUPP
+> in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
+> libdrm, which is used by many compositors; because of this, it is
+> important to check if this change breaks any compositor. In this sense,
+> the following projects were examined:
+>
+> * Drm-hwcomposer
+> * Kwin
+> * Sway
+> * Wlroots
+> * Wayland-core
+> * Weston
+> * Xorg (67 different drivers)
+>
+> For each repository the verification happened in three steps:
+>
+> * Update the main branch
+> * Look for any occurrence "drmWaitVBlank" with the command:
+>   git grep -n "drmWaitVBlank"
+> * Look in the git history of the project with the command:
+>   git log -SdrmWaitVBlank
+>
+> Finally, none of the above projects validate the use of EINVAL which
+> make safe, at least for these projects, to change the return values.
+>
+> Change since V1:
+>  Daniel Vetter and Chris Wilson
+>  - Replace ENOTTY by EOPNOTSUPP
+>  - Return EINVAL if the parameters are wrong
+>
+> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_vblank.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> index 98e091175921..80f5a3bb427e 100644
+> --- a/drivers/gpu/drm/drm_vblank.c
+> +++ b/drivers/gpu/drm/drm_vblank.c
+> @@ -1533,10 +1533,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
+>  	unsigned int flags, pipe, high_pipe;
+>  
+>  	if (!dev->irq_enabled)
+> -		return -EINVAL;
+> +		return -EOPNOTSUPP;
+Change to -EIO?
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
----
- drivers/crypto/Kconfig                  |  1 +
- drivers/crypto/ccree/cc_cipher.c        | 66 +++++++++++++++++++++++++++++++++
- drivers/crypto/ccree/cc_hw_queue_defs.h |  3 ++
- 3 files changed, 70 insertions(+)
+If userspace would ever print this out, it would print the following
+confusing message to userspace:
+"Operation not supported on transport endpoint"
+>  
+>  	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+> -		return -EINVAL;
+> +		return -EOPNOTSUPP;
+I would keep this -EINVAL, tbh and making it part of the below if statement..
+>  	if (vblwait->request.type &
+>  	    ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
 
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index bea4de6..c7e6f5d 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -751,6 +751,7 @@ config CRYPTO_DEV_CCREE
- 	select CRYPTO_ECB
- 	select CRYPTO_CTR
- 	select CRYPTO_XTS
-+	select CRYPTO_SM4
- 	help
- 	  Say 'Y' to enable a driver for the REE interface of the Arm
- 	  TrustZone CryptoCell family of processors. Currently the
-diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
-index 7623b299..989e70f 100644
---- a/drivers/crypto/ccree/cc_cipher.c
-+++ b/drivers/crypto/ccree/cc_cipher.c
-@@ -7,6 +7,7 @@
- #include <crypto/internal/skcipher.h>
- #include <crypto/des.h>
- #include <crypto/xts.h>
-+#include <crypto/sm4.h>
- #include <crypto/scatterwalk.h>
- 
- #include "cc_driver.h"
-@@ -83,6 +84,9 @@ static int validate_keys_sizes(struct cc_cipher_ctx *ctx_p, u32 size)
- 		if (size == DES3_EDE_KEY_SIZE || size == DES_KEY_SIZE)
- 			return 0;
- 		break;
-+	case S_DIN_to_SM4:
-+		if (size == SM4_KEY_SIZE)
-+			return 0;
- 	default:
- 		break;
- 	}
-@@ -122,6 +126,17 @@ static int validate_data_size(struct cc_cipher_ctx *ctx_p,
- 		if (IS_ALIGNED(size, DES_BLOCK_SIZE))
- 			return 0;
- 		break;
-+	case S_DIN_to_SM4:
-+		switch (ctx_p->cipher_mode) {
-+		case DRV_CIPHER_CTR:
-+			return 0;
-+		case DRV_CIPHER_ECB:
-+		case DRV_CIPHER_CBC:
-+			if (IS_ALIGNED(size, SM4_BLOCK_SIZE))
-+				return 0;
-+		default:
-+			break;
-+		}
- 	default:
- 		break;
- 	}
-@@ -522,6 +537,9 @@ static void cc_setup_cipher_data(struct crypto_tfm *tfm,
- 	case S_DIN_to_DES:
- 		flow_mode = DIN_DES_DOUT;
- 		break;
-+	case S_DIN_to_SM4:
-+		flow_mode = DIN_SM4_DOUT;
-+		break;
- 	default:
- 		dev_err(dev, "invalid flow mode, flow_mode = %d\n", flow_mode);
- 		return;
-@@ -1324,6 +1342,54 @@ static const struct cc_alg_template skcipher_algs[] = {
- 		.flow_mode = S_DIN_to_DES,
- 		.min_hw_rev = CC_HW_REV_630,
- 	},
-+	{
-+		.name = "cbc(sm4)",
-+		.driver_name = "cbc-sm4-ccree",
-+		.blocksize = SM4_BLOCK_SIZE,
-+		.template_skcipher = {
-+			.setkey = cc_cipher_setkey,
-+			.encrypt = cc_cipher_encrypt,
-+			.decrypt = cc_cipher_decrypt,
-+			.min_keysize = SM4_KEY_SIZE,
-+			.max_keysize = SM4_KEY_SIZE,
-+			.ivsize = SM4_BLOCK_SIZE,
-+			},
-+		.cipher_mode = DRV_CIPHER_CBC,
-+		.flow_mode = S_DIN_to_SM4,
-+		.min_hw_rev = CC_HW_REV_713,
-+	},
-+	{
-+		.name = "ecb(sm4)",
-+		.driver_name = "ecb-sm4-ccree",
-+		.blocksize = SM4_BLOCK_SIZE,
-+		.template_skcipher = {
-+			.setkey = cc_cipher_setkey,
-+			.encrypt = cc_cipher_encrypt,
-+			.decrypt = cc_cipher_decrypt,
-+			.min_keysize = SM4_KEY_SIZE,
-+			.max_keysize = SM4_KEY_SIZE,
-+			.ivsize = 0,
-+			},
-+		.cipher_mode = DRV_CIPHER_ECB,
-+		.flow_mode = S_DIN_to_SM4,
-+		.min_hw_rev = CC_HW_REV_713,
-+	},
-+	{
-+		.name = "ctr(sm4)",
-+		.driver_name = "ctr-sm4-ccree",
-+		.blocksize = SM4_BLOCK_SIZE,
-+		.template_skcipher = {
-+			.setkey = cc_cipher_setkey,
-+			.encrypt = cc_cipher_encrypt,
-+			.decrypt = cc_cipher_decrypt,
-+			.min_keysize = SM4_KEY_SIZE,
-+			.max_keysize = SM4_KEY_SIZE,
-+			.ivsize = SM4_BLOCK_SIZE,
-+			},
-+		.cipher_mode = DRV_CIPHER_CTR,
-+		.flow_mode = S_DIN_to_SM4,
-+		.min_hw_rev = CC_HW_REV_713,
-+	},
- };
- 
- static struct cc_crypto_alg *cc_create_alg(const struct cc_alg_template *tmpl,
-diff --git a/drivers/crypto/ccree/cc_hw_queue_defs.h b/drivers/crypto/ccree/cc_hw_queue_defs.h
-index a091ae5..6bd1922 100644
---- a/drivers/crypto/ccree/cc_hw_queue_defs.h
-+++ b/drivers/crypto/ccree/cc_hw_queue_defs.h
-@@ -107,6 +107,7 @@ enum cc_flow_mode {
- 	AES_to_AES_to_HASH_and_DOUT	= 13,
- 	AES_to_AES_to_HASH	= 14,
- 	AES_to_HASH_and_AES	= 15,
-+	DIN_SM4_DOUT		= 16,
- 	DIN_AES_AESMAC		= 17,
- 	HASH_to_DOUT		= 18,
- 	/* setup flows */
-@@ -114,9 +115,11 @@ enum cc_flow_mode {
- 	S_DIN_to_AES2		= 33,
- 	S_DIN_to_DES		= 34,
- 	S_DIN_to_RC4		= 35,
-+	S_DIN_to_SM4		= 36,
- 	S_DIN_to_HASH		= 37,
- 	S_AES_to_DOUT		= 38,
- 	S_AES2_to_DOUT		= 39,
-+	S_SM4_to_DOUT		= 40,
- 	S_RC4_to_DOUT		= 41,
- 	S_DES_to_DOUT		= 42,
- 	S_HASH_to_DOUT		= 43,
--- 
-2.7.4
+Cheers,
+
+Maarten
 
