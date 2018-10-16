@@ -2,31 +2,31 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFFEAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F93C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE32520869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:30:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE32520869
+	by mail.kernel.org (Postfix) with ESMTP id 3AAFB20869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:31:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AAFB20869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbeJPLSd (ORCPT
+        id S1727442AbeJPLUA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 07:18:33 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:34032 "EHLO
+        Tue, 16 Oct 2018 07:20:00 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:40780 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726934AbeJPLSd (ORCPT
+        by vger.kernel.org with ESMTP id S1726934AbeJPLUA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 07:18:33 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07683962|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03298;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.D2fZ7e3_1539660607;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D2fZ7e3_1539660607)
-          by smtp.aliyun-inc.com(10.147.41.231);
-          Tue, 16 Oct 2018 11:30:07 +0800
+        Tue, 16 Oct 2018 07:20:00 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.7436854|0.7746306;BR=01201311R101ec;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03276;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.D2ftWWw_1539660694;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D2ftWWw_1539660694)
+          by smtp.aliyun-inc.com(10.147.42.241);
+          Tue, 16 Oct 2018 11:31:34 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     akpm@linux-foundation.org, arnd@arndb.de,
         daniel.lezcano@linaro.org, davem@davemloft.net,
@@ -36,9 +36,9 @@ To:     akpm@linux-foundation.org, arnd@arndb.de,
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         devicetree@vger.kernel.org, robh+dt@kernel.org,
         c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V9 18/21] dt-bindings: csky CPU Bindings
-Date:   Tue, 16 Oct 2018 10:58:37 +0800
-Message-Id: <867b2328e3dbaef58d0b5e7fc58e8545d1510951.1539655732.git.ren_guo@c-sky.com>
+Subject: [PATCH V9 19/21] dt-bindings: Add vendor prefix for csky
+Date:   Tue, 16 Oct 2018 10:58:38 +0800
+Message-Id: <58e30b0d6b3e27a34952b52efeb46839d9081906.1539655732.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1539655731.git.ren_guo@c-sky.com>
 References: <cover.1539655731.git.ren_guo@c-sky.com>
@@ -49,100 +49,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the documentation to describe that how to add cpu nodes in
-dts for SMP.
+Add csky vendor definition.
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-Changelog:
- - Add compatible.
- - Remove status part.
----
----
- Documentation/devicetree/bindings/csky/cpus.txt | 73 +++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/csky/cpus.txt
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/csky/cpus.txt b/Documentation/devicetree/bindings/csky/cpus.txt
-new file mode 100644
-index 0000000..ae79412
---- /dev/null
-+++ b/Documentation/devicetree/bindings/csky/cpus.txt
-@@ -0,0 +1,73 @@
-+==================
-+C-SKY CPU Bindings
-+==================
-+
-+The device tree allows to describe the layout of CPUs in a system through
-+the "cpus" node, which in turn contains a number of subnodes (ie "cpu")
-+defining properties for every cpu.
-+
-+Only SMP system need to care about the cpus node and single processor
-+needn't define cpus node at all.
-+
-+=====================================
-+cpus and cpu node bindings definition
-+=====================================
-+
-+- cpus node
-+
-+	Description: Container of cpu nodes
-+
-+	The node name must be "cpus".
-+
-+	A cpus node must define the following properties:
-+
-+	- #address-cells
-+		Usage: required
-+		Value type: <u32>
-+		Definition: must be set to 1
-+	- #size-cells
-+		Usage: required
-+		Value type: <u32>
-+		Definition: must be set to 0
-+
-+- cpu node
-+
-+	Description: Describes one of SMP cores
-+
-+	PROPERTIES
-+
-+	- device_type
-+		Usage: required
-+		Value type: <string>
-+		Definition: must be "cpu"
-+	- reg
-+		Usage: required
-+		Value type: <u32>
-+		Definition: CPU index
-+	- compatible:
-+		Usage: required
-+		Value type: <string>
-+		Definition: must contain "csky", eg:
-+			"csky,610"
-+			"csky,807"
-+			"csky,810"
-+			"csky,860"
-+
-+Example:
-+--------
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		cpu@0 {
-+			device_type = "cpu";
-+			reg = <0>;
-+			status = "ok";
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			reg = <1>;
-+			status = "ok";
-+		};
-+	};
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 2c3fc51..a728ee3 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -84,6 +84,7 @@ cosmic	Cosmic Circuits
+ crane	Crane Connectivity Solutions
+ creative	Creative Technology Ltd
+ crystalfontz	Crystalfontz America, Inc.
++csky	Hangzhou C-SKY Microsystems Co., Ltd
+ cubietech	Cubietech, Ltd.
+ cypress	Cypress Semiconductor Corporation
+ cznic	CZ.NIC, z.s.p.o.
 -- 
 2.7.4
 
