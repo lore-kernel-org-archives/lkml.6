@@ -2,159 +2,113 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7356C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0329BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60BFC208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:09:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBC7A208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 01:10:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="ys55mSlM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60BFC208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jPQJ1pqK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBC7A208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbeJPI5O (ORCPT
+        id S1727040AbeJPI6E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 04:57:14 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:35206 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbeJPI5O (ORCPT
+        Tue, 16 Oct 2018 04:58:04 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43256 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbeJPI6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 04:57:14 -0400
-Received: by mail-qt1-f196.google.com with SMTP id d21-v6so11441617qtq.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 18:09:25 -0700 (PDT)
+        Tue, 16 Oct 2018 04:58:04 -0400
+Received: by mail-pl1-f196.google.com with SMTP id 30-v6so10109741plb.10;
+        Mon, 15 Oct 2018 18:10:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=58BO7VhVQCIpfvpsTCzExxe0HVPvAcHz+tjsTTvFTbA=;
-        b=ys55mSlM61BiZo/NHWpSMyNMP+SW+uAmuVohraYIikuBQLlkG/av9B23T/5Sy3/9fE
-         gWjr4hwhYA6Qc3efV9fzKYw4HBwzJYQ+jXx08eNJkMn2D2BK/NVpywere4iL3d3rPLkK
-         Zlpan5gEYFot5SYHwbFkkz1KRi2y79zwWnwpxlALcx7CroZS3OrUHgY9n0jI+XAIfrns
-         fqJSSUj8lQxmYc5llM5b1qp0NZclBWmkYRVceBWbbb426dMnUnqjZbPIRoLDK0zXMSSa
-         MIUxwh99DFojaASG38qaHqttVAeaYA161OAT4nlDM+Q7XMItSg1HDFBP0IAH4a6HEk/a
-         SVQA==
+        bh=jg4nzIGB7QtdoRL7x2OyUuHApbndmi/XN8GQm5zFfmI=;
+        b=jPQJ1pqKE3ifShdMCpSve1gKqyD/tfSRoV8+YeyL9C/22SK2tbI8auZ6mV/ss2PHbo
+         GVSH4bggBFN2Bkn2Xy0ncLClLXpMVPtOpc6CKV6e9MyocEFBaG2OU22iT+5A32sbHl4A
+         AplVJvFVxfpiTdW4IEKUYrRXkTrdC8yq7X8JVPkz8F3N0DnbPSYIkdcXrlJn+nD/HP2Z
+         AHk/Tw+L46St+Ku9z4edjpQe6jSlw8ECYbVuFT7Ugwg5f9pNBREn5kKWiCr9syDAipnX
+         D7f2XnvA+uijfV0ff68V97vmiKyINdmKiDtRABk3SEzL4K1ntEby0Znl7n/ncKPZHmpQ
+         mkUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=58BO7VhVQCIpfvpsTCzExxe0HVPvAcHz+tjsTTvFTbA=;
-        b=Dffub8LtOCM35Sny6qU5couynxfg/iUyJP5xWft6YP+cToLadhZKFiV8/GEVqTjRni
-         LkdMjR2CP7p60yUi8jpL7kwitTRiMb+brMt/4TkLcciqIu/JV399EFEpbaBfFEZEFt13
-         Bd9SJ97nzypMvDCCtHpB0mLTK6UyMuZY5ycB6TvF5LkDV7CxQN/iwjOqpFBZc8PVMJ8P
-         q5Zk9jxBQ/Vv5Tm0T1T47I/C40GpvFhmh1qhiW5y+zY8jeqjYqlWfgkSGC7nDf52piqs
-         zniqLdMbEXAoijzT/P83nWshbHflErFI+P2KMMLwSjPvJcT1w7IISnVai/8fe20UUhj/
-         amIA==
-X-Gm-Message-State: ABuFfogf/eMpKVcv7QPJMHdpw7grptBMFVryrxvc7QZz6NgDof1HXZh3
-        eAnCIFaHENIvKfyoOvSaNfuxGw==
-X-Google-Smtp-Source: ACcGV63I4cHeLkU8n1UZzDBoKxu7AM6QUwgyyO2jl2w/S8q+Roa+P3+Q4zDiMNGbMr2ArXaT7led/Q==
-X-Received: by 2002:aed:33c2:: with SMTP id v60-v6mr18334623qtd.25.1539652160143;
-        Mon, 15 Oct 2018 18:09:20 -0700 (PDT)
-Received: from skullcanyon (192-222-187-87.qc.cable.ebox.net. [192.222.187.87])
-        by smtp.gmail.com with ESMTPSA id r20-v6sm8379798qkl.12.2018.10.15.18.09.17
+        bh=jg4nzIGB7QtdoRL7x2OyUuHApbndmi/XN8GQm5zFfmI=;
+        b=Pc9Vyg91hp5DYOuarq2/+0yNO7e63/1yj4r/Qvpq5hs3zxBx5vv+j2ufXig+HMiX8n
+         up0KbyQH224iiX0TW91zB0PVVkxjZlXFPFilftEKnWZg8lapkFwJDBXf0SaHY1Ga9uvx
+         CH+XuLrnrAmU3rNKlAkdBp0D++R51AoITNEx4InrjtQVaQUYNO7YU8J4rvFbr1CyHF/F
+         sqAkWztY37zIdi9mwT0m8sfrcihh1bKsWgU/Zwb5gq9DPU9F53vPDKvoxEuasUlmiZjb
+         rTe+66VSb+1b8bf+jdyW50BeciF3/6ZPb1LWnOQEnnNgQ40UkTBCm8FcfJi7YGX38339
+         8uYQ==
+X-Gm-Message-State: ABuFfogiTjkF4OrY9aX/djCc8BgWAhoyuT+ZsROdSr3yu2j5ImbvNbsG
+        4jB55+Q79RgyLaAXWUAasiY=
+X-Google-Smtp-Source: ACcGV638/NkZj3qYrt99JzmkFSa+xsK/qiNoJ6ykTn0KKMwZd5z+txUnn105MYsHDDGMz2uPksZuGA==
+X-Received: by 2002:a17:902:bd8d:: with SMTP id q13-v6mr19262591pls.167.1539652215201;
+        Mon, 15 Oct 2018 18:10:15 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com ([60.240.252.156])
+        by smtp.gmail.com with ESMTPSA id i5-v6sm14654796pgl.46.2018.10.15.18.10.11
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 18:09:19 -0700 (PDT)
-Message-ID: <3653d4a4317cfa8ee45bc8bc43c98576c339c09a.camel@ndufresne.ca>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Tomasz Figa <tfiga@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin =?UTF-8?Q?=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?= 
-        <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen =?UTF-8?Q?=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Date:   Mon, 15 Oct 2018 21:09:17 -0400
-In-Reply-To: <CAAFQd5ASZU-tSadEbE5NuD3aiNeZakPe-UT7oXdBxASqCpujWw@mail.gmail.com>
-References: <20180724140621.59624-1-tfiga@chromium.org>
-         <20180724140621.59624-2-tfiga@chromium.org>
-         <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl>
-         <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
-         <a6af3dc9-1d09-a414-ce31-bc1b3e69894f@xs4all.nl>
-         <CAAFQd5AnC+hWy4QUGE-s+qgRvvgGC7rMhH6x8koTfYJzTLw8Cg@mail.gmail.com>
-         <f0aa7c84-08e3-9b04-8d1b-95f741d6817b@xs4all.nl>
-         <CAAFQd5ACWO0FxzZdxf-N-GStCMOSWzxKxhcpCRUh=BqT7jLJWw@mail.gmail.com>
-         <CAAFQd5ASZU-tSadEbE5NuD3aiNeZakPe-UT7oXdBxASqCpujWw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 15 Oct 2018 18:10:14 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 11:10:04 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] powerpc/traps: restore recoverability of machine_check
+ interrupts
+Message-ID: <20181016111004.662d16cf@roar.ozlabs.ibm.com>
+In-Reply-To: <ab520cc1-11b7-ddc6-2393-8f1315db4db3@c-s.fr>
+References: <f79824d5da910441ede885fa32a25083c4cc9359.1539422122.git.christophe.leroy@c-s.fr>
+        <ab520cc1-11b7-ddc6-2393-8f1315db4db3@c-s.fr>
+X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le lundi 15 octobre 2018 à 19:13 +0900, Tomasz Figa a écrit :
-> On Wed, Aug 8, 2018 at 11:55 AM Tomasz Figa <tfiga@chromium.org> wrote:
-> > 
-> > On Tue, Aug 7, 2018 at 4:37 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> > > 
-> > > On 08/07/2018 09:05 AM, Tomasz Figa wrote:
-> > > > On Thu, Jul 26, 2018 at 7:57 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> > > > > > > I wonder if we should make these min buffer controls required. It might be easier
-> > > > > > > that way.
-> > > > > > 
-> > > > > > Agreed. Although userspace is still free to ignore it, because REQBUFS
-> > > > > > would do the right thing anyway.
-> > > > > 
-> > > > > It's never been entirely clear to me what the purpose of those min buffers controls
-> > > > > is. REQBUFS ensures that the number of buffers is at least the minimum needed to
-> > > > > make the HW work. So why would you need these controls? It only makes sense if they
-> > > > > return something different from REQBUFS.
-> > > > > 
-> > > > 
-> > > > The purpose of those controls is to let the client allocate a number
-> > > > of buffers bigger than minimum, without the need to allocate the
-> > > > minimum number of buffers first (to just learn the number), free them
-> > > > and then allocate a bigger number again.
-> > > 
-> > > I don't feel this is particularly useful. One problem with the minimum number
-> > > of buffers as used in the kernel is that it is often the minimum number of
-> > > buffers required to make the hardware work, but it may not be optimal. E.g.
-> > > quite a few capture drivers set the minimum to 2, which is enough for the
-> > > hardware, but it will likely lead to dropped frames. You really need 3
-> > > (one is being DMAed, one is queued and linked into the DMA engine and one is
-> > > being processed by userspace).
-> > > 
-> > > I would actually prefer this to be the recommended minimum number of buffers,
-> > > which is >= the minimum REQBUFS uses.
-> > > 
-> > > I.e., if you use this number and you have no special requirements, then you'll
-> > > get good performance.
-> > 
-> > I guess we could make it so. It would make existing user space request
-> > more buffers than it used to with the original meaning, but I guess it
-> > shouldn't be a big problem.
-> 
-> I gave it a bit more thought and I feel like kernel is not the right
-> place to put any assumptions on what the userspace expects "good
-> performance" to be. Actually, having these controls return the minimum
-> number of buffers as REQBUFS would allocate makes it very well
-> specified - with this number you can only process frame by frame and
-> the number of buffers added by userspace defines exactly the queue
-> depth. It leaves no space for driver-specific quirks, because the
-> driver doesn't decide what's "good performance" anymore.
+On Mon, 15 Oct 2018 09:40:50 +0200
+Christophe LEROY <christophe.leroy@c-s.fr> wrote:
 
-I agree on that and I would add that the driver making any assumption
-would lead to memory waste in context where less buffer will still work
-(think of fence based operation as an example).
+> Cc: stable@vger.kernel.org <stable@vger.kernel.org>
+>=20
+> Le 13/10/2018 =C3=A0 11:16, Christophe Leroy a =C3=A9crit=C2=A0:
+> > commit b96672dd840f ("powerpc: Machine check interrupt is a non-
+> > maskable interrupt") added a call to nmi_enter() at the beginning of
+> > machine check restart exception handler. Due to that, in_interrupt()
+> > always returns true regardless of the state before entering the
+> > exception, and die() panics even when the system was not already in
+> > interrupt.
+> >=20
+> > This patch calls nmi_exit() before calling die() in order to restore
+> > the interrupt state we had before calling nmi_enter()
+> >=20
+> > Fixes: b96672dd840f ("powerpc: Machine check interrupt is a non-maskabl=
+e interrupt")
+> > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-> 
-> Best regards,
-> Tomasz
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
 
+This looks good to me and probably the simplest fix.
+
+powernv will need a fix on top of this, to remove the die and let it
+just fall through unrecovered to the traps.c code. pseries seems to
+be okay. But this patch looks good.
+
+Thanks,
+Nick
