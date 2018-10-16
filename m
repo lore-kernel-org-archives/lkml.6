@@ -2,121 +2,152 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA60C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9042FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BAB5208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:33:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="X8ccg64x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BAB5208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 4F223208D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 00:34:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F223208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbeJPIVL (ORCPT
+        id S1727017AbeJPIVr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 04:21:11 -0400
-Received: from ozlabs.org ([203.11.71.1]:48029 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726191AbeJPIVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 04:21:11 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42YxB047Kwz9s8T;
-        Tue, 16 Oct 2018 11:33:28 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539650008;
-        bh=prxPTtb9R2mqXVqo7vpbWCxk32aScWP55D5km6gax7s=;
-        h=Date:From:To:Cc:Subject:From;
-        b=X8ccg64xVbQ225ZlXJd1nGdFbgKbr7C6GulAdBD/fgaqwOJVaPxFXJ50zCCnV4HA9
-         zqZ0SjZnTQuJ8qRc9/X4nTeJIAOzxAIvx6eeLKaHJr7HVK7Lohytps3pP7QtGC0VVv
-         qLnrcg61Aomy2bQ6GaKu2JyktjNeVLIKSd5feTWE8u0jT1f7a4rvUJOlqTYVqrJMrH
-         bSwud4CT3kW6K8h3BcSAeEzpRSgj+R2ucuQXNZ/eaEgr6Y72po8aUFjWbVIzd6rTm5
-         z1AuDAmJaVwRECC9TMr4SZThugUVbtra/ffM/uyX8tHKDG/twJnHqpYtdq0bCVqXLR
-         rX414+EHLA4lg==
-Date:   Tue, 16 Oct 2018 11:33:27 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: linux-next: manual merge of the block tree with the pci tree
-Message-ID: <20181016113327.02ea2317@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2"; protocol="application/pgp-signature"
+        Tue, 16 Oct 2018 04:21:47 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:50964 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726946AbeJPIVr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 04:21:47 -0400
+Received: from mr4.cc.vt.edu (mail.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w9G0Y6Au008822
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 20:34:06 -0400
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w9G0Y0np013781
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 20:34:06 -0400
+Received: by mail-qk1-f200.google.com with SMTP id d200-v6so21731729qkc.22
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Oct 2018 17:34:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=T1IRuDbS2RuhG5flVTa5ziE+5IjHXRnSsn0Uqbmzq/A=;
+        b=nfSnX0Oh215iuo1WioXhNjxV3XhVAmQ3koMeNXOzxyJItgaIdvZrSbOukGvo9NKHmI
+         xgce5M4Xa1TUr6fIG5866O+lpi7rwJ4icbsaLjZSwLpAB7MMBZtcNZiBnoy9ga3yPIsn
+         com9kHn3jJC56VR8IAaYpoqp3zPFIyAMDJpIAMGrW0E6qpxxmGjrdMKSK3sh7L0CkaI1
+         52Z8DWtYxwe3ISnrVp0YDfy951Q5UM6MMEAhAGu3kb33CrcHROsPzYL5e9g/ppje0FPE
+         WHhCgYaJ7phL/LQ8b6qucJ+aec+gdrLb3codxUmWjjeEyFo20IRqkg4UNjtRI6bMqYlQ
+         7bdw==
+X-Gm-Message-State: ABuFfogZDjtwTah39mRlNGnRh8H2veUgGLWCSd35YoNp2I4urXo6F2GP
+        r1zpwTqSN+FFx3buTNCr505d7HDVwNBhmhHzaQyzdG21Xmeo0A2dmC3ScCpOsD8gTZRkm2fy0EH
+        IB9pcEMGfmzpQpFKyJHq0SgmQglBooclZudw=
+X-Received: by 2002:aed:24c3:: with SMTP id u3-v6mr18035490qtc.230.1539650035280;
+        Mon, 15 Oct 2018 17:33:55 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV60g0DamtbSFjiqGgISXH9Z4Oo7CsrKCzQxaYdBNFwCzrum7m+AtUCVkoEXooaW5bldxK152fw==
+X-Received: by 2002:aed:24c3:: with SMTP id u3-v6mr18035473qtc.230.1539650034843;
+        Mon, 15 Oct 2018 17:33:54 -0700 (PDT)
+Received: from turing-police.cc.vt.edu ([2607:b400:24:0:3d3c:680f:afbc:c585])
+        by smtp.gmail.com with ESMTPSA id n25-v6sm10637764qtf.14.2018.10.15.17.33.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 17:33:53 -0700 (PDT)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To:     ebiederm@xmission.com (Eric W. Biederman)
+Cc:     Enke Chen <enkechen@cisco.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky \(kamensky\)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
+Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
+In-Reply-To: <87va62lri4.fsf@xmission.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <87va62lri4.fsf@xmission.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1539650031_2195P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 15 Oct 2018 20:33:51 -0400
+Message-ID: <5192.1539650031@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+--==_Exmh_1539650031_2195P
+Content-Type: text/plain; charset=us-ascii
 
-Hi Jens,
+On Mon, 15 Oct 2018 18:28:03 -0500, Eric W. Biederman said:
+> Enke Chen <enkechen@cisco.com> writes:
+>
+> > For simplicity and consistency, this patch provides an implementation
+> > for signal-based fault notification prior to the coredump of a child
+> > process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+> > be used by an application to express its interest and to specify the
+> > signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
+> > signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
+> >
+> > Background:
+> >
+> > As the coredump of a process may take time, in certain time-sensitive
+> > applications it is necessary for a parent process (e.g., a process
+> > manager) to be notified of a child's imminent death before the coredump
+> > so that the parent process can act sooner, such as re-spawning an
+> > application process, or initiating a control-plane fail-over.
+>
+> You talk about time senstive and then you talk about bash scripts.
+> I don't think your definition of time-sensitive and my definition match.
 
-Today's linux-next merge of the block tree got a conflict in:
+When the process image is measured in hundreds of gigabytes, the corefile can
+take a while even by /bin/bash standards.  You want fun, watch an HPC process
+manage to OOM a machine with 3T of RAM in a way that produces a full image
+coredump.
 
-  include/linux/blkdev.h
+To network storage.
 
-between commit:
 
-  113ff970ccda ("block: Add PCI P2P flag for request queue")
-
-from the pci tree and commit:
-
-  cd84a62e0078 ("block, scsi: Change the preempt-only flag into a counter")
-
-from the block tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/blkdev.h
-index c32f7171899b,61207560e826..000000000000
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@@ -698,8 -704,6 +704,7 @@@ struct request_queue=20
-  #define QUEUE_FLAG_REGISTERED  26	/* queue has been registered to a disk =
-*/
-  #define QUEUE_FLAG_SCSI_PASSTHROUGH 27	/* queue supports SCSI commands */
-  #define QUEUE_FLAG_QUIESCED    28	/* queue has been quiesced */
-- #define QUEUE_FLAG_PREEMPT_ONLY	29	/* only process REQ_PREEMPT requests */
- +#define QUEUE_FLAG_PCI_P2PDMA  30	/* device supports PCI p2p requests */
- =20
-  #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
-  				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
-
---Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2
+--==_Exmh_1539650031_2195P
 Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFMdcACgkQAVBC80lX
-0GwX2wf+Kg7aFS1kLmO+eHIz+PR8MNT+eVwcUjn3pFzcGqFYbCKUVUlzz5h/4u5Y
-LKWQjCLv6hOeRbB4RMGs7i6Lo6n8t4yf0NXl6s0lXYA4RBJzusJf2i99QuhgCc/6
-EhPABu6zq28Eg3eABXu3GerE+3pCiLmhBtHjx/m1RLsHjpMkSgnn4dRSBPQVbhBZ
-LRFt1uC3FXmbUlcQC06iSK6G7svyu4Ny09StJRmgv+Cu5XXEamhk8U5SrnLg0VvD
-MII3BHUsm3tV+/cL+sVm8CYSHOjpu8sPvHZBhBvvSiGyyMHzgD8eLRBh/7Fj9ww8
-m+YJ1YoM5F69+ub4uB9XmriziBnssA==
-=5WY/
+iQEVAwUBW8Ux740DS38y7CIcAQJpSAf8CFlhML3n1ezv9Www7szL9y4zQSSV/ELG
+HvVFpEvQrLIU8cc3TvFIN0zBVIfdyNUwU01fmUT2CasrmdNQiDfZg88e6dUFdNgH
+Sm5MRVZJqlfBH8NycbmVs4RclMlbyNgYz9Dk9vAnw2FqBehjoQPvVmAhGr4KiFpP
+oF9xSDEMm2URShb/g0PCaB64dOHPObqnRaNtdYYrTeIw6fKSC8ravOiLzRp9u2uA
+JrQZE0WwKM0aE5EQNur0DucH7VJ5tpBxdTqDWkTtivHt81Z+SZ/w6/yliScupxt3
+4ByNw0CeSreIV4VLyJuZyZkUi3I+s2nXn+JuOjrZxu2AL/eurFwG5A==
+=p90O
 -----END PGP SIGNATURE-----
 
---Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2--
+--==_Exmh_1539650031_2195P--
