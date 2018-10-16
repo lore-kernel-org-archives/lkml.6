@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4F1C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC78C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5C5F20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 313C12089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFrYBvv4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5C5F20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="plSPXPan"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 313C12089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730997AbeJQBNT (ORCPT
+        id S1731006AbeJQBNW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:13:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59082 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:13:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727433AbeJQBNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:13:18 -0400
+        id S1727433AbeJQBNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:13:21 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 316E620866;
-        Tue, 16 Oct 2018 17:21:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD8532089E;
+        Tue, 16 Oct 2018 17:21:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710513;
-        bh=RHFpGlEnersEbAHwb+wnsUj1F5lbNyxDUnQWpoFRDCM=;
+        s=default; t=1539710516;
+        bh=qvN4lXxpB43Pj+NJ47bACUWs4lQY5tqLWRrfDDIP2Q0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jFrYBvv4a/2QNBrPOiMjCzSLYrmWlSudmHWJE9dZkKPBGShJRkkSCDIhllQO1F23r
-         lml96P7XhygR07MashbxKw/XU3Lwdr3LDu1FQ6SIvbrVUiOHWywHnWQSJJO4JPBTkS
-         DZ0MqOZ9G/5/uLcg+xYSY0etaZz/TkjdRnRWCJVY=
+        b=plSPXPano7Sc8FJG2MVGKCZ8jvo9eYZEAWvjZQYRQSL3NAG4XHWFrvrFovrDCm0Pf
+         S5EWy64reV95hkeTN5EXmNNrl3IZu5H10VgGmCjHm5mgakzljHoHt3bRJjpn9Qg04n
+         1DLOYpXKHnraefRzx/I9hxdMdA8TICcwK/6fY+yg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>
-Subject: [PATCH 4.14 103/109] ARM: signal: copy registers using __copy_from_user()
-Date:   Tue, 16 Oct 2018 19:06:11 +0200
-Message-Id: <20181016170530.598255022@linuxfoundation.org>
+Subject: [PATCH 4.14 104/109] ARM: vfp: use __copy_from_user() when restoring VFP state
+Date:   Tue, 16 Oct 2018 19:06:12 +0200
+Message-Id: <20181016170530.643315120@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -65,7 +65,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Commit c32cd419d6650e42b9cdebb83c672ec945e6bd7e upstream.
+Commit 42019fc50dfadb219f9e6ddf4c354f3837057d80 upstream.
 
 __get_user_error() is used as a fast accessor to make copying structure
 members in the signal handling path as efficient as possible.  However,
@@ -76,70 +76,116 @@ In the case of software PAN, it has to switch the domain register around
 each access, and with Spectre variant 1, it would have to repeat the
 access_ok() check for each access.
 
-It becomes much more efficient to use __copy_from_user() instead, so
-let's use this for the ARM integer registers.
+Use __copy_from_user() rather than __get_user_err() for individual
+members when restoring VFP state.
 
 Acked-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/kernel/signal.c |   38 +++++++++++++++++++++-----------------
- 1 file changed, 21 insertions(+), 17 deletions(-)
+ arch/arm/include/asm/thread_info.h |    4 ++--
+ arch/arm/kernel/signal.c           |   20 ++++++++------------
+ arch/arm/vfp/vfpmodule.c           |   17 +++++++----------
+ 3 files changed, 17 insertions(+), 24 deletions(-)
 
+--- a/arch/arm/include/asm/thread_info.h
++++ b/arch/arm/include/asm/thread_info.h
+@@ -126,8 +126,8 @@ struct user_vfp_exc;
+ 
+ extern int vfp_preserve_user_clear_hwstate(struct user_vfp __user *,
+ 					   struct user_vfp_exc __user *);
+-extern int vfp_restore_user_hwstate(struct user_vfp __user *,
+-				    struct user_vfp_exc __user *);
++extern int vfp_restore_user_hwstate(struct user_vfp *,
++				    struct user_vfp_exc *);
+ #endif
+ 
+ /*
 --- a/arch/arm/kernel/signal.c
 +++ b/arch/arm/kernel/signal.c
-@@ -184,6 +184,7 @@ struct rt_sigframe {
+@@ -149,22 +149,18 @@ static int preserve_vfp_context(struct v
  
- static int restore_sigframe(struct pt_regs *regs, struct sigframe __user *sf)
+ static int restore_vfp_context(char __user **auxp)
  {
-+	struct sigcontext context;
- 	char __user *aux;
- 	sigset_t set;
- 	int err;
-@@ -192,23 +193,26 @@ static int restore_sigframe(struct pt_re
- 	if (err == 0)
- 		set_current_blocked(&set);
+-	struct vfp_sigframe __user *frame =
+-		(struct vfp_sigframe __user *)*auxp;
+-	unsigned long magic;
+-	unsigned long size;
+-	int err = 0;
+-
+-	__get_user_error(magic, &frame->magic, err);
+-	__get_user_error(size, &frame->size, err);
++	struct vfp_sigframe frame;
++	int err;
  
--	__get_user_error(regs->ARM_r0, &sf->uc.uc_mcontext.arm_r0, err);
--	__get_user_error(regs->ARM_r1, &sf->uc.uc_mcontext.arm_r1, err);
--	__get_user_error(regs->ARM_r2, &sf->uc.uc_mcontext.arm_r2, err);
--	__get_user_error(regs->ARM_r3, &sf->uc.uc_mcontext.arm_r3, err);
--	__get_user_error(regs->ARM_r4, &sf->uc.uc_mcontext.arm_r4, err);
--	__get_user_error(regs->ARM_r5, &sf->uc.uc_mcontext.arm_r5, err);
--	__get_user_error(regs->ARM_r6, &sf->uc.uc_mcontext.arm_r6, err);
--	__get_user_error(regs->ARM_r7, &sf->uc.uc_mcontext.arm_r7, err);
--	__get_user_error(regs->ARM_r8, &sf->uc.uc_mcontext.arm_r8, err);
--	__get_user_error(regs->ARM_r9, &sf->uc.uc_mcontext.arm_r9, err);
--	__get_user_error(regs->ARM_r10, &sf->uc.uc_mcontext.arm_r10, err);
--	__get_user_error(regs->ARM_fp, &sf->uc.uc_mcontext.arm_fp, err);
--	__get_user_error(regs->ARM_ip, &sf->uc.uc_mcontext.arm_ip, err);
--	__get_user_error(regs->ARM_sp, &sf->uc.uc_mcontext.arm_sp, err);
--	__get_user_error(regs->ARM_lr, &sf->uc.uc_mcontext.arm_lr, err);
--	__get_user_error(regs->ARM_pc, &sf->uc.uc_mcontext.arm_pc, err);
--	__get_user_error(regs->ARM_cpsr, &sf->uc.uc_mcontext.arm_cpsr, err);
-+	err |= __copy_from_user(&context, &sf->uc.uc_mcontext, sizeof(context));
-+	if (err == 0) {
-+		regs->ARM_r0 = context.arm_r0;
-+		regs->ARM_r1 = context.arm_r1;
-+		regs->ARM_r2 = context.arm_r2;
-+		regs->ARM_r3 = context.arm_r3;
-+		regs->ARM_r4 = context.arm_r4;
-+		regs->ARM_r5 = context.arm_r5;
-+		regs->ARM_r6 = context.arm_r6;
-+		regs->ARM_r7 = context.arm_r7;
-+		regs->ARM_r8 = context.arm_r8;
-+		regs->ARM_r9 = context.arm_r9;
-+		regs->ARM_r10 = context.arm_r10;
-+		regs->ARM_fp = context.arm_fp;
-+		regs->ARM_ip = context.arm_ip;
-+		regs->ARM_sp = context.arm_sp;
-+		regs->ARM_lr = context.arm_lr;
-+		regs->ARM_pc = context.arm_pc;
-+		regs->ARM_cpsr = context.arm_cpsr;
-+	}
++	err = __copy_from_user(&frame, *auxp, sizeof(frame));
+ 	if (err)
+-		return -EFAULT;
+-	if (magic != VFP_MAGIC || size != VFP_STORAGE_SIZE)
++		return err;
++
++	if (frame.magic != VFP_MAGIC || frame.size != VFP_STORAGE_SIZE)
+ 		return -EINVAL;
  
- 	err |= !valid_user_regs(regs);
+-	*auxp += size;
+-	return vfp_restore_user_hwstate(&frame->ufp, &frame->ufp_exc);
++	*auxp += sizeof(frame);
++	return vfp_restore_user_hwstate(&frame.ufp, &frame.ufp_exc);
+ }
  
+ #endif
+--- a/arch/arm/vfp/vfpmodule.c
++++ b/arch/arm/vfp/vfpmodule.c
+@@ -597,13 +597,11 @@ int vfp_preserve_user_clear_hwstate(stru
+ }
+ 
+ /* Sanitise and restore the current VFP state from the provided structures. */
+-int vfp_restore_user_hwstate(struct user_vfp __user *ufp,
+-			     struct user_vfp_exc __user *ufp_exc)
++int vfp_restore_user_hwstate(struct user_vfp *ufp, struct user_vfp_exc *ufp_exc)
+ {
+ 	struct thread_info *thread = current_thread_info();
+ 	struct vfp_hard_struct *hwstate = &thread->vfpstate.hard;
+ 	unsigned long fpexc;
+-	int err = 0;
+ 
+ 	/* Disable VFP to avoid corrupting the new thread state. */
+ 	vfp_flush_hwstate(thread);
+@@ -612,17 +610,16 @@ int vfp_restore_user_hwstate(struct user
+ 	 * Copy the floating point registers. There can be unused
+ 	 * registers see asm/hwcap.h for details.
+ 	 */
+-	err |= __copy_from_user(&hwstate->fpregs, &ufp->fpregs,
+-				sizeof(hwstate->fpregs));
++	memcpy(&hwstate->fpregs, &ufp->fpregs, sizeof(hwstate->fpregs));
+ 	/*
+ 	 * Copy the status and control register.
+ 	 */
+-	__get_user_error(hwstate->fpscr, &ufp->fpscr, err);
++	hwstate->fpscr = ufp->fpscr;
+ 
+ 	/*
+ 	 * Sanitise and restore the exception registers.
+ 	 */
+-	__get_user_error(fpexc, &ufp_exc->fpexc, err);
++	fpexc = ufp_exc->fpexc;
+ 
+ 	/* Ensure the VFP is enabled. */
+ 	fpexc |= FPEXC_EN;
+@@ -631,10 +628,10 @@ int vfp_restore_user_hwstate(struct user
+ 	fpexc &= ~(FPEXC_EX | FPEXC_FP2V);
+ 	hwstate->fpexc = fpexc;
+ 
+-	__get_user_error(hwstate->fpinst, &ufp_exc->fpinst, err);
+-	__get_user_error(hwstate->fpinst2, &ufp_exc->fpinst2, err);
++	hwstate->fpinst = ufp_exc->fpinst;
++	hwstate->fpinst2 = ufp_exc->fpinst2;
+ 
+-	return err ? -EFAULT : 0;
++	return 0;
+ }
+ 
+ /*
 
 
