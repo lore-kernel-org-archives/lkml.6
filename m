@@ -2,146 +2,400 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B874AC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8760C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EF702148D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:28:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF702148D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A7B7214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:28:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A7B7214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbeJQBTg (ORCPT
+        id S1729111AbeJQBUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:19:36 -0400
-Received: from mga05.intel.com ([192.55.52.43]:55348 "EHLO mga05.intel.com"
+        Tue, 16 Oct 2018 21:20:08 -0400
+Received: from mga06.intel.com ([134.134.136.31]:2409 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727154AbeJQBTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:19:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1727154AbeJQBUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:20:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 10:28:07 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 10:28:38 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,389,1534834800"; 
-   d="scan'208";a="99721395"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga001.fm.intel.com with SMTP; 16 Oct 2018 10:28:03 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Tue, 16 Oct 2018 20:28:03 +0300
-Date:   Tue, 16 Oct 2018 20:28:03 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] drm/drm_vblank: Change EINVAL by the correct errno
-Message-ID: <20181016172803.GH9144@intel.com>
-References: <20181015170529.dgzpbm37hbuvqatc@smtp.gmail.com>
- <57b40f9f-24d2-27de-4895-5a76ff267643@linux.intel.com>
- <20181016163831.GA31561@phenom.ffwll.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181016163831.GA31561@phenom.ffwll.local>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+   d="scan'208";a="78487647"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by fmsmga007.fm.intel.com with ESMTP; 16 Oct 2018 10:28:38 -0700
+Message-ID: <124c1c2805286c70a9b2cc8e4b0abad7ef997ed4.camel@intel.com>
+Subject: Re: [RFC PATCH v4 21/27] x86/cet/shstk: ELF header parsing of
+ Shadow Stack
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Tue, 16 Oct 2018 10:23:43 -0700
+In-Reply-To: <CAGXu5jKO5Ot5VAJBMHudgx40g4N2tqhLKHeCdS7rkFj1bPaHig@mail.gmail.com>
+References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+         <20180921150351.20898-22-yu-cheng.yu@intel.com>
+         <CAGXu5jKO5Ot5VAJBMHudgx40g4N2tqhLKHeCdS7rkFj1bPaHig@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 06:38:31PM +0200, Daniel Vetter wrote:
-> On Tue, Oct 16, 2018 at 03:36:20PM +0200, Maarten Lankhorst wrote:
-> > Op 15-10-18 om 19:05 schreef Rodrigo Siqueira:
-> > > For historical reason, the function drm_wait_vblank_ioctl always return
-> > > -EINVAL if something gets wrong. This scenario limits the flexibility
-> > > for the userspace make detailed verification of the problem and take
-> > > some action. In particular, the validation of “if (!dev->irq_enabled)”
-> > > in the drm_wait_vblank_ioctl is responsible for checking if the driver
-> > > support vblank or not. If the driver does not support VBlank, the
-> > > function drm_wait_vblank_ioctl returns EINVAL which does not represent
-> > > the real issue; this patch changes this behavior by return EOPNOTSUPP.
-> > > Additionally, some operations are unsupported by this function, and
-> > > returns EINVAL; this patch also changes the return value to EOPNOTSUPP
-> > > in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
-> > > libdrm, which is used by many compositors; because of this, it is
-> > > important to check if this change breaks any compositor. In this sense,
-> > > the following projects were examined:
-> > >
-> > > * Drm-hwcomposer
-> > > * Kwin
-> > > * Sway
-> > > * Wlroots
-> > > * Wayland-core
-> > > * Weston
-> > > * Xorg (67 different drivers)
-> > >
-> > > For each repository the verification happened in three steps:
-> > >
-> > > * Update the main branch
-> > > * Look for any occurrence "drmWaitVBlank" with the command:
-> > >   git grep -n "drmWaitVBlank"
-> > > * Look in the git history of the project with the command:
-> > >   git log -SdrmWaitVBlank
-> > >
-> > > Finally, none of the above projects validate the use of EINVAL which
-> > > make safe, at least for these projects, to change the return values.
-> > >
-> > > Change since V1:
-> > >  Daniel Vetter and Chris Wilson
-> > >  - Replace ENOTTY by EOPNOTSUPP
-> > >  - Return EINVAL if the parameters are wrong
-> > >
-> > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> > > ---
-> > >  drivers/gpu/drm/drm_vblank.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> > > index 98e091175921..80f5a3bb427e 100644
-> > > --- a/drivers/gpu/drm/drm_vblank.c
-> > > +++ b/drivers/gpu/drm/drm_vblank.c
-> > > @@ -1533,10 +1533,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
-> > >  	unsigned int flags, pipe, high_pipe;
-> > >  
-> > >  	if (!dev->irq_enabled)
-> > > -		return -EINVAL;
-> > > +		return -EOPNOTSUPP;
-> > Change to -EIO?
-> > 
-> > If userspace would ever print this out, it would print the following
-> > confusing message to userspace:
-> > "Operation not supported on transport endpoint"
-> 
-> You're a bit late, EOPNOTSUPP is not established already in upstream for
-> this. And -EIO is taken already for "the gpu is dead".
-> 
-> > >  
-> > >  	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
-> > > -		return -EINVAL;
-> > > +		return -EOPNOTSUPP;
-> > I would keep this -EINVAL, tbh and making it part of the below if statement..
-> 
-> We discussed this, it's different: This here is an ioctl flag that's no
-> longer supported, the below is just an invalid request. Hence different
-> errno.
-> 
-> I think you missed a bit with your bikeshed :-)
+On Mon, 2018-10-15 at 16:40 -0700, Kees Cook wrote:
+> On Fri, Sep 21, 2018 at 8:03 AM, Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> > Look in .note.gnu.property of an ELF file and check if Shadow Stack needs
+> > to be enabled for the task.
 
-I think I too agree with the -EINVAL here as this flag is never
-supported, whereas -EOPNOTSUPP seems to mean "this flag is still
-valid, but not supported by your current hardware/driver
-configuration".
+[...]
 
-Also drm_invalid_op() uses -EINVAL for deprecated features as well.
+> > +/*
+> > + * The .note.gnu.property layout:
+> > + *
+> > + *     struct elf_note {
+> > + *             u32 n_namesz; --> sizeof(n_name[]); always (4)
+> > + *             u32 n_ndescsz;--> sizeof(property[])
+> > + *             u32 n_type;   --> always NT_GNU_PROPERTY_TYPE_0
+> > + *     };
+> > + *     char n_name[4]; --> always 'GNU\0'
+> > + *
+> > + *     struct {
+> > + *             struct property_x86 {
+> > + *                     u32 pr_type;
+> > + *                     u32 pr_datasz;
+> > + *             };
+> > + *             u8 pr_data[pr_datasz];
+> > + *     }[];
+> > + */
+> 
+> Does NT_GNU_PROPERTY_TYPE_0 only ever contain property_x86 bytes? (I
+> assume not, since there is a pr_type?)
 
--- 
-Ville Syrjälä
-Intel
+There are other property types, but we only look for NT_GNU_PROPERTY_TYPE_0.
+
+> > +
+> > +#define BUF_SIZE (PAGE_SIZE / 4)
+> > +
+> > +struct property_x86 {
+> > +       u32 pr_type;
+> > +       u32 pr_datasz;
+> > +};
+> > +
+> > +typedef bool (test_fn)(void *buf, u32 *arg);
+> > +typedef void *(next_fn)(void *buf, u32 *arg);
+> > +
+> > +static inline bool test_note_type_0(void *buf, u32 *arg)
+> > +{
+> > +       struct elf_note *n = buf;
+> > +
+> > +       return ((n->n_namesz == 4) && (memcmp(n + 1, "GNU", 4) == 0) &&
+> > +               (n->n_type == NT_GNU_PROPERTY_TYPE_0));
+> 
+> Cheaper to test n_type first...
+
+Yes, Thanks!
+
+> 
+> > +}
+> > +
+> > +static inline void *next_note(void *buf, u32 *arg)
+> > +{
+> > +       struct elf_note *n = buf;
+> > +       u32 align = *arg;
+> > +       int size;
+> > +
+> > +       size = round_up(sizeof(*n) + n->n_namesz, align);
+> 
+> I think this could overflow: n_namesz can be u64 for elf64_note.
+> 
+> > +       size = round_up(size + n->n_descsz, align);
+> 
+> Same here. You may want to use check_add_overflow(), etc, an u64 types.
+
+Note->n_namesz is always four-byte.  I should have used u32.
+
+> 
+> > +
+> > +       if (buf + size < buf)
+> > +               return NULL;
+> 
+> I don't understand this. You want to check size not exceeding the
+> allocation, which isn't passed into this function. Checking for a full
+> unsigned address wrap around is not sufficient to detect overflow.
+
+Here we only detect the warp around.  After this returns we then check other
+types of overflow in scan().
+
+> 
+> > +       else
+> > +               return (buf + size);
+> > +}
+> > +
+> > +static inline bool test_property_x86(void *buf, u32 *arg)
+> > +{
+> > +       struct property_x86 *pr = buf;
+> > +       u32 max_type = *arg;
+> > +
+> > +       if (pr->pr_type > max_type)
+> > +               *arg = pr->pr_type;
+> 
+> Why is *arg being updated? I don't see last_pr used outside of here --
+> are properties required to be pr_type-ordered?
+
+Yes, they need to be in ascending order.
+
+> 
+> > +
+> > +       return (pr->pr_type == GNU_PROPERTY_X86_FEATURE_1_AND);
+> > +}
+> > +
+> > +static inline void *next_property(void *buf, u32 *arg)
+> > +{
+> > +       struct property_x86 *pr = buf;
+> > +       u32 max_type = *arg;
+> > +
+> > +       if ((buf + sizeof(*pr) +  pr->pr_datasz < buf) ||
+> 
+> Again, this "< buf" test doesn't look at all correct to me.
+> 
+> > +           (pr->pr_type > GNU_PROPERTY_X86_FEATURE_1_AND) ||
+> > +           (pr->pr_type > max_type))
+> > +               return NULL;
+> > +       else
+> > +               return (buf + sizeof(*pr) + pr->pr_datasz);
+> > +}
+> > +
+> > +/*
+> > + * Scan 'buf' for a pattern; return true if found.
+> > + * *pos is the distance from the beginning of buf to where
+> > + * the searched item or the next item is located.
+> > + */
+> > +static int scan(u8 *buf, u32 buf_size, int item_size,
+> > +                test_fn test, next_fn next, u32 *arg, u32 *pos)
+> 
+> I'm not a fan of the short "scan", "test" and "next" names, and I
+> really don't like an arg named "arg". Something slightly more
+> descriptive for all of these would be nice, please.
+
+I need to work on that :-)  What would you suggest?
+
+> 
+> > +{
+> > +       int found = 0;
+> > +       u8 *p, *max;
+> > +
+> > +       max = buf + buf_size;
+> > +       if (max < buf)
+> > +               return 0;
+> > +
+> > +       p = buf;
+> > +
+> > +       while ((p + item_size < max) && (p + item_size > buf)) {
+> 
+> These comparisons are safe due to the BUF_SIZE limit of buf_size and
+> the only used size of item_size, but if this becomes more generic, it
+> should be more defensive on the size calculations (e.g. make sure than
+> "item_size < max" and then here "p < max - item_size", etc).
+> 
+> I'd kind of rather this code walked the base type and check each for
+> the matching feature. What is the general specification for what
+> NT_GNU_PROPERTY_TYPE_0 contains?
+
+There are other property types, but the kernel does not look at most of them.
+If the kernel needs to look at others, we need to rewrite this.
+
+[...]
+
+> > +
+> > +/*
+> > + * Search a PT_NOTE segment for the first NT_GNU_PROPERTY_TYPE_0.
+> > + */
+> > +static int find_note_type_0(struct file *file, unsigned long note_size,
+> > +                           loff_t file_offset, u32 align, u32 *feature)
+> > +{
+> > +       u8 *buf;
+> > +       u32 buf_pos;
+> > +       unsigned long read_size;
+> > +       unsigned long done;
+> > +       int found = 0;
+> > +       int ret = 0;
+> > +
+> > +       buf = kmalloc(BUF_SIZE, GFP_KERNEL);
+> > +       if (!buf)
+> > +               return -ENOMEM;
+> 
+> Why kmalloc over stack variable? (Or, does BUF_SIZE here really need
+> to be 1024?)
+
+BUF_SIZE can be smaller, for example 64.  If it is too small, we need to do
+kernel_read() too often.
+
+> 
+> > +
+> > +       *feature = 0;
+> > +       buf_pos = 0;
+> > +
+> > +       for (done = 0; done < note_size; done += buf_pos) {
+> > +               read_size = note_size - done;
+> > +               if (read_size > BUF_SIZE)
+> > +                       read_size = BUF_SIZE;
+> > +
+> > +               ret = kernel_read(file, buf, read_size, &file_offset);
+> > +
+> > +               if (ret != read_size) {
+> > +                       ret = (ret < 0) ? ret : -EIO;
+> > +                       kfree(buf);
+> > +                       return ret;
+> > +               }
+> > +
+> > +               /*
+> > +                * item_size = sizeof(struct elf_note) + elf_note.n_namesz.
+> > +                * n_namesz is 4 for the note type we look for.
+> > +                */
+> > +               ret = 0;
+> > +               found += scan(buf, read_size, sizeof(struct elf_note) + 4,
+> > +                             test_note_type_0, next_note,
+> > +                             &align, &buf_pos);
+> > +
+> > +               file_offset += buf_pos - read_size;
+> > +
+> > +               if (found == 1) {
+> > +                       struct elf_note *n =
+> > +                               (struct elf_note *)(buf + buf_pos);
+> > +                       u32 start = round_up(sizeof(*n) + n->n_namesz,
+> > align);
+> > +                       u32 total = round_up(start + n->n_descsz, align);
+> 
+> Same overflow notes from earlier...
+> 
+> > +
+> > +                       ret = find_feature_x86(file, n->n_descsz,
+> > +                                              file_offset + start,
+> > +                                              buf, feature);
+> > +                       file_offset += total;
+> > +                       buf_pos += total;
+> > +               } else if (!buf_pos) {
+> > +                       *feature = 0;
+> > +                       break;
+> > +               }
+> > +       }
+> > +
+> > +       kfree(buf);
+> > +       return ret;
+> > +}
+> > +
+> > +#ifdef CONFIG_COMPAT
+> > +static int check_notes_32(struct file *file, struct elf32_phdr *phdr,
+> > +                         int phnum, u32 *feature)
+> > +{
+> > +       int i;
+> > +       int err = 0;
+> > +
+> > +       for (i = 0; i < phnum; i++, phdr++) {
+> > +               if ((phdr->p_type != PT_NOTE) || (phdr->p_align != 4))
+> > +                       continue;
+> > +
+> > +               err = find_note_type_0(file, phdr->p_filesz, phdr->p_offset,
+> > +                                      phdr->p_align, feature);
+> > +               if (err)
+> > +                       return err;
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +#endif
+> > +
+> > +#ifdef CONFIG_X86_64
+> > +static int check_notes_64(struct file *file, struct elf64_phdr *phdr,
+> > +                         int phnum, u32 *feature)
+> > +{
+> > +       int i;
+> > +       int err = 0;
+> > +
+> > +       for (i = 0; i < phnum; i++, phdr++) {
+> > +               if ((phdr->p_type != PT_NOTE) || (phdr->p_align != 8))
+> > +                       continue;
+> 
+> Instead of a separate parser here, wouldn't it be a bit nicer to
+> attach this to the existing binfmt_elf program header parsing loop:
+
+We need to wait until SET_PERSONALITY2() is done.
+
+[...]
+
+> > +int arch_setup_features(void *ehdr_p, void *phdr_p,
+> > +                       struct file *file, bool interp)
+> > +{
+> > +       int err = 0;
+> > +       u32 feature = 0;
+> > +
+> > +       struct elf64_hdr *ehdr64 = ehdr_p;
+> > +
+> > +       if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
+> > +               return 0;
+> > +
+> > +       if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64) {
+> > +               struct elf64_phdr *phdr64 = phdr_p;
+> > +
+> > +               err = check_notes_64(file, phdr64, ehdr64->e_phnum,
+> > +                                    &feature);
+> > +               if (err < 0)
+> > +                       goto out;
+> > +       } else {
+> > +#ifdef CONFIG_COMPAT
+> > +               struct elf32_hdr *ehdr32 = ehdr_p;
+> > +
+> > +               if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32) {
+> > +                       struct elf32_phdr *phdr32 = phdr_p;
+> > +
+> > +                       err = check_notes_32(file, phdr32, ehdr32->e_phnum,
+> > +                                            &feature);
+> > +                       if (err < 0)
+> > +                               goto out;
+> > +               }
+> > +#endif
+> 
+> Should there be an #else error here?
+
+Yes, thanks.
+
+> I'd like to be using this code for a few other cases too (not just
+> x86-specific). For example, for marking KASan binaries as needing a
+> "legacy" memory layouts[1]. Others might be setting things like
+> no_new_privs at exec time, etc.
+
+If the item is a bit of GNU_PROPERTY_X86_FEATURE_1_AND, then this code would
+work.  Has it been finalized?
+
+Yu-cheng
+
