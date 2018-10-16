@@ -2,104 +2,140 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A49A0C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BB5C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52690205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:03:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ILPRrYWA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52690205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A3DC8205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 14:03:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3DC8205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=systec-electronic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbeJPVyK (ORCPT
+        id S1727262AbeJPVyL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:54:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39168 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbeJPVyK (ORCPT
+        Tue, 16 Oct 2018 17:54:11 -0400
+Received: from webbox1416.server-home.net ([77.236.96.61]:40713 "EHLO
+        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726986AbeJPVyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 16 Oct 2018 17:54:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3l3A6OygduF1nH1H5Cn5NFNHaqJ5qCd53v7SN/pL1IE=; b=ILPRrYWAcDt/ksW5HqydbOjtw
-        w/3sMJ4lmbOx+exFDL6KMwMTmIzWxYXje+Qc6K3oisf3Inmcyu6+Ph6GV8lpfmK7bv6GTfR3lLdIp
-        aMpg8fKLc8sUxzljS2LQVrHcPMsKPlEcAUbyduHmgsJXWp6YD11SxiHHjHds1nlExcUdye6dNsFv2
-        5fjshsMS8xwTYKc2l1z4CmmSp+quwn/k9CvQtDfytpKO70CAYOVleXXzifaUJCxDRKw4OOfGJ4aG7
-        SESaRX31cv5VsmdZOYns7INMpMxszCYGvBtnWtSG5t7spa2S2QBumDmcaVhn38AqrDITKwO3J+7AJ
-        M04Lo1m0g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gCPwS-0004UA-Ul; Tue, 16 Oct 2018 14:03:25 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9893F20295866; Tue, 16 Oct 2018 16:03:22 +0200 (CEST)
-Date:   Tue, 16 Oct 2018 16:03:22 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        nstange@suse.de, syzkaller-bugs@googlegroups.com,
-        Juri Lelli <juri.lelli@gmail.com>
-Subject: Re: INFO: rcu detected stall in do_idle
-Message-ID: <20181016140322.GB3121@hirez.programming.kicks-ass.net>
-References: <000000000000a4ee200578172fde@google.com>
- <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
+Received: from imapserver.systec-electronic.com (unknown [212.185.67.146])
+        by webbox1416.server-home.net (Postfix) with ESMTPA id C0D7927A64D;
+        Tue, 16 Oct 2018 16:03:31 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by imapserver.systec-electronic.com (Postfix) with ESMTP id 5247F1A1B57;
+        Tue, 16 Oct 2018 16:03:31 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at imapserver.systec-electronic.com
+Received: from imapserver.systec-electronic.com ([127.0.0.1])
+        by localhost (imapserver.systec-electronic.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 0r71DAj7A4j4; Tue, 16 Oct 2018 16:03:28 +0200 (CEST)
+Received: from ws-140106.localnet (ws-140106.systec.local [192.168.10.85])
+        by imapserver.systec-electronic.com (Postfix) with ESMTPA id EC03B1A1B59;
+        Tue, 16 Oct 2018 16:03:25 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@systec-electronic.com>
+To:     Jonas Danielsson <jonas@orbital-systems.com>
+Cc:     linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] power: reset: at91-reset: enable I-cache for at91sam9260_reset
+Date:   Tue, 16 Oct 2018 16:03:25 +0200
+Message-ID: <4836921.pHbLXnhTfm@ws-140106>
+In-Reply-To: <20181007125815.8392-1-jonas@threetimestwo.org>
+References: <20181007125815.8392-1-jonas@threetimestwo.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 03:24:06PM +0200, Thomas Gleixner wrote:
-> It does reproduce here but with a kworker stall. Looking at the reproducer:
-> 
->   *(uint32_t*)0x20000000 = 0;
->   *(uint32_t*)0x20000004 = 6;
->   *(uint64_t*)0x20000008 = 0;
->   *(uint32_t*)0x20000010 = 0;
->   *(uint32_t*)0x20000014 = 0;
->   *(uint64_t*)0x20000018 = 0x9917;
->   *(uint64_t*)0x20000020 = 0xffff;
->   *(uint64_t*)0x20000028 = 0;
->   syscall(__NR_sched_setattr, 0, 0x20000000, 0);
-> 
-> which means:
-> 
->   struct sched_attr {
->   	 .size		= 0,
-> 	 .policy	= 6,
-> 	 .flags		= 0,
-> 	 .nice		= 0,
-> 	 .priority	= 0,
-> 	 .deadline	= 0x9917,
-> 	 .runtime	= 0xffff,
-> 	 .period	= 0,
->   }
-> 
-> policy 6 is SCHED_DEADLINE
-> 
-> That makes the thread hog the CPU and prevents all kind of stuff to run.
-> 
-> Peter, is that expected behaviour?
+Do you have CONFIG_CPU_ICACHE_DISABLE enabled?
+I wonder why I-cache is disabled. I know about this errata, AT91SAM9G20 is affected as well.
 
-Sorta, just like FIFO-99 while(1);. Except we should be rejecting the
-above configuration, because of the rule:
+Best regards,
+Alexander
 
-  runtime <= deadline <= period
+On Sunday, October 7, 2018, 2:57:45 PM CEST Jonas Danielsson wrote:
+> From: Jonas Danielsson <jonas@orbital-systems.com>
+> 
+> This fixes a bug where our embedded system (AT91SAM9260 based) would
+> hang at reboot. At the most we managed 16 boot loops without a hang.
+> 
+> With this patch applied the problem has not been observed and the board
+> has managed above 250 boot loops.
+> 
+> The AT91SAM9260 datasheet tells us that with the instruction cache
+> disabled all instructions are fetched from SDRAM. And we have an errata
+> telling us we must power down the SDRAM before issuing cpu reset.
+> 
+> This means we need the instruction cache enabled in at91sam9260_reset()
+> At the moment it is being disabled in cpu_proc_fin() which is called from
+> arch/arm/kernel/reboot.c.
+> 
+> Signed-off-by: Jonas Danielsson <jonas@orbital-systems.com>
+> ---
+>  drivers/power/reset/at91-reset.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/power/reset/at91-reset.c b/drivers/power/reset/at91-reset.c
+> index f44a9ffcc2ab..78972bba64df 100644
+> --- a/drivers/power/reset/at91-reset.c
+> +++ b/drivers/power/reset/at91-reset.c
+> @@ -50,14 +50,24 @@ static void __iomem *at91_ramc_base[2], *at91_rstc_base;
+>  static struct clk *sclk;
+>  
+>  /*
+> -* unless the SDRAM is cleanly shutdown before we hit the
+> +* Errata 43.1.7.1 RSTC: Reset during SDRAM Accesses
+> +*
+> +* Unless the SDRAM is cleanly shutdown before we hit the
+>  * reset register it can be left driving the data bus and
+>  * killing the chance of a subsequent boot from NAND
+> +*
+> +* Since we are disabling SDRAM need to make sure that the
+> +* instruction cache is enabled.
+>  */
+>  static int at91sam9260_restart(struct notifier_block *this, unsigned long mode,
+>  			       void *cmd)
+>  {
+>  	asm volatile(
+> +		/* Enable I-cache */
+> +		"mrc	p15, 0, r0, c1, c0, 0\n\t"
+> +		"orr	r0, r0, #4096\n\t" /* CR_I (bit 12) */
+> +		"mcr	p15, 0, r0, c1, c0, 0\n\t"
+> +
+>  		/* Align to cache lines */
+>  		".balign 32\n\t"
+>  
+> 
 
-Juri, where were we supposed to check that?
+
+-- 
+SYS TEC electronic GmbH
+Am Windrad 2
+08468 Heinsdorfergrund
+Germany
+Telefon : +49 (0) 3765 38600-0
+Fax     : +49 (0) 3765 38600-4100
+Email   : alexander.stein@systec-electronic.com
+Website : http://www.systec-electronic.com
+
+Managing Director   : Dipl.-Phys. Siegmar Schmidt
+Commercial registry : Amtsgericht Chemnitz, HRB 28082
+USt.-Id Nr.         : DE150534010
+
+Diese E-Mail enthält vertrauliche und/oder rechtlich geschützte Informationen.
+Wenn Sie nicht der richtige Adressat sind oder diese E-Mail irrtümlich erhalten haben, informieren Sie bitte sofort den Absender und vernichten Sie diese Mail.
+Das unerlaubte Kopieren sowie die unbefugte Weitergabe dieser Mail sind nicht gestattet.
+ 
+This e-mail may contain confidential and/or privileged information.
+If you are not the intended recipient (or have received this e-mail in error) please notify the sender immediately and destroy this e-mail.
+Any unauthorized copying, disclosure or distribution of the material in this e-mail is strictly forbidden.
+
+
