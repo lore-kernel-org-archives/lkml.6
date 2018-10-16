@@ -7,95 +7,106 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B35C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC82C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 985E021470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CA0E214AB
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:16:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxfTpSxo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985E021470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s03A+Qho"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CA0E214AB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbeJPMFI (ORCPT
+        id S1730348AbeJPMFR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:05:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54076 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:05:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730300AbeJPMEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:04:52 -0400
+        id S1728564AbeJPMFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:05:17 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60782214AB;
-        Tue, 16 Oct 2018 04:16:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CE0E21470;
+        Tue, 16 Oct 2018 04:16:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663388;
-        bh=jzrBnfv4faBEpcrMZEfjR1ksJV/pYcpSd39PT1HnDes=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FxfTpSxoEFCgfhCD5FgAvhurLe1rITTTY820mTHIq61fONcsw9aqmw70n3a1Kaige
-         LSjC4I0LPEK91h7dwsmJ262eTFRCJeIMZPbDYXpeXj0t4T+P2ro3VAjI6kVOv9jfjn
-         SmeNJkPcawpQl8Y2jX+kF06gorzFc90IIkMWRuqI=
+        s=default; t=1539663413;
+        bh=9G4GZ2npiBcUZnY6978OiJiKtmDotHO1mpuBXtJMNEM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=s03A+Qho0HA6KUdcTuWDacD/HNjf+SR84jLpoZ9k8ir6/R9H/+d+wwsAOi2vjSJUL
+         3MC8pZqlDI5beYVNb4vwzIqMQIQ4n0wYNH7oS+4F6WbvzCcYGCeu6v+Y4QMKP0pE6w
+         tPb/zwdZq7c06TXpanv9Oga2kWzycgR1Ip9Q19F8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 23/25] net/usb: cancel pending work when unbinding smsc75xx
-Date:   Tue, 16 Oct 2018 00:16:04 -0400
-Message-Id: <20181016041606.135876-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 01/15] xfrm: Validate address prefix lengths in the xfrm selector.
+Date:   Tue, 16 Oct 2018 00:16:36 -0400
+Message-Id: <20181016041650.135958-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181016041606.135876-1-sashal@kernel.org>
-References: <20181016041606.135876-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Steffen Klassert <steffen.klassert@secunet.com>
 
-[ Upstream commit f7b2a56e1f3dcbdb4cf09b2b63e859ffe0e09df8 ]
+[ Upstream commit 07bf7908950a8b14e81aa1807e3c667eab39287a ]
 
-Cancel pending work before freeing smsc75xx private data structure
-during binding. This fixes the following crash in the driver:
+We don't validate the address prefix lengths in the xfrm
+selector we got from userspace. This can lead to undefined
+behaviour in the address matching functions if the prefix
+is too big for the given address family. Fix this by checking
+the prefixes and refuse SA/policy insertation when a prefix
+is invalid.
 
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000050
-IP: mutex_lock+0x2b/0x3f
-<snipped>
-Workqueue: events smsc75xx_deferred_multicast_write [smsc75xx]
-task: ffff8caa83e85700 task.stack: ffff948b80518000
-RIP: 0010:mutex_lock+0x2b/0x3f
-<snipped>
-Call Trace:
- smsc75xx_deferred_multicast_write+0x40/0x1af [smsc75xx]
- process_one_work+0x18d/0x2fc
- worker_thread+0x1a2/0x269
- ? pr_cont_work+0x58/0x58
- kthread+0xfa/0x10a
- ? pr_cont_work+0x58/0x58
- ? rcu_read_unlock_sched_notrace+0x48/0x48
- ret_from_fork+0x22/0x40
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: Air Icy <icytxw@gmail.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/smsc75xx.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/xfrm/xfrm_user.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/net/usb/smsc75xx.c b/drivers/net/usb/smsc75xx.c
-index 1a8b9ea49144..234febc6e1d9 100644
---- a/drivers/net/usb/smsc75xx.c
-+++ b/drivers/net/usb/smsc75xx.c
-@@ -1509,6 +1509,7 @@ static void smsc75xx_unbind(struct usbnet *dev, struct usb_interface *intf)
- {
- 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
- 	if (pdata) {
-+		cancel_work_sync(&pdata->set_multicast);
- 		netif_dbg(dev, ifdown, dev->net, "free pdata\n");
- 		kfree(pdata);
- 		pdata = NULL;
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index 4fe43d80c153..ca99638b5d5a 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -150,10 +150,16 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
+ 	err = -EINVAL;
+ 	switch (p->family) {
+ 	case AF_INET:
++		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
++			goto out;
++
+ 		break;
+ 
+ 	case AF_INET6:
+ #if IS_ENABLED(CONFIG_IPV6)
++		if (p->sel.prefixlen_d > 128 || p->sel.prefixlen_s > 128)
++			goto out;
++
+ 		break;
+ #else
+ 		err = -EAFNOSUPPORT;
+@@ -1285,10 +1291,16 @@ static int verify_newpolicy_info(struct xfrm_userpolicy_info *p)
+ 
+ 	switch (p->sel.family) {
+ 	case AF_INET:
++		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
++			return -EINVAL;
++
+ 		break;
+ 
+ 	case AF_INET6:
+ #if IS_ENABLED(CONFIG_IPV6)
++		if (p->sel.prefixlen_d > 128 || p->sel.prefixlen_s > 128)
++			return -EINVAL;
++
+ 		break;
+ #else
+ 		return  -EAFNOSUPPORT;
 -- 
 2.17.1
 
