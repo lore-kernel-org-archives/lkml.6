@@ -2,128 +2,137 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E616BC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93960C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A71BE2064A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:03:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HnKewxau"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A71BE2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 6690320658
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:03:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6690320658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbeJQAyU (ORCPT
+        id S1727522AbeJQAzK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:54:20 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:33167 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727364AbeJQAyT (ORCPT
+        Tue, 16 Oct 2018 20:55:10 -0400
+Received: from gateway23.websitewelcome.com ([192.185.49.179]:32593 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727132AbeJQAzK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:54:19 -0400
-Received: by mail-yb1-f196.google.com with SMTP id u88-v6so9199461ybi.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 10:02:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=W+X5PaUpkOlPOO1tCJJftVuhOIrLdOI2ZHpJ3GHF0Ak=;
-        b=HnKewxaupCcOK8cijKFG1yMgJz/jcv6g3pUVPw+UEAxyJzkzAFCVY5caSYRBa0QRZ1
-         4FbJApSTyK6JgoYT3E6mrfUVt4s9FS72Id37ahDfoRmJjU8d4W48xlh0j+5SUa/ooSCE
-         OzNVBZbLvuyPUU1zuuy/OSwPjCIZuyJfTdM3g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=W+X5PaUpkOlPOO1tCJJftVuhOIrLdOI2ZHpJ3GHF0Ak=;
-        b=hutguLTnLsZvQVfOsHai3482q8VBmVXq4aBz2CxW+PebNhSRpppJ+J90IK+p9PVKC3
-         X82ivzRnQOGdxzy9Ty6O3/vd5EF3x82wIUdai1dqgHK3VBAWbMP1wGTxRXVCXJrn9KcF
-         V0kyj6f8zF8L9YAbY94KsbwT7u45wiMyRGNjzMMgDAkMx7NOh7fjyHifaNbDyocLjViP
-         nlwBvHHGe5ByccIHxSAEzwdI4bJt7f5MRyfchVTIHl2XKt5DMuIrRG60+86Zk5OOre6s
-         4IODhZW57NJXfJsH9/IIfKrZzosaA1ZqxfRNjyDVjhEDteIOsjGfZJVL0AGZcH/334I6
-         rLlg==
-X-Gm-Message-State: ABuFfoiQUmzWX5LzAlIOyVDFf3knP8IWcG3wcwQt1BIBTSSxuB3b43mB
-        HRFzOINQ4QCfa6HfyZwwjf7MAowMbcs=
-X-Google-Smtp-Source: ACcGV61WxDRVW2VZoqpcbIiMCb9dw+Y3rL1kfW6HurLKXYKMgrTpCpz1zTAfzICWW8W5R9MbJ/hOdg==
-X-Received: by 2002:a25:9343:: with SMTP id g3-v6mr5601608ybo.222.1539709378999;
-        Tue, 16 Oct 2018 10:02:58 -0700 (PDT)
-Received: from mail-yw1-f47.google.com (mail-yw1-f47.google.com. [209.85.161.47])
-        by smtp.gmail.com with ESMTPSA id q11-v6sm3485024ywc.77.2018.10.16.10.02.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 10:02:56 -0700 (PDT)
-Received: by mail-yw1-f47.google.com with SMTP id m127-v6so9206484ywb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 10:02:55 -0700 (PDT)
-X-Received: by 2002:a81:2cc3:: with SMTP id s186-v6mr12732048yws.168.1539709374873;
- Tue, 16 Oct 2018 10:02:54 -0700 (PDT)
+        Tue, 16 Oct 2018 20:55:10 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 77B6119293
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 12:03:49 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id CSkkgWmxytz4jCSkvgeWck; Tue, 16 Oct 2018 12:03:49 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:42698 helo=[192.168.1.41])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gCSkk-000bUb-37; Tue, 16 Oct 2018 12:03:30 -0500
+Subject: Re: [PATCH net-next v2 2/2] net: phy: mscc: fix memory leak in
+ vsc8574_config_pre_init
+To:     David Miller <davem@davemloft.net>
+Cc:     quentin.schulz@bootlin.com, linux-kernel@vger.kernel.org,
+        andrew@lunn.ch, f.fainelli@gmail.com
+References: <6161326e265a99f8ec8e0f7028790a0131c5404e.1539159556.git.gustavo@embeddedor.com>
+ <20181010083422.phokcciqdkzm6u7w@qschulz>
+ <e64b93c2-4f25-ee68-ef23-e947f1e84d55@embeddedor.com>
+ <20181016.095414.697502448536323380.davem@davemloft.net>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <e29d0c22-8ad9-5565-2d46-e5d6635a7855@embeddedor.com>
+Date:   Tue, 16 Oct 2018 19:03:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Tue, 16 Oct 2018 10:02:53
- -0700 (PDT)
-In-Reply-To: <20181016112928.4b52afb5@gandalf.local.home>
-References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org> <20181016112928.4b52afb5@gandalf.local.home>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 16 Oct 2018 10:02:53 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLBtBU1eX7tGX1gOVKSFKeLMeoke3bGHUuqxk86dLSnng@mail.gmail.com>
-Message-ID: <CAGXu5jLBtBU1eX7tGX1gOVKSFKeLMeoke3bGHUuqxk86dLSnng@mail.gmail.com>
-Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pramod Gurav <gpramod@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181016.095414.697502448536323380.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gCSkk-000bUb-37
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:42698
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 8:29 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Tue, 16 Oct 2018 17:08:25 +0530
-> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
->> One more thing is for pstore dmesg-ramoops, I had to change
->> late_initcall to postcore_initcall which brings the question as to why
->> we changed to late_initcall?
->> Simple git blame shows to support crypto compress api, but is it really
->> helpful? A lot of boottime issues can be caught with pstore enabled at
->> postcore_initcall rather than late_initcall, this backtrace
->> is just one example. Is there any way we could change this?
->
-> Does it break if the crypto is not initialized? Perhaps add a command
-> line flag to have it happen earlier:
->
->  ramoops=earlyinit
->
-> and add a postcore_initcall that checks if that flag is set, and if so,
-> it does the work then, and the late_initcall() will do nothing.
->
-> That way, you can still have unmodified kernels use pstore when it
-> crashes at boot up.
 
-Even better, if we could find a way to make it work with a late
-initialization of compression (i.e. postcore_initcall() by default
-means anything caught would be uncompressed, but anything after
-late_initcall() would be compressed). I'd be very happy to review
-patches for that!
 
--Kees
+On 10/16/18 6:54 PM, David Miller wrote:
+>>
+>> Friendly ping. Dave, can you take this?
+> 
+> It needs to be posted properly to netdev, just like all networking
+> patches do.
+> 
 
--- 
-Kees Cook
-Pixel Security
+mmh... I don't know how I missed it. :/
+
+OK. I'll send the series to netdev.
+
+Thanks!
+--
+Gustavo
