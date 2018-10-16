@@ -4,45 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A8BC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD928C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7193A20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:33:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E253208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:33:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvBxpi52"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7193A20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTk0dMzT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E253208B3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728394AbeJPMV6 (ORCPT
+        id S1728142AbeJPMBW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:21:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48378 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728122AbeJPMBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 16 Oct 2018 08:01:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48352 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728071AbeJPMBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:01:21 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8483620869;
-        Tue, 16 Oct 2018 04:12:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD1F12098A;
+        Tue, 16 Oct 2018 04:12:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663180;
-        bh=JPgv61qFFimZUT39tSkBmQpJrgt/sPLs2Z2vfONRCic=;
+        s=default; t=1539663179;
+        bh=KNgnDeGvd28vGaktu3TDP1YrEZaumm0in6S8OnlgiwQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mvBxpi522/ImyRH6CcnQMbtYuDU9Mvffj2NujBCHYxLz2SVsEzi15O1bGIGWHymKn
-         wmBGmDUg7GdwkRGCOGDUlsHbwv/1YsZma9Niq2eyAloyKXmqHd9XuXHrlTxn6u4OFD
-         lDRXoxyJX6z9MDxJQ/eRrKdZKAZNxLR0br4NJ0Ao=
+        b=MTk0dMzTeak0HhlcuoIqyR6o0zsjaP65MfddWw/uvaq9y0WrS9h+zhdyCN/8lKFXP
+         QbxsgU46qJSl6vlL+KRkIxhcEgzMn4C+BFZ51/v0eaAVUp9VBNdj88VBFHMD7ZXIu/
+         R8oZw4foO8JaOlAoKDJgSh+y5J5rliPbPbqBvaOk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
+Cc:     Nilesh Javali <nilesh.javali@cavium.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 040/100] rxrpc: Fix checks as to whether we should set up a new call
-Date:   Tue, 16 Oct 2018 00:11:21 -0400
-Message-Id: <20181016041221.135528-40-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 039/100] scsi: qedi: Initialize the stats mutex lock
+Date:   Tue, 16 Oct 2018 00:11:20 -0400
+Message-Id: <20181016041221.135528-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 References: <20181016041221.135528-1-sashal@kernel.org>
@@ -51,108 +53,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Nilesh Javali <nilesh.javali@cavium.com>
 
-[ Upstream commit dc71db34e4f3c06b8277c8f3c2ff014610607a8c ]
+[ Upstream commit 3cc5746e5ad7688e274e193fa71278d98aa52759 ]
 
-There's a check in rxrpc_data_ready() that's checking the CLIENT_INITIATED
-flag in the packet type field rather than in the packet flags field.
+Fix kernel NULL pointer dereference,
 
-Fix this by creating a pair of helper functions to check whether the packet
-is going to the client or to the server and use them generally.
+Call Trace:
+  [<ffffffff9b7658e6>] __mutex_lock_slowpath+0xa6/0x1d0
+  [<ffffffff9b764cef>] mutex_lock+0x1f/0x2f
+  [<ffffffffc061b5e1>] qedi_get_protocol_tlv_data+0x61/0x450 [qedi]
+  [<ffffffff9b1f9d8e>] ? map_vm_area+0x2e/0x40
+  [<ffffffff9b1fc370>] ? __vmalloc_node_range+0x170/0x280
+  [<ffffffffc0b81c3d>] ? qed_mfw_process_tlv_req+0x27d/0xbd0 [qed]
+  [<ffffffffc0b6461b>] qed_mfw_fill_tlv_data+0x4b/0xb0 [qed]
+  [<ffffffffc0b81c59>] qed_mfw_process_tlv_req+0x299/0xbd0 [qed]
+  [<ffffffff9b02a59e>] ? __switch_to+0xce/0x580
+  [<ffffffffc0b61e5b>] qed_slowpath_task+0x5b/0x80 [qed]
 
-Fixes: 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Nilesh Javali <nilesh.javali@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/rxrpc/ar-internal.h | 10 ++++++++++
- net/rxrpc/conn_object.c |  2 +-
- net/rxrpc/input.c       | 12 ++++--------
- 3 files changed, 15 insertions(+), 9 deletions(-)
+ drivers/scsi/qedi/qedi_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 707630ab4713..5069193d2cc1 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -462,6 +462,16 @@ struct rxrpc_connection {
- 	u8			out_clientflag;	/* RXRPC_CLIENT_INITIATED if we are client */
- };
- 
-+static inline bool rxrpc_to_server(const struct rxrpc_skb_priv *sp)
-+{
-+	return sp->hdr.flags & RXRPC_CLIENT_INITIATED;
-+}
-+
-+static inline bool rxrpc_to_client(const struct rxrpc_skb_priv *sp)
-+{
-+	return !rxrpc_to_server(sp);
-+}
-+
- /*
-  * Flags in call->flags.
-  */
-diff --git a/net/rxrpc/conn_object.c b/net/rxrpc/conn_object.c
-index 4c77a78a252a..c37bf8e282b9 100644
---- a/net/rxrpc/conn_object.c
-+++ b/net/rxrpc/conn_object.c
-@@ -99,7 +99,7 @@ struct rxrpc_connection *rxrpc_find_connection_rcu(struct rxrpc_local *local,
- 	k.epoch	= sp->hdr.epoch;
- 	k.cid	= sp->hdr.cid & RXRPC_CIDMASK;
- 
--	if (sp->hdr.flags & RXRPC_CLIENT_INITIATED) {
-+	if (rxrpc_to_server(sp)) {
- 		/* We need to look up service connections by the full protocol
- 		 * parameter set.  We look up the peer first as an intermediate
- 		 * step and then the connection from the peer's tree.
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 608d078a4981..338fbbf216a9 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -1171,10 +1171,6 @@ void rxrpc_data_ready(struct sock *udp_sk)
- 
- 	trace_rxrpc_rx_packet(sp);
- 
--	_net("Rx RxRPC %s ep=%x call=%x:%x",
--	     sp->hdr.flags & RXRPC_CLIENT_INITIATED ? "ToServer" : "ToClient",
--	     sp->hdr.epoch, sp->hdr.cid, sp->hdr.callNumber);
--
- 	if (sp->hdr.type >= RXRPC_N_PACKET_TYPES ||
- 	    !((RXRPC_SUPPORTED_PACKET_TYPES >> sp->hdr.type) & 1)) {
- 		_proto("Rx Bad Packet Type %u", sp->hdr.type);
-@@ -1183,13 +1179,13 @@ void rxrpc_data_ready(struct sock *udp_sk)
- 
- 	switch (sp->hdr.type) {
- 	case RXRPC_PACKET_TYPE_VERSION:
--		if (!(sp->hdr.flags & RXRPC_CLIENT_INITIATED))
-+		if (rxrpc_to_client(sp))
- 			goto discard;
- 		rxrpc_post_packet_to_local(local, skb);
- 		goto out;
- 
- 	case RXRPC_PACKET_TYPE_BUSY:
--		if (sp->hdr.flags & RXRPC_CLIENT_INITIATED)
-+		if (rxrpc_to_server(sp))
- 			goto discard;
- 		/* Fall through */
- 
-@@ -1269,7 +1265,7 @@ void rxrpc_data_ready(struct sock *udp_sk)
- 		call = rcu_dereference(chan->call);
- 
- 		if (sp->hdr.callNumber > chan->call_id) {
--			if (!(sp->hdr.flags & RXRPC_CLIENT_INITIATED)) {
-+			if (rxrpc_to_client(sp)) {
- 				rcu_read_unlock();
- 				goto reject_packet;
- 			}
-@@ -1292,7 +1288,7 @@ void rxrpc_data_ready(struct sock *udp_sk)
+diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+index 3e18a68c2b03..054e66d93ed6 100644
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -2472,6 +2472,7 @@ static int __qedi_probe(struct pci_dev *pdev, int mode)
+ 		/* start qedi context */
+ 		spin_lock_init(&qedi->hba_lock);
+ 		spin_lock_init(&qedi->task_idx_lock);
++		mutex_init(&qedi->stats_lock);
  	}
- 
- 	if (!call || atomic_read(&call->usage) == 0) {
--		if (!(sp->hdr.type & RXRPC_CLIENT_INITIATED) ||
-+		if (rxrpc_to_client(sp) ||
- 		    sp->hdr.callNumber == 0 ||
- 		    sp->hdr.type != RXRPC_PACKET_TYPE_DATA)
- 			goto bad_message_unlock;
+ 	qedi_ops->ll2->register_cb_ops(qedi->cdev, &qedi_ll2_cb_ops, qedi);
+ 	qedi_ops->ll2->start(qedi->cdev, &params);
 -- 
 2.17.1
 
