@@ -2,157 +2,107 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 690A6C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7BCC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16659208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:50:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16659208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 6EEA120866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:52:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fbxQFVOR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EEA120866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbeJPVko (ORCPT
+        id S1727217AbeJPVmd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:40:44 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:54021 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727043AbeJPVko (ORCPT
+        Tue, 16 Oct 2018 17:42:33 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:43603 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727043AbeJPVmd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 17:40:44 -0400
-Received: from [IPv6:2001:420:44c1:2579:9a8:54a0:8ffa:2301] ([IPv6:2001:420:44c1:2579:9a8:54a0:8ffa:2301])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id CPjTgGDfxSskCCPjWg8bwr; Tue, 16 Oct 2018 15:50:08 +0200
-Subject: Re: [PATCH 2/2] media: docs-rst: Document memory-to-memory video
- encoder interface
-To:     Tomasz Figa <tfiga@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-References: <20180724140621.59624-1-tfiga@chromium.org>
- <20180724140621.59624-3-tfiga@chromium.org>
- <4168da98-fa01-ea2f-8162-385501e666be@xs4all.nl>
- <CAAFQd5BqtKFeJniNaqahi9h_zKR+rPrWUiyx004Z=MWDj7q++w@mail.gmail.com>
- <CAAFQd5Djur9y+=UHTx9ZSx310p2ShCsBTqsEA1UHCMoawuDscA@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <7b8b56e7-1617-5de6-9fa9-a10897a8f2f1@xs4all.nl>
-Date:   Tue, 16 Oct 2018 15:49:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 16 Oct 2018 17:42:33 -0400
+Received: by mail-qt1-f194.google.com with SMTP id q41-v6so25692508qtq.10
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 06:51:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0GbGhX6sHSV23Grz6FVp5g23P7JfBj1mSGNji9fqc/A=;
+        b=fbxQFVORaqMROf0NDV+zGR7NKho01mkJ0aHn2FtNA59cVRxBskW9Mz9m0wsIUvffLj
+         fvpyMnXd6pjpYlCRedmZ4Hmn60AXwet19i5+iL6A7r/q5BGXZ5VWwynJPHqMEZCJpu5m
+         tXdNn9JZNcRk1fOGvWMJToEKYjny9cn1eVe4Mqom08tvg+EXlAo6O/PHqiCwgeJLd4Cd
+         3fg1/Hlk4zpObMaR++FFuQDhlcXL8vo2c7lzGhYMGAN8J0XC7t8gk/nRKf8/HeJsSNTd
+         MDxgzNMfD0ixeYnyc0dKY37MxMi6gj5T+kO8Nw+qX0XuMyHA3fjc6/GBBNIXMC5uFOlB
+         EItQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0GbGhX6sHSV23Grz6FVp5g23P7JfBj1mSGNji9fqc/A=;
+        b=V2ae1JdrQ2hZ+1fH/L680ULeo/1iS09HvlMAYiJsKrbM6Mbly3eqppm5A3pzOrJ+Qx
+         DEjNflIP5qOYaSV2O48cjRsjuNUhfKAKcMFBAR0E/QL8HohfGbObmn0qQD8BgHYtZllC
+         Ly6tMPbHtsz2vlI5aYgtqaHRk482vwVDhL1pXHYgzLNmqf83STYWpxG29uD4w5s0ErDN
+         fh1WQ0kTEwBG0d26panzrnwNytubLEgGczBlr+VM3mWNKRtPlZaCi3HI+l7MM0ZGVp1B
+         /JhlPgaTlox3uJI8L4dVWVWT8hRje7d2whTOq/b1YOreOgISiaqR3f40vYgBwg+yzp/9
+         QtEQ==
+X-Gm-Message-State: ABuFfoiDuvaCVCdOQbTjB493BQHz4aJ+a1q4mt9vRFkGiNQ3QHr5tm9l
+        8xwIUEuq+bJSwI3JFNV60WAXwIn3+rGb3c+Pl9I=
+X-Google-Smtp-Source: ACcGV60FHv+39bcB204+vagy0bQnqXNbB1OzJLREycm030/0O43EXUFZ1AYzVm/INH1lR6vKMBm2vVyFMGt2zpavrGw=
+X-Received: by 2002:ac8:6784:: with SMTP id b4-v6mr20683361qtp.373.1539697918458;
+ Tue, 16 Oct 2018 06:51:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5Djur9y+=UHTx9ZSx310p2ShCsBTqsEA1UHCMoawuDscA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfLpy65hUflpLqKJJD9QesvS+BzueFdFXQnnL6ns7THT21td4E++XJ3rD/RpcdamuyR7Rm1xJTMSKowW0cQy5VxOBOBBYK/qvMBWqD7Uf5N92G4MUtRs2
- yVScfVZfYtBssixaHo9V8Fi1J2zQhWBFBlAYZSt6AvmuGAqKwfeU33bGuxkWjFimeepbeOQn5ei4UNiwTcWrk4vqDoBos1PPgj1g38JO1hWx1gY+93nP4MmB
- sRD8CQ1c8qRW/grl/Yvzn3mhgbf6nhPLLvlhOHMqlMK6TaHUugxtopu70pNBe8zCBfPBxq7IXMuc+6dT/o1BO/6OuTZ+fn8Hnw2TtpMK3toCHtgWIlChwZTX
- 3QZGgyFoi7u9Hvy9yHvKdTw2fuDITV2q76udIhrkumyPnRwXe6nW9LkUgtxmXFISjTGVklqOKPN3+P24zbvdF0fapEt1jTZFhM2hl7zavkx7JYKtyqJ6WAD+
- yO9kbcyTcvZaGBj3E8iwZe4zxJAz0V3kfRpqKvMc5r7zmK8lIWN67sWyeSNgvsXWGImgZKo0nPOOUEj5UgPos1LLLvoc4XNdqNE07ANHoKiHqj9vp83HE4qJ
- nDzr1MEnTaZ+bVadvcVEZ/nWCUPiSxzuhI3ViDlpYLMYlIEou+NPv1K36iHffF78iU7TE8bHlhbsqYCEI1mplYq582d82fDkVAnHpQzp2J2NhZ28/8/r/iQm
- qZf3ZnI7C30qmuyvNbv0xji42XP4E+AtdCLurv9HMptppwhJUdtgYnfuDP3hduLGPP+cZz1+ZWwOTe+r0nyYEgZVqE+2aihwVaPUnZrSskSlFpEtNQP5ExUS
- WncUk1rOqBmDGmLRDCIeOncL3XHixFOi7/TDTTS4w9//96AYXzq9JXDfO4ezkuPvKKdO5AjU4+1KeFIeCuKV5Dd5IUaolJ8QHDNcHEj2Lv00tcFZ8ULkpyyz
- oy3v+c/IcnjFClVcfzZSeZ4I6xw=
+References: <CGME20181016072250eucas1p1a763670c8509d20a6e6847eadb246817@eucas1p1.samsung.com>
+ <20181016072244.1216-1-a.hajda@samsung.com> <20181016072244.1216-4-a.hajda@samsung.com>
+In-Reply-To: <20181016072244.1216-4-a.hajda@samsung.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 16 Oct 2018 16:51:47 +0300
+Message-ID: <CAHp75VeZEtG7f3WmgvLrirReSwgbOQDp1qiBZ47652poMw8BUQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] drivers: use probe_err function in obvious cases
+To:     Andrzej Hajda <a.hajda@samsung.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/18 09:36, Tomasz Figa wrote:
-> On Tue, Aug 7, 2018 at 3:54 PM Tomasz Figa <tfiga@chromium.org> wrote:
->>>> +   * The driver must expose following selection targets on ``OUTPUT``:
->>>> +
->>>> +     ``V4L2_SEL_TGT_CROP_BOUNDS``
->>>> +         maximum crop bounds within the source buffer supported by the
->>>> +         encoder
->>>> +
->>>> +     ``V4L2_SEL_TGT_CROP_DEFAULT``
->>>> +         suggested cropping rectangle that covers the whole source picture
->>>> +
->>>> +     ``V4L2_SEL_TGT_CROP``
->>>> +         rectangle within the source buffer to be encoded into the
->>>> +         ``CAPTURE`` stream; defaults to ``V4L2_SEL_TGT_CROP_DEFAULT``
->>>> +
->>>> +     ``V4L2_SEL_TGT_COMPOSE_BOUNDS``
->>>> +         maximum rectangle within the coded resolution, which the cropped
->>>> +         source frame can be output into; always equal to (0, 0)x(width of
->>>> +         ``V4L2_SEL_TGT_CROP``, height of ``V4L2_SEL_TGT_CROP``), if the
->>>> +         hardware does not support compose/scaling
+On Tue, Oct 16, 2018 at 10:22 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>
+> The patch replaces obviously matching code with probe_err function.
+> There are many more places where probe_err could be used.
+> The patch shows how the new function should be used, and how it
+> improves the code.
 
-Re-reading this I would rewrite this a bit:
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -824,9 +824,7 @@ static int pca953x_probe(struct i2c_client *client,
+>         reg = devm_regulator_get(&client->dev, "vcc");
+>         if (IS_ERR(reg)) {
+>                 ret = PTR_ERR(reg);
+> -               if (ret != -EPROBE_DEFER)
+> -                       dev_err(&client->dev, "reg get err: %d\n", ret);
+> -               return ret;
+> +               return probe_err(&client->dev, ret, "reg get err: %d\n", ret);
 
-if the hardware does not support composition or scaling, then this is always
-equal to (0, 0)x(width of ``V4L2_SEL_TGT_CROP``, height of ``V4L2_SEL_TGT_CROP``).
+No need to assign ret above.
+As I mentioned, better to print a value for everyone.
 
->>>> +
->>>> +     ``V4L2_SEL_TGT_COMPOSE_DEFAULT``
->>>> +         equal to ``V4L2_SEL_TGT_CROP``
->>>> +
->>>> +     ``V4L2_SEL_TGT_COMPOSE``
->>>> +         rectangle within the coded frame, which the cropped source frame
->>>> +         is to be output into; defaults to
->>>> +         ``V4L2_SEL_TGT_COMPOSE_DEFAULT``; read-only on hardware without
->>>> +         additional compose/scaling capabilities; resulting stream will
->>>> +         have this rectangle encoded as the visible rectangle in its
->>>> +         metadata
->>>> +
->>>> +     ``V4L2_SEL_TGT_COMPOSE_PADDED``
->>>> +         always equal to coded resolution of the stream, as selected by the
->>>> +         encoder based on source resolution and crop/compose rectangles
->>>
->>> Are there codec drivers that support composition? I can't remember seeing any.
->>>
->>
->> Hmm, I was convinced that MFC could scale and we just lacked support
->> in the driver, but I checked the documentation and it doesn't seem to
->> be able to do so. I guess we could drop the COMPOSE rectangles for
->> now, until we find any hardware that can do scaling or composing on
->> the fly.
->>
-> 
-> On the other hand, having them defined already wouldn't complicate
-> existing drivers too much either, because they would just handle all
-> of them in the same switch case, i.e.
-> 
-> case V4L2_SEL_TGT_COMPOSE_BOUNDS:
-> case V4L2_SEL_TGT_COMPOSE_DEFAULT:
-> case V4L2_SEL_TGT_COMPOSE:
-> case V4L2_SEL_TGT_COMPOSE_PADDED:
->      return visible_rectangle;
-> 
-> That would need one change, though. We would define
-> V4L2_SEL_TGT_COMPOSE_DEFAULT to be equal to (0, 0)x(width of
-> V4L2_SEL_TGT_CROP - 1, height of ``V4L2_SEL_TGT_CROP - 1), which
+>         }
 
-" - 1"? Where does that come from?
+Please, split it at least one patch per subsystem.
 
-Usually rectangles are specified as widthxheight@left,top.
-
-> makes more sense than current definition, since it would bypass any
-> compose/scaling by default.
-
-I have no problem with drivers optionally implementing these rectangles,
-even if they don't do scaling or composition. The question is, should it
-be required for decoders? If there is a good reason, then I'm OK with it.
-
-Regards,
-
-	Hans
+-- 
+With Best Regards,
+Andy Shevchenko
