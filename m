@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC74C5ACCD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB01C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F8D42148D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CDF72087B
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 23:54:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q/tv9vgZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F8D42148D
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C+OPkpbp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CDF72087B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbeJQHrV (ORCPT
+        id S1727814AbeJQHrY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:47:21 -0400
-Received: from mail-yb1-f202.google.com ([209.85.219.202]:35791 "EHLO
-        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeJQHrU (ORCPT
+        Wed, 17 Oct 2018 03:47:24 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:54280 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727088AbeJQHrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:47:20 -0400
-Received: by mail-yb1-f202.google.com with SMTP id y40-v6so13919793ybi.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:31 -0700 (PDT)
+        Wed, 17 Oct 2018 03:47:23 -0400
+Received: by mail-pl1-f201.google.com with SMTP id v4-v6so19671846plz.21
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 16:54:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=NPgAtxmzKWmzJQDMuIIOgBsv8K6wiZu8ozAY1cnx0F8=;
-        b=Q/tv9vgZsEphVdS8HaQDVBjgIEXGCpYldgs1kF++knTxbQoZofgIh2eqo0t1KqAWnO
-         8X8Ki8IfmT4QpY4TzVkXbIABTK87mF9uGnn2i4+/yQsqCVYm6i5NFVJqkDeZ22T3khrp
-         BiqpvgivIDIGmLPn2vl1nZLnLn7AIZYptlM6x1C5JHoEDcgA0Mf1K9vs/T+ObfZ2MY3M
-         2whtguxy29sW2/mO4wDsRo06rwG4Ui3rj+QO0IGku1c403mq/DJ91s9crxCuTtILqAGc
-         cRNTWVh3kpdc+oHAVuG3gGCV+akOA7I9NmEOQBrZ6TVlU4/ZPVAPwS9q+unFEN8FWfGj
-         VQkA==
+        bh=ZdhUWDmbd6jQ8OjAdvOY6t1C+GbX1k8RU5FTIqQdOg8=;
+        b=C+OPkpbpTZbplYVmCFp2b9hJn6do+39K9nclx7JsOuXlb38ha65VqVZGHn/RuUJLAK
+         laNKNNpg/dY5pFjEt00k9XH2lTbIhyQzivthYVohqzBJ4pduCG8SpHujHdsPyUqT23HJ
+         TniphiJLHF3qSBiGtDooujiA36wMhRyqKDMHr6z2qq49h+vNAhW1UH/MFoezO0/JlnlT
+         dd6yuMiVZ6Gk16KpmuJT49SZAUUtOu6NHWSSBFw+Zc0x2MAfZf0zjmdZ7tTeWtH3NYaz
+         ZspiCaYHtB9klrCx5vU56JRVzFG5oS/uiqPDSOYVIAhEltoF356A3JyBSEP7UH9jvNZF
+         GLFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=NPgAtxmzKWmzJQDMuIIOgBsv8K6wiZu8ozAY1cnx0F8=;
-        b=KAf7/zjloLZLjppSokPkdfVRWlsROdpfvtwp5TI2UPOSzDdyaVoMKLamsWTZ5BgEgR
-         73zM3smK1tntDSErkFQvfD4r/Jtw2zY5KlkfAlJI6wQFkIdT6RntSrov3dD/29ZE59+4
-         cJr78jAfiO9WikpK5Kr4fRCS8OBSYVBkSiXQ9pECvTgMHBj4MyZz8R7sx8UXmv0rfj/P
-         oWcKjpWZIWBT4Lr9HoGhwe5wd/9hc3vMh9X2XCquWzimvTK/9iuPcuGJE0IbQAQNPyr9
-         6Uy2noSofel/DQ8bAhatHnIsCJboj+AUampd/YNP0gCuCRYLOwfVKljc9rMQn3US+osX
-         1kRA==
-X-Gm-Message-State: ABuFfojDSW4GmlDKmP7wBs4BnlqcTC5D9s1rchXIMmOQNopzU4rNucU3
-        XYpO5tNdDF9plV6ytHH742fAO+897dhlxKamTju4ZA==
-X-Google-Smtp-Source: ACcGV61nBpihFd18QPAhR/+fL6wQRLHt3ulP5Yqt//HsZMAp8D37O46JimAE0LsjbahZLMwMg5n+RVsupdDO/PfLOIeY7A==
-X-Received: by 2002:a25:a122:: with SMTP id z31-v6mr13459409ybh.85.1539734071113;
- Tue, 16 Oct 2018 16:54:31 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 16:51:07 -0700
+        bh=ZdhUWDmbd6jQ8OjAdvOY6t1C+GbX1k8RU5FTIqQdOg8=;
+        b=Bx9UH4E7cCLlKhUqariOPK0KxOh8npMKbKpKLgGZlfPsL5CpexiqghKHbWRhea6BI4
+         wsvBvgPLM+gfvH/vfR9ZWz2DOTJtfYUI0qHCp6CS80GYatWZhYuGq6lftIkP0Ft++LXR
+         nNDwFWxD96TGpTyq3VaFOeLLmTqbhXnPWOvrrzP3CRzEQHkJY7xWt08BklIJhuOFldp6
+         dtGv54tEEe5uYIxb01f1H7/q2ud1T++feIeD8EM/3D/CpAhBnP8AvJYAEXmEWrj7msmz
+         tIGHC5tydgju074onhAsnsMn49Hvb2ECNVAD+bXJ99q7SfS234HUag2GtcsCpa4KWkD3
+         ZkSw==
+X-Gm-Message-State: ABuFfohAGrgnN09yHuu8BDNnAHVV6UBbjegAPyq+mt1rUbRpDNsPo87O
+        SjrJSCKu1MH/JKVHbYcbgeJNDTSs5x2JwRfZ0qFgCw==
+X-Google-Smtp-Source: ACcGV617DwSk1hxsN27UphaMlR2h9I9aAKE+by99l1mdjsaqbOEZAeMJmNyvq7HhsEsxPE8jeirXuFyxr8F6Zoywmjcm0g==
+X-Received: by 2002:a63:5920:: with SMTP id n32-v6mr11619406pgb.47.1539734073215;
+ Tue, 16 Oct 2018 16:54:33 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 16:51:08 -0700
 In-Reply-To: <20181016235120.138227-1-brendanhiggins@google.com>
-Message-Id: <20181016235120.138227-19-brendanhiggins@google.com>
+Message-Id: <20181016235120.138227-20-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20181016235120.138227-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
-Subject: [RFC v1 18/31] kunit: mock: added parameter formatters
+Subject: [RFC v1 19/31] kunit: mock: implemented nice, strict and naggy mock distinctions
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
         shuah@kernel.org
@@ -70,348 +70,425 @@ Cc:     joel@jms.id.au, mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
         julia.lawall@lip6.fr, linux-kselftest@vger.kernel.org,
         kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
         jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
-        Brendan Higgins <brendanhiggins@google.com>
+        Brendan Higgins <brendanhiggins@google.com>,
+        Felix Guo <felixguoxiuping@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added parameter formatters which provide string formatting for
-parameters that have no matchers to be matched against.
+Nice mocks only fail when there is an expectation on a method, but none
+match a given call. Strict mocks only pass when there is a matching
+expectation for every call. Naggy mocks have the same pass/fail behavior
+as nice, but report a warning in any case a strict mock would fail.
 
+Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- include/kunit/mock.h     |  49 +++++++++++++++
- kunit/common-mocks.c     | 132 +++++++++++++++++++++++++++++++++++++++
- kunit/mock.c             |  48 ++++++++++++--
- kunit/test-stream-test.c |  28 +++++++++
- 4 files changed, 252 insertions(+), 5 deletions(-)
+ include/kunit/mock.h     |  63 +++++++++++++
+ kunit/mock-test.c        | 192 ++++++++++++++++++++++++++++++++++++++-
+ kunit/mock.c             |  10 +-
+ kunit/test-stream-test.c |   6 +-
+ 4 files changed, 265 insertions(+), 6 deletions(-)
 
 diff --git a/include/kunit/mock.h b/include/kunit/mock.h
-index daf965cf954e6..4f85b39d628d0 100644
+index 4f85b39d628d0..8d155b27a257a 100644
 --- a/include/kunit/mock.h
 +++ b/include/kunit/mock.h
-@@ -123,6 +123,18 @@ struct mock_expectation *mock_add_matcher(struct mock *mock,
- 					  struct mock_param_matcher *matchers[],
- 					  int len);
+@@ -95,10 +95,17 @@ struct mock_method {
+ 	struct list_head expectations;
+ };
  
-+struct mock_param_formatter {
-+	struct list_head node;
-+	const char *type_name;
-+	void (*format)(struct mock_param_formatter *formatter,
-+		       struct test_stream *stream,
-+		       const void *param);
++enum mock_type {
++	MOCK_TYPE_NICE,
++	MOCK_TYPE_NAGGY,
++	MOCK_TYPE_STRICT
 +};
 +
-+void mock_register_formatter(struct mock_param_formatter *formatter);
+ struct mock {
+ 	struct test_post_condition parent;
+ 	struct test *test;
+ 	struct list_head methods;
++	enum mock_type type;
+ 	/* TODO(brendanhiggins@google.com): add locking to do_expect. */
+ 	const void *(*do_expect)(struct mock *mock,
+ 				 const char *method_name,
+@@ -108,6 +115,8 @@ struct mock {
+ 				 int len);
+ };
+ 
++#define DEFAULT_MOCK_TYPE MOCK_TYPE_NAGGY
 +
-+void mock_unregister_formatter(struct mock_param_formatter *formatter);
-+
+ void mock_init_ctrl(struct test *test, struct mock *mock);
+ 
+ void mock_validate_expectations(struct mock *mock);
+@@ -137,6 +146,60 @@ void mock_unregister_formatter(struct mock_param_formatter *formatter);
+ 
  #define MOCK(name) name##_mock
  
++/**
++ * STRICT_MOCK() - sets the mock to be strict and returns the mock
++ * @mock: the mock
++ *
++ * For an example, see ``The Nice, the Strict, and the Naggy`` under
++ * ``Using KUnit``.
++ */
++#define STRICT_MOCK(mock) \
++({ \
++	mock_get_ctrl(mock)->type = MOCK_TYPE_STRICT; \
++	mock; \
++})
++
++static inline bool is_strict_mock(struct mock *mock)
++{
++	return mock->type == MOCK_TYPE_STRICT;
++}
++
++/**
++ * NICE_MOCK() - sets the mock to be nice and returns the mock
++ * @mock: the mock
++ *
++ * For an example, see ``The Nice, the Strict, and the Naggy`` under
++ * ``Using KUnit``.
++ */
++#define NICE_MOCK(mock) \
++({ \
++	mock_get_ctrl(mock)->type = MOCK_TYPE_NICE; \
++	mock; \
++})
++
++static inline bool is_nice_mock(struct mock *mock)
++{
++	return mock->type == MOCK_TYPE_NICE;
++}
++
++/**
++ * NAGGY_MOCK() - sets the mock to be naggy and returns the mock
++ * @mock: the mock
++ *
++ * For an example, see ``The Nice, the Strict, and the Naggy`` under
++ * ``Using KUnit``.
++ */
++#define NAGGY_MOCK(mock) \
++({ \
++	mock_get_ctrl(mock)->type = MOCK_TYPE_NAGGY; \
++	mock; \
++})
++
++static inline bool is_naggy_mock(struct mock *mock)
++{
++	return mock->type == MOCK_TYPE_NAGGY;
++}
++
  /**
-@@ -834,4 +846,41 @@ struct mock_param_matcher *test_struct_cmp(
- 		const char *struct_name,
- 		struct mock_struct_matcher_entry *entries);
+  * TEST_EXPECT_CALL() - Declares a *call expectation* on a mock function.
+  * @expectation_call: a mocked method or function with parameters replaced with
+diff --git a/kunit/mock-test.c b/kunit/mock-test.c
+index 77b16ad754424..675387743ada4 100644
+--- a/kunit/mock-test.c
++++ b/kunit/mock-test.c
+@@ -150,7 +150,7 @@ static void mock_test_failed_expect_call_fails_test(struct test *test)
+ static void mock_test_do_expect_default_return(struct test *test)
+ {
+ 	struct mock_test_context *ctx = test->priv;
+-	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct MOCK(test) *mock_test = NICE_MOCK(ctx->mock_test);
+ 	struct test *trgt = mock_get_trgt(mock_test);
+ 	struct mock *mock = ctx->mock;
+ 	int param0 = 5, param1 = -5;
+@@ -187,6 +187,49 @@ static void mock_test_do_expect_default_return(struct test *test)
+ 	TEST_EXPECT_EQ(test, 0, expectation->times_called);
+ }
  
-+struct mock_struct_formatter_entry {
-+	size_t member_offset;
-+	struct mock_param_formatter *formatter;
-+};
++/**
++ * DOC: Testing the failure condition of different mock types.
++ *
++ * The following tests will test the behaviour of expectations under different
++ * conditions. For example, what happens when an expectation:
++ * - is not satisfied at the end of the test
++ * - is fulfilled but the expected function is called again
++ * - a function is called without expectations set on it
++ *
++ * For each of these conditions, there may be variations between the different
++ * types of mocks: nice mocks, naggy mocks (the default) and strict mocks.
++ *
++ * More information about these mocks can be found in the kernel documentation
++ * under Documentation/test/api/class-and-function-mocking
++ */
 +
-+static inline void init_mock_struct_formatter_entry_internal(
-+		struct mock_struct_formatter_entry *entry,
-+		size_t offset,
-+		struct mock_param_formatter *formatter)
++/* Method called on strict mock with no expectations will fail */
++static void mock_test_strict_no_expectations_will_fail(struct test *test)
 +{
-+	entry->member_offset = offset;
-+	entry->formatter = formatter;
++	struct mock_test_context *ctx = test->priv;
++	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct test *trgt = mock_get_trgt(mock_test);
++	struct mock *mock = ctx->mock;
++	int param0 = 5, param1 = -5;
++	static const char * const two_param_types[] = {"int", "int"};
++	const void *two_params[] = {&param0, &param1};
++	struct mock_expectation *expectation;
++
++	mock->type = MOCK_TYPE_STRICT;
++
++	mock_set_default_action(mock,
++				"test_printk",
++				test_printk,
++				test_int_return(trgt, -4));
++
++	expectation = TEST_EXPECT_CALL(fail(mock_get_ctrl(mock_test),
++					    test_any(test)));
++
++	mock->do_expect(mock, "test_printk", test_printk, two_param_types,
++		two_params, ARRAY_SIZE(two_params));
++	mock_validate_expectations(mock);
 +}
 +
-+#define INIT_MOCK_STRUCT_FORMATTER_ENTRY(entry, type, member, formatter)       \
-+		init_mock_struct_formatter_entry_internal(entry,	       \
-+							  offsetof(type,       \
-+								   member),    \
-+								   formatter)
-+
-+static inline void INIT_MOCK_STRUCT_FORMATTER_ENTRY_LAST(
-+		struct mock_struct_formatter_entry *entry)
-+{
-+	entry->formatter = NULL;
-+}
-+
-+struct mock_param_formatter *mock_struct_formatter(
-+		struct test *test,
-+		const char *struct_name,
-+		struct mock_struct_formatter_entry *entries);
-+
-+struct mock_param_formatter *mock_find_formatter(const char *type_name);
-+
-+#define FORMATTER_FROM_TYPE(type) mock_find_formatter(#type)
-+
-+extern struct mock_param_formatter unknown_formatter[];
-+
- #endif /* _KUNIT_MOCK_H */
-diff --git a/kunit/common-mocks.c b/kunit/common-mocks.c
-index ef88f8b8acda3..1c52522808cab 100644
---- a/kunit/common-mocks.c
-+++ b/kunit/common-mocks.c
-@@ -386,3 +386,135 @@ DEFINE_RETURN_ACTION_WITH_TYPENAME(longlong, long long);
- DEFINE_RETURN_ACTION_WITH_TYPENAME(ulonglong, unsigned long long);
- DEFINE_RETURN_ACTION_WITH_TYPENAME(ptr, void *);
+ /*
+  * Method called on naggy mock with no expectations will not fail, but will show
+  * a warning message
+@@ -202,6 +245,8 @@ static void mock_test_naggy_no_expectations_no_fail(struct test *test)
+ 	const void *two_params[] = {&param0, &param1};
+ 	struct mock_expectation *expectation;
  
-+struct mock_param_integer_formatter {
-+	struct mock_param_formatter formatter;
-+	const char *fmt_str;
-+};
++	mock->type = MOCK_TYPE_NAGGY;
 +
-+static void mock_format_integer(struct mock_param_formatter *pformatter,
-+				struct test_stream *stream,
-+				const void *pparam)
+ 	mock_set_default_action(mock,
+ 				"test_printk",
+ 				test_printk,
+@@ -229,6 +274,93 @@ static void mock_test_naggy_no_expectations_no_fail(struct test *test)
+ 	mock_validate_expectations(mock);
+ }
+ 
++/* Method called on nice mock with no expectations will do nothing. */
++static void mock_test_nice_no_expectations_do_nothing(struct test *test)
 +{
-+	struct mock_param_integer_formatter *formatter =
-+			container_of(pformatter,
-+				     struct mock_param_integer_formatter,
-+				     formatter);
-+	long long param = CONVERT_TO_ACTUAL_TYPE(long long, pparam);
++	struct mock_test_context *ctx = test->priv;
++	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct test *trgt = mock_get_trgt(mock_test);
++	struct mock *mock = ctx->mock;
++	int param0 = 5, param1 = -5;
++	static const char * const two_param_types[] = {"int", "int"};
++	const void *two_params[] = {&param0, &param1};
++	struct mock_expectation *expectation;
 +
-+	stream->add(stream, formatter->fmt_str, param);
++	mock->type = MOCK_TYPE_NICE;
++
++	mock_set_default_action(mock,
++				"test_printk",
++				test_printk,
++				test_int_return(trgt, -4));
++
++	expectation = TEST_EXPECT_CALL(fail(mock_get_ctrl(mock_test),
++					    test_any(test)));
++	expectation->min_calls_expected = 0;
++	expectation->max_calls_expected = 0;
++
++	expectation = TEST_EXPECT_CALL(mock_vprintk(mock_get_ctrl(mock_test),
++						    test_any(test),
++						    test_any(test)));
++	expectation->min_calls_expected = 0;
++	expectation->max_calls_expected = 0;
++
++	mock->do_expect(mock,
++			"test_printk",
++			test_printk,
++			two_param_types,
++			two_params,
++			ARRAY_SIZE(two_params));
++	mock_validate_expectations(mock);
 +}
 +
-+#define INTEGER_FORMATTER_INIT(type, fmt) { \
-+	.formatter = { \
-+		.type_name = #type, \
-+		.format = mock_format_integer, \
-+	}, \
-+	.fmt_str = fmt, \
-+}
-+
-+static struct mock_param_integer_formatter integer_formatters[] = {
-+	INTEGER_FORMATTER_INIT(u8, "%PRIu8"),
-+	INTEGER_FORMATTER_INIT(u16, "%PRIu16"),
-+	INTEGER_FORMATTER_INIT(u32, "%PRIu32"),
-+	INTEGER_FORMATTER_INIT(u64, "%PRIu64"),
-+	INTEGER_FORMATTER_INIT(char, "%c"),
-+	INTEGER_FORMATTER_INIT(unsigned char, "%hhu"),
-+	INTEGER_FORMATTER_INIT(signed char, "%hhd"),
-+	INTEGER_FORMATTER_INIT(short, "%hd"),
-+	INTEGER_FORMATTER_INIT(unsigned short, "%hu"),
-+	INTEGER_FORMATTER_INIT(int, "%d"),
-+	INTEGER_FORMATTER_INIT(unsigned int, "%u"),
-+	INTEGER_FORMATTER_INIT(long, "%ld"),
-+	INTEGER_FORMATTER_INIT(unsigned long, "%lu"),
-+	INTEGER_FORMATTER_INIT(long long, "%lld"),
-+	INTEGER_FORMATTER_INIT(unsigned long long, "%llu"),
-+	INTEGER_FORMATTER_INIT(void *, "%px"),
-+};
-+
-+static void mock_format_string(struct mock_param_formatter *formatter,
-+			       struct test_stream *stream,
-+			       const void *pparam)
++/* Test that method called on a mock (of any type) with no matching expectations
++ * will fail test and print all the tried expectations.
++ */
++static void
++run_method_called_but_no_matching_expectation_test(struct test *test,
++						   enum mock_type mock_type)
 +{
-+	const char *param = CONVERT_TO_ACTUAL_TYPE(const char *, pparam);
++	struct mock_test_context *ctx = test->priv;
++	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct test *trgt = mock_get_trgt(mock_test);
++	struct mock *mock = ctx->mock;
++	int param0 = 5, param1 = -5;
++	static const char * const two_param_types[] = {"int", "int"};
++	const void *two_params[] = {&param0, &param1};
++	struct mock_expectation *handle;
++	struct mock_param_matcher *two_matchers[] = {
++		test_int_eq(trgt, 100),
++		test_int_eq(trgt, 100)
++	};
++	mock_add_matcher(mock, "test_printk", test_printk, two_matchers,
++		ARRAY_SIZE(two_matchers));
++	handle = TEST_EXPECT_CALL(fail(mock_get_ctrl(mock_test),
++				       test_any(test)));
 +
-+	stream->add(stream, "%s", param);
++	mock->type = mock_type;
++
++	mock->do_expect(mock, "test_printk", test_printk, two_param_types,
++		two_params, ARRAY_SIZE(two_params));
 +}
 +
-+static struct mock_param_formatter string_formatter = {
-+	.type_name = "const char *",
-+	.format = mock_format_string,
-+};
-+
-+static void mock_format_unknown(struct mock_param_formatter *formatter,
-+				struct test_stream *stream,
-+				const void *param)
++static void mock_test_naggy_no_matching_expectations_fail(struct test *test)
 +{
-+	stream->add(stream, "%pS", param);
++	run_method_called_but_no_matching_expectation_test(test,
++							   MOCK_TYPE_NAGGY);
 +}
 +
-+struct mock_param_formatter unknown_formatter[] = {
-+	{
-+		.type_name = "<unknown>",
-+		.format = mock_format_unknown,
-+	},
-+	{},
-+};
-+
-+static int mock_register_all_formatters(void)
++static void mock_test_strict_no_matching_expectations_fail(struct test *test)
 +{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(integer_formatters); i++)
-+		mock_register_formatter(&integer_formatters[i].formatter);
-+
-+	mock_register_formatter(&string_formatter);
-+
-+	return 0;
++	run_method_called_but_no_matching_expectation_test(test,
++							   MOCK_TYPE_STRICT);
 +}
-+test_pure_initcall(mock_register_all_formatters);
 +
-+struct mock_struct_formatter {
-+	struct mock_param_formatter formatter;
-+	const char *type_name;
-+	struct mock_struct_formatter_entry *entries;
-+};
-+
-+static void mock_format_struct(struct mock_param_formatter *pformatter,
-+			       struct test_stream *stream,
-+			       const void *pparam)
++static void mock_test_nice_no_matching_expectations_fail(struct test *test)
 +{
-+	struct mock_struct_formatter *formatter =
-+			container_of(pformatter,
-+				     struct mock_struct_formatter,
-+				     formatter);
-+	struct mock_struct_formatter_entry *entry;
-+	const char *param = CONVERT_TO_ACTUAL_TYPE(const char *, pparam);
-+	const char *member_ptr;
-+
-+	stream->add(stream, "%s {", formatter->type_name);
-+	for (entry = formatter->entries; entry->formatter; entry++) {
-+		member_ptr = param + entry->member_offset;
-+		entry->formatter->format(entry->formatter, stream, member_ptr);
-+		stream->add(stream, ", ");
-+	}
-+	stream->add(stream, "}");
++	run_method_called_but_no_matching_expectation_test(test,
++							   MOCK_TYPE_NICE);
 +}
 +
-+struct mock_param_formatter *mock_struct_formatter(
-+		struct test *test,
-+		const char *type_name,
-+		struct mock_struct_formatter_entry *entries)
+ static void mock_test_mock_validate_expectations(struct test *test)
+ {
+ 	struct mock_test_context *ctx = test->priv;
+@@ -257,6 +389,58 @@ static void mock_test_mock_validate_expectations(struct test *test)
+ 	mock_validate_expectations(mock);
+ }
+ 
++static void mock_test_validate_clears_expectations(struct test *test)
 +{
-+	struct mock_struct_formatter *formatter;
++	struct mock_test_context *ctx = test->priv;
++	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct test *trgt = mock_get_trgt(mock_test);
++	struct mock *mock = ctx->mock;
++	struct mock_param_matcher *matchers[] = {
++		test_int_eq(trgt, 5),
++		test_int_eq(trgt, -4)
++	};
++	int param0 = 5, param1 = -4;
++	static const char * const two_param_types[] = {"int", "int"};
++	const void *two_params[] = {&param0, &param1};
 +
-+	formatter = test_kzalloc(test, sizeof(*formatter), GFP_KERNEL);
-+	if (!formatter)
-+		return NULL;
++	struct mock_expectation *expectation;
 +
-+	formatter->formatter.type_name = type_name;
-+	formatter->formatter.format = mock_format_struct;
-+	formatter->type_name = type_name;
-+	formatter->entries = entries;
++	mock->type = MOCK_TYPE_STRICT;
 +
-+	return &formatter->formatter;
++	/* If all goes well, the mock_test should not fail. */
++	expectation = TEST_EXPECT_CALL(fail(mock_get_ctrl(mock_test),
++					    test_any(test)));
++	expectation->min_calls_expected = 0;
++	expectation->max_calls_expected = 0;
++
++	/* Add an arbitrary matcher for 0 calls */
++	expectation = mock_add_matcher(mock, "test_printk", test_printk,
++		matchers, ARRAY_SIZE(matchers));
++	expectation->times_called = 0;
++	expectation->min_calls_expected = 0;
++	expectation->max_calls_expected = 0;
++
++	/* Should have 0 calls and should clear the previous expectation */
++	mock_validate_expectations(mock);
++
++	/* Add a new matcher for 1 call */
++	expectation = mock_add_matcher(mock, "test_printk", test_printk,
++		matchers, ARRAY_SIZE(matchers));
++	expectation->times_called = 0;
++	expectation->min_calls_expected = 1;
++	expectation->max_calls_expected = 1;
++
++	/* Satisfy previous matcher */
++	mock->do_expect(mock, "test_printk", test_printk, two_param_types,
++		two_params, ARRAY_SIZE(two_params));
++
++	/*
++	 * Validate previous satisfy; if we didn't clear the previous
++	 * expectation, it would fail the mock_test.
++	 */
++	mock_validate_expectations(mock);
 +}
++
+ void *do_mocked_fail(struct mock_action *this, const void **params, int len)
+ {
+ 	static const int ret;
+@@ -306,7 +490,13 @@ static struct test_case mock_test_cases[] = {
+ 	TEST_CASE(mock_test_failed_expect_call_fails_test),
+ 	TEST_CASE(mock_test_do_expect_default_return),
+ 	TEST_CASE(mock_test_mock_validate_expectations),
++	TEST_CASE(mock_test_strict_no_expectations_will_fail),
+ 	TEST_CASE(mock_test_naggy_no_expectations_no_fail),
++	TEST_CASE(mock_test_nice_no_expectations_do_nothing),
++	TEST_CASE(mock_test_strict_no_matching_expectations_fail),
++	TEST_CASE(mock_test_naggy_no_matching_expectations_fail),
++	TEST_CASE(mock_test_nice_no_matching_expectations_fail),
++	TEST_CASE(mock_test_validate_clears_expectations),
+ 	{},
+ };
+ 
 diff --git a/kunit/mock.c b/kunit/mock.c
-index 424c612de553b..9be6b2d3621c4 100644
+index 9be6b2d3621c4..314cebb54e236 100644
 --- a/kunit/mock.c
 +++ b/kunit/mock.c
-@@ -186,15 +186,53 @@ int mock_set_default_action(struct mock *mock,
- 	return 0;
+@@ -79,6 +79,7 @@ void mock_init_ctrl(struct test *test, struct mock *mock)
+ 	mock->test = test;
+ 	INIT_LIST_HEAD(&mock->methods);
+ 	mock->do_expect = mock_do_expect;
++	mock->type = DEFAULT_MOCK_TYPE;
+ 	mock->parent.validate = mock_validate_wrapper;
+ 	list_add_tail(&mock->parent.node, &test->post_conditions);
  }
+@@ -316,7 +317,12 @@ static struct mock_expectation *mock_apply_expectations(
+ 		mock_add_method_expectation_error(test, stream,
+ 			"Method was called with no expectations declared: ",
+ 			mock, method, type_names, params, len);
+-		stream->commit(stream);
++		if (is_strict_mock(mock))
++			test->fail(test, stream);
++		else if (is_naggy_mock(mock))
++			stream->commit(stream);
++		else
++			stream->clear(stream);
+ 		return NULL;
+ 	}
  
-+struct mock_param_formatter_repo {
-+	struct list_head formatters;
-+};
-+
-+static struct mock_param_formatter_repo mock_param_formatter_repo = {
-+	.formatters = LIST_HEAD_INIT(mock_param_formatter_repo.formatters),
-+};
-+
-+void mock_register_formatter(struct mock_param_formatter *formatter)
-+{
-+	list_add_tail(&formatter->node, &mock_param_formatter_repo.formatters);
-+}
-+
-+void mock_unregister_formatter(struct mock_param_formatter *formatter)
-+{
-+	list_del(&formatter->node);
-+}
-+
-+struct mock_param_formatter *mock_find_formatter(const char *type_name)
-+{
-+	struct mock_param_formatter *formatter;
-+
-+	list_for_each_entry(formatter,
-+			    &mock_param_formatter_repo.formatters,
-+			    node) {
-+		if (!strcmp(type_name, formatter->type_name))
-+			return formatter;
-+	}
-+
-+	return NULL;
-+}
-+
- static void mock_format_param(struct test_stream *stream,
- 			      const char *type_name,
- 			      const void *param)
- {
--	/*
--	 * Cannot find formatter, so just print the pointer of the
--	 * symbol.
--	 */
--	stream->add(stream, "<%pS>", param);
-+	struct mock_param_formatter *formatter;
-+
-+	formatter = mock_find_formatter(type_name);
-+	if (formatter)
-+		formatter->format(formatter, stream, param);
-+	else
-+		/*
-+		 * Cannot find formatter, so just print the pointer of the
-+		 * symbol.
-+		 */
-+		stream->add(stream, "<%pS>", param);
- }
+@@ -346,7 +352,7 @@ static struct mock_expectation *mock_apply_expectations(
+ 		}
+ 	}
  
- static void mock_add_method_declaration_to_stream(
+-	if (expectations_all_saturated) {
++	if (expectations_all_saturated && !is_nice_mock(mock)) {
+ 		mock_add_method_expectation_error(test, stream,
+ 			"Method was called with fully saturated expectations: ",
+ 			mock, method, type_names, params, len);
 diff --git a/kunit/test-stream-test.c b/kunit/test-stream-test.c
-index 875b0db15878d..b335e09805a0f 100644
+index b335e09805a0f..738a2692f7ba4 100644
 --- a/kunit/test-stream-test.c
 +++ b/kunit/test-stream-test.c
-@@ -116,6 +116,7 @@ static void test_stream_test_commits_any_uncommitted_when_cleanup(
- 
- static int test_stream_test_init(struct test *test)
+@@ -20,7 +20,7 @@ struct test_stream_test_context {
+ static void test_stream_test_add(struct test *test)
  {
-+	struct mock_struct_formatter_entry *entries;
- 	struct test_stream_test_context *ctx;
+ 	struct test_stream_test_context *ctx = test->priv;
+-	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct MOCK(test) *mock_test = NICE_MOCK(ctx->mock_test);
+ 	struct test_stream *stream = ctx->stream;
  
- 	ctx = test_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-@@ -131,9 +132,35 @@ static int test_stream_test_init(struct test *test)
- 	if (!ctx->stream)
- 		return -ENOMEM;
+ 	stream->add(stream, "Foo");
+@@ -40,7 +40,7 @@ static void test_stream_test_add(struct test *test)
+ static void test_stream_test_append(struct test *test)
+ {
+ 	struct test_stream_test_context *ctx = test->priv;
+-	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct MOCK(test) *mock_test = NICE_MOCK(ctx->mock_test);
+ 	struct test_stream *stream = ctx->stream;
+ 	struct test_stream *other_stream;
  
-+	entries = test_kzalloc(test, sizeof(*entries) * 3, GFP_KERNEL);
-+	if (!entries) {
-+		test_warn(test,
-+			  "Could not allocate arg formatter for struct va_format");
-+		return 0;
-+	}
-+
-+	INIT_MOCK_STRUCT_FORMATTER_ENTRY(&entries[0],
-+					 struct va_format,
-+					 fmt,
-+					 FORMATTER_FROM_TYPE(const char *));
-+	INIT_MOCK_STRUCT_FORMATTER_ENTRY(&entries[1],
-+					 struct va_format,
-+					 va,
-+					 unknown_formatter);
-+	INIT_MOCK_STRUCT_FORMATTER_ENTRY_LAST(&entries[2]);
-+
-+	mock_register_formatter(mock_struct_formatter(test,
-+						      "struct va_format *",
-+						      entries));
-+
- 	return 0;
- }
+@@ -63,7 +63,7 @@ static void test_stream_test_append(struct test *test)
+ static void test_stream_error_message_when_no_level_set(struct test *test)
+ {
+ 	struct test_stream_test_context *ctx = test->priv;
+-	struct MOCK(test) *mock_test = ctx->mock_test;
++	struct MOCK(test) *mock_test = NICE_MOCK(ctx->mock_test);
+ 	struct test_stream *stream = ctx->stream;
+ 	struct test_stream *other_stream;
  
-+static void test_stream_test_exit(struct test *test)
-+{
-+	mock_unregister_formatter(mock_find_formatter("struct va_format *"));
-+}
-+
- static struct test_case test_stream_test_cases[] = {
- 	TEST_CASE(test_stream_test_add),
- 	TEST_CASE(test_stream_test_append),
-@@ -145,6 +172,7 @@ static struct test_case test_stream_test_cases[] = {
- static struct test_module test_stream_test_module = {
- 	.name = "test-stream-test",
- 	.init = test_stream_test_init,
-+	.exit = test_stream_test_exit,
- 	.test_cases = test_stream_test_cases,
- };
- module_test(test_stream_test_module);
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
