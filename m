@@ -2,107 +2,97 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1E8C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0610DC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00079208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:04:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B148220869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:11:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UxAfAsfi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00079208E4
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EJmy4ifs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B148220869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbeJPOxf (ORCPT
+        id S1727771AbeJPPAL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 10:53:35 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42468 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727640AbeJPOxe (ORCPT
+        Tue, 16 Oct 2018 11:00:11 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:43870 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727447AbeJPPAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 10:53:34 -0400
-Received: by mail-pl1-f196.google.com with SMTP id c8-v6so10519302plo.9
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 00:04:34 -0700 (PDT)
+        Tue, 16 Oct 2018 11:00:11 -0400
+Received: by mail-qk1-f194.google.com with SMTP id 12-v6so13464999qkj.10
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 00:11:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0PBH0SiDBTS5A/xCIVzOHbzcxzD+kYNUD3TokR7YxPA=;
-        b=UxAfAsfi9OW33xPWIKH8W6SO5E0lr4Jnir5detcjPRXnGlVfot+h5RZPOBX4pHw+lP
-         usF+WeYQMmGnEApGO+Ms4A+oXJWEOM6MSXnpY+qfi79QXFQAlOD+qen7DjgvKnYn/02t
-         IOarYai+UPBJhSNHGJWk+z4VkeV+HDAVqLL3o=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/MC/TFJxT4wqRcTHQ3op6F7JPPs4E8aXvaRRl5X9BMQ=;
+        b=EJmy4ifstZJCusc14jPOh3BMhlPvJZJ1hYP9IdQNTOijjjzpCFxFg6JKFiiRcRrGMd
+         +MojfCRoQv1FAHsCGZgDvL5WVHlwbrYAD8+/I4hTCvJXhdJmtyibv393N6mFpu+sI6nF
+         OwGFWpuUvEqTj6ifGQstTATUVxJOYEDBMAjVU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0PBH0SiDBTS5A/xCIVzOHbzcxzD+kYNUD3TokR7YxPA=;
-        b=OTonqDu6Pw1lsY9BOGrfPIcgjp0fdJTG36+cfU70AchFeAwknw9Y+Ic+clS3wv2MGe
-         lsr1+E+pEjkZMc699Sv21FQU2QCqksShAZkuRyikwQ8LNCy+pVs0queeKdljnJzOVlxh
-         jNSQT1o7a0R0UsO05MmOaaBEyArcGlv0CdO0l8dIfu6BRdS4+8KhbyboZnVFwYEZM1OR
-         +aylQKH9s76kDQkhelfB2zUuzwn4Qlxa4XvRGR4AbJhH4Hr4mnsg8ox60UWznYJb+NOW
-         zzjBGeso/fEZaMs0GgmLApTkW741isPRfDUlkeaWSApvLqMlmsMUxdJIZaNK6rLGFPu9
-         qMrQ==
-X-Gm-Message-State: ABuFfoijKAgE0k0qXNzIflu2ojrDHVt5/IigCfDTYU0sBiyGpxFCH8cB
-        7p5bJOWtI+aa5oyk4WB9w+RMXZ55tbA=
-X-Google-Smtp-Source: ACcGV63QvT8vEmiyCWkXKEHdUgANI0yQz0Pz7bD4n3D1SsXe14j0o2xsD2VfzFhsSNW3mtx/YKwECg==
-X-Received: by 2002:a17:902:6b46:: with SMTP id g6-v6mr19704687plt.19.1539673474071;
-        Tue, 16 Oct 2018 00:04:34 -0700 (PDT)
-Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id u21-v6sm21775107pfa.176.2018.10.16.00.04.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 16 Oct 2018 00:04:33 -0700 (PDT)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v5 5/5] parisc: syscalls: ignore nfsservctl for other architectures
-Date:   Tue, 16 Oct 2018 12:33:38 +0530
-Message-Id: <1539673418-7279-6-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539673418-7279-1-git-send-email-firoz.khan@linaro.org>
-References: <1539673418-7279-1-git-send-email-firoz.khan@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/MC/TFJxT4wqRcTHQ3op6F7JPPs4E8aXvaRRl5X9BMQ=;
+        b=Ai556KRFa47OsFrwhmX7PsQ3mv8LzGMqZTaO3kIvmtfs0t38VmS7fFheIj9Yf/jbC+
+         sKo4Lt5DVYYOuCsrPqiOI4ImLQ6UnioLwspJ+6AFoiRVmHmmVwQaGjL/6NcYcYb14Eb/
+         1BHeStPgAkqVHEkrgYWp9soFAs1/7FUW+XdSU/7WyLGqDg9yhGJl2l8QtfaP2dggH+Jb
+         BbGyEMiZY/oKzyrBDKSdy5BrzdNxW4OvIbts/p7cvBA+ptEN3euxuD/hZWWCuTt1T8bJ
+         tk9+wj0/R2Qg+WF7+cfE6RqHLelv1faLqFu5YqpYy73SyrnQSGhpwovjl4wS5sKuw104
+         WPYg==
+X-Gm-Message-State: ABuFfoj9ReFbp4NjlyzQFlr84aoFgo4Jstwb22NP/fDD5LoRZiQ7Auml
+        sYLHznnkE5bL15rkkKZrp4cG/IoxNWo7HsxrlviAHg==
+X-Google-Smtp-Source: ACcGV62r9W2h7/7BlKy6grEcF6hu4Uk6fU0NmEuDmMQZFNJtGV5xpiOQkbtbew/CtkpNHl+wMx6G46ERaMvBEAwT3z4=
+X-Received: by 2002:a37:5185:: with SMTP id f127-v6mr19362564qkb.44.1539673869537;
+ Tue, 16 Oct 2018 00:11:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181012125412.21324-1-linus.walleij@linaro.org>
+ <20181012142612.GJ7677@w540> <20181012164424.GE2340@sirena.org.uk> <2849502.hPNvL6TNkA@avalon>
+In-Reply-To: <2849502.hPNvL6TNkA@avalon>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 16 Oct 2018 09:10:56 +0200
+Message-ID: <CACRpkdZGE3RGWarj6_kZN7e6AT+1C9FMrs=bGUFJLD00F9gOEQ@mail.gmail.com>
+Subject: Re: [PATCH v2] regulator/gpio: Allow nonexclusive GPIO access
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Mark Brown <broonie@kernel.org>, jacopo <jacopo@jmondi.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Cheng-Yi Chiang <cychiang@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds an exception to the syscall table checking script.
+On Tue, Oct 16, 2018 at 1:08 AM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
 
-nfsservctl entry is only provided on x86, and there is no
-reason to add it elsewhere. However, including it on the
-syscall table caused a warning for most configurations on
-non-x86.
+> I've seen other boards where two components sharing a reset signal have an
+> active low reset for one, and an active high reset for the other one. Only one
+> of the two can be out of reset at a time. That's probably considered as
+> "clever" by the hardware engineers, but is awful to support for us.
 
-<stdin>:696:2: warning: #warning syscall nfsservctl not implemented [-Wcpp]
+Haha what a feat. If/when we run into that we simply invent a new
+flag like GPIOD_ACTIVE_AMBIGUOUS.
 
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
----
- scripts/checksyscalls.sh | 1 +
- 1 file changed, 1 insertion(+)
+> The core issue in my opinion is that we need code to handle this, and since
+> the removal of board files there is no place anymore for such code. Board
+> drivers exist in drivers/staging/board/, but that's hardly a solution moving
+> forward (the TODO file explicitly states that removal of that code is the end
+> goal).
 
-diff --git a/scripts/checksyscalls.sh b/scripts/checksyscalls.sh
-index ee3dfb5..cf93100 100755
---- a/scripts/checksyscalls.sh
-+++ b/scripts/checksyscalls.sh
-@@ -150,6 +150,7 @@ cat << EOF
- #define __IGNORE_uselib
- #define __IGNORE__sysctl
- #define __IGNORE_arch_prctl
-+#define __IGNORE_nfsservctl
- 
- /* ... including the "new" 32-bit uid syscalls */
- #define __IGNORE_lchown32
--- 
-1.9.1
+Yeah I kind of already concluded that I need to pull the multiple user
+reference counting out of the regulator core and take it over to the
+GPIO subsystem so I'm going to attempt that for the next kernel
+cycle. It's a neat feature anyways.
 
+Yours,
+Linus Walleij
