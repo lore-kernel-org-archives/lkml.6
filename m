@@ -4,55 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 838BAC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7836DC070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C6912098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4014E2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNtx0o3d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C6912098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+kcD0Xs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4014E2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729518AbeJPMDL (ORCPT
+        id S1729532AbeJPMDM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:03:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51544 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:03:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729491AbeJPMDK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:03:10 -0400
+        id S1728337AbeJPMDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:03:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD3362147E;
-        Tue, 16 Oct 2018 04:14:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 796CB214AB;
+        Tue, 16 Oct 2018 04:14:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663287;
-        bh=5CFA3Juw3AiH6IudlLzrKFUub2REYrqguQkNPcNeXlI=;
+        s=default; t=1539663288;
+        bh=YBUlaAgR2HhEWCrX2bA3+GlCE6Kajojlt4QpgnVrKI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cNtx0o3ddmPguCiBif+0yuAfO6pdoY+Nn2oqT+53TGyzF5vzAcOy3gT/2PyLjLBQD
-         /a6oaBt8l39wgci4MuOQZaL+WjDBnES30yj0JQ0BYwrIlsO2zTfwV54ClgokqrsLOG
-         HzhpP1Bba1oCt4akZC74QkN7JpGV6jQWSetmgQzI=
+        b=S+kcD0XsvjI3mNENxexQiffcK09uZNmpC4WvKSMl6CrwCWrw6vs+GfhHsFGcWoEVr
+         AzWXh0sQfJy6RNjNEDEJNO+LPEaBv050pL+Hoqirvgtryuu9iYFSHdSXvdkUrkjUx5
+         uDfKuXNUdXBwWaWhqSHYltQ3vNSCf6Lqm0diJ9OU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+Cc:     Kan Liang <kan.liang@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andrew Vagin <avagin@openvz.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
         Stephane Eranian <eranian@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Vince Weaver <vincent.weaver@maine.edu>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 47/61] perf/ring_buffer: Prevent concurent ring buffer access
-Date:   Tue, 16 Oct 2018 00:13:49 -0400
-Message-Id: <20181016041403.135678-47-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 48/61] perf/x86/intel/uncore: Fix PCI BDF address of M3UPI on SKX
+Date:   Tue, 16 Oct 2018 00:13:50 -0400
+Message-Id: <20181016041403.135678-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -61,107 +60,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@redhat.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-[ Upstream commit cd6fb677ce7e460c25bdd66f689734102ec7d642 ]
+[ Upstream commit 9d92cfeaf5215158d26d2991be7f7ff865cb98f3 ]
 
-Some of the scheduling tracepoints allow the perf_tp_event
-code to write to ring buffer under different cpu than the
-code is running on.
+The counters on M3UPI Link 0 and Link 3 don't count properly, and writing
+0 to these counters may causes system crash on some machines.
 
-This results in corrupted ring buffer data demonstrated in
-following perf commands:
+The PCI BDF addresses of the M3UPI in the current code are incorrect.
 
-  # perf record -e 'sched:sched_switch,sched:sched_wakeup' perf bench sched messaging
-  # Running 'sched/messaging' benchmark:
-  # 20 sender and receiver processes per group
-  # 10 groups == 400 processes run
+The correct addresses should be:
 
-       Total time: 0.383 [sec]
-  [ perf record: Woken up 8 times to write data ]
-  0x42b890 [0]: failed to process type: -1765585640
-  [ perf record: Captured and wrote 4.825 MB perf.data (29669 samples) ]
+  D18:F1	0x204D
+  D18:F2	0x204E
+  D18:F5	0x204D
 
-  # perf report --stdio
-  0x42b890 [0]: failed to process type: -1765585640
-
-The reason for the corruption are some of the scheduling tracepoints,
-that have __perf_task dfined and thus allow to store data to another
-cpu ring buffer:
-
-  sched_waking
-  sched_wakeup
-  sched_wakeup_new
-  sched_stat_wait
-  sched_stat_sleep
-  sched_stat_iowait
-  sched_stat_blocked
-
-The perf_tp_event function first store samples for current cpu
-related events defined for tracepoint:
-
-    hlist_for_each_entry_rcu(event, head, hlist_entry)
-      perf_swevent_event(event, count, &data, regs);
-
-And then iterates events of the 'task' and store the sample
-for any task's event that passes tracepoint checks:
-
-  ctx = rcu_dereference(task->perf_event_ctxp[perf_sw_context]);
-
-  list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-    if (event->attr.type != PERF_TYPE_TRACEPOINT)
-      continue;
-    if (event->attr.config != entry->type)
-      continue;
-
-    perf_swevent_event(event, count, &data, regs);
-  }
-
-Above code can race with same code running on another cpu,
-ending up with 2 cpus trying to store under the same ring
-buffer, which is specifically not allowed.
-
-This patch prevents the problem, by allowing only events with the same
-current cpu to receive the event.
-
-NOTE: this requires the use of (per-task-)per-cpu buffers for this
-feature to work; perf-record does this.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-[peterz: small edits to Changelog]
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andrew Vagin <avagin@openvz.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: e6dab5ffab59 ("perf/trace: Add ability to set a target task for events")
-Link: http://lkml.kernel.org/r/20180923161343.GB15054@krava
+Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore support")
+Link: http://lkml.kernel.org/r/1537538826-55489-1-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/events/intel/uncore_snbep.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index ee1c07c0b833..991af683ef9e 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8058,6 +8058,8 @@ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
- 			goto unlock;
- 
- 		list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-+			if (event->cpu != smp_processor_id())
-+				continue;
- 			if (event->attr.type != PERF_TYPE_TRACEPOINT)
- 				continue;
- 			if (event->attr.config != entry->type)
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 2dae3f585c01..a68aba8a482f 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3807,16 +3807,16 @@ static const struct pci_device_id skx_uncore_pci_ids[] = {
+ 		.driver_data = UNCORE_PCI_DEV_FULL_DATA(21, 5, SKX_PCI_UNCORE_M2PCIE, 3),
+ 	},
+ 	{ /* M3UPI0 Link 0 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
+-		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 0, SKX_PCI_UNCORE_M3UPI, 0),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
++		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 0),
+ 	},
+ 	{ /* M3UPI0 Link 1 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
+-		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 1),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204E),
++		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 2, SKX_PCI_UNCORE_M3UPI, 1),
+ 	},
+ 	{ /* M3UPI1 Link 2 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
+-		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 4, SKX_PCI_UNCORE_M3UPI, 2),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
++		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 5, SKX_PCI_UNCORE_M3UPI, 2),
+ 	},
+ 	{ /* end: all zeroes */ }
+ };
 -- 
 2.17.1
 
