@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058CEC04EBD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1460C18DF5
 	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6D552089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:45:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6D552089E
+	by mail.kernel.org (Postfix) with ESMTP id AFF262089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 10:45:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF262089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727214AbeJPSe7 (ORCPT
+        id S1727243AbeJPSfA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 14:34:59 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:3359 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726595AbeJPSe7 (ORCPT
+        Tue, 16 Oct 2018 14:35:00 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:44875 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727051AbeJPSe7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 16 Oct 2018 14:34:59 -0400
-X-UUID: 4a0ebfe74a07434cbdb198172e1786f7-20181016
-X-UUID: 4a0ebfe74a07434cbdb198172e1786f7-20181016
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+X-UUID: 19b2a88564fc4911b0f23efd0632d4be-20181016
+X-UUID: 19b2a88564fc4911b0f23efd0632d4be-20181016
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
         (envelope-from <honghui.zhang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 743982769; Tue, 16 Oct 2018 18:45:07 +0800
+        with ESMTP id 1573313564; Tue, 16 Oct 2018 18:45:06 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 16 Oct 2018 18:45:05 +0800
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 16 Oct 2018 18:45:04 +0800
 Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 16 Oct 2018 18:45:05 +0800
+ Transport; Tue, 16 Oct 2018 18:44:57 +0800
 From:   <honghui.zhang@mediatek.com>
 To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
         <linux-arm-kernel@lists.infradead.org>,
@@ -45,15 +45,14 @@ CC:     <ulf.hansson@linaro.org>, <marc.zyngier@arm.com>,
         <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
         <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>,
         <yt.shen@mediatek.com>, <jianjun.wang@mediatek.com>
-Subject: [PATCH v9 7/9] PCI: mediatek: Add system PM support for MT2712 and MT7622
-Date:   Tue, 16 Oct 2018 18:44:48 +0800
-Message-ID: <1539686690-24068-8-git-send-email-honghui.zhang@mediatek.com>
+Subject: [PATCH v9 6/9] PCI: mediatek: Fixup enable MSI logic by enable MSI after clock enabled
+Date:   Tue, 16 Oct 2018 18:44:47 +0800
+Message-ID: <1539686690-24068-7-git-send-email-honghui.zhang@mediatek.com>
 X-Mailer: git-send-email 2.6.4
 In-Reply-To: <1539686690-24068-1-git-send-email-honghui.zhang@mediatek.com>
 References: <1539686690-24068-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: E9C3A0C36B9FC78C1DE3684B071B388B5CC6D940BC38888088C1B89EA22E76872000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,88 +61,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-In order to reduce the PCIe power consuming while system suspend,
-the physical layer should be gated. And the PCIe link should be
-re-established and the related control register values should be
-re-initialized after system resume.
+The commit 43e6409db64d ("PCI: mediatek: Add MSI support for MT2712 and
+MT7622") added MSI support but enable MSI in wrong place, clocks was not
+enabled when enable MSI. This patch fix this issue by calling
+mtk_pcie_enable_msi in mtk_pcie_startup_port_v2 since the clock was all
+enabled at that time.
 
-Register suspend_noirq & resume_noirq callback functions to allow
-PCIe to come up after resume from RAM.
-
+Fixes: 43e6409db64d ("PCI: mediatek: Add MSI support for MT2712 and MT7622")
 Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
 Acked-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- drivers/pci/controller/pcie-mediatek.c | 50 ++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ drivers/pci/controller/pcie-mediatek.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 82d3d85..cf7e357 100644
+index 6967bb7..82d3d85 100644
 --- a/drivers/pci/controller/pcie-mediatek.c
 +++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -1168,6 +1168,55 @@ static int mtk_pcie_probe(struct platform_device *pdev)
- 	return err;
- }
+@@ -568,8 +568,6 @@ static int mtk_pcie_init_irq_domain(struct mtk_pcie_port *port,
+ 		ret = mtk_pcie_allocate_msi_domains(port);
+ 		if (ret)
+ 			return ret;
+-
+-		mtk_pcie_enable_msi(port);
+ 	}
  
-+static int __maybe_unused mtk_pcie_suspend_noirq(struct device *dev)
-+{
-+	struct mtk_pcie *pcie = dev_get_drvdata(dev);
-+	struct mtk_pcie_port *port;
+ 	return 0;
+@@ -690,6 +688,9 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+ 	val &= ~INTX_MASK;
+ 	writel(val, port->base + PCIE_INT_MASK);
+ 
++	if (IS_ENABLED(CONFIG_PCI_MSI))
++		mtk_pcie_enable_msi(port);
 +
-+	if (list_empty(&pcie->ports))
-+		return 0;
-+
-+	list_for_each_entry(port, &pcie->ports, list) {
-+		clk_disable_unprepare(port->pipe_ck);
-+		clk_disable_unprepare(port->obff_ck);
-+		clk_disable_unprepare(port->axi_ck);
-+		clk_disable_unprepare(port->aux_ck);
-+		clk_disable_unprepare(port->ahb_ck);
-+		clk_disable_unprepare(port->sys_ck);
-+		phy_power_off(port->phy);
-+		phy_exit(port->phy);
-+	}
-+
-+	clk_disable_unprepare(pcie->free_ck);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused mtk_pcie_resume_noirq(struct device *dev)
-+{
-+	struct mtk_pcie *pcie = dev_get_drvdata(dev);
-+	struct mtk_pcie_port *port, *tmp;
-+
-+	if (list_empty(&pcie->ports))
-+		return 0;
-+
-+	clk_prepare_enable(pcie->free_ck);
-+
-+	list_for_each_entry_safe(port, tmp, &pcie->ports, list)
-+		mtk_pcie_enable_port(port);
-+
-+	/* In case of EP was removed while system suspend. */
-+	if (list_empty(&pcie->ports))
-+		clk_disable_unprepare(pcie->free_ck);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops mtk_pcie_pm_ops = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_pcie_suspend_noirq,
-+				      mtk_pcie_resume_noirq)
-+};
-+
- static const struct mtk_pcie_soc mtk_pcie_soc_v1 = {
- 	.ops = &mtk_pcie_ops,
- 	.startup = mtk_pcie_startup_port,
-@@ -1200,6 +1249,7 @@ static struct platform_driver mtk_pcie_driver = {
- 		.name = "mtk-pcie",
- 		.of_match_table = mtk_pcie_ids,
- 		.suppress_bind_attrs = true,
-+		.pm = &mtk_pcie_pm_ops,
- 	},
- };
- builtin_platform_driver(mtk_pcie_driver);
+ 	/* Set AHB to PCIe translation windows */
+ 	size = mem->end - mem->start;
+ 	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
 -- 
 2.6.4
 
