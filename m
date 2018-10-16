@@ -2,148 +2,185 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E22B6C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2152BC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E58F208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:30:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BF9820869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 13:31:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="Rg3ckzsB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E58F208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pZ5hXuc/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BF9820869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbeJPVVH (ORCPT
+        id S1727152AbeJPVVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 17:21:07 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:36071 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbeJPVVG (ORCPT
+        Tue, 16 Oct 2018 17:21:41 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53403 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727032AbeJPVVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 17:21:06 -0400
-X-IronPort-AV: E=Sophos;i="5.54,388,1534834800"; 
-   d="scan'208";a="18895723"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 16 Oct 2018 06:30:28 -0700
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 16 Oct 2018 06:30:27 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PmXUdeHGPsuJN/i1sh2ihnf7CYL9T3Rcrr9PWO97qfA=;
- b=Rg3ckzsBYCoZ9DOh4PwH4SnQEjwCfN2ZwCCiYsId/btyXT6FS/ZX/hx7fIkMkXCBq6uwl4V9eDMWSviC8KXQ8cqe97WzE4J4mpdL4u4JEni93gdZFiylxty4IQYtwRb5zXpiVF4EgZ5EquePRuc4sxiI4LqYGtKEpIuO6GlICQA=
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
- BY2PR11MB0519.namprd11.prod.outlook.com (10.163.158.29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.24; Tue, 16 Oct 2018 13:30:24 +0000
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::2157:35fc:958a:34ff]) by BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::2157:35fc:958a:34ff%6]) with mapi id 15.20.1228.027; Tue, 16 Oct 2018
- 13:30:24 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <jonas@orbital-systems.com>, <linux-kernel@vger.kernel.org>
-CC:     <sre@kernel.org>, <Nicolas.Ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <linux-pm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] power: reset: at91-reset: enable I-cache for
- at91sam9260_reset
-Thread-Topic: [PATCH] power: reset: at91-reset: enable I-cache for
- at91sam9260_reset
-Thread-Index: AQHUZVRe/70fNEEmkkyQnDUBwInNrg==
-Date:   Tue, 16 Oct 2018 13:30:24 +0000
-Message-ID: <80993f04-c8ce-5a71-4f04-7edab5e1857b@microchip.com>
-References: <20181007125815.8392-1-jonas@threetimestwo.org>
-In-Reply-To: <20181007125815.8392-1-jonas@threetimestwo.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR09CA0055.eurprd09.prod.outlook.com
- (2603:10a6:802:28::23) To BY2PR11MB0744.namprd11.prod.outlook.com
- (2a01:111:e400:52de::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Claudiu.Beznea@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR11MB0519;6:6zlmIzJ8h0i8P9JGiEtBuVbqucxyGc8QIj+Ddi6i41JDV3WyTHVJn9SbJJZLm4092H71yuuP2I/OHnmhBt1qW4+D98l/MQGckx8kmGm5LY3PNgMYhORRH9FxQmIZd3yRP9zk15K0KoPhsVTZMKFfb/sRPTA/Qwq5+tSSjqlgbloEGBYG++5Sd9nFqWG2nbRcty8oJFD4PXmZn+LSv/6eMGtaew/yZO+fB3nm8eQqV2+Rh7dckWhKVQwuYiuojav/RJAo1t590kUJWc8Z4Qw9VoLHs4IXCZ0oFz6K7cb144NsDTylPB7QgihOaU5gyY/uT/F0NJF4nDEzZ83QnaJ/byjANBB/BCcDVEKJaWjYJ814n173qoep2lcfADG83A+/r+IlM/Jtoc6QyGo8Ga4kRRSwxycBxsrjtN8luYJQOaYzxFaQQYcYRtvf57hiXif3n3oxnHruTl6U58bByoSERA==;5:Ruz/Ws/WA1NLr1Q5pdz0u0gSEUfJtEfOLB2JwVRoxfjeDVDUO2HruPvRiRx1nhOfN81XwXqjYpKjmNE3nBeaP19mf7uM2jJSX6wjUO6oB3rVxmfsrAIY4YWRbozza5AK4fs+AvUObdEpXpfuok6A5/qHhA66zUSDhL0w0MPeXxQ=;7:wdTcJ8EA02f+RMBOFqQ+LDV6dRgyPsRPx7UAVuF6+i/XKRghRCXurt6Mz2PLDBY7XaZROgojbRw7dxDf9eU24zvjA5GatMdJRjRMNBa0jnpX+ddBXI0V0Bi/7nCtPNGmiu5lsZv4QMaVhr6bu/YaCCf1eg9r7ZbmRSCvp5Dk6FxQJKhkOHCfBQan7hOjyyr5j2EFP/2ZGhE2Eynt3X5hCBxLkRfGGzOOk/nd4Oxsfbvz7HJ+0l+AS5fkaIV+Rdfx
-x-ms-office365-filtering-correlation-id: 94d86d0b-9a5f-488d-2ec5-08d6336b8697
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0519;
-x-ms-traffictypediagnostic: BY2PR11MB0519:
-x-microsoft-antispam-prvs: <BY2PR11MB0519DD21960C895E36513C2687FE0@BY2PR11MB0519.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(3002001)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051);SRVR:BY2PR11MB0519;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0519;
-x-forefront-prvs: 0827D7ACB9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(136003)(39860400002)(346002)(189003)(199004)(31696002)(8936002)(86362001)(6512007)(81166006)(106356001)(7736002)(81156014)(6246003)(229853002)(5660300001)(72206003)(31686004)(105586002)(305945005)(6486002)(14454004)(478600001)(25786009)(110136005)(2900100001)(2906002)(68736007)(8676002)(53936002)(3846002)(6436002)(6116002)(54906003)(256004)(186003)(2616005)(476003)(11346002)(36756003)(446003)(486006)(14444005)(99286004)(53546011)(15760500003)(2501003)(26005)(386003)(6506007)(52116002)(76176011)(316002)(71190400001)(5250100002)(66066001)(71200400001)(97736004)(102836004)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0519;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: mAcY+IuedzMm5IFkLXkVxw5q2mvFDCoHP63K3ma+zuEaNWH+GUPx+MtamlL6Rd5p//Q7BSFUgWIqaphYKuWOy0+xc46X7fAygTTOAdBZvLfMwJNNAFmUklzuFeHh60Qq7rn8vAuEP8t/g2qt3zMu7BmLa8bG42ukg3H+arG+xHXNnlrLM670mDF2u4N3ssMKSb5Nw4+tyPEVtnsoIiIY/rPmZtz4Gn2GH7RFmsIXAafQ5non2uf83v0uK8ZAipQtGWVMfNgMXR6IQF9UhgAsDKTincMmVufqtJOyon6kf6XvSBg3CkER6fOAOTcimd9yzzsVV+zzey927RxQJah5ESJjpMFRIOhnMbd4l73ocm0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D1F3A927FB1D134C99D9257FB1D90650@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 16 Oct 2018 17:21:40 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181016133108euoutp01ad148d323644ab0d7fe57a710312be80~eGfZ09gL92477224772euoutp01u
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 13:31:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181016133108euoutp01ad148d323644ab0d7fe57a710312be80~eGfZ09gL92477224772euoutp01u
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539696668;
+        bh=DYSJDwdy9T36a0BNbl8xcXhKoomqJcjNl8wzzHGEir0=;
+        h=To:Cc:From:Subject:Date:References:From;
+        b=pZ5hXuc/XGSTFGxJHPUk6cgn77kcC7JLRiOfg1AfVCdiIo7+PUVWQufr4/zUuP9TF
+         C2p/U9cNazhyCCbLD+c/JDsEBk+mtywgO/t6G0AU9Z5vWWHMUJPqwJ/JUpnogcgD5J
+         olhlnZ/l+bc0296GnP3T57Ml6Qw1tqkRER+lXf2I=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181016133108eucas1p19a9af402f67bf514634deec1d31cb0ef~eGfZXAIpa0979809798eucas1p1v;
+        Tue, 16 Oct 2018 13:31:08 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id BD.73.04294.C18E5CB5; Tue, 16
+        Oct 2018 14:31:08 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181016133107eucas1p26f6edf4824df4b9ba464bd55edaeac85~eGfYreRiL1249012490eucas1p2n;
+        Tue, 16 Oct 2018 13:31:07 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181016133107eusmtrp27d58bd30a9734082cf47611bfecbd454~eGfYqytc80938509385eusmtrp2Y;
+        Tue, 16 Oct 2018 13:31:07 +0000 (GMT)
+X-AuditID: cbfec7f4-84fff700000010c6-f0-5bc5e81cb558
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 32.DD.04128.B18E5CB5; Tue, 16
+        Oct 2018 14:31:07 +0100 (BST)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181016133107eusmtip21ddec91a51e20391a33678960540aa51~eGfYahd1G0511305113eusmtip2z;
+        Tue, 16 Oct 2018 13:31:07 +0000 (GMT)
+To:     Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
+Cc:     linux-c6x-dev@linux-c6x.org, linux-kernel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] c6x: remove redundant 'default n' from Kconfig-s
+Date:   Tue, 16 Oct 2018 15:31:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94d86d0b-9a5f-488d-2ec5-08d6336b8697
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2018 13:30:24.4267
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0519
-X-OriginatorOrg: microchip.com
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42LZduznOV2ZF0ejDba+4LR4/2Q1s8WR2ROY
+        LC7vmsNm8X/6ZkYHFo+ds+6ye+zY9JrJ4/2+q2wenzfJBbBEcdmkpOZklqUW6dslcGUc2PKc
+        veCpYMXsVasYGxgv8HYxcnBICJhI7LzK3cXIxSEksIJRov/GB3YI5wujxPszC1m7GDmBnM+M
+        EjduZ4LYIA1357ayQRQtZ5T4+fckI4TznlFi/ayD7CBVIgLhEldvz2ABsZkFbCXW3YeIswlY
+        SUxsX8UIYgsLOEos61kOtoFFQFXi3qO3jCAniQpESPSfUQcJ8woISpyc+QRqjLzE9rdzmEF2
+        SQi8Z5OYfeklI0RRmcTPhrVMENe5SKxbvZwdwhaWeHV8C5QtI/F/53wmiObpjBJvfi1lgXDW
+        M0qsOXMMqtta4vDxi6wgVzALaEqs36UPEXaUWLh8DQskvPgkbrwVhDiIT2LStunMEGFeiY42
+        IYhqNYkNyzawwazt2rmSGcL2kJi4vo8NEqCxEhfWvGScwKgwC8mbs5C8OQvhhgWMzKsYxVNL
+        i3PTU4uN8lLL9YoTc4tL89L1kvNzNzECE8jpf8e/7GDc9SfpEKMAB6MSD++P60eihVgTy4or
+        cw8xSnAwK4nwpl86Gi3Em5JYWZValB9fVJqTWnyIUZqDRUmcd9m8jdFCAumJJanZqakFqUUw
+        WSYOTqkGxqkvH7dd/S1pVxfC+saCX/q98ZKfk3fvvrh6k2r98suuNutjywW+d2ROvifAf+HY
+        2yN+2leN7i+cFtDlM/nAx48vH5+Z2jXDsy1W4EWw1JunzQtUF36rK1+3qSniI8+UWeIlLVGF
+        lz/yKl/OCdonlpr9qWfj2/ip7y8utHz+RVn5tJem8cuH9ceUWIozEg21mIuKEwFxcimeHAMA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsVy+t/xe7rSL45GG/w+qGrx/slqZosjsycw
+        WVzeNYfN4v/0zYwOLB47Z91l99ix6TWTx/t9V9k8Pm+SC2CJ0rMpyi8tSVXIyC8usVWKNrQw
+        0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Ms4sOU5e8FTwYrZq1YxNjBe4O1i5OSQ
+        EDCRuDu3la2LkYtDSGApo8SCK43sXYwcQAkZiePryyBqhCX+XOuCqnnLKPHswhcmkBoRgXCJ
+        PYe1QWqYBWwl1t0/yA5iswlYSUxsX8UIYgsLOEos61nOCmLzCthJzHlzmxnEZhFQlbj36C1Y
+        jahAhMSthx0sEDWCEidnPmGBmKku8WfeJWYIW15i+9s5zBMY+WchKZuFpGwWkrIFjMyrGEVS
+        S4tz03OLjfSKE3OLS/PS9ZLzczcxAgN927GfW3Ywdr0LPsQowMGoxMP74/qRaCHWxLLiytxD
+        jBIczEoivOmXjkYL8aYkVlalFuXHF5XmpBYfYjQFOnwis5Rocj4wCvNK4g1NDc0tLA3Njc2N
+        zSyUxHnPG1RGCQmkJ5akZqemFqQWwfQxcXBKNTBu3j7JPt1sZ1X60kW7XtodVLP+/76LcY6P
+        85tK4x03b9U2JsypuTzLx6z46jHdBBcZv9ZlomY8h+S9zqemRCS33Q5Zf5r3yKm9Gnln7pz0
+        FV/0Q0I8ndH37PZsl9w1XNkhhQuXV7kr74u+7tWd9WejQybv/6eXK1snTlzOyWW8c67S3PDV
+        7vlKLMUZiYZazEXFiQBD1j0DigIAAA==
+Message-Id: <20181016133107eucas1p26f6edf4824df4b9ba464bd55edaeac85~eGfYreRiL1249012490eucas1p2n@eucas1p2.samsung.com>
+X-CMS-MailID: 20181016133107eucas1p26f6edf4824df4b9ba464bd55edaeac85
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181016133107eucas1p26f6edf4824df4b9ba464bd55edaeac85
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181016133107eucas1p26f6edf4824df4b9ba464bd55edaeac85
+References: <CGME20181016133107eucas1p26f6edf4824df4b9ba464bd55edaeac85@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgSm9uYXMsDQoNCk9uIDA3LjEwLjIwMTggMTU6NTcsIEpvbmFzIERhbmllbHNzb24gd3JvdGU6
-DQo+IEZyb206IEpvbmFzIERhbmllbHNzb24gPGpvbmFzQG9yYml0YWwtc3lzdGVtcy5jb20+DQo+
-IA0KPiBUaGlzIGZpeGVzIGEgYnVnIHdoZXJlIG91ciBlbWJlZGRlZCBzeXN0ZW0gKEFUOTFTQU05
-MjYwIGJhc2VkKSB3b3VsZA0KPiBoYW5nIGF0IHJlYm9vdC4gQXQgdGhlIG1vc3Qgd2UgbWFuYWdl
-ZCAxNiBib290IGxvb3BzIHdpdGhvdXQgYSBoYW5nLg0KPiANCj4gV2l0aCB0aGlzIHBhdGNoIGFw
-cGxpZWQgdGhlIHByb2JsZW0gaGFzIG5vdCBiZWVuIG9ic2VydmVkIGFuZCB0aGUgYm9hcmQNCj4g
-aGFzIG1hbmFnZWQgYWJvdmUgMjUwIGJvb3QgbG9vcHMuDQo+IA0KPiBUaGUgQVQ5MVNBTTkyNjAg
-ZGF0YXNoZWV0IHRlbGxzIHVzIHRoYXQgd2l0aCB0aGUgaW5zdHJ1Y3Rpb24gY2FjaGUNCj4gZGlz
-YWJsZWQgYWxsIGluc3RydWN0aW9ucyBhcmUgZmV0Y2hlZCBmcm9tIFNEUkFNLiBBbmQgd2UgaGF2
-ZSBhbiBlcnJhdGENCj4gdGVsbGluZyB1cyB3ZSBtdXN0IHBvd2VyIGRvd24gdGhlIFNEUkFNIGJl
-Zm9yZSBpc3N1aW5nIGNwdSByZXNldC4NCj4gDQo+IFRoaXMgbWVhbnMgd2UgbmVlZCB0aGUgaW5z
-dHJ1Y3Rpb24gY2FjaGUgZW5hYmxlZCBpbiBhdDkxc2FtOTI2MF9yZXNldCgpDQo+IEF0IHRoZSBt
-b21lbnQgaXQgaXMgYmVpbmcgZGlzYWJsZWQgaW4gY3B1X3Byb2NfZmluKCkgd2hpY2ggaXMgY2Fs
-bGVkIGZyb20NCj4gYXJjaC9hcm0va2VybmVsL3JlYm9vdC5jLg0KDQpBcmUgeW91IHVzaW5nIGtl
-eGVjIHJlYm9vdCBvciBpbXBsZW1lbnRlZCBoaWJlcm5hdGUgbW9kZSBvbiB0aGlzIG1hY2hpbmU/
-DQpJJ20gc2VlaW5nIGNwdV9wcm9jX2ZpbigpIGlzIGNhbGxlZCBvbmx5IGluIGNhc2Ugb2Yga2V4
-ZWMgcmVib290IG9yDQpzd2l0Y2hpbmcgdG8gaGliZXJuYXRlIG1vZGUuDQoNCkluIGNhc2Ugb2Yg
-bm9ybWFsIHJlYm9vdCAoZS5nLiByZWJvb3QgY29tbWFuZCkgbWFjaGluZV9yZXN0YXJ0KCkgZnJv
-bQ0KYXJjaC9hcm0va2VybmVsL3JlYm9vdC5jIGlzIGNhbGxlZC4gUGxlYXNlIGNvcnJlY3QgbWUg
-aWYgSSdtIHdyb25nLg0KDQpUaGFuayB5b3UsDQpDbGF1ZGl1IEJlem5lYQ0KDQo+IA0KPiBTaWdu
-ZWQtb2ZmLWJ5OiBKb25hcyBEYW5pZWxzc29uIDxqb25hc0BvcmJpdGFsLXN5c3RlbXMuY29tPg0K
-PiAtLS0NCj4gIGRyaXZlcnMvcG93ZXIvcmVzZXQvYXQ5MS1yZXNldC5jIHwgMTIgKysrKysrKysr
-KystDQo+ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0K
-PiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcG93ZXIvcmVzZXQvYXQ5MS1yZXNldC5jIGIvZHJp
-dmVycy9wb3dlci9yZXNldC9hdDkxLXJlc2V0LmMNCj4gaW5kZXggZjQ0YTlmZmNjMmFiLi43ODk3
-MmJiYTY0ZGYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcG93ZXIvcmVzZXQvYXQ5MS1yZXNldC5j
-DQo+ICsrKyBiL2RyaXZlcnMvcG93ZXIvcmVzZXQvYXQ5MS1yZXNldC5jDQo+IEBAIC01MCwxNCAr
-NTAsMjQgQEAgc3RhdGljIHZvaWQgX19pb21lbSAqYXQ5MV9yYW1jX2Jhc2VbMl0sICphdDkxX3Jz
-dGNfYmFzZTsNCj4gIHN0YXRpYyBzdHJ1Y3QgY2xrICpzY2xrOw0KPiAgDQo+ICAvKg0KPiAtKiB1
-bmxlc3MgdGhlIFNEUkFNIGlzIGNsZWFubHkgc2h1dGRvd24gYmVmb3JlIHdlIGhpdCB0aGUNCj4g
-KyogRXJyYXRhIDQzLjEuNy4xIFJTVEM6IFJlc2V0IGR1cmluZyBTRFJBTSBBY2Nlc3Nlcw0KPiAr
-Kg0KPiArKiBVbmxlc3MgdGhlIFNEUkFNIGlzIGNsZWFubHkgc2h1dGRvd24gYmVmb3JlIHdlIGhp
-dCB0aGUNCj4gICogcmVzZXQgcmVnaXN0ZXIgaXQgY2FuIGJlIGxlZnQgZHJpdmluZyB0aGUgZGF0
-YSBidXMgYW5kDQo+ICAqIGtpbGxpbmcgdGhlIGNoYW5jZSBvZiBhIHN1YnNlcXVlbnQgYm9vdCBm
-cm9tIE5BTkQNCj4gKyoNCj4gKyogU2luY2Ugd2UgYXJlIGRpc2FibGluZyBTRFJBTSBuZWVkIHRv
-IG1ha2Ugc3VyZSB0aGF0IHRoZQ0KPiArKiBpbnN0cnVjdGlvbiBjYWNoZSBpcyBlbmFibGVkLg0K
-PiAgKi8NCj4gIHN0YXRpYyBpbnQgYXQ5MXNhbTkyNjBfcmVzdGFydChzdHJ1Y3Qgbm90aWZpZXJf
-YmxvY2sgKnRoaXMsIHVuc2lnbmVkIGxvbmcgbW9kZSwNCj4gIAkJCSAgICAgICB2b2lkICpjbWQp
-DQo+ICB7DQo+ICAJYXNtIHZvbGF0aWxlKA0KPiArCQkvKiBFbmFibGUgSS1jYWNoZSAqLw0KPiAr
-CQkibXJjCXAxNSwgMCwgcjAsIGMxLCBjMCwgMFxuXHQiDQo+ICsJCSJvcnIJcjAsIHIwLCAjNDA5
-NlxuXHQiIC8qIENSX0kgKGJpdCAxMikgKi8NCj4gKwkJIm1jcglwMTUsIDAsIHIwLCBjMSwgYzAs
-IDBcblx0Ig0KPiArDQo+ICAJCS8qIEFsaWduIHRvIGNhY2hlIGxpbmVzICovDQo+ICAJCSIuYmFs
-aWduIDMyXG5cdCINCj4gIA0KPiANCg==
+'default n' is the default value for any bool or tristate Kconfig
+setting so there is no need to write it explicitly.
+
+Also since commit f467c5640c29 ("kconfig: only write '# CONFIG_FOO
+is not set' for visible symbols") the Kconfig behavior is the same
+regardless of 'default n' being present or not:
+
+    ...
+    One side effect of (and the main motivation for) this change is making
+    the following two definitions behave exactly the same:
+    
+        config FOO
+                bool
+    
+        config FOO
+                bool
+                default n
+    
+    With this change, neither of these will generate a
+    '# CONFIG_FOO is not set' line (assuming FOO isn't selected/implied).
+    That might make it clearer to people that a bare 'default n' is
+    redundant.
+    ...
+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/c6x/Kconfig           |    2 --
+ arch/c6x/platforms/Kconfig |    5 -----
+ 2 files changed, 7 deletions(-)
+
+Index: b/arch/c6x/Kconfig
+===================================================================
+--- a/arch/c6x/Kconfig	2018-10-09 15:58:36.295122871 +0200
++++ b/arch/c6x/Kconfig	2018-10-16 15:28:50.623630380 +0200
+@@ -70,14 +70,12 @@ config CMDLINE
+ config CMDLINE_FORCE
+ 	bool "Force default kernel command string"
+ 	depends on CMDLINE_BOOL
+-	default n
+ 	help
+ 	  Set this to have arguments from the default kernel command string
+ 	  override those passed by the boot loader.
+ 
+ config CPU_BIG_ENDIAN
+ 	bool "Build big-endian kernel"
+-	default n
+ 	help
+ 	  Say Y if you plan on running a kernel in big-endian mode.
+ 	  Note that your board must be properly built and your board
+Index: b/arch/c6x/platforms/Kconfig
+===================================================================
+--- a/arch/c6x/platforms/Kconfig	2018-09-03 18:11:11.249792456 +0200
++++ b/arch/c6x/platforms/Kconfig	2018-10-16 15:29:04.891630739 +0200
+@@ -2,20 +2,15 @@
+ 
+ config SOC_TMS320C6455
+ 	bool "TMS320C6455"
+-	default n
+ 
+ config SOC_TMS320C6457
+ 	bool "TMS320C6457"
+-	default n
+ 
+ config SOC_TMS320C6472
+ 	bool "TMS320C6472"
+-	default n
+ 
+ config SOC_TMS320C6474
+ 	bool "TMS320C6474"
+-	default n
+ 
+ config SOC_TMS320C6678
+ 	bool "TMS320C6678"
+-	default n
