@@ -2,178 +2,135 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70132C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C74C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18BD42089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:38:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Q9cLjCYw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18BD42089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id B943821470
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:41:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B943821470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbeJQA3u (ORCPT
+        id S1727292AbeJQAcR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:29:50 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36155 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbeJQA3u (ORCPT
+        Tue, 16 Oct 2018 20:32:17 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:57454 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbeJQAcQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:29:50 -0400
-Received: by mail-ed1-f68.google.com with SMTP id c26-v6so21998300edt.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 09:38:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=OGbpf6VY1dRc7YQGUwrKOJ0hbw3rVdNYxq4/XpQZ8o0=;
-        b=Q9cLjCYw1S/ef6UKh25jQMjhy8qgP7DsVB3g1Y2/rnLWxFL/or/T9YvhqTjfMQxn4R
-         SY7Q68k7OaAISAysMFOQfP1i5nNUP3VIt5FZ2WS+JKcFkzMXRMDNuQcYdXUFS/QY6kbS
-         BbqQZR1Yu5rTAhyoV4C9SZuje0zi57Qo3AUyA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=OGbpf6VY1dRc7YQGUwrKOJ0hbw3rVdNYxq4/XpQZ8o0=;
-        b=h7L8Y9v4xZE7UaV31hsxrL5QjerzDdJCVK91laUn8nhYx+0gNod7+dphi8sNlH1XEP
-         KNIu6AkQ8GhAM9PgivuM5BVSqPdjqVi4k855k8zCrw2atXA4g0/02+oosfYWfGYHVmxE
-         ff3hH1wX7YkcBK3mX8jt5TSexyO3w8Hl37ca/DGcxSPRdVsW/i5IKakgg0dcvcFePERf
-         htGsBog0mDZ8b6VJqYzj35ACBjko9a0tOvYoeRCRczUAU2SOhTSham9/snu84gHf5OTy
-         t+NpkDtlpV1sgLRsR48PNMQENeH8CUqbCjsMyH84jnPVeymqD1FZ1sQNgcUSyXHdtmiP
-         pZjA==
-X-Gm-Message-State: ABuFfoiMtgPTmcvFzJxHVZj7d2vbq5NCmIPfgeFd1g41FEu49ICtvB2G
-        0l65OBLbXdCW+6bvwcghLJhcng==
-X-Google-Smtp-Source: ACcGV62ts3Uy5/cKZpqd67aT5SKSm7laF375T2Yu9QEyX+UCVaeqVHO4jC54Axoek744VPv/KGH6iA==
-X-Received: by 2002:a50:b68b:: with SMTP id d11-v6mr31309579ede.283.1539707914705;
-        Tue, 16 Oct 2018 09:38:34 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id m11sm5217425edv.90.2018.10.16.09.38.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 09:38:33 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 18:38:31 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] drm/drm_vblank: Change EINVAL by the correct errno
-Message-ID: <20181016163831.GA31561@phenom.ffwll.local>
-Mail-Followup-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20181015170529.dgzpbm37hbuvqatc@smtp.gmail.com>
- <57b40f9f-24d2-27de-4895-5a76ff267643@linux.intel.com>
+        Tue, 16 Oct 2018 20:32:16 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 3F3EBC18AA;
+        Tue, 16 Oct 2018 16:41:02 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id L8fz-C3JjnzF; Tue, 16 Oct 2018 16:41:02 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id C8B70C0480;
+        Tue, 16 Oct 2018 16:40:56 +0000 (UTC)
+Subject: Re: [PATCH] selftests/ftrace: Add color to the PASS / FAIL results
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Shuah Khan <shuah@kernel.org>
+References: <20181012222106.7f38b667@vmware.local.home>
+ <20181015234231.e163ab77fd42dbd3ac9c84d5@kernel.org>
+ <20181017002632.20fcb18bf94efb79aa58219b@kernel.org>
+ <20181016113952.59893943@gandalf.local.home>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <ccadb761-025d-2447-c3e8-5762ea209347@kernel.org>
+Date:   Tue, 16 Oct 2018 10:40:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20181016113952.59893943@gandalf.local.home>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <57b40f9f-24d2-27de-4895-5a76ff267643@linux.intel.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 03:36:20PM +0200, Maarten Lankhorst wrote:
-> Op 15-10-18 om 19:05 schreef Rodrigo Siqueira:
-> > For historical reason, the function drm_wait_vblank_ioctl always return
-> > -EINVAL if something gets wrong. This scenario limits the flexibility
-> > for the userspace make detailed verification of the problem and take
-> > some action. In particular, the validation of “if (!dev->irq_enabled)”
-> > in the drm_wait_vblank_ioctl is responsible for checking if the driver
-> > support vblank or not. If the driver does not support VBlank, the
-> > function drm_wait_vblank_ioctl returns EINVAL which does not represent
-> > the real issue; this patch changes this behavior by return EOPNOTSUPP.
-> > Additionally, some operations are unsupported by this function, and
-> > returns EINVAL; this patch also changes the return value to EOPNOTSUPP
-> > in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
-> > libdrm, which is used by many compositors; because of this, it is
-> > important to check if this change breaks any compositor. In this sense,
-> > the following projects were examined:
-> >
-> > * Drm-hwcomposer
-> > * Kwin
-> > * Sway
-> > * Wlroots
-> > * Wayland-core
-> > * Weston
-> > * Xorg (67 different drivers)
-> >
-> > For each repository the verification happened in three steps:
-> >
-> > * Update the main branch
-> > * Look for any occurrence "drmWaitVBlank" with the command:
-> >   git grep -n "drmWaitVBlank"
-> > * Look in the git history of the project with the command:
-> >   git log -SdrmWaitVBlank
-> >
-> > Finally, none of the above projects validate the use of EINVAL which
-> > make safe, at least for these projects, to change the return values.
-> >
-> > Change since V1:
-> >  Daniel Vetter and Chris Wilson
-> >  - Replace ENOTTY by EOPNOTSUPP
-> >  - Return EINVAL if the parameters are wrong
-> >
-> > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> > ---
-> >  drivers/gpu/drm/drm_vblank.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> > index 98e091175921..80f5a3bb427e 100644
-> > --- a/drivers/gpu/drm/drm_vblank.c
-> > +++ b/drivers/gpu/drm/drm_vblank.c
-> > @@ -1533,10 +1533,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
-> >  	unsigned int flags, pipe, high_pipe;
-> >  
-> >  	if (!dev->irq_enabled)
-> > -		return -EINVAL;
-> > +		return -EOPNOTSUPP;
-> Change to -EIO?
+On 10/16/2018 09:39 AM, Steven Rostedt wrote:
+> On Wed, 17 Oct 2018 00:26:32 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
 > 
-> If userspace would ever print this out, it would print the following
-> confusing message to userspace:
-> "Operation not supported on transport endpoint"
-
-You're a bit late, EOPNOTSUPP is not established already in upstream for
-this. And -EIO is taken already for "the gpu is dead".
-
-> >  
-> >  	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
-> > -		return -EINVAL;
-> > +		return -EOPNOTSUPP;
-> I would keep this -EINVAL, tbh and making it part of the below if statement..
-
-We discussed this, it's different: This here is an ioctl flag that's no
-longer supported, the below is just an invalid request. Hence different
-errno.
-
-I think you missed a bit with your bikeshed :-)
--Daniel
-
-> >  	if (vblwait->request.type &
-> >  	    ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
+>> On Mon, 15 Oct 2018 23:42:31 +0900
+>> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>>
+>>> On Fri, 12 Oct 2018 22:21:06 -0400
+>>> Steven Rostedt <rostedt@goodmis.org> wrote:
+>>>   
+>>>> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>>>>
+>>>> Now that ftracetest has over 80 tests, it is difficult to simply scroll
+>>>> up the console window to find the failed tests when it reports just two
+>>>> tests have failed. In order to make this stand out better, have the
+>>>> color of the word "PASS" be green, "FAIL" and "XFAIL" be red, and all
+>>>> other results be blue. This helps tremendously in quickly spotting the
+>>>> failed tests by just scrolling up the console window.
+>>>>   
+>>>
+>>> Looks good to me.
+>>>
+>>> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>  
+>>
+>> Oops, I found some problems.
+>>
+>>>
+>>> Thanks!
+>>>   
+>>>> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>>>> ---
+>>>> diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+>>>> index 5c71d58..4946b2e 100755
+>>>> --- a/tools/testing/selftests/ftrace/ftracetest
+>>>> +++ b/tools/testing/selftests/ftrace/ftracetest
+>>>> @@ -153,7 +153,7 @@ else
+>>>>  fi
+>>>>  
+>>>>  prlog() { # messages
+>>>> -  [ -z "$LOG_FILE" ] && echo "$@" || echo "$@" | tee -a $LOG_FILE
+>>>> +  [ -z "$LOG_FILE" ] && echo -e "$@" || echo -e "$@" | tee -a $LOG_FILE  
+>>
+>> I think we should strip escape-sequences from log files, like below;
+>>
+>> strip_esc() {
+>>   sed -E "s/[[:cntrl:]]\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+>> }
+>>
+>>   [ -z "$LOG_FILE" ] && echo -e "$@" || echo -e "$@" | strip_esc | tee -a $LOG_FILE
+>>
+>>
+>>>>  }
+>>>>  catlog() { #file
+>>>>    [ -z "$LOG_FILE" ] && cat $1 || cat $1 | tee -a $LOG_FILE
+>>>> @@ -195,37 +195,37 @@ test_on_instance() { # testfile
+>>>>  eval_result() { # sigval
+>>>>    case $1 in
+>>>>      $PASS)
+>>>> -      prlog "	[PASS]"
+>>>> +      prlog "	[\e[32mPASS\e[30m]"  
+>>
+>> The last one should be "\e[0m" (reset), "\e[30m" just set the color "black".
+>> That doesn't work on my terminal, which is "white on black".
+>>
+>>
 > 
-> Cheers,
+> Ah thanks for the feedback. Want to write a patch on top, that Shuah
+> can add?
 > 
-> Maarten
+> -- Steve
 > 
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+That will be great. I can apply the updated patch with Masami's Reviewed-by
+perhaps.
+
+thanks,
+-- Shuah
