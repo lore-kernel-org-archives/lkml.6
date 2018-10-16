@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC44C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F747C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 959B42098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29AED2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:18:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRlxxx3h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 959B42098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/Vg25in"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29AED2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730096AbeJQBJl (ORCPT
+        id S1730110AbeJQBJo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:09:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54474 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:09:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729161AbeJQBJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:09:41 -0400
+        id S1729161AbeJQBJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:09:43 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84D1720866;
-        Tue, 16 Oct 2018 17:18:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA8EC2089E;
+        Tue, 16 Oct 2018 17:18:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710296;
-        bh=2UtasA2POZ3Gptqm+CjdpHI5ZHwSH+xZylxagT0/UEM=;
+        s=default; t=1539710299;
+        bh=94XOFJBcegfgbW0hJVuWgVkNtzlIAvGuNDPy2R/iPw4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DRlxxx3h7ojq53YdbeiVkwBxZ0KR166o9GZqYNtcj6VBqcuGZPOrecJhP4RKYYRV4
-         5Rc+RPJBAy1u3DdPk6/eknH8uVY9QwdrzxBRf8wua+ld91oUdcoDzopy18z3fEXlgB
-         gLqTpSt3uG86W8p9Uk1ZmiNRWTX6GIB8sEfyrUIM=
+        b=t/Vg25inRNEDX5hkFLQhX0dPUlR+09VIhbty8Ve4XP21+KvLD2xJHJJ4AQg0iB6Gx
+         4Jsod5JWlX+xEKqeINSFnV9c95Z4ErYEMEYRIymfrlr6ZfIg5oO265TEp/w9slcNfQ
+         pGOliOb3ZAbLi+0Xe972h2vQjF1bPvW4SBkJNtio=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
+        stable@vger.kernel.org, Friedemann Gerold <f.gerold@b-c-s.de>,
+        Michael Rauch <michael@rauch.be>,
+        Nikita Danilov <nikita.danilov@aquantia.com>,
+        Igor Russkikh <igor.russkikh@aquantia.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 003/109] bonding: avoid possible dead-lock
-Date:   Tue, 16 Oct 2018 19:04:31 +0200
-Message-Id: <20181016170524.753451592@linuxfoundation.org>
+Subject: [PATCH 4.14 030/109] net: aquantia: memory corruption on jumbo frames
+Date:   Tue, 16 Oct 2018 19:04:58 +0200
+Message-Id: <20181016170526.700170185@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -62,244 +65,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Friedemann Gerold <f.gerold@b-c-s.de>
 
-[ Upstream commit d4859d749aa7090ffb743d15648adb962a1baeae ]
+[ Upstream commit d26ed6b0e5e23190d43ab34bc69cbecdc464a2cf ]
 
-Syzkaller reported this on a slightly older kernel but it's still
-applicable to the current kernel -
+This patch fixes skb_shared area, which will be corrupted
+upon reception of 4K jumbo packets.
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.18.0-next-20180823+ #46 Not tainted
-------------------------------------------------------
-syz-executor4/26841 is trying to acquire lock:
-00000000dd41ef48 ((wq_completion)bond_dev->name){+.+.}, at: flush_workqueue+0x2db/0x1e10 kernel/workqueue.c:2652
+Originally build_skb usage purpose was to reuse page for skb to eliminate
+needs of extra fragments. But that logic does not take into account that
+skb_shared_info should be reserved at the end of skb data area.
 
-but task is already holding lock:
-00000000768ab431 (rtnl_mutex){+.+.}, at: rtnl_lock net/core/rtnetlink.c:77 [inline]
-00000000768ab431 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x412/0xc30 net/core/rtnetlink.c:4708
+In case packet data consumes all the page (4K), skb_shinfo location
+overflows the page. As a consequence, __build_skb zeroed shinfo data above
+the allocated page, corrupting next page.
 
-which lock already depends on the new lock.
+The issue is rarely seen in real life because jumbo are normally larger
+than 4K and that causes another code path to trigger.
+But it 100% reproducible with simple scapy packet, like:
 
-the existing dependency chain (in reverse order) is:
+    sendp(IP(dst="192.168.100.3") / TCP(dport=443) \
+          / Raw(RandString(size=(4096-40))), iface="enp1s0")
 
--> #2 (rtnl_mutex){+.+.}:
-       __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-       __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
-       mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
-       rtnl_lock+0x17/0x20 net/core/rtnetlink.c:77
-       bond_netdev_notify drivers/net/bonding/bond_main.c:1310 [inline]
-       bond_netdev_notify_work+0x44/0xd0 drivers/net/bonding/bond_main.c:1320
-       process_one_work+0xc73/0x1aa0 kernel/workqueue.c:2153
-       worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-       kthread+0x35a/0x420 kernel/kthread.c:246
-       ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
+Fixes: 018423e90bee ("net: ethernet: aquantia: Add ring support code")
 
--> #1 ((work_completion)(&(&nnw->work)->work)){+.+.}:
-       process_one_work+0xc0b/0x1aa0 kernel/workqueue.c:2129
-       worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-       kthread+0x35a/0x420 kernel/kthread.c:246
-       ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-
--> #0 ((wq_completion)bond_dev->name){+.+.}:
-       lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
-       flush_workqueue+0x30a/0x1e10 kernel/workqueue.c:2655
-       drain_workqueue+0x2a9/0x640 kernel/workqueue.c:2820
-       destroy_workqueue+0xc6/0x9d0 kernel/workqueue.c:4155
-       __alloc_workqueue_key+0xef9/0x1190 kernel/workqueue.c:4138
-       bond_init+0x269/0x940 drivers/net/bonding/bond_main.c:4734
-       register_netdevice+0x337/0x1100 net/core/dev.c:8410
-       bond_newlink+0x49/0xa0 drivers/net/bonding/bond_netlink.c:453
-       rtnl_newlink+0xef4/0x1d50 net/core/rtnetlink.c:3099
-       rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4711
-       netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
-       rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4729
-       netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
-       netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
-       netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
-       sock_sendmsg_nosec net/socket.c:622 [inline]
-       sock_sendmsg+0xd5/0x120 net/socket.c:632
-       ___sys_sendmsg+0x7fd/0x930 net/socket.c:2115
-       __sys_sendmsg+0x11d/0x290 net/socket.c:2153
-       __do_sys_sendmsg net/socket.c:2162 [inline]
-       __se_sys_sendmsg net/socket.c:2160 [inline]
-       __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2160
-       do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-  (wq_completion)bond_dev->name --> (work_completion)(&(&nnw->work)->work) --> rtnl_mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(rtnl_mutex);
-                               lock((work_completion)(&(&nnw->work)->work));
-                               lock(rtnl_mutex);
-  lock((wq_completion)bond_dev->name);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor4/26841:
-
-stack backtrace:
-CPU: 1 PID: 26841 Comm: syz-executor4 Not tainted 4.18.0-next-20180823+ #46
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
- print_circular_bug.isra.34.cold.55+0x1bd/0x27d kernel/locking/lockdep.c:1222
- check_prev_add kernel/locking/lockdep.c:1862 [inline]
- check_prevs_add kernel/locking/lockdep.c:1975 [inline]
- validate_chain kernel/locking/lockdep.c:2416 [inline]
- __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3412
- lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
- flush_workqueue+0x30a/0x1e10 kernel/workqueue.c:2655
- drain_workqueue+0x2a9/0x640 kernel/workqueue.c:2820
- destroy_workqueue+0xc6/0x9d0 kernel/workqueue.c:4155
- __alloc_workqueue_key+0xef9/0x1190 kernel/workqueue.c:4138
- bond_init+0x269/0x940 drivers/net/bonding/bond_main.c:4734
- register_netdevice+0x337/0x1100 net/core/dev.c:8410
- bond_newlink+0x49/0xa0 drivers/net/bonding/bond_netlink.c:453
- rtnl_newlink+0xef4/0x1d50 net/core/rtnetlink.c:3099
- rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4711
- netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
- rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4729
- netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
- netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
- netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
- sock_sendmsg_nosec net/socket.c:622 [inline]
- sock_sendmsg+0xd5/0x120 net/socket.c:632
- ___sys_sendmsg+0x7fd/0x930 net/socket.c:2115
- __sys_sendmsg+0x11d/0x290 net/socket.c:2153
- __do_sys_sendmsg net/socket.c:2162 [inline]
- __se_sys_sendmsg net/socket.c:2160 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2160
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f2df20a5c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f2df20a66d4 RCX: 0000000000457089
-RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000003
-RBP: 0000000000930140 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d40b8 R14: 00000000004c8ad8 R15: 0000000000000001
-
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Reported-by: Friedemann Gerold <f.gerold@b-c-s.de>
+Reported-by: Michael Rauch <michael@rauch.be>
+Signed-off-by: Friedemann Gerold <f.gerold@b-c-s.de>
+Tested-by: Nikita Danilov <nikita.danilov@aquantia.com>
+Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |   43 +++++++++++++++-------------------------
- include/net/bonding.h           |    7 ------
- 2 files changed, 18 insertions(+), 32 deletions(-)
+ drivers/net/ethernet/aquantia/atlantic/aq_ring.c |   32 ++++++++++++-----------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -210,6 +210,7 @@ static void bond_get_stats(struct net_de
- static void bond_slave_arr_handler(struct work_struct *work);
- static bool bond_time_in_interval(struct bonding *bond, unsigned long last_act,
- 				  int mod);
-+static void bond_netdev_notify_work(struct work_struct *work);
- 
- /*---------------------------- General routines -----------------------------*/
- 
-@@ -1254,6 +1255,8 @@ static struct slave *bond_alloc_slave(st
- 			return NULL;
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
+@@ -222,9 +222,10 @@ int aq_ring_rx_clean(struct aq_ring_s *s
  		}
- 	}
-+	INIT_DELAYED_WORK(&slave->notify_work, bond_netdev_notify_work);
+ 
+ 		/* for single fragment packets use build_skb() */
+-		if (buff->is_eop) {
++		if (buff->is_eop &&
++		    buff->len <= AQ_CFG_RX_FRAME_MAX - AQ_SKB_ALIGN) {
+ 			skb = build_skb(page_address(buff->page),
+-					buff->len + AQ_SKB_ALIGN);
++					AQ_CFG_RX_FRAME_MAX);
+ 			if (unlikely(!skb)) {
+ 				err = -ENOMEM;
+ 				goto err_exit;
+@@ -244,18 +245,21 @@ int aq_ring_rx_clean(struct aq_ring_s *s
+ 					buff->len - ETH_HLEN,
+ 					SKB_TRUESIZE(buff->len - ETH_HLEN));
+ 
+-			for (i = 1U, next_ = buff->next,
+-			     buff_ = &self->buff_ring[next_]; true;
+-			     next_ = buff_->next,
+-			     buff_ = &self->buff_ring[next_], ++i) {
+-				skb_add_rx_frag(skb, i, buff_->page, 0,
+-						buff_->len,
+-						SKB_TRUESIZE(buff->len -
+-						ETH_HLEN));
+-				buff_->is_cleaned = 1;
+-
+-				if (buff_->is_eop)
+-					break;
++			if (!buff->is_eop) {
++				for (i = 1U, next_ = buff->next,
++				     buff_ = &self->buff_ring[next_];
++				     true; next_ = buff_->next,
++				     buff_ = &self->buff_ring[next_], ++i) {
++					skb_add_rx_frag(skb, i,
++							buff_->page, 0,
++							buff_->len,
++							SKB_TRUESIZE(buff->len -
++							ETH_HLEN));
++					buff_->is_cleaned = 1;
 +
- 	return slave;
- }
++					if (buff_->is_eop)
++						break;
++				}
+ 			}
+ 		}
  
-@@ -1261,6 +1264,7 @@ static void bond_free_slave(struct slave
- {
- 	struct bonding *bond = bond_get_bond_by_slave(slave);
- 
-+	cancel_delayed_work_sync(&slave->notify_work);
- 	if (BOND_MODE(bond) == BOND_MODE_8023AD)
- 		kfree(SLAVE_AD_INFO(slave));
- 
-@@ -1282,39 +1286,26 @@ static void bond_fill_ifslave(struct sla
- 	info->link_failure_count = slave->link_failure_count;
- }
- 
--static void bond_netdev_notify(struct net_device *dev,
--			       struct netdev_bonding_info *info)
--{
--	rtnl_lock();
--	netdev_bonding_info_change(dev, info);
--	rtnl_unlock();
--}
--
- static void bond_netdev_notify_work(struct work_struct *_work)
- {
--	struct netdev_notify_work *w =
--		container_of(_work, struct netdev_notify_work, work.work);
-+	struct slave *slave = container_of(_work, struct slave,
-+					   notify_work.work);
-+
-+	if (rtnl_trylock()) {
-+		struct netdev_bonding_info binfo;
- 
--	bond_netdev_notify(w->dev, &w->bonding_info);
--	dev_put(w->dev);
--	kfree(w);
-+		bond_fill_ifslave(slave, &binfo.slave);
-+		bond_fill_ifbond(slave->bond, &binfo.master);
-+		netdev_bonding_info_change(slave->dev, &binfo);
-+		rtnl_unlock();
-+	} else {
-+		queue_delayed_work(slave->bond->wq, &slave->notify_work, 1);
-+	}
- }
- 
- void bond_queue_slave_event(struct slave *slave)
- {
--	struct bonding *bond = slave->bond;
--	struct netdev_notify_work *nnw = kzalloc(sizeof(*nnw), GFP_ATOMIC);
--
--	if (!nnw)
--		return;
--
--	dev_hold(slave->dev);
--	nnw->dev = slave->dev;
--	bond_fill_ifslave(slave, &nnw->bonding_info.slave);
--	bond_fill_ifbond(bond, &nnw->bonding_info.master);
--	INIT_DELAYED_WORK(&nnw->work, bond_netdev_notify_work);
--
--	queue_delayed_work(slave->bond->wq, &nnw->work, 0);
-+	queue_delayed_work(slave->bond->wq, &slave->notify_work, 0);
- }
- 
- void bond_lower_state_changed(struct slave *slave)
---- a/include/net/bonding.h
-+++ b/include/net/bonding.h
-@@ -139,12 +139,6 @@ struct bond_parm_tbl {
- 	int mode;
- };
- 
--struct netdev_notify_work {
--	struct delayed_work	work;
--	struct net_device	*dev;
--	struct netdev_bonding_info bonding_info;
--};
--
- struct slave {
- 	struct net_device *dev; /* first - useful for panic debug */
- 	struct bonding *bond; /* our master */
-@@ -172,6 +166,7 @@ struct slave {
- #ifdef CONFIG_NET_POLL_CONTROLLER
- 	struct netpoll *np;
- #endif
-+	struct delayed_work notify_work;
- 	struct kobject kobj;
- 	struct rtnl_link_stats64 slave_stats;
- };
 
 
