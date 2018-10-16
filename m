@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DDEC5ACC6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 943B6C5ACC9
 	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C13221476
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A9D320866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:20:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxMok2lm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C13221476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgA/CG5G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A9D320866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730550AbeJQBLb (ORCPT
+        id S1730538AbeJQBL1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:11:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56864 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:11:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729271AbeJQBLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:11:31 -0400
+        id S1729271AbeJQBL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:11:27 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6847621477;
-        Tue, 16 Oct 2018 17:20:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FBE320866;
+        Tue, 16 Oct 2018 17:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710405;
-        bh=HzCCTyI5ITsnWTtY8Qf4KTXonympOykIypolrYaFun8=;
+        s=default; t=1539710403;
+        bh=LYlQvuPvVm3ljlD2hJvT7+Y+D6Nee5rBFz96vv0Ll2w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PxMok2lm9YIyYTqA5NlTUW7n0l7gpqI59MHgFqQGPLNbM4+VkTjO625DwcFLHURnL
-         QWibG62IteHLTvXsdBhCvDGTiWFm1SQa9abIqgG/Fc9PckcZt3oQIarhbf8OHVmi1X
-         mYWyOvE95ev2pEm2WL50ZvJh1u4lpICz2ezf1RLI=
+        b=FgA/CG5G3VJGLHnnHZK51H5k4RGD2MGqfUVgr+xdSAmKi2oc+U0YoaXqZJdGtg9+o
+         HX/83g8V0mmZRkXUU7bV8JKs/XGwCC13NSLU8v/HQliwTjucgBfdguWFHt0pJGscLO
+         909VzOJ5qZzJ73xRLdpCwN6UkmBLFFdWQz3Lts5k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 040/109] ASoC: wm8804: Add ACPI support
-Date:   Tue, 16 Oct 2018 19:05:08 +0200
-Message-Id: <20181016170527.185875196@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.14 066/109] perf script python: Fix export-to-sqlite.py sample columns
+Date:   Tue, 16 Oct 2018 19:05:34 +0200
+Message-Id: <20181016170528.424989735@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -64,66 +63,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-[ Upstream commit 960cdd50ca9fdfeb82c2757107bcb7f93c8d7d41 ]
+commit d005efe18db0b4a123dd92ea8e77e27aee8f99fd upstream.
 
-HID made of either Wolfson/CirrusLogic PCI ID + 8804 identifier.
+With the "branches" export option, not all sample columns are exported.
+However the unwanted columns are not at the end of the tuple, as assumed
+by the code. Fix by taking the first 15 and last 3 values, instead of
+the first 18.
 
-This helps enumerate the HifiBerry Digi+ HAT boards on the Up2 platform.
-
-The scripts at https://github.com/thesofproject/acpi-scripts can be
-used to add the ACPI initrd overlays.
-
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180911114504.28516-3-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- sound/soc/codecs/wm8804-i2c.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
 
---- a/sound/soc/codecs/wm8804-i2c.c
-+++ b/sound/soc/codecs/wm8804-i2c.c
-@@ -13,6 +13,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/i2c.h>
-+#include <linux/acpi.h>
+---
+ tools/perf/scripts/python/export-to-sqlite.py |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/tools/perf/scripts/python/export-to-sqlite.py
++++ b/tools/perf/scripts/python/export-to-sqlite.py
+@@ -440,7 +440,11 @@ def branch_type_table(*x):
  
- #include "wm8804.h"
+ def sample_table(*x):
+ 	if branches:
+-		bind_exec(sample_query, 18, x)
++		for xx in x[0:15]:
++			sample_query.addBindValue(str(xx))
++		for xx in x[19:22]:
++			sample_query.addBindValue(str(xx))
++		do_query_(sample_query)
+ 	else:
+ 		bind_exec(sample_query, 22, x)
  
-@@ -40,17 +41,29 @@ static const struct i2c_device_id wm8804
- };
- MODULE_DEVICE_TABLE(i2c, wm8804_i2c_id);
- 
-+#if defined(CONFIG_OF)
- static const struct of_device_id wm8804_of_match[] = {
- 	{ .compatible = "wlf,wm8804", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, wm8804_of_match);
-+#endif
-+
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id wm8804_acpi_match[] = {
-+	{ "1AEC8804", 0 }, /* Wolfson PCI ID + part ID */
-+	{ "10138804", 0 }, /* Cirrus Logic PCI ID + part ID */
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(acpi, wm8804_acpi_match);
-+#endif
- 
- static struct i2c_driver wm8804_i2c_driver = {
- 	.driver = {
- 		.name = "wm8804",
- 		.pm = &wm8804_pm,
--		.of_match_table = wm8804_of_match,
-+		.of_match_table = of_match_ptr(wm8804_of_match),
-+		.acpi_match_table = ACPI_PTR(wm8804_acpi_match),
- 	},
- 	.probe = wm8804_i2c_probe,
- 	.remove = wm8804_i2c_remove,
 
 
