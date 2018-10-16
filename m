@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5F6C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 225F3C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B556A2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E07772098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:19:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1S4+nAmz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B556A2089E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vZfJi1lg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E07772098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbeJQBKq (ORCPT
+        id S1730354AbeJQBKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:10:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55852 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:10:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbeJQBKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:10:45 -0400
+        id S1727562AbeJQBKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:10:46 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FAF521479;
-        Tue, 16 Oct 2018 17:19:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B9B120866;
+        Tue, 16 Oct 2018 17:19:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710359;
-        bh=rEBxJVp3zZjG+D8gXixClXDeB6ADdpmCK57rIFXeG8c=;
+        s=default; t=1539710362;
+        bh=uv9oix1txZv3r/kTs+X/tFRZOUZUQ+8MhbhZ9ZJHRmo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1S4+nAmzStXZjoDbY900NvjBqDYdbqYfjAz/+3qZdueM5iKdnLwGe1DO1x4ix5zH3
-         2lR3wlcRKOnxUqiaHRM0wk1BIykqdbhmZl9u+tAIOIavqZFHb0aiSq4tMeplxXjLok
-         lOz+h8TTNXhzjegSMy0ypIP7a1Q7D6+dM7oyO5Cs=
+        b=vZfJi1lgrrX2bE9Cz95Q4M6iKLdsLjOGClsUuNRDzwd4IHmYLtYi4TiRsTSAPbJfG
+         m1MSP0VeAcNs4P1QBnaX4Ll4sEvxd5wKvND8EvewIFjA7i7dRgQO2qmNaugHDpz31e
+         +aVGJpjaZUM9xwJxJl0j5DpXw3Nq0cNtpDa2jO9U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Yu Zhao <yuzhao@google.com>, Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 051/109] sound: dont call skl_init_chip() to reset intel skl soc
-Date:   Tue, 16 Oct 2018 19:05:19 +0200
-Message-Id: <20181016170527.713322162@linuxfoundation.org>
+Subject: [PATCH 4.14 052/109] hv_netvsc: fix schedule in RCU context
+Date:   Tue, 16 Oct 2018 19:05:20 +0200
+Message-Id: <20181016170527.773874051@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -62,91 +63,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yu Zhao <yuzhao@google.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Upstream commit 75383f8d39d4c0fb96083dd460b7b139fbdac492 ]
+[ Upstream commit 018349d70f28a78d5343b3660cb66e1667005f8a ]
 
-Internally, skl_init_chip() calls snd_hdac_bus_init_chip() which
-1) sets bus->chip_init to prevent multiple entrances before device
-is stopped; 2) enables interrupt.
+When netvsc device is removed it can call reschedule in RCU context.
+This happens because canceling the subchannel setup work could (in theory)
+cause a reschedule when manipulating the timer.
 
-We shouldn't use it for the purpose of resetting device only because
-1) when we really want to initialize device, we won't be able to do
-so; 2) we are ready to handle interrupt yet, and kernel crashes when
-interrupt comes in.
+To reproduce, run with lockdep enabled kernel and unbind
+a network device from hv_netvsc (via sysfs).
 
-Rename azx_reset() to snd_hdac_bus_reset_link(), and use it to reset
-device properly.
+[  160.682011] WARNING: suspicious RCU usage
+[  160.707466] 4.19.0-rc3-uio+ #2 Not tainted
+[  160.709937] -----------------------------
+[  160.712352] ./include/linux/rcupdate.h:302 Illegal context switch in RCU read-side critical section!
+[  160.723691]
+[  160.723691] other info that might help us debug this:
+[  160.723691]
+[  160.730955]
+[  160.730955] rcu_scheduler_active = 2, debug_locks = 1
+[  160.762813] 5 locks held by rebind-eth.sh/1812:
+[  160.766851]  #0: 000000008befa37a (sb_writers#6){.+.+}, at: vfs_write+0x184/0x1b0
+[  160.773416]  #1: 00000000b097f236 (&of->mutex){+.+.}, at: kernfs_fop_write+0xe2/0x1a0
+[  160.783766]  #2: 0000000041ee6889 (kn->count#3){++++}, at: kernfs_fop_write+0xeb/0x1a0
+[  160.787465]  #3: 0000000056d92a74 (&dev->mutex){....}, at: device_release_driver_internal+0x39/0x250
+[  160.816987]  #4: 0000000030f6031e (rcu_read_lock){....}, at: netvsc_remove+0x1e/0x250 [hv_netvsc]
+[  160.828629]
+[  160.828629] stack backtrace:
+[  160.831966] CPU: 1 PID: 1812 Comm: rebind-eth.sh Not tainted 4.19.0-rc3-uio+ #2
+[  160.832952] Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS Hyper-V UEFI Release v1.0 11/26/2012
+[  160.832952] Call Trace:
+[  160.832952]  dump_stack+0x85/0xcb
+[  160.832952]  ___might_sleep+0x1a3/0x240
+[  160.832952]  __flush_work+0x57/0x2e0
+[  160.832952]  ? __mutex_lock+0x83/0x990
+[  160.832952]  ? __kernfs_remove+0x24f/0x2e0
+[  160.832952]  ? __kernfs_remove+0x1b2/0x2e0
+[  160.832952]  ? mark_held_locks+0x50/0x80
+[  160.832952]  ? get_work_pool+0x90/0x90
+[  160.832952]  __cancel_work_timer+0x13c/0x1e0
+[  160.832952]  ? netvsc_remove+0x1e/0x250 [hv_netvsc]
+[  160.832952]  ? __lock_is_held+0x55/0x90
+[  160.832952]  netvsc_remove+0x9a/0x250 [hv_netvsc]
+[  160.832952]  vmbus_remove+0x26/0x30
+[  160.832952]  device_release_driver_internal+0x18a/0x250
+[  160.832952]  unbind_store+0xb4/0x180
+[  160.832952]  kernfs_fop_write+0x113/0x1a0
+[  160.832952]  __vfs_write+0x36/0x1a0
+[  160.832952]  ? rcu_read_lock_sched_held+0x6b/0x80
+[  160.832952]  ? rcu_sync_lockdep_assert+0x2e/0x60
+[  160.832952]  ? __sb_start_write+0x141/0x1a0
+[  160.832952]  ? vfs_write+0x184/0x1b0
+[  160.832952]  vfs_write+0xbe/0x1b0
+[  160.832952]  ksys_write+0x55/0xc0
+[  160.832952]  do_syscall_64+0x60/0x1b0
+[  160.832952]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  160.832952] RIP: 0033:0x7fe48f4c8154
 
-Fixes: 60767abcea3d ("ASoC: Intel: Skylake: Reset the controller in probe")
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Resolve this by getting RTNL earlier. This is safe because the subchannel
+work queue does trylock on RTNL and will detect the race.
+
+Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
+Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/sound/hdaudio.h       |    1 +
- sound/hda/hdac_controller.c   |    7 ++++---
- sound/soc/intel/skylake/skl.c |    2 +-
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/hyperv/netvsc_drv.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
---- a/include/sound/hdaudio.h
-+++ b/include/sound/hdaudio.h
-@@ -357,6 +357,7 @@ void snd_hdac_bus_init_cmd_io(struct hda
- void snd_hdac_bus_stop_cmd_io(struct hdac_bus *bus);
- void snd_hdac_bus_enter_link_reset(struct hdac_bus *bus);
- void snd_hdac_bus_exit_link_reset(struct hdac_bus *bus);
-+int snd_hdac_bus_reset_link(struct hdac_bus *bus, bool full_reset);
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -2110,17 +2110,15 @@ static int netvsc_remove(struct hv_devic
  
- void snd_hdac_bus_update_rirb(struct hdac_bus *bus);
- int snd_hdac_bus_handle_stream_irq(struct hdac_bus *bus, unsigned int status,
---- a/sound/hda/hdac_controller.c
-+++ b/sound/hda/hdac_controller.c
-@@ -384,7 +384,7 @@ void snd_hdac_bus_exit_link_reset(struct
- EXPORT_SYMBOL_GPL(snd_hdac_bus_exit_link_reset);
+ 	cancel_delayed_work_sync(&ndev_ctx->dwork);
  
- /* reset codec link */
--static int azx_reset(struct hdac_bus *bus, bool full_reset)
-+int snd_hdac_bus_reset_link(struct hdac_bus *bus, bool full_reset)
- {
- 	if (!full_reset)
- 		goto skip_reset;
-@@ -409,7 +409,7 @@ static int azx_reset(struct hdac_bus *bu
-  skip_reset:
- 	/* check to see if controller is ready */
- 	if (!snd_hdac_chip_readb(bus, GCTL)) {
--		dev_dbg(bus->dev, "azx_reset: controller not ready!\n");
-+		dev_dbg(bus->dev, "controller not ready!\n");
- 		return -EBUSY;
- 	}
+-	rcu_read_lock();
+-	nvdev = rcu_dereference(ndev_ctx->nvdev);
+-
+-	if  (nvdev)
++	rtnl_lock();
++	nvdev = rtnl_dereference(ndev_ctx->nvdev);
++	if (nvdev)
+ 		cancel_work_sync(&nvdev->subchan_work);
  
-@@ -424,6 +424,7 @@ static int azx_reset(struct hdac_bus *bu
+ 	/*
+ 	 * Call to the vsc driver to let it know that the device is being
+ 	 * removed. Also blocks mtu and channel changes.
+ 	 */
+-	rtnl_lock();
+ 	vf_netdev = rtnl_dereference(ndev_ctx->vf_netdev);
+ 	if (vf_netdev)
+ 		netvsc_unregister_vf(vf_netdev);
+@@ -2132,7 +2130,6 @@ static int netvsc_remove(struct hv_devic
+ 	list_del(&ndev_ctx->list);
  
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(snd_hdac_bus_reset_link);
+ 	rtnl_unlock();
+-	rcu_read_unlock();
  
- /* enable interrupts */
- static void azx_int_enable(struct hdac_bus *bus)
-@@ -478,7 +479,7 @@ bool snd_hdac_bus_init_chip(struct hdac_
- 		return false;
- 
- 	/* reset controller */
--	azx_reset(bus, full_reset);
-+	snd_hdac_bus_reset_link(bus, full_reset);
- 
- 	/* clear interrupts */
- 	azx_int_clear(bus);
---- a/sound/soc/intel/skylake/skl.c
-+++ b/sound/soc/intel/skylake/skl.c
-@@ -698,7 +698,7 @@ static int skl_first_init(struct hdac_ex
- 		return -ENXIO;
- 	}
- 
--	skl_init_chip(bus, true);
-+	snd_hdac_bus_reset_link(bus, true);
- 
- 	snd_hdac_bus_parse_capabilities(bus);
+ 	hv_set_drvdata(dev, NULL);
  
 
 
