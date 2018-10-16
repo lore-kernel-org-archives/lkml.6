@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29487C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFBEC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E52472098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34C672089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:10:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9aBSaMY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52472098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdjjPOHz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34C672089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbeJQBBz (ORCPT
+        id S1727712AbeJQBB6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:01:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42010 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:01:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727132AbeJQBBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:01:54 -0400
+        id S1727669AbeJQBB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:01:57 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B02A820866;
-        Tue, 16 Oct 2018 17:10:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB85220866;
+        Tue, 16 Oct 2018 17:10:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539709832;
-        bh=MR/SRZFGCExWoGGbd5jxfLCi66yxMimSSCe53j19oMk=;
+        s=default; t=1539709835;
+        bh=i3z56OuLX6fzgFD9YR14UBCxnzs5IYtoJ/H4roWB2EI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b9aBSaMYhpOKJ90QKmIxsWBl11WlzxuTCEV6vlbM9Pf9xksAmxRqEvQo+kbtf+W1k
-         VbOyyu/Dq8aeeJGuXZ1bBz+vb3hefPGgKwaozrC4i4fUtlHi32pKc2DWvjiyJPGwzW
-         DQixeXN8dtk1z0zwJC5JiSssGuj3IqPkJDo1h2YI=
+        b=EdjjPOHzYv89o7iNWh+0wxfXuYbKDbII9KeiD4GQD8UfDqvnlfOl+YTXiy3M58ZF4
+         9P2Y1UvL2DoGuM/xEL52MbsRP3w0OSgUE5EpqfO01SgXhvVYED3Q3wMLSr/GC/zoVp
+         mh7A9BP+cWRMT4yQo6g3MqjMMDiZLigCb3B3olOQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Tranchetti <stranche@codeaurora.org>,
+        stable@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 012/135] netlabel: check for IPV4MASK in addrinfo_get
-Date:   Tue, 16 Oct 2018 19:04:02 +0200
-Message-Id: <20181016170516.282782128@linuxfoundation.org>
+Subject: [PATCH 4.18 013/135] net: mvpp2: Extract the correct ethtype from the skb for tx csum offload
+Date:   Tue, 16 Oct 2018 19:04:03 +0200
+Message-Id: <20181016170516.328437839@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
 References: <20181016170515.447235311@linuxfoundation.org>
@@ -62,61 +63,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Tranchetti <stranche@codeaurora.org>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-[ Upstream commit f88b4c01b97e09535505cf3c327fdbce55c27f00 ]
+[ Upstream commit 35f3625c21852ad839f20c91c7d81c4c1101e207 ]
 
-netlbl_unlabel_addrinfo_get() assumes that if it finds the
-NLBL_UNLABEL_A_IPV4ADDR attribute, it must also have the
-NLBL_UNLABEL_A_IPV4MASK attribute as well. However, this is
-not necessarily the case as the current checks in
-netlbl_unlabel_staticadd() and friends are not sufficent to
-enforce this.
+When offloading the L3 and L4 csum computation on TX, we need to extract
+the l3_proto from the ethtype, independently of the presence of a vlan
+tag.
 
-If passed a netlink message with NLBL_UNLABEL_A_IPV4ADDR,
-NLBL_UNLABEL_A_IPV6ADDR, and NLBL_UNLABEL_A_IPV6MASK attributes,
-these functions will all call netlbl_unlabel_addrinfo_get() which
-will then attempt dereference NULL when fetching the non-existent
-NLBL_UNLABEL_A_IPV4MASK attribute:
+The actual driver uses skb->protocol as-is, resulting in packets with
+the wrong L4 checksum being sent when there's a vlan tag in the packet
+header and checksum offloading is enabled.
 
-Unable to handle kernel NULL pointer dereference at virtual address 0
-Process unlab (pid: 31762, stack limit = 0xffffff80502d8000)
-Call trace:
-	netlbl_unlabel_addrinfo_get+0x44/0xd8
-	netlbl_unlabel_staticremovedef+0x98/0xe0
-	genl_rcv_msg+0x354/0x388
-	netlink_rcv_skb+0xac/0x118
-	genl_rcv+0x34/0x48
-	netlink_unicast+0x158/0x1f0
-	netlink_sendmsg+0x32c/0x338
-	sock_sendmsg+0x44/0x60
-	___sys_sendmsg+0x1d0/0x2a8
-	__sys_sendmsg+0x64/0xb4
-	SyS_sendmsg+0x34/0x4c
-	el0_svc_naked+0x34/0x38
-Code: 51001149 7100113f 540000a0 f9401508 (79400108)
----[ end trace f6438a488e737143 ]---
-Kernel panic - not syncing: Fatal exception
+This commit makes use of vlan_protocol_get() to get the correct ethtype
+regardless the presence of a vlan tag.
 
-Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
-
+Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netlabel/netlabel_unlabeled.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -781,7 +781,8 @@ static int netlbl_unlabel_addrinfo_get(s
- {
- 	u32 addr_len;
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -1725,7 +1725,7 @@ static void mvpp2_txq_desc_put(struct mv
+ }
  
--	if (info->attrs[NLBL_UNLABEL_A_IPV4ADDR]) {
-+	if (info->attrs[NLBL_UNLABEL_A_IPV4ADDR] &&
-+	    info->attrs[NLBL_UNLABEL_A_IPV4MASK]) {
- 		addr_len = nla_len(info->attrs[NLBL_UNLABEL_A_IPV4ADDR]);
- 		if (addr_len != sizeof(struct in_addr) &&
- 		    addr_len != nla_len(info->attrs[NLBL_UNLABEL_A_IPV4MASK]))
+ /* Set Tx descriptors fields relevant for CSUM calculation */
+-static u32 mvpp2_txq_desc_csum(int l3_offs, int l3_proto,
++static u32 mvpp2_txq_desc_csum(int l3_offs, __be16 l3_proto,
+ 			       int ip_hdr_len, int l4_proto)
+ {
+ 	u32 command;
+@@ -2600,14 +2600,15 @@ static u32 mvpp2_skb_tx_csum(struct mvpp
+ 	if (skb->ip_summed == CHECKSUM_PARTIAL) {
+ 		int ip_hdr_len = 0;
+ 		u8 l4_proto;
++		__be16 l3_proto = vlan_get_protocol(skb);
+ 
+-		if (skb->protocol == htons(ETH_P_IP)) {
++		if (l3_proto == htons(ETH_P_IP)) {
+ 			struct iphdr *ip4h = ip_hdr(skb);
+ 
+ 			/* Calculate IPv4 checksum and L4 checksum */
+ 			ip_hdr_len = ip4h->ihl;
+ 			l4_proto = ip4h->protocol;
+-		} else if (skb->protocol == htons(ETH_P_IPV6)) {
++		} else if (l3_proto == htons(ETH_P_IPV6)) {
+ 			struct ipv6hdr *ip6h = ipv6_hdr(skb);
+ 
+ 			/* Read l4_protocol from one of IPv6 extra headers */
+@@ -2619,7 +2620,7 @@ static u32 mvpp2_skb_tx_csum(struct mvpp
+ 		}
+ 
+ 		return mvpp2_txq_desc_csum(skb_network_offset(skb),
+-				skb->protocol, ip_hdr_len, l4_proto);
++					   l3_proto, ip_hdr_len, l4_proto);
+ 	}
+ 
+ 	return MVPP2_TXD_L4_CSUM_NOT | MVPP2_TXD_IP_CSUM_DISABLE;
 
 
