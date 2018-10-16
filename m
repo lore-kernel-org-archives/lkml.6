@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C874AC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4773DC070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90CA82145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05EFE21476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v0aUSiDA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90CA82145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiOo/MtY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05EFE21476
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbeJPMCq (ORCPT
+        id S1729218AbeJPMCr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50746 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727783AbeJPMCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:44 -0400
+        id S1727783AbeJPMCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:46 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64E7221477;
-        Tue, 16 Oct 2018 04:14:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55F042145D;
+        Tue, 16 Oct 2018 04:14:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663261;
-        bh=sQTpy3/dhCVNAUzkPo9qRIBkEUcuMhIT5WGlpCm85mg=;
+        s=default; t=1539663263;
+        bh=5E0IY2ltCD/23OyvNlR5Cad2YzwiE0hjI+DfKXbOqTQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v0aUSiDA69RCvZPR4rFUjOnPXBRCLTFmTkoff7RAoZd+8M+c4pRj/iC6MNv1TI9D/
-         lRNb8LVaZokDO6iNjdBpMZwhn0fVdXKDf+jpqgF4x88qkbtNqErSdB2h6tajEGeMHe
-         D4+AL0E5fdDn05Upz/1vEfdTKdsUoj6imql+VEi8=
+        b=NiOo/MtYSyXr5bewc8MKoxeRx8vt4XGWBWzOEFkVYzu5TrBo2RqFKPd5r6xXQQs3w
+         Ge7bjOyIsYmhqbKRDgbA+i20mca3ULUyUDq6hw3JpWlbDWGsx5buzJF1TkXcFRhAgD
+         /mtnVl3HLLM02hlWAj/GVHTNboskLoBR1WmFHdFE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Masashi Honma <masashi.honma@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 18/61] net: hns: fix for unmapping problem when SMMU is on
-Date:   Tue, 16 Oct 2018 00:13:20 -0400
-Message-Id: <20181016041403.135678-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 21/61] nl80211: Fix possible Spectre-v1 for NL80211_TXRATE_HT
+Date:   Tue, 16 Oct 2018 00:13:23 -0400
+Message-Id: <20181016041403.135678-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -55,107 +53,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Masashi Honma <masashi.honma@gmail.com>
 
-[ Upstream commit 2e9361efa707e186d91b938e44f9e326725259f7 ]
+[ Upstream commit 30fe6d50eb088783c8729c7d930f65296b2b3fa7 ]
 
-If SMMU is on, there is more likely that skb_shinfo(skb)->frags[i]
-can not send by a single BD. when this happen, the
-hns_nic_net_xmit_hw function map the whole data in a frags using
-skb_frag_dma_map, but unmap each BD' data individually when tx is
-done, which causes problem when SMMU is on.
+Use array_index_nospec() to sanitize ridx with respect to speculation.
 
-This patch fixes this problem by ummapping the whole data in a
-frags when tx is done.
-
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Reviewed-by: Yisen Zhuang <yisen.zhuang@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hnae.c     |  2 +-
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 30 ++++++++++++-------
- 2 files changed, 20 insertions(+), 12 deletions(-)
+ net/wireless/nl80211.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hnae.c b/drivers/net/ethernet/hisilicon/hns/hnae.c
-index a051e582d541..79d03f8ee7b1 100644
---- a/drivers/net/ethernet/hisilicon/hns/hnae.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hnae.c
-@@ -84,7 +84,7 @@ static void hnae_unmap_buffer(struct hnae_ring *ring, struct hnae_desc_cb *cb)
- 	if (cb->type == DESC_TYPE_SKB)
- 		dma_unmap_single(ring_to_dev(ring), cb->dma, cb->length,
- 				 ring_to_dma_dir(ring));
--	else
-+	else if (cb->length)
- 		dma_unmap_page(ring_to_dev(ring), cb->dma, cb->length,
- 			       ring_to_dma_dir(ring));
- }
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index 07d6a9cf2c55..4faadc3ffe8c 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -40,9 +40,9 @@
- #define SKB_TMP_LEN(SKB) \
- 	(((SKB)->transport_header - (SKB)->mac_header) + tcp_hdrlen(SKB))
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 3de415bca391..5e7c9b361e8a 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -3480,6 +3480,7 @@ static bool ht_rateset_to_mask(struct ieee80211_supported_band *sband,
+ 			return false;
  
--static void fill_v2_desc(struct hnae_ring *ring, void *priv,
--			 int size, dma_addr_t dma, int frag_end,
--			 int buf_num, enum hns_desc_type type, int mtu)
-+static void fill_v2_desc_hw(struct hnae_ring *ring, void *priv, int size,
-+			    int send_sz, dma_addr_t dma, int frag_end,
-+			    int buf_num, enum hns_desc_type type, int mtu)
- {
- 	struct hnae_desc *desc = &ring->desc[ring->next_to_use];
- 	struct hnae_desc_cb *desc_cb = &ring->desc_cb[ring->next_to_use];
-@@ -64,7 +64,7 @@ static void fill_v2_desc(struct hnae_ring *ring, void *priv,
- 	desc_cb->type = type;
- 
- 	desc->addr = cpu_to_le64(dma);
--	desc->tx.send_size = cpu_to_le16((u16)size);
-+	desc->tx.send_size = cpu_to_le16((u16)send_sz);
- 
- 	/* config bd buffer end */
- 	hnae_set_bit(rrcfv, HNSV2_TXD_VLD_B, 1);
-@@ -133,6 +133,14 @@ static void fill_v2_desc(struct hnae_ring *ring, void *priv,
- 	ring_ptr_move_fw(ring, next_to_use);
- }
- 
-+static void fill_v2_desc(struct hnae_ring *ring, void *priv,
-+			 int size, dma_addr_t dma, int frag_end,
-+			 int buf_num, enum hns_desc_type type, int mtu)
-+{
-+	fill_v2_desc_hw(ring, priv, size, size, dma, frag_end,
-+			buf_num, type, mtu);
-+}
-+
- static const struct acpi_device_id hns_enet_acpi_match[] = {
- 	{ "HISI00C1", 0 },
- 	{ "HISI00C2", 0 },
-@@ -289,15 +297,15 @@ static void fill_tso_desc(struct hnae_ring *ring, void *priv,
- 
- 	/* when the frag size is bigger than hardware, split this frag */
- 	for (k = 0; k < frag_buf_num; k++)
--		fill_v2_desc(ring, priv,
--			     (k == frag_buf_num - 1) ?
-+		fill_v2_desc_hw(ring, priv, k == 0 ? size : 0,
-+				(k == frag_buf_num - 1) ?
- 					sizeoflast : BD_MAX_SEND_SIZE,
--			     dma + BD_MAX_SEND_SIZE * k,
--			     frag_end && (k == frag_buf_num - 1) ? 1 : 0,
--			     buf_num,
--			     (type == DESC_TYPE_SKB && !k) ?
-+				dma + BD_MAX_SEND_SIZE * k,
-+				frag_end && (k == frag_buf_num - 1) ? 1 : 0,
-+				buf_num,
-+				(type == DESC_TYPE_SKB && !k) ?
- 					DESC_TYPE_SKB : DESC_TYPE_PAGE,
--			     mtu);
-+				mtu);
- }
- 
- netdev_tx_t hns_nic_net_xmit_hw(struct net_device *ndev,
+ 		/* check availability */
++		ridx = array_index_nospec(ridx, IEEE80211_HT_MCS_MASK_LEN);
+ 		if (sband->ht_cap.mcs.rx_mask[ridx] & rbit)
+ 			mcs[ridx] |= rbit;
+ 		else
 -- 
 2.17.1
 
