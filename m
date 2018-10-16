@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D29C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4F1C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C97F20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5C5F20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:21:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ir5x4ung"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C97F20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFrYBvv4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5C5F20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730986AbeJQBNP (ORCPT
+        id S1730997AbeJQBNT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:13:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58988 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:13:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729207AbeJQBNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:13:14 -0400
+        id S1727433AbeJQBNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:13:18 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30C1620866;
-        Tue, 16 Oct 2018 17:21:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 316E620866;
+        Tue, 16 Oct 2018 17:21:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710508;
-        bh=pg2jarIqg17KtXqUeyWeToPPa2bPGi0nVCHN4ygCZI0=;
+        s=default; t=1539710513;
+        bh=RHFpGlEnersEbAHwb+wnsUj1F5lbNyxDUnQWpoFRDCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ir5x4ungX25tR0AkoE74d367egFNM3Iav04y5sNfpWi9sMTaFL6XfEyu5UUVD5aM1
-         Mh/IB5anXO8NYcDBny6Kg5S4kQni1jE6qYt7Ighqs/4jMxA80pGDz79nvzSNm00P2H
-         BI3OGVg9hkb4qW5oHlsXDRpkFWxFHI4dHVvlK7ik=
+        b=jFrYBvv4a/2QNBrPOiMjCzSLYrmWlSudmHWJE9dZkKPBGShJRkkSCDIhllQO1F23r
+         lml96P7XhygR07MashbxKw/XU3Lwdr3LDu1FQ6SIvbrVUiOHWywHnWQSJJO4JPBTkS
+         DZ0MqOZ9G/5/uLcg+xYSY0etaZz/TkjdRnRWCJVY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>
-Subject: [PATCH 4.14 102/109] ARM: spectre-v1: fix syscall entry
-Date:   Tue, 16 Oct 2018 19:06:10 +0200
-Message-Id: <20181016170530.539960618@linuxfoundation.org>
+Subject: [PATCH 4.14 103/109] ARM: signal: copy registers using __copy_from_user()
+Date:   Tue, 16 Oct 2018 19:06:11 +0200
+Message-Id: <20181016170530.598255022@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
 References: <20181016170524.530541524@linuxfoundation.org>
@@ -66,97 +65,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Commit 10573ae547c85b2c61417ff1a106cffbfceada35 upstream.
+Commit c32cd419d6650e42b9cdebb83c672ec945e6bd7e upstream.
 
-Prevent speculation at the syscall table decoding by clamping the index
-used to zero on invalid system call numbers, and using the csdb
-speculative barrier.
+__get_user_error() is used as a fast accessor to make copying structure
+members in the signal handling path as efficient as possible.  However,
+with software PAN and the recent Spectre variant 1, the efficiency is
+reduced as these are no longer fast accessors.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+In the case of software PAN, it has to switch the domain register around
+each access, and with Spectre variant 1, it would have to repeat the
+access_ok() check for each access.
+
+It becomes much more efficient to use __copy_from_user() instead, so
+let's use this for the ARM integer registers.
+
 Acked-by: Mark Rutland <mark.rutland@arm.com>
-Boot-tested-by: Tony Lindgren <tony@atomide.com>
-Reviewed-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/kernel/entry-common.S |   18 +++++++-----------
- arch/arm/kernel/entry-header.S |   25 +++++++++++++++++++++++++
- 2 files changed, 32 insertions(+), 11 deletions(-)
+ arch/arm/kernel/signal.c |   38 +++++++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
 
---- a/arch/arm/kernel/entry-common.S
-+++ b/arch/arm/kernel/entry-common.S
-@@ -241,9 +241,7 @@ local_restart:
- 	tst	r10, #_TIF_SYSCALL_WORK		@ are we tracing syscalls?
- 	bne	__sys_trace
+--- a/arch/arm/kernel/signal.c
++++ b/arch/arm/kernel/signal.c
+@@ -184,6 +184,7 @@ struct rt_sigframe {
  
--	cmp	scno, #NR_syscalls		@ check upper syscall limit
--	badr	lr, ret_fast_syscall		@ return address
--	ldrcc	pc, [tbl, scno, lsl #2]		@ call sys_* routine
-+	invoke_syscall tbl, scno, r10, ret_fast_syscall
+ static int restore_sigframe(struct pt_regs *regs, struct sigframe __user *sf)
+ {
++	struct sigcontext context;
+ 	char __user *aux;
+ 	sigset_t set;
+ 	int err;
+@@ -192,23 +193,26 @@ static int restore_sigframe(struct pt_re
+ 	if (err == 0)
+ 		set_current_blocked(&set);
  
- 	add	r1, sp, #S_OFF
- 2:	cmp	scno, #(__ARM_NR_BASE - __NR_SYSCALL_BASE)
-@@ -277,14 +275,8 @@ __sys_trace:
- 	mov	r1, scno
- 	add	r0, sp, #S_OFF
- 	bl	syscall_trace_enter
--
--	badr	lr, __sys_trace_return		@ return address
--	mov	scno, r0			@ syscall number (possibly new)
--	add	r1, sp, #S_R0 + S_OFF		@ pointer to regs
--	cmp	scno, #NR_syscalls		@ check upper syscall limit
--	ldmccia	r1, {r0 - r6}			@ have to reload r0 - r6
--	stmccia	sp, {r4, r5}			@ and update the stack args
--	ldrcc	pc, [tbl, scno, lsl #2]		@ call sys_* routine
-+	mov	scno, r0
-+	invoke_syscall tbl, scno, r10, __sys_trace_return, reload=1
- 	cmp	scno, #-1			@ skip the syscall?
- 	bne	2b
- 	add	sp, sp, #S_OFF			@ restore stack
-@@ -362,6 +354,10 @@ sys_syscall:
- 		bic	scno, r0, #__NR_OABI_SYSCALL_BASE
- 		cmp	scno, #__NR_syscall - __NR_SYSCALL_BASE
- 		cmpne	scno, #NR_syscalls	@ check range
-+#ifdef CONFIG_CPU_SPECTRE
-+		movhs	scno, #0
-+		csdb
-+#endif
- 		stmloia	sp, {r5, r6}		@ shuffle args
- 		movlo	r0, r1
- 		movlo	r1, r2
---- a/arch/arm/kernel/entry-header.S
-+++ b/arch/arm/kernel/entry-header.S
-@@ -378,6 +378,31 @@
- #endif
- 	.endm
+-	__get_user_error(regs->ARM_r0, &sf->uc.uc_mcontext.arm_r0, err);
+-	__get_user_error(regs->ARM_r1, &sf->uc.uc_mcontext.arm_r1, err);
+-	__get_user_error(regs->ARM_r2, &sf->uc.uc_mcontext.arm_r2, err);
+-	__get_user_error(regs->ARM_r3, &sf->uc.uc_mcontext.arm_r3, err);
+-	__get_user_error(regs->ARM_r4, &sf->uc.uc_mcontext.arm_r4, err);
+-	__get_user_error(regs->ARM_r5, &sf->uc.uc_mcontext.arm_r5, err);
+-	__get_user_error(regs->ARM_r6, &sf->uc.uc_mcontext.arm_r6, err);
+-	__get_user_error(regs->ARM_r7, &sf->uc.uc_mcontext.arm_r7, err);
+-	__get_user_error(regs->ARM_r8, &sf->uc.uc_mcontext.arm_r8, err);
+-	__get_user_error(regs->ARM_r9, &sf->uc.uc_mcontext.arm_r9, err);
+-	__get_user_error(regs->ARM_r10, &sf->uc.uc_mcontext.arm_r10, err);
+-	__get_user_error(regs->ARM_fp, &sf->uc.uc_mcontext.arm_fp, err);
+-	__get_user_error(regs->ARM_ip, &sf->uc.uc_mcontext.arm_ip, err);
+-	__get_user_error(regs->ARM_sp, &sf->uc.uc_mcontext.arm_sp, err);
+-	__get_user_error(regs->ARM_lr, &sf->uc.uc_mcontext.arm_lr, err);
+-	__get_user_error(regs->ARM_pc, &sf->uc.uc_mcontext.arm_pc, err);
+-	__get_user_error(regs->ARM_cpsr, &sf->uc.uc_mcontext.arm_cpsr, err);
++	err |= __copy_from_user(&context, &sf->uc.uc_mcontext, sizeof(context));
++	if (err == 0) {
++		regs->ARM_r0 = context.arm_r0;
++		regs->ARM_r1 = context.arm_r1;
++		regs->ARM_r2 = context.arm_r2;
++		regs->ARM_r3 = context.arm_r3;
++		regs->ARM_r4 = context.arm_r4;
++		regs->ARM_r5 = context.arm_r5;
++		regs->ARM_r6 = context.arm_r6;
++		regs->ARM_r7 = context.arm_r7;
++		regs->ARM_r8 = context.arm_r8;
++		regs->ARM_r9 = context.arm_r9;
++		regs->ARM_r10 = context.arm_r10;
++		regs->ARM_fp = context.arm_fp;
++		regs->ARM_ip = context.arm_ip;
++		regs->ARM_sp = context.arm_sp;
++		regs->ARM_lr = context.arm_lr;
++		regs->ARM_pc = context.arm_pc;
++		regs->ARM_cpsr = context.arm_cpsr;
++	}
  
-+	.macro	invoke_syscall, table, nr, tmp, ret, reload=0
-+#ifdef CONFIG_CPU_SPECTRE
-+	mov	\tmp, \nr
-+	cmp	\tmp, #NR_syscalls		@ check upper syscall limit
-+	movcs	\tmp, #0
-+	csdb
-+	badr	lr, \ret			@ return address
-+	.if	\reload
-+	add	r1, sp, #S_R0 + S_OFF		@ pointer to regs
-+	ldmccia	r1, {r0 - r6}			@ reload r0-r6
-+	stmccia	sp, {r4, r5}			@ update stack arguments
-+	.endif
-+	ldrcc	pc, [\table, \tmp, lsl #2]	@ call sys_* routine
-+#else
-+	cmp	\nr, #NR_syscalls		@ check upper syscall limit
-+	badr	lr, \ret			@ return address
-+	.if	\reload
-+	add	r1, sp, #S_R0 + S_OFF		@ pointer to regs
-+	ldmccia	r1, {r0 - r6}			@ reload r0-r6
-+	stmccia	sp, {r4, r5}			@ update stack arguments
-+	.endif
-+	ldrcc	pc, [\table, \nr, lsl #2]	@ call sys_* routine
-+#endif
-+	.endm
-+
- /*
-  * These are the registers used in the syscall handler, and allow us to
-  * have in theory up to 7 arguments to a function - r0 to r6.
+ 	err |= !valid_user_regs(regs);
+ 
 
 
