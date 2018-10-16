@@ -2,87 +2,96 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA1CCC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 373A1C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB2121470
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:20:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F406E2083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:20:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="UiTjMnJ+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB2121470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FR8dIy/Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F406E2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbeJPQJ1 (ORCPT
+        id S1727017AbeJPQJp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 12:09:27 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34986 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbeJPQJ1 (ORCPT
+        Tue, 16 Oct 2018 12:09:45 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41487 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbeJPQJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 12:09:27 -0400
-Received: by mail-io1-f67.google.com with SMTP id w11-v6so16006439iob.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 01:20:11 -0700 (PDT)
+        Tue, 16 Oct 2018 12:09:45 -0400
+Received: by mail-pl1-f196.google.com with SMTP id q17-v6so10637436plr.8
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 01:20:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=0/PkxEiBmeplrJQZM8MhZ1A2VMfU1tpmK1LeKSglt04=;
-        b=UiTjMnJ+7b06A+48yRpkf9YrdrywzhjQyci0Iw4iNIDA0gtAIsFGu4ZJy/DW2vRjDw
-         asp3ygLHV6fIYpQPJMFydBsvl3ZCGbu40cogTwf35WuHNvtMnz6Ncw++7Qc1o6qi5qCM
-         xW+bJhspx34PJIJ2V7OIkx06ibJy2vWT7SBhY=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=zJeX9M/3WLf7vGzEgsrr2EwGJJddbgH/0Jo3NzAEVkc=;
+        b=FR8dIy/Qmurw7MTf6m8nU9O7QMNlI9a9oHeV13rsi/wauahqAhLyzqc47iO4VU6WQN
+         RE/8lbfSnYQKCBdPwBGD3ETpRs+1CFLCDlWGlKKPqIKsQHFYW5hpRb8PlqV13Vrti5n/
+         0Vl8DrlfZ707oa8UVw/zcedPSJjVBDW/VEzbo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=0/PkxEiBmeplrJQZM8MhZ1A2VMfU1tpmK1LeKSglt04=;
-        b=ugFYH7qHHI0jb/J2Kv3EWB3UpQgsZYrR/2/WzteG4ymuAkDE+rLS9ccs3yW807Wefx
-         TjTTCUVxQ9G7LP8ZoNXtv67YwsIBATVDbLXah0QMd0f+hhYiI3pt7/6DvzOvvc5hPo3K
-         UBFYC3M2cAI7+WBosex1vKvQ9ZDuUcPyLITwMmI/jn09TuSi4IyU+2VJSQ3ue4GxKmuP
-         L26fGo2TsdPoRrPQ4gLipCoLDP48rqOD1ujRreZTlV5Kr2bdogn4CKPqSEj2Gb+d+Z7d
-         iPOz+91PJtp5XnrntFJFYIPlJtH6KqfiwAZmBziZUhExWBd0KlT28TRA5cFEmgNqfGVx
-         jTHw==
-X-Gm-Message-State: ABuFfogIk50D3yqzMml1MTM3HaBoHHR2D7WWurdxY8wT9oUG3bL9mAsO
-        n24fmu6WllEPd9+OQXz2/CdHHF0xLj+FDg/8gEsw3A==
-X-Google-Smtp-Source: ACcGV606mB+Fai7qindvAlYCpHDV8JtQR9s5YSwviP/PHFrLuBWbeAf8iCdPt1pHkWBbZaxcrwww6+y4YJ1ZGXkVWhQ=
-X-Received: by 2002:a6b:fe09:: with SMTP id x9-v6mr13189230ioh.294.1539678011291;
- Tue, 16 Oct 2018 01:20:11 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Tue, 16 Oct 2018 01:20:10
- -0700 (PDT)
-X-Originating-IP: [178.164.242.48]
-In-Reply-To: <20181016054723.4dfb83f6@canb.auug.org.au>
-References: <20181016054723.4dfb83f6@canb.auug.org.au>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 16 Oct 2018 10:20:10 +0200
-Message-ID: <CAJfpegtZF3evQnaA+LWvD8-1fqQrAkn3qbcBOzO5w1PYh0EA8g@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the fuse tree
-To:     Dan Schatzberg <dschatzberg@fb.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zJeX9M/3WLf7vGzEgsrr2EwGJJddbgH/0Jo3NzAEVkc=;
+        b=T6W9774gQRnK/NNXI1uK7dhZIkJsJvKB2rZKOIKEdy6HuWoh/31fUICfwbxP+rxBak
+         TTIA+JN3782ANHfo4bdwMENrrRirxEvJ1AOSIDnz+ceb9zyU6Ls05B5ltQXADrjAi+Xv
+         ++Tcu2CZ1rANmOfDy3hfWH06CjzZVDj3bhIzIHhUxHqekXRsMeG3FKqlUgCDTYwn0S+q
+         zY9FG4/bGJ34Z/q0JgtaeN+8XGw4aXCJPKUFEOET790sN2AehSMlMkJE8VHYKlX6Un5j
+         ce9WLMzYcm4bJUF1Z3+N5KGTBpB7A1hP+fupIxy2Uy3yI3piSFoeKbblVCegmEFicOBq
+         jlxA==
+X-Gm-Message-State: ABuFfojGp0odVvJsmn2vcmNoZY7FRoVrs69ecCVkjwMuR6uIGd5B1SN6
+        r/otiVkpzs9rJI0lnsvIYIPnUw==
+X-Google-Smtp-Source: ACcGV612kssoHq7+rKZVH4a0tb4Hw6gJYXdScOiXaYkfM6tvnQx+Xj3eVqIKbVkcNeTwDKoPX0JvHQ==
+X-Received: by 2002:a17:902:bc49:: with SMTP id t9-v6mr20624403plz.210.1539678029651;
+        Tue, 16 Oct 2018 01:20:29 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id e131-v6sm20807868pfc.52.2018.10.16.01.20.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 16 Oct 2018 01:20:28 -0700 (PDT)
+From:   Chunyan Zhang <zhang.chunyan@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH] mmc: sdhci: use goto rather than return directly
+Date:   Tue, 16 Oct 2018 16:19:42 +0800
+Message-Id: <1539677982-13762-1-git-send-email-zhang.chunyan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 8:47 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Miklos,
->
-> Commit
->
->   5571f1e65486 ("fuse: enable caching of symlinks")
->
-> is missing a Signed-off-by from its author.
+The driver should clean resources requested in the function before
+unnormal return.
 
-Dan,
+CC: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+Fixes: bd9b902798ab ("mmc: sdhci: Implement an SDHCI-specific bounce buffer")
+---
+ drivers/mmc/host/sdhci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Maybe you mistakenly left off the SOB tag?  Can I add it for you?
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 1b3fbd9..f6b57e1 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3991,7 +3991,7 @@ int sdhci_setup_host(struct sdhci_host *host)
+ 		/* This may alter mmc->*_blk_* parameters */
+ 		ret = sdhci_allocate_bounce_buffer(host);
+ 		if (ret)
+-			return ret;
++			goto unreg;
+ 	}
+ 
+ 	return 0;
+-- 
+2.7.4
 
-Thanks,
-Miklos
