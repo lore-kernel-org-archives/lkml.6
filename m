@@ -2,222 +2,140 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 255D0C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3812CC070C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:19:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9302205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:19:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9302205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0CD46205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 09:19:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CD46205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbeJPRJQ (ORCPT
+        id S1727163AbeJPRJU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 13:09:16 -0400
-Received: from mga17.intel.com ([192.55.52.151]:41546 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbeJPRJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 13:09:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 02:19:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,388,1534834800"; 
-   d="scan'208";a="88697549"
-Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
-  by FMSMGA003.fm.intel.com with ESMTP; 16 Oct 2018 02:19:43 -0700
-From:   Songjun Wu <songjun.wu@linux.intel.com>
-To:     yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
-        hauke.mehrtens@intel.com
-Cc:     gregkh@linuxfoundation.org, paul.burton@mips.com, jslaby@suse.com,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: [RESEND PATCH 01/14] MIPS: dts: Change upper case to lower case
-Date:   Tue, 16 Oct 2018 17:19:02 +0800
-Message-Id: <20181016091915.19909-2-songjun.wu@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181016091915.19909-1-songjun.wu@linux.intel.com>
-References: <20181016091915.19909-1-songjun.wu@linux.intel.com>
+        Tue, 16 Oct 2018 13:09:20 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:50826 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727128AbeJPRJT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 13:09:19 -0400
+Received: from 79.184.253.168.ipv4.supernova.orange.pl (79.184.253.168) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id fa0184db1757bc2b; Tue, 16 Oct 2018 11:19:48 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v2] kernel/hung_task.c: disable on suspend
+Date:   Tue, 16 Oct 2018 11:16:34 +0200
+Message-ID: <1805225.nUohvyHBhR@aspire.rjw.lan>
+In-Reply-To: <20180925121636.592-1-vkuznets@redhat.com>
+References: <20180925121636.592-1-vkuznets@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All the upper case in unit-address and hex constants are
-changed to lower case according to the DT conventions.
+Hi,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
----
+Sorry for the delay here.
 
- arch/mips/boot/dts/lantiq/danube.dtsi   | 42 ++++++++++++++++-----------------
- arch/mips/boot/dts/lantiq/easy50712.dts | 14 +++++------
- 2 files changed, 28 insertions(+), 28 deletions(-)
+On Tuesday, September 25, 2018 2:16:36 PM CEST Vitaly Kuznetsov wrote:
+> It is possible to observe hung_task complaints when system goes to
+> suspend-to-idle state:
+> 
+>  PM: Syncing filesystems ... done.
+>  Freezing user space processes ... (elapsed 0.001 seconds) done.
+>  OOM killer disabled.
+>  Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
+>  sd 0:0:0:0: [sda] Synchronizing SCSI cache
+>  INFO: task bash:1569 blocked for more than 120 seconds.
+>        Not tainted 4.19.0-rc3_+ #687
+>  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>  bash            D    0  1569    604 0x00000000
+>  Call Trace:
+>   ? __schedule+0x1fe/0x7e0
+>   schedule+0x28/0x80
+>   suspend_devices_and_enter+0x4ac/0x750
+>   pm_suspend+0x2c0/0x310
+> 
+> The root cause of the issue is that under certain circumstances jiffies
+> counter keeps advancing, some work to prevent that is currently ongoing.
+> However, it seems that it would make sense to disable hung task detector
+> on suspend and re-enable it on wakeup regardless.
+> 
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+> Changes since v1:
+> - Implement detector disabling by zeroing timeout [Rafael J. Wysocki]
+> ---
+>  kernel/hung_task.c | 36 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 35 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index b9132d1269ef..ac6e8c9306bd 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/lockdep.h>
+>  #include <linux/export.h>
+>  #include <linux/sysctl.h>
+> +#include <linux/suspend.h>
+>  #include <linux/utsname.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/sched/debug.h>
+> @@ -242,12 +243,14 @@ void reset_hung_task_detector(void)
+>  }
+>  EXPORT_SYMBOL_GPL(reset_hung_task_detector);
+>  
+> +static unsigned long hung_last_checked;
+> +
+>  /*
+>   * kthread which checks for tasks stuck in D state
+>   */
+>  static int watchdog(void *dummy)
+>  {
+> -	unsigned long hung_last_checked = jiffies;
+> +	hung_last_checked = jiffies;
+>  
+>  	set_user_nice(current, 0);
+>  
+> @@ -272,9 +275,40 @@ static int watchdog(void *dummy)
+>  	return 0;
+>  }
+>  
+> +static int hungtask_pm_notify(struct notifier_block *self,
+> +			      unsigned long action, void *hcpu)
+> +{
+> +	static unsigned long saved_timeout, saved_interval;
+> +
+> +	switch (action) {
+> +	case PM_SUSPEND_PREPARE:
+> +	case PM_HIBERNATION_PREPARE:
+> +		saved_timeout = sysctl_hung_task_timeout_secs;
+> +		saved_interval = sysctl_hung_task_check_interval_secs;
+> +		sysctl_hung_task_timeout_secs = 0;
+> +		sysctl_hung_task_check_interval_secs = 0;
+> +		wake_up_process(watchdog_task);
+> +		break;
 
-diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
-index 2dd950181f8a..510be63c8bdf 100644
---- a/arch/mips/boot/dts/lantiq/danube.dtsi
-+++ b/arch/mips/boot/dts/lantiq/danube.dtsi
-@@ -10,12 +10,12 @@
- 		};
- 	};
- 
--	biu@1F800000 {
-+	biu@1f800000 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		compatible = "lantiq,biu", "simple-bus";
--		reg = <0x1F800000 0x800000>;
--		ranges = <0x0 0x1F800000 0x7FFFFF>;
-+		reg = <0x1f800000 0x800000>;
-+		ranges = <0x0 0x1f800000 0x7fffff>;
- 
- 		icu0: icu@80200 {
- 			#interrupt-cells = <1>;
-@@ -24,18 +24,18 @@
- 			reg = <0x80200 0x120>;
- 		};
- 
--		watchdog@803F0 {
-+		watchdog@803f0 {
- 			compatible = "lantiq,wdt";
--			reg = <0x803F0 0x10>;
-+			reg = <0x803f0 0x10>;
- 		};
- 	};
- 
--	sram@1F000000 {
-+	sram@1f000000 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		compatible = "lantiq,sram";
--		reg = <0x1F000000 0x800000>;
--		ranges = <0x0 0x1F000000 0x7FFFFF>;
-+		reg = <0x1f000000 0x800000>;
-+		ranges = <0x0 0x1f000000 0x7fffff>;
- 
- 		eiu0: eiu@101000 {
- 			#interrupt-cells = <1>;
-@@ -66,41 +66,41 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		compatible = "lantiq,fpi", "simple-bus";
--		ranges = <0x0 0x10000000 0xEEFFFFF>;
--		reg = <0x10000000 0xEF00000>;
-+		ranges = <0x0 0x10000000 0xeefffff>;
-+		reg = <0x10000000 0xef00000>;
- 
--		gptu@E100A00 {
-+		gptu@e100a00 {
- 			compatible = "lantiq,gptu-xway";
--			reg = <0xE100A00 0x100>;
-+			reg = <0xe100a00 0x100>;
- 		};
- 
--		serial@E100C00 {
-+		serial@e100c00 {
- 			compatible = "lantiq,asc";
--			reg = <0xE100C00 0x400>;
-+			reg = <0xe100c00 0x400>;
- 			interrupt-parent = <&icu0>;
- 			interrupts = <112 113 114>;
- 		};
- 
--		dma0: dma@E104100 {
-+		dma0: dma@e104100 {
- 			compatible = "lantiq,dma-xway";
--			reg = <0xE104100 0x800>;
-+			reg = <0xe104100 0x800>;
- 		};
- 
--		ebu0: ebu@E105300 {
-+		ebu0: ebu@e105300 {
- 			compatible = "lantiq,ebu-xway";
--			reg = <0xE105300 0x100>;
-+			reg = <0xe105300 0x100>;
- 		};
- 
--		pci0: pci@E105400 {
-+		pci0: pci@e105400 {
- 			#address-cells = <3>;
- 			#size-cells = <2>;
- 			#interrupt-cells = <1>;
- 			compatible = "lantiq,pci-xway";
- 			bus-range = <0x0 0x0>;
- 			ranges = <0x2000000 0 0x8000000 0x8000000 0 0x2000000	/* pci memory */
--				  0x1000000 0 0x00000000 0xAE00000 0 0x200000>; /* io space */
-+				  0x1000000 0 0x00000000 0xae00000 0 0x200000>; /* io space */
- 			reg = <0x7000000 0x8000		/* config space */
--				0xE105400 0x400>;	/* pci bridge */
-+				0xe105400 0x400>;	/* pci bridge */
- 		};
- 	};
- };
-diff --git a/arch/mips/boot/dts/lantiq/easy50712.dts b/arch/mips/boot/dts/lantiq/easy50712.dts
-index c37a33962f28..1ce20b7d05cb 100644
---- a/arch/mips/boot/dts/lantiq/easy50712.dts
-+++ b/arch/mips/boot/dts/lantiq/easy50712.dts
-@@ -52,14 +52,14 @@
- 			};
- 		};
- 
--		gpio: pinmux@E100B10 {
-+		gpio: pinmux@e100b10 {
- 			compatible = "lantiq,danube-pinctrl";
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&state_default>;
- 
- 			#gpio-cells = <2>;
- 			gpio-controller;
--			reg = <0xE100B10 0xA0>;
-+			reg = <0xe100b10 0xa0>;
- 
- 			state_default: pinmux {
- 				stp {
-@@ -82,26 +82,26 @@
- 			};
- 		};
- 
--		etop@E180000 {
-+		etop@e180000 {
- 			compatible = "lantiq,etop-xway";
--			reg = <0xE180000 0x40000>;
-+			reg = <0xe180000 0x40000>;
- 			interrupt-parent = <&icu0>;
- 			interrupts = <73 78>;
- 			phy-mode = "rmii";
- 			mac-address = [ 00 11 22 33 44 55 ];
- 		};
- 
--		stp0: stp@E100BB0 {
-+		stp0: stp@e100bb0 {
- 			#gpio-cells = <2>;
- 			compatible = "lantiq,gpio-stp-xway";
- 			gpio-controller;
--			reg = <0xE100BB0 0x40>;
-+			reg = <0xe100bb0 0x40>;
- 
- 			lantiq,shadow = <0xfff>;
- 			lantiq,groups = <0x3>;
- 		};
- 
--		pci@E105400 {
-+		pci@e105400 {
- 			lantiq,bus-clock = <33333333>;
- 			interrupt-map-mask = <0xf800 0x0 0x0 0x7>;
- 			interrupt-map = <
--- 
-2.11.0
+AFAICS, this is racy (for example, it still is possible for user space
+to update the sysctl_* values after you've set them to 0).  That can be
+fixed, but I'm not sure it is worth the effort.
+
+Since watchdog() is not expected to run very often in general, I think
+I prefer your v1 after all, so please resend it.
+
+Thanks,
+Rafael
 
