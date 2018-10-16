@@ -4,46 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45065C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CBFC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00EC521486
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90AB22147E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:23:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ng7cn00/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00EC521486
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0F5/E+c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90AB22147E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731280AbeJQBO1 (ORCPT
+        id S1731289AbeJQBOa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:14:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32816 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:14:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730397AbeJQBO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:14:26 -0400
+        id S1730397AbeJQBO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:14:29 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A98421477;
-        Tue, 16 Oct 2018 17:23:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71C8E2147E;
+        Tue, 16 Oct 2018 17:23:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710580;
-        bh=sn/oKwQJlc6qaWg5c2z2LYL3L1jTFXKpZo+GyI8W2xk=;
+        s=default; t=1539710583;
+        bh=10kZr+lW+aDPcbo0G1hpq7kf1ByvwMiUROZrNKfl56M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ng7cn00/f1as/j9QsJ8xXl15LsYed3CXyWQSH+LMzXeFIEs1Dp8Ii9Xk1UzFcpZoP
-         AA+XZnDRfDSA+6F42ZJTHBP8pYArrbM+dXy6kl0Qcu3Hd6yuuiwPFtpGKFp3Vs3Eh9
-         lvqqPGv+qvTD7nJcvkFIn2Ub2NC80VzQ5nhDH4lU=
+        b=R0F5/E+cTc4SnLknUJ0jozCrOHwbbzqPvVeQwo2dxhydqqehorjFruezq2jbZ34gj
+         FJDhirlHUkqzH1ymoQm6blm+JSpPFbTs3iDfK4h5i9lPPqa2Zj2HVCuUUt21fPGhv1
+         LnpOKUeqJD4iJLKrclmQ2Bfy6SxWkAAsnzXpf528=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org
-Subject: [PATCH 4.9 16/71] MIPS: VDSO: Always map near top of user memory
-Date:   Tue, 16 Oct 2018 19:09:13 +0200
-Message-Id: <20181016170540.218002691@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <syrjala@sci.fi>
+Subject: [PATCH 4.9 17/71] mach64: detect the dot clock divider correctly on sparc
+Date:   Tue, 16 Oct 2018 19:09:14 +0200
+Message-Id: <20181016170540.267500696@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
 References: <20181016170539.315587743@linuxfoundation.org>
@@ -61,186 +63,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Burton <paul.burton@mips.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit ea7e0480a4b695d0aa6b3fa99bd658a003122113 upstream.
+commit 76ebebd2464c5c8a4453c98b6dbf9c95a599e810 upstream.
 
-When using the legacy mmap layout, for example triggered using ulimit -s
-unlimited, get_unmapped_area() fills memory from bottom to top starting
-from a fairly low address near TASK_UNMAPPED_BASE.
+On Sun Ultra 5, it happens that the dot clock is not set up properly for
+some videomodes. For example, if we set the videomode "r1024x768x60" in
+the firmware, Linux would incorrectly set a videomode with refresh rate
+180Hz when booting (suprisingly, my LCD monitor can display it, although
+display quality is very low).
 
-This placement is suboptimal if the user application wishes to allocate
-large amounts of heap memory using the brk syscall. With the VDSO being
-located low in the user's virtual address space, the amount of space
-available for access using brk is limited much more than it was prior to
-the introduction of the VDSO.
+The reason is this: Older mach64 cards set the divider in the register
+VCLK_POST_DIV. The register has four 2-bit fields (the field that is
+actually used is specified in the lowest two bits of the register
+CLOCK_CNTL). The 2 bits select divider "1, 2, 4, 8". On newer mach64 cards,
+there's another bit added - the top four bits of PLL_EXT_CNTL extend the
+divider selection, so we have possible dividers "1, 2, 4, 8, 3, 5, 6, 12".
+The Linux driver clears the top four bits of PLL_EXT_CNTL and never sets
+them, so it can work regardless if the card supports them. However, the
+sparc64 firmware may set these extended dividers during boot - and the
+mach64 driver detects incorrect dot clock in this case.
 
-For example:
+This patch makes the driver read the additional divider bit from
+PLL_EXT_CNTL and calculate the initial refresh rate properly.
 
-  # ulimit -s unlimited; cat /proc/self/maps
-  00400000-004ec000 r-xp 00000000 08:00 71436      /usr/bin/coreutils
-  004fc000-004fd000 rwxp 000ec000 08:00 71436      /usr/bin/coreutils
-  004fd000-0050f000 rwxp 00000000 00:00 0
-  00cc3000-00ce4000 rwxp 00000000 00:00 0          [heap]
-  2ab96000-2ab98000 r--p 00000000 00:00 0          [vvar]
-  2ab98000-2ab99000 r-xp 00000000 00:00 0          [vdso]
-  2ab99000-2ab9d000 rwxp 00000000 00:00 0
-  ...
-
-Resolve this by adjusting STACK_TOP to reserve space for the VDSO &
-providing an address hint to get_unmapped_area() causing it to use this
-space even when using the legacy mmap layout.
-
-We reserve enough space for the VDSO, plus 1MB or 256MB for 32 bit & 64
-bit systems respectively within which we randomize the VDSO base
-address. Previously this randomization was taken care of by the mmap
-base address randomization performed by arch_mmap_rnd(). The 1MB & 256MB
-sizes are somewhat arbitrary but chosen such that we have some
-randomization without taking up too much of the user's virtual address
-space, which is often in short supply for 32 bit systems.
-
-With this the VDSO is always mapped at a high address, leaving lots of
-space for statically linked programs to make use of brk:
-
-  # ulimit -s unlimited; cat /proc/self/maps
-  00400000-004ec000 r-xp 00000000 08:00 71436      /usr/bin/coreutils
-  004fc000-004fd000 rwxp 000ec000 08:00 71436      /usr/bin/coreutils
-  004fd000-0050f000 rwxp 00000000 00:00 0
-  00c28000-00c49000 rwxp 00000000 00:00 0          [heap]
-  ...
-  7f67c000-7f69d000 rwxp 00000000 00:00 0          [stack]
-  7f7fc000-7f7fd000 rwxp 00000000 00:00 0
-  7fcf1000-7fcf3000 r--p 00000000 00:00 0          [vvar]
-  7fcf3000-7fcf4000 r-xp 00000000 00:00 0          [vdso]
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reported-by: Huacai Chen <chenhc@lemote.com>
-Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
-Cc: Huacai Chen <chenhc@lemote.com>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # v4.4+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org
+Acked-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Ville Syrjälä <syrjala@sci.fi>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/asm/processor.h |   10 +++++-----
- arch/mips/kernel/process.c        |   25 +++++++++++++++++++++++++
- arch/mips/kernel/vdso.c           |   18 +++++++++++++++++-
- 3 files changed, 47 insertions(+), 6 deletions(-)
+ drivers/video/fbdev/aty/atyfb.h      |    3 ++-
+ drivers/video/fbdev/aty/atyfb_base.c |    7 ++++---
+ drivers/video/fbdev/aty/mach64_ct.c  |   10 +++++-----
+ 3 files changed, 11 insertions(+), 9 deletions(-)
 
---- a/arch/mips/include/asm/processor.h
-+++ b/arch/mips/include/asm/processor.h
-@@ -13,6 +13,7 @@
+--- a/drivers/video/fbdev/aty/atyfb.h
++++ b/drivers/video/fbdev/aty/atyfb.h
+@@ -332,6 +332,8 @@ extern const struct aty_pll_ops aty_pll_
+ extern void aty_set_pll_ct(const struct fb_info *info, const union aty_pll *pll);
+ extern u8 aty_ld_pll_ct(int offset, const struct atyfb_par *par);
  
- #include <linux/atomic.h>
- #include <linux/cpumask.h>
-+#include <linux/sizes.h>
- #include <linux/threads.h>
++extern const u8 aty_postdividers[8];
++
  
- #include <asm/cachectl.h>
-@@ -80,11 +81,10 @@ extern unsigned int vced_count, vcei_cou
+     /*
+      *  Hardware cursor support
+@@ -358,7 +360,6 @@ static inline void wait_for_idle(struct
  
- #endif
+ extern void aty_reset_engine(const struct atyfb_par *par);
+ extern void aty_init_engine(struct atyfb_par *par, struct fb_info *info);
+-extern u8   aty_ld_pll_ct(int offset, const struct atyfb_par *par);
  
--/*
-- * One page above the stack is used for branch delay slot "emulation".
-- * See dsemul.c for details.
-- */
--#define STACK_TOP	((TASK_SIZE & PAGE_MASK) - PAGE_SIZE)
-+#define VDSO_RANDOMIZE_SIZE	(TASK_IS_32BIT_ADDR ? SZ_1M : SZ_256M)
-+
-+extern unsigned long mips_stack_top(void);
-+#define STACK_TOP		mips_stack_top()
+ void atyfb_copyarea(struct fb_info *info, const struct fb_copyarea *area);
+ void atyfb_fillrect(struct fb_info *info, const struct fb_fillrect *rect);
+--- a/drivers/video/fbdev/aty/atyfb_base.c
++++ b/drivers/video/fbdev/aty/atyfb_base.c
+@@ -3093,17 +3093,18 @@ static int atyfb_setup_sparc(struct pci_
+ 		/*
+ 		 * PLL Reference Divider M:
+ 		 */
+-		M = pll_regs[2];
++		M = pll_regs[PLL_REF_DIV];
  
- /*
-  * This decides where the kernel will search for a free chunk of vm
---- a/arch/mips/kernel/process.c
-+++ b/arch/mips/kernel/process.c
-@@ -28,6 +28,7 @@
- #include <linux/prctl.h>
- #include <linux/nmi.h>
+ 		/*
+ 		 * PLL Feedback Divider N (Dependent on CLOCK_CNTL):
+ 		 */
+-		N = pll_regs[7 + (clock_cntl & 3)];
++		N = pll_regs[VCLK0_FB_DIV + (clock_cntl & 3)];
  
-+#include <asm/abi.h>
- #include <asm/asm.h>
- #include <asm/bootinfo.h>
- #include <asm/cpu.h>
-@@ -35,6 +36,7 @@
- #include <asm/dsp.h>
- #include <asm/fpu.h>
- #include <asm/irq.h>
-+#include <asm/mips-cps.h>
- #include <asm/msa.h>
- #include <asm/pgtable.h>
- #include <asm/mipsregs.h>
-@@ -621,6 +623,29 @@ out:
- 	return pc;
- }
+ 		/*
+ 		 * PLL Post Divider P (Dependent on CLOCK_CNTL):
+ 		 */
+-		P = 1 << (pll_regs[6] >> ((clock_cntl & 3) << 1));
++		P = aty_postdividers[((pll_regs[VCLK_POST_DIV] >> ((clock_cntl & 3) << 1)) & 3) |
++		                     ((pll_regs[PLL_EXT_CNTL] >> (2 + (clock_cntl & 3))) & 4)];
  
-+unsigned long mips_stack_top(void)
-+{
-+	unsigned long top = TASK_SIZE & PAGE_MASK;
-+
-+	/* One page for branch delay slot "emulation" */
-+	top -= PAGE_SIZE;
-+
-+	/* Space for the VDSO, data page & GIC user page */
-+	top -= PAGE_ALIGN(current->thread.abi->vdso->size);
-+	top -= PAGE_SIZE;
-+	top -= mips_gic_present() ? PAGE_SIZE : 0;
-+
-+	/* Space for cache colour alignment */
-+	if (cpu_has_dc_aliases)
-+		top -= shm_align_mask + 1;
-+
-+	/* Space to randomize the VDSO base */
-+	if (current->flags & PF_RANDOMIZE)
-+		top -= VDSO_RANDOMIZE_SIZE;
-+
-+	return top;
-+}
-+
- /*
-  * Don't forget that the stack pointer must be aligned on a 8 bytes
-  * boundary for 32-bits ABI and 16 bytes for 64-bits ABI.
---- a/arch/mips/kernel/vdso.c
-+++ b/arch/mips/kernel/vdso.c
-@@ -16,6 +16,7 @@
- #include <linux/irqchip/mips-gic.h>
- #include <linux/kernel.h>
- #include <linux/mm.h>
-+#include <linux/random.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/timekeeper_internal.h>
-@@ -97,6 +98,21 @@ void update_vsyscall_tz(void)
- 	}
- }
+ 		/*
+ 		 * PLL Divider Q:
+--- a/drivers/video/fbdev/aty/mach64_ct.c
++++ b/drivers/video/fbdev/aty/mach64_ct.c
+@@ -114,7 +114,7 @@ static void aty_st_pll_ct(int offset, u8
+  */
  
-+static unsigned long vdso_base(void)
-+{
-+	unsigned long base;
-+
-+	/* Skip the delay slot emulation page */
-+	base = STACK_TOP + PAGE_SIZE;
-+
-+	if (current->flags & PF_RANDOMIZE) {
-+		base += get_random_int() & (VDSO_RANDOMIZE_SIZE - 1);
-+		base = PAGE_ALIGN(base);
-+	}
-+
-+	return base;
-+}
-+
- int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ #define Maximum_DSP_PRECISION 7
+-static u8 postdividers[] = {1,2,4,8,3};
++const u8 aty_postdividers[8] = {1,2,4,8,3,5,6,12};
+ 
+ static int aty_dsp_gt(const struct fb_info *info, u32 bpp, struct pll_ct *pll)
  {
- 	struct mips_vdso_image *image = current->thread.abi->vdso;
-@@ -138,7 +154,7 @@ int arch_setup_additional_pages(struct l
- 	if (cpu_has_dc_aliases)
- 		size += shm_align_mask + 1;
+@@ -221,7 +221,7 @@ static int aty_valid_pll_ct(const struct
+ 		pll->vclk_post_div += (q <  64*8);
+ 		pll->vclk_post_div += (q <  32*8);
+ 	}
+-	pll->vclk_post_div_real = postdividers[pll->vclk_post_div];
++	pll->vclk_post_div_real = aty_postdividers[pll->vclk_post_div];
+ 	//    pll->vclk_post_div <<= 6;
+ 	pll->vclk_fb_div = q * pll->vclk_post_div_real / 8;
+ 	pllvclk = (1000000 * 2 * pll->vclk_fb_div) /
+@@ -512,7 +512,7 @@ static int aty_init_pll_ct(const struct
+ 		u8 mclk_fb_div, pll_ext_cntl;
+ 		pll->ct.pll_ref_div = aty_ld_pll_ct(PLL_REF_DIV, par);
+ 		pll_ext_cntl = aty_ld_pll_ct(PLL_EXT_CNTL, par);
+-		pll->ct.xclk_post_div_real = postdividers[pll_ext_cntl & 0x07];
++		pll->ct.xclk_post_div_real = aty_postdividers[pll_ext_cntl & 0x07];
+ 		mclk_fb_div = aty_ld_pll_ct(MCLK_FB_DIV, par);
+ 		if (pll_ext_cntl & PLL_MFB_TIMES_4_2B)
+ 			mclk_fb_div <<= 1;
+@@ -534,7 +534,7 @@ static int aty_init_pll_ct(const struct
+ 		xpost_div += (q <  64*8);
+ 		xpost_div += (q <  32*8);
+ 	}
+-	pll->ct.xclk_post_div_real = postdividers[xpost_div];
++	pll->ct.xclk_post_div_real = aty_postdividers[xpost_div];
+ 	pll->ct.mclk_fb_div = q * pll->ct.xclk_post_div_real / 8;
  
--	base = get_unmapped_area(NULL, 0, size, 0, 0);
-+	base = get_unmapped_area(NULL, vdso_base(), size, 0, 0);
- 	if (IS_ERR_VALUE(base)) {
- 		ret = base;
- 		goto out;
+ #ifdef CONFIG_PPC
+@@ -583,7 +583,7 @@ static int aty_init_pll_ct(const struct
+ 			mpost_div += (q <  64*8);
+ 			mpost_div += (q <  32*8);
+ 		}
+-		sclk_post_div_real = postdividers[mpost_div];
++		sclk_post_div_real = aty_postdividers[mpost_div];
+ 		pll->ct.sclk_fb_div = q * sclk_post_div_real / 8;
+ 		pll->ct.spll_cntl2 = mpost_div << 4;
+ #ifdef DEBUG
 
 
