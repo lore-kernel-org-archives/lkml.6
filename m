@@ -2,188 +2,153 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82063C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5835AC04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30DC2205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:45:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hXXjqv6/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DC2205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 185D82089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:48:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185D82089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeJQAgs (ORCPT
+        id S1727270AbeJQAjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:36:48 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40727 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbeJQAgs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:36:48 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r1-v6so22020721edd.7
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 09:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ote3CaEJ6LuHeJUB867rC781HriwO22stBLo0Z09DMw=;
-        b=hXXjqv6/a7V0h0dCr3ksmMm9b7d4aIyDcdFkMlaOc3aP9MEO5giy5f0OcsqQDiMVc6
-         YCPeMgjcfL3M2dczHrfxRDkNv/oQv48HL8xdiqYnrq5gxMfIiGYIUmqzK5ASrXqwm+Cj
-         5yRN8KHFY6MkOITojOwgnrbP5e/GeRZ3T5Jiw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=ote3CaEJ6LuHeJUB867rC781HriwO22stBLo0Z09DMw=;
-        b=ZR5AiTLYsp0WN8usCHuyoCVwCPif9w+b6T6TU7T9m11TmL9muB1knJP6tG0TTGYL9n
-         juGd3qbt6aleq0xZS6s5qTiBNPXA/9Y1dW+iV4JSH0J+g8o6Xe6x0kF1pPMTMUGyKCXB
-         FP39/SJ7MlEeoUX6jqC5qc0e6W2nFbeh8BuShgMoOEohBxiccKc3MlKR6K8QneLHvINs
-         ppkq9RwZ+xlGMssMM7zWwmDazDc1KLxPD8Q6zMwnbRSygt9gBHOYY7nC0j3oWkKqwIOb
-         9B7xSuc8xywyNhQ7pW2WT3FlK/1Yu5eQ1N7jVQw31OqJPKnMNmTFaadcFwuadlh1nC2T
-         5xQw==
-X-Gm-Message-State: ABuFfohFqpNLvQ0Wg+gCeNhSWcmIz94t34nFDsdBSxfxP/tOgdxCEa0F
-        UP/NQFBONQzNFjSXsROEPJbDB76NSlw=
-X-Google-Smtp-Source: ACcGV600oqeqO95hpIjdffHpBR3umTlVZemz62gQXetA4a0O8iSYbaitGVMI1B31gP+9gjMLHghtgg==
-X-Received: by 2002:a17:906:6983:: with SMTP id i3-v6mr24962078ejr.141.1539708331556;
-        Tue, 16 Oct 2018 09:45:31 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id b26-v6sm4799761edw.0.2018.10.16.09.45.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 09:45:30 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 18:45:28 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     p.zabel@pengutronix.de, airlied@linux.ie,
-        linux-kernel@vger.kernel.org, rmk+kernel@armlinux.org.uk,
-        dri-devel@lists.freedesktop.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: Re: [PATCH] Revert "drm/imx: don't destroy mode objects manually on
- driver unbind"
-Message-ID: <20181016164528.GD31561@phenom.ffwll.local>
-Mail-Followup-To: Stefan Agner <stefan@agner.ch>, p.zabel@pengutronix.de,
-        airlied@linux.ie, linux-kernel@vger.kernel.org,
-        rmk+kernel@armlinux.org.uk, dri-devel@lists.freedesktop.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>
-References: <20181016160923.2042-1-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016160923.2042-1-stefan@agner.ch>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 16 Oct 2018 20:39:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55508 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727159AbeJQAjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 20:39:46 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BF41FACBA;
+        Tue, 16 Oct 2018 16:48:28 +0000 (UTC)
+Message-ID: <0611161a74bf9f91471bb13bf93cd1e8cc36c7d0.camel@suse.de>
+Subject: Re: [PATCH 6/9] ASoC: dt-bindings: bcm2835-rpi: add onboard audio
+ bindings
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Stefan Wahren <stefan.wahren@i2se.com>, gregkh@linuxfoundation.org
+Cc:     eric@anholt.net, linux-rpi-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, tiwai@suse.de
+Date:   Tue, 16 Oct 2018 18:48:26 +0200
+In-Reply-To: <4039d99c-5e57-c9d3-3af5-bc160e1adb57@i2se.com>
+References: <20181016150228.16994-1-nsaenzjulienne@suse.de>
+         <20181016150228.16994-7-nsaenzjulienne@suse.de>
+         <4039d99c-5e57-c9d3-3af5-bc160e1adb57@i2se.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-pzOGa/p4ojwCAlUileCs"
+X-Mailer: Evolution 3.28.5 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 06:09:23PM +0200, Stefan Agner wrote:
-> This reverts commit 8e3b16e2117409625b89807de3912ff773aea354.
-> 
-> Using the component framework requires all components to undo in
-> ->unbind what ->bind does. Unfortunately that particular commit
-> broke this rule. In particular, this is an issue if a single
-> component during probe fails. In that case, component_bind_all()
-> calls unbind on already succussfully bound components, and then
-> frees memory allocated using devm. If one of those components
-> registered e.g. an encoder with the framework then this leads to
-> use after free situations.
-> 
-> Revert the commit to ensure that all components properly undo
-> what ->bind does.
-> 
-> Link: https://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg233327.html
-> Suggested-by: Russell King <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Adding Benjamin, who just made the same mistake I think (and I reviewed it
-... oh well).
--Daniel
+--=-pzOGa/p4ojwCAlUileCs
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  drivers/gpu/drm/imx/imx-drm-core.c     | 4 ++--
->  drivers/gpu/drm/imx/imx-ldb.c          | 6 ++++++
->  drivers/gpu/drm/imx/imx-tve.c          | 3 +++
->  drivers/gpu/drm/imx/parallel-display.c | 3 +++
->  4 files changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
-> index 5ea0c82f9957..caa6061a98ba 100644
-> --- a/drivers/gpu/drm/imx/imx-drm-core.c
-> +++ b/drivers/gpu/drm/imx/imx-drm-core.c
-> @@ -305,11 +305,11 @@ static void imx_drm_unbind(struct device *dev)
->  
->  	drm_fb_cma_fbdev_fini(drm);
->  
-> -	drm_mode_config_cleanup(drm);
-> -
->  	component_unbind_all(drm->dev, drm);
->  	dev_set_drvdata(dev, NULL);
->  
-> +	drm_mode_config_cleanup(drm);
-> +
->  	drm_dev_put(drm);
->  }
->  
-> diff --git a/drivers/gpu/drm/imx/imx-ldb.c b/drivers/gpu/drm/imx/imx-ldb.c
-> index 3bd0f8a18e74..592aabc4a262 100644
-> --- a/drivers/gpu/drm/imx/imx-ldb.c
-> +++ b/drivers/gpu/drm/imx/imx-ldb.c
-> @@ -723,6 +723,12 @@ static void imx_ldb_unbind(struct device *dev, struct device *master,
->  		if (channel->panel)
->  			drm_panel_detach(channel->panel);
->  
-> +		if (!channel->connector.funcs)
-> +			continue;
-> +
-> +		channel->connector.funcs->destroy(&channel->connector);
-> +		channel->encoder.funcs->destroy(&channel->encoder);
-> +
->  		kfree(channel->edid);
->  		i2c_put_adapter(channel->ddc);
->  	}
-> diff --git a/drivers/gpu/drm/imx/imx-tve.c b/drivers/gpu/drm/imx/imx-tve.c
-> index cffd3310240e..8d6e89ce1edb 100644
-> --- a/drivers/gpu/drm/imx/imx-tve.c
-> +++ b/drivers/gpu/drm/imx/imx-tve.c
-> @@ -673,6 +673,9 @@ static void imx_tve_unbind(struct device *dev, struct device *master,
->  {
->  	struct imx_tve *tve = dev_get_drvdata(dev);
->  
-> +	tve->connector.funcs->destroy(&tve->connector);
-> +	tve->encoder.funcs->destroy(&tve->encoder);
-> +
->  	if (!IS_ERR(tve->dac_reg))
->  		regulator_disable(tve->dac_reg);
->  }
-> diff --git a/drivers/gpu/drm/imx/parallel-display.c b/drivers/gpu/drm/imx/parallel-display.c
-> index aefd04e18f93..6f11bffcde37 100644
-> --- a/drivers/gpu/drm/imx/parallel-display.c
-> +++ b/drivers/gpu/drm/imx/parallel-display.c
-> @@ -258,6 +258,9 @@ static void imx_pd_unbind(struct device *dev, struct device *master,
->  	if (imxpd->panel)
->  		drm_panel_detach(imxpd->panel);
->  
-> +	imxpd->encoder.funcs->destroy(&imxpd->encoder);
-> +	imxpd->connector.funcs->destroy(&imxpd->connector);
-> +
->  	kfree(imxpd->edid);
->  }
->  
-> -- 
-> 2.19.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Hi Stefan, thanks for the review,
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+On Tue, 2018-10-16 at 17:56 +0200, Stefan Wahren wrote:
+> Hi Nicolas,
+>=20
+> Am 16.10.2018 um 17:02 schrieb Nicolas Saenz Julienne:
+> > Adds a device tree binding file for Raspberry pi's Headphones and
+> > HDMI
+> > audio output devices.
+> >=20
+> > Based on raspberry's downstream kernel implementation:
+> >=20
+
+https://github.com/raspberrypi/linux/blob/rpi-4.14.y/arch/arm/boot/dts/bcm2=
+708-rpi.dtsi
+> >=20
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > ---
+> >  .../bindings/sound/brcm,bcm2835-audio.txt         | 15
+> > +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/sound/brcm,bcm2835-audio.txt
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/sound/brcm,bcm2835-
+> > audio.txt b/Documentation/devicetree/bindings/sound/brcm,bcm2835-
+> > audio.txt
+> > new file mode 100644
+> > index 000000000000..ee6fa085aaa9
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/sound/brcm,bcm2835-
+> > audio.txt
+> > @@ -0,0 +1,15 @@
+> > +Broadcom BCM283x audio device
+> > +
+> > +Required properties:
+> > +
+> > +- compatible: Should be "brcm,bcm2835-audio"
+> > +- brcm,pwm-channels: number of PWM channels, they are behind RPi's
+> > Video Core
+> > +		     IV, not actual Linux PWM devices.
+> > +
+> > +Example:
+> > +
+> > +audio: audio {
+> > +	compatible =3D "brcm,bcm2835-audio";
+> > +	brcm,pwm-channels =3D <8>;
+> > +};
+> > +
+>=20
+> i apologize but it seems to me that the TODO mentioned in the cover
+> letter isn't update to date anymore.
+>=20
+> Phil Elwell posted an important bugfix for vchiq before [1], but only
+> the driver part has been applied yet. After applying the DT changes
+> i'm
+> not sure if it still works.
+>=20
+> AFAIK the audio driver uses VCHIQ as a software interface and the
+> binding doesn't describe the real hardware.
+>=20
+> Since the camera driver will be registered as a platform device [2],
+> i
+> prefer this way for the audio driver, too.
+>=20
+> I'm actually working on this here [3] (currently only compile
+> tested).
+>=20
+
+Fair enough. I wasn't feeling too good about the bindings myself. I
+only went with them because I saw something similar was happening
+between "raspberrypi,bcm2835-power" and "raspberrypi,bcm2835-firmware".=20
+I'll be glad to review & test your patches whenever they are ready.
+
+This makes commits 6 to 9 useless. Do you want me to send a v2? I can
+throw in an extra change Takashi suggested and update the TODO file.
+
+Regards,
+Nicolas
+
+--=-pzOGa/p4ojwCAlUileCs
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlvGFloACgkQlfZmHno8
+x/5qVQgAj9SdQqpYnOnEuYDmgSJAupqxLFXc3HZ4ULk1UQcLNbC41OZ3z22M37Np
+NyeDRMs0xnSU/a7uF+Oec6Qj/T/12fc8EbBz3yDz2llBBWaLB4+bRk3UPZv8iWML
+KJv4dLlXm5iT56VGaqgrZYn4J4Wyt0Y2KNgqIPfmMWiyuTq0BMP5jYmsyRUI+vIS
+n4DQt0fizz3YJUpyLHsefocRp9Ab49riEsWVWEJaKKRFEcCzLarJPgISq7dXEMZG
+LrCno7d4WZvJ+elyMC0kI0TFV6VPKcdyt/dBCwFPWhnb3vtx6+zu5Ur+Uqgpzhfh
+gDrfzA+TIQ7OtA5pHB1bUcVeDvrt1A==
+=BQDU
+-----END PGP SIGNATURE-----
+
+--=-pzOGa/p4ojwCAlUileCs--
+
