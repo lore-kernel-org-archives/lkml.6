@@ -2,73 +2,474 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74952C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A269C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 480312098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:29:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 480312098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id E65D22098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:29:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c83x8ANN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E65D22098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729326AbeJQBUZ (ORCPT
+        id S1731660AbeJQBPt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:20:25 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39882 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbeJQBUY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:20:24 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gCT9K-0000mk-DC; Tue, 16 Oct 2018 17:28:54 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: lpfc: fix spelling mistake "Resrouce" -> "Resource"
-Date:   Tue, 16 Oct 2018 18:28:53 +0100
-Message-Id: <20181016172853.1398-1-colin.king@canonical.com>
+        Tue, 16 Oct 2018 21:15:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34460 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730396AbeJQBPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:15:48 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B8452089E;
+        Tue, 16 Oct 2018 17:24:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539710662;
+        bh=J7k3ed5vNHk6QUtds6YdJlP2hnbW7p/cfQHPgtsIsUI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=c83x8ANNOE3JQR1bWllMXhz47UhP17/YQcoBPsfefNx9LUfFBgGJlzUAgeXzSOmRi
+         x18+7cfYLFl4BHgdceLt3rWqIW19hhrz3I71zrB11Q/wP7b+mO0pFipxqZoXiNcRZr
+         f6JlN9of2MhVwo8rZSjYugJlHZSb5lFD5fKU64Yg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 44/71] inet: frags: add a pointer to struct netns_frags
+Date:   Tue, 16 Oct 2018 19:09:41 +0200
+Message-Id: <20181016170541.586561070@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
+References: <20181016170539.315587743@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Trivial fix to spelling mistake in lpfc_printf_log message text.
+------------------
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Eric Dumazet <edumazet@google.com>
+
+In order to simplify the API, add a pointer to struct inet_frags.
+This will allow us to make things less complex.
+
+These functions no longer have a struct inet_frags parameter :
+
+inet_frag_destroy(struct inet_frag_queue *q  /*, struct inet_frags *f */)
+inet_frag_put(struct inet_frag_queue *q /*, struct inet_frags *f */)
+inet_frag_kill(struct inet_frag_queue *q /*, struct inet_frags *f */)
+inet_frags_exit_net(struct netns_frags *nf /*, struct inet_frags *f */)
+ip6_expire_frag_queue(struct net *net, struct frag_queue *fq)
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+(cherry picked from commit 093ba72914b696521e4885756a68a3332782c8de)
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/lpfc/lpfc_init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/net/inet_frag.h                 |   11 ++++++-----
+ include/net/ipv6.h                      |    3 +--
+ net/ieee802154/6lowpan/reassembly.c     |   13 +++++++------
+ net/ipv4/inet_fragment.c                |   17 ++++++++++-------
+ net/ipv4/ip_fragment.c                  |    9 +++++----
+ net/ipv6/netfilter/nf_conntrack_reasm.c |   16 +++++++++-------
+ net/ipv6/reassembly.c                   |   20 ++++++++++----------
+ 7 files changed, 48 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index 0bd3ae99c4a6..20fa6785a0e2 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -7993,7 +7993,7 @@ lpfc_sli4_read_config(struct lpfc_hba *phba)
- 	else
- 		lpfc_printf_log(phba, KERN_ERR, LOG_SLI,
- 				"3028 GET_FUNCTION_CONFIG: failed to find "
--				"Resrouce Descriptor:x%x\n",
-+				"Resource Descriptor:x%x\n",
- 				LPFC_RSRC_DESC_TYPE_FCFCOE);
+--- a/include/net/inet_frag.h
++++ b/include/net/inet_frag.h
+@@ -9,6 +9,7 @@ struct netns_frags {
+ 	int			high_thresh;
+ 	int			low_thresh;
+ 	int			max_dist;
++	struct inet_frags	*f;
+ };
  
- read_cfg_out:
--- 
-2.19.1
+ /**
+@@ -108,20 +109,20 @@ static inline int inet_frags_init_net(st
+ 	atomic_set(&nf->mem, 0);
+ 	return 0;
+ }
+-void inet_frags_exit_net(struct netns_frags *nf, struct inet_frags *f);
++void inet_frags_exit_net(struct netns_frags *nf);
+ 
+-void inet_frag_kill(struct inet_frag_queue *q, struct inet_frags *f);
+-void inet_frag_destroy(struct inet_frag_queue *q, struct inet_frags *f);
++void inet_frag_kill(struct inet_frag_queue *q);
++void inet_frag_destroy(struct inet_frag_queue *q);
+ struct inet_frag_queue *inet_frag_find(struct netns_frags *nf,
+ 		struct inet_frags *f, void *key, unsigned int hash);
+ 
+ void inet_frag_maybe_warn_overflow(struct inet_frag_queue *q,
+ 				   const char *prefix);
+ 
+-static inline void inet_frag_put(struct inet_frag_queue *q, struct inet_frags *f)
++static inline void inet_frag_put(struct inet_frag_queue *q)
+ {
+ 	if (atomic_dec_and_test(&q->refcnt))
+-		inet_frag_destroy(q, f);
++		inet_frag_destroy(q);
+ }
+ 
+ static inline bool inet_frag_evicting(struct inet_frag_queue *q)
+--- a/include/net/ipv6.h
++++ b/include/net/ipv6.h
+@@ -559,8 +559,7 @@ struct frag_queue {
+ 	u8			ecn;
+ };
+ 
+-void ip6_expire_frag_queue(struct net *net, struct frag_queue *fq,
+-			   struct inet_frags *frags);
++void ip6_expire_frag_queue(struct net *net, struct frag_queue *fq);
+ 
+ static inline bool ipv6_addr_any(const struct in6_addr *a)
+ {
+--- a/net/ieee802154/6lowpan/reassembly.c
++++ b/net/ieee802154/6lowpan/reassembly.c
+@@ -93,10 +93,10 @@ static void lowpan_frag_expire(unsigned
+ 	if (fq->q.flags & INET_FRAG_COMPLETE)
+ 		goto out;
+ 
+-	inet_frag_kill(&fq->q, &lowpan_frags);
++	inet_frag_kill(&fq->q);
+ out:
+ 	spin_unlock(&fq->q.lock);
+-	inet_frag_put(&fq->q, &lowpan_frags);
++	inet_frag_put(&fq->q);
+ }
+ 
+ static inline struct lowpan_frag_queue *
+@@ -229,7 +229,7 @@ static int lowpan_frag_reasm(struct lowp
+ 	struct sk_buff *fp, *head = fq->q.fragments;
+ 	int sum_truesize;
+ 
+-	inet_frag_kill(&fq->q, &lowpan_frags);
++	inet_frag_kill(&fq->q);
+ 
+ 	/* Make the one we just received the head. */
+ 	if (prev) {
+@@ -437,7 +437,7 @@ int lowpan_frag_rcv(struct sk_buff *skb,
+ 		ret = lowpan_frag_queue(fq, skb, frag_type);
+ 		spin_unlock(&fq->q.lock);
+ 
+-		inet_frag_put(&fq->q, &lowpan_frags);
++		inet_frag_put(&fq->q);
+ 		return ret;
+ 	}
+ 
+@@ -585,13 +585,14 @@ static int __net_init lowpan_frags_init_
+ 	ieee802154_lowpan->frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
+ 	ieee802154_lowpan->frags.low_thresh = IPV6_FRAG_LOW_THRESH;
+ 	ieee802154_lowpan->frags.timeout = IPV6_FRAG_TIMEOUT;
++	ieee802154_lowpan->frags.f = &lowpan_frags;
+ 
+ 	res = inet_frags_init_net(&ieee802154_lowpan->frags);
+ 	if (res < 0)
+ 		return res;
+ 	res = lowpan_frags_ns_sysctl_register(net);
+ 	if (res < 0)
+-		inet_frags_exit_net(&ieee802154_lowpan->frags, &lowpan_frags);
++		inet_frags_exit_net(&ieee802154_lowpan->frags);
+ 	return res;
+ }
+ 
+@@ -601,7 +602,7 @@ static void __net_exit lowpan_frags_exit
+ 		net_ieee802154_lowpan(net);
+ 
+ 	lowpan_frags_ns_sysctl_unregister(net);
+-	inet_frags_exit_net(&ieee802154_lowpan->frags, &lowpan_frags);
++	inet_frags_exit_net(&ieee802154_lowpan->frags);
+ }
+ 
+ static struct pernet_operations lowpan_frags_ops = {
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -219,8 +219,9 @@ void inet_frags_fini(struct inet_frags *
+ }
+ EXPORT_SYMBOL(inet_frags_fini);
+ 
+-void inet_frags_exit_net(struct netns_frags *nf, struct inet_frags *f)
++void inet_frags_exit_net(struct netns_frags *nf)
+ {
++	struct inet_frags *f =nf->f;
+ 	unsigned int seq;
+ 	int i;
+ 
+@@ -264,33 +265,34 @@ __acquires(hb->chain_lock)
+ 	return hb;
+ }
+ 
+-static inline void fq_unlink(struct inet_frag_queue *fq, struct inet_frags *f)
++static inline void fq_unlink(struct inet_frag_queue *fq)
+ {
+ 	struct inet_frag_bucket *hb;
+ 
+-	hb = get_frag_bucket_locked(fq, f);
++	hb = get_frag_bucket_locked(fq, fq->net->f);
+ 	hlist_del(&fq->list);
+ 	fq->flags |= INET_FRAG_COMPLETE;
+ 	spin_unlock(&hb->chain_lock);
+ }
+ 
+-void inet_frag_kill(struct inet_frag_queue *fq, struct inet_frags *f)
++void inet_frag_kill(struct inet_frag_queue *fq)
+ {
+ 	if (del_timer(&fq->timer))
+ 		atomic_dec(&fq->refcnt);
+ 
+ 	if (!(fq->flags & INET_FRAG_COMPLETE)) {
+-		fq_unlink(fq, f);
++		fq_unlink(fq);
+ 		atomic_dec(&fq->refcnt);
+ 	}
+ }
+ EXPORT_SYMBOL(inet_frag_kill);
+ 
+-void inet_frag_destroy(struct inet_frag_queue *q, struct inet_frags *f)
++void inet_frag_destroy(struct inet_frag_queue *q)
+ {
+ 	struct sk_buff *fp;
+ 	struct netns_frags *nf;
+ 	unsigned int sum, sum_truesize = 0;
++	struct inet_frags *f;
+ 
+ 	WARN_ON(!(q->flags & INET_FRAG_COMPLETE));
+ 	WARN_ON(del_timer(&q->timer) != 0);
+@@ -298,6 +300,7 @@ void inet_frag_destroy(struct inet_frag_
+ 	/* Release all fragment data. */
+ 	fp = q->fragments;
+ 	nf = q->net;
++	f = nf->f;
+ 	while (fp) {
+ 		struct sk_buff *xp = fp->next;
+ 
+@@ -333,7 +336,7 @@ static struct inet_frag_queue *inet_frag
+ 			atomic_inc(&qp->refcnt);
+ 			spin_unlock(&hb->chain_lock);
+ 			qp_in->flags |= INET_FRAG_COMPLETE;
+-			inet_frag_put(qp_in, f);
++			inet_frag_put(qp_in);
+ 			return qp;
+ 		}
+ 	}
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -167,7 +167,7 @@ static void ip4_frag_free(struct inet_fr
+ 
+ static void ipq_put(struct ipq *ipq)
+ {
+-	inet_frag_put(&ipq->q, &ip4_frags);
++	inet_frag_put(&ipq->q);
+ }
+ 
+ /* Kill ipq entry. It is not destroyed immediately,
+@@ -175,7 +175,7 @@ static void ipq_put(struct ipq *ipq)
+  */
+ static void ipq_kill(struct ipq *ipq)
+ {
+-	inet_frag_kill(&ipq->q, &ip4_frags);
++	inet_frag_kill(&ipq->q);
+ }
+ 
+ static bool frag_expire_skip_icmp(u32 user)
+@@ -875,20 +875,21 @@ static int __net_init ipv4_frags_init_ne
+ 	net->ipv4.frags.timeout = IP_FRAG_TIME;
+ 
+ 	net->ipv4.frags.max_dist = 64;
++	net->ipv4.frags.f = &ip4_frags;
+ 
+ 	res = inet_frags_init_net(&net->ipv4.frags);
+ 	if (res < 0)
+ 		return res;
+ 	res = ip4_frags_ns_ctl_register(net);
+ 	if (res < 0)
+-		inet_frags_exit_net(&net->ipv4.frags, &ip4_frags);
++		inet_frags_exit_net(&net->ipv4.frags);
+ 	return res;
+ }
+ 
+ static void __net_exit ipv4_frags_exit_net(struct net *net)
+ {
+ 	ip4_frags_ns_ctl_unregister(net);
+-	inet_frags_exit_net(&net->ipv4.frags, &ip4_frags);
++	inet_frags_exit_net(&net->ipv4.frags);
+ }
+ 
+ static struct pernet_operations ip4_frags_ops = {
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -177,7 +177,7 @@ static void nf_ct_frag6_expire(unsigned
+ 	fq = container_of((struct inet_frag_queue *)data, struct frag_queue, q);
+ 	net = container_of(fq->q.net, struct net, nf_frag.frags);
+ 
+-	ip6_expire_frag_queue(net, fq, &nf_frags);
++	ip6_expire_frag_queue(net, fq);
+ }
+ 
+ /* Creation primitives. */
+@@ -263,7 +263,7 @@ static int nf_ct_frag6_queue(struct frag
+ 			 * this case. -DaveM
+ 			 */
+ 			pr_debug("end of fragment not rounded to 8 bytes.\n");
+-			inet_frag_kill(&fq->q, &nf_frags);
++			inet_frag_kill(&fq->q);
+ 			return -EPROTO;
+ 		}
+ 		if (end > fq->q.len) {
+@@ -356,7 +356,7 @@ found:
+ 	return 0;
+ 
+ discard_fq:
+-	inet_frag_kill(&fq->q, &nf_frags);
++	inet_frag_kill(&fq->q);
+ err:
+ 	return -EINVAL;
+ }
+@@ -378,7 +378,7 @@ nf_ct_frag6_reasm(struct frag_queue *fq,
+ 	int    payload_len;
+ 	u8 ecn;
+ 
+-	inet_frag_kill(&fq->q, &nf_frags);
++	inet_frag_kill(&fq->q);
+ 
+ 	WARN_ON(head == NULL);
+ 	WARN_ON(NFCT_FRAG6_CB(head)->offset != 0);
+@@ -623,7 +623,7 @@ int nf_ct_frag6_gather(struct net *net,
+ 
+ out_unlock:
+ 	spin_unlock_bh(&fq->q.lock);
+-	inet_frag_put(&fq->q, &nf_frags);
++	inet_frag_put(&fq->q);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(nf_ct_frag6_gather);
+@@ -635,19 +635,21 @@ static int nf_ct_net_init(struct net *ne
+ 	net->nf_frag.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
+ 	net->nf_frag.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
+ 	net->nf_frag.frags.timeout = IPV6_FRAG_TIMEOUT;
++	net->nf_frag.frags.f = &nf_frags;
++
+ 	res = inet_frags_init_net(&net->nf_frag.frags);
+ 	if (res < 0)
+ 		return res;
+ 	res = nf_ct_frag6_sysctl_register(net);
+ 	if (res < 0)
+-		inet_frags_exit_net(&net->nf_frag.frags, &nf_frags);
++		inet_frags_exit_net(&net->nf_frag.frags);
+ 	return res;
+ }
+ 
+ static void nf_ct_net_exit(struct net *net)
+ {
+ 	nf_ct_frags6_sysctl_unregister(net);
+-	inet_frags_exit_net(&net->nf_frag.frags, &nf_frags);
++	inet_frags_exit_net(&net->nf_frag.frags);
+ }
+ 
+ static struct pernet_operations nf_ct_net_ops = {
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -128,8 +128,7 @@ void ip6_frag_init(struct inet_frag_queu
+ }
+ EXPORT_SYMBOL(ip6_frag_init);
+ 
+-void ip6_expire_frag_queue(struct net *net, struct frag_queue *fq,
+-			   struct inet_frags *frags)
++void ip6_expire_frag_queue(struct net *net, struct frag_queue *fq)
+ {
+ 	struct net_device *dev = NULL;
+ 
+@@ -138,7 +137,7 @@ void ip6_expire_frag_queue(struct net *n
+ 	if (fq->q.flags & INET_FRAG_COMPLETE)
+ 		goto out;
+ 
+-	inet_frag_kill(&fq->q, frags);
++	inet_frag_kill(&fq->q);
+ 
+ 	rcu_read_lock();
+ 	dev = dev_get_by_index_rcu(net, fq->iif);
+@@ -166,7 +165,7 @@ out_rcu_unlock:
+ 	rcu_read_unlock();
+ out:
+ 	spin_unlock(&fq->q.lock);
+-	inet_frag_put(&fq->q, frags);
++	inet_frag_put(&fq->q);
+ }
+ EXPORT_SYMBOL(ip6_expire_frag_queue);
+ 
+@@ -178,7 +177,7 @@ static void ip6_frag_expire(unsigned lon
+ 	fq = container_of((struct inet_frag_queue *)data, struct frag_queue, q);
+ 	net = container_of(fq->q.net, struct net, ipv6.frags);
+ 
+-	ip6_expire_frag_queue(net, fq, &ip6_frags);
++	ip6_expire_frag_queue(net, fq);
+ }
+ 
+ static struct frag_queue *
+@@ -359,7 +358,7 @@ found:
+ 	return -1;
+ 
+ discard_fq:
+-	inet_frag_kill(&fq->q, &ip6_frags);
++	inet_frag_kill(&fq->q);
+ err:
+ 	__IP6_INC_STATS(net, ip6_dst_idev(skb_dst(skb)),
+ 			IPSTATS_MIB_REASMFAILS);
+@@ -386,7 +385,7 @@ static int ip6_frag_reasm(struct frag_qu
+ 	int sum_truesize;
+ 	u8 ecn;
+ 
+-	inet_frag_kill(&fq->q, &ip6_frags);
++	inet_frag_kill(&fq->q);
+ 
+ 	ecn = ip_frag_ecn_table[fq->ecn];
+ 	if (unlikely(ecn == 0xff))
+@@ -563,7 +562,7 @@ static int ipv6_frag_rcv(struct sk_buff
+ 		ret = ip6_frag_queue(fq, skb, fhdr, IP6CB(skb)->nhoff);
+ 
+ 		spin_unlock(&fq->q.lock);
+-		inet_frag_put(&fq->q, &ip6_frags);
++		inet_frag_put(&fq->q);
+ 		return ret;
+ 	}
+ 
+@@ -714,6 +713,7 @@ static int __net_init ipv6_frags_init_ne
+ 	net->ipv6.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
+ 	net->ipv6.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
+ 	net->ipv6.frags.timeout = IPV6_FRAG_TIMEOUT;
++	net->ipv6.frags.f = &ip6_frags;
+ 
+ 	res = inet_frags_init_net(&net->ipv6.frags);
+ 	if (res < 0)
+@@ -721,14 +721,14 @@ static int __net_init ipv6_frags_init_ne
+ 
+ 	res = ip6_frags_ns_sysctl_register(net);
+ 	if (res < 0)
+-		inet_frags_exit_net(&net->ipv6.frags, &ip6_frags);
++		inet_frags_exit_net(&net->ipv6.frags);
+ 	return res;
+ }
+ 
+ static void __net_exit ipv6_frags_exit_net(struct net *net)
+ {
+ 	ip6_frags_ns_sysctl_unregister(net);
+-	inet_frags_exit_net(&net->ipv6.frags, &ip6_frags);
++	inet_frags_exit_net(&net->ipv6.frags);
+ }
+ 
+ static struct pernet_operations ip6_frags_ops = {
+
 
