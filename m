@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB80C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72974C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FE922089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE922089E
+	by mail.kernel.org (Postfix) with ESMTP id 269982089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 16:50:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 269982089E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbeJQAlj (ORCPT
+        id S1727585AbeJQAln (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:41:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39796 "EHLO mx1.redhat.com"
+        Tue, 16 Oct 2018 20:41:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36900 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727159AbeJQAlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:41:39 -0400
+        id S1727292AbeJQAlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 20:41:42 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D504C308FE8F;
-        Tue, 16 Oct 2018 16:50:22 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A4B8630820D0;
+        Tue, 16 Oct 2018 16:50:26 +0000 (UTC)
 Received: from vitty.brq.redhat.com (unknown [10.43.2.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 824002CFD2;
-        Tue, 16 Oct 2018 16:50:20 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 241532CFD2;
+        Tue, 16 Oct 2018 16:50:22 +0000 (UTC)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -41,193 +41,571 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
         Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH v6 03/13] KVM: nVMX: add KVM_CAP_HYPERV_ENLIGHTENED_VMCS capability
-Date:   Tue, 16 Oct 2018 18:50:01 +0200
-Message-Id: <20181016165011.6607-4-vkuznets@redhat.com>
+Subject: [PATCH v6 04/13] KVM: nVMX: add enlightened VMCS state
+Date:   Tue, 16 Oct 2018 18:50:02 +0200
+Message-Id: <20181016165011.6607-5-vkuznets@redhat.com>
 In-Reply-To: <20181016165011.6607-1-vkuznets@redhat.com>
 References: <20181016165011.6607-1-vkuznets@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 16 Oct 2018 16:50:23 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 16 Oct 2018 16:50:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enlightened VMCS is opt-in. The current version does not contain all
-fields supported by nested VMX so we must not advertise the
-corresponding VMX features if enlightened VMCS is enabled.
+Adds hv_evmcs pointer and implement copy_enlightened_to_vmcs12() and
+copy_enlightened_to_vmcs12().
 
-Userspace is given the enlightened VMCS version supported by KVM as
-part of enabling KVM_CAP_HYPERV_ENLIGHTENED_VMCS. The version is to
-be advertised to the nested hypervisor, currently done via a cpuid
-leaf for Hyper-V.
+prepare_vmcs02()/prepare_vmcs02_full() separation is not valid for
+Enlightened VMCS, do full sync for now.
 
 Suggested-by: Ladi Prosek <lprosek@redhat.com>
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
 ---
- arch/x86/include/asm/kvm_host.h |  3 +++
- arch/x86/kvm/svm.c              |  9 ++++++++
- arch/x86/kvm/vmx.c              | 37 +++++++++++++++++++++++++++++++++
- arch/x86/kvm/x86.c              | 15 +++++++++++++
- include/uapi/linux/kvm.h        |  1 +
- 5 files changed, 65 insertions(+)
+ arch/x86/kvm/vmx.c | 440 +++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 423 insertions(+), 17 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 4b09d4aa9bf4..258fc2c85301 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1179,6 +1179,9 @@ struct kvm_x86_ops {
- 	int (*mem_enc_unreg_region)(struct kvm *kvm, struct kvm_enc_region *argp);
- 
- 	int (*get_msr_feature)(struct kvm_msr_entry *entry);
-+
-+	int (*nested_enable_evmcs)(struct kvm_vcpu *vcpu,
-+				   uint16_t *vmcs_version);
- };
- 
- struct kvm_arch_async_pf {
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 2936c63bcc2f..47b07211c5b1 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -7036,6 +7036,13 @@ static int svm_unregister_enc_region(struct kvm *kvm,
- 	return ret;
- }
- 
-+static int nested_enable_evmcs(struct kvm_vcpu *vcpu,
-+				   uint16_t *vmcs_version)
-+{
-+	/* Intel-only feature */
-+	return -ENODEV;
-+}
-+
- static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
- 	.cpu_has_kvm_support = has_svm,
- 	.disabled_by_bios = is_disabled,
-@@ -7165,6 +7172,8 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
- 	.mem_enc_op = svm_mem_enc_op,
- 	.mem_enc_reg_region = svm_register_enc_region,
- 	.mem_enc_unreg_region = svm_unregister_enc_region,
-+
-+	.nested_enable_evmcs = nested_enable_evmcs,
- };
- 
- static int __init svm_init(void)
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 509d4e34dd62..459cdaa0d1cd 100644
+index 459cdaa0d1cd..aebd008ccccb 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -846,6 +846,13 @@ struct nested_vmx {
+@@ -831,10 +831,10 @@ struct nested_vmx {
+ 	 */
+ 	struct vmcs12 *cached_shadow_vmcs12;
+ 	/*
+-	 * Indicates if the shadow vmcs must be updated with the
+-	 * data hold by vmcs12
++	 * Indicates if the shadow vmcs or enlightened vmcs must be updated
++	 * with the data held by struct vmcs12.
+ 	 */
+-	bool sync_shadow_vmcs;
++	bool need_vmcs12_sync;
+ 	bool dirty_vmcs12;
  
- 	bool change_vmcs01_virtual_apic_mode;
- 
-+	/*
-+	 * Enlightened VMCS has been enabled. It does not mean that L1 has to
-+	 * use it. However, VMX features available to L1 will be limited based
-+	 * on what the enlightened VMCS supports.
-+	 */
-+	bool enlightened_vmcs_enabled;
+ 	/*
+@@ -888,6 +888,8 @@ struct nested_vmx {
+ 		/* in guest mode on SMM entry? */
+ 		bool guest_mode;
+ 	} smm;
 +
- 	/* L2 must run next, and mustn't decide to exit to L1. */
- 	bool nested_run_pending;
++	struct hv_enlightened_vmcs *hv_evmcs;
+ };
  
-@@ -1589,6 +1596,34 @@ static inline void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf) {}
- static inline void evmcs_touch_msr_bitmap(void) {}
- #endif /* IS_ENABLED(CONFIG_HYPERV) */
+ #define POSTED_INTR_ON  0
+@@ -8450,7 +8452,7 @@ static inline void nested_release_vmcs12(struct kvm_vcpu *vcpu)
+ 		/* copy to memory all shadowed fields in case
+ 		   they were modified */
+ 		copy_shadow_to_vmcs12(vmx);
+-		vmx->nested.sync_shadow_vmcs = false;
++		vmx->nested.need_vmcs12_sync = false;
+ 		vmx_disable_shadow_vmcs(vmx);
+ 	}
+ 	vmx->nested.posted_intr_nv = -1;
+@@ -8630,6 +8632,393 @@ static inline int vmcs12_write_any(struct vmcs12 *vmcs12,
  
-+static int nested_enable_evmcs(struct kvm_vcpu *vcpu,
-+			       uint16_t *vmcs_version)
+ }
+ 
++static int copy_enlightened_to_vmcs12(struct vcpu_vmx *vmx)
 +{
-+	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	struct vmcs12 *vmcs12 = vmx->nested.cached_vmcs12;
++	struct hv_enlightened_vmcs *evmcs = vmx->nested.hv_evmcs;
 +
-+	/* We don't support disabling the feature for simplicity. */
-+	if (vmx->nested.enlightened_vmcs_enabled)
-+		return 0;
++	/* HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE */
++	vmcs12->tpr_threshold = evmcs->tpr_threshold;
++	vmcs12->guest_rip = evmcs->guest_rip;
 +
-+	vmx->nested.enlightened_vmcs_enabled = true;
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_BASIC))) {
++		vmcs12->guest_rsp = evmcs->guest_rsp;
++		vmcs12->guest_rflags = evmcs->guest_rflags;
++		vmcs12->guest_interruptibility_info =
++			evmcs->guest_interruptibility_info;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_PROC))) {
++		vmcs12->cpu_based_vm_exec_control =
++			evmcs->cpu_based_vm_exec_control;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_PROC))) {
++		vmcs12->exception_bitmap = evmcs->exception_bitmap;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_ENTRY))) {
++		vmcs12->vm_entry_controls = evmcs->vm_entry_controls;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_EVENT))) {
++		vmcs12->vm_entry_intr_info_field =
++			evmcs->vm_entry_intr_info_field;
++		vmcs12->vm_entry_exception_error_code =
++			evmcs->vm_entry_exception_error_code;
++		vmcs12->vm_entry_instruction_len =
++			evmcs->vm_entry_instruction_len;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1))) {
++		vmcs12->host_ia32_pat = evmcs->host_ia32_pat;
++		vmcs12->host_ia32_efer = evmcs->host_ia32_efer;
++		vmcs12->host_cr0 = evmcs->host_cr0;
++		vmcs12->host_cr3 = evmcs->host_cr3;
++		vmcs12->host_cr4 = evmcs->host_cr4;
++		vmcs12->host_ia32_sysenter_esp = evmcs->host_ia32_sysenter_esp;
++		vmcs12->host_ia32_sysenter_eip = evmcs->host_ia32_sysenter_eip;
++		vmcs12->host_rip = evmcs->host_rip;
++		vmcs12->host_ia32_sysenter_cs = evmcs->host_ia32_sysenter_cs;
++		vmcs12->host_es_selector = evmcs->host_es_selector;
++		vmcs12->host_cs_selector = evmcs->host_cs_selector;
++		vmcs12->host_ss_selector = evmcs->host_ss_selector;
++		vmcs12->host_ds_selector = evmcs->host_ds_selector;
++		vmcs12->host_fs_selector = evmcs->host_fs_selector;
++		vmcs12->host_gs_selector = evmcs->host_gs_selector;
++		vmcs12->host_tr_selector = evmcs->host_tr_selector;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1))) {
++		vmcs12->pin_based_vm_exec_control =
++			evmcs->pin_based_vm_exec_control;
++		vmcs12->vm_exit_controls = evmcs->vm_exit_controls;
++		vmcs12->secondary_vm_exec_control =
++			evmcs->secondary_vm_exec_control;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_IO_BITMAP))) {
++		vmcs12->io_bitmap_a = evmcs->io_bitmap_a;
++		vmcs12->io_bitmap_b = evmcs->io_bitmap_b;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_MSR_BITMAP))) {
++		vmcs12->msr_bitmap = evmcs->msr_bitmap;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2))) {
++		vmcs12->guest_es_base = evmcs->guest_es_base;
++		vmcs12->guest_cs_base = evmcs->guest_cs_base;
++		vmcs12->guest_ss_base = evmcs->guest_ss_base;
++		vmcs12->guest_ds_base = evmcs->guest_ds_base;
++		vmcs12->guest_fs_base = evmcs->guest_fs_base;
++		vmcs12->guest_gs_base = evmcs->guest_gs_base;
++		vmcs12->guest_ldtr_base = evmcs->guest_ldtr_base;
++		vmcs12->guest_tr_base = evmcs->guest_tr_base;
++		vmcs12->guest_gdtr_base = evmcs->guest_gdtr_base;
++		vmcs12->guest_idtr_base = evmcs->guest_idtr_base;
++		vmcs12->guest_es_limit = evmcs->guest_es_limit;
++		vmcs12->guest_cs_limit = evmcs->guest_cs_limit;
++		vmcs12->guest_ss_limit = evmcs->guest_ss_limit;
++		vmcs12->guest_ds_limit = evmcs->guest_ds_limit;
++		vmcs12->guest_fs_limit = evmcs->guest_fs_limit;
++		vmcs12->guest_gs_limit = evmcs->guest_gs_limit;
++		vmcs12->guest_ldtr_limit = evmcs->guest_ldtr_limit;
++		vmcs12->guest_tr_limit = evmcs->guest_tr_limit;
++		vmcs12->guest_gdtr_limit = evmcs->guest_gdtr_limit;
++		vmcs12->guest_idtr_limit = evmcs->guest_idtr_limit;
++		vmcs12->guest_es_ar_bytes = evmcs->guest_es_ar_bytes;
++		vmcs12->guest_cs_ar_bytes = evmcs->guest_cs_ar_bytes;
++		vmcs12->guest_ss_ar_bytes = evmcs->guest_ss_ar_bytes;
++		vmcs12->guest_ds_ar_bytes = evmcs->guest_ds_ar_bytes;
++		vmcs12->guest_fs_ar_bytes = evmcs->guest_fs_ar_bytes;
++		vmcs12->guest_gs_ar_bytes = evmcs->guest_gs_ar_bytes;
++		vmcs12->guest_ldtr_ar_bytes = evmcs->guest_ldtr_ar_bytes;
++		vmcs12->guest_tr_ar_bytes = evmcs->guest_tr_ar_bytes;
++		vmcs12->guest_es_selector = evmcs->guest_es_selector;
++		vmcs12->guest_cs_selector = evmcs->guest_cs_selector;
++		vmcs12->guest_ss_selector = evmcs->guest_ss_selector;
++		vmcs12->guest_ds_selector = evmcs->guest_ds_selector;
++		vmcs12->guest_fs_selector = evmcs->guest_fs_selector;
++		vmcs12->guest_gs_selector = evmcs->guest_gs_selector;
++		vmcs12->guest_ldtr_selector = evmcs->guest_ldtr_selector;
++		vmcs12->guest_tr_selector = evmcs->guest_tr_selector;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_GRP2))) {
++		vmcs12->tsc_offset = evmcs->tsc_offset;
++		vmcs12->virtual_apic_page_addr = evmcs->virtual_apic_page_addr;
++		vmcs12->xss_exit_bitmap = evmcs->xss_exit_bitmap;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CRDR))) {
++		vmcs12->cr0_guest_host_mask = evmcs->cr0_guest_host_mask;
++		vmcs12->cr4_guest_host_mask = evmcs->cr4_guest_host_mask;
++		vmcs12->cr0_read_shadow = evmcs->cr0_read_shadow;
++		vmcs12->cr4_read_shadow = evmcs->cr4_read_shadow;
++		vmcs12->guest_cr0 = evmcs->guest_cr0;
++		vmcs12->guest_cr3 = evmcs->guest_cr3;
++		vmcs12->guest_cr4 = evmcs->guest_cr4;
++		vmcs12->guest_dr7 = evmcs->guest_dr7;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_POINTER))) {
++		vmcs12->host_fs_base = evmcs->host_fs_base;
++		vmcs12->host_gs_base = evmcs->host_gs_base;
++		vmcs12->host_tr_base = evmcs->host_tr_base;
++		vmcs12->host_gdtr_base = evmcs->host_gdtr_base;
++		vmcs12->host_idtr_base = evmcs->host_idtr_base;
++		vmcs12->host_rsp = evmcs->host_rsp;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_XLAT))) {
++		vmcs12->ept_pointer = evmcs->ept_pointer;
++		vmcs12->virtual_processor_id = evmcs->virtual_processor_id;
++	}
++
++	if (unlikely(!(evmcs->hv_clean_fields &
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1))) {
++		vmcs12->vmcs_link_pointer = evmcs->vmcs_link_pointer;
++		vmcs12->guest_ia32_debugctl = evmcs->guest_ia32_debugctl;
++		vmcs12->guest_ia32_pat = evmcs->guest_ia32_pat;
++		vmcs12->guest_ia32_efer = evmcs->guest_ia32_efer;
++		vmcs12->guest_pdptr0 = evmcs->guest_pdptr0;
++		vmcs12->guest_pdptr1 = evmcs->guest_pdptr1;
++		vmcs12->guest_pdptr2 = evmcs->guest_pdptr2;
++		vmcs12->guest_pdptr3 = evmcs->guest_pdptr3;
++		vmcs12->guest_pending_dbg_exceptions =
++			evmcs->guest_pending_dbg_exceptions;
++		vmcs12->guest_sysenter_esp = evmcs->guest_sysenter_esp;
++		vmcs12->guest_sysenter_eip = evmcs->guest_sysenter_eip;
++		vmcs12->guest_bndcfgs = evmcs->guest_bndcfgs;
++		vmcs12->guest_activity_state = evmcs->guest_activity_state;
++		vmcs12->guest_sysenter_cs = evmcs->guest_sysenter_cs;
++	}
 +
 +	/*
-+	 * vmcs_version represents the range of supported Enlightened VMCS
-+	 * versions: lower 8 bits is the minimal version, higher 8 bits is the
-+	 * maximum supported version. KVM supports versions from 1 to
-+	 * KVM_EVMCS_VERSION.
++	 * Not used?
++	 * vmcs12->vm_exit_msr_store_addr = evmcs->vm_exit_msr_store_addr;
++	 * vmcs12->vm_exit_msr_load_addr = evmcs->vm_exit_msr_load_addr;
++	 * vmcs12->vm_entry_msr_load_addr = evmcs->vm_entry_msr_load_addr;
++	 * vmcs12->cr3_target_value0 = evmcs->cr3_target_value0;
++	 * vmcs12->cr3_target_value1 = evmcs->cr3_target_value1;
++	 * vmcs12->cr3_target_value2 = evmcs->cr3_target_value2;
++	 * vmcs12->cr3_target_value3 = evmcs->cr3_target_value3;
++	 * vmcs12->page_fault_error_code_mask =
++	 *		evmcs->page_fault_error_code_mask;
++	 * vmcs12->page_fault_error_code_match =
++	 *		evmcs->page_fault_error_code_match;
++	 * vmcs12->cr3_target_count = evmcs->cr3_target_count;
++	 * vmcs12->vm_exit_msr_store_count = evmcs->vm_exit_msr_store_count;
++	 * vmcs12->vm_exit_msr_load_count = evmcs->vm_exit_msr_load_count;
++	 * vmcs12->vm_entry_msr_load_count = evmcs->vm_entry_msr_load_count;
 +	 */
-+	*vmcs_version = (KVM_EVMCS_VERSION << 8) | 1;
 +
-+	vmx->nested.msrs.pinbased_ctls_high &= ~EVMCS1_UNSUPPORTED_PINCTRL;
-+	vmx->nested.msrs.entry_ctls_high &= ~EVMCS1_UNSUPPORTED_VMENTRY_CTRL;
-+	vmx->nested.msrs.exit_ctls_high &= ~EVMCS1_UNSUPPORTED_VMEXIT_CTRL;
-+	vmx->nested.msrs.secondary_ctls_high &= ~EVMCS1_UNSUPPORTED_2NDEXEC;
-+	vmx->nested.msrs.vmfunc_controls &= ~EVMCS1_UNSUPPORTED_VMFUNC;
++	/*
++	 * Read only fields:
++	 * vmcs12->guest_physical_address = evmcs->guest_physical_address;
++	 * vmcs12->vm_instruction_error = evmcs->vm_instruction_error;
++	 * vmcs12->vm_exit_reason = evmcs->vm_exit_reason;
++	 * vmcs12->vm_exit_intr_info = evmcs->vm_exit_intr_info;
++	 * vmcs12->vm_exit_intr_error_code = evmcs->vm_exit_intr_error_code;
++	 * vmcs12->idt_vectoring_info_field = evmcs->idt_vectoring_info_field;
++	 * vmcs12->idt_vectoring_error_code = evmcs->idt_vectoring_error_code;
++	 * vmcs12->vm_exit_instruction_len = evmcs->vm_exit_instruction_len;
++	 * vmcs12->vmx_instruction_info = evmcs->vmx_instruction_info;
++	 * vmcs12->exit_qualification = evmcs->exit_qualification;
++	 * vmcs12->guest_linear_address = evmcs->guest_linear_address;
++	 *
++	 * Not present in struct vmcs12:
++	 * vmcs12->exit_io_instruction_ecx = evmcs->exit_io_instruction_ecx;
++	 * vmcs12->exit_io_instruction_esi = evmcs->exit_io_instruction_esi;
++	 * vmcs12->exit_io_instruction_edi = evmcs->exit_io_instruction_edi;
++	 * vmcs12->exit_io_instruction_eip = evmcs->exit_io_instruction_eip;
++	 */
 +
 +	return 0;
 +}
 +
- static inline bool is_exception_n(u32 intr_info, u8 vector)
- {
- 	return (intr_info & (INTR_INFO_INTR_TYPE_MASK | INTR_INFO_VECTOR_MASK |
-@@ -14505,6 +14540,8 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
- 	.pre_enter_smm = vmx_pre_enter_smm,
- 	.pre_leave_smm = vmx_pre_leave_smm,
- 	.enable_smi_window = enable_smi_window,
++static int copy_vmcs12_to_enlightened(struct vcpu_vmx *vmx)
++{
++	struct vmcs12 *vmcs12 = vmx->nested.cached_vmcs12;
++	struct hv_enlightened_vmcs *evmcs = vmx->nested.hv_evmcs;
 +
-+	.nested_enable_evmcs = nested_enable_evmcs,
- };
- 
- static void vmx_cleanup_l1d_flush(void)
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index eee871ad4ade..50f308499ce5 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2913,6 +2913,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_HYPERV_EVENTFD:
- 	case KVM_CAP_HYPERV_TLBFLUSH:
- 	case KVM_CAP_HYPERV_SEND_IPI:
-+	case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
- 	case KVM_CAP_PCI_SEGMENT:
- 	case KVM_CAP_DEBUGREGS:
- 	case KVM_CAP_X86_ROBUST_SINGLESTEP:
-@@ -3700,6 +3701,10 @@ static int kvm_set_guest_paused(struct kvm_vcpu *vcpu)
- static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
- 				     struct kvm_enable_cap *cap)
- {
-+	int r;
-+	uint16_t vmcs_version;
-+	void __user *user_ptr;
++	/*
++	 * Should not be changed by KVM:
++	 *
++	 * evmcs->host_es_selector = vmcs12->host_es_selector;
++	 * evmcs->host_cs_selector = vmcs12->host_cs_selector;
++	 * evmcs->host_ss_selector = vmcs12->host_ss_selector;
++	 * evmcs->host_ds_selector = vmcs12->host_ds_selector;
++	 * evmcs->host_fs_selector = vmcs12->host_fs_selector;
++	 * evmcs->host_gs_selector = vmcs12->host_gs_selector;
++	 * evmcs->host_tr_selector = vmcs12->host_tr_selector;
++	 * evmcs->host_ia32_pat = vmcs12->host_ia32_pat;
++	 * evmcs->host_ia32_efer = vmcs12->host_ia32_efer;
++	 * evmcs->host_cr0 = vmcs12->host_cr0;
++	 * evmcs->host_cr3 = vmcs12->host_cr3;
++	 * evmcs->host_cr4 = vmcs12->host_cr4;
++	 * evmcs->host_ia32_sysenter_esp = vmcs12->host_ia32_sysenter_esp;
++	 * evmcs->host_ia32_sysenter_eip = vmcs12->host_ia32_sysenter_eip;
++	 * evmcs->host_rip = vmcs12->host_rip;
++	 * evmcs->host_ia32_sysenter_cs = vmcs12->host_ia32_sysenter_cs;
++	 * evmcs->host_fs_base = vmcs12->host_fs_base;
++	 * evmcs->host_gs_base = vmcs12->host_gs_base;
++	 * evmcs->host_tr_base = vmcs12->host_tr_base;
++	 * evmcs->host_gdtr_base = vmcs12->host_gdtr_base;
++	 * evmcs->host_idtr_base = vmcs12->host_idtr_base;
++	 * evmcs->host_rsp = vmcs12->host_rsp;
++	 * sync_vmcs12() doesn't read these:
++	 * evmcs->io_bitmap_a = vmcs12->io_bitmap_a;
++	 * evmcs->io_bitmap_b = vmcs12->io_bitmap_b;
++	 * evmcs->msr_bitmap = vmcs12->msr_bitmap;
++	 * evmcs->ept_pointer = vmcs12->ept_pointer;
++	 * evmcs->xss_exit_bitmap = vmcs12->xss_exit_bitmap;
++	 * evmcs->vm_exit_msr_store_addr = vmcs12->vm_exit_msr_store_addr;
++	 * evmcs->vm_exit_msr_load_addr = vmcs12->vm_exit_msr_load_addr;
++	 * evmcs->vm_entry_msr_load_addr = vmcs12->vm_entry_msr_load_addr;
++	 * evmcs->cr3_target_value0 = vmcs12->cr3_target_value0;
++	 * evmcs->cr3_target_value1 = vmcs12->cr3_target_value1;
++	 * evmcs->cr3_target_value2 = vmcs12->cr3_target_value2;
++	 * evmcs->cr3_target_value3 = vmcs12->cr3_target_value3;
++	 * evmcs->tpr_threshold = vmcs12->tpr_threshold;
++	 * evmcs->virtual_processor_id = vmcs12->virtual_processor_id;
++	 * evmcs->exception_bitmap = vmcs12->exception_bitmap;
++	 * evmcs->vmcs_link_pointer = vmcs12->vmcs_link_pointer;
++	 * evmcs->pin_based_vm_exec_control = vmcs12->pin_based_vm_exec_control;
++	 * evmcs->vm_exit_controls = vmcs12->vm_exit_controls;
++	 * evmcs->secondary_vm_exec_control = vmcs12->secondary_vm_exec_control;
++	 * evmcs->page_fault_error_code_mask =
++	 *		vmcs12->page_fault_error_code_mask;
++	 * evmcs->page_fault_error_code_match =
++	 *		vmcs12->page_fault_error_code_match;
++	 * evmcs->cr3_target_count = vmcs12->cr3_target_count;
++	 * evmcs->virtual_apic_page_addr = vmcs12->virtual_apic_page_addr;
++	 * evmcs->tsc_offset = vmcs12->tsc_offset;
++	 * evmcs->guest_ia32_debugctl = vmcs12->guest_ia32_debugctl;
++	 * evmcs->cr0_guest_host_mask = vmcs12->cr0_guest_host_mask;
++	 * evmcs->cr4_guest_host_mask = vmcs12->cr4_guest_host_mask;
++	 * evmcs->cr0_read_shadow = vmcs12->cr0_read_shadow;
++	 * evmcs->cr4_read_shadow = vmcs12->cr4_read_shadow;
++	 * evmcs->vm_exit_msr_store_count = vmcs12->vm_exit_msr_store_count;
++	 * evmcs->vm_exit_msr_load_count = vmcs12->vm_exit_msr_load_count;
++	 * evmcs->vm_entry_msr_load_count = vmcs12->vm_entry_msr_load_count;
++	 *
++	 * Not present in struct vmcs12:
++	 * evmcs->exit_io_instruction_ecx = vmcs12->exit_io_instruction_ecx;
++	 * evmcs->exit_io_instruction_esi = vmcs12->exit_io_instruction_esi;
++	 * evmcs->exit_io_instruction_edi = vmcs12->exit_io_instruction_edi;
++	 * evmcs->exit_io_instruction_eip = vmcs12->exit_io_instruction_eip;
++	 */
 +
- 	if (cap->flags)
- 		return -EINVAL;
- 
-@@ -3712,6 +3717,16 @@ static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
- 			return -EINVAL;
- 		return kvm_hv_activate_synic(vcpu, cap->cap ==
- 					     KVM_CAP_HYPERV_SYNIC2);
-+	case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
-+		r = kvm_x86_ops->nested_enable_evmcs(vcpu, &vmcs_version);
-+		if (!r) {
-+			user_ptr = (void __user *)(uintptr_t)cap->args[0];
-+			if (copy_to_user(user_ptr, &vmcs_version,
-+					 sizeof(vmcs_version)))
-+				r = -EFAULT;
-+		}
-+		return r;
++	evmcs->guest_es_selector = vmcs12->guest_es_selector;
++	evmcs->guest_cs_selector = vmcs12->guest_cs_selector;
++	evmcs->guest_ss_selector = vmcs12->guest_ss_selector;
++	evmcs->guest_ds_selector = vmcs12->guest_ds_selector;
++	evmcs->guest_fs_selector = vmcs12->guest_fs_selector;
++	evmcs->guest_gs_selector = vmcs12->guest_gs_selector;
++	evmcs->guest_ldtr_selector = vmcs12->guest_ldtr_selector;
++	evmcs->guest_tr_selector = vmcs12->guest_tr_selector;
 +
- 	default:
- 		return -EINVAL;
++	evmcs->guest_es_limit = vmcs12->guest_es_limit;
++	evmcs->guest_cs_limit = vmcs12->guest_cs_limit;
++	evmcs->guest_ss_limit = vmcs12->guest_ss_limit;
++	evmcs->guest_ds_limit = vmcs12->guest_ds_limit;
++	evmcs->guest_fs_limit = vmcs12->guest_fs_limit;
++	evmcs->guest_gs_limit = vmcs12->guest_gs_limit;
++	evmcs->guest_ldtr_limit = vmcs12->guest_ldtr_limit;
++	evmcs->guest_tr_limit = vmcs12->guest_tr_limit;
++	evmcs->guest_gdtr_limit = vmcs12->guest_gdtr_limit;
++	evmcs->guest_idtr_limit = vmcs12->guest_idtr_limit;
++
++	evmcs->guest_es_ar_bytes = vmcs12->guest_es_ar_bytes;
++	evmcs->guest_cs_ar_bytes = vmcs12->guest_cs_ar_bytes;
++	evmcs->guest_ss_ar_bytes = vmcs12->guest_ss_ar_bytes;
++	evmcs->guest_ds_ar_bytes = vmcs12->guest_ds_ar_bytes;
++	evmcs->guest_fs_ar_bytes = vmcs12->guest_fs_ar_bytes;
++	evmcs->guest_gs_ar_bytes = vmcs12->guest_gs_ar_bytes;
++	evmcs->guest_ldtr_ar_bytes = vmcs12->guest_ldtr_ar_bytes;
++	evmcs->guest_tr_ar_bytes = vmcs12->guest_tr_ar_bytes;
++
++	evmcs->guest_es_base = vmcs12->guest_es_base;
++	evmcs->guest_cs_base = vmcs12->guest_cs_base;
++	evmcs->guest_ss_base = vmcs12->guest_ss_base;
++	evmcs->guest_ds_base = vmcs12->guest_ds_base;
++	evmcs->guest_fs_base = vmcs12->guest_fs_base;
++	evmcs->guest_gs_base = vmcs12->guest_gs_base;
++	evmcs->guest_ldtr_base = vmcs12->guest_ldtr_base;
++	evmcs->guest_tr_base = vmcs12->guest_tr_base;
++	evmcs->guest_gdtr_base = vmcs12->guest_gdtr_base;
++	evmcs->guest_idtr_base = vmcs12->guest_idtr_base;
++
++	evmcs->guest_ia32_pat = vmcs12->guest_ia32_pat;
++	evmcs->guest_ia32_efer = vmcs12->guest_ia32_efer;
++
++	evmcs->guest_pdptr0 = vmcs12->guest_pdptr0;
++	evmcs->guest_pdptr1 = vmcs12->guest_pdptr1;
++	evmcs->guest_pdptr2 = vmcs12->guest_pdptr2;
++	evmcs->guest_pdptr3 = vmcs12->guest_pdptr3;
++
++	evmcs->guest_pending_dbg_exceptions =
++		vmcs12->guest_pending_dbg_exceptions;
++	evmcs->guest_sysenter_esp = vmcs12->guest_sysenter_esp;
++	evmcs->guest_sysenter_eip = vmcs12->guest_sysenter_eip;
++
++	evmcs->guest_activity_state = vmcs12->guest_activity_state;
++	evmcs->guest_sysenter_cs = vmcs12->guest_sysenter_cs;
++
++	evmcs->guest_cr0 = vmcs12->guest_cr0;
++	evmcs->guest_cr3 = vmcs12->guest_cr3;
++	evmcs->guest_cr4 = vmcs12->guest_cr4;
++	evmcs->guest_dr7 = vmcs12->guest_dr7;
++
++	evmcs->guest_physical_address = vmcs12->guest_physical_address;
++
++	evmcs->vm_instruction_error = vmcs12->vm_instruction_error;
++	evmcs->vm_exit_reason = vmcs12->vm_exit_reason;
++	evmcs->vm_exit_intr_info = vmcs12->vm_exit_intr_info;
++	evmcs->vm_exit_intr_error_code = vmcs12->vm_exit_intr_error_code;
++	evmcs->idt_vectoring_info_field = vmcs12->idt_vectoring_info_field;
++	evmcs->idt_vectoring_error_code = vmcs12->idt_vectoring_error_code;
++	evmcs->vm_exit_instruction_len = vmcs12->vm_exit_instruction_len;
++	evmcs->vmx_instruction_info = vmcs12->vmx_instruction_info;
++
++	evmcs->exit_qualification = vmcs12->exit_qualification;
++
++	evmcs->guest_linear_address = vmcs12->guest_linear_address;
++	evmcs->guest_rsp = vmcs12->guest_rsp;
++	evmcs->guest_rflags = vmcs12->guest_rflags;
++
++	evmcs->guest_interruptibility_info =
++		vmcs12->guest_interruptibility_info;
++	evmcs->cpu_based_vm_exec_control = vmcs12->cpu_based_vm_exec_control;
++	evmcs->vm_entry_controls = vmcs12->vm_entry_controls;
++	evmcs->vm_entry_intr_info_field = vmcs12->vm_entry_intr_info_field;
++	evmcs->vm_entry_exception_error_code =
++		vmcs12->vm_entry_exception_error_code;
++	evmcs->vm_entry_instruction_len = vmcs12->vm_entry_instruction_len;
++
++	evmcs->guest_rip = vmcs12->guest_rip;
++
++	evmcs->guest_bndcfgs = vmcs12->guest_bndcfgs;
++
++	return 0;
++}
++
+ /*
+  * Copy the writable VMCS shadow fields back to the VMCS12, in case
+  * they have been modified by the L1 guest. Note that the "read-only"
+@@ -8854,7 +9243,7 @@ static void set_current_vmptr(struct vcpu_vmx *vmx, gpa_t vmptr)
+ 			      SECONDARY_EXEC_SHADOW_VMCS);
+ 		vmcs_write64(VMCS_LINK_POINTER,
+ 			     __pa(vmx->vmcs01.shadow_vmcs));
+-		vmx->nested.sync_shadow_vmcs = true;
++		vmx->nested.need_vmcs12_sync = true;
  	}
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 7785678caedb..a67ea86edb0b 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -956,6 +956,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_MSR_PLATFORM_INFO 159
- #define KVM_CAP_PPC_NESTED_HV 160
- #define KVM_CAP_HYPERV_SEND_IPI 161
-+#define KVM_CAP_HYPERV_ENLIGHTENED_VMCS 162
+ 	vmx->nested.dirty_vmcs12 = true;
+ }
+@@ -10659,9 +11048,16 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 		vmcs_write32(PLE_WINDOW, vmx->ple_window);
+ 	}
  
- #ifdef KVM_CAP_IRQ_ROUTING
+-	if (vmx->nested.sync_shadow_vmcs) {
+-		copy_vmcs12_to_shadow(vmx);
+-		vmx->nested.sync_shadow_vmcs = false;
++	if (vmx->nested.need_vmcs12_sync) {
++		if (vmx->nested.hv_evmcs) {
++			copy_vmcs12_to_enlightened(vmx);
++			/* All fields are clean */
++			vmx->nested.hv_evmcs->hv_clean_fields |=
++				HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL;
++		} else {
++			copy_vmcs12_to_shadow(vmx);
++		}
++		vmx->nested.need_vmcs12_sync = false;
+ 	}
  
+ 	if (test_bit(VCPU_REGS_RSP, (unsigned long *)&vcpu->arch.regs_dirty))
+@@ -12037,7 +12433,7 @@ static void prepare_vmcs02_early(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
+ 	u32 exec_control, vmcs12_exec_ctrl;
+ 	u64 guest_efer = nested_vmx_calc_efer(vmx, vmcs12);
+ 
+-	if (vmx->nested.dirty_vmcs12)
++	if (vmx->nested.dirty_vmcs12 || vmx->nested.hv_evmcs)
+ 		prepare_vmcs02_early_full(vmx, vmcs12);
+ 
+ 	/*
+@@ -12312,7 +12708,7 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 
+-	if (vmx->nested.dirty_vmcs12) {
++	if (vmx->nested.dirty_vmcs12 || vmx->nested.hv_evmcs) {
+ 		prepare_vmcs02_full(vmx, vmcs12);
+ 		vmx->nested.dirty_vmcs12 = false;
+ 	}
+@@ -12899,8 +13295,8 @@ static int nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
+ 	load_vmcs12_host_state(vcpu, vmcs12);
+ 	vmcs12->vm_exit_reason = exit_reason | VMX_EXIT_REASONS_FAILED_VMENTRY;
+ 	vmcs12->exit_qualification = exit_qual;
+-	if (enable_shadow_vmcs)
+-		vmx->nested.sync_shadow_vmcs = true;
++	if (enable_shadow_vmcs || vmx->nested.hv_evmcs)
++		vmx->nested.need_vmcs12_sync = true;
+ 	return 1;
+ }
+ 
+@@ -12932,8 +13328,13 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+ 	if (vmcs12->hdr.shadow_vmcs)
+ 		return nested_vmx_failInvalid(vcpu);
+ 
+-	if (enable_shadow_vmcs)
++	if (vmx->nested.hv_evmcs) {
++		copy_enlightened_to_vmcs12(vmx);
++		/* Enlightened VMCS doesn't have launch state */
++		vmcs12->launch_state = !launch;
++	} else if (enable_shadow_vmcs) {
+ 		copy_shadow_to_vmcs12(vmx);
++	}
+ 
+ 	/*
+ 	 * The nested entry process starts with enforcing various prerequisites
+@@ -13690,8 +14091,8 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
+ 	 */
+ 	kvm_make_request(KVM_REQ_APIC_PAGE_RELOAD, vcpu);
+ 
+-	if (enable_shadow_vmcs && exit_reason != -1)
+-		vmx->nested.sync_shadow_vmcs = true;
++	if ((exit_reason != -1) && (enable_shadow_vmcs || vmx->nested.hv_evmcs))
++		vmx->nested.need_vmcs12_sync = true;
+ 
+ 	/* in case we halted in L2 */
+ 	vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+@@ -14216,6 +14617,11 @@ static int vmx_get_nested_state(struct kvm_vcpu *vcpu,
+ 
+ 	vmx = to_vmx(vcpu);
+ 	vmcs12 = get_vmcs12(vcpu);
++
++	/* FIXME: Enlightened VMCS is currently unsupported */
++	if (vmx->nested.hv_evmcs)
++		return -ENOTSUPP;
++
+ 	if (nested_vmx_allowed(vcpu) &&
+ 	    (vmx->nested.vmxon || vmx->nested.smm.vmxon)) {
+ 		kvm_state.vmx.vmxon_pa = vmx->nested.vmxon_ptr;
+@@ -14257,12 +14663,12 @@ static int vmx_get_nested_state(struct kvm_vcpu *vcpu,
+ 	 * When running L2, the authoritative vmcs12 state is in the
+ 	 * vmcs02. When running L1, the authoritative vmcs12 state is
+ 	 * in the shadow vmcs linked to vmcs01, unless
+-	 * sync_shadow_vmcs is set, in which case, the authoritative
++	 * need_vmcs12_sync is set, in which case, the authoritative
+ 	 * vmcs12 state is in the vmcs12 already.
+ 	 */
+ 	if (is_guest_mode(vcpu))
+ 		sync_vmcs12(vcpu, vmcs12);
+-	else if (enable_shadow_vmcs && !vmx->nested.sync_shadow_vmcs)
++	else if (enable_shadow_vmcs && !vmx->nested.need_vmcs12_sync)
+ 		copy_shadow_to_vmcs12(vmx);
+ 
+ 	if (copy_to_user(user_kvm_nested_state->data, vmcs12, sizeof(*vmcs12)))
 -- 
 2.17.1
 
