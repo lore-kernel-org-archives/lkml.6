@@ -2,395 +2,161 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F21EFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1FAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B48D0208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 02:59:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B48D0208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id DFFFC2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 03:00:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="thDiejC0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFFFC2089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbeJPKrv (ORCPT
+        id S1727164AbeJPKsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 06:47:51 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:47320 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726928AbeJPKrv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 06:47:51 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437212|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e01546;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.D2f6c0Q_1539658748;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D2f6c0Q_1539658748)
-          by smtp.aliyun-inc.com(10.147.41.187);
-          Tue, 16 Oct 2018 10:59:08 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     akpm@linux-foundation.org, arnd@arndb.de,
-        daniel.lezcano@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hch@infradead.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, peterz@infradead.org,
-        robh@kernel.org, tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V9 03/21] csky: Kernel booting
-Date:   Tue, 16 Oct 2018 10:58:22 +0800
-Message-Id: <4fc690db42b5b43edb15fd23517a6f3ba5b2c9ff.1539655731.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1539655731.git.ren_guo@c-sky.com>
-References: <cover.1539655731.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1539655731.git.ren_guo@c-sky.com>
-References: <cover.1539655731.git.ren_guo@c-sky.com>
+        Tue, 16 Oct 2018 06:48:41 -0400
+Received: from cmta19.telus.net ([209.171.16.92]:58542 "EHLO cmta19.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726928AbeJPKsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 06:48:40 -0400
+Received: from dougxps ([173.180.45.4])
+        by cmsmtp with SMTP
+        id CFangdIUmTtUECFaogvZwn; Mon, 15 Oct 2018 21:00:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
+        t=1539658831; bh=t1gOsh75WUxcZYvjc07vOycHBwroG3MAnWujiwR0v1Y=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date;
+        b=thDiejC0QiD1JrRYuX4uWKNrMkaUxAo3VKFJIEL5Z83DIGpWNf5RvY0JVP/2qL0+D
+         ZZuE2R1k86MABC+x93cUewIaxcZEW+OrbfSEGky8Yd7KQm0wdwug1BxIBo52+f0nKk
+         dld1dr5nqVOobl6m+pgJdzc9X+ZU2TKq9vdVBjNqN2SON+SIIH5HuwZlqj+o2MG6Ex
+         9Zm+iNO2ozCYJ9Qs11BMiQf8XviGg2oR94FYjc5+C7fVWlWt51oc43qkvllR/QmTAq
+         zO1Gwm73waHO25TUxHq/vEcvCxziVweQk6H70i+gEOhcRuwTaDxxmsNgzUKgbFPxfg
+         17GFaY3XSfgjg==
+X-Authority-Analysis: v=2.3 cv=a6fhCnaF c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=aatUQebYAAAA:8
+ a=FGbulvE0AAAA:8 a=gu6fZOg2AAAA:8 a=4c1hVEeGUr2z-EoRigYA:9 a=QEXdDO2ut3YA:10
+ a=BBaMYSUnRWwA:10 a=5DLwxePbAi8A:10 a=oCD-iAR9n-0A:10 a=-FEs8UIgK8oA:10
+ a=NWVoK91CQyQA:10 a=7715FyvI7WU-l6oqrZBK:22 a=svzTaB3SJmTkU8mK-ULk:22
+ a=2RSlZUUhi9gRBrsHwhhZ:22
+From:   "Doug Smythies" <dsmythies@telus.net>
+To:     "'Rafael J. Wysocki'" <rafael@kernel.org>
+Cc:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+        "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
+        "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
+        "'Frederic Weisbecker'" <frederic@kernel.org>,
+        "'Mel Gorman'" <mgorman@suse.de>,
+        "'Giovanni Gherdovich'" <ggherdovich@suse.cz>,
+        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "Doug Smythies" <dsmythies@telus.net>
+References: <000e01d4638a$91a20c60$b4e62520$@net> BxfmgI8c1ivIDBxfngUxWV
+In-Reply-To: BxfmgI8c1ivIDBxfngUxWV
+Subject: RE: [RFC/RFT/[PATCH] cpuidle: New timer events oriented governor for tickless systems
+Date:   Mon, 15 Oct 2018 20:00:19 -0700
+Message-ID: <001101d464fc$65623c60$3026b520$@net>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Content-Language: en-ca
+Thread-Index: AdRkW//69sOuXx+MRCCqbhBsESk+UAAlZb7A
+X-CMAE-Envelope: MS4wfFVg3LF5I7UEE53ZDcMWan1YtdwUd9X1fZIece3cwteUN1KTLLak7keC3zRmkAhrKblcAgKZoWVq2Rh6Gs4Cnl/AicXMhtzHxxM31ny/4STPCm9+gMfg
+ fExPmAouyxMXGHVSg51wXnBNPUZjLzPvsbcfpO7g9vBG2jeEH630D6rxmvCiN+kGNacL4UpydzoG+/8DXeVCGS93wjN6I4K+7BOWInKbv1Bn3+B/V6hvhR1L
+ GouLH6HpPsLZ0KARSlOgXa0ddwZ7rs93otBgMijz5R8Yc0lHX8qQMkqhFByFUP3BPCUIFiS5VCwmXa6lpE+ngPNXelvpsEpVHHaM1+1pU1FimL4p/tHuOBYZ
+ FajVYAhNHHJwZVTmX6rK+MRm0Sy1ZiJW/N/9Iqmh+hrAvm38ftnz3CP5vMK/MLjbKUP9zZU89P+9HoQbSmywAfB+mC++PHg4QXXFBBv9H15IELu767sUL5sw
+ JA2Fl6BYtsTQRpSoShvVMxFvGOaK0NCcdVmo5g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add boot code. Thx boot params is all in dtb and it's
-the only way to let kernel get bootloader param information.
+On 2018.10.15 00:52 Rafael J. Wysocki wrote:
+> On Sun, Oct 14, 2018 at 8:53 AM Doug Smythies <dsmythies@telus.net> wrote:
+>> On 2018.10.11 14:02 Rafael J. Wysocki wrote:
+>
+> ...[cut]...
+>
+>>> Overall, it selects deeper idle states than menu more often, but
+>>> that doesn't seem to make a significant difference in the majority
+>>> of cases.
+>>
+>> Not always, that viscous powernightmare sweep test that I run used
+>> way way more processor package power and spent a staggering amount
+>> of time in idle state 0. [1].
+>
+> Can you please remind me what exactly the workload is in that test?
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
----
-Changelog:
- - Use built-in dtb when dtb param is NULL.
- - Add dummy console for allmodconfig.
----
----
- arch/csky/kernel/head.S        |  77 ++++++++++++++++++++
- arch/csky/kernel/setup.c       | 162 +++++++++++++++++++++++++++++++++++++++++
- arch/csky/kernel/vmlinux.lds.S |  66 +++++++++++++++++
- 3 files changed, 305 insertions(+)
- create mode 100644 arch/csky/kernel/head.S
- create mode 100644 arch/csky/kernel/setup.c
- create mode 100644 arch/csky/kernel/vmlinux.lds.S
+The problem with my main test computer is that I have never had a good
+way to make it use idle state 0 and/or idle state 1 a significant amount,
+while not setting the need-resched flag. Due to the minimum overheads
+involved, in a tight loop c program calling nanosleep with an only 1
+nanosecond argument, will result in about 50 (44 to 57 measured)
+microseconds, or much too long to invoke idle state 0 or 1 (at least
+on my test computer). So, for my 8 CPU older model i7-2600K, the idea
+is to spin out 40 threads doing short sleeps in an attempt to pile up
+events such that the shallower idle states are invoked more often.
 
-diff --git a/arch/csky/kernel/head.S b/arch/csky/kernel/head.S
-new file mode 100644
-index 0000000..9c4ec47
---- /dev/null
-+++ b/arch/csky/kernel/head.S
-@@ -0,0 +1,77 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <linux/linkage.h>
-+#include <linux/init.h>
-+#include <asm/page.h>
-+#include <abi/entry.h>
-+
-+__HEAD
-+ENTRY(_start)
-+	/* set super user mode */
-+	lrw	a3, DEFAULT_PSR_VALUE
-+	mtcr    a3, psr
-+	psrset  ee
-+
-+	SETUP_MMU a3
-+
-+	/* set stack point */
-+	lrw     a3, init_thread_union + THREAD_SIZE
-+	mov	sp, a3
-+
-+	jmpi	csky_start
-+END(_start)
-+
-+#ifdef CONFIG_SMP
-+.align 10
-+ENTRY(_start_smp_secondary)
-+	/* Invalid I/Dcache BTB BHT */
-+	movi	a3, 7
-+	lsli	a3, 16
-+	addi	a3, (1<<4) | 3
-+	mtcr	a3, cr17
-+
-+	tlbi.alls
-+
-+	/* setup PAGEMASK */
-+	movi	a3, 0
-+	mtcr	a3, cr<6, 15>
-+
-+	/* setup MEL0/MEL1 */
-+	grs	a0, _start_smp_pc
-+_start_smp_pc:
-+	bmaski  a1, 13
-+	andn    a0, a1
-+	movi    a1, 0x00000006
-+	movi    a2, 0x00001006
-+	or      a1, a0
-+	or      a2, a0
-+	mtcr	a1, cr<2, 15>
-+	mtcr	a2, cr<3, 15>
-+
-+	/* setup MEH */
-+	mtcr	a0, cr<4, 15>
-+
-+	/* write TLB */
-+	bgeni   a3, 28
-+	mtcr	a3, cr<8, 15>
-+
-+	SETUP_MMU a3
-+
-+	/* enable MMU */
-+	movi	a3, 1
-+	mtcr    a3, cr18
-+
-+	jmpi	_goto_mmu_on
-+_goto_mmu_on:
-+	lrw	a3, DEFAULT_PSR_VALUE
-+	mtcr    a3, psr
-+	psrset  ee
-+
-+	/* set stack point */
-+	lrw     a3, secondary_stack
-+	ld.w	a3, (a3, 0)
-+	mov	sp, a3
-+
-+	jmpi	csky_start_secondary
-+END(_start_smp_secondary)
-+#endif
-diff --git a/arch/csky/kernel/setup.c b/arch/csky/kernel/setup.c
-new file mode 100644
-index 0000000..a5e3ab1
---- /dev/null
-+++ b/arch/csky/kernel/setup.c
-@@ -0,0 +1,162 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#include <linux/console.h>
-+#include <linux/memblock.h>
-+#include <linux/bootmem.h>
-+#include <linux/initrd.h>
-+#include <linux/of.h>
-+#include <linux/of_fdt.h>
-+#include <linux/start_kernel.h>
-+#include <linux/dma-contiguous.h>
-+#include <linux/screen_info.h>
-+#include <asm/sections.h>
-+#include <asm/mmu_context.h>
-+#include <asm/pgalloc.h>
-+
-+#ifdef CONFIG_DUMMY_CONSOLE
-+struct screen_info screen_info = {
-+	.orig_video_lines	= 30,
-+	.orig_video_cols	= 80,
-+	.orig_video_mode	= 0,
-+	.orig_video_ega_bx	= 0,
-+	.orig_video_isVGA	= 1,
-+	.orig_video_points	= 8
-+};
-+#endif
-+
-+phys_addr_t __init_memblock memblock_end_of_REG0(void)
-+{
-+	return (memblock.memory.regions[0].base +
-+		memblock.memory.regions[0].size);
-+}
-+
-+phys_addr_t __init_memblock memblock_start_of_REG1(void)
-+{
-+	return memblock.memory.regions[1].base;
-+}
-+
-+size_t __init_memblock memblock_size_of_REG1(void)
-+{
-+	return memblock.memory.regions[1].size;
-+}
-+
-+static void __init csky_memblock_init(void)
-+{
-+	unsigned long zone_size[MAX_NR_ZONES];
-+	unsigned long zhole_size[MAX_NR_ZONES];
-+	signed long size;
-+
-+	memblock_reserve(__pa(_stext), _end - _stext);
-+#ifdef CONFIG_BLK_DEV_INITRD
-+	memblock_reserve(__pa(initrd_start), initrd_end - initrd_start);
-+#endif
-+
-+	early_init_fdt_reserve_self();
-+	early_init_fdt_scan_reserved_mem();
-+
-+	memblock_dump_all();
-+
-+	memset(zone_size, 0, sizeof(zone_size));
-+	memset(zhole_size, 0, sizeof(zhole_size));
-+
-+	min_low_pfn = PFN_UP(memblock_start_of_DRAM());
-+	max_pfn	    = PFN_DOWN(memblock_end_of_DRAM());
-+
-+	max_low_pfn = PFN_UP(memblock_end_of_REG0());
-+	if (max_low_pfn == 0)
-+		max_low_pfn = max_pfn;
-+
-+	size = max_pfn - min_low_pfn;
-+
-+	if (memblock.memory.cnt > 1) {
-+		zone_size[ZONE_NORMAL]  =
-+			PFN_DOWN(memblock_start_of_REG1()) - min_low_pfn;
-+		zhole_size[ZONE_NORMAL] =
-+			PFN_DOWN(memblock_start_of_REG1()) - max_low_pfn;
-+	} else {
-+		if (size <= PFN_DOWN(LOWMEM_LIMIT - PHYS_OFFSET_OFFSET))
-+			zone_size[ZONE_NORMAL] = max_pfn - min_low_pfn;
-+		else {
-+			zone_size[ZONE_NORMAL] =
-+				PFN_DOWN(LOWMEM_LIMIT - PHYS_OFFSET_OFFSET);
-+			max_low_pfn = min_low_pfn + zone_size[ZONE_NORMAL];
-+		}
-+	}
-+
-+#ifdef CONFIG_HIGHMEM
-+	size = 0;
-+	if (memblock.memory.cnt > 1) {
-+		size = PFN_DOWN(memblock_size_of_REG1());
-+		highstart_pfn = PFN_DOWN(memblock_start_of_REG1());
-+	} else {
-+		size = max_pfn - min_low_pfn -
-+			PFN_DOWN(LOWMEM_LIMIT - PHYS_OFFSET_OFFSET);
-+		highstart_pfn =  min_low_pfn +
-+			PFN_DOWN(LOWMEM_LIMIT - PHYS_OFFSET_OFFSET);
-+	}
-+
-+	if (size > 0)
-+		zone_size[ZONE_HIGHMEM] = size;
-+
-+	highend_pfn = max_pfn;
-+#endif
-+	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
-+
-+	dma_contiguous_reserve(0);
-+
-+	free_area_init_node(0, zone_size, min_low_pfn, zhole_size);
-+}
-+
-+void __init setup_arch(char **cmdline_p)
-+{
-+	*cmdline_p = boot_command_line;
-+
-+	console_verbose();
-+
-+	pr_info("Phys. mem: %ldMB\n",
-+		(unsigned long) memblock_phys_mem_size()/1024/1024);
-+
-+	init_mm.start_code = (unsigned long) _stext;
-+	init_mm.end_code = (unsigned long) _etext;
-+	init_mm.end_data = (unsigned long) _edata;
-+	init_mm.brk = (unsigned long) _end;
-+
-+	parse_early_param();
-+
-+	csky_memblock_init();
-+
-+	unflatten_and_copy_device_tree();
-+
-+#ifdef CONFIG_SMP
-+	setup_smp();
-+#endif
-+
-+	sparse_init();
-+
-+#ifdef CONFIG_HIGHMEM
-+	kmap_init();
-+#endif
-+
-+#if defined(CONFIG_VT) && defined(CONFIG_DUMMY_CONSOLE)
-+	conswitchp = &dummy_con;
-+#endif
-+}
-+
-+asmlinkage __visible void __init csky_start(unsigned int unused, void *param)
-+{
-+	/* Clean up bss section */
-+	memset(__bss_start, 0, __bss_stop - __bss_start);
-+
-+	pre_trap_init();
-+	pre_mmu_init();
-+
-+	if (param == NULL)
-+		early_init_dt_scan(__dtb_start);
-+	else
-+		early_init_dt_scan(param);
-+
-+	start_kernel();
-+
-+	asm volatile("br .\n");
-+}
-diff --git a/arch/csky/kernel/vmlinux.lds.S b/arch/csky/kernel/vmlinux.lds.S
-new file mode 100644
-index 0000000..ae7961b
---- /dev/null
-+++ b/arch/csky/kernel/vmlinux.lds.S
-@@ -0,0 +1,66 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <asm/vmlinux.lds.h>
-+#include <asm/page.h>
-+
-+OUTPUT_ARCH(csky)
-+ENTRY(_start)
-+
-+#ifndef __cskyBE__
-+jiffies = jiffies_64;
-+#else
-+jiffies = jiffies_64 + 4;
-+#endif
-+
-+#define VBR_BASE \
-+	. = ALIGN(1024); \
-+	vec_base = .; \
-+	. += 512;
-+
-+SECTIONS
-+{
-+	. = PAGE_OFFSET + PHYS_OFFSET_OFFSET;
-+
-+	_stext = .;
-+	__init_begin = .;
-+	HEAD_TEXT_SECTION
-+	INIT_TEXT_SECTION(PAGE_SIZE)
-+	INIT_DATA_SECTION(PAGE_SIZE)
-+	PERCPU_SECTION(L1_CACHE_BYTES)
-+	. = ALIGN(PAGE_SIZE);
-+	__init_end = .;
-+
-+	.text : AT(ADDR(.text) - LOAD_OFFSET) {
-+		_text = .;
-+		IRQENTRY_TEXT
-+		SOFTIRQENTRY_TEXT
-+		TEXT_TEXT
-+		SCHED_TEXT
-+		CPUIDLE_TEXT
-+		LOCK_TEXT
-+		KPROBES_TEXT
-+		*(.fixup)
-+		*(.gnu.warning)
-+	} = 0
-+	_etext = .;
-+
-+	/* __init_begin __init_end must be page aligned for free_initmem */
-+	. = ALIGN(PAGE_SIZE);
-+
-+
-+	_sdata = .;
-+	RO_DATA_SECTION(PAGE_SIZE)
-+	RW_DATA_SECTION(L1_CACHE_BYTES, PAGE_SIZE, THREAD_SIZE)
-+	_edata = .;
-+
-+	NOTES
-+	EXCEPTION_TABLE(L1_CACHE_BYTES)
-+	BSS_SECTION(L1_CACHE_BYTES, PAGE_SIZE, L1_CACHE_BYTES)
-+	VBR_BASE
-+	_end = . ;
-+
-+	STABS_DEBUG
-+	DWARF_DEBUG
-+
-+	DISCARDS
-+}
--- 
-2.7.4
+Why 40 threads, one might wonder? This was many months ago now, but
+I tested quite a number of threads, and 40 seemed to provide the
+most interesting results for this type of work. I have not rechecked
+it since (probably should).
+
+For the testing I did in August for this:
+
+"[PATCH] cpuidle: menu: Retain tick when shallow state is selected"
+[2].
+The thinking was to sweep through a wide range of sleep times,
+and see if anything odd shows up. The test description is copied
+here:
+
+In [2] Doug wrote:
+> Test 1: A Thomas Ilsche type "powernightmare" test:
+> (forever ((10 times - variable usec sleep) 0.999 seconds sleep) X 40 staggered
+> threads. Where the "variable" was from 0.05 to 5 in steps of 0.05, for the first ~200
+> minutes of the test. (note: overheads mean that actual loop times are quite
+> different.) And then from 5 to 500 in steps of 1, for the remaining 1000 minutes of
+> the test. Each step ran for 2 minutes. The system was idle for 1 minute at the start,
+> and a few minutes at the end of the graphs.
+> While called "kernel 4.18", the baseline was actually from mainline at head =
+> df2def4, or just after Rafael's linux-pm "pm-4.19-rc1-2" merge.
+> (actually after the next acpi merge).
+> Reference kernel = df2def4 with the two patches reverted.
+
+However, that description was flawed, because there actually was never
+a long sleep (incompetence on my part, but it doesn't really matter).
+That test was 1200 minutes, and is worth looking at [3].
+Notice how, as the test progresses, a migration through the idle
+states can be observed, just as expected.
+
+The next old reference of this test was the 8 patch set on top of
+Kernel 4.19-rc6 [4], from a week ago. However, I shortened the test
+by 900 minutes. Why? Well, there is only so much time in a day.
+
+So now, back to the test this thread is about [1]. It might be
+argued that maybe the TEO governor should be spending more time
+in idle state 0 near the start of test, as the test shows. Trace
+data does, maybe, support such an argument, but I haven't had
+time to dig into it.
+
+I also wonder if some of the weirdness later in the test is
+repeatable or not (re: discussion elsewhere on this thread,
+now cut, about lack of repeatability). However, I have not
+had time to repeat the test.
+
+Hope this helps, and sorry for any confusion and this long e-mail.
+ 
+... Doug
+
+[1] http://fast.smythies.com/linux-pm/k419/k419-pn-sweep-teo.htm
+[2] https://marc.info/?l=linux-pm&m=153531591826718&w=2
+[3] http://fast.smythies.com/linux-pm/k418-pn-sweep-rjw.htm
+[4] http://fast.smythies.com/linux-pm/k419/k419-pn-sweep-rjw.htm
+   
 
