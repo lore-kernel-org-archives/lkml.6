@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A9FC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E08C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA4E721502
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1A3721471
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWpInLdv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA4E721502
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljCqDFdG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A3721471
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbeJPMDR (ORCPT
+        id S1729600AbeJPMDT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:03:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51790 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:03:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728337AbeJPMDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:03:17 -0400
+        id S1729577AbeJPMDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:03:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72A0D2148D;
-        Tue, 16 Oct 2018 04:14:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C3B92148C;
+        Tue, 16 Oct 2018 04:14:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663294;
-        bh=NydNWK4r0l/g39ISNLdhvHZCvfG7W4TFpnx5XK1YRuk=;
+        s=default; t=1539663295;
+        bh=U+3EFEWHEFbLwtn1ruOUU53PzVr3Jur7HAL/OT64tZw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UWpInLdvvWmPUZNh0oF1SN/wfOBcZp+7Gck1odok9uk7w6Xij6sjLqBDBO/UW5iPc
-         nLAIA7/quxpFVzq7EirOWBNipvh+IYUFGjVS1WL/ebFbjx2HggmdERI7j1TCpIeDbk
-         FWBhUcNEMaPZ/hvBjM+sKobBMDZtuWf6D3N2NIE8=
+        b=ljCqDFdGtYj8ZQYm00qC0rqXpYWNkg6HjG+0HXozGmjDvDzeu6/vUrjur0OlTq8X6
+         zhmXofCJCxJbW0Th2bONR4rE0mUpkZcDwpCiCgFxLzYospxSe5PSMC1zVs/uazUnt/
+         x1Ct8H4L5DrTYz14aGJ3QoGSPdNCopemNBFiAoL4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mahesh Bandewar <maheshb@google.com>,
-        Eric Dumazet <edumazet@google.com>,
+Cc:     Sean Tranchetti <stranche@codeaurora.org>,
+        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 53/61] bonding: fix warning message
-Date:   Tue, 16 Oct 2018 00:13:55 -0400
-Message-Id: <20181016041403.135678-53-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 54/61] net: qualcomm: rmnet: Skip processing loopback packets
+Date:   Tue, 16 Oct 2018 00:13:56 -0400
+Message-Id: <20181016041403.135678-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -54,43 +54,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Sean Tranchetti <stranche@codeaurora.org>
 
-[ Upstream commit 0f3b914c9cfcd7bbedd445dc4ac5dd999fa213c2 ]
+[ Upstream commit a07f388e2cde2be74b263f85df6f672fea0305a1 ]
 
-RX queue config for bonding master could be different from its slave
-device(s). With the commit 6a9e461f6fe4 ("bonding: pass link-local
-packets to bonding master also."), the packet is reinjected into stack
-with skb->dev as bonding master. This potentially triggers the
-message:
+RMNET RX handler was processing invalid packets that were
+originally sent on the real device and were looped back via
+dev_loopback_xmit(). This was detected using syzkaller.
 
-   "bondX received packet on queue Y, but number of RX queues is Z"
-
-whenever the queue that packet is received on is higher than the
-numrxqueues on bonding master (Y > Z).
-
-Fixes: 6a9e461f6fe4 ("bonding: pass link-local packets to bonding master also.")
-Reported-by: John Sperbeck <jsperbeck@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
+Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
+Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/bonding/bond_main.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index b880126e616b..cf64a365362b 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1193,6 +1193,7 @@ static rx_handler_result_t bond_handle_frame(struct sk_buff **pskb)
+diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
+index 929fb8d96ec0..8d979fef5fc7 100644
+--- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
++++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
+@@ -205,6 +205,9 @@ rx_handler_result_t rmnet_rx_handler(struct sk_buff **pskb)
+ 	if (!skb)
+ 		return RX_HANDLER_CONSUMED;
  
- 		if (nskb) {
- 			nskb->dev = bond->dev;
-+			nskb->queue_mapping = 0;
- 			netif_rx(nskb);
- 		}
- 		return RX_HANDLER_PASS;
++	if (skb->pkt_type == PACKET_LOOPBACK)
++		return RX_HANDLER_PASS;
++
+ 	dev = skb->dev;
+ 	port = rmnet_get_port(dev);
+ 
 -- 
 2.17.1
 
