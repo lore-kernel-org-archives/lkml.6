@@ -2,106 +2,103 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE5DC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D80C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBFEB20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:12:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJOcElll"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBFEB20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 388942086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 08:13:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388942086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbeJPQBc (ORCPT
+        id S1727132AbeJPQCl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 12:01:32 -0400
-Received: from mail-pg1-f178.google.com ([209.85.215.178]:33068 "EHLO
-        mail-pg1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbeJPQBc (ORCPT
+        Tue, 16 Oct 2018 12:02:41 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:59041 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726968AbeJPQCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 12:01:32 -0400
-Received: by mail-pg1-f178.google.com with SMTP id y18-v6so10487630pge.0;
-        Tue, 16 Oct 2018 01:12:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=K9ErhGaOwlvn70EuZYOINk0AgswN6DoWy2Wi43altDo=;
-        b=PJOcElllHaiNtG2fa7U3FymT0mZpxvulSaal6ejNc1zOJRqPRtmb4SjuO/cxyxqtGN
-         nPRYUiHzS1GdyZuyieqsEW/wjrfgkMC4wv34oqBRWBTiYyQz9uNSPtCoprwOIlcv9yHg
-         fMJF+5IgQmpE437ERlJ8EZPLTOvuhLKPM22pIAxf4RYMoTx+EVWqwuDGHXv2viucbWV/
-         bVy3A55UsoJ2P+otVKpy0XTMKgXj3ZM4FnFFvXBDiT6/qLvaMGhgE7Lhd+VD94rZC7du
-         E+g9Yq6gIZXwL8UcK6GueCCcCwTna5U4suFZVQsVwSsGJSUNx14DoYmQqozH4V/kBm24
-         uNvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=K9ErhGaOwlvn70EuZYOINk0AgswN6DoWy2Wi43altDo=;
-        b=h73FhFvcmbfbG389e6LuWoay2BDYkC7fH8EjBUGgZKk6DMoY8SL19L6NzBD3ivoZQt
-         ay0zNk8TiDkHMNPf20eDiSqR936QGF+4uRpIgy0FMFohnV54sG7+mAYaI9tGC7YbrgId
-         7WXwzIR50hJfVhxXhaj0srQD+FNYcCZnOpm+nh2G1Aj4jaf5XefN4CeV5vDvkt+dvgZJ
-         6GjrpwKSlqB/UQkdFb51KlL/n1fNjm8SYAJAJk13pYt23Xir3gCXqtfjjQlMXNFrUIDM
-         VPVuXZQlrqgOtH7BAqDhlMb+ri2BSpAuxSq+A2uRtKR2t+c202aJ7ieia8eci9UV53Z5
-         eDIg==
-X-Gm-Message-State: ABuFfojzxxYSS8TeCaVjFBYUGlZVprUbiJu5piFT/8p/K9SyYF+y2i07
-        ujMv+17O0+6QgI9bJQJE6qg=
-X-Google-Smtp-Source: ACcGV63UgF5hfj/WL4WzoEi3DZ6VmypXTUnlBi0dVrJ8kht7v36Hin55iTOP7i7DC1cdBAedmEI3VA==
-X-Received: by 2002:a65:655a:: with SMTP id a26-v6mr19186060pgw.389.1539677538352;
-        Tue, 16 Oct 2018 01:12:18 -0700 (PDT)
-Received: from localhost ([175.223.10.117])
-        by smtp.gmail.com with ESMTPSA id n80-v6sm21170256pfh.166.2018.10.16.01.12.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 01:12:17 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 17:12:13 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCHv2 0/4] less deadlock prone serial consoles
-Message-ID: <20181016081213.GA32747@jagdpanzerIV>
-References: <20181016050428.17966-1-sergey.senozhatsky@gmail.com>
- <20181016072328.GA4030@hirez.programming.kicks-ass.net>
+        Tue, 16 Oct 2018 12:02:41 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-22-UPK5rDeFOYeY9zcZOCvDkg-1; Tue, 16 Oct 2018 09:13:24 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 16 Oct 2018 09:13:25 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 16 Oct 2018 09:13:25 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Nick Desaulniers' <ndesaulniers@google.com>
+CC:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "Eric Biggers" <ebiggers@google.com>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] KEYS: trusted: fix -Wvarags warning
+Thread-Topic: [PATCH] KEYS: trusted: fix -Wvarags warning
+Thread-Index: AQHUYaFtz6yVKVwaakuhVxq6kXztuKUgDL3QgADCWICAALy2IA==
+Date:   Tue, 16 Oct 2018 08:13:25 +0000
+Message-ID: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
+ <20181011203126.15338-1-ndesaulniers@google.com>
+ <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
+ <CAKwvOdmXVY1iA-VAs-Ns3qVVnMTeU6v4RqxoS2=SJcSeQ23_og@mail.gmail.com>
+In-Reply-To: <CAKwvOdmXVY1iA-VAs-Ns3qVVnMTeU6v4RqxoS2=SJcSeQ23_og@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016072328.GA4030@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: UPK5rDeFOYeY9zcZOCvDkg-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (10/16/18 09:23), Peter Zijlstra wrote:
-> On Tue, Oct 16, 2018 at 02:04:24PM +0900, Sergey Senozhatsky wrote:
-> > 	Hello,
-> > 
-> > 
-> > 	RFC
-> > 
-> > 
-> > 	The patch set reduces the number of ways serial consoles
-> > can deadlock the system, including the recently reported deadlock
-> > in panic().
-> 
-> That's what I use early_printk for... :-)
+RnJvbTogTmljayBEZXNhdWxuaWVycw0KPiBTZW50OiAxNSBPY3RvYmVyIDIwMTggMjI6NTQNCj4g
+T24gTW9uLCBPY3QgMTUsIDIwMTggYXQgMjoyNiBBTSBEYXZpZCBMYWlnaHQgPERhdmlkLkxhaWdo
+dEBhY3VsYWIuY29tPiB3cm90ZToNCj4gPg0KPiA+IEZyb206IG5kZXNhdWxuaWVyc0Bnb29nbGUu
+Y29tDQo+ID4gPiBTZW50OiAxMSBPY3RvYmVyIDIwMTggMjE6MzENCj4gPiAuLi4NCj4gPiA+IGJ5
+IHN3YXBwaW5nIGgyIGFuZCBoMy4NCj4gPiA+DQo+ID4gPiBzZWN1cml0eS9rZXlzL3RydXN0ZWQu
+YzoxNDY6MTc6IHdhcm5pbmc6IHBhc3NpbmcgYW4gb2JqZWN0IHRoYXQNCj4gPiA+IHVuZGVyZ29l
+cyBkZWZhdWx0DQo+ID4gPiAgICAgICBhcmd1bWVudCBwcm9tb3Rpb24gdG8gJ3ZhX3N0YXJ0JyBo
+YXMgdW5kZWZpbmVkIGJlaGF2aW9yIFstV3ZhcmFyZ3NdDQo+ID4gPiAgICAgICAgIHZhX3N0YXJ0
+KGFyZ3AsIGgzKTsNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgXg0KPiA+ID4gc2VjdXJp
+dHkva2V5cy90cnVzdGVkLmM6MTI2OjM3OiBub3RlOiBwYXJhbWV0ZXIgb2YgdHlwZSAndW5zaWdu
+ZWQNCj4gPiA+IGNoYXInIGlzIGRlY2xhcmVkIGhlcmUNCj4gPiA+IHVuc2lnbmVkIGNoYXIgKmgy
+LCB1bnNpZ25lZCBjaGFyIGgzLCAuLi4pDQo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgXg0KPiA+ID4gU3BlY2lmaWNhbGx5LCBpdCBzZWVtcyB0aGF0IGJvdGggdGhlIEM5MCAo
+NC44LjEuMSkgYW5kIEMxMSAoNy4xNi4xLjQpDQo+ID4gPiBzdGFuZGFyZHMgZXhwbGljaXRseSBj
+YWxsIHRoaXMgb3V0IGFzIHVuZGVmaW5lZCBiZWhhdmlvcjoNCj4gPg0KPiA+IEkgZ3Vlc3MgdGhh
+dCBwcm9ibGVtcyBhcmlzZSB3aGVuIGFsbCB0aGUgYXJndW1lbnRzIGFyZSBzdGFja2VkDQo+ID4g
+YW5kIHZhX3N0YXJ0L3ZhX2FyZyB1c2UgbmFpdmUgcG9pbnRlciBtYW5pcHVsYXRpb24uDQo+ID4g
+SW4gdGhhdCBjYXNlICZoMyBtaWdodCBiZSA0biszIGFsaWduZWQgc28gdmFfYXJnKCkgd2lsbCBh
+Y2Nlc3MNCj4gPiBtaXNhbGlnbmVkIHN0YWNrIGxvY2F0aW9ucy4NCj4gPg0KPiA+IEkgZG91YnQg
+YW55IG1vZGVybiBjb21waWxlcnMgKHdoZXJlIHZhX3N0YXJ0IGFuZCB2YV9hcmcgYXJlIGJ1aWx0
+aW5zKQ0KPiA+IHdpbGwgZ2V0IHRoaXMgJ3dyb25nJyBldmVuIHdoZW4gYWxsIGFyZ3VtZW50cyBh
+cmUgc3RhY2tlZC4NCj4gPg0KPiA+IFNlZW1zIGNsYW5nIGlzIGJlaW5nIG92ZXIgY2F1dGlvdXMu
+DQo+IA0KPiBZZXM7IGRpZCB5b3UgaGF2ZSBmZWVkYmFjayBvbiB0aGUgRGVuaXMnIHByb3Bvc2Vk
+IGZpeCwgb3IgYW5vdGhlcj8NCg0KUGVyc29uYWxseSBJJ2QgYXZvaWQgY2hhciwgc2hvcnQgYW5k
+IGJvb2wgZm9yIGJvdGggZnVuY3Rpb24NCmFyZ3VtZW50cyBhbmQgcmVzdWx0cyBzaW5jZSB0aGV5
+IHR5cGljYWxseSByZXF1aXJlIGV4dHJhDQppbnN0cnVjdGlvbnMgZm9yIG1hc2tpbmcgdmFsdWVz
+IChldGMpLg0KYm9vbCBpcyBwYXJ0aWN1bGFybHkgb2Jub3hpb3VzLg0KDQpJbiB0aGF0IGNhc2Ug
+ZWl0aGVyIGludCBvciB1bnNpZ25lZCBpbnQgaXMgZ29vZC4NCg0KCURhdmlkDQoNCi0NClJlZ2lz
+dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
+S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-I've been waiting for this comment ;-)
-
-	-ss
