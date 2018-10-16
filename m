@@ -5,40 +5,40 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA6BC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76211C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA8020869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:33:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA8020869
+	by mail.kernel.org (Postfix) with ESMTP id 32C9F20869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:34:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C9F20869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=skidata.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeJQDYz (ORCPT
+        id S1727263AbeJQD0g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 23:24:55 -0400
-Received: from mail2.skidata.com ([91.230.2.91]:4786 "EHLO mail2.skidata.com"
+        Tue, 16 Oct 2018 23:26:36 -0400
+Received: from mail2.skidata.com ([91.230.2.91]:56463 "EHLO mail2.skidata.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbeJQDYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 23:24:54 -0400
+        id S1727007AbeJQD0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 23:26:35 -0400
 X-IronPort-AV: E=Sophos;i="5.54,389,1534802400"; 
-   d="scan'208";a="1730242"
-Subject: Re: [PATCH 2/7] Input: sx8654 - add reset-gpio support
+   d="scan'208";a="1730246"
+Subject: Re: [PATCH 6/7] Input: sx8654 - add sx8650 support
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
 CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Richard Leitner <richard.leitner@skidata.com>
 References: <20181016091653.26896-1-richard.leitner@skidata.com>
- <20181016091653.26896-3-richard.leitner@skidata.com>
- <20181016173931.GC230131@dtor-ws>
+ <20181016092248.27288-1-richard.leitner@skidata.com>
+ <20181016174838.GD230131@dtor-ws>
 From:   Richard Leitner <richard.leitner@skidata.com>
-Message-ID: <8d5ea869-0d92-aef0-1d27-bb5ecf5ba0af@skidata.com>
-Date:   Tue, 16 Oct 2018 21:32:41 +0200
+Message-ID: <575f935b-e082-7d19-30c1-4db36ed6114d@skidata.com>
+Date:   Tue, 16 Oct 2018 21:34:26 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181016173931.GC230131@dtor-ws>
+In-Reply-To: <20181016174838.GD230131@dtor-ws>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -50,147 +50,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dimitry,
-thanks for the quick reply!
 
-On 10/16/18 7:39 PM, Dmitry Torokhov wrote:
-> Hi Richard,
-> 
-> On Tue, Oct 16, 2018 at 11:16:48AM +0200, Richard Leitner wrote:
->> The sx8654 features a NRST input which may be connected to a GPIO.
->> Therefore add support for hard-resetting the sx8654 via this NRST.
->>
->> If the reset-gpio property is provided the sx8654 is resetted via NRST
->> instead of the soft-reset via I2C.
+On 10/16/18 7:48 PM, Dmitry Torokhov wrote:
+> On Tue, Oct 16, 2018 at 11:22:48AM +0200, Richard Leitner wrote:
+>> The sx8654 and sx8650 are quite similar, therefore add support for the
+>> sx8650 within the sx8654 driver.
 >>
 
 ...
 
->> +
->> +	dev_dbg(&ts->client->dev, "NRST unavailable, try softreset\n");
->> +	err = i2c_smbus_write_byte_data(ts->client, I2C_REG_SOFTRESET,
->> +					SOFTRESET_VALUE);
->> +	if (err)
->> +		return err;
+>>   
+>>   /* bits for I2C_REG_CHANMASK */
+>> -#define CONV_X				0x80
+>> -#define CONV_Y				0x40
+>> +#define CONV_X				BIT(7)
+>> +#define CONV_Y				BIT(6)
 > 
-> Have this in an "else" branch?
+> If you are using BIT() you need to include include/linux/bitops.h
+> 
+> I also would prefer conversion to using BIT() as a separate patch.
 
-If that's the preferred way... of course.
+OK. I'll take it out of this patch.
+
+Should I convert them (and the other #defines where it makes sense) to 
+BIT() at all?
+
+> 
+>>   
+>>   /* coordinates rate: higher nibble of CTRL0 register */
+>>   #define RATE_MANUAL			0x00
+>> @@ -71,14 +75,110 @@
+>>   /* power delay: lower nibble of CTRL0 register */
+>>   #define POWDLY_1_1MS			0x0b
+>>   
+>> +/* for sx8650, as we have no pen release IRQ there: timeout in ns following the
+>> + * last PENIRQ after which we assume the pen is lifted.
+>> + */
+>> +#define SX8650_PENIRQ_TIMEOUT		(80 * 1100 * 1000)
+>> +
+>>   #define MAX_12BIT			((1 << 12) - 1)
+>> +#define MAX_I2C_READ_LEN		10 /* see datasheet section 5.1.5 */
+>> +
+>> +/* channel definition */
+>> +#define CH_X				0x00
+>> +#define CH_Y				0x01
+>> +
+>> +struct sx865x_data {
+>> +	u8 cmd_manual;
+>> +	u8 chan_mask;
+>> +	u8 has_irq_penrelease;
+>> +	u8 has_reg_irqmask;
+>> +	irq_handler_t irqh;
+>> +};
+>>   
+>>   struct sx8654 {
+>>   	struct input_dev *input;
+>>   	struct i2c_client *client;
+>>   	struct gpio_desc *gpio_reset;
+>> +	struct hrtimer timer;
+> 
+> Does this have to be hrtimer? Can regular timer be used?
+
+I'll check again if it's feasible to reduce the timer delay to something 
+below the "normal" jiffy. If not I'll replace the hrtimer with a timer.
 
 > 
 >> +
->> +	return 0;
+>> +	const struct sx865x_data *data;
+>>   };
+>>   
+>> +static enum hrtimer_restart sx865x_penrelease_timer_handler(struct hrtimer *h)
+>> +{
+>> +	struct sx8654 *ts = container_of(h, struct sx8654, timer);
+>> +
+>> +	input_report_key(ts->input, BTN_TOUCH, 0);
+>> +	input_sync(ts->input);
+>> +	dev_dbg(&ts->client->dev, "penrelease by timer\n");
+>> +
+>> +	return HRTIMER_NORESTART;
 >> +}
 >> +
->>   static int sx8654_open(struct input_dev *dev)
->>   {
->>   	struct sx8654 *sx8654 = input_get_drvdata(dev);
->> @@ -171,6 +195,44 @@ static void sx8654_close(struct input_dev *dev)
->>   	}
+
+...
+
+>> @@ -196,10 +312,30 @@ static void sx8654_close(struct input_dev *dev)
 >>   }
 >>   
->> +#ifdef CONFIG_OF
->> +static int sx8654_get_ofdata(struct sx8654 *ts)
->> +{
->> +	struct device *dev = &ts->client->dev;
->> +	struct device_node *node = dev->of_node;
->> +	int err;
->> +
->> +	if (!node) {
->> +		ts->gpio_reset = NULL;
->> +		return 0;
->> +	}
-> 
-> There is no need to wrap this into CONFIG_OF or test "node". Just use
-> devm_gpiod_get_optional() and it will work equally well on DT, ACPI, and
-> static board systems.
-
-Ok. Thank you for that information!
-I haven't been aware of this before :-)
-
-> 
->> +
->> +	ts->gpio_reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
->> +	if (PTR_ERR(ts->gpio_reset) == -EPROBE_DEFER) {
->> +		return -EPROBE_DEFER;
->> +	} else if (IS_ERR(ts->gpio_reset)) {
->> +		err = PTR_ERR(ts->gpio_reset);
-> 
-> I'd do:
-> 
-> 		if (err != -EPROBE_DEFER)
-> 			dev_err(...)
-> 
-> here instead of separate branch.
-
-Indeed... Looks like a more sexy solution. Thanks.
-
-> 
->> +		dev_err(dev, "unable to request GPIO reset pin (%d)\n", err);
->> +		return err;
->> +	}
->> +	dev_dbg(dev, "got GPIO reset pin\n");
-> 
-> Also, I'd move all this code directly into probe() since all this
-> #ifdefery is not needed.
-
-Without the #ifdef'ery and node checking this sounds reasonable.
-
-> 
->> +
->> +	return 0;
->> +}
->> +
+>>   #ifdef CONFIG_OF
 >> +static const struct of_device_id sx8654_of_match[] = {
->> +	{ .compatible = "semtech,sx8654", },
->> +	{ },
+>> +	{
+>> +		.compatible = "semtech,sx8650",
+>> +		.data = &sx8650_data,
+>> +	}, {
+>> +		.compatible = "semtech,sx8654",
+>> +		.data = &sx8654_data,
+>> +	}, {
+>> +		.compatible = "semtech,sx8655",
+>> +		.data = &sx8654_data,
+>> +	}, {
+>> +		.compatible = "semtech,sx8656",
+>> +		.data = &sx8654_data,
+>> +	}, {},
 >> +};
+>> +MODULE_DEVICE_TABLE(of, sx8654_of_match);
+>> +
+>>   static int sx8654_get_ofdata(struct sx8654 *ts)
+>>   {
+>>   	struct device *dev = &ts->client->dev;
+>>   	struct device_node *node = dev->of_node;
+>> +	const struct of_device_id *of_id = of_match_device(sx8654_of_match,
+>> +							   dev);
 > 
-> Please keep the device table wehere it was.
+> If you use of_device_get_match_data() you do not need to move device
+> table around.
 
-OK.
+Thanks for that hint. I haven't known there's something like this ;-)
 
->> @@ -186,10 +248,20 @@ static int sx8654_probe(struct i2c_client *client,
->>   	if (!sx8654)
->>   		return -ENOMEM;
->>   
->> +	sx8654->client = client;
->> +
->> +	error = sx8654_get_ofdata(sx8654);
->> +	if (error) {
->> +		dev_err(&client->dev, "get_ofdata failed: %d\n", error);
->> +		return error;
->> +	}
->> +
->>   	input = devm_input_allocate_device(&client->dev);
->>   	if (!input)
->>   		return -ENOMEM;
->>   
->> +	sx8654->input = input;
->> +
->>   	input->name = "SX8654 I2C Touchscreen";
->>   	input->id.bustype = BUS_I2C;
->>   	input->dev.parent = &client->dev;
->> @@ -201,15 +273,11 @@ static int sx8654_probe(struct i2c_client *client,
->>   	input_set_abs_params(input, ABS_X, 0, MAX_12BIT, 0, 0);
->>   	input_set_abs_params(input, ABS_Y, 0, MAX_12BIT, 0, 0);
->>   
->> -	sx8654->client = client;
->> -	sx8654->input = input;
->> -
 > 
-> Why do we need to move this?
-
-This was because sx8654_get_ofdata needed ts->client->dev.
-But as I will integrate the reset gpio getting in the probe function 
-I'll move it back.
+>> +	const struct sx865x_data *data = (struct sx865x_data *)of_id->data;
+>>   	int err;
+>>   
+>>   	if (!node) {
 
 ...
 
+>> @@ -327,6 +466,7 @@ static int sx8654_probe(struct i2c_client *client,
+>>   }
+>>   
+>>   static const struct i2c_device_id sx8654_id_table[] = {
+>> +	{ "semtech_sx8650", 0 },
+> 
+> Can we add the data here as well?
+
+Does it generate any benefit if we add it? Who should be using it?
+
+I found in other drivers that it's used as a fallback when 
+of_device_get_match_data() returns NULL... Should I also implement it 
+that way?
+
+> 
+>>   	{ "semtech_sx8654", 0 },
+>>   	{ "semtech_sx8655", 0 },
+>>   	{ "semtech_sx8656", 0 },
+>> -- 
+>> 2.11.0
+>>
 > 
 > Thanks.
 > 
 
-I'll send a v2 of the series as soon as I have fixed the other patches.
-
-regards;Richard.L
+thanks&regards;Richard.L
