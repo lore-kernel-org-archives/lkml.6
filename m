@@ -2,195 +2,177 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA87BC04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 010C9C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 952C621477
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:52:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B792121476
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:52:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnliSksN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 952C621477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sv7Nv9J1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B792121476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeJQBni (ORCPT
+        id S1727449AbeJQBnm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:43:38 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44633 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbeJQBni (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:43:38 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g2-v6so11192514pgu.11;
-        Tue, 16 Oct 2018 10:52:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kn7I0Ez1LpEX4Rz4JbMuLmCPWSS9RClg6de8L5AxGPI=;
-        b=VnliSksN6ZE1kdDWM84jdtphQjLLVlnBgLUUx6aARZUbdTGlfdfqQAmJvqwolhvBgX
-         Li9g7g+WLPIk/eRIy1GYz0j/GQtEghzAF343TSnp+T7UkLUAEFIJI7pxwOKd16q41Dxb
-         LJfGCpBnhFKu1udBr2lLlCwAOzNn0RRntKqQaJDzZRL2V3IZXzLEj7O0ofseX2L7XpDp
-         KUesI2djUbYPOJxZEeznYiV+rd6/uDmQQhAMCuS5b2BZl7auEU1KLZx1SNpmIbsBf/gu
-         sjVnxWyiInsXVg949pZzBzlTnw/0+RXI3PKmPizpy5KpoTLkd5F1vT8T9n1RtmQeJllO
-         P9zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kn7I0Ez1LpEX4Rz4JbMuLmCPWSS9RClg6de8L5AxGPI=;
-        b=U5SV3sCUy16LZJmpnBZYQXemdrUczRwHoMC6mcBTgbPLnnKQ21IKcLQlVRW+vjdCkz
-         8AL2vdnKp68y1KyUIAkKKYtRCmxckAgsaQXW2C4WliQbOIwkRnc4tSBbzhIQwACHqE3t
-         XtjyruApVowzzp3DPuGTswCDvqG3A2fC1ifyQCAPijTmTZm5nzi2wCYh5QCpL3FCSEPE
-         cIk9tjAHtBzvRZrpFVOOQn7dQZhPb3vLQEs6sKX+p4wTcfPuIOmWvLMbbFxyzmscsXiM
-         aizsNoV0UKcrmdDr6jDF4lntCU9GKdJH2s3nj2FXY/godBeGjMHk2mlDaU9gaxgaFF0Y
-         F2gg==
-X-Gm-Message-State: ABuFfohmnYLcdzonxPl2M/CTxy/jjFHzSf9w0Jyn3AlYPPm9cxGgB8PC
-        lf71iWLrMidKPD11HFTBLpI=
-X-Google-Smtp-Source: ACcGV62AexGXxMhDSXZqd5xHdWeLE0LhuZyZnaEDxedHIEnhNb2XotfLcc9vjNfm6AZhyvYCfGCJKA==
-X-Received: by 2002:a62:3a84:: with SMTP id v4-v6mr22803103pfj.118.1539712323766;
-        Tue, 16 Oct 2018 10:52:03 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id y10-v6sm22991365pgi.85.2018.10.16.10.52.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 10:52:02 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 10:52:00 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Richard Leitner <richard.leitner@skidata.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] Input: sx8654 - use common of_touchscreen functions
-Message-ID: <20181016175200.GE230131@dtor-ws>
-References: <20181016091653.26896-1-richard.leitner@skidata.com>
- <20181016092310.27346-1-richard.leitner@skidata.com>
+        Tue, 16 Oct 2018 21:43:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727006AbeJQBnm (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:43:42 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3DC92148C;
+        Tue, 16 Oct 2018 17:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539712327;
+        bh=f5eoZr7ehDovQTYj6F++VTDr1i78US87L8dFxUsF+3Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sv7Nv9J1gMI4FGoUJEqGRRAvhdPzPqB8CgYw+6aQFdvBypcpBkSJMDc6JSaxPk/I9
+         7MNRmHxm9ZynuoPI3JJ6I/YAgLQJuLiIEWuf5gE/WxEjEXvBfXD83tgKyU85fIpm5D
+         FRM+bWGZrDRn/OlJGyFORpeeFvO3BK8BAS8TwwYI=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id BB921142C5E; Tue, 16 Oct 2018 14:52:04 -0300 (-03)
+Date:   Tue, 16 Oct 2018 14:52:04 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Milian Wolff <milian.wolff@kdab.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: Re: [PATCH 3/3] perf report: don't crash on invalid inline debug
+ information
+Message-ID: <20181016175204.GF3849@kernel.org>
+References: <20180926135207.30263-1-milian.wolff@kdab.com>
+ <1768601.Weh5pZyhPy@agathebauer>
+ <20181011193920.GA393@kernel.org>
+ <4772069.7eSvdiorvC@agathebauer>
+ <20181016174923.GE3849@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181016092310.27346-1-richard.leitner@skidata.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181016174923.GE3849@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 11:23:10AM +0200, Richard Leitner wrote:
-> of_touchscreen.c provides a common interface for a axis invertion and
-> swapping of touchscreens. Therefore use it in the sx8654 driver.
+Em Tue, Oct 16, 2018 at 02:49:23PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Mon, Oct 15, 2018 at 10:51:36PM +0200, Milian Wolff escreveu:
+> > On Donnerstag, 11. Oktober 2018 21:39:20 CEST Arnaldo Carvalho de Melo wrote:
+> > > Em Thu, Oct 11, 2018 at 08:23:31PM +0200, Milian Wolff escreveu:
+> > > > On Donnerstag, 27. September 2018 21:10:37 CEST Arnaldo Carvalho de Melo
+> > > > 
+> > > > wrote:
+> > > > > Em Wed, Sep 26, 2018 at 03:52:07PM +0200, Milian Wolff escreveu:
+> > > > > > When the function name for an inline frame is invalid, we must
+> > > > > > not try to demangle this symbol, otherwise we crash with:
+> > > > > > 
+> > > > > > #0  0x0000555555895c01 in bfd_demangle ()
+> > > > > > #1  0x0000555555823262 in demangle_sym (dso=0x555555d92b90,
+> > > > > > elf_name=0x0,
+> > > > > > kmodule=0) at util/symbol-elf.c:215 #2  dso__demangle_sym
+> > > > > > (dso=dso@entry=0x555555d92b90, kmodule=<optimized out>,
+> > > > > > kmodule@entry=0,
+> > > > > > elf_name=elf_name@entry=0x0) at util/symbol-elf.c:400 #3
+> > > > > > 0x00005555557fef4b in new_inline_sym (funcname=0x0,
+> > > > > > base_sym=0x555555d92b90, dso=0x555555d92b90) at util/srcline.c:89 #4
+> > > > > > inline_list__append_dso_a2l (dso=dso@entry=0x555555c7bb00,
+> > > > > > node=node@entry=0x555555e31810, sym=sym@entry=0x555555d92b90) at
+> > > > > > util/srcline.c:264 #5  0x00005555557ff27f in addr2line
+> > > > > > (dso_name=dso_name@entry=0x555555d92430
+> > > > > > "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fc
+> > > > > > e5/
+> > > > > > elf", addr=addr@entry=2888, file=file@entry=0x0,>
+> > > > > > 
+> > > > > >     line=line@entry=0x0, dso=dso@entry=0x555555c7bb00,
+> > > > > >     unwind_inlines=unwind_inlines@entry=true, node=0x555555e31810,
+> > > > > >     sym=0x555555d92b90) at util/srcline.c:313>
+> > > > > > 
+> > > > > > #6  0x00005555557ffe7c in addr2inlines (sym=0x555555d92b90,
+> > > > > > dso=0x555555c7bb00, addr=2888, dso_name=0x555555d92430
+> > > > > > "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fc
+> > > > > > e5/
+> > > > > > elf")>
+> > > > > > 
+> > > > > >     at util/srcline.c:358
+> > > > > > 
+> > > > > > So instead handle the case where we get invalid function names
+> > > > > > for inlined frames and use a fallback '??' function name instead.
+> > > > > > 
+> > > > > > While this crash was originally reported by Hadrien for rust code,
+> > > > > > I can now also reproduce it with trivial C++ code. Indeed, it seems
+> > > > > > like libbfd fails to interpret the debug information for the inline
+> > > > > > frame symbol name:
+> > > > > > 
+> > > > > > $ addr2line -e
+> > > > > > /home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce
+> > > > > > 5/e
+> > > > > > lf -if b48 main
+> > > > > > /usr/include/c++/8.2.1/complex:610
+> > > > > > ??
+> > > > > > /usr/include/c++/8.2.1/complex:618
+> > > > > > ??
+> > > > > > /usr/include/c++/8.2.1/complex:675
+> > > > > > ??
+> > > > > > /usr/include/c++/8.2.1/complex:685
+> > > > > > main
+> > > > > > /home/milian/projects/kdab/rnd/hotspot/tests/test-clients/cpp-inlining
+> > > > > > /mai
+> > > > > > n.cpp:39
+> > > > > > 
+> > > > > > I've reported this bug upstream and also attached a patch there
+> > > > > > which should fix this issue:
+> > > > > > https://sourceware.org/bugzilla/show_bug.cgi?id=23715
+> > > > > 
+> > > > > Millian, what about this one, which is the cset it is fixing?
+> > > > 
+> > > > Hey Arnaldo,
+> > > > 
+> > > > just noticed this email and that the corresponding patch hasn't landed in
+> > > > perf/core yet. The patch set which introduced this is a64489c56c307 ("perf
+> > > > report: Find the inline stack for a given address"). Note that the code
+> > > > was
+> > > > introduced by this patch, but then subsequently touched and moved by
+> > > > follow up patches. So, is this the patch you want to see referenced?
+> > > > Otherwise, the latest patch which gets fixed is afaik: 7285cf3325b4a
+> > > > ("perf srcline: Show correct function name for srcline of callchains").
+> > > > 
+> > > > Can you please pick either of these patches and amend the commit message
+> > > > of my patch and push it to perf/urgent and perf/core?
+> > > 
+> > > I'll reread all this later or tomorrow and continue, going AFK now.
+> > 
+> > Ping?
 > 
-> Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
-> ---
->  drivers/input/touchscreen/sx8654.c | 37 +++++++++++++++++++------------------
->  1 file changed, 19 insertions(+), 18 deletions(-)
+> Applied, seems simple enough, makes this code a bit more robust.
 > 
-> diff --git a/drivers/input/touchscreen/sx8654.c b/drivers/input/touchscreen/sx8654.c
-> index 33f7a0be4ef8..08b064f96b4e 100644
-> --- a/drivers/input/touchscreen/sx8654.c
-> +++ b/drivers/input/touchscreen/sx8654.c
-> @@ -36,6 +36,7 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/delay.h>
->  #include <linux/hrtimer.h>
-> +#include <linux/input/touchscreen.h>
->  
->  /* register addresses */
->  #define I2C_REG_TOUCH0			0x00
-> @@ -100,6 +101,7 @@ struct sx8654 {
->  	struct i2c_client *client;
->  	struct gpio_desc *gpio_reset;
->  	struct hrtimer timer;
-> +	struct touchscreen_properties props;
->  
->  	const struct sx865x_data *data;
->  };
-> @@ -168,8 +170,7 @@ static irqreturn_t sx8650_irq(int irq, void *handle)
->  				 chdata);
->  	}
->  
-> -	input_report_abs(ts->input, ABS_X, x);
-> -	input_report_abs(ts->input, ABS_Y, y);
-> +	touchscreen_report_pos(ts->input, &ts->props, x, y, false);
->  	input_report_key(ts->input, BTN_TOUCH, 1);
->  	input_sync(ts->input);
->  	dev_dbg(dev, "point(%4d,%4d)\n", x, y);
-> @@ -215,8 +216,8 @@ static irqreturn_t sx8654_irq(int irq, void *handle)
->  		x = ((data[0] & 0xf) << 8) | (data[1]);
->  		y = ((data[2] & 0xf) << 8) | (data[3]);
->  
-> -		input_report_abs(sx8654->input, ABS_X, x);
-> -		input_report_abs(sx8654->input, ABS_Y, y);
-> +		touchscreen_report_pos(sx8654->input, &sx8654->props, x, y,
-> +				       false);
->  		input_report_key(sx8654->input, BTN_TOUCH, 1);
->  		input_sync(sx8654->input);
->  
-> @@ -355,6 +356,8 @@ static int sx8654_get_ofdata(struct sx8654 *ts)
->  	}
->  	dev_dbg(dev, "got GPIO reset pin\n");
->  
-
-You need to mark axes used by the device before calling
-touchscreen_parse_properties(), otherwise you'll get warnings if
-corresponding property is present in DT.
-
-> +	touchscreen_parse_properties(ts->input, false, &ts->props);
-> +
->  	return 0;
->  }
->  #else /* CONFIG_OF */
-> @@ -380,25 +383,11 @@ static int sx8654_probe(struct i2c_client *client,
->  	sx8654 = devm_kzalloc(&client->dev, sizeof(*sx8654), GFP_KERNEL);
->  	if (!sx8654)
->  		return -ENOMEM;
-> -
->  	sx8654->client = client;
->  
-> -	error = sx8654_get_ofdata(sx8654);
-> -	if (error) {
-> -		dev_err(&client->dev, "get_ofdata failed: %d\n", error);
-> -		return error;
-> -	}
-> -
-> -	if (!sx8654->data->has_irq_penrelease) {
-> -		dev_dbg(&client->dev, "use timer for penrelease\n");
-> -		hrtimer_init(&sx8654->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> -		sx8654->timer.function = sx865x_penrelease_timer_handler;
-> -	}
-> -
->  	input = devm_input_allocate_device(&client->dev);
->  	if (!input)
->  		return -ENOMEM;
-> -
->  	sx8654->input = input;
->  
->  	input->name = "SX8654 I2C Touchscreen";
-> @@ -414,6 +403,18 @@ static int sx8654_probe(struct i2c_client *client,
->  
->  	input_set_drvdata(sx8654->input, sx8654);
->  
-> +	error = sx8654_get_ofdata(sx8654);
-> +	if (error) {
-> +		dev_err(&client->dev, "get_ofdata failed: %d\n", error);
-> +		return error;
-> +	}
-> +
-> +	if (!sx8654->data->has_irq_penrelease) {
-> +		dev_dbg(&client->dev, "use timer for penrelease\n");
-> +		hrtimer_init(&sx8654->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> +		sx8654->timer.function = sx865x_penrelease_timer_handler;
-> +	}
-> +
->  	error = sx8654_reset(sx8654);
->  	if (error) {
->  		dev_err(&client->dev, "reset failed");
-> -- 
-> 2.11.0
+> With regards to the cset where the problem originally was introduced,
+> i.e. not checking if a2l->funcname was NULL before either passing it to
+> strdup() or all the way to bfd_demangle(), that would cause the crash in
+> either place, I think this is the cset:
 > 
+>   commit a64489c56c307bf0955f0489158c5ecf6aa10fe2
+>   Author: Jin Yao <yao.jin@linux.intel.com>
+>   Date:   Sun Mar 26 04:34:26 2017 +0800
+> 
+>       perf report: Find the inline stack for a given address
+> 
+>> Agreed?
 
--- 
-Dmitry
+But I'm not sure this will be worth for doing backports, as before
+applying this patch a series of other patches touching this code would
+have to be applied :-\
+
+I can leave it there, so that we know when the problem was introduced,
+i.e. I _guess_ that if this rust or C++ reproducers would be used with
+perf built with a64489c56c307bf0955f0489158c5ecf6aa10fe2 as head, we
+would see a crash as well.
+
+- Arnaldo
