@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C31C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFD3C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FBB420658
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89A1A20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:24:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUmWeCrB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FBB420658
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xez4IxU6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A1A20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731612AbeJQBPi (ORCPT
+        id S1730791AbeJQBPl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:15:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34258 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 21:15:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbeJQBPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:15:37 -0400
+        id S1730396AbeJQBPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 21:15:40 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DD1A20658;
-        Tue, 16 Oct 2018 17:24:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CBE820866;
+        Tue, 16 Oct 2018 17:24:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539710651;
-        bh=noOdfN5qsnPzzSqHUHAnb7nvaPK3MXGoTyFsX/rICSw=;
+        s=default; t=1539710654;
+        bh=Kyh2juH6oCMOnimIbhG+Bbfw2sQrFN8mhDFTP44IVOY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GUmWeCrBpoay45VU96RS6QSADHkE4QPZq/1UgK99VXA8ZcLXUU7g2yPDsQPRMRF5S
-         Yvc7crPytn55EAnOVLjTeWZ4BLzRFl/KbiaZIieecHZT6hlm96oRXkEEDxP8+0UzE1
-         ikeFkYh0iI3VpiXwGVaHQLuIkkcB7xDqDhthI14Y=
+        b=Xez4IxU6DbT7OZy6Vz5XH9m+AmTpHPTjbVRfTrzGTIM3MO60vCr3/B6KZMoxIYLJj
+         zGZOquA1k3MNIHmqYbaeZ8lrDnnILSY+Bd/isi2s+uAPN9CVtZUT/o7JZVIinIt/EP
+         chEv2HJrMPRm+K0MyXUvCiUy6isuA6UirQ5Xvidc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 40/71] rtnl: limit IFLA_NUM_TX_QUEUES and IFLA_NUM_RX_QUEUES to 4096
-Date:   Tue, 16 Oct 2018 19:09:37 +0200
-Message-Id: <20181016170541.388868189@linuxfoundation.org>
+Subject: [PATCH 4.9 41/71] tcp/dccp: fix lockdep issue when SYN is backlogged
+Date:   Tue, 16 Oct 2018 19:09:38 +0200
+Message-Id: <20181016170541.435801460@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181016170539.315587743@linuxfoundation.org>
 References: <20181016170539.315587743@linuxfoundation.org>
@@ -65,52 +65,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 0e1d6eca5113858ed2caea61a5adc03c595f6096 ]
+[ Upstream commit 1ad98e9d1bdf4724c0a8532fabd84bf3c457c2bc ]
 
-We have an impressive number of syzkaller bugs that are linked
-to the fact that syzbot was able to create a networking device
-with millions of TX (or RX) queues.
+In normal SYN processing, packets are handled without listener
+lock and in RCU protected ingress path.
 
-Let's limit the number of RX/TX queues to 4096, this really should
-cover all known cases.
+But syzkaller is known to be able to trick us and SYN
+packets might be processed in process context, after being
+queued into socket backlog.
 
-A separate patch will add various cond_resched() in the loops
-handling sysfs entries at device creation and dismantle.
+In commit 06f877d613be ("tcp/dccp: fix other lockdep splats
+accessing ireq_opt") I made a very stupid fix, that happened
+to work mostly because of the regular path being RCU protected.
 
-Tested:
+Really the thing protecting ireq->ireq_opt is RCU read lock,
+and the pseudo request refcnt is not relevant.
 
-lpaa6:~# ip link add gre-4097 numtxqueues 4097 numrxqueues 4097 type ip6gretap
-RTNETLINK answers: Invalid argument
+This patch extends what I did in commit 449809a66c1d ("tcp/dccp:
+block BH for SYN processing") by adding an extra rcu_read_{lock|unlock}
+pair in the paths that might be taken when processing SYN from
+socket backlog (thus possibly in process context)
 
-lpaa6:~# time ip link add gre-4096 numtxqueues 4096 numrxqueues 4096 type ip6gretap
-
-real	0m0.180s
-user	0m0.000s
-sys	0m0.107s
-
-Fixes: 76ff5cc91935 ("rtnl: allow to specify number of rx and tx queues on device creation")
+Fixes: 06f877d613be ("tcp/dccp: fix other lockdep splats accessing ireq_opt")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/rtnetlink.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ include/net/inet_sock.h |    3 +--
+ net/dccp/input.c        |    4 +++-
+ net/ipv4/tcp_input.c    |    4 +++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -2368,6 +2368,12 @@ struct net_device *rtnl_create_link(stru
- 	else if (ops->get_num_rx_queues)
- 		num_rx_queues = ops->get_num_rx_queues();
+--- a/include/net/inet_sock.h
++++ b/include/net/inet_sock.h
+@@ -134,8 +134,7 @@ static inline int inet_request_bound_dev
  
-+	if (num_tx_queues < 1 || num_tx_queues > 4096)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (num_rx_queues < 1 || num_rx_queues > 4096)
-+		return ERR_PTR(-EINVAL);
-+
- 	err = -ENOMEM;
- 	dev = alloc_netdev_mqs(ops->priv_size, ifname, name_assign_type,
- 			       ops->setup, num_tx_queues, num_rx_queues);
+ static inline struct ip_options_rcu *ireq_opt_deref(const struct inet_request_sock *ireq)
+ {
+-	return rcu_dereference_check(ireq->ireq_opt,
+-				     atomic_read(&ireq->req.rsk_refcnt) > 0);
++	return rcu_dereference(ireq->ireq_opt);
+ }
+ 
+ struct inet_cork {
+--- a/net/dccp/input.c
++++ b/net/dccp/input.c
+@@ -605,11 +605,13 @@ int dccp_rcv_state_process(struct sock *
+ 	if (sk->sk_state == DCCP_LISTEN) {
+ 		if (dh->dccph_type == DCCP_PKT_REQUEST) {
+ 			/* It is possible that we process SYN packets from backlog,
+-			 * so we need to make sure to disable BH right there.
++			 * so we need to make sure to disable BH and RCU right there.
+ 			 */
++			rcu_read_lock();
+ 			local_bh_disable();
+ 			acceptable = inet_csk(sk)->icsk_af_ops->conn_request(sk, skb) >= 0;
+ 			local_bh_enable();
++			rcu_read_unlock();
+ 			if (!acceptable)
+ 				return 1;
+ 			consume_skb(skb);
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -5978,11 +5978,13 @@ int tcp_rcv_state_process(struct sock *s
+ 			if (th->fin)
+ 				goto discard;
+ 			/* It is possible that we process SYN packets from backlog,
+-			 * so we need to make sure to disable BH right there.
++			 * so we need to make sure to disable BH and RCU right there.
+ 			 */
++			rcu_read_lock();
+ 			local_bh_disable();
+ 			acceptable = icsk->icsk_af_ops->conn_request(sk, skb) >= 0;
+ 			local_bh_enable();
++			rcu_read_unlock();
+ 
+ 			if (!acceptable)
+ 				return 1;
 
 
