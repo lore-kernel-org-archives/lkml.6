@@ -2,116 +2,112 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6C1C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E252FC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 727362098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:06:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A68382145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 19:08:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HilbSA8d";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c1djIwPm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 727362098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="J7d/dPVQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A68382145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbeJQC6J (ORCPT
+        id S1727306AbeJQDAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 22:58:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34734 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbeJQC6J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 22:58:09 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0100D6130B; Tue, 16 Oct 2018 19:06:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539716778;
-        bh=G1bkRhdg7U1Bs7k0WRQjswBWfUPfdxoY5HA8q92Md/c=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HilbSA8dX9Gqha4vC8nUiTimdxK+mcUuUORAh17Sn67iWTVqopRgMzNnRtfcPSDqW
-         MNGQUILkaMv/+bhseObvKR2HHCKnvCgcdzVsEqNu22fMeVVsuFtIwZw0Jw5WKi/lDY
-         3Dy76xv12Ug2wvaxynzFCgf5mXTP+nICPWbTdKjQ=
-Received: from [192.168.43.47] (unknown [223.227.22.91])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 11FA4606DD;
-        Tue, 16 Oct 2018 19:06:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539716777;
-        bh=G1bkRhdg7U1Bs7k0WRQjswBWfUPfdxoY5HA8q92Md/c=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=c1djIwPmMEC4FjB93gXOG+rHBoRS0CBFc5pYAyczbllyjQHmNoKpReaqoSskX9cl+
-         Vqu4MaAQ08o3V2onnh08bLHNLRsVRUSItd3XNy3CPBZT302OvlKjEA6Nk48qE7HA1/
-         9t4gBIXBuOf1ep16nD98EmrCU4nATWw0V8JGWq7E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 11FA4606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pramod Gurav <gpramod@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
- <20181016112928.4b52afb5@gandalf.local.home>
- <8c2fb318-813d-81f1-1e2f-cdbc68353077@codeaurora.org>
- <20181016125721.236ada82@gandalf.local.home>
- <cab1be04-be06-6f53-7fe9-159936893fc8@codeaurora.org>
- <20181016134803.1b9260c1@gandalf.local.home>
- <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
- <20181016141610.639b9000@gandalf.local.home>
- <accdce6d-8fd2-9f15-d4cd-704cbf0b32eb@codeaurora.org>
- <20181016144123.24c47b38@gandalf.local.home>
- <7781815e-cba2-9e36-db6d-268298747876@codeaurora.org>
- <20181016150328.3450d718@gandalf.local.home>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <c94103d2-ed5d-bf43-fc71-c60e108f303e@codeaurora.org>
-Date:   Wed, 17 Oct 2018 00:36:05 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 16 Oct 2018 23:00:36 -0400
+Received: from imap.thunk.org ([74.207.234.97]:50666 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727142AbeJQDAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 23:00:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=e7+qk/GiyfuvxznreBUL2d5BN+UD4r/dcBfmaiFbVoM=; b=J7d/dPVQu9rzTN5SowWBLB1Z6n
+        DBWpA9y7/PRnPFHCwPyWIYEBjCtkNd6Bso31hwl3p5QMMEFQecgRJpeKbsJaLGjQOIPfYcLa69h/l
+        m02vbyEkDE+ohjeYkb22HyCtUsXp1fwE9fZgnY3Rs1Gfzkjb2XtxQfyzu9s/4UcEp8Lo=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gCUht-00088Z-F8; Tue, 16 Oct 2018 19:08:41 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id B707B7A4986; Tue, 16 Oct 2018 15:08:40 -0400 (EDT)
+Date:   Tue, 16 Oct 2018 15:08:40 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     fishland <fishland@aliyun.com>
+Cc:     adilger.kernel@dilger.ca, wang.yi59@zte.com.cn,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Liu Song <liu.song11@zte.com.cn>
+Subject: Re: [PATCH] ext4: direct return when jinode allocate failed
+Message-ID: <20181016190840.GF24131@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        fishland <fishland@aliyun.com>, adilger.kernel@dilger.ca,
+        wang.yi59@zte.com.cn, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Liu Song <liu.song11@zte.com.cn>
+References: <20181016145526.3288-1-fishland@aliyun.com>
 MIME-Version: 1.0
-In-Reply-To: <20181016150328.3450d718@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016145526.3288-1-fishland@aliyun.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 12:33 AM, Steven Rostedt wrote:
-> On Wed, 17 Oct 2018 00:31:03 +0530
-> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
-> 
->> Haa seems like you are right! With "ftrace=function
->> ftrace_filter=msm_read" , I can trigger the crash, but
->> sadly "ftrace_notrace=msm_read" also crashes.
-> 
-> So there's more than one problem area.
-> 
-> What about ftrace_notrace=m*
-> 
-> ?
+On Tue, Oct 16, 2018 at 10:55:26PM +0800, fishland wrote:
+> The jinode does not need protected by *i_lock*, we can return
+> directly if memory allocation fails.
 > 
 
-That too crashes.
+I don't see anything wrong with this patch, but at the same time, I'm
+not sure I see the benefit, either.  Checking for the allocation
+failure is cheap, and moving it out spinlock doesn't buy much; not to
+mention that the allocation failure is going to be highly uncommon.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+What inspired this commit?
+
+						- Ted
+
+
+
+> Signed-off-by: Liu Song <liu.song11@zte.com.cn>
+> Reviewed-by: Wang Yi <wang.yi59@zte.com.cn>
+> ---
+>  fs/ext4/inode.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index d767e993591d..67ba6f062de5 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4384,12 +4384,11 @@ int ext4_inode_attach_jinode(struct inode *inode)
+>  		return 0;
+>  
+>  	jinode = jbd2_alloc_inode(GFP_KERNEL);
+> +	if (!jinode)
+> +		return -ENOMEM;
+> +
+>  	spin_lock(&inode->i_lock);
+>  	if (!ei->jinode) {
+> -		if (!jinode) {
+> -			spin_unlock(&inode->i_lock);
+> -			return -ENOMEM;
+> -		}
+>  		ei->jinode = jinode;
+>  		jbd2_journal_init_jbd_inode(ei->jinode, inode);
+>  		jinode = NULL;
+> -- 
+> 2.17.1
+> 
