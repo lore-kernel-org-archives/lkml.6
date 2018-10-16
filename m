@@ -2,100 +2,112 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB38C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BE0C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D27D620866
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:34:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJ31KTYE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D27D620866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D3490204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 17:35:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3490204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730819AbeJQBMg (ORCPT
+        id S1727382AbeJQB05 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 21:12:36 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44903 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729543AbeJQBMf (ORCPT
+        Tue, 16 Oct 2018 21:26:57 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.182]:47679 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727233AbeJQB04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 21:12:35 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r9-v6so11774665pff.11;
-        Tue, 16 Oct 2018 10:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AlrWtG14U6jmyuUiph7Qq88b1WaQvj99KvqoG3hVNM8=;
-        b=MJ31KTYEGEeXMDmNqdgRj+t2y9WyKexy6eEUXfmWbf+95PaSSS8r5Vo1DsCwZkYOT4
-         Z9UpqbGWC3oxQbIogs2ICzWxSBXa4qUvcFYfv8lxmQXlYz23YpqNz84Q+0meursWUJpE
-         RkJfQ766Kw74FuYsIEUYM1Q8islqNYYFL0KeW0mnXQnhXl/Iv2Jivu5Z/jByyjnmrbNJ
-         lNavG+KooisvsD9MmXC+wypfPwjrjYWUu+o+/n+ZdJKKuvbLq7WBf+DQv374DQv3OeDu
-         xUXLZV6W7mpEVND9+Dm6PW7b3fEpj+rFB+uNQcvjCM0DvtCZtdciawhbAL/iEj7l/cQH
-         HygA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AlrWtG14U6jmyuUiph7Qq88b1WaQvj99KvqoG3hVNM8=;
-        b=c6F5dAvSpcXo90tb3tTLPUZug5MzN3NDEgyqxbBA6YcSju/i+OEFNj7fBSL8ydWJCy
-         yLLKH3RGUwHKtN+2ADf4j0Y87wOO14WHhbq0CWTJN+KOIxrwyi/TZ3RZbYes8+bLiymh
-         7z4/mlnRfG3gi5aNKBCCSa5zk//KS2wSGPw2oE1e3qbvMoJ7uBr0lu7sD3uLud7YKw2o
-         imfVTC6Dcx5sDN1R0P2/XtMjX3+9+n+UGwLiXHw4+p4kOhsFg8/ioW49QIJzdoFTiyC9
-         TRJLL6+l63LFtlIrO8bJ8ee5nNSVKi6wNLBH2a4sJ2wCXlPT+dOLdbx5xdlMk5ujrjA/
-         jwJQ==
-X-Gm-Message-State: ABuFfoiraAd03WYOvjGiJK+LXnVRlXMOM9GyU0XfzGKm7JHwYIgX5/DQ
-        r/0loCABrfELg3t2Io40E+Q=
-X-Google-Smtp-Source: ACcGV61bp9HiLhd79KgmxLZCie8On3OHLGHnImsO0af+2Th8bucmN7ixbFheVhsLY46n32snsbbpDA==
-X-Received: by 2002:a62:da1a:: with SMTP id c26-v6mr11934438pfh.52.1539710470388;
-        Tue, 16 Oct 2018 10:21:10 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm16359813pgv.7.2018.10.16.10.21.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 10:21:09 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 10:21:07 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: uinput - fix Spectre v1 vulnerability
-Message-ID: <20181016172107.GA230131@dtor-ws>
-References: <20181016111313.GA28307@embeddedor.com>
+        Tue, 16 Oct 2018 21:26:56 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id CE96C313CB9
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 12:35:26 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id CTFRg68aNaSeyCTFYgQw8E; Tue, 16 Oct 2018 12:35:26 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:46070 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gCTFQ-000vXD-Ru; Tue, 16 Oct 2018 12:35:12 -0500
+Date:   Tue, 16 Oct 2018 19:35:11 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        netdev@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next v3 1/2] net: phy: mscc: fix signedness bug in
+ vsc85xx_downshift_get
+Message-ID: <454db44c56f4981a56c02f87de80f860e142545a.1539710647.git.gustavo@embeddedor.com>
+References: <cover.1539710647.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181016111313.GA28307@embeddedor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <cover.1539710647.git.gustavo@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gCTFQ-000vXD-Ru
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:46070
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+Currently, the error handling for the call to function
+phy_read_paged() doesn't work because *reg_val* is of
+type u16 (16 bits, unsigned), which makes it impossible
+for it to hold a value less than 0.
 
-On Tue, Oct 16, 2018 at 01:13:13PM +0200, Gustavo A. R. Silva wrote:
-> setup.code can be indirectly controlled by user-space, hence leading to
-> a potential exploitation of the Spectre variant 1 vulnerability.
-> 
-> This issue was detected with the help of Smatch:
-> 
-> drivers/input/misc/uinput.c:512 uinput_abs_setup() warn: potential
-> spectre issue 'dev->absinfo' [w] (local cap)
-> 
-> Fix this by sanitizing setup.code before using it to index dev->absinfo.
+Fix this by changing the type of variable *reg_val* to int.
 
-So we are saying that attacker, by repeatedly calling ioctl(...,
-UI_ABS_SETUP, ...) will be able to poison branch predictor and discover
-another program or kernel secrets? But uinput is a privileged interface
-open to root only, as it allows injecting arbitrary keystrokes into the
-kernel. And since only root can use uinput, meh?
+Addresses-Coverity-ID: 1473970 ("Unsigned compared against 0")
+Fixes: 6a0bfbbe20b0 ("net: phy: mscc: migrate to phy_select/restore_page functions")
+Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v3:
+ - Post patch to netdev.
 
-Thanks.
+Changes in v2:
+ - Add Quentin's Reviewed-by to the commit log.
 
+ drivers/net/phy/mscc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+index bffe077..bff56c3 100644
+--- a/drivers/net/phy/mscc.c
++++ b/drivers/net/phy/mscc.c
+@@ -522,7 +522,7 @@ static int vsc85xx_mdix_set(struct phy_device *phydev, u8 mdix)
+ 
+ static int vsc85xx_downshift_get(struct phy_device *phydev, u8 *count)
+ {
+-	u16 reg_val;
++	int reg_val;
+ 
+ 	reg_val = phy_read_paged(phydev, MSCC_PHY_PAGE_EXTENDED,
+ 				 MSCC_PHY_ACTIPHY_CNTL);
 -- 
-Dmitry
+2.7.4
+
