@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E46DC070C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80729C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4881620869
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:24:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3904420869
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:24:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3sB6h8o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4881620869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjNjbp80"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3904420869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729768AbeJPMND (ORCPT
+        id S1729419AbeJPMDD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:13:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51406 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:03:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729434AbeJPMDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:03:05 -0400
+        id S1729379AbeJPMDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:03:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBD482145D;
-        Tue, 16 Oct 2018 04:14:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66AC121471;
+        Tue, 16 Oct 2018 04:14:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663282;
-        bh=2ni26Gm3lDrgz1i5JAKkzCWP9Q2UjZCn98Wn1nvpqug=;
+        s=default; t=1539663279;
+        bh=rrHq1lPPHa7aMdFbnrZ0cua3fW4CnINGSTMZCyM8v+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b3sB6h8oQuiNHGvADDqryZ9KEvba9yFs9Zilxip+1qTHKByywoYBxp9N3Mho0FggD
-         YTa0/Q84j1j/hykbk0HiElfthVOwK2Ty04g7buZ5vsRb4U2nAfbJVMWJTSmyv51ZhS
-         WK0256Q6EbafuEZXR0Hnb1uj6YAgHPMWf7SAAMoo=
+        b=LjNjbp80ZfbDbIqrIH9OulaI6e36rLyRfwBK+LBH6tQ/QcOECsSrWxqCESpx4EVsB
+         W/40h242diNClcvoHulCfcSW+QtALhriqIFmTseI6gYDkFKjEq8fNfA1i33b6RSoid
+         TNlfwAlibZk0AOmg618ebamIsfF9in3ByPQyuuAU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 43/61] cfg80211: fix use-after-free in reg_process_hint()
-Date:   Tue, 16 Oct 2018 00:13:45 -0400
-Message-Id: <20181016041403.135678-43-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 39/61] smsc75xx: Check for Wake-on-LAN modes
+Date:   Tue, 16 Oct 2018 00:13:41 -0400
+Message-Id: <20181016041403.135678-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -53,107 +53,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 1db58529454742f67ebd96e3588315e880b72837 ]
+[ Upstream commit 9c734b2769a73eea2e9e9767c0e0bf839ff23679 ]
 
-reg_process_hint_country_ie() can free regulatory_request and return
-REG_REQ_ALREADY_SET. We shouldn't use regulatory_request after it's
-called. KASAN error was observed when this happens.
+The driver does not check for Wake-on-LAN modes specified by an user,
+but will conditionally set the device as wake-up enabled or not based on
+that, which could be a very confusing user experience.
 
-BUG: KASAN: use-after-free in reg_process_hint+0x839/0x8aa [cfg80211]
-Read of size 4 at addr ffff8800c430d434 by task kworker/1:3/89
-<snipped>
-Workqueue: events reg_todo [cfg80211]
-Call Trace:
- dump_stack+0xc1/0x10c
- ? _atomic_dec_and_lock+0x1ad/0x1ad
- ? _raw_spin_lock_irqsave+0xa0/0xd2
- print_address_description+0x86/0x26f
- ? reg_process_hint+0x839/0x8aa [cfg80211]
- kasan_report+0x241/0x29b
- reg_process_hint+0x839/0x8aa [cfg80211]
- reg_todo+0x204/0x5b9 [cfg80211]
- process_one_work+0x55f/0x8d0
- ? worker_detach_from_pool+0x1b5/0x1b5
- ? _raw_spin_unlock_irq+0x65/0xdd
- ? _raw_spin_unlock_irqrestore+0xf3/0xf3
- worker_thread+0x5dd/0x841
- ? kthread_parkme+0x1d/0x1d
- kthread+0x270/0x285
- ? pr_cont_work+0xe3/0xe3
- ? rcu_read_unlock_sched_notrace+0xca/0xca
- ret_from_fork+0x22/0x40
-
-Allocated by task 2718:
- set_track+0x63/0xfa
- __kmalloc+0x119/0x1ac
- regulatory_hint_country_ie+0x38/0x329 [cfg80211]
- __cfg80211_connect_result+0x854/0xadd [cfg80211]
- cfg80211_rx_assoc_resp+0x3bc/0x4f0 [cfg80211]
-smsc95xx v1.0.6
- ieee80211_sta_rx_queued_mgmt+0x1803/0x7ed5 [mac80211]
- ieee80211_iface_work+0x411/0x696 [mac80211]
- process_one_work+0x55f/0x8d0
- worker_thread+0x5dd/0x841
- kthread+0x270/0x285
- ret_from_fork+0x22/0x40
-
-Freed by task 89:
- set_track+0x63/0xfa
- kasan_slab_free+0x6a/0x87
- kfree+0xdc/0x470
- reg_process_hint+0x31e/0x8aa [cfg80211]
- reg_todo+0x204/0x5b9 [cfg80211]
- process_one_work+0x55f/0x8d0
- worker_thread+0x5dd/0x841
- kthread+0x270/0x285
- ret_from_fork+0x22/0x40
-<snipped>
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: 6c636503260d ("smsc75xx: add wol magic packet support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/reg.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/usb/smsc75xx.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 6f032c7b8732..bd91de416035 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -2170,11 +2170,12 @@ static void reg_process_hint(struct regulatory_request *reg_request)
- {
- 	struct wiphy *wiphy = NULL;
- 	enum reg_request_treatment treatment;
-+	enum nl80211_reg_initiator initiator = reg_request->initiator;
+diff --git a/drivers/net/usb/smsc75xx.c b/drivers/net/usb/smsc75xx.c
+index 05553d252446..e5a4cbb366dc 100644
+--- a/drivers/net/usb/smsc75xx.c
++++ b/drivers/net/usb/smsc75xx.c
+@@ -731,6 +731,9 @@ static int smsc75xx_ethtool_set_wol(struct net_device *net,
+ 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
+ 	int ret;
  
- 	if (reg_request->wiphy_idx != WIPHY_IDX_INVALID)
- 		wiphy = wiphy_idx_to_wiphy(reg_request->wiphy_idx);
++	if (wolinfo->wolopts & ~SUPPORTED_WAKE)
++		return -EINVAL;
++
+ 	pdata->wolopts = wolinfo->wolopts & SUPPORTED_WAKE;
  
--	switch (reg_request->initiator) {
-+	switch (initiator) {
- 	case NL80211_REGDOM_SET_BY_CORE:
- 		treatment = reg_process_hint_core(reg_request);
- 		break;
-@@ -2192,7 +2193,7 @@ static void reg_process_hint(struct regulatory_request *reg_request)
- 		treatment = reg_process_hint_country_ie(wiphy, reg_request);
- 		break;
- 	default:
--		WARN(1, "invalid initiator %d\n", reg_request->initiator);
-+		WARN(1, "invalid initiator %d\n", initiator);
- 		goto out_free;
- 	}
- 
-@@ -2207,7 +2208,7 @@ static void reg_process_hint(struct regulatory_request *reg_request)
- 	 */
- 	if (treatment == REG_REQ_ALREADY_SET && wiphy &&
- 	    wiphy->regulatory_flags & REGULATORY_STRICT_REG) {
--		wiphy_update_regulatory(wiphy, reg_request->initiator);
-+		wiphy_update_regulatory(wiphy, initiator);
- 		wiphy_all_share_dfs_chan_state(wiphy);
- 		reg_check_channels();
- 	}
+ 	ret = device_set_wakeup_enable(&dev->udev->dev, pdata->wolopts);
 -- 
 2.17.1
 
