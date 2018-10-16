@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7816AC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAF0C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 357DF2147E
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0A4A21477
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 04:14:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1FZSMpKI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 357DF2147E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3DObaBs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A4A21477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbeJPMCd (ORCPT
+        id S1729053AbeJPMCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:02:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50438 "EHLO mail.kernel.org"
+        Tue, 16 Oct 2018 08:02:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728877AbeJPMCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 08:02:32 -0400
+        id S1729036AbeJPMCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Oct 2018 08:02:33 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 779472145D;
-        Tue, 16 Oct 2018 04:14:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62A4F21471;
+        Tue, 16 Oct 2018 04:14:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539663250;
-        bh=wtpycg2c0yN7U3EF2DgLYGrTaxS1wPMNv/hBttU9EpI=;
+        s=default; t=1539663251;
+        bh=Rhhw7ZBxnd4aqQM43ORZGu87HVdBDW8JlbJ69xz9bPM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1FZSMpKIN29r8Wo9bC/KFGms7Q2ZLXTPqiJLUwWHBk+xBnHLGPNruqV5gl2BnoyfB
-         UjAUyRsiRb+nhICe4uTc6qWF76X3bheGi3kkCU5M9l4+fDGyU739OObJbOR6Rj50N2
-         Vq1em381oMojCHQ4hW8Zh66Ci4w1Wd+KbATFwuKA=
+        b=Z3DObaBsT4KqhoT3Y5lkFSHN+6Xb4wDJuVRycvgZwdltolFaaapW7u7C7QW1T5NbL
+         YHG8oXbYrSCBVofGMe0DocfOzwJD4FXAuiCeWfBwdcoSo3MRdbABdsa52HYMdlJdFR
+         pnIV343d3xLwsF089J9p0ef9/8jl209JOoeYxzts=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 05/61] mac80211: Always report TX status
-Date:   Tue, 16 Oct 2018 00:13:07 -0400
-Message-Id: <20181016041403.135678-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 06/61] cfg80211: reg: Init wiphy_idx in regulatory_hint_core()
+Date:   Tue, 16 Oct 2018 00:13:08 -0400
+Message-Id: <20181016041403.135678-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181016041403.135678-1-sashal@kernel.org>
 References: <20181016041403.135678-1-sashal@kernel.org>
@@ -56,48 +56,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
 
-[ Upstream commit 8682250b3c1b75a45feb7452bc413d004cfe3778 ]
+[ Upstream commit 24f33e64fcd0d50a4b1a8e5b41bd0257aa66b0e8 ]
 
-If a frame is dropped for any reason, mac80211 wouldn't report the TX
-status back to user space.
+Core regulatory hints didn't set wiphy_idx to WIPHY_IDX_INVALID. Since
+the regulatory request is zeroed, wiphy_idx was always implicitly set to
+0. This resulted in updating only phy #0.
+Fix that.
 
-As the user space may rely on the TX_STATUS to kick its state
-machines, resends etc, it's better to just report this frame as not
-acked instead.
-
+Fixes: 806a9e39670b ("cfg80211: make regulatory_request use wiphy_idx instead of wiphy")
 Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+[add fixes tag]
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/status.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ net/wireless/reg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/mac80211/status.c b/net/mac80211/status.c
-index da7427a41529..ccac205e5853 100644
---- a/net/mac80211/status.c
-+++ b/net/mac80211/status.c
-@@ -470,11 +470,6 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
- 	if (!skb)
- 		return;
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 6e94f6934a0e..6f032c7b8732 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -2384,6 +2384,7 @@ static int regulatory_hint_core(const char *alpha2)
+ 	request->alpha2[0] = alpha2[0];
+ 	request->alpha2[1] = alpha2[1];
+ 	request->initiator = NL80211_REGDOM_SET_BY_CORE;
++	request->wiphy_idx = WIPHY_IDX_INVALID;
  
--	if (dropped) {
--		dev_kfree_skb_any(skb);
--		return;
--	}
--
- 	if (info->flags & IEEE80211_TX_INTFL_NL80211_FRAME_TX) {
- 		u64 cookie = IEEE80211_SKB_CB(skb)->ack.cookie;
- 		struct ieee80211_sub_if_data *sdata;
-@@ -495,6 +490,8 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
- 		}
- 		rcu_read_unlock();
+ 	queue_regulatory_request(request);
  
-+		dev_kfree_skb_any(skb);
-+	} else if (dropped) {
- 		dev_kfree_skb_any(skb);
- 	} else {
- 		/* consumes skb */
 -- 
 2.17.1
 
