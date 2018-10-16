@@ -2,100 +2,166 @@ Return-Path: <SRS0=e/xi=M4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3164C04EBD
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA60C04EBD
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 430E620881
-	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:22:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TgZ1wY8W";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TgZ1wY8W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 430E620881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 64F6220881
+	for <linux-kernel@archiver.kernel.org>; Tue, 16 Oct 2018 07:22:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64F6220881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbeJPPLp (ORCPT
+        id S1727148AbeJPPLy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 16 Oct 2018 11:11:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38518 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726649AbeJPPLo (ORCPT
+        Tue, 16 Oct 2018 11:11:54 -0400
+Received: from mo-csw-fb1515.securemx.jp ([210.130.202.171]:41660 "EHLO
+        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbeJPPLy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Oct 2018 11:11:44 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A5DEB60A34; Tue, 16 Oct 2018 07:22:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539674560;
-        bh=qUx72voxU4tZTyKO/SenLyoz0HDLI6MekyS5fU6sb/U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TgZ1wY8WKtroq1dVleheEn84Go+X1Q58vHx0atV5adU1iUi70tqDftXMUNqEWj7sc
-         i9i2F20WaSU/UpwSXErYLrjtrDHXpCakhAVz7+PDngFoYxAMCQYw87yRNSPXOnBVGS
-         NCGAvd3CniCu/wHyqxfHSGQTVPQhph2s+BPlHzjk=
-Received: from mgautam-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mgautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0D92E612F8;
-        Tue, 16 Oct 2018 07:22:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539674560;
-        bh=qUx72voxU4tZTyKO/SenLyoz0HDLI6MekyS5fU6sb/U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TgZ1wY8WKtroq1dVleheEn84Go+X1Q58vHx0atV5adU1iUi70tqDftXMUNqEWj7sc
-         i9i2F20WaSU/UpwSXErYLrjtrDHXpCakhAVz7+PDngFoYxAMCQYw87yRNSPXOnBVGS
-         NCGAvd3CniCu/wHyqxfHSGQTVPQhph2s+BPlHzjk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0D92E612F8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-From:   Manu Gautam <mgautam@codeaurora.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        linux-kernel@vger.kernel.org (open list:GENERIC PHY FRAMEWORK)
-Subject: [PATCH v2 2/2] phy: qcom-qusb2: Fix HSTX_TRIM tuning with fused value for SDM845
-Date:   Tue, 16 Oct 2018 12:52:07 +0530
-Message-Id: <20181016072209.1011-2-mgautam@codeaurora.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181016072209.1011-1-mgautam@codeaurora.org>
-References: <20181016072209.1011-1-mgautam@codeaurora.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 16 Oct 2018 11:11:54 -0400
+X-Greylist: delayed 1187 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Oct 2018 11:11:52 EDT
+Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1515) id w9G7365c008685; Tue, 16 Oct 2018 16:03:06 +0900
+Received: by mo-csw.securemx.jp (mx-mo-csw1516) id w9G71371008034; Tue, 16 Oct 2018 16:01:03 +0900
+X-Iguazu-Qid: 34tKGYFtwQQ7xmLeB1
+X-Iguazu-QSIG: v=1; s=0; t=1539673262; q=34tKGYFtwQQ7xmLeB1; m=4J/ZlX1w0YOeXvs4ydgRQTJEBo3RFS8g/7eBaoUj94M=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1510) id w9G70tIC027429;
+        Tue, 16 Oct 2018 16:00:56 +0900
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by imx2.toshiba.co.jp  with ESMTP id w9G70tsi029592;
+        Tue, 16 Oct 2018 16:00:55 +0900 (JST)
+From:   Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+To:     stable@vger.kernel.org
+Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
+        Rik van Riel <riel@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw@amazon.co.uk>, Bo Gan <ganb@vmware.com>,
+        "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 4.4 4/4] x86/fpu: Finish excising 'eagerfpu'
+Date:   Tue, 16 Oct 2018 16:00:03 +0900
+X-TSB-HOP: ON
+Message-Id: <1539673203-21068-5-git-send-email-daniel.sangorrin@toshiba.co.jp>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1539673203-21068-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+References: <1539673203-21068-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tune1 register on sdm845 is used to update HSTX_TRIM with fused
-setting. Enable same by specifying update_tune1_with_efuse flag
-for sdm845, otherwise driver ends up programming tune2 register.
+From: Andy Lutomirski <luto@kernel.org>
 
-Fixes: ef17f6e212ca ("phy: qcom-qusb2: Add QUSB2 PHYs support for sdm845")
-Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+commit e63650840e8b053aa09ad934877e87e9941ed135 upstream.
+
+Now that eagerfpu= is gone, remove it from the docs and some
+comments.  Also sync the changes to tools/.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/cf430dd4481d41280e93ac6cf0def1007a67fc8e.1476740397.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
 ---
- drivers/phy/qualcomm/phy-qcom-qusb2.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/kernel-parameters.txt |  5 -----
+ arch/x86/include/asm/cpufeatures.h  |  1 -
+ arch/x86/include/asm/fpu/types.h    | 23 -----------------------
+ 3 files changed, 29 deletions(-)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-index 9d6c88064158..69c92843eb3b 100644
---- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-@@ -231,6 +231,7 @@ static const struct qusb2_phy_cfg sdm845_phy_cfg = {
- 	.mask_core_ready = CORE_READY_STATUS,
- 	.has_pll_override = true,
- 	.autoresume_en	  = BIT(0),
-+	.update_tune1_with_efuse = true,
- };
+diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
+index 3fd53e1..da515c5 100644
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -961,11 +961,6 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
+ 			See Documentation/x86/intel_mpx.txt for more
+ 			information about the feature.
  
- static const char * const qusb2_phy_vreg_names[] = {
+-	eagerfpu=	[X86]
+-			on	enable eager fpu restore
+-			off	disable eager fpu restore
+-			auto	selects the default scheme, which automatically
+-				enables eagerfpu restore for xsaveopt.
+ 
+ 	module.async_probe [KNL]
+ 			Enable asynchronous probe on this module.
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index dd2269dc..a5fa319 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -104,7 +104,6 @@
+ #define X86_FEATURE_EXTD_APICID	( 3*32+26) /* has extended APICID (8 bits) */
+ #define X86_FEATURE_AMD_DCM     ( 3*32+27) /* multi-node processor */
+ #define X86_FEATURE_APERFMPERF	( 3*32+28) /* APERFMPERF */
+-/* free, was #define X86_FEATURE_EAGER_FPU	( 3*32+29) * "eagerfpu" Non lazy FPU restore */
+ #define X86_FEATURE_NONSTOP_TSC_S3 ( 3*32+30) /* TSC doesn't stop in S3 state */
+ 
+ /* Intel-defined CPU features, CPUID level 0x00000001 (ecx), word 4 */
+diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
+index dcb85a9..0d81c7d 100644
+--- a/arch/x86/include/asm/fpu/types.h
++++ b/arch/x86/include/asm/fpu/types.h
+@@ -310,29 +310,6 @@ struct fpu {
+ 	 * the registers in the FPU are more recent than this state
+ 	 * copy. If the task context-switches away then they get
+ 	 * saved here and represent the FPU state.
+-	 *
+-	 * After context switches there may be a (short) time period
+-	 * during which the in-FPU hardware registers are unchanged
+-	 * and still perfectly match this state, if the tasks
+-	 * scheduled afterwards are not using the FPU.
+-	 *
+-	 * This is the 'lazy restore' window of optimization, which
+-	 * we track though 'fpu_fpregs_owner_ctx' and 'fpu->last_cpu'.
+-	 *
+-	 * We detect whether a subsequent task uses the FPU via setting
+-	 * CR0::TS to 1, which causes any FPU use to raise a #NM fault.
+-	 *
+-	 * During this window, if the task gets scheduled again, we
+-	 * might be able to skip having to do a restore from this
+-	 * memory buffer to the hardware registers - at the cost of
+-	 * incurring the overhead of #NM fault traps.
+-	 *
+-	 * Note that on modern CPUs that support the XSAVEOPT (or other
+-	 * optimized XSAVE instructions), we don't use #NM traps anymore,
+-	 * as the hardware can track whether FPU registers need saving
+-	 * or not. On such CPUs we activate the non-lazy ('eagerfpu')
+-	 * logic, which unconditionally saves/restores all FPU state
+-	 * across context switches. (if FPU state exists.)
+ 	 */
+ 	union fpregs_state		state;
+ 	/*
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
 
