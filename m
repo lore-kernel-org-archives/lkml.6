@@ -2,231 +2,125 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8AB6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F05C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D0BB214DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:00:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D0BB214DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id C2C0C214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:01:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PoE0bsaU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2C0C214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727353AbeJQNyp (ORCPT
+        id S1727361AbeJQNz4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 09:54:45 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:49650 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbeJQNyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 09:54:45 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42ZhNw2L0Jz9ttBc;
-        Wed, 17 Oct 2018 08:00:32 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id f7F0ekkE_V2B; Wed, 17 Oct 2018 08:00:32 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42ZhNw1dxsz9ttBY;
-        Wed, 17 Oct 2018 08:00:32 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7107E8B7E8;
-        Wed, 17 Oct 2018 08:00:44 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id wm9FhLnt1yX0; Wed, 17 Oct 2018 08:00:44 +0200 (CEST)
-Received: from pc13168vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1DEA78B75F;
-        Wed, 17 Oct 2018 08:00:44 +0200 (CEST)
-Subject: Re: Crash on FSL Book3E due to pte_pgprot()? (was Re: [PATCH v3
- 12/24] powerpc/mm: use pte helpers in generic code)
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Geoff Levand <geoff@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Kumar Gala <galak@kernel.crashing.org>,
-        Li Yang <leoyang.li@nxp.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Scott Wood <oss@buserror.net>, aneesh.kumar@linux.vnet.ibm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-References: <cover.1539092111.git.christophe.leroy@c-s.fr>
- <343c844bbc5081d13ee4c9aa27ff3118f607e1cc.1539092112.git.christophe.leroy@c-s.fr>
- <87va61jsma.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <236d72cd-e6d7-61e5-2c80-e4311e41b4f6@c-s.fr>
-Date:   Wed, 17 Oct 2018 06:00:10 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 17 Oct 2018 09:55:56 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53249 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbeJQNz4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 09:55:56 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y11-v6so682656wma.3;
+        Tue, 16 Oct 2018 23:01:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=RbTVT/zYvpQ9SEC1HNt9MSqZUZ8u14s6yZ3GVbd73yQ=;
+        b=PoE0bsaU7dQtlxI+OnySxUU07CoI6VSQbXCMeeQDV0jDszJKhJPQTrFxjY1X66/QZD
+         wqZa/tSlt3/Pvdm9cXSCvf+7N60BVK3uZdA6Brz0SKCLnCLTs7S/bIoLrE+B0oXNtSm5
+         fte7J2dcxJo+LXYTL2ccJ7Y83+xgQi2nwkPxkoSdVN7/eTTq5ctq1YzSynBcspwdu+uD
+         mmxBeZNaNRwwEW+lZKCMsTrGiExyAI0aL9hBIICSt9Xf8GX972HxAg6SNbOLxcTxEyE1
+         KgwAu3/eht1zTsImXvyDGGGP6+DVKoyJE4xyNOOSNjNnI08dcc47TXlVLl3EHG+6DvfB
+         u9gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=RbTVT/zYvpQ9SEC1HNt9MSqZUZ8u14s6yZ3GVbd73yQ=;
+        b=cm7i2zDp6IL/+LetoGzG1FY8gBE3PUpSkDoFJOACQNBP7pAEly5nkfqUOU45vxAnsb
+         J5dhJ7joGO8e2kw5YFCvZ5YgNnfUjixgylEJtaaa0AnA+YScFj2oPvxhaBIbpqcWB35Z
+         xFi3lvokQqW9rt8xBkCcM1qH4VWOCalViK+LIm3xY8JX6yLQUvVMSLc3L0yqIeBmdUq1
+         6tcXPIVwdKzHW/m6kaeaRocm8+2UeGi1FnRf4Xcy0fxEZ79SAroWBXcI17Z1Hda7l/po
+         ARejfBR5GbF9L6gNqbjDUzYqPSnlZmi9Qji6MwvcaHNBgB/xnSkv21W56Z0UF9OLswvk
+         hLwg==
+X-Gm-Message-State: ABuFfogMUByjmFtnCICfqcoHqlxaqovaBrGcszmXFcd2oVlebL9PJYIf
+        K/2dZLioqQ5hJtCs2We5TKM=
+X-Google-Smtp-Source: ACcGV62HEZ5J2EKh22tB4Bx0IYTX+SeHFyr61F+utME/U8KAhRRpq/7vgctp2FTDkLVFgjsJv0m8OQ==
+X-Received: by 2002:a1c:e583:: with SMTP id c125-v6mr1316513wmh.134.1539756114255;
+        Tue, 16 Oct 2018 23:01:54 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id t13-v6sm9450232wrn.22.2018.10.16.23.01.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 23:01:53 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 08:01:51 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Leonardo =?iso-8859-1?Q?Br=E1s?= <leobras.c@gmail.com>
+Cc:     lkcamp@lists.libreplanetbr.org,
+        Matthew Wilcox <willy6545@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 2/4] Renames variable to fix shadow warning.
+Message-ID: <20181017060151.GA1105@gmail.com>
+References: <20181017000834.GA21330@WindFlash>
 MIME-Version: 1.0
-In-Reply-To: <87va61jsma.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181017000834.GA21330@WindFlash>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+* Leonardo Brás <leobras.c@gmail.com> wrote:
 
-On 10/17/2018 12:59 AM, Michael Ellerman wrote:
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> Renames the char variable to avoid shadowing a variable previously
+> declared on this function.
 > 
->> Get rid of platform specific _PAGE_XXXX in powerpc common code and
->> use helpers instead.
->>
->> mm/dump_linuxpagetables.c will be handled separately
->>
->> Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   arch/powerpc/include/asm/book3s/32/pgtable.h |  9 +++------
->>   arch/powerpc/include/asm/nohash/32/pgtable.h | 12 ++++++++----
->>   arch/powerpc/include/asm/nohash/pgtable.h    |  3 +--
->>   arch/powerpc/mm/pgtable.c                    | 21 +++++++--------------
->>   arch/powerpc/mm/pgtable_32.c                 | 15 ++++++++-------
->>   arch/powerpc/mm/pgtable_64.c                 | 14 +++++++-------
->>   arch/powerpc/xmon/xmon.c                     | 12 +++++++-----
->>   7 files changed, 41 insertions(+), 45 deletions(-)
+> Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
+> ---
+>  arch/x86/entry/vdso/vdso2c.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> So turns out this patch *also* breaks my p5020ds :)
-> 
-> Even with patch 4 merged, see next.
-> 
-> It's the same crash:
-> 
->    pcieport 2000:00:00.0: AER enabled with IRQ 480
->    Unable to handle kernel paging request for data at address 0x8000080080080000
->    Faulting instruction address: 0xc0000000000192cc
->    Oops: Kernel access of bad area, sig: 11 [#1]
->    BE SMP NR_CPUS=24 CoreNet Generic
->    Modules linked in:
->    CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc3-gcc7x-g98c847323b3a #1
->    NIP:  c0000000000192cc LR: c0000000005d0f9c CTR: 0000000000100000
->    REGS: c0000000f31bb400 TRAP: 0300   Not tainted  (4.19.0-rc3-gcc7x-g98c847323b3a)
->    MSR:  0000000080029000 <CE,EE,ME>  CR: 24000224  XER: 00000000
->    DEAR: 8000080080080000 ESR: 0000000000800000 IRQMASK: 0
->    GPR00: c0000000005d0f84 c0000000f31bb688 c00000000117dc00 8000080080080000
->    GPR04: 0000000000000000 0000000000400000 00000ffbff241010 c0000000f31b8000
->    GPR08: 0000000000000000 0000000000100000 0000000000000000 c0000000012d4710
->    GPR12: 0000000084000422 c0000000012ff000 c000000000002774 0000000000000000
->    GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
->    GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
->    GPR24: 0000000000000000 0000000000000000 8000080080080000 c0000000ffff89a8
->    GPR28: c0000000f3576400 c0000000f3576410 0000000000400000 c0000000012ecc98
->    NIP [c0000000000192cc] ._memset_io+0x6c/0x9c
->    LR [c0000000005d0f9c] .fsl_qman_probe+0x198/0x928
->    Call Trace:
->    [c0000000f31bb688] [c0000000005d0f84] .fsl_qman_probe+0x180/0x928 (unreliable)
->    [c0000000f31bb728] [c0000000006432ec] .platform_drv_probe+0x60/0xb4
->    [c0000000f31bb7a8] [c00000000064083c] .really_probe+0x294/0x35c
->    [c0000000f31bb848] [c000000000640d2c] .__driver_attach+0x148/0x14c
->    [c0000000f31bb8d8] [c00000000063d7dc] .bus_for_each_dev+0xb0/0x118
->    [c0000000f31bb988] [c00000000063ff28] .driver_attach+0x34/0x4c
->    [c0000000f31bba08] [c00000000063f648] .bus_add_driver+0x174/0x2bc
->    [c0000000f31bbaa8] [c0000000006418bc] .driver_register+0x90/0x180
->    [c0000000f31bbb28] [c000000000643270] .__platform_driver_register+0x60/0x7c
->    [c0000000f31bbba8] [c000000000ee2a70] .fsl_qman_driver_init+0x24/0x38
->    [c0000000f31bbc18] [c0000000000023fc] .do_one_initcall+0x64/0x2b8
->    [c0000000f31bbcf8] [c000000000e9f480] .kernel_init_freeable+0x3a8/0x494
->    [c0000000f31bbda8] [c000000000002798] .kernel_init+0x24/0x148
->    [c0000000f31bbe28] [c0000000000009e8] .ret_from_kernel_thread+0x58/0x70
->    Instruction dump:
->    4e800020 2ba50003 40dd003c 3925fffc 5488402e 7929f082 7d082378 39290001
->    550a801e 7d2903a6 7d4a4378 794a0020 <91430000> 38630004 4200fff8 70a50003
-> 
-> 
-> Comparing a working vs broken kernel, it seems to boil down to the fact
-> that we're filtering out more PTE bits now that we use pte_pgprot() in
-> ioremap_prot().
-> 
-> With the old code we get:
->    ioremap_prot: addr 0xff800000 flags 0x241215
->    ioremap_prot: addr 0xff800000 flags 0x241215
->    map_kernel_page: ea 0x8000080080080000 pa 0xff800000 pte 0xff800241215
-> 
-> 
-> And now we get:
->    ioremap_prot: addr 0xff800000 flags 0x241215 pte 0x241215
->    ioremap_prot: addr 0xff800000 pte 0x241215
->    ioremap_prot: addr 0xff800000 prot 0x241014
->    map_kernel_page: ea 0x8000080080080000 pa 0xff800000 pte 0xff800241014
-> 
-> So we're losing 0x201, which for nohash book3e is:
-> 
->    #define _PAGE_PRESENT	0x000001 /* software: pte contains a translation */
->    #define _PAGE_PSIZE_4K	0x000200
-> 
-> 
-> I haven't worked out if it's one or both of those that matter.
+> diff --git a/arch/x86/entry/vdso/vdso2c.h b/arch/x86/entry/vdso/vdso2c.h
+> index fa847a620f40..9466998d0f28 100644
+> --- a/arch/x86/entry/vdso/vdso2c.h
+> +++ b/arch/x86/entry/vdso/vdso2c.h
+> @@ -93,11 +93,11 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+>  		int k;
+>  		ELF(Sym) *sym = raw_addr + GET_LE(&symtab_hdr->sh_offset) +
+>  			GET_LE(&symtab_hdr->sh_entsize) * i;
+> -		const char *name = raw_addr + GET_LE(&strtab_hdr->sh_offset) +
+> +		const char *name2 = raw_addr + GET_LE(&strtab_hdr->sh_offset) +
+>  			GET_LE(&sym->st_name);
+>  
+>  		for (k = 0; k < NSYMS; k++) {
+> -			if (!strcmp(name, required_syms[k].name)) {
+> +			if (!strcmp(name2, required_syms[k].name)) {
+>  				if (syms[k]) {
+>  					fail("duplicate symbol %s\n",
+>  					     required_syms[k].name);
 
-At least missing _PAGE_PRESENT is an issue I believe.
-> 
-> The question is what's the right way to fix it? Should pte_pgprot() not
-> be filtering those bits out on book3e?
+NAK.
 
-I think we should not use pte_pggrot() for that then. What about the 
-below fix ?
+Please read and understand the code and rename both variables to 
+meaningful names, not just a mindless name/name2 ...
 
-Christophe
+Thanks,
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Date: Wed, 17 Oct 2018 05:56:25 +0000
-Subject: [PATCH] powerpc/mm: don't use pte_pgprot() in ioremap_prot()
-
-pte_pgprot() filters out some required flags like _PAGE_PRESENT.
-
-This patch replaces pte_pgprot() by __pgprot(pte_val())
-in ioremap_prot()
-
-Fixes: 26973fa5ac0e ("powerpc/mm: use pte helpers in generic code")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
-  arch/powerpc/mm/pgtable_32.c | 3 ++-
-  arch/powerpc/mm/pgtable_64.c | 4 ++--
-  2 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index 5877f5aa8f5d..a606e2f4937b 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -122,7 +122,8 @@ ioremap_prot(phys_addr_t addr, unsigned long size, 
-unsigned long flags)
-  	pte = pte_exprotect(pte);
-  	pte = pte_mkprivileged(pte);
-
--	return __ioremap_caller(addr, size, pte_pgprot(pte), 
-__builtin_return_address(0));
-+	return __ioremap_caller(addr, size, __pgprot(pte_val(pte)),
-+				__builtin_return_address(0));
-  }
-  EXPORT_SYMBOL(ioremap_prot);
-
-diff --git a/arch/powerpc/mm/pgtable_64.c b/arch/powerpc/mm/pgtable_64.c
-index fb1375c07e8c..836bf436cabb 100644
---- a/arch/powerpc/mm/pgtable_64.c
-+++ b/arch/powerpc/mm/pgtable_64.c
-@@ -245,8 +245,8 @@ void __iomem * ioremap_prot(phys_addr_t addr, 
-unsigned long size,
-  	pte = pte_mkprivileged(pte);
-
-  	if (ppc_md.ioremap)
--		return ppc_md.ioremap(addr, size, pte_pgprot(pte), caller);
--	return __ioremap_caller(addr, size, pte_pgprot(pte), caller);
-+		return ppc_md.ioremap(addr, size, __pgprot(pte_val(pte)), caller);
-+	return __ioremap_caller(addr, size, __pgprot(pte_val(pte)), caller);
-  }
-
-
--- 
-2.13.3
-
+	Ingo
