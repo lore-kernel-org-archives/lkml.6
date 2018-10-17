@@ -2,100 +2,123 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C4BECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C853DECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB27F208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:09:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C62C208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:14:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o8OkNCHa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB27F208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rQnUY3OL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C62C208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbeJRFGu (ORCPT
+        id S1727271AbeJRFMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 01:06:50 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:44387 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbeJRFGu (ORCPT
+        Thu, 18 Oct 2018 01:12:02 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44238 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbeJRFMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 01:06:50 -0400
-Received: by mail-oi1-f194.google.com with SMTP id u74-v6so22264384oia.11
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 14:09:19 -0700 (PDT)
+        Thu, 18 Oct 2018 01:12:01 -0400
+Received: by mail-pg1-f195.google.com with SMTP id g2-v6so13103921pgu.11;
+        Wed, 17 Oct 2018 14:14:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IxgrTIhoN/DAtGA/IJl1rvpfp4eQj0tJuWjkVpM6oys=;
-        b=o8OkNCHatoCd6tGdlumTHzLyE/1mwEmCnin0sUrJVhzePu8neQim1uv1G7T4HaYm7V
-         4a+3t59lIPUlEYPhQRAudqz7Zo2OWFNdUi8snHNQfGaUptuXNOegBH2SfS3QOrpDJb5A
-         PS0KphUEe0fnVGbIr6EOwivnJzpF+JthyMwWSNHFbTXIb13SWNOpm7THWmMC/YkGxoGk
-         DYoXQ/XJ7jWZR3MKxNVE9V6lcE0I6F9RFtBC/pWpPlXc8PFfJbTjNr+p907xGSOqEwyc
-         18V4fig3tEuxh7B/ONTAeZKs+CiBRX9iA4fI2gh9kWUws/MuZtKo1pl2A5RtCbI3LaZ+
-         zQ6g==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=22JNDfv7sjL2DXeYvh5/hLbUGdpncKEtBEgKirFm3Sk=;
+        b=rQnUY3OLBHGQykaFN2lsUhI+LUVCjnYV90TjR8HpzYe7sXSa3XjRhu/K2HezI12E10
+         ZN5z8VspYMnfO8+omvnQNobFx6egSTXUyTJKPVypF7l79oHbc02vo9S90y8/J2/m/W25
+         PcfAnXc9XaNoPgrBcUycmqTUdZY6upbzafpcvreIoyTVyTI1Bb0BHzvyg4u2mraxaBdr
+         bkKHSigpAiaZbPzZfnnKKYvcoIRE2x6mKsIG6pLQP2sYTi5UzAZlan9K0a2n8DJkOzg7
+         8B8ePYjsR8TXQXe1ML+vgX3rIgnbhL3dH68K0wrovPqh/9myPVCYs76FTydZQYzrQhmy
+         iCZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IxgrTIhoN/DAtGA/IJl1rvpfp4eQj0tJuWjkVpM6oys=;
-        b=UJH2/xO5Y/efHh3kizqPtq0XCj6a12lZTTOe1zmCE7LS+jDa2CmUozJO1Mn6E2rAGA
-         qnoHa6tRKAbb9WV5R25/98xkPIjppePhubmZ8iogM86CoIbVzWZ6Px1U94cTJkCbD6Km
-         jXJymn20e4lRVPFkPndazc380mrIukqyuGcRbve4PVCh7JI6MBZGOV6EmLdt6T5VjByD
-         eM8Q4LlUbmc9K9XAn2VpU01aSD8VDaepAJs89hY7StryZ0KKuM+4hmerNqZlPxYDJjKO
-         wTDkBs2+2pzg7ZyZxAVeVY8h6cCQQIx0S5E6aHBa2y7rPgFgO/Ul4dumuCiODgn2Cs6j
-         7XHg==
-X-Gm-Message-State: ABuFfoihpqy7bQGIUIlTxo3CpmObu2WBjQqxx0clRElMExP+3DTA0Acb
-        8oHr7LWjkRvzXtvPZjY/GDqupXeA9QNlLroTZ3IW9w==
-X-Google-Smtp-Source: ACcGV61d3e3Mc9Qmis+PgC2e0uvbDQzQQaQZI+9zZGyc2tNO+6cbpaEA/MClaTERe8fj1XOgUWUrPO3RFJKS4p4Hmck=
-X-Received: by 2002:a54:4e8d:: with SMTP id c13-v6mr14122139oiy.238.1539810558456;
- Wed, 17 Oct 2018 14:09:18 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=22JNDfv7sjL2DXeYvh5/hLbUGdpncKEtBEgKirFm3Sk=;
+        b=hHWG5VKdRaC0nqhx5KsfhhDvR0Ei1E5oc4zY0FLLGxI7JoTT5c7ILt5Jen0bdWLZ8b
+         4VMdik8VWF4djNqYRfTUk01AKdc3F5ruTuZliMk5hIYxlyvPv5Xdi2a6e8ym+Ls41J1Z
+         yWVeInNwzRrUH48vZ44756jpG0IIm8sKu9oiX90GuxdGxNluviy8Ebk/7tFsSLE0AMGk
+         ESTpRn0ZXbHPt0zcjZ+9LlagqDvHHBo2pDpMh0C1BhZFHpGDrgbRw7QzMoQH3HNGoir1
+         sMzCb6kvPHEJ3IxurbccB6Kr7/8jEA0icUtbc8B5iI7g6NrW7Jr6p+lZQypXB5qikXji
+         PMjw==
+X-Gm-Message-State: ABuFfogOEifhhvYjkfaa+ZZ5tofLnoT+7JaF4YlnaQX39zlXVHIZixTI
+        Ox4hLvG7FehNkng39zUlHOE=
+X-Google-Smtp-Source: ACcGV63E/kC/E4no8E+S7rHnlGpG2G3y/+c+4f87AxgNZfnbLdQQM7cal7R0k4sdUA8uEOv4BTCjFg==
+X-Received: by 2002:a63:1c1b:: with SMTP id c27-v6mr26072400pgc.351.1539810869429;
+        Wed, 17 Oct 2018 14:14:29 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id u79-v6sm35066260pfi.104.2018.10.17.14.14.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 14:14:27 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 14:14:26 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] hwmon: (ina3221) Return -ENODATA for two alarms
+ attributes
+Message-ID: <20181017211426.GA10990@roeck-us.net>
+References: <20181017012426.26958-1-nicoleotsuka@gmail.com>
+ <20181017012426.26958-3-nicoleotsuka@gmail.com>
+ <20181017194605.GB6812@roeck-us.net>
+ <20181017203917.GB15941@Asurada-Nvidia.nvidia.com>
 MIME-Version: 1.0
-References: <20181016235120.138227-1-brendanhiggins@google.com>
- <20181016235120.138227-7-brendanhiggins@google.com> <f0d64a0a-7914-f390-c0b5-dc7626b45476@ideasonboard.com>
- <ECADFF3FD767C149AD96A924E7EA6EAF8052436B@USCULXMSG01.am.sony.com>
-In-Reply-To: <ECADFF3FD767C149AD96A924E7EA6EAF8052436B@USCULXMSG01.am.sony.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Wed, 17 Oct 2018 14:09:06 -0700
-Message-ID: <CAFd5g45owvjnVh633_kqf9DKeWQDYdGNi9j1crNZC3k02r=v1A@mail.gmail.com>
-Subject: Re: [RFC v1 06/31] arch: um: enabled running kunit from User Mode Linux
-To:     Tim.Bird@sony.com
-Cc:     kieran.bingham@ideasonboard.com,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, mcgrof@kernel.org,
-        shuah@kernel.org, Joel Stanley <joel@jms.id.au>,
-        mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
-        rostedt@goodmis.org, khilman@baylibre.com,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017203917.GB15941@Asurada-Nvidia.nvidia.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 10:52 AM <Tim.Bird@sony.com> wrote:
-> >
-> > It might be of interest to the automated testing mailing list too ? (Tim?)
->
->  I think this is interesting to groups doing automated testing of the kernel
-> (including myself) as another set of tests to run.  Right now I don't see it
-> as having any special attributes related to automation.  But I could be wrong.
+On Wed, Oct 17, 2018 at 01:39:17PM -0700, Nicolin Chen wrote:
+> On Wed, Oct 17, 2018 at 12:46:05PM -0700, Guenter Roeck wrote:
+> > On Tue, Oct 16, 2018 at 06:24:23PM -0700, Nicolin Chen wrote:
+> > > There is nothing critically wrong to read these two attributes
+> > > without having a is_enabled() check at this point. But reading
+> > > the MASK_ENABLE register would clear the CVRF bit according to
+> > > the datasheet. So it'd be safer to fence for disabled channels
+> > > in order to add pm runtime feature.
+> > > 
+> > > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> > > ---
+> > >  drivers/hwmon/ina3221.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > > 
+> > > diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
+> > > index d61688f04594..3e98b59108ee 100644
+> > > --- a/drivers/hwmon/ina3221.c
+> > > +++ b/drivers/hwmon/ina3221.c
+> > > @@ -200,6 +200,8 @@ static int ina3221_read_curr(struct device *dev, u32 attr,
+> > >  		return 0;
+> > >  	case hwmon_curr_crit_alarm:
+> > >  	case hwmon_curr_max_alarm:
+> > > +		if (!ina3221_is_enabled(ina, channel))
+> > > +			return -ENODATA;
+> > 
+> > Makes sense, but can you check what the sensors command does with this ?
+> 
+> Not quite understanding the question. Do you mean the user case
+> causing the race condition -- wiping out the CVRF bit?
+> 
+No. Question is what the "sensors" command reports if reading the alarm
+attribute returns -ENODATA. If it reports an error, we would have a regression.
 
-Pardon my ignorance, but by automated testing you mean a CI server
-with presubmits, nightlys, and things of the sort?
+Guenter
 
-If that's the case, KUnit could be helpful because of the low resource
-cost in running them and the speed at which they run. There are some
-other features we would like to add which would help with that goal as
-well like test isolation. We actually have a presubmit server
-internally for running KUnit tests that can usually respond to patches
-with test results within a couple minutes. Would something like that
-be interesting?
+> > If it bails out I'd rather have the code return 0 and no error (after all,
+> > the sensor is disabled, so any alarm would be bogus).
+> 
+> That's true. Since they are alert flags, should return 0. I will
+> fix it.
+> 
+> Thanks
