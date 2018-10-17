@@ -2,237 +2,177 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81483ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6E1ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 510F921526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:58:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 510F921526
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 1185621526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:59:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MyNj3Pzh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1185621526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbeJQVyB (ORCPT
+        id S1727351AbeJQVzJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:54:01 -0400
-Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:37981 "EHLO
-        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727103AbeJQVyA (ORCPT
+        Wed, 17 Oct 2018 17:55:09 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:13937 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbeJQVzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:54:00 -0400
-Received: from mail.blacknight.com (unknown [81.17.254.17])
-        by outbound-smtp13.blacknight.com (Postfix) with ESMTPS id 5FB561C1785
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 14:58:09 +0100 (IST)
-Received: (qmail 11563 invoked from network); 17 Oct 2018 13:58:09 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.142])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 17 Oct 2018 13:58:09 -0000
-Date:   Wed, 17 Oct 2018 14:58:07 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Aaron Lu <aaron.lu@intel.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-Subject: Re: [RFC v4 PATCH 2/5] mm/__free_one_page: skip merge for order-0
- page unless compaction failed
-Message-ID: <20181017135807.GL5819@techsingularity.net>
-References: <20181017063330.15384-1-aaron.lu@intel.com>
- <20181017063330.15384-3-aaron.lu@intel.com>
- <20181017104427.GJ5819@techsingularity.net>
- <20181017131059.GA9167@intel.com>
+        Wed, 17 Oct 2018 17:55:09 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bc7402e0000>; Wed, 17 Oct 2018 06:59:10 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 17 Oct 2018 06:59:17 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 17 Oct 2018 06:59:17 -0700
+Received: from [10.26.11.110] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 17 Oct
+ 2018 13:59:15 +0000
+Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180513211347.7187-1-digetx@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <c1b73435-48f0-b445-568f-3c8942878123@nvidia.com>
+Date:   Wed, 17 Oct 2018 14:59:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20181017131059.GA9167@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180513211347.7187-1-digetx@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1539784750; bh=fX+QXIrcjADtKVTPd8XLMOguvHPO2vZRt7JPY5kTpts=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=MyNj3Pzh8li6+XqO39/P0+NfsFczAx1skajC3ERh4BX7SY5A1G0oV3vOmQTNwcCjD
+         KVFCKbGbsYfv/mWvHVZbcAo0C9cAP10ySd3gaKg5O762fB6ECnlvRCMKISZ2oPbWSO
+         ckfjxfEgmhOBsVYqSz5mIisi0ZFQyWcUPcdRe6o8j2Ser0SUzlgCBoawDyQU8x40DR
+         FFJiDRUmRKEwqkZbuDQXBuobRYF/Nty2guA51UBYkqnnYbDB9SNJLFRbKYZlowLk3u
+         KgG1m3hRf/3hTsz34E9MfPafS+PkYqmc4fmvmJ1KQI32e2X6XEZQg2aHpMTVs/REZr
+         BkB/KJi7hOXiw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 09:10:59PM +0800, Aaron Lu wrote:
-> On Wed, Oct 17, 2018 at 11:44:27AM +0100, Mel Gorman wrote:
-> > On Wed, Oct 17, 2018 at 02:33:27PM +0800, Aaron Lu wrote:
-> > > Running will-it-scale/page_fault1 process mode workload on a 2 sockets
-> > > Intel Skylake server showed severe lock contention of zone->lock, as
-> > > high as about 80%(42% on allocation path and 35% on free path) CPU
-> > > cycles are burnt spinning. With perf, the most time consuming part inside
-> > > that lock on free path is cache missing on page structures, mostly on
-> > > the to-be-freed page's buddy due to merging.
-> > > 
-> > 
-> > This confuses me slightly. The commit log for d8a759b57035 ("mm,
-> > page_alloc: double zone's batchsize") indicates that the contention for
-> > will-it-scale moved from the zone lock to the LRU lock. This appears to
-> > contradict that although the exact test case is different (page_fault_1
-> > vs page_fault2). Can you clarify why commit d8a759b57035 is
-> > insufficient?
-> 
-> commit d8a759b57035 helps zone lock scalability and while it reduced
-> zone lock scalability to some extent(but not entirely eliminated it),
-> the lock contention shifted to LRU lock in the meantime.
-> 
 
-I assume you meant "zone lock contention" in the second case.
+On 13/05/2018 22:13, Dmitry Osipenko wrote:
+> Nothing prevents I2C clients to access I2C while Tegra's driver is being
+> suspended, this results in -EBUSY error returned to the clients and that
+> may have unfortunate consequences. In particular this causes problems
+> for the TPS6586x MFD driver which emits hundreds of "failed to read
+> interrupt status" error messages on resume from suspend. This happens if
+> TPS6586X is used to wake system from suspend by the expired RTC alarm
+> timer because TPS6586X is an I2C device driver and its IRQ handler reads
+> the status register while Tegra's I2C driver is suspended, i.e. just after
+> kernel enabled IRQ's during of resume-from-suspend process.
 
-> e.g. from commit d8a759b57035's changelog, with the same test case
-> will-it-scale/page_fault1:
-> 
-> 4 sockets Skylake:
->     batch   score     change   zone_contention   lru_contention   total_contention
->      31   15345900    +0.00%       64%                 8%           72%
->      63   17992886   +17.25%       24%                45%           69%
-> 
-> 4 sockets Broadwell:
->     batch   score     change   zone_contention   lru_contention   total_contention
->      31   16703983    +0.00%       67%                 7%           74%
->      63   18288885    +9.49%       38%                33%           71%
-> 
-> 2 sockets Skylake:
->     batch   score     change   zone_contention   lru_contention   total_contention
->      31   9554867     +0.00%       66%                 3%           69%
->      63   9980145     +4.45%       62%                 4%           66%
-> 
-> Please note that though zone lock contention for the 4 sockets server
-> reduced a lot with commit d8a759b57035, 2 sockets Skylake still suffered
-> a lot from zone lock contention even after we doubled batch size.
-> 
+I have been looking at the above issue with the tps6586x because I am
+seeing delays on resume caused by this driver on the stable branches. I
+understand that this patch was dropped for stable, but looking at the
+specific issue with the tps6586x I am curious why the tps6586x driver
+was not fixed because it appears to me that the issue largely resides
+with that driver and any other device that uses the tps6586x is
+susceptible to it. I was able to fix the tps6586x driver by doing the
+following and I am interested in your thoughts ...
 
-Any particuular reason why? I assume it's related to the number of zone
-locks with the increase number of zones and the number of threads used
-for the test.
+Subject: [PATCH] mfd: tps6586x: Handle interrupts on suspend
 
-> Also, the reduced zone lock contention will again get worse if LRU lock
-> is optimized away by Daniel's work, or in cases there are no LRU in the
-> picture, e.g. an in-kernel user of page allocator like Tariq Toukan
-> demonstrated with netperf.
-> 
+The tps6586x device is registered as an irqchip and the tps6586x-rtc
+interrupt is one of it's interrupt sources. When using the tps6586x-rtc
+as a wake-up device from suspend, the following is seen:
 
-Vaguely understood, I never looked at the LRU lock patches.
+ PM: Syncing filesystems ... done.
+ Freezing user space processes ... (elapsed 0.001 seconds) done.
+ OOM killer disabled.
+ Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
+ Disabling non-boot CPUs ...
+ Entering suspend state LP1
+ Enabling non-boot CPUs ...
+ CPU1 is up
+ tps6586x 3-0034: failed to read interrupt status
+ tps6586x 3-0034: failed to read interrupt status
 
-> > I'm wondering is this really about reducing the number of dirtied cache
-> > lines due to struct page updates and less about the actual zone lock.
-> 
-> Hmm...if we reduce the time it takes under the zone lock, aren't we
-> helping the zone lock? :-)
-> 
+The reason why the tps6586x interrupt status cannot be read is because
+the tps6586x interrupt is not masked during suspend and when the
+tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
+seen before the i2c controller has been resumed in order to read the
+tps6586x interrupt status.
 
-Indirectly yes but reducing cache line dirtying is useful in itself so
-they should be at least considered separately as independent
-optimisations.
+The tps6586x-rtc driver sets it's interrupt as a wake-up source during
+suspend, which gets propagated to the parent tps6586x interrupt.
+However, the tps6586x-rtc driver cannot disable it's interrupt during
+suspend otherwise we would never be woken up and so the tps6586x must
+disable it's interrupt instead.
 
-> > 
-> > > One way to avoid this overhead is not do any merging at all for order-0
-> > > pages. With this approach, the lock contention for zone->lock on free
-> > > path dropped to 1.1% but allocation side still has as high as 42% lock
-> > > contention. In the meantime, the dropped lock contention on free side
-> > > doesn't translate to performance increase, instead, it's consumed by
-> > > increased lock contention of the per node lru_lock(rose from 5% to 37%)
-> > > and the final performance slightly dropped about 1%.
-> > > 
-> > 
-> > Although this implies it's really about contention.
-> > 
-> > > Though performance dropped a little, it almost eliminated zone lock
-> > > contention on free path and it is the foundation for the next patch
-> > > that eliminates zone lock contention for allocation path.
-> > > 
-> > 
-> > Can you clarify whether THP was enabled or not? As this is order-0 focused,
-> > it would imply the series should have minimal impact due to limited merging.
-> 
-> Sorry about this, I should have mentioned THP is not used here.
-> 
+Fix this by disabling the tps6586x interrupt on entering suspend and
+re-enabling it on resuming from suspend.
+---
+ drivers/mfd/tps6586x.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-That's important to know. It does reduce the utility of the patch
-somewhat but not all arches support THP and THP is not always enabled on
-x86.
+diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+index 5628a6b5b19b..165ac8a3d22c 100644
+--- a/drivers/mfd/tps6586x.c
++++ b/drivers/mfd/tps6586x.c
+@@ -594,6 +594,27 @@ static int tps6586x_i2c_remove(struct i2c_client
+*client)
+ 	return 0;
+ }
 
-> > compaction. Lazy merging doesn't say anything about the mobility of
-> > buddy pages that are still allocated.
-> 
-> True.
-> I was thinking if compactions isn't enabled, we probably shouldn't
-> enable this lazy buddy merging feature as it would make high order
-> allocation success rate dropping a lot.
-> 
-
-It probably is lower as reclaim is not that aggressive. Add a comment
-with an explanation as to why it's compaction-specific.
-
-> I probably should have mentioned clearly somewhere in the changelog that
-> the function of merging those unmerged order0 pages are embedded in
-> compaction code, in function isolate_migratepages_block() when isolate
-> candidates are scanned.
-> 
-
-Yes, but note that the concept is still problematic.
-isolate_migratepages_block is not guaranteed to find a pageblock with
-unmerged buddies in it. If there are pageblocks towards the end of the
-zone with unmerged pages, they may never be found. This will be very hard
-to detect at runtime because it's heavily dependant on the exact state
-of the system.
-
-
-> > 
-> > When lazy buddy merging was last examined years ago, a consequence was
-> > that high-order allocation success rates were reduced. I see you do the
-> 
-> I tried mmtests/stress-highalloc on one desktop and didn't see
-> high-order allocation success rate dropping as shown in patch0's
-> changelog. But it could be that I didn't test enough machines or using
-> other test cases? Any suggestions on how to uncover this problem?
-> 
-
-stress-highalloc is nowhere near as useful as it used to be
-unfortunately. It was built at a time when 4G machines were unusual.
-config-global-dhp__workload_thpscale can be sometimes useful but it's
-variable. There is not a good modern example of detecting allocation success
-rates of highly fragmented systems at the moment which is a real pity.
-
-> > merging when compaction has been recently considered but I don't see how
-> > that is sufficient. If a high-order allocation fails, there is no
-> > guarantee that compaction will find those unmerged buddies. There is
-> 
-> Any unmerged buddies will have page->buddy_merge_skipped set and during
-> compaction, when isolate_migratepages_block() iterates pages to find
-> isolate candidates, it will find these unmerged pages and will do_merge()
-> for them. Suppose an order-9 pageblock, every page is merge_skipped
-> order-0 page; after isolate_migratepages_block() iterates them one by one
-> and calls do_merge() for them one by one, higher order page will be
-> formed during this process and after the last unmerged order0 page goes
-> through do_merge(), an order-9 buddy page will be formed.
-> 
-
-Again, as compaction is not guaranteed to find the pageblocks, it would
-be important to consider whether a) that matters or b) find an
-alternative way of keeping unmerged buddies on separate lists so they
-can be quickly discovered when a high-order allocation fails.
-
-> > also no guarantee that a page free will find them. So, in the event of a
-> > high-order allocation failure, what finds all those unmerged buddies and
-> > puts them together to see if the allocation would succeed without
-> > reclaim/compaction/etc.
-> 
-> compaction is needed to form a high-order page after high-order
-> allocation failed, I think this is also true for vanilla kernel?
-
-It's needed to form them efficiently but excessive reclaim or writing 3
-to drop_caches can also do it. Be careful of tying lazy buddy too
-closely to compaction.
++static int __maybe_unused tps6586x_i2c_suspend(struct device *dev)
++{
++	struct tps6586x *tps6586x = dev_get_drvdata(dev);
++
++	disable_irq(tps6586x->client->irq);
++
++	return 0;
++}
++
++static int __maybe_unused tps6586x_i2c_resume(struct device *dev)
++{
++	struct tps6586x *tps6586x = dev_get_drvdata(dev);
++
++	enable_irq(tps6586x->client->irq);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(tps6586x_pm_ops, tps6586x_i2c_suspend,
++			 tps6586x_i2c_resume);
++
+ static const struct i2c_device_id tps6586x_id_table[] = {
+ 	{ "tps6586x", 0 },
+ 	{ },
+@@ -604,6 +625,7 @@ static int tps6586x_i2c_remove(struct i2c_client
+*client)
+ 	.driver	= {
+ 		.name	= "tps6586x",
+ 		.of_match_table = of_match_ptr(tps6586x_of_match),
++		.pm	= &tps6586x_pm_ops,
+ 	},
+ 	.probe		= tps6586x_i2c_probe,
+ 	.remove		= tps6586x_i2c_remove,
+-- 
+1.9.1
 
 -- 
-Mel Gorman
-SUSE Labs
+nvpublic
