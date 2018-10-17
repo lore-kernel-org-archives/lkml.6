@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47CAFECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9474ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 047C021537
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6676821528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:54:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dp8Qmq57"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 047C021537
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MKuQRRcq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6676821528
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728080AbeJQXue (ORCPT
+        id S1728092AbeJQXuk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:50:34 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:12874 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeJQXud (ORCPT
+        Wed, 17 Oct 2018 19:50:40 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:63366 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeJQXuj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:50:33 -0400
+        Wed, 17 Oct 2018 19:50:39 -0400
 Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20181017155411epoutp043b3a9aa575bb8570a99b7df764b657ac~ecFltWc_-0668806688epoutp044;
-        Wed, 17 Oct 2018 15:54:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20181017155411epoutp043b3a9aa575bb8570a99b7df764b657ac~ecFltWc_-0668806688epoutp044
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20181017155418epoutp01ef3021c391a5f319ee502bad01c5d14e~ecFrXvXo62806228062epoutp01l;
+        Wed, 17 Oct 2018 15:54:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20181017155418epoutp01ef3021c391a5f319ee502bad01c5d14e~ecFrXvXo62806228062epoutp01l
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539791652;
-        bh=fjqApFgO1XTp91HWbt7qKPbS5qEV11jI5OGBzjdAFiY=;
+        s=mail20170921; t=1539791658;
+        bh=CNGKVTRYfXVdSjJbQ49PGA9Orip/uVvSegZ9MuPr7to=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=dp8Qmq57p/KQ/u4Wp3A0+XVvVbYPAfJH11IpeivpdGLy1eoDjosfGQWsCiso+xflk
-         LuEzyTICqEDNmoKfkYVwDEEV3cLvY4jlORHAGV3toPE/fUszgXHwmC2trf8PgwDC4q
-         1DikfeYXtDnm9VcMoaRjouI/z/PR9lvRHF4X66D4=
+        b=MKuQRRcqdRLILgzdDUx3y1eFmPocBxsR3Bo1neSXEuOcR3KGhnrojLNDyL5PG2UVU
+         ItOui/IlRHZTzMo2kGduyfhcfFkE2zANDhNNRhIYcWu0lUGdWf7cmz541TFhMT9qpW
+         1ykSjLrH6kdCZbnaHuIw5ePwXEqJF4f1anyXHk18=
 Received: from epsmges2p1.samsung.com (unknown [182.195.42.69]) by
         epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20181017155411epcas2p3c90e292309e9b0b754e4fcf11cade851~ecFk-rUiG2604526045epcas2p3f;
-        Wed, 17 Oct 2018 15:54:11 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        20181017155417epcas2p34f8c248193156f5f60af69e400620d32~ecFqftACi0461104611epcas2p3Q;
+        Wed, 17 Oct 2018 15:54:17 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
         epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        07.67.04015.32B57CB5; Thu, 18 Oct 2018 00:54:11 +0900 (KST)
+        38.67.04015.92B57CB5; Thu, 18 Oct 2018 00:54:17 +0900 (KST)
 Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20181017155409epcas2p41b5770668abdb4af99646841a3dd24ec~ecFjzPh010750407504epcas2p4J;
-        Wed, 17 Oct 2018 15:54:09 +0000 (GMT)
-X-AuditID: b6c32a45-6a9ff70000000faf-0d-5bc75b23fdbd
+        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+        20181017155416epcas2p32f63571e9c06cd1aba2b40bcf23de8e1~ecFpk1h501998019980epcas2p3w;
+        Wed, 17 Oct 2018 15:54:16 +0000 (GMT)
+X-AuditID: b6c32a45-6c1ff70000000faf-14-5bc75b29991d
 Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 75.44.03633.12B57CB5; Thu, 18 Oct
-        2018 00:54:09 +0900 (KST)
+        (Symantec Messaging Gateway) with SMTP id A6.44.03633.72B57CB5; Thu, 18 Oct
+        2018 00:54:16 +0900 (KST)
 Received: from AMDC3058.DIGITAL.local ([106.120.53.102]) by mmp2.samsung.com
         (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
         2014)) with ESMTPA id <0PGR00KZM2SD3M00@mmp2.samsung.com>; Thu, 18 Oct 2018
-        00:54:09 +0900 (KST)
+        00:54:15 +0900 (KST)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To:     Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>
@@ -73,77 +73,80 @@ Cc:     Amit kucheria <amit.kucheria@linaro.org>,
         Baoyou Xie <baoyou.xie@linaro.org>,
         Shawn Guo <shawnguo@kernel.org>, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v2 09/17] thermal: qoriq: enable+check sensor after its
- setup is finished
-Date:   Wed, 17 Oct 2018 17:52:35 +0200
-Message-id: <1539791563-5959-10-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH v2 10/17] thermal: rcar_gen3_thermal: enable+check sensor
+ after its setup is finished
+Date:   Wed, 17 Oct 2018 17:52:36 +0200
+Message-id: <1539791563-5959-11-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1539791563-5959-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzVSZ0xTYRTla997fTRWX8r6AIOhaCIYUIzK5wjyw/GMI/pDYqyDCi+ATFtA
-        lglLVgAlhEDKagQjaSBAKYIVHAXaQhjBKsGFMiwKhGoaJeBAyoN/55x7Tu65ySW5wru4Cxke
-        HcdIoyWRIoKPPe729PP2EOvFe4aXbVFmWi0HtZQ34chk0QPUWNiLoZrXozh6kW4EaGVyDkf9
-        7RkclCV/gKG66QkeMmoqCWQp7AGocuE9D01PFBHoq9oJqerHCLSkqcZQ17gFBAjpDLOOoOWf
-        Bgn6ifwjj257t5+u7fzGoVXKPIL+MNpJ0IWZCwRdpFYCun20mksbyhYxWj/WzqEtKrfzgsv8
-        IyFMZHgCI93tH8QPe1ldyo3N5CX+MP8j0sBvPB/YkpDaByta3nLzAZ8UUh0A9tVPApYsAjin
-        KuRsuEytwzg7aAbwy2ctwZJlALuMzzGri6AOweIc5WqcJO2p01DdQFplLtWLwSmLpxXbUWJY
-        pBzlWTFG7YB1+aWEFQsoGvYrmnnsMjfYpytZq2e7qg+tKAhWL+PBqjfbWHwMjssb18vZwVm9
-        ej3rCk3KlrULVv0Azi8/xFjSBGDDgG49cRh260dwtt1mmNv9l2ctDSkBzM0WshYarmh614+s
-        AHCs14DfB84KYKMEjkysLCqUke2N9fWRSaJk8dGhPsExUSqw9hxexztA+dAZLaBIINokoJx1
-        YiEuSZAlRWkBJLkie0Gyu14sFIRIkpIZacx1aXwkI9MCVxITOQkmXavEQipUEsdEMEwsI92Y
-        ckhblzQwXfyoPSVQE3FhKfS7+8WChDoPt7Zrqc1n/dMDFrKOKrqcDPLhZ+fyth801ao84L3A
-        oJtjJb5bZvKxwGxhwa6p8PlBf+MfXaKr5WrJrTuS1BH8xBWb6aIaubk1xe+UQ4/7pcYcg91W
-        n5ngpwMO2OzJKW/fX69Ut42OkTd2mn8eQCEiTBYm8fXiSmWS/7E5krMYAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsVy+t9jQV3F6OPRBuemmFs0Nyxmstg4Yz2r
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTYRzGfbdz22pxOkq+KlgtxAtpXrLeMsoPGQcqunyrfcihpynexqaS
+        1oel4Q0Ul6TmrakVugxzrLxnzbZlqHgJ0dLEC+I9bKSmhTmPfvv9n+f5839eeCkhk4a7UtHx
+        iZwqXh4rJcTYu07vU77eMqvMvzUfR+maagFqKK7H0YzNCtDrXDOGnn0dwtGHh4MAbU0u4OhL
+        Y5oAPSqpwtDz6QkSDbaUEciW+wmgsuXvJJqeyCPQrNEZGWqGCfSnpQJD7T9sIJRh035aCLZk
+        vIdgm0vGSPbtt2C2um1OwBr02QQ7OtRGsLnpywSbZ9QDtnGoQsh+LlrDWOtwo4C1GdyvS26L
+        z0VysdHJnOrE+XBxVJ1VgysrqXulRbVAAzaJHCCiIH0SZo/NkTlATDF0E4AV7euY3WDoNQCr
+        yrz2QrrCbsDrbwAczlTxCxsA1vSvknaDoM9CbaZ+O0RRTvRlaKyj7LKQNmNwyuZtZ0daAZd7
+        tDuHMdoDDkyadlhCs9Dc9XG3kDvsshTgdhZt671bul29gIRDJQ94vgiXRtIFPDvCeauR5NkN
+        zugbgL0bpIsAXNx4gfFDPYB13ZbdjRDYae3H+XYHYFbnP9JeGtISmJXB8BEW1vatkfyDSwHc
+        0sF84KIDDnpwiFOq4xScOlAZ4KeWx6mT4hV+EQlxBrDzM3zCmkBx7xUToCkg3S+hXSwyBpcn
+        q1PiTABSQqmTJPWoVcZIIuUpqZwq4Y4qKZZTm4AbhUmdJZNu5TKGVsgTuRiOU3KqPVdAiVw1
+        IKFAcctp3rMnVMTq5pu1KDA86ObmeNLjdAdjq+ffxa4FqnZiRfRLmRBk67i2uXA8b7Tw2MGQ
+        7KvEU+sTk4fr75UbXpURs6c9jqz5bpUPyLGRC9pkgjO89A8bKY7qYExTrvsiOyLNGXNt4hhp
+        33vPwKz1u6+0S2fGDgdfCnJbvS/F1FHyAB+hSi3/D1E3m7gVAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsVy+t9jQV2N6OPRBn+Ws1k0Nyxmstg4Yz2r
         xbPPxxkt1vYeZbGYf+Uaq8WBxsuMFv8fvWa1OLW9icmiZdYiFoslTx6yW1zeNYfN4nPvEUaL
         Oe9us1s8edjHZvFii7jFphU32Cx+7prHYrH33mdGByGPpvfH2Dxm3T/L5rFz1l12j623TD0W
         73nJ5LFpVSebx51re9g8epvfsXn0bVnF6LH92jxmjxPTv7N4HL+xncnj8ya5AN4oLpuU1JzM
-        stQifbsEroyD86YyFzSzV3x8/4+tgfE3axcjJ4eEgInEs83ngWwuDiGBdYwSHTdmsUE4vxgl
-        PjQcYAGpYhOwkpjYvoqxi5GDQ0TAW2LLGg6QGmaBoywSa2d8YwOpERaIlljRtpcJxGYRUJVY
-        0jUVLM4r4CFxasEGdohtchInj00G28wJFD/3fwFYjZCAu8TJHS/ZJzDyLGBkWMUomVpQnJue
-        W2xUYJSXWq5XnJhbXJqXrpecn7uJERgB2w5r9e9gfLwk/hCjAAejEg/vDrFj0UKsiWXFlbmH
-        GCU4mJVEeKsUj0cL8aYkVlalFuXHF5XmpBYfYpTmYFES5+XPPxYpJJCeWJKanZpakFoEk2Xi
-        4JRqYNRMOrn/cse2gxdNZL1nuGnF7j0nyBB2ZLv/zBlLJ1evuf+lRuDoheqYlXLcyU7LHVyL
-        nKbqu8y0eJW78jJjSn6U3b/p+e0brryYK1il99D9TXdxEusWrfidrLK3QnZfrJzaoaRxUEsz
-        dIHBsh85P67mWOf67dynxPPacfcG6R1b9h60OSYmHaDEUpyRaKjFXFScCABt4OTgfAIAAA==
-X-CMS-MailID: 20181017155409epcas2p41b5770668abdb4af99646841a3dd24ec
+        stQifbsErow1xxtYCxZyVMyevpKxgfE3WxcjJ4eEgInEgmlnGLsYuTiEBNYxShy93wfl/GKU
+        aJj4kRmkik3ASmJi+yqgBAeHiIC3xJY1HCA1zAJHWSTWzvgGNklYIF2i6VAHO4jNIqAqcenR
+        IbA4r4CHxNGTB6G2yUmcPDaZFcTmBIqf+78ALC4k4C5xcsdL9gmMPAsYGVYxSqYWFOem5xYb
+        FRjlpZbrFSfmFpfmpesl5+duYgRGwLbDWv07GB8viT/EKMDBqMTDu0PsWLQQa2JZcWXuIUYJ
+        DmYlEd4qxePRQrwpiZVVqUX58UWlOanFhxilOViUxHn5849FCgmkJ5akZqemFqQWwWSZODil
+        Ghj7zxlr7lp2vmEbT8mdE5X/9afl5AZaRDLk34tlvv26wE067/Nq5/9NbDkSVxXZDvxYFp56
+        Y7vqvrDzGXc8ZR2yLJeJn/xZ6t65QrWP/fiMpox+qYnloZM/rXhzt8p8R8O99xNk+1PPqRRO
+        eTV/6uxvX09vZ2R9vKH9cdeFfcaxMqyCDhvCt81SYinOSDTUYi4qTgQAaU2JQ3wCAAA=
+X-CMS-MailID: 20181017155416epcas2p32f63571e9c06cd1aba2b40bcf23de8e1
 X-Msg-Generator: CA
 CMS-TYPE: 102P
-X-CMS-RootMailID: 20181017155409epcas2p41b5770668abdb4af99646841a3dd24ec
+X-CMS-RootMailID: 20181017155416epcas2p32f63571e9c06cd1aba2b40bcf23de8e1
 References: <1539791563-5959-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20181017155409epcas2p41b5770668abdb4af99646841a3dd24ec@epcas2p4.samsung.com>
+        <CGME20181017155416epcas2p32f63571e9c06cd1aba2b40bcf23de8e1@epcas2p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable+check sensor after enabling monitoring.
+Enable+check sensor after setting tsc->zone and checking ntrips.
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/thermal/qoriq_thermal.c | 6 +++---
+ drivers/thermal/rcar_gen3_thermal.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
-index d8a80448..fb1750f 100644
---- a/drivers/thermal/qoriq_thermal.c
-+++ b/drivers/thermal/qoriq_thermal.c
-@@ -233,13 +233,13 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
- 		goto err_tmu;
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index c72453e..eb50f33 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -421,9 +421,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 			goto error_unregister;
+ 		}
+ 
+-		thermal_zone_set_mode(zone, THERMAL_DEVICE_ENABLED);
+-		thermal_zone_device_check(zone);
+-
+ 		tsc->zone = zone;
+ 
+ 		ret = of_thermal_get_ntrips(tsc->zone);
+@@ -431,6 +428,9 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 			goto error_unregister;
+ 
+ 		dev_info(dev, "TSC%d: Loaded %d trip points\n", i, ret);
++
++		thermal_zone_set_mode(zone, THERMAL_DEVICE_ENABLED);
++		thermal_zone_device_check(zone);
  	}
  
--	thermal_zone_set_mode(data->tz, THERMAL_DEVICE_ENABLED);
--	thermal_zone_device_check(data->tz);
--
- 	/* Enable monitoring */
- 	site = 0x1 << (15 - data->sensor_id);
- 	tmu_write(data, site | TMR_ME | TMR_ALPF, &data->regs->tmr);
- 
-+	thermal_zone_set_mode(data->tz, THERMAL_DEVICE_ENABLED);
-+	thermal_zone_device_check(data->tz);
-+
- 	return 0;
- 
- err_tmu:
+ 	priv->num_tscs = i;
 -- 
 1.9.1
 
