@@ -2,125 +2,121 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6E7ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9ACECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C60421523
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:53:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C60421523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DDAAD21523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:53:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BLBWFzY9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDAAD21523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbeJQPr0 (ORCPT
+        id S1727482AbeJQPrv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:47:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38634 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726691AbeJQPr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:47:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CDB9CB027;
-        Wed, 17 Oct 2018 07:52:57 +0000 (UTC)
-Date:   Wed, 17 Oct 2018 09:52:57 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        yi.z.zhang@linux.intel.com
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-Message-ID: <20181017075257.GF18839@dhcp22.suse.cz>
-References: <20181009170051.GA40606@tiger-server>
- <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
- <25092df0-b7b4-d456-8409-9c004cb6e422@linux.intel.com>
- <20181010095838.GG5873@dhcp22.suse.cz>
- <f97de51c-67dd-99b2-754e-0685cac06699@linux.intel.com>
- <20181010172451.GK5873@dhcp22.suse.cz>
- <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com>
- <20181010185242.GP5873@dhcp22.suse.cz>
- <20181011085509.GS5873@dhcp22.suse.cz>
- <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
+        Wed, 17 Oct 2018 11:47:51 -0400
+Received: from mail-pl1-f179.google.com ([209.85.214.179]:43185 "EHLO
+        mail-pl1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726691AbeJQPrv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 11:47:51 -0400
+Received: by mail-pl1-f179.google.com with SMTP id 30-v6so12270787plb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 00:53:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jnjz7lH3HZhDbBDVjB+iy6/kTfkrTriNI0YEozLP+/E=;
+        b=BLBWFzY9by6EjhaWIIie72pVlBrb6I/rdzTo1QrmbaMNoq/ephkFCr9LikLV3AIHZy
+         +6HnDwKs2TUFT8o/MVElI1xUAeXJI2YsJXby5+qA+j7qfnhmQ9JBXwd4t77QTm2dccLk
+         KWG9oKiiuIF113sUD1QIMsHa7tQNxEqxYoovk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jnjz7lH3HZhDbBDVjB+iy6/kTfkrTriNI0YEozLP+/E=;
+        b=e2YcsN++185RYJAD+lciYFjq0uXD2kyQG6MXjRzaSFrIfF0Snd0iMXQiDqir1QRcge
+         J/EUW1MaRn8+8aYcXQIOFxu/lRIRYSe6xWW8cIzRrzJesbYDyf7rIhamFvW9DNLUc3NP
+         ZfoRrr54N0YMNbrcnD6uznNCWlhIPds6eGzLrtQojERdVUeCNFkvW2vegOaE2aNZ1GuG
+         IlT+1Q8LX1w7x/Ubn8eCFFi5E0lc5IY6+6P3vnuSYv2lW2MYEq5FaZ18aGlJ3V2lKT2E
+         hma4GvKYfbBECGWBgkRXC/lzL4gHZg/qbcS/z9MrYQugfb/JDeDx0N6cVfFyU6V7nhwr
+         Kr6w==
+X-Gm-Message-State: ABuFfohv/ii4/xbDTNQzXX6H+hqNwPHQ3cYbM6VfUaQkLozVa/sb1VSK
+        zN4pjzEOdX7WTXcixjxDAGGaOw==
+X-Google-Smtp-Source: ACcGV61hS6jffPti1COc3y/jSDt1WtCKYPiUdAoO2LLL8aWgP16kYpLNrUWSAQXwn7+Ss4hDd1fvrA==
+X-Received: by 2002:a17:902:6bc2:: with SMTP id m2-v6mr25209227plt.106.1539762804472;
+        Wed, 17 Oct 2018 00:53:24 -0700 (PDT)
+Received: from henryhsu-z840.tpe.corp.google.com ([2401:fa00:1:b:d0d:8911:feba:193e])
+        by smtp.gmail.com with ESMTPSA id c24-v6sm25430274pgn.60.2018.10.17.00.53.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 00:53:24 -0700 (PDT)
+From:   Heng-Ruey Hsu <henryhsu@chromium.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jcliang@chromium.org, tfiga@chromium.org,
+        Heng-Ruey Hsu <henryhsu@chromium.org>
+Subject: [PATCH] media: uvcvideo: Add boottime clock support
+Date:   Wed, 17 Oct 2018 15:52:42 +0800
+Message-Id: <20181017075242.21790-1-henryhsu@chromium.org>
+X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 11-10-18 10:38:39, Alexander Duyck wrote:
-> On 10/11/2018 1:55 AM, Michal Hocko wrote:
-> > On Wed 10-10-18 20:52:42, Michal Hocko wrote:
-> > [...]
-> > > My recollection was that we do clear the reserved bit in
-> > > move_pfn_range_to_zone and we indeed do in __init_single_page. But then
-> > > we set the bit back right afterwards. This seems to be the case since
-> > > d0dc12e86b319 which reorganized the code. I have to study this some more
-> > > obviously.
-> > 
-> > so my recollection was wrong and d0dc12e86b319 hasn't really changed
-> > much because __init_single_page wouldn't zero out the struct page for
-> > the hotplug contex. A comment in move_pfn_range_to_zone explains that we
-> > want the reserved bit because pfn walkers already do see the pfn range
-> > and the page is not fully associated with the zone until it is onlined.
-> > 
-> > I am thinking that we might be overzealous here. With the full state
-> > initialized we shouldn't actually care. pfn_to_online_page should return
-> > NULL regardless of the reserved bit and normal pfn walkers shouldn't
-> > touch pages they do not recognize and a plain page with ref. count 1
-> > doesn't tell much to anybody. So I _suspect_ that we can simply drop the
-> > reserved bit setting here.
-> 
-> So this has me a bit hesitant to want to just drop the bit entirely. If
-> nothing else I think I may wan to make that a patch onto itself so that if
-> we aren't going to set it we just drop it there. That way if it does cause
-> issues we can bisect it to that patch and pinpoint the cause.
+Android requires camera timestamps to be reported with
+CLOCK_BOOTTIME to sync timestamp with other sensor sources.
 
-Yes a patch on its own make sense for bisectability.
+Signed-off-by: Heng-Ruey Hsu <henryhsu@chromium.org>
+---
+ drivers/media/usb/uvc/uvc_driver.c | 4 ++++
+ drivers/media/usb/uvc/uvc_video.c  | 2 ++
+ 2 files changed, 6 insertions(+)
 
-> > Regarding the post initialization required by devm_memremap_pages and
-> > potentially others. Can we update the altmap which is already a way how
-> > to get alternative struct pages by a constructor which we could call
-> > from memmap_init_zone and do the post initialization? This would reduce
-> > the additional loop in the caller while it would still fit the overall
-> > design of the altmap and the core hotplug doesn't have to know anything
-> > about DAX or whatever needs a special treatment.
-> > 
-> > Does that make any sense?
-> 
-> I think the only thing that is currently using the altmap is the ZONE_DEVICE
-> memory init. Specifically I think it is only really used by the
-> devm_memremap_pages version of things, and then only under certain
-> circumstances. Also the HMM driver doesn't pass an altmap. What we would
-> really need is a non-ZONE_DEVICE users of the altmap to really justify
-> sticking with that as the preferred argument to pass.
-
-I am not aware of any upstream HMM user so I am not sure what are the
-expectations there. But I thought that ZONE_DEVICE users use altmap. If
-that is not generally true then we certainly have to think about a
-better interface.
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index d46dc432456c..a9658f38c586 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -2287,6 +2287,8 @@ static int uvc_clock_param_get(char *buffer, const struct kernel_param *kp)
+ {
+ 	if (uvc_clock_param == CLOCK_MONOTONIC)
+ 		return sprintf(buffer, "CLOCK_MONOTONIC");
++	else if (uvc_clock_param == CLOCK_BOOTTIME)
++		return sprintf(buffer, "CLOCK_BOOTTIME");
+ 	else
+ 		return sprintf(buffer, "CLOCK_REALTIME");
+ }
+@@ -2298,6 +2300,8 @@ static int uvc_clock_param_set(const char *val, const struct kernel_param *kp)
  
-> For those two functions it currently makes much more sense to pass the
-> dev_pagemap pointer and then reference the altmap from there. Otherwise we
-> are likely starting to look at something that would be more of a dirty hack
-> where we are passing a unused altmap in order to get to the dev_pagemap so
-> that we could populate the page.
-
-If dev_pagemap is a general abstraction then I agree.
+ 	if (strcasecmp(val, "monotonic") == 0)
+ 		uvc_clock_param = CLOCK_MONOTONIC;
++	else if (strcasecmp(val, "boottime") == 0)
++		uvc_clock_param = CLOCK_BOOTTIME;
+ 	else if (strcasecmp(val, "realtime") == 0)
+ 		uvc_clock_param = CLOCK_REALTIME;
+ 	else
+diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+index 86a99f461fd8..d4248d5cd9cd 100644
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -425,6 +425,8 @@ static inline ktime_t uvc_video_get_time(void)
+ {
+ 	if (uvc_clock_param == CLOCK_MONOTONIC)
+ 		return ktime_get();
++	else if (uvc_clock_param == CLOCK_BOOTTIME)
++		return ktime_get_boottime();
+ 	else
+ 		return ktime_get_real();
+ }
 -- 
-Michal Hocko
-SUSE Labs
+2.19.1.331.ge82ca0e54c-goog
+
