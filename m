@@ -2,100 +2,117 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED1AECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA427ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00B08214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:05:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00B08214C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A29621523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:07:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ihv/pnjf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A29621523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbeJQO7s (ORCPT
+        id S1727498AbeJQPBl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 10:59:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59376 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727162AbeJQO7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 10:59:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5547DAD25;
-        Wed, 17 Oct 2018 07:05:32 +0000 (UTC)
-Date:   Wed, 17 Oct 2018 09:05:31 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org
-Subject: Re: [RFC PATCH] mm, proc: report PR_SET_THP_DISABLE in proc
-Message-ID: <20181017070531.GC18839@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1810031547150.202532@chino.kir.corp.google.com>
- <20181004055842.GA22173@dhcp22.suse.cz>
- <alpine.DEB.2.21.1810040209130.113459@chino.kir.corp.google.com>
- <20181004094637.GG22173@dhcp22.suse.cz>
- <alpine.DEB.2.21.1810041130380.12951@chino.kir.corp.google.com>
- <20181009083326.GG8528@dhcp22.suse.cz>
- <20181015150325.GN18839@dhcp22.suse.cz>
- <alpine.DEB.2.21.1810151519250.247641@chino.kir.corp.google.com>
- <20181016104855.GQ18839@dhcp22.suse.cz>
- <alpine.DEB.2.21.1810161416540.83080@chino.kir.corp.google.com>
+        Wed, 17 Oct 2018 11:01:41 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35332 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727364AbeJQPBk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 11:01:40 -0400
+Received: by mail-wm1-f65.google.com with SMTP id e187-v6so951766wmf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 00:07:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AAtjDTWl/2R2tabAbNeMKt+JNSXaro3X8mifByiqvso=;
+        b=ihv/pnjfkMmuTOd7Z9u2EcNsUcS/4IcAwfpM9HPz6uFVx9h/bldoMLE9ScvwjoOp9e
+         Kux0Y8JAbD8zgDnkS37W5eS5xIhE4N5dHfrJXFmZQzW83CZxbElfkKYDlJmNI3nKc9VK
+         RxIQ6vKsCvIUlfUzWMnRSkQAomHMqTgmMUqwU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AAtjDTWl/2R2tabAbNeMKt+JNSXaro3X8mifByiqvso=;
+        b=pS0ZDIRibZo89Z1qMhSbkOIJwmBRUcrVbtgqxwq5kJ4oSUDvpI2fTOOh2YzCeLu9kO
+         8H37TmhrBz8A3alnJyPV9A+/xHNes7sTlBVVjrdIJnBurOyyvT+9qTtsSKnZpDrkCBrP
+         ziOFCKAcUXz/h2hkoRrIPLWDMOGPWGc0hCWxqCpuDScfGMjtQW3Pz6tDhwS0Kh+T78bu
+         XZxJ0v4Otxy4RFfQdNpUbXT1wtTTUDDeAiBoJ6LLs+7Xlhg0jnInRWnsV4M65X1oebQD
+         ak2g3GypuOVJbhS7RRuAYhEZa+A9W7oCANPLrsHHPrhvEcAUkw2CCzbE+CPNggcPcN9a
+         z5IQ==
+X-Gm-Message-State: ABuFfog7zv94Ui3b6AqXGcRHFjHUHYahWt2bWkFX/5nRA8C/mphxusgo
+        g5n4Q4QwN+ve/wEeBK1S2HwgmQ==
+X-Google-Smtp-Source: ACcGV62GZ6/lab6+piVRIeuLZM0uUfsunQdp5yDemqjb0s7KkViXyvJsbDjuj7IGMUptkD8dv+fnTQ==
+X-Received: by 2002:a1c:a345:: with SMTP id m66-v6mr1548346wme.104.1539760042970;
+        Wed, 17 Oct 2018 00:07:22 -0700 (PDT)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id l11-v6sm23207466wrn.61.2018.10.17.00.07.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 00:07:21 -0700 (PDT)
+Subject: Re: [PATCH v11 0/5] Venus updates - PIL
+To:     Vikash Garodia <vgarodia@codeaurora.org>,
+        stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org
+References: <1539005572-803-1-git-send-email-vgarodia@codeaurora.org>
+ <fb81c8b7946898bc61e9b8c793c74184@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <62411a58-f23a-6215-3b9e-cf3b6b08ffdc@linaro.org>
+Date:   Wed, 17 Oct 2018 10:07:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1810161416540.83080@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <fb81c8b7946898bc61e9b8c793c74184@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 16-10-18 14:24:19, David Rientjes wrote:
-> On Tue, 16 Oct 2018, Michal Hocko wrote:
+Hi Vikash,
+
+On 10/16/2018 06:55 PM, Vikash Garodia wrote:
+> <A Friendly reminder for review>
+
+I have no review comments. I'll need some time to test this version on
+v1 and v3.
+
 > 
-> > > I don't understand the point of extending smaps with yet another line.  
-> > 
-> > Because abusing a vma flag part is just wrong. What are you going to do
-> > when a next bug report states that the flag is set even though no
-> > userspace has set it and that leads to some malfunctioning? Can you rule
-> > that out? Even your abuse of the flag is surprising so why others
-> > wouldn't be?
-> > 
-> 
-> The flag has taken on the meaning of "thp disabled for this vma", how it 
-> is set is not the scope of the flag.  If a thp is explicitly disabled from 
-> being eligible for thp, whether by madvise, prctl, or any future 
-> mechanism, it should use VM_NOHUGEPAGE or show_smap_vma_flags() needs to 
-> be modified.
-
-No, this is not the meaning which is documented
-
-nh  - no-huge page advise flag
-
-and as far as I know it is only you who has complained so far.
- 
-> > As I've said there are two things. Exporting PR_SET_THP_DISABLE to
-> > userspace so that a 3rd party process can query it. I've already
-> > explained why that might be useful. If you really insist on having
-> > a per-vma field then let's do it properly now. Are you going to agree on
-> > that? If yes, I am willing to spend my time on that but I am not going
-> > to bother if this will lead to "I want my vma field abuse anyway".
-> 
-> I think what you and I want is largely irrelevant :)  What's important is 
-> that there are userspace implementations that query this today so 
-> continuing to support it as the way to determine if a vma has been thp 
-> disabled doesn't seem problematic and guarantees that userspace doesn't 
-> break.
-
-Do you know of any other userspace except your usecase? Is there
-anything fundamental that would prevent a proper API adoption for you?
+> On 2018-10-08 19:02, Vikash Garodia wrote:
+>> This version of the series
+>> * extends the description of firmware subnode in documentation.
+>> * renames the flag suggesting the presence of tz and update code
+>>   accordingly.
+>>
+>> Stanimir Varbanov (1):
+>>   venus: firmware: register separate platform_device for firmware loader
+>>
+>> Vikash Garodia (4):
+>>   venus: firmware: add routine to reset ARM9
+>>   venus: firmware: move load firmware in a separate function
+>>   venus: firmware: add no TZ boot and shutdown routine
+>>   dt-bindings: media: Document bindings for venus firmware device
+>>
+>>  .../devicetree/bindings/media/qcom,venus.txt       |  14 +-
+>>  drivers/media/platform/qcom/venus/core.c           |  24 ++-
+>>  drivers/media/platform/qcom/venus/core.h           |   6 +
+>>  drivers/media/platform/qcom/venus/firmware.c       | 235
+>> +++++++++++++++++++--
+>>  drivers/media/platform/qcom/venus/firmware.h       |  17 +-
+>>  drivers/media/platform/qcom/venus/hfi_venus.c      |  13 +-
+>>  drivers/media/platform/qcom/venus/hfi_venus_io.h   |   8 +
+>>  7 files changed, 274 insertions(+), 43 deletions(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+regards,
+Stan
