@@ -2,160 +2,125 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F26C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EE4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 04:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 076F1214FF
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:56:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73FC6214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 04:07:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eR3qLhkj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 076F1214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DjY7pItn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73FC6214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbeJQLuY (ORCPT
+        id S1727462AbeJQMBc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 07:50:24 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36143 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727376AbeJQLuY (ORCPT
+        Wed, 17 Oct 2018 08:01:32 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34955 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727265AbeJQMBc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 07:50:24 -0400
-Received: by mail-io1-f68.google.com with SMTP id p4-v6so17977316iom.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 20:56:45 -0700 (PDT)
+        Wed, 17 Oct 2018 08:01:32 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 32-v6so683708pgu.2;
+        Tue, 16 Oct 2018 21:07:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=37qfKIQn2F/zuG3mSaFIQxcnlRXFrQCwgR47g9iRnds=;
-        b=eR3qLhkj/cnfYG5BLIB37/9jHtum4kuIzgrrJ/0XfrR9eSxXIDs4qzt9/VWJldGxRj
-         1lkTX6DdTdFiWK6VkqBUNC82D4gsFfL+VsFn9xlaTkzRTnLZwNHcwFqRf9ai30xTW3Pf
-         /cD4k52NKBF7AcD/T+9etQcIWXdgWggNUVDcQ=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=WqRMWJuBSB3hCcvdUEjvDSzhuZD66PAfR/9wvsMWHu4=;
+        b=DjY7pItnqBTdA6UjHuWei7dkA43Gtlhxfp16fFfP5GqyuOOmSTwUCiOEtaNPkhsoD5
+         z+4CnyH8ZvzfmCfh0s3NrETN4w91/jneE334nHtoU/7OAH6TZ+pPjWOaQV1Gh2XH4L1n
+         PsMvLWmBSUAJvTLjzWVdJvl4VdoAdXFRwzjN8TuUaT++zP2oETnEn9y4w45v62gK9ceW
+         IOISGAg8alHaKrdfCv4aRiPg2aMMnVmCvzL6M+7EMvl926OdV0qM9DC7zH+Em7ZniQTq
+         crLDOMiwd4ZHL/7Z9gvYIAk5K7dSuwnLn5vgrEw5qvlfGBMjEdPu+h94CJmFBmu1EGeT
+         C/hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=37qfKIQn2F/zuG3mSaFIQxcnlRXFrQCwgR47g9iRnds=;
-        b=nsSAYbTCATQYe0uqUNt6ONzoRv6IC2mXYd3AT8+PdORaOBOlJh2ba0F7LHxQHFF8OQ
-         aFsRK09P5PBI+NMrYctjzQq1LG+onsJBxITYz2Py20aYO68cIoxCxUyCosB5xUUvyzZD
-         f9dwsLYe+i3LtI9IdMDRoZp+XjydTQ640tQLJAEG4lAcwDRjg0xWRmzua2x8c3rYlDtF
-         Ohg9m/Uptt0UUJROm7UMC7WRTxsikHRqQU3oBch3KA6WHF2AtbAVhm1KVBbkyviiyKUi
-         7y+eGtN/DGzCNKa0MixLEZTPCLWJAakH6jHAjfjXeFvDj6WXXiZed4pUZxkvnFbdwIwZ
-         PLSw==
-X-Gm-Message-State: ABuFfoh3B/JotuQZLPE+m7/JqgrO8s1UGGcL6ZthR5/soZZJC0guwLy9
-        RL5CMnOJyJvvIGTrj/efDzIPzw==
-X-Google-Smtp-Source: ACcGV6045Cu3NOwe0rUGTmvOePnUviGdgWIKo3LGp6OM1wbAtCFAvUQy5joGJhJz27f5dE6CQjTWuw==
-X-Received: by 2002:a6b:2c08:: with SMTP id s8-v6mr16725223ios.217.1539748604595;
-        Tue, 16 Oct 2018 20:56:44 -0700 (PDT)
-Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
-        by smtp.gmail.com with ESMTPSA id b130-v6sm376261itb.28.2018.10.16.20.56.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 20:56:43 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 22:56:42 -0500
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 000/109] 4.14.77-stable review
-Message-ID: <20181017035642.33i6jcg2bsr7lhq2@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-References: <20181016170524.530541524@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WqRMWJuBSB3hCcvdUEjvDSzhuZD66PAfR/9wvsMWHu4=;
+        b=GxlqiUDAt/e/LRiR/Ca6N714g8oxaDXabD0RpLLUk89Z4bZmO9DfGYFeCub7yKeIH/
+         qyy1MGcvh+J1j5rglIoIoATxaCwM0Dk5JbVzbEJqAtAA+gb7MF4NS25LHoPcw7DN7c6L
+         smCh3aKcTrcJ273gS8IYESe5v0mUgMNbg7xOHhpIn6jquyYhvBlvkqZOehWzLdNaF9ey
+         bwUDCYQQ+V/Yk4ILe1iMPFsJnHJU26jPVRbv7JbI60wI9b8t/usl3Xm+njvBrPQIYXZv
+         Q0BDtiuPKd8bm+g+a5+OCixpOB++cEDRIa7P9Q+FSov/zqYmlPozglkQMI7yxdF/nNcB
+         PH2w==
+X-Gm-Message-State: ABuFfoiW2Otrl//FbpbUSQzw2FYZFMCWT7/MADli3GySYYhtyUSaJoZY
+        2umIzz1uGyRigVHiLiWZjpg=
+X-Google-Smtp-Source: ACcGV61kVIYjPd2TV20Fg1oNDpAAN8SEAntMKzHA6K89DhRUxkuAYNlgcfg3fj/ETNP1VSYVcevr+Q==
+X-Received: by 2002:a62:670a:: with SMTP id b10-v6mr24807297pfc.243.1539749271549;
+        Tue, 16 Oct 2018 21:07:51 -0700 (PDT)
+Received: from Pilot130.192.168.0.22 (211-20-114-70.HINET-IP.hinet.net. [211.20.114.70])
+        by smtp.googlemail.com with ESMTPSA id i21-v6sm20998554pgj.55.2018.10.16.21.07.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 16 Oct 2018 21:07:50 -0700 (PDT)
+From:   "sudheer.v" <open.sudheer@gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Russell King <linux@armlinux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Michael Moese <mmoese@suse.de>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Cc:     "sudheer.v" <open.sudheer@gmail.com>,
+        Sudheer V <sudheer.veliseti@aspeedtech.com>,
+        ShivahShankar Shakarnarayan rao 
+        <shivahshankar.shankarnarayanrao@aspeedtech.com>
+Subject: [[PATCH] 0/9] *** DMA support for UART in ASPEED's AST2500  ***
+Date:   Wed, 17 Oct 2018 09:40:57 +0530
+Message-Id: <1539749466-3912-1-git-send-email-open.sudheer@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 07:04:28PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.77 release.
-> There are 109 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Oct 18 17:04:58 UTC 2018.
-> Anything received after that time might be too late.
+DMA controller driver  and UART dma client driver for aspeed's AST2500
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+sudheer.v (9):
+  DT-changes-for-DMA-UART-of-AST2500
+  Defconfig-changes-for-DMA-UART-of-AST2500
+  configuration-for-DMA-of-AST2500
+  Documentation-DTbindings-DMA-controller-of-AST2500
+  DMA-driver-for-AST2500
+  configuration-for-DMA-UART-of-AST2500
+  Documentation-DTbindings-DMA-UART-of-AST2500
+  DMA-UART-Driver-for-AST2500
+  updating MAINTAINERS for DMA and DMA-UART drivers of AST2500
 
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.14.77-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.14.y
-git commit: 3dbba66c8671a97270f35e072c54f74ddca6954e
-git describe: v4.14.76-110-g3dbba66c8671
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/build/v4.14.76-110-g3dbba66c8671
-
-
-No regressions (compared to build v4.14.76)
-
-
-No fixes (compared to build v4.14.76)
-
-
-Ran 21021 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* libhugetlbfs
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* kselftest
-* ltp-cap_bounds-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
+ .../devicetree/bindings/dma/ast-uart-sdma.txt      |   23 +
+ .../devicetree/bindings/serial/ast-sdma-uart.txt   |   34 +
+ MAINTAINERS                                        |   26 +
+ arch/arm/boot/dts/aspeed-ast2500-evb.dts           |   20 +
+ arch/arm/boot/dts/aspeed-g5.dtsi                   |   85 ++
+ arch/arm/configs/aspeed_g5_defconfig               |    6 +-
+ drivers/dma/Kconfig                                |    9 +
+ drivers/dma/Makefile                               |    1 +
+ drivers/dma/aspeed_uart_sdma.c                     |  810 ++++++++++
+ drivers/tty/serial/8250/8250_aspeed_uart_dma.c     | 1594 ++++++++++++++++++++
+ drivers/tty/serial/8250/Kconfig                    |   34 +
+ drivers/tty/serial/8250/Makefile                   |    1 +
+ 12 files changed, 2641 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/ast-uart-sdma.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/ast-sdma-uart.txt
+ create mode 100644 drivers/dma/aspeed_uart_sdma.c
+ create mode 100644 drivers/tty/serial/8250/8250_aspeed_uart_dma.c
 
 -- 
-Linaro LKFT
-https://lkft.linaro.org
+1.9.1
+
