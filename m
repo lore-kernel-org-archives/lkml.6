@@ -2,230 +2,258 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EED6ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E98ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17AE52150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:09:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="LvVlR9dU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17AE52150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id A9B0221528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:11:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9B0221528
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeJRAGS (ORCPT
+        id S1727805AbeJRAHa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 20:06:18 -0400
-Received: from mail.efficios.com ([167.114.142.138]:40054 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJRAGR (ORCPT
+        Wed, 17 Oct 2018 20:07:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39614 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727014AbeJRAHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 20:06:17 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 99DFE1CA347;
-        Wed, 17 Oct 2018 12:09:52 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id ZtcUV8Ta0-2R; Wed, 17 Oct 2018 12:09:51 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id A73571CA342;
-        Wed, 17 Oct 2018 12:09:51 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com A73571CA342
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1539792591;
-        bh=+hSbHJElIoBvQsPheS1n2fcIab9kSXagJgoTv1cg+YM=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=LvVlR9dUx2z7xDVC5ABFz+AKJYTu7rRPtsLXGUaxhrmzQV8vrKYwqpwHwx+4q29Bf
-         9a2ISAtwDx4K0mRZxD923NM4FeVBaSVfB3zfsuUDg66u2PSL4kF7kwkFh6iOeM49K9
-         vvtoospkPmtT1LwHw7vXaZgjmGbn3kIYtdUdPNrpkJIYmWvpNTtkjsYtgsYWVwfYiP
-         2poJILi/xpWcCMCV4cepq3kQh77jy6VDrG+WIDuIoxkiySjZ8icJhgYwdRBVl/2hJS
-         Zuqi60L7y9t7Ix6+818iSOlku+A7WnujW1a69mlENYcrUBlHo0ayUwjBI7uodR505X
-         qF4RgIBoX8WSw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id a1E9s6x8ny8B; Wed, 17 Oct 2018 12:09:51 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 82BC71CA338;
-        Wed, 17 Oct 2018 12:09:51 -0400 (EDT)
-Date:   Wed, 17 Oct 2018 12:09:51 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
+        Wed, 17 Oct 2018 20:07:30 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9HGA4rO056729
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 12:11:04 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n67xtsd7v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 12:11:04 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 17 Oct 2018 12:11:03 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 17 Oct 2018 12:11:00 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9HGAx7Q26214444
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 17 Oct 2018 16:10:59 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 31EC3B205F;
+        Wed, 17 Oct 2018 16:10:59 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 00676B2065;
+        Wed, 17 Oct 2018 16:10:58 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.109])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 17 Oct 2018 16:10:58 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 839BF16C4258; Wed, 17 Oct 2018 09:11:00 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 09:11:00 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Nikolay Borisov <nborisov@suse.com>, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
         Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Message-ID: <1102241735.877.1539792591430.JavaMail.zimbra@efficios.com>
-In-Reply-To: <1006597066.825.1539789100381.JavaMail.zimbra@efficios.com>
-References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com> <20181010191936.7495-7-mathieu.desnoyers@efficios.com> <20181017071931.GA18379@linux.vnet.ibm.com> <1006597066.825.1539789100381.JavaMail.zimbra@efficios.com>
-Subject: Re: [RFC PATCH for 4.21 06/16] cpu_opv: Provide cpu_opv system call
- (v8)
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC] doc: rcu: remove obsolete (non-)requirement about
+ disabling preemption
+Reply-To: paulmck@linux.ibm.com
+References: <20181015023328.GP2674@linux.ibm.com>
+ <20181015024758.GA227989@joelaf.mtv.corp.google.com>
+ <5151da01-343b-bb37-353e-b6652ae530f5@suse.com>
+ <20181015112112.GT2674@linux.ibm.com>
+ <20181015193951.GA33528@joelaf.mtv.corp.google.com>
+ <20181015195426.GD2674@linux.ibm.com>
+ <20181015201556.GA43575@joelaf.mtv.corp.google.com>
+ <20181015210856.GE2674@linux.ibm.com>
+ <20181016112611.GA27405@linux.ibm.com>
+ <20181016204122.GA8176@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3039 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: cpu_opv: Provide cpu_opv system call (v8)
-Thread-Index: 7qW2lzGCTO+IxFmqU0Kf5LalV47JZf1Yo2DH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016204122.GA8176@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18101716-0040-0000-0000-000004820BCB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009892; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01104038; UDB=6.00571514; IPR=6.00884090;
+ MB=3.00023796; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-17 16:11:02
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101716-0041-0000-0000-0000088A2246
+Message-Id: <20181017161100.GP2674@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810170137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Oct 17, 2018, at 11:11 AM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
-
-> ----- On Oct 17, 2018, at 3:19 AM, Srikar Dronamraju srikar@linux.vnet.ibm.com
-> wrote:
+On Tue, Oct 16, 2018 at 01:41:22PM -0700, Joel Fernandes wrote:
+> On Tue, Oct 16, 2018 at 04:26:11AM -0700, Paul E. McKenney wrote:
+> > On Mon, Oct 15, 2018 at 02:08:56PM -0700, Paul E. McKenney wrote:
+> > > On Mon, Oct 15, 2018 at 01:15:56PM -0700, Joel Fernandes wrote:
+> > > > On Mon, Oct 15, 2018 at 12:54:26PM -0700, Paul E. McKenney wrote:
+> > > > [...]
+> > > > > > > In any case, please don't spin for milliseconds with preemption disabled.
+> > > > > > > The real-time guys are unlikely to be happy with you if you do this!
+> > > > > > 
+> > > > > > Well just to clarify, I was just running Oleg's test which did this. This
+> > > > > > test was mentioned in the original documentation that I deleted. Ofcourse I
+> > > > > > would not dare do such a thing in production code :-D. I guess to Oleg's
+> > > > > > defense, he did it to very that synchronize_rcu() was not blocked on
+> > > > > > preempt-disable sections which was a different test.
+> > > > > 
+> > > > > Understood!  Just pointing out that RCU's tolerating a given action does
+> > > > > not necessarily mean that it is a good idea to take that action.  ;-)
+> > > > 
+> > > > Makes sense :-) thanks.
+> > > 
+> > > Don't worry, that won't happen again.  ;-)
+> > > 
+> > > > > > > > > +		pr_crit("SPIN done!\n");
+> > > > > > > > > +		preempt_enable();
+> > > > > > > > > +		break;
+> > > > > > > > > +	case 777:
+> > > > > > > > > +		pr_crit("SYNC start\n");
+> > > > > > > > > +		synchronize_rcu();
+> > > > > > > > > +		pr_crit("SYNC done!\n");
+> > > > > > > > 
+> > > > > > > > But you are using the console printing infrastructure which is rather
+> > > > > > > > heavyweight. Try replacing pr_* calls with trace_printk so that you
+> > > > > > > > write to the lock-free ring buffer, this will reduce the noise from the
+> > > > > > > > heavy console printing infrastructure.
+> > > > > > > 
+> > > > > > > And this might be a problem as well.
+> > > > > > 
+> > > > > > This was not the issue (or atleast not fully the issue) since I saw the same
+> > > > > > thing with trace_printk. It was exactly what you said - which is the
+> > > > > > excessively long preempt disabled times.
+> > > > > 
+> > > > > One approach would be to apply this patch against (say) v4.18, which
+> > > > > does not have consolidated grace periods.  You might then be able to
+> > > > > tell if the pr_crit() calls make any difference.
+> > > > 
+> > > > I could do that, yeah. But since the original problem went away due to
+> > > > disabling preempts for a short while, I will move on and continue to focus on
+> > > > updating other parts of the documenation. Just to mention I
+> > > > brought this up because I thought its better to do that than not to, just
+> > > > incase there is any lurking issue with the consolidation. Sorry if that ended
+> > > > up with me being noisy.
+> > > 
+> > > Not a problem, no need to apologize!
+> > 
+> > Besides, digging through the code did point out a reasonable optimization.
+> > In the common case, this would buy 100s of microseconds rather than
+> > milliseconds, but it seems simple enough to be worthwhile.  Thoughts?
 > 
->> Hi Mathieu,
->> 
->>> +static int do_cpu_opv(struct cpu_op *cpuop, int cpuopcnt,
->>> +		      struct cpu_opv_vaddr *vaddr_ptrs, int cpu)
->>> +{
->>> +	struct mm_struct *mm = current->mm;
->>> +	int ret;
->>> +
->>> +retry:
->>> +	if (cpu != raw_smp_processor_id()) {
->>> +		ret = push_task_to_cpu(current, cpu);
->>> +		if (ret)
->>> +			goto check_online;
->>> +	}
->>> +	down_read(&mm->mmap_sem);
->>> +	ret = vaddr_ptrs_check(vaddr_ptrs);
->>> +	if (ret)
->>> +		goto end;
->>> +	preempt_disable();
->>> +	if (cpu != smp_processor_id()) {
->>> +		preempt_enable();
->>> +		up_read(&mm->mmap_sem);
->>> +		goto retry;
->>> +	}
->> 
->> If we have a higher priority task/s either pinned to the cpu, dont we end up
->> in busy-looping till the task exits/sleeps?
+> Cool, thanks. One comment below:
 > 
-> You're right!
+> > ------------------------------------------------------------------------
+> > 
+> > commit 07921e8720907f58f82b142f2027fc56d5abdbfd
+> > Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> > Date:   Tue Oct 16 04:12:58 2018 -0700
+> > 
+> >     rcu: Speed up expedited GPs when interrupting RCU reader
+> >     
+> >     In PREEMPT kernels, an expedited grace period might send an IPI to a
+> >     CPU that is executing an RCU read-side critical section.  In that case,
+> >     it would be nice if the rcu_read_unlock() directly interacted with the
+> >     RCU core code to immediately report the quiescent state.  And this does
+> >     happen in the case where the reader has been preempted.  But it would
+> >     also be a nice performance optimization if immediate reporting also
+> >     happened in the preemption-free case.
+> >     
+> >     This commit therefore adds an ->exp_hint field to the task_struct structure's
+> >     ->rcu_read_unlock_special field.  The IPI handler sets this hint when
+> >     it has interrupted an RCU read-side critical section, and this causes
+> >     the outermost rcu_read_unlock() call to invoke rcu_read_unlock_special(),
+> >     which, if preemption is enabled, reports the quiescent state immediately.
+> >     If preemption is disabled, then the report is required to be deferred
+> >     until preemption (or bottom halves or interrupts or whatever) is re-enabled.
+> >     
+> >     Because this is a hint, it does nothing for more complicated cases.  For
+> >     example, if the IPI interrupts an RCU reader, but interrupts are disabled
+> >     across the rcu_read_unlock(), but another rcu_read_lock() is executed
+> >     before interrupts are re-enabled, the hint will already have been cleared.
+> >     If you do crazy things like this, reporting will be deferred until some
+> >     later RCU_SOFTIRQ handler, context switch, cond_resched(), or similar.
+> >     
+> >     Reported-by: Joel Fernandes <joel@joelfernandes.org>
+> >     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> > 
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index 004ca21f7e80..64ce751b5fe9 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -571,8 +571,10 @@ union rcu_special {
+> >  	struct {
+> >  		u8			blocked;
+> >  		u8			need_qs;
+> > +		u8			exp_hint; /* Hint for performance. */
+> > +		u8			pad; /* No garbage from compiler! */
+> >  	} b; /* Bits. */
+> > -	u16 s; /* Set of bits. */
+> > +	u32 s; /* Set of bits. */
+> >  };
+> >  
+> >  enum perf_event_task_context {
+> > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> > index e669ccf3751b..928fe5893a57 100644
+> > --- a/kernel/rcu/tree_exp.h
+> > +++ b/kernel/rcu/tree_exp.h
+> > @@ -692,8 +692,10 @@ static void sync_rcu_exp_handler(void *unused)
+> >  	 */
+> >  	if (t->rcu_read_lock_nesting > 0) {
+> >  		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> > -		if (rnp->expmask & rdp->grpmask)
+> > +		if (rnp->expmask & rdp->grpmask) {
+> >  			rdp->deferred_qs = true;
+> > +			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+> > +		}
+> >  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> >  	}
+> >  
+> > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> > index 8b48bb7c224c..d6286eb6e77e 100644
+> > --- a/kernel/rcu/tree_plugin.h
+> > +++ b/kernel/rcu/tree_plugin.h
+> > @@ -643,8 +643,9 @@ static void rcu_read_unlock_special(struct task_struct *t)
+> >  	local_irq_save(flags);
+> >  	irqs_were_disabled = irqs_disabled_flags(flags);
+> >  	if ((preempt_bh_were_disabled || irqs_were_disabled) &&
+> > -	    t->rcu_read_unlock_special.b.blocked) {
+> > +	    t->rcu_read_unlock_special.s) {
+> >  		/* Need to defer quiescent state until everything is enabled. */
+> > +		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+> >  		raise_softirq_irqoff(RCU_SOFTIRQ);
 > 
-> How about we ditch the thread migration altogether, and simply perform
-> the cpu_opv operations in a IPI handler ?
-> 
-> This is possible now that cpu_opv uses a temporary vmap() rather than
-> try to touch the user-space page through the current thread's page table.
-> 
-> Thoughts ?
+> Still going through this patch, but it seems to me like the fact that
+> rcu_read_unlock_special is called means someone has requested for a grace
+> period. Then in that case, does it not make sense to raise the softirq
+> for processing anyway?
 
-Here is the associated implementation on top of this patchset:
+Not necessarily.  Another reason that rcu_read_unlock_special() might
+be called is if the RCU read-side critical section had been preempted,
+in which case there might not even be a grace period in progress.
+In addition, if interrupts, bottom halves, and preemption are all enabled,
+the code in rcu_preempt_deferred_qs_irqrestore() doesn't need to bother
+raising softirq, as it can instead just immediately report the quiescent
+state.
 
-commit 759c5a8860d867091e168900329f0955e5101989
-Author: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Date:   Wed Oct 17 11:32:02 2018 -0400
+							Thanx, Paul
 
-    cpu opv: use ipi
-
-diff --git a/kernel/cpu_opv.c b/kernel/cpu_opv.c
-index db144b71d51a..30405e0cc049 100644
---- a/kernel/cpu_opv.c
-+++ b/kernel/cpu_opv.c
-@@ -31,6 +31,7 @@
- #include <linux/mm.h>
- #include <linux/vmalloc.h>
- #include <linux/atomic.h>
-+#include <linux/smp.h>
- #include <asm/ptrace.h>
- #include <asm/byteorder.h>
- #include <asm/cacheflush.h>
-@@ -1039,41 +1040,48 @@ static int vaddr_ptrs_check(struct cpu_opv_vaddr *vaddr_ptrs)
-        return 0;
- }
-
-+struct opv_ipi_args {
-+       struct cpu_op *cpuop;
-+       int cpuopcnt;
-+       int ret;
-+};
-+
-+static void cpu_opv_ipi(void *info)
-+{
-+       struct opv_ipi_args *args = info;
-+
-+       rseq_preempt(current);
-+       args->ret = __do_cpu_opv(args->cpuop, args->cpuopcnt);
-+}
-+
- static int do_cpu_opv(struct cpu_op *cpuop, int cpuopcnt,
-                      struct cpu_opv_vaddr *vaddr_ptrs, int cpu)
- {
-        struct mm_struct *mm = current->mm;
-+       struct opv_ipi_args args = {
-+               .cpuop = cpuop,
-+               .cpuopcnt = cpuopcnt,
-+       };
-        int ret;
-
- retry:
--       if (cpu != raw_smp_processor_id()) {
--               ret = push_task_to_cpu(current, cpu);
--               if (ret)
--                       goto check_online;
--       }
-+       if (!cpumask_test_cpu(cpu, &current->cpus_allowed))
-+               return -EINVAL;
-        down_read(&mm->mmap_sem);
-        ret = vaddr_ptrs_check(vaddr_ptrs);
-        if (ret)
-                goto end;
--       preempt_disable();
--       if (cpu != smp_processor_id()) {
--               preempt_enable();
-+       ret = smp_call_function_single(cpu, cpu_opv_ipi, &args, 1);
-+       if (ret) {
-                up_read(&mm->mmap_sem);
--               goto retry;
-+               goto check_online;
-        }
--       ret = __do_cpu_opv(cpuop, cpuopcnt);
--       preempt_enable();
-+       ret = args.ret;
- end:
-        up_read(&mm->mmap_sem);
-        return ret;
-
- check_online:
--       /*
--        * push_task_to_cpu() returns -EINVAL if the requested cpu is not part
--        * of the current thread's cpus_allowed mask.
--        */
--       if (ret == -EINVAL)
--               return ret;
-        get_online_cpus();
-        if (cpu_online(cpu)) {
-                put_online_cpus();
-
-
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
