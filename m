@@ -2,93 +2,165 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C73ECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D04AECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 157642087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:21:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RmeqGByi";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jZrvaTWK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157642087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 4CA0D2087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:21:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CA0D2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbeJRGS5 (ORCPT
+        id S1727549AbeJRGTA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 02:18:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58524 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbeJRGS4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 02:18:56 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0CFA360B73; Wed, 17 Oct 2018 22:21:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539814872;
-        bh=jJoG70O5KkpHrahwfC+EwcgyKkz4cI/KgVpAE7fjfBk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=RmeqGByiwrAhfnXXqhLIi52WwwWbX7vNskU7kg1LyDaiTtmn0Yo468akP/o/wjUt8
-         595jUAjuEpLXlVm9NvaCv0ahFwzublqN8rIOaXBzsaYkA2iORyDhYG0qedagfoF88Q
-         GPRWzdGIoGFIuaCFewqQ+H5gqi59k2h0fYPHAEq4=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 759C560B73;
-        Wed, 17 Oct 2018 22:21:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539814871;
-        bh=jJoG70O5KkpHrahwfC+EwcgyKkz4cI/KgVpAE7fjfBk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jZrvaTWKqE/XsRggRmaj3EFhtxQ3GYdyzhxBEv1fziC59AmjLuiIDvo3+FyCm78yy
-         6SOQjKt6Pp/QVlNipI5BUseqzhSODV/lOHFlvMa5it27t4N0QP8Unfi9S2wr+KK8a6
-         UBW18QX74j7VwjVLnQvqkRe9D4rnTh50wUYo2oLQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 759C560B73
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH 1/2] serial: set suppress_bind_attrs flag only if builtin
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Anders Roxell <anders.roxell@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
-        linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-serial@vger.kernel.org, tj@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20181017140311.28679-1-anders.roxell@linaro.org>
- <20181017150546.0d451252950214bec74a6fc8@linux-foundation.org>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <e0763032-3ae6-b352-e586-ad131ce689ca@codeaurora.org>
-Date:   Wed, 17 Oct 2018 16:21:08 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thu, 18 Oct 2018 02:19:00 -0400
+Received: from mga11.intel.com ([192.55.52.93]:56105 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727309AbeJRGS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 02:18:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 15:21:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
+   d="asc'?scan'208";a="101106686"
+Received: from smamidi-mobl.amr.corp.intel.com (HELO [10.251.27.65]) ([10.251.27.65])
+  by orsmga002.jf.intel.com with ESMTP; 17 Oct 2018 15:21:13 -0700
+Subject: Re: l1tf: Kernel suggests I throw away third of my memory. I'd rather
+ not
+To:     Pavel Machek <pavel@ucw.cz>, Michal Hocko <mhocko@kernel.org>
+References: <20181017105610.GA4260@amd>
+ <20181017111544.GO18839@dhcp22.suse.cz> <20181017113226.GA5176@amd>
+Cc:     vbabka@suse.cz, hpa@zytor.com, torvalds@linux-foundation.org,
+        ak@linux.intel.com, kernel list <linux-kernel@vger.kernel.org>,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <a428fb27-6fba-0bad-feac-81416cf9089c@intel.com>
+Date:   Wed, 17 Oct 2018 15:21:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181017150546.0d451252950214bec74a6fc8@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181017113226.GA5176@amd>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="5kEwjPTDEla28jY3WucQ7YCtXcSaUYnZl"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 4:05 PM, Andrew Morton wrote:
-> On Wed, 17 Oct 2018 16:03:10 +0200 Anders Roxell <anders.roxell@linaro.org> wrote:
-> 
->> Cc: Arnd Bergmann <arnd@arndb.de>
->> Co-developed-by: Arnd Bergmann <arnd@arndb.de>
->> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> 
-> This should have Arnd's Signed-off-by: as well.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--5kEwjPTDEla28jY3WucQ7YCtXcSaUYnZl
+Content-Type: multipart/mixed; boundary="vB5Hp7dXOXe2ZNK0dlRv2724OM2e7QhBr";
+ protected-headers="v1"
+From: Dave Hansen <dave.hansen@intel.com>
+To: Pavel Machek <pavel@ucw.cz>, Michal Hocko <mhocko@kernel.org>
+Cc: vbabka@suse.cz, hpa@zytor.com, torvalds@linux-foundation.org,
+ ak@linux.intel.com, kernel list <linux-kernel@vger.kernel.org>,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
+Message-ID: <a428fb27-6fba-0bad-feac-81416cf9089c@intel.com>
+Subject: Re: l1tf: Kernel suggests I throw away third of my memory. I'd rather
+ not
+References: <20181017105610.GA4260@amd>
+ <20181017111544.GO18839@dhcp22.suse.cz> <20181017113226.GA5176@amd>
+In-Reply-To: <20181017113226.GA5176@amd>
 
-I'm just interested to know, why?
+--vB5Hp7dXOXe2ZNK0dlRv2724OM2e7QhBr
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+On 10/17/2018 04:32 AM, Pavel Machek wrote:
+>> Well, that depends. Do you care about PROT_NONE attacks as well? If no=
+t
+>> then no-swap would help you. But even then no-swap is rather theoretic=
+al
+>> attack on a physical host unless you allow an arbitrary swapout to a
+>> malicious user (e.g. allow a user controlled memcg hard limit that wou=
+ld
+>> cause excessive local swapouts).
+> PROT_NONE attack.. aha, so kernel stores not only information about
+> swapped-out pages but also about file-backed pages that are currently
+> not present? Hmm. That makes it more complex :-(.=20
+
+There are also migration PTE entries that are "swap-like".  They can
+exist even if you swapoff -a.
+
+Can we do better?  Sure.  I think we'd all be happy to review patches
+that improve the situation if folks have simple ideas for improvement.
+
+
+--vB5Hp7dXOXe2ZNK0dlRv2724OM2e7QhBr--
+
+--5kEwjPTDEla28jY3WucQ7YCtXcSaUYnZl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJbx7XZAAoJEGg1lTBwyZKwNpEP/jTj8Xol1J0WWuh7Rnc6LeSA
+u0AnP0/VQ4ZfebGCD7WUNQqHSOkMRwdCXEhFzvCgA6s+x9xtEd1mmXqelgh1W82G
+H2qNnvcXxUn7pyknz7eLFC9W4FMv9TKNM6YhOMlvHr4Are++JW7r9DKjPZVGeyES
+uycBhNfKm0h7E6+e9pILY8HwEXKajnbkYQWppi5nqZSFJYtnE5gd8MRybQwd+62j
+y43ppErL8Mod5y73sVdsl3vWAhHTLV23WAivm4JPxRgtJh5LTTGag5SuOUcjuprh
+uGgr6PCSU3AwcZUzUfNaFSP3/9TqkfXVVjST4RGLAhhMEOwW9J3mJ73U0yRCcJ6/
+QuR3oaOZbycm8I2y56pQmP9sWjSdYPEU8krwPO6XEocmzBLM17oJB682QHXDX3z+
+YPDPjxGiKwZDY9fas3dXBZ/sAFTuW/LXDO+GU3p8hiGpSs6b7OHI4+14jOpabSWo
+b/WcDlzCsYv1VHw5UqdewmOQ5lmjPvdbZ6FsfcJMGiGtg82qJi7qROwq9iOtDyQa
+1uuP1iiUEypkmbR02JFZ7jUa6upcNwbFISyZCMPhQ9GJPWYpvY4SGAsKdZ7Ev2sV
+wDOptFK25RFkKaGvNhClGrsEjuYdC5ziHTkmBG3XTls8SAGlqY784zbSWmZe/vLt
+t/SRqig9U72k0YtbvdFY
+=w4KN
+-----END PGP SIGNATURE-----
+
+--5kEwjPTDEla28jY3WucQ7YCtXcSaUYnZl--
