@@ -2,289 +2,175 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7E3ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B241ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 368B920658
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:26:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E86121527
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:28:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="izG4H91S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 368B920658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="QAxxOT3+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E86121527
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=toradex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeJQWWY (ORCPT
+        id S1727517AbeJQWY1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:22:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56590 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeJQWWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:22:23 -0400
-Received: from localhost (unknown [46.144.157.90])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A766F20658;
-        Wed, 17 Oct 2018 14:26:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539786386;
-        bh=gyKh1q19KY5S9u0/RHz2ChEwVtLNrglhsaCH72YkB58=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=izG4H91Slipklr93xLK6xvGBJwu0XhPlUTlVf5vPnkLif7O7cuWFYSv6vstHSGsxg
-         Lij3NNl3KpFYDsyE1W0tQ9mrWglWiJPaCAFnMP2dn63U0bOoKeBVB1S3MTWEeNaVwc
-         646jMZE2KnnlW1gtP2Dl6VE5uxYBRifYM5pWuNQ4=
-Date:   Wed, 17 Oct 2018 16:26:21 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Haiyang Zhang <haiyangz@microsoft.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: Re: [PATCH 4.18 101/135] hv_netvsc: pair VF based on serial number
-Message-ID: <20181017142621.GB366@kroah.com>
-References: <20181016170515.447235311@linuxfoundation.org>
- <20181016170522.303317746@linuxfoundation.org>
- <DM5PR2101MB10138BCFD40D703FEE14EC35CAFE0@DM5PR2101MB1013.namprd21.prod.outlook.com>
- <20181017074629.GD25537@kroah.com>
- <DM5PR2101MB1013C986EEC151F096313D17CAFF0@DM5PR2101MB1013.namprd21.prod.outlook.com>
- <20181017131717.GA10130@kroah.com>
- <DM5PR2101MB101355087924D6C8442BDA4ACAFF0@DM5PR2101MB1013.namprd21.prod.outlook.com>
+        Wed, 17 Oct 2018 18:24:27 -0400
+Received: from mail-ve1eur01on0111.outbound.protection.outlook.com ([104.47.1.111]:14146
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726974AbeJQWY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 18:24:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L1YemgcjUX/6m2xJuxZy9b4/qlGdz++Bsj1DfgW+RS4=;
+ b=QAxxOT3+YmqgeLVDJmM5INl285vvmbH1mMuPzLcVe3jwvjVwXpKk0R4THwrEtBLo43uD0v9KuGyHWphSoLHdyLMDEvuC7LXIbdia5jvHjodwYGqUwF6A7NIn0ARouNdpq5gu1HjoQUCRNG+HPLWz6orazulAvbBi6rxaH1e3/0I=
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
+ VI1PR0501MB3583.eurprd05.prod.outlook.com (10.166.198.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.26; Wed, 17 Oct 2018 14:28:23 +0000
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::99b0:2276:18cf:18aa]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::99b0:2276:18cf:18aa%3]) with mapi id 15.20.1228.032; Wed, 17 Oct 2018
+ 14:28:23 +0000
+From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To:     "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform name vs.
+ of_node assignement
+Thread-Topic: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform name vs.
+ of_node assignement
+Thread-Index: AQHUZT3RvTwR5mXbA0afapHhEfD2LKUjYH2AgAAgVQA=
+Date:   Wed, 17 Oct 2018 14:28:22 +0000
+Message-ID: <1539786500.6233.58.camel@toradex.com>
+References: <20181016104730.4598-1-marcel@ziswiler.com>
+         <20181016104730.4598-10-marcel@ziswiler.com>
+         <35848cb7-36ee-6698-ff17-7f0e73567914@nvidia.com>
+In-Reply-To: <35848cb7-36ee-6698-ff17-7f0e73567914@nvidia.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=marcel.ziswiler@toradex.com; 
+x-originating-ip: [46.140.72.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB3583;6:U8cdixxKWcvn6Slji456eJSnFVgTVwgS3kba6r8k8XaMt9QJHQ7dmdSawB5pSd3tNtGqXHS2Ck5vZLTJX2+Ap5HevJv/hLQyeQi1AFGCyvXaKsvYxE+jB778m7t5dFSv/Ajn5+H/YCsKpqA6NYZR7tArpOuyVT8TwYT/UCy7RkguQl9jSDgqmlxwdAJCr7TvkmkiVEe2xPUG60PtTDqygxN3HarShuoVCaGqQphezvAt4ZdBNx1bnxdaS3OCAL7fYrQ7inUggnRUchM30mpyN4cv6n4NQaVysrr8mVH+qxDho5Mo/1pizzemh2GbMouCByw1VXdEqr0NOgWLg1UlrqI1DdKrDOsionmnIGY740SD7KY0trahdJ2GCTcNT5BShpTG9x3len0HyvVYEBhWCJt10OZ0iByYpcm4uk2FFkeeB2vZ3JhxyZd/OvIZmW7D0VBngrZwJ8Syr53tSusPRg==;5:1uu7MVRsZa6zho7ZcqZ9K+/0PdRlaD4OLAaR9Wxqht0xZ5f06IDQY28WXxnmsIBnSNZbEO/AfAo4FoFaTEBvvI7X9EbV4gB/gIJPgno54V6LyeL2uOh41qa3SxlNO0mvOHVlEZd+/PMjRGgd7WJKwvQDdhYKqZcmMFmfnFByzaI=;7:GxNKNOFHrRWp3pCZFe8mcgRyGsjCSLOnVcR4D1aH1XpnqPrUjWduSOGWZfaNQDEEWAfVXdukPnRHOKENArXwyH+9lD2pnJP50Wvoc7Ep8OzvwJFBRLvEb0PthOfCgBx2v8YvmPpd7XW623/6zDBs735a1smvnM2j9O2HQoEesD1nyJZKduQbte+BiODWc3PRwGEqsduMeApBHOPQztI6StcPUt4AdJBskim0dWWNwviNuGf+6RxrpLH98wsOnadt
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 7d489a36-f802-41d4-6876-08d6343ccb33
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB3583;
+x-ms-traffictypediagnostic: VI1PR0501MB3583:
+x-microsoft-antispam-prvs: <VI1PR0501MB358302F862E9AF9BBB04EAE9FBFF0@VI1PR0501MB3583.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231355)(944501410)(52105095)(93006095)(93001095)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0501MB3583;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB3583;
+x-forefront-prvs: 08286A0BE2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(136003)(39850400004)(396003)(199004)(189003)(2616005)(36756003)(11346002)(76176011)(6246003)(39060400002)(99286004)(54906003)(110136005)(446003)(97736004)(4326008)(305945005)(25786009)(476003)(7736002)(256004)(103116003)(4001150100001)(6506007)(486006)(2900100001)(5660300001)(316002)(53546011)(5250100002)(14444005)(53936002)(68736007)(8936002)(6436002)(6486002)(2501003)(81166006)(81156014)(8676002)(102836004)(6512007)(3846002)(6116002)(26005)(71190400001)(71200400001)(106356001)(575784001)(86362001)(14454004)(44832011)(7416002)(186003)(478600001)(66066001)(2906002)(2201001)(105586002)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB3583;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: lhPlPSRvMcGGTfBEyPMc7fdAzMLppWpsXuQjude44G0Ly2sAw/CL8LU63tk+2RKJpllhw/rquB/dgOD/arBut1F/WtT5ZldGb1b0uuZzElFPvRHpyTPnHXMtd8OYemRr9GIPtsoHydm6Sb4u5irHo7B9+0xhab0RnCMG0Q/SixXszcIYYTOFEKIS446fG/agMqWSBLZa1lrRB39kM5g0OOirwoQTxtpLro4ADBDuU1QOjOo/nbier7WbFpA+vZftxhw7ykN4GRTUje94y2Cky0PTYuXeuApc6oAMFzrM2lCZz9KhnqOj6IUMjiZU55O4zSrUt/N5gwkEsYs11DVEPY4vaj3/kEXOZE6gbBs4uwI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <17F2C5DC477B0146A97046FCDD769914@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM5PR2101MB101355087924D6C8442BDA4ACAFF0@DM5PR2101MB1013.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d489a36-f802-41d4-6876-08d6343ccb33
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 14:28:23.0439
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB3583
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 02:15:30PM +0000, Haiyang Zhang wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Sent: Wednesday, October 17, 2018 9:17 AM
-> > To: Haiyang Zhang <haiyangz@microsoft.com>
-> > Cc: linux-kernel@vger.kernel.org; stable@vger.kernel.org; Stephen Hemminger
-> > <sthemmin@microsoft.com>; David S. Miller <davem@davemloft.net>; Sasha
-> > Levin <Alexander.Levin@microsoft.com>
-> > Subject: Re: [PATCH 4.18 101/135] hv_netvsc: pair VF based on serial number
-> > 
-> > On Wed, Oct 17, 2018 at 01:02:17PM +0000, Haiyang Zhang wrote:
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > Sent: Wednesday, October 17, 2018 3:46 AM
-> > > > To: Haiyang Zhang <haiyangz@microsoft.com>
-> > > > Cc: linux-kernel@vger.kernel.org; stable@vger.kernel.org; Stephen
-> > > > Hemminger <sthemmin@microsoft.com>; David S. Miller
-> > > > <davem@davemloft.net>; Sasha Levin <Alexander.Levin@microsoft.com>
-> > > > Subject: Re: [PATCH 4.18 101/135] hv_netvsc: pair VF based on serial
-> > > > number
-> > > >
-> > > > On Tue, Oct 16, 2018 at 07:13:12PM +0000, Haiyang Zhang wrote:
-> > > > >
-> > > > >
-> > > > > > -----Original Message-----
-> > > > > > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
-> > > > > > owner@vger.kernel.org> On Behalf Of Greg Kroah-Hartman
-> > > > > > Sent: Tuesday, October 16, 2018 1:06 PM
-> > > > > > To: linux-kernel@vger.kernel.org
-> > > > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>;
-> > > > > > stable@vger.kernel.org; Stephen Hemminger
-> > > > > > <sthemmin@microsoft.com>; David S. Miller <davem@davemloft.net>;
-> > > > > > Sasha Levin <Alexander.Levin@microsoft.com>
-> > > > > > Subject: [PATCH 4.18 101/135] hv_netvsc: pair VF based on serial
-> > > > > > number
-> > > > > >
-> > > > > > 4.18-stable review patch.  If anyone has any objections, please let me
-> > know.
-> > > > > >
-> > > > > > ------------------
-> > > > > >
-> > > > > > From: Stephen Hemminger <stephen@networkplumber.org>
-> > > > > >
-> > > > > > [ Upstream commit 00d7ddba1143623b31bc2c15d18216e2da031b14 ]
-> > > > > >
-> > > > > > Matching network device based on MAC address is problematic
-> > > > > > since a non VF network device can be creted with a duplicate MAC
-> > > > > > address causing confusion and problems.  The VMBus API does
-> > > > > > provide a serial number that is a better matching method.
-> > > > > >
-> > > > > > Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-> > > > > > Signed-off-by: David S. Miller <davem@davemloft.net>
-> > > > > > Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> > > > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > > > ---
-> > > > > >  drivers/net/hyperv/netvsc.c     |    3 ++
-> > > > > >  drivers/net/hyperv/netvsc_drv.c |   58 ++++++++++++++++++++++-------
-> > -----
-> > > > -----
-> > > > > > -
-> > > > > >  2 files changed, 36 insertions(+), 25 deletions(-)
-> > > > > >
-> > > > > > --- a/drivers/net/hyperv/netvsc.c
-> > > > > > +++ b/drivers/net/hyperv/netvsc.c
-> > > > > > @@ -1203,6 +1203,9 @@ static void netvsc_send_vf(struct net_de
-> > > > > >
-> > > > > >  	net_device_ctx->vf_alloc = nvmsg-
-> > >msg.v4_msg.vf_assoc.allocated;
-> > > > > >  	net_device_ctx->vf_serial = nvmsg-
-> > >msg.v4_msg.vf_assoc.serial;
-> > > > > > +	netdev_info(ndev, "VF slot %u %s\n",
-> > > > > > +		    net_device_ctx->vf_serial,
-> > > > > > +		    net_device_ctx->vf_alloc ? "added" : "removed");
-> > > > > >  }
-> > > > > >
-> > > > > >  static  void netvsc_receive_inband(struct net_device *ndev,
-> > > > > > --- a/drivers/net/hyperv/netvsc_drv.c
-> > > > > > +++ b/drivers/net/hyperv/netvsc_drv.c
-> > > > > > @@ -1794,20 +1794,6 @@ out_unlock:
-> > > > > >  	rtnl_unlock();
-> > > > > >  }
-> > > > > >
-> > > > > > -static struct net_device *get_netvsc_bymac(const u8 *mac) -{
-> > > > > > -	struct net_device_context *ndev_ctx;
-> > > > > > -
-> > > > > > -	list_for_each_entry(ndev_ctx, &netvsc_dev_list, list) {
-> > > > > > -		struct net_device *dev = hv_get_drvdata(ndev_ctx-
-> > > > > > >device_ctx);
-> > > > > > -
-> > > > > > -		if (ether_addr_equal(mac, dev->perm_addr))
-> > > > > > -			return dev;
-> > > > > > -	}
-> > > > > > -
-> > > > > > -	return NULL;
-> > > > > > -}
-> > > > > > -
-> > > > > >  static struct net_device *get_netvsc_byref(struct net_device
-> > *vf_netdev)  {
-> > > > > >  	struct net_device_context *net_device_ctx; @@ -1936,26
-> > > > > > +1922,48
-> > > > @@
-> > > > > > static void netvsc_vf_setup(struct work_
-> > > > > >  	rtnl_unlock();
-> > > > > >  }
-> > > > > >
-> > > > > > +/* Find netvsc by VMBus serial number.
-> > > > > > + * The PCI hyperv controller records the serial number as the slot.
-> > > > > > + */
-> > > > > > +static struct net_device *get_netvsc_byslot(const struct
-> > > > > > +net_device
-> > > > > > +*vf_netdev) {
-> > > > > > +	struct device *parent = vf_netdev->dev.parent;
-> > > > > > +	struct net_device_context *ndev_ctx;
-> > > > > > +	struct pci_dev *pdev;
-> > > > > > +
-> > > > > > +	if (!parent || !dev_is_pci(parent))
-> > > > > > +		return NULL; /* not a PCI device */
-> > > > > > +
-> > > > > > +	pdev = to_pci_dev(parent);
-> > > > > > +	if (!pdev->slot) {
-> > > > > > +		netdev_notice(vf_netdev, "no PCI slot information\n");
-> > > > > > +		return NULL;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	list_for_each_entry(ndev_ctx, &netvsc_dev_list, list) {
-> > > > > > +		if (!ndev_ctx->vf_alloc)
-> > > > > > +			continue;
-> > > > > > +
-> > > > > > +		if (ndev_ctx->vf_serial == pdev->slot->number)
-> > > > > > +			return hv_get_drvdata(ndev_ctx->device_ctx);
-> > > > >
-> > > > > Greg,
-> > > > >
-> > > > > I had a fix to this patch. If not already, Could you include my
-> > > > > following fix
-> > > > together?
-> > > > > hv_netvsc: fix vf serial matching with pci slot info
-> > > > > https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fg
-> > > > > it.k
-> > > > > ernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fdavem%2Fnet-
-> > > > next.git%2F
-> > > > >
-> > > >
-> > commit%2F%3Fid%3D005479556197f80139771960dda0dfdcd2d2aad5&amp;da
-> > > > ta=02%
-> > > > >
-> > > >
-> > 7C01%7Chaiyangz%40microsoft.com%7C6ce194a47449435fe82a08d63404a94e
-> > > > %7C7
-> > > > >
-> > > >
-> > 2f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C636753591959679786&amp
-> > > > ;sdata
-> > > > >
-> > > >
-> > =ReWYMZW%2FYtoFSbFSxny9VGw6V8v9J4sGanfJjbVd34A%3D&amp;reserved=
-> > > > 0
-> > > >
-> > > > I can not take a patch that is not "upstream" yet, sorry.
-> > > >
-> > > > Also, this really feels like a "new feature" to me.  Can someone
-> > > > explain what bug this is fixing?
-> > >
-> > > Patch #A: hv_netvsc: pair VF based on serial number
-> > > https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.k
-> > > ernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fnext%2Flinux-
-> > next.git%2
-> > >
-> > Fcommit%2F%3Fid%3D00d7ddba1143623b31bc2c15d18216e2da031b14&amp;
-> > data=02
-> > > %7C01%7Chaiyangz%40microsoft.com%7C2e07aa3f8a9d4f32526008d63432d
-> > f14%7C
-> > >
-> > 72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C636753790439794786&am
-> > p;sdat
-> > > a=0ZyQ7jJdgsEZbh8TqA0eypvPUJVQaxSJcSNYuhLSl%2Fc%3D&amp;reserved=0
-> > >
-> > > Patch #B: hv_netvsc: fix vf serial matching with pci slot info
-> > > https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.k
-> > > ernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fnext%2Flinux-
-> > next.git%2
-> > >
-> > Fcommit%2F%3Fid%3D005479556197f80139771960dda0dfdcd2d2aad5&amp;d
-> > ata=02
-> > > %7C01%7Chaiyangz%40microsoft.com%7C2e07aa3f8a9d4f32526008d63432d
-> > f14%7C
-> > >
-> > 72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C636753790439794786&am
-> > p;sdat
-> > >
-> > a=JPfFlatrkt1K6zMLHmZDRG51cCLwVk9pXqHVtLm26hA%3D&amp;reserved=0
-> > >
-> > > The patch #A is a feature that use VF serial number for matching. But #A has
-> > a bug causing mismatch.
-> > >
-> > > Patch #B, upstream now (see the link to Linux-next), is a fix to #A.
-> > 
-> > You didn't answer my original question here, what bug is this fixing?
-> 
-> Patch #A: hv_netvsc: pair VF based on serial number
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=00d7ddba1143623b31bc2c15d18216e2da031b14
-> 
-> Patch #B: hv_netvsc: fix vf serial matching with pci slot info
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=005479556197f80139771960dda0dfdcd2d2aad5
-> 
-> The VF NIC needs to be paired with synthetic NIC on HyperV  --  to do that we 
-> use MAC address matching before the patch #A. But a non VF NIC can also 
-> have the same MAC, which shouldn't be paired with synthetic NIC. So a better 
-> method is implemented by #A to use VF serial number for matching.
-> 
-> But, #A has a bug, which causes matching to fail. Patch #B fixed it by extracting 
-> the VF serial number correctly from slot info.
-
-My question is, "what bug is patch #A fixing"?  Somehow things have been
-working just fine for people without this, right?  Remember, new
-features should not be backported to stable kernels if at all possible.
-
-thanks,
-
-greg k-h
+T24gV2VkLCAyMDE4LTEwLTE3IGF0IDEzOjMyICswMTAwLCBKb24gSHVudGVyIHdyb3RlOg0KPiBP
+biAxNi8xMC8yMDE4IDExOjQ3LCBNYXJjZWwgWmlzd2lsZXIgd3JvdGU6DQo+ID4gRnJvbTogTWFy
+Y2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQo+ID4gDQo+ID4gVGhp
+cyBmaXhlcyB0aGUgZm9sbG93aW5nIGVycm9yIGFzIHNlZW4gcG9zdCBjb21taXQgZGFlY2Y0NmVl
+MGU1DQo+ID4gKCJBU29DOiBzb2MtY29yZTogdXNlIHNuZF9zb2NfZGFpX2xpbmtfY29tcG9uZW50
+IGZvciBwbGF0Zm9ybSIpOg0KPiA+IA0KPiA+IHRlZ3JhLXNuZC1zZ3RsNTAwMCBzb3VuZDogQVNv
+QzogQm90aCBwbGF0Zm9ybSBuYW1lL29mX25vZGUgYXJlIHNldA0KPiA+IGZvcg0KPiA+ICBzZ3Rs
+NTAwMA0KPiA+IHRlZ3JhLXNuZC1zZ3RsNTAwMCBzb3VuZDogQVNvQzogZmFpbGVkIHRvIGluaXQg
+bGluayBzZ3RsNTAwMA0KPiA+IHRlZ3JhLXNuZC1zZ3RsNTAwMCBzb3VuZDogc25kX3NvY19yZWdp
+c3Rlcl9jYXJkIGZhaWxlZCAoLTIyKQ0KPiA+IHRlZ3JhLXNuZC1zZ3RsNTAwMDogcHJvYmUgb2Yg
+c291bmQgZmFpbGVkIHdpdGggZXJyb3IgLTIyDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogTWFy
+Y2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQo+ID4gDQo+ID4gLS0t
+DQo+ID4gDQo+ID4gQ2hhbmdlcyBpbiB2MjogTmV3IHBhdGNoDQo+ID4gDQo+ID4gIHNvdW5kL3Nv
+Yy90ZWdyYS90ZWdyYV9zZ3RsNTAwMC5jIHwgNSArKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwg
+NSBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL3NvdW5kL3NvYy90ZWdyYS90
+ZWdyYV9zZ3RsNTAwMC5jDQo+ID4gYi9zb3VuZC9zb2MvdGVncmEvdGVncmFfc2d0bDUwMDAuYw0K
+PiA+IGluZGV4IDkwMTQ1N2RhMjVlYy4uZWI3MDI5MjVjYWMzIDEwMDY0NA0KPiA+IC0tLSBhL3Nv
+dW5kL3NvYy90ZWdyYS90ZWdyYV9zZ3RsNTAwMC5jDQo+ID4gKysrIGIvc291bmQvc29jL3RlZ3Jh
+L3RlZ3JhX3NndGw1MDAwLmMNCj4gPiBAQCAtMTY4LDYgKzE2OCwxMSBAQCBzdGF0aWMgaW50IHRl
+Z3JhX3NndGw1MDAwX2RyaXZlcl9wcm9iZShzdHJ1Y3QNCj4gPiBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpDQo+ID4gIAlyZXR1cm4gMDsNCj4gPiAgDQo+ID4gIGVycl9maW5pX3V0aWxzOg0KPiA+ICsJ
+aWYgKHRlZ3JhX3NndGw1MDAwX2RhaS5wbGF0Zm9ybSkgew0KPiA+ICsJCWRldm1fa2ZyZWUoJnBk
+ZXYtPmRldiwNCj4gPiB0ZWdyYV9zZ3RsNTAwMF9kYWkucGxhdGZvcm0pOw0KPiA+ICsJCXRlZ3Jh
+X3NndGw1MDAwX2RhaS5wbGF0Zm9ybSA9IE5VTEw7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICAJdGVn
+cmFfYXNvY191dGlsc19maW5pKCZtYWNoaW5lLT51dGlsX2RhdGEpOw0KPiA+ICBlcnJfcHV0X2Nw
+dV9vZl9ub2RlOg0KPiA+ICAJb2Zfbm9kZV9wdXQodGVncmFfc2d0bDUwMDBfZGFpLmNwdV9vZl9u
+b2RlKTsNCj4gPiANCj4gDQo+IFdoZXJlIGlzIHRoZSBhYm92ZSBhbGxvY2F0ZWQ/DQoNCnNuZF9z
+b2NfaW5pdF9wbGF0Zm9ybSgpIGluIHNvdW5kL3NvYy9zb2MtY29yZS5jDQoNCj4gSSBkb24ndCBz
+ZWUgaXQgYWxsb2NhdGVkIGluIHRoaXMgZHJpdmVyDQo+IEFGQUlDVC4gSWYgaXQgaXMgbm90IHRo
+ZW4gaXQgZG9lcyBub3Qgc2VlbSByaWdodCB0byBmcmVlIHNvbWV0aGluZw0KPiB0aGF0DQo+IHdl
+IGhhdmUgbm90IGFsbG9jYXRlZCBpbiB0aGlzIGRyaXZlci4gSSB3b3VsZCBoYXZlIGFzc3VtZWQg
+aXQgd2FzDQo+IGFsbG9jYXRlZCBieSBzbmRfc29jX2luaXRfcGxhdGZvcm0oKSBpbiB3aGljaCBj
+YXNlIGl0IHNob3VsZCBub3QgYmUNCj4gbmVjZXNzYXJ5IHRvIGZyZWUgYmVjYXVzZSB0aGF0IGZ1
+bmN0aW9uIHVzZXMgZGV2bV9remFsbG9jKCkuDQoNClRoYXQgaXMga2luZCBvZiB3aGF0IEkgYXNz
+dW1lZCBhcyB3ZWxsLg0KDQo+IFdoYXQgYW0gSSBtaXNzaW5nIGhlcmU/DQoNClRoYXQgaXMgYWN0
+dWFsbHkgYSB2ZXJ5IHZlcnkgZ29vZCBxdWVzdGlvbi4gVW5mb3J0dW5hdGVseSwgc2luY2UgYWJv
+dmUNCm1lbnRpb25lZCBjb21taXQgd2hpY2ggaXMgcGFydCBvZiB0aGUgYmlnZ2VyIG11bHRpLXBs
+YXRmb3JtIChvcg0Kd2hhdGV2ZXIgb25lIG1heSBjYWxsIGl0KSByZXdvcmsgZG9uZSBieSBmb2xr
+cyBvbiBDQyB0aGluZ3Mgc3RhcnQNCmZhbGxpbmcgYXBhcnQuDQoNCkkgc2hvdWxkIG1heWJlIHJh
+dGhlciBoYXZlIHBocmFzZWQgdGhpcyBvbmUgYXMgYW4gUkZDLg0KDQpTb21lIGZhY3RzIGZyb20g
+bXkgaHVtYmxlIGludmVzdGlnYXRpb24gc28gZmFyOg0KDQotIFRoZSBpc3N1ZSBkb2VzIG5vdCBl
+eGhpYml0IGl0c2VsZiBvbiBBcGFsaXMvQ29saWJyaSBUMzAgd2hlcmUNCnByb2JhYmx5IHRoZSBv
+cmRlciBvZiB0aGluZ3MgYmVpbmcgaW5pdGlhbGlzZWQgaXMgc2xpZ2h0bHkgZGlmZmVyZW50Lg0K
+DQotIEJpc2VjdGluZyBwb2ludHMgdG8gdGhlIGFib3ZlIG1lbnRpb25lZCBjb21taXQgYmVpbmcg
+dG8gYmxhbWUuDQpIb3dldmVyIHRoZXJlIGlzIG5vIHdheSB0byBqdXN0IHJldmVydCB0aGF0IGNv
+bW1pdCBhcyBpdCBpcyBwYXJ0IG9mIHRoZQ0KYmlnZ2VyIG11bHRpLXBsYXRmb3JtIHJld29yay4N
+Cg0KLSBTb21laG93IGl0IGhhcyB0byBkbyB3aXRoIHByb2JlIGRlZmVycmFsLiBCYXNpY2FsbHks
+IHBsYXRmb3JtIGdldHMNCmFsbG9jYXRlZCBpbiBzbmRfc29jX2luaXRfcGxhdGZvcm0oKSBidXQg
+ZHVlIHRvIEdQSU8vSTJDIHdoYXRldmVyIG5vdA0KYmVpbmcgcmVhZHkgdGhlIFNHVEw1MDAwIGNv
+ZGVjIGFrYSBkYWlfbGluayBjYW4gbm90IHlldCBiZSBmb3VuZCBhbmQNCnRoZXJlZm9yZSBpdCBw
+cm9iZSBkZWZlcnMgYXMgZm9sbG93czoNCg0KWyAgICAyLjE2NjUxN10gdGVncmEzMC1pMnMgNzAz
+MDEyMDAuaTJzOiBETUEgY2hhbm5lbHMgc291cmNlZCBmcm9tDQpkZXZpY2UgNzAzMDAwMDAuYWh1
+Yg0KWyAgICAyLjE3NjA0M10gdGVncmEtc25kLXNndGw1MDAwIHNvdW5kOiBBU29DOiBDT0RFQyBE
+QUkgc2d0bDUwMDAgbm90DQpyZWdpc3RlcmVkDQpbICAgIDIuMTgzMjQxXSB0ZWdyYS1zbmQtc2d0
+bDUwMDAgc291bmQ6IHNuZF9zb2NfcmVnaXN0ZXJfY2FyZCBmYWlsZWQNCigtNTE3KQ0KDQotIFNv
+bWV3aGVyZSB0aGVyZWFmdGVyIHBsYXRmb3JtIHNlZW1zIHRvIGdldCBzdHVtcGVkIG9udG8gKGUu
+Zy4gaXRzDQpuYW1lIHJhdGhlciB0aGFuIGJlaW5nIG51bGwgbm93IGlzIGJvZ3VzLiBVbmZvcnR1
+bmF0ZWx5LCBpdCBpcyBub3QganVzdA0KdGhlIG5hbWUgYXMgY2xlYXJpbmcganVzdCB0aGF0IGRp
+ZCBub3QgcmVhbGx5IGhlbHAgKHNndGw1MDAwIGNvZGVjIGdldHMNCmluc3RhbnRpYXRlZCBidXQg
+dHJ5aW5nIHRvIHBsYXkgYXVkaW8gYWx3YXlzIHJldHVybmVkIC1FSU5WQUwpLg0KDQotIFRoZSBz
+ZWNvbmQgdGltZSBhcm91bmQgc25kX3NvY19pbml0X3BsYXRmb3JtKCkgcmUtdXNlcyBwcmV2aW91
+c2x5DQphbGxvY2F0ZWQgcGxhdGZvcm0gbm93IGNvcnJ1cHQgdHJpZ2dlcmluZyBhIGNoZWNrIGlu
+IHNvYy1jb3JlDQpjb25jZXJuaW5nIHBsYXRmb3JtIG5hbWUgYW5kIG9mX25vZGUgYm90aCBiZWlu
+ZyBzZXQgKGFzIG5vdGVkIGluIGFib3ZlDQpjb21taXQgbWVzc2FnZSkuDQoNClNvbWUgcXVlc3Rp
+b25zOg0KDQotIEhvdyBleGFjdGx5IGFyZSBkZXZtIGFsbG9jYXRpb25zIHN1cHBvc2VkIHRvIHdv
+cmsgY29uY2VybmluZyBwcm9iZQ0KZGVmZXJyYWxzPw0KDQotIERvZXMgb3Igc2hvdWxkIHRoZSBw
+bGF0Zm9ybSBnZXQgY2xlYXJlZCBkdXJpbmcgYSBwcm9iZSBkZWZlcnJhbA0KY3ljbGU/DQoNCi0g
+SWYgc28sIHdoeSBkb2VzIHRoYXQgbm90IHdvcms/DQoNCi0gT3IgaXMgc29tZSBzcGVjaWFsIGlt
+cGxpY2l0IHByb2JlIGRlZmVycmFsIGhhbmRsaW5nIG1pc3NpbmcgaW4gc29jLQ0KY29yZT8NCg0K
+SSdtIGhhcHB5IHRvIHRyeSBtb3JlIHRoaW5ncyBhbmQvb3IgcHJvdmlkZSBtb3JlIGRlYnVnZ2lu
+ZyBvdXRwdXQgaWYNCm5lZWRlZC4gSnVzdCBsZXQgbWUga25vdy4NCg0KVGhhbmtzIEpvbiENCg0K
+PiBDaGVlcnMNCj4gSm9uDQoNCkNoZWVycw0KDQpNYXJjZWw=
