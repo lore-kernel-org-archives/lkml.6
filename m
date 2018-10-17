@@ -2,110 +2,154 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0111ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E719ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C5621528
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:20:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA6B420658
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:21:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5FBr9V5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C5621528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HWq0o+B0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6B420658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbeJRAQ2 (ORCPT
+        id S1727785AbeJRARw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 20:16:28 -0400
-Received: from mail-qk1-f181.google.com ([209.85.222.181]:35151 "EHLO
-        mail-qk1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727191AbeJRAQ2 (ORCPT
+        Wed, 17 Oct 2018 20:17:52 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:45684 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727262AbeJRARv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 20:16:28 -0400
-Received: by mail-qk1-f181.google.com with SMTP id v68-v6so16846252qka.2;
-        Wed, 17 Oct 2018 09:20:01 -0700 (PDT)
+        Wed, 17 Oct 2018 20:17:51 -0400
+Received: by mail-qk1-f194.google.com with SMTP id m8-v6so16841561qka.12
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:21:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tASjEjfws3/XHl7yNeAIkgDk0U2NJ7AFE81cCChSL6E=;
-        b=Y5FBr9V5kqJXG6zjHU7WZnmah4mhzBAjmOjq4fBTz40SQLAArQNoX8ddthirR5Szw+
-         K/9RHEEx7wjVKNIovY3EyMwGiMn4t5r7aog9pAUShzYCVJljSIPHmYbhf/a7+3oU/r8i
-         3HcYH/H2DLOBUy8uNcPqJXDgRWRc9CgOQq4b6JMV9K2CEiyJ4vzmU8lV0J6YvLCKlxom
-         ZV3pOqbUe81cYw7K8rLEV4SDcNCs82mGhNCrrGZqAfUJW6XzO1gT9dT/oXyfRyT2aFDY
-         6aPaSED7mtXLMfbEiPl+Nknsdp9WxxcKiVV6/p8LyKroJzdasbOWjViybDoT2kwfdVBz
-         RkjQ==
+        d=linaro.org; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=WrfAD2+3i7ZJ95a4/drlAFrIwUpse9bbWec9AmIVWeY=;
+        b=HWq0o+B0MECQTEuDQoU2HMFEqdIkDtambj6jY0HSV5oM1jCpdTKkzrJqSvEY18igxX
+         kv7s+wrxiV6EU3BgS2Vkl+GJWYGKoarCURg2XixipBFRDwrReQOLB+o45UL5VlzufL7s
+         QpIwWoKu4BsWFmediMkC5xQ159/l739oq6RIg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tASjEjfws3/XHl7yNeAIkgDk0U2NJ7AFE81cCChSL6E=;
-        b=Hkutw5eXHxF3qk0IrkIl5+DOwc2pbxTm3zi3KplWllHxXKKM1nUv3Hf0rusT+iuYKV
-         giAuTe0fVnUWeQk5uAVCwX15b8f60OGRGO90OscJzagyN8R5r+j5ouwksUNlaaD8sUi3
-         OtopD2u9SwHWT+K4TL0SMZ0KfQ0y4bU8mrAiQixqVdV6xMOQKEU2TUyNccqbrT3YeSAs
-         7iAl5eK9mMWJ3D3YOM9bvl1XKKlrmvy1jpklVE25/VBr27l88StowxWTd3muVcnzYzCN
-         NZTPkds8PpnIsk7mgbLys/mdtE+O0yzP9dwR2ctg5TUhuafHRd0Qv6RF1xQEznnZvSuu
-         6/KA==
-X-Gm-Message-State: ABuFfojbqK4+iy/hNq4V2w8WhdlLO2DqWpc3DVk7qYrT9R72fS3NyBGN
-        Fyx1jCpuge/mgD5WlYLGy2w=
-X-Google-Smtp-Source: ACcGV63osFbXALgE4HTjIU4SVKFXaLkkRgG8xlvNzsgy4EDdz6Qe5A6/w25hcVVOZbLMira16cO8Pw==
-X-Received: by 2002:a37:2442:: with SMTP id w63-v6mr23537464qkg.31.1539793201076;
-        Wed, 17 Oct 2018 09:20:01 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::5:5411])
-        by smtp.gmail.com with ESMTPSA id s131-v6sm9230294qke.57.2018.10.17.09.20.00
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=WrfAD2+3i7ZJ95a4/drlAFrIwUpse9bbWec9AmIVWeY=;
+        b=L9YhyGSl0Mz1WdeBDHM/n1GrLipkG8oCo2B13cJcp1SHQXgZXDJGT4tBv/ZrHQFMyy
+         fPoN/qPkOlGa6LNHtud/ESP8FdzZAd01vZu0bzUnNGn3/BXRUzW94iy9aZzsT39hcG3q
+         xhSr92GCjO6gb99o7X8XpbeONUEF/MSlxYY9etkawqDVdEkoX3eiIKdLiAeooC3HNp2g
+         Qcg4pYuScqA/wO7/zN5iHeKFCEcoEddUxnFV0g1TQd7s8A7HtL7AH2mo2XY+EXE4UkIz
+         Xx33tzupkepnXOpYkj57F1BZMF2HDi2/ilqggsn2OD5UtYE33Ddr7XdLp/MtBzcJUvGi
+         8KFQ==
+X-Gm-Message-State: ABuFfoiP1Tld2MaBMiNlCX0ARyGA9+RAvm0stY4GKZIlv8BlF0zKidX9
+        RQZBh/C3ONPg3Lp3xndDp6zZGQ==
+X-Google-Smtp-Source: ACcGV60sAnksfmVrlFhXmwJO9mWZrhFfobCWJdosIkSnm26y7w8x6SvmVa+I0PnQkylo1K5udQvzNw==
+X-Received: by 2002:a37:3bc1:: with SMTP id i184-v6mr2245831qka.286.1539793284125;
+        Wed, 17 Oct 2018 09:21:24 -0700 (PDT)
+Received: from [192.168.1.169] (pool-71-255-245-97.washdc.fios.verizon.net. [71.255.245.97])
+        by smtp.gmail.com with ESMTPSA id l3-v6sm20084272qtl.2.2018.10.17.09.21.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 09:20:00 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 09:19:58 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: Cgroup v2 thread mode oddity: "domain invalid" cgroup with
- threaded controller enabled
-Message-ID: <20181017161958.GT270328@devbig004.ftw2.facebook.com>
-References: <a4912516-8c6b-d8d3-b714-5c03bcfc5e91@gmail.com>
+        Wed, 17 Oct 2018 09:21:22 -0700 (PDT)
+Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
+To:     Ingo Molnar <mingo@kernel.org>
+References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
+ <20181010061751.GA37224@gmail.com> <5BBE1E1F.3030308@linaro.org>
+ <20181016073305.GA64994@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, rui.zhang@intel.com,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        amit.kachhap@gmail.com, viresh.kumar@linaro.org,
+        javi.merino@kernel.org, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+        quentin.perret@arm.com, ionela.voinescu@arm.com,
+        vincent.guittot@linaro.org
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+Message-ID: <5BC76181.90105@linaro.org>
+Date:   Wed, 17 Oct 2018 12:21:21 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a4912516-8c6b-d8d3-b714-5c03bcfc5e91@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181016073305.GA64994@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Michael.
-
-Sorry about the delay.
-
-On Thu, Oct 04, 2018 at 09:40:57PM +0200, Michael Kerrisk (man-pages) wrote:
-> This seems odd. x/y is now of "domain invalid" type with a controller
-> enabled! This feels like a violation of the rules, since we can't
-> in other circumstances do anything with a "domain invalid" cgroup
-> except convert it to "threaded". In particular, we can't create
-> child cgroups under a "domain invalid" cgroup, or add member processes
-> to the cgroup, or *enable controllers in the cgroup*. In fact, when
-> doing the 
+On 10/16/2018 03:33 AM, Ingo Molnar wrote:
 > 
->     # echo threaded > x/z/cgroup.type
+> * Thara Gopinath <thara.gopinath@linaro.org> wrote:
 > 
-> I had expected a write(2) error because the state of x/y should
-> (I thought) not be permitted.
+>>>> Regarding testing, basic build, boot and sanity testing have been
+>>>> performed on hikey960 mainline kernel with debian file system.
+>>>> Further aobench (An occlusion renderer for benchmarking realworld
+>>>> floating point performance) showed the following results on hikey960
+>>>> with debain.
+>>>>
+>>>>                                         Result          Standard        Standard
+>>>>                                         (Time secs)     Error           Deviation
+>>>> Hikey 960 - no thermal pressure applied 138.67          6.52            11.52%
+>>>> Hikey 960 -  thermal pressure applied   122.37          5.78            11.57%
+>>>
+>>> Wow, +13% speedup, impressive! We definitely want this outcome.
+>>>
+>>> I'm wondering what happens if we do not track and decay the thermal 
+>>> load at all at the PELT level, but instantaneously decrease/increase 
+>>> effective CPU capacity in reaction to thermal events we receive from 
+>>> the CPU.
+>>
+>> The problem with instantaneous update is that sometimes thermal events 
+>> happen at a much faster pace than cpu_capacity is updated in the 
+>> scheduler. This means that at the moment when scheduler uses the 
+>> value, it might not be correct anymore.
+> 
+> Let me offer a different interpretation: if we average throttling events 
+> then we create a 'smooth' average of 'true CPU capacity' that doesn't 
+> fluctuate much. This allows more stable yet asymmetric task placement if 
+> the thermal characteristics of the different cores is different 
+> (asymmetric). This, compared to instantaneous updates, would reduce 
+> unnecessary task migrations between cores.
+> 
+> Is that accurate?
 
-So, both the interim (before turning x/z into threaded) and final
-(after) are completely fine - the cgroups are empty and whether
-threaded controllers like pids are enabled or not don't really change
-things that much.
+Yes. I think it is accurate. I will also add that if we don't average
+throttling events, we will miss the events that occur in between load
+balancing(LB) period.
 
-Maybe it is a bit inconsistent to then deny enabling threaded
-controllers on invalid domain cgroups.  We can lift that restriction
-but I personally can't see why that'd be clearly better.
+> 
+> If the thermal characteristics of the cores is roughly symmetric and the 
+> measured CPU-intense load itself is symmetric as well, then I have 
+> trouble seeing why reacting to thermal events should make any difference 
+> at all.
+In this scenario, i agree that scheduler reaction to thermal events
+should not make any difference in fact we should not observe any
+improvement or degradation in performance.
 
-Thanks.
+> 
+> Are there any inherent asymmetries in the thermal properties of the 
+> cores, or in the benchmarked workload itself?
+
+The benchmarked workload , meaning aobench? I don't think there arre any
+asymmetries there. On Hikey960, there are two clusters with different
+frequency domains. So yes I will say there is asymmetry there. Asides,
+IMHO, any other tasks running on the system can create an inherent
+asymmetry as cpu utilizations can vary.
+
+Regards
+Thara
+> 
+> Thanks,
+> 
+> 	Ingo
+> 
+
 
 -- 
-tejun
+Regards
+Thara
