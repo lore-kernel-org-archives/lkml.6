@@ -2,92 +2,394 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F54ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDE4ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C55F721470
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:25:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeL5oABZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C55F721470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7C93D2148D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:26:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C93D2148D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbeJQXVw (ORCPT
+        id S1727516AbeJQXWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:21:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49372 "EHLO mail.kernel.org"
+        Wed, 17 Oct 2018 19:22:34 -0400
+Received: from mga07.intel.com ([134.134.136.100]:17493 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727032AbeJQXVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:21:52 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0CAA2148D;
-        Wed, 17 Oct 2018 15:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539789939;
-        bh=OZj2GDmdvVDHedppTdL1IX5SjvozIaFPyfL3J/X7J2Y=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=NeL5oABZ93VeuK6jNxGKdkegUxxc4c28YiE+SgcRhCvMFmJs2Dkrb+/g5nIMIke2P
-         Rl6B6WP3bucQYu+VT1opJ79mJ69pLle3oKvo7wsTuWeKzPQp06y2ghrsAgE/84vVY3
-         i+fzxmxXL5MvcE89xQqFdtK2UMrigqjyR25+tUEM=
-Content-Type: text/plain; charset="utf-8"
+        id S1727032AbeJQXWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:22:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 08:26:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,392,1534834800"; 
+   d="scan'208";a="83365417"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.154]) ([10.7.198.154])
+  by orsmga006.jf.intel.com with ESMTP; 17 Oct 2018 08:26:20 -0700
+Subject: Re: [mm PATCH v3 4/6] mm: Move hot-plug specific memory init into
+ separate functions and optimize
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
+        linux-kernel@vger.kernel.org, willy@infradead.org,
+        davem@davemloft.net, yi.z.zhang@linux.intel.com,
+        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
+        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
+        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
+        mingo@kernel.org, kirill.shutemov@linux.intel.com
+References: <20181015202456.2171.88406.stgit@localhost.localdomain>
+ <20181015202716.2171.7284.stgit@localhost.localdomain>
+ <20181017091824.GL18839@dhcp22.suse.cz>
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Message-ID: <d9011108-4099-58dc-8b8c-110c5f2a3674@linux.intel.com>
+Date:   Wed, 17 Oct 2018 08:26:20 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1539756441-18776-2-git-send-email-Anson.Huang@nxp.com>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-References: <1539756441-18776-1-git-send-email-Anson.Huang@nxp.com>
- <1539756441-18776-2-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <153978993915.5275.9461015919945429893@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] clk: imx7d: remove CLK_IS_CRITICAL flag for arm_a7_root_clk
-Date:   Wed, 17 Oct 2018 08:25:39 -0700
+In-Reply-To: <20181017091824.GL18839@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Anson Huang (2018-10-16 23:12:04)
-> i.MX7D uses virtual cpu clock of "arm" clock to be child clock
+On 10/17/2018 2:18 AM, Michal Hocko wrote:
+> On Mon 15-10-18 13:27:16, Alexander Duyck wrote:
+>> This patch is going through and combining the bits in memmap_init_zone and
+>> memmap_init_zone_device that are related to hotplug into a single function
+>> called __memmap_init_hotplug.
+>>
+>> I also took the opportunity to integrate __init_single_page's functionality
+>> into this function. In doing so I can get rid of some of the redundancy
+>> such as the LRU pointers versus the pgmap.
+> 
+> This patch depends on [1] which I've had some concerns about. It adds
+> more code on top. I am still not convinced this is the right direction.
+> 
+> [1] http://lkml.kernel.org/r/20180925202053.3576.66039.stgit@localhost.localdomain
 
-This statement is concerning. Why do we have virtual clks?
+I wouldn't say this patch depends on it. The fact is I could easily make 
+this patch work with the code as it was before that change. This was 
+actually something I had started on first and then decided to move until 
+later since I knew this was more invasive than the 
+memmap_init_zone_device function was.
 
-> of "arm_a7_root_clk" and it is with CLK_IS_CRITICAL flag set, so
-> no need to add CLK_IS_CRITICAL flag for keeping "arm_a7_root_clk"
-> use count correct, latest clock tree is as below in clk_summary:
-> =
+With that said I am also wondering if a possible solution to the 
+complaints you had would be to look at just exporting the 
+__init_pageblock function later and moving the call to 
+memmap_init_zone_device out to the memremap or hotplug code when Dan 
+gets the refactoring for HMM and memremap all sorted out.
 
-> pll_arm_main                         1        1        0   792000000     =
-     0
->       pll_arm_main_bypass            1        1        0   792000000     =
-     0
->          pll_arm_main_clk            1        1        0   792000000     =
-     0
->             arm_a7_src               1        1        0   792000000     =
-     0
->                arm_a7_cg             1        1        0   792000000     =
-     0
->                   arm_a7_div         1        1        0   792000000     =
-     0
->                      arm_a7_root_clk       1        1        0   79200000=
-0    0
->                         arm          1        1        0   792000000
-> =
-
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>>
+>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>> ---
+>>   mm/page_alloc.c |  232 ++++++++++++++++++++++++++++++++++++++-----------------
+>>   1 file changed, 159 insertions(+), 73 deletions(-)
+>>
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index 20e9eb35d75d..92375e7867ba 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -1192,6 +1192,94 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+>>   #endif
+>>   }
+>>   
+>> +static void __meminit __init_pageblock(unsigned long start_pfn,
+>> +				       unsigned long nr_pages,
+>> +				       unsigned long zone, int nid,
+>> +				       struct dev_pagemap *pgmap,
+>> +				       bool is_reserved)
+>> +{
+>> +	unsigned long nr_pgmask = pageblock_nr_pages - 1;
+>> +	struct page *start_page = pfn_to_page(start_pfn);
+>> +	unsigned long pfn = start_pfn + nr_pages - 1;
+>> +#ifdef WANT_PAGE_VIRTUAL
+>> +	bool is_highmem = is_highmem_idx(zone);
+>> +#endif
+>> +	struct page *page;
+>> +
+>> +	/*
+>> +	 * Enforce the following requirements:
+>> +	 * size > 0
+>> +	 * size < pageblock_nr_pages
+>> +	 * start_pfn -> pfn does not cross pageblock_nr_pages boundary
+>> +	 */
+>> +	VM_BUG_ON(((start_pfn ^ pfn) | (nr_pages - 1)) > nr_pgmask);
+>> +
+>> +	/*
+>> +	 * Work from highest page to lowest, this way we will still be
+>> +	 * warm in the cache when we call set_pageblock_migratetype
+>> +	 * below.
+>> +	 *
+>> +	 * The loop is based around the page pointer as the main index
+>> +	 * instead of the pfn because pfn is not used inside the loop if
+>> +	 * the section number is not in page flags and WANT_PAGE_VIRTUAL
+>> +	 * is not defined.
+>> +	 */
+>> +	for (page = start_page + nr_pages; page-- != start_page; pfn--) {
+>> +		mm_zero_struct_page(page);
+>> +
+>> +		/*
+>> +		 * We use the start_pfn instead of pfn in the set_page_links
+>> +		 * call because of the fact that the pfn number is used to
+>> +		 * get the section_nr and this function should not be
+>> +		 * spanning more than a single section.
+>> +		 */
+>> +		set_page_links(page, zone, nid, start_pfn);
+>> +		init_page_count(page);
+>> +		page_mapcount_reset(page);
+>> +		page_cpupid_reset_last(page);
+>> +
+>> +		/*
+>> +		 * We can use the non-atomic __set_bit operation for setting
+>> +		 * the flag as we are still initializing the pages.
+>> +		 */
+>> +		if (is_reserved)
+>> +			__SetPageReserved(page);
+>> +
+>> +		/*
+>> +		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
+>> +		 * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
+>> +		 * page is ever freed or placed on a driver-private list.
+>> +		 */
+>> +		page->pgmap = pgmap;
+>> +		if (!pgmap)
+>> +			INIT_LIST_HEAD(&page->lru);
+>> +
+>> +#ifdef WANT_PAGE_VIRTUAL
+>> +		/* The shift won't overflow because ZONE_NORMAL is below 4G. */
+>> +		if (!is_highmem)
+>> +			set_page_address(page, __va(pfn << PAGE_SHIFT));
+>> +#endif
+>> +	}
+>> +
+>> +	/*
+>> +	 * Mark the block movable so that blocks are reserved for
+>> +	 * movable at startup. This will force kernel allocations
+>> +	 * to reserve their blocks rather than leaking throughout
+>> +	 * the address space during boot when many long-lived
+>> +	 * kernel allocations are made.
+>> +	 *
+>> +	 * bitmap is created for zone's valid pfn range. but memmap
+>> +	 * can be created for invalid pages (for alignment)
+>> +	 * check here not to call set_pageblock_migratetype() against
+>> +	 * pfn out of zone.
+>> +	 *
+>> +	 * Please note that MEMMAP_HOTPLUG path doesn't clear memmap
+>> +	 * because this is done early in sparse_add_one_section
+>> +	 */
+>> +	if (!(start_pfn & nr_pgmask))
+>> +		set_pageblock_migratetype(start_page, MIGRATE_MOVABLE);
+>> +}
+>> +
+>>   #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+>>   static void __meminit init_reserved_page(unsigned long pfn)
+>>   {
+>> @@ -5513,6 +5601,36 @@ void __ref build_all_zonelists(pg_data_t *pgdat)
+>>   	return false;
+>>   }
+>>   
+>> +static void __meminit __memmap_init_hotplug(unsigned long size, int nid,
+>> +					    unsigned long zone,
+>> +					    unsigned long start_pfn,
+>> +					    struct dev_pagemap *pgmap)
+>> +{
+>> +	unsigned long pfn = start_pfn + size;
+>> +
+>> +	while (pfn != start_pfn) {
+>> +		unsigned long stride = pfn;
+>> +
+>> +		pfn = max(ALIGN_DOWN(pfn - 1, pageblock_nr_pages), start_pfn);
+>> +		stride -= pfn;
+>> +
+>> +		/*
+>> +		 * The last argument of __init_pageblock is a boolean
+>> +		 * value indicating if the page will be marked as reserved.
+>> +		 *
+>> +		 * Mark page reserved as it will need to wait for onlining
+>> +		 * phase for it to be fully associated with a zone.
+>> +		 *
+>> +		 * Under certain circumstances ZONE_DEVICE pages may not
+>> +		 * need to be marked as reserved, however there is still
+>> +		 * code that is depending on this being set for now.
+>> +		 */
+>> +		__init_pageblock(pfn, stride, zone, nid, pgmap, true);
+>> +
+>> +		cond_resched();
+>> +	}
+>> +}
+>> +
+>>   /*
+>>    * Initially all pages are reserved - free ones are freed
+>>    * up by memblock_free_all() once the early boot process is
+>> @@ -5523,51 +5641,61 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>>   		struct vmem_altmap *altmap)
+>>   {
+>>   	unsigned long pfn, end_pfn = start_pfn + size;
+>> -	struct page *page;
+>>   
+>>   	if (highest_memmap_pfn < end_pfn - 1)
+>>   		highest_memmap_pfn = end_pfn - 1;
+>>   
+>> +	if (context == MEMMAP_HOTPLUG) {
+>>   #ifdef CONFIG_ZONE_DEVICE
+>> -	/*
+>> -	 * Honor reservation requested by the driver for this ZONE_DEVICE
+>> -	 * memory. We limit the total number of pages to initialize to just
+>> -	 * those that might contain the memory mapping. We will defer the
+>> -	 * ZONE_DEVICE page initialization until after we have released
+>> -	 * the hotplug lock.
+>> -	 */
+>> -	if (zone == ZONE_DEVICE) {
+>> -		if (!altmap)
+>> -			return;
+>> +		/*
+>> +		 * Honor reservation requested by the driver for this
+>> +		 * ZONE_DEVICE memory. We limit the total number of pages to
+>> +		 * initialize to just those that might contain the memory
+>> +		 * mapping. We will defer the ZONE_DEVICE page initialization
+>> +		 * until after we have released the hotplug lock.
+>> +		 */
+>> +		if (zone == ZONE_DEVICE) {
+>> +			if (!altmap)
+>> +				return;
+>> +
+>> +			if (start_pfn == altmap->base_pfn)
+>> +				start_pfn += altmap->reserve;
+>> +			end_pfn = altmap->base_pfn +
+>> +				  vmem_altmap_offset(altmap);
+>> +		}
+>> +#endif
+>> +		/*
+>> +		 * For these ZONE_DEVICE pages we don't need to record the
+>> +		 * pgmap as they should represent only those pages used to
+>> +		 * store the memory map. The actual ZONE_DEVICE pages will
+>> +		 * be initialized later.
+>> +		 */
+>> +		__memmap_init_hotplug(end_pfn - start_pfn, nid, zone,
+>> +				      start_pfn, NULL);
+>>   
+>> -		if (start_pfn == altmap->base_pfn)
+>> -			start_pfn += altmap->reserve;
+>> -		end_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
+>> +		return;
+>>   	}
+>> -#endif
+>>   
+>>   	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+>> +		struct page *page;
+>> +
+>>   		/*
+>>   		 * There can be holes in boot-time mem_map[]s handed to this
+>>   		 * function.  They do not exist on hotplugged memory.
+>>   		 */
+>> -		if (context == MEMMAP_EARLY) {
+>> -			if (!early_pfn_valid(pfn)) {
+>> -				pfn = next_valid_pfn(pfn) - 1;
+>> -				continue;
+>> -			}
+>> -			if (!early_pfn_in_nid(pfn, nid))
+>> -				continue;
+>> -			if (overlap_memmap_init(zone, &pfn))
+>> -				continue;
+>> -			if (defer_init(nid, pfn, end_pfn))
+>> -				break;
+>> +		if (!early_pfn_valid(pfn)) {
+>> +			pfn = next_valid_pfn(pfn) - 1;
+>> +			continue;
+>>   		}
+>> +		if (!early_pfn_in_nid(pfn, nid))
+>> +			continue;
+>> +		if (overlap_memmap_init(zone, &pfn))
+>> +			continue;
+>> +		if (defer_init(nid, pfn, end_pfn))
+>> +			break;
+>>   
+>>   		page = pfn_to_page(pfn);
+>>   		__init_single_page(page, pfn, zone, nid);
+>> -		if (context == MEMMAP_HOTPLUG)
+>> -			__SetPageReserved(page);
+>>   
+>>   		/*
+>>   		 * Mark the block movable so that blocks are reserved for
+>> @@ -5594,14 +5722,12 @@ void __ref memmap_init_zone_device(struct zone *zone,
+>>   				   unsigned long size,
+>>   				   struct dev_pagemap *pgmap)
+>>   {
+>> -	unsigned long pfn, end_pfn = start_pfn + size;
+>>   	struct pglist_data *pgdat = zone->zone_pgdat;
+>>   	unsigned long zone_idx = zone_idx(zone);
+>>   	unsigned long start = jiffies;
+>>   	int nid = pgdat->node_id;
+>>   
+>> -	if (WARN_ON_ONCE(!pgmap || !is_dev_zone(zone)))
+>> -		return;
+>> +	VM_BUG_ON(!is_dev_zone(zone));
+>>   
+>>   	/*
+>>   	 * The call to memmap_init_zone should have already taken care
+>> @@ -5610,53 +5736,13 @@ void __ref memmap_init_zone_device(struct zone *zone,
+>>   	 */
+>>   	if (pgmap->altmap_valid) {
+>>   		struct vmem_altmap *altmap = &pgmap->altmap;
+>> +		unsigned long end_pfn = start_pfn + size;
+>>   
+>>   		start_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
+>>   		size = end_pfn - start_pfn;
+>>   	}
+>>   
+>> -	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+>> -		struct page *page = pfn_to_page(pfn);
+>> -
+>> -		__init_single_page(page, pfn, zone_idx, nid);
+>> -
+>> -		/*
+>> -		 * Mark page reserved as it will need to wait for onlining
+>> -		 * phase for it to be fully associated with a zone.
+>> -		 *
+>> -		 * We can use the non-atomic __set_bit operation for setting
+>> -		 * the flag as we are still initializing the pages.
+>> -		 */
+>> -		__SetPageReserved(page);
+>> -
+>> -		/*
+>> -		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
+>> -		 * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
+>> -		 * page is ever freed or placed on a driver-private list.
+>> -		 */
+>> -		page->pgmap = pgmap;
+>> -		page->hmm_data = 0;
+>> -
+>> -		/*
+>> -		 * Mark the block movable so that blocks are reserved for
+>> -		 * movable at startup. This will force kernel allocations
+>> -		 * to reserve their blocks rather than leaking throughout
+>> -		 * the address space during boot when many long-lived
+>> -		 * kernel allocations are made.
+>> -		 *
+>> -		 * bitmap is created for zone's valid pfn range. but memmap
+>> -		 * can be created for invalid pages (for alignment)
+>> -		 * check here not to call set_pageblock_migratetype() against
+>> -		 * pfn out of zone.
+>> -		 *
+>> -		 * Please note that MEMMAP_HOTPLUG path doesn't clear memmap
+>> -		 * because this is done early in sparse_add_one_section
+>> -		 */
+>> -		if (!(pfn & (pageblock_nr_pages - 1))) {
+>> -			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+>> -			cond_resched();
+>> -		}
+>> -	}
+>> +	__memmap_init_hotplug(size, nid, zone_idx, start_pfn, pgmap);
+>>   
+>>   	pr_info("%s initialised, %lu pages in %ums\n", dev_name(pgmap->dev),
+>>   		size, jiffies_to_msecs(jiffies - start));
+>>
+> 
