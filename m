@@ -2,391 +2,271 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7614ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EF6ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C14321528
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:53:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AZrx7/HQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C14321528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 541BA2150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:53:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 541BA2150D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbeJQXt6 (ORCPT
+        id S1727959AbeJQXuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:49:58 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:31501 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727610AbeJQXt6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:49:58 -0400
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20181017155334epoutp02bd8925a5f3fd046b73d015c2fddabcda~ecFDHUVWv2037720377epoutp02L;
-        Wed, 17 Oct 2018 15:53:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20181017155334epoutp02bd8925a5f3fd046b73d015c2fddabcda~ecFDHUVWv2037720377epoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539791614;
-        bh=53+PoU65i0BeaWqbTJPfGy0Z01gG7y7JijUIPI9SaCc=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=AZrx7/HQwJoqCY3BJbhFziB+pOQhrtZTIU6Nyku82rorjzQF88Snf3h8Iebn4zL+y
-         MFFYOmJ8HIBDpsBtJoHtAH/MJH9FR/ZHraFQOdGB4nDPPB9Fu+j0Z0FKXpzhfknHp+
-         Ji6stQX/8sbKV9aHvLD5xHoWikp8t6sy9tx3g7MI=
-Received: from epsmges2p1.samsung.com (unknown [182.195.42.69]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20181017155333epcas2p260b5a85d31424e3733b8ba46fe906fbc~ecFB-it-k1311413114epcas2p2q;
-        Wed, 17 Oct 2018 15:53:33 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        1C.57.04015.DFA57CB5; Thu, 18 Oct 2018 00:53:33 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20181017155332epcas2p499ac9d53678d82a9984b3533e723a0dd~ecFBJmu-t0750407504epcas2p45;
-        Wed, 17 Oct 2018 15:53:32 +0000 (GMT)
-X-AuditID: b6c32a45-6c1ff70000000faf-dc-5bc75afd992a
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 32.44.03633.CFA57CB5; Thu, 18 Oct
-        2018 00:53:32 +0900 (KST)
-Received: from AMDC3058.DIGITAL.local ([106.120.53.102]) by mmp2.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PGR00KZM2SD3M00@mmp2.samsung.com>; Thu, 18 Oct 2018
-        00:53:32 +0900 (KST)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-Cc:     Amit kucheria <amit.kucheria@linaro.org>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Markus Mayer <mmayer@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Heiko Stuebner <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jun Nie <jun.nie@linaro.org>,
-        Baoyou Xie <baoyou.xie@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v2 03/17] thermal: separate sensor enable and check
- operations
-Date:   Wed, 17 Oct 2018 17:52:29 +0200
-Message-id: <1539791563-5959-4-git-send-email-b.zolnierkie@samsung.com>
-X-Mailer: git-send-email 1.9.1
-In-reply-to: <1539791563-5959-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTcRTHO3d3d9fR4jbN/VTwsfAPJS2j6Ic9SMq6VIRSgrSoRl5UdDo2
-        FTXyMR+poBhFLVsmLkNWYY6V71CnW0aKj2GiltlDKqMHI5aGWdvV/z7nfL+H8z1waIG0VOhP
-        p2ZkcZoMZbqcEpNPrWF7IlbO2BU7ZuaDcUmRkcCt+hYhXnDaAT+qHiTxXcekEPcWTwBefbco
-        xC/adAQurWsk8b0P8yI80WmgsLN6ALDh24wIf5ivofAniwybm6covNRZT+KeN044KGV1320U
-        Wzc3TLEdda9F7JPp3ayx+zPBmk2VFDs72U2x1SXfKLbGYgK2bbJewD6/6SJZ+1QbwTrNgXGS
-        M+J9SVx6ag6n2X7ggjjlQcczQt19Mnd4dExQBGUxVeBFI2YX6vk7J3SzlGkHVN4UXQXi/+wC
-        5OhbFaybzKVGIS88BuTqvUvxxTKgxi/jHhfFRKOrV0xQBTTtwxxHloe0uy1gBkn03hnmZm8m
-        DhlK68HNJBOKPq/+8LCEOYqKHa+AXxaIhmzXPIm8GBaNrDZ4diHmpgiNm26RvOkwMnTZ1tgb
-        fbFbRDwHoAVTK6wNAPq63ETyRQughy9tBO/ai6z2MSEfbxOqsK6I3KkRI0EV5VIeWdTyK5s/
-        8jagBn0bUQt+DbDBBL6cWqtK5rQ71VGRWqVKm52RHHkxU2UGz2+Ex7aDfuREPzA0yDdKGD+b
-        QipU5mjzVP2AaIHcR5IfYldIJUnKvHxOk3lek53OafshgCblMsm7gDsKKZOszOLSOE7NadZV
-        gvbyL4LEAu/FBEU5bA2W0eJKY7zx99PNA1t0UwXnshz6tzm109tOCw7Fu3JrFyNiy/Cxj2OG
-        uqDCy7LJjsSwa44bf4LO/TyVCkMrK73NvmcTHUfuDyZZO9HobIJqrqAvRJbQ5Ty/sL/Z1BFk
-        N9X/DB1p0S1dclkthdBeHZNAXNdvS5OT2hRlVLhAo1X+A2bQrIQXAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsVy+t9jQd0/UcejDZ4d1rBobljMZLFxxnpW
-        i2efjzNarO09ymIx/8o1VosDjZcZLf4/es1qcWp7E5NFy6xFLBZLnjxkt7i8aw6bxefeI4wW
-        c97dZrd48rCPzeLFFnGLTStusFn83DWPxWLvvc+MDkIeTe+PsXnMun+WzWPnrLvsHltvmXos
-        3vOSyWPTqk42jzvX9rB59Da/Y/Po27KK0WP7tXnMHiemf2fxOH5jO5PH501yAbxRXDYpqTmZ
-        ZalF+nYJXBmrd+5jKtjjV3H2wkXmBsZWxy5GTg4JAROJTS2LWbsYuTiEBNYxSiyf8p0dwvnF
-        KLF9/zxWkCo2ASuJie2rGLsYOThEBLwltqzhAKlhFjjKIrF2xjc2kBphAT+JQ1sfMYLYLAKq
-        Ei//fwCzeQXcJRqvXGeE2CYncfLYZLCZnAIeEuf+LwDrFQKqObnjJfsERp4FjAyrGCVTC4pz
-        03OLjQqM8lLL9YoTc4tL89L1kvNzNzECI2DbYa3+HYyPl8QfYhTgYFTi4d0hdixaiDWxrLgy
-        9xCjBAezkghvleLxaCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8/PnHIoUE0hNLUrNTUwtSi2Cy
-        TBycUg2Mm/7zrt3Sttqe4Z4JQ9bKuV7bOApe3WyozV8uw6zzxGTrhjnXfL4aqa1j6N4XUsz6
-        L3DOGZvsbRm5FceknvAtWbTMf0b9HLvwf/cSfuXp/F1mvky7sbcy46rYw9h1duwHBE0FInY4
-        s135/2jJ4nsT/PqjVbzV1020NlDbObmqxT93SZYqb8ViJZbijERDLeai4kQALGxvvnwCAAA=
-X-CMS-MailID: 20181017155332epcas2p499ac9d53678d82a9984b3533e723a0dd
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20181017155332epcas2p499ac9d53678d82a9984b3533e723a0dd
-References: <1539791563-5959-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20181017155332epcas2p499ac9d53678d82a9984b3533e723a0dd@epcas2p4.samsung.com>
+        Wed, 17 Oct 2018 19:50:03 -0400
+Received: from mga11.intel.com ([192.55.52.93]:25423 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727013AbeJQXuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:50:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 08:53:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
+   d="asc'?scan'208";a="100256625"
+Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.96])
+  by orsmga001.jf.intel.com with ESMTP; 17 Oct 2018 08:53:08 -0700
+Message-ID: <3f8e7a6e9532abcd772927432d5f00cebeba08b8.camel@intel.com>
+Subject: Re: [PATCH net-next] ixgbe: fix XFRM_ALGO dependency
+From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Reply-To: jeffrey.t.kirsher@intel.com
+To:     Shannon Nelson <shannon.nelson@oracle.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        =?ISO-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 17 Oct 2018 08:56:35 -0700
+In-Reply-To: <07e372cb-06da-bf95-bc53-64ee09fc8e76@oracle.com>
+References: <20181016100848.1329843-1-arnd@arndb.de>
+         <07e372cb-06da-bf95-bc53-64ee09fc8e76@oracle.com>
+Organization: Intel
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-eBL/cF5nu+mq+ndEqGVn"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[devm]_thermal_zone_of_sensor_register() is used to register
-thermal sensor by thermal drivers using DeviceTree. Besides
-registering sensor this function also immediately:
 
-- enables it:
+--=-eBL/cF5nu+mq+ndEqGVn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  tzd->ops->set_mode(tzd, THERMAL_DEVICE_ENABLED)
-  (->set_mode is set to of_thermal_set_mode() in of-thermal.c)
+On Tue, 2018-10-16 at 09:35 -0700, Shannon Nelson wrote:
+> On 10/16/2018 3:03 AM, Arnd Bergmann wrote:
+> > When XFRM_ALGO is not enabled, the new igxge ipsec code produces a
+> > link error:
+>=20
+> s/igxge/ixgbe/
+>=20
+> >=20
+> > drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.o: In function
+> > `ixgbe_ipsec_vf_add_sa':
+> > ixgbe_ipsec.c:(.text+0x1266): undefined reference to
+> > `xfrm_aead_get_byname'
+> >=20
+> > Simply selectin XFRM_ALGO from here causes circular dependencies,
+> > so
+>=20
+> s/selectin/selecting/
+>=20
+> > to fix it, we probably want this slightly more complex solution
+> > that is
+> > similar to what other drivers with XFRM offload do:
+> >=20
+> > A separate Kconfig symbol now controls whether we include the ipsec
+> > offload code. To keep the old behavior, this is left as 'default
+> > y'. The
+> > dependency in XFRM_OFFLOAD still causes a circular dependency but
+> > is
+> > not actually needed because this symbol is not user visible, so
+> > removing
+> > that dependency on top makes it all work.
+> >=20
+> > Fixes: eda0333ac293 ("ixgbe: add VF IPsec management")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-- checks it (indirectly by using of_thermal_set_mode()):
+I agree with Shannon's suggested changes.  Arnd, are you working on v2?
+Or would you like me to take care of it?
 
-  thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-  (which in turn ends up using ->get_temp method).
+> > ---
+> >   drivers/net/ethernet/intel/Kconfig            | 10 ++++++++++
+> >   drivers/net/ethernet/intel/ixgbe/Makefile     |  2 +-
+> >   drivers/net/ethernet/intel/ixgbe/ixgbe.h      |  8 ++++----
+> >   drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |  6 +++---
+> >   net/xfrm/Kconfig                              |  1 -
+> >   5 files changed, 18 insertions(+), 9 deletions(-)
+> >=20
+> > diff --git a/drivers/net/ethernet/intel/Kconfig
+> > b/drivers/net/ethernet/intel/Kconfig
+> > index b542aba6f0e8..d1db382d8299 100644
+> > --- a/drivers/net/ethernet/intel/Kconfig
+> > +++ b/drivers/net/ethernet/intel/Kconfig
+> > @@ -194,6 +194,16 @@ config IXGBE_DCB
+> >  =20
+> >   	  If unsure, say N.
+> >  =20
+> > +config IXGBE_IPSEC
+> > +	bool "IPSec XFRM cryptography-offload accelaration"
+> > +	default n
+>=20
+> remove this "default n" line?
+>=20
+> > +	depends on IXGBE
+> > +	depends on XFRM_OFFLOAD
+> > +	default y
+> > +	select XFRM_ALGO
+> > +	---help---
+> > +	  Enable support for IPSec offload in ixgbe.ko
+> > +
+> >   config IXGBEVF
+> >   	tristate "Intel(R) 10GbE PCI Express Virtual Function Ethernet
+> > support"
+> >   	depends on PCI_MSI
+> > diff --git a/drivers/net/ethernet/intel/ixgbe/Makefile
+> > b/drivers/net/ethernet/intel/ixgbe/Makefile
+> > index ca6b0c458e4a..4fb0d9e3f2da 100644
+> > --- a/drivers/net/ethernet/intel/ixgbe/Makefile
+> > +++ b/drivers/net/ethernet/intel/ixgbe/Makefile
+> > @@ -17,4 +17,4 @@ ixgbe-$(CONFIG_IXGBE_DCB) +=3D  ixgbe_dcb.o
+> > ixgbe_dcb_82598.o \
+> >   ixgbe-$(CONFIG_IXGBE_HWMON) +=3D ixgbe_sysfs.o
+> >   ixgbe-$(CONFIG_DEBUG_FS) +=3D ixgbe_debugfs.o
+> >   ixgbe-$(CONFIG_FCOE:m=3Dy) +=3D ixgbe_fcoe.o
+> > -ixgbe-$(CONFIG_XFRM_OFFLOAD) +=3D ixgbe_ipsec.o
+> > +ixgbe-$(CONFIG_IXGBE_IPSEC) +=3D ixgbe_ipsec.o
+> > diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe.h
+> > b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
+> > index 7a7679e7be84..1d5d66436eac 100644
+> > --- a/drivers/net/ethernet/intel/ixgbe/ixgbe.h
+> > +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
+> > @@ -770,9 +770,9 @@ struct ixgbe_adapter {
+> >   #define IXGBE_RSS_KEY_SIZE     40  /* size of RSS Hash Key in
+> > bytes */
+> >   	u32 *rss_key;
+> >  =20
+> > -#ifdef CONFIG_XFRM_OFFLOAD
+> > +#ifdef CONFIG_IXGBE_IPSEC
+> >   	struct ixgbe_ipsec *ipsec;
+> > -#endif /* CONFIG_XFRM_OFFLOAD */
+> > +#endif /* CONFIG_IXGBE_IPSEC */
+>=20
+> You'll probably want to apply these changes to the ixgbevf code as
+> well.
+>=20
+> Cheers,
+> sln
+>=20
+> >  =20
+> >   	/* AF_XDP zero-copy */
+> >   	struct xdp_umem **xsk_umems;
+> > @@ -1009,7 +1009,7 @@ void ixgbe_store_key(struct ixgbe_adapter
+> > *adapter);
+> >   void ixgbe_store_reta(struct ixgbe_adapter *adapter);
+> >   s32 ixgbe_negotiate_fc(struct ixgbe_hw *hw, u32 adv_reg, u32
+> > lp_reg,
+> >   		       u32 adv_sym, u32 adv_asm, u32 lp_sym, u32
+> > lp_asm);
+> > -#ifdef CONFIG_XFRM_OFFLOAD
+> > +#ifdef CONFIG_IXGBE_IPSEC
+> >   void ixgbe_init_ipsec_offload(struct ixgbe_adapter *adapter);
+> >   void ixgbe_stop_ipsec_offload(struct ixgbe_adapter *adapter);
+> >   void ixgbe_ipsec_restore(struct ixgbe_adapter *adapter);
+> > @@ -1037,5 +1037,5 @@ static inline int
+> > ixgbe_ipsec_vf_add_sa(struct ixgbe_adapter *adapter,
+> >   					u32 *mbuf, u32 vf) { return
+> > -EACCES; }
+> >   static inline int ixgbe_ipsec_vf_del_sa(struct ixgbe_adapter
+> > *adapter,
+> >   					u32 *mbuf, u32 vf) { return
+> > -EACCES; }
+> > -#endif /* CONFIG_XFRM_OFFLOAD */
+> > +#endif /* CONFIG_IXGBE_IPSEC */
+> >   #endif /* _IXGBE_H_ */
+> > diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+> > b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+> > index 0049a2becd7e..113b38e0defb 100644
+> > --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+> > +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+> > @@ -8694,7 +8694,7 @@ netdev_tx_t ixgbe_xmit_frame_ring(struct
+> > sk_buff *skb,
+> >  =20
+> >   #endif /* IXGBE_FCOE */
+> >  =20
+> > -#ifdef CONFIG_XFRM_OFFLOAD
+> > +#ifdef CONFIG_IXGBE_IPSEC
+> >   	if (skb->sp && !ixgbe_ipsec_tx(tx_ring, first, &ipsec_tx))
+> >   		goto out_drop;
+> >   #endif
+> > @@ -10190,7 +10190,7 @@ ixgbe_features_check(struct sk_buff *skb,
+> > struct net_device *dev,
+> >   	 * the TSO, so it's the exception.
+> >   	 */
+> >   	if (skb->encapsulation && !(features & NETIF_F_TSO_MANGLEID)) {
+> > -#ifdef CONFIG_XFRM_OFFLOAD
+> > +#ifdef CONFIG_IXGBE_IPSEC
+> >   		if (!skb->sp)
+> >   #endif
+> >   			features &=3D ~NETIF_F_TSO;
+> > @@ -10883,7 +10883,7 @@ static int ixgbe_probe(struct pci_dev
+> > *pdev, const struct pci_device_id *ent)
+> >   	if (hw->mac.type >=3D ixgbe_mac_82599EB)
+> >   		netdev->features |=3D NETIF_F_SCTP_CRC;
+> >  =20
+> > -#ifdef CONFIG_XFRM_OFFLOAD
+> > +#ifdef CONFIG_IXGBE_IPSEC
+> >   #define IXGBE_ESP_FEATURES	(NETIF_F_HW_ESP | \
+> >   				 NETIF_F_HW_ESP_TX_CSUM | \
+> >   				 NETIF_F_GSO_ESP)
+> > diff --git a/net/xfrm/Kconfig b/net/xfrm/Kconfig
+> > index 4a9ee2d83158..140270a13d54 100644
+> > --- a/net/xfrm/Kconfig
+> > +++ b/net/xfrm/Kconfig
+> > @@ -8,7 +8,6 @@ config XFRM
+> >  =20
+> >   config XFRM_OFFLOAD
+> >          bool
+> > -       depends on XFRM
+> >  =20
+> >   config XFRM_ALGO
+> >   	tristate
+> >=20
 
-For many DT thermal drivers this causes a problem because:
 
-- [devm]_thermal_zone_of_sensor_register() need to be called in
-  order to obtain data about thermal trips which are then used to
-  finish hardware sensor setup (only after which ->get_temp can
-  be used)
+--=-eBL/cF5nu+mq+ndEqGVn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-There is also related issue for DT thermal drivers that support
-IRQ (i.e. exynos and rockchip ones):
+-----BEGIN PGP SIGNATURE-----
 
-- sensor hardware should be enabled only after IRQ handler is
-  requested (because otherwise we might get IRQs that we can't
-  handle)
+iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlvHW7MACgkQ5W/vlVpL
+7c5wHg/+NP9nq3je2KsSMXHWUnmlsJRPiaPEwUIGII77Be/q9QvpjLpc0IgYhlxu
+vC26ZRd34GPQP97lcu1YPu4zhw95D5LlPN/Eq72t5pwcPhV3eRx5+dQXIE2GQ8+x
++nZSH2Hfik1yQRlFc6sdart5ZxWhff/uk8KJhN7AZ7DHUHgmeCwxfuPD7o0Oup5n
++EGZejZFeXcRezBTrC42C9q26AsQ9E+XJqRS8IdoltxoOI0fQd1vvG7taJZ/fUF9
+6R7r025SregAyKDaQ9K3a1TQ6ioAIHEP+n5j/QuzSuhmZ1Bm/mTc0Kw+2cFUG8tp
+IaDmeJlhc43KH6ljyJyDcuc/9/qqmpQccBbO4sIXJhUh7sTIB9m7a2CHRvPkIR11
+BENC25fJySD0U1BIAerWSsrmVBzDR49NXOjqxwvO2V0QIz3RgROsn9zobxLwZejg
+7ecmaqodJAmP3RBcUie4b44L3oo2lMjlMf60yDAYxv5Se1pECeMK6csXTtZsahJk
+nI0E9COMpTlw4ziherW6icUCAuCbpMbPqs25vwMnZHBs+6R3hf7Qe/S/ljIVftDr
+1iX0n2xOxjxJYgk4lFHr8e/KWdrNH33bp8UB+VSlNnVyzYjmibQkNb/PV95PP8KA
+swUZXxCRNh+sTjpaTmv7aU76KvGSSSwG6Sk6jyyZm8ClsbIqN8o=
+=rJ+0
+-----END PGP SIGNATURE-----
 
-- IRQ handler needs tzd structure which is obtained from
-  [devm_]thermal_zone_of_sensor_register()
-
-- after [devm_]thermal_zone_of_sensor_register() call core
-  thermal code assumes that sensor is enabled and ready to use
-  (i.e. that IRQ handler has been requested and sensor hardware
-  has been enabled)
-
-In order to prepare for fixing all abovementioned issues separate
-sensor enable and check operations in the core thermal code and
-update thermal drivers accordingly:
-
-* Add set_mode_skip_check flag to struct thermal_zone_device_ops and
-  set it in drivers that don't check the thermal zone device in their
-  ->set_mode method implementations.
-
-* Move thermal_zone_device_check() from ->set_mode implementations to
-  the users of thermal_zone_set_mode() (only place which calls
-  ->set_mode). Modify mode_store() in thermal_sysfs.c accordingly.
-
-There should be no functional changes caused by this patch.
-
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/acpi/thermal.c                             |  2 ++
- drivers/net/ethernet/mellanox/mlxsw/core_thermal.c |  2 --
- drivers/platform/x86/acerhdf.c                     |  2 ++
- drivers/thermal/db8500_thermal.c                   |  2 ++
- drivers/thermal/hisi_thermal.c                     |  2 ++
- drivers/thermal/imx_thermal.c                      |  2 --
- drivers/thermal/int340x_thermal/int3400_thermal.c  |  1 +
- drivers/thermal/of-thermal.c                       |  6 +++---
- drivers/thermal/rockchip_thermal.c                 | 16 ++++++++++++----
- drivers/thermal/thermal_sysfs.c                    |  3 +++
- include/linux/thermal.h                            |  2 ++
- 11 files changed, 29 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
-index b8b275e1..a7e3d9e 100644
---- a/drivers/acpi/thermal.c
-+++ b/drivers/acpi/thermal.c
-@@ -879,6 +879,8 @@ static int acpi_thermal_cooling_device_cb(struct thermal_zone_device *thermal,
- 	.get_crit_temp = thermal_get_crit_temp,
- 	.get_trend = thermal_get_trend,
- 	.notify = thermal_notify,
-+
-+	.set_mode_skip_check = true,
- };
- 
- static int acpi_thermal_register_thermal_zone(struct acpi_thermal *tz)
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c b/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
-index b0afd36..5f4b3bd 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
-@@ -170,8 +170,6 @@ static int mlxsw_thermal_set_mode(struct thermal_zone_device *tzdev,
- 
- 	thermal->mode = mode;
- 
--	thermal_zone_device_check(tzdev);
--
- 	return 0;
- }
- 
-diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
-index 5a2b93a..884fd83 100644
---- a/drivers/platform/x86/acerhdf.c
-+++ b/drivers/platform/x86/acerhdf.c
-@@ -507,6 +507,8 @@ static int acerhdf_get_crit_temp(struct thermal_zone_device *thermal,
- 	.get_trip_hyst = acerhdf_get_trip_hyst,
- 	.get_trip_temp = acerhdf_get_trip_temp,
- 	.get_crit_temp = acerhdf_get_crit_temp,
-+
-+	.set_mode_skip_check = true,
- };
- 
- 
-diff --git a/drivers/thermal/db8500_thermal.c b/drivers/thermal/db8500_thermal.c
-index ab66b2d7..c4d0fb1 100644
---- a/drivers/thermal/db8500_thermal.c
-+++ b/drivers/thermal/db8500_thermal.c
-@@ -220,6 +220,8 @@ static int db8500_sys_get_crit_temp(struct thermal_zone_device *thermal,
- 	.get_trip_type = db8500_sys_get_trip_type,
- 	.get_trip_temp = db8500_sys_get_trip_temp,
- 	.get_crit_temp = db8500_sys_get_crit_temp,
-+
-+	.set_mode_skip_check = true,
- };
- 
- static void db8500_thermal_update_config(struct db8500_thermal_zone *pzone,
-diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
-index 63d4fc3..6151e55 100644
---- a/drivers/thermal/hisi_thermal.c
-+++ b/drivers/thermal/hisi_thermal.c
-@@ -561,6 +561,7 @@ static int hisi_thermal_probe(struct platform_device *pdev)
- 	}
- 
- 	thermal_zone_set_mode((&data->sensor)->tzd, THERMAL_DEVICE_ENABLED);
-+	thermal_zone_device_check((&data->sensor)->tzd);
- 
- 	return 0;
- }
-@@ -570,6 +571,7 @@ static int hisi_thermal_remove(struct platform_device *pdev)
- 	struct hisi_thermal_data *data = platform_get_drvdata(pdev);
- 
- 	thermal_zone_set_mode((&data->sensor)->tzd, THERMAL_DEVICE_DISABLED);
-+	thermal_zone_device_check((&data->sensor)->tzd);
- 
- 	data->disable_sensor(data);
- 
-diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
-index 22f57ef..7abad6c 100644
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -385,8 +385,6 @@ static int imx_set_mode(struct thermal_zone_device *tz,
- 
- 	data->mode = mode;
- 
--	thermal_zone_device_check(tz);
--
- 	return 0;
- }
- 
-diff --git a/drivers/thermal/int340x_thermal/int3400_thermal.c b/drivers/thermal/int340x_thermal/int3400_thermal.c
-index e26b01c..d1f0641 100644
---- a/drivers/thermal/int340x_thermal/int3400_thermal.c
-+++ b/drivers/thermal/int340x_thermal/int3400_thermal.c
-@@ -305,6 +305,7 @@ static int int3400_thermal_probe(struct platform_device *pdev)
- 	if (priv->uuid_bitmap & 1 << INT3400_THERMAL_PASSIVE_1) {
- 		int3400_thermal_ops.get_mode = int3400_thermal_get_mode;
- 		int3400_thermal_ops.set_mode = int3400_thermal_set_mode;
-+		int3400_thermal_ops.set_mode_skip_check = true;
- 	}
- 	priv->thermal = thermal_zone_device_register("INT3400 Thermal", 0, 0,
- 						priv, &int3400_thermal_ops,
-diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-index c422b08..f1dcb7d 100644
---- a/drivers/thermal/of-thermal.c
-+++ b/drivers/thermal/of-thermal.c
-@@ -272,8 +272,6 @@ static int of_thermal_set_mode(struct thermal_zone_device *tz,
- 
- 	data->mode = mode;
- 
--	thermal_zone_device_check(tz);
--
- 	return 0;
- }
- 
-@@ -496,9 +494,11 @@ struct thermal_zone_device *
- 		if (sensor_specs.np == sensor_np && id == sensor_id) {
- 			tzd = thermal_zone_of_add_sensor(child, sensor_np,
- 							 data, ops);
--			if (!IS_ERR(tzd))
-+			if (!IS_ERR(tzd)) {
- 				thermal_zone_set_mode(tzd,
- 						      THERMAL_DEVICE_ENABLED);
-+				thermal_zone_device_check(tzd);
-+			}
- 
- 			of_node_put(sensor_specs.np);
- 			of_node_put(child);
-diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
-index 5640675..715f4cd 100644
---- a/drivers/thermal/rockchip_thermal.c
-+++ b/drivers/thermal/rockchip_thermal.c
-@@ -1281,9 +1281,11 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
- 
- 	thermal->chip->control(thermal->regs, true);
- 
--	for (i = 0; i < thermal->chip->chn_num; i++)
-+	for (i = 0; i < thermal->chip->chn_num; i++) {
- 		thermal_zone_set_mode((&thermal->sensors[i])->tzd,
- 				      THERMAL_DEVICE_ENABLED);
-+		thermal_zone_device_check((&thermal->sensors[i])->tzd);
-+	}
- 
- 	platform_set_drvdata(pdev, thermal);
- 
-@@ -1302,9 +1304,11 @@ static int rockchip_thermal_remove(struct platform_device *pdev)
- 	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
- 	int i;
- 
--	for (i = 0; i < thermal->chip->chn_num; i++)
-+	for (i = 0; i < thermal->chip->chn_num; i++) {
- 		thermal_zone_set_mode((&thermal->sensors[i])->tzd,
- 				      THERMAL_DEVICE_DISABLED);
-+		thermal_zone_device_check((&thermal->sensors[i])->tzd);
-+	}
- 
- 	thermal->chip->control(thermal->regs, false);
- 
-@@ -1320,9 +1324,11 @@ static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
- 	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
- 	int i;
- 
--	for (i = 0; i < thermal->chip->chn_num; i++)
-+	for (i = 0; i < thermal->chip->chn_num; i++) {
- 		thermal_zone_set_mode((&thermal->sensors[i])->tzd,
- 				      THERMAL_DEVICE_DISABLED);
-+		thermal_zone_device_check((&thermal->sensors[i])->tzd);
-+	}
- 
- 	thermal->chip->control(thermal->regs, false);
- 
-@@ -1372,9 +1378,11 @@ static int __maybe_unused rockchip_thermal_resume(struct device *dev)
- 
- 	thermal->chip->control(thermal->regs, true);
- 
--	for (i = 0; i < thermal->chip->chn_num; i++)
-+	for (i = 0; i < thermal->chip->chn_num; i++) {
- 		thermal_zone_set_mode((&thermal->sensors[i])->tzd,
- 				      THERMAL_DEVICE_ENABLED);
-+		thermal_zone_device_check((&thermal->sensors[i])->tzd);
-+	}
- 
- 	pinctrl_pm_select_default_state(dev);
- 
-diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
-index 3b38fb9..ac39fb6 100644
---- a/drivers/thermal/thermal_sysfs.c
-+++ b/drivers/thermal/thermal_sysfs.c
-@@ -85,6 +85,9 @@
- 	if (result)
- 		return result;
- 
-+	if (!tz->ops->set_mode_skip_check)
-+		thermal_zone_device_check(tz);
-+
- 	return count;
- }
- 
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index 3e325b3..92c460e 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -113,6 +113,8 @@ struct thermal_zone_device_ops {
- 			  enum thermal_trend *);
- 	int (*notify) (struct thermal_zone_device *, int,
- 		       enum thermal_trip_type);
-+
-+	bool set_mode_skip_check;
- };
- 
- struct thermal_cooling_device_ops {
--- 
-1.9.1
+--=-eBL/cF5nu+mq+ndEqGVn--
 
