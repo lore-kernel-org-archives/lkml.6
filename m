@@ -2,309 +2,130 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 443FFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 05:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6166C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 05:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDE97214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 05:03:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YU7NGe3i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDE97214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 88B53214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 05:03:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B53214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbeJQM4t (ORCPT
+        id S1727249AbeJQM5N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 08:56:49 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39594 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbeJQM4t (ORCPT
+        Wed, 17 Oct 2018 08:57:13 -0400
+Received: from gateway22.websitewelcome.com ([192.185.46.142]:27625 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726944AbeJQM5N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 08:56:49 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 61-v6so28005189wrb.6;
-        Tue, 16 Oct 2018 22:02:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=GDvvHWtYH+gpvch3gtMrq/NHHp9Fd+N2kHf+aQSynYM=;
-        b=YU7NGe3ieqKG0oYX4TS33KkRN10B9Y3a7EIbxb9Ux4UX4pmMO5UAyZ9Bivq5fQDDJE
-         c2pOBpZPOea5wBUOLCPAEd6OSnO0SMojwK51wpAmdp6trJlDCNC5ianM+yyP+32zdPb6
-         2dAPEygJblFmpwI0w3btc/oaILPgTLkM66Zw6XgIyIJsQ5uXK0mAwTDMlysnaDA1nQ1l
-         DvFHkRhiw5VoMRFlK74C2USInf6IG5hFqwzyAH9UE7Gy+iJrb58itQ+nHLSw1JQEWCQr
-         96RCam+YL0B5bhQsgwPA+MDmfDhCCrYy8kCxSw3kiSCXVq1XZbtgtISm85+QhUx13Ov9
-         Cj3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=GDvvHWtYH+gpvch3gtMrq/NHHp9Fd+N2kHf+aQSynYM=;
-        b=NeKONmOOM5SZPuGlXrqlGs/qWRqBVvAZF+Woyv/1qaqnFfgjoz+DHDvU/bmegqxS+N
-         VHzlk6OR8Nfip6vCCzuLSfF6vQXUWblEJIadUvRPqBbAlG58wIpifYnng8agrfXJq1Yb
-         uBG17rlQXay0g7cyf/D2Pvl/dEWkf3PaVjgRZNPyMAGZmX806AEUnd2zMx1WW8BrHHgw
-         Jcc5WbwYJwUg2/beXEAo8Gswq+8nyNVIc5cK5i7gt08+IxoHCQAgNYzGIPvueH+HzSWE
-         S0XFMSgZ2+bsD/QoozOJkpPxIf8/xPNbJnBMF4w4zCAiOgAqxeOfGg0dZOuz1LDswT3Z
-         piCA==
-X-Gm-Message-State: ABuFfoiXCiHBqaA1B1gRVdNziQc752mWqL7rNFqqQFFM5GNr91M//lZ5
-        PLBDqeZ4n9EBG70xet4iG6k=
-X-Google-Smtp-Source: ACcGV63q3Vy450Z01D+UnUvW2BcX67vMCiclKl+kVfDsCa7o4MK4qKwXedv9Zs05nCTQNa9BNA6VUA==
-X-Received: by 2002:adf:c650:: with SMTP id u16-v6mr23584805wrg.177.1539752578025;
-        Tue, 16 Oct 2018 22:02:58 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id z16-v6sm564745wmc.0.2018.10.16.22.02.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 22:02:57 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 22:02:55 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] Kbuild: Hide Clang's -Wempty-body behind W=1
-Message-ID: <20181017050255.GA9286@flashbox>
-References: <20181016021454.11953-1-natechancellor@gmail.com>
- <CAK7LNATO+L4-0SpuWrCnYEUVbxmcQkjOQvMB6PEsFv1b-heJOA@mail.gmail.com>
+        Wed, 17 Oct 2018 08:57:13 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 67654E9F
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 00:03:23 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id CdzEg4A5qtz4jCdzKgBmyR; Wed, 17 Oct 2018 00:03:22 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:52668 helo=[192.168.1.41])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gCdzD-002PTT-Eu; Wed, 17 Oct 2018 00:03:11 -0500
+Subject: Re: [PATCH] scsi: aic94xx: mark expected switch fall-throughs
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181004071009.GA13875@embeddedor.com>
+ <yq11s8ppcap.fsf@oracle.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <5cd48c48-8f52-117a-07e2-d2b530af7698@embeddedor.com>
+Date:   Wed, 17 Oct 2018 07:03:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <yq11s8ppcap.fsf@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNATO+L4-0SpuWrCnYEUVbxmcQkjOQvMB6PEsFv1b-heJOA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gCdzD-002PTT-Eu
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:52668
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
 
-On Wed, Oct 17, 2018 at 01:48:46PM +0900, Masahiro Yamada wrote:
-> Hi Nathan,
-> 
-> 
-> On Tue, Oct 16, 2018 at 11:15 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > There are only a few instances of this warning in an arm64 allyesconfig
-> > build but none of them appear useful. I believe the intention of the
-> > warning is to avoid situations like this:
-> >
-> > if (condition);
-> >         statement;
-> >
-> > where the user really intended
-> >
-> > if (condition)
-> >         statement;
-> >
-> > However, these instances have already been caught by GCC's warning about
-> > misleading indentation
-> 
-> 
-> Right, the example above is caught by -Wmisleading-indentation.
-> 
-> However, the following is not.
-> 
->    if (condition)
->           ;
-> 
-> 
-> 
-> So, -Wempty-body is a kind of different thing,
-> and still useful in my opinion.
-> 
-> 
-> 
-> > so the remaining warnings are about loops that
-> > fall into one of three categories:
-> >
-> > 1. Execute a function unconditionally (avoiding a useless variable to
-> >    hold the return value):
-> >
-> > drivers/isdn/hisax/hfc_pci.c:131:34: warning: if statement has empty body
-> > [-Wempty-body]
-> >         if (Read_hfc(cs, HFCPCI_INT_S1));
-> 
-> 
-> I think this is a real bug,
-> then -Wempty-body finally caught it.
-> (but -Wmisleading-indentation cannot catch it.)
-> 
-> 
-> 
-> It is wrong to enclose a non-effective statement with 'if ();'
-> just for suppressing another warning.
-> 
-> 
-> 
->      Read_hfc(cs, HFCPCI_INT_S1);
-> 
-> would emit this warning.
-> 
-> 
-> In file included from drivers/isdn/hisax/hfc_pci.c:20:0:
-> drivers/isdn/hisax/hfc_pci.c: In function ‘reset_hfcpci’:
-> drivers/isdn/hisax/hfc_pci.h:232:25: warning: statement with no effect
-> [-Wunused-value]
->  #define Read_hfc(a, b) (*(((u_char *)a->hw.hfcpci.pci_io) + b))
->                         ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/isdn/hisax/hfc_pci.c:131:2: note: in expansion of macro ‘Read_hfc’
->   Read_hfc(cs, HFCPCI_INT_S1);
->   ^~~~~~~~
-> 
-> 
-> 
-> The root cause is missing 'volatile'
-> while Read_hfc() is supposed to read out a HW register.
-> 
-> 
-> 
-> #define Read_hfc(a, b) (*(((volatile u_char *)a->hw.hfcpci.pci_io) + b))
-> 
-> will be a correct fix.
-> (or just use a standard accessor like readb(), ioread8(), etc.)
-> 
-> 
-> 
-> 
-> if (Read_hfc(cs, HFCPCI_INT_S1));
-> 
-> is optimized out by the compiler, so it is not working as expected.
-> 
-> 
-> 
-> >
-> > 2. Advancing a value to be used later on in the function like a pointer
-> >    or a count:
-> >
-> > drivers/atm/eni.c:244:48: warning: for loop has empty body
-> > [-Wempty-body]
-> >         for (order = 0; (1 << order) < *size; order++);
-> >                                                       ^
-> 
-> As you noted in the commit log,
-> Clang's -Wempty-body cares the location of a semi-colon,
-> while GCC's one does not.
-> 
-> 
-> 
-> 
-> 
->    for (order = 0; (1 << order) < *size; order++)
->              ;
-> 
-> is fine, and more readable in my opinion.
-> 
-> 
-> 
-> 
-> > 3. Busy waiting:
-> >
-> > drivers/atm/zatm.c:513:7: warning: while loop has empty body
-> > [-Wempty-body]
-> >         zwait;
-> >              ^
-> 
-> 
-> Again, Clang is fine with an empty body in while() loop,
-> but just picky about the semi-colon location.
-> 
-> For this particular case, how about something like this?
-> 
-> 
-> #define zwait  do {} while (zin(CMR) & uPD98401_BUSY)
-> 
-> 
-> 
-> 
-> 
-> I think an even better fix is
-> 
-> #define zwait()  do {} while (zin(CMR) & uPD98401_BUSY)
-> 
-> 
-> 
-> then, fix-up all
-> 
->    zwait;
-> 
-> to
-> 
->    zwait();
-> 
-> 
-> 
-> 
-> 
-> 
-> > None of these uses are problematic or need to be addressed.
-> 
-> 
-> The first pattern is really problematic, and need to be addressed.
-> 
-> I want to keep -Wempty-body enabled
-> to find out potential issues.
-> 
-> Please let me know if you see other patterns difficult to fix.
-> 
-> 
+
+On 10/17/18 3:55 AM, Martin K. Petersen wrote:
+
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+> 
+> Applied to 4.20/scsi-queue.
 > 
 
-Thank you very much for the quick feedback, this all sounds reasonable.
-I will go ahead and dig into these further and send out patches to
-address them.
-
-Much appreciated,
-Nathan
-
-> 
-> 
-> > Clang
-> > suggests moving the semi-colon to the next line to silence these
-> > warnings but that defeats the purpose of the compact nature of these
-> > constructs so just hide the warning behind W=1 so its use can still be
-> > audited but it won't polute a regular build.
-> >
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/42
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/66
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >  scripts/Makefile.extrawarn | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-> > index cf6cd0ef6975..8709d9d6faf1 100644
-> > --- a/scripts/Makefile.extrawarn
-> > +++ b/scripts/Makefile.extrawarn
-> > @@ -11,6 +11,7 @@
-> >  # are not supported by all versions of the compiler
-> >  # ==========================================================================
-> >
-> > +KBUILD_CFLAGS += $(call cc-disable-warning, empty-body)
-> >  KBUILD_CFLAGS += $(call cc-disable-warning, packed-not-aligned)
-> >
-> >  ifeq ("$(origin W)", "command line")
-> > @@ -32,6 +33,7 @@ warning-1 += $(call cc-option, -Wpacked-not-aligned)
-> >  warning-1 += $(call cc-option, -Wstringop-truncation)
-> >  warning-1 += $(call cc-disable-warning, missing-field-initializers)
-> >  warning-1 += $(call cc-disable-warning, sign-compare)
-> > +warning-1 += $(call cc-option, -Wempty-body)
-> >
-> >  warning-2 := -Waggregate-return
-> >  warning-2 += -Wcast-align
-> > --
-> > 2.19.1
-> >
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
+Thank you, Martin.
+--
+Gustavo
