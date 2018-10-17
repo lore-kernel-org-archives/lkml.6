@@ -2,110 +2,116 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E45ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E0FECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0BCF20869
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:19:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KaRwnyou"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0BCF20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id A34F12150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:21:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A34F12150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbeJQSOW (ORCPT
+        id S1727064AbeJQSQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:14:22 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:33772 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbeJQSOW (ORCPT
+        Wed, 17 Oct 2018 14:16:03 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:62672 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726727AbeJQSQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:14:22 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9HAIpM3182653;
-        Wed, 17 Oct 2018 10:18:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=TuXzmfD3eux8r3w9ljgHHREkHl3kBAYLjhd9J1lgT9g=;
- b=KaRwnyouz0ux/9YA58qX/prtZLKXu2F9M8vadQhJfd133P+Jh0M1FQvN2+F5+tl7j5Z9
- q6/BGSlBiqKba635MKySzkdn12ZS5URqI9ai7m4dWYNnhzDO6KlVvNTPh9ZusWD5tinR
- DPewCnfW3YL+KmUCMKpfHgkOL/37ywUb6xurRtCHJZGTt9O+MEKrwcGoalGM0XChnULT
- 68iGjLQWGn/uGgFUMtdor6zeTZjWFSOcG/rRfWqugoVBlGqvTDrzr68ltTQFzPlVOqy0
- f1RRnExkXQje8MuishxOdOQI/6sKy5110scXSiX8WQSF2UTbN7bhg9M9KNnkBRH9+/kc AA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2n384u65cn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Oct 2018 10:18:50 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9HAIhSa019781
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Oct 2018 10:18:44 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9HAIeHE029986;
-        Wed, 17 Oct 2018 10:18:41 GMT
-Received: from mwanda (/129.205.6.86)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 17 Oct 2018 03:18:40 -0700
-Date:   Wed, 17 Oct 2018 13:18:31 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, phil@raspberrypi.org,
-        Eric Anholt <eric@anholt.net>, devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/7] staging: vc04_services: Some dead code removal
-Message-ID: <20181017101831.b5kvh5jw3sqqhbat@mwanda>
-References: <20181004093747.21750-1-tuomas.tynkkynen@iki.fi>
- <1715113043.52878.1538821118324@email.1und1.de>
+        Wed, 17 Oct 2018 14:16:03 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="46265542"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 17 Oct 2018 18:20:59 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 422E04B6ED69;
+        Wed, 17 Oct 2018 18:20:58 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 17 Oct 2018 18:21:03 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
+        <hpa@zytor.com>, <keescook@chromium.org>, <bhe@redhat.com>,
+        <msys.mizuma@gmail.com>
+CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
+        <fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v9 1/8] x86/boot: Introduce cmdline_find_option_arg()to detect if option=arg in cmdline
+Date:   Wed, 17 Oct 2018 18:20:05 +0800
+Message-ID: <20181017102012.872-2-fanc.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20181017102012.872-1-fanc.fnst@cn.fujitsu.com>
+References: <20181017102012.872-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1715113043.52878.1538821118324@email.1und1.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9048 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=733
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810170093
+Content-Type: text/plain
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 422E04B6ED69.AD118
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 06, 2018 at 12:18:38PM +0200, Stefan Wahren wrote:
-> Hi Tuomas,
-> 
-> > Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi> hat am 4. Oktober 2018 um 11:37 geschrieben:
-> > 
-> > 
-> > Drop various pieces of dead code from here and there to get rid of
-> > the remaining users of VCHI_CONNECTION_T. After that we get to drop
-> > entire header files worth of unused code.
-> > 
-> > I've tested on a Raspberry Pi Model B (bcm2835_defconfig) that
-> > snd-bcm2835 can still play analog audio just fine.
-> > 
-> 
-> thanks and i'm fine with your patch series:
-> 
-> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-> 
-> Unfortunately this would break compilation of the downstream vchi
-> drivers like vcsm [1]. Personally i don't want to maintain another
-> one, because i cannot see the gain of the resulting effort.
-> 
-> [1] - https://github.com/raspberrypi/linux/tree/rpi-4.14.y/drivers/char/broadcom/vc_sm
+Introduce a new function cmdline_find_option_arg() to detect whether
+option is in command line and the value is arg.
+
+Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+---
+ arch/x86/boot/compressed/cmdline.c | 15 +++++++++++++++
+ arch/x86/boot/compressed/misc.h    |  1 +
+ 2 files changed, 16 insertions(+)
+
+diff --git a/arch/x86/boot/compressed/cmdline.c b/arch/x86/boot/compressed/cmdline.c
+index af6cda0b7900..61118c69feb8 100644
+--- a/arch/x86/boot/compressed/cmdline.c
++++ b/arch/x86/boot/compressed/cmdline.c
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "misc.h"
++#define STATIC
++#include <linux/decompress/mm.h>
+ 
+ #if CONFIG_EARLY_PRINTK || CONFIG_RANDOMIZE_BASE || CONFIG_X86_5LEVEL
+ 
+@@ -30,5 +32,18 @@ int cmdline_find_option_bool(const char *option)
+ {
+ 	return __cmdline_find_option_bool(get_cmd_line_ptr(), option);
+ }
++bool cmdline_find_option_arg(const char *option, const char *arg, int argsize)
++{
++	char *buffer = malloc(argsize+1);
++	bool find = false;
++	int ret;
++
++	ret = cmdline_find_option(option, buffer, argsize+1);
++	if (ret == argsize && !strncmp(buffer, arg, argsize))
++		find = true;
++
++	free(buffer);
++	return find;
++}
+ 
+ #endif
+diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+index a1d5918765f3..008fdc47a29c 100644
+--- a/arch/x86/boot/compressed/misc.h
++++ b/arch/x86/boot/compressed/misc.h
+@@ -67,6 +67,7 @@ static inline void debug_puthex(const char *s)
+ /* cmdline.c */
+ int cmdline_find_option(const char *option, char *buffer, int bufsize);
+ int cmdline_find_option_bool(const char *option);
++bool cmdline_find_option_arg(const char *option, const char *arg, int argsize);
+ #endif
+ 
+ 
+-- 
+2.17.2
 
 
-I feel like everyone else already knows the answer but why don't we just
-merge that code into staging?
-
-regards,
-dan carpenter
 
