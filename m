@@ -2,103 +2,89 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C4FECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A2DECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4627F2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:03:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4627F2150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 37A872150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:04:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37A872150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbeJQU7I (ORCPT
+        id S1727271AbeJQVAd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 16:59:08 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:2594 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727000AbeJQU7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 16:59:07 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42Zsmq21XKz9ttFX;
-        Wed, 17 Oct 2018 15:03:23 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id qX0Jd8w8HOGm; Wed, 17 Oct 2018 15:03:23 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42Zsmq16XSz9ttBT;
-        Wed, 17 Oct 2018 15:03:23 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 715AD8B7FF;
-        Wed, 17 Oct 2018 15:03:23 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id rXdIlUx1zF0d; Wed, 17 Oct 2018 15:03:23 +0200 (CEST)
-Received: from pc13168vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4BD6B8B7F2;
-        Wed, 17 Oct 2018 15:03:23 +0200 (CEST)
-Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 216A66F4CD; Wed, 17 Oct 2018 13:03:22 +0000 (UTC)
-Message-Id: <19885260cc71182f8c03840204e2553ef42acb67.1539781367.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/book3e: redefine pte_mkprivileged() and pte_mkuser()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        aneesh.kumar@linux.ibm.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 17 Oct 2018 13:03:22 +0000 (UTC)
+        Wed, 17 Oct 2018 17:00:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36722 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727000AbeJQVAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 17:00:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 14FD1ACC8;
+        Wed, 17 Oct 2018 13:04:55 +0000 (UTC)
+Subject: Re: [PATCH -next] advansys: remove set but not used variable
+ 'srb_tag' in adv_isr_callback
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>, hare@suse.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+References: <20181017123432.18304-1-yuehaibing@huawei.com>
+ <4950b4fe-61b5-e1c3-9d16-7643107857a5@suse.de>
+ <20181017130022.GA3575@bombadil.infradead.org>
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+Message-ID: <73b10652-5ccf-4760-4aba-9f58600b6da6@suse.de>
+Date:   Wed, 17 Oct 2018 15:04:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181017130022.GA3575@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Book3e defines both _PAGE_USER and _PAGE_PRIVILEGED, so the nohash
-default pte_mkprivileged() and pte_mkuser() are not usable.
+On 17/10/18 15:00, Matthew Wilcox wrote:
+> On Wed, Oct 17, 2018 at 02:49:50PM +0200, Johannes Thumshirn wrote:
+>> On 17/10/18 14:34, YueHaibing wrote:
+>>> -	srb_tag = le32_to_cpu(scsiqp->srb_tag);
+>>>  	scp = scsi_host_find_tag(boardp->shost, scsiqp->srb_tag);
+>>
+>> Shouldn't this be:
+>> 	scp = scsi_host_find_tag(boardp->shost,
+>> 					le32_to_cpu(scsiqp->srb_tag));
+> 
+> I don't think so.  Look at how scsiqp->srb_tag is set:
+> 
+>  adv_build_req(struct asc_board *boardp, struct scsi_cmnd *scp,
+>               ADV_SCSI_REQ_Q **adv_scsiqpp)
+>  {
+> +       u32 srb_tag = scp->request->tag;
+> ...
+> +       scsiqp->srb_tag = srb_tag;
+> 
+> If we're not converting it to le32 on the way in, we probably don't want
+> to convert it back on the way out.
 
-This patch redefines them for book3e.
+Yeah right, didn't check the submission path. It was just the removed
+srb_tag = le32_to_cpu(scsiqp->srb_tag);
+that triggered here.
 
-In theorie, only pte_mkprivileged() needs to be redefined because
-_PAGE_USER includes _PAGE_PRIVILEGED, but it is less confusing
-to redefine both.
+> Please don't make me power up my PA-RISC machine with an Advansys card
+> in it, just to find out ...
 
-Fixes: a0da4bc166f2 ("powerpc/mm: Allow platforms to redefine some helpers")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/nohash/pte-book3e.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Now that your saying it...
 
-diff --git a/arch/powerpc/include/asm/nohash/pte-book3e.h b/arch/powerpc/include/asm/nohash/pte-book3e.h
-index 58eef8cb569d..fa1451e15b4e 100644
---- a/arch/powerpc/include/asm/nohash/pte-book3e.h
-+++ b/arch/powerpc/include/asm/nohash/pte-book3e.h
-@@ -109,5 +109,21 @@
- #define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
- #define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
- 
-+#ifndef __ASSEMBLY__
-+static inline pte_t pte_mkprivileged(pte_t pte)
-+{
-+	return __pte((pte_val(pte) & ~_PAGE_USER) | _PAGE_PRIVILEGED);
-+}
-+
-+#define pte_mkprivileged pte_mkprivileged
-+
-+static inline pte_t pte_mkuser(pte_t pte)
-+{
-+	return __pte((pte_val(pte) & ~_PAGE_PRIVILEGED) | _PAGE_USER);
-+}
-+
-+#define pte_mkuser pte_mkuser
-+#endif /* __ASSEMBLY__ */
-+
- #endif /* __KERNEL__ */
- #endif /*  _ASM_POWERPC_NOHASH_PTE_BOOK3E_H */
 -- 
-2.13.3
-
+Johannes Thumshirn                                        SUSE Labs
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
