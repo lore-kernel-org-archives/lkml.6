@@ -2,159 +2,153 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88989ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA08ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC0521523
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:08:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dStrq5uY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC0521523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id F309521523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:09:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F309521523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbeJQRDJ (ORCPT
+        id S1727055AbeJQREI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 13:03:09 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33684 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbeJQRDI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 13:03:08 -0400
-Received: by mail-ed1-f68.google.com with SMTP id l14-v6so15141280edq.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 02:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xFeAn0Md0DOhEPy2vuKmIJiDNrUMQMrsi2vip2Gh92k=;
-        b=dStrq5uY7QG46KSaszPThv5ad3BWhu7ICtP6VfDeroP8CdnxH3q3X3tTyN843Fzq5k
-         t3kASHFx4c8esYPlCWpykYnrsX2PjHmFDcHPl0Xc+LU8BCY/vzHjusdxCYAd3M2kq2+A
-         AwwqiXZW8PtzMSHo3TPSSLxGI/aT0iLCBxWN0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=xFeAn0Md0DOhEPy2vuKmIJiDNrUMQMrsi2vip2Gh92k=;
-        b=HnwyoYiVSDLZH24ELU9mmQKga98+KXQLJ9d8X05jCEI56+YG2NXqY3CVsMSucUZvt9
-         Ucu24SHoU5vJlBRmKgKBaNKiKAAf/p8vd38KQm4ErdllR1wTUVH7srW8j1nZWMiL9/fa
-         Twv6tcoWhDVSi8bcCi9cgcVr/2Sp3ofge8D2U1hOuzGFkAsdHqVfHBS6vKZwkb/lwKC7
-         GyO4+e+FR4umh6Q2ugbquN2EREn20NALpuprp2347WgS+LftTn32oQNdf5vOR3SgATAE
-         WZt+KVev63NRYFxgpNfTIE8UJfFoMErCbFI6Vkmkuw0ePEh5LTo4E3rDfr2VZcOdhlud
-         g0iw==
-X-Gm-Message-State: ABuFfohLWWhva4bvONx+BNtnF+7XZ+l+9tKOWhzuK3dbDUoOILJpFQ8P
-        Tg2UgT6z6ODYoSeYr7IlbRPDMQ==
-X-Google-Smtp-Source: ACcGV60SddTGIx4G66wZZJCaEPz64bdOETjFk451PJjfGgx50/WDbafqfliDDf7b+wbVqKrUr1x3aA==
-X-Received: by 2002:a50:9247:: with SMTP id j7-v6mr31515eda.124.1539767302305;
-        Wed, 17 Oct 2018 02:08:22 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id p23-v6sm3479786ejj.16.2018.10.17.02.08.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 02:08:21 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 11:08:19 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
-        shuah@kernel.org, joel@jms.id.au, mpe@ellerman.id.au,
-        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
-        Tim.Bird@sony.com, khilman@baylibre.com, julia.lawall@lip6.fr,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, jdike@addtoit.com, richard@nod.at,
-        linux-um@lists.infradead.org,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        IGT development <igt-dev@lists.freedesktop.org>
-Subject: Re: [RFC v1 00/31] kunit: Introducing KUnit, the Linux kernel unit
- testing framework
-Message-ID: <20181017090819.GM31561@phenom.ffwll.local>
-Mail-Followup-To: Brendan Higgins <brendanhiggins@google.com>,
-        gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
-        shuah@kernel.org, joel@jms.id.au, mpe@ellerman.id.au,
-        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
-        Tim.Bird@sony.com, khilman@baylibre.com, julia.lawall@lip6.fr,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, jdike@addtoit.com, richard@nod.at,
-        linux-um@lists.infradead.org,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        IGT development <igt-dev@lists.freedesktop.org>
-References: <20181016235120.138227-1-brendanhiggins@google.com>
+        Wed, 17 Oct 2018 13:04:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51984 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726636AbeJQREI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 13:04:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AF8D1AE5E;
+        Wed, 17 Oct 2018 09:09:21 +0000 (UTC)
+Subject: Re: [PATCH] x86: modify inline asm constraints in __cmpxchg_double()
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
+References: <20181015084802.30934-1-jgross@suse.com>
+ <20181016062556.GA56841@gmail.com>
+ <e43d18fd-22c0-5c59-5cb6-3d7c8da71d8e@suse.com>
+ <20181016080150.GB41162@gmail.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <438ae46c-4dcd-53f3-3b01-bc54ac2c6ffa@suse.com>
+Date:   Wed, 17 Oct 2018 11:09:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016235120.138227-1-brendanhiggins@google.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181016080150.GB41162@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 04:50:49PM -0700, Brendan Higgins wrote:
-> This patch set proposes KUnit, a lightweight unit testing and mocking
-> framework for the Linux kernel.
+On 16/10/2018 10:01, Ingo Molnar wrote:
 > 
-> Unlike Autotest and kselftest, KUnit is a true unit testing framework;
-> it does not require installing the kernel on a test machine or in a VM
-> and does not require tests to be written in userspace running on a host
-> kernel. Additionally, KUnit is fast: From invocation to completion KUnit
-> can run several dozen tests in under a second. Currently, the entire
-> KUnit test suite for KUnit runs in under a second from the initial
-> invocation (build time excluded).
+> * Juergen Gross <jgross@suse.com> wrote:
 > 
-> KUnit is heavily inspired by JUnit, Python's unittest.mock, and
-> Googletest/Googlemock for C++. KUnit provides facilities for defining
-> unit test cases, grouping related test cases into test suites, providing
-> common infrastructure for running tests, mocking, spying, and much more.
+>> On 16/10/2018 08:25, Ingo Molnar wrote:
+>>>
+>>> * Juergen Gross <jgross@suse.com> wrote:
+>>>
+>>>> Some gcc versions seem to have problems with the constraints in
+>>>> __cmpxchg_double() as they suddenly issue a build error when random
+>>>> parts of sources calling __cmpxchg_double() are modified, like e.g.
+>>>> slub.c. This has been observed on Debian systems only so far.
+>>>>
+>>>> Using "0" instead of "a" in the input constraints has the same
+>>>> semantics while avoiding that build error.
+>>>>
+>>>> Signed-off-by: Juergen Gross <jgross@suse.com>
+>>>> ---
+>>>> I should note that I have observed gcc hangs instead sometimes. Not
+>>>> taking any patches modifying users of __cmpxchg_double() due to a gcc
+>>>> bug which seems to be distro-specific is a bad move IMO.
+>>>>
+>>>> I'd rather make it clear from build behavior that this is a bug in gcc
+>>>> by letting the build hang instead of throwing error warnings not in any
+>>>> way related to changes in the code.
+>>>>
+>>>> The gcc bug is filed under:
+>>>>
+>>>> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=908154
+>>>> ---
+>>>>  arch/x86/include/asm/cmpxchg.h | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
+>>>> index a55d79b233d3..b3b4d61a8969 100644
+>>>> --- a/arch/x86/include/asm/cmpxchg.h
+>>>> +++ b/arch/x86/include/asm/cmpxchg.h
+>>>> @@ -245,7 +245,7 @@ extern void __add_wrong_size(void)
+>>>>  	asm volatile(pfx "cmpxchg%c4b %2; sete %0"			\
+>>>>  		     : "=a" (__ret), "+d" (__old2),			\
+>>>>  		       "+m" (*(p1)), "+m" (*(p2))			\
+>>>> -		     : "i" (2 * sizeof(long)), "a" (__old1),		\
+>>>> +		     : "i" (2 * sizeof(long)), "0" (__old1),		\
+>>>>  		       "b" (__new1), "c" (__new2));			\
+>>>
+>>> This got changed to +a in -tip:
+>>>
+>>>   c808c09b527c: x86/asm: Use CC_SET()/CC_OUT() in __cmpxchg_double()
+>>>
+>>> Mind sending a patch on top of -tip?
+>>
+>> No, I think you can drop my patch.
+>>
+>> c808c09b527c: x86/asm: Use CC_SET()/CC_OUT() in __cmpxchg_double()
+>> has the same effect as my patch: the build failure is replaced by
+>> gcc hanging instead in the critical configuration.
 > 
-> ## What's so special about unit testing?
-> 
-> A unit test is supposed to test a single unit of code in isolation,
-> hence the name. There should be no dependencies outside the control of
-> the test; this means no external dependencies, which makes tests orders
-> of magnitudes faster. Likewise, since there are no external dependencies,
-> there are no hoops to jump through to run the tests. Additionally, this
-> makes unit tests deterministic: a failing unit test always indicates a
-> problem. Finally, because unit tests necessarily have finer granularity,
-> they are able to test all code paths easily solving the classic problem
-> of difficulty in exercising error handling code.
-> 
-> ## Is KUnit trying to replace other testing frameworks for the kernel?
-> 
-> No. Most existing tests for the Linux kernel are end-to-end tests, which
-> have their place. A well tested system has lots of unit tests, a
-> reasonable number of integration tests, and some end-to-end tests. KUnit
-> is just trying to address the unit test space which is currently not
-> being addressed.
-> 
-> ## More information on KUnit
-> 
-> There is a bunch of documentation near the end of this patch set that
-> describes how to use KUnit and best practices for writing unit tests.
-> For convenience I am hosting the compiled docs here:
-> https://google.github.io/kunit-docs/third_party/kernel/docs/
+> Ok. No sane workaround we can do to avoid the hang I suspect, right?
 
-We've started our own unit test framework (very early, and not any real
-infrastructure yet) under drivers/gpu/drm/selftests. They're all meant to
-test functions and small pieces of functionality of our libraries in
-isolation, without any need for a real (or virtual) gpu driver. It kinda
-integrates both with kselftests and with our graphics test suite, but
-directly running tests using UML as part of the build process sounds much,
-much better. Having proper and standardized infrastructure for kernel unit
-tests sounds terrific.
+I'm not aware of any.
 
-In other words: I want.
+> Should we propagate the fix/enhancement to x86/urgent? It's currently in 
+> x86/asm for a v4.20 merge.
 
-Please keep dri-devel@lists.freedesktop.org in the loop on future
-versions.
+My patch triggering the issue is queued for 4.20, too.
 
-Cheers, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+There might be other constellations triggering it, but I haven't
+seen any yet.
+
+
+Juergen
