@@ -2,115 +2,143 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B2CECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55464ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87D372098A
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:24:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D372098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0259F2098A
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:27:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fIt0EM8O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0259F2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbeJQUUA (ORCPT
+        id S1727139AbeJQUWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 16:20:00 -0400
-Received: from mga01.intel.com ([192.55.52.88]:5574 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726954AbeJQUUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 16:20:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 05:24:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,392,1534834800"; 
-   d="scan'208";a="78719211"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga007.fm.intel.com with ESMTP; 17 Oct 2018 05:24:32 -0700
-Received: from FMSMSX109.amr.corp.intel.com (10.18.116.9) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 17 Oct 2018 05:24:32 -0700
-Received: from hasmsx112.ger.corp.intel.com (10.184.198.40) by
- fmsmsx109.amr.corp.intel.com (10.18.116.9) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 17 Oct 2018 05:24:31 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- HASMSX112.ger.corp.intel.com ([169.254.11.230]) with mapi id 14.03.0319.002;
- Wed, 17 Oct 2018 15:24:29 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Nayna Jain <nayna@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v6 03/20] tpm: factor out tpm 1.x duration calculation
- to tpm1-cmd.c
-Thread-Topic: [PATCH v6 03/20] tpm: factor out tpm 1.x duration calculation
- to tpm1-cmd.c
-Thread-Index: AQHUZeXEAxkAvhY2ik6aE/XYedYfeaUjIkEAgAA4YJA=
-Date:   Wed, 17 Oct 2018 12:24:28 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9F4691@hasmsx109.ger.corp.intel.com>
-References: <20181017064613.19746-1-tomas.winkler@intel.com>
- <20181017064613.19746-4-tomas.winkler@intel.com>
- <05fea3e6-91a3-b508-83c0-d8f06d6bbd5c@linux.ibm.com>
-In-Reply-To: <05fea3e6-91a3-b508-83c0-d8f06d6bbd5c@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTAyM2E4MDgtMmUzZi00NjdiLTllZTUtZTUzYjM0MTg4NWRiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUGgxc2RJRXRMTVozSzdmY000RmRHbFBQQWZKcG5oeHltbzVmRWhQNHlVTDI2K2hTVVF4SDVZUkJpMEFmYkFCZCJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.154]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 17 Oct 2018 16:22:33 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44596 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbeJQUWd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 16:22:33 -0400
+Received: by mail-ot1-f68.google.com with SMTP id p23so25921499otf.11
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 05:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DlE7FHtsAwfJIw+siIZhRS7ZbZA56j0dZVqXrInqO9M=;
+        b=fIt0EM8OIRXaAsDnmEaqV+yEyOEPajrAYrCLe0m5oC4mJGhq64YwDswCfX69PS9RCK
+         8HJc80Iwewl2k2hABayiEY6y0IonSZuKSEOrrdi/I2JQqqgqqI1J2BEXkoOksBNKYUJ1
+         zhn5koaBGiu/+LQXp80ElF78qhc0hpYyr10D/vHkDsS+hsYYdnuJmFeymRWMVfAuEpBt
+         oulhnTj8Hn2oU1K+m+lwtU2POO9yk5+LV+NAlpKFrIWnj3eF3WmYQc1n3n0y7jXNcAgK
+         G1TGVMGtCNHZN7jXko4/g78JSSEElCW6EOpOHUAQ8QpbpwtKq0xa22CBk3aCrpXFzWC7
+         TOFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DlE7FHtsAwfJIw+siIZhRS7ZbZA56j0dZVqXrInqO9M=;
+        b=A94U6ELWsopO+BucWD6Qqu7B60YFVzbNyKYEeiqPUyZWyog6MmbPOZu3L8M3uiSyoL
+         jQ2paOlVMAzX5RMQ4mMoL7NGPaFfbFmJICKPfakcPtANblFEp9wGd6NiMiVruLPBrj+s
+         wjFuFN32X6eUycfaoPFN7OOPrYm5BOMLDZDs/JM7dF8HRcTHvCHfyA2597lZNp2nH2cc
+         vsl8MsTiUfwVFEabe0r6tsiEiYkO/rmGZ9oaTQSqBRa5UPpIoq5/Wij0aNJ2wD1BizzY
+         joAchtem13bR3W0net+9fu3FJXFvBWjGlW24zI2aFQJ6qtnRoGm0oipkSmpAHlpO1W98
+         f8rw==
+X-Gm-Message-State: ABuFfogjL2VQ5sgfud3PPdlO2sbJC7xGInwxkx4PBvngZHL2XcjiuLA5
+        ldQuiyo4sKzBVNOWIHvXV7xuOE2taujkAtERFqZWOlCiZO8=
+X-Google-Smtp-Source: ACcGV63NbD0cTiYnlNoZbGo8D112ONuuoSXoyZMRiWsp4Aurv0J3oMvHB9+j08DgU6MBWV8MPo1fj6lgpcl1sRoh7vA=
+X-Received: by 2002:a9d:2641:: with SMTP id a59mr17342136otb.35.1539779223859;
+ Wed, 17 Oct 2018 05:27:03 -0700 (PDT)
 MIME-Version: 1.0
+References: <20181017121000.30240-1-mpe@ellerman.id.au>
+In-Reply-To: <20181017121000.30240-1-mpe@ellerman.id.au>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 17 Oct 2018 14:26:37 +0200
+Message-ID: <CAG48ez2W8HeJcuPwA25vSqTco3B=CRzycSA0=--pG=7jWi3pPw@mail.gmail.com>
+Subject: Re: [PATCH] seq_buf: Make seq_buf_puts() NULL terminate the buffer
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiANCj4gDQo+IA0KPiBPbiAxMC8xNy8yMDE4IDEyOjE1IFBNLCBUb21hcyBXaW5rbGVyIHdyb3Rl
-Og0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NoYXIvdHBtL3RwbV9pMmNfbnV2b3Rvbi5jDQo+
-ID4gYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV9pMmNfbnV2b3Rvbi5jDQo+ID4gaW5kZXggY2FhODZi
-MTljNzZkLi41ZDIwZTk4Yjg0NGYgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jaGFyL3RwbS90
-cG1faTJjX251dm90b24uYw0KPiA+ICsrKyBiL2RyaXZlcnMvY2hhci90cG0vdHBtX2kyY19udXZv
-dG9uLmMNCj4gPiBAQCAtMzcwLDYgKzM3MCw3IEBAIHN0YXRpYyBpbnQgaTJjX251dm90b25fc2Vu
-ZChzdHJ1Y3QgdHBtX2NoaXAgKmNoaXAsDQo+IHU4ICpidWYsIHNpemVfdCBsZW4pDQo+ID4gICAJ
-c3RydWN0IGkyY19jbGllbnQgKmNsaWVudCA9IHRvX2kyY19jbGllbnQoZGV2KTsNCj4gPiAgIAl1
-MzIgb3JkaW5hbDsNCj4gPiAgIAlzaXplX3QgY291bnQgPSAwOw0KPiA+ICsJdW5zaWduZWQgbG9u
-ZyBkdXJhdGlvbjsNCj4gPiAgIAlpbnQgYnVyc3RfY291bnQsIGJ5dGVzMndyaXRlLCByZXRyaWVz
-LCByYyA9IC1FSU87DQo+ID4NCj4gPiAgIAlmb3IgKHJldHJpZXMgPSAwOyByZXRyaWVzIDwgVFBN
-X1JFVFJZOyByZXRyaWVzKyspIHsgQEAgLTQ1NSwxMg0KPiA+ICs0NTYsMTEgQEAgc3RhdGljIGlu
-dCBpMmNfbnV2b3Rvbl9zZW5kKHN0cnVjdCB0cG1fY2hpcCAqY2hpcCwgdTggKmJ1ZiwNCj4gc2l6
-ZV90IGxlbikNCj4gPiAgIAkJcmV0dXJuIHJjOw0KPiA+ICAgCX0NCj4gPiAgIAlvcmRpbmFsID0g
-YmUzMl90b19jcHUoKigoX19iZTMyICopIChidWYgKyA2KSkpOw0KPiA+IC0JcmMgPSBpMmNfbnV2
-b3Rvbl93YWl0X2Zvcl9kYXRhX2F2YWlsKGNoaXAsDQo+ID4gLQkJCQkJICAgICB0cG1fY2FsY19v
-cmRpbmFsX2R1cmF0aW9uKGNoaXAsDQo+ID4gLQkJCQkJCQkJICAgICAgIG9yZGluYWwpLA0KPiA+
-IC0JCQkJCSAgICAgJnByaXYtPnJlYWRfcXVldWUpOw0KPiA+ICsJZHVyYXRpb24gPSB0cG0xX2Nh
-bGNfb3JkaW5hbF9kdXJhdGlvbihjaGlwLCBvcmRpbmFsKTsNCj4gDQo+IA0KPiBUaGlzIHZlcnNp
-b24gb2YgdGhlIHBhdGNoIGRpZG4ndCBhZGRyZXNzIG15IHByZXZpb3VzIGNvbW1lbnQgLSAiVGhl
-IG9yaWdpbmFsDQo+IGNvZGUgaW4gdGhlIG51dm90b24gZHJpdmVyIGRvZXMgbm90IGRpZmZlcmVu
-dGlhdGUgYmV0d2VlbiBUUE0gMS4yIGFuZCBUUE0NCj4gMi4wIGFzIGl0IGRvZXMgaW4gdHBtX3Rp
-c19jb3JlLmMuDQo+IEJlZm9yZSBtYWtpbmcgYW55IGNoYW5nZXMsIEkgd291bGQgZmlyc3QgZml4
-IGl0LCBzbyB0aGF0IGl0IGNvdWxkIGVhc2lseSBiZQ0KPiBiYWNrcG9ydGVkLiBPbmx5IHRoZW4g
-ZG8gdGhlIHJlZmFjdG9yaW5nLiINCg0KVGhpcyBwYXRjaCBkb2Vzbid0IGNoYW5nZSB0aGUgb3Jp
-Z2luYWwgYmVoYXZpb3IsIGp1c3QgY2hhbmdlIHRoZSBuYW1lIG9mIHRoZSBmdW5jdGlvbiwgIHNv
-IHRoZXJlIGlzIG5vIHJlZ3Jlc3Npb24uDQpJIHdvdWxkIHN1Z2dlc3QgdGhlcmUgaXMgYW5vdGhl
-ciBidWcgaW4gdGhvc2UgZHJpdmVycy9kZXZpY2VzIHRoYXQgaXMgb3J0aG9nb25hbCB0byB0aGlz
-IHJlZmFjdG9yaW5nIGFuZCBzaG91bGQgbm90IGJsb2NrIHRoaXMgZnJvbSBtZXJnaW5nLg0KQWNj
-b3JkaW5nIHRvIHdoYXQgeW91IHNheSAgaXQgY2FuIGNhbGwganVzdCB0cG1fY2FsY19vcmlkbmFs
-X2R1cmF0aW9uKCkgaW5zdGVhZCBvZiB0cG0xX2NhbGNfb3JkaW5hbF9kdXJhdGlvbihjaGlwLCBv
-cmRpbmFsKSwNCmJ1dCBJIHByZWZlciB0aGF0IHNvbWVvbmUgdGhhdCBoYXMgdGhvc2UgZGV2aWNl
-cyB3aWxsIGRvIHRoYXQgY2hhbmdlIG9uIHRvcCBvZiB0aGlzIHNlcmllcyBhcyAgSSBjYW5ub3Qg
-dGVzdCBpdC4NCg0KVGhhbmtzDQpUb21hcw0KDQo=
+On Wed, Oct 17, 2018 at 2:10 PM Michael Ellerman <mpe@ellerman.id.au> wrote=
+:
+> Currently seq_buf_puts() will happily create a non NULL terminated
+> string for you in the buffer. This is particularly dangerous if the
+> buffer is on the stack.
+>
+> For example:
+>
+>   char buf[8];
+>   char secret =3D "secret";
+>   struct seq_buf s;
+>
+>   seq_buf_init(&s, buf, sizeof(buf));
+>   seq_buf_puts(&s, "foo");
+>   printk("Message is %s\n", buf);
+>
+> Can result in:
+>
+>   Message is foo=C2=AA=C2=AA=C2=AA=C2=AA=C2=AAsecret
+>
+> We could require all users to memset() their buffer to NULL before
+> use. But that seems likely to be forgotten and lead to bugs.
+>
+> Instead we can change seq_buf_puts() to always leave the buffer in a
+> NULL terminated state.
+>
+> The only downside is that this makes the buffer 1 character smaller
+> for seq_buf_puts(), but that seems like a good trade off.
+
+After this, you can also simplify rdt_last_cmd_status_show(), right?
+
+> ---
+>  lib/seq_buf.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> I recently merged a patch which actually hit this behaviour. I worked
+> around it by using seq_buf_printf(), but it would be good to fix the
+> problem at the source.
+>
+> diff --git a/lib/seq_buf.c b/lib/seq_buf.c
+> index 11f2ae0f9099..b1570204cde3 100644
+> --- a/lib/seq_buf.c
+> +++ b/lib/seq_buf.c
+> @@ -144,9 +144,13 @@ int seq_buf_puts(struct seq_buf *s, const char *str)
+>
+>         WARN_ON(s->size =3D=3D 0);
+>
+> +       /* Add 1 to len for the trailing NULL which must be there */
+
+Nit: In the comments, I would prefer either "null byte" or "NUL"
+instead of "NULL" when talking about something that is not a pointer.
+
+> +       len +=3D 1;
+
+It looks like you're using an "unsigned int" for the length, meaning
+that this can in theory (e.g. when operating on a string from a big
+vmalloc buffer) overflow. You should be using size_t here.
+
+>         if (seq_buf_can_fit(s, len)) {
+>                 memcpy(s->buffer + s->len, str, len);
+> -               s->len +=3D len;
+> +               /* Don't count the trailing NULL against the capacity */
+> +               s->len +=3D len - 1;
+>                 return 0;
+>         }
+>         seq_buf_set_overflow(s);
+> --
+> 2.17.1
+>
