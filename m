@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E03ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C029ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF2A82152A
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:21:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF2A82152A
+	by mail.kernel.org (Postfix) with ESMTP id D59492150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:21:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D59492150D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbeJQSQN (ORCPT
+        id S1727301AbeJQSQQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:16:13 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:62672 "EHLO
+        Wed, 17 Oct 2018 14:16:16 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:24037 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727050AbeJQSQM (ORCPT
+        with ESMTP id S1727208AbeJQSQP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:16:12 -0400
+        Wed, 17 Oct 2018 14:16:15 -0400
 X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="46265550"
+   d="scan'208";a="46265555"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 17 Oct 2018 18:21:05 +0800
+  by heian.cn.fujitsu.com with ESMTP; 17 Oct 2018 18:21:11 +0800
 Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id A82894B6ED8C;
-        Wed, 17 Oct 2018 18:21:04 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id DCF9C4B6ED68;
+        Wed, 17 Oct 2018 18:21:06 +0800 (CST)
 Received: from localhost.localdomain (10.167.225.56) by
  G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 17 Oct 2018 18:21:10 +0800
+ (TLS) id 14.3.408.0; Wed, 17 Oct 2018 18:21:12 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
@@ -41,16 +41,16 @@ To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         <msys.mizuma@gmail.com>
 CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
         <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v9 4/8] x86/boot: Add bios_get_rsdp_addr() to search RSDP in memory
-Date:   Wed, 17 Oct 2018 18:20:08 +0800
-Message-ID: <20181017102012.872-5-fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v9 5/8] x86/boot: Add get_acpi_rsdp() to parse RSDP in cmdlien from kexec
+Date:   Wed, 17 Oct 2018 18:20:09 +0800
+Message-ID: <20181017102012.872-6-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181017102012.872-1-fanc.fnst@cn.fujitsu.com>
 References: <20181017102012.872-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: A82894B6ED8C.AF17E
+X-yoursite-MailScanner-ID: DCF9C4B6ED68.A053A
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,128 +58,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Imitate acpi_find_root_pointer() and acpi_tb_scan_memory_for_rsdp()
-to search RSDP table pointer in memory. This function only works
-when RSDP not found in EFI table.
+If KEXEC write the RSDP pointer to cmdline, parse the cmdline
+and use it.
+Imitate from early_param of "acpi_rsdp".
 
 Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 ---
- arch/x86/boot/compressed/acpitb.c | 106 ++++++++++++++++++++++++++++++
- 1 file changed, 106 insertions(+)
+ arch/x86/boot/compressed/acpitb.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
 diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
-index 56b54b0e0889..50fa65cf824d 100644
+index 50fa65cf824d..37b1f4407be8 100644
 --- a/arch/x86/boot/compressed/acpitb.c
 +++ b/arch/x86/boot/compressed/acpitb.c
-@@ -94,3 +94,109 @@ static void efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+@@ -8,6 +8,9 @@
+ #include <linux/numa.h>
+ #include <linux/acpi.h>
+ 
++#define STATIC
++#include <linux/decompress/mm.h>
++
+ /* Search EFI table for RSDP table. */
+ static void efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+ {
+@@ -200,3 +203,23 @@ static void bios_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+ 		*rsdp_addr = (acpi_physical_address)address;
  	}
- #endif
  }
 +
-+static u8 compute_checksum(u8 *buffer, u32 length)
++static void get_acpi_rsdp(acpi_physical_address *rsdp_addr)
 +{
-+	u8 sum = 0;
-+	u8 *end = buffer + length;
++#ifdef CONFIG_KEXEC
++	unsigned long long res;
++	int len = 0;
++	char *val;
 +
-+	while (buffer < end)
-+		sum = (u8)(sum + *(buffer++));
++	val = malloc(20);
++	len = cmdline_find_option("acpi_rsdp", val, 20);
 +
-+	return sum;
-+}
++	if (len == -1)
++		return;
 +
-+/*
-+ * Used to search a block of memory for the RSDP signature.
-+ * Return Pointer to the RSDP if found, otherwise NULL.
-+ * Based on acpi_tb_scan_memory_for_rsdp().
-+ */
-+static u8 *scan_mem_for_rsdp(u8 *start, u32 length)
-+{
-+	struct acpi_table_rsdp *rsdp;
-+	u8 *end;
-+	u8 *rover;
-+
-+	end = start + length;
-+
-+	/* Search from given start address for the requested length */
-+	for (rover = start; rover < end; rover += ACPI_RSDP_SCAN_STEP) {
-+		/*
-+		 * The RSDP signature and checksum must both be correct
-+		 * Note: Sometimes there exists more than one RSDP in memory;
-+		 * the valid RSDP has a valid checksum, all others have an
-+		 * invalid checksum.
-+		 */
-+		rsdp = (struct acpi_table_rsdp *)rover;
-+
-+		/* Nope, BAD Signature */
-+		if (!ACPI_VALIDATE_RSDP_SIG(rsdp->signature))
-+			continue;
-+
-+		/* Check the standard checksum */
-+		if (compute_checksum((u8 *) rsdp, ACPI_RSDP_CHECKSUM_LENGTH))
-+			continue;
-+
-+		/* Check extended checksum if table version >= 2 */
-+		if ((rsdp->revision >= 2) &&
-+		    (compute_checksum((u8 *) rsdp, ACPI_RSDP_XCHECKSUM_LENGTH)))
-+			continue;
-+
-+		/* Sig and checksum valid, we have found a real RSDP */
-+		return rover;
++	if (len > 0) {
++		val[len] = 0;
++		*rsdp_addr = (acpi_physical_address)kstrtoull(val, 0, &res);
 +	}
-+	return NULL;
-+}
-+
-+/*
-+ * Used to search RSDP physical address.
-+ * Based on acpi_find_root_pointer(). Since only use physical address
-+ * in this period, so there is no need to do the memory map jobs.
-+ */
-+static void bios_get_rsdp_addr(acpi_physical_address *rsdp_addr)
-+{
-+	struct acpi_table_rsdp *rsdp;
-+	u8 *table_ptr;
-+	u8 *mem_rover;
-+	u32 address;
-+
-+	/*
-+	 * Get the location of the Extended BIOS Data Area (EBDA)
-+	 * Since we use physical address directely, so
-+	 * acpi_os_map_memory() and acpi_os_unmap_memory() are
-+	 * not needed here.
-+	 */
-+	table_ptr = (u8 *)ACPI_EBDA_PTR_LOCATION;
-+	*(u32 *)(void *)&address = *(u16 *)(void *)table_ptr;
-+	address <<= 4;
-+	table_ptr = (u8 *)address;
-+
-+	/*
-+	 * Search EBDA paragraphs (EBDA is required to be a minimum of
-+	 * 1K length)
-+	 */
-+	if (address > 0x400) {
-+		mem_rover = scan_mem_for_rsdp(table_ptr, ACPI_EBDA_WINDOW_SIZE);
-+
-+		if (mem_rover) {
-+			address += (u32)ACPI_PTR_DIFF(mem_rover, table_ptr);
-+			*rsdp_addr = (acpi_physical_address)address;
-+			return;
-+		}
-+	}
-+
-+	table_ptr = (u8 *)ACPI_HI_RSDP_WINDOW_BASE;
-+	mem_rover = scan_mem_for_rsdp(table_ptr, ACPI_HI_RSDP_WINDOW_SIZE);
-+
-+	/*
-+	 * Search upper memory: 16-byte boundaries in E0000h-FFFFFh
-+	 * Since we use physical address directely, so
-+	 * acpi_os_map_memory() and acpi_os_unmap_memory() are
-+	 * not needed here.
-+	 */
-+	if (mem_rover) {
-+		address = (u32)(ACPI_HI_RSDP_WINDOW_BASE +
-+				ACPI_PTR_DIFF(mem_rover, table_ptr));
-+		*rsdp_addr = (acpi_physical_address)address;
-+	}
++#endif
 +}
 -- 
 2.17.2
