@@ -2,154 +2,90 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E719ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED78ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA6B420658
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:21:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F6DC21528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:23:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HWq0o+B0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6B420658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Dk+LmyWm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6DC21528
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbeJRARw (ORCPT
+        id S1727749AbeJRATf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 20:17:52 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45684 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbeJRARv (ORCPT
+        Wed, 17 Oct 2018 20:19:35 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54766 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727037AbeJRATf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 20:17:51 -0400
-Received: by mail-qk1-f194.google.com with SMTP id m8-v6so16841561qka.12
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:21:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=WrfAD2+3i7ZJ95a4/drlAFrIwUpse9bbWec9AmIVWeY=;
-        b=HWq0o+B0MECQTEuDQoU2HMFEqdIkDtambj6jY0HSV5oM1jCpdTKkzrJqSvEY18igxX
-         kv7s+wrxiV6EU3BgS2Vkl+GJWYGKoarCURg2XixipBFRDwrReQOLB+o45UL5VlzufL7s
-         QpIwWoKu4BsWFmediMkC5xQ159/l739oq6RIg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=WrfAD2+3i7ZJ95a4/drlAFrIwUpse9bbWec9AmIVWeY=;
-        b=L9YhyGSl0Mz1WdeBDHM/n1GrLipkG8oCo2B13cJcp1SHQXgZXDJGT4tBv/ZrHQFMyy
-         fPoN/qPkOlGa6LNHtud/ESP8FdzZAd01vZu0bzUnNGn3/BXRUzW94iy9aZzsT39hcG3q
-         xhSr92GCjO6gb99o7X8XpbeONUEF/MSlxYY9etkawqDVdEkoX3eiIKdLiAeooC3HNp2g
-         Qcg4pYuScqA/wO7/zN5iHeKFCEcoEddUxnFV0g1TQd7s8A7HtL7AH2mo2XY+EXE4UkIz
-         Xx33tzupkepnXOpYkj57F1BZMF2HDi2/ilqggsn2OD5UtYE33Ddr7XdLp/MtBzcJUvGi
-         8KFQ==
-X-Gm-Message-State: ABuFfoiP1Tld2MaBMiNlCX0ARyGA9+RAvm0stY4GKZIlv8BlF0zKidX9
-        RQZBh/C3ONPg3Lp3xndDp6zZGQ==
-X-Google-Smtp-Source: ACcGV60sAnksfmVrlFhXmwJO9mWZrhFfobCWJdosIkSnm26y7w8x6SvmVa+I0PnQkylo1K5udQvzNw==
-X-Received: by 2002:a37:3bc1:: with SMTP id i184-v6mr2245831qka.286.1539793284125;
-        Wed, 17 Oct 2018 09:21:24 -0700 (PDT)
-Received: from [192.168.1.169] (pool-71-255-245-97.washdc.fios.verizon.net. [71.255.245.97])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm20084272qtl.2.2018.10.17.09.21.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 09:21:22 -0700 (PDT)
-Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
-To:     Ingo Molnar <mingo@kernel.org>
-References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
- <20181010061751.GA37224@gmail.com> <5BBE1E1F.3030308@linaro.org>
- <20181016073305.GA64994@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, rui.zhang@intel.com,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        amit.kachhap@gmail.com, viresh.kumar@linaro.org,
-        javi.merino@kernel.org, edubezval@gmail.com,
-        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
-        quentin.perret@arm.com, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <5BC76181.90105@linaro.org>
-Date:   Wed, 17 Oct 2018 12:21:21 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Wed, 17 Oct 2018 20:19:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=tRiMvX9h1hxuLnPQzyDFXL/24OFKNWflxpFPK0mMNU0=; b=Dk+LmyWmK7pPw1IikspwxK0Eb
+        s5y0+IyrHy/8vJwqHsHJPkSK1nbt9F1ppCh7LwyeA0U37IYlov+1JXz5c8yfST0ALnnVcMX26fkN9
+        jZagMhgqaqd+ZL/NcX7L41z2U2qeq3CLvyxCZ/oVbzJA98t8BplD+igpQpSHC2nl1j/YWYMDM1bYs
+        L66wLuovY8xBu0jtAp5o2R9spZyZy6a9Qvy4o98C0yNVPIdZoPUd8MTJ47b+5XV0Q2D/PcmBtw8XY
+        WDmgBRKPIqzB0ZJbT6flla5eSy9kTHyKi20Nko3MDr3kv/Eu2mNoVdBsJrK/+LKCTnwpNTZMMoJrx
+        KDCfLwzFA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gCob1-0002pn-NX; Wed, 17 Oct 2018 16:22:55 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E215620298568; Wed, 17 Oct 2018 18:22:53 +0200 (CEST)
+Date:   Wed, 17 Oct 2018 18:22:53 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     'Sebastian Andrzej Siewior' <bigeasy@linutronix.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        David Laight <David.Laight@ACULAB.COM>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH 1/3] x86/mm/pat: Disable preemption around
+ __flush_tlb_all()
+Message-ID: <20181017162253.GO3121@hirez.programming.kicks-ass.net>
+References: <20181016202525.29437-1-bigeasy@linutronix.de>
+ <20181016202525.29437-2-bigeasy@linutronix.de>
+ <acaca255a70b411488b889db9d1c31e4@AcuMS.aculab.com>
+ <20181017111145.GJ3121@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1810171315250.6000@nanos.tec.linutronix.de>
+ <20181017154707.GL3121@hirez.programming.kicks-ass.net>
+ <20181017160050.rw6tl2dzqiozbq3m@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20181016073305.GA64994@gmail.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017160050.rw6tl2dzqiozbq3m@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/2018 03:33 AM, Ingo Molnar wrote:
+On Wed, Oct 17, 2018 at 06:00:51PM +0200, 'Sebastian Andrzej Siewior' wrote:
+> On 2018-10-17 17:47:07 [+0200], Peter Zijlstra wrote:
+> > > > Ideally we'd never ever merge anything that only does local invalidates,
+> > > > on a global address space, that's just broken.
+> > > 
+> > > A little bit late to lament about that.
+> > 
+> > For this, yes :/ But for future stuff we should really not allow such
+> > things anymore.
 > 
-> * Thara Gopinath <thara.gopinath@linaro.org> wrote:
-> 
->>>> Regarding testing, basic build, boot and sanity testing have been
->>>> performed on hikey960 mainline kernel with debian file system.
->>>> Further aobench (An occlusion renderer for benchmarking realworld
->>>> floating point performance) showed the following results on hikey960
->>>> with debain.
->>>>
->>>>                                         Result          Standard        Standard
->>>>                                         (Time secs)     Error           Deviation
->>>> Hikey 960 - no thermal pressure applied 138.67          6.52            11.52%
->>>> Hikey 960 -  thermal pressure applied   122.37          5.78            11.57%
->>>
->>> Wow, +13% speedup, impressive! We definitely want this outcome.
->>>
->>> I'm wondering what happens if we do not track and decay the thermal 
->>> load at all at the PELT level, but instantaneously decrease/increase 
->>> effective CPU capacity in reaction to thermal events we receive from 
->>> the CPU.
->>
->> The problem with instantaneous update is that sometimes thermal events 
->> happen at a much faster pace than cpu_capacity is updated in the 
->> scheduler. This means that at the moment when scheduler uses the 
->> value, it might not be correct anymore.
-> 
-> Let me offer a different interpretation: if we average throttling events 
-> then we create a 'smooth' average of 'true CPU capacity' that doesn't 
-> fluctuate much. This allows more stable yet asymmetric task placement if 
-> the thermal characteristics of the different cores is different 
-> (asymmetric). This, compared to instantaneous updates, would reduce 
-> unnecessary task migrations between cores.
-> 
-> Is that accurate?
+> so we stay as is?
 
-Yes. I think it is accurate. I will also add that if we don't average
-throttling events, we will miss the events that occur in between load
-balancing(LB) period.
+Well, we can do that preempt kludge you propose to shut up the warning I
+suppose.
 
-> 
-> If the thermal characteristics of the cores is roughly symmetric and the 
-> measured CPU-intense load itself is symmetric as well, then I have 
-> trouble seeing why reacting to thermal events should make any difference 
-> at all.
-In this scenario, i agree that scheduler reaction to thermal events
-should not make any difference in fact we should not observe any
-improvement or degradation in performance.
-
-> 
-> Are there any inherent asymmetries in the thermal properties of the 
-> cores, or in the benchmarked workload itself?
-
-The benchmarked workload , meaning aobench? I don't think there arre any
-asymmetries there. On Hikey960, there are two clusters with different
-frequency domains. So yes I will say there is asymmetry there. Asides,
-IMHO, any other tasks running on the system can create an inherent
-asymmetry as cpu utilizations can vary.
-
-Regards
-Thara
-> 
-> Thanks,
-> 
-> 	Ingo
-> 
-
-
--- 
-Regards
-Thara
+But a kludge it is. That code really wants a global invalidate, but we
+cannot (not without massive surgery in any case).
