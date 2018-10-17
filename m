@@ -2,149 +2,174 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2CC4ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 242A6ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9437D21523
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:46:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AV2eXIWR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9437D21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C730E205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:49:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C730E205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727371AbeJQVmn (ORCPT
+        id S1727246AbeJQVpQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:42:43 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40164 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJQVmn (ORCPT
+        Wed, 17 Oct 2018 17:45:16 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34988 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbeJQVpQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:42:43 -0400
-Received: by mail-lf1-f67.google.com with SMTP id t22-v6so19855113lfb.7;
-        Wed, 17 Oct 2018 06:46:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wgEmNyjm3p/r25Qb8kV0YbhcJLvXLDpm0IdVhZ/4jeU=;
-        b=AV2eXIWRsgagMVEpiNWO06Hsqvy+9FyGXtNS0DoL4hCah79Mzs2jlPqJix7poMmLFK
-         1nIEGUWsVWTH+lf7Yzdk4HldCgbXlEyZavBjbiencstEXi0lBGJzrNiIl0IHbHvp6qUF
-         ZgsyvuGBdX8WVi7s1pWjZ4X4yMy0vecEJdUiHk6IPtmL3PeFRczvQWNhAX3SkmkXrK2L
-         jxJVJaiyY1+uSvmi2nnN+OfhNzVZ5Ef8sJb4PoeMkWb7agTv9p3gsQRdpgzZwOyEW/Cl
-         x+AryTiNYx3TUaYjR7murkeWoQmfVQ4HEeO33NdKzPJC3YojaB8e0pb6/44jIur0K9KH
-         locg==
+        Wed, 17 Oct 2018 17:45:16 -0400
+Received: by mail-oi1-f196.google.com with SMTP id 22-v6so21125655oiz.2;
+        Wed, 17 Oct 2018 06:49:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wgEmNyjm3p/r25Qb8kV0YbhcJLvXLDpm0IdVhZ/4jeU=;
-        b=WU8QFi+4wtywNyPGvT6+J9FBIX9PP47q5GGHNVBKmZKACzj9hCduPZhkhLgixKg+di
-         13MB5CnKPnakwLSpzQC9k0LKZwiF+dnLmdYWz7j/kZuUXKBDtYcK/wQ2M87Usw4+pH3W
-         Cd1k4FOnWXAa2F8SfrRRrYBUIQLiWq1rmMoUOoGkfqmeEusonp8UMy6hVu5LaU7GM8H0
-         Ml+VndaPeGgqywFHcTOSuJ5hy+/MCR6+73Gf/clKLSiDgNxqvo1Me+RyHIuAqDrK7TQ+
-         5Dt3j6ByPyIyJtQuV2fhUMwa9pbD/mMhTnCvonNpnSJWvlv28kz+vp/+moxStlFUobZH
-         l7Jw==
-X-Gm-Message-State: ABuFfohe90DE3RS+uFQSZYCGgLF1Tvd6qN1JpdAjT96OAFEX7Wb10Oa7
-        9TefmC2SWngbMvpQoaooisp0yX5X
-X-Google-Smtp-Source: ACcGV62jq2GP3ojKQD5HTrxMtJPxoPP5qnH19zyHbILd+TwLG2zyYSrseeAxTbMEtvVMGBEcdF1aUg==
-X-Received: by 2002:a19:c4c5:: with SMTP id u188-v6mr8782966lff.141.1539784013023;
-        Wed, 17 Oct 2018 06:46:53 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-91-118.nat.spd-mgts.ru. [109.252.91.118])
-        by smtp.googlemail.com with ESMTPSA id b64-v6sm4199086ljf.0.2018.10.17.06.46.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 06:46:52 -0700 (PDT)
-Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
- Tegra20/30
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180830194356.14059-1-digetx@gmail.com>
- <20180830194356.14059-2-digetx@gmail.com>
- <f38b38f1-0a60-d6fa-9047-23c619494b23@nvidia.com>
- <1448e619-35c9-0195-c68a-604d10f4dc8b@gmail.com>
- <a9b6e683-3802-896c-27ad-9c49853c231f@nvidia.com>
- <a0dd5d75-6683-f938-c5e5-a95a5c2b86e4@gmail.com>
- <3c72f573-d109-b607-b7b7-d70aea3e03df@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c6249de9-bcaa-ab3e-8546-40f8c2c17599@gmail.com>
-Date:   Wed, 17 Oct 2018 16:46:44 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dglbM1S1hBqJQYWWQpWxlZTAGqfDaXFS74Vo46ffhJI=;
+        b=HeQHHyPMWHIpK2bfIZZ/z14bH6iJ25DZyKtP2xwhzONqGj99Yxv6nIQKJ1i1Sp4qKz
+         gOYdy4cjjGHR65ZART/BvyGo1AbwzquPnJYBolEw8wvkmlh+prwKT6O4k1HP0blIWtVP
+         ET3KjA9r9t5lm9DQd1rztqX9FokVYsCI99YHFaM0w39ZqC9YuujebQTWqhZZI7id0rw6
+         gx15v447pQiQ3mtFm1O+edLTkJv3bQWUU27nmBxYhurYgOS/xL+lYdbuFD72RQT18CN0
+         XewTNpDOV+Zn+SOxUXeeyq57Ow3y2ecbL+UVWtfqqpH7o0az8622AZUQ6VN8WxS/6U7C
+         vLhg==
+X-Gm-Message-State: ABuFfojz+2QGloC6peHzxen0alIWqWnzvoxrqu/ZZqNoRlDW7pN4clK/
+        hxsOXP99Yvp/R+mhCSofqQ==
+X-Google-Smtp-Source: ACcGV62wKR3SX9wmviwDaKVBu2WQv/ofWDqydub+Xfmp0CBVwofZvEwlVBTMoLnfVdWlRAnY+S9htA==
+X-Received: by 2002:aca:68c5:: with SMTP id o66-v6mr8928901oik.96.1539784167321;
+        Wed, 17 Oct 2018 06:49:27 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o82-v6sm5050104oif.37.2018.10.17.06.49.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 06:49:26 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 08:49:25 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Nishanth Menon <nm@ti.com>
+Cc:     Lokesh Vutla <lokeshvutla@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH 1/2] dt-bindings: irqchip: Introduce TISCI Interrupt
+ router bindings
+Message-ID: <20181017134925.GA7084@bogus>
+References: <20181006072812.15814-1-lokeshvutla@ti.com>
+ <20181006072812.15814-2-lokeshvutla@ti.com>
+ <20181006162929.u6uh4ffn6gm3incf@akan>
 MIME-Version: 1.0
-In-Reply-To: <3c72f573-d109-b607-b7b7-d70aea3e03df@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181006162929.u6uh4ffn6gm3incf@akan>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/18 4:34 PM, Jon Hunter wrote:
+On Sat, Oct 06, 2018 at 11:29:29AM -0500, Nishanth Menon wrote:
+> On 12:58-20181006, Lokesh Vutla wrote:
+> > Add the DT binding documentation for Interrupt router driver.
+> > 
+> > Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> > ---
+> >  .../interrupt-controller/ti,sci-intr.txt      | 83 +++++++++++++++++++
+> >  MAINTAINERS                                   |  1 +
+> >  2 files changed, 84 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+> > new file mode 100644
+> > index 000000000000..681ca53cc5fb
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+> > @@ -0,0 +1,83 @@
+> > +Texas Instruments K3 Interrupt Router
+> > +=====================================
+> > +
+> > +The Interrupt Router (INTR) module provides a mechanism to mux M
+> > +interrupt inputs to N interrupt outputs, where all M inputs are selectable
+> > +to be driven per N output. There is one register per output (MUXCNTL_N) that
+> > +controls the selection.
+> > +
+> > +
+> > +                                 Interrupt Router
+> > +                             +----------------------+
+> > +                             |  Inputs     Outputs  |
+> > +        +-------+            | +------+             |
+> > +        | GPIO  |----------->| | irq0 |             |       Host IRQ
+> > +        +-------+            | +------+             |      controller
+> > +                             |    .        +-----+  |      +-------+
+> > +        +-------+            |    .        |  0  |  |----->|  GIC  |
+> > +        | INTA  |----------->|    .        +-----+  |      +-------+
+> > +        +-------+            |    .          .      |
+> > +                             | +------+      .      |
+> > +                             | | irqM |    +-----+  |
+> > +                             | +------+    |  N  |  |
+> > +                             |             +-----+  |
+> > +                             +----------------------+
+> > +
+> > +Configuration of these MUXCNTL_N registers is done by a system controller
+> > +(like the Device Memory and Security Controller on K3 AM654 SoC). System
+> > +controller will keep track of the used and unused registers within the Router.
+> > +Driver should request the system controller to get the range of GIC IRQs
+> > +assigned to the requesting hosts. It is the drivers responsibility to keep
+> > +track of GIC IRQs.
+> > +
+> > +Communication between the host processor running an OS and the system
+> > +controller happens through a protocol called TI System Control Interface
+> > +(TISCI protocol). For more details refer:
+> > +Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+> > +
+> > +TISCI Interrupt Router Node:
+> > +----------------------------
+> > +- compatible:		Must be "ti,sci-intr".
+> > +- interrupt-controller:	Identifies the node as an interrupt controller
+> > +- #interrupt-cells:	Specifies the number of cells needed to encode an
+> > +			interrupt source. The value should be 3.
+> > +			First cell should contain the TISCI device ID of source
+> > +			Second cell should contain the interrupt source offset
+> > +			within the device
+> > +			Third cell specifies the trigger type as defined
+> > +			in interrupts.txt in this directory.
+> > +- interrupt-parent:	phandle of irq parent for TISCI intr. The parent must
+> > +			use the same interrupt-cells format as GIC.
+> > +- ti,sci:		Phandle to TI-SCI compatible System controller node.
+> > +- ti,sci-dst-id:	TISCI device ID of the destination IRQ controller.
+> > +- ti,sci-rm-range-girq:	Tuple corresponding to unique TISCI resource type that
+> > +			defines the dst host irq ranges assigned to this
+> > +			interrupt router from this host context.
+> > +			Tuple should be of format <type subtype>.
+> > +
 > 
-> On 17/10/2018 14:07, Dmitry Osipenko wrote:
->> On 10/17/18 3:59 PM, Jon Hunter wrote:
->>>
->>> On 17/10/2018 13:37, Dmitry Osipenko wrote:
->>>> On 10/17/18 11:40 AM, Jon Hunter wrote:
->>>>>
->>>>> On 30/08/2018 20:43, Dmitry Osipenko wrote:
->>>>>> Add device-tree binding that describes CPU frequency-scaling hardware
->>>>>> found on NVIDIA Tegra20/30 SoC's.
->>>>>>
->>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>> ---
->>>>>>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
->>>>>>  1 file changed, 38 insertions(+)
->>>>>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>>>> new file mode 100644
->>>>>> index 000000000000..2c51f676e958
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>>>> @@ -0,0 +1,38 @@
->>>>>> +Binding for NVIDIA Tegra20 CPUFreq
->>>>>> +==================================
->>>>>> +
->>>>>> +Required properties:
->>>>>> +- clocks: Must contain an entry for each entry in clock-names.
->>>>>> +  See ../clocks/clock-bindings.txt for details.
->>>>>> +- clock-names: Must include the following entries:
->>>>>> +  - pll_x: main-parent for CPU clock, must be the first entry
->>>>>> +  - backup: intermediate-parent for CPU clock
->>>>>> +  - cpu: the CPU clock
->>>>>
->>>>> Is it likely that 'backup' will be anything other that pll_p? If not why
->>>>> not just call it pll_p? Personally, I don't 'backup' to descriptive even
->>>>> though I can see what you mean.
->>>>>
->>>>> I can see that you want to make this flexible, but if the likelihood is
->>>>> that we will just use pll_p then I am not sure it is warranted at this
->>>>> point.
->>>>
->>>> That won't describe HW, but software. And device tree should describe HW.
->>>
->>> Hmm ... well that's my point exactly. So why call it 'backup'? Sounds
->>> like a software description to me.
->>
->> Because HW is designed the way that CPU parent need to be switched to the backup clock source while main clock changes its rate. HW also allow to select among different parents, pll_p is one of those parents.
+> Rob, DT maintainers,
 > 
-> Yes that part is understood. I am just splitting hairs over the actual
-> name. We do the same for tegra124 but we just call it 'pll_p'. See ...
+> I'd like a feedback from DT maintainers on this 'range' topic.
 > 
-> Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
+> TISCI Firmware [1] currently seems to define a type corresponding to a
+> device ID[2]. in AM6 device, for example, this is different, however
+> have a 1 to 1 correspondence. However, there is expectation that type will
+> end up as device ID in a future SoC.
+> 
+> While this is subject to much debate internally, I'd like some feedback if this
+> is OK from Device tree representation - it is true that Firmware does
+> look at it as type, however in some future SoC, it could be that the
+> values themselves may correspond one to one with a device id -> The
+> original wish was that types might be something reusable across SoCs,
+> but that is turning out to be more of a theoretical wish than any thing
+> practical.
 
-tegra124-cpufreq choose to hardwire to the pll_p, but it could be other clocks. Technically abstracting backup clock should be more correct, but result is the same in the end.
+I'm not sure I follow all the terminology here of type, subtype, "dst 
+host irq", etc. It looks to me like you should be using interrupt-map property.
+
+Rob
+
+> 
+> [1]http://software-dl.ti.com/tisci/esd/latest/5_soc_doc/am6x/resasg_types.html
+> [2]http://software-dl.ti.com/tisci/esd/latest/5_soc_doc/am6x/devices.html
+> -- 
+> Regards,
+> Nishanth Menon
