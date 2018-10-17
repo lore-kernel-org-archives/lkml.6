@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5C8ECDE3E
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E76ECDE3E
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05C3021470
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:54:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05C3021470
+	by mail.kernel.org (Postfix) with ESMTP id 67740208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:54:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67740208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbeJRHwj (ORCPT
+        id S1727498AbeJRHwm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 03:52:39 -0400
-Received: from mga06.intel.com ([134.134.136.31]:9561 "EHLO mga06.intel.com"
+        Thu, 18 Oct 2018 03:52:42 -0400
+Received: from mga11.intel.com ([192.55.52.93]:62545 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726644AbeJRHwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 03:52:38 -0400
+        id S1727478AbeJRHwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 03:52:40 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 16:54:14 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 16:54:32 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="100366587"
+   d="scan'208";a="100366643"
 Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
-  by orsmga001.jf.intel.com with ESMTP; 17 Oct 2018 16:54:14 -0700
-Subject: [mm PATCH v4 2/6] mm: Drop meminit_pfn_in_nid as it is redundant
+  by orsmga001.jf.intel.com with ESMTP; 17 Oct 2018 16:54:31 -0700
+Subject: [mm PATCH v4 5/6] mm: Add reserved flag setting to set_page_links
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     linux-mm@kvack.org, akpm@linux-foundation.org
 Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
@@ -42,8 +42,8 @@ Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
         sparclinux@vger.kernel.org, dan.j.williams@intel.com,
         ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
         mingo@kernel.org, kirill.shutemov@linux.intel.com
-Date:   Wed, 17 Oct 2018 16:54:13 -0700
-Message-ID: <20181017235413.17213.73254.stgit@localhost.localdomain>
+Date:   Wed, 17 Oct 2018 16:54:31 -0700
+Message-ID: <20181017235431.17213.11512.stgit@localhost.localdomain>
 In-Reply-To: <20181017235043.17213.92459.stgit@localhost.localdomain>
 References: <20181017235043.17213.92459.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
@@ -55,170 +55,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As best as I can tell the meminit_pfn_in_nid call is completely redundant.
-The deferred memory initialization is already making use of
-for_each_free_mem_range which in turn will call into __next_mem_range which
-will only return a memory range if it matches the node ID provided assuming
-it is not NUMA_NO_NODE.
+This patch modifies the set_page_links function to include the setting of
+the reserved flag via a simple AND and OR operation. The motivation for
+this is the fact that the existing __set_bit call still seems to have
+effects on performance as replacing the call with the AND and OR can reduce
+initialization time.
 
-I am operating on the assumption that there are no zones or pgdata_t
-structures that have a NUMA node of NUMA_NO_NODE associated with them. If
-that is the case then __next_mem_range will never return a memory range
-that doesn't match the zone's node ID and as such the check is redundant.
+Looking over the assembly code before and after the change the main
+difference between the two is that the reserved bit is stored in a value
+that is generated outside of the main initialization loop and is then
+written with the other flags field values in one write to the page->flags
+value. Previously the generated value was written and then then a btsq
+instruction was issued.
 
-So one piece I would like to verfy on this is if this works for ia64.
-Technically it was using a different approach to get the node ID, but it
-seems to have the node ID also encoded into the memblock. So I am
-assuming this is okay, but would like to get confirmation on that.
+On my x86_64 test system with 3TB of persistent memory per node I saw the
+persistent memory initialization time on average drop from 23.49s to
+19.12s per node.
 
-On my x86_64 test system with 384GB of memory per node I saw a reduction in
-initialization time from 2.80s to 1.85s as a result of this patch.
-
-Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- mm/page_alloc.c |   50 ++++++++++++++------------------------------------
- 1 file changed, 14 insertions(+), 36 deletions(-)
+ include/linux/mm.h |    9 ++++++++-
+ mm/page_alloc.c    |   29 +++++++++++++++++++----------
+ 2 files changed, 27 insertions(+), 11 deletions(-)
 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 6e2c9631af05..14d06d7d2986 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1171,11 +1171,18 @@ static inline void set_page_node(struct page *page, unsigned long node)
+ 	page->flags |= (node & NODES_MASK) << NODES_PGSHIFT;
+ }
+ 
++static inline void set_page_reserved(struct page *page, bool reserved)
++{
++	page->flags &= ~(1ul << PG_reserved);
++	page->flags |= (unsigned long)(!!reserved) << PG_reserved;
++}
++
+ static inline void set_page_links(struct page *page, enum zone_type zone,
+-	unsigned long node, unsigned long pfn)
++	unsigned long node, unsigned long pfn, bool reserved)
+ {
+ 	set_page_zone(page, zone);
+ 	set_page_node(page, node);
++	set_page_reserved(page, reserved);
+ #ifdef SECTION_IN_PAGE_FLAGS
+ 	set_page_section(page, pfn_to_section_nr(pfn));
+ #endif
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 4bd858d1c3ba..a766a15fad81 100644
+index a0b81e0bef03..e7fee7a5f8a3 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -1301,36 +1301,22 @@ int __meminit early_pfn_to_nid(unsigned long pfn)
- #endif
- 
- #ifdef CONFIG_NODES_SPAN_OTHER_NODES
--static inline bool __meminit __maybe_unused
--meminit_pfn_in_nid(unsigned long pfn, int node,
--		   struct mminit_pfnnid_cache *state)
-+/* Only safe to use early in boot when initialisation is single-threaded */
-+static inline bool __meminit early_pfn_in_nid(unsigned long pfn, int node)
+@@ -1179,7 +1179,7 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+ 				unsigned long zone, int nid)
  {
- 	int nid;
- 
--	nid = __early_pfn_to_nid(pfn, state);
-+	nid = __early_pfn_to_nid(pfn, &early_pfnnid_cache);
- 	if (nid >= 0 && nid != node)
- 		return false;
- 	return true;
- }
- 
--/* Only safe to use early in boot when initialisation is single-threaded */
--static inline bool __meminit early_pfn_in_nid(unsigned long pfn, int node)
--{
--	return meminit_pfn_in_nid(pfn, node, &early_pfnnid_cache);
--}
--
- #else
--
- static inline bool __meminit early_pfn_in_nid(unsigned long pfn, int node)
+ 	mm_zero_struct_page(page);
+-	set_page_links(page, zone, nid, pfn);
++	set_page_links(page, zone, nid, pfn, false);
+ 	init_page_count(page);
+ 	page_mapcount_reset(page);
+ 	page_cpupid_reset_last(page);
+@@ -1195,7 +1195,8 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+ static void __meminit __init_pageblock(unsigned long start_pfn,
+ 				       unsigned long nr_pages,
+ 				       unsigned long zone, int nid,
+-				       struct dev_pagemap *pgmap)
++				       struct dev_pagemap *pgmap,
++				       bool is_reserved)
  {
- 	return true;
- }
--static inline bool __meminit  __maybe_unused
--meminit_pfn_in_nid(unsigned long pfn, int node,
--		   struct mminit_pfnnid_cache *state)
--{
--	return true;
--}
- #endif
- 
- 
-@@ -1459,21 +1445,13 @@ static inline void __init pgdat_init_report_one_done(void)
-  *
-  * Then, we check if a current large page is valid by only checking the validity
-  * of the head pfn.
-- *
-- * Finally, meminit_pfn_in_nid is checked on systems where pfns can interleave
-- * within a node: a pfn is between start and end of a node, but does not belong
-- * to this memory node.
-  */
--static inline bool __init
--deferred_pfn_valid(int nid, unsigned long pfn,
--		   struct mminit_pfnnid_cache *nid_init_state)
-+static inline bool __init deferred_pfn_valid(unsigned long pfn)
- {
- 	if (!pfn_valid_within(pfn))
- 		return false;
- 	if (!(pfn & (pageblock_nr_pages - 1)) && !pfn_valid(pfn))
- 		return false;
--	if (!meminit_pfn_in_nid(pfn, nid, nid_init_state))
--		return false;
- 	return true;
- }
- 
-@@ -1481,15 +1459,14 @@ static inline void __init pgdat_init_report_one_done(void)
-  * Free pages to buddy allocator. Try to free aligned pages in
-  * pageblock_nr_pages sizes.
-  */
--static void __init deferred_free_pages(int nid, int zid, unsigned long pfn,
-+static void __init deferred_free_pages(unsigned long pfn,
- 				       unsigned long end_pfn)
- {
--	struct mminit_pfnnid_cache nid_init_state = { };
  	unsigned long nr_pgmask = pageblock_nr_pages - 1;
- 	unsigned long nr_free = 0;
+ 	struct page *start_page = pfn_to_page(start_pfn);
+@@ -1231,19 +1232,16 @@ static void __meminit __init_pageblock(unsigned long start_pfn,
+ 		 * call because of the fact that the pfn number is used to
+ 		 * get the section_nr and this function should not be
+ 		 * spanning more than a single section.
++		 *
++		 * We can use a non-atomic operation for setting the
++		 * PG_reserved flag as we are still initializing the pages.
+ 		 */
+-		set_page_links(page, zone, nid, start_pfn);
++		set_page_links(page, zone, nid, start_pfn, is_reserved);
+ 		init_page_count(page);
+ 		page_mapcount_reset(page);
+ 		page_cpupid_reset_last(page);
  
- 	for (; pfn < end_pfn; pfn++) {
--		if (!deferred_pfn_valid(nid, pfn, &nid_init_state)) {
-+		if (!deferred_pfn_valid(pfn)) {
- 			deferred_free_range(pfn - nr_free, nr_free);
- 			nr_free = 0;
- 		} else if (!(pfn & nr_pgmask)) {
-@@ -1509,17 +1486,18 @@ static void __init deferred_free_pages(int nid, int zid, unsigned long pfn,
-  * by performing it only once every pageblock_nr_pages.
-  * Return number of pages initialized.
-  */
--static unsigned long  __init deferred_init_pages(int nid, int zid,
-+static unsigned long  __init deferred_init_pages(struct zone *zone,
- 						 unsigned long pfn,
- 						 unsigned long end_pfn)
- {
--	struct mminit_pfnnid_cache nid_init_state = { };
- 	unsigned long nr_pgmask = pageblock_nr_pages - 1;
-+	int nid = zone_to_nid(zone);
- 	unsigned long nr_pages = 0;
-+	int zid = zone_idx(zone);
- 	struct page *page = NULL;
+ 		/*
+-		 * We can use the non-atomic __set_bit operation for setting
+-		 * the flag as we are still initializing the pages.
+-		 */
+-		__SetPageReserved(page);
+-
+-		/*
+ 		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
+ 		 * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
+ 		 * page is ever freed or placed on a driver-private list.
+@@ -5612,7 +5610,18 @@ static void __meminit __memmap_init_hotplug(unsigned long size, int nid,
+ 		pfn = max(ALIGN_DOWN(pfn - 1, pageblock_nr_pages), start_pfn);
+ 		stride -= pfn;
  
- 	for (; pfn < end_pfn; pfn++) {
--		if (!deferred_pfn_valid(nid, pfn, &nid_init_state)) {
-+		if (!deferred_pfn_valid(pfn)) {
- 			page = NULL;
- 			continue;
- 		} else if (!page || !(pfn & nr_pgmask)) {
-@@ -1582,12 +1560,12 @@ static int __init deferred_init_memmap(void *data)
- 	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
- 		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
- 		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
--		nr_pages += deferred_init_pages(nid, zid, spfn, epfn);
-+		nr_pages += deferred_init_pages(zone, spfn, epfn);
+-		__init_pageblock(pfn, stride, zone, nid, pgmap);
++		/*
++		 * The last argument of __init_pageblock is a boolean
++		 * value indicating if the page will be marked as reserved.
++		 *
++		 * Mark page reserved as it will need to wait for onlining
++		 * phase for it to be fully associated with a zone.
++		 *
++		 * Under certain circumstances ZONE_DEVICE pages may not
++		 * need to be marked as reserved, however there is still
++		 * code that is depending on this being set for now.
++		 */
++		__init_pageblock(pfn, stride, zone, nid, pgmap, true);
+ 
+ 		cond_resched();
  	}
- 	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
- 		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
- 		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
--		deferred_free_pages(nid, zid, spfn, epfn);
-+		deferred_free_pages(spfn, epfn);
- 	}
- 	pgdat_resize_unlock(pgdat, &flags);
- 
-@@ -1676,7 +1654,7 @@ static int __init deferred_init_memmap(void *data)
- 		while (spfn < epfn && nr_pages < nr_pages_needed) {
- 			t = ALIGN(spfn + PAGES_PER_SECTION, PAGES_PER_SECTION);
- 			first_deferred_pfn = min(t, epfn);
--			nr_pages += deferred_init_pages(nid, zid, spfn,
-+			nr_pages += deferred_init_pages(zone, spfn,
- 							first_deferred_pfn);
- 			spfn = first_deferred_pfn;
- 		}
-@@ -1688,7 +1666,7 @@ static int __init deferred_init_memmap(void *data)
- 	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
- 		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
- 		epfn = min_t(unsigned long, first_deferred_pfn, PFN_DOWN(epa));
--		deferred_free_pages(nid, zid, spfn, epfn);
-+		deferred_free_pages(spfn, epfn);
- 
- 		if (first_deferred_pfn == epfn)
- 			break;
 
