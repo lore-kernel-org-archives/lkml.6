@@ -2,127 +2,90 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671DEECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B708CECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239FE2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:37:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239FE2150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 870A321528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:37:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 870A321528
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbeJQXdt (ORCPT
+        id S1727537AbeJQXeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:33:49 -0400
-Received: from anholt.net ([50.246.234.109]:54632 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727048AbeJQXdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:33:49 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 520B010A0F9D;
-        Wed, 17 Oct 2018 08:37:34 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id gNaLyCrloPqb; Wed, 17 Oct 2018 08:37:33 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id E2FEC10A0826;
-        Wed, 17 Oct 2018 08:37:32 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 6D30D2FE1BEE; Wed, 17 Oct 2018 08:37:32 -0700 (PDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, phil@raspberrypi.org,
-        devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/7] staging: vc04_services: Some dead code removal
-In-Reply-To: <20181017101831.b5kvh5jw3sqqhbat@mwanda>
-References: <20181004093747.21750-1-tuomas.tynkkynen@iki.fi> <1715113043.52878.1538821118324@email.1und1.de> <20181017101831.b5kvh5jw3sqqhbat@mwanda>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Wed, 17 Oct 2018 08:37:32 -0700
-Message-ID: <87bm7stwhv.fsf@anholt.net>
+        Wed, 17 Oct 2018 19:34:10 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40058 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbeJQXeK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:34:10 -0400
+Received: by mail-qk1-f196.google.com with SMTP id a13-v6so16736499qkc.7;
+        Wed, 17 Oct 2018 08:37:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XtqOi9bO2GYWQ15t2HKZ3ytuZ0JilaZMq8xk0e0v3mk=;
+        b=AaOMVU8AVJ4CGIPbgD8je9nBcTnG+DwQcwudPK5Iw98TUMioQfaLJLspVufsAHlz+I
+         ScamkAl8ScH0Wr3+Jlno9DWdQM7DMKlOfvTNEIT0ZnKC+pB422Ypj4161DROmjz92fUG
+         V1YOQuDTg0RPjJJtjaAIx0xFMWTcpyaOSmXVTdvpJO1FMqyv9ENh11nPzmQW/ERUNi8/
+         C0g1OD7acO+QYWhQaEOF82NC2iD4kkQ8nE0zy8HpFyIhju8SCX5dPZN2l1tmo6weqg0G
+         M4gLbDXX+VKEJ6WnTsqGN3kjpmr6THzWCidiEBPNmwHupnnk1sicV06mMISQXDdp0uqZ
+         HP4A==
+X-Gm-Message-State: ABuFfogOWbiEmC7WtVbyek3EL0Q8Q04CX+gSzFC5LzwqlYQ8slTw9FZX
+        EFEpL9WufeILmuoG3rSvxz82hNpl8Ugi8nZEEPA=
+X-Google-Smtp-Source: ACcGV63S/Q9gNd6Og3GlbIiiSTf67X2ApeG1tltng5Zp4hSqLVTTCwbf+mnOMWa/JuHfwaROsP7cC2RfVQtevxi4Dbg=
+X-Received: by 2002:a37:2b66:: with SMTP id r99-v6mr2922212qkh.343.1539790674450;
+ Wed, 17 Oct 2018 08:37:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+References: <cover.1539655731.git.ren_guo@c-sky.com> <1c0d8cddcdf15e5f397b3e42b76461e97d6e34ad.1539655732.git.ren_guo@c-sky.com>
+In-Reply-To: <1c0d8cddcdf15e5f397b3e42b76461e97d6e34ad.1539655732.git.ren_guo@c-sky.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 17 Oct 2018 17:37:38 +0200
+Message-ID: <CAK8P3a363-ucdqEtrkUah9NPrFtQV6eH=4G3fcQtHMyMStME5w@mail.gmail.com>
+Subject: Re: [PATCH V9 14/21] csky: User access
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        David Miller <davem@davemloft.net>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-Dan Carpenter <dan.carpenter@oracle.com> writes:
-
-> On Sat, Oct 06, 2018 at 12:18:38PM +0200, Stefan Wahren wrote:
->> Hi Tuomas,
->>=20
->> > Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi> hat am 4. Oktober 2018 um 1=
-1:37 geschrieben:
->> >=20
->> >=20
->> > Drop various pieces of dead code from here and there to get rid of
->> > the remaining users of VCHI_CONNECTION_T. After that we get to drop
->> > entire header files worth of unused code.
->> >=20
->> > I've tested on a Raspberry Pi Model B (bcm2835_defconfig) that
->> > snd-bcm2835 can still play analog audio just fine.
->> >=20
->>=20
->> thanks and i'm fine with your patch series:
->>=20
->> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
->>=20
->> Unfortunately this would break compilation of the downstream vchi
->> drivers like vcsm [1]. Personally i don't want to maintain another
->> one, because i cannot see the gain of the resulting effort.
->>=20
->> [1] - https://github.com/raspberrypi/linux/tree/rpi-4.14.y/drivers/char/=
-broadcom/vc_sm
+On Tue, Oct 16, 2018 at 5:05 AM Guo Ren <ren_guo@c-sky.com> wrote:
 >
+> The patch adds "user access from kernel" codes.
 >
-> I feel like everyone else already knows the answer but why don't we just
-> merge that code into staging?
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/csky/include/asm/uaccess.h | 416 ++++++++++++++++++++++++++++++++++++++++
+>  arch/csky/lib/usercopy.c        | 262 +++++++++++++++++++++++++
+>  2 files changed, 678 insertions(+)
+>  create mode 100644 arch/csky/include/asm/uaccess.h
+>  create mode 100644 arch/csky/lib/usercopy.c
 
-Dave's been working on a new VCSM service where the firmware can call
-back into Linux to allocate (instead of just having a permanent carveout
-of system memory that the firmware allocates from), and lets us make
-dma-bufs out of those buffers.  That driver makes a no-copies v4l2 media
-decode driver possible, which would then let Kodi and similar projects
-switch from downstream kernels with closed graphics to upstream kernels
-with open graphics.
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-Given that the new VCSM service is a rewrite, it's not clear to me that
-importing the old VCSM driver is a win.  But maybe we should go raid
-https://github.com/6by9/linux/tree/rpi-4.14.y-codecs-push-pt2a and grab
-the new drivers.  Upstreaming the VCHI audio driver to staging has
-clearly been a win for it, so maybe other eyes on the new v4l2 codec
-could help Dave along in stabilizing it.
+The 64-bit __put_user() is usually what everyone gets wrong, but
+your version seems fine. Also the access_ok() checks and
+the copy_to_user() result value all look correct.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlvHVzwACgkQtdYpNtH8
-nuhK3A//f9GO+h+0BU+AZYWAEyoJ12NUn7Gso5Bser2gUjV352+gWL78sAdM8zhJ
-7UTVcgv0PHym6v0TX9N1F64jBHGKF/yKlacUAhi3h8fJ7+dwJ9QBPLVqUSIcG7Nu
-S/Xpj7gVZaXqonCCSU2hT6aUgxTNb/YfhjuA1/qbRoYffipxUp2j0Ix2+dRgU/AO
-fTX9ka51mOfyIGWEXLFFfkNdt5VjyPmgHlvybNwh3bv1cvC4YG8fG8HI/YGcAyEx
-fj7CA4Xi95V3wW2Q50rpfdGXa4MyOjDBM7UxBlglBMOJyvb+e5wICByWZWmrRlcf
-0FCr/wJImHxpgJ2E7J7ZQ/dJO+FEfhkUuPe5gQRZ80/g6cranOnKlo/A6J9lxD2c
-cM6rKQvLSEtIeo4GbEirWjkJQKUp6nUYQfm6y8KBkcL/E51jaIogzd5+u1SHPK3o
-mDhEZhCmewH2GXPPOfrSqMk1+x12fuchjU8EcFTY4J5fUzYMfyicLXxqTlIbjkPq
-Vuonee5gEO8IL3fSYmcq8EBqrII69J9iCWWxufPx0U7xHleKN5wo9fMioiRmobka
-ahoItmmhPBqYRJrxT5wa6wTFu+4vEWz5cA+4NKct1xQ0o4xoqfSHDkLtffL3fd7o
-UbFA8m2UV0hy6wC9Ujvjr3a6GXbdXE14Xz0TKaJhesOlkV0IiVA=
-=Pemg
------END PGP SIGNATURE-----
---=-=-=--
+        Arnd
