@@ -2,65 +2,104 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47616ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B24B5ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1606521526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:32:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1606521526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F92A2150C
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:32:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F92A2150C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbeJQX2d (ORCPT
+        id S1727589AbeJQX3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:28:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49781 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727090AbeJQX2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:28:33 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 17 Oct 2018 19:29:08 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:40556 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbeJQX3I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:29:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 0830021269;
+        Wed, 17 Oct 2018 15:32:54 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 5uoEJf5aIE0U; Wed, 17 Oct 2018 15:32:54 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1045D356D5;
-        Wed, 17 Oct 2018 15:32:20 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A32E7842C;
-        Wed, 17 Oct 2018 15:32:14 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20181017151134.GA8966@andrea>
-References: <20181017151134.GA8966@andrea> <153978619457.8478.3813964117489247515.stgit@warthog.procyon.org.uk> <153978621809.8478.2198040871218302573.stgit@warthog.procyon.org.uk>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     dhowells@redhat.com, gregkh@linux-foundation.org,
-        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
-        viro@zeniv.linux.org.uk, sandeen@redhat.com,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] fscache: Fix race in fscache_op_complete() due to split atomic_sub & read
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 0F1F1211E7;
+        Wed, 17 Oct 2018 15:32:50 +0000 (UTC)
+Subject: Re: [Ksummit-discuss] [PATCH v3 3/3] code-of-conduct: Add back the
+ TAB as the central reporting point
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        ksummit-discuss@lists.linuxfoundation.org
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>
+References: <1539701820.2805.6.camel@HansenPartnership.com>
+ <1539702015.2805.10.camel@HansenPartnership.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <eb2ecb2b-7087-d516-b3c5-5e5a09a1f1da@kernel.org>
+Date:   Wed, 17 Oct 2018 09:32:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <14407.1539790333.1@warthog.procyon.org.uk>
-Date:   Wed, 17 Oct 2018 16:32:13 +0100
-Message-ID: <14408.1539790333@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 17 Oct 2018 15:32:20 +0000 (UTC)
+In-Reply-To: <1539702015.2805.10.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
-
-> > Fix this by using atomic_sub_return() instead of two calls.
+On 10/16/2018 09:00 AM, James Bottomley wrote:
+> Add a Reporting section where the Enforcement section used to be.  The
+> intention is still to debate what should go here, but in the meantime, this
+> gives us back the central reporting point we had in the old code of conflict.
 > 
-> Seems a case for atomic_sub_return_relaxed()... why not?
+> Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Reviewed-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> 
+> ---
+> 
+> v2: Added this patch to allay concerns we were stripping the reporting
+>     mechanism entirely.
+> v3: Add (where required by law) as a qualifier to the confidentiality
+>     requirement
+> ---
+>  Documentation/process/code-of-conduct.rst | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/process/code-of-conduct.rst
+> index 4dd90987305b..eec768471a4d 100644
+> --- a/Documentation/process/code-of-conduct.rst
+> +++ b/Documentation/process/code-of-conduct.rst
+> @@ -59,6 +59,17 @@ address, posting via an official social media account, or acting as an appointed
+>  representative at an online or offline event. Representation of a project may be
+>  further defined and clarified by project maintainers.
+>  
+> +Reporting
+> +=========
+> +
+> +Instances of abusive, harassing, or otherwise unacceptable behavior may be
+> +reported by contacting the Technical Advisory Board (TAB) at
+> +<tab@lists.linux-foundation.org>. All complaints will be reviewed and
+> +investigated and will result in a response that is deemed necessary and
+> +appropriate to the circumstances. The TAB is obligated to maintain
+> +confidentiality with regard to the reporter of an incident (except where
+> +required by law).
+> +
+>  Attribution
+>  ===========
+>  
+> 
+Acked-by : Shuah Khan <shuah@kernel.org>
 
-Ummm...  In that case, should it be atomic_sub_return_release()?
-
-David
+thanks,
+-- Shuah
