@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FEAEECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 989E9ECDE39
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E0EB214D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64DD1214D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:49:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbqVzrWe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E0EB214D5
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHw2FYJo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64DD1214D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbeJRBqe (ORCPT
+        id S1728108AbeJRBqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 21:46:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34300 "EHLO mail.kernel.org"
+        Wed, 17 Oct 2018 21:46:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727290AbeJRBqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 21:46:33 -0400
+        id S1727290AbeJRBqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 21:46:35 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FFE52148E;
-        Wed, 17 Oct 2018 17:49:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B366A214AB;
+        Wed, 17 Oct 2018 17:49:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539798587;
-        bh=Ru6p2bJ/6C4GqKiFP5scRoSEHUCUdjeiIWHGStTuhHM=;
+        s=default; t=1539798589;
+        bh=bRFCOQqty0AY5RjN5WejT0DE/sXl8QR1mIZFNSqjlxY=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=JbqVzrWeS5jbDMCoUNKscokJos6Kp0IAJqQmhou1y8BsFmEh7OVpNiKlK5rMXmp/D
-         gIS1SPvI+d/IXjSkubIkt2km1dycfYCi+XNr7va6P7JueBF1Vvu95vUbYHoLNKqT5G
-         kCpXrbCHyMy3IANln862nVPoS1F9GqTs6AP63XUI=
+        b=bHw2FYJoHArRDpz/HVFtenbn7iXXElLZQ0615i3eXS5+e3sya3xZGaNDT+qujRRcz
+         bMpLZjewQs+jhiGCKid4BIwwlquofIXcJYdECYpEoTPFWLp1wGWPVnec8finZGI3e3
+         Xb3oUVTnH7u4cwBTLQe6W/FyLcg90plg+lp7Q8jM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181016142200.19741-5-alexandre.belloni@bootlin.com>
+In-Reply-To: <20181016142200.19741-6-alexandre.belloni@bootlin.com>
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
@@ -49,23 +49,28 @@ Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
 References: <20181016142200.19741-1-alexandre.belloni@bootlin.com>
- <20181016142200.19741-5-alexandre.belloni@bootlin.com>
-Message-ID: <153979858672.5275.14300177764052679778@swboyd.mtv.corp.google.com>
+ <20181016142200.19741-6-alexandre.belloni@bootlin.com>
+Message-ID: <153979858914.5275.16522645452377539139@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v2 04/22] clk: at91: audio-pll: separate registration from DT
- parsing
-Date:   Wed, 17 Oct 2018 10:49:46 -0700
+Subject: Re: [PATCH v2 05/22] clk: at91: generated: set audio_pll_allowed in
+ at91_clk_register_generated()
+Date:   Wed, 17 Oct 2018 10:49:49 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Alexandre Belloni (2018-10-16 07:21:42)
-> Separate registration out of of_sama5d2_clk_audio_pll*_setup to allow oth=
-er
-> code to use it.
+Quoting Alexandre Belloni (2018-10-16 07:21:43)
+> Set gck->audio_pll_allowed in at91_clk_register_generated. This makes it
+> easier to do it from code that is not parsing device tree.
 > =
 
+> Also, this fixes an issue where the resulting clk_hw can be dereferenced
+> before being tested for error.
+> =
+
+> Fixes: 1a1a36d72e3d ("clk: at91: clk-generated: make gclk determine audio=
+_pll rate")
 > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > ---
 
