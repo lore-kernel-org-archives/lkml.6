@@ -2,180 +2,117 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB67ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD6CECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 830F12150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:39:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830F12150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 7DFA521523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:40:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fd7ze2hh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DFA521523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727288AbeJQVfU (ORCPT
+        id S1727338AbeJQVft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:35:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42932 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726727AbeJQVfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:35:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1930FAFC1;
-        Wed, 17 Oct 2018 13:39:33 +0000 (UTC)
-Date:   Wed, 17 Oct 2018 15:39:31 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Torsten Duwe <duwe@lst.de>
-cc:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org, jeyu@kernel.org
-Subject: Re: [PATCH v3 3/4] arm64: implement live patching
-In-Reply-To: <20181001141652.5478C68BE1@newverein.lst.de>
-Message-ID: <alpine.LSU.2.21.1810171051560.21847@pobox.suse.cz>
-References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141652.5478C68BE1@newverein.lst.de>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 17 Oct 2018 17:35:49 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45964 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbeJQVft (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 17:35:49 -0400
+Received: by mail-pf1-f193.google.com with SMTP id u12-v6so13203780pfn.12
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 06:40:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ixx4Ybmjxu91RY2LQlr7ikt9bJh+H2INS/VFi5gpdt0=;
+        b=Fd7ze2hhu4vkQt7tG5VVBtDxtAOrNS+MlsVd9qtezb9aBb5e+iiNJ7WjTAx5XjOz86
+         9cyz7DbirTzqvgEzYR2RxShoocnWFLRLNHNzmSdri43fbIDOTySS7VKnPtgBxusU6+ZI
+         1d2vH43dUE0a4D0xeP2O1iwfi/jUd80+FQj6f4SXtOvEOdx6lNQvkX9pjuXeEW8g8EIE
+         H73QgCwJRIaU7YsDx32c5qFXmvpvWc/w+7WhGLUYTutJb/fWA11Qe4LlbWjwvL6wV3Ch
+         VGICmJw/+qk/KVgz0l5rhD2iPOBnmhG3zTPQi6ouJlcpSpluZaJhNvB7AyAVr/bEEoZr
+         Ck/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ixx4Ybmjxu91RY2LQlr7ikt9bJh+H2INS/VFi5gpdt0=;
+        b=LQ5K8Kq9RM9Y16UNByhxwB/JBWBu8fVPCkTL/WuRPwcL2bUqpofnpx7sLnSmUFHABo
+         Y0fX5lcy6C85kNMLjOC2FogMlqTgCZuHxaDcEAcKAAjohjOq638V8BGWqND0Knas3Rxn
+         3IQ218qT3/cyaYHIKXggkpXRt43K4KNRtZlQitvIFzFkGjId3OXyA1pB4SSo/FdODkgA
+         9/WHA7fhSBNvIQECti1z3dA2RpuXPy6Xp6KJGQGWQEmPL9fMRphukIPnz6DqerTmQUEK
+         FP/vrd9YBESTlUuG1vaoWL238Go9Fbj5U9G8O5/KJ4IEVkNcR2OSTi2P/xgvSs39zzI3
+         DzhA==
+X-Gm-Message-State: ABuFfoiiFKB1zp/haj0njTmF8jNXnNTkMya03LxadBdnbFlRy41USwo8
+        VWBt8Dbmt8gWGuk8dzoA+3nwTasQmhc0EGuzlpdRQqoBgOM=
+X-Google-Smtp-Source: ACcGV60rODJLuXIeF9U3xQuURAzHOePQ4dhEF1l67YIr+a4W8Mc/0+bWiRk2BR0N8r+73r6pFWPe7kj4bCZ3TsaBNIE=
+X-Received: by 2002:a62:8a91:: with SMTP id o17-v6mr26740404pfk.184.1539783604001;
+ Wed, 17 Oct 2018 06:40:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20181017023652.6867-1-changbin.du@gmail.com> <62b6aff8-8ca2-7d6c-d810-64d10a25f2d4@siemens.com>
+In-Reply-To: <62b6aff8-8ca2-7d6c-d810-64d10a25f2d4@siemens.com>
+From:   Changbin Du <changbin.du@gmail.com>
+Date:   Wed, 17 Oct 2018 21:39:52 +0800
+Message-ID: <CABgQ-Tgfa-dX2v0LF95wTef36bKGwTkdB9AQrzCozOx_7kgMBQ@mail.gmail.com>
+Subject: Re: [PATCH] scripts/gdb: fix lx-version for gdb 7.3-
+To:     "J. Kiszka" <jan.kiszka@siemens.com>
+Cc:     Du Changbin <changbin.du@gmail.com>, kbingham@kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 1 Oct 2018, Torsten Duwe wrote:
+On Wed, Oct 17, 2018 at 08:56:44AM +0200, Jan Kiszka wrote:
+> On 17.10.18 04:36, Du Changbin wrote:
+> > For gdb version less than 7.3, lx-version only one character.
+>
+>                                           ^^^ prints?
+>
+I will update it, thanks!
 
-> Based on ftrace with regs, do the usual thing. Also allocate a
-> task flag for whatever consistency handling will be used.
-> Watch out for interactions with the graph tracer.
+> > (gdb) lx-version
+> > L(gdb)
+> >
+> > This can be fixed by casting 'linux_banner' as (char *).
+> > (gdb) lx-version
+> > Linux version 4.19.0-rc1+ (changbin@acer) (gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #21 SMP Sat Sep 1 21:43:30 CST 2018
+> >
+> > gdb 7.4 seems to be no such issue.
+> >
+> > Signed-off-by: Du Changbin <changbin.du@gmail.com>
+> > ---
+> >   scripts/gdb/linux/proc.py | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/scripts/gdb/linux/proc.py b/scripts/gdb/linux/proc.py
+> > index 086d27223c0c..0aebd7565b03 100644
+> > --- a/scripts/gdb/linux/proc.py
+> > +++ b/scripts/gdb/linux/proc.py
+> > @@ -41,7 +41,7 @@ class LxVersion(gdb.Command):
+> >       def invoke(self, arg, from_tty):
+> >           # linux_banner should contain a newline
+> > -        gdb.write(gdb.parse_and_eval("linux_banner").string())
+> > +        gdb.write(gdb.parse_and_eval("(char *)linux_banner").string())
+> >   LxVersion()
+> >
+>
+> Looks good to me otherwise.
+>
+> Jan
+>
+> --
+> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+> Corporate Competence Center Embedded Linux
 
-Similar to what Mark wrote about 2/4, I'd appreciate a better commit log. 
-Could you explain traditional "what/why/how", please?
- 
-> Signed-off-by: Torsten Duwe <duwe@suse.de>
-> 
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -119,6 +119,7 @@ config ARM64
->  	select HAVE_GENERIC_DMA_COHERENT
->  	select HAVE_HW_BREAKPOINT if PERF_EVENTS
->  	select HAVE_IRQ_TIME_ACCOUNTING
-> +	select HAVE_LIVEPATCH
->  	select HAVE_MEMBLOCK
->  	select HAVE_MEMBLOCK_NODE_MAP if NUMA
->  	select HAVE_NMI
-> @@ -1349,4 +1350,6 @@ if CRYPTO
->  source "arch/arm64/crypto/Kconfig"
->  endif
->  
-> +source "kernel/livepatch/Kconfig"
-> +
->  source "lib/Kconfig"
-> --- a/arch/arm64/include/asm/thread_info.h
-> +++ b/arch/arm64/include/asm/thread_info.h
-> @@ -76,6 +76,7 @@ void arch_release_task_struct(struct tas
->  #define TIF_FOREIGN_FPSTATE	3	/* CPU's FP state is not current's */
->  #define TIF_UPROBE		4	/* uprobe breakpoint or singlestep */
->  #define TIF_FSCHECK		5	/* Check FS is USER_DS on return */
-> +#define TIF_PATCH_PENDING	6
->  #define TIF_NOHZ		7
->  #define TIF_SYSCALL_TRACE	8
->  #define TIF_SYSCALL_AUDIT	9
-> @@ -94,6 +95,7 @@ void arch_release_task_struct(struct tas
->  #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
->  #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
->  #define _TIF_FOREIGN_FPSTATE	(1 << TIF_FOREIGN_FPSTATE)
-> +#define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
->  #define _TIF_NOHZ		(1 << TIF_NOHZ)
->  #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
->  #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
-> @@ -106,7 +108,8 @@ void arch_release_task_struct(struct tas
->  
->  #define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_SIGPENDING | \
->  				 _TIF_NOTIFY_RESUME | _TIF_FOREIGN_FPSTATE | \
-> -				 _TIF_UPROBE | _TIF_FSCHECK)
-> +				 _TIF_UPROBE | _TIF_FSCHECK | \
-> +				 _TIF_PATCH_PENDING)
-
-Could you add a note to the changelog what this means? My ability to read 
-arm64 entry.S is very limited, but I can see that _TIF_WORK_MASK is 
-process in a syscall exit and irq return paths. That's good. It is also 
-called (via "b ret_to_user") in a couple of different places (el0_* 
-labels). I guess those are returns from exception handling. A comment 
-about it in the changelog would be appreciated.
-  
->  #define _TIF_SYSCALL_WORK	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT | \
->  				 _TIF_SYSCALL_TRACEPOINT | _TIF_SECCOMP | \
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/livepatch.h
-> @@ -0,0 +1,36 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + *
-> + * livepatch.h - arm64-specific Kernel Live Patching Core
-> + *
-> + * Copyright (C) 2016,2018 SUSE
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * as published by the Free Software Foundation; either version 2
-> + * of the License, or (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program; if not, see <http://www.gnu.org/licenses/>.
-> + */
-> +#ifndef _ASM_ARM64_LIVEPATCH_H
-> +#define _ASM_ARM64_LIVEPATCH_H
-> +
-> +#include <linux/module.h>
-> +#include <linux/ftrace.h>
-
-I think that only
-
-#include <asm/ptrace.h>
-
-is in fact needed, because of "struct pt_regs".
-
-
-Ad relocations. I checked that everything in struct mod_arch_specific 
-stays after the module is load. Both core and init get SHF_ALLOC set 
-(mod->arch.core.plt->sh_flags in module_frob_arch_sections(). It is 
-important because apply_relocate_add() may use those sections 
-through module_emit_plt_entry() call.
-
-ftrace_trampoline section gets SHF_ALLOC as well. Btw, don't you want to 
-do something similar for new ftrace_regs_trampoline in 
-module_frob_arch_sections()? Perhaps even edit 
-arch/arm64/kernel/module.lds? I'm completely clueless here, so it may be 
-ok. And it applies to 2/4 patch.
-
-The last thing is count_plts() function called from 
-module_frob_arch_sections(). It needed to be changed in 2016 as well. See 
-Jessica's patch 
-(20160713001113.GA30925@packer-debian-8-amd64.digitalocean.com). The logic 
-in the function has changed since then. If I am not mistaken, 
-count_plts() is fine as it is right now. It does not consider SHN_UNDEF 
-anymore, it looks at the destination section (where a symbol should 
-resolved to) only.
-
-Jessica, could you doublecheck, please?
-
-Torsten, please doublecheck all this as well and add a comment about all 
-this to the changelog, so we don't have to analyze it from the beginning 
-again in the future.
-
+--
 Thanks,
-Miroslav
+Du Changbin
