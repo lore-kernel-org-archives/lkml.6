@@ -2,114 +2,92 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C497ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0029ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D758C2150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:48:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AfnZvDGa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D758C2150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 69E112150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:49:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69E112150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727243AbeJQUnq (ORCPT
+        id S1727219AbeJQUp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 16:43:46 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40279 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbeJQUnq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 16:43:46 -0400
-Received: by mail-oi1-f194.google.com with SMTP id j68-v6so20936647oib.7;
-        Wed, 17 Oct 2018 05:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V8f2MWGigH5X5oEjoqFaeKPsTcmN2VjqAB7dIhDSGv8=;
-        b=AfnZvDGaRl96PPxHVLF+HuMgD+/Ms6NNoHp7kywhRAk2l7cdC/c6xBRgqljY8FJxCJ
-         cTZ/ExGdO+/cmoGDfV6dRnNgX2okdySoJSbcJjaHKV4WYR0t+iwfTADVw0SNfd0pOzG/
-         UdP72PLCrmB8fB+UVYADVn8U10cmSvasdfWtL+EXsjcBviTj42VwH8959GIMF9c+IuUs
-         4oKwOXqhGTHtLhj+hXGXM36uyeIZmO3yvQSPZx5ZtNtx5AKOU6+3pqy7i7y8Ua6bvaXO
-         rBNeXZBYiZPTlyktti+HKlbZFhZN+c9+Ziu+cuy8LXCVtNKJksBHru6isn6qWxHQSQet
-         fA6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V8f2MWGigH5X5oEjoqFaeKPsTcmN2VjqAB7dIhDSGv8=;
-        b=YU04zcXon4wd79MjUPism2QhNaGLVNgcbZLZPH4CEeow5Y7YRoEBea8n80LN/XJWlO
-         ukuclE+7AbGuQJpeHtCc2doppfQ+Gfqq6GxOF+ibIoWko7ETidoNoliPjHUKbUXG/hkK
-         tzHmoclCuYoIvZpGdvyBjyBuNGNuluE7zJtja4u9Kxn78YEL7gbJX9b83ipyF+/KKppF
-         Atp+OdEdlhzc3CRBv0wJPZyOxnPz8pFb0XMifbkeZLZGlglmTgi6HrAimYVly/ucf/H7
-         0WJYZnkT38Qv8FFUq+MP3V4xqGcPOOXZFptKwFlmNS36wOsfgj7QS/DFr7WVmyDOFaSv
-         1YNg==
-X-Gm-Message-State: ABuFfogeWeSg1CA0ZFjCRwsDN5SUqYoWWFjN5CDXsJ4xrwXXk5KxiOol
-        Em1JtD+bQ2gKFr6nzcBvb2XdxBLlZcDbQWTkcFw=
-X-Google-Smtp-Source: ACcGV62TCjhXlbBRbRdHpx5qjdbUhfHohtP+P/5LIR5XhEcJq0gRCBKNjJcbUpKW5hiRnF8Q5Cc/qZ+QX8HAG1pW3hA=
-X-Received: by 2002:aca:e385:: with SMTP id a127-v6mr14891988oih.261.1539780492117;
- Wed, 17 Oct 2018 05:48:12 -0700 (PDT)
+        Wed, 17 Oct 2018 16:45:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34078 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726936AbeJQUp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 16:45:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 872D9ACBC;
+        Wed, 17 Oct 2018 12:49:51 +0000 (UTC)
+Subject: Re: [PATCH -next] advansys: remove set but not used variable
+ 'srb_tag' in adv_isr_callback
+To:     YueHaibing <yuehaibing@huawei.com>, willy@infradead.org,
+        hare@suse.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+References: <20181017123432.18304-1-yuehaibing@huawei.com>
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+Message-ID: <4950b4fe-61b5-e1c3-9d16-7643107857a5@suse.de>
+Date:   Wed, 17 Oct 2018 14:49:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <cover.1539779579.git.leonard.crestez@nxp.com> <95dce7010676581691b1ac9906e9298470e0aa1a.1539779579.git.leonard.crestez@nxp.com>
-In-Reply-To: <95dce7010676581691b1ac9906e9298470e0aa1a.1539779579.git.leonard.crestez@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 17 Oct 2018 09:48:21 -0300
-Message-ID: <CAOMZO5BMeHjsyZWhUb5RmEBRCYViUN-Vx8KyLBWtDJGKBHHpCg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] crypto: mxs-dcp - Add support for dcp clk
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Horia Geanta Neag <horia.geanta@nxp.com>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181017123432.18304-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leonard,
-
-On Wed, Oct 17, 2018 at 9:38 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
->
-> On 6ull and 6sll the DCP block has a clock which needs to be explicitly
-> enabled.
->
-> Add minimal handling for this at probe/remove time.
->
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+On 17/10/18 14:34, YueHaibing wrote:
+> drivers/scsi/advansys.c: In function 'adv_isr_callback':
+> drivers/scsi/advansys.c:5952:6: warning:
+>  variable 'srb_tag' set but not used [-Wunused-but-set-variable]
+> 
+> It never used since introduction in
+> commit 9c17c62aedb0 ("advansys: use shared host tag map for command lookup")
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
+>  drivers/scsi/advansys.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
+> index 44c9619..223ef6f 100644
+> --- a/drivers/scsi/advansys.c
+> +++ b/drivers/scsi/advansys.c
+> @@ -5949,7 +5949,6 @@ static void adv_async_callback(ADV_DVC_VAR *adv_dvc_varp, uchar code)
+>  static void adv_isr_callback(ADV_DVC_VAR *adv_dvc_varp, ADV_SCSI_REQ_Q *scsiqp)
+>  {
+>  	struct asc_board *boardp = adv_dvc_varp->drv_ptr;
+> -	u32 srb_tag;
+>  	adv_req_t *reqp;
+>  	adv_sgblk_t *sgblkp;
+>  	struct scsi_cmnd *scp;
+> @@ -5965,7 +5964,6 @@ static void adv_isr_callback(ADV_DVC_VAR *adv_dvc_varp, ADV_SCSI_REQ_Q *scsiqp)
+>  	 * completed. The adv_req_t structure actually contains the
+>  	 * completed ADV_SCSI_REQ_Q structure.
+>  	 */
+> -	srb_tag = le32_to_cpu(scsiqp->srb_tag);
+>  	scp = scsi_host_find_tag(boardp->shost, scsiqp->srb_tag);
 
-Please always explain what changed from the previous patch version.
+Shouldn't this be:
+	scp = scsi_host_find_tag(boardp->shost,
+					le32_to_cpu(scsiqp->srb_tag));
 
-> +       /* Restart the DCP block. */
-> +       ret = stmp_reset_block(sdcp->base);
-> +       if (ret) {
-> +               dev_err(dev, "Failed reset\n");
-> +               goto err_disable_unprepare_clk;
-> +       }
 
-This seems like an unrelated change that should be in a separate patch.
-
-Also, this was not present in v3, so it is better to explain that this
-has been introduced in v4.
+-- 
+Johannes Thumshirn                                        SUSE Labs
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
