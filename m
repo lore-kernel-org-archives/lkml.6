@@ -2,154 +2,104 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=3.0 tests=DATE_IN_PAST_03_06,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8C1ECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CADECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:41:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F50A21473
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 864A921473
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:41:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rrr28sIU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F50A21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HRNqVkhg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 864A921473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbeJRGjg (ORCPT
+        id S1727603AbeJRGjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 02:39:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60468 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbeJRGjg (ORCPT
+        Thu, 18 Oct 2018 02:39:45 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45007 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbeJRGjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 02:39:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/GeNbQ7N59Uk/lY2UmvSe+yGDeqM6Ue0NDbSm2tdI5g=; b=Rrr28sIU7jNUVzUBNYLlru+ol
-        5faVgHbs6pGz0bNhiMxfwYYgfXlLEj/ELnuWV9VWOHJEgTd/Vx4HU1JeETGqOElqyagFB8q9/2xf4
-        1q88FHIGTp6DLzxqHenKXfAIiIwBUs/4XfKQnOdjWvY5ipqOckeVbmv0i+5FgLIkvPTg1ODV64Jlh
-        566XdmhfF3ZcmEfr21MmR60b+W18x6B947nvkGvuo3isjReY4XO9CHwDE0zNYedWo1cuUaCB9msMl
-        YWhELWP9d9st7b2aGj6IetwKHfd0SA/O4Rtn63eNNA/OgYRGfqBDbLaTORxhaibMz1zdT6T5HZhgW
-        ichiWhkLw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gCuVe-0005NE-UC; Wed, 17 Oct 2018 22:41:46 +0000
-Subject: Re: [PATCH] docs: Introduce deprecated APIs list
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20181017021708.GA22211@beast>
- <aed0041d-7c28-4dfb-91b5-fc83174d8744@infradead.org>
- <875zy0ki3r.fsf@intel.com>
- <70d6b61f-25af-f903-0693-46e649c08aff@infradead.org>
- <CAGXu5jJDZjaSLE9uPZVWCqrtSMh1-x8H=X+3ptSYrL5QZdo8xA@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <193ca5ac-a3ef-3cfe-ca91-3b142ef9c50b@infradead.org>
-Date:   Wed, 17 Oct 2018 15:41:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 18 Oct 2018 02:39:44 -0400
+Received: by mail-ot1-f68.google.com with SMTP id p23so27867062otf.11
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:41:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UdTDYmrD+Y9u0PK5U9K3HvUUu+sgzgVl8WCZEh4jKw0=;
+        b=HRNqVkhgxDjMxdm3PTQPcsStkOuweQj368RgImVO+rTI+RWgWystwvKvBZERCUnhDm
+         PvYCWTUoKMi5qxTLZ2K1M2pyHPSYiggjKAPVlADoSPGYNUsocTar0ztcTzSBRc5XfkwT
+         1zLQrYaLCrVsLb/MGdb6FI4EZ/kH6ZsPczs2fDhRuFQrUS6YYQuta5wwwz7Lh2cETAZk
+         LRkGpDb1Vfw3p2K9FeH33b/0wBh8F2XzU2tPdtdklt7Qy0ViJjmuMRFG3nMESyYIIfYb
+         Av2qBe4UjsSFg94UltO8IUvbnWBz+mTMisfmJLdn43tAwAjJ3MXkBDtDExUcSX7AdgDo
+         0hsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UdTDYmrD+Y9u0PK5U9K3HvUUu+sgzgVl8WCZEh4jKw0=;
+        b=h0kh/tMrBRk9SLwm2hmajVcPUvVDt+S/8SCVbgfSRLv9NzLq5LfdtCS2xeT8UOKKUf
+         VVbGe05BJUfI31zF1yNnC9lP+VEs6P/NhoBJcJamX3/I8LcH3a4rnnNxWafQU+GXVsIX
+         iErElg6o1kKqcjWHBrNuq8W9NR+B6/ZUbWd+tLatCc1fpf+JD+SYIR+9FMmBHZxKL8K2
+         WjUkr2+W+YXDSvbq8AhW7QQa86CQ77ZCKuAvLiyl/gVVI7PkvZjn33iYQ3snzTs5YS2q
+         f3M7gV1V3fAoo5eT8zvt1StK6quJDBS4OTejXagHbL0320nw0TXxd/sFXMtVs8XA71BS
+         7FXw==
+X-Gm-Message-State: ABuFfohBb7Ivl/ugIlsoILnFYZo4dx8JUt8EPRQSucJe9CZNfZWvLuhf
+        2fX9ZOyI27kYk8YrRnsIxET4gdQzoiVMVMtXCzs=
+X-Google-Smtp-Source: ACcGV60f+swCkoSoCmO6Z3O7HJIwv5XW1GvQWOKq3F3T/rgLsp+k68gw6VOYMemCo9i7QFY2sVCDUo4GM9Pgmw8T0lU=
+X-Received: by 2002:a9d:cb0:: with SMTP id b45mr18299107otb.2.1539816115137;
+ Wed, 17 Oct 2018 15:41:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJDZjaSLE9uPZVWCqrtSMh1-x8H=X+3ptSYrL5QZdo8xA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180906152859.7810-1-tycho@tycho.ws> <20180906152859.7810-4-tycho@tycho.ws>
+ <CALCETrXGBZyqDb7DEysHmOkxaBrXUp4s2X08HfqZkpjM28s3Hg@mail.gmail.com>
+ <CAMkWEXNN2_saQN-yQ7Pwgau1YTYQQuih+KLnKj5-cOYa6CyMPw@mail.gmail.com>
+ <20181017150022.GA7544@cisco> <CAMkWEXM1c7AGTH=tpgoHtPnFFY-V+05nGOU90Sa1E3EPY9OhKQ@mail.gmail.com>
+In-Reply-To: <CAMkWEXM1c7AGTH=tpgoHtPnFFY-V+05nGOU90Sa1E3EPY9OhKQ@mail.gmail.com>
+From:   Michael Tirado <mtirado418@gmail.com>
+Date:   Wed, 17 Oct 2018 18:15:47 +0000
+Message-ID: <CAMkWEXOywaUUy3=G+26G1uYOPw-pq-Wq68xSPmShuAMCGwfcbQ@mail.gmail.com>
+Subject: Re: [PATCH v6 3/5] seccomp: add a way to get a listener fd from ptrace
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/18 3:37 PM, Kees Cook wrote:
-> On Wed, Oct 17, 2018 at 10:08 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 10/17/18 3:00 AM, Jani Nikula wrote:
->>> On Tue, 16 Oct 2018, Randy Dunlap <rdunlap@infradead.org> wrote:
->>>> On 10/16/18 7:17 PM, Kees Cook wrote:
->>>>> As discussed in the "API replacement/deprecation" thread[1], this
->>>>> makes an effort to document what things shouldn't get (re)added to the
->>>>> kernel, by introducing Documentation/process/deprecated.rst. It also
->>>>> adds the overflow kerndoc to ReST output, and tweaks the struct_size()
->>>>> documentation to parse correctly.
->>>>>
->>>>> [1] https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2018-September/005282.html
->>>>>
->>>>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>>>> ---
->>>>>  Documentation/driver-api/basics.rst  |  3 +
->>>>>  Documentation/process/deprecated.rst | 99 ++++++++++++++++++++++++++++
->>>>>  Documentation/process/index.rst      |  1 +
->>>>>  include/linux/overflow.h             |  2 +-
->>>>>  4 files changed, 104 insertions(+), 1 deletion(-)
->>>>>  create mode 100644 Documentation/process/deprecated.rst
->>>>
->>>>
->>>>> diff --git a/include/linux/overflow.h b/include/linux/overflow.h
->>>>> index 40b48e2133cb..2f224f43dd06 100644
->>>>> --- a/include/linux/overflow.h
->>>>> +++ b/include/linux/overflow.h
->>>>> @@ -291,7 +291,7 @@ static inline __must_check size_t __ab_c_size(size_t n, size_t size, size_t c)
->>>>>  }
->>>>>
->>>>>  /**
->>>>> - * struct_size() - Calculate size of structure with trailing array.
->>>>> + * function struct_size() - Calculate size of structure with trailing array.
->>>>
->>>> That syntax is not explained nor documented in Documentation/doc-guide/kernel-doc.rst.
->>>>
->>>> Is the root problem that the function name begins with "struct"?
->>>> Please explain in the patch description.
->>>
->>> Indeed, shouldn't be needed.
-> 
-> I actually thought the problem was with it not knowing how to deal
-> with struct_size() being a macro instead of a real function.
-> 
->> Well, this is just a guess (no testing), but in scripts/kernel-doc (at line
->> 1907 in 4.19-rc8), we can see:
->>
->>         if ($identifier =~ m/^struct/) {
->>             $decl_type = 'struct';
->>         } elsif ($identifier =~ m/^union/) {
->>             $decl_type = 'union';
->>         } elsif ($identifier =~ m/^enum/) {
->>             $decl_type = 'enum';
->>         } elsif ($identifier =~ m/^typedef/) {
->>             $decl_type = 'typedef';
->>         } else {
->>             $decl_type = 'function';
->>         }
->>
->> I wouldn't be surprised if a function named "struct_size" looks like a
->> type struct.  Maybe it needs to be more strict, with either a space or
->> word boundary at the end of each type string.  E.g.:
->>
->>         if ($identifier =~ m/^struct\b/) {
->>             $decl_type = 'struct';
->>         } elsif ($identifier =~ m/^union\b/) {
->>             $decl_type = 'union';
->>         } elsif ($identifier =~ m/^enum\b/) {
->>             $decl_type = 'enum';
->>         } elsif ($identifier =~ m/^typedef\b/) {
->>             $decl_type = 'typedef';
->>         } else {
->>             $decl_type = 'function';
->>         }
-> 
-> But I see it's actually the prefix! :P
-> 
-> Using the above code fixes it for me. Can you send this fix with my
-> Tested-by, and I'll spin a v2 of my "deprecated.rst" patch without the
-> overflow.h change?
+Tycho, Sorry for the duplicate, I forgot to CC the list :(
 
-OK, but I'll have to first test for unexpected consequences of it.
-(i.e., run full docs build with and without the patch)
+On Wed, Oct 17, 2018 at 3:00 PM Tycho Andersen <tycho@tycho.ws> wrote:
+>
+>
+> That's one of the use cases, but there are a large number of others. I
+> discuss a few in patch 1:
+> https://www.spinics.net/lists/linux-containers/msg33956.html
+>
 
--- 
-~Randy
+Thanks this is making more sense to me now.
+
+I haven't been keeping up with the list and just did a bunch
+of reading. It seems that stackable LSM's are making some real
+progress now, and I wonder if those patches are merged would
+using a stacked security module approach be worth exploring if
+it provides the same or greater flexibility, and assuming all
+syscalls of interest can be hooked somehow?
+
+>FWIW, I'm dropping the ptrace bits (and the fd passing bits)
+>from the next version, because they seem fairly controversial.
+
+Yeah ptrace can be difficult to work with, no doubt it is
+controversial; <3 Yama. I've used the ptrace method for counting
+syscall failures, and ignoring the non-trivial amount of time it
+took me to learn the API then write working code, the performance
+loss (in a syscall heavyweight program like web browser) is a
+noticeable problem, outside of a debugging or analysis context.
