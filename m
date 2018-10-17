@@ -2,189 +2,159 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1780BECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5C0ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFF3D2151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:59:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFF3D2151D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AD31F2151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:59:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="LvtPjW60"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD31F2151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbeJQQyR (ORCPT
+        id S1727374AbeJQQy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 12:54:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40098 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726976AbeJQQyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 12:54:16 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1428F368E7;
-        Wed, 17 Oct 2018 08:59:34 +0000 (UTC)
-Received: from shalem.localdomain.com (ovpn-116-246.ams2.redhat.com [10.36.116.246])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 82E721713E;
-        Wed, 17 Oct 2018 08:59:32 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>, linux-acpi@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ACPI / scan: Create platform device for INT33FE ACPI nodes
-Date:   Wed, 17 Oct 2018 10:59:28 +0200
-Message-Id: <20181017085928.13406-2-hdegoede@redhat.com>
-In-Reply-To: <20181017085928.13406-1-hdegoede@redhat.com>
-References: <20181017085928.13406-1-hdegoede@redhat.com>
+        Wed, 17 Oct 2018 12:54:29 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:60035 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726691AbeJQQy2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 12:54:28 -0400
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w9H8xdwh024558;
+        Wed, 17 Oct 2018 17:59:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w9H8xdwh024558
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539766780;
+        bh=pg4rCzw7+zwVahgcmGmpzx2jiW/Tlo9LDhAeQWQSaes=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LvtPjW60I89QgOnM5C0k9exaeyfGvBpRMUxkA3TGkksUF98kVR46H4bZ4niOP+RwT
+         JR4rmR/GD1YvivAnNN9offv5ymQCi2FkjQJfeEnr0e/aqVyaZouMVwOHfQUcBh46eu
+         g6p9ezoNOu6ebbCUwbJKl2Ltom5nRppR+a6YfiNhkXfhUowGlQiqTJq9x7NCwo+xwI
+         WVR+FKoOCmuOkAbZwEwUsw1naFOXFGoaMlCufJqbms0V04/EWeQWwUc9McJmN5jg0J
+         6kAAtiVb3fE8ViCVLuRTRSdBQtLkObtFrCuuGgUIO4BMZowTv/ahlv4/Xa6H2DtO/6
+         41h/AwVafEiew==
+X-Nifty-SrcIP: [209.85.217.51]
+Received: by mail-vs1-f51.google.com with SMTP id e206so20307481vsd.0;
+        Wed, 17 Oct 2018 01:59:40 -0700 (PDT)
+X-Gm-Message-State: ABuFfojSVy2Lu6AoQPiVmOTUYvQjeZtotvdQdzhwYWNYwsCb1Ic9JWuA
+        yQbXz+dwMs1KjXzlu5gZZnA78P+uMEoI3LYoACk=
+X-Google-Smtp-Source: ACcGV60JFGDHebpmRBUJubLWgDn5s0oXLz9EWUUnrr/qpiIjWzo3TWd1UvlAQ2IDKqW9ZnZWF6Rvr8N4G0stQZyv/4w=
+X-Received: by 2002:a67:3793:: with SMTP id j19mr9858863vsi.215.1539766779085;
+ Wed, 17 Oct 2018 01:59:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 17 Oct 2018 08:59:34 +0000 (UTC)
+References: <1539681053-24388-1-git-send-email-yamada.masahiro@socionext.com>
+ <1539681053-24388-4-git-send-email-yamada.masahiro@socionext.com> <20181016195420.GE27990@zn.tnic>
+In-Reply-To: <20181016195420.GE27990@zn.tnic>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 17 Oct 2018 17:59:02 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS7wzJ+L-2kC2fyi9Ta9qq1jiM0-UOAisGL2CZuSEoE7w@mail.gmail.com>
+Message-ID: <CAK7LNAS7wzJ+L-2kC2fyi9Ta9qq1jiM0-UOAisGL2CZuSEoE7w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] kbuild: check the presence of lzo and lz4 tools when necessary
+To:     Borislav Petkov <bp@suse.de>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bay and Cherry Trail devices with a Dollar Cove or Whiskey Cove PMIC
-have an ACPI node with a HID of INT33FE which is a "virtual" battery
-device implementing a standard ACPI battery interface which depends upon
-a proprietary, undocument OpRegion called BMOP. Since we do have docs
-for the actual fuel-gauges used on these boards we instead use native
-fuel-gauge drivers talking directly to the fuel-gauge ICs on boards which
-rely on this INT33FE device for their battery monitoring.
+On Wed, Oct 17, 2018 at 4:56 AM Borislav Petkov <bp@suse.de> wrote:
+>
+> On Tue, Oct 16, 2018 at 06:10:53PM +0900, Masahiro Yamada wrote:
+> > If CONFIG_KERNEL_LZ4 is enabled without lz4 tool installed on the
+> > system, the build fails at the very last stage (reported by
+> > Borislav Petkov [1]).
+> >
+> >   LZO     arch/x86/boot/compressed/vmlinux.bin.lzo
+> > /bin/sh: 1: lzop: not found
+> > arch/x86/boot/compressed/Makefile:141: recipe for target 'arch/x86/boot/compressed/vmlinux.bin.lzo' failed
+> > make[2]: *** [arch/x86/boot/compressed/vmlinux.bin.lzo] Error 1
+> > arch/x86/boot/Makefile:112: recipe for target 'arch/x86/boot/compressed/vmlinux' failed
+> > make[1]: *** [arch/x86/boot/compressed/vmlinux] Error 2
+> > arch/x86/Makefile:284: recipe for target 'bzImage' failed
+> > make: *** [bzImage] Error 2
+> >
+> > Check the tools in scripts/Makefile.toolcheck to fail the build
+> > earlier with a more readable message.
+> >
+> > [1] https://patchwork.kernel.org/patch/10635381/
+> >
+> > Suggested-by: Borislav Petkov <bp@suse.de>
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  scripts/Makefile.toolcheck | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/scripts/Makefile.toolcheck b/scripts/Makefile.toolcheck
+> > index bc26fc0..5e336e4 100644
+> > --- a/scripts/Makefile.toolcheck
+> > +++ b/scripts/Makefile.toolcheck
+> > @@ -17,6 +17,14 @@ msg_stack_validation = "libelf is necessary for building the objtool." \
+> >                      "Please install libelf-dev, libelf-devel or elfutils-libelf-devel."
+> >  toolcheck-$(CONFIG_STACK_VALIDATION) += stack_validation
+> >
+> > +chk_lzo = command -v lzop
+> > +msg_lzo = "lzo tool not found. Please install it."
+> > +toolcheck-$(CONFIG_KERNEL_LZO) += lzo
+> > +
+> > +chk_lz4 = command -v lz4c
+> > +msg_lz4 = "lz4 tool not found. Please install it."
+> > +toolcheck-$(CONFIG_KERNEL_LZ4) += lz4
+> > +
+> >  PHONY += $(toolcheck-y)
+> >  __toolcheck: $(toolcheck-y)
+> >
+> > --
+>
+> Cool, thanks for doing that!
+>
+> However, I applied all three, cleaned up the tree properly:
+>
+> $ git clean -dqfx
+>
+> and then used my .config (attached) which selects CONFIG_KERNEL_LZ4.
+>
+> And I built it twice just to make sure I'm seeing correctly but the
+> error still happens at the end:
+>
+>   DESCEND  objtool
+>   CALL    scripts/checksyscalls.sh
+>   CHK     include/generated/compile.h
+>   Building modules, stage 2.
+>   CC      arch/x86/boot/compressed/misc.o
+>   LZ4     arch/x86/boot/compressed/vmlinux.bin.lz4
+> /bin/sh: 1: lz4c: not found
+> make[2]: *** [arch/x86/boot/compressed/Makefile:143: arch/x86/boot/compressed/vmlinux.bin.lz4] Error 1
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [arch/x86/boot/Makefile:112: arch/x86/boot/compressed/vmlinux] Error 2
+> make: *** [arch/x86/Makefile:290: bzImage] Error 2
+> make: *** Waiting for unfinished jobs....
+>   MODPOST 956 modules
+>
+> What am I missing?
 
-On boards with a Dollar Cove PMIC the INT33FE device's resources (_CRS)
-describe a non-existing I2C client at address 0x6b with a bus-speed of
-100KHz. This is a problem on some boards since there are actual devices
-on that same bus which need a speed of 400KHz to function properly.
 
-This commit adds the INT33FE HID to the list of devices with I2C resources
-which should be enumerated as a platform-device rather then letting the
-i2c-core instantiate an i2c-client matching the first I2C resource,
-so that its bus-speed will not influence the max speed of the I2C bus.
-This fixes e.g. the touchscreen not working on the Teclast X98 II Plus.
+I have no idea.
 
-The INT33FE device on boards with a Whiskey Cove PMIC is somewhat special.
-Its first I2C resource is for a secondary I2C address of the PMIC itself,
-which is already described in an ACPI device with an INT34D3 HID.
+With liblz4-tool package installed on my machine,
+I can build x86 kernel with CONFIG_KERNEL_LZ4.
 
-But it has 3 more I2C resources describing 3 other chips for which we do
-need to instantiate I2C clients and which need device-connections added
-between them for things to work properly. This special case is handled by
-the drivers/platform/x86/intel_cht_int33fe.c code.
 
-Before this commit that code was binding to the i2c-client instantiated
-for the secondary I2C address of the PMIC, since we now instantiate a
-platform device for the INT33FE device instead, this commit also changes
-the intel_cht_int33fe driver from an i2c driver to a platform driver.
 
-This also brings the intel_cht_int33fe drv inline with how we instantiate
-multiple i2c clients from a single ACPI device in other cases, as done
-by the drivers/platform/x86/i2c-multi-instantiate.c code.
 
-Reported-and-tested-by: Alexander Meiler <alex.meiler@protonmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/acpi/scan.c                      |  1 +
- drivers/platform/x86/intel_cht_int33fe.c | 24 +++++++++---------------
- 2 files changed, 10 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index e1b6231cfa1c..1dcc48b9d33c 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -1550,6 +1550,7 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
- 	 */
- 	static const struct acpi_device_id i2c_multi_instantiate_ids[] = {
- 		{"BSG1160", },
-+		{"INT33FE", },
- 		{}
- 	};
- 
-diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-index a26f410800c2..f40b1c192106 100644
---- a/drivers/platform/x86/intel_cht_int33fe.c
-+++ b/drivers/platform/x86/intel_cht_int33fe.c
-@@ -24,6 +24,7 @@
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
-+#include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- 
-@@ -88,9 +89,9 @@ static const struct property_entry fusb302_props[] = {
- 	{ }
- };
- 
--static int cht_int33fe_probe(struct i2c_client *client)
-+static int cht_int33fe_probe(struct platform_device *pdev)
- {
--	struct device *dev = &client->dev;
-+	struct device *dev = &pdev->dev;
- 	struct i2c_board_info board_info;
- 	struct cht_int33fe_data *data;
- 	struct i2c_client *max17047;
-@@ -207,7 +208,7 @@ static int cht_int33fe_probe(struct i2c_client *client)
- 	if (!data->pi3usb30532)
- 		goto out_unregister_fusb302;
- 
--	i2c_set_clientdata(client, data);
-+	platform_set_drvdata(pdev, data);
- 
- 	return 0;
- 
-@@ -223,9 +224,9 @@ static int cht_int33fe_probe(struct i2c_client *client)
- 	return -EPROBE_DEFER; /* Wait for the i2c-adapter to load */
- }
- 
--static int cht_int33fe_remove(struct i2c_client *i2c)
-+static int cht_int33fe_remove(struct platform_device *pdev)
- {
--	struct cht_int33fe_data *data = i2c_get_clientdata(i2c);
-+	struct cht_int33fe_data *data = platform_get_drvdata(pdev);
- 
- 	i2c_unregister_device(data->pi3usb30532);
- 	i2c_unregister_device(data->fusb302);
-@@ -237,29 +238,22 @@ static int cht_int33fe_remove(struct i2c_client *i2c)
- 	return 0;
- }
- 
--static const struct i2c_device_id cht_int33fe_i2c_id[] = {
--	{ }
--};
--MODULE_DEVICE_TABLE(i2c, cht_int33fe_i2c_id);
--
- static const struct acpi_device_id cht_int33fe_acpi_ids[] = {
- 	{ "INT33FE", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, cht_int33fe_acpi_ids);
- 
--static struct i2c_driver cht_int33fe_driver = {
-+static struct platform_driver cht_int33fe_driver = {
- 	.driver	= {
- 		.name = "Intel Cherry Trail ACPI INT33FE driver",
- 		.acpi_match_table = ACPI_PTR(cht_int33fe_acpi_ids),
- 	},
--	.probe_new = cht_int33fe_probe,
-+	.probe = cht_int33fe_probe,
- 	.remove = cht_int33fe_remove,
--	.id_table = cht_int33fe_i2c_id,
--	.disable_i2c_core_irq_mapping = true,
- };
- 
--module_i2c_driver(cht_int33fe_driver);
-+module_platform_driver(cht_int33fe_driver);
- 
- MODULE_DESCRIPTION("Intel Cherry Trail ACPI INT33FE pseudo device driver");
- MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
 -- 
-2.19.0
-
+Best Regards
+Masahiro Yamada
