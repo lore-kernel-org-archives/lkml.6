@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F027EECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DEAECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD1312150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:21:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD1312150D
+	by mail.kernel.org (Postfix) with ESMTP id C12392152A
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:21:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C12392152A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbeJQSQK (ORCPT
+        id S1727250AbeJQSQM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:16:10 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:62672 "EHLO
+        Wed, 17 Oct 2018 14:16:12 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:24037 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727050AbeJQSQJ (ORCPT
+        with ESMTP id S1727142AbeJQSQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:16:09 -0400
+        Wed, 17 Oct 2018 14:16:11 -0400
 X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="46265548"
+   d="scan'208";a="46265551"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
   by heian.cn.fujitsu.com with ESMTP; 17 Oct 2018 18:21:05 +0800
 Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 9AA654B6ED70;
-        Wed, 17 Oct 2018 18:21:02 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id 66A414B6ED68;
+        Wed, 17 Oct 2018 18:21:00 +0800 (CST)
 Received: from localhost.localdomain (10.167.225.56) by
  G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 17 Oct 2018 18:21:08 +0800
+ (TLS) id 14.3.408.0; Wed, 17 Oct 2018 18:21:05 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
@@ -41,16 +41,16 @@ To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         <msys.mizuma@gmail.com>
 CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
         <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v9 3/8] x86/boot: Add efi_get_rsdp_addr() to dig out RSDP from EFI table
-Date:   Wed, 17 Oct 2018 18:20:07 +0800
-Message-ID: <20181017102012.872-4-fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v9 2/8] x86/boot: Copy kstrtoull() to compressed period
+Date:   Wed, 17 Oct 2018 18:20:06 +0800
+Message-ID: <20181017102012.872-3-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181017102012.872-1-fanc.fnst@cn.fujitsu.com>
 References: <20181017102012.872-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 9AA654B6ED70.AE76A
+X-yoursite-MailScanner-ID: 66A414B6ED68.AC1BD
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,126 +58,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a bug that kaslr may randomly choose some positions
-which are located in movable memory regions. This will break memory
-hotplug feature and make the movable memory chosen by KASLR can't be
-removed. So dig SRAT table from ACPI tables to get memory information.
-
-Imitate the ACPI code of parsing ACPI tables to dig and read ACPI
-tables. Since some operations are not needed here, functions are
-simplified. Functions will be used to dig only SRAT tables to get
-information of memory, so that KASLR can the memory in immovable node.
-
-This function works for EFI. Dig RSDP from EFI tabler, based on efi_init().
+Copy kstrtoull() to 'compressed' directory so that
+we can use it to change the address in cmdline from
+string to unsigned long long.
 
 Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 ---
- arch/x86/boot/compressed/acpitb.c | 96 +++++++++++++++++++++++++++++++
- 1 file changed, 96 insertions(+)
- create mode 100644 arch/x86/boot/compressed/acpitb.c
+ arch/x86/boot/compressed/misc.c | 88 +++++++++++++++++++++++++++++++++
+ arch/x86/boot/compressed/misc.h |  4 ++
+ 2 files changed, 92 insertions(+)
 
-diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
-new file mode 100644
-index 000000000000..56b54b0e0889
---- /dev/null
-+++ b/arch/x86/boot/compressed/acpitb.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define BOOT_CTYPE_H
-+#include "misc.h"
-+#include "error.h"
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index 8dd1d5ccae58..5b9b24949337 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -426,3 +426,91 @@ void fortify_panic(const char *name)
+ {
+ 	error("detected buffer overflow");
+ }
 +
-+#include <linux/efi.h>
-+#include <asm/efi.h>
-+#include <linux/numa.h>
-+#include <linux/acpi.h>
++#define KSTRTOX_OVERFLOW        (1U << 31)
 +
-+/* Search EFI table for RSDP table. */
-+static void efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
++static inline char _tolower(const char c)
 +{
-+#ifdef CONFIG_EFI
-+	efi_system_table_t *systab;
-+	bool efi_64 = false;
-+	void *config_tables;
-+	struct efi_info *e;
-+	char *sig;
-+	int size;
-+	int i;
-+
-+	e = &boot_params->efi_info;
-+	sig = (char *)&e->efi_loader_signature;
-+
-+	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
-+		efi_64 = true;
-+	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
-+		efi_64 = false;
-+	else {
-+		debug_putstr("Wrong EFI loader signature.\n");
-+		return;
-+	}
-+
-+	/* Get systab from boot params. Based on efi_init(). */
-+#ifdef CONFIG_X86_64
-+	systab = (efi_system_table_t *)(
-+			e->efi_systab | ((__u64)e->efi_systab_hi<<32));
-+#else
-+	if (e->efi_systab_hi || e->efi_memmap_hi) {
-+		debug_putstr("Table located above 4GB. EFI should be disabled.\n");
-+		return;
-+	}
-+	systab = (efi_system_table_t *)e->efi_systab;
-+#endif
-+
-+	if (!systab)
-+		return;
-+
-+	/*
-+	 * Get EFI tables from systab. Based on efi_config_init() and
-+	 * efi_config_parse_tables(). Only dig out the config_table.
-+	 */
-+	size = efi_64 ? sizeof(efi_config_table_64_t) :
-+			sizeof(efi_config_table_32_t);
-+
-+	for (i = 0; i < systab->nr_tables; i++) {
-+		efi_guid_t guid;
-+		unsigned long table;
-+
-+		config_tables = (void *)(systab->tables + size * i);
-+		if (efi_64) {
-+			efi_config_table_64_t *tmp_table;
-+
-+			tmp_table = (efi_config_table_64_t *)config_tables;
-+			guid = tmp_table->guid;
-+			table = tmp_table->table;
-+#ifndef CONFIG_64BIT
-+			if (table >> 32) {
-+				debug_putstr("Table located above 4G. EFI should be disabled.\n");
-+				return;
-+			}
-+#endif
-+		} else {
-+			efi_config_table_32_t *tmp_table;
-+
-+			tmp_table = (efi_config_table_32_t *)config_tables;
-+			guid = tmp_table->guid;
-+			table = tmp_table->table;
-+		}
-+
-+		/*
-+		 * Get RSDP from EFI tables.
-+		 * If ACPI20 table found, use it.
-+		 * If ACPI20 table not found, but ACPI table found,
-+		 * use the ACPI table.
-+		 */
-+		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID))) {
-+			*rsdp_addr = (acpi_physical_address)table;
-+		} else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID))) {
-+			*rsdp_addr = (acpi_physical_address)table;
-+			return;
-+		}
-+	}
-+#endif
++	return c | 0x20;
 +}
++
++unsigned int
++_parse_integer(const char *s, unsigned int base, unsigned long long *p)
++{
++	unsigned long long res;
++	unsigned int rv;
++
++	res = 0;
++	rv = 0;
++	while (1) {
++		unsigned int c = *s;
++		unsigned int lc = c | 0x20; /* don't tolower() this line */
++		unsigned int val;
++
++		if ('0' <= c && c <= '9')
++			val = c - '0';
++		else if ('a' <= lc && lc <= 'f')
++			val = lc - 'a' + 10;
++		else
++			break;
++
++		if (val >= base)
++			break;
++		/*
++		 * Check for overflow only if we are within range of
++		 * it in the max base we support (16)
++		 */
++		if (unlikely(res & (~0ull << 60))) {
++			if (res > div_u64(ULLONG_MAX - val, base))
++				rv |= KSTRTOX_OVERFLOW;
++		}
++		res = res * base + val;
++		rv++;
++		s++;
++	}
++	*p = res;
++	return rv;
++}
++
++const char *_parse_integer_fixup_radix(const char *s, unsigned int *base)
++{
++	if (*base == 0) {
++		if (s[0] == '0') {
++			if (_tolower(s[1]) == 'x' && isxdigit(s[2]))
++				*base = 16;
++			else
++				*base = 8;
++		} else
++			*base = 10;
++	}
++	if (*base == 16 && s[0] == '0' && _tolower(s[1]) == 'x')
++		s += 2;
++	return s;
++}
++
++static int _kstrtoull(const char *s, unsigned int base, unsigned long long *res)
++{
++	unsigned long long _res;
++	unsigned int rv;
++
++	s = _parse_integer_fixup_radix(s, &base);
++	rv = _parse_integer(s, base, &_res);
++	if (rv & KSTRTOX_OVERFLOW)
++		return -ERANGE;
++	if (rv == 0)
++		return -EINVAL;
++	s += rv;
++	if (*s == '\n')
++		s++;
++	if (*s)
++		return -EINVAL;
++	*res = _res;
++	return 0;
++}
++
++int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
++{
++	if (s[0] == '+')
++		s++;
++	return _kstrtoull(s, base, res);
++}
+diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+index 008fdc47a29c..40378408d980 100644
+--- a/arch/x86/boot/compressed/misc.h
++++ b/arch/x86/boot/compressed/misc.h
+@@ -63,6 +63,10 @@ static inline void debug_puthex(const char *s)
+ 
+ #endif
+ 
++#if (defined CONFIG_RANDOMIZE_BASE) && (defined CONFIG_RANDOMIZE_BASE)
++int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
++#endif
++
+ #if CONFIG_EARLY_PRINTK || CONFIG_RANDOMIZE_BASE
+ /* cmdline.c */
+ int cmdline_find_option(const char *option, char *buffer, int bufsize);
 -- 
 2.17.2
 
