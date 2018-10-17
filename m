@@ -2,108 +2,159 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABB0ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D54ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C76F2214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:57:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FEE321528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:00:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LYBJ9YqN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C76F2214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WzMCdL8T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FEE321528
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbeJQPwM (ORCPT
+        id S1727315AbeJQPyf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:52:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40272 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726691AbeJQPwM (ORCPT
+        Wed, 17 Oct 2018 11:54:35 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43311 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726691AbeJQPyf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:52:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=51V0OGFB51gOBIo+ldcrua/+UtLzwkNCMJ7Czh3dCsQ=; b=LYBJ9YqNQpgObcF6/XuGPHdFB
-        bCO2Kxm4Lezqpqeo0y6ypJvxsNTaNo98IQFxLhzB7fPnG4cFa+mfx6row+oY/lCAXrLfkzLB6Cvsj
-        rOjotDSLye4WBdD7ddY9Ns581igz3fqaebz3n1w1znwoe5FDkq6mKKDnBoQ4NQevBm85+IklVsgFC
-        S74z3kBR/K9yzT4DpLovsBffUoNimlFLAF4c4TZlnouymRFC24zprSSdSUPpdw/G/Plc6pebHoQN7
-        FsaOHeE1wwj3t1ro+vREGod0/nuxCF4krm7TboqqX7wrF76O0GKZG0c0dlTx0aJIgMTmglbQDpWJ6
-        vDP0fwLXQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gCghv-0008UA-0v; Wed, 17 Oct 2018 07:57:31 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A5D4A2029856B; Wed, 17 Oct 2018 09:57:28 +0200 (CEST)
-Date:   Wed, 17 Oct 2018 09:57:28 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCHv2 2/4] printk: move printk_safe macros to printk
- header
-Message-ID: <20181017075728.GF3121@hirez.programming.kicks-ass.net>
-References: <20181016050428.17966-1-sergey.senozhatsky@gmail.com>
- <20181016050428.17966-3-sergey.senozhatsky@gmail.com>
- <20181016072719.GB4030@hirez.programming.kicks-ass.net>
- <20181016122734.GA1259@jagdpanzerIV>
- <20181016125415.GA3121@hirez.programming.kicks-ass.net>
- <20181017043251.GC1068@jagdpanzerIV>
+        Wed, 17 Oct 2018 11:54:35 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d8-v6so917157pgv.10;
+        Wed, 17 Oct 2018 01:00:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=mCvlGy8CA9/62CQ/b+OrKENmTK7WbZSo1J2CmB9SFRw=;
+        b=WzMCdL8TU2gvc4MY5YVt7UwKNdxNRHx1gYQl6DJXKtg2WMlH0zRrmwQ0fW9VtSWGoA
+         hnZZ+fBqda86Kch147B+oZeD5TiaQxIwwNcayMiUKZY6YBaXT+2+kNnXWhxu5Uvp1fGr
+         lE4Kqw5qUj9PD2kxuaHcbUgfYDgOvtH3FnJy7vGVJXyxgfCgetl92InCzPwOtQM7t7Ot
+         u0gXGHyAZ99MvvqEOzXOdOo6bDZKT5OaMc5BHKDRmEkLInwVLfNS3qybcme/2rlJ5tJY
+         RPw7YrBDmq0wC46DadveFUnzjIIoOF4plrrzEUToUEPuiHRmxJm/XfP74F9NnL4NIdZM
+         5QxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=mCvlGy8CA9/62CQ/b+OrKENmTK7WbZSo1J2CmB9SFRw=;
+        b=fTryEM1xE8lA7SX2LtHWIYaIqYENNDyAQvLAN0vW/rCh/WXrZI/n9CNc78AYuEVyhV
+         yq9VAYL7pGkl0G36bHZha+IuHp1EcF4pH9HfwQBoGoXeu+XXPzVxUcn82BZSKoXrysxf
+         hdwCDvLf/wSSkKQ40MGrP6VYaAJHdlNhdkH23v9Z9QyKaViW/L3lVI2o/q3ui0kRYUBQ
+         SbCLbJIXqtXkFduEEkZ6Q/tY0Q2TK2t4bm8CVA1h33O0GlRYN7rbOrlUvOaTSTGsM+Nt
+         wibRkmPbXD9QwPODgJSzsfRlNjJQ6M2oRj9vICALuR1jAh1U6dghEbgIGs7mSAlBCQb4
+         jwWg==
+X-Gm-Message-State: ABuFfoj7dqt9rqFz+k2vui7/r2/bywd4/SVYe/CnS8A6/F+E22qqfwYi
+        KHHM+BsLYfbmb66UUScVG3uOJ2ulD78=
+X-Google-Smtp-Source: ACcGV63wV5YU5emVPPokaMzcgPDNpZblPSbi87N8LWi/vPtSkWrQ8jJk2cFJ6bwmHb41gwUgJOmN2A==
+X-Received: by 2002:a62:fc13:: with SMTP id e19-v6mr25755261pfh.101.1539763206763;
+        Wed, 17 Oct 2018 01:00:06 -0700 (PDT)
+Received: from [0.0.0.0] (104.176.229.35.bc.googleusercontent.com. [35.229.176.104])
+        by smtp.gmail.com with ESMTPSA id u77-v6sm28576890pfj.40.2018.10.17.01.00.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 01:00:06 -0700 (PDT)
+Subject: Re: [PATCH v4 3/3] iio: magnetometer: Add driver support for PNI
+ RM3100
+To:     Himanshu Jha <himanshujha199640@gmail.com>
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        preid@electromag.com.au, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181002143812.3661-1-songqiang1304521@gmail.com>
+ <20181012073536.20339-1-songqiang1304521@gmail.com>
+ <20181012073536.20339-4-songqiang1304521@gmail.com>
+ <436097c6-b32b-42e4-e704-a15280e13cb0@gmail.com>
+ <20181012125316.GA6480@himanshu-Vostro-3559>
+From:   Song Qiang <songqiang1304521@gmail.com>
+Message-ID: <ce65b203-2a44-08e4-bdd0-f3c8df48e2f1@gmail.com>
+Date:   Wed, 17 Oct 2018 16:00:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017043251.GC1068@jagdpanzerIV>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181012125316.GA6480@himanshu-Vostro-3559>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 01:32:51PM +0900, Sergey Senozhatsky wrote:
-> This probably will be a bit more hairy. logbuf is written to by many
-> sources and is read from by many sides, including user-space [both read()
-> and write()]. So we will need more flags/magic around memcpy(). A simple,
-> "grab the logbuf entry, set the proper offset to point to the next available
-> logbuf record and then do memcpy()" won't suffice. We need a flag for
-> "memcpy() complete, we can read this entry". Otherwise:
 
-Sure, but lockless buffers mostly have reserve and commit stages anyway.
-Exactly to avoid that problem.
+On 2018/10/12 下午8:53, Himanshu Jha wrote:
+> Hi Qiang,
+>
+> On Fri, Oct 12, 2018 at 04:36:01PM +0800, Song Qiang wrote:
+>>
+>> On 2018年10月12日 15:35, Song Qiang wrote:
+>>> PNI RM3100 is a high resolution, large signal immunity magnetometer,
+>>> composed of 3 single sensors and a processing chip with a MagI2C
+>>> interface.
+>>>
+>> ...
+>>> +static irqreturn_t rm3100_trigger_handler(int irq, void *p)
+>>> +{
+>>> +	struct iio_poll_func *pf = p;
+>>> +	struct iio_dev *indio_dev = pf->indio_dev;
+>>> +	unsigned long scan_mask = *indio_dev->active_scan_mask;
+>>> +	unsigned int mask_len = indio_dev->masklength;
+>>> +	struct rm3100_data *data = iio_priv(indio_dev);
+>>> +	struct regmap *regmap = data->regmap;
+>>> +	int ret, i, bit;
+>>> +
+>>> +	mutex_lock(&data->lock);
+>>> +	switch (scan_mask) {
+>>> +	case BIT(0) | BIT(1) | BIT(2):
+>>> +		ret = regmap_bulk_read(regmap, RM3100_REG_MX2, data->buffer, 9);
+>>> +		mutex_unlock(&data->lock);
+>>> +		if (ret < 0)
+>>> +			goto done;
+>>> +	break;
+>>> +	case BIT(0) | BIT(1):
+>>> +		ret = regmap_bulk_read(regmap, RM3100_REG_MX2, data->buffer, 6);
+>>> +		mutex_unlock(&data->lock);
+>>> +		if (ret < 0)
+>>> +			goto done;
+>>> +	break;
+>>> +	case BIT(1) | BIT(2):
+>>> +		ret = regmap_bulk_read(regmap, RM3100_REG_MY2, data->buffer, 6);
+>>> +		mutex_unlock(&data->lock);
+>>> +		if (ret < 0)
+>>> +			goto done;
+>>> +	break;
+>> Hi Jonathan,
+>>
+>> I just noticed that these three breaks are not proper aligned.
+> Please send the new version of a patch as a *new* thread and don't
+> use `--in-reply-to` flag(if you're using) to chain into older versions
+> as whole thread of older discussion comes up and is often not required.
+>
+> The changelog gives enough info of what's new in the revised series.
+>
+>
+Hi Himanshu,
 
-> All right. OK. So we are on the same page here:
 
-> - Have more opinions on this. People please speak out.
-> - Have clear "let's do it" from Cc-ed people.
-> 
-> 
-> If we are really doing this, then let's split it and have
-> incremental changes. Namely, what I suggest is:
+Thanks for your advise.
 
-I'd start by replacing logbuf with the lockless buffer and ripping out
-the current nmi/safe/etc.. bollocks.
+I did it because the following instruction tells me to, and I think it's 
+also a very quick way of gathering
 
-There is absolutely no point what so ever in doing anything until that
-is sorted.
+all scattered messages. Both ways have their own advantages and 
+disadvantages I think. :)
 
-After that, move the console output to a kthread, but keep earlycon (if
-set) synchronous.
+<https://kernelnewbies.org/PatchPhilosophy> Section "Updating and 
+resending patches".
 
-Also avoid the whole panic/warn special case when earlycon is set, no
-point in doing dodgy crap when you know you have a good option already.
+
+yours,
+
+Song Qiang
 
