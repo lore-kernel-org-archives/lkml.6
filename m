@@ -2,341 +2,176 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6CAECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FF0ECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B0E121477
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:55:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 847FF21477
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:57:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zixtee1A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0E121477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="BpV3pRWK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 847FF21477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbeJRDxK (ORCPT
+        id S1727943AbeJRDyi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 23:53:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727108AbeJRDxJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 23:53:09 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3ED202087A;
-        Wed, 17 Oct 2018 19:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539806153;
-        bh=sSFO3yRF1qzL71OKneUdoVEKpbzJEfLPDG3LjVCPGWU=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=zixtee1AKNg/P5vM03ZwTNw6RqC1TxZjjNwxGTCMm9OlkHJNqQAjogtxBmnTqorz5
-         J2zFC4x/YExcb0LdDN45Ez0cvH3ywTT9DDx/oHb9uHFiEJ3M4P/h2qqFWYrMQggFkP
-         oMprCHx28dy3sr7cQw8JaauSmlFjwraOsEXYReLw=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        Wed, 17 Oct 2018 23:54:38 -0400
+Received: from mail-hk2apc01on0122.outbound.protection.outlook.com ([104.47.124.122]:6512
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727108AbeJRDyh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 23:54:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x4N9wv51EPl7tuzkqV7FGtT7RLZECtTj50IM6D9+FTs=;
+ b=BpV3pRWKjEZjki4KbFlSyVSS6LBkg5dIGK7ShpGGjaiu1CpaYkE7Kbqg+TrjgxTMJExzie64da5Ba+LXhkcRSRZeCEmQEeQ2F4BlhXtjoYwj8YaK9NrHJbvKX1zqALdrvE9UWHIjCxsJOV8LDMvYJRMLi6nLMqtAMeaFfE/9y6s=
+Received: from KU1P153MB0166.APCP153.PROD.OUTLOOK.COM (10.170.173.13) by
+ KU1P153MB0200.APCP153.PROD.OUTLOOK.COM (52.133.204.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1273.1; Wed, 17 Oct 2018 19:57:11 +0000
+Received: from KU1P153MB0166.APCP153.PROD.OUTLOOK.COM
+ ([fe80::ad50:c821:fe34:27d2]) by KU1P153MB0166.APCP153.PROD.OUTLOOK.COM
+ ([fe80::ad50:c821:fe34:27d2%2]) with mapi id 15.20.1273.008; Wed, 17 Oct 2018
+ 19:57:11 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        KY Srinivasan <kys@microsoft.com>
+CC:     "olaf@aepfle.de" <olaf@aepfle.de>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Stable@vger.kernel.org" <Stable@vger.kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        vkuznets <vkuznets@redhat.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>
+Subject: RE: [PATCH 5/5] Tools: hv: kvp: Fix a warning of buffer overflow with
+ gcc 8.0.1
+Thread-Topic: [PATCH 5/5] Tools: hv: kvp: Fix a warning of buffer overflow
+ with gcc 8.0.1
+Thread-Index: AQHUZceh6b+BMOYFh0ycWQy2BKpeOqUi4woAgAD3YKA=
+Date:   Wed, 17 Oct 2018 19:57:10 +0000
+Message-ID: <KU1P153MB01661641307510EC5952A6B9BFFF0@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
+References: <20181017031241.669-1-kys@linuxonhyperv.com>
+ <20181017031406.773-1-kys@linuxonhyperv.com>
+ <20181017031406.773-5-kys@linuxonhyperv.com>
+ <20181017050728.GF22447@kroah.com>
+In-Reply-To: <20181017050728.GF22447@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-10-17T19:57:06.7968784Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:9:1471:6c20:c44d:d299]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;KU1P153MB0200;6:eh06mrn5f90sjRfpWLKI99EdAmcL720E+7mEAqGfAwbme+PIk7/Pnu7DDvvH7MrEFejFssO5IISfMuf4upG/zZzOP9PA6HGXPcT01EkmII9z5UWjenitSqw6A4UYyMPnzldOl+Mlrm3o+4gfhe3lDgVWpQuH8tna53pxuPDs/HSHsbh7HO6mVb5Io3qHVJ9cgcvAzf0+WW6gKIkjo3l0LiIb6ct9+wKY8jYkbbBLHVecj0XQZKb42hfl2fOWMYf46hxkc26jO6/7FS26umCjmWK3Du1RlfpdshRNrYk1YA4Y3j3IyIu4H+0pPAovu9PyKg8PUjChddIxjlaR282X/dh0LW6bhkwBiehvg8EZ2i7osTG25IGCRocoPVcF4lXH/Gi7uvuDo9Bv+PlmO88P+Z4gZzl2FLrBLoEmKQwGiv5RSeQcGAz3pPK/583Rg/o1lU5Nj8Ni+QbjyHZ0jnvszg==;5:vjCh7yMIhtgjXhsZUiIb7pCed6kFVJ8chOBqDpeyGI1b6Sk5HUi5kpILIs14vdP25jbRV6mjxDCGuqFrrzyMhmz2lw5dPuRZJ7NtcSnDMT0xWMWalt4SscFVGJn4SR/kTxWTPgoTtbwxU0RGmCdRHnBEKLQ2QbhROYkKMYdEqH8=;7:MHkFL5TXtu6zp6Abx+9xLmR1S5hSyOKZ8WA/1JEbd73P4oD2doAYxKUdY9hkeFAys1PhNwIPNSXGTPUN4YSxkD+Y89PZDUM3mxf0Im2J3xrMNLcoxh1eq9vKJ1O8AW5rhybkNzgtQWGALWy4HcVg9w==
+x-ms-office365-filtering-correlation-id: d3ba96c0-4101-49c8-783b-08d6346aba08
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:KU1P153MB0200;
+x-ms-traffictypediagnostic: KU1P153MB0200:
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <KU1P153MB020011FEFCF81CF776727575BFFF0@KU1P153MB0200.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:KU1P153MB0200;BCL:0;PCL:0;RULEID:;SRVR:KU1P153MB0200;
+x-forefront-prvs: 08286A0BE2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(366004)(39860400002)(396003)(199004)(189003)(5660300001)(9686003)(6506007)(46003)(110136005)(186003)(22452003)(97736004)(54906003)(105586002)(8936002)(2906002)(478600001)(6116002)(106356001)(55016002)(256004)(10090500001)(68736007)(86362001)(99286004)(7696005)(93886005)(316002)(14444005)(76176011)(8990500004)(14454004)(53936002)(107886003)(486006)(86612001)(71190400001)(71200400001)(2900100001)(25786009)(102836004)(33656002)(5250100002)(6246003)(4326008)(6436002)(8676002)(74316002)(305945005)(229853002)(11346002)(446003)(6636002)(1511001)(7736002)(10290500003)(81156014)(81166006)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:KU1P153MB0200;H:KU1P153MB0166.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 2/Jc6U/xaJZq97QOk2H0pmlMSRpyJd3uAqKILQsuXtC/1pO8MQIGBrFrHqByZgpxM+W7XEg17iuWRHlosPeCxV8lE4gU2E/04iGu+7x5tesgIwZCCue+vN6asIM297ac07ghiByxLDFC0DoQXNofoEot9PG83QrG0KE0Msn8LKuK0lCCad6A4LVuXWbHSCTbOQphAZSKGoJMnpTAmjZt5nx0OVcVR/MaCoioQUB5+EtN85tQxvZ64UhylW2ayl8KpXR6KISXbrPASyh8H+AjUWbhCUaVgDemTY83+gaEjkHAlhvT1KiQ20+WGkMO6HJQn/IUdzAYpfoy7wcQg6RF9f/zH48Vyq+A0f6yBWxprFo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-To:     Abel Vesa <abel.vesa@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
-Cc:     linux-imx@nxp.com, Abel Vesa <abelvesa@linux.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
- <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
-Message-ID: <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v9 3/5] clk: imx: add SCCG PLL type
-Date:   Wed, 17 Oct 2018 12:55:52 -0700
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3ba96c0-4101-49c8-783b-08d6346aba08
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 19:57:10.6935
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KU1P153MB0200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Abel Vesa (2018-09-24 03:39:55)
-> diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pl=
-l.c
-> new file mode 100644
-> index 0000000..a9837fa
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-sccg-pll.c
-> @@ -0,0 +1,237 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright 2018 NXP.
-> + */
-> +
-> +#include <linux/clk.h>
+> From: devel <driverdev-devel-bounces@linuxdriverproject.org> On Behalf Of
+> Greg KH
+> Sent: Tuesday, October 16, 2018 22:07
+>=20
+> On Wed, Oct 17, 2018 at 03:14:06AM +0000, kys@linuxonhyperv.com wrote:
+> > From: Dexuan Cui <decui@microsoft.com>
+> >
+> > The patch fixes:
+> >
+> > hv_kvp_daemon.c: In function 'kvp_set_ip_info':
+> > hv_kvp_daemon.c:1305:2: note: 'snprintf' output between 41 and 4136 byt=
+es
+> > into a destination of size 4096
+> > ...
+> > --- a/tools/hv/hv_kvp_daemon.c
+> > +++ b/tools/hv/hv_kvp_daemon.c
+> > @@ -1176,7 +1176,7 @@ static int kvp_set_ip_info(char *if_name, struct
+> hv_kvp_ipaddr_value *new_val)
+> >  	int error =3D 0;
+> >  	char if_file[PATH_MAX];
+> >  	FILE *file;
+> > -	char cmd[PATH_MAX];
+> > +	char cmd[PATH_MAX * 2];
+>=20
+> Overkill?
 
-Is this include used? Otherwise should see clk-provider.h included here.
+Well, I found the -Wformat-truncation warning can be suppressed by checking
+the return value of snprintf, so I'm going to do a new patch for KY to rese=
+nd like this:
 
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/slab.h>
-> +#include <linux/delay.h>
-> +#include <linux/bitfield.h>
-> +
-> +#include "clk.h"
-> +
-> +/* PLL CFGs */
-> +#define PLL_CFG0               0x0
-> +#define PLL_CFG1               0x4
-> +#define PLL_CFG2               0x8
-> +
-> +#define PLL_DIVF1_MASK         GENMASK(18, 13)
-> +#define PLL_DIVF2_MASK         GENMASK(12, 7)
-> +#define PLL_DIVR1_MASK         GENMASK(27, 25)
-> +#define PLL_DIVR2_MASK         GENMASK(24, 19)
-> +#define PLL_REF_MASK           GENMASK(2, 0)
-> +
-> +#define PLL_LOCK_MASK          BIT(31)
-> +#define PLL_PD_MASK            BIT(7)
-> +
-> +#define OSC_25M                        25000000
-> +#define OSC_27M                        27000000
-> +
-> +#define PLL_SCCG_LOCK_TIMEOUT  70
-> +
-> +struct clk_sccg_pll {
-> +       struct clk_hw   hw;
-> +       void __iomem    *base;
-> +};
-> +
-> +#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
-> +
-> +static int clk_pll_wait_lock(struct clk_sccg_pll *pll)
-> +{
-> +       u32 val;
-> +
-> +       return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK, 0,
-> +                                       PLL_SCCG_LOCK_TIMEOUT);
-> +}
-> +
-> +static int clk_pll1_is_prepared(struct clk_hw *hw)
-> +{
-> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> +       u32 val;
-> +
-> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
-> +       return (val & PLL_PD_MASK) ? 0 : 1;
-> +}
-> +
-> +static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
-> +                                        unsigned long parent_rate)
-> +{
-> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> +       u32 val, divf;
-> +
-> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
-> +       divf =3D FIELD_GET(PLL_DIVF1_MASK, val);
-> +
-> +       return parent_rate * 2 * (divf + 1);
-> +}
-> +
-> +static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                              unsigned long *prate)
-> +{
-> +       unsigned long parent_rate =3D *prate;
-> +       u32 div;
-> +
-> +       div =3D rate / (parent_rate * 2);
+@@ -1178,6 +1178,7 @@ static int kvp_set_ip_info(char *if_name, struct hv_k=
+vp_ipaddr_value *new_val)
+        FILE *file;
+        char cmd[PATH_MAX];
+        char *mac_addr;
++       int str_len;
 
-Can parent_rate be 0?
+        /*
+         * Set the configuration for the specified interface with
+@@ -1301,8 +1302,19 @@ static int kvp_set_ip_info(char *if_name, struct hv_=
+kvp_ipaddr_value *new_val)
+         * invoke the external script to do its magic.
+         */
 
-> +
-> +       return parent_rate * div * 2;
-> +}
-> +
-> +static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                           unsigned long parent_rate)
-> +{
-> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> +       u32 val;
-> +       u32 divf;
-> +
-> +       divf =3D rate / (parent_rate * 2);
+-       snprintf(cmd, sizeof(cmd), KVP_SCRIPTS_PATH "%s %s",
+-                "hv_set_ifconfig", if_file);
++       str_len =3D snprintf(cmd, sizeof(cmd), KVP_SCRIPTS_PATH "%s %s",
++                    "hv_set_ifconfig", if_file);
++
++       /*
++        * This is a little overcautious, but it's necessary to suppress so=
+me
++        * false warnings from gcc 8.0.1.
++        */
++       if (str_len <=3D 0 || (unsigned int)str_len >=3D sizeof(cmd)) {
++               syslog(LOG_ERR, "Cmd '%s' (len=3D%d) may be too long",
++                      cmd, str_len);
++               return HV_E_FAIL;
++       }
 
-Can parent_rate be 0?
 
-> +
-> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
-> +       val &=3D ~PLL_DIVF1_MASK;
-> +       val |=3D FIELD_PREP(PLL_DIVF1_MASK, divf - 1);
-> +       writel_relaxed(val, pll->base + PLL_CFG2);
-> +
-> +       return clk_pll_wait_lock(pll);
-> +}
-> +
-> +static int clk_pll1_prepare(struct clk_hw *hw)
-> +{
-> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> +       u32 val;
-> +
-> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
-> +       val &=3D ~PLL_PD_MASK;
-> +       writel_relaxed(val, pll->base + PLL_CFG0);
-> +
-> +       return clk_pll_wait_lock(pll);
-> +}
-> +
-> +static void clk_pll1_unprepare(struct clk_hw *hw)
-> +{
-> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> +       u32 val;
-> +
-> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
-> +       val |=3D PLL_PD_MASK;
-> +       writel_relaxed(val, pll->base + PLL_CFG0);
-> +
-> +}
-> +
-> +static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
-> +                                        unsigned long parent_rate)
-> +{
-> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> +       u32 val, ref, divr1, divf1, divr2, divf2;
-> +       u64 temp64;
-> +
-> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
-> +       switch (FIELD_GET(PLL_REF_MASK, val)) {
-> +       case 0:
-> +               ref =3D OSC_25M;
-> +               break;
-> +       case 1:
-> +               ref =3D OSC_27M;
-> +               break;
-> +       default:
-> +               ref =3D OSC_25M;
-
-Does this information not come through 'parent_rate'?
-
-> +               break;
-> +       }
-> +
-> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
-> +       divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
-> +       divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
-> +       divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
-> +       divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
-> +
-> +       temp64 =3D ref * 2;
-> +       temp64 *=3D (divf1 + 1) * (divf2 + 1);
-> +
-> +       do_div(temp64, (divr1 + 1) * (divr2 + 1));
-
-Nitpicks: A comment with the equation may be helpful to newcomers.
-
-> +
-> +       return (unsigned long)temp64;
-
-Drop useless cast please.
-
-> +}
-> +
-> +static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                              unsigned long *prate)
-> +{
-> +       u32 div;
-> +       unsigned long parent_rate =3D *prate;
-> +
-> +       div =3D rate / (parent_rate);
-> +
-> +       return parent_rate * div;
-> +}
-> +
-> +static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                           unsigned long parent_rate)
-> +{
-> +       u32 val;
-> +       u32 divf;
-> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> +
-> +       divf =3D rate / (parent_rate);
-
-Drop useless parenthesis please.
-
-> +
-> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
-> +       val &=3D ~PLL_DIVF2_MASK;
-> +       val |=3D FIELD_PREP(PLL_DIVF2_MASK, divf - 1);
-> +       writel_relaxed(val, pll->base + PLL_CFG2);
-> +
-> +       return clk_pll_wait_lock(pll);
-> +}
-> +
-> +static const struct clk_ops clk_sccg_pll1_ops =3D {
-> +       .is_prepared    =3D clk_pll1_is_prepared,
-> +       .recalc_rate    =3D clk_pll1_recalc_rate,
-> +       .round_rate     =3D clk_pll1_round_rate,
-> +       .set_rate       =3D clk_pll1_set_rate,
-> +};
-> +
-> +static const struct clk_ops clk_sccg_pll2_ops =3D {
-> +       .prepare        =3D clk_pll1_prepare,
-> +       .unprepare      =3D clk_pll1_unprepare,
-> +       .recalc_rate    =3D clk_pll2_recalc_rate,
-> +       .round_rate     =3D clk_pll2_round_rate,
-> +       .set_rate       =3D clk_pll2_set_rate,
-> +};
-> +
-> +struct clk *imx_clk_sccg_pll(const char *name,
-> +                               const char *parent_name,
-> +                               void __iomem *base,
-> +                               enum imx_sccg_pll_type pll_type)
-> +{
-> +       struct clk_sccg_pll *pll;
-> +       struct clk *clk;
-> +       struct clk_init_data init;
-> +
-> +       pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-> +       if (!pll)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       pll->base =3D base;
-> +       init.name =3D name;
-> +       switch (pll_type) {
-> +       case SCCG_PLL1:
-> +               init.ops =3D &clk_sccg_pll1_ops;
-> +               break;
-> +       case SCCG_PLL2:
-> +               init.ops =3D &clk_sccg_pll2_ops;
-> +               break;
-> +       default:
-> +               kfree(pll);
-> +               return ERR_PTR(-EINVAL);
-
-Do this case statement before allocating? So that kfree() isn't required
-here?
-
-> +       }
-> +
-> +       init.flags =3D 0;
-> +       init.parent_names =3D &parent_name;
-> +       init.num_parents =3D 1;
-> +
-> +       pll->hw.init =3D &init;
-> +
-> +       clk =3D clk_register(NULL, &pll->hw);
-
-Any chance to use clk_hw based registration APIs?
-
-> +       if (IS_ERR(clk))
-> +               kfree(pll);
-> +
-> +       return clk;
+Thanks,
+-- Dexuan
