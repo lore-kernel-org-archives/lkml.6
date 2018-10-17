@@ -2,111 +2,118 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BADECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70218ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAE8D2151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:58:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAE8D2151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 3EFF62151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:58:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EFF62151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbeJQQwx (ORCPT
+        id S1727142AbeJQQxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 12:52:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49902 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727014AbeJQQwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 12:52:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5E6C6AD93;
-        Wed, 17 Oct 2018 08:58:09 +0000 (UTC)
-Subject: Re: [PATCH] xen: remove redundant 'default n' from Kconfig
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <CGME20181016143359eucas1p1b2033a69cc7b03c090125e1b9566fc1d@eucas1p1.samsung.com>
- <20181016143359eucas1p1b2033a69cc7b03c090125e1b9566fc1d~eHWRlFIki1482014820eucas1p1q@eucas1p1.samsung.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b7929981-5818-32d6-4a27-c9701c977d39@suse.com>
-Date:   Wed, 17 Oct 2018 10:58:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181016143359eucas1p1b2033a69cc7b03c090125e1b9566fc1d~eHWRlFIki1482014820eucas1p1q@eucas1p1.samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
+        Wed, 17 Oct 2018 12:53:04 -0400
+Received: from gate.crashing.org ([63.228.1.57]:55974 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726768AbeJQQxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 12:53:04 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w9H8uPEf017600;
+        Wed, 17 Oct 2018 03:56:26 -0500
+Message-ID: <351eecd5b1b21893e94f76b34c058c6257b7f837.camel@kernel.crashing.org>
+Subject: Re: [[PATCH] 8/9] DMA-UART-Driver-for-AST2500
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Vinod <vkoul@kernel.org>, "sudheer.v" <open.sudheer@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Russell King <linux@armlinux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Michael Moese <mmoese@suse.de>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org,
+        Sudheer V <sudheer.veliseti@aspeedtech.com>,
+        ShivahShankar Shakarnarayan rao 
+        <shivahshankar.shankarnarayanrao@aspeedtech.com>
+Date:   Wed, 17 Oct 2018 19:56:25 +1100
+In-Reply-To: <20181017060531.GU2400@vkoul-mobl>
+References: <1539749466-3912-1-git-send-email-open.sudheer@gmail.com>
+         <1539749466-3912-9-git-send-email-open.sudheer@gmail.com>
+         <20181017060531.GU2400@vkoul-mobl>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/10/2018 16:33, Bartlomiej Zolnierkiewicz wrote:
-> 'default n' is the default value for any bool or tristate Kconfig
-> setting so there is no need to write it explicitly.
+On Wed, 2018-10-17 at 11:35 +0530, Vinod wrote:
+> On 17-10-18, 09:41, sudheer.v wrote:
 > 
-> Also since commit f467c5640c29 ("kconfig: only write '# CONFIG_FOO
-> is not set' for visible symbols") the Kconfig behavior is the same
-> regardless of 'default n' being present or not:
+> Please add the change log describing the driver and its features
 > 
->     ...
->     One side effect of (and the main motivation for) this change is making
->     the following two definitions behave exactly the same:
->     
->         config FOO
->                 bool
->     
->         config FOO
->                 bool
->                 default n
->     
->     With this change, neither of these will generate a
->     '# CONFIG_FOO is not set' line (assuming FOO isn't selected/implied).
->     That might make it clearer to people that a bare 'default n' is
->     redundant.
->     ...
+> > Signed-off-by: sudheer.v <open.sudheer@gmail.com>
 > 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> 
+> > ---
+> >  drivers/tty/serial/8250/8250_aspeed_uart_dma.c | 1594 ++++++++++++++++++++++++
+> >  1 file changed, 1594 insertions(+)
+> >  create mode 100644 drivers/tty/serial/8250/8250_aspeed_uart_dma.c
+> > 
+> > diff --git a/drivers/tty/serial/8250/8250_aspeed_uart_dma.c b/drivers/tty/serial/8250/8250_aspeed_uart_dma.c
+> > new file mode 100644
+> > index 0000000..e1019a8
+> > --- /dev/null
+> > +++ b/drivers/tty/serial/8250/8250_aspeed_uart_dma.c
+> 
+> why is this in serial. It is dmaengine driver so belongs to drivers/dma/
+> like other controllers. Please move it out and resubmit.
+ 
+It's not a dmaengine driver. It's a serial UART driver that happens to
+use a dedicated DMA engine.
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+It's unclear whether it should be split into two drivers, or just have
+the serial driver directly use the dma engine since that engine is
+dedicated in HW to only work on those UARTs and nothing else...
+
+Cheers,
+Ben.
 
 
-Juergen
+> While doing resubmission please take some time to understand subsystem
+> tags to use. (hint git log <subsystem> will tell you)
+> 
+> Also series has [[PATCH] 8/9] whereas it should be [PATCH 8/9] please
+> let git generate that for you (hint git format-patch start..end does a
+> good job)
+> 
+> > @@ -0,0 +1,1594 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + *   drivers/tty/serial/8250/8250_aspeed_uart_dma.c
+> > + *    1. 2018/07/01 Shivah Shankar created
+> > + *    2. 2018/08/25 sudheer.veliseti<open.sudheer@gmail.com> modified
+> 
+> we dont use this log in kernel. I do not see s-o-b by Shivah, that
+> should be added. I think he should be author and you need to list
+> changes you did..
+> 
+
