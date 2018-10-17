@@ -2,170 +2,127 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69489ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81AE5ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:51:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A4F7214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:50:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A4F7214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
+	by mail.kernel.org (Postfix) with ESMTP id 513DB204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:51:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 513DB204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727155AbeJQSp6 (ORCPT
+        id S1727245AbeJQSqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:45:58 -0400
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.116]:61029 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726868AbeJQSp5 (ORCPT
+        Wed, 17 Oct 2018 14:46:25 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:53079 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726868AbeJQSqZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:45:57 -0400
-Received: from [85.158.142.194] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-5.bemta.az-b.eu-central-1.aws.symcld.net id 14/27-08839-60417CB5; Wed, 17 Oct 2018 10:50:46 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA1WSe0hTYRjG/XYuO4qT45zsU1JqUJh1psvME2G
-  GBC2i0qCohPRMT260HW2XUusP04qcFhpdbKkzcl00kEpJh4bzUmmFUGJiF7ylqGXCIssy2vGk
-  2X8/3ud5v+f54CUQaREeTLBZZtbIMXoF7oO6prd3UJjsaVJk9/l19MxApZiucIfQ9p5ejC6/f
-  hHQo/3NItrhqkXpiTYnoF87y3Dafb4d0PXjUyJ6+M5nMT0yeAHf4qsueUmpG23vxeqbTeMi9b
-  veJlzd2nYOqCs6E9XfXpSgaveD0ATiIKbjNBlZKZh2pliT+Ss8qyOvBcsFdeFW4ENIyVsAljf
-  YMSvwJnBSBSs+fQFWQBAykoJlP0S8ByGdKLQ+a0Z5TwB5CJ5uHRDxLCOT4ZSjERc4Hs5ND857
-  UHIlHGq+Ms8SMgFO5pZiQtgsgN1PHiK84E0mwrF7nWKeARkCv56qmZ8jpBz2j9jnAyBJwqqmb
-  kTgQDg+/BsTeDl8PHsXFzgOTn6YQgWOgEPDQ0BgFay+0vJ3HgOv3R0T8x9DyNWw1hkhRK2Alw
-  oHxUJPf9h5bQQtBnLbkha2fxu2JRu2JRuVAK0GtMaoS9eaDYxOT6kiIymVKoqKptZvUDI5lEb
-  JWqhUljMbGY+oZI6blKZsQ6o+Tcmx5gfAcxNpRzFlA7DdTm8FQYRIESi5+v1JktRPk5GWrWVM
-  2mSjRc+aWsEyglBASZH0aZLU38ims1mHdXrPYS3IkPBVyCQWXpaYMhmDSZcuSF0giuh5UVCKE
-  Gc/vilFpCiXwbHBcslb3kryVq2FW3xo4UhfgZDgAAnw8vKS+mayRoPO/L8+AeQEUARISvhXfH
-  WceTFvwlNF5KmyLbadr2Jm/knBuYDwzx/dFNcXX1+5anzMr6sTW9P1atvmrUGuvSfwRnBgbex
-  G576+/Hc72h05IWFUZHIUUv8an3XoU87Ehyb/pAp3TgUOxPgUVe2pdOUUR/S83X/PXpdnvyxr
-  cTx/FPq8YKzhSIooqSZa5Q67n2iw3K6/kcNVOXfJjyFzta52x+6TCtSkZVThiNHE/AE2R0pEn
-  wMAAA==
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-11.tower-239.messagelabs.com!1539773445!308654!1
-X-Originating-IP: [193.240.73.197]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.14.24; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 10024 invoked from network); 17 Oct 2018 10:50:45 -0000
-Received: from unknown (HELO sw-ex-cashub02.diasemi.com) (193.240.73.197)
-  by server-11.tower-239.messagelabs.com with AES128-SHA encrypted SMTP; 17 Oct 2018 10:50:45 -0000
-Received: from SW-EX-MBX02.diasemi.com ([169.254.4.108]) by
- sw-ex-cashub02.diasemi.com ([10.20.16.142]) with mapi id 14.03.0382.000; Wed,
- 17 Oct 2018 11:50:45 +0100
-From:   Steve Twiss <stwiss.opensource@diasemi.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        "Linux PM list" <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 3/3] thermal: da9062/61: Prevent hardware access
- during system suspend
-Thread-Topic: [PATCH v2 3/3] thermal: da9062/61: Prevent hardware access
- during system suspend
-Thread-Index: AQHUYhXnLkN7Q/V/6kGq9xgKC5zdxKUjJhXg///4kwCAABKUQA==
-Date:   Wed, 17 Oct 2018 10:50:44 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB7021C4CD09D@SW-EX-MBX02.diasemi.com>
-References: <20181012072017.10765-1-geert+renesas@glider.be>
- <20181012072017.10765-4-geert+renesas@glider.be>
- <6ED8E3B22081A4459DAC7699F3695FB7021C4CCFCB@SW-EX-MBX02.diasemi.com>
- <CAMuHMdWEzDenwgT8gkK7+_rEyjeVBCKrLaML5sMRkiZkzJN8jg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWEzDenwgT8gkK7+_rEyjeVBCKrLaML5sMRkiZkzJN8jg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.20.27.121]
-x-kse-attachmentfiltering-interceptor-info: protection disabled
-x-kse-serverinfo: sw-ex-cashub02.diasemi.com, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 17/10/2018 08:22:00
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 17 Oct 2018 14:46:25 -0400
+Received: from [192.168.178.69] ([109.104.44.135]) by mrelayeu.kundenserver.de
+ (mreue001 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 0LcbEF-1fka0d1ItL-00k7BT; Wed, 17 Oct 2018 12:50:56 +0200
+Received: from [192.168.178.69] ([109.104.44.135]) by mrelayeu.kundenserver.de
+ (mreue001 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 0LcbEF-1fka0d1ItL-00k7BT; Wed, 17 Oct 2018 12:50:56 +0200
+Subject: Re: [PATCH 0/7] staging: vc04_services: Some dead code removal
+To:     Dave Stevenson <dave.stevenson@raspberrypi.org>,
+        Eric Anholt <eric@anholt.net>
+Cc:     tuomas.tynkkynen@iki.fi, Phil Elwell <phil@raspberrypi.org>,
+        devel@driverdev.osuosl.org, Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+References: <20181004093747.21750-1-tuomas.tynkkynen@iki.fi>
+ <1715113043.52878.1538821118324@email.1und1.de> <87a7nf5gr9.fsf@anholt.net>
+ <CAAoAYcN_xVvi2-dUcGobVcMEtjFTV=Hi7OFr2vuEF08aQkVWHA@mail.gmail.com>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <530d012b-50c3-ca03-a37e-fe62ac309e02@i2se.com>
+Date:   Wed, 17 Oct 2018 12:50:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <CAAoAYcN_xVvi2-dUcGobVcMEtjFTV=Hi7OFr2vuEF08aQkVWHA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:hjvPuCvfNVRTTb1RCmWr5FlttXPKu9tKmoqkUWpn2QZ6FwpspiK
+ +061o2yoWERWFC8f4qaqLkEybP9gyItzPaeFhIUk67LYVoHwz2Vd+vPGDiaiGJPQLdmxdNl
+ ZeUTiWyUpa3C+RMHXRgytCygDyrzHmuy/CKikHks/z0N2EPAbqRTWcrPRCMv9jQn2o01lrP
+ /MR8tniUjMWyD+V054DZQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:SaUGiqW4Fk0=:zDZV24LqlJwZTAart60GLG
+ Yq5dxY90hBShiXbP8g0qXV+B2HH3/YPplO2IGFwc0GNIRe1cD0kV9HCktBomH/Z/tw3pJtKMP
+ zPoZwKTy9nr2Kj3EaZHw8u1jW3lxVI4CqjZbdejhZF3jx1qM1uE0H7IvUdnvTxiQPlLXW0G+n
+ kaFZHbMNUOR1pxRK4tmz1VKx+4XdYk5n3PJ+jQtDhhR4vww/rs1Mnt4e01d/31K0dXWawUEPB
+ TOdWKJmPVAwrNq60Pr3ix/0iyQtpNAAsn55g3T+zWPLR3OgBJUT8O/U1pox+Ee1v4punjTA/s
+ D7WGfJyeFD+SJzTw4ldF5mX880g4GEAarZeC3XyVj3bTy1rAFVSuwOJ8wTjSwZEHcGa5cOH2N
+ y5Ks/SZwiZNdkj3k5DO5I0/53OQZfHYYWife+MaKm1nA+4t4teTopMBbe2hgcJvCOOM85hBTg
+ Sk/YvztS+j+deIsA9i8PGu7pICPT1IMmwewjUND9xjF8s4f54Wi2/7IZXJDORlFVRJJflasBo
+ Odepn/Xz1ZyAUOOC2Yo/jyWb6OmetzlUmm2g3uKvIhNPX5OF55R7hxjvR1jRNJQ/IosCicPkV
+ U6jea1Eyrqbt4WYBi1uuc62GsRMUJv1B7ywBm0zYNnvvuB06F4ii++2pgzlxHXdtlSPsHZtl5
+ o6fsvHjRR7x5LhZhDewlAhAjNWs2rn3f2w6GF+KgeoL/LI9LgWIyuFP0Clh65jyw1ztEJ+QSU
+ Dyw6M721CFjkK+Bl
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIDE3IE9jdG9iZXIgMjAxOCAxMDoxNCBHZWVydCBVeXR0ZXJob2V2ZW4g
-d3JvdGU6DQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAzLzNdIHRoZXJtYWw6IGRhOTA2Mi82
-MTogUHJldmVudCBoYXJkd2FyZSBhY2Nlc3MgZHVyaW5nDQo+IHN5c3RlbSBzdXNwZW5kDQo+IA0K
-PiBIaSBTdGV2ZSwNCj4gDQo+IE9uIFdlZCwgT2N0IDE3LCAyMDE4IGF0IDEwOjU3IEFNIFN0ZXZl
-IFR3aXNzIHdyb3RlOg0KPiA+IE9uIDEyIE9jdG9iZXIgMjAxOCAwODoyMCBHZWVydCBVeXR0ZXJo
-b2V2ZW4gd3JvdGU6DQo+ID4gPiBTdWJqZWN0OiBbUEFUQ0ggdjIgMy8zXSB0aGVybWFsOiBkYTkw
-NjIvNjE6IFByZXZlbnQgaGFyZHdhcmUgYWNjZXNzIGR1cmluZw0KPiA+ID4gc3lzdGVtIHN1c3Bl
-bmQNCj4gPiA+DQo+ID4gPiBUaGUgd29ya3F1ZXVlIHVzZWQgZm9yIG1vbml0b3JpbmcgdGhlIGhh
-cmR3YXJlIG1heSBydW4gd2hpbGUgdGhlIGRldmljZQ0KPiA+ID4gaXMgYWxyZWFkeSBzdXNwZW5k
-ZWQuICBGaXggdGhpcyBieSB1c2luZyB0aGUgZnJlZXphYmxlIHN5c3RlbSB3b3JrcXVldWUNCj4g
-PiA+IGluc3RlYWQsIGNmci4gY29tbWl0IDUxZTIwZDBlM2E2MGNmNDYgKCJ0aGVybWFsOiBQcmV2
-ZW50IHBvbGxpbmcgZnJvbQ0KPiA+ID4gaGFwcGVuaW5nIGR1cmluZyBzeXN0ZW0gc3VzcGVuZCIp
-Lg0KPiA+DQo+ID4gTXkgdGhpbmtpbmcgd2FzOiAgdGhpcyBkZXZpY2UgaXMgYSBQTUlDIGFuZCBp
-dCB3aWxsIHBvd2VyIHRoZSBzeXN0ZW0uIFNvIHdoZW4NCj4gPiB0aGUgZGV2aWNlIGlzIHR1cm5l
-ZCBvZmYsIHRoZSBTL1cgd2lsbCBhbHNvIG5vdCBiZSBydW5uaW5nLg0KPiA+DQo+ID4gQWx0aG91
-Z2ggbXkgYXNzdW1wdGlvbiBvbmx5IHdvcmtzIGlmIHRoZSBQTUlDIGRldmljZSBpcyB0aGUgcHJp
-bWFyeSBzeXN0ZW0NCj4gPiBwb3dlciAtLSB0aGlzIGhhcyBhbHdheXMgYmVlbiB0aGUgY2FzZSBz
-byBmYXIuIEFuZCBhbHRob3VnaCBJIGRvbid0IGhhdmUgYW55DQo+ID4gZXZpZGVuY2UgdGhpcyB3
-aWxsIGNoYW5nZSwgaXQgbWF5IGJlY29tZSB1bnRydWUgaW4gdGhlIGZ1dHVyZSBvZiBjb3Vyc2Uu
-DQo+IA0KPiBUaGlzIGlzIG5vdCBhYm91dCBwb3dlcmluZyBvZmYgdGhlIHN5c3RlbSwgYnV0IGFi
-b3V0IHN1c3BlbmRpbmcgdGhlIHN5c3RlbSwNCj4gd2hpY2ggc3VzcGVuZHMgYWxsIGRyaXZlcnMu
-DQo+IA0KPiBUaGUgaXNzdWUgaXMgdGhhdCB0aGUgbm9ybWFsIHdvcmtxdWV1ZSBtYXkgcnVuIHdo
-aWxlIHRoZSBzeXN0ZW0gaXMgYmVpbmcNCj4gc3VzcGVuZGVkLiAgQWNjZXNzaW5nIHRoZSBEQTkw
-NjIgbWF5IG9yIG1heSBub3Qgd29yayBhdCB0aGF0IHRpbWUsDQo+IGRlcGVuZGluZyBvbiB0aGUg
-aTJjIGNvbnRyb2xsZXIgYmVpbmcgdXNhYmxlIG9yIG5vdC4NCg0KSSBzZWUgbm93LiBZZXMuDQoN
-Cj4gDQo+IER1ZSB0byB0aGUgREE5MDYyIGJlaW5nIGFuIGkyYyBkZXZpY2UsIEkgYWdyZWUgdGhp
-cyBpcyBkaWZmZXJlbnQgdGhhbg0KPiBmb3IgcmNhci10aGVybWFsLCB3aGVyZSB0aGUgcmNhci10
-aGVybWFsIGRldmljZSBpdHNlbGYgY2Fubm90IGJlDQo+IGFjY2Vzc2VkIGJlY2F1c2UgaXQgaXMg
-c3VzcGVuZGVkLg0KPiANCj4gPiA+IEZpeGVzOiA2MDg1NjdhYWMzMjA2YWU4ICgidGhlcm1hbDog
-ZGE5MDYyLzYxOiBUaGVybWFsIGp1bmN0aW9uIHRlbXBlcmF0dXJlDQo+ID4gPiBtb25pdG9yaW5n
-IGRyaXZlciIpDQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0
-K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPiA+ID4gLS0tDQo+ID4gPiBVbnRlc3RlZCBkdWUgdG8gbGFj
-ayBvZiBoYXJkd2FyZS4NCj4gPg0KPiA+IFNvLCBJIGhhdmUgbm90IGJlZW4gYWJsZSB0byBtYWtl
-IGFueSB0aW1lIHRvIHRlc3QgdGhpcyBwYXRjaCB5ZXQgLS0gYW5kIHdpdGgNCj4gPiBjdXJyZW50
-IHdvcmtsb2FkcyB0aGlzIG1pZ2h0IHRha2UgYSBiaXQgb2YgdGltZSBiZWZvcmUgSSBnZXQgdG8g
-aXQuDQo+IA0KPiBUaGUgbWFpbiB0aGluZyB0byB0ZXN0IGlzIHdoYXQgaGFwcGVucyB3aGVuIGRh
-OTA2Ml90aGVybWFsX3BvbGxfb24oKSBpcw0KPiBjYWxsZWQgd2hpbGUgdGhlIGkyYyBjb250cm9s
-bGVyIGlzIGFscmVhZHkgc3VzcGVuZGVkLCBhbmQgd2hldGhlciB0aGF0DQo+IGlzIG1pdGlnYXRl
-ZCBieSBteSBwYXRjaC4NCj4gTG9va2luZyBhdCB0aGUgZnVuY3Rpb24sIEkgZ3Vlc3MgaXQgc3Rh
-cnRzIHNwZXdpbmcgZXJyb3IgbWVzc2FnZXMsIGFuZA0KPiB3aWxsIGNvbnRpbnVlIHRyaWdnZXJp
-bmcgaXRzZWxmLCBieSB2aXJ0dWUgb2YgZW5hYmxpbmcgdGhlIGludGVycnVwdCBhZ2FpbiwNCj4g
-d2l0aG91dCBoYXZpbmcgYmVlbiBhYmxlIHRvIGRpc2FibGUgaXRzIGNhdXNlLg0KDQpXZSBoYXZl
-IGRlZmluaXRlbHkgc2VlbiBzaW1pbGFyIHRoaW5ncyBsaWtlIHRoaXMgYmVmb3JlLCBleGFjdGx5
-IGFzIHlvdSBkZXNjcmliZWQNCndoZW4gZ29pbmcgaW50byBzdXNwZW5kIGFuZCB0aGUgSTJDIGNv
-bnRyb2xsZXIgZGlzYXBwZWFycy4gDQpUaGVyZSB3aWxsIGJlIGEgd2luZG93IG9mIG9wcG9ydHVu
-aXR5IGZvciB0aGlzIHRvIGhhcHBlbi4gDQoNCkkgaGF2ZSBzdGlsbCBub3QgdGVzdGVkLCBidXQ6
-DQoNCkFja2VkLWJ5OiBTdGV2ZSBUd2lzcyA8c3R3aXNzLm9wZW5zb3VyY2VAZGlhc2VtaS5jb20+
-DQoNCkkgd2lsbCBtYWtlIHRpbWUgdG8gdGVzdCB5b3VyIGNoYW5nZXMuDQoNClJlZ2FyZHMsDQpT
-dGV2ZQ0KDQo+IA0KPiA+ID4gLS0tIGEvZHJpdmVycy90aGVybWFsL2RhOTA2Mi10aGVybWFsLmMN
-Cj4gPiA+ICsrKyBiL2RyaXZlcnMvdGhlcm1hbC9kYTkwNjItdGhlcm1hbC5jDQo+ID4gPiBAQCAt
-MTA2LDcgKzEwNiw3IEBAIHN0YXRpYyB2b2lkIGRhOTA2Ml90aGVybWFsX3BvbGxfb24oc3RydWN0
-DQo+IHdvcmtfc3RydWN0DQo+ID4gPiAqd29yaykNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgVEhFUk1BTF9FVkVOVF9VTlNQRUNJRklFRCk7DQo+ID4gPg0K
-PiA+ID4gICAgICAgICAgICAgICBkZWxheSA9IG1zZWNzX3RvX2ppZmZpZXModGhlcm1hbC0+em9u
-ZS0+cGFzc2l2ZV9kZWxheSk7DQo+ID4gPiAtICAgICAgICAgICAgIHNjaGVkdWxlX2RlbGF5ZWRf
-d29yaygmdGhlcm1hbC0+d29yaywgZGVsYXkpOw0KPiA+ID4gKyAgICAgICAgICAgICBxdWV1ZV9k
-ZWxheWVkX3dvcmsoc3lzdGVtX2ZyZWV6YWJsZV93cSwgJnRoZXJtYWwtPndvcmssDQo+ID4gPiBk
-ZWxheSk7DQo+ID4gPiAgICAgICAgICAgICAgIHJldHVybjsNCj4gPiA+ICAgICAgIH0NCj4gPiA+
-DQo+ID4gPiBAQCAtMTI1LDcgKzEyNSw3IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBkYTkwNjJfdGhl
-cm1hbF9pcnFfaGFuZGxlcihpbnQgaXJxLA0KPiA+ID4gdm9pZCAqZGF0YSkNCj4gPiA+ICAgICAg
-IHN0cnVjdCBkYTkwNjJfdGhlcm1hbCAqdGhlcm1hbCA9IGRhdGE7DQo+ID4gPg0KPiA+ID4gICAg
-ICAgZGlzYWJsZV9pcnFfbm9zeW5jKHRoZXJtYWwtPmlycSk7DQo+ID4gPiAtICAgICBzY2hlZHVs
-ZV9kZWxheWVkX3dvcmsoJnRoZXJtYWwtPndvcmssIDApOw0KPiA+ID4gKyAgICAgcXVldWVfZGVs
-YXllZF93b3JrKHN5c3RlbV9mcmVlemFibGVfd3EsICZ0aGVybWFsLT53b3JrLCAwKTsNCj4gPiA+
-DQo+ID4gPiAgICAgICByZXR1cm4gSVJRX0hBTkRMRUQ7DQo+ID4gPiAgfQ0KPiANCj4gR3J7b2V0
-amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4g
-LS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQg
-aWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0
-aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0K
-PiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIi
-IG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgLS0gTGludXMgVG9ydmFsZHMNCg==
+Hi,
+
+Am 17.10.2018 um 11:55 schrieb Dave Stevenson:
+> On Mon, 15 Oct 2018 at 17:27, Eric Anholt <eric@anholt.net> wrote:
+>> Stefan Wahren <stefan.wahren@i2se.com> writes:
+>>
+>>> Hi Tuomas,
+>>>
+>>>> Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi> hat am 4. Oktober 2018 um 11:37 geschrieben:
+>>>>
+>>>>
+>>>> Drop various pieces of dead code from here and there to get rid of
+>>>> the remaining users of VCHI_CONNECTION_T. After that we get to drop
+>>>> entire header files worth of unused code.
+>>>>
+>>>> I've tested on a Raspberry Pi Model B (bcm2835_defconfig) that
+>>>> snd-bcm2835 can still play analog audio just fine.
+>>>>
+>>> thanks and i'm fine with your patch series:
+>>>
+>>> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+>>>
+>>> Unfortunately this would break compilation of the downstream vchi
+>>> drivers like vcsm [1]. Personally i don't want to maintain another
+>>> one, because i cannot see the gain of the resulting effort.
+>>>
+>>> [1] - https://github.com/raspberrypi/linux/tree/rpi-4.14.y/drivers/char/broadcom/vc_sm
+> I'm happy enough to work around these changes. Once the change is in a
+> released kernel we can merge a modified version of vc_sm into the
+> downstream kernel branch. It's not as if it requires big changes.
+>
+>> I think the main concern would be if we removed things necessary for
+>> 6by9's new vcsm (the one that will let us do dma-buf sharing between
+>> media decode and DRM).
+> The new vcsm uses the same VCHI service as the existing downstream vc_sm driver.
+> The video codec driver don't use any VCHI functionality over and above
+> the camera. It goes via a slightly extended version of the
+> mmal-vchiq.c, which I have split out into a shared module.
+
+my statement about the old vc_sm based on assumption there wont be a
+user of this driver.
+
+In case the camera driver would use the new vc_sm driver, i would be
+happier to see this merged in staging than in downstream.
+
+Stefan
+
+>
+>> On the other hand, git revert is a thing, so it's not like we actually
+>> lose anything.
+> :-)
+>
+>   Dave
+
