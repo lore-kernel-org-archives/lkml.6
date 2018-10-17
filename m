@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F0EECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA567ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0999820866
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:55:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 943ED21470
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:55:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDKMAwnT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0999820866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTSAr4L0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 943ED21470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbeJRGxr (ORCPT
+        id S1727977AbeJRGxv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 02:53:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42414 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 02:53:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727814AbeJRGxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 02:53:47 -0400
+        id S1727814AbeJRGxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 02:53:50 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4309621479;
-        Wed, 17 Oct 2018 22:55:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33DFF21477;
+        Wed, 17 Oct 2018 22:55:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539816953;
-        bh=y0JjWVGKWy29lkDeshxq8W9vejVEtSB8vAwVggZZQzM=;
+        s=default; t=1539816956;
+        bh=Lh/WwdkX4CNy7Td50lWO8NLf//RWr50pAON6ixb4Iac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uDKMAwnTYNWwx8Gq6WEMUFrMWtGnlXWMuKBzCJIx3OU04B7GMqLe9/K2OtqCjwug6
-         qRmbrPJPMLcm5Hha8EknnVbB0Ru5QhZiuLDQU07I2y3MEXEUmSPamZJ96Ud2Gxi5xZ
-         CPCZOUzRXJyPv/yGNffYCnqJYI8uWosTjyi6ALSY=
+        b=YTSAr4L0lxsavXeC9Y3zaee3BabuTF9rFBMDC3XEyHTv9CJm4orHOSEQlrW6jnROS
+         T+wvq/eNRpVrqqn5oL/0UCmhYxjzL+Dd3llcecrjdXg1hLO4hb1C0aEvLlvjUyK1Vn
+         v8ZTea4s4L+eaTXMg+zmzICgptrLnRVId0V8mdLs=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        "Herton R. Krzesinski" <herton@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
-        Yordan Karadzhov <y.karadz@gmail.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 10/11] perf tools: Pass build flags to traceevent build
-Date:   Wed, 17 Oct 2018 19:55:00 -0300
-Message-Id: <20181017225501.32150-11-acme@kernel.org>
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 11/11] perf tools: Stop fallbacking to kallsyms for vdso symbols lookup
+Date:   Wed, 17 Oct 2018 19:55:01 -0300
+Message-Id: <20181017225501.32150-12-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181017225501.32150-1-acme@kernel.org>
 References: <20181017225501.32150-1-acme@kernel.org>
@@ -57,34 +57,275 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-So the extra user build flags are propagated to libtraceevent.
+David reports that:
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: "Herton R. Krzesinski" <herton@redhat.com>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-Cc: Yordan Karadzhov (VMware) <y.karadz@gmail.com>
-Link: http://lkml.kernel.org/r/20181016150614.21260-3-jolsa@kernel.org
+<quote>
+Perf has this hack where it uses the kernel symbol map as a backup when
+a symbol can't be found in the user's symbol table(s).
+
+This causes problems because the tests driving this code path use
+machine__kernel_ip(), and that is completely meaningless on Sparc.  On
+sparc64 the kernel and user live in physically separate virtual address
+spaces, rather than a shared one.  And the kernel lives at a virtual
+address that overlaps common userspace addresses.  So this test passes
+almost all the time when a user symbol lookup fails.
+
+The consequence of this is that, if the unfound user virtual address in
+the sample doesn't match up to a kernel symbol either, we trigger things
+like this code in builtin-top.c:
+
+	if (al.sym == NULL && al.map != NULL) {
+		const char *msg = "Kernel samples will not be resolved.\n";
+		/*
+		 * As we do lazy loading of symtabs we only will know if the
+		 * specified vmlinux file is invalid when we actually have a
+		 * hit in kernel space and then try to load it. So if we get
+		 * here and there are _no_ symbols in the DSO backing the
+		 * kernel map, bail out.
+		 *
+		 * We may never get here, for instance, if we use -K/
+		 * --hide-kernel-symbols, even if the user specifies an
+		 * invalid --vmlinux ;-)
+		 */
+		if (!machine->kptr_restrict_warned && !top->vmlinux_warned &&
+		    __map__is_kernel(al.map) && map__has_symbols(al.map)) {
+			if (symbol_conf.vmlinux_name) {
+				char serr[256];
+				dso__strerror_load(al.map->dso, serr, sizeof(serr));
+				ui__warning("The %s file can't be used: %s\n%s",
+					    symbol_conf.vmlinux_name, serr, msg);
+			} else {
+				ui__warning("A vmlinux file was not found.\n%s",
+					    msg);
+			}
+
+			if (use_browser <= 0)
+				sleep(5);
+			top->vmlinux_warned = true;
+		}
+	}
+
+When I fire up a compilation on sparc, this triggers immediately.
+
+I'm trying to figure out what the "backup to kernel map" code is
+accomplishing.
+
+I see some language in the current code and in the changes that have
+happened in this area talking about vdso.  Does that really happen?
+
+The vdso is mapped into userspace virtual addresses, not kernel ones.
+
+More history.  This didn't cause problems on sparc some time ago,
+because the kernel IP check used to be "ip < 0" :-) Sparc kernel
+addresses are not negative.  But now with machine__kernel_ip(), which
+works using the symbol table determined kernel address range, it does
+trigger.
+
+What it all boils down to is that on architectures like sparc,
+machine__kernel_ip() should always return false in this scenerio, and
+therefore this kind of logic:
+
+		if (cpumode == PERF_RECORD_MISC_USER && machine &&
+		    mg != &machine->kmaps &&
+		    machine__kernel_ip(machine, al->addr)) {
+
+is basically invalid.  PERF_RECORD_MISC_USER implies no kernel address
+can possibly match for the sample/event in question (no matter how
+hard you try!) :-)
+</>
+
+So, I thought something had changed and in the past we would somehow
+find that address in the kallsyms, but I couldn't find anything to back
+that up, the patch introducing this is over a decade old, lots of things
+changed, so I was just thinking I was missing something.
+
+I tried a gtod busy loop to generate vdso activity and added a 'perf
+probe' at that branch, on x86_64 to see if it ever gets hit:
+
+Made thread__find_map() noinline, as 'perf probe' in lines of inline
+functions seems to not be working, only at function start. (Masami?)
+
+  # perf probe -x ~/bin/perf -L thread__find_map:57
+  <thread__find_map@/home/acme/git/perf/tools/perf/util/event.c:57>
+     57                 if (cpumode == PERF_RECORD_MISC_USER && machine &&
+     58                     mg != &machine->kmaps &&
+     59                     machine__kernel_ip(machine, al->addr)) {
+     60                         mg = &machine->kmaps;
+     61                         load_map = true;
+     62                         goto try_again;
+                        }
+                } else {
+                        /*
+                         * Kernel maps might be changed when loading
+                         * symbols so loading
+                         * must be done prior to using kernel maps.
+                         */
+     69                 if (load_map)
+     70                         map__load(al->map);
+     71                 al->addr = al->map->map_ip(al->map, al->addr);
+
+  # perf probe -x ~/bin/perf thread__find_map:60
+  Added new event:
+    probe_perf:thread__find_map (on thread__find_map:60 in /home/acme/bin/perf)
+
+  You can now use it in all perf tools, such as:
+
+	perf record -e probe_perf:thread__find_map -aR sleep 1
+
+  #
+
+  Then used this to see if, system wide, those probe points were being hit:
+
+  # perf trace -e *perf:thread*/max-stack=8/
+  ^C[root@jouet ~]#
+
+  No hits when running 'perf top' and:
+
+  # cat gtod.c
+  #include <sys/time.h>
+
+  int main(void)
+  {
+	struct timeval tv;
+
+	while (1)
+		gettimeofday(&tv, 0);
+
+	return 0;
+  }
+  [root@jouet c]# ./gtod
+  ^C
+
+  Pressed 'P' in 'perf top' and the [vdso] samples are there:
+
+  62.84%  [vdso]                    [.] __vdso_gettimeofday
+   8.13%  gtod                      [.] main
+   7.51%  [vdso]                    [.] 0x0000000000000914
+   5.78%  [vdso]                    [.] 0x0000000000000917
+   5.43%  gtod                      [.] _init
+   2.71%  [vdso]                    [.] 0x000000000000092d
+   0.35%  [kernel]                  [k] native_io_delay
+   0.33%  libc-2.26.so              [.] __memmove_avx_unaligned_erms
+   0.20%  [vdso]                    [.] 0x000000000000091d
+   0.17%  [i2c_i801]                [k] i801_access
+   0.06%  firefox                   [.] free
+   0.06%  libglib-2.0.so.0.5400.3   [.] g_source_iter_next
+   0.05%  [vdso]                    [.] 0x0000000000000919
+   0.05%  libpthread-2.26.so        [.] __pthread_mutex_lock
+   0.05%  libpixman-1.so.0.34.0     [.] 0x000000000006d3a7
+   0.04%  [kernel]                  [k] entry_SYSCALL_64_trampoline
+   0.04%  libxul.so                 [.] style::dom_apis::query_selector_slow
+   0.04%  [kernel]                  [k] module_get_kallsym
+   0.04%  firefox                   [.] malloc
+   0.04%  [vdso]                    [.] 0x0000000000000910
+
+  I added a 'perf probe' to thread__find_map:69, and that surely got tons
+  of hits, i.e. for every map found, just to make sure the 'perf probe'
+  command was really working.
+
+  In the process I noticed a bug, we're only have records for '[vdso]' for
+  pre-existing commands, i.e. ones that are running when we start 'perf top',
+  when we will generate the PERF_RECORD_MMAP by looking at /perf/PID/maps.
+
+  I.e. like this, for preexisting processes with a vdso map, again,
+  tracing for all the system, only pre-existing processes get a [vdso] map
+  (when having one):
+
+  [root@jouet ~]# perf probe -x ~/bin/perf __machine__addnew_vdso
+  Added new event:
+  probe_perf:__machine__addnew_vdso (on __machine__addnew_vdso in /home/acme/bin/perf)
+
+  You can now use it in all perf tools, such as:
+
+	perf record -e probe_perf:__machine__addnew_vdso -aR sleep 1
+
+  [root@jouet ~]# perf trace -e probe_perf:__machine__addnew_vdso/max-stack=8/
+     0.000 probe_perf:__machine__addnew_vdso:(568eb3)
+                                       __machine__addnew_vdso (/home/acme/bin/perf)
+                                       map__new (/home/acme/bin/perf)
+                                       machine__process_mmap2_event (/home/acme/bin/perf)
+                                       machine__process_event (/home/acme/bin/perf)
+                                       perf_event__process (/home/acme/bin/perf)
+                                       perf_tool__process_synth_event (/home/acme/bin/perf)
+                                       perf_event__synthesize_mmap_events (/home/acme/bin/perf)
+                                       __event__synthesize_thread (/home/acme/bin/perf)
+
+The kernel is generating a PERF_RECORD_MMAP for vDSOs, but somehow
+'perf top' is not getting those records while 'perf record' is:
+
+  # perf record ~acme/c/gtod
+  ^C[ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.076 MB perf.data (1499 samples) ]
+
+  # perf report -D | grep PERF_RECORD_MMAP2
+  71293612401913 0x11b48 [0x70]: PERF_RECORD_MMAP2 25484/25484: [0x400000(0x1000) @ 0 fd:02 1137 541179306]: r-xp /home/acme/c/gtod
+  71293612419012 0x11be0 [0x70]: PERF_RECORD_MMAP2 25484/25484: [0x7fa4a2783000(0x227000) @ 0 fd:00 3146370 854107250]: r-xp /usr/lib64/ld-2.26.so
+  71293612432110 0x11c50 [0x60]: PERF_RECORD_MMAP2 25484/25484: [0x7ffcdb53a000(0x2000) @ 0 00:00 0 0]: r-xp [vdso]
+  71293612509944 0x11cb0 [0x70]: PERF_RECORD_MMAP2 25484/25484: [0x7fa4a23cd000(0x3b6000) @ 0 fd:00 3149723 262067164]: r-xp /usr/lib64/libc-2.26.so
+  #
+  # perf script | grep vdso | head
+      gtod 25484 71293.612768: 2485554 cycles:ppp:  7ffcdb53a914 [unknown] ([vdso])
+      gtod 25484 71293.613576: 2149343 cycles:ppp:  7ffcdb53a917 [unknown] ([vdso])
+      gtod 25484 71293.614274: 1814652 cycles:ppp:  7ffcdb53aca8 __vdso_gettimeofday+0x98 ([vdso])
+      gtod 25484 71293.614862: 1669070 cycles:ppp:  7ffcdb53acc5 __vdso_gettimeofday+0xb5 ([vdso])
+      gtod 25484 71293.615404: 1451589 cycles:ppp:  7ffcdb53acc5 __vdso_gettimeofday+0xb5 ([vdso])
+      gtod 25484 71293.615999: 1269941 cycles:ppp:  7ffcdb53ace6 __vdso_gettimeofday+0xd6 ([vdso])
+      gtod 25484 71293.616405: 1177946 cycles:ppp:  7ffcdb53a914 [unknown] ([vdso])
+      gtod 25484 71293.616775: 1121290 cycles:ppp:  7ffcdb53ac47 __vdso_gettimeofday+0x37 ([vdso])
+      gtod 25484 71293.617150: 1037721 cycles:ppp:  7ffcdb53ace6 __vdso_gettimeofday+0xd6 ([vdso])
+      gtod 25484 71293.617478:  994526 cycles:ppp:  7ffcdb53ace6 __vdso_gettimeofday+0xd6 ([vdso])
+  #
+
+The patch is the obvious one and with it we also continue to resolve
+vdso symbols for pre-existing processes in 'perf top' and for all
+processes in 'perf record' + 'perf report/script'.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-cs7skq9pp0kjypiju6o7trse@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.perf | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/event.c | 21 ++-------------------
+ 1 file changed, 2 insertions(+), 19 deletions(-)
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 5224ade3d5af..0be411695379 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -635,7 +635,7 @@ $(LIBPERF_IN): prepare FORCE
- $(LIB_FILE): $(LIBPERF_IN)
- 	$(QUIET_AR)$(RM) $@ && $(AR) rcs $@ $(LIBPERF_IN) $(LIB_OBJS)
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 0988eb3b844b..bc646185f8d9 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -1561,26 +1561,9 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
  
--LIBTRACEEVENT_FLAGS += plugin_dir=$(plugindir_SQ)
-+LIBTRACEEVENT_FLAGS += plugin_dir=$(plugindir_SQ) 'EXTRA_CFLAGS=$(EXTRA_CFLAGS)' 'LDFLAGS=$(LDFLAGS)'
- 
- $(LIBTRACEEVENT): FORCE
- 	$(Q)$(MAKE) -C $(TRACE_EVENT_DIR) $(LIBTRACEEVENT_FLAGS) O=$(OUTPUT) $(OUTPUT)libtraceevent.a
+ 		return NULL;
+ 	}
+-try_again:
++
+ 	al->map = map_groups__find(mg, al->addr);
+-	if (al->map == NULL) {
+-		/*
+-		 * If this is outside of all known maps, and is a negative
+-		 * address, try to look it up in the kernel dso, as it might be
+-		 * a vsyscall or vdso (which executes in user-mode).
+-		 *
+-		 * XXX This is nasty, we should have a symbol list in the
+-		 * "[vdso]" dso, but for now lets use the old trick of looking
+-		 * in the whole kernel symbol list.
+-		 */
+-		if (cpumode == PERF_RECORD_MISC_USER && machine &&
+-		    mg != &machine->kmaps &&
+-		    machine__kernel_ip(machine, al->addr)) {
+-			mg = &machine->kmaps;
+-			load_map = true;
+-			goto try_again;
+-		}
+-	} else {
++	if (al->map != NULL) {
+ 		/*
+ 		 * Kernel maps might be changed when loading symbols so loading
+ 		 * must be done prior to using kernel maps.
 -- 
 2.14.4
 
