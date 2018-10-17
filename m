@@ -2,237 +2,170 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF480ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB99ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7031521526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:31:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7031521526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 695302151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:33:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 695302151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbeJQPZV (ORCPT
+        id S1727086AbeJQP1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:25:21 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37756 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726957AbeJQPZV (ORCPT
+        Wed, 17 Oct 2018 11:27:22 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40673 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeJQP1V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:25:21 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9H7UdGw103496
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 03:30:59 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n5vb9u903-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 03:30:59 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 17 Oct 2018 08:30:56 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 17 Oct 2018 08:30:50 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9H7Un9Q7864630
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 17 Oct 2018 07:30:49 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 89406A4059;
-        Wed, 17 Oct 2018 07:30:49 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B75CA405D;
-        Wed, 17 Oct 2018 07:30:48 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.72])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 17 Oct 2018 07:30:48 +0000 (GMT)
-Date:   Wed, 17 Oct 2018 10:30:46 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Pavel Tatashin <pasha.tatashin@gmail.com>
-Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.jiang@intel.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, davem@davemloft.net,
-        yi.z.zhang@linux.intel.com, khalid.aziz@oracle.com,
-        rppt@linux.vnet.ibm.com, vbabka@suse.cz,
-        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-Subject: Re: [mm PATCH v3 1/6] mm: Use mm_zero_struct_page from SPARC on all
- 64b architectures
-References: <20181015202456.2171.88406.stgit@localhost.localdomain>
- <20181015202656.2171.92963.stgit@localhost.localdomain>
- <57c559f6-4858-7a52-7fbb-979caa08f240@gmail.com>
+        Wed, 17 Oct 2018 11:27:21 -0400
+Received: by mail-ot1-f68.google.com with SMTP id w67so25193942ota.7;
+        Wed, 17 Oct 2018 00:33:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jqmsMVNo0twCcj0fFEXS/qA3tiQNjli7UOaEwVtH0Y0=;
+        b=MRYRz9ghXlx2y1L/SVJvvCV14+VvvNZx3h+D/eszTC0f3PfMjq2um4q/Z6yqle8AtO
+         VY+s8b124+IjCqOSdZyPdwdQ9deKVtrMrnWA3GcnBoHQO0L+18h8h0ZNzS/MkMAxaHD7
+         OMQK8DZXwEG10GXoqLd592Rg2ZDeLtWblBBZlNNXBYTuBlvJI3lidmuteRX2ZnqAThNE
+         CyRfq5xVtU/e0WSKc927K4AuKzVgnexShmjz3XP3kem4WWna5NjwxllJgKH9hl5/wFcS
+         YlOjTDUQ0f4oVcnij8R5oJfkrlJUfxin5iHv2rC3mQNxsz8+8SRcezFMdwx5d5geieqv
+         FpFA==
+X-Gm-Message-State: ABuFfogujUbKv1OQgWcYa234MTQnNxooYFJ2OulXsLPLg/wFeZ1X85EX
+        WLesXmvURLx7G+p4dW79xEZw8+kRdEGxQwhJ8SA=
+X-Google-Smtp-Source: ACcGV61siK7CFNkZZS9yYbNdL5mGuBGcOhhoDIzBsrwWDIuv0Q5KqFLfcROo7dLvlpzep01mlLvJaTgHOX/j+wowJic=
+X-Received: by 2002:a9d:5549:: with SMTP id h9mr3216711oti.244.1539761579845;
+ Wed, 17 Oct 2018 00:32:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <57c559f6-4858-7a52-7fbb-979caa08f240@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18101707-0028-0000-0000-000003088D78
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101707-0029-0000-0000-000023C39E46
-Message-Id: <20181017073045.GA20004@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810170068
+References: <20181016165513.7133-1-vkuznets@redhat.com>
+In-Reply-To: <20181016165513.7133-1-vkuznets@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 17 Oct 2018 09:32:48 +0200
+Message-ID: <CAJZ5v0iiaShTFSvaFaGyzTHaQsPHtHqou=BxDTOsJ1VEAyrfnQ@mail.gmail.com>
+Subject: Re: [PATCH v3] kernel/hung_task.c: disable on suspend
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 03:01:11PM -0400, Pavel Tatashin wrote:
-> 
-> 
-> On 10/15/18 4:26 PM, Alexander Duyck wrote:
-> > This change makes it so that we use the same approach that was already in
-> > use on Sparc on all the archtectures that support a 64b long.
-> > 
-> > This is mostly motivated by the fact that 8 to 10 store/move instructions
-> > are likely always going to be faster than having to call into a function
-> > that is not specialized for handling page init.
-> > 
-> > An added advantage to doing it this way is that the compiler can get away
-> > with combining writes in the __init_single_page call. As a result the
-> > memset call will be reduced to only about 4 write operations, or at least
-> > that is what I am seeing with GCC 6.2 as the flags, LRU poitners, and
-> > count/mapcount seem to be cancelling out at least 4 of the 8 assignments on
-> > my system.
-> > 
-> > One change I had to make to the function was to reduce the minimum page
-> > size to 56 to support some powerpc64 configurations.
-> > 
-> > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> 
-> 
-> I have tested on Broadcom's Stingray cpu with 48G RAM:
-> __init_single_page() takes 19.30ns / 64-byte struct page
-> Wit the change it takes 17.33ns / 64-byte struct page
- 
-I gave it a run on an OpenPower (S812LC 8348-21C) with Power8 processor and
-with 128G of RAM. My results for 64-byte struct page were:
+On Tue, Oct 16, 2018 at 6:55 PM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>
+> It is possible to observe hung_task complaints when system goes to
+> suspend-to-idle state:
+>
+>  # echo freeze > /sys/power/state
+>
+>  PM: Syncing filesystems ... done.
+>  Freezing user space processes ... (elapsed 0.001 seconds) done.
+>  OOM killer disabled.
+>  Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
+>  sd 0:0:0:0: [sda] Synchronizing SCSI cache
+>  INFO: task bash:1569 blocked for more than 120 seconds.
+>        Not tainted 4.19.0-rc3_+ #687
+>  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>  bash            D    0  1569    604 0x00000000
+>  Call Trace:
+>   ? __schedule+0x1fe/0x7e0
+>   schedule+0x28/0x80
+>   suspend_devices_and_enter+0x4ac/0x750
+>   pm_suspend+0x2c0/0x310
+>
+> Register a PM notifier to disable the detector on suspend and re-enable
+> back on wakeup.
+>
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+> Changes since v2:
+> - Resurrect 'v1' as zeroing timeouts can be racy [Rafael J. Wysocki]
+> ---
+>  kernel/hung_task.c | 28 +++++++++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index b9132d1269ef..41955c5d8427 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/lockdep.h>
+>  #include <linux/export.h>
+>  #include <linux/sysctl.h>
+> +#include <linux/suspend.h>
+>  #include <linux/utsname.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/sched/debug.h>
+> @@ -242,6 +243,26 @@ void reset_hung_task_detector(void)
+>  }
+>  EXPORT_SYMBOL_GPL(reset_hung_task_detector);
+>
+> +static bool hung_detector_suspended;
+> +
+> +static int hungtask_pm_notify(struct notifier_block *self,
+> +                             unsigned long action, void *hcpu)
+> +{
+> +       switch (action) {
+> +       case PM_SUSPEND_PREPARE:
+> +       case PM_HIBERNATION_PREPARE:
 
-before: 4.6788ns
-after: 4.5882ns
+Please add PM_RESTORE_PREPARE here ->
 
-My two cents :)
+> +               hung_detector_suspended = true;
+> +               break;
+> +       case PM_POST_SUSPEND:
+> +       case PM_POST_HIBERNATION:
 
-> Please add this data and also the data from Intel to the description.
-> 
-> Thank you,
-> Pavel
-> 
-> > ---
-> >  arch/sparc/include/asm/pgtable_64.h |   30 ------------------------------
-> >  include/linux/mm.h                  |   34 ++++++++++++++++++++++++++++++++++
-> >  2 files changed, 34 insertions(+), 30 deletions(-)
-> > 
-> > diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
-> > index 1393a8ac596b..22500c3be7a9 100644
-> > --- a/arch/sparc/include/asm/pgtable_64.h
-> > +++ b/arch/sparc/include/asm/pgtable_64.h
-> > @@ -231,36 +231,6 @@
-> >  extern struct page *mem_map_zero;
-> >  #define ZERO_PAGE(vaddr)	(mem_map_zero)
-> >  
-> > -/* This macro must be updated when the size of struct page grows above 80
-> > - * or reduces below 64.
-> > - * The idea that compiler optimizes out switch() statement, and only
-> > - * leaves clrx instructions
-> > - */
-> > -#define	mm_zero_struct_page(pp) do {					\
-> > -	unsigned long *_pp = (void *)(pp);				\
-> > -									\
-> > -	 /* Check that struct page is either 64, 72, or 80 bytes */	\
-> > -	BUILD_BUG_ON(sizeof(struct page) & 7);				\
-> > -	BUILD_BUG_ON(sizeof(struct page) < 64);				\
-> > -	BUILD_BUG_ON(sizeof(struct page) > 80);				\
-> > -									\
-> > -	switch (sizeof(struct page)) {					\
-> > -	case 80:							\
-> > -		_pp[9] = 0;	/* fallthrough */			\
-> > -	case 72:							\
-> > -		_pp[8] = 0;	/* fallthrough */			\
-> > -	default:							\
-> > -		_pp[7] = 0;						\
-> > -		_pp[6] = 0;						\
-> > -		_pp[5] = 0;						\
-> > -		_pp[4] = 0;						\
-> > -		_pp[3] = 0;						\
-> > -		_pp[2] = 0;						\
-> > -		_pp[1] = 0;						\
-> > -		_pp[0] = 0;						\
-> > -	}								\
-> > -} while (0)
-> > -
-> >  /* PFNs are real physical page numbers.  However, mem_map only begins to record
-> >   * per-page information starting at pfn_base.  This is to handle systems where
-> >   * the first physical page in the machine is at some huge physical address,
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index bb0de406f8e7..ec6e57a0c14e 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -102,8 +102,42 @@ static inline void set_max_mapnr(unsigned long limit) { }
-> >   * zeroing by defining this macro in <asm/pgtable.h>.
-> >   */
-> 
-> The comment above becomes outdated. Please change, we use optimized
-> mm_zero_struct_page on every 64-bit platform.
-> 
-> >  #ifndef mm_zero_struct_page
-> > +#if BITS_PER_LONG == 64
-> > +/* This function must be updated when the size of struct page grows above 80
-> > + * or reduces below 64. The idea that compiler optimizes out switch()
-> > + * statement, and only leaves move/store instructions
-> > + */
-> > +#define	mm_zero_struct_page(pp) __mm_zero_struct_page(pp)
-> > +static inline void __mm_zero_struct_page(struct page *page)
-> > +{
-> > +	unsigned long *_pp = (void *)page;
-> > +
-> > +	 /* Check that struct page is either 56, 64, 72, or 80 bytes */
-> > +	BUILD_BUG_ON(sizeof(struct page) & 7);
-> > +	BUILD_BUG_ON(sizeof(struct page) < 56);
-> > +	BUILD_BUG_ON(sizeof(struct page) > 80);
-> > +
-> > +	switch (sizeof(struct page)) {
-> > +	case 80:
-> > +		_pp[9] = 0;	/* fallthrough */
-> > +	case 72:
-> > +		_pp[8] = 0;	/* fallthrough */
-> > +	default:
-> > +		_pp[7] = 0;	/* fallthrough */
-> > +	case 56:
-> > +		_pp[6] = 0;
-> > +		_pp[5] = 0;
-> > +		_pp[4] = 0;
-> > +		_pp[3] = 0;
-> > +		_pp[2] = 0;
-> > +		_pp[1] = 0;
-> > +		_pp[0] = 0;
-> > +	}
-> > +}
-> > +#else
-> >  #define mm_zero_struct_page(pp)  ((void)memset((pp), 0, sizeof(struct page)))
-> >  #endif
-> > +#endif
-> >  
-> >  /*
-> >   * Default maximum number of active map areas, this limits the number of vmas
-> > 
-> 
+-> and PM_POST_RESTORE here for completeness.
 
--- 
-Sincerely yours,
-Mike.
+> +               hung_detector_suspended = false;
+> +               break;
+> +       default:
+> +               break;
+> +       }
+> +       return NOTIFY_OK;
+> +}
+> +
+>  /*
+>   * kthread which checks for tasks stuck in D state
+>   */
+> @@ -261,7 +282,8 @@ static int watchdog(void *dummy)
+>                 interval = min_t(unsigned long, interval, timeout);
+>                 t = hung_timeout_jiffies(hung_last_checked, interval);
+>                 if (t <= 0) {
+> -                       if (!atomic_xchg(&reset_hung_task, 0))
+> +                       if (!atomic_xchg(&reset_hung_task, 0) &&
+> +                           !hung_detector_suspended)
+>                                 check_hung_uninterruptible_tasks(timeout);
+>                         hung_last_checked = jiffies;
+>                         continue;
+> @@ -275,6 +297,10 @@ static int watchdog(void *dummy)
+>  static int __init hung_task_init(void)
+>  {
+>         atomic_notifier_chain_register(&panic_notifier_list, &panic_block);
+> +
+> +       /* Disable hung task detector on suspend */
+> +       pm_notifier(hungtask_pm_notify, 0);
+> +
+>         watchdog_task = kthread_run(watchdog, NULL, "khungtaskd");
+>
+>         return 0;
+> --
 
+Apart from the above it is fine by me.
+
+This is the minimum fix for the issue at hand AFAICS.
+
+Thanks,
+Rafael
