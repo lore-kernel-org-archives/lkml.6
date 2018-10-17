@@ -2,187 +2,201 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 175CDECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104B1ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9CD420658
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:24:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KRqHCNyh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9CD420658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B36402086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:30:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B36402086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbeJRAUo (ORCPT
+        id S1727691AbeJRA0t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 20:20:44 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41810 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbeJRAUo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 20:20:44 -0400
-Received: by mail-qt1-f194.google.com with SMTP id l41-v6so30691702qtl.8
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:24:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=iNM2n6BlDhj5BCTHFnjmqv+8aMrp/w65o+CoQC2jUeo=;
-        b=KRqHCNyhw7B51V4aOIODjzKkIzqfh4wjqeG7sIhWcU8VgvJX8zqLSdvo2TnuhcD1yh
-         yBHeqxBhYLPJts0dS1ZiHX5CvwRipxZBr84UUvXsdzMK7KG277ssBwnM74DgCeLpjJwo
-         lM9XkYyf6w/24KZ1S9EGQ5VGHH7QstEDVD3cI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=iNM2n6BlDhj5BCTHFnjmqv+8aMrp/w65o+CoQC2jUeo=;
-        b=InIjyY9EtgcmfGPtBO5OK83Vp+vvdyTpqhH9inFKVyaJHOfsGyI+NInzXtrfQcE2FJ
-         NUOIkaJN351qyPuuyv+eXrGlEaTT4mqqu/m0nFlCwlDkP+Gl+Mlr/fmxirDbYr8Ag027
-         cvTEEZzjjrjTZa8TwdgrSS4CSM7jisHbkUCZ4X83h17lj5kyyszB5xLoW/pci3u5YlQ5
-         xDgN9UJC77oMcJlFqCd+KgsW0tVa2jn1d/z6fkKUnpwSHFFTiSlk3Qe0cKwEDP1lSWzy
-         1vg4REnRbKXPddwlnbqfcJZoZnFbMAzhFannteZy5mOON2zqEj4Ghnu+JD9JqNAIWhf8
-         NKHA==
-X-Gm-Message-State: ABuFfogQkmLbXAw9O4sYUu5gT07T+w0gS2dtCtJifsQI48GcbFVK0iBg
-        HHHJkWYpl3PeGwkVhTP6ISHjdQ==
-X-Google-Smtp-Source: ACcGV61dTJPeTSKnZOoXjOciXpHC3CyfcJdTVCX2+xzxzrZH3f11cJgK5TEb9M+UmBVxRWRDWyzNEw==
-X-Received: by 2002:ac8:c0b:: with SMTP id k11-v6mr25849475qti.31.1539793456493;
-        Wed, 17 Oct 2018 09:24:16 -0700 (PDT)
-Received: from [192.168.1.169] (pool-71-255-245-97.washdc.fios.verizon.net. [71.255.245.97])
-        by smtp.gmail.com with ESMTPSA id 140-v6sm12506610qkj.13.2018.10.17.09.24.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 09:24:15 -0700 (PDT)
-Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
-To:     Vincent Guittot <vincent.guittot@linaro.org>,
-        l.luba@partner.samsung.com
-References: <CGME20181009162509epcas1p4fdd2e23039caa24586a4a52c6d2e7336@epcas1p4.samsung.com>
- <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
- <20181010153553eucas1p1b8f74f4aa45751ef029805fd118affc1~cSUmU58-F2963929639eucas1p1L@eucas1p1.samsung.com>
- <5BBE3751.7000908@linaro.org>
- <20181011111025eucas1p2125db99d798a60a8e38da97c2a1c7436~ciWHHd0YW0102601026eucas1p2b@eucas1p2.samsung.com>
- <CAKfTPtBZam-+3sbKa+XffhoxkPX_ndTLoxioVwU-iz0qTnnPAw@mail.gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Ionela Voinescu <ionela.voinescu@arm.com>,
-        b.zolnierkie@samsung.com
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <5BC7622E.6000201@linaro.org>
-Date:   Wed, 17 Oct 2018 12:24:14 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Wed, 17 Oct 2018 20:26:49 -0400
+Received: from foss.arm.com ([217.140.101.70]:54536 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727435AbeJRA0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 20:26:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14017A78;
+        Wed, 17 Oct 2018 09:30:21 -0700 (PDT)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 290793F71A;
+        Wed, 17 Oct 2018 09:30:20 -0700 (PDT)
+Subject: Re: [PATCH 3/4] irqchip/mbigen: add support for a MBIGEN generating
+ SPIs
+To:     Yang Yingliang <yangyingliang@huawei.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, guohanjun@huawei.com
+References: <1539681316-19300-1-git-send-email-yangyingliang@huawei.com>
+ <1539681316-19300-4-git-send-email-yangyingliang@huawei.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ xsFNBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
+ g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
+ t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
+ ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
+ qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
+ 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
+ ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
+ t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
+ lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
+ DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABzSNNYXJjIFp5bmdp
+ ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPsLBewQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
+ AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
+ LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
+ 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
+ TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
+ 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
+ 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
+ UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
+ bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
+ LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
+ cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
+ 6ilrF8nOwU0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
+ 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
+ w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
+ VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
+ w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
+ QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
+ hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
+ o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
+ AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
+ BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAHCwV8EGAEC
+ AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
+ mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
+ MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
+ 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
+ kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
+ 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
+ a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
+ qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
+ hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
+ yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
+Organization: ARM Ltd
+Message-ID: <a8ea3f08-8d60-13bf-edcc-03298a9cfb0d@arm.com>
+Date:   Wed, 17 Oct 2018 17:30:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtBZam-+3sbKa+XffhoxkPX_ndTLoxioVwU-iz0qTnnPAw@mail.gmail.com>
+In-Reply-To: <1539681316-19300-4-git-send-email-yangyingliang@huawei.com>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/2018 01:11 PM, Vincent Guittot wrote:
-> Hi Lukasz,
+On 16/10/18 10:15, Yang Yingliang wrote:
+> Now with
+> 5052875 ("irqchip/gic-v3: Add support for Message Based Interrupts as an MSI controller"),
+> we can support MBIGEN to generate message based SPIs by writing GICD_SETSPIR.
 > 
-> On Thu, 11 Oct 2018 at 13:10, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>
->>
->>
->> On 10/10/2018 07:30 PM, Thara Gopinath wrote:
->>> Hello Lukasz,
->>>
->>> On 10/10/2018 11:35 AM, Lukasz Luba wrote:
->>>> Hi Thara,
->>>>
->>>> I have run it on Exynos5433 mainline.
->>>> When it is enabled with step_wise thermal governor,
->>>> some of my tests are showing ~30-50% regression (i.e. hackbench),
->>>> dhrystone ~10%.
->>>
->>> That is interesting. If I understand correctly, dhrystone spawns 16
->>> threads or so and floods the system. In "theory", such a test should not
->>> see any performance improvement and degradation. What is the thermal
->>> activity like in your system? I will try running one of these tests on
->>> hikey960.
->> I use this dhrystone implementation:
->> https://github.com/Keith-S-Thompson/dhrystone/blob/master/v2.2/dry.c
->> It does not span new threads/processes and I pinned it to a single cpu.
->>
->> My thermal setup is probably different than yours.
->> You have (on hikey960) probably 1 sensor for whole SoC and one thermal
->> zone (if it is this mainline file:
->> arch/arm64/boot/dts/hisilicon/hi3660.dtsi).
->> This thermal zone has two cooling devices - two clusters with dvfs.
->> Your temperature signal read out from that sensor is probably much
->> smoother. When you have sensor inside cluster, the rising factor
->> can be even 20deg/s (for big cores).
->> In my case, there are 4 thermal zones, each cluster has it's private
->> sensor and thermal zone. There is no 'SoC sensor' or 'PCB sensor',
->> which is recommended for IPA.
->>>>
->>>> Could you tell me which thermal governor was used in your case?
->>>> Please also share the name of that benchmark, i will give it a try.
->>>> Is it single threaded compute-intensive?
->>>
->>> Step-wise governor.
->>> I use aobench which is part of phoronix-test-suite.
->>>
->>> Regards
->>> Thara
->>>
->> I have built this aobench and run it pinned to single big cpu:
->> time taskset -c 4 ./aobench
+> The first 64-pins of each MBIGEN chip is used to generate SPIs, and each
+> MBIGEN chip has several MBIGEN nodes, every node has 128 pins for generating
+> LPIs. The total pins are: 64(SPIs) + 128 * node_nr(LPIs). So we can translate
+> the pin index in a unified way in mbigen_domain_translate().
 > 
-> Why have you pinned the test only on CPU4 ?
-> Goal of thermal pressure is to inform the scheduler of reduced compute
-> capacity and help the scheduler to take better decision in tasks
-> placement.
-
-Hi Lukasz,
-
-I agree with Vincent's observation. I had not seen this earlier. Pinning
-a task to a cpu will obviously prevent migration. The performance
-regression could be due to as Vincent mentioned below other tasks in the
-system. On another note, which cpufreq governor are you using? Is the
-core being bumped up to highest possible OPP during the test?
-
-Regards
-Thara
-> So I would not expect perf impact on your test as the bench will stay
-> pinned on the cpu4
-> That being said you obviously have perf impact as shown below in your results
-> And other tasks on the system are not pinned and might come and
-> disturb your bench
+> Also Add TYPE and VEC registers that used by generating SPIs, the driver can
+> access them when MBIGEN is used to generate SPIs.
 > 
->> The results:
->> 3min-5:30min [mainline]
->> 5:15min-5:50min [+patchset]
->>
->> The idea is definitely worth to investigate further.
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> ---
+>  drivers/irqchip/irq-mbigen.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
 > 
-> Yes I agree
+> diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
+> index f05998f..37c1932 100644
+> --- a/drivers/irqchip/irq-mbigen.c
+> +++ b/drivers/irqchip/irq-mbigen.c
+> @@ -48,6 +48,7 @@
+>  #define MBIGEN_NODE_OFFSET		0x1000
+>  
+>  /* offset of vector register in mbigen node */
+> +#define REG_MBIGEN_SPI_VEC_OFFSET	0x500
+>  #define REG_MBIGEN_LPI_VEC_OFFSET	0x200
+>  
+>  /**
+> @@ -62,6 +63,7 @@
+>   * This register is used to configure interrupt
+>   * trigger type
+>   */
+> +#define REG_MBIGEN_SPI_TYPE_OFFSET	0x400
+>  #define REG_MBIGEN_LPI_TYPE_OFFSET	0x0
+>  
+>  /**
+> @@ -79,6 +81,9 @@ static inline unsigned int get_mbigen_vec_reg(irq_hw_number_t hwirq)
+>  {
+>  	unsigned int nid, pin;
+>  
+> +	if (hwirq < SPI_NUM_PER_MBIGEN_CHIP)
+> +		return (hwirq * 4 + REG_MBIGEN_SPI_VEC_OFFSET);
+> +
+>  	hwirq -= SPI_NUM_PER_MBIGEN_CHIP;
+>  	nid = hwirq / IRQS_PER_MBIGEN_NODE + 1;
+>  	pin = hwirq % IRQS_PER_MBIGEN_NODE;
+> @@ -92,6 +97,13 @@ static inline void get_mbigen_type_reg(irq_hw_number_t hwirq,
+>  {
+>  	unsigned int nid, irq_ofst, ofst;
+>  
+> +	if (hwirq < SPI_NUM_PER_MBIGEN_CHIP) {
+> +		*mask = 1 << (hwirq % 32);
+> +		ofst = hwirq / 32 * 4;
+> +		*addr = ofst + REG_MBIGEN_SPI_TYPE_OFFSET;
+> +		return;
+> +	}
+> +
+>  	hwirq -= SPI_NUM_PER_MBIGEN_CHIP;
+>  	nid = hwirq / IRQS_PER_MBIGEN_NODE + 1;
+>  	irq_ofst = hwirq % IRQS_PER_MBIGEN_NODE;
+> @@ -162,6 +174,12 @@ static void mbigen_write_msg(struct msi_desc *desc, struct msi_msg *msg)
+>  	u32 val;
+>  
+>  	base += get_mbigen_vec_reg(d->hwirq);
+> +
+> +	if (d->hwirq < SPI_NUM_PER_MBIGEN_CHIP) {
+> +		writel_relaxed(msg->data, base);
+> +		return;
+> +	}
+
+How is the GICD_SETSPI_NSR base address programmed if you're ignoring
+the address stored in the message?
+
+How do you deal with level interrupts, as you don't seem to use the
+level MSI framework either?
+
+> +
+>  	val = readl_relaxed(base);
+>  
+>  	val &= ~(IRQ_EVENT_ID_MASK << IRQ_EVENT_ID_SHIFT);
+> @@ -182,8 +200,7 @@ static int mbigen_domain_translate(struct irq_domain *d,
+>  		if (fwspec->param_count != 2)
+>  			return -EINVAL;
+>  
+> -		if ((fwspec->param[0] > MAXIMUM_IRQ_PIN_NUM) ||
+> -			(fwspec->param[0] < SPI_NUM_PER_MBIGEN_CHIP))
+> +		if (fwspec->param[0] > MAXIMUM_IRQ_PIN_NUM)
+>  			return -EINVAL;
+>  		else
+>  			*hwirq = fwspec->param[0];
 > 
-> Vincent
->>
->> Regards,
->> Lukasz
->>
->>
->>
 
+Now, the biggest question of them all: how does it work with ACPI? Last
+time I checked, there was no DT support for platforms using the MBIGEN.
 
+My gut feeling is that it would be so much better if the SPIs generated
+by the MBIGEN were configured in firmware, and the devices behind it
+would just describe the corresponding SPI...
+
+Thanks,
+
+	M.
 -- 
-Regards
-Thara
+Jazz is not dead. It just smells funny...
