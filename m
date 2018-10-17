@@ -6,82 +6,84 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBAD5ECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D25ABECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B79822087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:58:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B79822087A
+	by mail.kernel.org (Postfix) with ESMTP id 981112087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:59:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 981112087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbeJRDzQ (ORCPT
+        id S1728034AbeJRD42 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 23:55:16 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35044 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbeJRDzQ (ORCPT
+        Wed, 17 Oct 2018 23:56:28 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42962 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbeJRD41 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 23:55:16 -0400
-Received: by mail-ot1-f66.google.com with SMTP id 14so23474444oth.2;
-        Wed, 17 Oct 2018 12:58:00 -0700 (PDT)
+        Wed, 17 Oct 2018 23:56:27 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w81-v6so22118101oiw.9;
+        Wed, 17 Oct 2018 12:59:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hOmTxnFBCChT34ZPXs3roEwNf7Q36IbA6NOv02WWc8I=;
-        b=hp8cPDoLdW7m89SRQAe7EHfhT7oBd1dyoasL13wt6C1Yrtr5XdVXx94hqQcDhzJO1t
-         fK6yR0EBZQ2CML1p8kcj7xdrRKnIjwOmHmu2Ybs82gbMPaIIMk4L47bkbE8u5m90S69H
-         xJJ7fqplZyd4FmMFKpt8mTzaTTE3Q4He2FvJUFvOT3OFaM+aLs9eiSfdQ6oQ7lAydJW/
-         vvfsn+EIpAnvfMg7aVgQO0Ui/aE8wOeH+NAB+/Vn2AKbo7NIxAmIYxu/6t/8pI246ign
-         SBkQ63TDgQT2qIE+929TS0T/RMapYQBDZrkguDS+MTINxcNLslJ9EiVsq90lmrlOpbcM
-         mDww==
-X-Gm-Message-State: ABuFfoh5nI6xKNXmX8lCsthLCdPsbK1ik4JdeVyo0Z30MzkwlUTq/Q6i
-        TTTaOXg9kWl5s1eVrGMKDw==
-X-Google-Smtp-Source: ACcGV62dXWBTBM1mTV3tyPb1XH1mK0mB++UuXDBu7t/qPRlNlu4MITUf/THdm1gcYcUQy6yeMxtF4Q==
-X-Received: by 2002:a9d:8a4:: with SMTP id 33mr16402646otf.269.1539806279766;
-        Wed, 17 Oct 2018 12:57:59 -0700 (PDT)
+        bh=vRBNtr0Oel9vQ3H2vZYKPypBbmzkBI2MpMBMrykdGq4=;
+        b=C1uGbNKFHLrbtYGTBslvghpKfPToIxmjdBMUQXr/I0O+PaYG75odAAOKIju+fp1Bea
+         xMFKyogCyByUrFl8Jo+e5dNi6NU606fBWKCGHUQ1tpn3W93kl4poagWCqvj9n++U6fAy
+         +vCX07VNDl/TKkoPDGqcGq24XAe78CxK1LXLFYWjctJHKoqy1TPMLb+eyIeBB1eVW+z0
+         FUBbQEZcq57DJbmy5S7jXYkzD6iOxcyrKmeKShjKmyuMY7KwpXOUgG2jNWjG3b9bUdlA
+         EAMm3cSuK1icysmqwGs+6L9y4/dOtv9qIxecbRCVUpEmaxYxbFuaxCRCWoNKL0KXHpmG
+         vFKw==
+X-Gm-Message-State: ABuFfojR+sBDa/x8XMay5i6BxDTr/V29pS6KZAqlEuWTGLfAm/BTN97/
+        fnYnwZDtAA0HLW+3+dZLOw==
+X-Google-Smtp-Source: ACcGV6293WnLc/mugvuOLKBQvXdnNLKEm0GRFSOaT7+vdpvn79I+Iyz7DmhiNUlNFEfFS3LWYoB65w==
+X-Received: by 2002:aca:6257:: with SMTP id w84-v6mr13956131oib.326.1539806351251;
+        Wed, 17 Oct 2018 12:59:11 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a17-v6sm5737358oii.7.2018.10.17.12.57.59
+        by smtp.gmail.com with ESMTPSA id b8sm6250424otd.50.2018.10.17.12.59.10
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 12:57:59 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 14:57:58 -0500
+        Wed, 17 Oct 2018 12:59:10 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 14:59:09 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        amit.kucheria@linaro.org, evgreen@google.com,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ
- Firmware bindings
-Message-ID: <20181017195758.GA11226@bogus>
-References: <1539257761-23023-1-git-send-email-tdas@codeaurora.org>
- <1539257761-23023-2-git-send-email-tdas@codeaurora.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 2/2] dt-bindings: uniphier: move cache-uniphier.txt to
+ vendor directory
+Message-ID: <20181017195909.GA13070@bogus>
+References: <1539318324-4938-1-git-send-email-yamada.masahiro@socionext.com>
+ <1539318324-4938-2-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1539257761-23023-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1539318324-4938-2-git-send-email-yamada.masahiro@socionext.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 11 Oct 2018 17:06:00 +0530, Taniya Das wrote:
-> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
-> SoCs. This is required for managing the cpu frequency transitions which are
-> controlled by the hardware engine.
+On Fri, 12 Oct 2018 13:25:24 +0900, Masahiro Yamada wrote:
+> Now, the Socionext vendor directory is available at
+> Documentation/devicetree/bindings/arm/socionext/
 > 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Move cache-uniphier.txt over to it.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
->  .../bindings/cpufreq/cpufreq-qcom-hw.txt           | 173 +++++++++++++++++++++
->  1 file changed, 173 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+> 
+> Changes in v2:
+>   - New patch
+> 
+>  .../devicetree/bindings/arm/{uniphier => socionext}/cache-uniphier.txt    | 0
+>  1 file changed, 0 insertions(+), 0 deletions(-)
+>  rename Documentation/devicetree/bindings/arm/{uniphier => socionext}/cache-uniphier.txt (100%)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
