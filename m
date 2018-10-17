@@ -2,175 +2,147 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E700EECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 956C0ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB7C2151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43F3E2151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:50:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cyU7tudF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pDc256VK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB7C2151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ItVCK3pF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F3E2151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbeJQWqJ (ORCPT
+        id S1727760AbeJQWq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:46:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59026 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbeJQWqJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:46:09 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4746F60769; Wed, 17 Oct 2018 14:50:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539787805;
-        bh=Wk+VNzTAG2U1KHPsUStP31swo41CoB5YURu+ohyDsM4=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=cyU7tudFTQJlTkyeLhF9T233971YnqnowoGxaxOK3TjatGMM0V7Z3DupYuoPLk5pm
-         ioQMauuuRmFFpP+U2/HjoLGR39ygQIdlGtBg1eMNVBx6HwmoCI2i5wGZerQ5NNfAcA
-         TB8e1ET2QcC5L4bVMOZDvoIXU2yuqhsUGKhxWq8Q=
-Received: from [192.168.43.47] (unknown [223.227.22.91])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8094E60769;
-        Wed, 17 Oct 2018 14:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539787803;
-        bh=Wk+VNzTAG2U1KHPsUStP31swo41CoB5YURu+ohyDsM4=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=pDc256VKXag+l77psjUdtES+Weoeh76UBDjdV01E6aNvBco5vELXkoE4AQR5SI9eq
-         HvEKQWtBe3NQ4FZjxemBRIzFgt4r56beoOTpRV2ewsBmDrH+FSfHtg3T6HfzhlfT+j
-         cKUfwrPCpimgIqvvDBFwLc6/9Trul/t+vsSv4rWw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8094E60769
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Joel Fernandes <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pramod Gurav <gpramod@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
- <20181016112928.4b52afb5@gandalf.local.home>
- <CAGXu5jLBtBU1eX7tGX1gOVKSFKeLMeoke3bGHUuqxk86dLSnng@mail.gmail.com>
- <20181017101355.GA230639@joelaf.mtv.corp.google.com>
- <2a23cd74-7364-0fb7-3c7b-7be79a881073@codeaurora.org>
-Message-ID: <69d2f43d-dc96-9348-7f70-5db88e8f5c39@codeaurora.org>
-Date:   Wed, 17 Oct 2018 20:19:41 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <2a23cd74-7364-0fb7-3c7b-7be79a881073@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Wed, 17 Oct 2018 18:46:57 -0400
+Received: from mail-bn3nam01on0070.outbound.protection.outlook.com ([104.47.33.70]:60461
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727196AbeJQWq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 18:46:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ajeih4Op6vkFyssPay1wToDj+IVUpYfk5jFI3zgH76I=;
+ b=ItVCK3pFgqHf2o0l9Bb4RRogVVshf+vAS6GFbPaKId548lDCUULGCDG04Scqm5kNxkvEnrgyya3f0GAl+ngjTQ6m9dfBqm10IBiHZWmM4bjdZC2PiqzLna0B3SZzNrap4npSKbZb7+2U6LCAdPtd6OrJCghV7Rqx9VazjidfjKM=
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
+ DM5PR12MB1915.namprd12.prod.outlook.com (10.175.88.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.24; Wed, 17 Oct 2018 14:50:45 +0000
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::bd60:9d30:b818:b828]) by DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::bd60:9d30:b818:b828%3]) with mapi id 15.20.1250.020; Wed, 17 Oct 2018
+ 14:50:45 +0000
+From:   "Moger, Babu" <Babu.Moger@amd.com>
+To:     Fenghua Yu <fenghua.yu@intel.com>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "jannh@google.com" <jannh@google.com>,
+        "dima@arista.com" <dima@arista.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>
+Subject: Re: [PATCH v4 08/13] arch/x86: Bring few more functions into the
+ resource structure
+Thread-Topic: [PATCH v4 08/13] arch/x86: Bring few more functions into the
+ resource structure
+Thread-Index: AQHUZMlzim78ZV4gn02F0jJUDULTV6UiizAAgAD8yAA=
+Date:   Wed, 17 Oct 2018 14:50:45 +0000
+Message-ID: <bcfe2e44-4595-2a62-c3f2-16bdad5ed196@amd.com>
+References: <20181015205514.25387-1-babu.moger@amd.com>
+ <20181015205514.25387-9-babu.moger@amd.com>
+ <20181016234556.GB39177@romley-ivt3.sc.intel.com>
+In-Reply-To: <20181016234556.GB39177@romley-ivt3.sc.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN6PR02CA0010.namprd02.prod.outlook.com
+ (2603:10b6:805:a2::23) To DM5PR12MB2471.namprd12.prod.outlook.com
+ (2603:10b6:4:b5::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Babu.Moger@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1915;20:QqfoI346H79le1pBdXKGMr3Yz1SZ2jhq8dX/e+lMPII5/GgDMy5o0oIyMbr+ElLe/Rf76uLT2uVeQW4TJ51pLIjXYgAZklMNJ7wHuhQAsxU+aejErqicKZoeiSo3ApEya+T0u8ghXWnSv6qWSqlIFa9GIMxDPiLpq/0bf3Dnkn8pHCoT2O8qehGuwpaaFs9tVbxCRK2ZWI8MAMgEOQSkxedp9qOwnvEo6N3LxRNQT2mjdPjnNmMdpZuYYR+o4/oH
+x-ms-office365-filtering-correlation-id: 076069ea-4631-4410-2781-08d6343feb39
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1915;
+x-ms-traffictypediagnostic: DM5PR12MB1915:
+x-microsoft-antispam-prvs: <DM5PR12MB19150D8B50AF60D5DB9EBEE395FF0@DM5PR12MB1915.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1915;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1915;
+x-forefront-prvs: 08286A0BE2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(136003)(346002)(376002)(199004)(189003)(81166006)(105586002)(54906003)(6916009)(31686004)(316002)(4326008)(36756003)(72206003)(81156014)(25786009)(102836004)(186003)(26005)(8936002)(14444005)(486006)(31696002)(256004)(106356001)(478600001)(11346002)(446003)(8676002)(14454004)(2616005)(476003)(71190400001)(2900100001)(86362001)(97736004)(6436002)(3846002)(6116002)(6246003)(2906002)(229853002)(53936002)(5660300001)(305945005)(66066001)(5250100002)(7736002)(6512007)(99286004)(7406005)(68736007)(76176011)(7416002)(53546011)(52116002)(386003)(6486002)(6506007)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1915;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: rNJnZE7XbQNFyYDrYE3yeIPSm3mwhUaOoFgx0PLCGrBmM6IukAfcHvKYMTkr2NfJR+C+uC0kwstL1A3zYVH7Jdqqn05IFTvRD316wJtbetlV3CVzOq5oMkthGH9RBj4gFZiCuRPsu9qkmBzonbm/hoiCDIFUeiGoMXyVexuIdwlTHvne4RzkCVWovaEYK5rCxGSRvGELf2n2DGKxTXstQXwBjysXzFvyh+iqHdGiXpsT+EpHimY4r8pZOdBIVboxmeAOx8SJyXnGaamIALDsxGciwjdUdXj3phxK2jLKo+FtJyRxyXXSgPr6YHw5dleKRFTw/o+ksdPu9gu5c4ZeXiPKODGLt2/gx0ZPAqnRcd0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <36FBE988105F6E459104EC2EBF07AF8C@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 076069ea-4631-4410-2781-08d6343feb39
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 14:50:45.6741
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1915
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 5:08 PM, Sai Prakash Ranjan wrote:
->>
->> What do you think about the (untested) patch below? It seems to me 
->> that it
->> should solve the issue of missing early crash dumps, but I have not 
->> tested it
->> yet. Sai, would you mind trying it out and let me know if you can see the
->> early crash dumps properly now?
->>
->> ----8<---
->> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
->> Subject: [RFC] pstore: allocate compression during late_initcall
->>
->> ramoop's pstore registration (using pstore_register) has to run during
->> late_initcall because crypto backend may not be ready during
->> postcore_initcall. This causes missing of dmesg crash dumps which could
->> have been caught by pstore.
->>
->> Instead, lets allow ramoops pstore registration earlier, and once crypto
->> is ready we can initialize the compression.
->>
->> Reported-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
->> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
->> ---
->>   fs/pstore/platform.c | 13 +++++++++++++
->>   fs/pstore/ram.c      |  2 +-
->>   2 files changed, 14 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
->> index 15e99d5a681d..f09066db2d4d 100644
->> --- a/fs/pstore/platform.c
->> +++ b/fs/pstore/platform.c
->> @@ -780,6 +780,19 @@ void __init pstore_choose_compression(void)
->>       }
->>   }
->> +static int __init pstore_compression_late_init(void)
->> +{
->> +    /*
->> +     * Check if any pstore backends registered earlier but did not 
->> allocate
->> +     * for compression because crypto was not ready, if so then 
->> initialize
->> +     * compression.
->> +     */
->> +    if (psinfo && !tfm)
->> +        allocate_buf_for_compression();
->> +    return 0;
->> +}
->> +late_initcall(pstore_compression_late_init);
->> +
->>   module_param(compress, charp, 0444);
->>   MODULE_PARM_DESC(compress, "Pstore compression to use");
->> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
->> index bbd1e357c23d..98e48d1a9776 100644
->> --- a/fs/pstore/ram.c
->> +++ b/fs/pstore/ram.c
->> @@ -940,7 +940,7 @@ static int __init ramoops_init(void)
->>       ramoops_register_dummy();
->>       return platform_driver_register(&ramoops_driver);
->>   }
->> -late_initcall(ramoops_init);
->> +postcore_initcall(ramoops_init);
->>   static void __exit ramoops_exit(void)
->>   {
->>
-> 
-> Yes I could see the early crash dump. Also I tested with different 
-> compression (LZO) instead of deflate just to be sure and it works fine, 
-> thanks :)
-> 
-> Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-> 
-
-I just noticed that allocate_buf_for_compression() is also called from 
-pstore_register(). Shouldn't that call be removed now that ramoops_init 
-is moved to postcore_initcall and allocate_buf_for_compression() will 
-just return doing nothing when called from pstore_register()?
-
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+SGkgRmVuZ2h1YSwNCg0KT24gMTAvMTYvMjAxOCAwNjo0NSBQTSwgRmVuZ2h1YSBZdSB3cm90ZToN
+Cj4gT24gTW9uLCBPY3QgMTUsIDIwMTggYXQgMDg6NTU6NDlQTSArMDAwMCwgTW9nZXIsIEJhYnUg
+d3JvdGU6DQo+PiB1cGRhdGVfbWJhX2J3IDogRmVlZGJhY2sgbG9vcCBiYW5kd2lkdGggdXBkYXRl
+IGZ1bmN0aW9uYWxpdHkgaXMgbm90DQo+PiAgICAgICAgICAgICAgICAgbmVlZGVkIGZvciBBTUQu
+DQo+IA0KPiBXaWxsIHlvdSBpbXBsZW1lbnQgdXBkYXRlX21iYV9idygpIGZvciBBTUQgaW4gZnV0
+dXJlPw0KDQpOby4gVGhlcmUgaXMgbm8gcGxhbi4NCg0KPiANCj4+ICAJCWxpc3RfZm9yX2VhY2hf
+ZW50cnkoY3JncnAsIGhlYWQsIG1vbi5jcmR0Z3JwX2xpc3QpDQo+PiAgCQkJbWJtX3VwZGF0ZShk
+LCBjcmdycC0+bW9uLnJtaWQpOw0KPj4gIA0KPj4gLQkJaWYgKGlzX21iYV9zYyhOVUxMKSkNCj4+
+IC0JCQl1cGRhdGVfbWJhX2J3KHByZ3JwLCBkKTsNCj4+ICsJCWlmIChpc19tYmFfc2MoTlVMTCkp
+IHsNCj4+ICsJCQlyX21iYSA9ICZyZHRfcmVzb3VyY2VzX2FsbFtSRFRfUkVTT1VSQ0VfTUJBXTsN
+Cj4+ICsJCQlpZiAocl9tYmEtPnVwZGF0ZV9tYmFfYncpDQo+PiArCQkJCXJfbWJhLT51cGRhdGVf
+bWJhX2J3KHByZ3JwLCBkKTsNCj4+ICsJCX0NCj4gDQo+IE1vdW50IG9wdGlvbiAibWJhX01CcHMi
+IGlzIG5vdCBpbXBsZW1lbnRlZCBvbiBBTUQuIFRoZW4gZG9uJ3QNCj4gY2FsbCBzZXRfbWJhX3Nj
+KHRydWUpIGluIHBhcnNlX3JkdGdyb3VwZnNfb3B0aW9ucygpLg0KPiANCj4gVGh1cywgeW91IGRv
+bid0IG5lZWQgdG8gY2hhbmdlIHRoaXMgY29kZSBoZXJlIGJlY2F1c2UgaXNfbWJhX3NjKE5VTEwp
+IGlzDQo+IGZhbHNlIG9uIEFNRC4NCg0KWWVzLiBpc19tYmFfc2MoTlVMTCkgaXMgZmFsc2Ugb24g
+QU1ELiBJIGNhbiByZW1vdmUgdGhpcyBjaGFuZ2UuDQoNCj4gDQo+IFRoYW5rcy4NCj4gDQo+IC1G
+ZW5naHVhDQo+IA0K
