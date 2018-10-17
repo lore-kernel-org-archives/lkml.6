@@ -2,112 +2,92 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3617DECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F54ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:25:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA3402151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:24:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA3402151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id C55F721470
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:25:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeL5oABZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C55F721470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbeJQXVF (ORCPT
+        id S1727699AbeJQXVw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:21:05 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:44685 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeJQXVE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:21:04 -0400
-Received: by mail-qk1-f194.google.com with SMTP id y8-v6so16701169qka.11;
-        Wed, 17 Oct 2018 08:24:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MaGRLek2OX0zEc2g5QRc22boZKv7PEzfJvudm/qjq4I=;
-        b=F57Ltvsf1LVZ8+K6hI1OO8RnfZv9qsQY67XM1nalDcrdu/0q0OIWHP0yjKrXZmy51k
-         RXaAPJovWzKV4K6AShnzT93tL3O7b8t6okbwcIMXMTa45tJyThwLJ7WpXQeBzIIUKXPN
-         WpKvuWOLTK8IbFVll+p+kqr5kGSp4WOikexT+DOLgumxUw5Lw6zTOUbsZdB2SKjPE4IG
-         wP/6VLcer/Ed2So+Y+nR1Pu91f/9chwje3Uj+uGdTHXu2NLKM8wOKSFPzMTXChKaehPE
-         gwsUw+Ej+wgf8QNiiVVK1wAM/x2CR5nJrM2e9c6mZ8i1X7RnGu1B1iwm3Do/w9EhOPM2
-         n2XQ==
-X-Gm-Message-State: ABuFfojiusMgrWSx3dRpFTUk0Uq4GIjJK3j/4fnz5aYi9eERRQa0wzqy
-        fAzCCGAdLd0Q3dEFzZFNncqufSrE/bGsa0eW30g=
-X-Google-Smtp-Source: ACcGV610nGyt5yECRWz6iCgyMu18D+Y5I4e7XAO+VmaGq/lwkwLzPVGxLFggIVihNno2rBnGOrHk0ItQ5JmrN76V6O8=
-X-Received: by 2002:a37:e21a:: with SMTP id g26-v6mr24536179qki.330.1539789892521;
- Wed, 17 Oct 2018 08:24:52 -0700 (PDT)
+        Wed, 17 Oct 2018 19:21:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49372 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727032AbeJQXVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:21:52 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0CAA2148D;
+        Wed, 17 Oct 2018 15:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539789939;
+        bh=OZj2GDmdvVDHedppTdL1IX5SjvozIaFPyfL3J/X7J2Y=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=NeL5oABZ93VeuK6jNxGKdkegUxxc4c28YiE+SgcRhCvMFmJs2Dkrb+/g5nIMIke2P
+         Rl6B6WP3bucQYu+VT1opJ79mJ69pLle3oKvo7wsTuWeKzPQp06y2ghrsAgE/84vVY3
+         i+fzxmxXL5MvcE89xQqFdtK2UMrigqjyR25+tUEM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <cover.1539655731.git.ren_guo@c-sky.com> <f884af8fffa1645c2650292a3001a2fbfc4cc390.1539655732.git.ren_guo@c-sky.com>
-In-Reply-To: <f884af8fffa1645c2650292a3001a2fbfc4cc390.1539655732.git.ren_guo@c-sky.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 17 Oct 2018 17:24:36 +0200
-Message-ID: <CAK8P3a3hJ+Xt2xfTg=bkDBfahk7Z-3+Unt1MqmMQrRnCeJhVtg@mail.gmail.com>
-Subject: Re: [PATCH V9 13/21] csky: Library functions
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com,
-        linfei_chen@c-sky.com, Mao Han <han_mao@c-sky.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1539756441-18776-2-git-send-email-Anson.Huang@nxp.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+References: <1539756441-18776-1-git-send-email-Anson.Huang@nxp.com>
+ <1539756441-18776-2-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <153978993915.5275.9461015919945429893@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/2] clk: imx7d: remove CLK_IS_CRITICAL flag for arm_a7_root_clk
+Date:   Wed, 17 Oct 2018 08:25:39 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 5:02 AM Guo Ren <ren_guo@c-sky.com> wrote:
+Quoting Anson Huang (2018-10-16 23:12:04)
+> i.MX7D uses virtual cpu clock of "arm" clock to be child clock
 
-> +++ b/arch/csky/lib/delay.c
-> @@ -0,0 +1,39 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/delay.h>
-> +
-> +void __delay(unsigned long loops)
-> +{
-> +       asm volatile (
-> +               "mov r0, r0\n"
-> +               "1:declt %0\n"
-> +               "bf     1b"
-> +               : "=r"(loops)
-> +               : "0"(loops));
-> +}
-> +EXPORT_SYMBOL(__delay);
-> +
-> +void __const_udelay(unsigned long xloops)
-> +{
-> +       unsigned long long loops;
-> +
-> +       loops = (unsigned long long)xloops * loops_per_jiffy * HZ;
-> +
-> +       __delay(loops >> 32);
-> +}
-> +EXPORT_SYMBOL(__const_udelay);
+This statement is concerning. Why do we have virtual clks?
 
-I can't find any indication we discussed this part before. Can you
-explain (in the
-changelog and in a reply) if there is a reliable high-resolution clocksource
-available in the architecture? If you can read the elapsed time here instead of
-using the loops_per_jiffy estimate, that would make this more robust, as
-well as speed up the boot.
+> of "arm_a7_root_clk" and it is with CLK_IS_CRITICAL flag set, so
+> no need to add CLK_IS_CRITICAL flag for keeping "arm_a7_root_clk"
+> use count correct, latest clock tree is as below in clk_summary:
+> =
 
-If you can't do that in general, that's fine, and you can add my
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> pll_arm_main                         1        1        0   792000000     =
+     0
+>       pll_arm_main_bypass            1        1        0   792000000     =
+     0
+>          pll_arm_main_clk            1        1        0   792000000     =
+     0
+>             arm_a7_src               1        1        0   792000000     =
+     0
+>                arm_a7_cg             1        1        0   792000000     =
+     0
+>                   arm_a7_div         1        1        0   792000000     =
+     0
+>                      arm_a7_root_clk       1        1        0   79200000=
+0    0
+>                         arm          1        1        0   792000000
+> =
+
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
