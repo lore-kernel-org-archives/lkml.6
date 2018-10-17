@@ -2,302 +2,202 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8988ECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2901ECDE39
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E236B21476
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E236B21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A627A21476
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U3ll2Se5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A627A21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbeJRCaA (ORCPT
+        id S1728468AbeJRCaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 22:30:00 -0400
-Received: from mga12.intel.com ([192.55.52.136]:29682 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728435AbeJRC36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 22:29:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 11:33:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="82003933"
-Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by orsmga007.jf.intel.com with ESMTP; 17 Oct 2018 11:33:02 -0700
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Subject: [Patch v3 13/13] x86/speculation: Create PRCTL interface to restrict indirect branch speculation
-Date:   Wed, 17 Oct 2018 10:59:41 -0700
-Message-Id: <a04ba925a19af6ad5eaad2bc5501b7ea1ece66a9.1539798901.git.tim.c.chen@linux.intel.com>
-X-Mailer: git-send-email 2.9.4
-In-Reply-To: <cover.1539798901.git.tim.c.chen@linux.intel.com>
-References: <cover.1539798901.git.tim.c.chen@linux.intel.com>
-In-Reply-To: <cover.1539798901.git.tim.c.chen@linux.intel.com>
-References: <cover.1539798901.git.tim.c.chen@linux.intel.com>
+        Wed, 17 Oct 2018 22:30:18 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:44470 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728176AbeJRCaS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 22:30:18 -0400
+Received: by mail-yw1-f66.google.com with SMTP id s73-v6so10758229ywg.11
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 11:33:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=E7Ju8kbYszWk0nEMKwbY77mi8dj+AQLdKq6dVXBCtDo=;
+        b=U3ll2Se5XxPEOBwzJ1MS41Z38hkSOPXmdQ+lsrhFkibCJcnw/8Jy0RONnCl+pmCF9A
+         SbJXWXdmtAKayVyoZFC/akqkNbRySOF0y4JXVAegaOXIsCW4T3SbwLGVPUzCtG5kJF0D
+         7f66DbaJJV9zeqJt8endLyh/xZMyhmWKGJRys=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=E7Ju8kbYszWk0nEMKwbY77mi8dj+AQLdKq6dVXBCtDo=;
+        b=geYQWEcYnwL3MKAyd3pOEqTvIMWghCOGLGFgs2IwpLK0ImcpD/vm3fib2y71i8Mby6
+         S/f2pWmQ5JxDuObH4NI6Om4hUxTI3zR9EVgSuvdSCErKOBq/m3/j9BPAs4Nf/AUnTgNM
+         lZQNul2BtOgCNdXPMIZpPEidRpBz2ZtLZu6bp5ZJrz/mXxvKFQNzS5uSbk1d9CR6QQxV
+         W/xBgamo2wDi34SGefWW53slprz0rUQrPMapOIl8mvvWWF0qezGFMCk6/VGckmrM/WEI
+         dJmiDPf7fSUzTHlAsQ5cJ03yJnDF9x1YTrkOvgMxyDABKsptAiIwNFsL+VjVEAE18E9g
+         fu6g==
+X-Gm-Message-State: ABuFfohdR3GetRDcXSHz8jNvWIVu6t3xeBQjy1ap3zO96rVbc2qG6SJ6
+        1kBVHJhFBYAJ7xlBeUb+NU6ZG4a408M=
+X-Google-Smtp-Source: ACcGV62u0/74cJVxYLAx37rpNu0bkbyeMp/Azd6DDUDl15kTygU0o/083loF4+byWSn+U6b/9h5Ybg==
+X-Received: by 2002:a0d:ff83:: with SMTP id p125-v6mr16307868ywf.65.1539801200050;
+        Wed, 17 Oct 2018 11:33:20 -0700 (PDT)
+Received: from mail-yw1-f49.google.com (mail-yw1-f49.google.com. [209.85.161.49])
+        by smtp.gmail.com with ESMTPSA id c128-v6sm6923881ywb.68.2018.10.17.11.33.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 11:33:19 -0700 (PDT)
+Received: by mail-yw1-f49.google.com with SMTP id j75-v6so10765214ywj.10
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 11:33:19 -0700 (PDT)
+X-Received: by 2002:a81:2cc3:: with SMTP id s186-v6mr16382159yws.168.1539800735756;
+ Wed, 17 Oct 2018 11:25:35 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Wed, 17 Oct 2018 11:25:34
+ -0700 (PDT)
+In-Reply-To: <20181017175611.GB107185@joelaf.mtv.corp.google.com>
+References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
+ <20181016112928.4b52afb5@gandalf.local.home> <CAGXu5jLBtBU1eX7tGX1gOVKSFKeLMeoke3bGHUuqxk86dLSnng@mail.gmail.com>
+ <20181017101355.GA230639@joelaf.mtv.corp.google.com> <2a23cd74-7364-0fb7-3c7b-7be79a881073@codeaurora.org>
+ <69d2f43d-dc96-9348-7f70-5db88e8f5c39@codeaurora.org> <20181017175611.GB107185@joelaf.mtv.corp.google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 17 Oct 2018 11:25:34 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+Jg6SQWcduVy-Kt39Bup4og=jr=eGrBCLEdn80Cayu-Q@mail.gmail.com>
+Message-ID: <CAGXu5j+Jg6SQWcduVy-Kt39Bup4og=jr=eGrBCLEdn80Cayu-Q@mail.gmail.com>
+Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
+        Geliang Tang <geliangtang@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pramod Gurav <gpramod@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create PRCTL interface to restrict an application's indirect branch
-speculation.  This will protect the application against spectre v2 attack
-from another application.
+On Wed, Oct 17, 2018 at 10:56 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> On Wed, Oct 17, 2018 at 08:19:41PM +0530, Sai Prakash Ranjan wrote:
+>> On 10/17/2018 5:08 PM, Sai Prakash Ranjan wrote:
+>> > >
+>> > > What do you think about the (untested) patch below? It seems to me
+>> > > that it
+>> > > should solve the issue of missing early crash dumps, but I have not
+>> > > tested it
+>> > > yet. Sai, would you mind trying it out and let me know if you can see the
+>> > > early crash dumps properly now?
+>> > >
+>> > > ----8<---
+>> > > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+>> > > Subject: [RFC] pstore: allocate compression during late_initcall
+>> > >
+>> > > ramoop's pstore registration (using pstore_register) has to run during
+>> > > late_initcall because crypto backend may not be ready during
+>> > > postcore_initcall. This causes missing of dmesg crash dumps which could
+>> > > have been caught by pstore.
+>> > >
+>> > > Instead, lets allow ramoops pstore registration earlier, and once crypto
+>> > > is ready we can initialize the compression.
+>> > >
+>> > > Reported-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+>> > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+>> > > ---
+>> > >   fs/pstore/platform.c | 13 +++++++++++++
+>> > >   fs/pstore/ram.c      |  2 +-
+>> > >   2 files changed, 14 insertions(+), 1 deletion(-)
+>> > >
+>> > > diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+>> > > index 15e99d5a681d..f09066db2d4d 100644
+>> > > --- a/fs/pstore/platform.c
+>> > > +++ b/fs/pstore/platform.c
+>> > > @@ -780,6 +780,19 @@ void __init pstore_choose_compression(void)
+>> > >       }
+>> > >   }
+>> > > +static int __init pstore_compression_late_init(void)
+>> > > +{
+>> > > +    /*
+>> > > +     * Check if any pstore backends registered earlier but did not
+>> > > allocate
+>> > > +     * for compression because crypto was not ready, if so then
+>> > > initialize
+>> > > +     * compression.
+>> > > +     */
+>> > > +    if (psinfo && !tfm)
+>> > > +        allocate_buf_for_compression();
+>> > > +    return 0;
+>> > > +}
+>> > > +late_initcall(pstore_compression_late_init);
+>> > > +
+>> > >   module_param(compress, charp, 0444);
+>> > >   MODULE_PARM_DESC(compress, "Pstore compression to use");
+>> > > diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+>> > > index bbd1e357c23d..98e48d1a9776 100644
+>> > > --- a/fs/pstore/ram.c
+>> > > +++ b/fs/pstore/ram.c
+>> > > @@ -940,7 +940,7 @@ static int __init ramoops_init(void)
+>> > >       ramoops_register_dummy();
+>> > >       return platform_driver_register(&ramoops_driver);
+>> > >   }
+>> > > -late_initcall(ramoops_init);
+>> > > +postcore_initcall(ramoops_init);
+>> > >   static void __exit ramoops_exit(void)
+>> > >   {
+>> > >
+>> >
+>> > Yes I could see the early crash dump. Also I tested with different
+>> > compression (LZO) instead of deflate just to be sure and it works fine,
+>> > thanks :)
+>> >
+>> > Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+>> >
+>
+> Thanks.
+>
+>> I just noticed that allocate_buf_for_compression() is also called from
+>> pstore_register(). Shouldn't that call be removed now that ramoops_init is
+>> moved to postcore_initcall and allocate_buf_for_compression() will just
+>> return doing nothing when called from pstore_register()?
+>
+> Yes, that is the point. If crypto is not ready then my thought is
+> allocate_buf_for_compression() called from pstore_register() should do
+> nothing and pstore will work uncompressed and the kdump infrastructure will
+> only cause uncompressed writes. But say if the kdump triggered *after* crypto
+> was ready, then the dump write out would be compressed since pstore is ready
+> for compression.
+>
+> The idea is if a future pstore backend calls pstore_register late, then it
+> may as well do the allocate_buf_for_compression as well at that time when it
+> runs. In that cause pstore_compression_late_init would do nothing.
+>
+> So this approach is both dynamic and future proof.
 
-Invocations:
-Check indirect branch speculation status with
-- prctl(PR_GET_SPECULATION_CTRL, PR_INDIR_BRANCH, 0, 0, 0);
+Yeah, thanks! I think this looks correct, but I'll spend some more
+time testing it too.
 
-Enable indirect branch speculation with
-- prctl(PR_SET_SPECULATION_CTRL, PR_INDIR_BRANCH, PR_SPEC_ENABLE, 0, 0);
+-Kees
 
-Disable indirect branch speculation with
-- prctl(PR_SET_SPECULATION_CTRL, PR_INDIR_BRANCH, PR_SPEC_DISABLE, 0, 0);
-
-Force disable indirect branch speculation with
-- prctl(PR_SET_SPECULATION_CTRL, PR_INDIR_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
-
-See Documentation/userspace-api/spec_ctrl.rst.
-
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
----
- Documentation/admin-guide/kernel-parameters.txt |  5 +-
- Documentation/userspace-api/spec_ctrl.rst       | 10 +++
- arch/x86/kernel/cpu/bugs.c                      | 85 ++++++++++++++++++++++++-
- include/linux/sched.h                           | 11 ++++
- include/uapi/linux/prctl.h                      |  1 +
- tools/include/uapi/linux/prctl.h                |  1 +
- 6 files changed, 111 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 2feb6b2..9af11be 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4196,7 +4196,10 @@
- 			lite   - turn on mitigation for non-dumpable
- 				 processes (i.e. protect daemons and other
- 				 privileged processes that tend to be
--				 non-dumpable).
-+				 non-dumpable), and processes that has indirect
-+				 branch speculation restricted via prctl's
-+				 PR_SET_SPECULATION_CTRL option
-+
- 			strict - protect against attacks for all user processes
- 			auto   - let kernel decide lite or strict mode
- 
-diff --git a/Documentation/userspace-api/spec_ctrl.rst b/Documentation/userspace-api/spec_ctrl.rst
-index 32f3d55..1acf198 100644
---- a/Documentation/userspace-api/spec_ctrl.rst
-+++ b/Documentation/userspace-api/spec_ctrl.rst
-@@ -92,3 +92,13 @@ Speculation misfeature controls
-    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
-    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
-    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_FORCE_DISABLE, 0, 0);
-+
-+- PR_INDIR_BRANCH: Indirect Branch Speculation in Applications
-+                   (Mitigate Spectre V2 style user space application
-+                    to application attack)
-+
-+  Invocations:
-+   * prctl(PR_GET_SPECULATION_CTRL, PR_INDIR_BRANCH, 0, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_INDIR_BRANCH, PR_SPEC_ENABLE, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_INDIR_BRANCH, PR_SPEC_DISABLE, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_INDIR_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index cc77b9e..d5c5faf 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -763,12 +763,70 @@ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
- 	return 0;
- }
- 
-+static int indir_branch_prctl_set(struct task_struct *task, unsigned long ctrl)
-+{
-+	bool update;
-+
-+	switch (ctrl) {
-+	case PR_SPEC_ENABLE:
-+		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
-+			return 0;
-+		/*
-+		 * Indirect branch speculation is always disabled in
-+		 * strict mode or if the application is non dumpable
-+		 * in lite mode. 
-+		 */
-+		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_STRICT)
-+			return -ENXIO;
-+		if (task->mm && get_dumpable(task->mm) != SUID_DUMP_USER)
-+			return -ENXIO;
-+		task_clear_spec_indir_branch_disable(task);
-+		update = test_and_clear_tsk_thread_flag(task, TIF_STIBP);
-+		break;
-+	case PR_SPEC_DISABLE:
-+		/*
-+		 * Indirect branch speculation is always enabled when
-+		 * app to app mitigation is off.
-+		 */
-+		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
-+			return -ENXIO;
-+		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_STRICT)
-+			return 0;
-+		task_set_spec_indir_branch_disable(task);
-+		update = !test_and_set_tsk_thread_flag(task, TIF_STIBP);
-+		break;
-+	case PR_SPEC_FORCE_DISABLE:
-+		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
-+			return -ENXIO;
-+		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_STRICT)
-+			return 0;
-+		task_set_spec_indir_branch_disable(task);
-+		task_set_spec_indir_branch_force_disable(task);
-+		update = !test_and_set_tsk_thread_flag(task, TIF_STIBP);
-+		break;
-+	default:
-+		return -ERANGE;
-+	}
-+
-+	/*
-+	 * If being set on non-current task, delay setting the CPU
-+	 * mitigation until it is next scheduled.
-+	 * Use speculative_store_bypass_update will update SPEC_CTRL MSR
-+	 */
-+	if (task == current && update)
-+		speculation_ctrl_update_current();
-+
-+	return 0;
-+}
-+
- int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
- 			     unsigned long ctrl)
- {
- 	switch (which) {
- 	case PR_SPEC_STORE_BYPASS:
- 		return ssb_prctl_set(task, ctrl);
-+	case PR_INDIR_BRANCH:
-+		return indir_branch_prctl_set(task, ctrl);
- 	default:
- 		return -ENODEV;
- 	}
-@@ -787,7 +845,7 @@ void arch_set_dumpable(struct task_struct *tsk, unsigned int value)
- 
- 	if (tsk->mm && value != SUID_DUMP_USER)
- 		update = !test_and_set_tsk_thread_flag(tsk, TIF_STIBP);
--	else
-+	else if (!task_spec_indir_branch_disable(tsk))
- 		update = test_and_clear_tsk_thread_flag(tsk, TIF_STIBP);
- 
- 	if (tsk == current && update)
-@@ -821,11 +879,36 @@ static int ssb_prctl_get(struct task_struct *task)
- 	}
- }
- 
-+static int indir_branch_prctl_get(struct task_struct *task)
-+{
-+	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
-+		return PR_SPEC_NOT_AFFECTED;
-+
-+	switch (spectre_v2_app2app_enabled) {
-+	case SPECTRE_V2_APP2APP_NONE:
-+		return PR_SPEC_ENABLE;
-+	case SPECTRE_V2_APP2APP_LITE:
-+		if (task_spec_indir_branch_force_disable(task))
-+			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
-+		if (task->mm && get_dumpable(task->mm) != SUID_DUMP_USER)
-+			return PR_SPEC_DISABLE;
-+		if (task_spec_indir_branch_disable(task))
-+			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
-+		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
-+	case SPECTRE_V2_APP2APP_STRICT:
-+		return PR_SPEC_DISABLE;
-+	default:
-+		return PR_SPEC_NOT_AFFECTED;
-+	}
-+}
-+
- int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
- {
- 	switch (which) {
- 	case PR_SPEC_STORE_BYPASS:
- 		return ssb_prctl_get(task);
-+	case PR_INDIR_BRANCH:
-+		return indir_branch_prctl_get(task);
- 	default:
- 		return -ENODEV;
- 	}
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 977cb57..8e44de6 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1439,6 +1439,10 @@ static inline bool is_percpu_thread(void)
- #define PFA_SPREAD_SLAB			2	/* Spread some slab caches over cpuset */
- #define PFA_SPEC_SSB_DISABLE		3	/* Speculative Store Bypass disabled */
- #define PFA_SPEC_SSB_FORCE_DISABLE	4	/* Speculative Store Bypass force disabled*/
-+#define PFA_SPEC_INDIR_BRANCH_DISABLE	5	/* Indirect branch speculation */
-+						/* restricted in apps */
-+#define PFA_SPEC_INDIR_BRANCH_FORCE_DISABLE 6	/* Indirect branch speculation */
-+						/* restricted in apps force disabled */
- 
- #define TASK_PFA_TEST(name, func)					\
- 	static inline bool task_##func(struct task_struct *p)		\
-@@ -1470,6 +1474,13 @@ TASK_PFA_CLEAR(SPEC_SSB_DISABLE, spec_ssb_disable)
- TASK_PFA_TEST(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
- TASK_PFA_SET(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
- 
-+TASK_PFA_TEST(SPEC_INDIR_BRANCH_DISABLE, spec_indir_branch_disable)
-+TASK_PFA_SET(SPEC_INDIR_BRANCH_DISABLE, spec_indir_branch_disable)
-+TASK_PFA_CLEAR(SPEC_INDIR_BRANCH_DISABLE, spec_indir_branch_disable)
-+
-+TASK_PFA_TEST(SPEC_INDIR_BRANCH_FORCE_DISABLE, spec_indir_branch_force_disable)
-+TASK_PFA_SET(SPEC_INDIR_BRANCH_FORCE_DISABLE, spec_indir_branch_force_disable)
-+
- static inline void
- current_restore_flags(unsigned long orig_flags, unsigned long flags)
- {
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index c0d7ea0..06f71f6 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -212,6 +212,7 @@ struct prctl_mm_map {
- #define PR_SET_SPECULATION_CTRL		53
- /* Speculation control variants */
- # define PR_SPEC_STORE_BYPASS		0
-+# define PR_INDIR_BRANCH		1
- /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
- # define PR_SPEC_NOT_AFFECTED		0
- # define PR_SPEC_PRCTL			(1UL << 0)
-diff --git a/tools/include/uapi/linux/prctl.h b/tools/include/uapi/linux/prctl.h
-index c0d7ea0..06f71f6 100644
---- a/tools/include/uapi/linux/prctl.h
-+++ b/tools/include/uapi/linux/prctl.h
-@@ -212,6 +212,7 @@ struct prctl_mm_map {
- #define PR_SET_SPECULATION_CTRL		53
- /* Speculation control variants */
- # define PR_SPEC_STORE_BYPASS		0
-+# define PR_INDIR_BRANCH		1
- /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
- # define PR_SPEC_NOT_AFFECTED		0
- # define PR_SPEC_PRCTL			(1UL << 0)
 -- 
-2.9.4
-
+Kees Cook
+Pixel Security
