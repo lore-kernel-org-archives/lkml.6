@@ -2,86 +2,127 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B39ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 671DEECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3417421528
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:35:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="ZnVRLh5j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3417421528
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id 239FE2150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:37:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239FE2150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbeJQXbb (ORCPT
+        id S1727395AbeJQXdt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:31:31 -0400
-Received: from a9-114.smtp-out.amazonses.com ([54.240.9.114]:46158 "EHLO
-        a9-114.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727090AbeJQXbb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:31:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1539790516;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=/9qDFGIlwUfxNvMNzZ/qogVAU8XGQ7J8Th+UdROAvvQ=;
-        b=ZnVRLh5jsn91ea4+966PUYDyF8pgjuTLx8IlL7GjuG0Mt7642wXG9+1ZqKRn943/
-        RdA6TAd2qCav5ciYPV6ubuxTuHTgsL1kzDcIfp06ekEkss5nZND92yKrjTtEbWDA06I
-        pIMoAGN9yL45I9QmCBXxupxBtRteA+pqbtYKO2iE=
-Date:   Wed, 17 Oct 2018 15:35:15 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-cc:     Matthew Wilcox <willy@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot+87829a10073277282ad1@syzkaller.appspotmail.com,
-        Pekka Enberg <penberg@kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: WARNING: kmalloc bug in input_mt_init_slots
-In-Reply-To: <20181017000955.GG230131@dtor-ws>
-Message-ID: <0100016682aaae79-d1382d3d-83f8-4972-b4b9-6220367f4f65-000000@email.amazonses.com>
-References: <000000000000e5f76c057664e73d@google.com> <CAKdAkRS7PSXv65MTnvKOewqESxt0_FtKohd86ioOuYR3R0z9dw@mail.gmail.com> <CACT4Y+YOb6M=xuPG64PAvd=0bcteicGtwQO60CevN_V67SJ=MQ@mail.gmail.com> <010001660c1fafb2-6d0dc7e1-d898-4589-874c-1be1af94e22d-000000@email.amazonses.com>
- <CACT4Y+ayX8vzd2JPrLeFhf3K_Quf4x6SDtmtkNJuwNLyOh67tQ@mail.gmail.com> <010001660c4a8bbe-91200766-00df-48bd-bc60-a03da2ccdb7d-000000@email.amazonses.com> <20180924184158.GA156847@dtor-ws> <20180927143537.GB19006@bombadil.infradead.org>
- <20181017000955.GG230131@dtor-ws>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 17 Oct 2018 19:33:49 -0400
+Received: from anholt.net ([50.246.234.109]:54632 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727048AbeJQXdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:33:49 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 520B010A0F9D;
+        Wed, 17 Oct 2018 08:37:34 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id gNaLyCrloPqb; Wed, 17 Oct 2018 08:37:33 -0700 (PDT)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id E2FEC10A0826;
+        Wed, 17 Oct 2018 08:37:32 -0700 (PDT)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 6D30D2FE1BEE; Wed, 17 Oct 2018 08:37:32 -0700 (PDT)
+From:   Eric Anholt <eric@anholt.net>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, phil@raspberrypi.org,
+        devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/7] staging: vc04_services: Some dead code removal
+In-Reply-To: <20181017101831.b5kvh5jw3sqqhbat@mwanda>
+References: <20181004093747.21750-1-tuomas.tynkkynen@iki.fi> <1715113043.52878.1538821118324@email.1und1.de> <20181017101831.b5kvh5jw3sqqhbat@mwanda>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date:   Wed, 17 Oct 2018 08:37:32 -0700
+Message-ID: <87bm7stwhv.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.10.17-54.240.9.114
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Oct 2018, Dmitry Torokhov wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> On Thu, Sep 27, 2018 at 07:35:37AM -0700, Matthew Wilcox wrote:
-> > On Mon, Sep 24, 2018 at 11:41:58AM -0700, Dmitry Torokhov wrote:
-> > > > How large is the allocation? AFACIT nRequests larger than KMALLOC_MAX_SIZE
-> > > > are larger than the maximum allowed by the page allocator. Thus the warning
-> > > > and the NULL return.
-> > >
-> > > The size in this particular case is being derived from a value passed
-> > > from userspace. Input core does not care about any limits on size of
-> > > memory kmalloc() can support and is perfectly happy with getting NULL
-> > > and telling userspace to go away with their silly requests by returning
-> > > -ENOMEM.
-> > >
-> > > For the record: I definitely do not want to pre-sanitize size neither in
-> > > uinput nor in input core.
-> >
-> > Probably should be using kvzalloc then.
+Dan Carpenter <dan.carpenter@oracle.com> writes:
+
+> On Sat, Oct 06, 2018 at 12:18:38PM +0200, Stefan Wahren wrote:
+>> Hi Tuomas,
+>>=20
+>> > Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi> hat am 4. Oktober 2018 um 1=
+1:37 geschrieben:
+>> >=20
+>> >=20
+>> > Drop various pieces of dead code from here and there to get rid of
+>> > the remaining users of VCHI_CONNECTION_T. After that we get to drop
+>> > entire header files worth of unused code.
+>> >=20
+>> > I've tested on a Raspberry Pi Model B (bcm2835_defconfig) that
+>> > snd-bcm2835 can still play analog audio just fine.
+>> >=20
+>>=20
+>> thanks and i'm fine with your patch series:
+>>=20
+>> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+>>=20
+>> Unfortunately this would break compilation of the downstream vchi
+>> drivers like vcsm [1]. Personally i don't want to maintain another
+>> one, because i cannot see the gain of the resulting effort.
+>>=20
+>> [1] - https://github.com/raspberrypi/linux/tree/rpi-4.14.y/drivers/char/=
+broadcom/vc_sm
 >
-> No. No sane input device can track so many contacts so we need to use
-> kvzalloc(). Failing to allocate memory is proper response here.
+>
+> I feel like everyone else already knows the answer but why don't we just
+> merge that code into staging?
 
-What is a "contact" here? Are we talking about SG segments?
+Dave's been working on a new VCSM service where the firmware can call
+back into Linux to allocate (instead of just having a permanent carveout
+of system memory that the firmware allocates from), and lets us make
+dma-bufs out of those buffers.  That driver makes a no-copies v4l2 media
+decode driver possible, which would then let Kodi and similar projects
+switch from downstream kernels with closed graphics to upstream kernels
+with open graphics.
 
+Given that the new VCSM service is a rewrite, it's not clear to me that
+importing the old VCSM driver is a win.  But maybe we should go raid
+https://github.com/6by9/linux/tree/rpi-4.14.y-codecs-push-pt2a and grab
+the new drivers.  Upstreaming the VCHI audio driver to staging has
+clearly been a win for it, so maybe other eyes on the new v4l2 codec
+could help Dave along in stabilizing it.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlvHVzwACgkQtdYpNtH8
+nuhK3A//f9GO+h+0BU+AZYWAEyoJ12NUn7Gso5Bser2gUjV352+gWL78sAdM8zhJ
+7UTVcgv0PHym6v0TX9N1F64jBHGKF/yKlacUAhi3h8fJ7+dwJ9QBPLVqUSIcG7Nu
+S/Xpj7gVZaXqonCCSU2hT6aUgxTNb/YfhjuA1/qbRoYffipxUp2j0Ix2+dRgU/AO
+fTX9ka51mOfyIGWEXLFFfkNdt5VjyPmgHlvybNwh3bv1cvC4YG8fG8HI/YGcAyEx
+fj7CA4Xi95V3wW2Q50rpfdGXa4MyOjDBM7UxBlglBMOJyvb+e5wICByWZWmrRlcf
+0FCr/wJImHxpgJ2E7J7ZQ/dJO+FEfhkUuPe5gQRZ80/g6cranOnKlo/A6J9lxD2c
+cM6rKQvLSEtIeo4GbEirWjkJQKUp6nUYQfm6y8KBkcL/E51jaIogzd5+u1SHPK3o
+mDhEZhCmewH2GXPPOfrSqMk1+x12fuchjU8EcFTY4J5fUzYMfyicLXxqTlIbjkPq
+Vuonee5gEO8IL3fSYmcq8EBqrII69J9iCWWxufPx0U7xHleKN5wo9fMioiRmobka
+ahoItmmhPBqYRJrxT5wa6wTFu+4vEWz5cA+4NKct1xQ0o4xoqfSHDkLtffL3fd7o
+UbFA8m2UV0hy6wC9Ujvjr3a6GXbdXE14Xz0TKaJhesOlkV0IiVA=
+=Pemg
+-----END PGP SIGNATURE-----
+--=-=-=--
