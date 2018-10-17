@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDE9ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8E7ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7254B2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 437EF21523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:42:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Cslwrbih"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7254B2150F
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kQqw06VZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437EF21523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbeJQVh6 (ORCPT
+        id S1727579AbeJQViI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:37:58 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57662 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727482AbeJQVh4 (ORCPT
+        Wed, 17 Oct 2018 17:38:08 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37386 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbeJQVhy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:37:56 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181017134209euoutp011e723b5f25dca56b42f2fb63d5895412~eaSTasaTQ1247812478euoutp01F;
-        Wed, 17 Oct 2018 13:42:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181017134209euoutp011e723b5f25dca56b42f2fb63d5895412~eaSTasaTQ1247812478euoutp01F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539783729;
-        bh=JbawqqnuJmBPjDcr8q+jVFNwx8wHm3+63GETfeiWmM0=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=Cslwrbihf4Qh9yWmfIn0qVLkbBZj5DaqlO60KNjnvsAyRlDZ4zoH89EraP7uZs4r4
-         C28IdAJpP9vqQUh3wPg1rGlWhqnks6PKm+b2IXvgLtkus5GEjpdwGPS0BDsldHKmF0
-         gORccETx6aVxNG4FFpsTLvEYVOQsORBJ+aqjFXAs=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181017134209eucas1p2d71dfa82326b8459cab3baa065f0d34f~eaSS_S21_1254712547eucas1p2t;
-        Wed, 17 Oct 2018 13:42:09 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 40.5E.04441.03C37CB5; Wed, 17
-        Oct 2018 14:42:08 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181017134208eucas1p19c81d1ce9050be1b78e386d8a349f441~eaSSInvIn0909309093eucas1p1l;
+        Wed, 17 Oct 2018 17:37:54 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181017134208euoutp02d4a410fdf8256252a1865accb1ba45c9~eaSR9I68r1192811928euoutp02o;
         Wed, 17 Oct 2018 13:42:08 +0000 (GMT)
-X-AuditID: cbfec7f2-5e3ff70000001159-9a-5bc73c30cd54
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181017134208euoutp02d4a410fdf8256252a1865accb1ba45c9~eaSR9I68r1192811928euoutp02o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539783728;
+        bh=oel99Mp9meQQ4+STkZabHx/+KTVTtlGBaiezJPYNJsY=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=kQqw06VZBtPPZCP663Qs5jxm9kqRAeG0pi26bcNe061EGneUTsgli8NT50+hX2xSt
+         N/GIpnz0/7sajk6KlQwSgtp6uvySPZ2WEVxyAFV/DYD5h6OHllKt8IRG5/TE8o5Jke
+         6vHk/456+GM9m8iEdgBere9FLXIszAKqeJYfl7pw=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181017134207eucas1p105a6fc6c211349ed1f213f0ac74092c1~eaSRZ34r21606816068eucas1p1b;
+        Wed, 17 Oct 2018 13:42:07 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 6E.4E.04441.F2C37CB5; Wed, 17
+        Oct 2018 14:42:07 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181017134206eucas1p1ebc76569f706675d41f2d2183349f1f3~eaSQn7isL1609216092eucas1p1A;
+        Wed, 17 Oct 2018 13:42:06 +0000 (GMT)
+X-AuditID: cbfec7f2-a1ae89c000001159-96-5bc73c2f86cb
 Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 8B.22.04284.03C37CB5; Wed, 17
-        Oct 2018 14:42:08 +0100 (BST)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id AE.12.04128.E2C37CB5; Wed, 17
+        Oct 2018 14:42:06 +0100 (BST)
 Received: from AMDC2765.digital.local ([106.116.147.25]) by
         eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
         (built May  5 2014)) with ESMTPA id <0PGQ001A0WQ1IZ80@eusync4.samsung.com>;
-        Wed, 17 Oct 2018 14:42:08 +0100 (BST)
+        Wed, 17 Oct 2018 14:42:06 +0100 (BST)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -69,71 +69,139 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v3 6/6] arm64: platform: Add enable Exynos Multi-Core Timer
- driver
-Date:   Wed, 17 Oct 2018 15:41:59 +0200
-Message-id: <20181017134159.9656-7-m.szyprowski@samsung.com>
+Subject: [PATCH v3 3/6] clocksource: exynos_mct: Refactor resources
+ allocation
+Date:   Wed, 17 Oct 2018 15:41:56 +0200
+Message-id: <20181017134159.9656-4-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-reply-to: <20181017134159.9656-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPIsWRmVeSWpSXmKPExsWy7djPc7oGNsejDa5O1bLYOGM9q8X7ZT2M
-        Fte/PGe1mPdZ1mLS/QksFufPb2C32PT4GqvF5V1z2CxmnN/HZLH2yF12i793/rFZbN40ldni
-        5ccTLA68HmvmrWH02LSqk83jzrU9bB7vzp1j99i8pN6jb8sqRo/Pm+QC2KO4bFJSczLLUov0
-        7RK4Mg5tucVWMIe94s//r0wNjJPYuhg5OSQETCRmnJ4LZHNxCAmsYJTo/XCHGcL5zCixbkIz
-        E0zV3P6H7BCJZYwSW9cugWppYJK4sHAuO0gVm4ChRNfbLrC5IgLZEp2PHzCC2MwCi5glDhwT
-        BrGFBUIkFjzbxAxiswioSry42gBWwytgI7Hy0hF2iG3yEqs3HACq4eDgFLCVWNtfBbJLQmAP
-        m8ThldcYIWpcJI6sPAr1g7DEq+NboHplJDo7DjJBNDQzSrTPmMUO4fQAnT1nB1SHtcTh4xdZ
-        Ia7jk5i0bTrYNgkBXomONiGIEg+J1Y8OgZUICUxglGha7TuBUXIBI8MqRvHU0uLc9NRiw7zU
-        cr3ixNzi0rx0veT83E2MwGg+/e/4px2MXy8lHWIU4GBU4uHdIXYsWog1say4MvcQowQHs5II
-        b5Xi8Wgh3pTEyqrUovz4otKc1OJDjNIcLErivMvmbYwWEkhPLEnNTk0tSC2CyTJxcEo1MK5g
-        spDZVbvF2Ww+i++6Qw86qp1fWac90lxwdv4Ovk6/dXc8ty5+dbXb40FD98LChrKry1brs1jm
-        Cv4rCS4WeRYlw9O8P/nDtnfiCsc+FgbYdgcovm6yYPkyxa1Z5lzrh1eX/6h83eDzRqB5Z9Ur
-        m2npy2N2uRs35l3ptDz7nK2kRbK/d8mPUCWW4oxEQy3mouJEAM574DjiAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDLMWRmVeSWpSXmKPExsVy+t/xa7oGNsejDWZu5bbYOGM9q8X7ZT2M
-        Fte/PGe1mPdZ1mLS/QksFufPb2C32PT4GqvF5V1z2CxmnN/HZLH2yF12i793/rFZbN40ldni
-        5ccTLA68HmvmrWH02LSqk83jzrU9bB7vzp1j99i8pN6jb8sqRo/Pm+QC2KO4bFJSczLLUov0
-        7RK4Mg5tucVWMIe94s//r0wNjJPYuhg5OSQETCTm9j9k72Lk4hASWMIose3pVyiniUli4pw9
-        zCBVbAKGEl1vu8A6RASyJebv7WYHsZkFljBL3LzvAGILC4RILHi2CayeRUBV4sXVBkYQm1fA
-        RmLlpSPsENvkJVZvOABUw8HBKWArsba/CiQsBFTy8vNcpgmMPAsYGVYxiqSWFuem5xYb6hUn
-        5haX5qXrJefnbmIEhuG2Yz8372C8tDH4EKMAB6MSD+8OsWPRQqyJZcWVuYcYJTiYlUR4qxSP
-        RwvxpiRWVqUW5ccXleakFh9ilOZgURLnPW9QGSUkkJ5YkpqdmlqQWgSTZeLglGpgZKu1ydwn
-        b5suVVjDLmq7IkxdK/TN7NK8FotVF9zKF0RNZDRIObEtlJ9T82xU3ofs4/I1FoLcKZe3vMnk
-        5fqUVn9e/vC5yRY/GtlVjz+S1F/L/7Ls6FeBmS2Hpt3c7i3+2cjfPCYlnluV794e9StPbnDk
-        HyrN3VVaJasQoL/tzhWTsI7oHXeUWIozEg21mIuKEwHmOmvZPwIAAA==
-X-CMS-MailID: 20181017134208eucas1p19c81d1ce9050be1b78e386d8a349f441
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWRb0gTcRjH/e1ud7fV4tgsf2kWDgoqnBlFl5oYBB2BaL1IbC905eG/bcrO
+        WfqmhaltaZk1Hf6ZGmbhf885h4qahjMENQVtMLFYEQoluqyEtJyn7z4Pz+fh+/A8BCKdRgOJ
+        dG0Oo9Oq1HJMjNrHNiZDw6KcyjOeWhHVZekQUitNJYCa//lNSFm9wVT5YhlKTU114hTnmRNS
+        s301GGWZGhRQbe8WcGrTvYVR3ZwZoZZWx9EYCd1qbQU012zEaPfcAEb/mJzE6e7G+/QTWzOg
+        vdzRePyWOCqFUafnMrqw6GRx2p+VDiy7FN57OF0lMIB5mQmICEiegzMFy7gJiAkp+QZAS+8a
+        4AsvgP3GNnTPWiqeQPhGE4AVQy92LYMAjj7bxH0WRoZD03cT5mN/MhMaPZ+AjxHyJQKHx3by
+        ZGQ87GlvR3yMkseh4YFtx5GQUfCL3Szg047Bls7hbYcgROQl2PY035cFyQEM1s0U7250BZps
+        rwDPMrjstOE8H4Gzzx+j/EABgMWWKpwvSgDsqXFgvBUJR50fhPx2B2C5vXInDZIS+KhIyis0
+        dLsNu4cpA9Db4hKWgcP1wK8ZBDB6VpPKsOFa5q6CVWlYvTZVcSdLw4HtP09sOdccYH3m9ggg
+        CSDfL3EcGlNKhapcNk8zAiCByP0l+SFOpVSSosrLZ3RZSTq9mmFHQBCBygMkTdYupZRMVeUw
+        mQyTzej2ugJCFGgAjTfro8nYzx8zBvHr/aGxlHuw8pc5A9movigraGl37Yv42xBx1c//vc16
+        4qSlPuhgokuBLMw6GsSrOcnGosK4a63uxLh1k+eGi7NVvw4JLE8u1L4F58cV/5J6YtI9CaFc
+        6ZClYlRtDr7wW3+5q84e2Xe6t/us+WstsShNGEblKJumCj+F6FjVf3G8cCzjAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDLMWRmVeSWpSXmKPExsVy+t/xa7p6NsejDToalCw2zljPavF+WQ+j
+        xfUvz1kt5n2WtZh0fwKLxfnzG9gtNj2+xmpxedccNosZ5/cxWaw9cpfd4u+df2wWmzdNZbZ4
+        +fEEiwOvx5p5axg9Nq3qZPO4c20Pm8e7c+fYPTYvqffo27KK0ePzJrkA9igum5TUnMyy1CJ9
+        uwSujB/v17MV9EpUtFyYxdTAeF24i5GTQ0LAROJl+2nmLkYuDiGBJYwS6w83s0M4TUwSUyY+
+        YASpYhMwlOh628UGYosIZEvM39vNDmIzCyxhlrh53wHEFhbwk5hx8xBYnEVAVaKhcQtYL6+A
+        jcSTbVOZILbJS6zecABoGwcHp4CtxNr+KpCwEFDJy89zmSYw8ixgZFjFKJJaWpybnltspFec
+        mFtcmpeul5yfu4kRGIbbjv3csoOx613wIUYBDkYlHt4dYseihVgTy4orcw8xSnAwK4nwVike
+        jxbiTUmsrEotyo8vKs1JLT7EKM3BoiTOe96gMkpIID2xJDU7NbUgtQgmy8TBKdXAyCrz44Dq
+        3ESDm8+fW6xbGey3LkVkd+y7Ap/NKRLaTB+OT9tWGJahM2f3LraSzUlvwxbMPhN4qjHZ9uKc
+        +i3+DUkSG8NO/oq3+hEXeuQ6s0rerOxcgxvMt1nzD5j5qMap8riFveOYKW3Ts5T38/nL9at2
+        2WpEF3v6J71OmKD7p8L12M2Zd4RVlFiKMxINtZiLihMBsgbrDD8CAAA=
+X-CMS-MailID: 20181017134206eucas1p1ebc76569f706675d41f2d2183349f1f3
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20181017134208eucas1p19c81d1ce9050be1b78e386d8a349f441
+X-CMS-RootMailID: 20181017134206eucas1p1ebc76569f706675d41f2d2183349f1f3
 References: <20181017134159.9656-1-m.szyprowski@samsung.com>
-        <CGME20181017134208eucas1p19c81d1ce9050be1b78e386d8a349f441@eucas1p1.samsung.com>
+        <CGME20181017134206eucas1p1ebc76569f706675d41f2d2183349f1f3@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Exynos SoCs enabling MCT driver is required even if ARM Architected
-Timer driver is used to for managing timer hardware and clock source
-events.
+Move interrupts allocation from exynos4_timer_resources() into separate
+function together with the interrupt number parsing code from
+mct_init_dt(), so the code for managing interrupts is kept together.
+While touching exynos4_timer_resources() function, move of_iomap() to it.
+No functional changes.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clocksource/exynos_mct.c | 49 +++++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 51bc479334a4..7cc687580fad 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -62,6 +62,7 @@ config ARCH_BRCMSTB
- config ARCH_EXYNOS
- 	bool "ARMv8 based Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
-+	select CLKSRC_EXYNOS_MCT
- 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select EXYNOS_PMU
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 49413900b24c..02ad55db390b 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -502,11 +502,14 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
+ 	return 0;
+ }
+ 
+-static int __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
++static int __init exynos4_timer_resources(struct device_node *np)
+ {
+-	int err, cpu;
+ 	struct clk *mct_clk, *tick_clk;
+ 
++	reg_base = of_iomap(np, 0);
++	if (!reg_base)
++		panic("%s: unable to ioremap mct address space\n", __func__);
++
+ 	tick_clk = of_clk_get_by_name(np, "fin_pll");
+ 	if (IS_ERR(tick_clk))
+ 		panic("%s: unable to determine tick clock rate\n", __func__);
+@@ -517,9 +520,27 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+ 		panic("%s: unable to retrieve mct clock instance\n", __func__);
+ 	clk_prepare_enable(mct_clk);
+ 
+-	reg_base = base;
+-	if (!reg_base)
+-		panic("%s: unable to ioremap mct address space\n", __func__);
++	return 0;
++}
++
++static int __init exynos4_timer_interrupts(struct device_node *np,
++					   unsigned int int_type)
++{
++	int i, err, cpu;
++
++	mct_int_type = int_type;
++
++	/* This driver uses only one global timer interrupt */
++	mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
++
++	/*
++	 * Find out the number of local irqs specified. The local
++	 * timer irqs are specified after the four global timer
++	 * irqs are specified.
++	 */
++	nr_irqs = of_irq_count(np);
++	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
++		mct_irqs[i] = irq_of_parse_and_map(np, i);
+ 
+ 	if (mct_int_type == MCT_INT_PPI) {
+ 
+@@ -579,24 +600,14 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+ 
+ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ {
+-	u32 nr_irqs, i;
+ 	int ret;
+ 
+-	mct_int_type = int_type;
+-
+-	/* This driver uses only one global timer interrupt */
+-	mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
++	ret = exynos4_timer_resources(np);
++	if (ret)
++		return ret;
+ 
+-	/*
+-	 * Find out the number of local irqs specified. The local
+-	 * timer irqs are specified after the four global timer
+-	 * irqs are specified.
+-	 */
+-	nr_irqs = of_irq_count(np);
+-	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
+-		mct_irqs[i] = irq_of_parse_and_map(np, i);
+ 
+-	ret = exynos4_timer_resources(np, of_iomap(np, 0));
++	ret = exynos4_timer_interrupts(np, int_type);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.17.1
 
