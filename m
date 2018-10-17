@@ -6,122 +6,93 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E34ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD57ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 017DE205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:23:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 017DE205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6082E205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:23:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6082E205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727731AbeJQWTg (ORCPT
+        id S1727748AbeJQWTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:19:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39304 "EHLO mx1.redhat.com"
+        Wed, 17 Oct 2018 18:19:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeJQWTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:19:36 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727013AbeJQWTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 18:19:39 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 893693084027;
-        Wed, 17 Oct 2018 14:23:40 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E24C82B5AC;
-        Wed, 17 Oct 2018 14:23:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 2/4] fscache: Fix race in fscache_op_complete() due to split
- atomic_sub & read
-From:   David Howells <dhowells@redhat.com>
-To:     gregkh@linux-foundation.org
-Cc:     Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
-        viro@zeniv.linux.org.uk, sandeen@redhat.com, dhowells@redhat.com,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 17 Oct 2018 15:23:38 +0100
-Message-ID: <153978621809.8478.2198040871218302573.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153978619457.8478.3813964117489247515.stgit@warthog.procyon.org.uk>
-References: <153978619457.8478.3813964117489247515.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        by mail.kernel.org (Postfix) with ESMTPSA id 0971721527;
+        Wed, 17 Oct 2018 14:23:42 +0000 (UTC)
+Date:   Wed, 17 Oct 2018 10:23:41 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        "Herton R. Krzesinski" <herton@redhat.com>
+Subject: Re: [PATCHv2 01/10] tools lib traceevent: Use LDFLAGS in the build
+ commands
+Message-ID: <20181017102341.53412998@gandalf.local.home>
+In-Reply-To: <20181016154526.GC6631@krava>
+References: <20181016150614.21260-1-jolsa@kernel.org>
+        <20181016150614.21260-2-jolsa@kernel.org>
+        <20181016112136.3a72a452@gandalf.local.home>
+        <20181016154526.GC6631@krava>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 17 Oct 2018 14:23:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kiran.modukuri <kiran.modukuri@gmail.com>
+On Tue, 16 Oct 2018 17:45:26 +0200
+Jiri Olsa <jolsa@redhat.com> wrote:
 
-The code in fscache_retrieval_complete is using atomic_sub followed by an
-atomic_read:
+> On Tue, Oct 16, 2018 at 11:21:36AM -0400, Steven Rostedt wrote:
+> > On Tue, 16 Oct 2018 17:06:06 +0200
+> > Jiri Olsa <jolsa@kernel.org> wrote:
+> >   
+> > > So user could specify outside LDFLAGS values.
+> > > 
+> > > Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+> > > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > > ---
+> > >  tools/lib/traceevent/Makefile | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
+> > > index 0b4e833088a4..e535073c94ce 100644
+> > > --- a/tools/lib/traceevent/Makefile
+> > > +++ b/tools/lib/traceevent/Makefile
+> > > @@ -174,7 +174,7 @@ $(TE_IN): force
+> > >  	$(Q)$(MAKE) $(build)=libtraceevent
+> > >  
+> > >  $(OUTPUT)libtraceevent.so.$(EVENT_PARSE_VERSION): $(TE_IN)
+> > > -	$(QUIET_LINK)$(CC) --shared $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
+> > > +	$(QUIET_LINK)$(CC) --shared $(LDFLAGS) $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
+> > >  	@ln -sf $(@F) $(OUTPUT)libtraceevent.so
+> > >  	@ln -sf $(@F) $(OUTPUT)libtraceevent.so.$(EP_VERSION)
+> > >  
+> > > @@ -193,7 +193,7 @@ $(PLUGINS_IN): force
+> > >  	$(Q)$(MAKE) $(build)=$(plugin_obj)
+> > >  
+> > >  $(OUTPUT)%.so: $(OUTPUT)%-in.o
+> > > -	$(QUIET_LINK)$(CC) $(CFLAGS) -shared -nostartfiles -o $@ $^
+> > > +	$(QUIET_LINK)$(CC) -shared $(LDFLAGS) -nostartfiles -o $@ $^  
+> > 
+> > 
+> > I'm guessing that the CFLAGS are not needed here, but shouldn't that
+> > also be mentioned in the change log?  
+> 
+> yep, sry.. v2 attached
+> 
 
-        atomic_sub(n_pages, &op->n_pages);
-        if (atomic_read(&op->n_pages) <= 0)
-                fscache_op_complete(&op->op, true);
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-This causes two threads doing a decrement of n_pages to race with each
-other seeing the op->refcount 0 at same time - and they end up calling
-fscache_op_complete() in both the threads leading to an assertion failure.
-
-Fix this by using atomic_sub_return() instead of two calls.
-
-The oops looks something like:
-
-FS-Cache: Assertion failed
-FS-Cache: 0 > 0 is false
-...
-kernel BUG at /usr/src/linux-4.4.0/fs/fscache/operation.c:449!
-...
-Workqueue: fscache_operation fscache_op_work_func [fscache]
-...
-RIP: 0010:[<ffffffffc037eacd>] fscache_op_complete+0x10d/0x180 [fscache]
-...
-Call Trace:
- [<ffffffffc1464cf9>] cachefiles_read_copier+0x3a9/0x410 [cachefiles]
- [<ffffffffc037e272>] fscache_op_work_func+0x22/0x50 [fscache]
- [<ffffffff81096da0>] process_one_work+0x150/0x3f0
- [<ffffffff8109751a>] worker_thread+0x11a/0x470
- [<ffffffff81808e59>] ? __schedule+0x359/0x980
- [<ffffffff81097400>] ? rescuer_thread+0x310/0x310
- [<ffffffff8109cdd6>] kthread+0xd6/0xf0
- [<ffffffff8109cd00>] ? kthread_park+0x60/0x60
- [<ffffffff8180d0cf>] ret_from_fork+0x3f/0x70
- [<ffffffff8109cd00>] ? kthread_park+0x60/0x60
-
-This seen this in 4.4.x kernels and the same bug affects fscache in latest
-upstreams kernels.
-
-Fixes: 1bb4b7f98f36 ("FS-Cache: The retrieval remaining-pages counter needs to be atomic_t")
-Signed-off-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- include/linux/fscache-cache.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
-index 34cf0fdd7dc7..bf98ed803af2 100644
---- a/include/linux/fscache-cache.h
-+++ b/include/linux/fscache-cache.h
-@@ -196,11 +196,11 @@ static inline void fscache_enqueue_retrieval(struct fscache_retrieval *op)
- static inline void fscache_retrieval_complete(struct fscache_retrieval *op,
- 					      int n_pages)
- {
--	atomic_sub(n_pages, &op->n_pages);
--	if (atomic_read(&op->n_pages) <= 0)
-+	if (atomic_sub_return(n_pages, &op->n_pages) <= 0)
- 		fscache_op_complete(&op->op, false);
- }
- 
-+
- /**
-  * fscache_put_retrieval - Drop a reference to a retrieval operation
-  * @op: The retrieval operation affected
-
+-- Steve
