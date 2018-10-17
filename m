@@ -2,106 +2,66 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A094ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FFAECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0621A2151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:23:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0621A2151D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B7C1B2151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:24:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7C1B2151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbeJQXUI (ORCPT
+        id S1727728AbeJQXUh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:20:08 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41675 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeJQXUI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:20:08 -0400
-Received: by mail-ot1-f68.google.com with SMTP id c32so26573665otb.8;
-        Wed, 17 Oct 2018 08:23:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=g0K1aFQ8/XZ8HCls+6/2G7Ve0JWnnbAtChk68WtMu68=;
-        b=sG0mTGyWq1kl4Jy+vji4qJhT8EjP2OKtD9ZRoLnNAYqH+Rl5GWWKWeIaFk9LjPALk+
-         sdD/SOvkM/BQ6LkFSNMw+jsXS7GOD+sJEdMBEHnIqsAtlTmdYm4CpUIbvH+J4TwmBIcQ
-         eC3SEhfhfRghpjMCXALeYEyvunSIWZPjgt5GeIQ8TCJW6n5EUsnqUdQ5i+FFolHpIIKo
-         kM/kGWSpcO5EdNG575gtQQ4walFZpUM1bisgq2qqPlFP9WQuojvTUKEeCtyt/Hps3weR
-         /OpG0hc3E7NF2KYQAryS6cAmKV4/hvss0dJoYkxjB3dPifekEA79ysL3HzrKyHYn+0GM
-         5WYg==
-X-Gm-Message-State: ABuFfohuTfKapkRwQLfhlRQpKLplL+lPV8V058K4K8z6xvWeAAFop+kS
-        cPQScWA5+wsewmwOjyZhjKMkcqI=
-X-Google-Smtp-Source: ACcGV60nILbir8GN7lV07BdL2Xf9qkM1nnh1xXsXqE3Lb5s3wwP2XQ89f7JaGEdXdFCyzxWKB/2kHw==
-X-Received: by 2002:a9d:2538:: with SMTP id k53mr15836318otb.156.1539789835775;
-        Wed, 17 Oct 2018 08:23:55 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g188-v6sm7368913oic.10.2018.10.17.08.23.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 08:23:55 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 10:23:54 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Quentin Schulz <quentin.schulz@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: phy: Update SERDES_MAX to be SERDES_MAX
- + 1
-Message-ID: <20181017152354.GA9268@bogus>
-References: <cover.1539036280.git.gustavo@embeddedor.com>
- <3a1a95a4832af33dcd1842b0298d257bbcf1f5ab.1539036280.git.gustavo@embeddedor.com>
- <20181009072723.mshyvplpo2xmkyfl@qschulz>
- <dab86dfb-d56b-b7c3-8e2a-6955803a2842@embeddedor.com>
- <20181017150931.GA385@bogus>
+        Wed, 17 Oct 2018 19:20:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36112 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727013AbeJQXUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:20:37 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 50ED530E4E94;
+        Wed, 17 Oct 2018 15:24:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 531145E7BA;
+        Wed, 17 Oct 2018 15:24:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <87woqgiqta.fsf@xmission.com>
+References: <87woqgiqta.fsf@xmission.com> <19866.1539782101@warthog.procyon.org.uk> <68a2107f-bf70-055b-86cf-1ba2ba9422bf@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754766004.17872.9829232103614083565.stgit@warthog.procyon.org.uk> <9b8bf436-65de-13b9-0002-0479d11c18ca@gmail.com> <20181013061141.GR32577@ZenIV.linux.org.uk> <28710.1539782412@warthog.procyon.org.uk> <f6f2553e-f64d-9c26-4290-baf43e5f533b@gmail.com>
+To:     ebiederm@xmission.com (Eric W. Biederman)
+Cc:     dhowells@redhat.com,
+        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>, linux-api@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mszeredi@redhat.com
+Subject: Re: [PATCH 31/34] vfs: syscall: Add fspick() to select a superblock for reconfiguration [ver #12]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017150931.GA385@bogus>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <13799.1539789863.1@warthog.procyon.org.uk>
+Date:   Wed, 17 Oct 2018 16:24:23 +0100
+Message-ID: <13800.1539789863@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 17 Oct 2018 15:24:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 10:09:31AM -0500, Rob Herring wrote:
-> On Tue, Oct 16, 2018 at 10:44:52AM +0200, Gustavo A. R. Silva wrote:
-> > Hi,
-> > 
-> > On 10/9/18 9:27 AM, Quentin Schulz wrote:
-> > > Hi Gustavo,
-> > > 
-> > > On Tue, Oct 09, 2018 at 12:21:36AM +0200, Gustavo A. R. Silva wrote:
-> > >> SERDES_MAX is a valid value to index ctrl->phys in
-> > >> drivers/phy/mscc/phy-ocelot-serdes.c. But, currently,
-> > >> there is an out-of-bounds bug in the mentioned driver
-> > >> when reading from ctrl->phys, because the size of
-> > >> array ctrl->phys is SERDES_MAX.
-> > >>
-> > >> Partially fix this by updating SERDES_MAX to be SERDES6G_MAX + 1.
-> > >>
-> > >> Notice that this is the first part of the solution to
-> > >> the out-of-bounds bug mentioned above. Although this
-> > >> change is not dependent on any other one.
-> > >>
-> > > 
-> > > Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> > > 
-> > 
-> > Friendly ping. Who can you take this?
-> 
-> Applied. No need (nor benefit) to ping me. You can check the status of 
-> DT patches on patchwork[1]. If it is there and in the "New" state, it is 
-> in my queue.
+Eric W. Biederman <ebiederm@xmission.com> wrote:
 
-Actually, this doesn't apply to my tree as the file doesn't exist. It 
-needs to go thru the phy tree. You didn't Cc the maintainer nor list, so 
-resend.
+> Davids check will work for bind mounts as well.  It just won't work it
+> just won't work for files or subdirectories of some mountpoint.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Bind mounts have to be done with open_tree() and move_mount().  You can't now
+do fsmount() on something fspick()'d.
 
-Rob
+David
