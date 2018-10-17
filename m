@@ -2,138 +2,112 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6562AECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 959C5ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34D17214DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:00:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34D17214DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 52C092151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:02:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C092151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727155AbeJQQzF (ORCPT
+        id S1727086AbeJQQ50 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 12:55:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50406 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726691AbeJQQzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 12:55:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BAA89AEFF;
-        Wed, 17 Oct 2018 09:00:20 +0000 (UTC)
-Date:   Wed, 17 Oct 2018 10:00:15 +0100
-From:   Mel Gorman <mgorman@suse.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Argangeli <andrea@kernel.org>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
- mappings
-Message-ID: <20181017090015.GI6931@suse.de>
-References: <20181009094825.GC6931@suse.de>
- <20181009122745.GN8528@dhcp22.suse.cz>
- <20181009130034.GD6931@suse.de>
- <20181009142510.GU8528@dhcp22.suse.cz>
- <20181009230352.GE9307@redhat.com>
- <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
- <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
- <20181016074606.GH6931@suse.de>
- <20181016153715.b40478ff2eebe8d6cf1aead5@linux-foundation.org>
+        Wed, 17 Oct 2018 12:57:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60248 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726482AbeJQQ5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 12:57:25 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EF71B3082DCF;
+        Wed, 17 Oct 2018 09:02:42 +0000 (UTC)
+Received: from [10.72.12.94] (ovpn-12-94.pek2.redhat.com [10.72.12.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F1EA41B475;
+        Wed, 17 Oct 2018 09:02:37 +0000 (UTC)
+Subject: Re: [PATCH v2] virtio_net: avoid using netif_tx_disable() for
+ serializing tx routine
+To:     Ake Koomsin <ake@igel.co.jp>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <f04bee7a-3892-102d-2be0-f4fda4048e74@redhat.com>
+ <20181017075918.7043-1-ake@igel.co.jp>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <276ac5bb-90f7-5fb6-a826-0bb05ecfa069@redhat.com>
+Date:   Wed, 17 Oct 2018 17:02:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20181016153715.b40478ff2eebe8d6cf1aead5@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181017075918.7043-1-ake@igel.co.jp>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 17 Oct 2018 09:02:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 03:37:15PM -0700, Andrew Morton wrote:
-> On Tue, 16 Oct 2018 08:46:06 +0100 Mel Gorman <mgorman@suse.de> wrote:
-> > I consider this to be an unfortunate outcome. On the one hand, we have a
-> > problem that three people can trivially reproduce with known test cases
-> > and a patch shown to resolve the problem. Two of those three people work
-> > on distributions that are exposed to a large number of users. On the
-> > other, we have a problem that requires the system to be in a specific
-> > state and an unknown workload that suffers badly from the remote access
-> > penalties with a patch that has review concerns and has not been proven
-> > to resolve the trivial cases. In the case of distributions, the first
-> > patch addresses concerns with a common workload where on the other hand
-> > we have an internal workload of a single company that is affected --
-> > which indirectly affects many users admittedly but only one entity directly.
-> > 
-> > At the absolute minimum, a test case for the "system fragmentation incurs
-> > access penalties for a workload" scenario that could both replicate the
-> > fragmentation and demonstrate the problem should have been available before
-> > the patch was rejected.  With the test case, there would be a chance that
-> > others could analyse the problem and prototype some fixes. The test case
-> > was requested in the thread and never produced so even if someone were to
-> > prototype fixes, it would be dependant on a third party to test and produce
-> > data which is a time-consuming loop. Instead, we are more or less in limbo.
-> > 
-> 
-> OK, thanks.
-> 
-> But we're OK holding off for a few weeks, yes?  If we do that
-> we'll still make it into 4.19.1.  Am reluctant to merge this while
-> discussion, testing and possibly more development are ongoing.
-> 
 
-Without a test case that reproduces the Google case, we are a bit stuck.
-Previous experience indicates that just fragmenting memory is not enough
-to give a reliable case as unless the unmovable/reclaimable pages are
-"sticky", the normal reclaim can handle it. Similarly, the access
-pattern of the target workload is important as it would need to be
-something larger than L3 cache to constantly hit the access penalty. We
-do not know what the exact characteristics of the Google workload are
-but we know that a fix for three cases is not equivalent for the Google
-case.
+On 2018/10/17 下午3:59, Ake Koomsin wrote:
+> Commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+> introduces netif_tx_disable() after netif_device_detach() in order to
+> avoid use-after-free of tx queues. However, there are two issues.
+>
+> 1) Its operation is redundant with netif_device_detach() if the interface
+>     is running.
+> 2) In case of the interface is not running before suspending and
+>     resuming, the tx does not get resumed by netif_device_attach().
+>     This results in losing network connectivity.
+>
+> It is better to use netif_tx_lock()/netif_tx_unlock() instead for
+> serializing tx routine during reset. This also preserves the symmetry
+> of netif_device_detach() and netif_device_attach().
+>
+> Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+> Signed-off-by: Ake Koomsin <ake@igel.co.jp>
+> ---
+>   drivers/net/virtio_net.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 3f5aa59c37b7..41ccf9c994a4 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -2267,8 +2267,9 @@ static void virtnet_freeze_down(struct virtio_device *vdev)
+>   	/* Make sure no work handler is accessing the device */
+>   	flush_work(&vi->config_work);
+>   
+> +	netif_tx_lock(vi->dev);
+>   	netif_device_detach(vi->dev);
+> -	netif_tx_disable(vi->dev);
+> +	netif_tx_unlock(vi->dev);
 
-The discussion has circled around wish-list items such as better
-fragmentation control, node-aware compaction, improved compact deferred
-logic and lower latencies with little in the way of actual specifics
-of implementation or patches. Improving fragmentation control would
-benefit from a workload that actually fragments so the extfrag events
-can be monitored as well as maybe a dump of pageblocks with mixed pages.
 
-On node-aware compaction, that was not implemented initially simply
-because HighMem was common and that needs to be treated as a corner case
--- we cannot safely migrate pages from zone normal to highmem. That one
-is relatively trivial to measure as it's a functional issue.
+Sorry for not finding this earlier. I think we should use 
+netif_tx_lock_bh() to prevent start_xmit() to run under bh.
 
-However, backing off compaction properly to maximise allocation success
-rates while minimising allocation latency and access latency needs a live
-workload that is representative. Trivial cases like the java workloads,
-nas or usemem won't do as they either exhibit special locality or are
-streaming readers/writers. Memcache might work but the driver in that
-case is critical to ensure the access penalties are incurred. Again,
-a modern example is missing.
+Thanks
 
-As for why this took so long to discover, it is highly likely that it's
-due to VM's being sized such as they typically fit in a NUMA node so
-it would have avoided the worst case scenarios. Furthermore, a machine
-dedicated to VM's has fewer concerns with respect to slab allocations
-and unmovable allocations fragmenting memory long-term. Finally, the
-worst case scenarios are encountered when there is a mix of different
-workloads of variable duration which may be common in a Google-like setup
-with different jobs being dispatched across a large network but less so
-in other setups where a service tends to be persistent. We already know
-that some of the worst performance problems take years to discover.
 
--- 
-Mel Gorman
-SUSE Labs
+>   	cancel_delayed_work_sync(&vi->refill);
+>   
+>   	if (netif_running(vi->dev)) {
+> @@ -2304,7 +2305,9 @@ static int virtnet_restore_up(struct virtio_device *vdev)
+>   		}
+>   	}
+>   
+> +	netif_tx_lock(vi->dev);
+>   	netif_device_attach(vi->dev);
+> +	netif_tx_unlock(vi->dev);
+>   	return err;
+>   }
+>   
