@@ -2,104 +2,101 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F64BECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 599ABECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F39A208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:15:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O30+RJzz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F39A208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A5AC2087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:15:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A5AC2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727214AbeJREM1 (ORCPT
+        id S1727514AbeJREMo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 00:12:27 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38644 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725737AbeJREM0 (ORCPT
+        Thu, 18 Oct 2018 00:12:44 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46257 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725737AbeJREMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 00:12:26 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f8-v6so13047942pgq.5;
-        Wed, 17 Oct 2018 13:15:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nrtSpmGjBXVdHO7Av1Tvi+PPHLlbTkswLCSQT6BvVjE=;
-        b=O30+RJzzLPmwpKMKAH2rqg48tD9p2RawIQKf4QO3csxTXuF0aYl5yqFT2neobverkl
-         aG9ooPzieXiMNsnmfZnr8ifxOcu8CmxT0iJSOeRUYsX51YMkPDWJh6dwoOSO6CwqyEcZ
-         GKg8JdoQXoJoWu/x1AfqrhLvVY29z5/oszPchMMPA/8tOLEWptLX+m+WpAmiqnri+r8E
-         BpBrlNzdnTiT+6uiLHw+SaZ4oYWS0y8Nr5tQvFmKePE9f7BtdloRortG24GNQjl1wOV9
-         RKhhO1hE0yuT6YEbX37oLiBLcKciBvNeDG8epUCHKkoQsmwDGjDfyRvdpkHYVrIgxWVe
-         2ZNg==
+        Thu, 18 Oct 2018 00:12:44 -0400
+Received: by mail-ot1-f68.google.com with SMTP id o21so27492348otb.13;
+        Wed, 17 Oct 2018 13:15:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nrtSpmGjBXVdHO7Av1Tvi+PPHLlbTkswLCSQT6BvVjE=;
-        b=oIyux4b43PUO+b2tNLt4mmA47F5/dOaugGwi2OnwBvpZcWpdOODAnPYP9JeJZKOJsD
-         iwMJ+a8Hn6u1lDP9uX6IsVxK/DdxWkSm4PoOkQL+I3CrlgCNE2GcZlr79tYIsHoFk8c/
-         5zdoEHkaVg2bEdKZ+8zHcJ2TkkQEQjDat72r26Be4H1UJZvoMj71JWVL7/tNnqQuqwbp
-         bWbOHKMUOIyXxHLpgb1jMOKmdcoOgZNhCOtyBJ946UkvwkDX+XeDhwWadgZdS9C65cZn
-         mJasiV/9HUGFcqNzpiogtG6oJQrs4Qc1X+Fg5HCFmpQQljuCo7lepD77VYTvDNiZWS94
-         M/iw==
-X-Gm-Message-State: ABuFfojFuqBPFb/55jK8cZ+ZA3M6FCM4ZcC2wGRoihqoUL4kzbrtKrqr
-        y6sSuYnkeRx5Eu4Z8KShqQj6AoWx
-X-Google-Smtp-Source: ACcGV63ThV/TzIyCZwbDQ7S/WSv12DvAxAsgshMdcfVCS43xPDtVZqez9XrN9W0Z3AlPF9U1GLH+wA==
-X-Received: by 2002:a62:5ac6:: with SMTP id o189-v6mr28299801pfb.40.1539807306864;
-        Wed, 17 Oct 2018 13:15:06 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id n64-v6sm27065918pfi.185.2018.10.17.13.15.06
+        bh=FVNq7Um6Q9Xhi6t5aMFd2UpQIEimCO5z4fv1r3LmNHA=;
+        b=WSGZzaxRYPrKSP4dRcTSV4lACovRTyfIamoyYjG97qs30E29/Sd0oGmtKCnEJoiP0k
+         W6LjkS9F8uybRS6H9ZNneuqCK9uT82sOvcVFKpurMrqooDd1N1WIQ0NCNAnoubRFlkth
+         OjZPqyTkpDeq+gAy0pS0BfETTP6j1+CE22y7c7Pe1u2tj/zuf30QRQYAe7D3GTQoDvu0
+         ae2OE5bTFMmC5IoNKWc1T1zVEaJPGbHhKBWXB0XveuYbaTdDRab0pmox9XLKaR9Wmj3r
+         r4DOpkmTv1CjP4BiWeiamhNPbU/xPavfPtSc3eWED/oV4tMVKuz5zJ0yx2XjRIlGARyS
+         4DIQ==
+X-Gm-Message-State: ABuFfoheaQ9Lq+M60kZt6sdrHdkRbm3NQiTLvmv66/37fVEal8FSUBFD
+        /IBLQ5zQsCNuSpImoxYDWEyEPTg=
+X-Google-Smtp-Source: ACcGV63YubM7aGCGR3TSsiM0bzPZHeco4uL3U1l8PsvUcy5CrTw/WRoiEmART2rqKh/rLnxmVXcRPA==
+X-Received: by 2002:a9d:339a:: with SMTP id u26mr18726503otc.81.1539807324339;
+        Wed, 17 Oct 2018 13:15:24 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id k24sm6156262otd.57.2018.10.17.13.15.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 13:15:06 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 13:15:02 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] hwmon: (core) Inherit power properties to hdev
-Message-ID: <20181017201501.GA15941@Asurada-Nvidia.nvidia.com>
-References: <20181017012426.26958-1-nicoleotsuka@gmail.com>
- <20181017012426.26958-2-nicoleotsuka@gmail.com>
- <20181017194430.GA6812@roeck-us.net>
+        Wed, 17 Oct 2018 13:15:23 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 15:15:22 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        KT Liao <kt.liao@emc.com.tw>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/5] dt-bindings: add more optional properties for
+ elan_i2c touchpads
+Message-ID: <20181017201522.GA26525@bogus>
+References: <20181012142413.26107-1-benjamin.tissoires@redhat.com>
+ <20181012142413.26107-4-benjamin.tissoires@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181017194430.GA6812@roeck-us.net>
+In-Reply-To: <20181012142413.26107-4-benjamin.tissoires@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 12:44:30PM -0700, Guenter Roeck wrote:
+On Fri, Oct 12, 2018 at 04:24:11PM +0200, Benjamin Tissoires wrote:
+> Some new touchpads IC are connected through PS/2 and I2C. On some of these
+> new IC, the I2C part doesn't have all of the information available.
+> We need to be able to forward the touchpad parameters from PS/2 and
+> thus, we need those new optional properties.
+> 
+> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1628715
+> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> ---
+>  Documentation/devicetree/bindings/input/elan_i2c.txt | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/input/elan_i2c.txt b/Documentation/devicetree/bindings/input/elan_i2c.txt
+> index 797607460735..ace6bcb0b4eb 100644
+> --- a/Documentation/devicetree/bindings/input/elan_i2c.txt
+> +++ b/Documentation/devicetree/bindings/input/elan_i2c.txt
+> @@ -13,6 +13,14 @@ Optional properties:
+>    pinctrl binding [1]).
+>  - vcc-supply: a phandle for the regulator supplying 3.3V power.
+>  - elan,trackpoint: touchpad can support a trackpoint (boolean)
+> +- elan,clickpad: touchpad is a clickpad (the entire surface is a button)
 
-> > +	hdev->driver = dev->driver;
-> > +	hdev->power = dev->power;
-> > +	hdev->pm_domain = dev->pm_domain;
-> 
-> dev can, unfortunately, be NULL
-> 
-> >  	hdev->of_node = dev ? dev->of_node : NULL;
-> 
-> ... as you can see here.
+> +- elan,max_x: the maximum reported value on the X axis
+> +- elan,max_y: the maximum reported value on the Y axis
+> +- elan,min_x: the minimum reported value on the X axis
+> +- elan,min_y: the minimum reported value on the Y axis
+> +- elan,x_res: the resolution of the X axis (in units per mm)
+> +- elan,y_res: the resolution of the Y axis (in units per mm)
+> +- elan,width: max reported width of a blob
 
-Oops..will fix it.
+Can't we use standard touchscreen properties here? (Yes, I get this is a 
+touchpad, not touchscreen).
 
-Thanks!
-
-> 
-> Guenter
-> 
-> >  	hwdev->chip = chip;
-> >  	dev_set_drvdata(hdev, drvdata);
-> > -- 
-> > 2.17.1
-> > 
+Rob
