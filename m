@@ -2,107 +2,132 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9421FECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 741FDECDE39
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 607E921476
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:32:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43F2B2148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:32:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LelkQvFm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 607E921476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0RAmgjFU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F2B2148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbeJRC2z (ORCPT
+        id S1728305AbeJRC3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 22:28:55 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:46391 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJRC2z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 22:28:55 -0400
-Received: by mail-yw1-f65.google.com with SMTP id j202-v6so10755698ywa.13
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 11:31:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=BvS6s5e3Ccz2AZdsJrSkBdOPFXjXmL4OCyqgTGSCQiI=;
-        b=LelkQvFmubbB5ts6bfTwC09I1W6k4atqyEhZjcDZMfyukkKw8Z5kNQwn//IMXLTB3C
-         N/KucNrL9JvioClfnU0UJX+q4NuQeGcn5BgpcajgZqcm6EB3SeY/uZQIF+f1HuHzfHV8
-         09aK9XV5FIyEYNUJaOPHVxau4BtgI/xGCiKyM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=BvS6s5e3Ccz2AZdsJrSkBdOPFXjXmL4OCyqgTGSCQiI=;
-        b=V2dZstWxLx34gezy/1FaCqTIJf2c5gEnikwzi8xhDZjnBkc580X26b2yqsHsrzNJ5o
-         sPfzu5kn5bPQKzfYtfSGxzXhyTifMRcOeqdnBYmWL0sSVxUwpZO7eI7A7EFc7Va1etKJ
-         sKoosaDbUvvCt0BWBt4VusGmQPGAzVMcd2gUnFbdjpvBXbQT5Ow99oYf3xN/CtIf6WLh
-         dfVX++OTbRsVIPL11E3bRulOmr9ua5lmKvxYrGs1X/IL7EVw1VpEgmP5JTMAgh+KAN/6
-         W+y4IU/aZT76nKFvZMpU1A5DkalxjDsrGcAHXabLvR6xTAbambZyKQuYxWh9pWxUW+g5
-         9Zhg==
-X-Gm-Message-State: ABuFfohJ+kOU+lUa+88K5cvaNCvM5BIFVFakVFcvtecioB07JGbWSoWZ
-        Gw4dnpAVEkVaLngEDI6gcaI71lqaM3U=
-X-Google-Smtp-Source: ACcGV60QPxkGBhDLwCxYba6xIswgWlO3wBxBzaMF07oHd85al8yPz2AY5V4ZK4oWsKJk7JofqT9psQ==
-X-Received: by 2002:a81:ae04:: with SMTP id m4-v6mr15676808ywh.474.1539801118292;
-        Wed, 17 Oct 2018 11:31:58 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id l138-v6sm5674683ywe.50.2018.10.17.11.31.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 11:31:57 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id o8-v6so10778799ybk.13
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 11:31:56 -0700 (PDT)
-X-Received: by 2002:a25:3617:: with SMTP id d23-v6mr16325360yba.141.1539801116376;
- Wed, 17 Oct 2018 11:31:56 -0700 (PDT)
+        Wed, 17 Oct 2018 22:29:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727014AbeJRC3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 22:29:10 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C68021476;
+        Wed, 17 Oct 2018 18:32:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539801134;
+        bh=6jz7+gJ/Q97AzpykflWof4gbC1TERmI3QHYKYdh0zQg=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=0RAmgjFUCXo+ZbXkL+D+y84OoM0QOSKtmg+uqgaHZl3t139eKLBaEo573zYrptYsa
+         Vj189uuILFi8t9YKNwMoUrlveW4saCY/y85gQIBYZxDSoDMBVVv7LmztLLS5vZ8uCs
+         /p0tLQOyQKxWVWlN9xCZe6v7gmCbw7f971sdrUOQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Wed, 17 Oct 2018 11:31:55
- -0700 (PDT)
-In-Reply-To: <CAMkWEXNN2_saQN-yQ7Pwgau1YTYQQuih+KLnKj5-cOYa6CyMPw@mail.gmail.com>
-References: <20180906152859.7810-1-tycho@tycho.ws> <20180906152859.7810-4-tycho@tycho.ws>
- <CALCETrXGBZyqDb7DEysHmOkxaBrXUp4s2X08HfqZkpjM28s3Hg@mail.gmail.com> <CAMkWEXNN2_saQN-yQ7Pwgau1YTYQQuih+KLnKj5-cOYa6CyMPw@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 17 Oct 2018 11:31:55 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+LBzzZeqPAcfAjOmQ7db=2xNdcw2CMurc+PDWtS85fcA@mail.gmail.com>
-Message-ID: <CAGXu5j+LBzzZeqPAcfAjOmQ7db=2xNdcw2CMurc+PDWtS85fcA@mail.gmail.com>
-Subject: Re: [PATCH v6 3/5] seccomp: add a way to get a listener fd from ptrace
-To:     Michael Tirado <mtirado418@gmail.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Tycho Andersen <tycho@tycho.ws>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180922181709.13007-3-gregory.clement@bootlin.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+References: <20180922181709.13007-1-gregory.clement@bootlin.com>
+ <20180922181709.13007-3-gregory.clement@bootlin.com>
+Message-ID: <153980113358.5275.6784587664499905114@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/6] clk: mvebu: add helper file for Armada AP and CP clocks
+Date:   Wed, 17 Oct 2018 11:32:13 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 12:25 AM, Michael Tirado <mtirado418@gmail.com> wrote:
-> On Thu, Sep 13, 2018 at 12:02 AM Andy Lutomirski <luto@amacapital.net> wrote:
->>
->> Or we could have a
->> seccomp() mode that adds a filter but only kicks in after execve().
->>
->> --Andy
->
-> Hey that's a pretty good idea, then we could block execve in a seccomp
-> launcher without post-exec cooperation, or that patch I wrote that used
-> an execve counter which probably should have been through prctl instead.
+Quoting Gregory CLEMENT (2018-09-22 11:17:05)
+> diff --git a/drivers/clk/mvebu/armada_ap_cp_helper.c b/drivers/clk/mvebu/=
+armada_ap_cp_helper.c
+> new file mode 100644
+> index 000000000000..5f2457719b10
+> --- /dev/null
+> +++ b/drivers/clk/mvebu/armada_ap_cp_helper.c
+> @@ -0,0 +1,28 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Marvell Armada AP and CP110 helper
+> + *
+> + * Copyright (C) 2018 Marvell
+> + *
+> + * Gregory Clement <gregory.clement@bootlin.com>
+> + *
+> + */
+> +
+> +#include "armada_ap_cp_helper.h"
+> +#include <linux/device.h>
+> +
+> +char *ap_cp_unique_name(struct device *dev, struct device_node *np,
+> +                       const char *name)
+> +{
+> +       const __be32 *reg;
+> +       u64 addr;
+> +
+> +       /* Do not create a name if there is no clock */
+> +       if (!name)
+> +               return NULL;
+> +
+> +       reg =3D of_get_property(np, "reg", NULL);
+> +       addr =3D of_translate_address(np, reg);
+> +       return devm_kasprintf(dev, GFP_KERNEL, "%llx-%s",
+> +                             (unsigned long long)addr, name);
 
-This has come up a few times before, actually. I had a working
-prototype, but it needed some more shaking-out. I do like the idea of
-"activate later" filters, though I'd always felt like using execve as
-the boundary was a bit limiting. I wonder if we could do some kind of
-external trigger (i.e. the fd passed to the caller) for when to
-activate... likely the synchronization is a horror show, though, so if
-execve is "good enough", I'll probably be happy with that. :)
+We probably don't want to leak physical addresses into debugfs, but I
+guess this is how it's already been, so maybe something in the future
+should change this for security purposes.
 
--Kees
+> +}
+> diff --git a/drivers/clk/mvebu/armada_ap_cp_helper.h b/drivers/clk/mvebu/=
+armada_ap_cp_helper.h
+> new file mode 100644
+> index 000000000000..23aa29f3fcf7
+> --- /dev/null
+> +++ b/drivers/clk/mvebu/armada_ap_cp_helper.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +
+> +#ifndef __ARMADA_AP_CP_HELPER_H
+> +#define __ARMADA_AP_CP_HELPER_H
+> +
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
 
--- 
-Kees Cook
-Pixel Security
+Drop these includes? And forward declare =
+
+
+struct device;
+struct device_node;
+
+> +
+> +char *ap_cp_unique_name(struct device *dev, struct device_node *np,
+> +                       const char *name);
+> +#endif
