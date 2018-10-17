@@ -2,85 +2,133 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47782ECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C17ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF9221480
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:33:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF9221480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BE4A021479
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:37:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="0BNZ+DZd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE4A021479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728418AbeJRDa6 (ORCPT
+        id S1728373AbeJRDeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 23:30:58 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40530 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728122AbeJRDa6 (ORCPT
+        Wed, 17 Oct 2018 23:34:14 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36752 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728129AbeJRDeN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 23:30:58 -0400
-Received: by mail-oi1-f196.google.com with SMTP id j68-v6so22065231oib.7;
-        Wed, 17 Oct 2018 12:33:48 -0700 (PDT)
+        Wed, 17 Oct 2018 23:34:13 -0400
+Received: by mail-ot1-f67.google.com with SMTP id x4so25998927otg.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 12:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X5EPERwG7Rt2FJx6jlrxgsAT7CqRWmgc1U9eT9124S0=;
+        b=0BNZ+DZdn3Sfab3DPt4S44cQaaXv5eKcABUuMKFJ44wtAAYHjQk0/kSOed0d3Y7SJk
+         CxbLndA1ROAnvg4wOs1k1nBnCSzkQxHVXAnum4HYB62oOno1Mbtn50cR5E/ofIrvtU3L
+         NE2d+PwcjFGH72doPWBL5R7V3kNeX1qZ/edFw003FNmFXN6lFKrdh7lVyKtHUgDVTq/Z
+         D7FDdz9LBGDvaeq9afZK1cBkepzciBHBuLhzz37q199DfHigYWnriT/KoG/0wtRfx19k
+         GRr5cTW1VgBn9NUkGA5cbOLGNQhHMrWPH9Jj5brUq5hBJ2PUoMPJCONcRr/TH8C9Uimf
+         7Cjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bEESbS4mh1TXnLr0glP3a2qu3nBqaXj0qxeWDRcgqkk=;
-        b=KKrCaWrkhRXBiUhzeOzvCbenG0fvNPaB1BmhxbBfqESVOX5SeRcYBkUKDruqcCT//A
-         Dp9wO1Mu6sQhk+Qdv6pr0xVmZSxsrDq1tMLLRT4ougO8/GRFRX/uZLrWDina5KXF7O5M
-         qHcGyHr1Oc87XUv/jQ8jXreIxKle4oqaXn7zauuTDL2GEfSJZYCuj2N25fnimgExXawf
-         wzp3xgp3p/1ZIEZgv0H2YsndPfaj6g/P8HOnFuCT7nbAccEbfn4b0cYuIeGFcynxdB/Q
-         FXo284YvNyvCz6XmpwfLpXABDgxxDNQi8lLor+FECi2SXHjbA0LsctruK7PNy+oAjK8e
-         qU9Q==
-X-Gm-Message-State: ABuFfoghsIRxkiwrEEXRJhXhv2wlu/CezhsHur91Wq2sCanDcZmhY8wd
-        qTgXHVbjpp+PKh/8C5mX9w==
-X-Google-Smtp-Source: ACcGV62JP8S2dxSGz1Vhtk368tMgXu7Vhlf2rhYGRGQvCMkNPJcMJUxK2YPaCk/Y0LvnDceXRtyNkw==
-X-Received: by 2002:aca:4ac1:: with SMTP id x184-v6mr13830610oia.211.1539804827690;
-        Wed, 17 Oct 2018 12:33:47 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p6sm6074795otc.43.2018.10.17.12.33.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 12:33:47 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 14:33:46 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        James Cameron <quozl@laptop.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 06/11] dt-bindings: spi/spi-pxa2xx: Add spi-slave property
-Message-ID: <20181017193346.GB8853@bogus>
-References: <20181010170936.316862-1-lkundrak@v3.sk>
- <20181010170936.316862-7-lkundrak@v3.sk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X5EPERwG7Rt2FJx6jlrxgsAT7CqRWmgc1U9eT9124S0=;
+        b=AOiL32WlfXEFUJJGdPgsDNo0+Cl8FA/17UgbQ4iXND8nOi5kIVPk85On2bkJ0wqebh
+         hOtyiu230t7JyIRM63VjpGlgxQsdf7sOR7LyNr6A7g3AlR4sC4n6TDuqf0hiWxBohprq
+         ISuypGapNhlH84wMn46b9Yr/I2cQEGRFPoe9o+G9Z4YDd0tddUXx+/VD/Nz0NBEEw4Wc
+         r663OFYjM65NQeJt/DyOzY9NxZJLj/sbd50M2oKgljYOegwV1XT0aaBP1xqraF02lhQr
+         CZiIbkbJlHYRhxmmi46ZIERdUq1DHeFE8T8Q10lv3NK3aSmTDrfxvZK5wm4fCtWecYZ5
+         QKtA==
+X-Gm-Message-State: ABuFfoi/oIBxcLLOodVLkLWihQbmdtPTj0wE4bgYm7NExWSSN6UaMcQ0
+        cRShJe+Zrp1x0fqjsF3g/GaZKaIAWHYIW+s+nffTWw==
+X-Google-Smtp-Source: ACcGV62RKyJ8NGBE9EPXNHGOAOLKjjxT1guOCHbWQAJZ35C7d99brfK5lzxjogk/k/+LLsQbeC3A6621K2Mu9K1CkWw=
+X-Received: by 2002:a9d:4d0a:: with SMTP id n10mr16341195otf.95.1539805022185;
+ Wed, 17 Oct 2018 12:37:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181010170936.316862-7-lkundrak@v3.sk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181013050021.11962-1-pagupta@redhat.com> <20181013050021.11962-3-pagupta@redhat.com>
+ <CAPcyv4hroaVWA-HgjWCnr7QTd_y7U8sCvS+Up733ttnD6_cKzQ@mail.gmail.com> <431127218.21694133.1539803509205.JavaMail.zimbra@redhat.com>
+In-Reply-To: <431127218.21694133.1539803509205.JavaMail.zimbra@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 17 Oct 2018 12:36:51 -0700
+Message-ID: <CAPcyv4joz_dPruJY4CYAxXSuMTD-NUoqm6kvGFrF19jt5dN=rg@mail.gmail.com>
+Subject: Re: [Qemu-devel] [PATCH v2 2/2] virtio-pmem: Add virtio pmem driver
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     Kevin Wolf <kwolf@redhat.com>, Jan Kara <jack@suse.cz>,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>,
+        David Hildenbrand <david@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>, zwisler@kernel.org,
+        lcapitulino@redhat.com, Paolo Bonzini <pbonzini@redhat.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 07:09:31PM +0200, Lubomir Rintel wrote:
-> This is used to indicate that the chip attached to this controller is a SPI
-> master.
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  Documentation/devicetree/bindings/spi/spi-pxa2xx.txt | 1 +
->  1 file changed, 1 insertion(+)
+On Wed, Oct 17, 2018 at 12:11 PM Pankaj Gupta <pagupta@redhat.com> wrote:
+>
+>
+>
+> > On Fri, Oct 12, 2018 at 10:01 PM Pankaj Gupta <pagupta@redhat.com> wrote:
+> > >
+> > > This patch adds virtio-pmem driver for KVM guest.
+> > >
+> > > Guest reads the persistent memory range information from
+> > > Qemu over VIRTIO and registers it on nvdimm_bus. It also
+> > > creates a nd_region object with the persistent memory
+> > > range information so that existing 'nvdimm/pmem' driver
+> > > can reserve this into system memory map. This way
+> > > 'virtio-pmem' driver uses existing functionality of pmem
+> > > driver to register persistent memory compatible for DAX
+> > > capable filesystems.
+> > >
+> > > This also provides function to perform guest flush over
+> > > VIRTIO from 'pmem' driver when userspace performs flush
+> > > on DAX memory range.
+> >
+> > Before we can move forward with this driver we need additional
+> > filesystem enabling to detect when the backing device is fronting DAX
+> > pmem or a paravirtualized page cache through virtio-pmem. Any
+> > interface that requires fsync() and a round trip to the hypervisor to
+> > flush host page cache is not DAX.
+>
+> I saw your proposal[1] for new mmap flag MAP_DIRECT. IIUIC mapping should fail for
+> MAP_DIRECT if it requires explicit flush or buffer indirection. So, if we disable
+> MAP_SYNC flag for virtio-pmem this should fail MAP_DIRECT as well? Otherwise
+> without MAP_DIRECT, virtio-pmem should be defaulted to VIRTIO flush mechanism.
 
-This could be rolled into patch 1. Either way,
+Right, although I wouldn't worry about MAP_DIRECT in the short term
+since we're still discussing what the upstream interface. Regardless
+of whether MAP_DIRECT is specified or not the virtio-flush mechanism
+would always be used for virtio-pmem. I.e. there is no possibility to
+get full DAX operation with virtio-pmem, only the page-cache bypass
+sub-set.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Taking a look at where we could inject this check for filesystems it's
+a bit awkward to do it in xfs_file_mmap() for example because we do
+not have the backing device for the extents of the inode. So at a
+minimum you would need to investigate calling xfs_inode_supports_dax()
+from that path and teaching it about a new dax_device flag. I'm
+thinking the dax_device flag should be called DAXDEV_BUFFERED to
+indicate the presence of software buffering on a device that otherwise
+supports bypassing the local page cache.
