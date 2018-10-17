@@ -2,167 +2,90 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A4DECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F50ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBCB121526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:41:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCB121526
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id A42E121527
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:42:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AY9/dJ2B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A42E121527
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbeJQWhs (ORCPT
+        id S1727612AbeJQWiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:37:48 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.23]:20900 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727048AbeJQWhr (ORCPT
+        Wed, 17 Oct 2018 18:38:51 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:37482 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbeJQWiv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:37:47 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 4593E160714
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:41:46 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Cn0pgwCBrRPojCn0zgCuey; Wed, 17 Oct 2018 09:41:45 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:59040 helo=[192.168.1.41])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gCn0o-003UTP-6g; Wed, 17 Oct 2018 09:41:26 -0500
-To:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181008191712.GA12892@embeddedor.com>
- <CAGXu5j+a=81mGFrF5igMXe46mv_PsqzUKCzLWj0oCEMk1PY62g@mail.gmail.com>
- <9fa270bc-502d-5ff5-2acb-88ababcc9262@embeddedor.com>
- <20181017061741.qr23stkwqf36fet6@gondor.apana.org.au>
- <20181017072034.GD28572@kwain>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] crypto: inside-secure: safexcel - fix memory allocation
-Message-ID: <0529a397-f104-5f3a-663e-7ef2d883dcb2@embeddedor.com>
-Date:   Wed, 17 Oct 2018 16:41:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 17 Oct 2018 18:38:51 -0400
+Received: by mail-vk1-f195.google.com with SMTP id y128-v6so6400184vky.4
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 07:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=cJrE2Qzh3OxtNj3/H5AjSiQA8j0vne5WLIRPK7sC7qg=;
+        b=AY9/dJ2B+w+rc9wAkXl/Wxtz3OkPxxsU1AuMPa5jHxl1duW94bzQ1Ntwsqdy2InXF/
+         e6VhhDewvsY/gFTB3YVkxYT18nEuGrQ82b6skzXRDVrHDNGNSX/Dwaj200bcWyPrx6xB
+         vj7XeKOUZkWDIXEq3DbW7k2zv38H6gecE7YlBQknrdDgoY8KEmM21T+CbpdaDr+JuTqm
+         0ajRsSxO4tAqvLxH/Uao2ZuVOupy1O3dTCAQZSEh+PLNYu0vsWw3WJ2Jy1yCMnJNnYup
+         8AYLudSYwAZQ2t/BL4p+3far3Ls98Mbd6STnBWfLSZFI2Q57yaNzuwXz0duBNgVm7MSP
+         aDmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cJrE2Qzh3OxtNj3/H5AjSiQA8j0vne5WLIRPK7sC7qg=;
+        b=o3bMYITnKwj0qaX02ir8NzcUv/9z3hriiaVY6nEn+LHL6PpHEx0IaDGbUdlpaTU2B0
+         nKrjOdDfHRe3ffgcJnqNDDd8rSyzGtQYxvlPQ2nXAa5IupcAYLpoiN8sAGLh5eaUChFN
+         5NO1pQWwxPj+vmcxTqIjB3Ow19WViOza5qEKOi+PT29yWbQN1YqAkpjp3Q+jVFA17+xz
+         GtohwfYMuwxqzwASubVbkyw7LoLq3ojQYrt5lFs5Y7vhpjAhrkShK+qmW/3TzyiZRG+F
+         x3ogv8A5qoz7U+a4V6S28j8kn+B3om5GRM1nwIiCCu3fgnNdKvesbRyzmqeyw5NYoQPc
+         QCYw==
+X-Gm-Message-State: ABuFfojPCpyMpwGXahw74XYWkClkOywn9DJeHmDXvCgnP6Y+UtpSnnfQ
+        yf4i5hv9d8owwp827OQc5T4t103Ve8UOHpa6TBw=
+X-Google-Smtp-Source: ACcGV61/63Xp4eYXOprtB85lqwSLCPfuUB+tSzGdD4ofmCRXgvZ9EsDHKMXwokh9tzyU3NR53BmDOMPhhpqSoYf8nBM=
+X-Received: by 2002:a1f:c146:: with SMTP id r67mr10660186vkf.90.1539787369665;
+ Wed, 17 Oct 2018 07:42:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181017072034.GD28572@kwain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gCn0o-003UTP-6g
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:59040
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <cover.1539781832.git.zongbox@gmail.com>
+In-Reply-To: <cover.1539781832.git.zongbox@gmail.com>
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Wed, 17 Oct 2018 22:42:13 +0800
+Message-ID: <CAEbi=3dRLbC34uVuft5WsP7hrXnBHVFMxUyi8ZTexeAczRT3rA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Remove the no longer used mechanism
+To:     Zong Li <zongbox@gmail.com>
+Cc:     Vincent Chen <deanbo422@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greentime <greentime@andestech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/17/18 9:20 AM, Antoine Tenart wrote:
-> Hi,
-> 
-> On Wed, Oct 17, 2018 at 02:17:41PM +0800, Herbert Xu wrote:
->> On Tue, Oct 16, 2018 at 09:44:02PM +0200, Gustavo A. R. Silva wrote:
->>> On 10/9/18 12:20 AM, Kees Cook wrote:
->>>> On Mon, Oct 8, 2018 at 12:17 PM, Gustavo A. R. Silva
->>>> <gustavo@embeddedor.com> wrote:
->>>>> The original intention is to allocate space for EIP197_DEFAULT_RING_SIZE
->>>>> *pointers* to struct, so sizeof(priv->ring[i].rdr_req) should be
->>>>> sizeof(*priv->ring[i].rdr_req).
->>>>>
->>>>> Addresses-Coverity-ID: 1473962 ("Sizeof not portable")
->>>>> Fixes: 9744fec95f06 ("crypto: inside-secure - remove request list to improve performance")
->>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>>>
->>>> Reviewed-by: Kees Cook <keescook@chromium.org>
->>>>
->>>
->>>
->>> Friendly ping. Who can take this?
->>
->> Well I tried to take it but it doesn't apply against cryptodev.
->> So I presume this can go into the tree that carried the change
->> which it depended on?
-> 
-> I would say this should go in cryptodev. The issue is probably because
-> of other changes that got applied in the meantime. Gustavo can probably
-> rebase his patch on top of cryptodev, and re-send it.
-> 
-
-cryptodev is missing the previous commit 329e09893909d409039f6a79757d9b80b67efe39
-to which this patch applies.
-
-Kees, did you apply the commit above to your tree?
-
-If so, could you take this patch?
-
-Thanks
---
-Gustavo
+Zong Li <zongbox@gmail.com> =E6=96=BC 2018=E5=B9=B410=E6=9C=8817=E6=97=A5 =
+=E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=889:17=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> This patchset remove the no longer used mechanism as follows:
+> 1. Reserve the TLB space for UART mapping during booting.
+> 2. Assign a value for UART display when an error ocurred during booting.
+>
+> Zong Li (2):
+>   nds32: Remove the redundant assignment
+>   nds32: Fill all TLB entries with kernel image mapping
+>
+>  arch/nds32/kernel/head.S | 11 +----------
+>  1 file changed, 1 insertion(+), 10 deletions(-)
+>
+Zong, Thank you.
+Acked-by: Greentime Hu <greentime@andestech.com>
