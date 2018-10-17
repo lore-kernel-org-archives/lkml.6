@@ -2,66 +2,96 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EE0ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FC4ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89F932150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:02:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F932150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8804121526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:02:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/vb7AnU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8804121526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbeJQW61 (ORCPT
+        id S1727810AbeJQW6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:58:27 -0400
-Received: from mga12.intel.com ([192.55.52.136]:11480 "EHLO mga12.intel.com"
+        Wed, 17 Oct 2018 18:58:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727016AbeJQW60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:58:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 08:02:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,392,1534834800"; 
-   d="scan'208";a="83359835"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.154]) ([10.7.198.154])
-  by orsmga006.jf.intel.com with ESMTP; 17 Oct 2018 08:02:20 -0700
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        yi.z.zhang@linux.intel.com
-References: <20181009170051.GA40606@tiger-server>
- <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
- <25092df0-b7b4-d456-8409-9c004cb6e422@linux.intel.com>
- <20181010095838.GG5873@dhcp22.suse.cz>
- <f97de51c-67dd-99b2-754e-0685cac06699@linux.intel.com>
- <20181010172451.GK5873@dhcp22.suse.cz>
- <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com>
- <20181010185242.GP5873@dhcp22.suse.cz> <20181011085509.GS5873@dhcp22.suse.cz>
- <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
- <20181017075257.GF18839@dhcp22.suse.cz>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <971729e6-bcfe-a386-361b-d662951e69a7@linux.intel.com>
-Date:   Wed, 17 Oct 2018 08:02:20 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727047AbeJQW6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 18:58:42 -0400
+Received: from [192.168.1.16] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE04D2150F;
+        Wed, 17 Oct 2018 15:02:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539788556;
+        bh=mk/EnutWj9y5GAoMaGwwnbaCM37ULNsNU2wSg49Fjfw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=d/vb7AnUGoX1dPtoxTC4acZFI1TVFSpinIJJOl1HO1ranqh7asIoXxcQfLe7+ajI8
+         hZ7eBKv2X7TV4H7U/0KmoDXobytYm/QoYDim6vny1NkFw7RqV6CdvGQrIjZhvl2eoy
+         vTG3vB0Vx1cWsJCWtL0j2Vfw6G/umH24mtr936LA=
+Subject: Re: [PATCHv2] reset: socfpga: add an early reset driver for SoCFPGA
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     linux-kernel@vger.kernel.org, marex@denx.de
+References: <20181011135241.13614-1-dinguyen@kernel.org>
+ <1539787061.4729.11.camel@pengutronix.de>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ xsFNBFEnvWwBEAC44OQqJjuetSRuOpBMIk3HojL8dY1krl8T8GJjfgc/Gh97CfVbrqhV5yQ3
+ Sk/MW9mxO9KNvQCbZtthfn62YHmroNwipjZ6wKOMfKdtJR4+8JW/ShIJYnrMfwN8Wki6O+5a
+ yPNNCeENHleV0FLVXw3aACxOcjEzGJHYmg4UC+56rfoxPEhKF6aGBTV5aGKMtQy77ywuqt12
+ c+hlRXHODmXdIeT2V4/u/AsFNAq6UFUEvHrVj+dMIyv2VhjRvkcESIGnG12ifPdU7v/+wom/
+ smtfOAGojgTCqpwd0Ay2xFzgGnSCIFRHp0I/OJqhUcwAYEAdgHSBVwiyTQx2jP+eDu3Q0jI3
+ K/x5qrhZ7lj8MmJPJWQOSYC4fYSse2oVO+2msoMTvMi3+Jy8k+QNH8LhB6agq7wTgF2jodwO
+ yij5BRRIKttp4U62yUgfwbQtEUvatkaBQlG3qSerOzcdjSb4nhRPxasRqNbgkBfs7kqH02qU
+ LOAXJf+y9Y1o6Nk9YCqb5EprDcKCqg2c8hUya8BYqo7y+0NkBU30mpzhaJXncbCMz3CQZYgV
+ 1TR0qEzMv/QtoVuuPtWH9RCC83J5IYw1uFUG4RaoL7Z03fJhxGiXx3/r5Kr/hC9eMl2he6vH
+ 8rrEpGGDm/mwZOEoG5D758WQHLGH4dTAATg0+ZzFHWBbSnNaSQARAQABzSFEaW5oIE5ndXll
+ biA8ZGluZ3V5ZW5Aa2VybmVsLm9yZz7CwXgEEwECACIFAlbG5oQCGwMGCwkIBwMCBhUIAgkK
+ CwQWAgMBAh4BAheAAAoJEBmUBAuBoyj0fIgQAICrZ2ceRWpkZv1UPM/6hBkWwOo3YkzSQwL+
+ AH15hf9xx0D5mvzEtZ97ZoD0sAuB+aVIFwolet+nw49Q8HA3E/3j0DT7sIAqJpcPx3za+kKT
+ twuQ4NkQTTi4q5WCpA5b6e2qzIynB50b3FA6bCjJinN06PxhdOixJGv1qDDmJ01fq2lA7/PL
+ cny/1PIo6PVMWo9nf77L6iXVy8sK/d30pa1pjhMivfenIleIPYhWN1ZdRAkH39ReDxdqjQXN
+ NHanNtsnoCPFsqeCLmuUwcG+XSTo/gEM6l2sdoMF4qSkD4DdrVf5rsOyN4KJAY9Uqytn4781
+ n6l1NAQSRr0LPT5r6xdQ3YXIbwUfrBWh2nDPm0tihuHoH0CfyJMrFupSmjrKXF84F3cq0DzC
+ yasTWUKyW/YURbWeGMpQH3ioDLvBn0H3AlVoSloaRzPudQ6mP4O8mY0DZQASGf6leM82V3t0
+ Gw8MxY9tIiowY7Yl2bHqXCorPlcEYXjzBP32UOxIK7y7AQ1JQkcv6pZ0/6lX6hMshzi9Ydw0
+ m8USfFRZb48gsp039gODbSMCQ2NfxBEyUPw1O9nertCMbIO/0bHKkP9aiHwg3BPwm3YL1UvM
+ ngbze/8cyjg9pW3Eu1QAzMQHYkT1iiEjJ8fTssqDLjgJyp/I3YHYUuAf3i8SlcZTusIwSqnD
+ zsFNBFEnvWwBEADZqma4LI+vMqJYe15fxnX8ANw+ZuDeYHy17VXqQ7dA7n8E827ndnoXoBKB
+ 0n7smz1C0I9StarHQPYTUciMLsaUpedEfpYgqLa7eRLFPvk/cVXxmY8Pk+aO8zHafr8yrFB1
+ cYHO3Ld8d/DvF2DuC3iqzmgXzaRQhvQZvJ513nveCa2zTPPCj5w4f/Qkq8OgCz9fOrf/CseM
+ xcP3Jssyf8qTZ4CTt1L6McRZPA/oFNTTgS/KA22PMMP9i8E6dF0Nsj0MN0R7261161PqfA9h
+ 5c+BBzKZ6IHvmfwY+Fb0AgbqegOV8H/wQYCltPJHeA5y1kc/rqplw5I5d8Q6B29p0xxXSfaP
+ UQ/qmXUkNQPNhsMnlL3wRoCol60IADiEyDJHVZRIl6U2K54LyYE1vkf14JM670FsUH608Hmk
+ 30FG8bxax9i+8Muda9ok/KR4Z/QPQukmHIN9jVP1r1C/aAEvjQ2PK9aqrlXCKKenQzZ8qbeC
+ rOTXSuJgWmWnPWzDrMxyEyy+e84bm+3/uPhZjjrNiaTzHHSRnF2ffJigu9fDKAwSof6SwbeH
+ eZcIM4a9Dy+Ue0REaAqFacktlfELeu1LVzMRvpIfPua8izTUmACTgz2kltTaeSxAXZwIziwY
+ prPU3cfnAjqxFHO2TwEpaQOMf8SH9BSAaCXArjfurOF+Pi3lKwARAQABwsFfBBgBAgAJBQJR
+ J71sAhsMAAoJEBmUBAuBoyj0MnIQAI+bcNsfTNltf5AbMJptDgzISZJrYCXuzOgv4+d1CubD
+ 83s0k6VJgsiCIEpvELQJsr58xB6l+o3yTBZRo/LViNLk0jF4CmCdXWjTyaQAIceEdlaeeTGH
+ d5GqAud9rv9q1ERHTcvmoEX6pwv3m66ANK/dHdBV97vXacl+BjQ71aRiAiAFySbJXnqj+hZQ
+ K8TCI/6TOtWJ9aicgiKpmh/sGmdeJCwZ90nxISvkxDXLEmJ1prvbGc74FGNVNTW4mmuNqj/p
+ oNr0iHan8hjPNXwoyLNCtj3I5tBmiHZcOiHDUufHDyKQcsKsKI8kqW3pJlDSACeNpKkrjrib
+ 3KLQHSEhTQCt3ZUDf5xNPnFHOnBjQuGkumlmhkgD5RVguki39AP2BQYp/mdk1NCRQxz5PR1B
+ 2w0QaTgPY24chY9PICcMw+VeEgHZJAhuARKglxiYj9szirPd2kv4CFu2w6a5HNMdVT+i5Hov
+ cJEJNezizexE0dVclt9OS2U9Xwb3VOjs1ITMEYUf8T1j83iiCCFuXqH4U3Eji0nDEiEN5Ac0
+ Jn/EGOBG2qGyKZ4uOec9j5ABF7J6hyO7H6LJaX5bLtp0Z7wUbyVaR4UIGdIOchNgNQk4stfm
+ JiyuXyoFl/1ihREfvUG/e7+VAAoOBnMjitE5/qUERDoEkkuQkMcAHyEyd+XZMyXY
+Message-ID: <5944ac0a-ba43-43fa-9985-c84644023ae8@kernel.org>
+Date:   Wed, 17 Oct 2018 10:02:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181017075257.GF18839@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1539787061.4729.11.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,85 +99,204 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 12:52 AM, Michal Hocko wrote:
-> On Thu 11-10-18 10:38:39, Alexander Duyck wrote:
->> On 10/11/2018 1:55 AM, Michal Hocko wrote:
->>> On Wed 10-10-18 20:52:42, Michal Hocko wrote:
->>> [...]
->>>> My recollection was that we do clear the reserved bit in
->>>> move_pfn_range_to_zone and we indeed do in __init_single_page. But then
->>>> we set the bit back right afterwards. This seems to be the case since
->>>> d0dc12e86b319 which reorganized the code. I have to study this some more
->>>> obviously.
->>>
->>> so my recollection was wrong and d0dc12e86b319 hasn't really changed
->>> much because __init_single_page wouldn't zero out the struct page for
->>> the hotplug contex. A comment in move_pfn_range_to_zone explains that we
->>> want the reserved bit because pfn walkers already do see the pfn range
->>> and the page is not fully associated with the zone until it is onlined.
->>>
->>> I am thinking that we might be overzealous here. With the full state
->>> initialized we shouldn't actually care. pfn_to_online_page should return
->>> NULL regardless of the reserved bit and normal pfn walkers shouldn't
->>> touch pages they do not recognize and a plain page with ref. count 1
->>> doesn't tell much to anybody. So I _suspect_ that we can simply drop the
->>> reserved bit setting here.
+Hi Philipp
+
+On 10/17/2018 09:37 AM, Philipp Zabel wrote:
+> Hi Dinh,
+> 
+> On Thu, 2018-10-11 at 08:52 -0500, Dinh Nguyen wrote:
+>> Create a separate reset driver that uses the reset operations in
+>> reset-simple. The reset driver for the SoCFPGA platform needs to
+>> register early in order to be able bring online timers that needed
+>> early in the kernel bootup.
 >>
->> So this has me a bit hesitant to want to just drop the bit entirely. If
->> nothing else I think I may wan to make that a patch onto itself so that if
->> we aren't going to set it we just drop it there. That way if it does cause
->> issues we can bisect it to that patch and pinpoint the cause.
-> 
-> Yes a patch on its own make sense for bisectability.
-
-For now I think I am going to back off of this. There is a bunch of 
-other changes that need to happen in order for us to make this work. As 
-far as I can tell there are several places that are relying on this 
-reserved bit.
-
->>> Regarding the post initialization required by devm_memremap_pages and
->>> potentially others. Can we update the altmap which is already a way how
->>> to get alternative struct pages by a constructor which we could call
->>> from memmap_init_zone and do the post initialization? This would reduce
->>> the additional loop in the caller while it would still fit the overall
->>> design of the altmap and the core hotplug doesn't have to know anything
->>> about DAX or whatever needs a special treatment.
->>>
->>> Does that make any sense?
+>> We do not need this early reset driver for Stratix10, because on
+>> arm64, Linux does not need the timers are that in reset. Linux is
+>> able to run just fine with the internal armv8 timer.
 >>
->> I think the only thing that is currently using the altmap is the ZONE_DEVICE
->> memory init. Specifically I think it is only really used by the
->> devm_memremap_pages version of things, and then only under certain
->> circumstances. Also the HMM driver doesn't pass an altmap. What we would
->> really need is a non-ZONE_DEVICE users of the altmap to really justify
->> sticking with that as the preferred argument to pass.
+>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+>> ---
+>> v2: Do not build separate reset driver for STRATIX10
+>>     fix warning: symbol 'socfpga_reset_init' was not declared. Should
+>>     it be static?
+>> ---
+>>  arch/arm/mach-socfpga/socfpga.c |  4 ++
+>>  drivers/reset/Kconfig           |  9 +++-
+>>  drivers/reset/Makefile          |  1 +
+>>  drivers/reset/reset-socfpga.c   | 88 +++++++++++++++++++++++++++++++++
+>>  4 files changed, 101 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/reset/reset-socfpga.c
+>>
+>> diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
+>> index dde14f7bf2c3..cc64576c102b 100644
+>> --- a/arch/arm/mach-socfpga/socfpga.c
+>> +++ b/arch/arm/mach-socfpga/socfpga.c
+>> @@ -32,6 +32,8 @@ void __iomem *rst_manager_base_addr;
+>>  void __iomem *sdr_ctl_base_addr;
+>>  unsigned long socfpga_cpu1start_addr;
+>>  
+>> +extern void __init socfpga_reset_init(void);
+>> +
+>>  void __init socfpga_sysmgr_init(void)
+>>  {
+>>  	struct device_node *np;
+>> @@ -64,6 +66,7 @@ static void __init socfpga_init_irq(void)
+>>  
+>>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+>>  		socfpga_init_ocram_ecc();
+>> +	socfpga_reset_init();
+>>  }
+>>  
+>>  static void __init socfpga_arria10_init_irq(void)
+>> @@ -74,6 +77,7 @@ static void __init socfpga_arria10_init_irq(void)
+>>  		socfpga_init_arria10_l2_ecc();
+>>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+>>  		socfpga_init_arria10_ocram_ecc();
+>> +	socfpga_reset_init();
+>>  }
+>>  
+>>  static void socfpga_cyclone5_restart(enum reboot_mode mode, const char *cmd)
+>> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+>> index 13d28fdbdbb5..f10de5ce4753 100644
+>> --- a/drivers/reset/Kconfig
+>> +++ b/drivers/reset/Kconfig
+>> @@ -100,7 +100,7 @@ config RESET_QCOM_AOSS
+>>  
+>>  config RESET_SIMPLE
+>>  	bool "Simple Reset Controller Driver" if COMPILE_TEST
+>> -	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
+>> +	default ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
+>>  	help
+>>  	  This enables a simple reset controller driver for reset lines that
+>>  	  that can be asserted and deasserted by toggling bits in a contiguous,
+>> @@ -119,6 +119,13 @@ config RESET_STM32MP157
+>>  	help
+>>  	  This enables the RCC reset controller driver for STM32 MPUs.
+>>  
+>> +config RESET_SOCFPGA
+>> +	bool "SoCFPGA Reset Driver" if COMPILE_TEST && !ARCH_SOCFPGA
+>> +	default ARCH_SOCFPGA && !ARCH_STRATIX10
+>> +	select RESET_SIMPLE
+>> +	help
+>> +	  This enables the reset driver for SoCFPGA.
+>> +
+>>  config RESET_SUNXI
+>>  	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
+>>  	default ARCH_SUNXI
+>> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+>> index 4243c38228e2..d09bb41273f6 100644
+>> --- a/drivers/reset/Makefile
+>> +++ b/drivers/reset/Makefile
+>> @@ -18,6 +18,7 @@ obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
+>>  obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
+>>  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+>>  obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
+>> +obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
+>>  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+>>  obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+>>  obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+>> diff --git a/drivers/reset/reset-socfpga.c b/drivers/reset/reset-socfpga.c
+>> new file mode 100644
+>> index 000000000000..b92769861d2b
+>> --- /dev/null
+>> +++ b/drivers/reset/reset-socfpga.c
+>> @@ -0,0 +1,88 @@
+>> +// SPDX-License-Identifier:	GPL-2.0
+>> +/*
+>> + * Copyright (C) 2018, Intel Corporation
+>> + * Copied from reset-sunxi.c
+>> + */
+>> +
+>> +#include <linux/err.h>
+>> +#include <linux/io.h>
+>> +#include <linux/init.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/reset-controller.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/spinlock.h>
+>> +#include <linux/types.h>
+>> +
+>> +#include "reset-simple.h"
+>> +
+>> +#define SOCFPGA_NR_BANKS	8
+>> +void __init socfpga_reset_init(void);
+>> +
+>> +static int a10_reset_init(struct device_node *np)
+>> +{
+>> +	struct reset_simple_data *data;
+>> +	struct resource res;
+>> +	resource_size_t size;
+>> +	int ret;
+>> +	u32 reg_offset = 0x10;
+>> +
+>> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
+>> +	if (!data)
+>> +		return -ENOMEM;
+>> +
+>> +	ret = of_address_to_resource(np, 0, &res);
+>> +	if (ret)
+>> +		goto err_alloc;
+>> +
+>> +	size = resource_size(&res);
+>> +	if (!request_mem_region(res.start, size, np->name)) {
+>> +		ret = -EBUSY;
+>> +		goto err_alloc;
+>> +	}
+>> +
+>> +	data->membase = ioremap(res.start, size);
+>> +	if (!data->membase) {
+>> +		ret = -ENOMEM;
+>> +		goto err_alloc;
+>> +	}
+>> +
+>> +	if (of_property_read_u32(np, "altr,modrst-offset", &reg_offset))
+>> +		pr_warn("missing altr,modrst-offset property, assuming 0x10\n");
+>> +	data->membase += reg_offset;
+>> +
+>> +	spin_lock_init(&data->lock);
+>> +
+>> +	data->rcdev.owner = THIS_MODULE;
+>> +	data->rcdev.nr_resets = SOCFPGA_NR_BANKS * 32;
+>> +	data->rcdev.ops = &reset_simple_ops;
+>> +	data->rcdev.of_node = np;
+>> +	data->status_active_low = true;
+>> +
+>> +	return reset_controller_register(&data->rcdev);
+>> +
+>> +err_alloc:
+>> +	kfree(data);
+>> +	return ret;
+>> +};
+>> +
+>> +/*
+>> + * These are the reset controller we need to initialize early on in
+>> + * our system, before we can even think of using a regular device
+>> + * driver for it.
+>> + * The controllers that we can register through the regular device
+>> + * model are handled by the simple reset driver directly.
+>> + */
+>> +static const struct of_device_id socfpga_early_reset_dt_ids[] __initconst = {
+>> +	{ .compatible = "altr,rst-mgr", },
 > 
-> I am not aware of any upstream HMM user so I am not sure what are the
-> expectations there. But I thought that ZONE_DEVICE users use altmap. If
-> that is not generally true then we certainly have to think about a
-> better interface.
+> That doesn't seem right. If you don't remove the altr,rst-mgr compatible
+> from reset-simple.c anymore, we suddenly have two device drivers for the
+> same compatible.
 
-I'm just basing my statement on the use of the move_pfn_range_to_zone 
-call. The only caller that is actually passing the altmap is 
-devm_memremap_pages and if I understand things correctly that is only 
-used when we want to stare the vmmemmap on the same memory that we just 
-hotplugged.
+You're right, and that's why I am not building reset-simple for
+ARCH_SOCFPGA anymore. I am only building reset-simple for ARCH_STRATIX10.
 
-That is why it made more sense to me to just create a ZONE_DEVICE 
-specific function for handling the page initialization because the one 
-value I do have to pass is the dev_pagemap in both HMM and memremap 
-case, and that has the altmap already embedded inside of it.
-
->> For those two functions it currently makes much more sense to pass the
->> dev_pagemap pointer and then reference the altmap from there. Otherwise we
->> are likely starting to look at something that would be more of a dirty hack
->> where we are passing a unused altmap in order to get to the dev_pagemap so
->> that we could populate the page.
 > 
-> If dev_pagemap is a general abstraction then I agree.
+> (Also I liked removing altr,modrst-offset from reset-simple.c)
 
-Well so far HMM and the memremap code have both agreed to use that 
-structure to store the metadata for ZONE_DEVICE mappings, and at this 
-point we are already looking at 3 different memory types being stored 
-within that zone as we already have the private, public, and DAX memory 
-types all using this structure.
+I can remove it since it's just 0x20 of ARCH_STRATIX10.
+
+> 
+> Would there be any issue with calling socfpga_reset_init() on Stratix10
+> as well?
+> 
+
+I don't see any place in the arm64 common code where I can do this.
+
+Dinh
