@@ -5,51 +5,51 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E0FECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0EFECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:42:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61DB921526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA0DF21528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:42:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dTJ1aJIp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61DB921526
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fRN6aj7z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0DF21528
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbeJQPgo (ORCPT
+        id S1727365AbeJQPgr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:36:44 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:56410 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726691AbeJQPgn (ORCPT
+        Wed, 17 Oct 2018 11:36:47 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:42066 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727000AbeJQPgq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:36:43 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9H7g0ad022831;
-        Wed, 17 Oct 2018 02:42:00 -0500
+        Wed, 17 Oct 2018 11:36:46 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9H7gBd9017540;
+        Wed, 17 Oct 2018 02:42:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539762120;
-        bh=3AdF0VMpgtkV9yWrrnXvabWcf4Spt+07w4PmTvQYyH8=;
+        s=ti-com-17Q1; t=1539762131;
+        bh=A3B7m156w4JW4GKL6NESpqJCfKj0ubYIPGRpxQW6oQM=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=dTJ1aJIpyTli+QbK/3XU+bgaqeqvI7/5NdCJMUsUMcHJ7NhBI6/qLXfB18kBWg5Jr
-         CjQP+kiX1LHP0u7deGcY+nVNF8wRdgX4HhmEz+Cpv/phBvKVVqp9XDmQkYTMK+M91z
-         BmdABzLeG9sh5F3lHsZF2esYnRRL8b6B19ESguDQ=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7fx5O023348;
-        Wed, 17 Oct 2018 02:41:59 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+        b=fRN6aj7zZSvWPs0x13xufuxfIDxVG79B6xt0Ip54U+xiZVtXdF2AFg8oJ0JKQdR0e
+         Uawxe0GUlGPgITPOttgqFRA3sVsRxNkn5FzC3X27mdIN1rjLEdcjMKdih1sBxqLsRv
+         /Tkvv8sqgXuzOyQuk1CK9CkloBrdBAlFr/2X4Uco=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7gAOu008761;
+        Wed, 17 Oct 2018 02:42:10 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 17
- Oct 2018 02:41:59 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
+ Oct 2018 02:42:09 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 17 Oct 2018 02:41:59 -0500
+ Wed, 17 Oct 2018 02:42:10 -0500
 Received: from a0393678ub.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7fgSP009413;
-        Wed, 17 Oct 2018 02:41:56 -0500
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7fgSS009413;
+        Wed, 17 Oct 2018 02:42:06 -0500
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Bjorn Helgaas <bhelgaas@google.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -60,9 +60,9 @@ CC:     Rob Herring <robh+dt@kernel.org>, <linux-pci@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH v2 04/21] PCI: keystone: Do not initiate link training multiple times
-Date:   Wed, 17 Oct 2018 13:10:57 +0530
-Message-ID: <20181017074114.28239-5-kishon@ti.com>
+Subject: [PATCH v2 07/21] PCI: keystone: Remove redundant platform_set_drvdata
+Date:   Wed, 17 Oct 2018 13:11:00 +0530
+Message-ID: <20181017074114.28239-8-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181017074114.28239-1-kishon@ti.com>
 References: <20181017074114.28239-1-kishon@ti.com>
@@ -74,47 +74,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 886bc5ceb5cc3ad4b219502d72 ("PCI: designware: Add generic
-dw_pcie_wait_for_link()") while adding a generic dw_pcie_wait_for_link()
-performed a special handling (initiate link training multiple times) for
-keystone which is not required. This also resulted in unncessarily waiting
-for more time to establish the link even when no PCI device is connected.
-
-Remove it and make it look similar to other dwc based PCIe drivers.
+No functional change. Remove redundant platform_set_drvdata invocation
+in ks_pcie_probe().
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/pci/controller/dwc/pci-keystone.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/pci/controller/dwc/pci-keystone.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index afb948372077..aa7e706fc37d 100644
+index 337464d15775..926e345dc965 100644
 --- a/drivers/pci/controller/dwc/pci-keystone.c
 +++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -87,19 +87,17 @@ static int ks_pcie_establish_link(struct keystone_pcie *ks_pcie)
- {
- 	struct dw_pcie *pci = ks_pcie->pci;
- 	struct device *dev = pci->dev;
--	unsigned int retries;
+@@ -912,8 +912,6 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
- 	if (dw_pcie_link_up(pci)) {
- 		dev_info(dev, "Link already up\n");
- 		return 0;
- 	}
- 
-+	ks_dw_pcie_initiate_link_train(ks_pcie);
-+
- 	/* check if the link is up or not */
--	for (retries = 0; retries < 5; retries++) {
--		ks_dw_pcie_initiate_link_train(ks_pcie);
--		if (!dw_pcie_wait_for_link(pci))
--			return 0;
--	}
-+	if (!dw_pcie_wait_for_link(pci))
-+		return 0;
- 
- 	dev_err(dev, "phy link never came up\n");
- 	return -ETIMEDOUT;
+-	platform_set_drvdata(pdev, ks_pcie);
+-
+ 	ret = ks_add_pcie_port(ks_pcie, pdev);
+ 	if (ret < 0)
+ 		goto fail_clk;
 -- 
 2.17.1
 
