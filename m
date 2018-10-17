@@ -2,243 +2,170 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A5EECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3370AECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1F9321473
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:34:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4DFD21470
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:37:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="WhyZKqL5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F9321473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TnIjRT3w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4DFD21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeJRGb3 (ORCPT
+        id S1727519AbeJRGfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 02:31:29 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40094 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbeJRGb3 (ORCPT
+        Thu, 18 Oct 2018 02:35:08 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:35964 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbeJRGfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 02:31:29 -0400
-Received: by mail-ed1-f65.google.com with SMTP id r1-v6so26424475edd.7
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:33:40 -0700 (PDT)
+        Thu, 18 Oct 2018 02:35:07 -0400
+Received: by mail-yw1-f67.google.com with SMTP id e201-v6so11049761ywa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:37:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AundlnETdPac4xvhDRjsgdvex9/IrvteaWUKjQaagI8=;
-        b=WhyZKqL5GSkwgjXT/n6/DYhgKBRBrTBSYx451s9YR1lOCkYjDX/c3sGtACdYVlc4iV
-         YNbbS9rMX4xKykZiUGmJDFvIIA9fF8c8ZrnlwkaM//Gt6FnN/6satXyKQxwquEixn0og
-         nX5DZhc7tEy9VJuoH7H8G1QnEsIkTF7pIsZ7A=
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Lg0GOna/bu3SR+krD9Mg3SxVQkU2T4SP5z5fCIw1bvI=;
+        b=TnIjRT3wrnVh/VxzazJ+d5anZmywAl6XpjKbbqJ0Avo72T7/U0QrCFejeYmJv/icq/
+         RTyKZ25P+EDrsWBhqCgbf2l/tyXvyXr7e376T4IXDilYh2gu81FQ3BEKDTboNg3nNb65
+         UN13omd6L/QgFeAYskXg1JGjnvnTv7kT4gMB0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AundlnETdPac4xvhDRjsgdvex9/IrvteaWUKjQaagI8=;
-        b=sq3bcilHhdJjtr+zcXc138cIjJOOYEQ31eR6trsY/7MyuK+I7r2oUBuxVLCTy1IhMJ
-         5GQ/RzuSHJ0p7vIFmE3E9YvQ+IOaeAnYM5wLJ1XLBrvFZj7JWYVH9qa4kRkch9wsD3Fl
-         I88AZmfseF+cVazfrDTVtPIPcyuQFsNK1zVukqrfjowUAz3Josbv2Z11SNUqTAlaRI9t
-         KmyKkbL9ka99G8yTme1U8JVRmLsuKtfi4Njf1aHxiYU20JAw5yCHT1ZQih0h7eBCVbgS
-         tQV14C7ubO0igWRhuF2S9Ia4rvWSTdmDJMEJ669VQfHI98e6NKdrLcn3EQKbu4fnzrkY
-         a+qw==
-X-Gm-Message-State: ABuFfoggYKiMDQESOyCnbLdBalwEnK+smwcYZ/ejJhCzCXINCS0gplL6
-        nKo3s3n8cBl9E6SPU5rO2D72JT66/ms=
-X-Google-Smtp-Source: ACcGV62+HUziUWgOSdlfYrLsVeBArDmWkH2BE7xrWET/27TShlfutY2aqJLjXsRvDJDiY61CSeN9JA==
-X-Received: by 2002:a50:94d2:: with SMTP id t18-v6mr1781442eda.86.1539815619711;
-        Wed, 17 Oct 2018 15:33:39 -0700 (PDT)
-Received: from prevas-ravi.waoo.dk (dhcp-5-186-114-252.cgn.ip.fibianet.dk. [5.186.114.252])
-        by smtp.gmail.com with ESMTPSA id e30-v6sm7001555edd.25.2018.10.17.15.33.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 17 Oct 2018 15:33:39 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [POC 01/12] Accessing __ro_after_init variables as immediates
-Date:   Thu, 18 Oct 2018 00:33:21 +0200
-Message-Id: <20181017223332.11964-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.19.1.6.gbde171bbf5
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Lg0GOna/bu3SR+krD9Mg3SxVQkU2T4SP5z5fCIw1bvI=;
+        b=dyEM3nXWk/rJQUUxhsnMFrpy0CcNVsnc9wbnUMFZWgUWNAsq/5pAUmDSss6GfjkD//
+         kKPs5e4gI3mWv4+I+ld+3HM8p4P5umO8Xa+Xl+eJJeF4krJMGCrGbXW/u26C01uSBFDR
+         CLp6EOGFFMNX226l9/yYwOBZK5bO0jj+IZA6tzdNJ/RacvQRnzqQnq3bhhROaPClj5WZ
+         FcA6cOJmiI5qRYzWULkY1YJRkZCXcgTQTMpW7sSXsk9hfJvhERQ5eTX2+Wo5x9jNxN/k
+         0JxTa1um5jflohQwVq8HPSMuZ69s0fvEQrMoL4q/Rj/eoUP6URU4EaWO6yQIhMTPz2zw
+         v/8g==
+X-Gm-Message-State: ABuFfoiBBEvvZxHeRbMkvvjTNf4XzFBN/NJD/bgm0+ciMvTrrYRoKy2d
+        ZJNgunmvu8lda1eSVgHddR+bnnJDPHg=
+X-Google-Smtp-Source: ACcGV632RoF6G8LanlBCiSE8A7JxQV6dqFmQ4LZWP4fqmf/fnWllWAmEQODyd4n978KHwGRjxiUCRg==
+X-Received: by 2002:a81:e807:: with SMTP id a7-v6mr17376304ywm.9.1539815838294;
+        Wed, 17 Oct 2018 15:37:18 -0700 (PDT)
+Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
+        by smtp.gmail.com with ESMTPSA id z130-v6sm5900949ywd.91.2018.10.17.15.37.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 15:37:16 -0700 (PDT)
+Received: by mail-yw1-f44.google.com with SMTP id e201-v6so11049715ywa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:37:16 -0700 (PDT)
+X-Received: by 2002:a81:2cc3:: with SMTP id s186-v6mr17142882yws.168.1539815836119;
+ Wed, 17 Oct 2018 15:37:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Wed, 17 Oct 2018 15:37:15
+ -0700 (PDT)
+In-Reply-To: <70d6b61f-25af-f903-0693-46e649c08aff@infradead.org>
+References: <20181017021708.GA22211@beast> <aed0041d-7c28-4dfb-91b5-fc83174d8744@infradead.org>
+ <875zy0ki3r.fsf@intel.com> <70d6b61f-25af-f903-0693-46e649c08aff@infradead.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 17 Oct 2018 15:37:15 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJDZjaSLE9uPZVWCqrtSMh1-x8H=X+3ptSYrL5QZdo8xA@mail.gmail.com>
+Message-ID: <CAGXu5jJDZjaSLE9uPZVWCqrtSMh1-x8H=X+3ptSYrL5QZdo8xA@mail.gmail.com>
+Subject: Re: [PATCH] docs: Introduce deprecated APIs list
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[This is on top of 58d20fcbd005 "Merge branch 'x86/grub2'" from the -tip
-tree, to have the macros.S mechanism available].
+On Wed, Oct 17, 2018 at 10:08 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 10/17/18 3:00 AM, Jani Nikula wrote:
+>> On Tue, 16 Oct 2018, Randy Dunlap <rdunlap@infradead.org> wrote:
+>>> On 10/16/18 7:17 PM, Kees Cook wrote:
+>>>> As discussed in the "API replacement/deprecation" thread[1], this
+>>>> makes an effort to document what things shouldn't get (re)added to the
+>>>> kernel, by introducing Documentation/process/deprecated.rst. It also
+>>>> adds the overflow kerndoc to ReST output, and tweaks the struct_size()
+>>>> documentation to parse correctly.
+>>>>
+>>>> [1] https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2018-September/005282.html
+>>>>
+>>>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>>>> ---
+>>>>  Documentation/driver-api/basics.rst  |  3 +
+>>>>  Documentation/process/deprecated.rst | 99 ++++++++++++++++++++++++++++
+>>>>  Documentation/process/index.rst      |  1 +
+>>>>  include/linux/overflow.h             |  2 +-
+>>>>  4 files changed, 104 insertions(+), 1 deletion(-)
+>>>>  create mode 100644 Documentation/process/deprecated.rst
+>>>
+>>>
+>>>> diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+>>>> index 40b48e2133cb..2f224f43dd06 100644
+>>>> --- a/include/linux/overflow.h
+>>>> +++ b/include/linux/overflow.h
+>>>> @@ -291,7 +291,7 @@ static inline __must_check size_t __ab_c_size(size_t n, size_t size, size_t c)
+>>>>  }
+>>>>
+>>>>  /**
+>>>> - * struct_size() - Calculate size of structure with trailing array.
+>>>> + * function struct_size() - Calculate size of structure with trailing array.
+>>>
+>>> That syntax is not explained nor documented in Documentation/doc-guide/kernel-doc.rst.
+>>>
+>>> Is the root problem that the function name begins with "struct"?
+>>> Please explain in the patch description.
+>>
+>> Indeed, shouldn't be needed.
 
-One can replace various uses of variables that are initialized at init
-and then never changed, so that the code never actually loads the
-variable from memory. Instead, the value of the variable gets encoded as
-an immediate operand. For example, many code paths do something like
+I actually thought the problem was with it not knowing how to deal
+with struct_size() being a macro instead of a real function.
 
-  p = kmem_cache_alloc(foo_cachep, GFP_KERNEL)
+> Well, this is just a guess (no testing), but in scripts/kernel-doc (at line
+> 1907 in 4.19-rc8), we can see:
+>
+>         if ($identifier =~ m/^struct/) {
+>             $decl_type = 'struct';
+>         } elsif ($identifier =~ m/^union/) {
+>             $decl_type = 'union';
+>         } elsif ($identifier =~ m/^enum/) {
+>             $decl_type = 'enum';
+>         } elsif ($identifier =~ m/^typedef/) {
+>             $decl_type = 'typedef';
+>         } else {
+>             $decl_type = 'function';
+>         }
+>
+> I wouldn't be surprised if a function named "struct_size" looks like a
+> type struct.  Maybe it needs to be more strict, with either a space or
+> word boundary at the end of each type string.  E.g.:
+>
+>         if ($identifier =~ m/^struct\b/) {
+>             $decl_type = 'struct';
+>         } elsif ($identifier =~ m/^union\b/) {
+>             $decl_type = 'union';
+>         } elsif ($identifier =~ m/^enum\b/) {
+>             $decl_type = 'enum';
+>         } elsif ($identifier =~ m/^typedef\b/) {
+>             $decl_type = 'typedef';
+>         } else {
+>             $decl_type = 'function';
+>         }
 
-where foo_cachep is some global variable that is set in an init
-function. The theory is that one can avoid the cost of a D$ miss by
-having the cpu load the value of foo_cachep directly into %rdi from the
-instruction stream. There's no way around the I$ cost of running a piece
-of code.
+But I see it's actually the prefix! :P
 
-For system hash tables there are typically two __ro_after_init variables
-in play, the base and either a shift (e.g. dcache) or a
-mask (e.g. futex). In both cases, one can implement the entire
-computation of the relevant hash bucket using just the hash value as
-input.
+Using the above code fixes it for me. Can you send this fix with my
+Tested-by, and I'll spin a v2 of my "deprecated.rst" patch without the
+overflow.h change?
 
-For now, this just aims at giving a POC implementation of the above
-access patterns for x86-64, but one can rather easily identify other
-patterns one might want to support. For example, pgdir_shift could give
-rise to implementing rai_shl() and rai_shr(), and rai_and() is also an
-obvious candidate.
+-Kees
 
-Going a bit further, and no longer restricting to __ro_after_init
-variables, one can imagine implementing rai_gt(), rai_leq() etc. via asm
-goto, to allow comparisons to sysctl limits. But while that might be
-able to reuse some of this infrastructure, one would need some way to
-trigger (another) .text update from the sysctl handler.
-
-I'm not enforcing that referenced variables are actually
-__ro_after_init, partly because many of the obvious subjects are merely
-__read_mostly, partly to be able to change some test variables
-deliberately and see that the rai_load still returns the initial value.
-
-The prefix rai_ is probably awful, but seemed to be an available
-three-letter acronym. Suggestions for better naming are much welcome.
-
-Implementation-wise, each access to a rai variable that should be
-patched shortly after init needs to be annotated using one of the rai_*
-macros. Doing anything more automatic would likely require a gcc plugin,
-and I'm not sure all read accesses to rai variables from non-init code
-should necessarily be patched. I'd really like kmalloc(128, GFP_KERNEL)
-to do a rai_load() of the appropriate kmalloc cache, but it's likely one runs
-into some __builtin_constant_p trouble.
-
-At each such access, we create four pieces of data: A template with the
-right instructions for patching in, but with dummy immediates; a thunk
-which may be slow and stupid, but which computes the correct result
-until patching is done (and which is also used as an int3 handler), and
-which is careful not to clobber any registers; a short piece of .text
-that simply jumps to the thunk, plus nops to make room for the full
-template; and finally a struct describing the type of access, the
-variables involved and where to find the template, thunk and instruction
-to be patched. I'm sure some of this metadata can eventually be
-discarded with __initdata, but for now I'm just keeping it simple. It's
-not a big deal when there's only a handful of core users, but if the
-kmalloc() thing gets implemented, we're going to have lots more
-rai_entry's.
-
-I have no idea how to benchmark this, or if it is worth it at all. Any
-micro-benchmark would probably just keep the variable in L1 cache, but
-if one accesses the variable sufficiently rarely that it's no longer in
-L1, that extra cache miss is hardly noticable.
-
-Comments? Flames?
-
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- include/linux/rai.h | 83 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
- create mode 100644 include/linux/rai.h
-
-diff --git a/include/linux/rai.h b/include/linux/rai.h
-new file mode 100644
-index 000000000000..e839454000ee
---- /dev/null
-+++ b/include/linux/rai.h
-@@ -0,0 +1,83 @@
-+#ifndef _LINUX_RAI_H
-+#define _LINUX_RAI_H
-+
-+/*
-+ * These document the behaviour any arch implementation of _rai_*
-+ * should have, and can be used by those in cases the arch does not
-+ * want to handle (e.g. _rai_load of a 2-byte quantity).
-+ */
-+#define _rai_load_fallback(var)                       (var)
-+#define _rai_bucket_shift_fallback(base, shift, hash) (&(base)[(hash) >> (shift)])
-+#define _rai_bucket_mask_fallback(base, mask, hash)   (&(base)[(hash) & (mask)])
-+
-+#ifdef CONFIG_ARCH_HAS_RAI
-+#include <asm/rai.h>
-+void update_rai_access(void);
-+#else
-+static inline void update_rai_access(void) {}
-+#endif
-+
-+#ifdef MODULE /* don't bother with modules for now */
-+#undef _rai_load
-+#undef _rai_bucket_shift
-+#undef _rai_bucket_mask
-+#endif
-+
-+/* Make sure all _rai_* are defined. */
-+#ifndef _rai_load
-+#define _rai_load _rai_load_fallback
-+#endif
-+#ifndef _rai_bucket_shift
-+#define _rai_bucket_shift _rai_bucket_shift_fallback
-+#endif
-+#ifndef _rai_bucket_mask
-+#define _rai_bucket_mask _rai_bucket_mask_fallback
-+#endif
-+
-+
-+/* 
-+ * The non-underscored rai_* are property of this header, so that it
-+ * can do tricks like defining debugging versions. Usually, it just
-+ * defines rai_foo as _rai_foo, with the latter being guaranteed to be
-+ * defined by the above logic.
-+ */
-+#if defined(CONFIG_RAI_DEBUG)
-+
-+#include <bug.h>
-+
-+#define rai_warn(what, expect, got)					\
-+	WARN_ONCE(expect != got,					\
-+		  "%s:%d: %s() returned %*phN, expected %*phN\n",	\
-+		  __FILE__, __LINE__, what,				\
-+		  (int)sizeof(got), &(got),				\
-+		  (int)sizeof(expect), &(expect))
-+
-+#define rai_load(var) ({						\
-+		typeof(var) v1 = _rai_load_fallback(var);		\
-+		typeof(var) v2 = _rai_load(var);			\
-+		rai_warn("rai_load", v1, v2);				\
-+		(v1); /* chicken */					\
-+	})
-+
-+#define rai_bucket_shift(base, shift, hash) ({				\
-+		typeof(hash) h = (hash);				\
-+		typeof(base) b1 = _rai_bucket_shift_fallback(base, shift, h); \
-+		typeof(base) b2 = _rai_bucket_shift(base, shift, h);	\
-+		rai_warn("rai_bucket_shift", b1, b2);			\
-+		(b1);							\
-+	})
-+
-+#define rai_bucket_mask(base, mask, hash) ({				\
-+		typeof(hash) h = (hash);				\
-+		typeof(base) b1 = _rai_bucket_mask_fallback(base, mask, h); \
-+		typeof(base) b2 = _rai_bucket_mask(base, mask, h);	\
-+		rai_warn("rai_bucket_mask", b1, b2);			\
-+		(b1);							\
-+	})
-+#else
-+#define rai_load         _rai_load
-+#define rai_bucket_shift _rai_bucket_shift
-+#define rai_bucket_mask  _rai_bucket_mask
-+#endif
-+
-+#endif /* _LINUX_RAI_H */
 -- 
-2.19.1.6.gbde171bbf5
-
+Kees Cook
+Pixel Security
