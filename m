@@ -4,155 +4,211 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EBAECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47336ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD262214D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:58:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC890214D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:59:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rXzS6psd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD262214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="sUnCzwLN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC890214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=toradex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727155AbeJQSxL (ORCPT
+        id S1727213AbeJQSy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:53:11 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:4544 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726922AbeJQSxK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:53:10 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bc715b50000>; Wed, 17 Oct 2018 03:57:57 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 17 Oct 2018 03:58:00 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 17 Oct 2018 03:58:00 -0700
-Received: from [10.26.11.110] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 17 Oct
- 2018 10:57:56 +0000
-Subject: Re: [PATCH v2 8/9] ASoC: tegra_sgtl5000: fix device_node refcounting
-To:     Marcel Ziswiler <marcel@ziswiler.com>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Mark Brown <broonie@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        <alsa-devel@alsa-project.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-References: <20181016104730.4598-1-marcel@ziswiler.com>
- <20181016104730.4598-9-marcel@ziswiler.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <af707410-9954-b1a1-6d9b-5ad085604446@nvidia.com>
-Date:   Wed, 17 Oct 2018 11:57:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181016104730.4598-9-marcel@ziswiler.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 17 Oct 2018 14:54:29 -0400
+Received: from mail-eopbgr60104.outbound.protection.outlook.com ([40.107.6.104]:27712
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726923AbeJQSy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 14:54:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GEn3O6K1xemwI2hNKjwqfGb9BnGF/VmYbmPFPqL0wgM=;
+ b=sUnCzwLN69he9RXax7ekLKmydX72UeWPT27uhiKjqUniVxuYlzEMmiUWjoR0fOLZhtU6MXGa6/c6aiSrHAaYmXgDwi7MYYJmtMvGhBAObef0JMktzWAokX1IeWICw9H0efiIeD/B6ar2m99vo02m6WpV9KWEf42UazkSQfyVxj4=
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
+ VI1PR0501MB2143.eurprd05.prod.outlook.com (10.167.196.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.23; Wed, 17 Oct 2018 10:59:11 +0000
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::99b0:2276:18cf:18aa]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::99b0:2276:18cf:18aa%3]) with mapi id 15.20.1228.032; Wed, 17 Oct 2018
+ 10:59:11 +0000
+From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To:     "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>,
+        "digetx@gmail.com" <digetx@gmail.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
+Thread-Topic: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
+Thread-Index: AQHUZghvkMNHFejUfkSwmm4BBOtWFA==
+Date:   Wed, 17 Oct 2018 10:59:11 +0000
+Message-ID: <1539773948.6233.23.camel@toradex.com>
+References: <20180830184210.5369-1-digetx@gmail.com>
+         <20180830184210.5369-2-digetx@gmail.com>
+         <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
+In-Reply-To: <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1539773877; bh=hQuU0Wyvxg2PFTdqbUFfXN9F1upsQ8uRJKdrH8lH9Rw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=rXzS6psd0nPOAX9JvziYTgEw9Z/gJXXEleyVpTxJ3WSzbjnnkUg0p4B49BU+u9Ctg
-         AAZIi3RMW3GpY93Q9JbGASK+CkzsO1v6SwC82f6XEWikzUOgxHcVVPZ3D/SsuWzzlt
-         NT8EcFxtpfWi5xza8S/aoO+kbiBuPVsg/h+VphM99M/n7X1RDS2WH5an9BOw1mvrR6
-         2Ix1hqFkmMGoyyJstvGn/iBURsI918HSGr8c04b5ZRgjej4rwywt2SA6Vi5Fr58y2X
-         q6b81MNyTZFb6nrTL04v1Dm4IylFy01ax8THHlNlVgOl9Qb4SCbVH0vgxMqDxVQtHL
-         8oDTQQ93NLm1g==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=marcel.ziswiler@toradex.com; 
+x-originating-ip: [46.140.72.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2143;6:aHV73OwlhNQfUFFRe8/xG1IcqdujxtevGqTBYwVyEUDGiqSmuiUCD8H9Cq/zT7sUUoCFL5N6Kse2lkzZfgcnVHR0lF+25qzIbOBuNiS4/VnLIXaxBCBWBDooJ58xiqBYat8izVUjhvBoW7NnmjcP8muWgjPwsw8hdz1RVIYhj/MAZo7QyfWRNnslBUT9lXXsgkLKfzZs1JhAwnEc+e7azqCkZf4bAjFPnI2sVrkRsS0PWmQXftisDZUW+ePs29FDUrcjPyVe0Egp2fx6sXRCMtJoMIq1zcuiTuLj8OoldvfJ8gYRHISlhMLxUXzZZTHpGK2wIH91bslHViArZ00OXju7U2qlT0eHGT5U3KbXh9B+Y7lA9f2njckq8MYi8FXsLQJy7/eSzOuF0DAzUGABtdkJbrNrt94A9AnFj9Npo3YjvPjpg8F8xerNykZJH5gQmDQf9VZFv8VwrV5MN2ipKg==;5:6aMGPG3mw3/QPM96Qv/NTEFTu5pghfj7Sy0RGom4+Ua0uBoH7wHXyE7HLkwgs5gZRSEW2yhN6ipcnHJARLITNLhwwqnXkjhfZbP4wlkkBZhw7t+O2FLdsIcvlcwwW9IgJVIR3d22a8Ibr2Yi43u9xIVz7gMoOa9wWB6dqJbngcA=;7:COQBOaGTWT9fQ5SXJuqD1Ery/lWR2sbs1Q/GsU54twkh5kBrZzmPNeGAJPcwyp3TzvABSz6xnZ/OjRulf3dImAX6mSFnrrddYlRurJY8GtBgvm5DQR1eLT5NJ9XnFW3eA/sE4DspLWZQpXenFF/vcgb6rwh1NqRZ+HQKY2xGFenUGZkOdc/uAHFgfnPyjg9OAIvi1yNoNVNutRwXVu1bL+Y/p0nhZURls3vT1fVLdD43rXQ5Xpn5gqRfqn/5KpS1
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 3c451294-dc96-46a3-74ee-08d6341f91d5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2143;
+x-ms-traffictypediagnostic: VI1PR0501MB2143:
+x-microsoft-antispam-prvs: <VI1PR0501MB21430B5EFA3642BD39904918FBFF0@VI1PR0501MB2143.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(149066)(150057)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0501MB2143;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2143;
+x-forefront-prvs: 08286A0BE2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(396003)(346002)(39840400004)(366004)(54534003)(189003)(199004)(103116003)(102836004)(25786009)(86362001)(6506007)(71190400001)(71200400001)(36756003)(99286004)(305945005)(7736002)(2906002)(575784001)(53936002)(6512007)(6436002)(81156014)(81166006)(186003)(5660300001)(26005)(45080400002)(4326008)(8676002)(14444005)(256004)(446003)(110136005)(2900100001)(229853002)(486006)(105586002)(97736004)(54906003)(106356001)(316002)(11346002)(68736007)(66066001)(6246003)(14454004)(8936002)(5250100002)(76176011)(39060400002)(478600001)(7416002)(6486002)(44832011)(2616005)(476003)(2501003)(6116002)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2143;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: VWpe0kjs6RWGmFZWjmgkHNggVzqVtkLjUlcGJwdmjPNPHmCBOXft0DfIPPeDNx8lhwr2bGhz6XPZIvOe6pWLfVT3tAO6XTwPRkIe0u3Kqh6QioiVqtyYmjrN4tYruDQ/rxmVoMN4Aso4WvWIYvceoc9LhmgB0sJvgsnX9qlXf98IynOogiR57OhZo8x/j4MOIGW1iSotPng8meAB67RZz3/Tvl+wi6c4/SvrPvSxDwe8k8yDeovLpMNJKSh3zZHQ4t0LBmSkZSRVJQffwhfDl+hak1CyDc/AXk1B3ieEM+210RmT0Xijwv0KUVMnMSvtlVDr6OJiYJ+RzpfmOnBaOLFSOpldbAPV16n3SkKQv+Y=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <23DD281DB9DC544D86A549630A5C44EC@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c451294-dc96-46a3-74ee-08d6341f91d5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 10:59:11.3778
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 16/10/2018 11:47, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> Similar to the following:
-> 
-> commit 4321723648b0 ("ASoC: tegra_alc5632: fix device_node refcounting")
-> 
-> commit 7c5dfd549617 ("ASoC: tegra: fix device_node refcounting")
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-> 
-> Changes in v2: New patch
-> 
->  sound/soc/tegra/tegra_sgtl5000.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-> index 45a4aa9d2a47..901457da25ec 100644
-> --- a/sound/soc/tegra/tegra_sgtl5000.c
-> +++ b/sound/soc/tegra/tegra_sgtl5000.c
-> @@ -149,14 +149,14 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
->  		dev_err(&pdev->dev,
->  			"Property 'nvidia,i2s-controller' missing/invalid\n");
->  		ret = -EINVAL;
-> -		goto err;
-> +		goto err_put_codec_of_node;
->  	}
->  
->  	tegra_sgtl5000_dai.platform_of_node = tegra_sgtl5000_dai.cpu_of_node;
->  
->  	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
->  	if (ret)
-> -		goto err;
-> +		goto err_put_cpu_of_node;
->  
->  	ret = snd_soc_register_card(card);
->  	if (ret) {
-> @@ -169,6 +169,13 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
->  
->  err_fini_utils:
->  	tegra_asoc_utils_fini(&machine->util_data);
-> +err_put_cpu_of_node:
-> +	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
-> +	tegra_sgtl5000_dai.cpu_of_node = NULL;
-> +	tegra_sgtl5000_dai.platform_of_node = NULL;
-> +err_put_codec_of_node:
-> +	of_node_put(tegra_sgtl5000_dai.codec_of_node);
-> +	tegra_sgtl5000_dai.codec_of_node = NULL;
->  err:
->  	return ret;
->  }
-> @@ -183,6 +190,12 @@ static int tegra_sgtl5000_driver_remove(struct platform_device *pdev)
->  
->  	tegra_asoc_utils_fini(&machine->util_data);
->  
-> +	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
-> +	tegra_sgtl5000_dai.cpu_of_node = NULL;
-> +	tegra_sgtl5000_dai.platform_of_node = NULL;
-> +	of_node_put(tegra_sgtl5000_dai.codec_of_node);
-> +	tegra_sgtl5000_dai.codec_of_node = NULL;
-> +
->  	return ret;
->  }
->  
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+T24gRnJpLCAyMDE4LTA4LTMxIGF0IDEyOjI5ICswMzAwLCBQZXRlciBEZSBTY2hyaWp2ZXIgd3Jv
+dGU6DQo+IE9uIFRodSwgQXVnIDMwLCAyMDE4IGF0IDA5OjQyOjEwUE0gKzAzMDAsIERtaXRyeSBP
+c2lwZW5rbyB3cm90ZToNCj4gPiBDdXJyZW50bHkgYWxsIFBMTCdzIG9uIFRlZ3JhMjAgdXNlIGEg
+aGFyZGNvZGVkIGRlbGF5IGRlc3BpdGUgb2YNCj4gPiBoYXZpbmcNCj4gPiBhIGxvY2stc3RhdHVz
+IGJpdC4gVGhlIGxvY2stc3RhdHVzIHBvbGxpbmcgd2FzIGRpc2FibGVkIH43IHllYXJzDQo+ID4g
+YWdvDQo+ID4gYmVjYXVzZSBQTExFIHdhcyBmYWlsaW5nIHRvIGxvY2sgYW5kIHdhcyBhIHN1c3Bp
+Y2lvbiB0aGF0IG90aGVyDQo+ID4gUExMcw0KPiA+IG1pZ2h0IGJlIGZhdWx0eSB0b28uIE90aGVy
+IFBMTHMgYXJlIG9rYXksIGhlbmNlIGVuYWJsZSB0aGUgbG9jay0NCj4gPiBzdGF0dXMNCj4gPiBw
+b2xsaW5nIGZvciB0aGVtLiBUaGlzIHJlZHVjZXMgZGVsYXkgb2YgYW55IG9wZXJhdGlvbiB0aGF0
+IHJlcXVpcmUNCj4gPiBQTEwNCj4gPiB0byBsb2NrLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6
+IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4NCj4gPiAtLS0NCj4gPiANCj4gPiBD
+aGFuZ2Vsb2c6DQo+ID4gDQo+ID4gdjI6CURvbid0IGVuYWJsZSBwb2xsaW5nIGZvciBQTExFIGFz
+IGl0IGtub3duIHRvIG5vdCBiZWluZw0KPiA+IGFibGUgdG8gbG9jay4NCj4gPiANCj4gDQo+IFRo
+aXMgaXNuJ3QgY29ycmVjdC4gVGhlIGxvY2sgYml0IG9mIFBMTEUgY2FuIGRlY2xhcmUgbG9jayB0
+b28gZWFybHksDQo+IGJ1dCB0aGUNCj4gUExMIGl0c2VsZiBkb2VzIGxvY2suDQoNCklzIHRoZXJl
+IGFuIGVycmF0YSBkb2N1bWVudGluZyB0aGlzPyBBcyBJIGNvdWxkIG5vdCByZWFsbHkgZmluZCBh
+bnkNCm1lbnRpb25pbmcgb2YgdGhpcyBhbnl3aGVyZSBhdCBsZWFzdCB1cCB0byB0aGUgdjExIGZy
+b20gRGVjIDIxLCAyMDEwIEkNCnN0aWxsIGhhdmUgYWNjZXNzIHRvLg0KDQpCVFc6IEl0IGxvb2tz
+IGxpa2UgYWxzbyBQTExBIG1heSBub3QgYWx3YXlzIGxvY2sgcHJvcGVybHkgd2l0aCB0aG9zZQ0K
+Y2hhbmdlcy4gSXMgdGhlcmUgYW55dGhpbmcga25vd24gYWJvdXQgdGhhdCBhcyB3ZWxsPyBIZXJl
+IGlzIHdoYXQgSSBnZXQNCm9uIHZhcmlvdXMgQ29saWJyaSBUMjAgbW9kdWxlcyAod2hpbGUgcmFu
+ZG9tIG90aGVyIG9uZXMgc2VlbSB0byB3b3JrDQpmaW5lKToNCg0KWyAgICAwLjIzMjU5MV0gY2xr
+X3BsbF93YWl0X2Zvcl9sb2NrOiBUaW1lZCBvdXQgd2FpdGluZyBmb3IgcGxsIHBsbF9hDQpsb2Nr
+DQpbICAgIDAuMjMyNjE0XSB0ZWdyYV9pbml0X2Zyb21fdGFibGU6IEZhaWxlZCB0byBlbmFibGUg
+cGxsX2ENClsgICAgMC4yMzI2MjddIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0t
+LQ0KWyAgICAwLjIzMjY1NV0gV0FSTklORzogQ1BVOiAwIFBJRDogMSBhdA0KL3J1bi9tZWRpYS96
+aW0vQnVpbGQvU291cmNlcy9saW51eC0NCm5leHQuZ2l0L2RyaXZlcnMvY2xrL3RlZ3JhL2Nsay5j
+OjI4NSANCnRlZ3JhX2luaXRfZnJvbV90YWJsZSsweDE2OC8weDE3NA0KWyAgICAwLjIzMjY3Nl0g
+TW9kdWxlcyBsaW5rZWQgaW46DQpbICAgIDAuMjMyNjk2XSBDUFU6IDAgUElEOiAxIENvbW06IHN3
+YXBwZXIvMCBOb3QgdGFpbnRlZCA0LjE5LjAtcmMyLQ0KbmV4dC0yMDE4MDkwMy0wMDIxNC1nNTYx
+OGEwNTE0Y2YxLWRpcnR5ICMxODMNClsgICAgMC4yMzI3MTRdIEhhcmR3YXJlIG5hbWU6IE5WSURJ
+QSBUZWdyYSBTb0MgKEZsYXR0ZW5lZCBEZXZpY2UgVHJlZSkNClsgICAgMC4yMzI3NTNdIFs8YzAx
+MTM2NDQ+XSAodW53aW5kX2JhY2t0cmFjZSkgZnJvbSBbPGMwMTBkYzBjPl0NCihzaG93X3N0YWNr
+KzB4MTAvMHgxNCkNClsgICAgMC4yMzI3ODNdIFs8YzAxMGRjMGM+XSAoc2hvd19zdGFjaykgZnJv
+bSBbPGMwYWE2NmY0Pl0NCihkdW1wX3N0YWNrKzB4OGMvMHhhMCkNClsgICAgMC4yMzI4MDhdIFs8
+YzBhYTY2ZjQ+XSAoZHVtcF9zdGFjaykgZnJvbSBbPGMwMTI1NDI4Pl0NCihfX3dhcm4rMHhlMC8w
+eGY4KQ0KWyAgICAwLjIzMjgyOF0gWzxjMDEyNTQyOD5dIChfX3dhcm4pIGZyb20gWzxjMDEyNTU1
+OD5dDQood2Fybl9zbG93cGF0aF9udWxsKzB4NDAvMHg0OCkNClsgICAgMC4yMzI4NDldIFs8YzAx
+MjU1NTg+XSAod2Fybl9zbG93cGF0aF9udWxsKSBmcm9tIFs8YzBmMmYyODQ+XQ0KKHRlZ3JhX2lu
+aXRfZnJvbV90YWJsZSsweDE2OC8weDE3NCkNClsgICAgMC4yMzI4NzRdIFs8YzBmMmYyODQ+XSAo
+dGVncmFfaW5pdF9mcm9tX3RhYmxlKSBmcm9tIFs8YzBmMmYwM2M+XQ0KKHRlZ3JhX2Nsb2Nrc19h
+cHBseV9pbml0X3RhYmxlKzB4MWMvMHgyYykNClsgICAgMC4yMzI5MDFdIFs8YzBmMmYwM2M+XSAo
+dGVncmFfY2xvY2tzX2FwcGx5X2luaXRfdGFibGUpIGZyb20NCls8YzAxMDJmYTA+XSAoZG9fb25l
+X2luaXRjYWxsKzB4NTQvMHgyNzgpDQpbICAgIDAuMjMyOTI2XSBbPGMwMTAyZmEwPl0gKGRvX29u
+ZV9pbml0Y2FsbCkgZnJvbSBbPGMwZjAxMTI4Pl0NCihrZXJuZWxfaW5pdF9mcmVlYWJsZSsweDJj
+MC8weDM1NCkNClsgICAgMC4yMzI5NDldIFs8YzBmMDExMjg+XSAoa2VybmVsX2luaXRfZnJlZWFi
+bGUpIGZyb20gWzxjMGFiYjFmMD5dDQooa2VybmVsX2luaXQrMHg4LzB4MTBjKQ0KWyAgICAwLjIz
+Mjk3MF0gWzxjMGFiYjFmMD5dIChrZXJuZWxfaW5pdCkgZnJvbSBbPGMwMTAxMGU4Pl0NCihyZXRf
+ZnJvbV9mb3JrKzB4MTQvMHgyYykNClsgICAgMC4yMzI5ODddIEV4Y2VwdGlvbiBzdGFjaygweGM0
+YzhmZmIwIHRvIDB4YzRjOGZmZjgpDQpbICAgIDAuMjMzMDAxXSBmZmEwOiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAwMDAwMDAwMA0KMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAw
+MDANClsgICAgMC4yMzMwMjFdIGZmYzA6IDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAw
+MDAwIDAwMDAwMDAwDQowMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMA0KWyAgICAwLjIzMzA0MF0g
+ZmZlMDogMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMTMNCjAwMDAw
+MDAwDQpbICAgIDAuMjMzMDU5XSAtLS1bIGVuZCB0cmFjZSAzZjQwZmE0OTUzMDYxMGI5IF0tLS0N
+Cg0KPiA+ICBkcml2ZXJzL2Nsay90ZWdyYS9jbGstdGVncmEyMC5jIHwgMjAgKysrKysrKysrKysr
+Ky0tLS0tLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEzIGluc2VydGlvbnMoKyksIDcgZGVsZXRp
+b25zKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdy
+YTIwLmMNCj4gPiBiL2RyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTIwLmMNCj4gPiBpbmRleCBj
+Yzg1N2Q0ZDRhODYuLmNmZGUzNzQ1YTBkYiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Nsay90
+ZWdyYS9jbGstdGVncmEyMC5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvdGVncmEvY2xrLXRlZ3Jh
+MjAuYw0KPiA+IEBAIC0yOTgsNyArMjk4LDggQEAgc3RhdGljIHN0cnVjdCB0ZWdyYV9jbGtfcGxs
+X3BhcmFtcyBwbGxfY19wYXJhbXMNCj4gPiA9IHsNCj4gPiAgCS5sb2NrX2VuYWJsZV9iaXRfaWR4
+ID0gUExMX01JU0NfTE9DS19FTkFCTEUsDQo+ID4gIAkubG9ja19kZWxheSA9IDMwMCwNCj4gPiAg
+CS5mcmVxX3RhYmxlID0gcGxsX2NfZnJlcV90YWJsZSwNCj4gPiAtCS5mbGFncyA9IFRFR1JBX1BM
+TF9IQVNfQ1BDT04gfCBURUdSQV9QTExfSEFTX0xPQ0tfRU5BQkxFLA0KPiA+ICsJLmZsYWdzID0g
+VEVHUkFfUExMX0hBU19DUENPTiB8IFRFR1JBX1BMTF9IQVNfTE9DS19FTkFCTEUgfA0KPiA+ICsJ
+CSBURUdSQV9QTExfVVNFX0xPQ0ssDQo+ID4gIH07DQo+ID4gIA0KPiA+ICBzdGF0aWMgc3RydWN0
+IHRlZ3JhX2Nsa19wbGxfcGFyYW1zIHBsbF9tX3BhcmFtcyA9IHsNCj4gPiBAQCAtMzE0LDcgKzMx
+NSw4IEBAIHN0YXRpYyBzdHJ1Y3QgdGVncmFfY2xrX3BsbF9wYXJhbXMgcGxsX21fcGFyYW1zDQo+
+ID4gPSB7DQo+ID4gIAkubG9ja19lbmFibGVfYml0X2lkeCA9IFBMTF9NSVNDX0xPQ0tfRU5BQkxF
+LA0KPiA+ICAJLmxvY2tfZGVsYXkgPSAzMDAsDQo+ID4gIAkuZnJlcV90YWJsZSA9IHBsbF9tX2Zy
+ZXFfdGFibGUsDQo+ID4gLQkuZmxhZ3MgPSBURUdSQV9QTExfSEFTX0NQQ09OIHwgVEVHUkFfUExM
+X0hBU19MT0NLX0VOQUJMRSwNCj4gPiArCS5mbGFncyA9IFRFR1JBX1BMTF9IQVNfQ1BDT04gfCBU
+RUdSQV9QTExfSEFTX0xPQ0tfRU5BQkxFIHwNCj4gPiArCQkgVEVHUkFfUExMX1VTRV9MT0NLLA0K
+PiA+ICB9Ow0KPiA+ICANCj4gPiAgc3RhdGljIHN0cnVjdCB0ZWdyYV9jbGtfcGxsX3BhcmFtcyBw
+bGxfcF9wYXJhbXMgPSB7DQo+ID4gQEAgLTMzMSw3ICszMzMsNyBAQCBzdGF0aWMgc3RydWN0IHRl
+Z3JhX2Nsa19wbGxfcGFyYW1zIHBsbF9wX3BhcmFtcw0KPiA+ID0gew0KPiA+ICAJLmxvY2tfZGVs
+YXkgPSAzMDAsDQo+ID4gIAkuZnJlcV90YWJsZSA9IHBsbF9wX2ZyZXFfdGFibGUsDQo+ID4gIAku
+ZmxhZ3MgPSBURUdSQV9QTExfRklYRUQgfCBURUdSQV9QTExfSEFTX0NQQ09OIHwNCj4gPiAtCQkg
+VEVHUkFfUExMX0hBU19MT0NLX0VOQUJMRSwNCj4gPiArCQkgVEVHUkFfUExMX0hBU19MT0NLX0VO
+QUJMRSB8IFRFR1JBX1BMTF9VU0VfTE9DSywNCj4gPiAgCS5maXhlZF9yYXRlID0gIDIxNjAwMDAw
+MCwNCj4gPiAgfTsNCj4gPiAgDQo+ID4gQEAgLTM0OCw3ICszNTAsOCBAQCBzdGF0aWMgc3RydWN0
+IHRlZ3JhX2Nsa19wbGxfcGFyYW1zIHBsbF9hX3BhcmFtcw0KPiA+ID0gew0KPiA+ICAJLmxvY2tf
+ZW5hYmxlX2JpdF9pZHggPSBQTExfTUlTQ19MT0NLX0VOQUJMRSwNCj4gPiAgCS5sb2NrX2RlbGF5
+ID0gMzAwLA0KPiA+ICAJLmZyZXFfdGFibGUgPSBwbGxfYV9mcmVxX3RhYmxlLA0KPiA+IC0JLmZs
+YWdzID0gVEVHUkFfUExMX0hBU19DUENPTiB8IFRFR1JBX1BMTF9IQVNfTE9DS19FTkFCTEUsDQo+
+ID4gKwkuZmxhZ3MgPSBURUdSQV9QTExfSEFTX0NQQ09OIHwgVEVHUkFfUExMX0hBU19MT0NLX0VO
+QUJMRSB8DQo+ID4gKwkJIFRFR1JBX1BMTF9VU0VfTE9DSywNCj4gPiAgfTsNCj4gPiAgDQo+ID4g
+IHN0YXRpYyBzdHJ1Y3QgdGVncmFfY2xrX3BsbF9wYXJhbXMgcGxsX2RfcGFyYW1zID0gew0KPiA+
+IEBAIC0zNjQsNyArMzY3LDggQEAgc3RhdGljIHN0cnVjdCB0ZWdyYV9jbGtfcGxsX3BhcmFtcyBw
+bGxfZF9wYXJhbXMNCj4gPiA9IHsNCj4gPiAgCS5sb2NrX2VuYWJsZV9iaXRfaWR4ID0gUExMRFVf
+TUlTQ19MT0NLX0VOQUJMRSwNCj4gPiAgCS5sb2NrX2RlbGF5ID0gMTAwMCwNCj4gPiAgCS5mcmVx
+X3RhYmxlID0gcGxsX2RfZnJlcV90YWJsZSwNCj4gPiAtCS5mbGFncyA9IFRFR1JBX1BMTF9IQVNf
+Q1BDT04gfCBURUdSQV9QTExfSEFTX0xPQ0tfRU5BQkxFLA0KPiA+ICsJLmZsYWdzID0gVEVHUkFf
+UExMX0hBU19DUENPTiB8IFRFR1JBX1BMTF9IQVNfTE9DS19FTkFCTEUgfA0KPiA+ICsJCSBURUdS
+QV9QTExfVVNFX0xPQ0ssDQo+ID4gIH07DQo+ID4gIA0KPiA+ICBzdGF0aWMgY29uc3Qgc3RydWN0
+IHBkaXZfbWFwIHBsbHVfcFtdID0gew0KPiA+IEBAIC0zODcsNyArMzkxLDggQEAgc3RhdGljIHN0
+cnVjdCB0ZWdyYV9jbGtfcGxsX3BhcmFtcyBwbGxfdV9wYXJhbXMNCj4gPiA9IHsNCj4gPiAgCS5s
+b2NrX2RlbGF5ID0gMTAwMCwNCj4gPiAgCS5wZGl2X3RvaHcgPSBwbGx1X3AsDQo+ID4gIAkuZnJl
+cV90YWJsZSA9IHBsbF91X2ZyZXFfdGFibGUsDQo+ID4gLQkuZmxhZ3MgPSBURUdSQV9QTExVIHwg
+VEVHUkFfUExMX0hBU19DUENPTiB8DQo+ID4gVEVHUkFfUExMX0hBU19MT0NLX0VOQUJMRSwNCj4g
+PiArCS5mbGFncyA9IFRFR1JBX1BMTFUgfCBURUdSQV9QTExfSEFTX0NQQ09OIHwNCj4gPiBURUdS
+QV9QTExfSEFTX0xPQ0tfRU5BQkxFIHwNCj4gPiArCQkgVEVHUkFfUExMX1VTRV9MT0NLLA0KPiA+
+ICB9Ow0KPiA+ICANCj4gPiAgc3RhdGljIHN0cnVjdCB0ZWdyYV9jbGtfcGxsX3BhcmFtcyBwbGxf
+eF9wYXJhbXMgPSB7DQo+ID4gQEAgLTQwMyw3ICs0MDgsOCBAQCBzdGF0aWMgc3RydWN0IHRlZ3Jh
+X2Nsa19wbGxfcGFyYW1zIHBsbF94X3BhcmFtcw0KPiA+ID0gew0KPiA+ICAJLmxvY2tfZW5hYmxl
+X2JpdF9pZHggPSBQTExfTUlTQ19MT0NLX0VOQUJMRSwNCj4gPiAgCS5sb2NrX2RlbGF5ID0gMzAw
+LA0KPiA+ICAJLmZyZXFfdGFibGUgPSBwbGxfeF9mcmVxX3RhYmxlLA0KPiA+IC0JLmZsYWdzID0g
+VEVHUkFfUExMX0hBU19DUENPTiB8IFRFR1JBX1BMTF9IQVNfTE9DS19FTkFCTEUsDQo+ID4gKwku
+ZmxhZ3MgPSBURUdSQV9QTExfSEFTX0NQQ09OIHwgVEVHUkFfUExMX0hBU19MT0NLX0VOQUJMRSB8
+DQo+ID4gKwkJIFRFR1JBX1BMTF9VU0VfTE9DSywNCj4gPiAgfTsNCj4gPiAgDQo+ID4gIHN0YXRp
+YyBzdHJ1Y3QgdGVncmFfY2xrX3BsbF9wYXJhbXMgcGxsX2VfcGFyYW1zID0gew0KPiA+IC0tIA0K
+PiA+IDIuMTguMA==
