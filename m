@@ -2,114 +2,211 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87543ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2507ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 581A72150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:13:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581A72150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 58D122150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:14:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58D122150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeJQTIS (ORCPT
+        id S1727259AbeJQTJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:08:18 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49988 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726922AbeJQTIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:08:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40EFE80D;
-        Wed, 17 Oct 2018 04:13:05 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (unknown [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CDA53F59C;
-        Wed, 17 Oct 2018 04:13:03 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 12:12:58 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 00/21] PCI: Cleanup pci-keystone driver
-Message-ID: <20181017111258.GA5692@e107981-ln.cambridge.arm.com>
-References: <20181017074114.28239-1-kishon@ti.com>
+        Wed, 17 Oct 2018 15:09:32 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:17303 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726922AbeJQTJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 15:09:32 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42ZqLq2Vfbz9ttFL;
+        Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id LDEN7I_JHYek; Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42ZqLq1m84z9ttBq;
+        Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 88FA68B7FA;
+        Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id ezw1CVoaURvd; Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
+Received: from pc13168vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1C86A8B7F2;
+        Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
+Subject: Re: Crash on FSL Book3E due to pte_pgprot()? (was Re: [PATCH v3
+ 12/24] powerpc/mm: use pte helpers in generic code)
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Geoff Levand <geoff@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Li Yang <leoyang.li@nxp.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Scott Wood <oss@buserror.net>, aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
+References: <cover.1539092111.git.christophe.leroy@c-s.fr>
+ <343c844bbc5081d13ee4c9aa27ff3118f607e1cc.1539092112.git.christophe.leroy@c-s.fr>
+ <87va61jsma.fsf@concordia.ellerman.id.au>
+ <236d72cd-e6d7-61e5-2c80-e4311e41b4f6@c-s.fr>
+ <87efcoeudx.fsf@concordia.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <6ec9cf4b-abd2-8244-4780-4564a7ffb1ad@c-s.fr>
+Date:   Wed, 17 Oct 2018 11:12:08 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017074114.28239-1-kishon@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <87efcoeudx.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 01:10:53PM +0530, Kishon Vijay Abraham I wrote:
-> The PCIe controller in AM654 uses Synopsys core revision 4.90a and uses
-> the same TI wrapper as used in keystone2 with certain modification.
-> Hence AM654 will use the same pci wrapper driver pci-keystone.c
-> 
-> In preparation for adding AM654 support, cleanup pci-keystone driver
-> here.
-> 
-> Most of the cleanups here are trivial with major modification being
-> merging pci-keystone-dw.c and pci-keystone.c
-> 
-> Cleaning-up irq handling in the RFC series is dropped here as it has
-> few comments to be addressed.
-> 
-> Changes from v1:
-> *) remove phy_reset in the cleanup PHY handling patch. It will be sent
->    while adding AM654 support
-> *) Add a separate patch for using ERR_IRQ_STATUS instead of
->    ERR_IRQ_STATUS_RAW
-> *) Split outbound window configuration into two patches. One which
->    gets the number of outbound windows from DT and the other cleansup
->    outbound window configuration.
-> 
-> Kishon Vijay Abraham I (21):
->   PCI: keystone: Use quirk to limit MRRS for K2G
->   PCI: keystone: Use quirk to set MRRS for PCI host bridge
->   PCI: keystone: Move dw_pcie_setup_rc out of ks_pcie_establish_link()
->   PCI: keystone: Do not initiate link training multiple times
->   PCI: keystone: Remove unused argument from ks_dw_pcie_host_init()
->   PCI: keystone: Merge pci-keystone-dw.c and pci-keystone.c
->   PCI: keystone: Remove redundant platform_set_drvdata
->   PCI: keystone: Use uniform function naming convention
->   dt-bindings: PCI: keystone: Add bindings to get device control module
->   PCI: keystone: Use syscon APIs to get device id from control module
->   PCI: keystone: Cleanup PHY handling
->   PCI: keystone: Invoke pm_runtime APIs to enable clock
->   PCI: keystone: Cleanup configuration space access
->   PCI: keystone: Get number of outbound windows from DT
->   PCI: keystone: Cleanup outbound window configuration
->   PCI: keystone: Cleanup set_dbi_mode and get_dbi_mode
->   PCI: keystone: Cleanup ks_pcie_link_up()
->   PCI: keystone: Use ERR_IRQ_STATUS instead of ERR_IRQ_STATUS_RAW to get
->     interrupt status
->   PCI: keystone: Add debug error message for all errors
->   PCI: keystone: Reorder header file in alphabetical order
->   PCI: keystone: Cleanup macros defined in pci-keystone.c
-> 
->  .../devicetree/bindings/pci/pci-keystone.txt  |   3 +
->  MAINTAINERS                                   |   2 +-
->  drivers/pci/controller/dwc/Makefile           |   2 +-
->  drivers/pci/controller/dwc/pci-keystone-dw.c  | 484 -----------
->  drivers/pci/controller/dwc/pci-keystone.c     | 788 +++++++++++++++---
->  drivers/pci/controller/dwc/pci-keystone.h     |  57 --
->  drivers/pci/controller/dwc/pcie-designware.h  |   4 +
->  7 files changed, 686 insertions(+), 654 deletions(-)
->  delete mode 100644 drivers/pci/controller/dwc/pci-keystone-dw.c
->  delete mode 100644 drivers/pci/controller/dwc/pci-keystone.h
 
-I have applied the series to pci/keystone, tentatively for v4.20.
 
-Thanks,
-Lorenzo
+On 10/17/2018 10:32 AM, Michael Ellerman wrote:
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>> On 10/17/2018 12:59 AM, Michael Ellerman wrote:
+> ...
+>>> The question is what's the right way to fix it? Should pte_pgprot() not
+>>> be filtering those bits out on book3e?
+>>
+>> I think we should not use pte_pggrot() for that then. What about the
+>> below fix ?
+> 
+> Thanks, that almost works.
+> 
+> pte_mkprivileged() also needs to not strip _PAGE_BAP_SR.
+
+Oops, I missed it allthough I knew it. Patch below.
+
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Date: Wed, 17 Oct 2018 10:46:24 +0000
+Subject: [PATCH] powerpc/book3e: redefine pte_mkprivileged() and 
+pte_mkuser()
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras 
+<paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+
+Book3e defines both _PAGE_USER and _PAGE_PRIVILEGED, so the nohash
+default pte_mkprivileged() and pte_mkuser() are not usable.
+
+This patch redefines them for book3e.
+
+Fixes: a0da4bc166f2 ("powerpc/mm: Allow platforms to redefine some helpers")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+  arch/powerpc/include/asm/nohash/pte-book3e.h | 14 ++++++++++++++
+  1 file changed, 14 insertions(+)
+
+diff --git a/arch/powerpc/include/asm/nohash/pte-book3e.h 
+b/arch/powerpc/include/asm/nohash/pte-book3e.h
+index 58eef8cb569d..fb4297dff3e2 100644
+--- a/arch/powerpc/include/asm/nohash/pte-book3e.h
++++ b/arch/powerpc/include/asm/nohash/pte-book3e.h
+@@ -109,5 +109,19 @@
+  #define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
+  #define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
+
++static inline pte_t pte_mkprivileged(pte_t pte)
++{
++	return __pte((pte_val(pte) & ~_PAGE_USER) | _PAGE_PRIVILEGED);
++}
++
++#define pte_mkprivileged pte_mkprivileged
++
++static inline pte_t pte_mkuser(pte_t pte)
++{
++	return __pte((pte_val(pte) & ~_PAGE_PRIVILEGED) | _PAGE_USER);
++}
++
++#define pte_mkuser pte_mkuser
++
+  #endif /* __KERNEL__ */
+  #endif /*  _ASM_POWERPC_NOHASH_PTE_BOOK3E_H */
+-- 
+2.13.3
+
+
+
+> 
+> 
+> But there's also a use of pte_pgprot() in mm/memory.c, and I think that
+> is also broken now that we don't add PAGE_KERNEL back in.
+> 
+> Aneesh is going to do a patch to make pte_pgprot() only mask the PFN
+> which is what other arches do.
+
+Yes I saw it, that's ok for me.
+
+Christophe
+
+> 
+> cheers
+> 
+>> From: Christophe Leroy <christophe.leroy@c-s.fr>
+>> Date: Wed, 17 Oct 2018 05:56:25 +0000
+>> Subject: [PATCH] powerpc/mm: don't use pte_pgprot() in ioremap_prot()
+>>
+>> pte_pgprot() filters out some required flags like _PAGE_PRESENT.
+>>
+>> This patch replaces pte_pgprot() by __pgprot(pte_val())
+>> in ioremap_prot()
+>>
+>> Fixes: 26973fa5ac0e ("powerpc/mm: use pte helpers in generic code")
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>    arch/powerpc/mm/pgtable_32.c | 3 ++-
+>>    arch/powerpc/mm/pgtable_64.c | 4 ++--
+>>    2 files changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+>> index 5877f5aa8f5d..a606e2f4937b 100644
+>> --- a/arch/powerpc/mm/pgtable_32.c
+>> +++ b/arch/powerpc/mm/pgtable_32.c
+>> @@ -122,7 +122,8 @@ ioremap_prot(phys_addr_t addr, unsigned long size,
+>> unsigned long flags)
+>>    	pte = pte_exprotect(pte);
+>>    	pte = pte_mkprivileged(pte);
+>>
+>> -	return __ioremap_caller(addr, size, pte_pgprot(pte),
+>> __builtin_return_address(0));
+>> +	return __ioremap_caller(addr, size, __pgprot(pte_val(pte)),
+>> +				__builtin_return_address(0));
+>>    }
+>>    EXPORT_SYMBOL(ioremap_prot);
+>>
+>> diff --git a/arch/powerpc/mm/pgtable_64.c b/arch/powerpc/mm/pgtable_64.c
+>> index fb1375c07e8c..836bf436cabb 100644
+>> --- a/arch/powerpc/mm/pgtable_64.c
+>> +++ b/arch/powerpc/mm/pgtable_64.c
+>> @@ -245,8 +245,8 @@ void __iomem * ioremap_prot(phys_addr_t addr,
+>> unsigned long size,
+>>    	pte = pte_mkprivileged(pte);
+>>
+>>    	if (ppc_md.ioremap)
+>> -		return ppc_md.ioremap(addr, size, pte_pgprot(pte), caller);
+>> -	return __ioremap_caller(addr, size, pte_pgprot(pte), caller);
+>> +		return ppc_md.ioremap(addr, size, __pgprot(pte_val(pte)), caller);
+>> +	return __ioremap_caller(addr, size, __pgprot(pte_val(pte)), caller);
+>>    }
+>>
+>>
+>> -- 
+>> 2.13.3
