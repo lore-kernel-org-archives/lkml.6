@@ -2,93 +2,104 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EF3ECDE3C
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 276ADECDE3D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AF6E21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:17:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA97721477
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:17:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="R8JEZWWN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF6E21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BsYuTKvN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA97721477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeJRHPI (ORCPT
+        id S1727398AbeJRHPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 03:15:08 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40549 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbeJRHPI (ORCPT
+        Thu, 18 Oct 2018 03:15:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39668 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbeJRHPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 03:15:08 -0400
-Received: by mail-pf1-f195.google.com with SMTP id g21-v6so6920150pfi.7
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 16:17:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=4Vph7K58I7mDaUIWZmOzAm5Xj4AP7uOvWjkvkfoUkTc=;
-        b=R8JEZWWNEJP7CAJpYXDPxTM4fpJpKbvqdqNEgcI5+8eit2SAjcSsHoaYGrc5tg3yUX
-         22Vi+WOXkrwv8C+JB7rjU1t8lpqO9uaG7W1iKwpgHHc7Ig7HBV9Mwxi+bb5342NyoR+c
-         YqagS7HvTrDXrKhebJnM+qi3ufl6va4PSVo3w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=4Vph7K58I7mDaUIWZmOzAm5Xj4AP7uOvWjkvkfoUkTc=;
-        b=G3BDv7ZRIyIraXSk5+TqKgidy0FVrT0esPyOKPIZfkVUekoSgbNd7/XI0mgkySxx+P
-         mK1V6S7yOJBFB/64Mt049Y7VpMSaB/5EaSHesm2J6KNLdI8Jpff44CCA6TzDid1CKVTd
-         wDsO8D0zxbQ927OTDQjncNFBSF6X+J6Uj/SvnfhqiNPnPyuAXSqvpUitbFwnSFo8Xa2P
-         151BIHlg+R6XeQCbnT3pGFWjKEW/fWeENI5yE3NUkDpGO2mfsi4C3/bd1Fn3rDEmsUc7
-         nfaPbYPy6vBZbBW5BUeWyL82L8kK6BNWGzARJ1RemZzgNot4V/7wpjRn9VmZb+kd93m0
-         NteA==
-X-Gm-Message-State: ABuFfojxRc2+HYXXp4AJ+CngF7cbc18HdmvFlh7OXMViqgrl+k/jmyaq
-        WCxoysDo2Tm9YzcQungdXLtfwA==
-X-Google-Smtp-Source: ACcGV633b3ku9w3dAAg5ixxLwVu6JAoZxop0tZHgyYE7WH4fXUfNipImSreDFxD5oIlPa1v+anwspQ==
-X-Received: by 2002:a63:65c7:: with SMTP id z190-v6mr26239581pgb.146.1539818228711;
-        Wed, 17 Oct 2018 16:17:08 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id c79-v6sm23547726pfc.92.2018.10.17.16.17.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 16:17:07 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 18 Oct 2018 03:15:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=A3xmIxQE/qQ44bWf8Ps0hwRkE9rUw8JX3NwGiFM8VeA=; b=BsYuTKvNrh54cw27Kvn4OX+z/
+        BQ/BJ5dSHu07+qwEgUvJ52NHkKXtSvEjg6CdT7eYRsh+zi5lu54mCJ2ubIWPs+AgjySltJwOCe018
+        wP7KG1ib8hjiD9XayZ9gPNWn0Hixbjui3voZ0GyiGci6NSgmRsAxgTCoeCEcWtf0nkOUXfRQ0Lto+
+        nAZuMZalTJY7zfWOOv6mNckzI95kPBJZIKqGR2Doh0aU3/gopD6HP/xX7/USIo7KNnMrSre9WUC9t
+        EYszVLFms0rzDd3qSnuRoxnh1cdsqSi2ASGG5OW7rUBdWsN80TcwnKSYOm/83hA2tYlGLFADnfvQr
+        T6DZdUU1Q==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gCv3m-0001ox-Fw; Wed, 17 Oct 2018 23:17:02 +0000
+Subject: Re: [PATCH v5 03/27] x86/fpu/xstate: Introduce XSAVES system states
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
+ <20181011151523.27101-4-yu-cheng.yu@intel.com>
+ <20181017104137.GE22535@zn.tnic>
+ <32da559b-7958-60db-e328-f0eb316e668e@infradead.org>
+ <20181017225829.GA32023@zn.tnic>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <fde4c237-6210-f4e4-5362-c2e24a9916a2@infradead.org>
+Date:   Wed, 17 Oct 2018 16:17:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Taniya Das <tdas@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <1539257761-23023-2-git-send-email-tdas@codeaurora.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, skannan@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        evgreen@google.com, Taniya Das <tdas@codeaurora.org>
-References: <1539257761-23023-1-git-send-email-tdas@codeaurora.org>
- <1539257761-23023-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <153981822634.5275.112469394181457779@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ Firmware
- bindings
-Date:   Wed, 17 Oct 2018 16:17:06 -0700
+In-Reply-To: <20181017225829.GA32023@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-10-11 04:36:00)
-> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
-> SoCs. This is required for managing the cpu frequency transitions which a=
-re
-> controlled by the hardware engine.
-> =
+On 10/17/18 3:58 PM, Borislav Petkov wrote:
+> On Wed, Oct 17, 2018 at 03:39:47PM -0700, Randy Dunlap wrote:
+>> Would you mind explaining this request? (requirement?)
+>> Other than to say that it is the preference of some maintainers,
+>> please say Why it is preferred.
+>>
+>> and since the <type>s above won't typically be the same length,
+>> it's not for variable name alignment, right?
+> 
+> Searching the net a little, it shows you have asked that question
+> before. So what is it you really wanna know?
 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+OK, you have shown that your web search skills are better than mine.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+I asked what I really wanted to know.
 
+ta.
+-- 
+~Randy
