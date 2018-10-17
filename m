@@ -2,116 +2,226 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9AAC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E14C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB02F214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:27:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Or3Av8ax"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB02F214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 26C9C2148D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:30:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C9C2148D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbeJQLV3 (ORCPT
+        id S1727427AbeJQLX5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 07:21:29 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38236 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbeJQLV3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 07:21:29 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f29-v6so12476207pff.5
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 20:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=c2NGBkleLooUmiW44+p0aReBMQJapUb9eKrSpvpqdLY=;
-        b=Or3Av8axUrV4bBZsq8J9dfjAfolYL9nbYK4wT7+9BB8yO0cKv0RM28Lz/xzxgffmA/
-         vG46WJQU5ASVNlao0Nk2cnDEGg6tsAUI5dKp9Jqe+De7vP6gDu3Dm/rH7pze6mZmwNCy
-         D71Gfe1Isz8Ji4K+5hM9prGBciEKOUICf6i5E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c2NGBkleLooUmiW44+p0aReBMQJapUb9eKrSpvpqdLY=;
-        b=I3q9NDZAynwjo2I0gEk43l/gGZL8m6ew6yBXAWv6qVlJD4cLuE1vnTm1M9S08F9DmV
-         8bRTDevDNl5QMjLPcKHaOcYAO9aB3ieaJb+Zhtnl5h2sMIedP7riurzhrb8lWqTF7uBX
-         rUTrO3GHwhizaPvowdoWyPnLGLIM8k7Ct+wT4veaNkXvp7NKBTvFEOr88W/2sDAZojRM
-         Euano6E8F4N7Qm3C2FLqkTW2qVCnsC7aZghT5IInpB/nZaQWx1iZ/66XPZ0EHD3RvpP5
-         MSG0PByK2OYV2ietjd8btPg//A+KnES2CSpU25tfEDUDCmbl6ioHOUIL1kQOuYxJ5tXZ
-         WA5w==
-X-Gm-Message-State: ABuFfogYS40j7gHUNZIztdUGHofTvYC7IbfqAOiyb+x91axW8C+EQsWy
-        Zn1G/WfjA/zMFi4wTNanajNA
-X-Google-Smtp-Source: ACcGV61l82DxE/pDVALljfjIVxQgnBCBMhE2kiv/OPYPmejIER83dRfp97JdbmuCWUKmGRzGzruuaQ==
-X-Received: by 2002:a63:3181:: with SMTP id x123-v6mr386739pgx.83.1539746874866;
-        Tue, 16 Oct 2018 20:27:54 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:6305:1a9d:4c38:eda8:7f99:11d3])
-        by smtp.gmail.com with ESMTPSA id 187-v6sm24701183pfu.129.2018.10.16.20.27.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 20:27:54 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 08:57:46 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     xuwei5@hisilicon.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/4] Add clock support for Hi3670 SoC
-Message-ID: <20181017032746.GB2888@Mani-XPS-13-9360>
-References: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
+        Wed, 17 Oct 2018 07:23:57 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52768 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727111AbeJQLX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 07:23:56 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 3C841CBA5D457;
+        Wed, 17 Oct 2018 11:30:18 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Wed, 17 Oct 2018
+ 11:30:08 +0800
+Subject: Re: [PATCH v11] f2fs: guarantee journalled quota data by checkpoint
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, Weichao Guo <guoweichao@huawei.com>
+References: <20180920120500.21026-1-chao@kernel.org>
+ <20181001000618.GC17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <cd4d60b9-3f24-d408-610a-af57e0cb0165@kernel.org>
+ <20181001012911.GF17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <73df627f-5b12-71cd-9a52-41f187d5516d@kernel.org>
+ <20181001014915.GG17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <143b572f-8044-eae2-d321-79040beba4f4@kernel.org>
+ <20181002164514.GA93409@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <9a3f0b96-8d29-121a-b31b-1eeb7c2e92c2@huawei.com>
+Date:   Wed, 17 Oct 2018 11:30:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181002164514.GA93409@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 11:00:59PM -0700, Manivannan Sadhasivam wrote:
-> This patchset adds clock support for Hi3670 SoC from HiSilicon utilizing
-> the HiSi common clock code. While adding clock support, let's remove the
-> fixed clock for UART and source SoC clock on HiKey970 board.
-> 
-> This patchset has been verified on HiKey970 board.
-> 
-> Thanks,
-> Mani
-> 
-> Manivannan Sadhasivam (4):
->   dt-bindings: clk: hisilicon: Add bindings for Hi3670 clk
->   arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
->   arm64: dts: hisilicon: Source SoC clock for UART6
+Jaegeuk,
 
-Hi Wei,
+Sorry for the long delay, I'm busy on other thing.
 
-Since the clk patches are merged, can you please take the DTS patches
-through HiSi tree? I will post the pinctrl/gpio patches soon which will
-depend on clk bits.
+I'm trying your fixing code on both fsck and kernel with 'run.sh
+por_fsstress' case.
+
+And got below output, is that normal in updated fsck? I didn't have time to
+look into this.
+
+Info: checkpoint state = 8c6 :  quota_need_fsck nat_bits crc
+compacted_summary orphan_inodes sudden-power-off
+[fsck_chk_quota_files:1755] Fixing Quota file ([  0] ino [0x4])
+[ERROR] quotaio_tree.c:83:write_blk:: Cannot write block (1320):
+Inappropriate ioctl for device
+[ERROR] quotaio_tree.c:110:get_free_dqblk:: Cannot allocate new quota block
+(out of disk space).
+[ERROR] quotaio_tree.c:315:dq_insert_tree:: Cannot write quota (id
+67368348): Inappropriate ioctl for device
+[fsck_chk_quota_files:1755] Fixing Quota file ([  1] ino [0x5])
+[ERROR] quotaio_tree.c:83:write_blk:: Cannot write block (1332):
+Inappropriate ioctl for device
+[ERROR] quotaio_tree.c:110:get_free_dqblk:: Cannot allocate new quota block
+(out of disk space).
+[ERROR] quotaio_tree.c:315:dq_insert_tree:: Cannot write quota (id
+73435216): Inappropriate ioctl for device
 
 Thanks,
-Mani
 
->   clk: hisilicon: Add clock driver for Hi3670 SoC
+
+On 2018/10/3 0:45, Jaegeuk Kim wrote:
+> On 10/01, Chao Yu wrote:
+>> On 2018-10-1 9:49, Jaegeuk Kim wrote:
+>>> On 10/01, Chao Yu wrote:
+>>>> On 2018-10-1 9:29, Jaegeuk Kim wrote:
+>>>>> On 10/01, Chao Yu wrote:
+>>>>>> Hi Jaegeuk,
+>>>>>>
+>>>>>> On 2018-10-1 8:06, Jaegeuk Kim wrote:
+>>>>>>> Hi Chao,
+>>>>>>>
+>>>>>>> This fails on fsstress with godown without fault injection. Could you please
+>>>>>>> test a bit? I assumed that this patch should give no fsck failure along with
+>>>>>>> valid checkpoint having no flag.
+>>>>>>
+>>>>>> Okay, let me reproduce with that case.
+>>>>>>
+>>>>>>>
+>>>>>>> BTW, I'm in doubt that f2fs_lock_all covers entire quota modification. What
+>>>>>>> about prepare_write_begin() -> f2fs_get_block() ... -> inc_valid_block_count()?
+>>>>>>
+>>>>>> If quota data changed in above path, we will detect that in below condition:
+>>>>>>
+>>>>>> block_operation()
+>>>>>>
+>>>>>> 	down_write(&sbi->node_change);
+>>>>>>
+>>>>>> 	if (__need_flush_quota(sbi)) {
+>>>>>> 		up_write(&sbi->node_change);
+>>>>>> 		f2fs_unlock_all(sbi);
+>>>>>> 		goto retry_flush_quotas;
+>>>>>> 	}
+>>>>>>
+>>>>>> So there is no problem?
+>>>>>
+>>>>> We may need to check quota is dirty, since we have no way to detect by
+>>>>> f2fs structures?
+>>>>
+>>>> Below condition can check that.
+>>>>
+>>>> static bool __need_flush_quota(struct f2fs_sb_info *sbi)
+>>>> {
+>>>> ...
+>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH))
+>>>> 		return true;
+>>>> 	if (get_pages(sbi, F2FS_DIRTY_QDATA))
+>>>> 		return true;
+>>>> ...
+>>>> }
+>>>>
+>>>> static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
+>>>> {
+>>>> ...
+>>>> 	ret = dquot_mark_dquot_dirty(dquot);
+>>>>
+>>>> 	/* if we are using journalled quota */
+>>>> 	if (is_journalled_quota(sbi))
+>>>> 		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+>>>> ...
+>>>> }
+>>>
+>>> Okay, then, could you please run the above stress test to reproduce this?
+>>
+>> Sure, let me try this case and fix it.
+>>
+>> Could you check other patches in mailing list, and test them instead?
 > 
->  .../bindings/clock/hi3670-clock.txt           |   43 +
->  arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |   48 +-
->  drivers/clk/hisilicon/Kconfig                 |    7 +
->  drivers/clk/hisilicon/Makefile                |    1 +
->  drivers/clk/hisilicon/clk-hi3670.c            | 1016 +++++++++++++++++
->  include/dt-bindings/clock/hi3670-clock.h      |  348 ++++++
->  6 files changed, 1458 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/hi3670-clock.txt
->  create mode 100644 drivers/clk/hisilicon/clk-hi3670.c
->  create mode 100644 include/dt-bindings/clock/hi3670-clock.h
+> With the below change, the test result is much better for now.
+> Let me know, if you have further concern.
 > 
-> -- 
-> 2.17.1
+> ---
+>  fs/f2fs/checkpoint.c | 6 ++++++
+>  fs/f2fs/super.c      | 4 +++-
+>  2 files changed, 9 insertions(+), 1 deletion(-)
 > 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index a1facfbfc5c7..b111c6201023 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1111,6 +1111,8 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>  
+>  retry_flush_quotas:
+>  	if (__need_flush_quota(sbi)) {
+> +		int locked;
+> +
+>  		if (++cnt > DEFAULT_RETRY_QUOTA_FLUSH_COUNT) {
+>  			set_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
+>  			f2fs_lock_all(sbi);
+> @@ -1118,7 +1120,11 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>  		}
+>  		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+>  
+> +		/* only failed during mount/umount/freeze/quotactl */
+> +		locked = down_read_trylock(&sbi->sb->s_umount);
+>  		f2fs_quota_sync(sbi->sb, -1);
+> +		if (locked)
+> +			up_read(&sbi->sb->s_umount);
+>  	}
+>  
+>  	f2fs_lock_all(sbi);
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index a28c245b1288..b39f60d57120 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1706,6 +1706,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+>  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+>  				goto repeat;
+>  			}
+> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>  			return PTR_ERR(page);
+>  		}
+>  
+> @@ -1717,6 +1718,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+>  		}
+>  		if (unlikely(!PageUptodate(page))) {
+>  			f2fs_put_page(page, 1);
+> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>  			return -EIO;
+>  		}
+>  
+> @@ -1758,6 +1760,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+>  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+>  				goto retry;
+>  			}
+> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>  			break;
+>  		}
+>  
+> @@ -1794,7 +1797,6 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
+>  
+>  static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
+>  {
+> -
+>  	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
+>  		f2fs_msg(sbi->sb, KERN_ERR,
+>  			"quota sysfile may be corrupted, skip loading it");
+> 
+
