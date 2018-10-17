@@ -3,117 +3,237 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D521ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B552ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAB5A21526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:37:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB5A21526
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id E5ABC2151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:37:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5ABC2151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbeJQWdS (ORCPT
+        id S1727621AbeJQWdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:33:18 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44919 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeJQWdR (ORCPT
+        Wed, 17 Oct 2018 18:33:42 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43203 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727018AbeJQWdm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:33:17 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g2-v6so12626395pgu.11
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 07:37:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nSIEJxgznH8EAppRelSrm5qC2SSC0dPcCuAlLVdnMrE=;
-        b=gLbhdOuJsiS4duwoA5xy6BJeEE8nXSACWqYP6+0e4isGaT3QBnQN0Ai31+TaMlpCBf
-         KA+evKISktdabBr+PL1LA5Lo9/R18z4QIcoSDBPdELTYAAJAiUQ0IysKDoGFq85WMKhy
-         AjEqsGnjMk4cZ7gqhQpC9sBcAQByP+4eJHOls1EiJy0OuoxFc9n0MFC2TvDBIy+QmDWH
-         Sn6KFhJJGofGUYO2sG54rluOXXWCd/rXIU9b0cXwMwmZ/SgD+noC3fyAyTvKgUvkhHrf
-         elv9rNT9dZPkvukF8o2TN8k0ClPA/uXcr1978t7ckAcMqgmtyonW1D+dRgGENWuAa0Hi
-         W0GA==
-X-Gm-Message-State: ABuFfoh1A99PkLSMstTWX7/NMLueC2OLk/IiwOvUEwp8mlVqFk6ov817
-        BcSPIsEODPSZdite/FnaWMw=
-X-Google-Smtp-Source: ACcGV63PHgu/11bkwFIhUitfbZrIryvZfUuLzykcbqT/951KNAW2FYnpNCzi022BjL5bZR38C++vwQ==
-X-Received: by 2002:a63:24f:: with SMTP id 76-v6mr24297418pgc.67.1539787037814;
-        Wed, 17 Oct 2018 07:37:17 -0700 (PDT)
-Received: from asus.site ([2601:647:4601:42b4:3842:3e31:3bb6:cf62])
-        by smtp.gmail.com with ESMTPSA id z26-v6sm21193456pfh.77.2018.10.17.07.37.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 07:37:16 -0700 (PDT)
-Subject: Re: [Ksummit-discuss] [PATCH v2] code-of-conduct: Remove explicit
- list of discrimination factors
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        ksummit-discuss@lists.linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tomi Valkeinen <tomi.valkeinen@iki.fi>
-References: <20181017082648.919-1-geert@linux-m68k.org>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <01f49baf-d6ad-5ea6-e9ad-226725404cce@acm.org>
-Date:   Wed, 17 Oct 2018 07:37:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20181017082648.919-1-geert@linux-m68k.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Wed, 17 Oct 2018 18:33:42 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gCmxB-0003F7-Qs; Wed, 17 Oct 2018 16:37:41 +0200
+Message-ID: <1539787061.4729.11.camel@pengutronix.de>
+Subject: Re: [PATCHv2] reset: socfpga: add an early reset driver for SoCFPGA
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, marex@denx.de
+Date:   Wed, 17 Oct 2018 16:37:41 +0200
+In-Reply-To: <20181011135241.13614-1-dinguyen@kernel.org>
+References: <20181011135241.13614-1-dinguyen@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/18 1:26 AM, Geert Uytterhoeven wrote:
-> Providing an explicit list of discrimination factors may give the false
-> impression that discrimination based on other unlisted factors would be
-> allowed.
+Hi Dinh,
+
+On Thu, 2018-10-11 at 08:52 -0500, Dinh Nguyen wrote:
+> Create a separate reset driver that uses the reset operations in
+> reset-simple. The reset driver for the SoCFPGA platform needs to
+> register early in order to be able bring online timers that needed
+> early in the kernel bootup.
 > 
-> Avoid any ambiguity by removing the list, to ensure "a harassment-free
-> experience for everyone", period.
+> We do not need this early reset driver for Stratix10, because on
+> arm64, Linux does not need the timers are that in reset. Linux is
+> able to run just fine with the internal armv8 timer.
 > 
-> Fixes: 8a104f8b5867c682 ("Code of Conduct: Let's revamp it.")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Acked-by: Frank Rowand <frowand.list@gmail.com>
-> Acked-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Acked-by: Tomi Valkeinen <tomi.valkeinen@iki.fi>
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 > ---
-> v2:
->    - Add Acked-by.
-> 
-> The use of "race" may also conflict with the United Nation's views on
-> this matter, cfr. e.g. the UNESCO's "Four statements on the race
-> question"[1][2] and "Declaration on Race and Racial Prejudice"[3].
-> 
-> [1] https://en.wikipedia.org/wiki/The_Race_Question
-> [2] http://unesdoc.unesco.org/images/0012/001229/122962eo.pdf
-> [3] http://portal.unesco.org/en/ev.php-URL_ID=13161&URL_DO=DO_TOPIC&URL_SECTION=201.html
+> v2: Do not build separate reset driver for STRATIX10
+>     fix warning: symbol 'socfpga_reset_init' was not declared. Should
+>     it be static?
 > ---
->   Documentation/process/code-of-conduct.rst | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
+>  arch/arm/mach-socfpga/socfpga.c |  4 ++
+>  drivers/reset/Kconfig           |  9 +++-
+>  drivers/reset/Makefile          |  1 +
+>  drivers/reset/reset-socfpga.c   | 88 +++++++++++++++++++++++++++++++++
+>  4 files changed, 101 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/reset/reset-socfpga.c
 > 
-> diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/process/code-of-conduct.rst
-> index ab7c24b5478c6b30..e472c9f86ff00b34 100644
-> --- a/Documentation/process/code-of-conduct.rst
-> +++ b/Documentation/process/code-of-conduct.rst
-> @@ -6,10 +6,7 @@ Our Pledge
->   
->   In the interest of fostering an open and welcoming environment, we as
->   contributors and maintainers pledge to making participation in our project and
-> -our community a harassment-free experience for everyone, regardless of age, body
-> -size, disability, ethnicity, sex characteristics, gender identity and
-> -expression, level of experience, education, socio-economic status, nationality,
-> -personal appearance, race, religion, or sexual identity and orientation.
-> +our community a harassment-free experience for everyone.
->   
->   Our Standards
->   =============
+> diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
+> index dde14f7bf2c3..cc64576c102b 100644
+> --- a/arch/arm/mach-socfpga/socfpga.c
+> +++ b/arch/arm/mach-socfpga/socfpga.c
+> @@ -32,6 +32,8 @@ void __iomem *rst_manager_base_addr;
+>  void __iomem *sdr_ctl_base_addr;
+>  unsigned long socfpga_cpu1start_addr;
+>  
+> +extern void __init socfpga_reset_init(void);
+> +
+>  void __init socfpga_sysmgr_init(void)
+>  {
+>  	struct device_node *np;
+> @@ -64,6 +66,7 @@ static void __init socfpga_init_irq(void)
+>  
+>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+>  		socfpga_init_ocram_ecc();
+> +	socfpga_reset_init();
+>  }
+>  
+>  static void __init socfpga_arria10_init_irq(void)
+> @@ -74,6 +77,7 @@ static void __init socfpga_arria10_init_irq(void)
+>  		socfpga_init_arria10_l2_ecc();
+>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+>  		socfpga_init_arria10_ocram_ecc();
+> +	socfpga_reset_init();
+>  }
+>  
+>  static void socfpga_cyclone5_restart(enum reboot_mode mode, const char *cmd)
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 13d28fdbdbb5..f10de5ce4753 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -100,7 +100,7 @@ config RESET_QCOM_AOSS
+>  
+>  config RESET_SIMPLE
+>  	bool "Simple Reset Controller Driver" if COMPILE_TEST
+> -	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
+> +	default ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
+>  	help
+>  	  This enables a simple reset controller driver for reset lines that
+>  	  that can be asserted and deasserted by toggling bits in a contiguous,
+> @@ -119,6 +119,13 @@ config RESET_STM32MP157
+>  	help
+>  	  This enables the RCC reset controller driver for STM32 MPUs.
+>  
+> +config RESET_SOCFPGA
+> +	bool "SoCFPGA Reset Driver" if COMPILE_TEST && !ARCH_SOCFPGA
+> +	default ARCH_SOCFPGA && !ARCH_STRATIX10
+> +	select RESET_SIMPLE
+> +	help
+> +	  This enables the reset driver for SoCFPGA.
+> +
+>  config RESET_SUNXI
+>  	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
+>  	default ARCH_SUNXI
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 4243c38228e2..d09bb41273f6 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -18,6 +18,7 @@ obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
+>  obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
+>  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+>  obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
+> +obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
+>  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+>  obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+>  obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+> diff --git a/drivers/reset/reset-socfpga.c b/drivers/reset/reset-socfpga.c
+> new file mode 100644
+> index 000000000000..b92769861d2b
+> --- /dev/null
+> +++ b/drivers/reset/reset-socfpga.c
+> @@ -0,0 +1,88 @@
+> +// SPDX-License-Identifier:	GPL-2.0
+> +/*
+> + * Copyright (C) 2018, Intel Corporation
+> + * Copied from reset-sunxi.c
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/init.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/types.h>
+> +
+> +#include "reset-simple.h"
+> +
+> +#define SOCFPGA_NR_BANKS	8
+> +void __init socfpga_reset_init(void);
+> +
+> +static int a10_reset_init(struct device_node *np)
+> +{
+> +	struct reset_simple_data *data;
+> +	struct resource res;
+> +	resource_size_t size;
+> +	int ret;
+> +	u32 reg_offset = 0x10;
+> +
+> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	ret = of_address_to_resource(np, 0, &res);
+> +	if (ret)
+> +		goto err_alloc;
+> +
+> +	size = resource_size(&res);
+> +	if (!request_mem_region(res.start, size, np->name)) {
+> +		ret = -EBUSY;
+> +		goto err_alloc;
+> +	}
+> +
+> +	data->membase = ioremap(res.start, size);
+> +	if (!data->membase) {
+> +		ret = -ENOMEM;
+> +		goto err_alloc;
+> +	}
+> +
+> +	if (of_property_read_u32(np, "altr,modrst-offset", &reg_offset))
+> +		pr_warn("missing altr,modrst-offset property, assuming 0x10\n");
+> +	data->membase += reg_offset;
+> +
+> +	spin_lock_init(&data->lock);
+> +
+> +	data->rcdev.owner = THIS_MODULE;
+> +	data->rcdev.nr_resets = SOCFPGA_NR_BANKS * 32;
+> +	data->rcdev.ops = &reset_simple_ops;
+> +	data->rcdev.of_node = np;
+> +	data->status_active_low = true;
+> +
+> +	return reset_controller_register(&data->rcdev);
+> +
+> +err_alloc:
+> +	kfree(data);
+> +	return ret;
+> +};
+> +
+> +/*
+> + * These are the reset controller we need to initialize early on in
+> + * our system, before we can even think of using a regular device
+> + * driver for it.
+> + * The controllers that we can register through the regular device
+> + * model are handled by the simple reset driver directly.
+> + */
+> +static const struct of_device_id socfpga_early_reset_dt_ids[] __initconst = {
+> +	{ .compatible = "altr,rst-mgr", },
 
-Acked-by: Bart Van Assche <bvanassche@acm.org>
+That doesn't seem right. If you don't remove the altr,rst-mgr compatible
+from reset-simple.c anymore, we suddenly have two device drivers for the
+same compatible.
 
+(Also I liked removing altr,modrst-offset from reset-simple.c)
 
+Would there be any issue with calling socfpga_reset_init() on Stratix10
+as well?
+
+regards
+Philipp
