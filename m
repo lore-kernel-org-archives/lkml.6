@@ -2,107 +2,131 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF386ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D57DECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1E6F205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F17FE205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:23:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+R/SYA4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E6F205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ofyguocm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F17FE205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbeJQWSZ (ORCPT
+        id S1727601AbeJQWTQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:18:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726974AbeJQWSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:18:25 -0400
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4EE3205F4;
-        Wed, 17 Oct 2018 14:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539786149;
-        bh=c2t9attt+FBs4wgQjfbUfmk/qR/0vzxMcb3wtCqp/AM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=H+R/SYA4PxDSRj0G+3dKQ522TOzUKYVQRqUXeiI5laK6zEJOepe0Rb2J+g8xEzjlb
-         vKgye75a6NFd6DIIjUWcOJe10jELQqLHmjJuA+M52+g4TQZ4LltoyRFCBSA/YwdGV9
-         0Z3M/dF4OCj4Vhybk+dQ6zaSzoHVpNYbNkofP5AI=
-Received: by mail-qk1-f172.google.com with SMTP id q5-v6so16560846qki.6;
-        Wed, 17 Oct 2018 07:22:28 -0700 (PDT)
-X-Gm-Message-State: ABuFfoi4rakX4ZJbB2m1yJ2ULtRMSAfOTsGqRZFcnWQCY3HxTt0xEr2m
-        JaRBoSF4JehtXnNs3i4h66bV3+9MrmBM91P8MA==
-X-Google-Smtp-Source: ACcGV60iid+6OwnbnQTFN9P+D2MuV/hPaWMJngsd7r5RkHl5VrRyMCCAZYqh59/UzFeXI8ruxrsgyGoHLg2NtXVJfv8=
-X-Received: by 2002:a37:3ac1:: with SMTP id h184-v6mr1523326qka.147.1539786148134;
- Wed, 17 Oct 2018 07:22:28 -0700 (PDT)
+        Wed, 17 Oct 2018 18:19:16 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34977 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727032AbeJQWTQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 18:19:16 -0400
+Received: by mail-qt1-f193.google.com with SMTP id d21-v6so17808494qtq.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 07:23:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=+V+1tdObalfpAa88mC/A06Ihj6E2es3DkukF8lOEjQM=;
+        b=OfyguocmKYwUM0YN79sptX8QQJ6ISrE5BDpU6jbLH+bxqfV+3oePtQ0IJjd3IBqsIk
+         20apZbfxDOIReRisA+0CLXRIaAxy+lkyVSpJBTtGDFcsFE1BVHsT+UlFrRuc6Gy6ryV9
+         NMSOCpBkJVPs+IbrV7q6HsCg4EbeGO2AOf6nY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=+V+1tdObalfpAa88mC/A06Ihj6E2es3DkukF8lOEjQM=;
+        b=CYR1Yx9SuG+MK3FJSsMmVuQTuQ15j+O5OYZmUXnaGWkxKfi8DokeZVys+S6eZrYe1o
+         cDX1kFwLxtFlaSO7exhRVq4Xaz+oBZIU002KyScjhZxfu0JDLQEGH8IbqrqQFi4R5r/P
+         gI8PWNe+tKam3kuHFx4TFY8pKJ+GfXtN9FMNUbUDWm6tQEiX4hlfNnb6HuRhV7u05fCD
+         Jp3HLSbdOuop4Ie83DsZIofgxIb1QKDtMdu3+d/AH6QI1z4JQcbw5A2DRoKSLl/DKv9k
+         +/HFgAM96rIydq7lMBmzARFrrQeG9AXafoEo4OYXpG3YDZvnSXBMdGHojQW8FBjZnadp
+         WBiQ==
+X-Gm-Message-State: ABuFfoi7/oXGuuTZYAmuxaAlIgi+H2oB1NLuIVoHcpUUOk1Ag229YZ/W
+        v3hYjHcVvnZ/R1YtuUs+2wxo/w==
+X-Google-Smtp-Source: ACcGV63N3J8e0lF22lCyndUZsDbaDPfRtlGQKUDGuE5wbzTbNhxOCHP4A4SwzzeoXNBMkUo+L3o80A==
+X-Received: by 2002:aed:3024:: with SMTP id 33-v6mr20773244qte.29.1539786199479;
+        Wed, 17 Oct 2018 07:23:19 -0700 (PDT)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id l43-v6sm13559575qtc.80.2018.10.17.07.23.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 07:23:18 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 10:23:17 -0400 (EDT)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Roman Yeryomin <roman@advem.lv>
+Subject: Re: [PATCH 1/2] ARM: copypage-fa: add kto and kfrom to input operands
+ list
+In-Reply-To: <CAK8P3a3XUdkBmrnMUn2TePEBAh49=QvvxRiOk_+JnSp1fSwXJg@mail.gmail.com>
+Message-ID: <nycvar.YSQ.7.76.1810171009560.1498@knanqh.ubzr>
+References: <20181015221629.13924-1-stefan@agner.ch> <CACRpkdaVGKLtE-whhK3oFgY+4xoy1JqWkcBW4UO0-hJs2B-QGg@mail.gmail.com> <20181016084416.GF30658@n2100.armlinux.org.uk> <nycvar.YSQ.7.76.1810161357580.1498@knanqh.ubzr>
+ <CAK8P3a3XUdkBmrnMUn2TePEBAh49=QvvxRiOk_+JnSp1fSwXJg@mail.gmail.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-References: <1538734081-26585-1-git-send-email-david.hernandezsanchez@st.com>
- <1538734081-26585-4-git-send-email-david.hernandezsanchez@st.com> <20181016224009.GA24851@bogus>
-In-Reply-To: <20181016224009.GA24851@bogus>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 17 Oct 2018 09:22:16 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKavGoXKdEzq+n0+qfd6VF+gjHiGQbvzKLuHcmEvVa-qA@mail.gmail.com>
-Message-ID: <CAL_JsqKavGoXKdEzq+n0+qfd6VF+gjHiGQbvzKLuHcmEvVa-qA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ARM: dts: stm32: add thermal sensor support on STM32MP157c
-To:     David HERNANDEZ SANCHEZ <david.hernandezsanchez@st.com>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 5:40 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, 5 Oct 2018 10:08:46 +0000, David HERNANDEZ SANCHEZ wrote:
-> > QWRkIGNvbmZpZ3VyYXRpb24gb24gRFQgZm9yIHRoZXJtYWwgc2Vuc29yIGRyaXZlcg0KDQpTaWdu
-> > ZWQtb2ZmLWJ5OiBEYXZpZCBIZXJuYW5kZXogU2FuY2hleiA8ZGF2aWQuaGVybmFuZGV6c2FuY2hl
-> > ekBzdC5jb20+DQoNCmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9zdG0zMm1wMTU3Yy5k
-> > dHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3RtMzJtcDE1N2MuZHRzaQ0KaW5kZXggNjYxYmU5NC4u
-> > ZTkwYjlmNiAxMDA2NDQNCi0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N0bTMybXAxNTdjLmR0c2kN
-> > CisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3N0bTMybXAxNTdjLmR0c2kNCkBAIC04NCw2ICs4NCwz
-> > MSBAQA0KIAkJfTsNCiAJfTsNCg0KKwl0aGVybWFsLXpvbmVzIHsNCisJCWNwdV90aGVybWFsOiBj
-> > cHUtdGhlcm1hbCB7DQorCQkJcG9sbGluZy1kZWxheS1wYXNzaXZlID0gPDA+Ow0KKwkJCXBvbGxp
-> > bmctZGVsYXkgPSA8MD47DQorCQkJdGhlcm1hbC1zZW5zb3JzID0gPCZkdHM+Ow0KKw0KKwkJCXRy
-> > aXBzIHsNCisJCQkJY3B1X2FsZXJ0MTogY3B1LWFsZXJ0MSB7DQorCQkJCQl0ZW1wZXJhdHVyZSA9
-> > IDw4NTAwMD47DQorCQkJCQloeXN0ZXJlc2lzID0gPDA+Ow0KKwkJCQkJdHlwZSA9ICJwYXNzaXZl
-> > IjsNCisJCQkJfTsNCisNCisJCQkJY3B1LWNyaXQgew0KKwkJCQkJdGVtcGVyYXR1cmUgPSA8MTIw
-> > MDAwPjsNCisJCQkJCWh5c3RlcmVzaXMgPSA8MD47DQorCQkJCQl0eXBlID0gImNyaXRpY2FsIjsN
-> > CisJCQkJfTsNCisJCQl9Ow0KKw0KKwkJCWNvb2xpbmctbWFwcyB7DQorCQkJfTsNCisJCX07DQor
-> > CX07DQorDQogCXNvYyB7DQogCQljb21wYXRpYmxlID0gInNpbXBsZS1idXMiOw0KIAkJI2FkZHJl
-> > c3MtY2VsbHMgPSA8MT47DQpAQCAtOTA4LDYgKzkzMywxNiBAQA0KIAkJCXN0YXR1cyA9ICJkaXNh
-> > YmxlZCI7DQogCQl9Ow0KDQorCQlkdHM6IHRoZXJtYWxANTAwMjgwMDAgew0KKwkJCWNvbXBhdGli
-> > bGUgPSAic3Qsc3RtMzItdGhlcm1hbCI7DQorCQkJcmVnID0gPDB4NTAwMjgwMDAgMHgxMDA+Ow0K
-> > KwkJCWludGVycnVwdHMgPSA8R0lDX1NQSSAxNDcgSVJRX1RZUEVfTEVWRUxfSElHSD47DQorCQkJ
-> > Y2xvY2tzID0gPCZyY2MgVE1QU0VOUz47DQorCQkJY2xvY2stbmFtZXMgPSAicGNsayI7DQorCQkJ
-> > I3RoZXJtYWwtc2Vuc29yLWNlbGxzID0gPDA+Ow0KKwkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQor
-> > CQl9Ow0KKw0KIAkJY3J5cDE6IGNyeXBANTQwMDEwMDAgew0KIAkJCWNvbXBhdGlibGUgPSAic3Qs
-> > c3RtMzJtcDEtY3J5cCI7DQogCQkJcmVnID0gPDB4NTQwMDEwMDAgMHg0MDA+Ow0KLS0NCjIuNy40
-> > DQo=
+On Wed, 17 Oct 2018, Arnd Bergmann wrote:
+
+> On Tue, Oct 16, 2018 at 10:43 PM Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+> > On Tue, 16 Oct 2018, Russell King - ARM Linux wrote:
+> > > On Tue, Oct 16, 2018 at 10:00:19AM +0200, Linus Walleij wrote:
+> > > > On Tue, Oct 16, 2018 at 12:16 AM Stefan Agner <stefan@agner.ch> wrote:
+> > > It's not obvious yet whether this is right - it contradicts the GCC
+> > > manual, but then we have evidence that it's required for some GCC
+> > > versions where GCC may clone the function, or if the function is
+> > > used within the same file.
 > >
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> > Why not getting rid of __naked altogether? Here's what I suggest:
+> >
+> > ----- >8
+> > Subject: [PATCH] ARM: remove naked function usage
+> >
+> > Convert page copy functions not to rely on the naked function attribute.
+> >
+> > This attribute is known to confuse some gcc versions when function
+> > arguments aren't explicitly listed as inline assembly operands despite
+> > the gcc documentation. That resulted in commit 9a40ac86152c ("ARM:
+> > 6164/1: Add kto and kfrom to input operands list.").
+> 
+> It's probably worth noting that the minimum gcc version for compiling
+> the kernel is now gcc-4.6, which I think does not suffer from the gcc-4.5
+> bug that triggered the change. See in particular commits 9c695203a7dd
+> ("compiler-gcc.h: gcc-4.5 needs noclone and noinline on __naked functions")
+> and d124b44f09ca ("Compiler Attributes: naked was fixed in gcc 4.6").
+> 
+> The first one made sure we don't inline these functions, so gcc-4.5
+> no longer runs into the problem even in the absence of the workaround,
+> and the second patch reverts that again, noting that gcc-4.6 is fixed.
+> 
+> I don't see anything wrong with converting the functions to not
+> use __naked at all, but I think we can also just revert the original
+> commit 9a40ac86152c to get it to build with clang. When I last
+> played with clang on arm32, that's what I did. I'll reply with the
+> patch I have in my randconfig tree.
 
-Rest assured that I did review the decoded base64. Please fix your
-mailer to not send base64 encoded mails.
+The __naked attribute has idiosyncrasies of its own, regardless of any 
+potential bugs, that sometimes makes it harder to maintain and prevent 
+extra optimizations that the compiler could otherwise take care of. So I 
+think that this is a good thing to get rid of __naked when its usage 
+isn't necessary, like the instances in this patch.
 
-Rob
+The remaining instances are cases where there is simply no stack 
+available making __naked necessary in those cases.
+
+
+Nicolas
