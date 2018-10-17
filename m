@@ -2,190 +2,90 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D332ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67981ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB0320658
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:09:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="sNdyVuFc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CB0320658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B4D121526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:11:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4D121526
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727981AbeJQXF7 (ORCPT
+        id S1727794AbeJQXHZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:05:59 -0400
-Received: from mail.efficios.com ([167.114.142.138]:56192 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbeJQXF6 (ORCPT
+        Wed, 17 Oct 2018 19:07:25 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:45944 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbeJQXHZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:05:58 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 9C27D1CA616;
-        Wed, 17 Oct 2018 11:09:50 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id nF3AnNyw5lbN; Wed, 17 Oct 2018 11:09:50 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 33A6E1CA60F;
-        Wed, 17 Oct 2018 11:09:50 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 33A6E1CA60F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1539788990;
-        bh=wWKd6QJ+MQ/yuWkoCIdeyyQB03N3odcK3FEkxpn/8UY=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=sNdyVuFcpwObhDOeIFyxJ4F54U9RzFd++rfPR1EgAzMzkoeuDdANVIX3rcO3LC67k
-         24nWVMFZy+IUp5w1wmLDQGVyC8AEhvtg8+v2JfumdD4/xReYrAZEFcCMpXjNajntFk
-         Z9K7WLXD73mOoQFgE0syYGrFRQTf6Cl/CnlaaNQQ9cukhxc5jKcCx1wZAk0q/oPKs1
-         5zT2AIPrVeadFNkMaXv1AHzQdU+MRzpEeWS9DCyJaJGIiZK94NBC9qsj9pAfZy+NIq
-         uemyqTthMK3Car6lNKW7JFB6mo5Wz/QQrRuRLZX/yKmPwn8BCfRtKO/mrWpGbokjU/
-         i0xUxmWlAtZiQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 1JImKwivWloO; Wed, 17 Oct 2018 11:09:50 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 0EDA21CA605;
-        Wed, 17 Oct 2018 11:09:50 -0400 (EDT)
-Date:   Wed, 17 Oct 2018 11:09:49 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Message-ID: <704369944.814.1539788989963.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20181017065145.GA7111@linux.vnet.ibm.com>
-References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com> <20181010191936.7495-4-mathieu.desnoyers@efficios.com> <20181017065145.GA7111@linux.vnet.ibm.com>
-Subject: Re: [RFC PATCH for 4.21 03/16] sched: Implement push_task_to_cpu
- (v2)
+        Wed, 17 Oct 2018 19:07:25 -0400
+Received: by mail-qk1-f194.google.com with SMTP id m8-v6so16675688qka.12;
+        Wed, 17 Oct 2018 08:11:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FKaGTVrDoB3wM70SDy9cZPLZvYt4VflSq8YoDlpWSDE=;
+        b=nxFZ6EYLzEan6NUSSIGEyCGTmJExXZi506FPLjpNlVl7Yj+8mOav3CXwbRq9u6jvvf
+         lt0pPan2PyBuoq2HofiagZoi93QOJu+S0+vSDYKv6GSQSkpPH6ZYSE4884moFN/6Pdip
+         8duHtDNlyuRSfcogiWmkl/uBvl3TpB7O7n5ChSw0JmDU8xPD2YgKbPjhhe4z9mdr4IbF
+         ndurbqUTiwkGDXpPlRLJ+L7O8SrRJsA7VbcSsPy7lQJaq2UWKiF2y4L8JHa9p7dClhR9
+         oSqoqgfrpXAq8R0+4USB56QIP/0cRB0Cr47wBD5Ih3IkaRLa4Upgg0SRrjIRDHGqgTy0
+         0syA==
+X-Gm-Message-State: ABuFfogmxIS6MAjk6YoATdy5HUU1jSOWyHwG6uQxQKm4TIY0VWN6R0bx
+        TXRXCFVXSPRSyYL6GDC1MRxMMDvjVf73lVIA8PY=
+X-Google-Smtp-Source: ACcGV63Ifr8mYTn2NQG6A+s7WdZteIZ35upOrBk3toeSNWS2uLr5aiTnYVuzgYxBBPoWpsNUjUhm+BeJqwYzTbZwXNc=
+X-Received: by 2002:a37:38b:: with SMTP id 133-v6mr25029036qkd.173.1539789076799;
+ Wed, 17 Oct 2018 08:11:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3039 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: sched: Implement push_task_to_cpu (v2)
-Thread-Index: GiS32WM/xSgzHSI9RscP/cknL+p9+w==
+References: <cover.1539655731.git.ren_guo@c-sky.com> <9ae1d1609a49d976ae7659157507018b0c846423.1539655732.git.ren_guo@c-sky.com>
+In-Reply-To: <9ae1d1609a49d976ae7659157507018b0c846423.1539655732.git.ren_guo@c-sky.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 17 Oct 2018 17:11:00 +0200
+Message-ID: <CAK8P3a31sVAMCPXLqyqMpvj-gsxOmuf2qL0bT5crDQo0Wcg__g@mail.gmail.com>
+Subject: Re: [PATCH V9 08/21] csky: Process management and Signal
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        David Miller <davem@davemloft.net>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Oct 17, 2018, at 2:51 AM, Srikar Dronamraju srikar@linux.vnet.ibm.com wrote:
+On Tue, Oct 16, 2018 at 5:01 AM Guo Ren <ren_guo@c-sky.com> wrote:
+>
+> This patch adds files related to task_switch, sigcontext, signal,
+> fpu context switch.
+>
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> ---
+> Changelog:
+>  - abiv2/fpu.c: Userspace should never be sent NSIGXXX as a si_code.
+>    Use FPE_FLTUNK instead.
+>  - abiv2/fpu.c: Use force_sig_fault instead.
 
-> Hi Mathieu,
-> 
->> +int push_task_to_cpu(struct task_struct *p, unsigned int dest_cpu)
->> +{
-> 
-> In your use case, is the task going to be current?
-> If yes, we should simply be using migrate_task_to.
-> 
->> +	struct rq_flags rf;
->> +	struct rq *rq;
->> +	int ret = 0;
->> +
->> +	rq = task_rq_lock(p, &rf);
->> +	update_rq_clock(rq);
->> +
->> +	if (!cpumask_test_cpu(dest_cpu, &p->cpus_allowed)) {
->> +		ret = -EINVAL;
->> +		goto out;
->> +	}
-> 
-> Ideally we should have checked cpus_allowed/cpu_active_mask before taking
-> the lock. This would help reduce the contention on the rqlock when the
-> passed parameter is not correct.
-> 
->> +
->> +	if (!cpumask_test_cpu(dest_cpu, cpu_active_mask)) {
->> +		ret = -EBUSY;
->> +		goto out;
->> +	}
->> +
->> +	if (task_cpu(p) == dest_cpu)
->> +		goto out;
-> 
-> Same as above.
-> 
->> +
->> +	if (task_running(rq, p) || p->state == TASK_WAKING) {
-> 
-> Why are we using migration thread to move a task in TASK_WAKING state?
-> 
->> +		struct migration_arg arg = { p, dest_cpu };
->> +		/* Need help from migration thread: drop lock and wait. */
->> +		task_rq_unlock(rq, p, &rf);
->> +		stop_one_cpu(cpu_of(rq), migration_cpu_stop, &arg);
->> +		tlb_migrate_finish(p->mm);
->> +		return 0;
-> 
-> Why cant we use migrate_task_to instead?
+I'm hesitant to provide a Reviewed-by: tag for this one, as I don't
+understand the signal handling enough myself, and it's something
+that should be reviewed properly because of the ABI implications.
 
-I could do that be moving migrate_task_to outside of NUMA-specific #ifdef,
-but I think we can do much, much simpler than that, see below.
+Maybe someone else can have a closer look at this?
 
-> 
->> +	} else if (task_on_rq_queued(p)) {
->> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
->> index 455fa330de04..27ad25780204 100644
->> --- a/kernel/sched/sched.h
->> +++ b/kernel/sched/sched.h
->> @@ -1340,6 +1340,15 @@ static inline void __set_task_cpu(struct task_struct *p,
->> unsigned int cpu)
->>  #endif
->>  }
->>  
->> +#ifdef CONFIG_SMP
->> +int push_task_to_cpu(struct task_struct *p, unsigned int dest_cpu);
->> +#else
->> +static inline int push_task_to_cpu(struct task_struct *p, unsigned int
->> dest_cpu)
->> +{
->> +	return 0;
->> +}
->> +#endif
->> +
-> 
-> Your usecase is outside kernel/sched. So I am not sure if this is the right
-> place for the declaration.
-
-Actually, now that I think of it, we may not need to migrate the task at all.
-Now that cpu_opv implementation takes a temporary vmap() of the user-space pages,
-we can touch that virtual address range from interrupt context from another CPU.
-
-So cpu_opv can simply execute the vector of operations in IPI context rather than
-do all this silly dance with migration.
-
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+       Arnd
