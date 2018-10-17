@@ -2,134 +2,458 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66ABC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 05:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1723C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 05:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 804D1214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 05:59:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50923214DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 05:59:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Nzb/0R3M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 804D1214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NedRIZKN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50923214DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbeJQNxX (ORCPT
+        id S1727186AbeJQNx0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 09:53:23 -0400
-Received: from mail-by2nam01on0124.outbound.protection.outlook.com ([104.47.34.124]:19780
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726429AbeJQNxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 09:53:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BF7jnjsp7wdXjtrbSnU7j0UJ5z0/OdoeQN8eTWjjhYk=;
- b=Nzb/0R3MFqYNZmiZpuzTmMGj6E+ZO8Jf+l1nwaeDfGvEQlV6ImifjnT7apmA62rE2aDfqGp9EOl3gGGgsOhj1lNFPoowq7v8zxSQg5OwTeCj+c6qcuuQpLBx4+1sVUCZXwcPyrJzpx2GDRAkx07kAyhOOqXlKTGKaytT/pFpsVM=
-Received: from SN6PR2101MB1118.namprd21.prod.outlook.com (52.132.115.32) by
- SN6PR2101MB1021.namprd21.prod.outlook.com (52.132.116.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1273.1; Wed, 17 Oct 2018 05:59:20 +0000
-Received: from SN6PR2101MB1118.namprd21.prod.outlook.com
- ([fe80::dc2b:5afa:e768:4791]) by SN6PR2101MB1118.namprd21.prod.outlook.com
- ([fe80::dc2b:5afa:e768:4791%5]) with mapi id 15.20.1273.004; Wed, 17 Oct 2018
- 05:59:20 +0000
-From:   KY Srinivasan <kys@microsoft.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        vkuznets <vkuznets@redhat.com>
-Subject: RE: [PATCH 1/5] Drivers: hv: vmbus: Get rid of unnecessary state in
- hv_context
-Thread-Topic: [PATCH 1/5] Drivers: hv: vmbus: Get rid of unnecessary state in
- hv_context
-Thread-Index: AQHUZcef1et9N4RQ/kO4sJA3u6BssaUi4lcAgAAO2ZA=
-Date:   Wed, 17 Oct 2018 05:59:19 +0000
-Message-ID: <SN6PR2101MB11182BB44E4F099A3D17D1BDA0FF0@SN6PR2101MB1118.namprd21.prod.outlook.com>
-References: <20181017031241.669-1-kys@linuxonhyperv.com>
- <20181017031406.773-1-kys@linuxonhyperv.com>
- <20181017050458.GD22447@kroah.com>
-In-Reply-To: <20181017050458.GD22447@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2601:600:a280:b50:506a:a801:e603:e795]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR2101MB1021;6:QTq9lpMMPRTc1QovpQcSJRKFWaXm6JaKKSP8Cm2wfztEC3H+zTwPkw5WZUUC5xDI3YzRXTZx3ZPIcXjI4xO2cGxgKd39do1nq76cRJOQAuDFg+lbLe8RqPes28y/sj0TAWut0372hY4Tt5RR+JR3tPSPm8Rpfqtz+E01fPIsjqCA5FrgpfZhSfAORW5UTOl2xD+1bquxskoCfCM+DfKcT8FFeyOkpSSdf1hkrKqxcPM/hqiKYBxow0QTNW4GY1ifAEtVHWs9o6MM0KBItt4irl7fOUW1Rf1Qzo+NU7dHUeSMHoUooXexQfI+tmsXXXrmpE+fIKVdXJ63JQ/ow85VBgQ9/vk5kpfiSe7q5JNgL789349bfg7vRogLJMybYfzi4eshkl9rEOV25o+dzMvozOIMuSRS+Rtk3az01XNYsC7+eeiWyf3AbhBkA/N7VNXDRKzn8STmx8hd+mdB0oX2UQ==;5:fCq5e3pQ9KZVG0ZB5R+fsAUd8HixZMztqFsR/TC3eNItSr3uLdCXl8FqF3kU5zkfskr8n4ztKl4cHVtU8gOaFV6fST+0l4LYnsegIdQ76YRXCnb0JycLeVdkKp9iZ4yaXlsGaY0gfX+BPX5sNlrq4T+RYmtdhha7tBXjd0oKrMU=;7:2zZIhb63VxoPUoeEfTxp1q+3JwMeISTqR4M9kA94NflsKUGCySocLalwleKNEaeizb+PPC7CqZZpflWqyc7l8BZup+HkzDgLx9WNQmG0WIu3cTLReiPfvY+kIuwmy4hQwUWLl0+xXKfUhpmRvxpC2Q==
-x-ms-office365-filtering-correlation-id: cf99a29b-b46f-431c-5753-08d633f5ae30
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:SN6PR2101MB1021;
-x-ms-traffictypediagnostic: SN6PR2101MB1021:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kys@microsoft.com; 
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <SN6PR2101MB1021EBA2716E85D43BE4D3F7A0FF0@SN6PR2101MB1021.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(198206253151910)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991092);SRVR:SN6PR2101MB1021;BCL:0;PCL:0;RULEID:;SRVR:SN6PR2101MB1021;
-x-forefront-prvs: 08286A0BE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39860400002)(346002)(396003)(136003)(13464003)(189003)(199004)(305945005)(8936002)(53546011)(33656002)(7736002)(6116002)(10090500001)(76176011)(81166006)(81156014)(46003)(8676002)(8990500004)(6506007)(71190400001)(106356001)(71200400001)(2900100001)(476003)(446003)(105586002)(11346002)(5660300001)(486006)(68736007)(229853002)(97736004)(10290500003)(86612001)(5250100002)(54906003)(478600001)(25786009)(53936002)(316002)(86362001)(256004)(22452003)(99286004)(74316002)(6436002)(2906002)(4326008)(102836004)(186003)(7696005)(6916009)(14454004)(55016002)(6246003)(9686003)(26583001)(24704002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR2101MB1021;H:SN6PR2101MB1118.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: YrljUKGVRI1PKKnecb1B+UoCaP5TJrlQGKunOFfy8Db5UUqGs6DnV1uSiTVBMiC1e65nI2/N9RpOXS7gi5ieAVzW1Pg82pkk0TKdnCx9rJvLWAERoReJE9Ypkl7vKDCntkq70yV7UNSvF9cr02GUCS9Qso/NqhLwsxA1iwkFgFXhw0OIUvr9Oi70HMQ5/NVjvKyUvmTLmNwKxQnidxdRhrY/EkBC+LQnw14woIQnYIxBS/8yR9wpZVRXCr60yqgrXjWI+081r7UsBddpGSNh9MCZasA/f1vY8yYXFT8jb56GiJxhI1C6oMTIocNAN7LGpH0/gdlSdf/tF0OYZXnYwRN93m94+fTYxloERpVgcow=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf99a29b-b46f-431c-5753-08d633f5ae30
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 05:59:20.0390
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB1021
+        Wed, 17 Oct 2018 09:53:26 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:46360 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbeJQNx0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 09:53:26 -0400
+Received: by mail-yb1-f193.google.com with SMTP id o8-v6so9877497ybk.13
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 22:59:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=JKEeSaI0NWMtpYbArZasgm1Rp1ul3p0mgAzF0mTISHs=;
+        b=NedRIZKNBu4n/Uk2fvx5iUfyDeAUyX5zshZkWWFiP9gXWX3B2sq1CfhSwUi3TEoIru
+         XIq4NjTPhotGOtu5rGvZ81nfh7Rx+PKkKM9edUY4AeJmkYn19DO1cxBMJ332mK55voXd
+         hr/gUa0iP57rKRNLKrsEKiz5C/FAkteUGG1Eo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=JKEeSaI0NWMtpYbArZasgm1Rp1ul3p0mgAzF0mTISHs=;
+        b=MiZXsZFLISk7mJlPZV6q99e60seAutVg7dY4DemZimg/qcov+fG5cG4H1yBCcQ9Ei6
+         Cb71lAS11MWfkouZu+1hvoUpX0kM4a1/lnq/eonFcyIn26Exx5L14ea7eft16N3k1nfP
+         2f2GBaMC91AKAEopLc5gsciXJfjeHSPVdtwoSiBGhu3rSw7v4sQJlVxOHipaLM6H4l2Q
+         jko1TsmISa7DLDG2C5Vd65SonahQ55KKG3H6hgFWkXcV/+j2L001VGvwqrxJjUbdhM7H
+         0Mcv1JSoyzUNI+NT2XEhUOcN0bG/2nAVJvekbKKhRXn2cUPct3fwzSfFPlDpuVAluZ6+
+         +SJw==
+X-Gm-Message-State: ABuFfog1yCLlcaLGLGav8j+Atfn5kBRkyAdRU3dM6itIVsf2ZOr4ZlBy
+        S5QHYW3fi17McTfIvFA62sLIZQ==
+X-Google-Smtp-Source: ACcGV613BKn9dDwq3b8p3rEFjeZ8ZHxgODkwBxu2QG/b2RLW5hUlFDAXvbR4EMwyv3s0hE4c0Poxfg==
+X-Received: by 2002:a5b:50f:: with SMTP id o15-v6mr13042119ybp.7.1539755966073;
+        Tue, 16 Oct 2018 22:59:26 -0700 (PDT)
+Received: from dhcp-10-123-74-106.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id y1-v6sm3930329ywf.34.2018.10.16.22.59.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Oct 2018 22:59:25 -0700 (PDT)
+From:   Suganath Prabu <suganath-prabu.subramani@broadcom.com>
+To:     helgaas@kernel.org, lukas@wunner.de, linux-scsi@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     benh@kernel.crashing.org, ruscur@russell.cc,
+        sbobroff@linux.ibm.com, oohall@gmail.com,
+        andy.shevchenko@gmail.com, Sathya.Prakash@broadcom.com,
+        sreekanth.reddy@broadcom.com,
+        Suganath Prabu <suganath-prabu.subramani@broadcom.com>
+Subject: [v5 1/4] mpt3sas: Separate out mpt3sas_wait_for_ioc_to_operational
+Date:   Wed, 17 Oct 2018 11:29:04 +0530
+Message-Id: <1539755947-27014-2-git-send-email-suganath-prabu.subramani@broadcom.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1539755947-27014-1-git-send-email-suganath-prabu.subramani@broadcom.com>
+References: <1539755947-27014-1-git-send-email-suganath-prabu.subramani@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+No functional changes. This section of code
+ "wait for IOC to be operational" is used in many places
+ across the driver, and hence moved this code in to
+ a function "mpt3sas_wait_for_ioc_to_operational()"
 
+Signed-off-by: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c      | 77 +++++++++++++++++++-------------
+ drivers/scsi/mpt3sas/mpt3sas_base.h      |  4 ++
+ drivers/scsi/mpt3sas/mpt3sas_config.c    | 25 +++--------
+ drivers/scsi/mpt3sas/mpt3sas_ctl.c       | 22 ++-------
+ drivers/scsi/mpt3sas/mpt3sas_transport.c | 66 +++++----------------------
+ 5 files changed, 71 insertions(+), 123 deletions(-)
 
-> -----Original Message-----
-> From: Greg KH <gregkh@linuxfoundation.org>
-> Sent: Tuesday, October 16, 2018 10:05 PM
-> To: KY Srinivasan <kys@microsoft.com>
-> Cc: linux-kernel@vger.kernel.org; devel@linuxdriverproject.org;
-> olaf@aepfle.de; apw@canonical.com; jasowang@redhat.com; Stephen
-> Hemminger <sthemmin@microsoft.com>; Michael Kelley (EOSG)
-> <Michael.H.Kelley@microsoft.com>; vkuznets <vkuznets@redhat.com>
-> Subject: Re: [PATCH 1/5] Drivers: hv: vmbus: Get rid of unnecessary state=
- in
-> hv_context
->=20
-> On Wed, Oct 17, 2018 at 03:14:02AM +0000, kys@linuxonhyperv.com wrote:
-> > From: "K. Y. Srinivasan" <kys@microsoft.com>
-> >
-> > Currently we are replicating state in struct hv_context that is unneces=
-sary -
-> > this state can be retrieved from the hypervisor. Furthermore, this is a=
- per-
-> cpu
-> > state that is being maintained as a global state in struct hv_context.
-> > Get rid of this state in struct hv_context.
-> >
-> > Reply-To: kys@microsoft.com
->=20
-> Why is this here?
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 166b607..a6c217c 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -5079,6 +5079,43 @@ _base_send_ioc_reset(struct MPT3SAS_ADAPTER *ioc, u8 reset_type, int timeout)
+ }
+ 
+ /**
++ * mpt3sas_wait_for_ioc_to_operational - IOC's operational
++ *		state and HBA hot unplug status are checked here.
++ * @ioc: per adapter object
++ * @wait_count: timeout in seconds
++ *
++ * Return: Waits up to timeout seconds for the IOC to
++ * become operational. Returns 0 if IOC is present
++ * and operational; otherwise returns -EFAULT.
++ */
++
++int
++mpt3sas_wait_for_ioc_to_operational(struct MPT3SAS_ADAPTER *ioc,
++	int timeout)
++{
++	int wait_state_count = 0;
++	u32 ioc_state;
++
++	ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
++	while (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
++
++		if (wait_state_count++ == timeout) {
++			ioc_err(ioc, "%s: failed due to ioc not operational\n",
++				__func__);
++			return -EFAULT;
++		}
++		ssleep(1);
++		ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
++		ioc_info(ioc, "%s: waiting for operational state(count=%d)\n",
++			 __func__, wait_state_count);
++	}
++	if (wait_state_count)
++		ioc_info(ioc, "ioc is operational\n");
++
++	return 0;
++}
++
++/**
+  * _base_handshake_req_reply_wait - send request thru doorbell interface
+  * @ioc: per adapter object
+  * @request_bytes: request length
+@@ -5212,11 +5249,9 @@ mpt3sas_base_sas_iounit_control(struct MPT3SAS_ADAPTER *ioc,
+ 	Mpi2SasIoUnitControlRequest_t *mpi_request)
+ {
+ 	u16 smid;
+-	u32 ioc_state;
+ 	u8 issue_reset = 0;
+ 	int rc;
+ 	void *request;
+-	u16 wait_state_count;
+ 
+ 	dinitprintk(ioc, ioc_info(ioc, "%s\n", __func__));
+ 
+@@ -5228,20 +5263,10 @@ mpt3sas_base_sas_iounit_control(struct MPT3SAS_ADAPTER *ioc,
+ 		goto out;
+ 	}
+ 
+-	wait_state_count = 0;
+-	ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-	while (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
+-		if (wait_state_count++ == 10) {
+-			ioc_err(ioc, "%s: failed due to ioc not operational\n",
+-				__func__);
+-			rc = -EFAULT;
+-			goto out;
+-		}
+-		ssleep(1);
+-		ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-		ioc_info(ioc, "%s: waiting for operational state(count=%d)\n",
+-			 __func__, wait_state_count);
+-	}
++	rc = mpt3sas_wait_for_ioc_to_operational(ioc,
++					IOC_OPERATIONAL_WAIT_COUNT);
++	if (rc)
++		goto out;
+ 
+ 	smid = mpt3sas_base_get_smid(ioc, ioc->base_cb_idx);
+ 	if (!smid) {
+@@ -5307,11 +5332,9 @@ mpt3sas_base_scsi_enclosure_processor(struct MPT3SAS_ADAPTER *ioc,
+ 	Mpi2SepReply_t *mpi_reply, Mpi2SepRequest_t *mpi_request)
+ {
+ 	u16 smid;
+-	u32 ioc_state;
+ 	u8 issue_reset = 0;
+ 	int rc;
+ 	void *request;
+-	u16 wait_state_count;
+ 
+ 	dinitprintk(ioc, ioc_info(ioc, "%s\n", __func__));
+ 
+@@ -5323,20 +5346,10 @@ mpt3sas_base_scsi_enclosure_processor(struct MPT3SAS_ADAPTER *ioc,
+ 		goto out;
+ 	}
+ 
+-	wait_state_count = 0;
+-	ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-	while (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
+-		if (wait_state_count++ == 10) {
+-			ioc_err(ioc, "%s: failed due to ioc not operational\n",
+-				__func__);
+-			rc = -EFAULT;
+-			goto out;
+-		}
+-		ssleep(1);
+-		ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-		ioc_info(ioc, "%s: waiting for operational state(count=%d)\n",
+-			 __func__, wait_state_count);
+-	}
++	rc = mpt3sas_wait_for_ioc_to_operational(ioc,
++					IOC_OPERATIONAL_WAIT_COUNT);
++	if (rc)
++		goto out;
+ 
+ 	smid = mpt3sas_base_get_smid(ioc, ioc->base_cb_idx);
+ 	if (!smid) {
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.h b/drivers/scsi/mpt3sas/mpt3sas_base.h
+index 8f1d6b0..c860ed2 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.h
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
+@@ -139,6 +139,8 @@
+ #define DEFAULT_NUM_FWCHAIN_ELEMTS	8
+ 
+ #define FW_IMG_HDR_READ_TIMEOUT	15
++
++#define IOC_OPERATIONAL_WAIT_COUNT	10
+ /*
+  * NVMe defines
+  */
+@@ -1487,6 +1489,8 @@ mpt3sas_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc);
+ 
+ u8 mpt3sas_base_check_cmd_timeout(struct MPT3SAS_ADAPTER *ioc,
+ 	u8 status, void *mpi_request, int sz);
++int mpt3sas_wait_for_ioc_to_operational(struct MPT3SAS_ADAPTER *ioc,
++	int wait_count);
+ 
+ /* scsih shared API */
+ struct scsi_cmnd *mpt3sas_scsih_scsi_lookup_get(struct MPT3SAS_ADAPTER *ioc,
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_config.c b/drivers/scsi/mpt3sas/mpt3sas_config.c
+index 0220944..14a195c 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_config.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_config.c
+@@ -300,11 +300,10 @@ _config_request(struct MPT3SAS_ADAPTER *ioc, Mpi2ConfigRequest_t
+ 	void *config_page, u16 config_page_sz)
+ {
+ 	u16 smid;
+-	u32 ioc_state;
+ 	Mpi2ConfigRequest_t *config_request;
+ 	int r;
+ 	u8 retry_count, issue_host_reset = 0;
+-	u16 wait_state_count;
++
+ 	struct config_request mem;
+ 	u32 ioc_status = UINT_MAX;
+ 
+@@ -361,23 +360,11 @@ _config_request(struct MPT3SAS_ADAPTER *ioc, Mpi2ConfigRequest_t
+ 		ioc_info(ioc, "%s: attempting retry (%d)\n",
+ 			 __func__, retry_count);
+ 	}
+-	wait_state_count = 0;
+-	ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-	while (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
+-		if (wait_state_count++ == MPT3_CONFIG_PAGE_DEFAULT_TIMEOUT) {
+-			ioc_err(ioc, "%s: failed due to ioc not operational\n",
+-				__func__);
+-			ioc->config_cmds.status = MPT3_CMD_NOT_USED;
+-			r = -EFAULT;
+-			goto free_mem;
+-		}
+-		ssleep(1);
+-		ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-		ioc_info(ioc, "%s: waiting for operational state(count=%d)\n",
+-			 __func__, wait_state_count);
+-	}
+-	if (wait_state_count)
+-		ioc_info(ioc, "%s: ioc is operational\n", __func__);
++
++	r = mpt3sas_wait_for_ioc_to_operational(ioc,
++				MPT3_CONFIG_PAGE_DEFAULT_TIMEOUT);
++	if (r)
++		goto free_mem;
+ 
+ 	smid = mpt3sas_base_get_smid(ioc, ioc->config_cb_idx);
+ 	if (!smid) {
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+index 0f6305c..34c11a5 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+@@ -641,7 +641,6 @@ _ctl_do_mpt_command(struct MPT3SAS_ADAPTER *ioc, struct mpt3_ioctl_command karg,
+ 	MPI2DefaultReply_t *mpi_reply;
+ 	Mpi26NVMeEncapsulatedRequest_t *nvme_encap_request = NULL;
+ 	struct _pcie_device *pcie_device = NULL;
+-	u32 ioc_state;
+ 	u16 smid;
+ 	u8 timeout;
+ 	u8 issue_reset;
+@@ -654,7 +653,6 @@ _ctl_do_mpt_command(struct MPT3SAS_ADAPTER *ioc, struct mpt3_ioctl_command karg,
+ 	dma_addr_t data_in_dma = 0;
+ 	size_t data_in_sz = 0;
+ 	long ret;
+-	u16 wait_state_count;
+ 	u16 device_handle = MPT3SAS_INVALID_DEVICE_HANDLE;
+ 	u8 tr_method = MPI26_SCSITASKMGMT_MSGFLAGS_PROTOCOL_LVL_RST_PCIE;
+ 
+@@ -666,22 +664,10 @@ _ctl_do_mpt_command(struct MPT3SAS_ADAPTER *ioc, struct mpt3_ioctl_command karg,
+ 		goto out;
+ 	}
+ 
+-	wait_state_count = 0;
+-	ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-	while (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
+-		if (wait_state_count++ == 10) {
+-			ioc_err(ioc, "%s: failed due to ioc not operational\n",
+-				__func__);
+-			ret = -EFAULT;
+-			goto out;
+-		}
+-		ssleep(1);
+-		ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-		ioc_info(ioc, "%s: waiting for operational state(count=%d)\n",
+-			 __func__, wait_state_count);
+-	}
+-	if (wait_state_count)
+-		ioc_info(ioc, "%s: ioc is operational\n", __func__);
++	ret = mpt3sas_wait_for_ioc_to_operational(ioc,
++					IOC_OPERATIONAL_WAIT_COUNT);
++	if (ret)
++		goto out;
+ 
+ 	mpi_request = kzalloc(ioc->request_sz, GFP_KERNEL);
+ 	if (!mpi_request) {
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_transport.c b/drivers/scsi/mpt3sas/mpt3sas_transport.c
+index 031b420..7acb408 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_transport.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_transport.c
+@@ -296,7 +296,6 @@ _transport_expander_report_manufacture(struct MPT3SAS_ADAPTER *ioc,
+ 	struct rep_manu_request *manufacture_request;
+ 	int rc;
+ 	u16 smid;
+-	u32 ioc_state;
+ 	void *psge;
+ 	u8 issue_reset = 0;
+ 	void *data_out = NULL;
+@@ -304,7 +303,6 @@ _transport_expander_report_manufacture(struct MPT3SAS_ADAPTER *ioc,
+ 	dma_addr_t data_in_dma;
+ 	size_t data_in_sz;
+ 	size_t data_out_sz;
+-	u16 wait_state_count;
+ 
+ 	if (ioc->shost_recovery || ioc->pci_error_recovery) {
+ 		ioc_info(ioc, "%s: host reset in progress!\n", __func__);
+@@ -320,22 +318,10 @@ _transport_expander_report_manufacture(struct MPT3SAS_ADAPTER *ioc,
+ 	}
+ 	ioc->transport_cmds.status = MPT3_CMD_PENDING;
+ 
+-	wait_state_count = 0;
+-	ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-	while (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
+-		if (wait_state_count++ == 10) {
+-			ioc_err(ioc, "%s: failed due to ioc not operational\n",
+-				__func__);
+-			rc = -EFAULT;
+-			goto out;
+-		}
+-		ssleep(1);
+-		ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-		ioc_info(ioc, "%s: waiting for operational state(count=%d)\n",
+-			 __func__, wait_state_count);
+-	}
+-	if (wait_state_count)
+-		ioc_info(ioc, "%s: ioc is operational\n", __func__);
++	rc = mpt3sas_wait_for_ioc_to_operational(ioc,
++					IOC_OPERATIONAL_WAIT_COUNT);
++	if (rc)
++		goto out;
+ 
+ 	smid = mpt3sas_base_get_smid(ioc, ioc->transport_cb_idx);
+ 	if (!smid) {
+@@ -1077,13 +1063,11 @@ _transport_get_expander_phy_error_log(struct MPT3SAS_ADAPTER *ioc,
+ 	struct phy_error_log_reply *phy_error_log_reply;
+ 	int rc;
+ 	u16 smid;
+-	u32 ioc_state;
+ 	void *psge;
+ 	u8 issue_reset = 0;
+ 	void *data_out = NULL;
+ 	dma_addr_t data_out_dma;
+ 	u32 sz;
+-	u16 wait_state_count;
+ 
+ 	if (ioc->shost_recovery || ioc->pci_error_recovery) {
+ 		ioc_info(ioc, "%s: host reset in progress!\n", __func__);
+@@ -1099,22 +1083,10 @@ _transport_get_expander_phy_error_log(struct MPT3SAS_ADAPTER *ioc,
+ 	}
+ 	ioc->transport_cmds.status = MPT3_CMD_PENDING;
+ 
+-	wait_state_count = 0;
+-	ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-	while (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
+-		if (wait_state_count++ == 10) {
+-			ioc_err(ioc, "%s: failed due to ioc not operational\n",
+-				__func__);
+-			rc = -EFAULT;
+-			goto out;
+-		}
+-		ssleep(1);
+-		ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-		ioc_info(ioc, "%s: waiting for operational state(count=%d)\n",
+-			 __func__, wait_state_count);
+-	}
+-	if (wait_state_count)
+-		ioc_info(ioc, "%s: ioc is operational\n", __func__);
++	rc = mpt3sas_wait_for_ioc_to_operational(ioc,
++					IOC_OPERATIONAL_WAIT_COUNT);
++	if (rc)
++		goto out;
+ 
+ 	smid = mpt3sas_base_get_smid(ioc, ioc->transport_cb_idx);
+ 	if (!smid) {
+@@ -1381,13 +1353,11 @@ _transport_expander_phy_control(struct MPT3SAS_ADAPTER *ioc,
+ 	struct phy_control_reply *phy_control_reply;
+ 	int rc;
+ 	u16 smid;
+-	u32 ioc_state;
+ 	void *psge;
+ 	u8 issue_reset = 0;
+ 	void *data_out = NULL;
+ 	dma_addr_t data_out_dma;
+ 	u32 sz;
+-	u16 wait_state_count;
+ 
+ 	if (ioc->shost_recovery || ioc->pci_error_recovery) {
+ 		ioc_info(ioc, "%s: host reset in progress!\n", __func__);
+@@ -1403,22 +1373,10 @@ _transport_expander_phy_control(struct MPT3SAS_ADAPTER *ioc,
+ 	}
+ 	ioc->transport_cmds.status = MPT3_CMD_PENDING;
+ 
+-	wait_state_count = 0;
+-	ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-	while (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
+-		if (wait_state_count++ == 10) {
+-			ioc_err(ioc, "%s: failed due to ioc not operational\n",
+-				__func__);
+-			rc = -EFAULT;
+-			goto out;
+-		}
+-		ssleep(1);
+-		ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+-		ioc_info(ioc, "%s: waiting for operational state(count=%d)\n",
+-			 __func__, wait_state_count);
+-	}
+-	if (wait_state_count)
+-		ioc_info(ioc, "%s: ioc is operational\n", __func__);
++	rc = mpt3sas_wait_for_ioc_to_operational(ioc,
++					IOC_OPERATIONAL_WAIT_COUNT);
++	if (rc)
++		goto out;
+ 
+ 	smid = mpt3sas_base_get_smid(ioc, ioc->transport_cb_idx);
+ 	if (!smid) {
+-- 
+1.8.3.1
 
-No sure how this happened; will fix it and resend.
-
-K. Y
->=20
-> greg k-h
