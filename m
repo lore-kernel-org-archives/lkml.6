@@ -2,192 +2,228 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561B7ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C2BECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:58:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BBB821528
+	by mail.kernel.org (Postfix) with ESMTP id CEC5D2151D
 	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:58:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KWht7aTR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BBB821528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEC5D2151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeJQQxh (ORCPT
+        id S1727254AbeJQQxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 12:53:37 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36279 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbeJQQxg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 12:53:36 -0400
-Received: by mail-pf1-f196.google.com with SMTP id l81-v6so12873697pfg.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 01:58:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uD+DH1P0SFFdY+Fa3qAgij6eAcAFeaVCmZBUuVfGQX4=;
-        b=KWht7aTRlkiKCBtRfVeJNsP4i4VUhahGY5ijojCW63jtUpOs4tO1YQPPfBRq28ztKf
-         pwbjKA+NcHMq8buohff8sKTcAm83Kq4FsjvkNQ8NruvsG8+UC9EEZTm1B4i1M1GZzYKV
-         /TGgaHI/3co+Gf+NZmGh6yKSrf0Lb5Ptunwso=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uD+DH1P0SFFdY+Fa3qAgij6eAcAFeaVCmZBUuVfGQX4=;
-        b=a7kYSUbkXi/Ev5Sz4Xd+Nbwn6C+TRIAksg+uhZEtXYlEHQJx+VMxbmzy//ZEMaWIsH
-         SHf9ahJvLocuBwi32YMIRzHLOO6Ds27GaxuKMQX9aJ90n4M1ZBvsvMdqFjEXrEoWB2gf
-         QN8WZMZVgC0BGLcD/H5SyLEAJO/1ir5IpHXuAw/+Z1LHRyTBhBju2iM77LaknVjBQ8vy
-         vsT6YA7VMci5IlO44YRLSsZYh6vBxYP2ZiAvGsx5GZPWL59TeTbxe745pTBWi24fBjlC
-         pPz9OrLVJkt4Hdiab1eHCPOKIPlgBl4WRYc/Nd30FS7IrMuTEe28GrG8VIPx5hHe29p8
-         VVQA==
-X-Gm-Message-State: ABuFfogQUGOTGztErFLpRcc+50gLyY8oqieKhBVBXcwlwng5QiUao9CX
-        ImDzBxnstHfNumtjYdjn8bB/
-X-Google-Smtp-Source: ACcGV60qBnultztrjkNHwdH05ny71X4T7UVJPkAsnQ7nnm6Q6mWRPLq2U4LFEdHzL+DnQc8fyM1B6g==
-X-Received: by 2002:a63:5c1f:: with SMTP id q31-v6mr23803403pgb.452.1539766734448;
-        Wed, 17 Oct 2018 01:58:54 -0700 (PDT)
-Received: from vovoy-z840.tpe.corp.google.com ([2401:fa00:1:b:d89e:cfa6:3c8:e61b])
-        by smtp.gmail.com with ESMTPSA id 84-v6sm28477983pfs.108.2018.10.17.01.58.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 01:58:53 -0700 (PDT)
-From:   Kuo-Hsin Yang <vovoy@chromium.org>
-To:     vovoy@chromium.org
-Cc:     akpm@linux-foundation.org, chris@chris-wilson.co.uk,
-        corbet@lwn.net, dave.hansen@intel.com, hoegsberg@chromium.org,
-        hughd@google.com, intel-gfx@lists.freedesktop.org,
-        joonas.lahtinen@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, marcheu@chromium.org, mhocko@suse.com,
-        peterz@infradead.org
-Subject: [PATCH v2] shmem, drm/i915: mark pinned shmemfs pages as unevictable
-Date:   Wed, 17 Oct 2018 16:58:01 +0800
-Message-Id: <20181017085801.220742-1-vovoy@chromium.org>
-X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
-In-Reply-To: <20181016174300.197906-1-vovoy@chromium.org>
-References: <20181016174300.197906-1-vovoy@chromium.org>
+        Wed, 17 Oct 2018 12:53:38 -0400
+Received: from mga01.intel.com ([192.55.52.88]:54777 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726714AbeJQQxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 12:53:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 01:57:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,391,1534834800"; 
+   d="scan'208";a="99931705"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Oct 2018 01:57:54 -0700
+Received: from [10.125.252.14] (abudanko-mobl.ccr.corp.intel.com [10.125.252.14])
+        by linux.intel.com (Postfix) with ESMTP id 88D6E580444;
+        Wed, 17 Oct 2018 01:57:51 -0700 (PDT)
+Subject: Re: [RFC][PATCH] perf: Rewrite core context handling
+To:     Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org
+Cc:     linux-kernel@vger.kernel.org, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        songliubraving@fb.com, eranian@google.com, tglx@linutronix.de,
+        mark.rutland@arm.com, megha.dey@intel.com, frederic@kernel.org
+References: <20181010104559.GO5728@hirez.programming.kicks-ass.net>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <f12f2d18-2e25-1879-fe34-227c82618abd@linux.intel.com>
+Date:   Wed, 17 Oct 2018 11:57:49 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181010104559.GO5728@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The i915 driver uses shmemfs to allocate backing storage for gem
-objects. These shmemfs pages can be pinned (increased ref count) by
-shmem_read_mapping_page_gfp(). When a lot of pages are pinned, vmscan
-wastes a lot of time scanning these pinned pages. In some extreme case,
-all pages in the inactive anon lru are pinned, and only the inactive
-anon lru is scanned due to inactive_ratio, the system cannot swap and
-invokes the oom-killer. Mark these pinned pages as unevictable to speed
-up vmscan.
+Hi,
 
-By exporting shmem_unlock_mapping, drivers can: 1. mark a shmemfs
-address space as unevictable with mapping_set_unevictable(), pages in
-the address space will be moved to unevictable list in vmscan. 2. mark
-an address space as evictable with mapping_clear_unevictable(), and move
-these pages back to evictable list with shmem_unlock_mapping().
+On 10.10.2018 13:45, Peter Zijlstra wrote:
+<SNIP>
+> -static bool perf_rotate_context(struct perf_cpu_context *cpuctx)
+> +/*
+> + * XXX somewhat completely buggered; this is in cpu_pmu_context, but we need
+> + * event_pmu_context for rotations. We also need event_pmu_context specific
+> + * scheduling routines. ARGH
+> + *
+> + *  - fixed the cpu_pmu_context vs event_pmu_context thingy
+> + *    (cpu_pmu_context embeds an event_pmu_context)
+> + *
+> + *  - need nr_events/nr_active in epc to do per epc rotation
+> + *    (done)
+> + *
+> + *  - need cpu and task pmu ctx together...
+> + *    (cpc->task_epc)
+> + */
+> +static bool perf_rotate_context(struct perf_cpu_pmu_context *cpc)
 
-This patch was inspired by Chris Wilson's change [1].
+Since it reduces to single cpu context (and single task context) at all times, 
+ideally, it would probably be coded as simple as this: 
 
-[1]: https://patchwork.kernel.org/patch/9768741/
+	perf_rotate_context()
+	{
+            cpu = this_cpu_ptr(&cpu_context)
+            for_every_pmu(pmu, cpu)
+                    for_every_event_ctx(event_ctx, pmu)
+	                    rotate(event_ctx, pmu)
+	}
 
-Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
----
-Changes for v2:
- Squashed the two patches.
+so rotate(event_ctx, pmu) would operate on common events objects semantics 
+and memory layout, and PMU specific code handle SW/HW programming differences.
+Implementing that implies this data relations:
 
- Documentation/vm/unevictable-lru.rst | 4 +++-
- drivers/gpu/drm/i915/i915_gem.c      | 8 ++++++++
- mm/shmem.c                           | 2 ++
- 3 files changed, 13 insertions(+), 1 deletion(-)
+                                      cpu (struct perf_cpu_context)
+                                       |
+                                       v
+      cpu_context ---> cpu_0->cpu_1->cpu_2->cpu_3
+                         |      |      |      |
+                         v      v      v      v
+    pmu0 (struct pmu)  pmu00  pmu01  pmu02  pmu03    
+                         |      |      |      | 
+                         v      v      v      v
+    pmu1               pmu10  pmu11  pmu12  pmu13
+                         |      |      |      |
+                         v      v      v      v
+    pmu2               pmu20  pmu21 *pmu22* pmu23  <- pmu (struct perf_cpu_pmu_context)
 
-diff --git a/Documentation/vm/unevictable-lru.rst b/Documentation/vm/unevictable-lru.rst
-index fdd84cb8d511..a812fb55136d 100644
---- a/Documentation/vm/unevictable-lru.rst
-+++ b/Documentation/vm/unevictable-lru.rst
-@@ -143,7 +143,7 @@ using a number of wrapper functions:
- 	Query the address space, and return true if it is completely
- 	unevictable.
- 
--These are currently used in two places in the kernel:
-+These are currently used in three places in the kernel:
- 
-  (1) By ramfs to mark the address spaces of its inodes when they are created,
-      and this mark remains for the life of the inode.
-@@ -154,6 +154,8 @@ These are currently used in two places in the kernel:
-      swapped out; the application must touch the pages manually if it wants to
-      ensure they're in memory.
- 
-+ (3) By the i915 driver to mark pinned address space until it's unpinned.
-+
- 
- Detecting Unevictable Pages
- ---------------------------
-diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-index fcc73a6ab503..e0ff5b736128 100644
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -2390,6 +2390,7 @@ i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
- {
- 	struct sgt_iter sgt_iter;
- 	struct page *page;
-+	struct address_space *mapping;
- 
- 	__i915_gem_object_release_shmem(obj, pages, true);
- 
-@@ -2409,6 +2410,10 @@ i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
- 	}
- 	obj->mm.dirty = false;
- 
-+	mapping = file_inode(obj->base.filp)->i_mapping;
-+	mapping_clear_unevictable(mapping);
-+	shmem_unlock_mapping(mapping);
-+
- 	sg_free_table(pages);
- 	kfree(pages);
- }
-@@ -2551,6 +2556,7 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
- 	 * Fail silently without starting the shrinker
- 	 */
- 	mapping = obj->base.filp->f_mapping;
-+	mapping_set_unevictable(mapping);
- 	noreclaim = mapping_gfp_constraint(mapping, ~__GFP_RECLAIM);
- 	noreclaim |= __GFP_NORETRY | __GFP_NOWARN;
- 
-@@ -2664,6 +2670,8 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
- err_pages:
- 	for_each_sgt_page(page, sgt_iter, st)
- 		put_page(page);
-+	mapping_clear_unevictable(mapping);
-+	shmem_unlock_mapping(mapping);
- 	sg_free_table(st);
- 	kfree(st);
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 446942677cd4..d1ce34c09df6 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -786,6 +786,7 @@ void shmem_unlock_mapping(struct address_space *mapping)
- 		cond_resched();
- 	}
- }
-+EXPORT_SYMBOL_GPL(shmem_unlock_mapping);
- 
- /*
-  * Remove range of pages and swap entries from radix tree, and free them.
-@@ -3874,6 +3875,7 @@ int shmem_lock(struct file *file, int lock, struct user_struct *user)
- void shmem_unlock_mapping(struct address_space *mapping)
- {
- }
-+EXPORT_SYMBOL_GPL(shmem_unlock_mapping);
- 
- #ifdef CONFIG_MMU
- unsigned long shmem_get_unmapped_area(struct file *file,
--- 
-2.19.1.331.ge82ca0e54c-goog
 
+                                            event_ctx
+                                               |
+                                               v
+    *pmu22* (struct perf_cpu_pmu_context) -> ctx22_0 -> ctx22_1
+                                               |          |
+                                               v          v
+                                             event00    event01
+                                               |          |
+                                               v          v
+                                            *event10*   event11   <- event
+                                               |          |
+                                               v          v
+                                             event20    event21
+
+In new schema that would result in one more link on the right:
+
+                                                         cpu_context[NR_CPUS] 
+                                                                  |
+                                                                  v
+  task_struct::perf_event_ctxp -> perf_event_context <- perf_cpu_context -----,
+       ^                                 |    ^ ^                             |
+       `---------------------------------'    | |                             |
+                                              | `--> perf_event_pmu_context   | <- link
+                                              |       ^           ^           |
+                                              |       |           |           |
+                                              | ,-----'           v           |
+                                              | |      perf_cpu_pmu_context <-' 
+                                              | |                 ^
+                                              | |                 |
+                                              v v                 v
+                                         perf_event ---> pmu[,cpu_pmu_ctx[NR_CPUS],]
+
+Thanks,
+Alexey
+
+>  {
+> +	struct perf_cpu_context *cpuctx = this_cpu_ptr(&cpu_context);
+> +	struct perf_event_pmu_context *cpu_epc, *task_epc = NULL;
+>  	struct perf_event *cpu_event = NULL, *task_event = NULL;
+>  	bool cpu_rotate = false, task_rotate = false;
+>  	struct perf_event_context *ctx = NULL;
+> +	struct pmu *pmu;
+>  
+>  	/*
+>  	 * Since we run this from IRQ context, nobody can install new
+>  	 * events, thus the event count values are stable.
+>  	 */
+>  
+> -	if (cpuctx->ctx.nr_events) {
+> -		if (cpuctx->ctx.nr_events != cpuctx->ctx.nr_active)
+> -			cpu_rotate = true;
+> -	}
+> +	cpu_epc = &cpc->epc;
+> +	pmu = cpu_epc->pmu;
+>  
+> -	ctx = cpuctx->task_ctx;
+> -	if (ctx && ctx->nr_events) {
+> -		if (ctx->nr_events != ctx->nr_active)
+> +	if (cpu_epc->nr_events && cpu_epc->nr_events != cpu_epc->nr_active)
+> +		cpu_rotate = true;
+> +
+> +	task_epc = cpc->task_epc;
+> +	if (task_epc) {
+> +		WARN_ON_ONCE(task_epc->pmu != pmu);
+> +		if (task_epc->nr_events && task_epc->nr_events != task_epc->nr_active)
+>  			task_rotate = true;
+>  	}
+>  
+>  	if (!(cpu_rotate || task_rotate))
+>  		return false;
+>  
+> -	perf_ctx_lock(cpuctx, cpuctx->task_ctx);
+> -	perf_pmu_disable(cpuctx->ctx.pmu);
+> +	perf_ctx_lock(cpuctx, ctx);
+> +	perf_pmu_disable(pmu);
+>  
+>  	if (task_rotate)
+> -		task_event = ctx_first_active(ctx);
+> +		task_event = ctx_first_active(task_epc);
+> +
+>  	if (cpu_rotate)
+> -		cpu_event = ctx_first_active(&cpuctx->ctx);
+> +		cpu_event = ctx_first_active(cpu_epc);
+>  
+>  	/*
+>  	 * As per the order given at ctx_resched() first 'pop' task flexible
+>  	 * and then, if needed CPU flexible.
+>  	 */
+> -	if (task_event || (ctx && cpu_event))
+> -		ctx_sched_out(ctx, cpuctx, EVENT_FLEXIBLE);
+> -	if (cpu_event)
+> -		cpu_ctx_sched_out(cpuctx, EVENT_FLEXIBLE);
+> +	if (task_event || (task_epc && cpu_event)) {
+> +		update_context_time(ctx);
+> +		__pmu_ctx_sched_out(task_epc, EVENT_FLEXIBLE);
+> +	}
+> +
+> +	if (cpu_event) {
+> +		update_context_time(&cpuctx->ctx);
+> +		__pmu_ctx_sched_out(cpu_epc, EVENT_FLEXIBLE);
+> +		rotate_ctx(&cpuctx->ctx, cpu_event);
+> +		__pmu_ctx_sched_in(&cpuctx->ctx, pmu);
+> +	}
+>  
+>  	if (task_event)
+>  		rotate_ctx(ctx, task_event);
+> -	if (cpu_event)
+> -		rotate_ctx(&cpuctx->ctx, cpu_event);
+>  
+> -	perf_event_sched_in(cpuctx, ctx, current);
+> +	if (task_event || (task_epc && cpu_event))
+> +		__pmu_ctx_sched_in(ctx, pmu);
+>  
+> -	perf_pmu_enable(cpuctx->ctx.pmu);
+> -	perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
+> +	perf_pmu_enable(pmu);
+> +	perf_ctx_unlock(cpuctx, ctx);
+>  
+>  	return true;
+>  }
