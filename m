@@ -2,159 +2,97 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CCBECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DBFECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC6B205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:28:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC6B205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6490A205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:28:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6490A205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbeJREZg (ORCPT
+        id S1727821AbeJREZm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 00:25:36 -0400
-Received: from mga04.intel.com ([192.55.52.120]:62491 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbeJREZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 00:25:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 13:28:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="100107468"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Oct 2018 13:28:13 -0700
-Date:   Wed, 17 Oct 2018 13:24:46 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Babu Moger <babu.moger@amd.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        James Morse <james.morse@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Subject: Re: [PATCH 0/7] selftests/resctrl: Add resctrl selftest
-Message-ID: <20181017202446.GA45091@romley-ivt3.sc.intel.com>
-References: <1539709001-38018-1-git-send-email-fenghua.yu@intel.com>
- <933e752f-2533-c982-cf0f-acd59ac50cde@amd.com>
- <FFF73D592F13FD46B8700F0A279B802F485D47DE@ORSMSX114.amr.corp.intel.com>
- <20181016203215.GA39177@romley-ivt3.sc.intel.com>
- <bc44fb0c-1ce2-031d-f2b4-3941f1517bbf@amd.com>
- <9c99a95d-de9a-6b33-a4c4-074b31515a7e@amd.com>
- <CALBSrqBXdXfNdZ1yJ_-zUSkk_2m_8R-VHNqk8DH3HmxCti4hhA@mail.gmail.com>
+        Thu, 18 Oct 2018 00:25:42 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43064 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbeJREZl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 00:25:41 -0400
+Received: by mail-oi1-f194.google.com with SMTP id s69-v6so22156632oie.10;
+        Wed, 17 Oct 2018 13:28:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nEcdy7QEDbNlcX07BFBN89zLOirmmnq91X/i2VMyaL8=;
+        b=LBzmzB54J3c9Ulg9gv/o0GOVOyFrWdvy5AAoILkCJcfC+NlXWF6yCPLhYzYBVrpj5H
+         /bSn4KbIoycfCE0MYURngdi6vjt+ZwqCQOHrMH2IBg5I3UtUaVmbQ5dJ7M9KVfszMdNZ
+         wC9iTnoV8DRcWOwx9aeqRwKX9bm6fkff7h7+i0GpvP9pjjFBTv0vvc+kPlaoOmeSAvWZ
+         bmaP6zBeNobmx9duXVKKcSwSUrcKuZ66Wr4WePu1BqRdToA7EczemTc7NjhmtCHNEWUf
+         beuinU4ecTtURIh6SmGpGcHs8nlnqQkvXV+cOheqTxooHVUh8CDWjAlbXw1F4gCXsdFN
+         lDzw==
+X-Gm-Message-State: ABuFfojBwJ4Y3HttlKVEUMaARpatsZBMGPcuIHJ2PLF6N7HWvOEPkEUI
+        bXI+sqcsjwwbov9OHpKcBiUrBJguzzR+bicwoTs=
+X-Google-Smtp-Source: ACcGV63AaImc1z7tHmL0M6Msh6TSOdjWNVL1mke8ThowGM2MOldlYt/WOW24+5D3Tl4K3VZSolDd5sb68toPmLpKSvg=
+X-Received: by 2002:aca:ab8b:: with SMTP id u133-v6mr15347446oie.57.1539808099156;
+ Wed, 17 Oct 2018 13:28:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALBSrqBXdXfNdZ1yJ_-zUSkk_2m_8R-VHNqk8DH3HmxCti4hhA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180606193811.16007-1-malat@debian.org> <20180606193811.16007-2-malat@debian.org>
+In-Reply-To: <20180606193811.16007-2-malat@debian.org>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Wed, 17 Oct 2018 22:28:08 +0200
+Message-ID: <CA+7wUswf1+3E12-qs0c0L7PjPWsndYo2oe_b=Gv5vXF0gd+Ttg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] MIPS: Ci20: Enable SND_JZ4740_SOC driver
+To:     James Hogan <jhogan@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        LKML <linux-kernel@vger.kernel.org>, alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 11:04 AM Moger, Babu <Babu.Moger@amd.com> wrote:
-> 
->     Hi Fenghua,
->      My few comments.
-> 
->     On 10/17/2018 09:40 AM, Moger, Babu wrote:
->     > On 10/16/2018 03:32 PM, Fenghua Yu wrote:
->     >>> From: Moger, Babu [mailto:Babu.Moger@amd.com]
->     >>> On 10/16/2018 11:56 AM, Fenghua Yu wrote:
->     >>>> With more and more resctrl features are being added by Intel, AMD and
->     >>>> ARM, a test tool is becoming more and more useful to validate that
->     >>>> both hardware and software functionalities work as expected.
->     >>>
->     >>> I like the initiative here. It is always good to have a single code
->     base.
->     >>>
->     >>> One question. I see that there is a tool at https://github.com/intel/
->     intel-cmt-cat to test and verify the functionality of resctrl feature. I
->     also see some of the distros have this tool already.
->     >>> Is this tool going to replace intel-cmt-cat? I have not looked at the
->     >>> patches closely yet.
->     >>
->     >> No, the selftest in this patch set will not replace intel-cmt-cat or
->     >> vice versa.
->     >>
->     >> The selftest in this patch set has a different purpose from
->     intel-cmt-cat:
->     >> the selftest is a test tool which validates resctrl functionalities
->     while
->     >> intel-cmt-cat is mainly a utility that provides base library for higher
->     >> level applications including performance analysis tools, benchmark
->     measurement
->     >> tools, and potential resctrl tests. For example, running MBA test in the
->     >> selftests tells MBA working or not working (fail/pass) right way. The
->     >
->     > Ok. Sure. Let me take a look at selftest closely. Will send my feedback
->     soon.
+On Wed, Jun 6, 2018 at 9:38 PM Mathieu Malaterre <malat@debian.org> wrote:
+>
+> Update the Ci20's defconfig to enable the JZ4780's SND driver.
+>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>  arch/mips/configs/ci20_defconfig | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
+> index e1c14f6af824..0c08c7675b42 100644
+> --- a/arch/mips/configs/ci20_defconfig
+> +++ b/arch/mips/configs/ci20_defconfig
+> @@ -104,6 +104,10 @@ CONFIG_REGULATOR=y
+>  CONFIG_REGULATOR_DEBUG=y
+>  CONFIG_REGULATOR_FIXED_VOLTAGE=y
+>  # CONFIG_VGA_CONSOLE is not set
+> +CONFIG_SOUND=y
+> +CONFIG_SND=y
+> +CONFIG_SND_SOC=y
+> +CONFIG_SND_JZ4740_SOC=y
 
-Thanks.
+technically I am also missing: CONFIG_SND_JZ4740_SOC_I2S=y
 
->     >
->     >> intel-cmt-cat doesn't have this testing capability unless we extend the
->     >> tool.
->     >>
->     >> And intel-cmt-cat is maintained and developed by Intel. I don't think
->     it's
->     >> easy to extend it to AMD and ARM features. The selftest will be
->     maintained
->     >
->     > We1l.. We were hoping to have a common tool across. It makes it easy for
->     > distros. Probably, we can have a separate discussion on this.
->     >
->     >> and developed by the community and will hopefully cover all
->     architectures.
->     >>
->     >> We have seen a few issues recently in resctrl and may see more issues
->     >> while expending the features. A convevient selftest may be useful to
->     help
->     >> identify and fix those potential issues.
-> 
->     I don't know the rules for selftest. Here are my general comments.
-> 
->      1. File names are not consistent.
->       # ls *.c
->        fill_buf.c  mba.c  mbm.c  resctrl.c  resctrl_membw.c  resctrl_tests.c
->       Few files start with resctrl_ prefix and others don't.
-
-All files are in resctrl directory. It's redundant to have resctrl prefix for
-each file. Probably we will remove the resctrl prefix for all files to
-keep uniform naming style.
-
-> 
->      2. Do we need README(or USAGE) here? I had too
-
-We can add that in next version.
-
-> 
->      3. I saw lots of these errors.
->         "mba.c:111:2: error: ‘for’ loop initial declarations are only allowed
->     in C99 mode"
->       for (int i = 0; i < 10; i++) {
->       ^
-> 
->       I had to change it to
->        int i;
->        for (i = 0; i < 10; i++) {
-
-Will fix the issues.
-
-Thanks.
-
--Fenghua
+>  # CONFIG_HID is not set
+>  # CONFIG_USB_SUPPORT is not set
+>  CONFIG_MMC=y
+> --
+> 2.11.0
+>
