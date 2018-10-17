@@ -2,238 +2,102 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD78C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 02:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 954FBC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 02:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7104214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 02:17:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47F37214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 02:19:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DUHKFz75"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7104214DA
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AF/qJh14"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47F37214C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeJQKKc (ORCPT
+        id S1727360AbeJQKNB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 06:10:32 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43391 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727086AbeJQKKc (ORCPT
+        Wed, 17 Oct 2018 06:13:01 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:38730 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbeJQKNB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 06:10:32 -0400
-Received: by mail-pl1-f193.google.com with SMTP id 30-v6so11882614plb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 19:17:11 -0700 (PDT)
+        Wed, 17 Oct 2018 06:13:01 -0400
+Received: by mail-yb1-f196.google.com with SMTP id e190-v6so9736015ybb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 19:19:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=DCVmlSjP07MR/1l2OcfmI69av54uWU4+X7+FEqXRDu4=;
-        b=DUHKFz759mSuPyWK2AWmYQatTLCnnFmVLYf1RFeXhfuXGEx3O4r791tzBYDsYeCb6E
-         KmiNAoDorCdqoAI85NXZWttiYTYgIaYy8jcXdSYkyHY+GftlEufSnZR5bybIzfyL1Lmp
-         epdl0TxNcuIDcydpRr5rygNAxrnducYFO9xpE=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=fmS4tWhzloUUJqiAdoh6mxdsNrq3Rd/E5QAg9bsl7MY=;
+        b=AF/qJh146laykI9gT6QmcZWIHVJxCD2AZAkPEtWCVqQq5RSZ70L2xSkX7iaPiYjujZ
+         G2SS+CyVnnROkoz6ywljm0XS7V3tdffI16BPqi7Scy4zzRHQQ3B8HLO+hX/JIlte2ee+
+         mI9U4HLV1cYuProy3SDHrZC6W08VtGVRX6mpc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=DCVmlSjP07MR/1l2OcfmI69av54uWU4+X7+FEqXRDu4=;
-        b=ickXHGtBxScSPPlq+jg6Qa3JQdLbGANeEpvMjgRituwtrRxEVHipO77FpqXv0To7XN
-         bSdEghbGK/MR+VDS7xUXSQtV2ueKzZkqU703FnQ10bRvSMNiX+alh734tJQD5jtm7FyA
-         Swvs+SrLDAWZuOj3F/ss/8im9y1mq58W0fEfX4AcB+PFWHLr3lChazW39SGZL3biVJZN
-         AQ/P4GNhgPzdT82AzDW4LQvzwhGiEERefkuFg46NXZw0EYmrNrKVfiN8njgYgzfDzcFI
-         ovZzS6pcMJqkHvijiWV9jnb4eUIkShD3KhvTk+hs8basB+0Pw82YpykRVz78iXTWHXyi
-         4IRg==
-X-Gm-Message-State: ABuFfohvW7G1Bi05jV6SLVvc/yqrq6NTrGCsAJfMH3Hc3qXvdmZCM9fi
-        +fGTDXIbJgVLSJ/ruJmoVwz/ZirIJ5E=
-X-Google-Smtp-Source: ACcGV60uqpSy+TqB2iYqbcuXkUGuq1ue5MaGG8JDp11NKPCe62fvKQbvYY8umLod6GBMvgUwVI8aBw==
-X-Received: by 2002:a17:902:6546:: with SMTP id d6-v6mr23894309pln.139.1539742630866;
-        Tue, 16 Oct 2018 19:17:10 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id b14-v6sm19756230pgn.49.2018.10.16.19.17.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 19:17:09 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 19:17:08 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] docs: Introduce deprecated APIs list
-Message-ID: <20181017021708.GA22211@beast>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=fmS4tWhzloUUJqiAdoh6mxdsNrq3Rd/E5QAg9bsl7MY=;
+        b=uXvdbUgKvfta8xCfLevji3ibuI5V4wLvJbb6gRZu9g2DtmrCngqLufmH42bxTHI7QA
+         SSWohJK7oZZulx0e3sO+bsgwmZ9ozjmqWlfLJF9/TVBDPg3LVkGYPZi23L0PN2H6/ShJ
+         GThGlRqrvULqlSFJfcmvq3VVlwplqQ4PmYhloAhffnrUR6+ys06aH/ryGH2aPNa8bgKL
+         TWelj/EaR7ZGdTRSnKkyeTOkUZyCLmN9o4Te60A/ChMEfp5cxSVkaqArb1I1dVnw6+KY
+         evKIm/vB/b1Be69TVlO3KKFyKKBzWtHokzYBkzQQQaobY6j2l1V5Ae0s/hCcv6QCab0A
+         HkaQ==
+X-Gm-Message-State: ABuFfoinOAacjfIt9J8x1I0XSPsi1iS28RE6VWfxH+EOfD24HrWF6dBx
+        kJ3cjmxr7Psd2+YBVh+0+AZK2exOUlk=
+X-Google-Smtp-Source: ACcGV62i7U/Sq6eQcV24ZMuKEe3+gDXFuqNv71DuMjPHbmqn+2EDjNslFuH9yDtn9g0A7SubeSQLIg==
+X-Received: by 2002:a25:4982:: with SMTP id w124-v6mr12662842yba.85.1539742778334;
+        Tue, 16 Oct 2018 19:19:38 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id q2-v6sm3840666ywg.87.2018.10.16.19.19.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Oct 2018 19:19:37 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id e190-v6so9735987ybb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 19:19:36 -0700 (PDT)
+X-Received: by 2002:a25:bcc6:: with SMTP id l6-v6mr2427739ybm.171.1539742776434;
+ Tue, 16 Oct 2018 19:19:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Tue, 16 Oct 2018 19:19:35
+ -0700 (PDT)
+In-Reply-To: <CAHrFyr6AeZzfGkQneiyoLz6YZ-vnyyQWTtc0HK-tqVJkoXt=4w@mail.gmail.com>
+References: <20181016223322.16844-1-christian@brauner.io> <20181016223322.16844-2-christian@brauner.io>
+ <877eihjw0n.fsf@xmission.com> <CAHrFyr6AeZzfGkQneiyoLz6YZ-vnyyQWTtc0HK-tqVJkoXt=4w@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 16 Oct 2018 19:19:35 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJTaOyzPUYMCi9_vbxCUhLz09C-LEQL9dmM+pt_xfxcQw@mail.gmail.com>
+Message-ID: <CAGXu5jJTaOyzPUYMCi9_vbxCUhLz09C-LEQL9dmM+pt_xfxcQw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] sysctl: handle overflow in proc_get_long
+To:     Christian Brauner <christian@brauner.io>
+Cc:     "Eric W . Biederman" <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As discussed in the "API replacement/deprecation" thread[1], this
-makes an effort to document what things shouldn't get (re)added to the
-kernel, by introducing Documentation/process/deprecated.rst. It also
-adds the overflow kerndoc to ReST output, and tweaks the struct_size()
-documentation to parse correctly.
+On Tue, Oct 16, 2018 at 5:24 PM, Christian Brauner <christian@brauner.io> wrote:
+> Right, but if you write a value that exceeds the buffer of 22 chars that is used
+> to parse you already get EINVAL back on current kernels.
+> So it didn't feel like returning EOVERFLOW or ERANGE might make sense.
+> I saw a change in 4.10 or 4.11 as well that used EINVAL on UINT_MAX overflow
+> or something. EINVAL might be enough information for userspace here ?/.
 
-[1] https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2018-September/005282.html
+I'd agree: I think there is more precedent for EINVAL.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- Documentation/driver-api/basics.rst  |  3 +
- Documentation/process/deprecated.rst | 99 ++++++++++++++++++++++++++++
- Documentation/process/index.rst      |  1 +
- include/linux/overflow.h             |  2 +-
- 4 files changed, 104 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/process/deprecated.rst
-
-diff --git a/Documentation/driver-api/basics.rst b/Documentation/driver-api/basics.rst
-index 826e85d50a16..e970fadf4d1a 100644
---- a/Documentation/driver-api/basics.rst
-+++ b/Documentation/driver-api/basics.rst
-@@ -121,6 +121,9 @@ Kernel utility functions
- .. kernel-doc:: kernel/rcu/update.c
-    :export:
- 
-+.. kernel-doc:: include/linux/overflow.h
-+   :internal:
-+
- Device Resource Management
- --------------------------
- 
-diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
-new file mode 100644
-index 000000000000..95e261224a81
---- /dev/null
-+++ b/Documentation/process/deprecated.rst
-@@ -0,0 +1,99 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=====================================================================
-+Deprecated Interfaces, Language Features, Attributes, and Conventions
-+=====================================================================
-+
-+In a perfect world, it would be possible to convert all instances of
-+some deprecated API into the new API and entirely remove the old API in
-+a single development cycle. However, due to the size of the kernel, the
-+maintainership hierarchy, and timing, it's not always feasible to do these
-+kinds of conversions at once. This means that new instances may sneak into
-+the kernel while old ones are being removed, only making the amount of
-+work to remove the API grow. In order to educate developers about what
-+has been deprecated and why, this list has been created as a place to
-+point when uses of deprecated things are proposed for inclusion in the
-+kernel.
-+
-+__deprecated
-+------------
-+While this attribute does visually mark an interface as deprecated,
-+it `does not produce warnings during builds any more
-+<https://git.kernel.org/linus/771c035372a036f83353eef46dbb829780330234>`_
-+because one of the standing goals of the kernel is to build without
-+warnings and no one was actually doing anything to remove these deprecated
-+interfaces. While using `__deprecated` is nice to note an old API in
-+a header file, it isn't the full solution. Such interfaces must either
-+be fully removed from the kernel, or added to this file to discourage
-+others from using them in the future.
-+
-+open-coded arithmetic in allocator arguments
-+--------------------------------------------
-+Dynamic size calculations (especially multiplication)
-+should not be performed in memory allocator (or similar)
-+function arguments.
-+
-+For example, do not use ``rows * cols`` as an argument, as in:
-+``kmalloc(rows * cols, GFP_KERNEL)``.
-+Instead, the 2-factor form of the allocator should be used:
-+``kmalloc_array(rows, cols, GFP_KERNEL)``.
-+If no 2-factor form is available, the saturate-on-overflow helpers should
-+be used:
-+``vmalloc(array_size(rows, cols))``.
-+
-+See :c:func:`array_size`, :c:func:`array3_size`, and :c:func:`struct_size`,
-+for more details as well as the related :c:func:`check_add_overflow` and
-+:c:func:`check_mul_overflow` family of functions.
-+
-+simple_strtol(), simple_strtoll(), simple_strtoul(), simple_strtoull()
-+----------------------------------------------------------------------
-+The :c:func:`simple_strtol`, :c:func:`simple_strtoll`,
-+:c:func:`simple_strtoul`, and :c:func:`simple_strtoull` functions
-+explicitly ignore overflows, which may lead to unexpected results
-+in callers. The respective :c:func:`kstrtol`, :c:func:`kstrtoll`,
-+:c:func:`kstrtoul`, and :c:func:`kstrtoull` functions tend to be the
-+correct replacements, though note that those require the string to be
-+NUL or newline terminated.
-+
-+strcpy()
-+--------
-+:c:func:`strcpy` performs no bounds checking on the destination
-+buffer. This could result in linear overflows beyond the
-+end of the buffer, leading to all kinds of misbehaviors. While
-+`CONFIG_FORTIFY_SOURCE=y` and various compiler flags help reduce the
-+risk of using this function, there is no good reason to add new uses of
-+this function. The safe replacement is :c:func:`strscpy`.
-+
-+strncpy() on NUL-terminated strings
-+-----------------------------------
-+Use of :c:func:`strncpy` does not guarantee that the destination buffer
-+will be NUL terminated. This can lead to various linear read overflows
-+and other misbehavior due to the missing termination. It also NUL-pads the
-+destination buffer if the source contents are shorter than the destination
-+buffer size, which may be a needless performance penalty for callers using
-+only NUL-terminated strings. The safe replacement is :c:func:`strscpy`.
-+(Users of :c:func:`strscpy` still needing NUL-padding will need an
-+explicit :c:func:`memset` added.)
-+
-+If a caller is using non-NUL-terminated strings, :c:func:`strncpy()` can
-+still be used, but destinations should be marked with the `__nonstring
-+<https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html>`_
-+attribute to avoid future compiler warnings.
-+
-+strlcpy()
-+---------
-+:c:func:`strlcpy` reads the entire source buffer first, possibly exceeding
-+the given limit of bytes to copy. This is inefficient and can lead to
-+linear read overflows if a source string is not NUL-terminated. The
-+safe replacement is :c:func:`strscpy`.
-+
-+Variable Length Arrays (VLAs)
-+-----------------------------
-+Using stack VLAs produces much worse machine code than statically
-+sized stack arrays. While these non-trivial `performance issues
-+<https://git.kernel.org/linus/02361bc77888>`_ are reason enough to
-+eliminate VLAs, they are also a security risk. Dynamic growth of a stack
-+array may exceed the remaining memory in the stack segment. This could
-+lead to a crash, possible overwriting sensitive contents at the end of the
-+stack (when built without `CONFIG_THREAD_INFO_IN_TASK=y`), or overwriting
-+memory adjacent to the stack (when built without `CONFIG_VMAP_STACK=y`)
-diff --git a/Documentation/process/index.rst b/Documentation/process/index.rst
-index 9ae3e317bddf..b4de2c682255 100644
---- a/Documentation/process/index.rst
-+++ b/Documentation/process/index.rst
-@@ -41,6 +41,7 @@ Other guides to the community that are of interest to most developers are:
-    stable-kernel-rules
-    submit-checklist
-    kernel-docs
-+   deprecated
- 
- These are some overall technical guides that have been put here for now for
- lack of a better place.
-diff --git a/include/linux/overflow.h b/include/linux/overflow.h
-index 40b48e2133cb..2f224f43dd06 100644
---- a/include/linux/overflow.h
-+++ b/include/linux/overflow.h
-@@ -291,7 +291,7 @@ static inline __must_check size_t __ab_c_size(size_t n, size_t size, size_t c)
- }
- 
- /**
-- * struct_size() - Calculate size of structure with trailing array.
-+ * function struct_size() - Calculate size of structure with trailing array.
-  * @p: Pointer to the structure.
-  * @member: Name of the array member.
-  * @n: Number of elements in the array.
--- 
-2.17.1
-
+-Kees
 
 -- 
 Kees Cook
