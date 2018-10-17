@@ -2,105 +2,105 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEE1ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE59ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A9B1208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:50:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DrtlBXQC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A9B1208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 9FA6F2145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:54:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FA6F2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbeJRHsH (ORCPT
+        id S1727291AbeJRHwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 03:48:07 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46277 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbeJRHsH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 03:48:07 -0400
-Received: by mail-pf1-f194.google.com with SMTP id r64-v6so13938923pfb.13
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 16:50:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2VouO04QRaIBjzO+RSNJ9hEYO7dF/UmzI2scWHWf/bk=;
-        b=DrtlBXQCohvGNZnl38voyWsyjdZguj/ylNWj8RZbD35CKbzr42acg/caPP/BRff+le
-         ucoTmyJ5Hj0z69RXaDoyPfKMNuy5fYjDUi1YBAwJE0Gfh5B0VKiyYMHw9V94D96crR02
-         e7XewtcER2t2Glj1eBZdeZ+aOa6ikl5pbGB18=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2VouO04QRaIBjzO+RSNJ9hEYO7dF/UmzI2scWHWf/bk=;
-        b=RtZUikX1k7qjoQB2o7JEDyBgYm8qu/SNDp96WyugCLFOu3+8eI8aR3DoTIcSzTnz3A
-         dnD4VBw3VpO150vw+uJ6s7aTnyvksOez3WPmsVX+7g97Lwl10G+bMMjE8thClcV8523e
-         gUcwYKFPuncZerjDvqLogZAj9HgAoZneVFC33iBSOPn03MkQETCj0zEKyGJQPSV2algJ
-         7TR+tFVZ80Xhkw+FOjQiFZoC0rHMM+YjkI2WWuOTqdP/IrV78Vyijc9j73t5PH0dVROC
-         e0J7h4SG28aB+a1dL7MJyks6+QAtcj7rA69papO5yKjG68FVbqoR2fwsPS7AiYGAJmoH
-         yYmg==
-X-Gm-Message-State: ABuFfogEv7Y5BiwNbKs/QvOSC5pYh86ndFEB3F6qrIq1krXZcEo80KQl
-        dwJ+RHMfv/QgodXXK69mSYrnBg==
-X-Google-Smtp-Source: ACcGV61cFSfdBntPaVH1T9pN6hAm56tnIi+5nz/5xF7SjsQrRsb87YoutZ0ki2ho/BT1VYXOE5Zjig==
-X-Received: by 2002:a63:de46:: with SMTP id y6-v6mr26182145pgi.198.1539820200300;
-        Wed, 17 Oct 2018 16:50:00 -0700 (PDT)
-Received: from rodete-desktop-imager.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id 187-v6sm28544629pfu.129.2018.10.17.16.49.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 16:49:58 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 16:49:56 -0700
-From:   Brian Norris <briannorris@chromium.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Subject: Re: [RFC PATCH] soc: qcom: rmtfs_mem: Control remoteproc from
- rmtfs_mem
-Message-ID: <20181017234954.GA179852@rodete-desktop-imager.corp.google.com>
-References: <20180925080607.30565-1-bjorn.andersson@linaro.org>
- <20180925172943.GA118699@ban.mtv.corp.google.com>
- <20181002193445.GP2523@minitux>
+        Thu, 18 Oct 2018 03:52:11 -0400
+Received: from mga07.intel.com ([134.134.136.100]:54892 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727019AbeJRHwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 03:52:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 16:54:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
+   d="scan'208";a="100366532"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
+  by orsmga001.jf.intel.com with ESMTP; 17 Oct 2018 16:54:02 -0700
+Subject: [mm PATCH v4 0/6] Deferred page init improvements
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     linux-mm@kvack.org, akpm@linux-foundation.org
+Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
+        dave.jiang@intel.com, alexander.h.duyck@linux.intel.com,
+        linux-kernel@vger.kernel.org, willy@infradead.org,
+        davem@davemloft.net, yi.z.zhang@linux.intel.com,
+        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
+        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
+        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
+        mingo@kernel.org, kirill.shutemov@linux.intel.com
+Date:   Wed, 17 Oct 2018 16:54:02 -0700
+Message-ID: <20181017235043.17213.92459.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002193445.GP2523@minitux>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+This patchset is essentially a refactor of the page initialization logic
+that is meant to provide for better code reuse while providing a
+significant improvement in deferred page initialization performance.
 
-Sorry for getting back to this late.
+In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
+memory per node I have seen the following. In the case of regular memory
+initialization the deferred init time was decreased from 3.75s to 1.06s on
+average. For the persistent memory the initialization time dropped from
+24.17s to 19.12s on average. This amounts to a 253% improvement for the
+deferred memory initialization performance, and a 26% improvement in the
+persistent memory initialization performance.
 
-On Tue, Oct 02, 2018 at 12:34:45PM -0700, Bjorn Andersson wrote:
-> On Tue 25 Sep 10:29 PDT 2018, Brian Norris wrote:
-> For the record; I did consider making the rmtfs implementation the one
-> driving the remoteproc state through /sys/class/remoteproc, but that
-> would not cope with abnormal termination of the rmtfs implementation.
+I have called out the improvement observed with each patch.
 
-It could, if you had rmtfs always power cycle the modem on startup. But
-we'd be in a bad situation in the meantime, so that might not be great.
+v1->v2:
+    Fixed build issue on PowerPC due to page struct size being 56
+    Added new patch that removed __SetPageReserved call for hotplug
+v2->v3:
+    Rebased on latest linux-next
+    Removed patch that had removed __SetPageReserved call from init
+    Added patch that folded __SetPageReserved into set_page_links
+    Tweaked __init_pageblock to use start_pfn to get section_nr instead of pfn
+v3->v4:
+    Updated patch description and comments for mm_zero_struct_page patch
+        Replaced "default" with "case 64"
+        Removed #ifndef mm_zero_struct_page
+    Fixed typo in comment that ommited "_from" in kerneldoc for iterator
+    Added Reviewed-by for patches reviewed by Pavel
+    Added Acked-by from Michal Hocko
+    Added deferred init times for patches that affect init performance
+    Swapped patches 5 & 6, pulled some code/comments from 4 into 5
+        Did this as reserved bit wasn't used in deferred memory init
 
-> I will work up a patch making the remoteproc driver observe the presence
-> of the RMTFS_QMI_SERVICE and see how that looks.
+---
 
-I believe Sibi Sankar already sent a v2 with the rmtfs driver doing this
-instead. He also replied to this email with slightly different
-suggestions; I'll try to reply to both of those.
+Alexander Duyck (6):
+      mm: Use mm_zero_struct_page from SPARC on all 64b architectures
+      mm: Drop meminit_pfn_in_nid as it is redundant
+      mm: Use memblock/zone specific iterator for handling deferred page init
+      mm: Move hot-plug specific memory init into separate functions and optimize
+      mm: Add reserved flag setting to set_page_links
+      mm: Use common iterator for deferred_init_pages and deferred_free_pages
 
-Thanks,
-Brian
+
+ arch/sparc/include/asm/pgtable_64.h |   30 --
+ include/linux/memblock.h            |   58 ++++
+ include/linux/mm.h                  |   50 +++
+ mm/memblock.c                       |   63 ++++
+ mm/page_alloc.c                     |  569 +++++++++++++++++++++--------------
+ 5 files changed, 513 insertions(+), 257 deletions(-)
+
+--
