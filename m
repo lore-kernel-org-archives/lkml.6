@@ -2,95 +2,180 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CAAECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB67ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:39:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 457752150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:38:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 457752150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	by mail.kernel.org (Postfix) with ESMTP id 830F12150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:39:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830F12150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbeJQVeE (ORCPT
+        id S1727288AbeJQVfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:34:04 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42651 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbeJQVeE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:34:04 -0400
-Received: by mail-ot1-f68.google.com with SMTP id c23so24395698otl.9;
-        Wed, 17 Oct 2018 06:38:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y5EUDX803PiowWWGJP/xW4a3xMrgwy9l/YNKviS+1pc=;
-        b=t/mHToNfUgc+Mb52STYO4A0DqMGXTuvB6xECxxdytlDKbu/F2rm+fC7kxk6pehcgue
-         DrBbInPfiWsl0kN2oaIF9BKTbp5VRQKTLPw+HnBvaReWoEhcRQ3i9VIp0wFE2KHrDAGr
-         GpHly4KNJZERuH5MeQF64jYq/dMWxmlBfJDBoAmt4r1gy/uu4zYPUbsG+90NqnW1rea1
-         SGc2s6ss7cJ/UGjYd84YZYf6OtuMlqKgbUqjHv2SR/+AJkXNSuubSJQMxXL9VDvEh0MQ
-         nPQ2gdBvkIOCbr75kpeeHdCF7PV1vUtd2OG3nqBg5tCxQOVmcJrWLgcXipNLGMpGaW5C
-         N3Zg==
-X-Gm-Message-State: ABuFfohu/hxArCBPoDhvfyUnM16RcHHqBVJNq6h7TtxaQH9a3vm+mMof
-        j5c8XCeDi5mIvPJTSNBnJhisO1ob89JbPPp+kDFZAX4VUCg=
-X-Google-Smtp-Source: ACcGV60v7nSAKQSm8G+Heu6Ct0EUZbvudTFD5A3Z3EcQkC4tS1GOlmez/Obvr/CeaZKqPGKdaYWwd7Rn1r1v1nd8Cfw=
-X-Received: by 2002:a9d:488e:: with SMTP id d14mr17599624otf.354.1539783499285;
- Wed, 17 Oct 2018 06:38:19 -0700 (PDT)
+        Wed, 17 Oct 2018 17:35:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42932 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726727AbeJQVfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 17:35:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1930FAFC1;
+        Wed, 17 Oct 2018 13:39:33 +0000 (UTC)
+Date:   Wed, 17 Oct 2018 15:39:31 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Torsten Duwe <duwe@lst.de>
+cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org, jeyu@kernel.org
+Subject: Re: [PATCH v3 3/4] arm64: implement live patching
+In-Reply-To: <20181001141652.5478C68BE1@newverein.lst.de>
+Message-ID: <alpine.LSU.2.21.1810171051560.21847@pobox.suse.cz>
+References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141652.5478C68BE1@newverein.lst.de>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181014170431.GK3461@darkstar.musicnaut.iki.fi>
-In-Reply-To: <20181014170431.GK3461@darkstar.musicnaut.iki.fi>
-From:   Mathieu Malaterre <malat@debian.org>
-Date:   Wed, 17 Oct 2018 15:38:07 +0200
-Message-ID: <CA+7wUszkduiKMVx5Et3Q2-2tz72CXUKE1_kndC6V1d45uEY2Aw@mail.gmail.com>
-Subject: Re: Bug report: MIPS CI20/jz4740-mmc DMA and PREEMPT_NONE
-To:     aaro.koskinen@iki.fi
-Cc:     Linux-MIPS <linux-mips@linux-mips.org>, linux-mmc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 1 Oct 2018, Torsten Duwe wrote:
 
-On Sun, Oct 14, 2018 at 7:04 PM Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
->
-> Hi,
->
-> There is something wrong with jz4740-mmc in current mainline kernel
-> (tested v4.18 and 4.19-rc, the MMC support for CI20 does not exist
-> prior those), as the DMA support does not work properly if I disable
-> kernel pre-emption. The console gets flooded with:
->
-> [   16.461094] jz4740-mmc 13450000.mmc: [jz4740_mmc_prepare_dma_data] invalid cookie: data->host_cookie 567 host->next_data.cookie 568
-> [   16.473120] jz4740-mmc 13450000.mmc: [jz4740_mmc_prepare_dma_data] invalid cookie: data->host_cookie 568 host->next_data.cookie 569
-> [   16.485144] jz4740-mmc 13450000.mmc: [jz4740_mmc_prepare_dma_data] invalid cookie: data->host_cookie 569 host->next_data.cookie 570
-> [   16.497170] jz4740-mmc 13450000.mmc: [jz4740_mmc_prepare_dma_data] invalid cookie: data->host_cookie 570 host->next_data.cookie 571
-> [   16.509194] jz4740-mmc 13450000.mmc: [jz4740_mmc_prepare_dma_data] invalid cookie: data->host_cookie 571 host->next_data.cookie 572
-> [   16.532421] jz4740-mmc 13450000.mmc: [jz4740_mmc_prepare_dma_data] invalid cookie: data->host_cookie 572 host->next_data.cookie 573
-> [   16.544594] jz4740-mmc 13450000.mmc: [jz4740_mmc_prepare_dma_data] invalid cookie: data->host_cookie 573 host->next_data.cookie 574
-> [   16.556621] jz4740-mmc 13450000.mmc: [jz4740_mmc_prepare_dma_data] invalid cookie: data->host_cookie 574 host->next_data.cookie 575
-> [   16.568638] jz4740-mmc 13450000.mmc: [jz4740_mmc_prepare_dma_data] invalid cookie: data->host_cookie 575 host->next_data.cookie 576
-> [   16.601092] jz4740-mmc 13450000.mmc: [jz4740_mmc_prepare_dma_data] invalid cookie: data->host_cookie 582 host->next_data.cookie 583
->
-> etc. ad inf.
->
-> This should be easily reproducible on CI20 board with ci20_defconfig
-> and setting CONFIG_PREEMPT_NONE=y.
+> Based on ftrace with regs, do the usual thing. Also allocate a
+> task flag for whatever consistency handling will be used.
+> Watch out for interactions with the graph tracer.
 
-Since CONFIG_PREEMPT has been 'y' since at least commit 0752f92934292
-could you confirm that the original mmc driver (kernel from imgtech
-people) did work ok with PREEMPT_NONE (sorry I did not do my homework)
-?
+Similar to what Mark wrote about 2/4, I'd appreciate a better commit log. 
+Could you explain traditional "what/why/how", please?
+ 
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
+> 
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -119,6 +119,7 @@ config ARM64
+>  	select HAVE_GENERIC_DMA_COHERENT
+>  	select HAVE_HW_BREAKPOINT if PERF_EVENTS
+>  	select HAVE_IRQ_TIME_ACCOUNTING
+> +	select HAVE_LIVEPATCH
+>  	select HAVE_MEMBLOCK
+>  	select HAVE_MEMBLOCK_NODE_MAP if NUMA
+>  	select HAVE_NMI
+> @@ -1349,4 +1350,6 @@ if CRYPTO
+>  source "arch/arm64/crypto/Kconfig"
+>  endif
+>  
+> +source "kernel/livepatch/Kconfig"
+> +
+>  source "lib/Kconfig"
+> --- a/arch/arm64/include/asm/thread_info.h
+> +++ b/arch/arm64/include/asm/thread_info.h
+> @@ -76,6 +76,7 @@ void arch_release_task_struct(struct tas
+>  #define TIF_FOREIGN_FPSTATE	3	/* CPU's FP state is not current's */
+>  #define TIF_UPROBE		4	/* uprobe breakpoint or singlestep */
+>  #define TIF_FSCHECK		5	/* Check FS is USER_DS on return */
+> +#define TIF_PATCH_PENDING	6
+>  #define TIF_NOHZ		7
+>  #define TIF_SYSCALL_TRACE	8
+>  #define TIF_SYSCALL_AUDIT	9
+> @@ -94,6 +95,7 @@ void arch_release_task_struct(struct tas
+>  #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+>  #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+>  #define _TIF_FOREIGN_FPSTATE	(1 << TIF_FOREIGN_FPSTATE)
+> +#define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+>  #define _TIF_NOHZ		(1 << TIF_NOHZ)
+>  #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+>  #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+> @@ -106,7 +108,8 @@ void arch_release_task_struct(struct tas
+>  
+>  #define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_SIGPENDING | \
+>  				 _TIF_NOTIFY_RESUME | _TIF_FOREIGN_FPSTATE | \
+> -				 _TIF_UPROBE | _TIF_FSCHECK)
+> +				 _TIF_UPROBE | _TIF_FSCHECK | \
+> +				 _TIF_PATCH_PENDING)
 
-Thanks
+Could you add a note to the changelog what this means? My ability to read 
+arm64 entry.S is very limited, but I can see that _TIF_WORK_MASK is 
+process in a syscall exit and irq return paths. That's good. It is also 
+called (via "b ret_to_user") in a couple of different places (el0_* 
+labels). I guess those are returns from exception handling. A comment 
+about it in the changelog would be appreciated.
+  
+>  #define _TIF_SYSCALL_WORK	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT | \
+>  				 _TIF_SYSCALL_TRACEPOINT | _TIF_SECCOMP | \
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/livepatch.h
+> @@ -0,0 +1,36 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + *
+> + * livepatch.h - arm64-specific Kernel Live Patching Core
+> + *
+> + * Copyright (C) 2016,2018 SUSE
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * as published by the Free Software Foundation; either version 2
+> + * of the License, or (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program; if not, see <http://www.gnu.org/licenses/>.
+> + */
+> +#ifndef _ASM_ARM64_LIVEPATCH_H
+> +#define _ASM_ARM64_LIVEPATCH_H
+> +
+> +#include <linux/module.h>
+> +#include <linux/ftrace.h>
 
-> A.
+I think that only
+
+#include <asm/ptrace.h>
+
+is in fact needed, because of "struct pt_regs".
+
+
+Ad relocations. I checked that everything in struct mod_arch_specific 
+stays after the module is load. Both core and init get SHF_ALLOC set 
+(mod->arch.core.plt->sh_flags in module_frob_arch_sections(). It is 
+important because apply_relocate_add() may use those sections 
+through module_emit_plt_entry() call.
+
+ftrace_trampoline section gets SHF_ALLOC as well. Btw, don't you want to 
+do something similar for new ftrace_regs_trampoline in 
+module_frob_arch_sections()? Perhaps even edit 
+arch/arm64/kernel/module.lds? I'm completely clueless here, so it may be 
+ok. And it applies to 2/4 patch.
+
+The last thing is count_plts() function called from 
+module_frob_arch_sections(). It needed to be changed in 2016 as well. See 
+Jessica's patch 
+(20160713001113.GA30925@packer-debian-8-amd64.digitalocean.com). The logic 
+in the function has changed since then. If I am not mistaken, 
+count_plts() is fine as it is right now. It does not consider SHN_UNDEF 
+anymore, it looks at the destination section (where a symbol should 
+resolved to) only.
+
+Jessica, could you doublecheck, please?
+
+Torsten, please doublecheck all this as well and add a comment about all 
+this to the changelog, so we don't have to analyze it from the beginning 
+again in the future.
+
+Thanks,
+Miroslav
