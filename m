@@ -2,115 +2,114 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B635ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87543ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA2C2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:12:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y9miJW9T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AA2C2150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 581A72150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:13:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581A72150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeJQTHL (ORCPT
+        id S1727255AbeJQTIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:07:11 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48876 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726922AbeJQTHL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:07:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vAVsTLMJA6FiTXtENZZOQUCdwoBIYlRBqtoKLVH21YI=; b=Y9miJW9Tfmna8fTSyfgRTtcBa
-        MiS7bVh/rqlCKet64Su/YrxOQFnGRhqamNadfzCBCXhoc6A/5LfbCcUlK8ORrP9IZRYWvAWbirl0o
-        2rWfnFgTS+pxLI+prLZZO9oUfOaTvY989bdgj4rvEjnlXodxMPZ8DbMZEP0oegycNw3SVTLvU6+Tj
-        tBAWBb+iwb+fFBdFBgFLobNp4OhU7xeCvoqSonBlKNwJsw5ossLT0MXOWB52BQ1gUJHtdij8qIW0f
-        36dEkhwbgGWK9CWLglYJ0NYByLiVuUydnKnV3SWh3k/5Ya9KKqt1JUJCCbK9c70KhPED4YTWg2CrB
-        1uS0nwikw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gCjjv-0000pi-Hc; Wed, 17 Oct 2018 11:11:49 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E63EC2029856A; Wed, 17 Oct 2018 13:11:45 +0200 (CEST)
-Date:   Wed, 17 Oct 2018 13:11:45 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Sebastian Andrzej Siewior' <bigeasy@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH 1/3] x86/mm/pat: Disable preemption around
- __flush_tlb_all()
-Message-ID: <20181017111145.GJ3121@hirez.programming.kicks-ass.net>
-References: <20181016202525.29437-1-bigeasy@linutronix.de>
- <20181016202525.29437-2-bigeasy@linutronix.de>
- <acaca255a70b411488b889db9d1c31e4@AcuMS.aculab.com>
+        Wed, 17 Oct 2018 15:08:18 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49988 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726922AbeJQTIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 15:08:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40EFE80D;
+        Wed, 17 Oct 2018 04:13:05 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (unknown [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CDA53F59C;
+        Wed, 17 Oct 2018 04:13:03 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 12:12:58 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 00/21] PCI: Cleanup pci-keystone driver
+Message-ID: <20181017111258.GA5692@e107981-ln.cambridge.arm.com>
+References: <20181017074114.28239-1-kishon@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <acaca255a70b411488b889db9d1c31e4@AcuMS.aculab.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181017074114.28239-1-kishon@ti.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 09:54:38AM +0000, David Laight wrote:
-> From: Sebastian Andrzej Siewior
-> > Sent: 16 October 2018 21:25
-> > I've seen the WARN_ON_ONCE(__read_cr3() != build_cr3()) in
-> > switch_mm_irqs_off() every once in a while during a snapshotted system
-> > upgrade.
-> > I also saw the warning early during which was introduced in commit
-> > decab0888e6e ("x86/mm: Remove preempt_disable/enable() from
-> > __native_flush_tlb()"). The callchain is
-> > 
-> >   get_page_from_freelist() -> post_alloc_hook() -> __kernel_map_pages()
-> > 
-> > with CONFIG_DEBUG_PAGEALLOC enabled.
-> > 
-> > Turns out, once I disable preemption around __flush_tlb_all() both
-> > warnings do not appear.
-> > 
-> > Disable preemption during CR3 reset / __flush_tlb_all().
-> > 
-> > Fixes: decab0888e6e ("x86/mm: Remove preempt_disable/enable() from __native_flush_tlb()")
-> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > ---
-> >  arch/x86/mm/pageattr.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-> > index 51a5a69ecac9f..fe6b21f0a6631 100644
-> > --- a/arch/x86/mm/pageattr.c
-> > +++ b/arch/x86/mm/pageattr.c
-> > @@ -2088,7 +2088,9 @@ void __kernel_map_pages(struct page *page, int numpages, int enable)
-> >  	 * We should perform an IPI and flush all tlbs,
-> >  	 * but that can deadlock->flush only current cpu:
-> >  	 */
-> > +	preempt_disable();
-> >  	__flush_tlb_all();
-> > +	preempt_enable();
+On Wed, Oct 17, 2018 at 01:10:53PM +0530, Kishon Vijay Abraham I wrote:
+> The PCIe controller in AM654 uses Synopsys core revision 4.90a and uses
+> the same TI wrapper as used in keystone2 with certain modification.
+> Hence AM654 will use the same pci wrapper driver pci-keystone.c
 > 
-> Can it make any sense to flush the tlb with preemption enabled?
-> Surely preemption must be disabled over something else as well?
+> In preparation for adding AM654 support, cleanup pci-keystone driver
+> here.
+> 
+> Most of the cleanups here are trivial with major modification being
+> merging pci-keystone-dw.c and pci-keystone.c
+> 
+> Cleaning-up irq handling in the RFC series is dropped here as it has
+> few comments to be addressed.
+> 
+> Changes from v1:
+> *) remove phy_reset in the cleanup PHY handling patch. It will be sent
+>    while adding AM654 support
+> *) Add a separate patch for using ERR_IRQ_STATUS instead of
+>    ERR_IRQ_STATUS_RAW
+> *) Split outbound window configuration into two patches. One which
+>    gets the number of outbound windows from DT and the other cleansup
+>    outbound window configuration.
+> 
+> Kishon Vijay Abraham I (21):
+>   PCI: keystone: Use quirk to limit MRRS for K2G
+>   PCI: keystone: Use quirk to set MRRS for PCI host bridge
+>   PCI: keystone: Move dw_pcie_setup_rc out of ks_pcie_establish_link()
+>   PCI: keystone: Do not initiate link training multiple times
+>   PCI: keystone: Remove unused argument from ks_dw_pcie_host_init()
+>   PCI: keystone: Merge pci-keystone-dw.c and pci-keystone.c
+>   PCI: keystone: Remove redundant platform_set_drvdata
+>   PCI: keystone: Use uniform function naming convention
+>   dt-bindings: PCI: keystone: Add bindings to get device control module
+>   PCI: keystone: Use syscon APIs to get device id from control module
+>   PCI: keystone: Cleanup PHY handling
+>   PCI: keystone: Invoke pm_runtime APIs to enable clock
+>   PCI: keystone: Cleanup configuration space access
+>   PCI: keystone: Get number of outbound windows from DT
+>   PCI: keystone: Cleanup outbound window configuration
+>   PCI: keystone: Cleanup set_dbi_mode and get_dbi_mode
+>   PCI: keystone: Cleanup ks_pcie_link_up()
+>   PCI: keystone: Use ERR_IRQ_STATUS instead of ERR_IRQ_STATUS_RAW to get
+>     interrupt status
+>   PCI: keystone: Add debug error message for all errors
+>   PCI: keystone: Reorder header file in alphabetical order
+>   PCI: keystone: Cleanup macros defined in pci-keystone.c
+> 
+>  .../devicetree/bindings/pci/pci-keystone.txt  |   3 +
+>  MAINTAINERS                                   |   2 +-
+>  drivers/pci/controller/dwc/Makefile           |   2 +-
+>  drivers/pci/controller/dwc/pci-keystone-dw.c  | 484 -----------
+>  drivers/pci/controller/dwc/pci-keystone.c     | 788 +++++++++++++++---
+>  drivers/pci/controller/dwc/pci-keystone.h     |  57 --
+>  drivers/pci/controller/dwc/pcie-designware.h  |   4 +
+>  7 files changed, 686 insertions(+), 654 deletions(-)
+>  delete mode 100644 drivers/pci/controller/dwc/pci-keystone-dw.c
+>  delete mode 100644 drivers/pci/controller/dwc/pci-keystone.h
 
-This code is fishy anyway, for only doing that local invalidate.
+I have applied the series to pci/keystone, tentatively for v4.20.
 
-Ideally we'd never ever merge anything that only does local invalidates,
-on a global address space, that's just broken.
-
-
+Thanks,
+Lorenzo
