@@ -2,80 +2,82 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D679ECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17389ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C40D421486
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:41:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C40D421486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DBDA821486
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:42:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBDA821486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbeJRCiN (ORCPT
+        id S1728252AbeJRCi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 22:38:13 -0400
-Received: from mga14.intel.com ([192.55.52.115]:41469 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728095AbeJRCiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 22:38:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 11:41:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="100082998"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Oct 2018 11:41:14 -0700
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-To:     balbi@kernel.org, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sathyanarayanan.kuppuswamy@linux.intel.com, stable@vger.kernel.org
-Subject: [PATCH v1 1/1] usb: dwc3: Fix NULL pointer exception in dwc3_pci_remove()
-Date:   Wed, 17 Oct 2018 11:40:26 -0700
-Message-Id: <2972befa36441a5dea1de9efb1e1355f8406d7b6.1539801494.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 17 Oct 2018 22:38:58 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:34774 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728015AbeJRCi6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 22:38:58 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 94178422B8;
+        Wed, 17 Oct 2018 18:41:59 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id MGC65MiqSEwc; Wed, 17 Oct 2018 18:41:59 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 8F14E41077;
+        Wed, 17 Oct 2018 18:41:46 +0000 (UTC)
+Subject: Re: [PATCH 4.14 000/109] 4.14.77-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20181016170524.530541524@linuxfoundation.org>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <cbdc26d7-fc21-3a46-12f9-6cd3fe7379be@kernel.org>
+Date:   Wed, 17 Oct 2018 12:41:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In dwc3_pci_quirks() function, gpiod lookup table is only registered for
-baytrail SOC. But in dwc3_pci_remove(), we try to unregistered it
-without any checks. This leads to NULL pointer de-reference exception in
-gpiod_remove_lookup_table() when unloading the module for non baytrail
-SOCs. This patch fixes this issue.
+On 10/16/2018 11:04 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.77 release.
+> There are 109 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Oct 18 17:04:58 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.77-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Fixes: 5741022cbdf3 ("usb: dwc3: pci: Add GPIO lookup table on platforms
-without ACPI GPIO resources")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- drivers/usb/dwc3/dwc3-pci.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Compiled and booted on my test system. No dmesg regressions.
 
-diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
-index 1286076a8890..842795856bf4 100644
---- a/drivers/usb/dwc3/dwc3-pci.c
-+++ b/drivers/usb/dwc3/dwc3-pci.c
-@@ -283,8 +283,10 @@ static int dwc3_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
- static void dwc3_pci_remove(struct pci_dev *pci)
- {
- 	struct dwc3_pci		*dwc = pci_get_drvdata(pci);
-+	struct pci_dev		*pdev = dwc->pci;
- 
--	gpiod_remove_lookup_table(&platform_bytcr_gpios);
-+	if (pdev->device == PCI_DEVICE_ID_INTEL_BYT)
-+		gpiod_remove_lookup_table(&platform_bytcr_gpios);
- #ifdef CONFIG_PM
- 	cancel_work_sync(&dwc->wakeup_work);
- #endif
--- 
-2.7.4
+thanks,
+-- Shuah
 
