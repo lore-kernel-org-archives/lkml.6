@@ -2,211 +2,98 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2507ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC45ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:15:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58D122150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:14:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58D122150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 29C0E2150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:15:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29C0E2150D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbeJQTJc (ORCPT
+        id S1727061AbeJQTLA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:09:32 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:17303 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726922AbeJQTJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:09:32 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42ZqLq2Vfbz9ttFL;
-        Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id LDEN7I_JHYek; Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42ZqLq1m84z9ttBq;
-        Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 88FA68B7FA;
-        Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ezw1CVoaURvd; Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
-Received: from pc13168vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1C86A8B7F2;
-        Wed, 17 Oct 2018 13:14:11 +0200 (CEST)
-Subject: Re: Crash on FSL Book3E due to pte_pgprot()? (was Re: [PATCH v3
- 12/24] powerpc/mm: use pte helpers in generic code)
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Geoff Levand <geoff@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Kumar Gala <galak@kernel.crashing.org>,
-        Li Yang <leoyang.li@nxp.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Scott Wood <oss@buserror.net>, aneesh.kumar@linux.vnet.ibm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-References: <cover.1539092111.git.christophe.leroy@c-s.fr>
- <343c844bbc5081d13ee4c9aa27ff3118f607e1cc.1539092112.git.christophe.leroy@c-s.fr>
- <87va61jsma.fsf@concordia.ellerman.id.au>
- <236d72cd-e6d7-61e5-2c80-e4311e41b4f6@c-s.fr>
- <87efcoeudx.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <6ec9cf4b-abd2-8244-4780-4564a7ffb1ad@c-s.fr>
-Date:   Wed, 17 Oct 2018 11:12:08 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 17 Oct 2018 15:11:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45294 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726922AbeJQTLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 15:11:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6E62CAD21;
+        Wed, 17 Oct 2018 11:15:45 +0000 (UTC)
+Date:   Wed, 17 Oct 2018 13:15:44 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     vbabka@suse.cz, hpa@zytor.com, torvalds@linux-foundation.org,
+        ak@linux.intel.com, dave.hansen@intel.com,
+        kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de
+Subject: Re: l1tf: Kernel suggests I throw away third of my memory. I'd
+ rather not
+Message-ID: <20181017111544.GO18839@dhcp22.suse.cz>
+References: <20181017105610.GA4260@amd>
 MIME-Version: 1.0
-In-Reply-To: <87efcoeudx.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017105610.GA4260@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/17/2018 10:32 AM, Michael Ellerman wrote:
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> On 10/17/2018 12:59 AM, Michael Ellerman wrote:
-> ...
->>> The question is what's the right way to fix it? Should pte_pgprot() not
->>> be filtering those bits out on book3e?
->>
->> I think we should not use pte_pggrot() for that then. What about the
->> below fix ?
+On Wed 17-10-18 12:56:10, Pavel Machek wrote:
+> Hi!
 > 
-> Thanks, that almost works.
+> 6a012288 suggests I throw away 1GB on RAM. On 3GB system.. that is not
+> going to be pleasant.
 > 
-> pte_mkprivileged() also needs to not strip _PAGE_BAP_SR.
+> l1tf.html says:
+> 
+> # The Linux kernel contains a mitigation for this attack vector, PTE
+> # inversion, which is permanently enabled and has no performance
+> # impact.
+> 
+> I don't believe it has "no" performance impact, but I guess it is lost
+> in the noise.
 
-Oops, I missed it allthough I knew it. Patch below.
+Please prove otherwise. I would be more than surprised if inverting pfn
+part of the pte is noticeable. But I can be wrong of course.
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Date: Wed, 17 Oct 2018 10:46:24 +0000
-Subject: [PATCH] powerpc/book3e: redefine pte_mkprivileged() and 
-pte_mkuser()
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras 
-<paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+> #  The kernel ensures that the address bits of PTEs, which are
+> # not marked present, never point to cacheable physical memory space.
+> 
+> # A system with an up to date kernel is protected against attacks from
+> # malicious user space applications.
+> 
+> These are not true.
+> 
+> cat /sys/devices/system/cpu/vulnerabilities/l1tf
+> Vulnerable
+> uname -a
+> Linux amd 4.19.0-rc8-next-20181017autobisect1539371050 #189 SMP Wed
+> Oct 17 12:04:23 CEST 2018 i686 GNU/Linux
 
-Book3e defines both _PAGE_USER and _PAGE_PRIVILEGED, so the nohash
-default pte_mkprivileged() and pte_mkuser() are not usable.
+This is a result of you having memory above MAX_PFN/2 right?
 
-This patch redefines them for book3e.
+> Now question is... can we do better? Kernel stores information about
+> swapped-out pages there, right? That sounds like a cool hack, but
+> maybe it is time to get rid of that hack?
 
-Fixes: a0da4bc166f2 ("powerpc/mm: Allow platforms to redefine some helpers")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
-  arch/powerpc/include/asm/nohash/pte-book3e.h | 14 ++++++++++++++
-  1 file changed, 14 insertions(+)
+Patches are welcome.
+ 
+> As a workaround, can I simply do swapoff -a to be safe for now?
 
-diff --git a/arch/powerpc/include/asm/nohash/pte-book3e.h 
-b/arch/powerpc/include/asm/nohash/pte-book3e.h
-index 58eef8cb569d..fb4297dff3e2 100644
---- a/arch/powerpc/include/asm/nohash/pte-book3e.h
-+++ b/arch/powerpc/include/asm/nohash/pte-book3e.h
-@@ -109,5 +109,19 @@
-  #define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
-  #define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
+Well, that depends. Do you care about PROT_NONE attacks as well? If not
+then no-swap would help you. But even then no-swap is rather theoretical
+attack on a physical host unless you allow an arbitrary swapout to a
+malicious user (e.g. allow a user controlled memcg hard limit that would
+cause excessive local swapouts).
 
-+static inline pte_t pte_mkprivileged(pte_t pte)
-+{
-+	return __pte((pte_val(pte) & ~_PAGE_USER) | _PAGE_PRIVILEGED);
-+}
-+
-+#define pte_mkprivileged pte_mkprivileged
-+
-+static inline pte_t pte_mkuser(pte_t pte)
-+{
-+	return __pte((pte_val(pte) & ~_PAGE_PRIVILEGED) | _PAGE_USER);
-+}
-+
-+#define pte_mkuser pte_mkuser
-+
-  #endif /* __KERNEL__ */
-  #endif /*  _ASM_POWERPC_NOHASH_PTE_BOOK3E_H */
 -- 
-2.13.3
-
-
-
-> 
-> 
-> But there's also a use of pte_pgprot() in mm/memory.c, and I think that
-> is also broken now that we don't add PAGE_KERNEL back in.
-> 
-> Aneesh is going to do a patch to make pte_pgprot() only mask the PFN
-> which is what other arches do.
-
-Yes I saw it, that's ok for me.
-
-Christophe
-
-> 
-> cheers
-> 
->> From: Christophe Leroy <christophe.leroy@c-s.fr>
->> Date: Wed, 17 Oct 2018 05:56:25 +0000
->> Subject: [PATCH] powerpc/mm: don't use pte_pgprot() in ioremap_prot()
->>
->> pte_pgprot() filters out some required flags like _PAGE_PRESENT.
->>
->> This patch replaces pte_pgprot() by __pgprot(pte_val())
->> in ioremap_prot()
->>
->> Fixes: 26973fa5ac0e ("powerpc/mm: use pte helpers in generic code")
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>    arch/powerpc/mm/pgtable_32.c | 3 ++-
->>    arch/powerpc/mm/pgtable_64.c | 4 ++--
->>    2 files changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
->> index 5877f5aa8f5d..a606e2f4937b 100644
->> --- a/arch/powerpc/mm/pgtable_32.c
->> +++ b/arch/powerpc/mm/pgtable_32.c
->> @@ -122,7 +122,8 @@ ioremap_prot(phys_addr_t addr, unsigned long size,
->> unsigned long flags)
->>    	pte = pte_exprotect(pte);
->>    	pte = pte_mkprivileged(pte);
->>
->> -	return __ioremap_caller(addr, size, pte_pgprot(pte),
->> __builtin_return_address(0));
->> +	return __ioremap_caller(addr, size, __pgprot(pte_val(pte)),
->> +				__builtin_return_address(0));
->>    }
->>    EXPORT_SYMBOL(ioremap_prot);
->>
->> diff --git a/arch/powerpc/mm/pgtable_64.c b/arch/powerpc/mm/pgtable_64.c
->> index fb1375c07e8c..836bf436cabb 100644
->> --- a/arch/powerpc/mm/pgtable_64.c
->> +++ b/arch/powerpc/mm/pgtable_64.c
->> @@ -245,8 +245,8 @@ void __iomem * ioremap_prot(phys_addr_t addr,
->> unsigned long size,
->>    	pte = pte_mkprivileged(pte);
->>
->>    	if (ppc_md.ioremap)
->> -		return ppc_md.ioremap(addr, size, pte_pgprot(pte), caller);
->> -	return __ioremap_caller(addr, size, pte_pgprot(pte), caller);
->> +		return ppc_md.ioremap(addr, size, __pgprot(pte_val(pte)), caller);
->> +	return __ioremap_caller(addr, size, __pgprot(pte_val(pte)), caller);
->>    }
->>
->>
->> -- 
->> 2.13.3
+Michal Hocko
+SUSE Labs
