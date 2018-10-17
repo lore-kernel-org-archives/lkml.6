@@ -2,104 +2,167 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02603ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85895ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B87DB2098A
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35B892098A
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:29:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwJ1Fso2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B87DB2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQFJx4ub"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B892098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbeJQUXD (ORCPT
+        id S1727223AbeJQUY3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 16:23:03 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44850 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbeJQUXD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 16:23:03 -0400
-Received: by mail-lf1-f65.google.com with SMTP id m18-v6so19639596lfl.11;
-        Wed, 17 Oct 2018 05:27:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EyldOrl1AnlI7bDeSkD8n3QBfB1hJho+erDX8iZ85/s=;
-        b=IwJ1Fso2PgZU6HOwFCFc0BVHhFn7dAbnbny+NqUpkrjribbvX94WCURXyApn5BP4RA
-         z14wX59eLmaERvim275eJA+Yo/103F1r992dIO/XLKC2DRKl8u9p1ZlHjfoG2hGEayvW
-         m6lCsezlscDJ1oakuZRc9ZoctRV+DXREmDc1DFJtSIqncEdBZJQToMqzoiA+kK0QHd5K
-         /kvymPJ/ivUbQdQHmgqp712MMb5i22KlNlZJL6Fk7e1/XPpgOXVt8iaPvgucf7laZXmE
-         c9wVGcyj00pILZlc1blJMqmdY/ojFtgS9pBdNwwNl9+H3qoBi5u60uMLk2jT3x+6VAM5
-         5uxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EyldOrl1AnlI7bDeSkD8n3QBfB1hJho+erDX8iZ85/s=;
-        b=WkGy5NyTjI4Sk5wvWL7f5k7AMYGO5hWjblXHqWBZCRqmOaGSdkpmipZmzs+PLOyv4I
-         beXTuhJZ3rUsz75bruewHsyEd+Kyb74giRLBI7K3z9p+T4hkBvwasigwIJ6kuSO43zsG
-         kP375ldE3xz0HPAY9/T23c2SFZkvgt/nxqrxBciV5MGOph1bQy8wGUlAcfNYIA8NAT0z
-         XuH6cfdj5f+gFHd93/bt7vO200bSohBidrtJKCaYqmRXG2P1ImciTlMiAvY1A2ZsAAIR
-         cdUok+DCSP/VZofaQEgf33gaZDHlGw03RGgt9V4XcEfLMGVjurkcykh7rWejywuakrG7
-         m+SQ==
-X-Gm-Message-State: ABuFfoj5wicWraD7aoBY1DbPimMEWzzEpYRnn2llgqfBzH24q8kFByAl
-        tMLbLK36pfxVXFU1TAeKzFbczNt4
-X-Google-Smtp-Source: ACcGV609L5u4voduDTYHIB8fdIkubV1Buw2BdRViIDrfJRLJPaw9zS8bDY1YioiIo7EvgvCpV6Hbew==
-X-Received: by 2002:a19:d7d6:: with SMTP id q83-v6mr15583396lfi.27.1539779252844;
-        Wed, 17 Oct 2018 05:27:32 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.91.118])
-        by smtp.googlemail.com with ESMTPSA id g92-v6sm4117414lji.24.2018.10.17.05.27.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 05:27:31 -0700 (PDT)
-Subject: Re: [PATCH v1 1/3] clk: tegra: Convert CCLKG mux to mux + clock
- divider on Tegra30
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180830192045.11017-1-digetx@gmail.com>
- <20180830192045.11017-2-digetx@gmail.com>
- <19523f37-eb78-067c-cc62-b6ceaad985a9@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b1265595-f01d-5ab2-aaf9-6c4d674f9f3a@gmail.com>
-Date:   Wed, 17 Oct 2018 15:27:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 17 Oct 2018 16:24:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727013AbeJQUY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 16:24:29 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A47F2098A;
+        Wed, 17 Oct 2018 12:28:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539779339;
+        bh=2cql87JkCo6UuTz0KbPSqxwMJlMbys2/cJ7/7N3yUfs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mQFJx4ubjK8ivF+u27gSolbnxTdtuD4UhV9araYIRFzo3W07QVGHzxi9KuFy3wdRe
+         kwr8WMrrUrarxbb73/oDVqoRMtNQn5yXm539bekMNxoRh+5IY73qQtAloe5mGfsWF1
+         Wfr9zqza75LufS8zrc9dzl3dsFl44xsttjQNcFvs=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 27063142C5E; Wed, 17 Oct 2018 09:28:55 -0300 (-03)
+Date:   Wed, 17 Oct 2018 09:28:55 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@gmail.com>
+Subject: Re: perf's handling of unfindable user symbols...
+Message-ID: <20181017122855.GB31465@kernel.org>
+References: <20181014.004238.292485794143606801.davem@davemloft.net>
+ <20181015222546.GA2159@redhat.com>
+ <20181015.160246.58484704665215987.davem@davemloft.net>
+ <20181016184506.GB3254@redhat.com>
+ <20181017172226.7274498db2bbe3431c3f4057@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <19523f37-eb78-067c-cc62-b6ceaad985a9@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017172226.7274498db2bbe3431c3f4057@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/18 11:53 AM, Jon Hunter wrote:
-> 
-> On 30/08/2018 20:20, Dmitry Osipenko wrote:
->> Some of the CCLKG parents aren't accessible via device tree because they
->> are created as non-DT clocks. Apparently there is no reason to define
->> these clocks in that manner, hence convert CCLKG mux to mux + clock
->> divider to remove the non-DT parent clocks. Now it is possible to request
->> all of CCLKG parents from device tree, which is necessary for the CPUFreq
->> driver.
-> 
-> Is it likely that all of these clock parents will be used by the CPUFreq
-> driver for these devices? If the clocks you currently need are available
-> then my preference would be to stick with what we have for now.
+Em Wed, Oct 17, 2018 at 05:22:26PM +0900, Masami Hiramatsu escreveu:
+> On Tue, 16 Oct 2018 15:45:06 -0300
+> Arnaldo Carvalho de Melo <acme@redhat.com> wrote:
+> > So, I thought something had changed and in the past we would somehow
+> > find that address in the kallsyms, but I couldn't find anything to back
+> > that up, the patch introducing this is over a decade old, lots of things
+> > changed, so I was just thinking I was missing something.
 
-You could use them all if you want, that's what HW allow. The current clock description doesn't fully describe the HW, though it should be enough at least for the CPUFreq driver if we are going to use clk_get_sys() and stick to the "default" parent. Peter?
+> > I tried a gtod busy loop to generate vdso activity and added a 'perf
+> > probe' at that branch, on x86_64 to see if it ever gets hit:
+
+> > Made thread__find_map() noinline, as 'perf probe' in lines of inline
+> > functions seems to not be working, only at function start. (Masami?)
+ 
+> Thank you for reporting it. Hmm, what happened when you did it?
+> I checked some points, but seems no problem.
+> (Would you see no line number? or defined event didn't work?)
+
+So, the problem is with a function in the perf tool that ends up inlined
+in five places, then when I ask for a line inside of this function to be
+probed, it creates 4 probes, one in each of the function it inlines,
+see:
+
+[root@jouet ~]# perf probe -x ~/bin/perf -L thread__find_map:43
+<thread__find_map@/home/acme/git/perf/tools/perf/util/event.c:43>
+     43                 return NULL;
+                }
+         
+     46         al->map = map_groups__find(mg, al->addr);
+     47         if (al->map != NULL) {
+                        /*
+                         * Kernel maps might be changed when loading symbols so loading
+                         * must be done prior to using kernel maps.
+                         */
+                        if (load_map)
+     53                         map__load(al->map);
+     54                 al->addr = al->map->map_ip(al->map, al->addr);
+                }
+         
+     57         return al->map;
+     58  }
+         
+         struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
+                                           u64 addr, struct addr_location *al)
+
+[root@jouet ~]# 
+
+So I know that everytime we look for a mmap in a thread and we find that map,
+we get to line 54, lets try to add it:
+
+[root@jouet ~]# perf probe -x ~/bin/perf thread__find_map:54
+Added new events:
+  probe_perf:thread__find_map (on thread__find_map:54 in /home/acme/bin/perf)
+  probe_perf:thread__find_map_1 (on thread__find_map:54 in /home/acme/bin/perf)
+  probe_perf:thread__find_map_2 (on thread__find_map:54 in /home/acme/bin/perf)
+  probe_perf:thread__find_map_3 (on thread__find_map:54 in /home/acme/bin/perf)
+  probe_perf:thread__find_map_4 (on thread__find_map:54 in /home/acme/bin/perf)
+
+You can now use it in all perf tools, such as:
+
+	perf record -e probe_perf:thread__find_map_4 -aR sleep 1
+
+[root@jouet ~]#
+
+Now I run 'perf top' and then, on another terminal, run this to get system wide
+events to get a few of those probes:
+
+[root@jouet ~]# perf trace -a -e *perf:*/max-stack=7/ sleep 0.02
+     0.000 probe_perf:thread__find_map_3:(4be2e3)
+                                       machine__resolve (/home/acme/bin/perf)
+                                       perf_top__mmap_read_idx (/home/acme/bin/perf)
+                                       perf_top__mmap_read (/home/acme/bin/perf)
+                                       cmd_top (/home/acme/bin/perf)
+                                       run_builtin (/home/acme/bin/perf)
+                                       handle_internal_command (/home/acme/bin/perf)
+                                       main (/home/acme/bin/perf)
+     0.023 probe_perf:thread__find_map_3:(4be2e3)
+                                       machine__resolve (/home/acme/bin/perf)
+                                       perf_top__mmap_read_idx (/home/acme/bin/perf)
+                                       perf_top__mmap_read (/home/acme/bin/perf)
+                                       cmd_top (/home/acme/bin/perf)
+                                       run_builtin (/home/acme/bin/perf)
+                                       handle_internal_command (/home/acme/bin/perf)
+                                       main (/home/acme/bin/perf)
+     0.048 probe_perf:thread__find_map_3:(4be2e3)
+                                       machine__resolve (/home/acme/bin/perf)
+                                       perf_top__mmap_read_idx (/home/acme/bin/perf)
+                                       perf_top__mmap_read (/home/acme/bin/perf)
+                                       cmd_top (/home/acme/bin/perf)
+                                       run_builtin (/home/acme/bin/perf)
+                                       handle_internal_command (/home/acme/bin/perf)
+                                       main (/home/acme/bin/perf)
+<SNIP>
+[root@jouet ~]# 
+
+So it now I'm not being able to reproduce... Erm, nevermind then, I'll report
+back if I notice this again... :-)
+
+Thanks for checking, sorry for the noise.
+
+- Arnaldo
