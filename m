@@ -8,66 +8,65 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE550ECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2A5ECDE39
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9109E214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:04:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14EB820658
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:07:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UstTV3xj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9109E214AB
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYQC55OR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14EB820658
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbeJRCBS (ORCPT
+        id S1728058AbeJRCD5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 22:01:18 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38688 "EHLO
+        Wed, 17 Oct 2018 22:03:57 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51666 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbeJRCBR (ORCPT
+        with ESMTP id S1727037AbeJRCD5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 22:01:17 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 193-v6so3114449wme.3;
-        Wed, 17 Oct 2018 11:04:26 -0700 (PDT)
+        Wed, 17 Oct 2018 22:03:57 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 143-v6so2901273wmf.1;
+        Wed, 17 Oct 2018 11:07:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=jwmDRFAXk8IJbF45OLxiQ5WR/eywmGic65f22BWyPCw=;
-        b=UstTV3xjP1pxh8GT7mfdfQVyTVNlMLdTa0ZUBXE7jYuAfHmNTW9l3ehE5hGvDWBfiT
-         IOFx+/J/RQ7ZBZ8IU/plrR4Dv4pPH1Z6aDcz2OlnK+oYWuCkxQVWbzCeYqrOoHaIyQNN
-         EVBG5LvB3ypN6TrS+5G67dzzUwr4mq7UPqTDykaul8dUIRyx3Clj6Xhz+QRDMo82tkWe
-         mHuS9nainqU2zxLMeS9W27Q7QOvxVxCZcivcdV35zdi0i83lLOQPcZf/l4kGKtbGMleK
-         ViNPaSO+qmDIes4Az+qRDxWquZjrtfP35uUYnEBVcSZpZ4MVfWod7sVEBEPiGnrEKjzL
-         BJyw==
+        bh=xlPogxfmHt1DZaGCj5PyjdYUloKjkWNrXyFOeF4SI5E=;
+        b=gYQC55ORdZoMIfCW2xzehG9fhGRRECJXR8y6kwRSMqTSUUxiAU7Txn4evLNJeSKuZP
+         SQWoK3Id6Bmcoc727n496dmC6uSlXqL9UwjBdkWzcOuPt/Ym27Hy+GDMjb5CCYCwW6d/
+         lYShzz0aKRXTb3FQKVdC5UVM5ft2+w8aNx2khqDJTB0p3CaupKPOuOSk6G9/gLWH9OKU
+         pBKO5Mm/BuX3NcKfBltUlvPAUGJk0A66dgpdUuDfXi1r0xumJQMbbPUA+E+B8ELuXWFJ
+         mxLS6b8hVz0pUUiJK98kKRmRohIuOWSIVkLbcQejJPz4Ose+f1Vx8Kqpd2GMfCZta/L+
+         PSkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=jwmDRFAXk8IJbF45OLxiQ5WR/eywmGic65f22BWyPCw=;
-        b=Kmj0lrac/Kgo8VkQF+L5KRh0n4RgCfPbvoW3djl8qD4Bn1xWKtFvYHFAD/YUHuefeD
-         RUJ/321cr8lzghI8JGRUmQSUHbNaiL2Cwn3UhY1IR6LsDexm4Rnwtz1j6JZMIe7+EWCN
-         zyssA13vufEfEaXqkvAcbVFcWw4OanIvqbPPPgCFBQ3mLrfhlf/e/VOsm2OxR1CQUCuC
-         JTm2G6EI5xtMOzRYFrPQdApIgZDollXByg8R62hpQ1eWnrZJlLLlyK/l8TEm6fp6mLjY
-         6Sq07UUmjA804wXBKP3b8237Co4sHEhVtXjuzSPpVZ7C+1q3xXu3MRF3Ma9xPbIWvvSu
-         3dmw==
-X-Gm-Message-State: ABuFfoiQ8WJNyoU75KOhzmulPv3EGlOMw3rvs9ZRYq5IF35feXXmc2VM
-        lmelSpkkWFJegWj09Ju6Nbs=
-X-Google-Smtp-Source: ACcGV62qk42F3jfa9xcu6KuY53LkskVHzpQx8+nySq1nGEKskP/33bqR5h2CjeYNHGINbPMvxPFWcg==
-X-Received: by 2002:a1c:1782:: with SMTP id 124-v6mr4063120wmx.133.1539799465840;
-        Wed, 17 Oct 2018 11:04:25 -0700 (PDT)
+        bh=xlPogxfmHt1DZaGCj5PyjdYUloKjkWNrXyFOeF4SI5E=;
+        b=RsZ7RyYRTby4mXEVFsH5xBiEa9eyHoz/NGg2YD+NIVDzWnRoP7f1RQuYYYhbkNMOO7
+         pDSvukUE2Yz2WLKkz8Nb+3pVYo/1VYA8Me/OuTV6atcUkafWYO1/+CS2V5ic/C2jjzHH
+         ZnCOGHeyWQ+LefT1652Xhf3eeDnweHmqNHfRjcX8LYfSWWrro0QjNx2OkiyjuE7Rmk7X
+         bddYjsC8OL56YorkQEbk4nBuNku9G8Bw0gF/SJmEIloYpZvZWh1QAGZScDD8pUIFGdtR
+         xFOL8j3c/iYGh1LRvkMmxLXzNQ9xBRPFtQuNCv7WbnOLUn6XZmGvJKtyROAS/e6q1DGH
+         g2aQ==
+X-Gm-Message-State: ABuFfojRsil77O8Hj9z4rkAzWu2ERfvIHugDNL+uVNYvc9tW4Bymihw/
+        c3maJ+E0hWa4dTt7ZribpsQ=
+X-Google-Smtp-Source: ACcGV61H8n2MgA4vicmM603EdhQPQW+43E9Ra2FfZlLZLPfjF5bKZF1VMro5gG+LHmv3J1t+3H5sCg==
+X-Received: by 2002:a1c:1183:: with SMTP id 125-v6mr4064977wmr.103.1539799625585;
+        Wed, 17 Oct 2018 11:07:05 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm23754491wrp.3.2018.10.17.11.04.24
+        by smtp.gmail.com with ESMTPSA id u5-v6sm18803928wru.16.2018.10.17.11.07.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 11:04:24 -0700 (PDT)
+        Wed, 17 Oct 2018 11:07:05 -0700 (PDT)
 From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Chas Williams <3chas3@gmail.com>
-Cc:     linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Karsten Keil <isdn@linux-pingi.de>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] atm: zatm: Fix empty body Clang warnings
-Date:   Wed, 17 Oct 2018 11:04:19 -0700
-Message-Id: <20181017180419.8955-1-natechancellor@gmail.com>
+Subject: [PATCH] isdn: hfc_{pci,sx}: Avoid empty body if statements and use proper register accessors
+Date:   Wed, 17 Oct 2018 11:06:57 -0700
+Message-Id: <20181017180657.9410-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -78,165 +77,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Clang warns:
 
-drivers/atm/zatm.c:513:7: error: while loop has empty body
+drivers/isdn/hisax/hfc_pci.c:131:34: error: if statement has empty body
 [-Werror,-Wempty-body]
-        zwait;
-             ^
-drivers/atm/zatm.c:513:7: note: put the semicolon on a separate line to
-silence this warning
+        if (Read_hfc(cs, HFCPCI_INT_S1));
+                                        ^
+drivers/isdn/hisax/hfc_pci.c:131:34: note: put the semicolon on a
+separate line to silence this warning
 
-Get rid of this warning by using an empty do-while loop. While we're at
-it, add parentheses to make it clear that this is a function-like macro.
+Use the format found in drivers/isdn/hardware/mISDN/hfcpci.c of casting
+the return of Read_hfc to void, instead of using an empty if statement.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/42
+While we're at it, Masahiro Yamada pointed out that {Read,Write}_hfc
+should be using a standard access method in hfc_pci.h. Use the one found
+in drivers/isdn/hardware/mISDN/hfc_pci.h.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/66
 Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/atm/zatm.c | 42 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/isdn/hisax/hfc_pci.c | 6 +++---
+ drivers/isdn/hisax/hfc_pci.h | 4 ++--
+ drivers/isdn/hisax/hfc_sx.c  | 6 +++---
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/atm/zatm.c b/drivers/atm/zatm.c
-index e89146ddede6..d5c76b50d357 100644
---- a/drivers/atm/zatm.c
-+++ b/drivers/atm/zatm.c
-@@ -126,7 +126,7 @@ static unsigned long dummy[2] = {0,0};
- #define zin_n(r) inl(zatm_dev->base+r*4)
- #define zin(r) inl(zatm_dev->base+uPD98401_##r*4)
- #define zout(v,r) outl(v,zatm_dev->base+uPD98401_##r*4)
--#define zwait while (zin(CMR) & uPD98401_BUSY)
-+#define zwait() do {} while (zin(CMR) & uPD98401_BUSY)
+diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
+index 8e5b03161b2f..a63b9155b697 100644
+--- a/drivers/isdn/hisax/hfc_pci.c
++++ b/drivers/isdn/hisax/hfc_pci.c
+@@ -128,7 +128,7 @@ reset_hfcpci(struct IsdnCardState *cs)
+ 	Write_hfc(cs, HFCPCI_INT_M1, cs->hw.hfcpci.int_m1);
  
- /* RX0, RX1, TX0, TX1 */
- static const int mbx_entries[NR_MBX] = { 1024,1024,1024,1024 };
-@@ -140,7 +140,7 @@ static const int mbx_esize[NR_MBX] = { 16,16,4,4 }; /* entry size in bytes */
+ 	/* Clear already pending ints */
+-	if (Read_hfc(cs, HFCPCI_INT_S1));
++	(void) Read_hfc(cs, HFCPCI_INT_S1);
  
- static void zpokel(struct zatm_dev *zatm_dev,u32 value,u32 addr)
- {
--	zwait;
-+	zwait();
- 	zout(value,CER);
- 	zout(uPD98401_IND_ACC | uPD98401_IA_BALL |
- 	    (uPD98401_IA_TGT_CM << uPD98401_IA_TGT_SHIFT) | addr,CMR);
-@@ -149,10 +149,10 @@ static void zpokel(struct zatm_dev *zatm_dev,u32 value,u32 addr)
- 
- static u32 zpeekl(struct zatm_dev *zatm_dev,u32 addr)
- {
--	zwait;
-+	zwait();
- 	zout(uPD98401_IND_ACC | uPD98401_IA_BALL | uPD98401_IA_RW |
- 	  (uPD98401_IA_TGT_CM << uPD98401_IA_TGT_SHIFT) | addr,CMR);
--	zwait;
-+	zwait();
- 	return zin(CER);
+ 	Write_hfc(cs, HFCPCI_STATES, HFCPCI_LOAD_STATE | 2);	/* HFC ST 2 */
+ 	udelay(10);
+@@ -158,7 +158,7 @@ reset_hfcpci(struct IsdnCardState *cs)
+ 	/* Finally enable IRQ output */
+ 	cs->hw.hfcpci.int_m2 = HFCPCI_IRQ_ENABLE;
+ 	Write_hfc(cs, HFCPCI_INT_M2, cs->hw.hfcpci.int_m2);
+-	if (Read_hfc(cs, HFCPCI_INT_S1));
++	(void) Read_hfc(cs, HFCPCI_INT_S1);
  }
  
-@@ -241,7 +241,7 @@ static void refill_pool(struct atm_dev *dev,int pool)
- 	}
- 	if (first) {
- 		spin_lock_irqsave(&zatm_dev->lock, flags);
--		zwait;
-+		zwait();
- 		zout(virt_to_bus(first),CER);
- 		zout(uPD98401_ADD_BAT | (pool << uPD98401_POOL_SHIFT) | count,
- 		    CMR);
-@@ -508,9 +508,9 @@ static int open_rx_first(struct atm_vcc *vcc)
- 	}
- 	if (zatm_vcc->pool < 0) return -EMSGSIZE;
- 	spin_lock_irqsave(&zatm_dev->lock, flags);
--	zwait;
-+	zwait();
- 	zout(uPD98401_OPEN_CHAN,CMR);
--	zwait;
-+	zwait();
- 	DPRINTK("0x%x 0x%x\n",zin(CMR),zin(CER));
- 	chan = (zin(CMR) & uPD98401_CHAN_ADDR) >> uPD98401_CHAN_ADDR_SHIFT;
- 	spin_unlock_irqrestore(&zatm_dev->lock, flags);
-@@ -571,21 +571,21 @@ static void close_rx(struct atm_vcc *vcc)
- 		pos = vcc->vci >> 1;
- 		shift = (1-(vcc->vci & 1)) << 4;
- 		zpokel(zatm_dev,zpeekl(zatm_dev,pos) & ~(0xffff << shift),pos);
--		zwait;
-+		zwait();
- 		zout(uPD98401_NOP,CMR);
--		zwait;
-+		zwait();
- 		zout(uPD98401_NOP,CMR);
- 		spin_unlock_irqrestore(&zatm_dev->lock, flags);
- 	}
- 	spin_lock_irqsave(&zatm_dev->lock, flags);
--	zwait;
-+	zwait();
- 	zout(uPD98401_DEACT_CHAN | uPD98401_CHAN_RT | (zatm_vcc->rx_chan <<
- 	    uPD98401_CHAN_ADDR_SHIFT),CMR);
--	zwait;
-+	zwait();
- 	udelay(10); /* why oh why ... ? */
- 	zout(uPD98401_CLOSE_CHAN | uPD98401_CHAN_RT | (zatm_vcc->rx_chan <<
- 	    uPD98401_CHAN_ADDR_SHIFT),CMR);
--	zwait;
-+	zwait();
- 	if (!(zin(CMR) & uPD98401_CHAN_ADDR))
- 		printk(KERN_CRIT DEV_LABEL "(itf %d): can't close RX channel "
- 		    "%d\n",vcc->dev->number,zatm_vcc->rx_chan);
-@@ -699,7 +699,7 @@ printk("NONONONOO!!!!\n");
- 	skb_queue_tail(&zatm_vcc->tx_queue,skb);
- 	DPRINTK("QRP=0x%08lx\n",zpeekl(zatm_dev,zatm_vcc->tx_chan*VC_SIZE/4+
- 	  uPD98401_TXVC_QRP));
--	zwait;
-+	zwait();
- 	zout(uPD98401_TX_READY | (zatm_vcc->tx_chan <<
- 	    uPD98401_CHAN_ADDR_SHIFT),CMR);
- 	spin_unlock_irqrestore(&zatm_dev->lock, flags);
-@@ -891,12 +891,12 @@ static void close_tx(struct atm_vcc *vcc)
- 	}
- 	spin_lock_irqsave(&zatm_dev->lock, flags);
- #if 0
--	zwait;
-+	zwait();
- 	zout(uPD98401_DEACT_CHAN | (chan << uPD98401_CHAN_ADDR_SHIFT),CMR);
- #endif
--	zwait;
-+	zwait();
- 	zout(uPD98401_CLOSE_CHAN | (chan << uPD98401_CHAN_ADDR_SHIFT),CMR);
--	zwait;
-+	zwait();
- 	if (!(zin(CMR) & uPD98401_CHAN_ADDR))
- 		printk(KERN_CRIT DEV_LABEL "(itf %d): can't close TX channel "
- 		    "%d\n",vcc->dev->number,chan);
-@@ -926,9 +926,9 @@ static int open_tx_first(struct atm_vcc *vcc)
- 	zatm_vcc->tx_chan = 0;
- 	if (vcc->qos.txtp.traffic_class == ATM_NONE) return 0;
- 	spin_lock_irqsave(&zatm_dev->lock, flags);
--	zwait;
-+	zwait();
- 	zout(uPD98401_OPEN_CHAN,CMR);
--	zwait;
-+	zwait();
- 	DPRINTK("0x%x 0x%x\n",zin(CMR),zin(CER));
- 	chan = (zin(CMR) & uPD98401_CHAN_ADDR) >> uPD98401_CHAN_ADDR_SHIFT;
- 	spin_unlock_irqrestore(&zatm_dev->lock, flags);
-@@ -1557,7 +1557,7 @@ static void zatm_phy_put(struct atm_dev *dev,unsigned char value,
- 	struct zatm_dev *zatm_dev;
+ /***************************************************/
+@@ -1537,7 +1537,7 @@ hfcpci_bh(struct work_struct *work)
+ 					cs->hw.hfcpci.int_m1 &= ~HFCPCI_INTS_TIMER;
+ 					Write_hfc(cs, HFCPCI_INT_M1, cs->hw.hfcpci.int_m1);
+ 					/* Clear already pending ints */
+-					if (Read_hfc(cs, HFCPCI_INT_S1));
++					(void) Read_hfc(cs, HFCPCI_INT_S1);
+ 					Write_hfc(cs, HFCPCI_STATES, 4 | HFCPCI_LOAD_STATE);
+ 					udelay(10);
+ 					Write_hfc(cs, HFCPCI_STATES, 4);
+diff --git a/drivers/isdn/hisax/hfc_pci.h b/drivers/isdn/hisax/hfc_pci.h
+index 4e58700a3e61..4c3b3ba35726 100644
+--- a/drivers/isdn/hisax/hfc_pci.h
++++ b/drivers/isdn/hisax/hfc_pci.h
+@@ -228,8 +228,8 @@ typedef union {
+ } fifo_area;
  
- 	zatm_dev = ZATM_DEV(dev);
--	zwait;
-+	zwait();
- 	zout(value,CER);
- 	zout(uPD98401_IND_ACC | uPD98401_IA_B0 |
- 	    (uPD98401_IA_TGT_PHY << uPD98401_IA_TGT_SHIFT) | addr,CMR);
-@@ -1569,10 +1569,10 @@ static unsigned char zatm_phy_get(struct atm_dev *dev,unsigned long addr)
- 	struct zatm_dev *zatm_dev;
  
- 	zatm_dev = ZATM_DEV(dev);
--	zwait;
-+	zwait();
- 	zout(uPD98401_IND_ACC | uPD98401_IA_B0 | uPD98401_IA_RW |
- 	  (uPD98401_IA_TGT_PHY << uPD98401_IA_TGT_SHIFT) | addr,CMR);
--	zwait;
-+	zwait();
- 	return zin(CER) & 0xff;
+-#define Write_hfc(a, b, c) (*(((u_char *)a->hw.hfcpci.pci_io) + b) = c)
+-#define Read_hfc(a, b) (*(((u_char *)a->hw.hfcpci.pci_io) + b))
++#define Write_hfc(a, b, c) (writeb(c, (a->hw.hfcpci.pci_io) + b))
++#define Read_hfc(a, b) (readb((a->hw.hfcpci.pci_io) + b))
+ 
+ extern void main_irq_hcpci(struct BCState *bcs);
+ extern void releasehfcpci(struct IsdnCardState *cs);
+diff --git a/drivers/isdn/hisax/hfc_sx.c b/drivers/isdn/hisax/hfc_sx.c
+index 4d3b4b2f2612..c4f3f37adfc8 100644
+--- a/drivers/isdn/hisax/hfc_sx.c
++++ b/drivers/isdn/hisax/hfc_sx.c
+@@ -381,7 +381,7 @@ reset_hfcsx(struct IsdnCardState *cs)
+ 	Write_hfc(cs, HFCSX_INT_M1, cs->hw.hfcsx.int_m1);
+ 
+ 	/* Clear already pending ints */
+-	if (Read_hfc(cs, HFCSX_INT_S1));
++	(void) Read_hfc(cs, HFCSX_INT_S1);
+ 
+ 	Write_hfc(cs, HFCSX_STATES, HFCSX_LOAD_STATE | 2);	/* HFC ST 2 */
+ 	udelay(10);
+@@ -411,7 +411,7 @@ reset_hfcsx(struct IsdnCardState *cs)
+ 	/* Finally enable IRQ output */
+ 	cs->hw.hfcsx.int_m2 = HFCSX_IRQ_ENABLE;
+ 	Write_hfc(cs, HFCSX_INT_M2, cs->hw.hfcsx.int_m2);
+-	if (Read_hfc(cs, HFCSX_INT_S2));
++	(void) Read_hfc(cs, HFCSX_INT_S2);
  }
  
+ /***************************************************/
+@@ -1288,7 +1288,7 @@ hfcsx_bh(struct work_struct *work)
+ 					cs->hw.hfcsx.int_m1 &= ~HFCSX_INTS_TIMER;
+ 					Write_hfc(cs, HFCSX_INT_M1, cs->hw.hfcsx.int_m1);
+ 					/* Clear already pending ints */
+-					if (Read_hfc(cs, HFCSX_INT_S1));
++					(void) Read_hfc(cs, HFCSX_INT_S1);
+ 
+ 					Write_hfc(cs, HFCSX_STATES, 4 | HFCSX_LOAD_STATE);
+ 					udelay(10);
 -- 
 2.19.1
 
