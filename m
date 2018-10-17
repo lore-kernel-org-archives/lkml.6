@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE47ECDE3C
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35043ECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60DEF2148D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:33:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6EE421477
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:33:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="HAkIPBkm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60DEF2148D
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="MDs33Dw+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6EE421477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbeJRGbe (ORCPT
+        id S1727733AbeJRGbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 02:31:34 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46244 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727611AbeJRGbd (ORCPT
+        Thu, 18 Oct 2018 02:31:36 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35682 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727245AbeJRGbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 02:31:33 -0400
-Received: by mail-ed1-f66.google.com with SMTP id g32-v6so26368720edg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:33:45 -0700 (PDT)
+        Thu, 18 Oct 2018 02:31:35 -0400
+Received: by mail-ed1-f65.google.com with SMTP id y19-v6so26409537edd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:33:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gMZtexrmDCCSY/ipZIRBsOGz5pizXdGYv3KGnMsFEt4=;
-        b=HAkIPBkmqM+TynGtBXV+KiNW3r1QgJHJhnhDT2MTSAcjPG2RKjcInrHAmbEZEmtZF1
-         0DoBc1tRZu2yGXVNI6Ftwgpjfdh2R+PNe7GgB5DFd3GhK06IhQlTmFIbNYWy3I4oquic
-         aUyib9+2u1kf1uG6WrCJO367NiRHTOi1eeiNI=
+        bh=szX5fOJwvrTdOkI09MAw122Wg0mz2i7sdUAeS8MC6qM=;
+        b=MDs33Dw+1uWNroo+bxWYK/Q+Tj7yDAurNsHFmsAlv8cCZuk8hq+FLNVVFeDbKLA5m0
+         c4sl6re8UG39cDCCBvm3K1TWcKynMFWUbR9MufQmEbIVl1BavNt50U4Ts/mBja0COISk
+         wIsqpc4k39IgE8jkLgp27CKOyLAqIaiqlzWHU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gMZtexrmDCCSY/ipZIRBsOGz5pizXdGYv3KGnMsFEt4=;
-        b=arnmseXFmsCZ3VwCNZrVctcIFw7DV1NqAizPhRfeDs+PrMgx38y5hDIj5zk1JuEyUc
-         1bLYkjT7cuIwcQbBiuUZwNeobjeZRHLyrORchFiDAXYfBIWNoLE+DN7OUvv4p3J8jd07
-         h0qBrWwe4ftSTp9xedHi5i2jRl0d1n6nNHdrUWSOVE16cbtW2O0Bpnc7kFvy7ZZP4vxs
-         KHpP5pli1lZ2devsoIglPrjPM1hiQtp9hSSKHuVTsosTASxiE2LxddkhJBJAtkrcwp7P
-         6ZALmx0HE4CEPs63Re4iClKuZzIc1JrQosX4gZW8YpPDsoKXaQ7pb6x5GadhZy+0k5ky
-         T/ww==
-X-Gm-Message-State: ABuFfojz7Sm+SZUdmXriY4kmNvcJKlLTXLocJvPM72ZMO2cEEehxyuQZ
-        GvdWUBIpdLnwvYBRm8uAKUU71Rkih+g=
-X-Google-Smtp-Source: ACcGV62cWhVyqi25Oyixmt+MXw2dJiNm7zz/h6KqMo+Xe1uvUXgzKvcTHHdazKF0T0bM8Gi1QShLNQ==
-X-Received: by 2002:a50:a7c1:: with SMTP id i59-v6mr1738094edc.296.1539815624800;
-        Wed, 17 Oct 2018 15:33:44 -0700 (PDT)
+        bh=szX5fOJwvrTdOkI09MAw122Wg0mz2i7sdUAeS8MC6qM=;
+        b=nL0Ux+O4WtzAxTtAg420Efe0VoRb5PJ7pDnVpZw9Zg3PrplWE7bSUdO0TSGbwkH735
+         6+M625cY79gFf7UoOaykg5pZS/H2/Ql0KXM271KPwUtNfYyMjBoBCs62/ALECRGLCZbE
+         xTKdRQgEW8HLcBwIeBIgZd/snaHxRoiPcFSXr8HrFmtlZN/OI3Isl7jP3I5ej8gdYQNl
+         H0AhEk9x+2P19lmlVoSy7yqjijrTQQMcc1tL8mPGBV7eYL5vPX9krv9BtnHzqoc1mUe7
+         hQwY+dUomvBk3ArUhqCGv/A/UfZmrKnowUInt0i8DxsY4lNFQ+r1ZcmCTkZjCdnE68VC
+         8Pfw==
+X-Gm-Message-State: ABuFfogKpD76Pn0+RvBOt5zJbj4llt3OYY+Q6pJxk4Ms0oMzbb6CnWst
+        1pMO93CPycJigGRpKyq+3Ni1v63cDYY=
+X-Google-Smtp-Source: ACcGV61MyLFe1TcozPLbmI9SJBurKwYrg0Lxh6VPhBglhU4arL7FYcUygs7Rr8x1f0b8wyHDhyNlfQ==
+X-Received: by 2002:a50:a844:: with SMTP id j62-v6mr1733693edc.132.1539815626671;
+        Wed, 17 Oct 2018 15:33:46 -0700 (PDT)
 Received: from prevas-ravi.waoo.dk (dhcp-5-186-114-252.cgn.ip.fibianet.dk. [5.186.114.252])
-        by smtp.gmail.com with ESMTPSA id e30-v6sm7001555edd.25.2018.10.17.15.33.43
+        by smtp.gmail.com with ESMTPSA id e30-v6sm7001555edd.25.2018.10.17.15.33.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 17 Oct 2018 15:33:44 -0700 (PDT)
+        Wed, 17 Oct 2018 15:33:46 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
         Ingo Molnar <mingo@kernel.org>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [POC 06/12] ugly ugly hack
-Date:   Thu, 18 Oct 2018 00:33:26 +0200
-Message-Id: <20181017223332.11964-6-linux@rasmusvillemoes.dk>
+Subject: [POC 08/12] fs/dcache.c: access dentry_cache via rai_load
+Date:   Thu, 18 Oct 2018 00:33:28 +0200
+Message-Id: <20181017223332.11964-8-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.19.1.6.gbde171bbf5
 In-Reply-To: <20181017223332.11964-1-linux@rasmusvillemoes.dk>
 References: <20181017223332.11964-1-linux@rasmusvillemoes.dk>
@@ -75,64 +75,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just to have a quick way of seeing that rai-patching works (i.e., once
-we implement rai_load, we'd not expect the output to change). Also,
-inside virtme we can do a quick "gdb vmlinux /proc/kcode" and
-disassemble rai_proc_show to see how the patched function looks.
+This avoids a cacheline access to get the value of the dentry_cache
+pointer in the places that do a kmem_cache_*(dentry_cache, ...);
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- arch/x86/kernel/rai.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ fs/dcache.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/rai.c b/arch/x86/kernel/rai.c
-index 2c6ff06f7a34..819d03a025e3 100644
---- a/arch/x86/kernel/rai.c
-+++ b/arch/x86/kernel/rai.c
-@@ -37,3 +37,43 @@ update_rai_access(void)
- 	rai_patch(__start_rai_data, __stop_rai_data);
- 	mutex_unlock(&text_mutex);
- }
-+
-+#if 1
-+#include <linux/proc_fs.h>
-+#include <linux/seq_file.h>
-+
-+static int one, two;
-+static long three;
-+
-+static int
-+rai_proc_show(struct seq_file *m, void *v) {
-+	seq_printf(m, "one: %d, two: %d, three: %ld\n",
-+		   rai_load(one), rai_load(two), rai_load(three));
-+	one = two = three = -1;
-+
-+	return 0;
-+}
-+
-+static int
-+rai_proc_open(struct inode *inode, struct  file *file) {
-+	return single_open(file, rai_proc_show, NULL);
-+}
-+
-+static const struct file_operations rai_proc_fops = {
-+	.owner = THIS_MODULE,
-+	.open = rai_proc_open,
-+	.read = seq_read,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+};
-+
-+static int __init rai_proc_init(void) {
-+	one = 1;
-+	two = 2;
-+	three = 3;
-+
-+	proc_create("rai", 0, NULL, &rai_proc_fops);
-+	return 0;
-+}
-+late_initcall(rai_proc_init);
-+#endif
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 2e7e8d85e9b4..1d54dfb38c9d 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -30,6 +30,7 @@
+ #include <linux/bit_spinlock.h>
+ #include <linux/rculist_bl.h>
+ #include <linux/list_lru.h>
++#include <linux/rai.h>
+ #include "internal.h"
+ #include "mount.h"
+ 
+@@ -76,7 +77,8 @@ __cacheline_aligned_in_smp DEFINE_SEQLOCK(rename_lock);
+ 
+ EXPORT_SYMBOL(rename_lock);
+ 
+-static struct kmem_cache *dentry_cache __read_mostly;
++static struct kmem_cache *__dentry_cache __read_mostly;
++#define dentry_cache rai_load(__dentry_cache)
+ 
+ const struct qstr empty_name = QSTR_INIT("", 0);
+ EXPORT_SYMBOL(empty_name);
+@@ -3088,7 +3090,7 @@ static void __init dcache_init(void)
+ 	 * but it is probably not worth it because of the cache nature
+ 	 * of the dcache.
+ 	 */
+-	dentry_cache = KMEM_CACHE_USERCOPY(dentry,
++	__dentry_cache = KMEM_CACHE_USERCOPY(dentry,
+ 		SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|SLAB_MEM_SPREAD|SLAB_ACCOUNT,
+ 		d_iname);
+ 
 -- 
 2.19.1.6.gbde171bbf5
 
