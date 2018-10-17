@@ -2,166 +2,138 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF64BECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 322E3ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B8BB21523
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:29:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TcJ/6s/x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B8BB21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id F156C21523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:29:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F156C21523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727214AbeJQQXm (ORCPT
+        id S1727255AbeJQQY0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 12:23:42 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:36205 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbeJQQXm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 12:23:42 -0400
-Received: by mail-yb1-f193.google.com with SMTP id 5-v6so10027018ybf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 01:29:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NOr1UmBB9d8q1n7xYt7gDGs/6Chh1j7/sDGAwIoH7T0=;
-        b=TcJ/6s/x+jDu7g2K4mveXfsbUz06MHr1JHj9c3qJ1i00ra+kVylNXHZ71M6ECAUDAi
-         2l2Jms6U8ob+DSxP+jekl8wu8s2qtPE/3bKy3XgRi9Yb7Lxeilj6LNCbCDSnUvTynQup
-         iNWbv1DBP5y7Eyaya41vZhutJ7GSiUlWtKPVY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NOr1UmBB9d8q1n7xYt7gDGs/6Chh1j7/sDGAwIoH7T0=;
-        b=lEDBkRCq5RDjcUw4Wgli9RO4+floO5qxA1Hy8nJqMu9nP3SPvV9v7OGEgp1trUyol7
-         4ygTO9YCPSnripf+oveZbQ++QSwzVQBsSaAkBPc5jUQA0g0JeXNi5pvbpIJv8F50tREa
-         EKYY70ZlXNXdQOmV2KskmHuvV8IRbp+eOe2FBLJ6ed7j2m9Ub3eeTp2tQ7GDWTw8OCG1
-         3K6imfG6mdSRP8mrwSNRF5VZhLgaYSAaCXNH9rhVJpGGqVCO2lPhIMKM+FBBfCmlJHkf
-         /ouc4kmqil5QkZfZcyDGaw/VAZjn53joEQbHKB0J/wdulCjHX9VnaemfP+dWulGTEBhX
-         JeiA==
-X-Gm-Message-State: ABuFfoh6cunGZh6vFCF4wInev/Cez6RX9hQgyTip1fS0WJW4K0JpK6Pr
-        Qsc9B/5tst9gChVpAw98A+KM+o9lbbM=
-X-Google-Smtp-Source: ACcGV60DcgFD56PQwo1pJDRawnRBTMlsXtQ2eaYSWtCGHe6AUTw7kjq20qkLFikLITWDr/9s8AJhsA==
-X-Received: by 2002:a25:ac4d:: with SMTP id r13-v6mr374132ybd.45.1539764946078;
-        Wed, 17 Oct 2018 01:29:06 -0700 (PDT)
-Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
-        by smtp.gmail.com with ESMTPSA id 138-v6sm4216840ywj.11.2018.10.17.01.29.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 01:29:04 -0700 (PDT)
-Received: by mail-yw1-f44.google.com with SMTP id l79-v6so10010470ywc.7
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 01:29:04 -0700 (PDT)
-X-Received: by 2002:a81:3d8d:: with SMTP id k135-v6mr13943217ywa.415.1539764943845;
- Wed, 17 Oct 2018 01:29:03 -0700 (PDT)
+        Wed, 17 Oct 2018 12:24:26 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47508 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727013AbeJQQYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 12:24:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5BD2EBD;
+        Wed, 17 Oct 2018 01:29:49 -0700 (PDT)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A14EF3F71C;
+        Wed, 17 Oct 2018 01:29:47 -0700 (PDT)
+Subject: Re: [PATCH V13 0/4] C-SKY(csky) Linux Intc Driver
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, daniel.lezcano@linaro.org,
+        will.deacon@arm.com, jhogan@kernel.org, paul.burton@mips.com,
+        peterz@infradead.org, arnd@arndb.de, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <cover.1539696960.git.ren_guo@c-sky.com>
+ <3fff53d8-fca0-fee4-ae3b-c8b08dc29a37@arm.com>
+ <20181017015511.GA21519@guoren-Inspiron-7460>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ xsFNBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
+ g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
+ t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
+ ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
+ qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
+ 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
+ ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
+ t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
+ lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
+ DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABzSNNYXJjIFp5bmdp
+ ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPsLBewQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
+ AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
+ LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
+ 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
+ TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
+ 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
+ 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
+ UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
+ bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
+ LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
+ cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
+ 6ilrF8nOwU0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
+ 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
+ w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
+ VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
+ w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
+ QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
+ hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
+ o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
+ AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
+ BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAHCwV8EGAEC
+ AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
+ mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
+ MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
+ 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
+ kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
+ 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
+ a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
+ qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
+ hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
+ yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
+Organization: ARM Ltd
+Message-ID: <3043b2ca-cfa2-db70-b24a-fc473139991c@arm.com>
+Date:   Wed, 17 Oct 2018 09:29:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181017075242.21790-1-henryhsu@chromium.org> <13883852.6N9L7C0n48@avalon>
-In-Reply-To: <13883852.6N9L7C0n48@avalon>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 17 Oct 2018 17:28:52 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5B+4x4aSUywtdukwgUmQNQsQsbK4sjedNphwNFteaTscg@mail.gmail.com>
-Message-ID: <CAAFQd5B+4x4aSUywtdukwgUmQNQsQsbK4sjedNphwNFteaTscg@mail.gmail.com>
-Subject: Re: [PATCH] media: uvcvideo: Add boottime clock support
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Heng-Ruey Hsu <henryhsu@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ricky Liang <jcliang@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181017015511.GA21519@guoren-Inspiron-7460>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+Hi Guo,
 
-On Wed, Oct 17, 2018 at 5:02 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Heng-Ruey,
->
-> Thank you for the patch.
->
-> On Wednesday, 17 October 2018 10:52:42 EEST Heng-Ruey Hsu wrote:
-> > Android requires camera timestamps to be reported with
-> > CLOCK_BOOTTIME to sync timestamp with other sensor sources.
->
-> What's the rationale behind this, why can't CLOCK_MONOTONIC work ? If the
-> monotonic clock has shortcomings that make its use impossible for proper
-> synchronization, then we should consider switching to CLOCK_BOOTTIME globally
-> in V4L2, not in selected drivers only.
->
+On 17/10/18 02:55, Guo Ren wrote:
+> Hi Marc,
+> 
+> On Tue, Oct 16, 2018 at 03:41:05PM +0100, Marc Zyngier wrote:
+>> Guo,
+>>
+>> On 16/10/18 15:08, Guo Ren wrote:
+>>> This is about 13th patchset for C-SKY linux intc drivers and it should pair
+>>> with 9th kernel patchset. Timer drivers are seperated according to
+>>> requirements.
+>>>
+>>> This version patch improve the comment in commit-msg and move the
+>>> changelog to the end with "---", so git am will ignore the changelog.
+>>>
+>>> Hope it could be merged into linux-4.20 and I'm very grateful to any help.
+>>
+>> I can't really see that happening, in all honesty. On its own, this code
+>> is not very useful (it cannot compile standalone), and I haven't seen a
+>> clear indication that the rest of the architecture code is going to be
+>> merged for 4.20.
+> Thank you very much for your frankness.
+> 
+>> If the arch code is actually being merged for 4.20, then please add my:
+>>
+>> 	Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+>>
+>> to these 4 patches, and get the whole thing merged in one go.
+>>
+> Got it, thx for the conditional Reviewed-by.
 
-CLOCK_BOOTTIME includes the time spent in suspend, while
-CLOCK_MONOTONIC doesn't. I can imagine the former being much more
-useful for anything that cares about the actual, long term, time
-tracking. Especially important since suspend is a very common event on
-Android and doesn't stop the time flow there, i.e. applications might
-wake up the device to perform various tasks at necessary times.
+The Reviewed-by is not conditional, and you can apply it right now. What
+I meant is that I'm happy for you to get these irqchip patches merged
+with the rest of the architecture code.
 
-Generally, I'd see a V4L2_BUF_FLAG_TIMESTAMP_BOOTTIME flag being added
-and user space being given choice to select the time stamp base it
-needs, perhaps by setting the flag in v4l2_buffer struct at QBUF time?
+Thanks,
 
-Best regards,
-Tomasz
-
-> > Signed-off-by: Heng-Ruey Hsu <henryhsu@chromium.org>
-> > ---
-> >  drivers/media/usb/uvc/uvc_driver.c | 4 ++++
-> >  drivers/media/usb/uvc/uvc_video.c  | 2 ++
-> >  2 files changed, 6 insertions(+)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_driver.c
-> > b/drivers/media/usb/uvc/uvc_driver.c index d46dc432456c..a9658f38c586
-> > 100644
-> > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > @@ -2287,6 +2287,8 @@ static int uvc_clock_param_get(char *buffer, const
-> > struct kernel_param *kp) {
-> >       if (uvc_clock_param == CLOCK_MONOTONIC)
-> >               return sprintf(buffer, "CLOCK_MONOTONIC");
-> > +     else if (uvc_clock_param == CLOCK_BOOTTIME)
-> > +             return sprintf(buffer, "CLOCK_BOOTTIME");
-> >       else
-> >               return sprintf(buffer, "CLOCK_REALTIME");
-> >  }
-> > @@ -2298,6 +2300,8 @@ static int uvc_clock_param_set(const char *val, const
-> > struct kernel_param *kp)
-> >
-> >       if (strcasecmp(val, "monotonic") == 0)
-> >               uvc_clock_param = CLOCK_MONOTONIC;
-> > +     else if (strcasecmp(val, "boottime") == 0)
-> > +             uvc_clock_param = CLOCK_BOOTTIME;
-> >       else if (strcasecmp(val, "realtime") == 0)
-> >               uvc_clock_param = CLOCK_REALTIME;
-> >       else
-> > diff --git a/drivers/media/usb/uvc/uvc_video.c
-> > b/drivers/media/usb/uvc/uvc_video.c index 86a99f461fd8..d4248d5cd9cd 100644
-> > --- a/drivers/media/usb/uvc/uvc_video.c
-> > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > @@ -425,6 +425,8 @@ static inline ktime_t uvc_video_get_time(void)
-> >  {
-> >       if (uvc_clock_param == CLOCK_MONOTONIC)
-> >               return ktime_get();
-> > +     else if (uvc_clock_param == CLOCK_BOOTTIME)
-> > +             return ktime_get_boottime();
-> >       else
-> >               return ktime_get_real();
-> >  }
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
->
->
+	M.
+-- 
+Jazz is not dead. It just smells funny...
