@@ -2,136 +2,147 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AC4ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1C4ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D84CB214DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:53:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D84CB214DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B61E8204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:55:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sZKK+4RO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B61E8204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbeJQWt3 (ORCPT
+        id S1727655AbeJQWvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:49:29 -0400
-Received: from mga01.intel.com ([192.55.52.88]:17631 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727000AbeJQWt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:49:29 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 07:53:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,392,1534834800"; 
-   d="scan'208";a="100019606"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 17 Oct 2018 07:53:18 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 17 Oct 2018 17:53:18 +0300
-Date:   Wed, 17 Oct 2018 17:53:17 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/5] device property: Introducing software nodes
-Message-ID: <20181017145317.GA14912@kuha.fi.intel.com>
-References: <20181012113934.29942-1-heikki.krogerus@linux.intel.com>
- <CAHp75VcWu_6jco6k5to1x1QNG8Ad893J81TPpTbJkLcqw=RR=g@mail.gmail.com>
+        Wed, 17 Oct 2018 18:51:19 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55031 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727000AbeJQWvS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 18:51:18 -0400
+Received: by mail-wm1-f66.google.com with SMTP id r63-v6so2332063wma.4;
+        Wed, 17 Oct 2018 07:55:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=bVSv5kvJGnsBnF4fTs51dmvQZ2ELFeKwYI05LDwB3bc=;
+        b=sZKK+4ROFe8mBPRRhH3O5tTj/eEB3tkmZa8DIoOy+frQt4gK+nRFmBqz7FpzLrijhN
+         0ce+1He/uWzEd68bERcKIWJ2W8163OP0R+A6JUSsnXiFtP7rGJsIUTkHobftDDBUHCLN
+         5HIk5UCHVie4xJtyBOdu9NLX3UOZkzf3lzAMqa0MGwA+tlxuw8U89oKsB61SKY1iIF9C
+         P5ww5kqtr9fyMzQ3R0v4gkymSVDpOvGkT872Pj+/tYCY1i+lMC0juFz5uUh9+QSCuu06
+         +9pbr/q8qYuofvBWhDdFt6BJOTjXTrKqEJMKkCyDvokNrH1Z9iirV4E5pAZEYneYv3AV
+         m1vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=bVSv5kvJGnsBnF4fTs51dmvQZ2ELFeKwYI05LDwB3bc=;
+        b=YIBEiJvjvcGB5fDjXigoo/x1JJh97W+Twz3oJGJKZXYtVNnsvvMESRSmDz7DBqfIQT
+         KPsHnXhFbdR1W39EZNJ1ENVd3tb6RZRwhy/p1+vqh7V8ERpz5lL27hSsYNBB+5KLl//g
+         ukoJt0CPV3pU29ptMCGfhUdGlvjoZID80dazZoRtqgwpOSpkMH6ciQL2zSn8ju29aLQJ
+         jV1/NqlKTP4p8fX0PqjAH6/jnTViytvFdnmoxMoHqy0jil+JQa7l3FDGUdcsIm+KVisl
+         KAfzllUrCKGSfFi2vU+1TqV6zAkCa25PRx73OOZ0Bz9MTmc4Yl9k1gU8Hoso+JX6ENG4
+         shwg==
+X-Gm-Message-State: ABuFfohAPyhqJGo8qh5xCEJiucVDKzNAp2J+6FfMQXsNRbVG9h6ANrAg
+        8tw68dMV9TuK2M9ZsIz32bcfyRlREYM=
+X-Google-Smtp-Source: ACcGV60R7mDfHwAYhkl7w9QDt5rNlTaP16YQGH16jhyvu15ho/2fXAvUn86ZA9OGAW64D0DoosNl+g==
+X-Received: by 2002:a1c:dc42:: with SMTP id t63-v6mr3229264wmg.17.1539788113311;
+        Wed, 17 Oct 2018 07:55:13 -0700 (PDT)
+Received: from [172.16.1.192] (host-89-243-172-161.as13285.net. [89.243.172.161])
+        by smtp.gmail.com with ESMTPSA id d6-v6sm11002486wro.72.2018.10.17.07.55.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 07:55:12 -0700 (PDT)
+Subject: Re: [PATCH 31/34] vfs: syscall: Add fspick() to select a superblock
+ for reconfiguration [ver #12]
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>, linux-api@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mszeredi@redhat.com
+References: <19866.1539782101@warthog.procyon.org.uk>
+ <68a2107f-bf70-055b-86cf-1ba2ba9422bf@gmail.com>
+ <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
+ <153754766004.17872.9829232103614083565.stgit@warthog.procyon.org.uk>
+ <9b8bf436-65de-13b9-0002-0479d11c18ca@gmail.com>
+ <20181013061141.GR32577@ZenIV.linux.org.uk>
+ <28710.1539782412@warthog.procyon.org.uk>
+ <f6f2553e-f64d-9c26-4290-baf43e5f533b@gmail.com>
+ <87woqgiqta.fsf@xmission.com>
+From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Message-ID: <8f5cf2a3-c522-d0b8-1257-1814e8149956@gmail.com>
+Date:   Wed, 17 Oct 2018 15:55:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcWu_6jco6k5to1x1QNG8Ad893J81TPpTbJkLcqw=RR=g@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <87woqgiqta.fsf@xmission.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 05:35:50PM +0300, Andy Shevchenko wrote:
-> On Fri, Oct 12, 2018 at 2:41 PM Heikki Krogerus
-> <heikki.krogerus@linux.intel.com> wrote:
-> >
-> > Hi guys,
-> >
-> > To continue the discussion started by Dmitry [1], this is my proposal
-> > that I mentioned in my last mail. In short, the idea is that instead
-> > of trying to extend the support for the currently used struct
-> > property_set, I'm proposing that we introduce a completely new,
-> > independent type of fwnode, and replace the struct property_set with
-> > it. I'm calling the type "software node" here.
-> >
-> > The reason for a complete separation of the software nodes from the
-> > generic property handling code is the need to be able to create the
-> > nodes independently from the devices that they are bind to.
-> >
-> > The way this works is that every node that is created will have a
-> > kobject registered. That will take care the ref counting for us, and
-> > also allow us to for example display the properties in sysfs.
-> >
-> > There are a few more details in patch 3/5 about the software nodes in
-> > the commit message.
-> >
-> > [1] https://lkml.org/lkml/2018/9/17/1067
-> 
-> In private discussion I brought a concern that we exposed properties
-> as a part of ABI, but at the same time we have not strict rules which
-> might lead to ambiguous reading, e.g. there is no type exported and
-> thus no possibility to tell what kind of property it is.
-> 
-> Examples:
-> 1. 0x1 and 0x1 ??? are they of the same type?
-> 2. 0x1 ??? is it an array or single value?
-> 3. 0x12345678 ??? is it string or hex?
-> 4. 25 ??? is it hex or decimal?
-
-This is mostly a note to self, but also to let everybody know:
-
-After thinking about this a bit more I realised that the user space
-has to know what the property it is reading contains. An array of
-integers can actually be a string in reality, just like a string may
-contain an integer value(s). String or string array could describe a
-data structure, or even supply the values for one. In reality the type
-of the property, or the fact that it's an array or not, do not help at
-all to determine the content of the property.
-
-So the user space has to know what a property returns if it wants
-to use it, and once the user space knows that, the user space will
-also know the type and other details about the property, including
-knowing is it an array or not.
-
-Based on that, I'm against any kind of grouping or naming of the
-properties, was it based on the type of the property or is it an array
-or not, or supplying any details about the properties in any way to
-the user space. That would only complicate the life for the user
-space, as the grouping or naming, or supplying the details about the
-properties in any way, does not provide any information that the user
-space does not already have. The details about the properties would
-just be a sort of a useless noise for the user space that just has to
-be filtered out.
-
-Therefore I'm going to continue to propose that we expose the
-properties exactly the way I'm doing now: we'll have the "properties"
-directory that contains an attribute file for every property named
-with the names of the properties, and nothing else.
-
-The output formats we can still debate about, but Andy had already
-good proposals for that.
-
-I'm still not planning to include the property exposure at the first
-stage. Well add it after the initial support is in.
+On 17/10/2018 15:35, Eric W. Biederman wrote:
+> Alan Jenkins <alan.christopher.jenkins@gmail.com> writes:
+>
+>> On 17/10/2018 14:20, David Howells wrote:
+>>> David Howells <dhowells@redhat.com> wrote:
+>>>
+>>>> I should probably check that the picked point is actually a mountpoint.
+>>> The root of the mount object at the path specified, that is, perhaps with
+>>> something like the attached.
+>>>
+>>> David
+>>
+>> I agree.  I'm happy to see this is using the same check as do_remount().
+>>
+>>
+>> * change filesystem flags. dir should be a physical root of filesystem.
+>> * If you've mounted a non-root directory somewhere and want to do remount
+>> * on it - tough luck.
+>> */
+> Davids check will work for bind mounts as well.  It just won't work it
+> just won't work for files or subdirectories of some mountpoint.
+>
+> Eric
 
 
-Thanks,
+I see.  Then I am still happy to see the fspick() check match a check in 
+do_remount() (and it still solves the problem I was worried about).
 
--- 
-heikki
+I cannot blame David for the do_remount() comment being out of date :-).
+
+# uname -r
+4.18.10-200.fc.28.x86_64
+# mount --bind /mnt /mnt
+# mount -oremount,debug /mnt
+# findmnt /mnt; findmnt /
+[findmnt shows / has been remounted, adding the ext4 "debug" mount option]
+
+
+>
+>>> ---
+>>> diff --git a/fs/fsopen.c b/fs/fsopen.c
+>>> index f673e93ac456..aaaaa17a233c 100644
+>>> --- a/fs/fsopen.c
+>>> +++ b/fs/fsopen.c
+>>> @@ -186,6 +186,10 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags
+>>>    	if (ret < 0)
+>>>    		goto err;
+>>>    +	ret = -EINVAL;
+>>> +	if (target.mnt->mnt_root != target.dentry)
+>>> +		goto err_path;
+>>> +
+>>>    	fc = vfs_new_fs_context(target.dentry->d_sb->s_type, target.dentry,
+>>>    				0, 0, FS_CONTEXT_FOR_RECONFIGURE);
+>>>    	if (IS_ERR(fc)) {
+>>>
