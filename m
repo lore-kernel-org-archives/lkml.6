@@ -2,198 +2,341 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA09AECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6CAECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66F63214D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:54:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B0E121477
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:55:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NpJzU6Em"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66F63214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zixtee1A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0E121477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbeJRDvP (ORCPT
+        id S1727715AbeJRDxK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 23:51:15 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43838 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbeJRDvP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 23:51:15 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d8-v6so1804049pgv.10
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 12:54:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=x6OaPB+36JBdWhkZ++BX81AZlRsiJSO6bUvHIW4LpB4=;
-        b=NpJzU6EmmPaKmHBxYryq5Dl9zA8MR6rWSzW6K9WedtO/m99IWFhQInQ5gspGkTMvy3
-         tS6mvPdyJa5JkaJK1gFD2FPDjQXxbRyLYmkAq6we0glpgNk4N1Epx/lXrQsXtO9m4Ssc
-         qZECUcbeutXEAZi8TQ4J/BHWB1rDw2LvTo+Gs5c3kln4wWpuUQk5h9Jrwbqmg16DJRpw
-         mfYs1juvYZ9yt4h+Rx7go7ikBG6ff0hJeG8SPUAokwq+Xflup78xmvJesPN1pqfc9Pmv
-         3iMOQAKsr9lyrZmnhcX4TLtnFJjkFmSgsevVK4rxtjVwlUxRnFcRiRhsVyrmI60H/dAs
-         8bNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=x6OaPB+36JBdWhkZ++BX81AZlRsiJSO6bUvHIW4LpB4=;
-        b=BXV5TdD99+d9CZ2hmaNWrhHWmq5hl4bVKkxDbITpcJlMpqonwKNkqKeHq5SNyU3x2h
-         vLb5EFsxD53vpdG2xUM5EkiNca4Id+O7N4Qi0utppJMhnYsQ/CGqXc8fZUH8hPA3+MSo
-         rZa6G1EBOoIYNIj4Y/H9s2biaRXeV9aVBIp/AU5puo/P334o0DOHS1/vqt7/1QsEW67B
-         ltbBkgVqNOMY1IIiqrsVk+NnKM2BeXrxUCKk/CHXpJXRt9avMUqlMMZh6Wfl0HGjQIL/
-         gtpPF6fAYmaEP8oFZQL+rtXvXjbM5fHyG04+iIfCQlwd2JZ/ZCYV41RmIC5TguGDIkWt
-         l3zw==
-X-Gm-Message-State: ABuFfoi+ktX0+4nRJA40A6B+HV8sm3c/QPa64DMTut+f/lGzTwylhmiP
-        7Y2qKAYbNv2WAV3/adt89Hs=
-X-Google-Smtp-Source: ACcGV638EmeaMI02fP4zFHHSlnA+l8p5euKLCyKWhMrk6ui7z/xfHLUSLXzsEUeJH8F1cZ2IAqA2Eg==
-X-Received: by 2002:a65:40c2:: with SMTP id u2-v6mr25680649pgp.123.1539806039738;
-        Wed, 17 Oct 2018 12:53:59 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id m20-v6sm19232009pgv.93.2018.10.17.12.53.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 12:53:59 -0700 (PDT)
-Subject: Re: [Ksummit-discuss] [PATCH v3 1/3] code-of-conduct: Fix the
- ambiguity about collecting email addresses
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        ksummit-discuss@lists.linuxfoundation.org
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-References: <1539701820.2805.6.camel@HansenPartnership.com>
- <1539701896.2805.7.camel@HansenPartnership.com>
- <e332116b-62e8-9930-c263-d022edb5828e@gmail.com>
- <1539744091.2805.108.camel@HansenPartnership.com>
- <16a20416-0045-dfe6-d937-63f2f0cff269@gmail.com>
- <1539803331.3769.62.camel@HansenPartnership.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <b056cdc3-29de-b6c8-b2a7-67b93b0fd730@gmail.com>
-Date:   Wed, 17 Oct 2018 12:53:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 17 Oct 2018 23:53:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727108AbeJRDxJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 23:53:09 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3ED202087A;
+        Wed, 17 Oct 2018 19:55:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539806153;
+        bh=sSFO3yRF1qzL71OKneUdoVEKpbzJEfLPDG3LjVCPGWU=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=zixtee1AKNg/P5vM03ZwTNw6RqC1TxZjjNwxGTCMm9OlkHJNqQAjogtxBmnTqorz5
+         J2zFC4x/YExcb0LdDN45Ez0cvH3ywTT9DDx/oHb9uHFiEJ3M4P/h2qqFWYrMQggFkP
+         oMprCHx28dy3sr7cQw8JaauSmlFjwraOsEXYReLw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1539803331.3769.62.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
+Cc:     linux-imx@nxp.com, Abel Vesa <abelvesa@linux.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
+ <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
+Message-ID: <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v9 3/5] clk: imx: add SCCG PLL type
+Date:   Wed, 17 Oct 2018 12:55:52 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/18 12:08, James Bottomley wrote:
-> On Wed, 2018-10-17 at 11:49 -0700, Frank Rowand wrote:
->> On 10/16/18 19:41, James Bottomley wrote:
->>> On Tue, 2018-10-16 at 19:10 -0700, Frank Rowand wrote:
-> [...]
->>>> Repeating my comment on version 1:
->>>>
->>>> My understanding of the concern behind this change is that we
->>>> should be able to use an email address for the current
->>>> development practices, such as Reported-by, Suggested-by, etc
->>>> tags when the email address was provided in what is a public
->>>> space for the project.  The public space is visible to anyone in
->>>> the world who desires to access it.
->>>>
->>>> I do not understand how "ordinarily collected by the project" is
->>>> equivalent to "an email address that was provided in a public
->>>> space for the project".
->>>
->>> I don't think it is ... or should be.  This section is specifically
->>> enumerating unacceptable behaviours.  The carve out "email address
->>> not ordinarily collected by the project" means that adding
->>> someone's email address in a tag isn't immediately sanctionable in
->>> the code of conduct as unacceptable behaviour if a question about
->>> whether you asked explicit permission arises.  Equally, a carve out
->>> from unacceptable behaviours doesn't make the action always
->>> acceptable, so it's not a licence to publish someone's email
->>> address regardless of context.
->>
->> The patch says "Publishing ... electronic address not ordinarily
->> collected by the project, without explicit permission".  (I think it
->> is fair to abstract here with "...".)  This phrase specifies which
->> email addresses can be published.  It does not specify in what cases
->> the email address can be published.  The desired goal is to be able
->> to publish email addresses in patch and commit tags.
-> 
-> No, that's not my desired goal.   The section is not about giving
-> permission it's about making sure listed unacceptable behaviours don't
-> overlap what we normally do.  The goal is to exclude email the project
-> ordinarily collects from immediate sanction under the unacceptable
-> behaviours clause.  I deliberately didn't add anything about permission
-> because that's up to the project to define in its more standard
-> contribution documents.
+Quoting Abel Vesa (2018-09-24 03:39:55)
+> diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pl=
+l.c
+> new file mode 100644
+> index 0000000..a9837fa
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-sccg-pll.c
+> @@ -0,0 +1,237 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2018 NXP.
+> + */
+> +
+> +#include <linux/clk.h>
 
-OK.  I am fine with the goal of wording that excludes certain things
-from unacceptable behavior instead providing permissions for certain
-things.  I think me phrasing as permission instead of carve out is
-creating a lot of the miscommunication.
+Is this include used? Otherwise should see clk-provider.h included here.
 
-Please re-read my comments, but in every place where I state things
-in a way of providing permissions, re-state it in your mind as the
-same sentence _except_ phrased as excluding from unacceptable
-behavior.  (I started to do that explicitly, but it looked like
-I was just going to create a whole lot of distracting text.)
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/slab.h>
+> +#include <linux/delay.h>
+> +#include <linux/bitfield.h>
+> +
+> +#include "clk.h"
+> +
+> +/* PLL CFGs */
+> +#define PLL_CFG0               0x0
+> +#define PLL_CFG1               0x4
+> +#define PLL_CFG2               0x8
+> +
+> +#define PLL_DIVF1_MASK         GENMASK(18, 13)
+> +#define PLL_DIVF2_MASK         GENMASK(12, 7)
+> +#define PLL_DIVR1_MASK         GENMASK(27, 25)
+> +#define PLL_DIVR2_MASK         GENMASK(24, 19)
+> +#define PLL_REF_MASK           GENMASK(2, 0)
+> +
+> +#define PLL_LOCK_MASK          BIT(31)
+> +#define PLL_PD_MASK            BIT(7)
+> +
+> +#define OSC_25M                        25000000
+> +#define OSC_27M                        27000000
+> +
+> +#define PLL_SCCG_LOCK_TIMEOUT  70
+> +
+> +struct clk_sccg_pll {
+> +       struct clk_hw   hw;
+> +       void __iomem    *base;
+> +};
+> +
+> +#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
+> +
+> +static int clk_pll_wait_lock(struct clk_sccg_pll *pll)
+> +{
+> +       u32 val;
+> +
+> +       return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK, 0,
+> +                                       PLL_SCCG_LOCK_TIMEOUT);
+> +}
+> +
+> +static int clk_pll1_is_prepared(struct clk_hw *hw)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val;
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
+> +       return (val & PLL_PD_MASK) ? 0 : 1;
+> +}
+> +
+> +static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
+> +                                        unsigned long parent_rate)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val, divf;
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
+> +       divf =3D FIELD_GET(PLL_DIVF1_MASK, val);
+> +
+> +       return parent_rate * 2 * (divf + 1);
+> +}
+> +
+> +static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                              unsigned long *prate)
+> +{
+> +       unsigned long parent_rate =3D *prate;
+> +       u32 div;
+> +
+> +       div =3D rate / (parent_rate * 2);
 
+Can parent_rate be 0?
 
->> Which email addresses are allowed to be published?  (This is the
->> point of my original comment.)  To me, the patch wording is
->> describing how I can determine whether I can put a specific email
->> address in a tag in a patch that I submit or commit.  I can put an
->> email address in a tag _if_ it is "ordinarily collected by the
->> project".
->>
->> This then leads my mental process down the path of the disclosures
->> (from all of the companies that I do business with) that tell me what
->> they are going to do with my personal information, such as my
->> address.  (They usually plan to share it with the world for their
->> financial benefit.) In that context, my personal information is not
->> _public_, but it is _ordinarily collected_ by the company.  I hope
->> this provides some insight into what I am reading into "ordinarily
->> collected by the project".
->>
->> My original comment was trying to provide the concept behind a way to
->> create an alternate wording in the patch to define "which email
->> addresses".
->>
->> Where are email addresses allowed to be published?  I do not
->> understand the patch wording to address this at all.
-> 
-> I agree, but, as I said, my goal wasn't to provide explicit permission
-> (because the list is too long and too dependent on the way the project
-> operates) it was to carve out an exclusion from sanction for stuff the
-> kernel normally does.  The carve out doesn't translate into explicit
-> permission because the project can define other standards for the way
-> email addresses are added to the tags.
-> 
->> Trying to understand how you are understanding my comment vs what I
->> intended to communicate, it seems to me that you are focused on the
->> "where allowed" and I am focused on the "which email addresses".
->>
->> More clear?  Or am I still not communicating well enough?
-> 
-> I think the crux of the disagreement is that you think the carve out
-> equates to a permission which is not specific enough and I think it
+> +
+> +       return parent_rate * div * 2;
+> +}
+> +
+> +static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                           unsigned long parent_rate)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val;
+> +       u32 divf;
+> +
+> +       divf =3D rate / (parent_rate * 2);
 
-Nope.  That is a big place where I was not transferring my thoughts
-to clear communication.  I agree that what I wrote should have been
-written in terms of carve out instead of permission.
+Can parent_rate be 0?
 
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
+> +       val &=3D ~PLL_DIVF1_MASK;
+> +       val |=3D FIELD_PREP(PLL_DIVF1_MASK, divf - 1);
+> +       writel_relaxed(val, pll->base + PLL_CFG2);
+> +
+> +       return clk_pll_wait_lock(pll);
+> +}
+> +
+> +static int clk_pll1_prepare(struct clk_hw *hw)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val;
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
+> +       val &=3D ~PLL_PD_MASK;
+> +       writel_relaxed(val, pll->base + PLL_CFG0);
+> +
+> +       return clk_pll_wait_lock(pll);
+> +}
+> +
+> +static void clk_pll1_unprepare(struct clk_hw *hw)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val;
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
+> +       val |=3D PLL_PD_MASK;
+> +       writel_relaxed(val, pll->base + PLL_CFG0);
+> +
+> +}
+> +
+> +static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
+> +                                        unsigned long parent_rate)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val, ref, divr1, divf1, divr2, divf2;
+> +       u64 temp64;
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
+> +       switch (FIELD_GET(PLL_REF_MASK, val)) {
+> +       case 0:
+> +               ref =3D OSC_25M;
+> +               break;
+> +       case 1:
+> +               ref =3D OSC_27M;
+> +               break;
+> +       default:
+> +               ref =3D OSC_25M;
 
-> doesn't equate to a permission at all, which is why there's no need to
-> make it more explicit.  Is that a fair characterisation?
+Does this information not come through 'parent_rate'?
 
-Nope.  My concern is "which email addresses".
+> +               break;
+> +       }
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
+> +       divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
+> +       divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
+> +       divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
+> +       divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
+> +
+> +       temp64 =3D ref * 2;
+> +       temp64 *=3D (divf1 + 1) * (divf2 + 1);
+> +
+> +       do_div(temp64, (divr1 + 1) * (divr2 + 1));
 
--Frank
+Nitpicks: A comment with the equation may be helpful to newcomers.
 
+> +
+> +       return (unsigned long)temp64;
 
-> James
-> 
-> 
+Drop useless cast please.
 
+> +}
+> +
+> +static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                              unsigned long *prate)
+> +{
+> +       u32 div;
+> +       unsigned long parent_rate =3D *prate;
+> +
+> +       div =3D rate / (parent_rate);
+> +
+> +       return parent_rate * div;
+> +}
+> +
+> +static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                           unsigned long parent_rate)
+> +{
+> +       u32 val;
+> +       u32 divf;
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +
+> +       divf =3D rate / (parent_rate);
+
+Drop useless parenthesis please.
+
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
+> +       val &=3D ~PLL_DIVF2_MASK;
+> +       val |=3D FIELD_PREP(PLL_DIVF2_MASK, divf - 1);
+> +       writel_relaxed(val, pll->base + PLL_CFG2);
+> +
+> +       return clk_pll_wait_lock(pll);
+> +}
+> +
+> +static const struct clk_ops clk_sccg_pll1_ops =3D {
+> +       .is_prepared    =3D clk_pll1_is_prepared,
+> +       .recalc_rate    =3D clk_pll1_recalc_rate,
+> +       .round_rate     =3D clk_pll1_round_rate,
+> +       .set_rate       =3D clk_pll1_set_rate,
+> +};
+> +
+> +static const struct clk_ops clk_sccg_pll2_ops =3D {
+> +       .prepare        =3D clk_pll1_prepare,
+> +       .unprepare      =3D clk_pll1_unprepare,
+> +       .recalc_rate    =3D clk_pll2_recalc_rate,
+> +       .round_rate     =3D clk_pll2_round_rate,
+> +       .set_rate       =3D clk_pll2_set_rate,
+> +};
+> +
+> +struct clk *imx_clk_sccg_pll(const char *name,
+> +                               const char *parent_name,
+> +                               void __iomem *base,
+> +                               enum imx_sccg_pll_type pll_type)
+> +{
+> +       struct clk_sccg_pll *pll;
+> +       struct clk *clk;
+> +       struct clk_init_data init;
+> +
+> +       pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
+> +       if (!pll)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       pll->base =3D base;
+> +       init.name =3D name;
+> +       switch (pll_type) {
+> +       case SCCG_PLL1:
+> +               init.ops =3D &clk_sccg_pll1_ops;
+> +               break;
+> +       case SCCG_PLL2:
+> +               init.ops =3D &clk_sccg_pll2_ops;
+> +               break;
+> +       default:
+> +               kfree(pll);
+> +               return ERR_PTR(-EINVAL);
+
+Do this case statement before allocating? So that kfree() isn't required
+here?
+
+> +       }
+> +
+> +       init.flags =3D 0;
+> +       init.parent_names =3D &parent_name;
+> +       init.num_parents =3D 1;
+> +
+> +       pll->hw.init =3D &init;
+> +
+> +       clk =3D clk_register(NULL, &pll->hw);
+
+Any chance to use clk_hw based registration APIs?
+
+> +       if (IS_ERR(clk))
+> +               kfree(pll);
+> +
+> +       return clk;
