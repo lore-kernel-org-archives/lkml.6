@@ -2,271 +2,154 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EF6ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F355ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 541BA2150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:53:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 541BA2150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D08D52150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:53:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EyOrKyub"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D08D52150D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbeJQXuD (ORCPT
+        id S1728004AbeJQXuI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:50:03 -0400
-Received: from mga11.intel.com ([192.55.52.93]:25423 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeJQXuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:50:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 08:53:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="asc'?scan'208";a="100256625"
-Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.96])
-  by orsmga001.jf.intel.com with ESMTP; 17 Oct 2018 08:53:08 -0700
-Message-ID: <3f8e7a6e9532abcd772927432d5f00cebeba08b8.camel@intel.com>
-Subject: Re: [PATCH net-next] ixgbe: fix XFRM_ALGO dependency
-From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Reply-To: jeffrey.t.kirsher@intel.com
-To:     Shannon Nelson <shannon.nelson@oracle.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        =?ISO-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 17 Oct 2018 08:56:35 -0700
-In-Reply-To: <07e372cb-06da-bf95-bc53-64ee09fc8e76@oracle.com>
-References: <20181016100848.1329843-1-arnd@arndb.de>
-         <07e372cb-06da-bf95-bc53-64ee09fc8e76@oracle.com>
-Organization: Intel
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-eBL/cF5nu+mq+ndEqGVn"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Wed, 17 Oct 2018 19:50:08 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:63290 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeJQXuH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:50:07 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20181017155346epoutp01a97af298635505c65307adb5a6ef3caa~ecFOESDfM2806228062epoutp01h;
+        Wed, 17 Oct 2018 15:53:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20181017155346epoutp01a97af298635505c65307adb5a6ef3caa~ecFOESDfM2806228062epoutp01h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539791626;
+        bh=G9v961x7gTaUJ3IgOF7OjZMws+07qhAKZWxmjW9kIhg=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=EyOrKyubSlC1adEZvBP44L/8wW/QYOTz4AfGQMX9pCrOaGAy54V3DEkyYhOgHJA8m
+         OVNXda2rkrsHL/UPdrAaD8TcaZ8Ues6PRk7MAOCE8vTUNhOFXR5UblGnTBjo9PvEb5
+         w0xw8Av5zuFeUHac5Q3yVgjf5VEFvQaCgaJ0dBOg=
+Received: from epsmges1p1.samsung.com (unknown [182.195.42.53]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181017155345epcas1p13d4067385b5ccdc39eb3691ec37c8b6c~ecFNTNsfv1224012240epcas1p1Q;
+        Wed, 17 Oct 2018 15:53:45 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DB.3F.04073.90B57CB5; Thu, 18 Oct 2018 00:53:45 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181017155345epcas1p18dee37b9a46f2bf0b68aa3ded43f2717~ecFMq4zcf2660926609epcas1p1o;
+        Wed, 17 Oct 2018 15:53:45 +0000 (GMT)
+X-AuditID: b6c32a35-69fff70000000fe9-b5-5bc75b09eec9
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 95.A6.03743.80B57CB5; Thu, 18 Oct
+        2018 00:53:45 +0900 (KST)
+Received: from AMDC3058.DIGITAL.local ([106.120.53.102]) by mmp2.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PGR00KZM2SD3M00@mmp2.samsung.com>; Thu, 18 Oct 2018
+        00:53:44 +0900 (KST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc:     Amit kucheria <amit.kucheria@linaro.org>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jun Nie <jun.nie@linaro.org>,
+        Baoyou Xie <baoyou.xie@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v2 05/17] thermal: bcm2835: enable+check sensor after its
+ setup is finished
+Date:   Wed, 17 Oct 2018 17:52:31 +0200
+Message-id: <1539791563-5959-6-git-send-email-b.zolnierkie@samsung.com>
+X-Mailer: git-send-email 1.9.1
+In-reply-to: <1539791563-5959-1-git-send-email-b.zolnierkie@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTYRjG+7Zz22hxXKJfGkIDLaM0K+EryySCDlpkUf3RqBztpLJN146G
+        FcR0kstaNyNr3m+QK6nW5iwK1HKnIruZJmYta9Sy0GReSkJrHv3ved739z7vx8dLieUmPIzK
+        zMphDVkqrYKQYs2PomNWSpS8cpXHtQKZjHUidOfqLRx99fMANVk6MFT1tgdHrfldAE1//oGj
+        Z64CESq01mKo3jtAoq775QTyWx4DVD70nkTegXME8jlCkf16L4H+3K/E0MOPfpAkZwqG3QRj
+        9XQSzD3rB5Jx9sUzdQ++ixi77TTB9Pc8IBiLaYhgzjlsgHH1VIqZJ6UTGMP3ukSM3x6RKtsn
+        3aBmtZlHWUNsYpo0o6jKSupLJXnXe0zACL6RxUBCQXot9JvLQDGQUnK6BUCf5TwpmAkAzY3d
+        2BzlKyvChMZtAC+db8UFMwlgzS/nTBZBr4cXi2z/sygqmE6BjptUoCymOzD4xR8d0Avp/dDe
+        WQUCGqMjYX79XzKAy+itMP/MEWFXBHzqLsEDWkIz8MV0NRFYBekSEn7qLsQDPKS3wIH+VIFf
+        CAd5BymUw+Gbjo0CXgrgz8kGTDC3ALz53C0SBhLgI/41LrxtARwaOzubKYPmU3IBYeDtmrbZ
+        XykD8Ef+a9EFsKgazLOBEFbP6dJZLk4fF8OpdFxuVnrMoWydHcycxvL4FnD5xbZ2QFNAMV/W
+        EuJWynHVUe6Yrh1ASqwIlh1fwivlMrXq2HHWkH3QkKtluXYQTmGKUJk3rEIpp9NVOayGZfWs
+        Ya4roiRhRrDOkShrSlwV2VGb5hv97fuSd+fK+Deze9jbEGXdHNS3eo8miXvZtPtdasKkiDc0
+        V1i2qg9vmnJ38mSGr3FppXLQE+oZd4Z37zx5QBPCrxlNDp1StnU5b4wVqkcu7F2cHBWbV3Nt
+        pGG7TxX0yuWpFGOTKTu4uxO7jcu0ak39rhMKjMtQxS0XGzjVP55NM5QWAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsVy+t9jQV3O6OPRBk8+M1s0Nyxmstg4Yz2r
+        xbPPxxkt1vYeZbGYf+Uaq8WBxsuMFv8fvWa1OLW9icmiZdYiFoslTx6yW1zeNYfN4nPvEUaL
+        Oe9us1s8edjHZvFii7jFphU32Cx+7prHYrH33mdGByGPpvfH2Dxm3T/L5rFz1l12j623TD0W
+        73nJ5LFpVSebx51re9g8epvfsXn0bVnF6LH92jxmjxPTv7N4HL+xncnj8ya5AN4oLpuU1JzM
+        stQifbsEroz2+bPYC6ZzVqy41szYwPicvYuRk0NCwETixex2li5GLg4hgXWMEs/3/mWHcH4x
+        SvxbcJMRpIpNwEpiYvsqIJuDQ0TAW2LLGg6QGmaBoywSa2d8YwOpERaIldjbeA7MZhFQlWhc
+        8ocdpJ5XwF2isbsQYpmcxMljk1lBbE4BD4lz/xeAlQsBlZzc8ZJ9AiPPAkaGVYySqQXFuem5
+        xUYFhnmp5XrFibnFpXnpesn5uZsYgeG/7bBW3w7G+0viDzEKcDAq8fDuEDsWLcSaWFZcmXuI
+        UYKDWUmEt0rxeLQQb0piZVVqUX58UWlOavEhRmkOFiVx3tt5xyKFBNITS1KzU1MLUotgskwc
+        nFINjO1d26wyVQwMDxh8CLj8+IFudoSUxQfmtvYvSuwOUeeCS520dnrNW/lmVeLkR00hNxSY
+        XSfsl/666tDmcNF583t+5nGaFUbV7H5e8OrWjMVvX50XFz4w8+0E3e4d9U8zMyWnLjpXWHnL
+        WjDG6KGW7PUXn09+LfOfWJ7vNG1JvKOBEf9Of0dFKyWW4oxEQy3mouJEAIqMWl17AgAA
+X-CMS-MailID: 20181017155345epcas1p18dee37b9a46f2bf0b68aa3ded43f2717
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20181017155345epcas1p18dee37b9a46f2bf0b68aa3ded43f2717
+References: <1539791563-5959-1-git-send-email-b.zolnierkie@samsung.com>
+        <CGME20181017155345epcas1p18dee37b9a46f2bf0b68aa3ded43f2717@epcas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Enable+check sensor after HW-block setup (if necessary) and setting
+data->tz.
 
---=-eBL/cF5nu+mq+ndEqGVn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc: Eric Anholt <eric@anholt.net>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/thermal/broadcom/bcm2835_thermal.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On Tue, 2018-10-16 at 09:35 -0700, Shannon Nelson wrote:
-> On 10/16/2018 3:03 AM, Arnd Bergmann wrote:
-> > When XFRM_ALGO is not enabled, the new igxge ipsec code produces a
-> > link error:
->=20
-> s/igxge/ixgbe/
->=20
-> >=20
-> > drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.o: In function
-> > `ixgbe_ipsec_vf_add_sa':
-> > ixgbe_ipsec.c:(.text+0x1266): undefined reference to
-> > `xfrm_aead_get_byname'
-> >=20
-> > Simply selectin XFRM_ALGO from here causes circular dependencies,
-> > so
->=20
-> s/selectin/selecting/
->=20
-> > to fix it, we probably want this slightly more complex solution
-> > that is
-> > similar to what other drivers with XFRM offload do:
-> >=20
-> > A separate Kconfig symbol now controls whether we include the ipsec
-> > offload code. To keep the old behavior, this is left as 'default
-> > y'. The
-> > dependency in XFRM_OFFLOAD still causes a circular dependency but
-> > is
-> > not actually needed because this symbol is not user visible, so
-> > removing
-> > that dependency on top makes it all work.
-> >=20
-> > Fixes: eda0333ac293 ("ixgbe: add VF IPsec management")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-I agree with Shannon's suggested changes.  Arnd, are you working on v2?
-Or would you like me to take care of it?
-
-> > ---
-> >   drivers/net/ethernet/intel/Kconfig            | 10 ++++++++++
-> >   drivers/net/ethernet/intel/ixgbe/Makefile     |  2 +-
-> >   drivers/net/ethernet/intel/ixgbe/ixgbe.h      |  8 ++++----
-> >   drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |  6 +++---
-> >   net/xfrm/Kconfig                              |  1 -
-> >   5 files changed, 18 insertions(+), 9 deletions(-)
-> >=20
-> > diff --git a/drivers/net/ethernet/intel/Kconfig
-> > b/drivers/net/ethernet/intel/Kconfig
-> > index b542aba6f0e8..d1db382d8299 100644
-> > --- a/drivers/net/ethernet/intel/Kconfig
-> > +++ b/drivers/net/ethernet/intel/Kconfig
-> > @@ -194,6 +194,16 @@ config IXGBE_DCB
-> >  =20
-> >   	  If unsure, say N.
-> >  =20
-> > +config IXGBE_IPSEC
-> > +	bool "IPSec XFRM cryptography-offload accelaration"
-> > +	default n
->=20
-> remove this "default n" line?
->=20
-> > +	depends on IXGBE
-> > +	depends on XFRM_OFFLOAD
-> > +	default y
-> > +	select XFRM_ALGO
-> > +	---help---
-> > +	  Enable support for IPSec offload in ixgbe.ko
-> > +
-> >   config IXGBEVF
-> >   	tristate "Intel(R) 10GbE PCI Express Virtual Function Ethernet
-> > support"
-> >   	depends on PCI_MSI
-> > diff --git a/drivers/net/ethernet/intel/ixgbe/Makefile
-> > b/drivers/net/ethernet/intel/ixgbe/Makefile
-> > index ca6b0c458e4a..4fb0d9e3f2da 100644
-> > --- a/drivers/net/ethernet/intel/ixgbe/Makefile
-> > +++ b/drivers/net/ethernet/intel/ixgbe/Makefile
-> > @@ -17,4 +17,4 @@ ixgbe-$(CONFIG_IXGBE_DCB) +=3D  ixgbe_dcb.o
-> > ixgbe_dcb_82598.o \
-> >   ixgbe-$(CONFIG_IXGBE_HWMON) +=3D ixgbe_sysfs.o
-> >   ixgbe-$(CONFIG_DEBUG_FS) +=3D ixgbe_debugfs.o
-> >   ixgbe-$(CONFIG_FCOE:m=3Dy) +=3D ixgbe_fcoe.o
-> > -ixgbe-$(CONFIG_XFRM_OFFLOAD) +=3D ixgbe_ipsec.o
-> > +ixgbe-$(CONFIG_IXGBE_IPSEC) +=3D ixgbe_ipsec.o
-> > diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-> > b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-> > index 7a7679e7be84..1d5d66436eac 100644
-> > --- a/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-> > +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-> > @@ -770,9 +770,9 @@ struct ixgbe_adapter {
-> >   #define IXGBE_RSS_KEY_SIZE     40  /* size of RSS Hash Key in
-> > bytes */
-> >   	u32 *rss_key;
-> >  =20
-> > -#ifdef CONFIG_XFRM_OFFLOAD
-> > +#ifdef CONFIG_IXGBE_IPSEC
-> >   	struct ixgbe_ipsec *ipsec;
-> > -#endif /* CONFIG_XFRM_OFFLOAD */
-> > +#endif /* CONFIG_IXGBE_IPSEC */
->=20
-> You'll probably want to apply these changes to the ixgbevf code as
-> well.
->=20
-> Cheers,
-> sln
->=20
-> >  =20
-> >   	/* AF_XDP zero-copy */
-> >   	struct xdp_umem **xsk_umems;
-> > @@ -1009,7 +1009,7 @@ void ixgbe_store_key(struct ixgbe_adapter
-> > *adapter);
-> >   void ixgbe_store_reta(struct ixgbe_adapter *adapter);
-> >   s32 ixgbe_negotiate_fc(struct ixgbe_hw *hw, u32 adv_reg, u32
-> > lp_reg,
-> >   		       u32 adv_sym, u32 adv_asm, u32 lp_sym, u32
-> > lp_asm);
-> > -#ifdef CONFIG_XFRM_OFFLOAD
-> > +#ifdef CONFIG_IXGBE_IPSEC
-> >   void ixgbe_init_ipsec_offload(struct ixgbe_adapter *adapter);
-> >   void ixgbe_stop_ipsec_offload(struct ixgbe_adapter *adapter);
-> >   void ixgbe_ipsec_restore(struct ixgbe_adapter *adapter);
-> > @@ -1037,5 +1037,5 @@ static inline int
-> > ixgbe_ipsec_vf_add_sa(struct ixgbe_adapter *adapter,
-> >   					u32 *mbuf, u32 vf) { return
-> > -EACCES; }
-> >   static inline int ixgbe_ipsec_vf_del_sa(struct ixgbe_adapter
-> > *adapter,
-> >   					u32 *mbuf, u32 vf) { return
-> > -EACCES; }
-> > -#endif /* CONFIG_XFRM_OFFLOAD */
-> > +#endif /* CONFIG_IXGBE_IPSEC */
-> >   #endif /* _IXGBE_H_ */
-> > diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-> > b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-> > index 0049a2becd7e..113b38e0defb 100644
-> > --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-> > +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-> > @@ -8694,7 +8694,7 @@ netdev_tx_t ixgbe_xmit_frame_ring(struct
-> > sk_buff *skb,
-> >  =20
-> >   #endif /* IXGBE_FCOE */
-> >  =20
-> > -#ifdef CONFIG_XFRM_OFFLOAD
-> > +#ifdef CONFIG_IXGBE_IPSEC
-> >   	if (skb->sp && !ixgbe_ipsec_tx(tx_ring, first, &ipsec_tx))
-> >   		goto out_drop;
-> >   #endif
-> > @@ -10190,7 +10190,7 @@ ixgbe_features_check(struct sk_buff *skb,
-> > struct net_device *dev,
-> >   	 * the TSO, so it's the exception.
-> >   	 */
-> >   	if (skb->encapsulation && !(features & NETIF_F_TSO_MANGLEID)) {
-> > -#ifdef CONFIG_XFRM_OFFLOAD
-> > +#ifdef CONFIG_IXGBE_IPSEC
-> >   		if (!skb->sp)
-> >   #endif
-> >   			features &=3D ~NETIF_F_TSO;
-> > @@ -10883,7 +10883,7 @@ static int ixgbe_probe(struct pci_dev
-> > *pdev, const struct pci_device_id *ent)
-> >   	if (hw->mac.type >=3D ixgbe_mac_82599EB)
-> >   		netdev->features |=3D NETIF_F_SCTP_CRC;
-> >  =20
-> > -#ifdef CONFIG_XFRM_OFFLOAD
-> > +#ifdef CONFIG_IXGBE_IPSEC
-> >   #define IXGBE_ESP_FEATURES	(NETIF_F_HW_ESP | \
-> >   				 NETIF_F_HW_ESP_TX_CSUM | \
-> >   				 NETIF_F_GSO_ESP)
-> > diff --git a/net/xfrm/Kconfig b/net/xfrm/Kconfig
-> > index 4a9ee2d83158..140270a13d54 100644
-> > --- a/net/xfrm/Kconfig
-> > +++ b/net/xfrm/Kconfig
-> > @@ -8,7 +8,6 @@ config XFRM
-> >  =20
-> >   config XFRM_OFFLOAD
-> >          bool
-> > -       depends on XFRM
-> >  =20
-> >   config XFRM_ALGO
-> >   	tristate
-> >=20
-
-
---=-eBL/cF5nu+mq+ndEqGVn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlvHW7MACgkQ5W/vlVpL
-7c5wHg/+NP9nq3je2KsSMXHWUnmlsJRPiaPEwUIGII77Be/q9QvpjLpc0IgYhlxu
-vC26ZRd34GPQP97lcu1YPu4zhw95D5LlPN/Eq72t5pwcPhV3eRx5+dQXIE2GQ8+x
-+nZSH2Hfik1yQRlFc6sdart5ZxWhff/uk8KJhN7AZ7DHUHgmeCwxfuPD7o0Oup5n
-+EGZejZFeXcRezBTrC42C9q26AsQ9E+XJqRS8IdoltxoOI0fQd1vvG7taJZ/fUF9
-6R7r025SregAyKDaQ9K3a1TQ6ioAIHEP+n5j/QuzSuhmZ1Bm/mTc0Kw+2cFUG8tp
-IaDmeJlhc43KH6ljyJyDcuc/9/qqmpQccBbO4sIXJhUh7sTIB9m7a2CHRvPkIR11
-BENC25fJySD0U1BIAerWSsrmVBzDR49NXOjqxwvO2V0QIz3RgROsn9zobxLwZejg
-7ecmaqodJAmP3RBcUie4b44L3oo2lMjlMf60yDAYxv5Se1pECeMK6csXTtZsahJk
-nI0E9COMpTlw4ziherW6icUCAuCbpMbPqs25vwMnZHBs+6R3hf7Qe/S/ljIVftDr
-1iX0n2xOxjxJYgk4lFHr8e/KWdrNH33bp8UB+VSlNnVyzYjmibQkNb/PV95PP8KA
-swUZXxCRNh+sTjpaTmv7aU76KvGSSSwG6Sk6jyyZm8ClsbIqN8o=
-=rJ+0
------END PGP SIGNATURE-----
-
---=-eBL/cF5nu+mq+ndEqGVn--
+diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+index 687a00c..ec82fef 100644
+--- a/drivers/thermal/broadcom/bcm2835_thermal.c
++++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+@@ -227,9 +227,6 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ 		goto err_clk;
+ 	}
+ 
+-	thermal_zone_set_mode(tz, THERMAL_DEVICE_ENABLED);
+-	thermal_zone_device_check(tz);
+-
+ 	/*
+ 	 * right now the FW does set up the HW-block, so we are not
+ 	 * touching the configuration registers.
+@@ -276,6 +273,9 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ 
+ 	data->tz = tz;
+ 
++	thermal_zone_set_mode(tz, THERMAL_DEVICE_ENABLED);
++	thermal_zone_device_check(tz);
++
+ 	platform_set_drvdata(pdev, tz);
+ 
+ 	bcm2835_thermal_debugfs(pdev);
+-- 
+1.9.1
 
