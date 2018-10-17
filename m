@@ -2,88 +2,90 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D25ABECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C004CECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 981112087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:59:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 981112087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 890AD21477
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:59:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V7WRtZDp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 890AD21477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbeJRD42 (ORCPT
+        id S1728176AbeJRD4h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 23:56:28 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42962 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbeJRD41 (ORCPT
+        Wed, 17 Oct 2018 23:56:37 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41134 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727186AbeJRD4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 23:56:27 -0400
-Received: by mail-oi1-f193.google.com with SMTP id w81-v6so22118101oiw.9;
-        Wed, 17 Oct 2018 12:59:11 -0700 (PDT)
+        Wed, 17 Oct 2018 23:56:36 -0400
+Received: by mail-pf1-f196.google.com with SMTP id m77-v6so13704461pfi.8
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 12:59:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=H0DKsXihlM0NQPPht+/+FHBCldKDkLh+uDzGgPdMPT0=;
+        b=V7WRtZDpd4EU2gIK0BzBthgQMurHyIcS4cS691sQ1PWN+0A/hznQmfqvBJol8eGXRX
+         oIR/+nthMGR783jaq24ToF2CUF4WDFsXhTdmK6GwyX9Cm397IarTzQDUmvvrbWp8ye5+
+         ZEQZAHbRc5u4PZI6A7oGD0IXIN6RwTbRDsZq8EushVf52doaMpGB7K85BX3+KmCjWjbw
+         LmpldJgXXMN5JPABZm45laTyz2vs15HBh4x3g3K21VFQN4MM9MtZPSFodHwkNO9pnUPX
+         3kIRHqxpFEolZCY2Dr20V6dY6D98pPfguTbzPw1/e6KSy31EIfdeKHkFDLZ6zoaYRH33
+         2r7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vRBNtr0Oel9vQ3H2vZYKPypBbmzkBI2MpMBMrykdGq4=;
-        b=C1uGbNKFHLrbtYGTBslvghpKfPToIxmjdBMUQXr/I0O+PaYG75odAAOKIju+fp1Bea
-         xMFKyogCyByUrFl8Jo+e5dNi6NU606fBWKCGHUQ1tpn3W93kl4poagWCqvj9n++U6fAy
-         +vCX07VNDl/TKkoPDGqcGq24XAe78CxK1LXLFYWjctJHKoqy1TPMLb+eyIeBB1eVW+z0
-         FUBbQEZcq57DJbmy5S7jXYkzD6iOxcyrKmeKShjKmyuMY7KwpXOUgG2jNWjG3b9bUdlA
-         EAMm3cSuK1icysmqwGs+6L9y4/dOtv9qIxecbRCVUpEmaxYxbFuaxCRCWoNKL0KXHpmG
-         vFKw==
-X-Gm-Message-State: ABuFfojR+sBDa/x8XMay5i6BxDTr/V29pS6KZAqlEuWTGLfAm/BTN97/
-        fnYnwZDtAA0HLW+3+dZLOw==
-X-Google-Smtp-Source: ACcGV6293WnLc/mugvuOLKBQvXdnNLKEm0GRFSOaT7+vdpvn79I+Iyz7DmhiNUlNFEfFS3LWYoB65w==
-X-Received: by 2002:aca:6257:: with SMTP id w84-v6mr13956131oib.326.1539806351251;
-        Wed, 17 Oct 2018 12:59:11 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id b8sm6250424otd.50.2018.10.17.12.59.10
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=H0DKsXihlM0NQPPht+/+FHBCldKDkLh+uDzGgPdMPT0=;
+        b=Guwp1V7523TG8AZZXO9tQELo/e04xYZzPD+seFu6lW+HDnkOs/2B2AMwAZUSAaKhMY
+         KZ28G2kGrtqAp2qy4stJvY7QrdJKRx4RFWWRIx09BdF9P3OR7j1UYM8k4zvSybUuvo64
+         eB7aQDtzgg9FzbNxUN7aJgtX6LRJfyxHpqvaQmbA02NmNakEfsv+uIEezRc3a22NRc0R
+         XkbQpizyE6EbqsmnqqbJ/0LipF9/jzCBYx2HHibKvm9jH1Z8m2dd3GexdY8I1t4dek7A
+         kHfZOqflsDrp1c5O/jbOoldDkUTYWNXfWpvEJ4S+3cw3k/K0pQeX6Atre3K8R3ty8X2N
+         wt6g==
+X-Gm-Message-State: ABuFfoiepC9WNu0rY/sY1p7PJvn01Q56TBia3mqWyi2lMlSV+Jtpw9Lt
+        3+PXO7g8aRGurREjqs2tF6g36A==
+X-Google-Smtp-Source: ACcGV63JYNM0//S8IIty4/QpIjVAzmioCYj1HlU1/q7buwakg5Ee88yoQ8R0qNSHDwLqiQVjKTcBEQ==
+X-Received: by 2002:a63:dd58:: with SMTP id g24-v6mr25148262pgj.86.1539806360186;
+        Wed, 17 Oct 2018 12:59:20 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id d2-v6sm20892491pfn.118.2018.10.17.12.59.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 12:59:10 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 14:59:09 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: uniphier: move cache-uniphier.txt to
- vendor directory
-Message-ID: <20181017195909.GA13070@bogus>
-References: <1539318324-4938-1-git-send-email-yamada.masahiro@socionext.com>
- <1539318324-4938-2-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 17 Oct 2018 12:59:19 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 12:59:18 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: Re: [RFC PATCH] mm, proc: report PR_SET_THP_DISABLE in proc
+In-Reply-To: <20181017070531.GC18839@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1810171256330.60837@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1810031547150.202532@chino.kir.corp.google.com> <20181004055842.GA22173@dhcp22.suse.cz> <alpine.DEB.2.21.1810040209130.113459@chino.kir.corp.google.com> <20181004094637.GG22173@dhcp22.suse.cz> <alpine.DEB.2.21.1810041130380.12951@chino.kir.corp.google.com>
+ <20181009083326.GG8528@dhcp22.suse.cz> <20181015150325.GN18839@dhcp22.suse.cz> <alpine.DEB.2.21.1810151519250.247641@chino.kir.corp.google.com> <20181016104855.GQ18839@dhcp22.suse.cz> <alpine.DEB.2.21.1810161416540.83080@chino.kir.corp.google.com>
+ <20181017070531.GC18839@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1539318324-4938-2-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 12 Oct 2018 13:25:24 +0900, Masahiro Yamada wrote:
-> Now, the Socionext vendor directory is available at
-> Documentation/devicetree/bindings/arm/socionext/
-> 
-> Move cache-uniphier.txt over to it.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> Changes in v2:
->   - New patch
-> 
->  .../devicetree/bindings/arm/{uniphier => socionext}/cache-uniphier.txt    | 0
->  1 file changed, 0 insertions(+), 0 deletions(-)
->  rename Documentation/devicetree/bindings/arm/{uniphier => socionext}/cache-uniphier.txt (100%)
+On Wed, 17 Oct 2018, Michal Hocko wrote:
+
+> Do you know of any other userspace except your usecase? Is there
+> anything fundamental that would prevent a proper API adoption for you?
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Yes, it would require us to go back in time and build patched binaries. 
