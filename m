@@ -6,75 +6,67 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCACECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A683ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD02821526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4039821526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:48:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gi+951KH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD02821526
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xTYeES4q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4039821526
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727400AbeJQPnA (ORCPT
+        id S1727437AbeJQPnN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:43:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56758 "EHLO mail.kernel.org"
+        Wed, 17 Oct 2018 11:43:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726947AbeJQPnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:43:00 -0400
+        id S1726947AbeJQPnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 11:43:13 -0400
 Received: from localhost (unknown [188.88.119.206])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05FE2214C3;
-        Wed, 17 Oct 2018 07:48:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A231214C3;
+        Wed, 17 Oct 2018 07:48:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539762514;
-        bh=DH0a2DtgbaKHK9xmp9Xrj/M2dX3cgPzO9DrTkfK4MeA=;
+        s=default; t=1539762528;
+        bh=/TbKA/isZ6f8DSG+cy2n/ft7ChHmnC6F1FIwAhiqzHE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gi+951KH3zqKli0DmzmNbwMdXNnBuBcURr648sYbdFD0zt+r0+OgQhq5D/hW54VeE
-         4bgyD1p5/e+ZYFcuU3EY7+sdcofHndVpVY1fFnAHgPf4WAOeTvZcA3Q9hTaWBDVGvq
-         Pms/eZwwpRub2BSbe3Kic5vcI1GezcR09ho4FtoI=
-Date:   Wed, 17 Oct 2018 09:48:31 +0200
+        b=xTYeES4qcNyq94g/4jTk6m+EOgIEfHQnhTNeeAE7Nc4QdHNFhhz/HYzsvLn1lfn00
+         W0jqS8w8zjTaeygrPXBwud2cNjr2j7fqtS6iXGnLOk5J1dmg1e0PAnFZ5gqqw1Jmjb
+         0MQi8AfzAkgeb8SDwk5lovBWlGKvsaWFCGKlk3hs=
+Date:   Wed, 17 Oct 2018 09:48:45 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Paul Mackerras <paulus@ozlabs.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        David Gibson <david@gibson.dropbear.id.au>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.18 086/135] KVM: PPC: Book3S HV: Dont use
- compound_order to determine host mapping size
-Message-ID: <20181017074831.GF25537@kroah.com>
+To:     Holger =?iso-8859-1?Q?Hoffst=E4tte?= 
+        <holger@applied-asynchrony.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.18 000/135] 4.18.15-stable review
+Message-ID: <20181017074845.GG25537@kroah.com>
 References: <20181016170515.447235311@linuxfoundation.org>
- <20181016170521.241312038@linuxfoundation.org>
- <20181016223224.GA27627@blackberry>
+ <e76f0204-fb8e-137f-200b-770972fd1553@applied-asynchrony.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181016223224.GA27627@blackberry>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e76f0204-fb8e-137f-200b-770972fd1553@applied-asynchrony.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 09:32:25AM +1100, Paul Mackerras wrote:
-> On Tue, Oct 16, 2018 at 07:05:16PM +0200, Greg Kroah-Hartman wrote:
-> > 4.18-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Nicholas Piggin <npiggin@gmail.com>
-> > 
-> > [ Upstream commit 71d29f43b6332badc5598c656616a62575e83342 ]
+On Tue, Oct 16, 2018 at 08:33:42PM +0200, Holger Hoffstätte wrote:
+> On 10/16/18 19:03, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.18.15 release.
 > 
-> If you take 71d29f43b633 then you also need 6579804c4317 ("KVM: PPC:
-> Book3S HV: Avoid crash from THP collapse during radix page fault",
-> 2018-10-04).
+> Gave this a try since I have r8169 NICs. Applied over .14 and now running
+> on three different machines. No observed regressions in dmesg or behaviour;
+> all smooth sailing.
 
-Thanks, now queued up.
+Wonderful, thanks for testing this and letting me know.
 
 greg k-h
