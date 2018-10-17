@@ -2,148 +2,154 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4B8ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1576DECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE8921476
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:12:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="OtQLwcKs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE8921476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by mail.kernel.org (Postfix) with ESMTP id C77C721476
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:14:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C77C721476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbeJRDJ5 (ORCPT
+        id S1728213AbeJRDMD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 23:09:57 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44954 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727271AbeJRDJ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 23:09:56 -0400
-Received: by mail-io1-f67.google.com with SMTP id s6-v6so8889863ioa.11
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 12:12:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=UdE+IhzO9w1b99QSn8+Vi4bVlAuA8dqyG0qOb8ZWjKg=;
-        b=OtQLwcKslQOTFOAwhYLUvumiTGGqyqAlPn/8qpw8Ze2PC0tVUXjKUF0lkwbewEDo54
-         eWE45OAsLWGdSwgyhxOV2+WcwFdaEDxhpKzgUjv5nLvwyDH2n/Bc1jGlmSwI9jnv4e7f
-         jmkg6Y5HL6DzNK4+LGZVvKKhYQKA0sfAOZMmo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=UdE+IhzO9w1b99QSn8+Vi4bVlAuA8dqyG0qOb8ZWjKg=;
-        b=E6gkosEdFLQMRfyJQDOrAoPINfVHwjrspDN66yWl5513JVJSmBQuj9e183LCZ29XXA
-         TKxMM5RNef2JFepW2DT/7pPXSHSeFOaBUzOri6efpH5AxADb9o1Wi2qiRGJ0zLH9PCoe
-         ZtRQjMl0N0iIyrP5ZXWG0TKlzv2dRdHNSzxkSTDK5Rabs8eceDZfU6vF3yuY5kJxePz3
-         hpqJSW1KAyAKTbVsqkVRCAfU/lCvAQ7URDuhYkFZPlXGE9FaR1a46CZLM7ytHRHFqUAF
-         8+GPpRQQw2HKdhGCBlRjyJHMwF+zmeUV+ARaruw1LwV4BSBXiVta7vgPLaLsuOWUp711
-         GyZA==
-X-Gm-Message-State: ABuFfogA0eBHyB6h5KTG00QutojARsf0yDC+AVJcHi+1NzF+sCTsHPl3
-        r5pY9G9d93QZ7YlcmP2BQDR7nLrrXkQa7leSzgdq1A==
-X-Google-Smtp-Source: ACcGV63mO++qnvlaLvfYAJCM85WeqevSqXbNLw/4BR0GQ6xTIvN6zzShn/RGThs+gBHOPjxtgkJWuTiCOqtfbkNA8mU=
-X-Received: by 2002:a5e:8b06:: with SMTP id g6-v6mr14950348iok.144.1539803078141;
- Wed, 17 Oct 2018 12:04:38 -0700 (PDT)
+        Wed, 17 Oct 2018 23:12:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48582 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727128AbeJRDMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 23:12:03 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E4F59308FEC8;
+        Wed, 17 Oct 2018 19:05:29 +0000 (UTC)
+Received: from w520.home (ovpn-116-90.phx2.redhat.com [10.3.116.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7EF9160C56;
+        Wed, 17 Oct 2018 19:05:28 +0000 (UTC)
+Date:   Wed, 17 Oct 2018 13:05:28 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>, kvm@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>, aik@ozlabs.ru,
+        david@gibson.dropbear.id.au
+Subject: Re: [PATCH v3] drivers/vfio: Fix a redundant copy bug
+Message-ID: <20181017130528.6df57601@w520.home>
+In-Reply-To: <CAAa=b7erQ-FwD6eQiAKanU1kb5fEoUGoEG4P6LQQP6YMDxfakg@mail.gmail.com>
+References: <1539786725-1812-1-git-send-email-wang6495@umn.edu>
+        <20181017094506.1b09eb64@w520.home>
+        <CAAa=b7erQ-FwD6eQiAKanU1kb5fEoUGoEG4P6LQQP6YMDxfakg@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Wed, 17 Oct 2018 12:04:37
- -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <006890C4-64D4-4DE2-A1F0-335FFFD585BB@dilger.ca>
-References: <CAJfpegsxFUGeczcC-pzK0WWROjv48_PvXtNun-f5QJMoUDn1Dw@mail.gmail.com>
- <006890C4-64D4-4DE2-A1F0-335FFFD585BB@dilger.ca>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 17 Oct 2018 21:04:37 +0200
-Message-ID: <CAJfpeguvJZbP83mSULc74Yhpp_CPMBW1XvcgbvCbLnF7QCncUA@mail.gmail.com>
-Subject: Re: statx(2) API and documentation
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Michael Kerrisk <mtk.manpages@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 17 Oct 2018 19:05:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 8:45 PM, Andreas Dilger <adilger@dilger.ca> wrote:
-> On Oct 17, 2018, at 12:24 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
->>
->> I'm trying to implement statx for fuse and ran into the following issues:
->>
->> - Need a STATX_ATTRIBUTES bit, so that userspace can explicitly ask
->> for stx_attribute; otherwise if querying has non-zero cost, then
->> filesystem cannot do it without regressing performance.
->
-> Seems reasonable.
->
->> - STATX_ALL definition is unclear, can this change, or is it fixed?
->> If it's the former, than that's a backward compatibility nightmare.
->> If it's the latter, then what's the point?
->
-> The value can change over time.  It is intended to reflect the current
-> state of affairs at the time the userspace program and kernel are compiled.
-> The value sent from userspace lets the kernel know what fields are in
-> the userspace struct, so it doesn't try to set fields that aren't there.
+On Wed, 17 Oct 2018 12:58:26 -0500
+Wenwen Wang <wang6495@umn.edu> wrote:
 
-What's the point of a userspace program specifying STATX_ALL?  Without
-a way to programmatically query the interface definition it's useless:
-there's no way to guess which mask bit corresponds to which field, and
-what that field represents.
+> On Wed, Oct 17, 2018 at 10:45 AM Alex Williamson
+> <alex.williamson@redhat.com> wrote:
+> >
+> > On Wed, 17 Oct 2018 09:32:04 -0500
+> > Wenwen Wang <wang6495@umn.edu> wrote:
+> >  
+> > > In vfio_spapr_iommu_eeh_ioctl(), if the ioctl command is VFIO_EEH_PE_OP,
+> > > the user-space buffer 'arg' is copied to the kernel object 'op' and the
+> > > 'argsz' and 'flags' fields of 'op' are checked. If the check fails, an
+> > > error code EINVAL is returned. Otherwise, 'op.op' is further checked
+> > > through a switch statement to invoke related handlers. If 'op.op' is
+> > > VFIO_EEH_PE_INJECT_ERR, the whole user-space buffer 'arg' is copied again
+> > > to 'op' to obtain the err information. However, in the following execution
+> > > of this case, the fields of 'op', except the field 'err', are actually not
+> > > used. That is, the second copy has a redundant part. Therefore, for both
+> > > performance consideration, the redundant part of the second copy should be
+> > > removed.
+> > >
+> > > This patch removes such a part in the second copy. It only copies from
+> > > 'err.type' to 'err.mask', which is exactly required by the
+> > > VFIO_EEH_PE_INJECT_ERR op.
+> > >
+> > > This patch also adds a 4-byte reserved field in the structure
+> > > vfio_eeh_pe_op to make sure that the u64 fields in the structure
+> > > vfio_eeh_pe_err are 8-byte aligned.
+> > >
+> > > Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> > > ---
+> > >  drivers/vfio/vfio_spapr_eeh.c | 9 ++++++---
+> > >  include/uapi/linux/vfio.h     | 1 +
+> > >  2 files changed, 7 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/vfio/vfio_spapr_eeh.c b/drivers/vfio/vfio_spapr_eeh.c
+> > > index 38edeb4..66634c6 100644
+> > > --- a/drivers/vfio/vfio_spapr_eeh.c
+> > > +++ b/drivers/vfio/vfio_spapr_eeh.c
+> > > @@ -37,6 +37,7 @@ long vfio_spapr_iommu_eeh_ioctl(struct iommu_group *group,
+> > >       struct eeh_pe *pe;
+> > >       struct vfio_eeh_pe_op op;
+> > >       unsigned long minsz;
+> > > +     unsigned long start, end;
+> > >       long ret = -EINVAL;
+> > >
+> > >       switch (cmd) {
+> > > @@ -86,10 +87,12 @@ long vfio_spapr_iommu_eeh_ioctl(struct iommu_group *group,
+> > >                       ret = eeh_pe_configure(pe);
+> > >                       break;
+> > >               case VFIO_EEH_PE_INJECT_ERR:
+> > > -                     minsz = offsetofend(struct vfio_eeh_pe_op, err.mask);
+> > > -                     if (op.argsz < minsz)
+> > > +                     start = offsetof(struct vfio_eeh_pe_op, err.type);  
+> >
+> > I noted in the previous version that we already have this in minsz, so
+> > you're fixing a redundant copy with a redundant operation.  
+> 
+> The value in start is different from the value in minsz. So why is
+> this a redundant operation?
 
-And there will be programs out there which specify STATX_ALL without
-considering that in the future it may become slower as it is now due
-to a recompile.
+I suppose that's true given the alignment issue below, so we're
+actually avoiding 16 bytes rather than 12.  The benefit of this change
+still seems pretty thin to me, but it is more correct, so I guess it's
+ok.  Do you want to send a new version or shall I just drop the vfio.h
+changes and the last paragraph of the commit log in favor of the
+separate patch?  Alexey or David, do you want to provide an Ack for
+these?  Thanks,
 
-So what's the point exactly?
+Alex
 
-> The value in the kernel allows masking off new fields from userspace that
-> it doesn't understand.
+> > > +                     end = offsetofend(struct vfio_eeh_pe_op, err.mask);
+> > > +                     if (op.argsz < end)
+> > >                               return -EINVAL;
+> > > -                     if (copy_from_user(&op, (void __user *)arg, minsz))
+> > > +                     if (copy_from_user(&op.err, (char __user *)arg +
+> > > +                                             start, end - start))
+> > >                               return -EFAULT;
+> > >
+> > >                       ret = eeh_pe_inject_err(pe, op.err.type, op.err.func,
+> > > diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> > > index 1aa7b82..d904c42 100644
+> > > --- a/include/uapi/linux/vfio.h
+> > > +++ b/include/uapi/linux/vfio.h
+> > > @@ -729,6 +729,7 @@ struct vfio_eeh_pe_op {
+> > >       __u32 argsz;
+> > >       __u32 flags;
+> > >       __u32 op;
+> > > +     __u32 __resv;
+> > >       union {
+> > >               struct vfio_eeh_pe_err err;
+> > >       };  
+> >
+> > Please don't include two separate issues in the same patch.  Am I also
+> > correct in assuming that this is untested?  Thanks,  
+> 
+> No problem. I will seperate these two patches. And yes, this is not tested.
+> 
+> Thanks,
+> Wenwen
 
-Okay, but that has nothing to do with the UAPI.  Even as an internal
-flag we should be careful, as it might grow uses which can have
-similar issues as the userspace one above.
-
->
->> - STATX_ATIME is cleared from stx_mask on SB_RDONLY, and on NFS it is
->> also cleared on MNT_NOATIME, but not on MNT_RDONLY.  We need some sort
->> of guideline in the documentation about what constitutes
->> "unsupported": does atime become unsupported because filesystem is
->> remounted r/o?  If so, why isn't this case handled consistently in the
->> VFS and filesystems?
->
-> Strange.  I'd think that if userspace is requesting atime, it should
-> get an atime value.  The fact that the kernel is not updating atime
-> due to mount options just means that atime might be old.  That doesn't
-> mean (IMHO) that atime doesn't exist.
-
-Right, OTOH I sort of see the value in  NFS: no roundtrip to server if
-atime value is useless anyway.
-
->> - What about fields that are not cached when statx() is called with
->> AT_STATX_DONT_SYNC?  E.g. stx_btime is supported by the filesystem,
->> but getting it requires a roundtrip to the server.  Requesting
->> STATX_BTIME in the mask and adding  AT_STATX_DONT_SYNC to the flags
->> means the filesystem has to decide which it will honor.   My feeling
->> is that it should honor AT_STATX_DONT_SYNC and clear STATX_BTIME in
->> stx_mask.   Documentation has no word about this case.
->
-> The btime value shouldn't change over the lifetime of a file, so
-> DONT_SYNC shouldn't have any effect on its validity?
-
-Not validity, but presence in the cache.  Network filesystem or fuse
-may or may not have it available in the cache at the time the inode is
-first initialized on loookup.  So when statx(..., AT_STATX_DONT_SYNC,
-STATX_BTIME) comes along, it may need a roundtrip to the server.  What
-should it do?
-
-Thanks,
-Miklos
