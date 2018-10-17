@@ -2,127 +2,174 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A08ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04465ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB0B21523
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:46:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=igel-co-jp.20150623.gappssmtp.com header.i=@igel-co-jp.20150623.gappssmtp.com header.b="jvbrgbTt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB0B21523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=igel.co.jp
+	by mail.kernel.org (Postfix) with ESMTP id C2772214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:48:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2772214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbeJQSln (ORCPT
+        id S1727053AbeJQSnk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:41:43 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33681 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeJQSln (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:41:43 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 78-v6so10630023pfq.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 03:46:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=igel-co-jp.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UDCIadFRSzptxJ3AJqHNtXdJLKi2HbHA5UNRHJFQ93k=;
-        b=jvbrgbTtkE1B2XNRUaxvN63mWO86P9TZxovhUfFFgSXIu+2UjvJI2D7s2T08rpgXjh
-         N1OK9HC0xL2ro1QIQEig8FyIhp9tTQYAnfSG28iWHY6mP53d29Tkqyl9G//oNO0I3RJy
-         DnGPcEu5iO2IyMw7xE2e4bL7ohB7gchZUUmRYmKHmMDUAO8FrldrAcgk/D2DdEwRCiVh
-         0Lsq7mcsC4pRc9kMbTIQ8j6YI5FXc76m3U/AkXN+QuRgImBDvjeCKm08MYn4rDd/BSWB
-         MGM6MVlxEs5ba5Vcz6gBYcefhe69FZYsRrmSzh+SiOO5DEWXOl7uojb9aVlRu43TW/hZ
-         ZTiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UDCIadFRSzptxJ3AJqHNtXdJLKi2HbHA5UNRHJFQ93k=;
-        b=shB2Ag6Xyl/2czRZtKvvOV7MBEpna0/7ANtbQ+HWeCiVuj73I3QUwqFAGgVA/XtML2
-         IeFU+Pzu9cB1NWpzSctq+NQjQJuZev5Az9Lijc4vTr18Gh5aExj0H2Bi9f6fRuJPrHzT
-         vvzoX57PmhLe8VaJMLuWkoRFJB0nHYQrC7JjgVFGFImFqZasN2l3THH3bPPZ5u3x3x/+
-         K2d8R/knlJHvh4aW0b1mQLxos2zU7u4tuSIt4wn4DxmKLOReXc4VRqD9LGxvfsWTHNes
-         qPErMHjlwpl9U6bsgj8POSikNmWpUG/KHk9OrX81Zie6TSUyCqTlsPSmenmph2bsgqUN
-         mATg==
-X-Gm-Message-State: ABuFfoji05Z+ZW3rSIIH7HIUIIWNKp+ya5nVMNpmAdwttd8nJb5pL45X
-        5Ovu0aLMD4/gIwIrHn/XbdYNGA==
-X-Google-Smtp-Source: ACcGV62Z0pn+F75xv9RpVOYoaMIpgKdIQYr3bTelr5stdalHDvfRuyMk8l+yLE+6AYralIoUdWru6A==
-X-Received: by 2002:a62:da1a:: with SMTP id c26-v6mr15016399pfh.52.1539773195501;
-        Wed, 17 Oct 2018 03:46:35 -0700 (PDT)
-Received: from ake-ubuntu.hq.igel.co.jp (napt.igel.co.jp. [219.106.231.132])
-        by smtp.gmail.com with ESMTPSA id a14-v6sm20063247pgi.75.2018.10.17.03.46.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 17 Oct 2018 03:46:34 -0700 (PDT)
-From:   Ake Koomsin <ake@igel.co.jp>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     ake@igel.co.jp, "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] virtio_net: avoid using netif_tx_disable() for serializing tx routine
-Date:   Wed, 17 Oct 2018 19:44:12 +0900
-Message-Id: <20181017104419.13003-1-ake@igel.co.jp>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <276ac5bb-90f7-5fb6-a826-0bb05ecfa069@redhat.com>
-References: <276ac5bb-90f7-5fb6-a826-0bb05ecfa069@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 17 Oct 2018 14:43:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49572 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726868AbeJQSnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 14:43:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90E8C341;
+        Wed, 17 Oct 2018 03:48:32 -0700 (PDT)
+Received: from a75553-lin.blr.arm.com (unknown [10.162.0.175])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0D4E63F71D;
+        Wed, 17 Oct 2018 03:48:28 -0700 (PDT)
+From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-kernel@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>
+Subject: [PATCH v3 0/7] Add ARMv8.3 pointer authentication for kvm guest
+Date:   Wed, 17 Oct 2018 16:17:53 +0530
+Message-Id: <1539773280-4159-1-git-send-email-amit.kachhap@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
-introduces netif_tx_disable() after netif_device_detach() in order to
-avoid use-after-free of tx queues. However, there are two issues.
+Hi,
 
-1) Its operation is redundant with netif_device_detach() in case the
-   interface is running.
-2) In case of the interface is not running before suspending and
-   resuming, the tx does not get resumed by netif_device_attach().
-   This results in losing network connectivity.
+This patch series adds pointer authentication support for KVM guest and
+is based on top of Linux 4.19-rc7 and generic pointer authentication patch
+series[1]. The first two patch in this series was originally posted by
+Mark Rutland earlier[2,3] and contains some history of this work.
 
-It is better to use netif_tx_lock_bh()/netif_tx_unlock_bh() instead for
-serializing tx routine during reset. This also preserves the symmetry
-of netif_device_detach() and netif_device_attach().
+Extension Overview:
+=============================================
 
-Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
-Signed-off-by: Ake Koomsin <ake@igel.co.jp>
----
- drivers/net/virtio_net.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+The ARMv8.3 pointer authentication extension adds functionality to detect
+modification of pointer values, mitigating certain classes of attack such as
+stack smashing, and making return oriented programming attacks harder.
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 3f5aa59c37b7..3e2c041d76ac 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2267,8 +2267,9 @@ static void virtnet_freeze_down(struct virtio_device *vdev)
- 	/* Make sure no work handler is accessing the device */
- 	flush_work(&vi->config_work);
- 
-+	netif_tx_lock_bh(vi->dev);
- 	netif_device_detach(vi->dev);
--	netif_tx_disable(vi->dev);
-+	netif_tx_unlock_bh(vi->dev);
- 	cancel_delayed_work_sync(&vi->refill);
- 
- 	if (netif_running(vi->dev)) {
-@@ -2304,7 +2305,9 @@ static int virtnet_restore_up(struct virtio_device *vdev)
- 		}
- 	}
- 
-+	netif_tx_lock_bh(vi->dev);
- 	netif_device_attach(vi->dev);
-+	netif_tx_unlock_bh(vi->dev);
- 	return err;
- }
- 
+The extension introduces the concept of a pointer authentication code (PAC),
+which is stored in some upper bits of pointers. Each PAC is derived from the
+original pointer, another 64-bit value (e.g. the stack pointer), and a secret
+128-bit key.
+
+New instructions are added which can be used to:
+
+* Insert a PAC into a pointer
+* Strip a PAC from a pointer
+* Authenticate and strip a PAC from a pointer
+
+The detailed description of ARMv8.3 pointer authentication support in
+userspace/kernel can be found in Kristina's generic pointer authentication
+patch series[1].
+
+KVM guest work:
+==============================================
+
+If pointer authentication is enabled for KVM guests then the new PAC intructions
+will not trap to EL2. If not then they may be ignored if in HINT region or trapped
+in EL2 as illegal instruction. Since KVM guest vcpu runs as a thread so they have
+a key initialised (Only APIAKey now) which will be used by PAC. When world switch
+happens between host and guest then this key is exchanged.
+
+There were some review comments by Christoffer Dall in the original series[2,3]
+and this patch series tries to implement them. The original series enabled pointer
+authentication for both userspace and kvm userspace. However it is now
+bifurcated and this series contains only KVM guest support.
+
+Changes since v2 [2,3]:
+* Allow host and guest to have different HCR_EL2 settings and not just constant
+  value HCR_HOST_VHE_FLAGS or HCR_HOST_NVHE_FLAGS.
+* Optimise the reading of HCR_EL2 in host/guest switch by fetching it once
+  during KVM initialisation state and using it later.
+* Context switch pointer authentication keys when switching between guest
+  and host. Pointer authentication was enabled in a lazy context earlier[2] and
+  is removed now to make it simple. However it can be revisited later if there
+  is significant performance issue.
+* Added a userspace option to choose pointer authentication.
+* Based on the userspace option, ptrauth cpufeature will be visible.
+* Based on the userspace option, ptrauth key registers will be accessible.
+* A small document is added on how to enable pointer authentication from
+  userspace KVM API.
+
+Looking for feedback and comments.
+
+Thanks,
+Amit
+
+[1]: https://patchwork.kernel.org/cover/10627655/
+[2]: https://lore.kernel.org/lkml/20171127163806.31435-11-mark.rutland@arm.com/
+[3]: https://lore.kernel.org/lkml/20171127163806.31435-10-mark.rutland@arm.com/
+
+
+Linux (4.19-rc7 based):
+
+Amit Daniel Kachhap (6):
+  arm64/kvm: preserve host HCR_EL2 value
+  arm64/kvm: context-switch ptrauth registers
+  arm64/kvm: add a userspace option to enable pointer authentication
+  arm64/kvm: enable pointer authentication cpufeature conditionally
+  arm64/kvm: control accessibility of ptrauth key registers
+  arm64: docs: document KVM support of pointer authentication
+
+Mark Rutland (2):
+  arm64/kvm: preserve host HCR_EL2 value
+  arm64/kvm: context-switch ptrauth registers
+
+ Documentation/arm64/pointer-authentication.txt |  8 ++-
+ Documentation/virtual/kvm/api.txt              |  2 +
+ arch/arm/include/asm/kvm_host.h                |  8 +++
+ arch/arm64/include/asm/cpufeature.h            |  6 ++
+ arch/arm64/include/asm/kvm_asm.h               |  2 +
+ arch/arm64/include/asm/kvm_host.h              | 45 ++++++++++++-
+ arch/arm64/include/asm/kvm_hyp.h               |  7 ++
+ arch/arm64/include/uapi/asm/kvm.h              |  1 +
+ arch/arm64/kernel/traps.c                      |  1 +
+ arch/arm64/kvm/handle_exit.c                   | 24 ++++---
+ arch/arm64/kvm/hyp/Makefile                    |  1 +
+ arch/arm64/kvm/hyp/ptrauth-sr.c                | 89 +++++++++++++++++++++++++
+ arch/arm64/kvm/hyp/switch.c                    | 23 +++++--
+ arch/arm64/kvm/hyp/sysreg-sr.c                 | 11 ++++
+ arch/arm64/kvm/hyp/tlb.c                       |  6 +-
+ arch/arm64/kvm/reset.c                         |  3 +
+ arch/arm64/kvm/sys_regs.c                      | 91 ++++++++++++++++++++------
+ include/uapi/linux/kvm.h                       |  1 +
+ virt/kvm/arm/arm.c                             |  5 ++
+ 19 files changed, 295 insertions(+), 39 deletions(-)
+ create mode 100644 arch/arm64/kvm/hyp/ptrauth-sr.c
+
+kvmtool:
+
+Repo: git.kernel.org/pub/scm/linux/kernel/git/will/kvmtool.git
+Amit Daniel Kachhap (1):
+  arm/kvm: arm64: Add a vcpu feature for pointer authentication
+
+ arm/aarch32/include/kvm/kvm-cpu-arch.h    | 2 ++
+ arm/aarch64/include/asm/kvm.h             | 3 +++
+ arm/aarch64/include/kvm/kvm-arch.h        | 1 +
+ arm/aarch64/include/kvm/kvm-config-arch.h | 4 +++-
+ arm/aarch64/include/kvm/kvm-cpu-arch.h    | 2 ++
+ arm/aarch64/kvm-cpu.c                     | 5 +++++
+ arm/include/arm-common/kvm-config-arch.h  | 1 +
+ arm/kvm-cpu.c                             | 7 +++++++
+ include/linux/kvm.h                       | 1 +
+ 9 files changed, 25 insertions(+), 1 deletion(-)
 -- 
-2.19.1
+2.7.4
 
