@@ -2,113 +2,92 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9E3ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6859CECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9937214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:33:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9937214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 38F10214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38F10214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbeJQR2Z (ORCPT
+        id S1727097AbeJQR2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 13:28:25 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38546 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbeJQR2Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 13:28:24 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 193-v6so1389119wme.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 02:33:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8NWKvPBEgnJ+ukZLy12IRpoW4u88DekVuBxWeZE7qN8=;
-        b=gthxv2mZZZYL8wpzArKJwKrPgJ0ygn3ZruasVSpLX1SVAIeg+95PNsNA6aEQRu7f4/
-         AO7m7EzcByIxhKGSlPYUx07rreLKNfX/h7zCUzBKUGsTwTPSywLdp+OXxJlU/4GU+7ih
-         H+xFq2ELjHodY3THywqOl9Vm6D4KBnjByJMplIkFLaZbLnxFhuLwFJfXqVXcq6+RDET9
-         n/k8gtJiRiJjFJ4EhvpXt7vC3rvoV8vFSyo3ZDRSPNmamyxOjeH8b9Zb6zh/WXfzMPiX
-         PJ7sHCdJyQ8qPBhT3gvl1HAPfQsVSc+VPgtJ8AKT3QJKwaS/GYYDynuYRMINWPmKZuz4
-         EHMQ==
-X-Gm-Message-State: ABuFfoioegfAM3RAbDd8bGBbiSz1XMyWrDB0RTATOAtvbaEJi+3GSs/B
-        CLdEo8Y6Yb73dqRP4onZLM8=
-X-Google-Smtp-Source: ACcGV60isc1E9rhUebSPx0vMTgO9ZLDQh56yfVc+o43osZfM60cu+C+DVTJW0TdgG8ARNexwVjIIdw==
-X-Received: by 2002:a1c:ee8d:: with SMTP id j13-v6mr2013558wmi.125.1539768812834;
-        Wed, 17 Oct 2018 02:33:32 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id g10-v6sm13814446wrv.49.2018.10.17.02.33.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 02:33:32 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 7AEFB1259B4; Wed, 17 Oct 2018 11:33:31 +0200 (CEST)
-Date:   Wed, 17 Oct 2018 11:33:31 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com,
-        dan.j.williams@intel.com, yasu.isimatu@gmail.com,
-        rppt@linux.vnet.ibm.com, malat@debian.org,
-        linux-kernel@vger.kernel.org, pavel.tatashin@microsoft.com,
-        jglisse@redhat.com, Jonathan.Cameron@huawei.com, rafael@kernel.org,
-        dave.jiang@intel.com, linux-mm@kvack.org,
-        alexander.h.duyck@linux.intel.com,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH 2/5] mm/memory_hotplug: Create add/del_device_memory
- functions
-Message-ID: <20181017093331.GA25724@techadventures.net>
-References: <20181015153034.32203-1-osalvador@techadventures.net>
- <20181015153034.32203-3-osalvador@techadventures.net>
- <d0a12eb5-3824-8d25-75f8-3e62f1e81994@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0a12eb5-3824-8d25-75f8-3e62f1e81994@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Wed, 17 Oct 2018 13:28:31 -0400
+Received: from gate.crashing.org ([63.228.1.57]:47269 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726691AbeJQR2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 13:28:31 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w9H9Aheb019037;
+        Wed, 17 Oct 2018 04:10:44 -0500
+Message-ID: <33a2232671caa008541f8de542f8e7a27ab88248.camel@kernel.crashing.org>
+Subject: Re: [PATCH 2/8] powerpc: remove CONFIG_PCI_QSPAN
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christoph Hellwig <hch@lst.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-arch@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org
+Date:   Wed, 17 Oct 2018 20:10:42 +1100
+In-Reply-To: <20181017080201.10866-3-hch@lst.de>
+References: <20181017080201.10866-1-hch@lst.de>
+         <20181017080201.10866-3-hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >  	/*
-> >  	 * For device private memory we call add_pages() as we only need to
-> >  	 * allocate and initialize struct page for the device memory. More-
-> > @@ -1096,20 +1100,17 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
-> >  	 * want the linear mapping and thus use arch_add_memory().
-> >  	 */
+On Wed, 2018-10-17 at 10:01 +0200, Christoph Hellwig wrote:
+> This option isn't actually used anywhere.
+
+Oh my, that's ancient. Probably didn't make the cut from arch/ppc to
+arch/powerpc
+
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+
+> ---
+>  arch/powerpc/Kconfig | 9 ---------
+>  1 file changed, 9 deletions(-)
 > 
-> Some parts of this comment should be moved into add_device_memory now.
-> (e.g. we call add_pages() ...)
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index a80669209155..e8c8970248bc 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -955,7 +955,6 @@ config PCI
+>  	bool "PCI support" if PPC_PCI_CHOICE
+>  	default y if !40x && !CPM2 && !PPC_8xx && !PPC_83xx \
+>  		&& !PPC_85xx && !PPC_86xx && !GAMECUBE_COMMON
+> -	default PCI_QSPAN if PPC_8xx
+>  	select GENERIC_PCI_IOMAP
+>  	help
+>  	  Find out whether your system includes a PCI bus. PCI is the name of
+> @@ -969,14 +968,6 @@ config PCI_DOMAINS
+>  config PCI_SYSCALL
+>  	def_bool PCI
+>  
+> -config PCI_QSPAN
+> -	bool "QSpan PCI"
+> -	depends on PPC_8xx
+> -	select PPC_I8259
+> -	help
+> -	  Say Y here if you have a system based on a Motorola 8xx-series
+> -	  embedded processor with a QSPAN PCI interface, otherwise say N.
+> -
+>  config PCI_8260
+>  	bool
+>  	depends on PCI && 8260
 
-I agree.
-
-> > +#ifdef CONFIG_ZONE_DEVICE
-> > +int del_device_memory(int nid, unsigned long start, unsigned long size,
-> > +				struct vmem_altmap *altmap, bool mapping)
-> > +{
-> > +	int ret;
-> 
-> nit: personally I prefer short parameters last in the list.
-
-I do not have a strong opinion here.
-If people think that long parameters should be placed at the end because
-it improves readability, I am ok with moving them there.
- 
-> Can you document for both functions that they should be called with the
-> memory hotplug lock in write?
-
-Sure, I will do that in the next version, once I get some more feedback.
-
-> Apart from that looks good to me.
-
-Thanks for reviewing it David ;-)!
-May I assume your Reviewed-by here (if the above comments are addressed)?
-
-Thanks
--- 
-Oscar Salvador
-SUSE L3
