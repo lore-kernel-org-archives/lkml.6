@@ -2,136 +2,83 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E71ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDEBECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F132E214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:32:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZX3yvX14"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F132E214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 99F3021528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:33:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99F3021528
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727400AbeJQV2X (ORCPT
+        id S1727439AbeJQV3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:28:23 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33288 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbeJQV2W (ORCPT
+        Wed, 17 Oct 2018 17:29:10 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38945 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbeJQV3K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:28:22 -0400
-Received: by mail-pl1-f196.google.com with SMTP id s4-v6so12727950plp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 06:32:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2vVRehv+/DK5t8nD9otaP27r6ueRtDust8bHJl4AYsk=;
-        b=ZX3yvX14LitvTHVLZdIKo1LK68pcqVNwi06851FLU0lBON0O312tFzGczlJIfxDXRN
-         cyA2EtigYsD7gBUU34bWHZnt9DO10TB1tjTnjhnq+Urzxf/gMEwJxrp0SnzrtfTrTQXR
-         jaUtcrLa78t0NM0FmO3fbg9X7mL73Fuzaem8FMS0oT7J+TVQCnu1l+mwK5dyopa8+A58
-         vWZp5I8gVpyZmsOuAPUayPiNLZWSDWizFz5bbgK+9v8KUdM7FLNGj6GP9Ss2c/gVAniK
-         MSaonvxfF1At9+ABOUS+QxsJWYp4JfbgQezI7NsseQqyQiSzUygBlW7l4astW+AhNJ9T
-         nQeQ==
+        Wed, 17 Oct 2018 17:29:10 -0400
+Received: by mail-ot1-f65.google.com with SMTP id l58so26167132otd.6;
+        Wed, 17 Oct 2018 06:33:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2vVRehv+/DK5t8nD9otaP27r6ueRtDust8bHJl4AYsk=;
-        b=s5A5BAFIPqo5/ieoczLp3Ol6+tsZ/4LJqIaGTDSDdosfTUdnPBjgQLn/gGB6hmV++c
-         aiGAipe9FWoWJ7K5WPAUpUxcHuNwLQrwvH6DUoz/z9P9QyJqQ4rffKaRZ76iUgIGe4h3
-         KcPV48m0nkrPm+AQ310pbLnzrmCw4gjvFUnrHN/xdgtF2h99Uv4uKnn36TEKr3cZXdVa
-         XvwIOruu3Iq4pr/+sC87Dlodk6xLld6Qy4ViBFcz1ToMjum3Wdo7hpERYbfX7YcP7ZkI
-         Rw0C0eD7wg+gbOroRAYZaQUWaGO7A1df4afE6N63Cw70d+iw0EqpjRD6I6Rr4Vwx7EQO
-         7d/w==
-X-Gm-Message-State: ABuFfogYLE+U7tc+uqJt0IM0q9NXOYTQT7qmRmOWs56Jtk9oMU1Zeavo
-        2ePCNiEZhvhNKoAHpbkH0PM=
-X-Google-Smtp-Source: ACcGV61bbmiAZI82DE8BeqWHkXJtWAzA4EmkbohxaqmmsSILEqufJpr2XdxKsC+VQA+CsbVjLtJxgQ==
-X-Received: by 2002:a17:902:708b:: with SMTP id z11-v6mr26673694plk.151.1539783159322;
-        Wed, 17 Oct 2018 06:32:39 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id d3-v6sm2429412pgq.16.2018.10.17.06.32.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 06:32:38 -0700 (PDT)
-Subject: Re: [Ksummit-discuss] [PATCH] code-of-conduct: Remove explicit list
- of discrimination factors
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Josh Triplett <josh@joshtriplett.org>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ksummit-discuss@lists.linuxfoundation.org, tomi.valkeinen@iki.fi
-References: <20181017071902.30102-1-geert@linux-m68k.org>
- <20181017091325.GA15991@localhost>
- <CAMuHMdX0G767xYYcd8TDMLBp3cY9+fz_aJFAuz8OxgmCmhbNrg@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <1a51fc4c-882c-59ef-7497-262e595af10e@roeck-us.net>
-Date:   Wed, 17 Oct 2018 06:32:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SeCSrusglQu4nppH7XoMBfU5pQ/tjBz9pcaKRUoqPAw=;
+        b=ryDBWBe49H2u+H7L+I2IKHr9+qp+axiTp0Ia65ndsr9Xn8SW3aGVWWv2LYP50yy1sf
+         3JLdRHwlfAEyWBtCr4uSnU7XbQNXv4kWPwbKNV+y5oEvIoM8u1uzynItlTx9EZ8nnO1f
+         EwXNYNtjveEdmAXyGdf4uHG58h1lLACWRg4/aBoy2N0NlTabNwUOu/5K3tCf6p2Hm8Ot
+         fr3GNoJZJDEx795fRzJ0MKxzZzLnenrwwpVXeNv9JciVGUwJHbcLyFGeFcomMcXITQTG
+         u3sHn4x09M3MNV9ncUmUukbO0otWWtQS7p2PTBhetWld6uwh61ZUcvpIaQb0pUI0f1WF
+         FMkg==
+X-Gm-Message-State: ABuFfohV9/czOk1gM9A8Clm3DRhOXbKWJ5D5Xwe+bDjxRF1LIqMOAojo
+        jeHbkHeyy0/gC9GgJz6gUg==
+X-Google-Smtp-Source: ACcGV62JmB+k9SCw+OkHtZHWfLiXzeOwuEWK1I0+1QuQlk8YHhY7VkhDsnfjP7MyjROm1Yo+q7cbIg==
+X-Received: by 2002:a9d:5302:: with SMTP id g2mr17529861oth.88.1539783205790;
+        Wed, 17 Oct 2018 06:33:25 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l56sm6026295otd.55.2018.10.17.06.33.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 06:33:25 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 08:33:24 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Maciej Purski <m.purski@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH v1 07/11] dt-bindings: regulator: Document new
+ regulator-max-step-microvolt property
+Message-ID: <20181017133324.GA5459@bogus>
+References: <20181005153638.1886-1-digetx@gmail.com>
+ <20181005153638.1886-8-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdX0G767xYYcd8TDMLBp3cY9+fz_aJFAuz8OxgmCmhbNrg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005153638.1886-8-digetx@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 02:31 AM, Geert Uytterhoeven wrote:
-> Hi Josh,
+On Fri,  5 Oct 2018 18:36:34 +0300, Dmitry Osipenko wrote:
+> Certain hardware may require supply voltage to be changed in steps. Define
+> new property that allow to describe such hardware.
 > 
-> Thanks for your comments!
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/regulator/regulator.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> On Wed, Oct 17, 2018 at 11:13 AM Josh Triplett <josh@joshtriplett.org> wrote:
->> On Wed, Oct 17, 2018 at 09:19:01AM +0200, Geert Uytterhoeven wrote:
->>> Providing an explicit list of discrimination factors may give the false
->>> impression that discrimination based on other unlisted factors would be
->>> allowed.
->>
->> This impression is, in fact, false, as has already been discussed
->> elsewhere. I had hoped that discussion would suffice.
-> 
-> The CoC FAQ is not part of the CoC, and not part of the Linux kernel.
-> If the CoC is imprecise, it should be fixed in the CoC, not in a separate
-> document hosted elsewhere, as discussed elsewhere.
-> 
-> Comparison with the GPL and the GPL FAQ is not appropriate, as the GPL
-> is still the precise legal document, while its FAQ is a clarification using
-> laymen's terms.
-> 
->> As mentioned there: The original commit explicitly said "Explicit
->> guidelines have demonstrated success in other projects and other areas
->> of the kernel."; this is precisely the kind of explicit guideline it
-> 
-> Given the original commit was not submitted for and objected to public
-> review, nobody had the chance to question these statements, and ask for
-> pointers of proof, which would surely have happened.
-> 
->> refers to. Listing explicit cases to cover does not imply other cases
->> are not covered;
-> 
-> It does, if not accompanied by "examples of...", like in the other sections.
-> 
->> it does, however, ensure that the listed cases *are*,
->> and helps people know that they're covered.
-> 
-> So you agree people cannot know if the unlisted cases are covered or not?
-> 
->> This patch is not OK, and defeats one of the purposes of the original
->> change.
-> 
-> So the purpose of the original change was to list a number of factors,
-> without saying that it was just a list of examples?
 
-One could consider adding something like "discrimination factors such as",
-or maybe "or any other discrimination factors not listed here" to the
-original text. Or a simple "regardless of, for example, ...".
-
-Guenter
+Reviewed-by: Rob Herring <robh@kernel.org>
