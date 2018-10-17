@@ -2,184 +2,232 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EDBECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50FF9ECDE39
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21B76214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:45:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="QtrYuAJk";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="U+nBkOMF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21B76214C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id EA94C20645
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:47:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA94C20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbeJRAli (ORCPT
+        id S1727327AbeJRAnn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 20:41:38 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:48960 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727018AbeJRAli (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 20:41:38 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w9HGfu1a007558;
-        Wed, 17 Oct 2018 09:44:34 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=p0XZihJvwASnZrhmWpHU0KQUfmITDtGW17trozH/G2Y=;
- b=QtrYuAJkCx3Pmk3ijWGD41AhNCS/zX723vKF7zZ5jh32otQnbYwVK5MP7vmm7fP1DBve
- +he1GJ0maIFSHT+J8km3mCHCciLB51Gy01dYzJD3ISayjqDCtUbIZMEmqKeLHWgeVp0p
- J113AQLqTbpx0f+xHqtn2SClIKM9m696IPg= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by m0089730.ppops.net with ESMTP id 2n65c9s0w1-15
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 17 Oct 2018 09:44:34 -0700
-Received: from frc-hub02.TheFacebook.com (2620:10d:c021:18::172) by
- frc-hub02.TheFacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 17 Oct 2018 09:43:30 -0700
-Received: from FRC-CHUB04.TheFacebook.com (2620:10d:c021:18::23) by
- frc-hub02.TheFacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
- (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3
- via Frontend Transport; Wed, 17 Oct 2018 09:43:30 -0700
-Received: from NAM05-DM3-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.24) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Wed, 17 Oct 2018 12:43:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p0XZihJvwASnZrhmWpHU0KQUfmITDtGW17trozH/G2Y=;
- b=U+nBkOMFxcujkJ1lnIgh8x4auQh3miehMjRKb4Z+3g7GFCKQtmZCSxGXTM6oHTb6HcSl9N7wR9UXL830p6a/+EFMaAyGKJnxsZb8O6sceQs5ja2lzLKEO+XBvx02hm+FX0e1C6ghr7ymOq1KUlLiB3JmsrzEqiZfqsRnATsX8go=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
- MWHPR15MB1887.namprd15.prod.outlook.com (10.174.100.136) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.24; Wed, 17 Oct 2018 16:43:27 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::f809:2e0d:6e1c:924a]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::f809:2e0d:6e1c:924a%8]) with mapi id 15.20.1228.027; Wed, 17 Oct 2018
- 16:43:27 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "acme@kernel.org" <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Stephane Eranian <eranian@google.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "megha.dey@intel.com" <megha.dey@intel.com>,
-        "frederic@kernel.org" <frederic@kernel.org>
-Subject: Re: [RFC][PATCH] perf: Rewrite core context handling
-Thread-Topic: [RFC][PATCH] perf: Rewrite core context handling
-Thread-Index: AQHUYIaFJ/VvvMmSxkC06uIJGGK3pKUf754AgAATMgCAAOOBAIABVJuAgAEXCYCAAF4KAA==
-Date:   Wed, 17 Oct 2018 16:43:27 +0000
-Message-ID: <82000D4A-0A1B-4A8B-904C-24640215D2BD@fb.com>
-References: <20181010104559.GO5728@hirez.programming.kicks-ass.net>
- <3a738a08-2295-a4e9-dce7-a3e2b2ad794e@linux.intel.com>
- <20181015083448.GN9867@hirez.programming.kicks-ass.net>
- <AF0FCD08-E014-4D29-B023-EA780056DBB5@fb.com>
- <FE66AE20-9785-4CF7-8D8D-CF2A9C696923@fb.com>
- <20181017110651.GI3121@hirez.programming.kicks-ass.net>
-In-Reply-To: <20181017110651.GI3121@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.9.1)
-x-originating-ip: [2620:10d:c090:200::5:7715]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1887;20:8owBrtETGAuNeR8rfH9egbRnoEC2990k6bmaoGFWjcgRVJtNKw56zAFll9QLCsNo05fi54mzVyllj3gvAeYrkw2cK7ADtpm4HwdOXpYDFAm3NMKnbA3emaqBTyz6y5iJdMMJqttkxueZs0KUGOogRK80oU6Ikl7w60dqQabWXiY=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: e5b1b3e5-e39b-4cec-976e-08d6344fa9e7
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1887;
-x-ms-traffictypediagnostic: MWHPR15MB1887:
-x-microsoft-antispam-prvs: <MWHPR15MB1887620294A8CC9B09A7F4D5B3FF0@MWHPR15MB1887.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(11241501184)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:MWHPR15MB1887;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1887;
-x-forefront-prvs: 08286A0BE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(136003)(39860400002)(376002)(346002)(199004)(189003)(54906003)(6512007)(11346002)(6436002)(2900100001)(36756003)(83716004)(6486002)(50226002)(229853002)(256004)(14444005)(478600001)(4326008)(57306001)(2616005)(6916009)(46003)(86362001)(68736007)(5660300001)(476003)(25786009)(446003)(486006)(186003)(2906002)(97736004)(106356001)(6246003)(33656002)(7736002)(76176011)(71190400001)(305945005)(7416002)(71200400001)(102836004)(14454004)(6506007)(105586002)(53546011)(81156014)(82746002)(8676002)(81166006)(6116002)(53936002)(93886005)(316002)(8936002)(99286004)(5250100002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1887;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 6KwbHLlaU1jsdvi3kKLV6M7IHoHCG6zQizkJRIsTIJP7vToJhzFTUQI0h69k+fZZgpdobFSI10Yob58M9VZE3dcvaI7TsgZkl3vnwlBpefOKAZ9FWMOJgne6CaTYThbwY4vsCgs4RBSaqCaDlUx8hDTmFOjclhb+jPU4YOKdBrTJ5zpni2o1vqRC3EqaQ/7rzFnAa3+RSXZbPfthI6qjE/JJ5daCm8zyoMDRpYVZMH6Znh4x0u2HYnpzrNirKbUUVCgc09lqIQKHTb+pEsy+mDtK8aL6OCqw1BX9T/BYyfMYtbN8BN/mMtY9qIfaIIBh0q0Vx9xxzHHas6sH1mAgvZyt+cmJ2UhDt2L5ce/LcX0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <33A2FAC3AA7BEC40B499662CEF2BC381@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 17 Oct 2018 20:43:43 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:58171 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727053AbeJRAnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 20:43:43 -0400
+Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 4BFDB2012D0DCD;
+        Wed, 17 Oct 2018 18:47:09 +0200 (CEST)
+Subject: Re: What happens before or in `schedule_preempt_disabled()`?
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
+References: <70649a6c-e9a2-3b38-58d6-62f63fc2792e@molgen.mpg.de>
+ <alpine.DEB.2.21.1810171829100.1517@nanos.tec.linutronix.de>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <cfe32337-d1de-d57c-080b-6d4ab852e22b@molgen.mpg.de>
+Date:   Wed, 17 Oct 2018 18:47:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5b1b3e5-e39b-4cec-976e-08d6344fa9e7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 16:43:27.5680
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1887
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_14:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <alpine.DEB.2.21.1810171829100.1517@nanos.tec.linutronix.de>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms080006050604040302070808"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is a cryptographically signed message in MIME format.
+
+--------------ms080006050604040302070808
+Content-Type: text/plain; charset=iso-8859-7
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+Dear Thomas,
 
 
-> On Oct 17, 2018, at 4:06 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+As always thank you for the quick reply.
+
+
+On 10/17/18 18:39, Thomas Gleixner wrote:
+
+> On Wed, 17 Oct 2018, Paul Menzel wrote:
+>>
+>> Please find the debug patches attached. The `random: %i` messages are =
+from
+>> `crng_fast_load()`.
+>>
+>> My question is, how can I figure out, what happens in the code below?
+>>
+>>         complete(&kthreadd_done);
+>>         pr_info("After kthreadd_done\n");
+>>
+>>         /*
+>>          * The boot idle thread must execute schedule()
+>>          * at least once to get things moving:
+>>          */
+>>         schedule_preempt_disabled();
+>>         pr_info("After schedule_preempt_disabled\n");
+>>
+>> Looking at `schedule_preempt_disabled()`, it shouldn=A2t take much tim=
+e, and I
+>> was unable to find out where `crng_fast_load()` is called from.
+>>
+>> I guess threading is somehow working at that point, and I would though=
+ that
+>> it is the `complete()` call, but wonder why the `After kthreadd_done` =
+is
+>> printed earlier.
 >=20
-> On Tue, Oct 16, 2018 at 06:28:10PM +0000, Song Liu wrote:
->>> How about this:=20
->>>=20
->>> 1. Keep multiple perf_cpu_context per CPU, just like before this patch.=
-=20
->>>=20
->>> 2. For perf_event_context, add PMU as an order for the RB tree.=20
->>>=20
->>> 3. (hw) pmu->perf_cpu_context->ctx only has events for this PMU (and sw=
-=20
->>>  events moved to this context).
->>>=20
->>> 4. task->perf_event_ctxp has events for all PMUs.=20
->>>=20
->>> With this path, we keep the existing perf_cpu_context/perf_event_contex=
-t
->>> logic as-is, which I think is simp=10ler than the new logic (with extra
->>> *_pmu_context). And it should also solve the problem.=20
->>>=20
->>> Does this make sense? If this doesn't look too broken, I am happy to
->>> draft RFC for it.=20
->>>=20
->>=20
->> I am not sure whether you missed this one, or found it totally insane.=20
->> Could you please share your comments on it? My gut feeling is that this=
-=20
->> would be a simpler patch to solve the problem (two hw PMUs). (It might=20
->> be less efficient though).=20
->=20
-> Ah, sorry, somehow this email got lost.
->=20
-> That makes task and cpu contexts wildly different, which will complicate
-> matters I feel.
->=20
+> This creates the init thread from the idle thread with preemption
+> disabled. To get the init thread on the CPU the idle thread must schedu=
+le
+> voluntary, which it does by calling schedule_preempt_disabled(). So the=
 
-I think we only need different logic when adding events to the task/cpu=20
-contexts. The ctx_sched_in() and ctx_sched_out() will need some extra
-logic to filter out events that are not being scheduled (don't schedule
-events on PMU-a when rotating PMU-b). This logic will be the same for=20
-task and cpu context. The difference is, the CPU context will not have
-such events, because we never added such event to CPU context.=20
+> scheduler picks the init thread and that executes the init callbacks.
+>=20
+> The random calls are invoked by add_interrupt_randomness() or
+> add_hwgenerator_randomness(). But they are probably not consuming all t=
+he
+> time.
+>=20
+> The time is consumed by the initcalls which are required before bringin=
+g up
+> the (non boot) CPUs. See kernel_init_freeable() which is called from
+> kernel_init(). If you add initcall_debug to the command line you will g=
+et
+> more information at least about the functions which are marked with
+> initcall.
 
-Does this make sense? I could try draft a RFC to see how difficult it is.=20
+Thank you for the quick reply. Just a note, that `initcall_debug` is pres=
+ent
+on the Linux kernel command line. (I didn=A2t mention that the full outpu=
+t of
+`dmesg` was attached to my message.
 
-Thanks,
-Song=
+    [    0.078186] Kernel command line: BOOT_IMAGE=3D/boot/vmlinuz-4.19.0=
+-rc8-00045-gc92161e11c2a root=3D/dev/sda1 rw noisapnp cryptomgr.notests q=
+uiet initcall_debug init=3D/lib/systemd/systemd-bootchart iomem=3Drelaxed=
+ apparmor=3D0 selinux=3D0 kmemleak=3Doff initcall_blacklist=3Dserial8250_=
+init,init_graph_trace udev.children_max=3D2 udev.log_priority=3Dinfo
+
+Thank you again for the pointers. I=A2ll look into those.
+
+
+Kind regards,
+
+Paul
+
+
+--------------ms080006050604040302070808
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
+AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
+VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
+Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
+BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
+IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
+Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
+FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
+eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
+WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
+xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
+AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
+4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
+/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
+AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
+ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
+MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
+Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
+ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
+eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
+MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
+PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
+2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
+ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
+CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
+dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
+BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
+NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
+BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
+A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
+59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
+G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
+rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
+OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
+Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
+VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
+IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
+BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
+dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
+Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
+Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
+L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
+Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
+dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
+YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
+/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
+jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
+dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
+wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
+qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
+/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
+A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
+VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
+MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
+DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
+DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
+enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
+peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
+6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
++2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
+ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
+AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
+FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
+ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
+dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
+Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
+dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
+dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
+BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
+dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
+AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
+Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
+aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
+GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
+fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
+1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
+EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
+LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
+RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
+SIb3DQEJBTEPFw0xODEwMTcxNjQ3MDlaMC8GCSqGSIb3DQEJBDEiBCAatNGm/L8YO63+2DOt
+Alg2QcyLhExjcDtt1OFWC8xvsDBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
+BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
+MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
+bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
+gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
+DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
+BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAFqB
+eLvy7mLy1bk/jhafabCmBib/VSZ5kE8vUou/+fn1H2yt3Gv5fVtBQRwJSkQW6DSLu6T7pgOe
+UZP8It7MV5m25pAkA94Zee1UFJVl2Zrk04NRodOAkcf4RCoMuAcL3E6J3+WqWJ46uJwoIHkO
+VJsi9nxK6G8asEePk2E2Yf5WI8zLzOrT7/VSJajkGBOvesdd/f9i5L3gaUsYh+wJdDaOXCk3
+lqAT2aVYW2RQmLQ2X80z2GfA7WgN47yQuaYlZZ/G+8+vj4rqdabnrjtf5i/VH3XKMq8bETtv
+w0GV23hJBfQhvlmb2h2X9y0SiuBY+/cg1/igSLMu/SsxViNVuWQAAAAAAAA=
+--------------ms080006050604040302070808--
