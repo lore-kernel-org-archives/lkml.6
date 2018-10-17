@@ -2,90 +2,161 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67981ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDE8ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B4D121526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4D121526
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id D81502150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:11:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="IoEOgIuf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81502150D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbeJQXHZ (ORCPT
+        id S1727835AbeJQXHu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:07:25 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45944 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJQXHZ (ORCPT
+        Wed, 17 Oct 2018 19:07:50 -0400
+Received: from mail.efficios.com ([167.114.142.138]:57802 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbeJQXHt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:07:25 -0400
-Received: by mail-qk1-f194.google.com with SMTP id m8-v6so16675688qka.12;
-        Wed, 17 Oct 2018 08:11:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FKaGTVrDoB3wM70SDy9cZPLZvYt4VflSq8YoDlpWSDE=;
-        b=nxFZ6EYLzEan6NUSSIGEyCGTmJExXZi506FPLjpNlVl7Yj+8mOav3CXwbRq9u6jvvf
-         lt0pPan2PyBuoq2HofiagZoi93QOJu+S0+vSDYKv6GSQSkpPH6ZYSE4884moFN/6Pdip
-         8duHtDNlyuRSfcogiWmkl/uBvl3TpB7O7n5ChSw0JmDU8xPD2YgKbPjhhe4z9mdr4IbF
-         ndurbqUTiwkGDXpPlRLJ+L7O8SrRJsA7VbcSsPy7lQJaq2UWKiF2y4L8JHa9p7dClhR9
-         oSqoqgfrpXAq8R0+4USB56QIP/0cRB0Cr47wBD5Ih3IkaRLa4Upgg0SRrjIRDHGqgTy0
-         0syA==
-X-Gm-Message-State: ABuFfogmxIS6MAjk6YoATdy5HUU1jSOWyHwG6uQxQKm4TIY0VWN6R0bx
-        TXRXCFVXSPRSyYL6GDC1MRxMMDvjVf73lVIA8PY=
-X-Google-Smtp-Source: ACcGV63Ifr8mYTn2NQG6A+s7WdZteIZ35upOrBk3toeSNWS2uLr5aiTnYVuzgYxBBPoWpsNUjUhm+BeJqwYzTbZwXNc=
-X-Received: by 2002:a37:38b:: with SMTP id 133-v6mr25029036qkd.173.1539789076799;
- Wed, 17 Oct 2018 08:11:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1539655731.git.ren_guo@c-sky.com> <9ae1d1609a49d976ae7659157507018b0c846423.1539655732.git.ren_guo@c-sky.com>
-In-Reply-To: <9ae1d1609a49d976ae7659157507018b0c846423.1539655732.git.ren_guo@c-sky.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 17 Oct 2018 17:11:00 +0200
-Message-ID: <CAK8P3a31sVAMCPXLqyqMpvj-gsxOmuf2qL0bT5crDQo0Wcg__g@mail.gmail.com>
-Subject: Re: [PATCH V9 08/21] csky: Process management and Signal
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>,
+        Wed, 17 Oct 2018 19:07:49 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 1EC0A1CA6B4;
+        Wed, 17 Oct 2018 11:11:41 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id 3t3An6xl9U90; Wed, 17 Oct 2018 11:11:40 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 8E4CF1CA6AD;
+        Wed, 17 Oct 2018 11:11:40 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 8E4CF1CA6AD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1539789100;
+        bh=pOsEDiQXaRkGMm76xjqtw5SniO690HLscXPdPt3k9L8=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=IoEOgIufWUIe0IYeoGBWoWN1oYlKlsfMTxhrs1qXRKLCcu1nbPMrt7kbFw8+pHrlY
+         R56HLITNW/l3MJCDRDCs5qngBfkswSvKKJ3pMGp/s2tYKxaaaXj7ITdKxrhsYY97ZB
+         q1ToqfinlxHNumfzhBRQDgU4UVnVNxYm5otmgOVTr1Kjc6OMb6t73hH7MFwMAVpWPb
+         bTtiSM1nwuojshUz/i3qTNdwUIwVwoZKodZqGQizVHGQiJirUehRaTckMnDcGPX4l3
+         P7qCqS7NZf/2ZlEYAzeG72Ral1ATaeyn5f7jWwcsr1oFQNDaD29+TG2VDPF9dZdYww
+         a/ymbrLOlJWnQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id m0gjQxnKcsKy; Wed, 17 Oct 2018 11:11:40 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 6E04D1CA6A6;
+        Wed, 17 Oct 2018 11:11:40 -0400 (EDT)
+Date:   Wed, 17 Oct 2018 11:11:40 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com
-Content-Type: text/plain; charset="UTF-8"
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <1006597066.825.1539789100381.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20181017071931.GA18379@linux.vnet.ibm.com>
+References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com> <20181010191936.7495-7-mathieu.desnoyers@efficios.com> <20181017071931.GA18379@linux.vnet.ibm.com>
+Subject: Re: [RFC PATCH for 4.21 06/16] cpu_opv: Provide cpu_opv system call
+ (v8)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3039 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
+Thread-Topic: cpu_opv: Provide cpu_opv system call (v8)
+Thread-Index: 7qW2lzGCTO+IxFmqU0Kf5LalV47JZQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 5:01 AM Guo Ren <ren_guo@c-sky.com> wrote:
->
-> This patch adds files related to task_switch, sigcontext, signal,
-> fpu context switch.
->
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> ---
-> Changelog:
->  - abiv2/fpu.c: Userspace should never be sent NSIGXXX as a si_code.
->    Use FPE_FLTUNK instead.
->  - abiv2/fpu.c: Use force_sig_fault instead.
+----- On Oct 17, 2018, at 3:19 AM, Srikar Dronamraju srikar@linux.vnet.ibm.com wrote:
 
-I'm hesitant to provide a Reviewed-by: tag for this one, as I don't
-understand the signal handling enough myself, and it's something
-that should be reviewed properly because of the ABI implications.
+> Hi Mathieu,
+> 
+>> +static int do_cpu_opv(struct cpu_op *cpuop, int cpuopcnt,
+>> +		      struct cpu_opv_vaddr *vaddr_ptrs, int cpu)
+>> +{
+>> +	struct mm_struct *mm = current->mm;
+>> +	int ret;
+>> +
+>> +retry:
+>> +	if (cpu != raw_smp_processor_id()) {
+>> +		ret = push_task_to_cpu(current, cpu);
+>> +		if (ret)
+>> +			goto check_online;
+>> +	}
+>> +	down_read(&mm->mmap_sem);
+>> +	ret = vaddr_ptrs_check(vaddr_ptrs);
+>> +	if (ret)
+>> +		goto end;
+>> +	preempt_disable();
+>> +	if (cpu != smp_processor_id()) {
+>> +		preempt_enable();
+>> +		up_read(&mm->mmap_sem);
+>> +		goto retry;
+>> +	}
+> 
+> If we have a higher priority task/s either pinned to the cpu, dont we end up
+> in busy-looping till the task exits/sleeps?
 
-Maybe someone else can have a closer look at this?
+You're right!
 
-       Arnd
+How about we ditch the thread migration altogether, and simply perform
+the cpu_opv operations in a IPI handler ?
+
+This is possible now that cpu_opv uses a temporary vmap() rather than
+try to touch the user-space page through the current thread's page table.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
+> 
+>> +	ret = __do_cpu_opv(cpuop, cpuopcnt);
+>> +	preempt_enable();
+>> +end:
+>> +	up_read(&mm->mmap_sem);
+>> +	return ret;
+>> +
+>> +check_online:
+>> +	/*
+>> +	 * push_task_to_cpu() returns -EINVAL if the requested cpu is not part
+>> +	 * of the current thread's cpus_allowed mask.
+>> +	 */
+>> +	if (ret == -EINVAL)
+>> +		return ret;
+>> +	get_online_cpus();
+>> +	if (cpu_online(cpu)) {
+>> +		put_online_cpus();
+>> +		goto retry;
+> > +	}
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
