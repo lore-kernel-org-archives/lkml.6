@@ -2,100 +2,190 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3B2ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D332ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CD2520658
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:09:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CD2520658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2CB0320658
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:09:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="sNdyVuFc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CB0320658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbeJQXFk (ORCPT
+        id S1727981AbeJQXF7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:05:40 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46709 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbeJQXFk (ORCPT
+        Wed, 17 Oct 2018 19:05:59 -0400
+Received: from mail.efficios.com ([167.114.142.138]:56192 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbeJQXF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:05:40 -0400
-Received: by mail-oi1-f196.google.com with SMTP id k64-v6so21326173oia.13;
-        Wed, 17 Oct 2018 08:09:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D2IIiHJAQ75M4sUEA9PE/cRsr8V/lGkeukwtxM+loNw=;
-        b=TnSr9vgEkyu09z3cJjhNVXXtSPVT7RG/3vep9WCrhpKwqoCv2IEHIaV558nrvA8lar
-         sQlUGxidMrBM//d4QEx9J3H1rL3HARwdkxSE1jYxdcpfXJ2EECkUDkh91XegqTEJsOiN
-         b2MJCC3bav0OD16lkXaGpQuKHRaZ3gnQ7XCYWtTPR7KgDD/po4iKvwEDBB/z0Py+Ruft
-         Yj9qkz91ZXK9hZCMn5gCFAN/bp0hec6oYycRM689giB9pRJsxpkKcrGnyzVWGgkU1Ekt
-         Y9tNIxKqBbDF5qvvZurkjKIPuCF7NBNNDGUMtKEDKlGvNdjx98T1PrZyQtZ65mrbQAAd
-         GgWA==
-X-Gm-Message-State: ABuFfohKVdjpMvTvMlWUh484Bj2GQxmflvKB9VvgiQ+2uq6l9iDtjgjz
-        L2DeUah6uSvxNECzfO2GSTXrJn0=
-X-Google-Smtp-Source: ACcGV62Hu6u4NpVPeU5tyiTe9eEoBRTW4EKGyyrCal0VU10kheAhNIGWLJiZXM/bTmnRoY/qXHlKsw==
-X-Received: by 2002:aca:bbc5:: with SMTP id l188-v6mr10272445oif.340.1539788972574;
-        Wed, 17 Oct 2018 08:09:32 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h29sm1582258otg.34.2018.10.17.08.09.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 08:09:32 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 10:09:31 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Quentin Schulz <quentin.schulz@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: phy: Update SERDES_MAX to be SERDES_MAX
- + 1
-Message-ID: <20181017150931.GA385@bogus>
-References: <cover.1539036280.git.gustavo@embeddedor.com>
- <3a1a95a4832af33dcd1842b0298d257bbcf1f5ab.1539036280.git.gustavo@embeddedor.com>
- <20181009072723.mshyvplpo2xmkyfl@qschulz>
- <dab86dfb-d56b-b7c3-8e2a-6955803a2842@embeddedor.com>
+        Wed, 17 Oct 2018 19:05:58 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 9C27D1CA616;
+        Wed, 17 Oct 2018 11:09:50 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id nF3AnNyw5lbN; Wed, 17 Oct 2018 11:09:50 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 33A6E1CA60F;
+        Wed, 17 Oct 2018 11:09:50 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 33A6E1CA60F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1539788990;
+        bh=wWKd6QJ+MQ/yuWkoCIdeyyQB03N3odcK3FEkxpn/8UY=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=sNdyVuFcpwObhDOeIFyxJ4F54U9RzFd++rfPR1EgAzMzkoeuDdANVIX3rcO3LC67k
+         24nWVMFZy+IUp5w1wmLDQGVyC8AEhvtg8+v2JfumdD4/xReYrAZEFcCMpXjNajntFk
+         Z9K7WLXD73mOoQFgE0syYGrFRQTf6Cl/CnlaaNQQ9cukhxc5jKcCx1wZAk0q/oPKs1
+         5zT2AIPrVeadFNkMaXv1AHzQdU+MRzpEeWS9DCyJaJGIiZK94NBC9qsj9pAfZy+NIq
+         uemyqTthMK3Car6lNKW7JFB6mo5Wz/QQrRuRLZX/yKmPwn8BCfRtKO/mrWpGbokjU/
+         i0xUxmWlAtZiQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 1JImKwivWloO; Wed, 17 Oct 2018 11:09:50 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 0EDA21CA605;
+        Wed, 17 Oct 2018 11:09:50 -0400 (EDT)
+Date:   Wed, 17 Oct 2018 11:09:49 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <704369944.814.1539788989963.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20181017065145.GA7111@linux.vnet.ibm.com>
+References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com> <20181010191936.7495-4-mathieu.desnoyers@efficios.com> <20181017065145.GA7111@linux.vnet.ibm.com>
+Subject: Re: [RFC PATCH for 4.21 03/16] sched: Implement push_task_to_cpu
+ (v2)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dab86dfb-d56b-b7c3-8e2a-6955803a2842@embeddedor.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3039 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
+Thread-Topic: sched: Implement push_task_to_cpu (v2)
+Thread-Index: GiS32WM/xSgzHSI9RscP/cknL+p9+w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 10:44:52AM +0200, Gustavo A. R. Silva wrote:
-> Hi,
+----- On Oct 17, 2018, at 2:51 AM, Srikar Dronamraju srikar@linux.vnet.ibm.com wrote:
+
+> Hi Mathieu,
 > 
-> On 10/9/18 9:27 AM, Quentin Schulz wrote:
-> > Hi Gustavo,
-> > 
-> > On Tue, Oct 09, 2018 at 12:21:36AM +0200, Gustavo A. R. Silva wrote:
-> >> SERDES_MAX is a valid value to index ctrl->phys in
-> >> drivers/phy/mscc/phy-ocelot-serdes.c. But, currently,
-> >> there is an out-of-bounds bug in the mentioned driver
-> >> when reading from ctrl->phys, because the size of
-> >> array ctrl->phys is SERDES_MAX.
-> >>
-> >> Partially fix this by updating SERDES_MAX to be SERDES6G_MAX + 1.
-> >>
-> >> Notice that this is the first part of the solution to
-> >> the out-of-bounds bug mentioned above. Although this
-> >> change is not dependent on any other one.
-> >>
-> > 
-> > Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> > 
+>> +int push_task_to_cpu(struct task_struct *p, unsigned int dest_cpu)
+>> +{
 > 
-> Friendly ping. Who can you take this?
+> In your use case, is the task going to be current?
+> If yes, we should simply be using migrate_task_to.
+> 
+>> +	struct rq_flags rf;
+>> +	struct rq *rq;
+>> +	int ret = 0;
+>> +
+>> +	rq = task_rq_lock(p, &rf);
+>> +	update_rq_clock(rq);
+>> +
+>> +	if (!cpumask_test_cpu(dest_cpu, &p->cpus_allowed)) {
+>> +		ret = -EINVAL;
+>> +		goto out;
+>> +	}
+> 
+> Ideally we should have checked cpus_allowed/cpu_active_mask before taking
+> the lock. This would help reduce the contention on the rqlock when the
+> passed parameter is not correct.
+> 
+>> +
+>> +	if (!cpumask_test_cpu(dest_cpu, cpu_active_mask)) {
+>> +		ret = -EBUSY;
+>> +		goto out;
+>> +	}
+>> +
+>> +	if (task_cpu(p) == dest_cpu)
+>> +		goto out;
+> 
+> Same as above.
+> 
+>> +
+>> +	if (task_running(rq, p) || p->state == TASK_WAKING) {
+> 
+> Why are we using migration thread to move a task in TASK_WAKING state?
+> 
+>> +		struct migration_arg arg = { p, dest_cpu };
+>> +		/* Need help from migration thread: drop lock and wait. */
+>> +		task_rq_unlock(rq, p, &rf);
+>> +		stop_one_cpu(cpu_of(rq), migration_cpu_stop, &arg);
+>> +		tlb_migrate_finish(p->mm);
+>> +		return 0;
+> 
+> Why cant we use migrate_task_to instead?
 
-Applied. No need (nor benefit) to ping me. You can check the status of 
-DT patches on patchwork[1]. If it is there and in the "New" state, it is 
-in my queue.
+I could do that be moving migrate_task_to outside of NUMA-specific #ifdef,
+but I think we can do much, much simpler than that, see below.
 
-Rob
+> 
+>> +	} else if (task_on_rq_queued(p)) {
+>> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+>> index 455fa330de04..27ad25780204 100644
+>> --- a/kernel/sched/sched.h
+>> +++ b/kernel/sched/sched.h
+>> @@ -1340,6 +1340,15 @@ static inline void __set_task_cpu(struct task_struct *p,
+>> unsigned int cpu)
+>>  #endif
+>>  }
+>>  
+>> +#ifdef CONFIG_SMP
+>> +int push_task_to_cpu(struct task_struct *p, unsigned int dest_cpu);
+>> +#else
+>> +static inline int push_task_to_cpu(struct task_struct *p, unsigned int
+>> dest_cpu)
+>> +{
+>> +	return 0;
+>> +}
+>> +#endif
+>> +
+> 
+> Your usecase is outside kernel/sched. So I am not sure if this is the right
+> place for the declaration.
 
-[1] https://patchwork.ozlabs.org/project/devicetree-bindings/list/
+Actually, now that I think of it, we may not need to migrate the task at all.
+Now that cpu_opv implementation takes a temporary vmap() of the user-space pages,
+we can touch that virtual address range from interrupt context from another CPU.
+
+So cpu_opv can simply execute the vector of operations in IPI context rather than
+do all this silly dance with migration.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
