@@ -2,143 +2,409 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 454F4ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0A3ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04AAB2151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:55:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="tg4xYssa";
-	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="BAnXOoWE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04AAB2151D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=raspberrypi.org
+	by mail.kernel.org (Postfix) with ESMTP id 050052151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:55:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 050052151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeJQRuU (ORCPT
+        id S1727289AbeJQRu2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 13:50:20 -0400
-Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:5439 "EHLO
-        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726976AbeJQRuU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 13:50:20 -0400
-Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
-        by mx07-00252a01.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9H9rJeU020484
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 10:55:22 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=pp; bh=iWrG4H3562DqofSZnEETaSKBiRB5u25Y6J2x2L0MvjI=;
- b=tg4xYssa+SY9JCMLYEoOA6e7G2cHkLsH1V8RCo0yCmkEikPiJAbEcdezXAyd2bn36mRM
- xvECtJ4NK21be236VaSnH0LnYlEyULPZdgR7DiBC0Tn0CjKPIHLju107HgFtsQEAfedE
- 236orSzqfYIdBmuV19TdJuONhUqn0RywFrmOBYYOjePKdFRgktk/SQYl6afG3/7n7yKZ
- QTiX1chJLbEATyqVM2Tpr8N3ax+sd1zbQZn/bwaAUeePteOcgd+77OYinUQvBFm9I6lD
- Zclv9VUCftc/x8qWbJUWVk8lPw59cbG83PCI/oPfCa7hwT7PMj2nRLTG14dkcz6z7Mbb Bg== 
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-        by mx07-00252a01.pphosted.com with ESMTP id 2n3641a49r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 10:55:22 +0100
-Received: by mail-pl1-f198.google.com with SMTP id b23-v6so20321127pls.8
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 02:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iWrG4H3562DqofSZnEETaSKBiRB5u25Y6J2x2L0MvjI=;
-        b=BAnXOoWENf29poweo4JTozaLEmmjyqrJFd/VB9Foz6UBTPcW0064/j3CU45Wifbh96
-         TzHN+EtSGZHUBveDTzYlfmi6tzXDR1bImJYUNVp+rhLCu9wMIwrVXOyuDXWkpOTsXJ4I
-         zL2VeMoJqTVUMeEgKMFTPz3av1fZwTgwjWRjUIL3VlOxxOmNlXqm8BCi+XjjHfSpYdJE
-         pTmwcIuMAkC4/8YVNSnLVuhjH99ZRmLV1e8LJ+ZSoNdWR+90aCXEMoA5+Sne2h/GJW1F
-         yy/6v4LUnYGIUUtw9/+NyRTPEX0Xyu/mJDKBQx4juYgeVZUrTQUMwbN/fw2SLFup/+Vl
-         AKIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iWrG4H3562DqofSZnEETaSKBiRB5u25Y6J2x2L0MvjI=;
-        b=BA0VyE3hycuVu6eM4jFW7U55YGEe/eQI2A0xHwZ91RAAf0NxLm0eM8W899hLNsB0t0
-         o/JN/PrFqxNoTD9LXxXWJq6z933aqn7nmChUyaJAPO4dJAfbma3ItY/IKHTv1Nv7zSyZ
-         rxOz9UBjuoyTL0fPmt9oFVfYY86/1O1nINBjSR2RrGbT21AcocrFdQUXm4mBiKy6r5LH
-         HIH3TlltJe//l6km7D74DuHRByqlW8xX2HhHSpv138An/8Yabaw1DOE23EXW/e/nChoD
-         0O0t8KjuFIkUFUE+w2OnYr0ozesCYWPAfJ1egjt79a690I8RBSU8yDz/hNstbeBaXe2x
-         vyLQ==
-X-Gm-Message-State: ABuFfojteiSwRxSV+JSsJUVDlZqrR6xI6vo4IMs6EAOxk7CC5qwZ6lp7
-        urgQ3tKqVmjGGR4KJrDp1kI32ow9fvom9MR5uSuDh3wct+jY1y+j+/GUgWGqr3ftBVsb6t7nyPw
-        uvSPdvq8VKwKOuqBjOmhb9YxaC+y3Ar3/jAQb9KA=
-X-Received: by 2002:a62:5441:: with SMTP id i62-v6mr25974351pfb.155.1539770120416;
-        Wed, 17 Oct 2018 02:55:20 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV638P+81PnmyFPqQL1AkI86+qOz3L9pBNbTG+kuEc24tCGyyBp6BLt/QwcqC5G75Mcaq26cHvK6eGY7oAbTJvu0=
-X-Received: by 2002:a62:5441:: with SMTP id i62-v6mr25974335pfb.155.1539770120144;
- Wed, 17 Oct 2018 02:55:20 -0700 (PDT)
+        Wed, 17 Oct 2018 13:50:28 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:48046 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726727AbeJQRu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 13:50:28 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42Znbj5vDnz9ttF7;
+        Wed, 17 Oct 2018 11:55:13 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id vN58cl0cQPu2; Wed, 17 Oct 2018 11:55:13 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42Znbj58hgz9ttBR;
+        Wed, 17 Oct 2018 11:55:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id AE04D8B7FE;
+        Wed, 17 Oct 2018 11:55:13 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 6pcSmtNhmCHH; Wed, 17 Oct 2018 11:55:13 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id EF1968B7F7;
+        Wed, 17 Oct 2018 11:55:12 +0200 (CEST)
+Subject: Re: Crash on FSL Book3E due to pte_pgprot()? (was Re: [PATCH v3
+ 12/24] powerpc/mm: use pte helpers in generic code)
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Geoff Levand <geoff@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Li Yang <leoyang.li@nxp.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Scott Wood <oss@buserror.net>, aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
+References: <cover.1539092111.git.christophe.leroy@c-s.fr>
+ <343c844bbc5081d13ee4c9aa27ff3118f607e1cc.1539092112.git.christophe.leroy@c-s.fr>
+ <87va61jsma.fsf@concordia.ellerman.id.au>
+ <236d72cd-e6d7-61e5-2c80-e4311e41b4f6@c-s.fr> <87ftx4x67q.fsf@linux.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <bc7b2996-45b4-fc39-6795-da2489b3fd27@c-s.fr>
+Date:   Wed, 17 Oct 2018 11:55:12 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181004093747.21750-1-tuomas.tynkkynen@iki.fi>
- <1715113043.52878.1538821118324@email.1und1.de> <87a7nf5gr9.fsf@anholt.net>
-In-Reply-To: <87a7nf5gr9.fsf@anholt.net>
-From:   Dave Stevenson <dave.stevenson@raspberrypi.org>
-Date:   Wed, 17 Oct 2018 10:55:06 +0100
-Message-ID: <CAAoAYcN_xVvi2-dUcGobVcMEtjFTV=Hi7OFr2vuEF08aQkVWHA@mail.gmail.com>
-Subject: Re: [PATCH 0/7] staging: vc04_services: Some dead code removal
-To:     Eric Anholt <eric@anholt.net>
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>, tuomas.tynkkynen@iki.fi,
-        Phil Elwell <phil@raspberrypi.org>, devel@driverdev.osuosl.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_14:,,
- signatures=0
+In-Reply-To: <87ftx4x67q.fsf@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Oct 2018 at 17:27, Eric Anholt <eric@anholt.net> wrote:
->
-> Stefan Wahren <stefan.wahren@i2se.com> writes:
->
-> > Hi Tuomas,
-> >
-> >> Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi> hat am 4. Oktober 2018 um 11:37 geschrieben:
-> >>
-> >>
-> >> Drop various pieces of dead code from here and there to get rid of
-> >> the remaining users of VCHI_CONNECTION_T. After that we get to drop
-> >> entire header files worth of unused code.
-> >>
-> >> I've tested on a Raspberry Pi Model B (bcm2835_defconfig) that
-> >> snd-bcm2835 can still play analog audio just fine.
-> >>
-> >
-> > thanks and i'm fine with your patch series:
-> >
-> > Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-> >
-> > Unfortunately this would break compilation of the downstream vchi
-> > drivers like vcsm [1]. Personally i don't want to maintain another
-> > one, because i cannot see the gain of the resulting effort.
-> >
-> > [1] - https://github.com/raspberrypi/linux/tree/rpi-4.14.y/drivers/char/broadcom/vc_sm
 
-I'm happy enough to work around these changes. Once the change is in a
-released kernel we can merge a modified version of vc_sm into the
-downstream kernel branch. It's not as if it requires big changes.
 
-> I think the main concern would be if we removed things necessary for
-> 6by9's new vcsm (the one that will let us do dma-buf sharing between
-> media decode and DRM).
+Le 17/10/2018 à 11:39, Aneesh Kumar K.V a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> 
+>> On 10/17/2018 12:59 AM, Michael Ellerman wrote:
+>>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>>
+>>>> Get rid of platform specific _PAGE_XXXX in powerpc common code and
+>>>> use helpers instead.
+>>>>
+>>>> mm/dump_linuxpagetables.c will be handled separately
+>>>>
+>>>> Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+>>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>>> ---
+>>>>    arch/powerpc/include/asm/book3s/32/pgtable.h |  9 +++------
+>>>>    arch/powerpc/include/asm/nohash/32/pgtable.h | 12 ++++++++----
+>>>>    arch/powerpc/include/asm/nohash/pgtable.h    |  3 +--
+>>>>    arch/powerpc/mm/pgtable.c                    | 21 +++++++--------------
+>>>>    arch/powerpc/mm/pgtable_32.c                 | 15 ++++++++-------
+>>>>    arch/powerpc/mm/pgtable_64.c                 | 14 +++++++-------
+>>>>    arch/powerpc/xmon/xmon.c                     | 12 +++++++-----
+>>>>    7 files changed, 41 insertions(+), 45 deletions(-)
+>>>
+>>> So turns out this patch *also* breaks my p5020ds :)
+>>>
+>>> Even with patch 4 merged, see next.
+>>>
+>>> It's the same crash:
+>>>
+>>>     pcieport 2000:00:00.0: AER enabled with IRQ 480
+>>>     Unable to handle kernel paging request for data at address 0x8000080080080000
+>>>     Faulting instruction address: 0xc0000000000192cc
+>>>     Oops: Kernel access of bad area, sig: 11 [#1]
+>>>     BE SMP NR_CPUS=24 CoreNet Generic
+>>>     Modules linked in:
+>>>     CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc3-gcc7x-g98c847323b3a #1
+>>>     NIP:  c0000000000192cc LR: c0000000005d0f9c CTR: 0000000000100000
+>>>     REGS: c0000000f31bb400 TRAP: 0300   Not tainted  (4.19.0-rc3-gcc7x-g98c847323b3a)
+>>>     MSR:  0000000080029000 <CE,EE,ME>  CR: 24000224  XER: 00000000
+>>>     DEAR: 8000080080080000 ESR: 0000000000800000 IRQMASK: 0
+>>>     GPR00: c0000000005d0f84 c0000000f31bb688 c00000000117dc00 8000080080080000
+>>>     GPR04: 0000000000000000 0000000000400000 00000ffbff241010 c0000000f31b8000
+>>>     GPR08: 0000000000000000 0000000000100000 0000000000000000 c0000000012d4710
+>>>     GPR12: 0000000084000422 c0000000012ff000 c000000000002774 0000000000000000
+>>>     GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+>>>     GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+>>>     GPR24: 0000000000000000 0000000000000000 8000080080080000 c0000000ffff89a8
+>>>     GPR28: c0000000f3576400 c0000000f3576410 0000000000400000 c0000000012ecc98
+>>>     NIP [c0000000000192cc] ._memset_io+0x6c/0x9c
+>>>     LR [c0000000005d0f9c] .fsl_qman_probe+0x198/0x928
+>>>     Call Trace:
+>>>     [c0000000f31bb688] [c0000000005d0f84] .fsl_qman_probe+0x180/0x928 (unreliable)
+>>>     [c0000000f31bb728] [c0000000006432ec] .platform_drv_probe+0x60/0xb4
+>>>     [c0000000f31bb7a8] [c00000000064083c] .really_probe+0x294/0x35c
+>>>     [c0000000f31bb848] [c000000000640d2c] .__driver_attach+0x148/0x14c
+>>>     [c0000000f31bb8d8] [c00000000063d7dc] .bus_for_each_dev+0xb0/0x118
+>>>     [c0000000f31bb988] [c00000000063ff28] .driver_attach+0x34/0x4c
+>>>     [c0000000f31bba08] [c00000000063f648] .bus_add_driver+0x174/0x2bc
+>>>     [c0000000f31bbaa8] [c0000000006418bc] .driver_register+0x90/0x180
+>>>     [c0000000f31bbb28] [c000000000643270] .__platform_driver_register+0x60/0x7c
+>>>     [c0000000f31bbba8] [c000000000ee2a70] .fsl_qman_driver_init+0x24/0x38
+>>>     [c0000000f31bbc18] [c0000000000023fc] .do_one_initcall+0x64/0x2b8
+>>>     [c0000000f31bbcf8] [c000000000e9f480] .kernel_init_freeable+0x3a8/0x494
+>>>     [c0000000f31bbda8] [c000000000002798] .kernel_init+0x24/0x148
+>>>     [c0000000f31bbe28] [c0000000000009e8] .ret_from_kernel_thread+0x58/0x70
+>>>     Instruction dump:
+>>>     4e800020 2ba50003 40dd003c 3925fffc 5488402e 7929f082 7d082378 39290001
+>>>     550a801e 7d2903a6 7d4a4378 794a0020 <91430000> 38630004 4200fff8 70a50003
+>>>
+>>>
+>>> Comparing a working vs broken kernel, it seems to boil down to the fact
+>>> that we're filtering out more PTE bits now that we use pte_pgprot() in
+>>> ioremap_prot().
+>>>
+>>> With the old code we get:
+>>>     ioremap_prot: addr 0xff800000 flags 0x241215
+>>>     ioremap_prot: addr 0xff800000 flags 0x241215
+>>>     map_kernel_page: ea 0x8000080080080000 pa 0xff800000 pte 0xff800241215
+>>>
+>>>
+>>> And now we get:
+>>>     ioremap_prot: addr 0xff800000 flags 0x241215 pte 0x241215
+>>>     ioremap_prot: addr 0xff800000 pte 0x241215
+>>>     ioremap_prot: addr 0xff800000 prot 0x241014
+>>>     map_kernel_page: ea 0x8000080080080000 pa 0xff800000 pte 0xff800241014
+>>>
+>>> So we're losing 0x201, which for nohash book3e is:
+>>>
+>>>     #define _PAGE_PRESENT	0x000001 /* software: pte contains a translation */
+>>>     #define _PAGE_PSIZE_4K	0x000200
+>>>
+>>>
+>>> I haven't worked out if it's one or both of those that matter.
+>>
+>> At least missing _PAGE_PRESENT is an issue I believe.
+>>>
+>>> The question is what's the right way to fix it? Should pte_pgprot() not
+>>> be filtering those bits out on book3e?
+>>
+>> I think we should not use pte_pggrot() for that then. What about the
+>> below fix ?
+>>
+>> Christophe
+>>
+>> From: Christophe Leroy <christophe.leroy@c-s.fr>
+>> Date: Wed, 17 Oct 2018 05:56:25 +0000
+>> Subject: [PATCH] powerpc/mm: don't use pte_pgprot() in ioremap_prot()
+>>
+>> pte_pgprot() filters out some required flags like _PAGE_PRESENT.
+>>
+>> This patch replaces pte_pgprot() by __pgprot(pte_val())
+>> in ioremap_prot()
+>>
+>> Fixes: 26973fa5ac0e ("powerpc/mm: use pte helpers in generic code")
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>    arch/powerpc/mm/pgtable_32.c | 3 ++-
+>>    arch/powerpc/mm/pgtable_64.c | 4 ++--
+>>    2 files changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+>> index 5877f5aa8f5d..a606e2f4937b 100644
+>> --- a/arch/powerpc/mm/pgtable_32.c
+>> +++ b/arch/powerpc/mm/pgtable_32.c
+>> @@ -122,7 +122,8 @@ ioremap_prot(phys_addr_t addr, unsigned long size,
+>> unsigned long flags)
+>>    	pte = pte_exprotect(pte);
+>>    	pte = pte_mkprivileged(pte);
+>>
+>> -	return __ioremap_caller(addr, size, pte_pgprot(pte),
+>> __builtin_return_address(0));
+>> +	return __ioremap_caller(addr, size, __pgprot(pte_val(pte)),
+>> +				__builtin_return_address(0));
+> 
+> 
+> That means we pass the pfn bits also to __ioremap_caller right? How about
+> 
+>  From b4d5e0f24f8482375b2dd86afaced26ebf716600 Mon Sep 17 00:00:00 2001
+> From: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> Date: Wed, 17 Oct 2018 14:07:50 +0530
+> Subject: [PATCH] powerpc/mm: Make pte_pgprot return all pte bits
+> 
+> Other archs do the same and instead of adding required pte bits (which got
+> masked out) in __ioremap_at, make sure we filter only pfn bits out.
+> 
+> Fixes: 26973fa5ac0e ("powerpc/mm: use pte helpers in generic code")
+> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-The new vcsm uses the same VCHI service as the existing downstream vc_sm driver.
-The video codec driver don't use any VCHI functionality over and above
-the camera. It goes via a slightly extended version of the
-mmal-vchiq.c, which I have split out into a shared module.
+Looks good for me.
 
-> On the other hand, git revert is a thing, so it's not like we actually
-> lose anything.
+Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-:-)
-
-  Dave
+> ---
+>   arch/powerpc/include/asm/book3s/32/pgtable.h       |  6 ------
+>   arch/powerpc/include/asm/book3s/64/pgtable.h       |  8 --------
+>   arch/powerpc/include/asm/nohash/32/pte-40x.h       |  5 -----
+>   arch/powerpc/include/asm/nohash/32/pte-44x.h       |  5 -----
+>   arch/powerpc/include/asm/nohash/32/pte-8xx.h       |  5 -----
+>   arch/powerpc/include/asm/nohash/32/pte-fsl-booke.h |  5 -----
+>   arch/powerpc/include/asm/nohash/pgtable.h          |  1 -
+>   arch/powerpc/include/asm/nohash/pte-book3e.h       |  5 -----
+>   arch/powerpc/include/asm/pgtable.h                 | 10 ++++++++++
+>   9 files changed, 10 insertions(+), 40 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
+> index 0fbd4c642b51..e61dd3ae5bc0 100644
+> --- a/arch/powerpc/include/asm/book3s/32/pgtable.h
+> +++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
+> @@ -48,11 +48,6 @@ static inline bool pte_user(pte_t pte)
+>   #define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_HASHPTE | _PAGE_DIRTY | \
+>   			 _PAGE_ACCESSED | _PAGE_SPECIAL)
+>   
+> -/* Mask of bits returned by pte_pgprot() */
+> -#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_COHERENT | _PAGE_NO_CACHE | \
+> -			 _PAGE_WRITETHRU | _PAGE_USER | _PAGE_ACCESSED | \
+> -			 _PAGE_RW | _PAGE_DIRTY)
+> -
+>   /*
+>    * We define 2 sets of base prot bits, one for basic pages (ie,
+>    * cacheable kernel and user pages) and one for non cacheable
+> @@ -396,7 +391,6 @@ static inline int pte_young(pte_t pte)		{ return !!(pte_val(pte) & _PAGE_ACCESSE
+>   static inline int pte_special(pte_t pte)	{ return !!(pte_val(pte) & _PAGE_SPECIAL); }
+>   static inline int pte_none(pte_t pte)		{ return (pte_val(pte) & ~_PTE_NONE_MASK) == 0; }
+>   static inline bool pte_exec(pte_t pte)		{ return true; }
+> -static inline pgprot_t pte_pgprot(pte_t pte)	{ return __pgprot(pte_val(pte) & PAGE_PROT_BITS); }
+>   
+>   static inline int pte_present(pte_t pte)
+>   {
+> diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+> index c34a161dc651..cb5dd4078d42 100644
+> --- a/arch/powerpc/include/asm/book3s/64/pgtable.h
+> +++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+> @@ -128,13 +128,6 @@
+>   
+>   #define H_PTE_PKEY  (H_PTE_PKEY_BIT0 | H_PTE_PKEY_BIT1 | H_PTE_PKEY_BIT2 | \
+>   		     H_PTE_PKEY_BIT3 | H_PTE_PKEY_BIT4)
+> -/*
+> - * Mask of bits returned by pte_pgprot()
+> - */
+> -#define PAGE_PROT_BITS  (_PAGE_SAO | _PAGE_NON_IDEMPOTENT | _PAGE_TOLERANT | \
+> -			 H_PAGE_4K_PFN | _PAGE_PRIVILEGED | _PAGE_ACCESSED | \
+> -			 _PAGE_READ | _PAGE_WRITE |  _PAGE_DIRTY | _PAGE_EXEC | \
+> -			 _PAGE_SOFT_DIRTY | H_PTE_PKEY)
+>   /*
+>    * We define 2 sets of base prot bits, one for basic pages (ie,
+>    * cacheable kernel and user pages) and one for non cacheable
+> @@ -496,7 +489,6 @@ static inline bool pte_exec(pte_t pte)
+>   	return !!(pte_raw(pte) & cpu_to_be64(_PAGE_EXEC));
+>   }
+>   
+> -static inline pgprot_t pte_pgprot(pte_t pte)	{ return __pgprot(pte_val(pte) & PAGE_PROT_BITS); }
+>   
+>   #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+>   static inline bool pte_soft_dirty(pte_t pte)
+> diff --git a/arch/powerpc/include/asm/nohash/32/pte-40x.h b/arch/powerpc/include/asm/nohash/32/pte-40x.h
+> index 7a8b3c94592f..661f4599f2fc 100644
+> --- a/arch/powerpc/include/asm/nohash/32/pte-40x.h
+> +++ b/arch/powerpc/include/asm/nohash/32/pte-40x.h
+> @@ -73,11 +73,6 @@
+>   /* Until my rework is finished, 40x still needs atomic PTE updates */
+>   #define PTE_ATOMIC_UPDATES	1
+>   
+> -/* Mask of bits returned by pte_pgprot() */
+> -#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_NO_CACHE | \
+> -			 _PAGE_WRITETHRU | _PAGE_USER | _PAGE_ACCESSED | \
+> -			 _PAGE_RW | _PAGE_HWWRITE | _PAGE_DIRTY | _PAGE_EXEC)
+> -
+>   #define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED)
+>   #define _PAGE_BASE	(_PAGE_BASE_NC)
+>   
+> diff --git a/arch/powerpc/include/asm/nohash/32/pte-44x.h b/arch/powerpc/include/asm/nohash/32/pte-44x.h
+> index 8d6b268a986f..78bc304f750e 100644
+> --- a/arch/powerpc/include/asm/nohash/32/pte-44x.h
+> +++ b/arch/powerpc/include/asm/nohash/32/pte-44x.h
+> @@ -93,11 +93,6 @@
+>   #define _PAGE_KERNEL_RW		(_PAGE_DIRTY | _PAGE_RW)
+>   #define _PAGE_KERNEL_RWX	(_PAGE_DIRTY | _PAGE_RW | _PAGE_EXEC)
+>   
+> -/* Mask of bits returned by pte_pgprot() */
+> -#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_COHERENT | _PAGE_NO_CACHE | \
+> -			 _PAGE_WRITETHRU | _PAGE_USER | _PAGE_ACCESSED | \
+> -			 _PAGE_RW | _PAGE_DIRTY | _PAGE_EXEC)
+> -
+>   /* TODO: Add large page lowmem mapping support */
+>   #define _PMD_PRESENT	0
+>   #define _PMD_PRESENT_MASK (PAGE_MASK)
+> diff --git a/arch/powerpc/include/asm/nohash/32/pte-8xx.h b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
+> index 1c57efac089d..6bfe041ef59d 100644
+> --- a/arch/powerpc/include/asm/nohash/32/pte-8xx.h
+> +++ b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
+> @@ -55,11 +55,6 @@
+>   #define _PAGE_KERNEL_RW		(_PAGE_SH | _PAGE_DIRTY)
+>   #define _PAGE_KERNEL_RWX	(_PAGE_SH | _PAGE_DIRTY | _PAGE_EXEC)
+>   
+> -/* Mask of bits returned by pte_pgprot() */
+> -#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_NO_CACHE | \
+> -			 _PAGE_ACCESSED | _PAGE_RO | _PAGE_NA | \
+> -			 _PAGE_SH | _PAGE_DIRTY | _PAGE_EXEC)
+> -
+>   #define _PMD_PRESENT	0x0001
+>   #define _PMD_PRESENT_MASK	_PMD_PRESENT
+>   #define _PMD_BAD	0x0fd0
+> diff --git a/arch/powerpc/include/asm/nohash/32/pte-fsl-booke.h b/arch/powerpc/include/asm/nohash/32/pte-fsl-booke.h
+> index 1ecf60fe0909..0fc1bd42bb3e 100644
+> --- a/arch/powerpc/include/asm/nohash/32/pte-fsl-booke.h
+> +++ b/arch/powerpc/include/asm/nohash/32/pte-fsl-booke.h
+> @@ -39,11 +39,6 @@
+>   /* No page size encoding in the linux PTE */
+>   #define _PAGE_PSIZE		0
+>   
+> -/* Mask of bits returned by pte_pgprot() */
+> -#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_COHERENT | _PAGE_NO_CACHE | \
+> -			 _PAGE_WRITETHRU | _PAGE_USER | _PAGE_ACCESSED | \
+> -			 _PAGE_RW | _PAGE_DIRTY | _PAGE_EXEC)
+> -
+>   #define _PMD_PRESENT	0
+>   #define _PMD_PRESENT_MASK (PAGE_MASK)
+>   #define _PMD_BAD	(~PAGE_MASK)
+> diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
+> index 04e9f0922ad4..70ff23974b59 100644
+> --- a/arch/powerpc/include/asm/nohash/pgtable.h
+> +++ b/arch/powerpc/include/asm/nohash/pgtable.h
+> @@ -52,7 +52,6 @@ static inline int pte_none(pte_t pte)		{ return (pte_val(pte) & ~_PTE_NONE_MASK)
+>   static inline bool pte_hashpte(pte_t pte)	{ return false; }
+>   static inline bool pte_ci(pte_t pte)		{ return pte_val(pte) & _PAGE_NO_CACHE; }
+>   static inline bool pte_exec(pte_t pte)		{ return pte_val(pte) & _PAGE_EXEC; }
+> -static inline pgprot_t pte_pgprot(pte_t pte)	{ return __pgprot(pte_val(pte) & PAGE_PROT_BITS); }
+>   
+>   #ifdef CONFIG_NUMA_BALANCING
+>   /*
+> diff --git a/arch/powerpc/include/asm/nohash/pte-book3e.h b/arch/powerpc/include/asm/nohash/pte-book3e.h
+> index 58eef8cb569d..f95ab6eaf441 100644
+> --- a/arch/powerpc/include/asm/nohash/pte-book3e.h
+> +++ b/arch/powerpc/include/asm/nohash/pte-book3e.h
+> @@ -82,11 +82,6 @@
+>   #define _PTE_NONE_MASK	0
+>   #endif
+>   
+> -/* Mask of bits returned by pte_pgprot() */
+> -#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_COHERENT | _PAGE_NO_CACHE | \
+> -			 _PAGE_WRITETHRU | _PAGE_USER | _PAGE_ACCESSED | \
+> -			 _PAGE_PRIVILEGED | _PAGE_RW | _PAGE_DIRTY | _PAGE_EXEC)
+> -
+>   /*
+>    * We define 2 sets of base prot bits, one for basic pages (ie,
+>    * cacheable kernel and user pages) and one for non cacheable
+> diff --git a/arch/powerpc/include/asm/pgtable.h b/arch/powerpc/include/asm/pgtable.h
+> index fb4b85bba110..9679b7519a35 100644
+> --- a/arch/powerpc/include/asm/pgtable.h
+> +++ b/arch/powerpc/include/asm/pgtable.h
+> @@ -46,6 +46,16 @@ struct mm_struct;
+>   /* Keep these as a macros to avoid include dependency mess */
+>   #define pte_page(x)		pfn_to_page(pte_pfn(x))
+>   #define mk_pte(page, pgprot)	pfn_pte(page_to_pfn(page), (pgprot))
+> +/*
+> + * Select all bits except the pfn
+> + */
+> +static inline pgprot_t pte_pgprot(pte_t pte)
+> +{
+> +	unsigned long pte_flags;
+> +
+> +	pte_flags = pte_val(pte) & ~PTE_RPN_MASK;
+> +	return __pgprot(pte_flags);
+> +}
+>   
+>   /*
+>    * ZERO_PAGE is a global shared page that is always zero: used
+> 
