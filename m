@@ -2,99 +2,65 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 738CFECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47616ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A4A821526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:32:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZ4qvd5y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A4A821526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1606521526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:32:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1606521526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbeJQX2U (ORCPT
+        id S1727508AbeJQX2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:28:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51432 "EHLO mail.kernel.org"
+        Wed, 17 Oct 2018 19:28:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49781 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727032AbeJQX2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:28:19 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727090AbeJQX2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:28:33 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 188232150C;
-        Wed, 17 Oct 2018 15:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539790326;
-        bh=W4wduh4CjJnVogAUXOi+A23JhsE6uRKABB3hOgRrwb4=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=DZ4qvd5yKxW/h9dIE3Y7n+EiI0s6x0d+m6h8CJfOoINnXcqzazndoSgQ0oM2thhm/
-         peNM1sNnFaQYIpVnSBNASv03UXqoSIUYU5GZyRH6+gTex9SPyetJwmcYBhFU6wA6aO
-         cMYYPA2hZ7S8hU7SH6eG5ra0aycLM/ahdm6wX9d0=
-Content-Type: text/plain; charset="utf-8"
+        by mx1.redhat.com (Postfix) with ESMTPS id 1045D356D5;
+        Wed, 17 Oct 2018 15:32:20 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A32E7842C;
+        Wed, 17 Oct 2018 15:32:14 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20181017151134.GA8966@andrea>
+References: <20181017151134.GA8966@andrea> <153978619457.8478.3813964117489247515.stgit@warthog.procyon.org.uk> <153978621809.8478.2198040871218302573.stgit@warthog.procyon.org.uk>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     dhowells@redhat.com, gregkh@linux-foundation.org,
+        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
+        viro@zeniv.linux.org.uk, sandeen@redhat.com,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] fscache: Fix race in fscache_op_complete() due to split atomic_sub & read
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     ilia.lin@gmail.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180614215358.11264-7-ilia.lin@gmail.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        Ilia Lin <ilialin@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180614215358.11264-1-ilia.lin@gmail.com>
- <20180614215358.11264-7-ilia.lin@gmail.com>
-Message-ID: <153979032539.5275.12064078400966025600@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v13 6/8] clk: qcom: cpu-8996: Add support to switch to alternate
- PLL
-Date:   Wed, 17 Oct 2018 08:32:05 -0700
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <14407.1539790333.1@warthog.procyon.org.uk>
+Date:   Wed, 17 Oct 2018 16:32:13 +0100
+Message-ID: <14408.1539790333@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 17 Oct 2018 15:32:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting ilia.lin@gmail.com (2018-06-14 14:53:53)
-> @@ -227,6 +232,26 @@ clk_cpu_8996_mux_determine_rate(struct clk_hw *hw, s=
-truct clk_rate_request *req)
->         return 0;
->  }
->  =
+Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
 
-> +int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+> > Fix this by using atomic_sub_return() instead of two calls.
+> 
+> Seems a case for atomic_sub_return_relaxed()... why not?
 
-static? And name it something like clk_cpu_8996_notifier?
+Ummm...  In that case, should it be atomic_sub_return_release()?
 
-> +                       void *data)
-> +{
-> +       int ret;
-> +       struct clk_cpu_8996_mux *cpuclk =3D to_clk_cpu_8996_mux_nb(nb);
-> +
-> +       switch (event) {
-> +       case PRE_RATE_CHANGE:
-> +               ret =3D clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT=
-_INDEX);
-> +               break;
-> +       case POST_RATE_CHANGE:
-> +               ret =3D clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL=
-_INDEX);
-> +               break;
-> +       default:
-> +               ret =3D 0;
-> +               break;
-> +       }
-> +
-> +       return notifier_from_errno(ret);
-> +};
+David
