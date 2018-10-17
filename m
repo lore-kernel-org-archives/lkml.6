@@ -2,135 +2,165 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AAAC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3DCC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1B1A214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:27:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 305AA214DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:28:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFkeyLhN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1B1A214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nI4xl+Xv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 305AA214DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbeJQIU2 (ORCPT
+        id S1727587AbeJQIVD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 04:20:28 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33507 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbeJQIU1 (ORCPT
+        Wed, 17 Oct 2018 04:21:03 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:52519 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727214AbeJQIVD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 04:20:27 -0400
-Received: by mail-pl1-f193.google.com with SMTP id s4-v6so11803450plp.0;
-        Tue, 16 Oct 2018 17:27:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HKdljdK3lZurcsERNuDne5HsmZgQRKXBf3s9e/nz8i4=;
-        b=QFkeyLhNKWiTn5zijhVA6Q+/MWVzkoVV75Wbdr3GF0FgobfWfiwmxXhw28BF7FITV4
-         W1jyj8eyynTfAduMjQbD4/pNgolazy/TMsYhYTg/4kaEXfDKiMJTpD2ezuzosfCpbspp
-         mzMZiVmBTbuipWdICUGVLy8CrWmAqiMgPwr0K80g0NJNvuEqMqfYV6JgZPTX/8mfdePG
-         uN65oNoa7PRy8YZ5osTyzwNThioBcBkD4NsffgDphPH/pK5IGIT87y+eV19wsmWVkMHS
-         g5XrcLWw4mAeBieV/O+EitSUIEa4TG8FkSg+B2tYvwIOTGIq8kF6JuF4sEpXWsDyR0wk
-         F6Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HKdljdK3lZurcsERNuDne5HsmZgQRKXBf3s9e/nz8i4=;
-        b=fQbPCeoLRlRhn8cpkm0g8G6vgAYw+ee6a2EadpA7Vw16W1y9XRVqwMMG0nUsBvYQez
-         y1GqrNzoQXhFHc0rVbKLt7NAwQ+DTIJcTDCN0yWnltCQfg4w4nqNWM7ZzAJQPRFsB0lg
-         PWp/UNrL7HDgaeW59Eq8dIMr0A33n/fs5Sx6kYiDyMlMKS5r80sRzeL17Kki3d3Dd/eK
-         bGTazQV3nx2JXIri+/RWkV5IT/s9qbXmAeFiBoh9FEloJdV0ny+zXlejINTuBP5MWrWS
-         jo5RnnQ8l6rH3Qy0zZNEaTp1AzsJAIZ9UA+exHi97Iu015moIb6hc636hdPUM+1lglB4
-         YF5w==
-X-Gm-Message-State: ABuFfoj3MYN6ZPf116CWk6UmmlzDr83w7dWMkg6i82hipviyQiOJs9zg
-        Z5PNMpI1ey+TPH+lJfygEjw=
-X-Google-Smtp-Source: ACcGV60xJADMA6aHb+jFMS2YjKcJL4FaW4F3/7XK5ZNLqT9ONP7EJnniCzQe0WLYZ9WslxisXi1grQ==
-X-Received: by 2002:a17:902:15a8:: with SMTP id m37-v6mr23544598pla.132.1539736047246;
-        Tue, 16 Oct 2018 17:27:27 -0700 (PDT)
-Received: from localhost ([110.70.53.52])
-        by smtp.gmail.com with ESMTPSA id b62-v6sm30997828pfa.159.2018.10.16.17.27.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 17:27:25 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 09:27:22 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [RFC PATCH for 4.21 04/16] mm: Introduce vm_map_user_ram,
- vm_unmap_user_ram
-Message-ID: <20181017002722.GA1068@jagdpanzerIV>
-References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com>
- <20181010191936.7495-5-mathieu.desnoyers@efficios.com>
- <20181016143016.10da89bd@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016143016.10da89bd@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 17 Oct 2018 04:21:03 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20181017002758epoutp049c535b1f0f21521c5e8d9493d9d50a27~ePc5KUDhc1682616826epoutp04g;
+        Wed, 17 Oct 2018 00:27:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20181017002758epoutp049c535b1f0f21521c5e8d9493d9d50a27~ePc5KUDhc1682616826epoutp04g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539736078;
+        bh=Om2kOX7WjGjxHas+FpFaZwXleQSrzXojGlRh1POgFzA=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=nI4xl+Xvg2dLWIhMXjBYwFRmPMPhz56jb+JESCWUnsbszN3TG3ScvxsDOyGdtcKVT
+         jwuhWgmEmf5cx2O8VwMHTe+N9l4vh1mip8PdF2hxFRFaPwjArXMFh7hMi2xiCbO0/F
+         4TpAU2RzIiTXRxIjAdJFiYGKdMED7fu++iRFXA7E=
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.153]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20181017002755epcas1p38d9713c6ede86c33bb53009279ad488f~ePc18Gre21153411534epcas1p3K;
+        Wed, 17 Oct 2018 00:27:55 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        96.F3.04073.70286CB5; Wed, 17 Oct 2018 09:27:51 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181017002751epcas1p27ab64dfa4ea01e6771ba3d215319b5cb~ePcx4VbE-1680216802epcas1p2v;
+        Wed, 17 Oct 2018 00:27:51 +0000 (GMT)
+X-AuditID: b6c32a37-3edff70000000fe9-91-5bc68207a659
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 22.3B.03743.60286CB5; Wed, 17 Oct
+        2018 09:27:50 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PGP00ITWVYDVU00@mmp2.samsung.com>; Wed, 17 Oct 2018 09:27:50 +0900 (KST)
+Message-id: <5BC68205.1090406@samsung.com>
+Date:   Wed, 17 Oct 2018 09:27:49 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel@collabora.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH] PM / devfreq: Fix static checker warning in
+ try_then_request_governor
+In-reply-to: <20181016100203.18624-1-enric.balletbo@collabora.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEKsWRmVeSWpSXmKPExsWy7bCmni5707FogzufeCzW3D7EaLH5XA+r
+        xdmmN+wWl3fNYbP43HuE0eJ24wo2BzaPHXeXMHr0bVnF6PF5k1wAc1S2TUZqYkpqkUJqXnJ+
+        SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QXiWFssScUqBQQGJxsZK+nU1R
+        fmlJqkJGfnGJrVJqQUpOgWWBXnFibnFpXrpecn6ulaGBgZEpUGFCdsaard3MBaf4KxqOrWRu
+        YLzG08XIySEhYCIxd/sL5i5GLg4hgR2MEs8PbmGBcL4zSvxev5qxi5EDrGpvYwVIg5DABqCi
+        0zIgNq+AoMSPyfdYQEqYBeQljlzKBgkzC2hKbN29nh0kLCRwl1HigjJEtZbE7k/7WUBsFgFV
+        iQ9fN4HZbEDx/S9usIHY/AKKEld/PGYEsUUFIiR2zv/GDmKLCERKTGr/yAhyGbNAB6PEiYZm
+        sLXCAjESey9JgtRwCjhJHDp9Cux6CYE9bBJX/u9mhvjRRWLZugUsELawxKvjW9ghvpKWuHTU
+        FqK+nVHiy4tmVghnAqPEh1ObmSAajCWeLexigniMT+Ld1x5WiGZeiY42IYgSD4kvsx+wQYJn
+        KqNE0zejCYyys5BCaBYihGYhhdACRuZVjGKpBcW56anFhgXGyDG3iRGcvrTMdzBuOOdziFGA
+        g1GJh3eH2LFoIdbEsuLK3EOMEhzMSiK8p6uBQrwpiZVVqUX58UWlOanFhxhNgUE8kVlKNDkf
+        mFrzSuINTY2MjY0tTAzNTA0NlcR5n0jNjRYSSE8sSc1OTS1ILYLpY+LglGpg9AhaEpcSv8qs
+        OP+wP8tC1d8SjeuTkwqfzVKa9jWsa9L/fbyu5XNNF9geljl31ETHyEBypW3D0SS9hA3rlUy2
+        +eeWbdii7ib6bM5S8fM2UUYN0yZ1Xu9bblfYzJh+8MfmUFc97nl9cVN3H76+eLr90b1r7i7X
+        DMw1Y/hdMO9hr8Gkfb3v3FfpKrEUZyQaajEXFScCADbLERl1AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsVy+t9jQV22pmPRBovmmlusuX2I0WLzuR5W
+        i7NNb9gtLu+aw2bxufcIo8XtxhVsDmweO+4uYfTo27KK0ePzJrkA5igum5TUnMyy1CJ9uwSu
+        jDVbu5kLTvFXNBxbydzAeI2ni5GDQ0LARGJvY0UXIxeHkMA6RomXJxaydTFycvAKCEr8mHyP
+        BaSGWUBe4silbJAws4C6xKR5i5hBbCGB+4wSE9YpQpRrSez+tJ8FxGYRUJX48HUTmM0GFN//
+        4gbYSH4BRYmrPx4zgowUFYiQ6D5RCRIWEYiUOLZ5ATvICcwCHYwS39atZgepERaIkdh7SRLi
+        tOmMEv8e3wbbyyngJHHo9CmWCYwCs5BcOgvh0llILl3AyLyKUTK1oDg3PbfYqMAwL7Vcrzgx
+        t7g0L10vOT93EyMwkLcd1urbwXh/SfwhRgEORiUe3h1ix6KFWBPLiitzDzFKcDArifCergYK
+        8aYkVlalFuXHF5XmpBYfYpTmYFES572ddyxSSCA9sSQ1OzW1ILUIJsvEwSnVwOi31f/Yqtlr
+        9RiyH+kaOtlzGW19IpTTXvnwQr4t35OvEy8+2ij5bbZ3tfjL6ztUmu/a6E+91S6dpMum1ZvN
+        X7lWmXnf1XPPN6c5se2e9o/3qm1Z2P6LG8rXzD7+XUHLX+fL/6zdyqnxXfxB+gy9V11F1xm+
+        Tpi0cdd8pjYF/5sFR3Ndp2gveqPEUpyRaKjFXFScCACeN1ECYAIAAA==
+X-CMS-MailID: 20181017002751epcas1p27ab64dfa4ea01e6771ba3d215319b5cb
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181016100221epcas2p3da3cd977eefd0681e7d1231640b9e96e
+References: <CGME20181016100221epcas2p3da3cd977eefd0681e7d1231640b9e96e@epcas2p3.samsung.com>
+        <20181016100203.18624-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (10/16/18 14:30), Steven Rostedt wrote:
-> > +void vm_unmap_user_ram(const void *mem, unsigned int count)
-> > +{
-> > +	unsigned long size = (unsigned long)count << PAGE_SHIFT;
-> > +	unsigned long addr = (unsigned long)mem;
-> > +	struct vmap_area *va;
-> > +
-> > +	might_sleep();
-> > +	BUG_ON(!addr);
-> > +	BUG_ON(addr < VMALLOC_START);
-> > +	BUG_ON(addr > VMALLOC_END);
-> > +	BUG_ON(!PAGE_ALIGNED(addr));
-> > +
-> > +	debug_check_no_locks_freed(mem, size);
-> > +	va = find_vmap_area(addr);
-> > +	BUG_ON(!va);
-> > +	free_unmap_vmap_area(va);
-> > +}
-> > +EXPORT_SYMBOL(vm_unmap_user_ram);
-> > +
+Hi Enric,
+
+On 2018년 10월 16일 19:02, Enric Balletbo i Serra wrote:
+> The patch 23c7b54ca1cd: "PM / devfreq: Fix devfreq_add_device() when
+> drivers are built as modules." leads to the following static checker
+> warning:
 > 
-> Noticing this from Sergey's question in another patch, why are you
-> using BUG_ON()? That's rather extreme and something we are trying to
-> avoid adding more of (I still need to remove the BUG_ON()s I've added
-> over ten years ago). I don't see why all these BUG_ON's can't be turned
-> into:
+>     drivers/devfreq/devfreq.c:1043 governor_store()
+>     warn: 'governor' can also be NULL
+> 
+> The reason is that the try_then_request_governor() function returns both
+> error pointers and NULL. It should just return error pointers, so fix
+> this by returning a ERR_PTR to the error intead of returning NULL.
+> 
+> Fixes: 23c7b54ca1cd ("PM / devfreq: Fix devfreq_add_device() when drivers are built as modules.")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> 
+>  drivers/devfreq/devfreq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 62ead442a872..b10124c7308f 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -231,7 +231,7 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
+>   * if is not found. This can happen when both drivers (the governor driver
+>   * and the driver that call devfreq_add_device) are built as modules.
+>   * devfreq_list_lock should be held by the caller. Returns the matched
+> - * governor's pointer.
+> + * governor's pointer or an error pointer.
+>   */
+>  static struct devfreq_governor *try_then_request_governor(const char *name)
+>  {
+> @@ -257,7 +257,7 @@ static struct devfreq_governor *try_then_request_governor(const char *name)
+>  		/* Restore previous state before return */
+>  		mutex_lock(&devfreq_list_lock);
+>  		if (err)
+> -			return NULL;
+> +			return ERR_PTR(err);
+>  
+>  		governor = find_devfreq_governor(name);
+>  	}
+>
 
-+1
+LGTM.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-> 	if (WARN_ON(x))
-> 		return;
-
-Given that this somewhat MM-related, I'd may be say VM_WARN_ON().
-
-	-ss
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
