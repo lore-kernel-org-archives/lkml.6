@@ -2,250 +2,198 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E70DFC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA917C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EB52214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:01:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69182214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:03:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="p31Z6sBz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EB52214C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tXyJFRoO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69182214C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeJQIyV (ORCPT
+        id S1727061AbeJQI4Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 04:54:21 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:6808 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbeJQIyU (ORCPT
+        Wed, 17 Oct 2018 04:56:16 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36768 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbeJQI4Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 04:54:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1539738076; x=1571274076;
-  h=from:subject:to:cc:references:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=qzltMKBFD9GBZjcn5ePHd3WcmyNOpRLo7a7/Sa9inz0=;
-  b=p31Z6sBz0gUn/V4e2n7K4xLE8At2QFLwJVQZBtlS16FDnrP9qdO7078v
-   hnagTBBK4QxRE/oO6m6FNl2/HusOHnqglS4KmnwXr8sNVGXFdNsvU6OQy
-   DwUiMpKEtBd8E6rPdDLhULnGKhErA4aQ8wUkztXtcHH1V8iZPzwU/4/kE
-   SGMbtg4oUehtr0qqJMCQw2AJyGi9vdUTq3l9dZ9U/jTUGz+ZsymMRqzOz
-   4HPfMHpL2z2ExOIvCZrazFp1UDsH3HGhxT2m2jdK2k4Y9qYPIF9+BS47W
-   9PeaCmSpyxAxWIjX6oeR8k/5MyQaXXqJe+BgjsGcCPTWa/1cypPAx5YNG
-   w==;
-X-IronPort-AV: E=Sophos;i="5.54,389,1534780800"; 
-   d="scan'208";a="92111020"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 17 Oct 2018 09:01:15 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 16 Oct 2018 17:46:20 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.73.114]) ([10.111.73.114])
-  by uls-op-cesaip02.wdc.com with ESMTP; 16 Oct 2018 18:01:15 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-Subject: Re: [RFC 4/4] gpio: sifive: Add GPIO driver for SiFive SoCs
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christoph Hellwig <hch@infradead.org>
-References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
- <1539111085-25502-5-git-send-email-atish.patra@wdc.com>
- <CACRpkdaoBwqQ4V5Hm9f_G5_jrdkvjT5anhBK1_HoFTj6=cba-Q@mail.gmail.com>
-Message-ID: <d8fe9a17-283c-e2ad-9e01-2754b35699b4@wdc.com>
-Date:   Tue, 16 Oct 2018 18:01:13 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdaoBwqQ4V5Hm9f_G5_jrdkvjT5anhBK1_HoFTj6=cba-Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 17 Oct 2018 04:56:16 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f18-v6so11682246pgv.3;
+        Tue, 16 Oct 2018 18:03:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wtfVJGuK3ZhO/8ZGeMlQEw2Z0tpYdlLRRC7H57ePNVM=;
+        b=tXyJFRoOG8IFhdlaUFl8MLfczm7p2+zHhsYaTsQdSKRecGOjHW83oNRBptxM62xj7r
+         mXHhxLlFNTZ83t2c00avWtqdJi1IaQAYYcXHEGZ+L4v0i5ek2H1sFjGIG6wR2+WbnX+9
+         iYwuaSW+ioiEUgKASyqK9wJXWYq9EBf0pmMMdAfKcYf0xIVaIUM9VtEhq/lZ36Uuwifs
+         LFK32bLEZXkhI/P9DmfN6mxns5cotGPeR0NkVH81R9ENTcEBHTe0ndtBllcW6Vk7oMpU
+         WdibNnSSdoa/U16Txi/NaKbaXycJa4nPiKrl9L4v8XnND9BJC6wTI9aDB0wNPdw7sxs2
+         81yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wtfVJGuK3ZhO/8ZGeMlQEw2Z0tpYdlLRRC7H57ePNVM=;
+        b=Sh0rCyGzyfdXUAkSUL+49g2MJMDexvHnL+J4SVsj/PNLJxpH0W3ed6QfrXdILlTWXH
+         5xeUNAUJSm5PDVrOKMnrYE5GK6M+XodzjZ8gU+6Fdw0RD8Ran+rNm8+f04YskW6mXj4f
+         itiAfLlhqj51t9LQAuLHz6/Qbs7FHxiDPoBvPr87IhARXJIXAAsypQEPYq2nPg5poZdQ
+         RgtWE+rihBTlsaBxl8Ez+MPolF5fayLc3wGt3zvl3Xf+uATRyBLaLEmoPq9I4wEnt40G
+         0GXQ4GC7koBpv8WaJkHvA8XbB6KiLu+noMfj/9ViH505bSC54NRBycPdZRrpHYp7zXMJ
+         Yr2A==
+X-Gm-Message-State: ABuFfog26FmRyOIjHFbWHC9iVWZW5khmHLuozt/6H1rjoZD++OltiHRR
+        6kJGMxi1qLTxc7P4eg0B8Zg=
+X-Google-Smtp-Source: ACcGV61KmQKeKQB5t/FZW9qLFSdTIo43kkGP+ayTBcRhCFdDLK8WM9hvuTgatTUNs+YpiZJ630ws3w==
+X-Received: by 2002:a63:3e06:: with SMTP id l6-v6mr21155730pga.96.1539738189289;
+        Tue, 16 Oct 2018 18:03:09 -0700 (PDT)
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp. [210.141.244.193])
+        by smtp.gmail.com with ESMTPSA id c79-v6sm22799350pfb.147.2018.10.16.18.03.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 18:03:08 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 10:03:05 +0900
+From:   Masami Hiramatsu <masami.hiramatsu@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Daniel =?UTF-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>,
+        shuah@kernel.org, linux-kselftest@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org (open list),
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH] selftests/ftrace: Use colored output when available
+Message-Id: <20181017100305.0b3c03461b098f8943805455@gmail.com>
+In-Reply-To: <20181016130956.2be3b984@gandalf.local.home>
+References: <20181016170220.31156-1-daniel.diaz@linaro.org>
+        <20181016130956.2be3b984@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/18 5:35 AM, Linus Walleij wrote:
-> Hi Atish,
-> 
-> thanks for your patch!
-> 
-> On Tue, Oct 9, 2018 at 8:51 PM Atish Patra <atish.patra@wdc.com> wrote:
-> 
->> From: "Wesley W. Terpstra" <wesley@sifive.com>
->>
->> Adds the GPIO driver for SiFive RISC-V SoCs.
->>
->> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
->> [Atish: Various fixes and code cleanup]
->> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> 
-> (...)
-> 
->> +config GPIO_SIFIVE
->> +       bool "SiFive GPIO support"
->> +       depends on OF_GPIO
->> +       select GPIOLIB_IRQCHIP
-> 
-> I suggest to add
-> select GPIO_GENERIC as per below.
-> 
-> Maybe select REGMAP_MMIO as well.
-
-ok.
+On Tue, 16 Oct 2018 13:09:56 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
 > 
->> +       help
->> +         Say yes here to support the GPIO device on SiFive SoCs.
->> +
+> Masami,
 > 
->> +#include <linux/of_irq.h>
->> +#include <linux/irqchip/chained_irq.h>
-> 
-> Do you need these two? I think <linux/gpio/driver.h>
-> will bring them in for you.
-> 
+> Does this fix the issues you reported?
 
-driver.h only brings chained_irq.h. of_irq.h is still required. Right ?
+Yes, a half. We still need to strip out the escape sequences from
+log file even if the terminal accepts colors.
+Anyway, this fixes the "black character" issue for me :)
 
->> +#include <linux/pinctrl/consumer.h>
-> 
-> Are you using this?
+Thanks Daniel!
 
-My bad. Left over from the old code. I will remove it.
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+I'll add a filter patch on top of this.
+
+Thank you,
 
 > 
->> +struct sifive_gpio {
->> +       raw_spinlock_t          lock;
->> +       void __iomem            *base;
->> +       struct gpio_chip        gc;
->> +       unsigned long           enabled;
+> -- Steve
 > 
-> Since max GPIO is 32 why not use an u32 for this?
+> On Tue, 16 Oct 2018 12:02:20 -0500
+> Daniel Díaz <daniel.diaz@linaro.org> wrote:
 > 
-
-Sure.
-
->> +       unsigned int            trigger[MAX_GPIO];
->> +       unsigned int            irq_parent[MAX_GPIO];
->> +       struct sifive_gpio      *self_ptr[MAX_GPIO];
->> +};
->> +
->> +static void sifive_assign_bit(void __iomem *ptr, unsigned int offset, int value)
->> +{
->> +       /*
->> +        * It's frustrating that we are not allowed to use the device atomics
->> +        * which are GUARANTEED to be supported by this device on RISC-V
->> +        */
->> +       u32 bit = BIT(offset), old = ioread32(ptr);
->> +
->> +       if (value)
->> +               iowrite32(old | bit, ptr);
->> +       else
->> +               iowrite32(old & ~bit, ptr);
->> +}
-> 
-> This looks like a mask and set implementation, you are
-> essentially reinventing regmap MMIO and the
-> regmap_update_bits() call. Could you look into
-> just using regmap MMIO in that case?
-> 
-> If you need examples, look at gpio-mvebu.c that calls
-> devm_regmap_init_mmio() for example.
-> 
-
-That's really cool. Sorry, for not checking that earlier.
-I am pretty new to this.
-
->> +static int sifive_direction_input(struct gpio_chip *gc, unsigned int offset)
->> +static int sifive_direction_output(struct gpio_chip *gc, unsigned int offset,
->> +static int sifive_get_direction(struct gpio_chip *gc, unsigned int offset)
->> +static int sifive_get_value(struct gpio_chip *gc, unsigned int offset)
->> +static void sifive_set_value(struct gpio_chip *gc, unsigned int offset,
-> 
-> These functions look like a typical hardware that can use
-> 
-> GPIOLIB_GENERIC and bgpio_init() to set up the accessors.
-> 
-> See gpio-ftgpio010.c for an example.
-> 
-> As a bonus you will get .get/.set_multiple implemented by
-> the generic GPIO.
-> 
-
-Great. This will reduce the driver a code by a big factor.
-Thanks for the pointer.
-
-
->> +static void sifive_irq_enable(struct irq_data *d)
->> +static void sifive_irq_disable(struct irq_data *d)
-> (...)
->> +static struct irq_chip sifive_irqchip = {
->> +       .name           = "sifive-gpio",
->> +       .irq_set_type   = sifive_irq_set_type,
->> +       .irq_mask       = sifive_irq_mask,
->> +       .irq_unmask     = sifive_irq_unmask,
->> +       .irq_enable     = sifive_irq_enable,
->> +       .irq_disable    = sifive_irq_disable,
-> 
-> The handling of .irq_enable and .irq_disable has
-> changed upstream. Please align with the new codebase
-> as changed by Hans Verkuil:
-> 
-> commit 461c1a7d4733d1dfd5c47b040cf32a5e7eefbc6c
-> "gpiolib: override irq_enable/disable"
-> commit 4e9439ddacea06f35acce4d374bf6bd0acf99bc8
-> "gpiolib: add flag to indicate if the irq is disabled"
-> 
-> You will need to rebase your work on the v4.20-rc1 once it is
-> out. Right now the changes are on linux-next or my devel
-> branch.
-
-Will do.
-
-> 
->> +       ngpio = of_irq_count(node);
->> +       if (ngpio >= MAX_GPIO) {
->> +               dev_err(dev, "Too many GPIO interrupts (max=%d)\n", MAX_GPIO);
->> +               return -ENXIO;
->> +       }
-> (...)
->> +       for (gpio = 0; gpio < ngpio; ++gpio) {
->> +               irq = platform_get_irq(pdev, gpio);
->> +               if (irq < 0) {
->> +                       dev_err(dev, "invalid IRQ\n");
->> +                       gpiochip_remove(&chip->gc);
->> +                       return -ENODEV;
->> +               }
-> 
-> This is an hierarchical IRQ so it should use an hierarchical
-> irqdomain.
-> 
-> I am discussing with Thierry to make more generic irq domains
-> for hierarchical IRQ GPIOs, until then you have to look at
-> gpio-thunderx.c, gpio-uniphier.c or gpio-xgene-sb.c that all
-> use hierarchical IRQs.
-> 
-
-Thanks. I will convert them to hierarchical IRQ.
-
-Regards,
-Atish
-> Yours,
-> Linus Walleij
+> > If test is being directly executed (with stdout opened on the
+> > terminal) and the terminal capabilities indicate enough
+> > colors, then use the existing scheme of green, red, and blue
+> > to show when tests pass, fail or end in a different way.
+> > 
+> > When running the tests redirecting the stdout, for instance,
+> > to a file, then colors are not shown, thus producing a more
+> > readable output.
+> > 
+> > Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
+> > ---
+> >  tools/testing/selftests/ftrace/ftracetest | 29 +++++++++++++++++------
+> >  1 file changed, 22 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+> > index 4946b2edfcff..d987bbec675f 100755
+> > --- a/tools/testing/selftests/ftrace/ftracetest
+> > +++ b/tools/testing/selftests/ftrace/ftracetest
+> > @@ -152,6 +152,21 @@ else
+> >    date > $LOG_FILE
+> >  fi
+> >  
+> > +# Define text colors
+> > +# Check available colors on the terminal, if any
+> > +ncolors=`tput colors 2>/dev/null`
+> > +color_reset=
+> > +color_red=
+> > +color_green=
+> > +color_blue=
+> > +# If stdout exists and number of colors is eight or more, use them
+> > +if [ -t 1 -a "$ncolors" -a "$ncolors" -ge 8 ]; then
+> > +  color_reset="\e[0m"
+> > +  color_red="\e[31m"
+> > +  color_green="\e[32m"
+> > +  color_blue="\e[34m"
+> > +fi
+> > +
+> >  prlog() { # messages
+> >    [ -z "$LOG_FILE" ] && echo -e "$@" || echo -e "$@" | tee -a $LOG_FILE
+> >  }
+> > @@ -195,37 +210,37 @@ test_on_instance() { # testfile
+> >  eval_result() { # sigval
+> >    case $1 in
+> >      $PASS)
+> > -      prlog "	[\e[32mPASS\e[30m]"
+> > +      prlog "	[${color_green}PASS${color_reset}]"
+> >        PASSED_CASES="$PASSED_CASES $CASENO"
+> >        return 0
+> >      ;;
+> >      $FAIL)
+> > -      prlog "	[\e[31mFAIL\e[30m]"
+> > +      prlog "	[${color_red}FAIL${color_reset}]"
+> >        FAILED_CASES="$FAILED_CASES $CASENO"
+> >        return 1 # this is a bug.
+> >      ;;
+> >      $UNRESOLVED)
+> > -      prlog "	[\e[34mUNRESOLVED\e[30m]"
+> > +      prlog "	[${color_blue}UNRESOLVED${color_reset}]"
+> >        UNRESOLVED_CASES="$UNRESOLVED_CASES $CASENO"
+> >        return 1 # this is a kind of bug.. something happened.
+> >      ;;
+> >      $UNTESTED)
+> > -      prlog "	[\e[34mUNTESTED\e[30m]"
+> > +      prlog "	[${color_blue}UNTESTED${color_reset}]"
+> >        UNTESTED_CASES="$UNTESTED_CASES $CASENO"
+> >        return 0
+> >      ;;
+> >      $UNSUPPORTED)
+> > -      prlog "	[\e[34mUNSUPPORTED\e[30m]"
+> > +      prlog "	[${color_blue}UNSUPPORTED${color_reset}]"
+> >        UNSUPPORTED_CASES="$UNSUPPORTED_CASES $CASENO"
+> >        return $UNSUPPORTED_RESULT # depends on use case
+> >      ;;
+> >      $XFAIL)
+> > -      prlog "	[\e[31mXFAIL\e[30m]"
+> > +      prlog "	[${color_red}XFAIL${color_reset}]"
+> >        XFAILED_CASES="$XFAILED_CASES $CASENO"
+> >        return 0
+> >      ;;
+> >      *)
+> > -      prlog "	[\e[34mUNDEFINED\e[30m]"
+> > +      prlog "	[${color_blue}UNDEFINED${color_reset}]"
+> >        UNDEFINED_CASES="$UNDEFINED_CASES $CASENO"
+> >        return 1 # this must be a test bug
+> >      ;;
 > 
 
 
-
+-- 
+Masami Hiramatsu
