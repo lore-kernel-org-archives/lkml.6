@@ -2,235 +2,109 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBFFECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C67ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:36:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DA3521526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:33:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="b66GzMt5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DA3521526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 706F520658
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:36:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706F520658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbeJQW3E (ORCPT
+        id S1727485AbeJQWcD convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:29:04 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:43212 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727018AbeJQW3E (ORCPT
+        Wed, 17 Oct 2018 18:32:03 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:54666 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbeJQWcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:29:04 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id D222110C0E38;
-        Wed, 17 Oct 2018 07:33:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1539786785; bh=sQV+HHkT97QU5oNWTOufcnT7Fuu68mJ9GlFsLL0ArK0=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=b66GzMt5kRG09R0RoVfnvBFFb39PEQBKP9YTAh1TlqBP4AcX9O+a1sUg7aEsxW0I1
-         cWTshN1/UiJ9KfEPU+OF1MMxZ4VjTqpRgSwnRxSWFiVNQ5JXmR9z7HN1O2k7aiRizy
-         3qdbXvCTqKmvDBg0iCQIEEChye0Cu8V2f2n0l8bFb6E7AhHFiPxMp2gIxTf9msyTDQ
-         SejP3vz1pxiwn7Yr39adyMlmMdBu/Pld47LXJahsZh8EMthfIVxglBoKy4f45QliSn
-         vUwRJkfScNvdo2ZNVAJbYpm639102b94l9lSJ2OeEeaZvhXBUieKIaK6HBlcN4qIpO
-         +cfxx5IXM+8dw==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id B8FB53BED;
-        Wed, 17 Oct 2018 07:33:05 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 17 Oct 2018 07:33:05 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
- 17 Oct 2018 16:33:02 +0200
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Vineet Gupta" <vineet.gupta1@synopsys.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: RE: [PATCH] ARC: Don't set CROSS_COMPILE in arch's Makefile
-Thread-Topic: [PATCH] ARC: Don't set CROSS_COMPILE in arch's Makefile
-Thread-Index: AQHUTf6R3sVlJYK9iUusjHna3859tqUjsBhg
-Date:   Wed, 17 Oct 2018 14:33:02 +0000
-Message-ID: <4881796E12491D4BB15146FE0209CE6468174FFF@DE02WEMBXB.internal.synopsys.com>
-References: <20180916204757.31131-1-abrodkin@synopsys.com>
-In-Reply-To: <20180916204757.31131-1-abrodkin@synopsys.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jWVdKeWIyUnJhVzVjWVhCd1pHRjBZVnh5YjJGdGFXNW5YREE1WkRnME9X?=
- =?utf-8?B?STJMVE15WkRNdE5HRTBNQzA0TldWbExUWmlPRFJpWVRJNVpUTTFZbHh0YzJk?=
- =?utf-8?B?elhHMXpaeTA0WW1ZME56RTVOUzFrTWpFNUxURXhaVGd0WW1VNU9DMDRPR0l4?=
- =?utf-8?B?TVRGalpHVXlNVGRjWVcxbExYUmxjM1JjT0dKbU5EY3hPVGN0WkRJeE9TMHhN?=
- =?utf-8?B?V1U0TFdKbE9UZ3RPRGhpTVRFeFkyUmxNakUzWW05a2VTNTBlSFFpSUhONlBT?=
- =?utf-8?B?SXpNamt4SWlCMFBTSXhNekU0TkRJMk1ETTRNRGc0Tmpnek56TWlJR2c5SW1K?=
- =?utf-8?B?RVFURmpablJMVFVsc05tOXFhakpGVTJveVFqaENSV3cyVFQwaUlHbGtQU0lp?=
- =?utf-8?B?SUdKc1BTSXdJaUJpYnowaU1TSWdZMms5SW1OQlFVRkJSVkpJVlRGU1UxSlZS?=
- =?utf-8?B?azVEWjFWQlFVSlJTa0ZCUVZaVFJYQlBTbTFpVlVGVFlXOXdObUlyWlZZNWNV?=
- =?utf-8?B?cHhhVzV3ZGpVMVdESnZUMEZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRklRVUZCUVVOclEwRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGRlFVRlJRVUpCUVVGQlVEaFFjR1ZuUVVGQlFVRkJRVUZCUVVGQlFVRkJT?=
- =?utf-8?B?alJCUVVGQ2JVRkhhMEZpWjBKb1FVYzBRVmwzUW14QlJqaEJZMEZDYzBGSFJV?=
- =?utf-8?B?RmlaMEoxUVVkclFXSm5RbTVCUmpoQlpIZENhRUZJVVVGYVVVSjVRVWN3UVZs?=
- =?utf-8?B?UlFubEJSM05CUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlowRkJRVUZCUVc1blFVRkJSMWxCWW5kQ01VRkhORUZhUVVKNVFVaHJRVmgz?=
- =?utf-8?B?UW5kQlIwVkJZMmRDTUVGSE5FRmFVVUo1UVVoTlFWaDNRbTVCUjFsQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRlJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRMEZCUVVGQlFVTmxRVUZCUVZwblFuWkJTRlZCWW1kQ2Ew?=
- =?utf-8?B?RklTVUZsVVVKbVFVaEJRVmxSUW5sQlNGRkJZbWRDYkVGSVNVRmpkMEptUVVo?=
- =?utf-8?B?TlFWbFJRblJCU0UxQlpGRkNkVUZIWTBGWWQwSnFRVWM0UVdKblFtMUJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZDUVVGQlFVRkJRVUZCUVVsQlFVRkJRVUZLTkVGQlFVSnRRVWM0?=
- =?utf-8?B?UVdSUlFuVkJSMUZCWTJkQ05VRkdPRUZqUVVKb1FVaEpRV1JCUW5WQlIxVkJZ?=
- =?utf-8?B?MmRDZWtGR09FRmpkMEpvUVVjd1FXTjNRakZCUnpSQlduZENaa0ZJU1VGYVVV?=
- =?utf-8?B?SjZRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlJVRkJRVUZCUVVGQlFVRm5RVUZCUVVGQmJt?=
- =?utf-8?B?ZEJRVUZIV1VGaWQwSXhRVWMwUVZwQlFubEJTR3RCV0hkQ2QwRkhSVUZqWjBJ?=
- =?utf-8?B?d1FVYzBRVnBSUW5sQlNFMUJXSGRDZWtGSE1FRmhVVUpxUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVkZCUVVGQlFVRkJRVUZE?=
- =?utf-8?B?UVVGQlFVRkJRMlZCUVVGQldtZENka0ZJVlVGaVowSnJRVWhKUVdWUlFtWkJT?=
- =?utf-8?B?RUZCV1ZGQ2VVRklVVUZpWjBKc1FVaEpRV04zUW1aQlNFMUJaRUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVKQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlNVRkJRVUZCUVVvMFFVRkJRbTFCUnpoQlpGRkNkVUZIVVVG?=
- =?utf-8?B?alowSTFRVVk0UVdOQlFtaEJTRWxCWkVGQ2RVRkhWVUZqWjBKNlFVWTRRV1JC?=
- =?utf-8?B?UW5wQlJ6QkJXWGRCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkZRVUZCUVVGQlFVRkJRV2RCUVVGQlFVRnVaMEZCUVVkWlFXSjNR?=
- =?utf-8?B?akZCUnpSQldrRkNlVUZJYTBGWWQwSjNRVWRGUVdOblFqQkJSelJCV2xGQ2VV?=
- =?utf-8?B?RklUVUZZZDBJeFFVY3dRVmwzUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCVVVGQlFVRkJRVUZCUVVOQlFVRkJRVUZEWlVG?=
- =?utf-8?B?QlFVRmFkMEl3UVVoTlFWaDNRbmRCU0VsQlluZENhMEZJVlVGWmQwSXdRVVk0?=
- =?utf-8?B?UVdSQlFubEJSMFZCWVZGQ2RVRkhhMEZpWjBKdVFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFrRkJRVUZCUVVGQlFVRkpR?=
- =?utf-8?B?VUZCUVVGQlNqUkJRVUZDZWtGSFJVRmlRVUpzUVVoTlFWaDNRbWhCUjAxQldY?=
- =?utf-8?B?ZENka0ZJVlVGaVowSXdRVVk0UVdOQlFuTkJSMFZCWW1kQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVVZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCWjBGQlFVRkJRVzVuUVVGQlNFMUJXVkZDYzBGSFZVRmpkMEpt?=
- =?utf-8?B?UVVoRlFXUlJRblpCU0ZGQldsRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGUlFVRkJRVUZCUVVGQlEwRkJRVUZCUVVObFFVRkJRV04zUW5WQlNF?=
- =?utf-8?B?RkJZM2RDWmtGSGQwRmhVVUpxUVVkVlFXSm5RbnBCUjFWQldIZENNRUZIVlVG?=
- =?utf-8?B?alowSjBRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkNRVUZCUVVGQlFVRkJRVWxCUVVGQlFVRktORUZC?=
- =?utf-8?B?UVVKNlFVYzBRV05CUW5wQlJqaEJZa0ZDY0VGSFRVRmFVVUoxUVVoTlFWcFJR?=
- =?utf-8?B?bVpCU0ZGQldsRkNlVUZITUVGWWQwSjZRVWhSUVdSUlFtdEJSMVZCWW1kQ01F?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUlVGQlFVRkJRVUZCUVVGblFV?=
- =?utf-8?B?RkJRVUZCYm1kQlFVRklXVUZhZDBKbVFVZHpRVnBSUWpWQlNHTkJZbmRDZVVG?=
- =?utf-8?B?SFVVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFWRkJRVUZC?=
- =?utf-8?Q?QUFBQUFDQUFBQUFBQT0iLz48L21ldGE+?=
-x-dg-rorf: 
-x-originating-ip: [10.225.15.19]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 17 Oct 2018 18:32:03 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gCmvb-0000oe-W0; Wed, 17 Oct 2018 08:36:04 -0600
+Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gCmvb-0002fB-0g; Wed, 17 Oct 2018 08:36:03 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>, linux-api@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mszeredi@redhat.com
+References: <19866.1539782101@warthog.procyon.org.uk>
+        <68a2107f-bf70-055b-86cf-1ba2ba9422bf@gmail.com>
+        <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
+        <153754766004.17872.9829232103614083565.stgit@warthog.procyon.org.uk>
+        <9b8bf436-65de-13b9-0002-0479d11c18ca@gmail.com>
+        <20181013061141.GR32577@ZenIV.linux.org.uk>
+        <28710.1539782412@warthog.procyon.org.uk>
+        <f6f2553e-f64d-9c26-4290-baf43e5f533b@gmail.com>
+Date:   Wed, 17 Oct 2018 09:35:45 -0500
+In-Reply-To: <f6f2553e-f64d-9c26-4290-baf43e5f533b@gmail.com> (Alan Jenkins's
+        message of "Wed, 17 Oct 2018 15:31:26 +0100")
+Message-ID: <87woqgiqta.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1gCmvb-0002fB-0g;;;mid=<87woqgiqta.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19hcb5RQKjAH6x0dAjbhxUx+4sBQrfVGB4=
+X-SA-Exim-Connect-IP: 67.3.154.154
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 31/34] vfs: syscall: Add fspick() to select a superblock for reconfiguration [ver #12]
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWxleGV5IEJy
-b2RraW4gW21haWx0bzphYnJvZGtpbkBzeW5vcHN5cy5jb21dDQo+IFNlbnQ6IFN1bmRheSwgU2Vw
-dGVtYmVyIDE2LCAyMDE4IDExOjQ4IFBNDQo+IFRvOiBsaW51eC1zbnBzLWFyY0BsaXN0cy5pbmZy
-YWRlYWQub3JnDQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBWaW5lZXQgR3Vw
-dGEgPHZndXB0YUBzeW5vcHN5cy5jb20+OyBBbGV4ZXkgQnJvZGtpbiA8YWJyb2RraW5Ac3lub3Bz
-eXMuY29tPjsgTWFzYWhpcm8NCj4gWWFtYWRhIDx5YW1hZGEubWFzYWhpcm9Ac29jaW9uZXh0LmNv
-bT47IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6IFtQQVRDSF0gQVJD
-OiBEb24ndCBzZXQgQ1JPU1NfQ09NUElMRSBpbiBhcmNoJ3MgTWFrZWZpbGUNCj4gDQo+IFRoZXJl
-J3Mgbm90IG11Y2ggc2Vuc2UgaW4gZG9pbmcgdGhhdCBiZWNhdXNlIGlmIHVzZXIgb3INCj4gaGlz
-IGJ1aWxkLXN5c3RlbSBkaWRuJ3Qgc2V0IENST1NTX0NPTVBJTEUgd2Ugc3RpbGwgbWF5DQo+IHZl
-cnkgd2VsbCBtYWtlIGluY29ycmVjdCBndWVzcy4NCj4gDQo+IEJ1dCBhcyBpdCB0dXJuZWQgb3V0
-IHNldHRpbmcgQ1JPU1NfQ09NUElMRSBpcyBub3QgYXMgaGFybWxlc3MNCj4gYXMgb25lIG1heSB0
-aGluazogd2l0aCByZWNlbnQgY2hhbmdlcyB0aGF0IGltcGxlbWVudGVkIGF1dG9tYXRpYw0KPiBk
-aXNjb3Zlcnkgb2YgX19ob3N0X18gZ2NjIGZlYXR1cmVzIHVuY29uZGl0aW9uYWwgc2V0dXAgb2YN
-Cj4gQ1JPU1NfQ09NUElMRSBsZWFkcyB0byBmYWlsdXJlcyBvbiBleGVjdXRpb24gb2YgIm1ha2Ug
-eHh4X2RlZmNvbmZpZyINCj4gd2l0aCBhYnNlbnQgY3Jvc3MtY29tcGlsZXIsIGZvciBtb3JlIGlu
-Zm8gc2VlIFsxXS4NCj4gDQo+IFNldCBDUk9TU19DT01QSUxFIGFzIHdlbGwgZ2V0cyBpbiB0aGUg
-d2F5IGlmIHdlIHdhbnQgb25seSB0byBidWlsZA0KPiAuZHRiJ3MgKGFnYWluIHdpdGggYWJzZW50
-IGNyb3NzLWNvbXBpbGVyIHdoaWNoIGlzIG5vdCByZWFsbHkgbmVlZGVkDQo+IGZvciBidWlsZGlu
-ZyAuZHRiJ3MpLCBzZWUgWzJdLg0KPiANCj4gTm90ZSwgd2UgaGFkIHRvIGNoYW5nZSBMSUJHQ0Mg
-YXNzaWdubWVudCB0eXBlIGZyb20gIjo9IiB0byAiPSINCj4gc28gdGhhdCBpcyBpcyByZXNvbHZl
-ZCBvbiBpdHMgdXNhZ2UsIG90aGVyd2lzZSBpZiBpdCBpcyByZXNvbHZlZA0KPiBhdCBkZWNsYXJh
-dGlvbiB0aW1lIHdpdGggbWlzc2luZyBDUk9TU19DT01QSUxFIHdlJ3JlIGdldHRpbmcgdGhpcw0K
-PiBlcnJvciBtZXNzYWdlIGZyb20gaG9zdCBHQ0M6DQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gZ2NjOiBlcnJvcjogdW5yZWNvZ25pemVk
-IGNvbW1hbmQgbGluZSBvcHRpb24g4oCYLW1tZWRpdW0tY2FsbHPigJkNCj4gZ2NjOiBlcnJvcjog
-dW5yZWNvZ25pemVkIGNvbW1hbmQgbGluZSBvcHRpb24g4oCYLW1uby1zZGF0YeKAmTsgZGlkIHlv
-dSBtZWFuIOKAmC1mbm8tc3RhdHPigJk/DQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gDQo+IFsxXSBodHRwOi8vbGlzdHMuaW5mcmFkZWFk
-Lm9yZy9waXBlcm1haWwvbGludXgtc25wcy1hcmMvMjAxOC1TZXB0ZW1iZXIvMDA0MzA4Lmh0bWwN
-Cj4gWzJdIGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL3BpcGVybWFpbC9saW51eC1zbnBzLWFy
-Yy8yMDE4LVNlcHRlbWJlci8wMDQzMjAuaHRtbA0KPiANCj4gU2lnbmVkLW9mZi1ieTogQWxleGV5
-IEJyb2RraW4gPGFicm9ka2luQHN5bm9wc3lzLmNvbT4NCj4gQ2M6IE1hc2FoaXJvIFlhbWFkYSA8
-eWFtYWRhLm1hc2FoaXJvQHNvY2lvbmV4dC5jb20+DQo+IENjOiBSb2IgSGVycmluZyA8cm9iaEBr
-ZXJuZWwub3JnPg0KPiAtLS0NCj4gIGFyY2gvYXJjL01ha2VmaWxlIHwgMTAgKy0tLS0tLS0tLQ0K
-PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCA5IGRlbGV0aW9ucygtKQ0KPiANCj4g
-ZGlmZiAtLWdpdCBhL2FyY2gvYXJjL01ha2VmaWxlIGIvYXJjaC9hcmMvTWFrZWZpbGUNCj4gaW5k
-ZXggOTljY2U3N2FiOThmLi41ZjZiNjc5MTdkYzIgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJjL01h
-a2VmaWxlDQo+ICsrKyBiL2FyY2gvYXJjL01ha2VmaWxlDQo+IEBAIC02LDE0ICs2LDYgQEANCj4g
-ICMgcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb24uDQo+ICAjDQo+IA0K
-PiAtaWZlcSAoJChDUk9TU19DT01QSUxFKSwpDQo+IC1pZm5kZWYgQ09ORklHX0NQVV9CSUdfRU5E
-SUFODQo+IC1DUk9TU19DT01QSUxFIDo9IGFyYy1saW51eC0NCj4gLWVsc2UNCj4gLUNST1NTX0NP
-TVBJTEUgOj0gYXJjZWItbGludXgtDQo+IC1lbmRpZg0KPiAtZW5kaWYNCj4gLQ0KPiAgS0JVSUxE
-X0RFRkNPTkZJRyA6PSBuc2ltXzcwMF9kZWZjb25maWcNCj4gDQo+ICBjZmxhZ3MteQkrPSAtZm5v
-LWNvbW1vbiAtcGlwZSAtZm5vLWJ1aWx0aW4gLW1tZWRpdW0tY2FsbHMgLURfX2xpbnV4X18NCj4g
-QEAgLTc5LDcgKzcxLDcgQEAgY2ZsYWdzLSQoZGlzYWJsZV9zbWFsbF9kYXRhKQkJKz0gLW1uby1z
-ZGF0YSAtZmNhbGwtdXNlZC1ncA0KPiAgY2ZsYWdzLSQoQ09ORklHX0NQVV9CSUdfRU5ESUFOKQkJ
-Kz0gLW1iaWctZW5kaWFuDQo+ICBsZGZsYWdzLSQoQ09ORklHX0NQVV9CSUdfRU5ESUFOKQkrPSAt
-RUINCj4gDQo+IC1MSUJHQ0MJOj0gJChzaGVsbCAkKENDKSAkKGNmbGFncy15KSAtLXByaW50LWxp
-YmdjYy1maWxlLW5hbWUpDQo+ICtMSUJHQ0MJPSAkKHNoZWxsICQoQ0MpICQoY2ZsYWdzLXkpIC0t
-cHJpbnQtbGliZ2NjLWZpbGUtbmFtZSkNCj4gDQo+ICAjIE1vZHVsZXMgd2l0aCBzaG9ydCBjYWxs
-cyBtaWdodCBicmVhayBmb3IgY2FsbHMgaW50byBidWlsdGluLWtlcm5lbA0KPiAgS0JVSUxEX0NG
-TEFHU19NT0RVTEUJKz0gLW1sb25nLWNhbGxzIC1tbm8tbWlsbGljb2RlDQo+IC0tDQo+IDIuMTcu
-MQ0KDQpNYXkgd2UgaGF2ZSB0aGlzIG9uZSBiYWNrLXBvcnRlZCB0byBzdGFibGUgYnJhbmNoZXM/
-DQoNClVwc3RyZWFtIGNvbW1pdCBpbiBMaW51cycgdHJlZSBpczoNCjQwNjYwZjFmY2VlOCAoIkFS
-QzogYnVpbGQ6IERvbid0IHNldCBDUk9TU19DT01QSUxFIGluIGFyY2gncyBNYWtlZmlsZSIpLg0K
-DQpSZWdhcmRzLA0KQWxleGV5DQoNCg==
+Alan Jenkins <alan.christopher.jenkins@gmail.com> writes:
+
+> On 17/10/2018 14:20, David Howells wrote:
+>> David Howells <dhowells@redhat.com> wrote:
+>>
+>>> I should probably check that the picked point is actually a mountpoint.
+>> The root of the mount object at the path specified, that is, perhaps with
+>> something like the attached.
+>>
+>> David
+>
+>
+> I agree.  I'm happy to see this is using the same check as do_remount().
+>
+>
+> * change filesystem flags. dir should be a physical root of filesystem.
+> * If you've mounted a non-root directory somewhere and want to do remount
+> * on it - tough luck.
+> */
+
+Davids check will work for bind mounts as well.  It just won't work it
+just won't work for files or subdirectories of some mountpoint.
+
+Eric
+
+>> ---
+>> diff --git a/fs/fsopen.c b/fs/fsopen.c
+>> index f673e93ac456..aaaaa17a233c 100644
+>> --- a/fs/fsopen.c
+>> +++ b/fs/fsopen.c
+>> @@ -186,6 +186,10 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags
+>>   	if (ret < 0)
+>>   		goto err;
+>>   +	ret = -EINVAL;
+>> +	if (target.mnt->mnt_root != target.dentry)
+>> +		goto err_path;
+>> +
+>>   	fc = vfs_new_fs_context(target.dentry->d_sb->s_type, target.dentry,
+>>   				0, 0, FS_CONTEXT_FOR_RECONFIGURE);
+>>   	if (IS_ERR(fc)) {
+>>
