@@ -2,145 +2,198 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E31ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77888ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2322204FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:24:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2322204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EF71205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:25:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="PDrsHNm9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF71205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727155AbeJQTTQ (ORCPT
+        id S1727191AbeJQTUl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:19:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36518 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726936AbeJQTTQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:19:16 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 57770C05D40A;
-        Wed, 17 Oct 2018 11:24:01 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 207635C237;
-        Wed, 17 Oct 2018 11:23:56 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v4] kernel/hung_task.c: disable on suspend
-Date:   Wed, 17 Oct 2018 13:23:55 +0200
-Message-Id: <20181017112355.12763-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 17 Oct 2018 11:24:01 +0000 (UTC)
+        Wed, 17 Oct 2018 15:20:41 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:41902 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbeJQTUl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 15:20:41 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 256785C0C21;
+        Wed, 17 Oct 2018 13:25:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1539775522;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oSn3WWTtcf+FQS/x/kr+Se2Q5dLek6RbP5/AD80nDL8=;
+        b=PDrsHNm99E1TSoMxMARIWa3tLhvFfgDBaVaUyjqkXsBHORfmelA9xyso6p04D0Ik4TPw9p
+        KKWcVS6ZNRBwIgZe0kS0I45JRLe9YXTR6+oUEcUC4Vd9Skkj1RXkNLRbCOL1HqZNC3esIu
+        f6NUqLTYv7DnkdeC1bGbfkR0zTbz2Tc=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 17 Oct 2018 13:25:21 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     p.zabel@pengutronix.de
+Cc:     airlied@linux.ie, rmk+kernel@armlinux.org.uk,
+        l.stach@pengutronix.de, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "drm/imx: don't destroy mode objects manually on
+ driver unbind"
+In-Reply-To: <20181016160923.2042-1-stefan@agner.ch>
+References: <20181016160923.2042-1-stefan@agner.ch>
+Message-ID: <d55ebfae98b0ccf30895700be0881264@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is possible to observe hung_task complaints when system goes to
-suspend-to-idle state:
+On 16.10.2018 18:09, Stefan Agner wrote:
+> This reverts commit 8e3b16e2117409625b89807de3912ff773aea354.
+> 
+> Using the component framework requires all components to undo in
+> ->unbind what ->bind does. Unfortunately that particular commit
+> broke this rule. In particular, this is an issue if a single
+> component during probe fails. In that case, component_bind_all()
+> calls unbind on already succussfully bound components, and then
+> frees memory allocated using devm. If one of those components
+> registered e.g. an encoder with the framework then this leads to
+> use after free situations.
+> 
+> Revert the commit to ensure that all components properly undo
+> what ->bind does.
 
- # echo freeze > /sys/power/state
+After Lucas comment mentioning HDMI unbind is not proper I looked
+through all the unbind again. The other unbind functions need some
+fixing too. I did not bother checking whether those were always broken
+or just because things changed (the commit this is reverting was in
+2016).... Here is what I found:
 
- PM: Syncing filesystems ... done.
- Freezing user space processes ... (elapsed 0.001 seconds) done.
- OOM killer disabled.
- Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
- sd 0:0:0:0: [sda] Synchronizing SCSI cache
- INFO: task bash:1569 blocked for more than 120 seconds.
-       Not tainted 4.19.0-rc3_+ #687
- "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
- bash            D    0  1569    604 0x00000000
- Call Trace:
-  ? __schedule+0x1fe/0x7e0
-  schedule+0x28/0x80
-  suspend_devices_and_enter+0x4ac/0x750
-  pm_suspend+0x2c0/0x310
+> 
+> Link:
+> https://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg233327.html
+> Suggested-by: Russell King <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/gpu/drm/imx/imx-drm-core.c     | 4 ++--
+>  drivers/gpu/drm/imx/imx-ldb.c          | 6 ++++++
+>  drivers/gpu/drm/imx/imx-tve.c          | 3 +++
+>  drivers/gpu/drm/imx/parallel-display.c | 3 +++
+>  4 files changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/imx/imx-drm-core.c
+> b/drivers/gpu/drm/imx/imx-drm-core.c
+> index 5ea0c82f9957..caa6061a98ba 100644
+> --- a/drivers/gpu/drm/imx/imx-drm-core.c
+> +++ b/drivers/gpu/drm/imx/imx-drm-core.c
+> @@ -305,11 +305,11 @@ static void imx_drm_unbind(struct device *dev)
+>  
+>  	drm_fb_cma_fbdev_fini(drm);
+>  
+> -	drm_mode_config_cleanup(drm);
+> -
+>  	component_unbind_all(drm->dev, drm);
+>  	dev_set_drvdata(dev, NULL);
+>  
+> +	drm_mode_config_cleanup(drm);
+> +
+>  	drm_dev_put(drm);
+>  }
+>  
+> diff --git a/drivers/gpu/drm/imx/imx-ldb.c b/drivers/gpu/drm/imx/imx-ldb.c
+> index 3bd0f8a18e74..592aabc4a262 100644
+> --- a/drivers/gpu/drm/imx/imx-ldb.c
+> +++ b/drivers/gpu/drm/imx/imx-ldb.c
+> @@ -723,6 +723,12 @@ static void imx_ldb_unbind(struct device *dev,
+> struct device *master,
+>  		if (channel->panel)
+>  			drm_panel_detach(channel->panel);
+>  
+> +		if (!channel->connector.funcs)
+> +			continue;
+> +
+> +		channel->connector.funcs->destroy(&channel->connector);
+> +		channel->encoder.funcs->destroy(&channel->encoder);
 
-Register a PM notifier to disable the detector on suspend and re-enable
-back on wakeup.
+There can be an encoder and bridge, or an encoder and connector. All of
+them should be properly cleaned up.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
-Changes since v3:
-- Handle PM_RESTORE_PREPARE/PM_POST_RESTORE for completeness
-  [Rafael J. Wysocki]
----
- kernel/hung_task.c | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+So I guess this should look like this:
 
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index b9132d1269ef..cb8e3e8ac7b9 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -15,6 +15,7 @@
- #include <linux/lockdep.h>
- #include <linux/export.h>
- #include <linux/sysctl.h>
-+#include <linux/suspend.h>
- #include <linux/utsname.h>
- #include <linux/sched/signal.h>
- #include <linux/sched/debug.h>
-@@ -242,6 +243,28 @@ void reset_hung_task_detector(void)
- }
- EXPORT_SYMBOL_GPL(reset_hung_task_detector);
- 
-+static bool hung_detector_suspended;
-+
-+static int hungtask_pm_notify(struct notifier_block *self,
-+			      unsigned long action, void *hcpu)
-+{
-+	switch (action) {
-+	case PM_SUSPEND_PREPARE:
-+	case PM_HIBERNATION_PREPARE:
-+	case PM_RESTORE_PREPARE:
-+		hung_detector_suspended = true;
-+		break;
-+	case PM_POST_SUSPEND:
-+	case PM_POST_HIBERNATION:
-+	case PM_POST_RESTORE:
-+		hung_detector_suspended = false;
-+		break;
-+	default:
-+		break;
-+	}
-+	return NOTIFY_OK;
-+}
-+
- /*
-  * kthread which checks for tasks stuck in D state
-  */
-@@ -261,7 +284,8 @@ static int watchdog(void *dummy)
- 		interval = min_t(unsigned long, interval, timeout);
- 		t = hung_timeout_jiffies(hung_last_checked, interval);
- 		if (t <= 0) {
--			if (!atomic_xchg(&reset_hung_task, 0))
-+			if (!atomic_xchg(&reset_hung_task, 0) &&
-+			    !hung_detector_suspended)
- 				check_hung_uninterruptible_tasks(timeout);
- 			hung_last_checked = jiffies;
- 			continue;
-@@ -275,6 +299,10 @@ static int watchdog(void *dummy)
- static int __init hung_task_init(void)
- {
- 	atomic_notifier_chain_register(&panic_notifier_list, &panic_block);
-+
-+	/* Disable hung task detector on suspend */
-+	pm_notifier(hungtask_pm_notify, 0);
-+
- 	watchdog_task = kthread_run(watchdog, NULL, "khungtaskd");
- 
- 	return 0;
--- 
-2.17.1
+  		if (channel->panel)
+  			drm_panel_detach(channel->panel);
 
+  		if (channel->bridge)
+  			drm_bridge_detach(channel->bridge);
+
+		if (channel->connector.funcs)
+			channel->connector.funcs->destroy(&channel->connector);
+
+		if (channel->encoder.funcs)
+			channel->encoder.funcs->destroy(&channel->encoder);
+
+		kfree(channel->edid);
+		i2c_put_adapter(channel->ddc);
+
+The last two functions following are only strictly necessary when
+connector is initialized. But its safe to call them with null, so I
+would just call them always.
+
+
+> +
+>  		kfree(channel->edid);
+>  		i2c_put_adapter(channel->ddc);
+>  	}
+> diff --git a/drivers/gpu/drm/imx/imx-tve.c b/drivers/gpu/drm/imx/imx-tve.c
+> index cffd3310240e..8d6e89ce1edb 100644
+> --- a/drivers/gpu/drm/imx/imx-tve.c
+> +++ b/drivers/gpu/drm/imx/imx-tve.c
+> @@ -673,6 +673,9 @@ static void imx_tve_unbind(struct device *dev,
+> struct device *master,
+>  {
+>  	struct imx_tve *tve = dev_get_drvdata(dev);
+>  
+> +	tve->connector.funcs->destroy(&tve->connector);
+> +	tve->encoder.funcs->destroy(&tve->encoder);
+> +
+
+Cleanup of tve->ddc missing.
+
+>  	if (!IS_ERR(tve->dac_reg))
+>  		regulator_disable(tve->dac_reg);
+>  }
+> diff --git a/drivers/gpu/drm/imx/parallel-display.c
+> b/drivers/gpu/drm/imx/parallel-display.c
+> index aefd04e18f93..6f11bffcde37 100644
+> --- a/drivers/gpu/drm/imx/parallel-display.c
+> +++ b/drivers/gpu/drm/imx/parallel-display.c
+> @@ -258,6 +258,9 @@ static void imx_pd_unbind(struct device *dev,
+> struct device *master,
+>  	if (imxpd->panel)
+>  		drm_panel_detach(imxpd->panel);
+>  
+
+And in this case a bridge detach is missing.
+
+Will send a v2 with that addressed.
+
+--
+Stefan
+
+> +	imxpd->encoder.funcs->destroy(&imxpd->encoder);
+> +	imxpd->connector.funcs->destroy(&imxpd->connector);
+> +
+>  	kfree(imxpd->edid);
+>  }
