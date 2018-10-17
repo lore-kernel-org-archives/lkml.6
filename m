@@ -2,177 +2,221 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6E1ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC8AECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1185621526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:59:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5DF22148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:00:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MyNj3Pzh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1185621526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="RvteVn7c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5DF22148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbeJQVzJ (ORCPT
+        id S1727376AbeJQV43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:55:09 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13937 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJQVzJ (ORCPT
+        Wed, 17 Oct 2018 17:56:29 -0400
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:56800 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbeJQV43 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:55:09 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bc7402e0000>; Wed, 17 Oct 2018 06:59:10 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 17 Oct 2018 06:59:17 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 17 Oct 2018 06:59:17 -0700
-Received: from [10.26.11.110] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 17 Oct
- 2018 13:59:15 +0000
-Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180513211347.7187-1-digetx@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <c1b73435-48f0-b445-568f-3c8942878123@nvidia.com>
-Date:   Wed, 17 Oct 2018 14:59:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180513211347.7187-1-digetx@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1539784750; bh=fX+QXIrcjADtKVTPd8XLMOguvHPO2vZRt7JPY5kTpts=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=MyNj3Pzh8li6+XqO39/P0+NfsFczAx1skajC3ERh4BX7SY5A1G0oV3vOmQTNwcCjD
-         KVFCKbGbsYfv/mWvHVZbcAo0C9cAP10ySd3gaKg5O762fB6ECnlvRCMKISZ2oPbWSO
-         ckfjxfEgmhOBsVYqSz5mIisi0ZFQyWcUPcdRe6o8j2Ser0SUzlgCBoawDyQU8x40DR
-         FFJiDRUmRKEwqkZbuDQXBuobRYF/Nty2guA51UBYkqnnYbDB9SNJLFRbKYZlowLk3u
-         KgG1m3hRf/3hTsz34E9MfPafS+PkYqmc4fmvmJ1KQI32e2X6XEZQg2aHpMTVs/REZr
-         BkB/KJi7hOXiw==
+        Wed, 17 Oct 2018 17:56:29 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 04DD6A2F
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 14:00:38 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p6.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 1kQoqUF6okgE for <linux-kernel@vger.kernel.org>;
+        Wed, 17 Oct 2018 09:00:37 -0500 (CDT)
+Received: from mail-it1-f200.google.com (mail-it1-f200.google.com [209.85.166.200])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id C4FA3179
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:00:37 -0500 (CDT)
+Received: by mail-it1-f200.google.com with SMTP id f18so2066696itk.6
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 07:00:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=/goqZAtDD5LIfBcMbUDlFWpd0V/S3kz2A3SN5nyISS4=;
+        b=RvteVn7cwqKSGvlfivw0n8oC1/riSeykNyYK0gY4Rnq/M4diMRxA9QIa7vNUv1vb9o
+         o+j+TDQx3kjNHd/u9cgao1pvARTfG2iTZ4/l9RoxDYVbXqCV1JWtIv2nlu8j0297ZPj8
+         9bVke/FWM1HlTXfK/AVmrbCrNum+T3zsCRlzyDCMQPGbaUC4bg1cS4KmZLwWMTmlpRKd
+         DWJkytV9ZIS5dMasrttPIosvqSWUgaQIkzLy4nOJDOcFYWlbShs/4sL58sS+uEg1GtVH
+         Y7MhLF8MVXZUYYhYmdbhFu0pCTQW8Y0DzpoaJVY2g+9cddJD0LN1xptXfAsqEJnqIYk2
+         WEVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/goqZAtDD5LIfBcMbUDlFWpd0V/S3kz2A3SN5nyISS4=;
+        b=n2nkrLJIKkpBy9QcXRcguvNmPEJLoy0goc8BMHd3hBaaCrCCTXWTMAcM6q+6AXDkbe
+         C33YcDpKawIscq6tc/pmLH6769M7uFhC9SA1kE1I3cwrI/5VuN/u1+J7a8gxOnljgCeV
+         uKTOehOcZhz7tToQIeeVYO6zU2guv0JgxREBkzc0IFoRjI1O2L133CQEhT6TZ5VU3XWG
+         HFIVJh5a+G/OHx6D7hMEYjH0X1A5c6xCm8SR5pxxGXhvreAmvBDf4bHKm5Cplp+8XPGl
+         jHehIfRQreY52vMglXchFyNEqlIx4F5T9JpEIoI0ChcNG6ep3sZkmQOxq7AXmAKWnI1G
+         x8Dw==
+X-Gm-Message-State: ABuFfoiFA4G3u6+fHssWLMkJzXYPcaLH2yfuUGBcca8cDMYZdM6+OXTz
+        7snVGTLlDxGlEsDJs31g4XhrqPnJ/rogZMnhVl3X+jndphm2AXm/YIl5hD56g0KmwYkoclbxMwY
+        9wBYCG2jW03U1zdYz2NuBphR96XUB
+X-Received: by 2002:a24:9287:: with SMTP id l129-v6mr1649921itd.26.1539784837330;
+        Wed, 17 Oct 2018 07:00:37 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV61JeB3Q55q3Bht3vSZmcjfiO7WFIv/UT5bpMsUUkrzubZM3WtADgCwtBOCIMBu3zRlyDtz/Sg==
+X-Received: by 2002:a24:9287:: with SMTP id l129-v6mr1649904itd.26.1539784837067;
+        Wed, 17 Oct 2018 07:00:37 -0700 (PDT)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id 184-v6sm837438itk.41.2018.10.17.07.00.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 17 Oct 2018 07:00:36 -0700 (PDT)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] thunderbolt: Fix a missing-check bug
+Date:   Wed, 17 Oct 2018 09:00:29 -0500
+Message-Id: <1539784829-1159-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In tb_cfg_copy(), the header of the received control package, which is in
+the buffer 'pkg->buffer', is firstly parsed through parse_header() to make
+sure the header is in the expected format. In parse_header(), the header is
+actually checked by invoking check_header(), which checks the 'unknown'
+field of the header and the response route acquired through
+'tb_cfg_get_route(header)'. If there is no error in this checking process,
+the package, including the header, is then copied to 'req->response' in
+tb_cfg_copy() through memcpy() and the parsing result is saved to
+'req->result'.
 
-On 13/05/2018 22:13, Dmitry Osipenko wrote:
-> Nothing prevents I2C clients to access I2C while Tegra's driver is being
-> suspended, this results in -EBUSY error returned to the clients and that
-> may have unfortunate consequences. In particular this causes problems
-> for the TPS6586x MFD driver which emits hundreds of "failed to read
-> interrupt status" error messages on resume from suspend. This happens if
-> TPS6586X is used to wake system from suspend by the expired RTC alarm
-> timer because TPS6586X is an I2C device driver and its IRQ handler reads
-> the status register while Tegra's I2C driver is suspended, i.e. just after
-> kernel enabled IRQ's during of resume-from-suspend process.
+The problem here is that the whole parsing and checking process is
+conducted directly on the buffer 'pkg->buffer', which is actually a DMA
+region and allocated through dma_pool_alloc() in tb_ctl_pkg_alloc(). Given
+that the DMA region can also be accessed directly by a device at any time,
+it is possible that a malicious device can race to modify the package data
+after the parsing and checking process but before memcpy() is invoked in
+tb_cfg_copy(). Through this way, the attacker can bypass the parsing and
+checking process and inject malicious data. This can potentially cause
+undefined behavior of the kernel and introduce unexpected security risk.
 
-I have been looking at the above issue with the tps6586x because I am
-seeing delays on resume caused by this driver on the stable branches. I
-understand that this patch was dropped for stable, but looking at the
-specific issue with the tps6586x I am curious why the tps6586x driver
-was not fixed because it appears to me that the issue largely resides
-with that driver and any other device that uses the tps6586x is
-susceptible to it. I was able to fix the tps6586x driver by doing the
-following and I am interested in your thoughts ...
+This patch firstly copies the header of the package to a stack variable
+'hdr' and performs the parsing and checking process on 'hdr'. If there is
+no error in this process, 'hdr' is then used to rewrite the header in
+'req->response' after memcpy(). This way, the above issue can be avoided.
 
-Subject: [PATCH] mfd: tps6586x: Handle interrupts on suspend
-
-The tps6586x device is registered as an irqchip and the tps6586x-rtc
-interrupt is one of it's interrupt sources. When using the tps6586x-rtc
-as a wake-up device from suspend, the following is seen:
-
- PM: Syncing filesystems ... done.
- Freezing user space processes ... (elapsed 0.001 seconds) done.
- OOM killer disabled.
- Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
- Disabling non-boot CPUs ...
- Entering suspend state LP1
- Enabling non-boot CPUs ...
- CPU1 is up
- tps6586x 3-0034: failed to read interrupt status
- tps6586x 3-0034: failed to read interrupt status
-
-The reason why the tps6586x interrupt status cannot be read is because
-the tps6586x interrupt is not masked during suspend and when the
-tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
-seen before the i2c controller has been resumed in order to read the
-tps6586x interrupt status.
-
-The tps6586x-rtc driver sets it's interrupt as a wake-up source during
-suspend, which gets propagated to the parent tps6586x interrupt.
-However, the tps6586x-rtc driver cannot disable it's interrupt during
-suspend otherwise we would never be woken up and so the tps6586x must
-disable it's interrupt instead.
-
-Fix this by disabling the tps6586x interrupt on entering suspend and
-re-enabling it on resuming from suspend.
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
 ---
- drivers/mfd/tps6586x.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/thunderbolt/ctl.c | 39 ++++++++++++++++++++++-----------------
+ 1 file changed, 22 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-index 5628a6b5b19b..165ac8a3d22c 100644
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -594,6 +594,27 @@ static int tps6586x_i2c_remove(struct i2c_client
-*client)
+diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
+index 37a7f4c..ae4cd61 100644
+--- a/drivers/thunderbolt/ctl.c
++++ b/drivers/thunderbolt/ctl.c
+@@ -166,10 +166,9 @@ tb_cfg_request_find(struct tb_ctl *ctl, struct ctl_pkg *pkg)
+ 
+ 
+ static int check_header(const struct ctl_pkg *pkg, u32 len,
+-			enum tb_cfg_pkg_type type, u64 route)
++			enum tb_cfg_pkg_type type, u64 route,
++			const struct tb_cfg_header *hdr)
+ {
+-	struct tb_cfg_header *header = pkg->buffer;
+-
+ 	/* check frame, TODO: frame flags */
+ 	if (WARN(len != pkg->frame.size,
+ 			"wrong framesize (expected %#x, got %#x)\n",
+@@ -183,12 +182,12 @@ static int check_header(const struct ctl_pkg *pkg, u32 len,
+ 		return -EIO;
+ 
+ 	/* check header */
+-	if (WARN(header->unknown != 1 << 9,
+-			"header->unknown is %#x\n", header->unknown))
++	if (WARN(hdr->unknown != 1 << 9,
++			"hdr->unknown is %#x\n", hdr->unknown))
+ 		return -EIO;
+-	if (WARN(route != tb_cfg_get_route(header),
++	if (WARN(route != tb_cfg_get_route(hdr),
+ 			"wrong route (expected %llx, got %llx)",
+-			route, tb_cfg_get_route(header)))
++			route, tb_cfg_get_route(hdr)))
+ 		return -EIO;
  	return 0;
  }
-
-+static int __maybe_unused tps6586x_i2c_suspend(struct device *dev)
-+{
-+	struct tps6586x *tps6586x = dev_get_drvdata(dev);
+@@ -215,14 +214,15 @@ static int check_config_address(struct tb_cfg_address addr,
+ 	return 0;
+ }
+ 
+-static struct tb_cfg_result decode_error(const struct ctl_pkg *response)
++static struct tb_cfg_result decode_error(const struct ctl_pkg *response,
++					 const struct tb_cfg_header *hdr)
+ {
+ 	struct cfg_error_pkg *pkg = response->buffer;
+ 	struct tb_cfg_result res = { 0 };
+-	res.response_route = tb_cfg_get_route(&pkg->header);
++	res.response_route = tb_cfg_get_route(hdr);
+ 	res.response_port = 0;
+ 	res.err = check_header(response, sizeof(*pkg), TB_CFG_PKG_ERROR,
+-			       tb_cfg_get_route(&pkg->header));
++			       tb_cfg_get_route(hdr), hdr);
+ 	if (res.err)
+ 		return res;
+ 
+@@ -237,17 +237,17 @@ static struct tb_cfg_result decode_error(const struct ctl_pkg *response)
+ }
+ 
+ static struct tb_cfg_result parse_header(const struct ctl_pkg *pkg, u32 len,
+-					 enum tb_cfg_pkg_type type, u64 route)
++					 enum tb_cfg_pkg_type type, u64 route,
++					 const struct tb_cfg_header *hdr)
+ {
+-	struct tb_cfg_header *header = pkg->buffer;
+ 	struct tb_cfg_result res = { 0 };
+ 
+ 	if (pkg->frame.eof == TB_CFG_PKG_ERROR)
+-		return decode_error(pkg);
++		return decode_error(pkg, hdr);
+ 
+ 	res.response_port = 0; /* will be updated later for cfg_read/write */
+-	res.response_route = tb_cfg_get_route(header);
+-	res.err = check_header(pkg, len, type, route);
++	res.response_route = tb_cfg_get_route(hdr);
++	res.err = check_header(pkg, len, type, route, hdr);
+ 	return res;
+ }
+ 
+@@ -753,13 +753,18 @@ static bool tb_cfg_match(const struct tb_cfg_request *req,
+ 
+ static bool tb_cfg_copy(struct tb_cfg_request *req, const struct ctl_pkg *pkg)
+ {
++	struct tb_cfg_header hdr;
+ 	struct tb_cfg_result res;
+ 
++	hdr = *(struct tb_cfg_header *)pkg->buffer;
 +
-+	disable_irq(tps6586x->client->irq);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused tps6586x_i2c_resume(struct device *dev)
-+{
-+	struct tps6586x *tps6586x = dev_get_drvdata(dev);
-+
-+	enable_irq(tps6586x->client->irq);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(tps6586x_pm_ops, tps6586x_i2c_suspend,
-+			 tps6586x_i2c_resume);
-+
- static const struct i2c_device_id tps6586x_id_table[] = {
- 	{ "tps6586x", 0 },
- 	{ },
-@@ -604,6 +625,7 @@ static int tps6586x_i2c_remove(struct i2c_client
-*client)
- 	.driver	= {
- 		.name	= "tps6586x",
- 		.of_match_table = of_match_ptr(tps6586x_of_match),
-+		.pm	= &tps6586x_pm_ops,
- 	},
- 	.probe		= tps6586x_i2c_probe,
- 	.remove		= tps6586x_i2c_remove,
+ 	/* Now make sure it is in expected format */
+ 	res = parse_header(pkg, req->response_size, req->response_type,
+-			   tb_cfg_get_route(req->request));
+-	if (!res.err)
++			   tb_cfg_get_route(req->request), &hdr);
++	if (!res.err) {
+ 		memcpy(req->response, pkg->buffer, req->response_size);
++		*(struct tb_cfg_header *)req->response = hdr;
++	}
+ 
+ 	req->result = res;
+ 
 -- 
-1.9.1
+2.7.4
 
--- 
-nvpublic
