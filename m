@@ -2,78 +2,108 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF47ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8522DECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8711020658
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:08:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8711020658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 54D2C21526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:09:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D2C21526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbeJQXEv (ORCPT
+        id S1727940AbeJQXF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:04:51 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:46314 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbeJQXEu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:04:50 -0400
-Received: by mail-qk1-f195.google.com with SMTP id q12-v6so16649937qkl.13;
-        Wed, 17 Oct 2018 08:08:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oi+R2yoDz1QlzfJFv+rn3szB8dJAdsRW/VqTOYNFUH0=;
-        b=OE7+uRaGGzuTVtBd6gMRgVHXUrM+I/dYlhjBDAPJMNd5bpCmsKs5W4wWQ2y0ERk+RM
-         PvHd2EkoLJvAJznjKVrGkzzHQo3qe/jxVUCk8kPfVbXSibBqu8ePIQkJqLG3R99+AOX4
-         +PvEF4M+plqDhkpDUwST9vcNxSdBRTyXWIBrIvz18/rZsXlIabXs82tygsCDxlLmNp1S
-         4FLs873VLhmz0PPeF6+CaC/o1AyDdJzWGTelhbU0a2Dbc8oO+OrxP2mioVMNgTl8LJH1
-         Z5F/zf+3PwZOjn9DMiygldi8A+AiiQZLuxx9+mF6XyWl7sLq/6Tf+Oya3S/AQ5wzXLWw
-         RTgw==
-X-Gm-Message-State: ABuFfoijeEm5c+Z8E4LzNLuhICv1UAqBbwgzgTay/pJ0UbKXcQ61MPUM
-        5yreczm8QAaVkkOo9AvVDIBDdoi7MfvTKHpMfks=
-X-Google-Smtp-Source: ACcGV63OE8vKLHbQOpGsBNmUl532n4g8rwx/+CPQGRQJLmnb6v7/7rkJyqsw9og+pdmU7+73uyyLaoe4xlG+d8+6l2A=
-X-Received: by 2002:a37:2b66:: with SMTP id r99-v6mr2809463qkh.343.1539788922568;
- Wed, 17 Oct 2018 08:08:42 -0700 (PDT)
+        Wed, 17 Oct 2018 19:05:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49852 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727182AbeJQXF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:05:29 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CEB6230001E0;
+        Wed, 17 Oct 2018 15:09:21 +0000 (UTC)
+Received: from redhat.com (ovpn-124-92.rdu2.redhat.com [10.10.124.92])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D7B915C63B;
+        Wed, 17 Oct 2018 15:09:20 +0000 (UTC)
+Date:   Wed, 17 Oct 2018 11:09:20 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Ake Koomsin <ake@igel.co.jp>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] virtio_net: avoid using netif_tx_disable() for
+ serializing tx routine
+Message-ID: <20181017110741-mutt-send-email-mst@kernel.org>
+References: <276ac5bb-90f7-5fb6-a826-0bb05ecfa069@redhat.com>
+ <20181017104419.13003-1-ake@igel.co.jp>
 MIME-Version: 1.0
-References: <cover.1539655731.git.ren_guo@c-sky.com> <e078ec6a6ae8f116ac2ca381a92c81630e6b70f0.1539655731.git.ren_guo@c-sky.com>
-In-Reply-To: <e078ec6a6ae8f116ac2ca381a92c81630e6b70f0.1539655731.git.ren_guo@c-sky.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 17 Oct 2018 17:08:26 +0200
-Message-ID: <CAK8P3a2Wnq-nBaXjz=_YxN5+XPCEYqO6akPe-7KGOiBui69FaA@mail.gmail.com>
-Subject: Re: [PATCH V9 06/21] csky: Cache and TLB routines
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017104419.13003-1-ake@igel.co.jp>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 17 Oct 2018 15:09:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 5:01 AM Guo Ren <ren_guo@c-sky.com> wrote:
->
-> This patch adds cache and tlb sync codes for abiv1 & abiv2.
->
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
+On Wed, Oct 17, 2018 at 07:44:12PM +0900, Ake Koomsin wrote:
+> Commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+> introduces netif_tx_disable() after netif_device_detach() in order to
+> avoid use-after-free of tx queues. However, there are two issues.
+> 
+> 1) Its operation is redundant with netif_device_detach() in case the
+>    interface is running.
+> 2) In case of the interface is not running before suspending and
+>    resuming, the tx does not get resumed by netif_device_attach().
+>    This results in losing network connectivity.
+> 
+> It is better to use netif_tx_lock_bh()/netif_tx_unlock_bh() instead for
+> serializing tx routine during reset. This also preserves the symmetry
+> of netif_device_detach() and netif_device_attach().
+> 
+> Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+> Signed-off-by: Ake Koomsin <ake@igel.co.jp>
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+
+Thanks a lot for debugging!
+Seems like stable material to me, right?
+
+> ---
+>  drivers/net/virtio_net.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 3f5aa59c37b7..3e2c041d76ac 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -2267,8 +2267,9 @@ static void virtnet_freeze_down(struct virtio_device *vdev)
+>  	/* Make sure no work handler is accessing the device */
+>  	flush_work(&vi->config_work);
+>  
+> +	netif_tx_lock_bh(vi->dev);
+>  	netif_device_detach(vi->dev);
+> -	netif_tx_disable(vi->dev);
+> +	netif_tx_unlock_bh(vi->dev);
+>  	cancel_delayed_work_sync(&vi->refill);
+>  
+>  	if (netif_running(vi->dev)) {
+> @@ -2304,7 +2305,9 @@ static int virtnet_restore_up(struct virtio_device *vdev)
+>  		}
+>  	}
+>  
+> +	netif_tx_lock_bh(vi->dev);
+>  	netif_device_attach(vi->dev);
+> +	netif_tx_unlock_bh(vi->dev);
+>  	return err;
+>  }
+>  
+> -- 
+> 2.19.1
