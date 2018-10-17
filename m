@@ -2,162 +2,83 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8BEECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D9DECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B4FA21527
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:07:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B4FA21527
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B26F21528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:08:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B26F21528
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbeJQPBo (ORCPT
+        id S1727610AbeJQPCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:01:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40081 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbeJQPBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:01:43 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5B930208B5; Wed, 17 Oct 2018 09:07:26 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-7-245.w90-88.abo.wanadoo.fr [90.88.129.245])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EFD4E20794;
-        Wed, 17 Oct 2018 09:07:25 +0200 (CEST)
-Date:   Wed, 17 Oct 2018 09:07:24 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>
-Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
- SPI NOR flash memories
-Message-ID: <20181017090724.12f2cd79@bbrezillon>
-In-Reply-To: <VI1PR04MB1038AB25EABDC8507984ADC799FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
-        <20180911154007.17195-2-tudor.ambarus@microchip.com>
-        <VI1PR04MB103888BC18F3C5AD0C02DEF699FE0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <31a8f6a9-1459-443a-6ef8-2b2c17769ae4@microchip.com>
-        <de0f7245-2557-12be-a306-67b08e55ae7b@wedev4u.fr>
-        <VI1PR04MB1038AB25EABDC8507984ADC799FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Wed, 17 Oct 2018 11:02:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59734 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727257AbeJQPCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 11:02:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 909B9AD25;
+        Wed, 17 Oct 2018 07:08:26 +0000 (UTC)
+Date:   Wed, 17 Oct 2018 09:08:25 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Mel Gorman <mgorman@suse.de>,
+        David Rientjes <rientjes@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
+ mappings
+Message-ID: <20181017070825.GD18839@dhcp22.suse.cz>
+References: <20181009130034.GD6931@suse.de>
+ <20181009142510.GU8528@dhcp22.suse.cz>
+ <20181009230352.GE9307@redhat.com>
+ <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
+ <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
+ <20181016074606.GH6931@suse.de>
+ <20181016153715.b40478ff2eebe8d6cf1aead5@linux-foundation.org>
+ <20181016231149.GJ30832@redhat.com>
+ <20181016161643.9c16164889b4d99d6eff6763@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016161643.9c16164889b4d99d6eff6763@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Oct 2018 02:07:43 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-
-> >   
-> Actually there is no entry of s25fs512s in current spi-nor.c file.
-> For my connected flash part, jedec ID read points to s25fl512s. I
-> have asked my board team to confirm the name of exact connected flash
-> part. When I check the data sheet of s25fs512s, it also points to the
-> same Jedec ID information. { "s25fl512s",  INFO(0x010220, 0x4d00, 256
-> * 1024, 256, ....}
+On Tue 16-10-18 16:16:43, Andrew Morton wrote:
+> On Tue, 16 Oct 2018 19:11:49 -0400 Andrea Arcangeli <aarcange@redhat.com> wrote:
 > 
-> But as stated earlier, if I skip reading SFDP or read using 1-1-1
-> protocol then read are always correct. For 1-4-4 protocol read are
-> wrong and on further debugging found that Read code of 0x6C is being
-> send as opcode instead of 0xEC.
+> > This was a severe regression
+> > compared to previous kernels that made important workloads unusable
+> > and it starts when __GFP_THISNODE was added to THP allocations under
+> > MADV_HUGEPAGE. It is not a significant risk to go to the previous
+> > behavior before __GFP_THISNODE was added, it worked like that for
+> > years.@s1@s2@s1
 > 
-> If I revert this patch, reads are working fine.
+> 5265047ac301 ("mm, thp: really limit transparent hugepage allocation to
+> local node") was April 2015.  That's a long time for a "severe
+> regression" to go unnoticed?
 
-Can you try with the following patch?
-
-Also, can you add a trace to check whether you're reaching this point
-[1] or not.
-
-[1]https://elixir.bootlin.com/linux/v4.19-rc8/source/drivers/mtd/spi-nor/spi-nor.c#L2227
-
---->8---
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 9407ca5f9443..49278c1491a6 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -2643,6 +2643,8 @@ static int spi_nor_parse_bfpt(struct spi_nor *nor,
-                break;
- 
-        case BFPT_DWORD1_ADDRESS_BYTES_4_ONLY:
-+       case BFPT_DWORD1_ADDRESS_BYTES_3_OR_4:
-+               nor->flags |= SNOR_F_4B_OPCODES;
-                nor->addr_width = 4;
-                break;
- 
-@@ -3552,7 +3554,7 @@ static int spi_nor_init(struct spi_nor *nor)
- 
-        if ((nor->addr_width == 4) &&
-            (JEDEC_MFR(nor->info) != SNOR_MFR_SPANSION) &&
--           !(nor->info->flags & SPI_NOR_4B_OPCODES)) {
-+           !(nor->flags & SNOR_F_4B_OPCODES)) {
-                /*
-                 * If the RESET# pin isn't hooked up properly, or the system
-                 * otherwise doesn't perform a reset command in the boot
-@@ -3586,7 +3588,7 @@ void spi_nor_restore(struct spi_nor *nor)
-        /* restore the addressing mode */
-        if ((nor->addr_width == 4) &&
-            (JEDEC_MFR(nor->info) != SNOR_MFR_SPANSION) &&
--           !(nor->info->flags & SPI_NOR_4B_OPCODES) &&
-+           !(nor->flags & SNOR_F_4B_OPCODES) &&
-            (nor->flags & SNOR_F_BROKEN_RESET))
-                set_4byte(nor, nor->info, 0);
- }
-@@ -3724,6 +3726,9 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
-        if (info->flags & SPI_NOR_NO_FR)
-                params.hwcaps.mask &= ~SNOR_HWCAPS_READ_FAST;
- 
-+       if (info->flags & SPI_NOR_4B_OPCODES)
-+               nor->flags |= SNOR_F_4B_OPCODES;
-+
-        /*
-         * Configure the SPI memory:
-         * - select op codes for (Fast) Read, Page Program and Sector Erase.
-@@ -3742,13 +3747,16 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
-        } else if (mtd->size > 0x1000000) {
-                /* enable 4-byte addressing if the device exceeds 16MiB */
-                nor->addr_width = 4;
--               if (JEDEC_MFR(info) == SNOR_MFR_SPANSION ||
--                   info->flags & SPI_NOR_4B_OPCODES)
--                       spi_nor_set_4byte_opcodes(nor, info);
-+               if (JEDEC_MFR(info) == SNOR_MFR_SPANSION)
-+                       nor->flags |= SNOR_F_4B_OPCODES;
-        } else {
-                nor->addr_width = 3;
-        }
- 
-+       if (info->addr_width == 4 &&
-+           nor->flags & SNOR_F_4B_OPCODES)
-+               spi_nor_set_4byte_opcodes(nor, info);
-+
-        if (nor->addr_width > SPI_NOR_MAX_ADDR_WIDTH) {
-                dev_err(dev, "address width is too large: %u\n",
-                        nor->addr_width);
-diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index 7f0c7303575e..4ffb165f4f85 100644
---- a/include/linux/mtd/spi-nor.h
-+++ b/include/linux/mtd/spi-nor.h
-@@ -236,6 +236,7 @@ enum spi_nor_option_flags {
-        SNOR_F_READY_XSR_RDY    = BIT(4),
-        SNOR_F_USE_CLSR         = BIT(5),
-        SNOR_F_BROKEN_RESET     = BIT(6),
-+       SNOR_F_4B_OPCODES       = BIT(7)
- };
- 
- /**
+Well, it gets some time to adopt changes in enterprise and we start
+seeing people reporting this issue. That is why I believe we should
+start with something really simple and stable tree backportable first
+and then build something more complex on top.
+-- 
+Michal Hocko
+SUSE Labs
