@@ -2,67 +2,86 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0C2ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F70ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B6982150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:35:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6982150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EE7542152D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:37:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE7542152D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbeJQRaf (ORCPT
+        id S1727035AbeJQRcL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 13:30:35 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48732 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726861AbeJQRaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 13:30:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4364A341;
-        Wed, 17 Oct 2018 02:35:44 -0700 (PDT)
-Received: from e107155-lin (unknown [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C75CB3F59C;
-        Wed, 17 Oct 2018 02:35:42 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 10:35:40 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Huacai Chen <chenhc@lemote.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>,
-        Huacai Chen <chenhuacai@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] cacheinfo: Keep the old value if of_property_read_u32
- fails
-Message-ID: <20181017093540.GB16320@e107155-lin>
-References: <1539739563-1886-1-git-send-email-chenhc@lemote.com>
+        Wed, 17 Oct 2018 13:32:11 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:65527 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726691AbeJQRcL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 13:32:11 -0400
+X-UUID: c175b17d1fa142cdb9a04879eb92a158-20181017
+X-UUID: c175b17d1fa142cdb9a04879eb92a158-20181017
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <shun-chih.yu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 834201519; Wed, 17 Oct 2018 17:37:14 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 17 Oct 2018 17:37:12 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by mtkcas08.mediatek.inc
+ (172.21.101.126) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 17 Oct
+ 2018 17:37:12 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 17 Oct 2018 17:37:12 +0800
+From:   <shun-chih.yu@mediatek.com>
+To:     Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Dan Williams" <dan.j.williams@intel.com>
+CC:     <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srv_wsdupstream@mediatek.com>
+Subject: [PATCH v2] add support for Mediatek Command-Queue DMA controller on MT6765 SoC 
+Date:   Wed, 17 Oct 2018 17:36:57 +0800
+Message-ID: <1539769019-32107-1-git-send-email-shun-chih.yu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1539739563-1886-1-git-send-email-chenhc@lemote.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 09:26:03AM +0800, Huacai Chen wrote:
-> Commit 448a5a552f336bd7b847b1951 ("drivers: base: cacheinfo: use OF
-> property_read_u32 instead of get_property,read_number") makes cache
-> size and number_of_sets be 0 if DT doesn't provide there values. I
-> think this is unreasonable so make them keep the old values, which is
-> the same as old kernels.
->
 
-What old values does the kernel have ? Which architecture are you referring ?
-If DT doesn't have entry then we can't expose sysfs, hence 0.
-Please provide more details on the issue you are seeing.
+Changes since v1:
+- remove unused macros, typos
+- leverage ASYNC_TX_ENABLE_CHANNEL_SWITCH to maintain DMA descriptor list
 
---
-Regards,
-Sudeep
+
+This patchset introduces support for MediaTek Command-Queue DMA controller.
+
+MediaTek Command-Queue DMA controller (CQDMA) on MT6765 SoC is dedicated to memory-to-memory transfer through queue-based descriptor management.
+
+There are only 3 physical channels inside CQDMA, while the driver is extended to support 32 virtual channels for multiple dma users to issue dma requests onto the CQDMA simultaneously.
+
+
+Shun-Chih Yu (2):
+  dt-bindings: dmaengine: Add MediaTek Command-Queue DMA controller
+    bindings
+  dmaengine: mediatek: Add MediaTek Command-Queue DMA controller for
+    MT6765 SoC
+
+ .../devicetree/bindings/dma/mtk-cqdma.txt          |   31 +
+ drivers/dma/mediatek/Kconfig                       |   13 +
+ drivers/dma/mediatek/Makefile                      |    1 +
+ drivers/dma/mediatek/mtk-cqdma.c                   |  943 ++++++++++++++++++++
+ 4 files changed, 988 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/mtk-cqdma.txt
+ create mode 100644 drivers/dma/mediatek/mtk-cqdma.c
