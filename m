@@ -2,195 +2,123 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D35ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96908ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93FFB214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:49:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FFB214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 655EB204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:50:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 655EB204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbeJQSod (ORCPT
+        id S1727068AbeJQSp0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:44:33 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49690 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726868AbeJQSoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:44:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FD9B341;
-        Wed, 17 Oct 2018 03:49:25 -0700 (PDT)
-Received: from a75553-lin.blr.arm.com (unknown [10.162.0.175])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1EADB3F71D;
-        Wed, 17 Oct 2018 03:49:20 -0700 (PDT)
-From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v3 7/7] arm/kvm: arm64: Add a vcpu feature for pointer authentication
-Date:   Wed, 17 Oct 2018 16:18:00 +0530
-Message-Id: <1539773280-4159-8-git-send-email-amit.kachhap@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539773280-4159-1-git-send-email-amit.kachhap@arm.com>
-References: <1539773280-4159-1-git-send-email-amit.kachhap@arm.com>
+        Wed, 17 Oct 2018 14:45:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41272 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726868AbeJQSp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 14:45:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BF2DCAED2;
+        Wed, 17 Oct 2018 10:50:16 +0000 (UTC)
+Date:   Wed, 17 Oct 2018 12:50:15 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCHv2 2/4] printk: move printk_safe macros to printk
+ header
+Message-ID: <20181017105015.udzegzfh7cxgatso@pathway.suse.cz>
+References: <20181016050428.17966-1-sergey.senozhatsky@gmail.com>
+ <20181016050428.17966-3-sergey.senozhatsky@gmail.com>
+ <20181016072719.GB4030@hirez.programming.kicks-ass.net>
+ <20181016114006.6q5atyaitapcwbud@pathway.suse.cz>
+ <20181016121752.GA2537@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016121752.GA2537@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a runtime feature and can be enabled by --ptrauth option.
+On Tue 2018-10-16 14:17:52, Peter Zijlstra wrote:
+> On Tue, Oct 16, 2018 at 01:40:06PM +0200, Petr Mladek wrote:
+> > On Tue 2018-10-16 09:27:19, Peter Zijlstra wrote:
+> 
+> > > Instead of this tinkering around the edges, why don't you make the main
+> > > logbuf a lockless ringbuffer and then delegate the actual printing of
+> > > that buffer to a kthread, except for earlycon, which can do synchronous
+> > > output.
+> > 
+> > In fact, there is no problem with printk log buffer. This patchset
+> > tries to avoid deadlock caused by console-specific locks
+> > used by console->write() methods.
+> > 
+> > By other words, we neither need printk_safe or lockless log buffer
+> > to fix this prolem. Instead, we need either printk_deferred context
+> > or lockless consoles.
+> 
+> If you have a lockless buffer and a trailing printk thread, that's
+> deferred.
+> 
+> And earlycon _should_ be lockless (yes, I know, some suck)
+> 
+> But if you do this deferred nonsense that's currently in printk, then
+> you risk never seeing the message -- the same problem I have with the
+> whole printk_safe thing too.
 
-Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: kvmarm@lists.cs.columbia.edu
----
- arm/aarch32/include/kvm/kvm-cpu-arch.h    | 2 ++
- arm/aarch64/include/asm/kvm.h             | 3 +++
- arm/aarch64/include/kvm/kvm-arch.h        | 1 +
- arm/aarch64/include/kvm/kvm-config-arch.h | 4 +++-
- arm/aarch64/include/kvm/kvm-cpu-arch.h    | 2 ++
- arm/aarch64/kvm-cpu.c                     | 5 +++++
- arm/include/arm-common/kvm-config-arch.h  | 1 +
- arm/kvm-cpu.c                             | 7 +++++++
- include/linux/kvm.h                       | 1 +
- 9 files changed, 25 insertions(+), 1 deletion(-)
+What do you mean with printing the message, please? Storing it
+into a buffer or showing on console?
 
-diff --git a/arm/aarch32/include/kvm/kvm-cpu-arch.h b/arm/aarch32/include/kvm/kvm-cpu-arch.h
-index d28ea67..5779767 100644
---- a/arm/aarch32/include/kvm/kvm-cpu-arch.h
-+++ b/arm/aarch32/include/kvm/kvm-cpu-arch.h
-@@ -13,4 +13,6 @@
- #define ARM_CPU_ID		0, 0, 0
- #define ARM_CPU_ID_MPIDR	5
- 
-+unsigned int kvm__cpu_ptrauth_get_feature(void) {}
-+
- #endif /* KVM__KVM_CPU_ARCH_H */
-diff --git a/arm/aarch64/include/asm/kvm.h b/arm/aarch64/include/asm/kvm.h
-index c286035..0fd183d 100644
---- a/arm/aarch64/include/asm/kvm.h
-+++ b/arm/aarch64/include/asm/kvm.h
-@@ -98,6 +98,9 @@ struct kvm_regs {
- #define KVM_ARM_VCPU_PSCI_0_2		2 /* CPU uses PSCI v0.2 */
- #define KVM_ARM_VCPU_PMU_V3		3 /* Support guest PMUv3 */
- 
-+/* CPU uses address authentication and A key */
-+#define KVM_ARM_VCPU_PTRAUTH		4
-+
- struct kvm_vcpu_init {
- 	__u32 target;
- 	__u32 features[7];
-diff --git a/arm/aarch64/include/kvm/kvm-arch.h b/arm/aarch64/include/kvm/kvm-arch.h
-index 9de623a..bd566cb 100644
---- a/arm/aarch64/include/kvm/kvm-arch.h
-+++ b/arm/aarch64/include/kvm/kvm-arch.h
-@@ -11,4 +11,5 @@
- 
- #include "arm-common/kvm-arch.h"
- 
-+
- #endif /* KVM__KVM_ARCH_H */
-diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
-index 04be43d..2074684 100644
---- a/arm/aarch64/include/kvm/kvm-config-arch.h
-+++ b/arm/aarch64/include/kvm/kvm-config-arch.h
-@@ -8,7 +8,9 @@
- 			"Create PMUv3 device"),				\
- 	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
- 			"Specify random seed for Kernel Address Space "	\
--			"Layout Randomization (KASLR)"),
-+			"Layout Randomization (KASLR)"),		\
-+	OPT_BOOLEAN('\0', "ptrauth", &(cfg)->has_ptrauth,		\
-+			"Enable address authentication"),
- 
- #include "arm-common/kvm-config-arch.h"
- 
-diff --git a/arm/aarch64/include/kvm/kvm-cpu-arch.h b/arm/aarch64/include/kvm/kvm-cpu-arch.h
-index a9d8563..f7b64b7 100644
---- a/arm/aarch64/include/kvm/kvm-cpu-arch.h
-+++ b/arm/aarch64/include/kvm/kvm-cpu-arch.h
-@@ -17,4 +17,6 @@
- #define ARM_CPU_CTRL		3, 0, 1, 0
- #define ARM_CPU_CTRL_SCTLR_EL1	0
- 
-+unsigned int kvm__cpu_ptrauth_get_feature(void);
-+
- #endif /* KVM__KVM_CPU_ARCH_H */
-diff --git a/arm/aarch64/kvm-cpu.c b/arm/aarch64/kvm-cpu.c
-index 1b29374..10da2cb 100644
---- a/arm/aarch64/kvm-cpu.c
-+++ b/arm/aarch64/kvm-cpu.c
-@@ -123,6 +123,11 @@ void kvm_cpu__reset_vcpu(struct kvm_cpu *vcpu)
- 		return reset_vcpu_aarch64(vcpu);
- }
- 
-+unsigned int kvm__cpu_ptrauth_get_feature(void)
-+{
-+	return (1UL << KVM_ARM_VCPU_PTRAUTH);
-+}
-+
- int kvm_cpu__get_endianness(struct kvm_cpu *vcpu)
- {
- 	struct kvm_one_reg reg;
-diff --git a/arm/include/arm-common/kvm-config-arch.h b/arm/include/arm-common/kvm-config-arch.h
-index 6a196f1..eb872db 100644
---- a/arm/include/arm-common/kvm-config-arch.h
-+++ b/arm/include/arm-common/kvm-config-arch.h
-@@ -10,6 +10,7 @@ struct kvm_config_arch {
- 	bool		aarch32_guest;
- 	bool		has_pmuv3;
- 	u64		kaslr_seed;
-+	bool		has_ptrauth;
- 	enum irqchip_type irqchip;
- };
- 
-diff --git a/arm/kvm-cpu.c b/arm/kvm-cpu.c
-index 7780251..5afd727 100644
---- a/arm/kvm-cpu.c
-+++ b/arm/kvm-cpu.c
-@@ -68,6 +68,13 @@ struct kvm_cpu *kvm_cpu__arch_init(struct kvm *kvm, unsigned long cpu_id)
- 		vcpu_init.features[0] |= (1UL << KVM_ARM_VCPU_PSCI_0_2);
- 	}
- 
-+	/* Set KVM_ARM_VCPU_PTRAUTH_I_A if available */
-+	if (kvm__supports_extension(kvm, KVM_CAP_ARM_PTRAUTH)) {
-+		if (kvm->cfg.arch.has_ptrauth)
-+			vcpu_init.features[0] |=
-+					kvm__cpu_ptrauth_get_feature();
-+	}
-+
- 	/*
- 	 * If the preferred target ioctl is successful then
- 	 * use preferred target else try each and every target type
-diff --git a/include/linux/kvm.h b/include/linux/kvm.h
-index f51d508..ffd8f5c 100644
---- a/include/linux/kvm.h
-+++ b/include/linux/kvm.h
-@@ -883,6 +883,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_PPC_MMU_RADIX 134
- #define KVM_CAP_PPC_MMU_HASH_V3 135
- #define KVM_CAP_IMMEDIATE_EXIT 136
-+#define KVM_CAP_ARM_PTRAUTH 160
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
--- 
-2.7.4
+I guess that it is storing because you suggest handling
+the console by a printk kthread.
 
+Now, please, what is your vision of the lock less buffer?
+Would it be similar with the one used by ftrace?
+
+The current implementation of the lockless buffer is very tricky
+and supports only one reader. It will be even bigger maze
+of code when we add such a support.
+
+Also the messages are spread in many page-size buffers that
+are linked in a per-cpu lists. The page used by the reader
+is put outside the list. This all makes it very hard to
+reconstruct the log. AFAIK, people use ftrace_dump_on_oops
+even with a crashdump because nobody improved crash
+to extract the messages from the complicated lockless
+buffer for years.
+
+IMHO, the current printk buffer is much more easy from
+this point of view. It is one global buffer plus
+two per-cpu buffers that are mostly empty.
+
+
+I still think that the buffer is the minor problem these
+days. The big problem are consoles and I do not see
+how any lockless buffer could help with it.
+
+Also note that by deferred printk I mean deferring the console
+handling! IMHO, there are _no more problems_ with storing
+the messages into the buffer if we accept that the current
+very limited use of printk_safe per-cpu buffers is easier
+than any complicated generic lockless buffer.
+
+Best Regards,
+Petr
