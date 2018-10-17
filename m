@@ -2,104 +2,101 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 276ADECDE3D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF80DECDE3C
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA97721477
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:17:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BsYuTKvN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA97721477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id B9C8521476
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:17:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9C8521476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeJRHPN (ORCPT
+        id S1727365AbeJRHPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 18 Oct 2018 03:15:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39668 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727316AbeJRHPM (ORCPT
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38322 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726644AbeJRHPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 18 Oct 2018 03:15:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=A3xmIxQE/qQ44bWf8Ps0hwRkE9rUw8JX3NwGiFM8VeA=; b=BsYuTKvNrh54cw27Kvn4OX+z/
-        BQ/BJ5dSHu07+qwEgUvJ52NHkKXtSvEjg6CdT7eYRsh+zi5lu54mCJ2ubIWPs+AgjySltJwOCe018
-        wP7KG1ib8hjiD9XayZ9gPNWn0Hixbjui3voZ0GyiGci6NSgmRsAxgTCoeCEcWtf0nkOUXfRQ0Lto+
-        nAZuMZalTJY7zfWOOv6mNckzI95kPBJZIKqGR2Doh0aU3/gopD6HP/xX7/USIo7KNnMrSre9WUC9t
-        EYszVLFms0rzDd3qSnuRoxnh1cdsqSi2ASGG5OW7rUBdWsN80TcwnKSYOm/83hA2tYlGLFADnfvQr
-        T6DZdUU1Q==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gCv3m-0001ox-Fw; Wed, 17 Oct 2018 23:17:02 +0000
-Subject: Re: [PATCH v5 03/27] x86/fpu/xstate: Introduce XSAVES system states
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
- <20181011151523.27101-4-yu-cheng.yu@intel.com>
- <20181017104137.GE22535@zn.tnic>
- <32da559b-7958-60db-e328-f0eb316e668e@infradead.org>
- <20181017225829.GA32023@zn.tnic>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <fde4c237-6210-f4e4-5362-c2e24a9916a2@infradead.org>
-Date:   Wed, 17 Oct 2018 16:17:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gCv3s-0001o1-Gv; Wed, 17 Oct 2018 23:17:08 +0000
+Date:   Thu, 18 Oct 2018 00:17:08 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Colin King <colin.king@canonical.com>,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vyacheslav Dubeyko <slava@dubeyko.com>,
+        "Ernesto A. Fernndez" <ernesto.mnd.fernandez@gmail.com>
+Subject: Re: [PATCH] hfs: fix array out of bounds read of array extent
+Message-ID: <20181017231708.GB32577@ZenIV.linux.org.uk>
+References: <20180831140538.31566-1-colin.king@canonical.com>
+ <20181017150117.fef4f8d8e814aa2d25adba5e@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20181017225829.GA32023@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017150117.fef4f8d8e814aa2d25adba5e@linux-foundation.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/18 3:58 PM, Borislav Petkov wrote:
-> On Wed, Oct 17, 2018 at 03:39:47PM -0700, Randy Dunlap wrote:
->> Would you mind explaining this request? (requirement?)
->> Other than to say that it is the preference of some maintainers,
->> please say Why it is preferred.
->>
->> and since the <type>s above won't typically be the same length,
->> it's not for variable name alignment, right?
+On Wed, Oct 17, 2018 at 03:01:17PM -0700, Andrew Morton wrote:
+> On Fri, 31 Aug 2018 15:05:38 +0100 Colin King <colin.king@canonical.com> wrote:
 > 
-> Searching the net a little, it shows you have asked that question
-> before. So what is it you really wanna know?
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > Currently extent and index i are both being incremented causing
+> > an array out of bounds read on extent[i]. Fix this by removing
+> > the extraneous increment of extent.
+> > 
+> > Detected by CoverityScan, CID#711541 ("Out of bounds read")
+> > 
+> > Fixes: d1081202f1d0 ("HFS rewrite")
+> 
+> No such commit here.  I assume this is 7cb74be6fd827e314f8.
+> 
+> > --- a/fs/hfs/extent.c
+> > +++ b/fs/hfs/extent.c
+> > @@ -300,7 +300,7 @@ int hfs_free_fork(struct super_block *sb, struct hfs_cat_file *file, int type)
+> >  		return 0;
+> >  
+> >  	blocks = 0;
+> > -	for (i = 0; i < 3; extent++, i++)
+> > +	for (i = 0; i < 3; i++)
+> >  		blocks += be16_to_cpu(extent[i].count);
+> >  
+> >  	res = hfs_free_extents(sb, extent, blocks, blocks);
+> 
+> Well, that's quite the bug.  Question is, why didn't anyone notice it. 
+> What are the runtime effects?  A disk space leak, perhaps?
+> 
+> I worry a bit that, given the fs was evidently working "ok", perhaps
+> this error was corrected elsewhere in the code and that "fixing" this
+> site will have unexpected and undesirable runtime effects.  Can someone
+> help me out here?
 
-OK, you have shown that your web search skills are better than mine.
+hfs_free_extents() seems to expect the 'offset' argument to be the
+sum of ->count of 1--3 starting elements of extent array.  In case of
+mismatch, it returns -EIO and that's it - hfs_free_fork() will bugger
+off with -EIO at that point.  If it does match, block_nr is supposed
+to be in range 0..offset and blocks offset - block_nr .. offset - 1
+are freed.
 
-I asked what I really wanted to know.
+So at a guess, that sucker mostly ends up leaking blocks.  Said that,
+it means that the rest of hfs_free_fork() has never been tested.
 
-ta.
--- 
-~Randy
+I'd suggest somebody to turn that
+        /* panic? */
+        return -EIO;
+in hfs_free_extents() into
+	printk(KERN_ERR "hfs_free_extents is fucked");
+	return -EIO;
+and see if it's triggerable.  Then check if there's a block leak in
+the reproducer, whatever it is.
