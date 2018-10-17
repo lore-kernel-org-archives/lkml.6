@@ -2,127 +2,119 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81AE5ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E96ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 513DB204FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:51:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 513DB204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id 7186B214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:51:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="Ao0pHBa3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7186B214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=toradex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbeJQSqZ (ORCPT
+        id S1727303AbeJQSqo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:46:25 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:53079 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeJQSqZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:46:25 -0400
-Received: from [192.168.178.69] ([109.104.44.135]) by mrelayeu.kundenserver.de
- (mreue001 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 0LcbEF-1fka0d1ItL-00k7BT; Wed, 17 Oct 2018 12:50:56 +0200
-Received: from [192.168.178.69] ([109.104.44.135]) by mrelayeu.kundenserver.de
- (mreue001 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 0LcbEF-1fka0d1ItL-00k7BT; Wed, 17 Oct 2018 12:50:56 +0200
-Subject: Re: [PATCH 0/7] staging: vc04_services: Some dead code removal
-To:     Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        Eric Anholt <eric@anholt.net>
-Cc:     tuomas.tynkkynen@iki.fi, Phil Elwell <phil@raspberrypi.org>,
-        devel@driverdev.osuosl.org, Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <20181004093747.21750-1-tuomas.tynkkynen@iki.fi>
- <1715113043.52878.1538821118324@email.1und1.de> <87a7nf5gr9.fsf@anholt.net>
- <CAAoAYcN_xVvi2-dUcGobVcMEtjFTV=Hi7OFr2vuEF08aQkVWHA@mail.gmail.com>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <530d012b-50c3-ca03-a37e-fe62ac309e02@i2se.com>
-Date:   Wed, 17 Oct 2018 12:50:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAAoAYcN_xVvi2-dUcGobVcMEtjFTV=Hi7OFr2vuEF08aQkVWHA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Wed, 17 Oct 2018 14:46:44 -0400
+Received: from mail-eopbgr10113.outbound.protection.outlook.com ([40.107.1.113]:6497
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726868AbeJQSqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 14:46:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n/UvljF0UFCwep0DJIRQLiB2dovnOtyRQPsLjR/kk4I=;
+ b=Ao0pHBa3fT9p3WZ0O06t0tGLyEALWKal5fdRqdPH0abUlbOUwzWR7nKUzfVtIENOfXhxG2270rmB0msQUkjg1BdbHaLSHAv8+niv60m9pzNfKinW8taq3lJdcx61/h9xB+prtELtzfG+BTWNOrX6u8HImtKMZRs6KBczvvGlMuQ=
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
+ VI1PR0501MB2574.eurprd05.prod.outlook.com (10.168.137.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.25; Wed, 17 Oct 2018 10:51:30 +0000
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::99b0:2276:18cf:18aa]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::99b0:2276:18cf:18aa%3]) with mapi id 15.20.1228.032; Wed, 17 Oct 2018
+ 10:51:30 +0000
+From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 0/9] ARM: dts: tegra: last minute fixes
+Thread-Topic: [PATCH v2 0/9] ARM: dts: tegra: last minute fixes
+Thread-Index: AQHUZT23D2xEra+FPkWbX0WDmDqGEKUhxLoAgAF/gAA=
+Date:   Wed, 17 Oct 2018 10:51:30 +0000
+Message-ID: <1539773488.6233.22.camel@toradex.com>
+References: <20181016104730.4598-1-marcel@ziswiler.com>
+         <20181016115852.GE7449@sirena.org.uk>
+In-Reply-To: <20181016115852.GE7449@sirena.org.uk>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-X-Provags-ID: V03:K1:hjvPuCvfNVRTTb1RCmWr5FlttXPKu9tKmoqkUWpn2QZ6FwpspiK
- +061o2yoWERWFC8f4qaqLkEybP9gyItzPaeFhIUk67LYVoHwz2Vd+vPGDiaiGJPQLdmxdNl
- ZeUTiWyUpa3C+RMHXRgytCygDyrzHmuy/CKikHks/z0N2EPAbqRTWcrPRCMv9jQn2o01lrP
- /MR8tniUjMWyD+V054DZQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:SaUGiqW4Fk0=:zDZV24LqlJwZTAart60GLG
- Yq5dxY90hBShiXbP8g0qXV+B2HH3/YPplO2IGFwc0GNIRe1cD0kV9HCktBomH/Z/tw3pJtKMP
- zPoZwKTy9nr2Kj3EaZHw8u1jW3lxVI4CqjZbdejhZF3jx1qM1uE0H7IvUdnvTxiQPlLXW0G+n
- kaFZHbMNUOR1pxRK4tmz1VKx+4XdYk5n3PJ+jQtDhhR4vww/rs1Mnt4e01d/31K0dXWawUEPB
- TOdWKJmPVAwrNq60Pr3ix/0iyQtpNAAsn55g3T+zWPLR3OgBJUT8O/U1pox+Ee1v4punjTA/s
- D7WGfJyeFD+SJzTw4ldF5mX880g4GEAarZeC3XyVj3bTy1rAFVSuwOJ8wTjSwZEHcGa5cOH2N
- y5Ks/SZwiZNdkj3k5DO5I0/53OQZfHYYWife+MaKm1nA+4t4teTopMBbe2hgcJvCOOM85hBTg
- Sk/YvztS+j+deIsA9i8PGu7pICPT1IMmwewjUND9xjF8s4f54Wi2/7IZXJDORlFVRJJflasBo
- Odepn/Xz1ZyAUOOC2Yo/jyWb6OmetzlUmm2g3uKvIhNPX5OF55R7hxjvR1jRNJQ/IosCicPkV
- U6jea1Eyrqbt4WYBi1uuc62GsRMUJv1B7ywBm0zYNnvvuB06F4ii++2pgzlxHXdtlSPsHZtl5
- o6fsvHjRR7x5LhZhDewlAhAjNWs2rn3f2w6GF+KgeoL/LI9LgWIyuFP0Clh65jyw1ztEJ+QSU
- Dyw6M721CFjkK+Bl
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=marcel.ziswiler@toradex.com; 
+x-originating-ip: [46.140.72.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2574;6:XiJj57zj7Jb57ZVBv1qloDX3b4cC+XCauFSD/ZlOYBCUrBxMeKlv/spq/BCmSaIsV1WbDgSSfy98STuj8K7q7m6WxotX6naXp7piLyYFGSBoHXQG+rB6GzDiT5nd/1ZEbQSDEzB8ihdMY0FgZnO4+62D7U6pG06iUOaPScdRi5ch047cJAG17y2ezFsM4Yj+X+gtX0sLT9bsBNBKrHn1wF5INipmWKLI7pKS1DAZgWfbDNNqvO+62PDAq7duFZlByl80N7gkJK4xKbxU1W047RJ5iYc4c0nRQiyvnaYoZSxizueM0AuIalAjalnmAuHEfu53FVDfsEHgWJMBTrKbHiTZjtpHjI5b8nkvnEoysqqC2iS/0WcspTxHo73ufKWAy2EgqqKcBXGLtpXqggqa7rjO5pOhVVyhNFDX3Z4r0yox9S7MaMykXa87G+kx+q0bNy3TzN4DYHsWysRTVuJoHg==;5:5AQgyxiPByff2QC1HCDLJgkFb8BjMubj5vJAZxqsuzZWmsMWn2faUYUf0wY6pCmCGVr+DSGSkJzVdZGYp+J6pdAiUtfFok24yYdtXthRuqqB7n7d40bKPO/yg3FkTcLU23boynSDTUZCyffBXjNl4upvXaChp+acixZCseZMqQU=;7:LUgtyRmu9QfFJUlx0sQn1kCgN1AqlqKvV7ghuVjJ10+G7anycZz0gmCZ88yRE2F1Eak4LPkYdjqswY91XSIa4Lu8GdNbW+t141uJnaKNR2jawmZYmk7C9GMwxTAvuc5IvoUhH2i6xXQnk0ZIfyz+hKrBQhydTfVQmNNdjru1lETLUrK2iWzKFYfhqB9L096M5+rLwLKC4DC3t/z1iUf7bSw/3bmuLLWrq3oJ+HDGaa+gEI6S/SxhAOIoZvMXOMpb
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 91e9e709-ef2c-4c1c-1f4b-08d6341e7f2b
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2574;
+x-ms-traffictypediagnostic: VI1PR0501MB2574:
+x-microsoft-antispam-prvs: <VI1PR0501MB25741A191C01242E7861D99CFBFF0@VI1PR0501MB2574.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR0501MB2574;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2574;
+x-forefront-prvs: 08286A0BE2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39840400004)(346002)(136003)(376002)(396003)(366004)(199004)(189003)(6436002)(54906003)(229853002)(105586002)(6916009)(2351001)(106356001)(6486002)(6506007)(76176011)(99286004)(3846002)(256004)(102836004)(36756003)(71190400001)(14454004)(8936002)(81156014)(478600001)(71200400001)(316002)(6116002)(81166006)(1730700003)(2906002)(68736007)(11346002)(446003)(2501003)(2616005)(476003)(103116003)(97736004)(5250100002)(7416002)(5660300001)(486006)(86362001)(44832011)(305945005)(4326008)(25786009)(66066001)(7736002)(39060400002)(6246003)(26005)(5640700003)(53936002)(186003)(6512007)(2900100001)(8676002)(4001150100001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2574;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Tf4+kpB+LW/RCnfga6ALIart2+A1NHBy0zg0QfjbIf1NoWWIOlDpn+g6PIf856lOabAzJf6486It92uH+i04A7TMz5AxNRZWdmWUtGwYTM3x3P5xa5rwZK6SDGlnD1VxQGj0mRAjzXnbf2iZsvgayf0mokMHzF3TR6xmz3qTs8+Y1e2TM9X01Dz5+PdUDzYHm4FYEkt7omNhitO8gyAD5Uz8tZqu3gN7tLDbuFvmFe4l3M+S4QpuJj/kYBtykpgj4clerS1soXPjl7JNK0+skMEgrtoAT59tyVH9XMjM5OxEkgCGnSSGZJG+sfMvnXEj/4TikZ1y9pOUuJlDT45+Vsxh8wnTU9gVsCoyzQVMMbQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3EF134A37DAD084B910FC81E187F1986@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91e9e709-ef2c-4c1c-1f4b-08d6341e7f2b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 10:51:30.5448
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2574
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Am 17.10.2018 um 11:55 schrieb Dave Stevenson:
-> On Mon, 15 Oct 2018 at 17:27, Eric Anholt <eric@anholt.net> wrote:
->> Stefan Wahren <stefan.wahren@i2se.com> writes:
->>
->>> Hi Tuomas,
->>>
->>>> Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi> hat am 4. Oktober 2018 um 11:37 geschrieben:
->>>>
->>>>
->>>> Drop various pieces of dead code from here and there to get rid of
->>>> the remaining users of VCHI_CONNECTION_T. After that we get to drop
->>>> entire header files worth of unused code.
->>>>
->>>> I've tested on a Raspberry Pi Model B (bcm2835_defconfig) that
->>>> snd-bcm2835 can still play analog audio just fine.
->>>>
->>> thanks and i'm fine with your patch series:
->>>
->>> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
->>>
->>> Unfortunately this would break compilation of the downstream vchi
->>> drivers like vcsm [1]. Personally i don't want to maintain another
->>> one, because i cannot see the gain of the resulting effort.
->>>
->>> [1] - https://github.com/raspberrypi/linux/tree/rpi-4.14.y/drivers/char/broadcom/vc_sm
-> I'm happy enough to work around these changes. Once the change is in a
-> released kernel we can merge a modified version of vc_sm into the
-> downstream kernel branch. It's not as if it requires big changes.
->
->> I think the main concern would be if we removed things necessary for
->> 6by9's new vcsm (the one that will let us do dma-buf sharing between
->> media decode and DRM).
-> The new vcsm uses the same VCHI service as the existing downstream vc_sm driver.
-> The video codec driver don't use any VCHI functionality over and above
-> the camera. It goes via a slightly extended version of the
-> mmal-vchiq.c, which I have split out into a shared module.
-
-my statement about the old vc_sm based on assumption there wont be a
-user of this driver.
-
-In case the camera driver would use the new vc_sm driver, i would be
-happier to see this merged in staging than in downstream.
-
-Stefan
-
->
->> On the other hand, git revert is a thing, so it's not like we actually
->> lose anything.
-> :-)
->
->   Dave
-
+T24gVHVlLCAyMDE4LTEwLTE2IGF0IDEyOjU4ICswMTAwLCBNYXJrIEJyb3duIHdyb3RlOg0KPiBP
+biBUdWUsIE9jdCAxNiwgMjAxOCBhdCAxMjo0NzoyMVBNICswMjAwLCBNYXJjZWwgWmlzd2lsZXIg
+d3JvdGU6DQo+IA0KPiA+IE1hcmNlbCBaaXN3aWxlciAoOSk6DQo+ID4gICBBUk06IHRlZ3JhOiBm
+aXggc2ltcGxlLXBhbmVsIGNvbXBhdGlibGVzDQo+ID4gICBBUk06IHRlZ3JhOiBhcGFsaXMtdGsx
+L2NvbGlicmlfdDIwL3QzMDogZXZhbC9pcmlzOiBmaXggcmVndWxhdG9yDQo+ID4gZ3Bpbw0KPiA+
+ICAgICBlbmFibGUNCj4gPiAgIEFSTTogdGVncmE6IGNvbGlicmlfdDIwOiByZW9yZGVyIHBtaWMg
+cHJvcGVydGllcw0KPiA+ICAgQVJNOiB0ZWdyYTogYXBhbGlzLXRrMTogZnVydGhlciByZWd1bGF0
+b3IgY2xlYW4tdXANCj4gPiAgIEFSTTogdGVncmE6IGFwYWxpc190MzAvdGsxOiBhbm5vdGF0ZSBw
+b3dlciBJMkMgYmVpbmcgb24tbW9kdWxlDQo+ID4gICBBUk06IHRlZ3JhOiBjb2xpYnJpX3QzMDog
+ZnVydGhlciByZWd1bGF0b3IgY2xlYW4tdXANCj4gPiAgIEFSTTogdGVncmE6IGFwYWxpc190MzA6
+IGZ1cnRoZXIgcmVndWxhdG9yIGNsZWFuLXVwDQo+ID4gICBBU29DOiB0ZWdyYV9zZ3RsNTAwMDog
+Zml4IGRldmljZV9ub2RlIHJlZmNvdW50aW5nDQo+ID4gICBBU29DOiB0ZWdyYV9zZ3RsNTAwMDog
+Zml4IHBsYXRmb3JtIG5hbWUgdnMuIG9mX25vZGUgYXNzaWduZW1lbnQNCj4gDQo+IFRoZXNlIEFT
+b0MgcGF0Y2hlcyBhcHBlYXIgdG8gaGF2ZSBhYnNvbHV0ZWx5IG5vIHJlbGF0aW9uc2hpcCB3aXRo
+IHRoZQ0KPiByZXN0IG9mIHRoZSBzZXJpZXMuICBJcyB0aGF0IHRoZSBjYXNlIG9yIGlzIHRoZXJl
+IHNvbWUgZGVwZW5kZW5jeSBJJ20NCj4gbWlzc2luZz8NCg0KTm90IG91dHNpZGUgb2YgYWxsIGJl
+aW5nIFRlZ3JhIHNwZWNpZmljIHN0dWZmLCBuby4gSWYgeW91IHByZWZlciBJIG1heQ0Kc2VuZCB0
+aGVtIGFzIGEgc2VwYXJhdGUgc2VyaWVzLg==
