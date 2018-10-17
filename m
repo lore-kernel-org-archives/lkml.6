@@ -2,130 +2,1021 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FC4ECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47100ECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFA0021470
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA72120645
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:33:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="GRX/w9aJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA0021470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=toradex.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8pjMK+Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA72120645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbeJRFal (ORCPT
+        id S1727476AbeJRFa7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 01:30:41 -0400
-Received: from mail-ve1eur01on0094.outbound.protection.outlook.com ([104.47.1.94]:28688
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727014AbeJRFal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 01:30:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D2dgPcEEnB/KzidybN6WgiPq0Jg+9LezpgO9D/W0+tw=;
- b=GRX/w9aJpq+xMqwRi8egzDKJ9XT0r50D9JUIfnh+WP1pMuUcn9tKzeSLrTJh7fhDsvRhPcB/Sw7kCsbFY15vqj4fQyJdutGg97hccArppCY/1HOmy312ns7VNpRBYGK8tqj6nhCyDIlWjaYkhdxutH5gwfu9HX4UWnX7jhTeJPg=
-Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
- VI1PR0501MB2605.eurprd05.prod.outlook.com (10.168.137.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.23; Wed, 17 Oct 2018 21:33:01 +0000
-Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
- ([fe80::99b0:2276:18cf:18aa]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
- ([fe80::99b0:2276:18cf:18aa%3]) with mapi id 15.20.1228.032; Wed, 17 Oct 2018
- 21:33:01 +0000
-From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
-To:     "broonie@kernel.org" <broonie@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform name vs.
- of_node assignement
-Thread-Topic: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform name vs.
- of_node assignement
-Thread-Index: AQHUZT3RvTwR5mXbA0afapHhEfD2LKUjYH2AgAAgVQCAAFCGgIAAJh4A
-Date:   Wed, 17 Oct 2018 21:33:00 +0000
-Message-ID: <1539811978.6233.63.camel@toradex.com>
-References: <20181016104730.4598-1-marcel@ziswiler.com>
-         <20181016104730.4598-10-marcel@ziswiler.com>
-         <35848cb7-36ee-6698-ff17-7f0e73567914@nvidia.com>
-         <1539786500.6233.58.camel@toradex.com>
-         <20181017191633.GL24097@sirena.org.uk>
-In-Reply-To: <20181017191633.GL24097@sirena.org.uk>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=marcel.ziswiler@toradex.com; 
-x-originating-ip: [188.155.129.42]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2605;6:hm180A7gMrRx1Sx5IZEjY7hZ0CeFC/9jN1zrNMDxNKw/WrWQF/O3CaYlX9hHOj8LAuSYR5rxl+b6h6+Qb95n3hvjHEiGSeYrHaCLFRWzkXoAuT0lzJyHvSGm+RQNRjOKrL0SLN+vzQd5wrlgSB1lRDBVEYUr0bH8LMB1ygOkMYbSIesOJIG1ajZ2S0BC/iS7ZrRQm96dhuyQtVv6wCvRBYDuf2WILrE0FUYm+fdaimlw9GDORsqXZ8tE+yK7x60Clbao8EaXBbfjYeOkY9PTAf4XHUKfqA1ZP0X2lombU/IXNyWB4UF9NGKErMAr54PBpc91DzqG8LjsODEYqTsM5cyEL63vnGHfmmWFUHVGpq5qi8yoIqXN4n/r3wlCjGygf+NRwUzOBxe8Ry+4ZlHrOpRifmdnkOmPlQ0B6RGyfruAxJqJTvDG0oOLLPogAWGq+MnBRYz4X45bnNtCxYIQ4Q==;5:oE9YQvNV8yfuCriqCfhmDt7bP3hjJKSBfDII6qeOFyTknWCeacP2QLD7apSNcKPqFfuylE/SEYwd71BnHoRMEAp4WhGmEC5TRCqapyDGfK5w48ruDzHdHjdPnt1sQBFaC1SLvau/7PqphmolEF+omZt/jaKmeWM0dmIEfrsc66g=;7:vKTBPQrkZbKL0/DOlUIIyoqddNHYQWGb6OvjkqZcu6Px3PIiRyFwBI1MZwGG2TxitIRJh2Lel4/kBBdrKOqcRYouYh5tfveKF5HM2RBEV9WddZXdoJasueEiWT5oItQA8x4ArHqvxGzrgSjQRgZSXZWb0/bx7dypvY8Iw8CtQGxMTc5wrqzT2DRMzt51IOw/5+yv3T6D30O2peND4rhXbMbSD76z4nLh9c+n/4kCiSsAdcHAE0MlfGTd7kl+qOjD
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 41f2de4c-0ef6-4240-b44e-08d634781d36
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2605;
-x-ms-traffictypediagnostic: VI1PR0501MB2605:
-x-microsoft-antispam-prvs: <VI1PR0501MB2605654EC3307172F6BA2DAFFBFF0@VI1PR0501MB2605.eurprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0501MB2605;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2605;
-x-forefront-prvs: 08286A0BE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39850400004)(376002)(366004)(136003)(346002)(189003)(199004)(5250100002)(2501003)(14454004)(186003)(5660300001)(6246003)(39060400002)(6512007)(2900100001)(97736004)(4001150100001)(478600001)(106356001)(53936002)(4326008)(25786009)(68736007)(86362001)(446003)(6506007)(26005)(102836004)(105586002)(36756003)(476003)(11346002)(71190400001)(71200400001)(2616005)(8936002)(486006)(305945005)(54906003)(256004)(81156014)(66066001)(76176011)(3846002)(7736002)(316002)(8676002)(1730700003)(5640700003)(6436002)(2906002)(229853002)(6116002)(2351001)(44832011)(93886005)(6916009)(7416002)(81166006)(103116003)(6486002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2605;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: toradex.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: lcJ3lm18IiyckgbJ1uPmXn6T0HMliPHJ4l4LULyt/uCqFgFB3MNg2AJQF8Jo0xqTiBvD3dt0J2/UobHVP6nyGaLoUPThs7QB7ospn/VNHrVyAUM1IP1uMbviCPggdUH3n9OVIbwej2OHUbXKAoDCSY/gjczn6pD1SrvNI2tuYleiZmIZb6S8ID1G39p6pP+YmLc94SavKf3I6HIJ1Xx360APmGDG85i4HP5EY3N8B6i03nTLazVRN5b3KN3Rx2fLxZOu44qKTi/Sp9z2f25TYs4Y+uYF55xk8vOxvSb6vkZxJXAt5tx3F6JH8MZnjeY1U1/YpKMphS3ta6K6h3687oelsWInGXDaN4nlzPBZJ8Y=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <06250A4EB448944599C40A443B9B117D@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41f2de4c-0ef6-4240-b44e-08d634781d36
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 21:33:00.9547
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2605
+        Thu, 18 Oct 2018 01:30:59 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37176 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbeJRFa7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 01:30:59 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 185-v6so3696374wmt.2;
+        Wed, 17 Oct 2018 14:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=/3g3SP1wl7ndyGh7AL0NMZYxnte02uhTKQjH3hAKkC8=;
+        b=H8pjMK+YT7Ga8x65m9Gy+e0dru371vZ4c7pYKDfIIJc8R8XAsD482CPoUcBY0IJ3hZ
+         dQvdhb6hL7SbCu+jpL//AZxpiMq4vdtHQeJV3ia3fUrUrkhWMu9pi9Wg0DAwOnNRl7PX
+         9PPV2n9mOQgPcH+EA6yWV+yIv7jWJzIMEhZ0BIytXWRO41BXFdT/2QuWk2Os/WbdGsgI
+         PYhRDm+e3FphF7/HcF2+u7p5nLdu8KH9DaMiFkXVrvbgaPhQYhM5r+mm5IKvc1EZS0Nn
+         QnNrmnfOWVzhdIvnNK1NRy736z8lkShd9VYEpOSn/Mje+i3NXdVbgZvIWKlnloCNP928
+         ho8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=/3g3SP1wl7ndyGh7AL0NMZYxnte02uhTKQjH3hAKkC8=;
+        b=TmIl2yU22NXdSihjuRm6Av/2GNA9M+s5Jxzjhq4q3C49w+d7ZG+LTjg4fmpfXSfp2u
+         z9mfNuwA+XHsEydXoMr2V/+Bep6LEAtK17sts9TzTkcrRvVsMuO1izBtYiDTuVeX60Ut
+         v4Lll5nWNH51BPtP6R0tAdAyNmFQoTSBI2DabKqSep3wB0r/Y1gG2JSaAZs1BZ2GraXa
+         z0MNKRPX/IdNctIB/lbekh/zsRYBKblii9YE0wbFlM+DX4IGBfDxhJ6QUOIFuJAsBYtv
+         r79UBbecMVTFRF5cYktWBkIpFzbE3thl9OPnUDzZXjUOAWl0TWPEwr/bBUieNnEMKBiG
+         fBHA==
+X-Gm-Message-State: ABuFfog0XURBIEpydvHrwqRiIDcZ1dhSeRTqijuS6l/DFVMcoR4LTtg9
+        sx7immhl3CSbmSGjEAzH9oo=
+X-Google-Smtp-Source: ACcGV60EhVU6dTjoWfvXt/o4AsFHDmvBFP5T4YbdNFV8XBQ9ojvLfwbQux6WDjulRBTHXnzkTod0Ew==
+X-Received: by 2002:a1c:4c16:: with SMTP id z22-v6mr4333857wmf.89.1539811998627;
+        Wed, 17 Oct 2018 14:33:18 -0700 (PDT)
+Received: from localhost.localdomain (164-235-243-213.terrecablate.net. [213.243.235.164])
+        by smtp.gmail.com with ESMTPSA id 4-v6sm3623962wmt.16.2018.10.17.14.33.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 14:33:17 -0700 (PDT)
+From:   ektor5 <ek5.chimenti@gmail.com>
+Cc:     hverkuil@xs4all.nl, luca.pisani@udoo.org, jose.abreu@synopsys.com,
+        sean@mess.org, sakari.ailus@linux.intel.com,
+        Ettore Chimenti <ek5.chimenti@gmail.com>, jacopo@jmondi.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [PATCH v3 1/2] media: add SECO cec driver
+Date:   Wed, 17 Oct 2018 23:31:41 +0200
+Message-Id: <3682be6c6cf7263f165080b9a1123017a23489a0.1539807092.git.ek5.chimenti@gmail.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <cover.1539807092.git.ek5.chimenti@gmail.com>
+References: <cover.1539807092.git.ek5.chimenti@gmail.com>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTEwLTE3IGF0IDIwOjE2ICswMTAwLCBNYXJrIEJyb3duIHdyb3RlOg0KPiBP
-biBXZWQsIE9jdCAxNywgMjAxOCBhdCAwMjoyODoyMlBNICswMDAwLCBNYXJjZWwgWmlzd2lsZXIg
-d3JvdGU6DQo+IA0KPiA+IFNvbWUgcXVlc3Rpb25zOg0KPiA+IC0gSG93IGV4YWN0bHkgYXJlIGRl
-dm0gYWxsb2NhdGlvbnMgc3VwcG9zZWQgdG8gd29yayBjb25jZXJuaW5nDQo+ID4gcHJvYmUNCj4g
-PiBkZWZlcnJhbHM/DQo+IA0KPiBQcm9iZSBkZWZlcnJhbHMgYXJlIGp1c3Qgbm9ybWFsIHByb2Jl
-IGVycm9ycywgYW55IGRldm1fIGFsbG9jYXRlZA0KPiBzdHVmZg0KPiBnZXRzIHVud291bmQuDQoN
-Ck9LLCB0aGF0IGlzIHdoZXJlIG15IHVuZGVyc3RhbmRpbmcgd2FzIHdlYXJ5LiBTbyB5b3UgYXJl
-IHNheWluZw0KYW55dGhpbmcgc2hvdWxkIHJlYWxseSBnZXQgYWxsb2NhdGVkIGFnYWluIHVwb24g
-dGhlIHNlY29uZCB0aW1lLg0KDQo+ID4gLSBEb2VzIG9yIHNob3VsZCB0aGUgcGxhdGZvcm0gZ2V0
-IGNsZWFyZWQgZHVyaW5nIGEgcHJvYmUgZGVmZXJyYWwNCj4gPiBjeWNsZT8NCj4gPiAtIElmIHNv
-LCB3aHkgZG9lcyB0aGF0IG5vdCB3b3JrPw0KPiANCj4gSXMgc29tZXRoaW5nIHdyaXRpbmcgdG8g
-c3RhdGljIGRhdGEgd2hlbiBpdCBzaG91bGQgYmUgd3JpdGluZyB0bw0KPiBkeW5hbWljYWxseSBh
-bGxvY2F0ZWQgZGF0YT8gIFRoYXQncyB3aGF0IHRoaXMgc291bmRzIGxpa2UsIHdlDQo+IHNob3Vs
-ZG4ndA0KPiBiZSBtb2RpZnlpbmcgYW55IHN0YXRpYyBkYXRhIGFuZCBhbnkgZGF0YSBkeW5hbWlj
-YWxseSBhbGxvY2F0ZWQNCj4gZHVyaW5nDQo+IHByb2JlIG91Z2h0IHRvIGJlIGJlaW5nIGRpc2Nh
-cmRlZC4NCg0KT0ssIEkgYmVsaWV2ZSBJIHN0YXJ0IHRvIHNlZSB3aGF0IHlvdSBhcmUgc2F5aW5n
-LiBJIGd1ZXNzIHRoZSBidWcgbGF5cw0KaW4gc29jLWNvcmUgdGhlbiBub3QgcHJvcGVybHkgZGlz
-Y2FyZGluZyB0aGUgcGxhdGZvcm0gYW5kIHRoZSBzZWNvbmQNCnRpbWUgYXJvdW5kIGl0IGlzIHVz
-aW5nIGEgc3RhbGUgcG9pbnRlciB0byB0aGF0IHdoaWNoIG5vdyBvZiBjb3Vyc2UNCnBvaW50cyB0
-byB3aGF0ZXZlciBoYXBwZW5zIHRvIGJlIHRoZXJlISBMZXQgbWUgdHJ5IGEgZmV3IG1vcmUgdGhp
-bmdzDQphbmQgSSB3aWxsIGNvb2sgdXAgYSBwcm9wZXIgcGF0Y2ggdG8gZml4IHRoYXQuLi4NCg0K
-PiA+IC0gT3IgaXMgc29tZSBzcGVjaWFsIGltcGxpY2l0IHByb2JlIGRlZmVycmFsIGhhbmRsaW5n
-IG1pc3NpbmcgaW4NCj4gPiBzb2MtDQo+ID4gY29yZT8NCj4gDQo+IExpa2UgSSBzYXkgYSBwcm9i
-ZSBkZWZlcnJhbCBpcyBqdXN0IGEgbm9ybWFsIGVycm9yLg0KDQpZZWFoLCByaWdodC4gVGhhbmtz
-IQ==
+From: Ettore Chimenti <ek5.chimenti@gmail.com>
+
+This patch adds support to the CEC device implemented with a STM32
+microcontroller in X86 SECO Boards, including UDOO X86.
+
+The communication is achieved via Braswell integrated SMBus
+(i2c-i801). The driver use direct access to the PCI addresses, due to
+the limitations of the specific driver in presence of ACPI calls.
+
+The basic functionalities are tested with success with cec-ctl and
+cec-compliance.
+
+Inspired by cros-ec-cec implementation, attaches to i915 driver
+cec-notifier.
+
+Signed-off-by: Ettore Chimenti <ek5.chimenti@gmail.com>
+---
+ MAINTAINERS                                |   6 +
+ drivers/media/platform/Kconfig             |  12 +
+ drivers/media/platform/Makefile            |   2 +
+ drivers/media/platform/seco-cec/Makefile   |   1 +
+ drivers/media/platform/seco-cec/seco-cec.c | 699 +++++++++++++++++++++
+ drivers/media/platform/seco-cec/seco-cec.h | 130 ++++
+ 6 files changed, 850 insertions(+)
+ create mode 100644 drivers/media/platform/seco-cec/Makefile
+ create mode 100644 drivers/media/platform/seco-cec/seco-cec.c
+ create mode 100644 drivers/media/platform/seco-cec/seco-cec.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4ece30f15777..1062912a5ff4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12972,6 +12972,12 @@ L:	sdricohcs-devel@lists.sourceforge.net (subscribers-only)
+ S:	Maintained
+ F:	drivers/mmc/host/sdricoh_cs.c
+ 
++SECO BOARDS CEC DRIVER
++M:	Ettore Chimenti <ek5.chimenti@gmail.com>
++S:	Maintained
++F:	drivers/media/platform/seco-cec/seco-cec.c
++F:	drivers/media/platform/seco-cec/seco-cec.h
++
+ SECURE COMPUTING
+ M:	Kees Cook <keescook@chromium.org>
+ R:	Andy Lutomirski <luto@amacapital.net>
+diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+index 94c1fe0e9787..51cd1fd005e3 100644
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -613,6 +613,18 @@ config VIDEO_TEGRA_HDMI_CEC
+ 	 The CEC bus is present in the HDMI connector and enables communication
+ 	 between compatible devices.
+ 
++config VIDEO_SECO_CEC
++	tristate "SECO Boards HDMI CEC driver"
++	depends on (X86 || IA64) || COMPILE_TEST
++	depends on PCI && DMI
++	select CEC_CORE
++	select CEC_NOTIFIER
++	help
++	  This is a driver for SECO Boards integrated CEC interface.
++	  Selecting it will enable support for this device.
++	  CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
++
+ endif #CEC_PLATFORM_DRIVERS
+ 
+ menuconfig SDR_PLATFORM_DRIVERS
+diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+index 41322ab65802..5d2b06c4c68a 100644
+--- a/drivers/media/platform/Makefile
++++ b/drivers/media/platform/Makefile
+@@ -53,6 +53,8 @@ obj-$(CONFIG_VIDEO_TEGRA_HDMI_CEC)	+= tegra-cec/
+ 
+ obj-y					+= stm32/
+ 
++obj-$(CONFIG_VIDEO_SECO_CEC)		+= seco-cec/
++
+ obj-y					+= davinci/
+ 
+ obj-$(CONFIG_VIDEO_SH_VOU)		+= sh_vou.o
+diff --git a/drivers/media/platform/seco-cec/Makefile b/drivers/media/platform/seco-cec/Makefile
+new file mode 100644
+index 000000000000..09900b087d02
+--- /dev/null
++++ b/drivers/media/platform/seco-cec/Makefile
+@@ -0,0 +1 @@
++obj-y += seco-cec.o
+diff --git a/drivers/media/platform/seco-cec/seco-cec.c b/drivers/media/platform/seco-cec/seco-cec.c
+new file mode 100644
+index 000000000000..9ac9a1f36bc0
+--- /dev/null
++++ b/drivers/media/platform/seco-cec/seco-cec.c
+@@ -0,0 +1,699 @@
++// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
++/*
++ * CEC driver for SECO X86 Boards
++ *
++ * Author:  Ettore Chimenti <ek5.chimenti@gmail.com>
++ * Copyright (C) 2018, SECO Srl.
++ * Copyright (C) 2018, Aidilab Srl.
++ */
++
++#include <linux/acpi.h>
++#include <linux/delay.h>
++#include <linux/dmi.h>
++#include <linux/gpio/consumer.h>
++#include <linux/gpio.h>
++#include <linux/interrupt.h>
++#include <linux/pci.h>
++#include <linux/platform_device.h>
++
++/* CEC Framework */
++#include <media/cec.h>
++
++#include "seco-cec.h"
++
++struct secocec_data {
++	struct device *dev;
++	struct platform_device *pdev;
++	struct cec_adapter *cec_adap;
++	struct cec_notifier *notifier;
++	int irq;
++};
++
++#define smb_wr16(cmd, data) smb_word_op(CMD_WORD_DATA, SECOCEC_MICRO_ADDRESS, \
++					     cmd, data, SMBUS_WRITE, NULL)
++#define smb_rd16(cmd, res) smb_word_op(CMD_WORD_DATA, SECOCEC_MICRO_ADDRESS, \
++				       cmd, 0, SMBUS_READ, res)
++
++static int smb_word_op(short data_format, u16 slave_addr, u8 cmd, u16 data,
++		       u8 operation, u16 *result)
++{
++	unsigned int count;
++	short _data_format;
++	int status = 0;
++
++	switch (data_format) {
++	case CMD_BYTE_DATA:
++		_data_format = BRA_SMB_CMD_BYTE_DATA;
++		break;
++	case CMD_WORD_DATA:
++		_data_format = BRA_SMB_CMD_WORD_DATA;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	/* Active wait until ready */
++	for (count = 0; count <= SMBTIMEOUT; ++count) {
++		if (!(inb(HSTS) & BRA_INUSE_STS))
++			break;
++		udelay(SMB_POLL_UDELAY);
++	}
++
++	if (count > SMBTIMEOUT)
++		/* Reset the lock instead of failing */
++		outb(0xff, HSTS);
++
++	outb(0x00, HCNT);
++	outb((u8)(slave_addr & 0xfe) | operation, XMIT_SLVA);
++	outb(cmd, HCMD);
++	inb(HCNT);
++
++	if (operation == SMBUS_WRITE) {
++		outb((u8)data, HDAT0);
++		outb((u8)(data >> 8), HDAT1);
++	}
++
++	outb(BRA_START + _data_format, HCNT);
++
++	for (count = 0; count <= SMBTIMEOUT; count++) {
++		if (!(inb(HSTS) & BRA_HOST_BUSY))
++			break;
++		udelay(SMB_POLL_UDELAY);
++	}
++
++	if (count > SMBTIMEOUT) {
++		status = -EBUSY;
++		goto err;
++	}
++
++	if (inb(HSTS) & BRA_HSTS_ERR_MASK) {
++		status = -EIO;
++		goto err;
++	}
++
++	if (operation == SMBUS_READ)
++		*result = ((inb(HDAT0) & 0xff) + ((inb(HDAT1) & 0xff) << 8));
++
++err:
++	outb(0xff, HSTS);
++	return status;
++}
++
++static int secocec_adap_enable(struct cec_adapter *adap, bool enable)
++{
++	struct secocec_data *cec = cec_get_drvdata(adap);
++	struct device *dev = cec->dev;
++	u16 val = 0;
++	int status;
++
++	if (enable) {
++		/* Clear the status register */
++		status = smb_rd16(SECOCEC_STATUS_REG_1, &val);
++		if (status)
++			goto err;
++
++		status = smb_wr16(SECOCEC_STATUS_REG_1, val);
++		if (status)
++			goto err;
++
++		/* Enable the interrupts */
++		status = smb_rd16(SECOCEC_ENABLE_REG_1, &val);
++		if (status)
++			goto err;
++
++		status = smb_wr16(SECOCEC_ENABLE_REG_1,
++				  val | SECOCEC_ENABLE_REG_1_CEC);
++		if (status)
++			goto err;
++
++		dev_dbg(dev, "Device enabled");
++	} else {
++		/* Clear the status register */
++		status = smb_rd16(SECOCEC_STATUS_REG_1, &val);
++		if (status)
++			goto err;
++
++		status = smb_wr16(SECOCEC_STATUS_REG_1, val);
++		if (status)
++			goto err;
++
++		/* Disable the interrupts */
++		status = smb_rd16(SECOCEC_ENABLE_REG_1, &val);
++		if (status)
++			goto err;
++
++		status = smb_wr16(SECOCEC_ENABLE_REG_1, val &
++				  ~SECOCEC_ENABLE_REG_1_CEC &
++				  ~SECOCEC_ENABLE_REG_1_IR);
++		if (status)
++			goto err;
++
++		dev_dbg(dev, "Device disabled");
++	}
++
++	return 0;
++err:
++	dev_err(dev, "Adapter setup failed (%d)", status);
++	return status;
++}
++
++static int secocec_adap_log_addr(struct cec_adapter *adap, u8 logical_addr)
++{
++	u16 enable_val = 0;
++	int status;
++
++	/* Disable device */
++	status = smb_rd16(SECOCEC_ENABLE_REG_1, &enable_val);
++	if (status)
++		return status;
++
++	status = smb_wr16(SECOCEC_ENABLE_REG_1,
++			  enable_val & ~SECOCEC_ENABLE_REG_1_CEC);
++	if (status)
++		return status;
++
++	/* Write logical address */
++	status = smb_wr16(SECOCEC_DEVICE_LA, logical_addr);
++	if (status)
++		return status;
++
++	/* Re-enable device */
++	status = smb_wr16(SECOCEC_ENABLE_REG_1,
++			  enable_val | SECOCEC_ENABLE_REG_1_CEC);
++	if (status)
++		return status;
++
++	return 0;
++}
++
++static int secocec_adap_transmit(struct cec_adapter *adap, u8 attempts,
++				 u32 signal_free_time, struct cec_msg *msg)
++{
++	struct secocec_data *cec = cec_get_drvdata(adap);
++	struct device *dev = cec->dev;
++	u16 payload_len, payload_id_len, destination, val = 0;
++	u8 *payload_msg;
++	int status;
++	u8 i;
++
++	/* Device msg len already accounts for header */
++	payload_id_len = msg->len - 1;
++
++	/* Send data length */
++	status = smb_wr16(SECOCEC_WRITE_DATA_LENGTH, payload_id_len);
++	if (status)
++		goto err;
++
++	/* Send Operation ID if present */
++	if (payload_id_len > 0) {
++		status = smb_wr16(SECOCEC_WRITE_OPERATION_ID, msg->msg[1]);
++		if (status)
++			goto err;
++	}
++	/* Send data if present */
++	if (payload_id_len > 1) {
++		/* Only data; */
++		payload_len = msg->len - 2;
++		payload_msg = &msg->msg[2];
++
++		/* Copy message into registers */
++		for (i = 0; i < payload_len; i += 2) {
++			/* hi byte */
++			val = payload_msg[i + 1] << 8;
++
++			/* lo byte */
++			val |= payload_msg[i];
++
++			status = smb_wr16(SECOCEC_WRITE_DATA_00 + i / 2, val);
++			if (status)
++				goto err;
++		}
++	}
++	/* Send msg source/destination and fire msg */
++	destination = msg->msg[0];
++	status = smb_wr16(SECOCEC_WRITE_BYTE0, destination);
++	if (status)
++		goto err;
++
++	return 0;
++
++err:
++	dev_err(dev, "Transmit failed (%d)", status);
++	return status;
++}
++
++static int secocec_tx_done(struct cec_adapter *adap, u16 status_val)
++{
++	int status = 0;
++
++	if (status_val & SECOCEC_STATUS_TX_ERROR_MASK) {
++		if (status_val & SECOCEC_STATUS_TX_NACK_ERROR) {
++			cec_transmit_attempt_done(adap, CEC_TX_STATUS_NACK);
++			status = -EAGAIN;
++		} else {
++			cec_transmit_attempt_done(adap, CEC_TX_STATUS_ERROR);
++			status = -EIO;
++		}
++	} else {
++		cec_transmit_attempt_done(adap, CEC_TX_STATUS_OK);
++	}
++
++	/* Reset status reg */
++	status_val = SECOCEC_STATUS_TX_ERROR_MASK |
++		SECOCEC_STATUS_MSG_SENT_MASK |
++		SECOCEC_STATUS_TX_NACK_ERROR;
++	smb_wr16(SECOCEC_STATUS, status_val);
++
++	return status;
++}
++
++static int secocec_rx_done(struct cec_adapter *adap, u16 status_val)
++{
++	struct secocec_data *cec = cec_get_drvdata(adap);
++	struct device *dev = cec->dev;
++	struct cec_msg msg = { };
++	bool flag_overflow = false;
++	u8 payload_len, i = 0;
++	u8 *payload_msg;
++	u16 val = 0;
++	int status;
++
++	if (status_val & SECOCEC_STATUS_RX_OVERFLOW_MASK) {
++		dev_warn(dev, "Received more than 16 bytes. Discarding");
++		flag_overflow = true;
++	}
++
++	if (status_val & SECOCEC_STATUS_RX_ERROR_MASK) {
++		dev_warn(dev, "Message received with errors. Discarding");
++		status = -EIO;
++		goto rxerr;
++	}
++
++	/* Read message length */
++	status = smb_rd16(SECOCEC_READ_DATA_LENGTH, &val);
++	if (status)
++		goto err;
++
++	/* Device msg len already accounts for the header */
++	msg.len = min(val + 1, CEC_MAX_MSG_SIZE);
++
++	/* Read logical address */
++	status = smb_rd16(SECOCEC_READ_BYTE0, &val);
++	if (status)
++		goto err;
++
++	/* device stores source LA and destination */
++	msg.msg[0] = val;
++
++	/* Read operation ID */
++	status = smb_rd16(SECOCEC_READ_OPERATION_ID, &val);
++	if (status)
++		goto err;
++
++	msg.msg[1] = val;
++
++	/* Read data if present */
++	if (msg.len > 1) {
++		payload_len = msg.len - 2;
++		payload_msg = &msg.msg[2];
++
++		/* device stores 2 bytes in every 16-bit val */
++		for (i = 0; i < payload_len; i += 2) {
++			status = smb_rd16(SECOCEC_READ_DATA_00 + i / 2, &val);
++			if (status)
++				goto err;
++
++			/* low byte, skipping header */
++			payload_msg[i] = val & 0x00ff;
++
++			/* hi byte */
++			payload_msg[i + 1] = (val & 0xff00) >> 8;
++		}
++	}
++
++	cec_received_msg(cec->cec_adap, &msg);
++
++	/* Reset status reg */
++	status_val = SECOCEC_STATUS_MSG_RECEIVED_MASK;
++	if (flag_overflow)
++		status_val |= SECOCEC_STATUS_RX_OVERFLOW_MASK;
++
++	status = smb_wr16(SECOCEC_STATUS, status_val);
++	if (status)
++		goto err;
++
++	return 0;
++
++rxerr:
++	/* Reset error reg */
++	status_val = SECOCEC_STATUS_MSG_RECEIVED_MASK |
++		SECOCEC_STATUS_RX_ERROR_MASK;
++	if (flag_overflow)
++		status_val |= SECOCEC_STATUS_RX_OVERFLOW_MASK;
++	smb_wr16(SECOCEC_STATUS, status_val);
++
++err:
++	dev_err(dev, "Receive message failed (%d)", status);
++	return status;
++}
++
++struct cec_adap_ops secocec_cec_adap_ops = {
++	/* Low-level callbacks */
++	.adap_enable = secocec_adap_enable,
++	.adap_log_addr = secocec_adap_log_addr,
++	.adap_transmit = secocec_adap_transmit,
++};
++
++static irqreturn_t secocec_irq_handler(int irq, void *priv)
++{
++	struct secocec_data *cec = priv;
++	struct device *dev = cec->dev;
++	u16 status_val, cec_val, val = 0;
++	int status;
++
++	/*  Read status register */
++	status = smb_rd16(SECOCEC_STATUS_REG_1, &status_val);
++	if (status)
++		goto err;
++
++	if (status_val & SECOCEC_STATUS_REG_1_CEC) {
++		/* Read CEC status register */
++		status = smb_rd16(SECOCEC_STATUS, &cec_val);
++		if (status)
++			goto err;
++
++		if (cec_val & SECOCEC_STATUS_MSG_RECEIVED_MASK)
++			secocec_rx_done(cec->cec_adap, cec_val);
++
++		if (cec_val & SECOCEC_STATUS_MSG_SENT_MASK)
++			secocec_tx_done(cec->cec_adap, cec_val);
++
++		if ((~cec_val & SECOCEC_STATUS_MSG_SENT_MASK) &&
++		    (~cec_val & SECOCEC_STATUS_MSG_RECEIVED_MASK))
++			dev_warn(dev,
++				 "Message not received or sent, but interrupt fired");
++
++		val = SECOCEC_STATUS_REG_1_CEC;
++	}
++
++	if (status_val & SECOCEC_STATUS_REG_1_IR) {
++		dev_dbg(dev, "IR RC5 Interrupt Caught");
++		val |= SECOCEC_STATUS_REG_1_IR;
++		/* TODO IRDA RX */
++	}
++
++	/*  Reset status register */
++	status = smb_wr16(SECOCEC_STATUS_REG_1, val);
++	if (status)
++		goto err;
++
++	return IRQ_HANDLED;
++
++err:
++	dev_err(dev, "IRQ: Read/Write SMBus operation failed (%d)", status);
++
++	/*  Reset status register */
++	val = SECOCEC_STATUS_REG_1_CEC | SECOCEC_STATUS_REG_1_IR;
++	smb_wr16(SECOCEC_STATUS_REG_1, val);
++
++	return IRQ_HANDLED;
++}
++
++struct cec_dmi_match {
++	char *sys_vendor;
++	char *product_name;
++	char *devname;
++	char *conn;
++};
++
++static const struct cec_dmi_match secocec_dmi_match_table[] = {
++	/* UDOO X86 */
++	{ "SECO", "UDOO x86", "0000:00:02.0", "Port B" },
++};
++
++static int secocec_cec_get_notifier(struct cec_notifier **notify)
++{
++	int i;
++
++	for (i = 0 ; i < ARRAY_SIZE(secocec_dmi_match_table) ; ++i) {
++		const struct cec_dmi_match *m = &secocec_dmi_match_table[i];
++
++		if (dmi_match(DMI_SYS_VENDOR, m->sys_vendor) &&
++		    dmi_match(DMI_PRODUCT_NAME, m->product_name)) {
++			struct device *d;
++
++			/* Find the device, bail out if not yet registered */
++			d = bus_find_device_by_name(&pci_bus_type, NULL,
++						    m->devname);
++			if (!d)
++				return -EPROBE_DEFER;
++
++			*notify = cec_notifier_get_conn(d, m->conn);
++
++			return 0;
++		}
++	}
++
++	return -EINVAL;
++}
++
++static int secocec_acpi_probe(struct secocec_data *sdev)
++{
++	struct device *dev = sdev->dev;
++	struct gpio_desc *gpio;
++	int irq = 0;
++
++	gpio = devm_gpiod_get(dev, NULL, GPIOF_IN);
++	if (IS_ERR(gpio)) {
++		dev_err(dev, "Cannot request interrupt gpio");
++		return PTR_ERR(gpio);
++	}
++
++	irq = gpiod_to_irq(gpio);
++	if (irq < 0) {
++		dev_err(dev, "Cannot find valid irq");
++		return -ENODEV;
++	}
++	dev_dbg(dev, "irq-gpio is bound to IRQ %d", irq);
++
++	sdev->irq = irq;
++
++	return 0;
++}
++
++static int secocec_probe(struct platform_device *pdev)
++{
++	struct secocec_data *secocec;
++	struct device *dev = &pdev->dev;
++	int ret;
++	u16 val;
++
++	secocec = devm_kzalloc(dev, sizeof(*secocec), GFP_KERNEL);
++	if (!secocec)
++		return -ENOMEM;
++
++	dev_set_drvdata(dev, secocec);
++
++	/* Request SMBus regions */
++	if (!request_muxed_region(BRA_SMB_BASE_ADDR, 7, "CEC00001")) {
++		dev_err(dev, "Request memory region failed");
++		return -ENXIO;
++	}
++
++	secocec->pdev = pdev;
++	secocec->dev = dev;
++
++	if (!has_acpi_companion(dev)) {
++		dev_dbg(dev, "Cannot find any ACPI companion");
++		ret = -ENODEV;
++		goto err;
++	}
++
++	ret = secocec_acpi_probe(secocec);
++	if (ret) {
++		dev_err(dev, "Cannot assign gpio to IRQ");
++		ret = -ENODEV;
++		goto err;
++	}
++
++	dev_dbg(dev, "IRQ detected at %d", secocec->irq);
++
++	/* Firmware version check */
++	ret = smb_rd16(SECOCEC_VERSION, &val);
++	if (ret) {
++		dev_err(dev, "Cannot check fw version");
++		goto err;
++	}
++	if (val < SECOCEC_LATEST_FW) {
++		dev_err(dev, "CEC Firmware not supported (v.%04x). Use ver > v.%04x",
++			val, SECOCEC_LATEST_FW);
++		ret = -EINVAL;
++		goto err;
++	}
++
++	ret = secocec_cec_get_notifier(&secocec->notifier);
++	if (ret) {
++		dev_err(dev, "no CEC notifier available\n");
++		goto err;
++	}
++
++	ret = devm_request_threaded_irq(dev,
++					secocec->irq,
++					NULL,
++					secocec_irq_handler,
++					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
++					dev_name(&pdev->dev), secocec);
++
++	if (ret) {
++		dev_err(dev, "Cannot request IRQ %d", secocec->irq);
++		ret = -EIO;
++		goto err;
++	}
++
++	/* Allocate CEC adapter */
++	secocec->cec_adap = cec_allocate_adapter(&secocec_cec_adap_ops,
++						 secocec,
++						 dev_name(dev),
++						 CEC_CAP_DEFAULTS,
++						 SECOCEC_MAX_ADDRS);
++
++	if (IS_ERR(secocec->cec_adap)) {
++		ret = PTR_ERR(secocec->cec_adap);
++		goto err;
++	}
++
++	ret = cec_register_adapter(secocec->cec_adap, dev);
++	if (ret)
++		goto err_delete_adapter;
++
++	if (secocec->notifier)
++		cec_register_cec_notifier(secocec->cec_adap, secocec->notifier);
++
++	platform_set_drvdata(pdev, secocec);
++
++	dev_dbg(dev, "Device registered");
++
++	return ret;
++
++err_delete_adapter:
++	cec_delete_adapter(secocec->cec_adap);
++err:
++	dev_err(dev, "%s device probe failed\n", dev_name(dev));
++
++	return ret;
++}
++
++static int secocec_remove(struct platform_device *pdev)
++{
++	struct secocec_data *secocec = platform_get_drvdata(pdev);
++
++	cec_unregister_adapter(secocec->cec_adap);
++
++	if (secocec->notifier)
++		cec_notifier_put(secocec->notifier);
++
++	release_region(BRA_SMB_BASE_ADDR, 7);
++
++	dev_dbg(&pdev->dev, "CEC device removed");
++
++	return 0;
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int secocec_suspend(struct device *dev)
++{
++	int status;
++	u16 val;
++
++	dev_dbg(dev, "Device going to suspend, disabling");
++
++	/* Clear the status register */
++	status = smb_rd16(SECOCEC_STATUS_REG_1, &val);
++	if (status)
++		goto err;
++
++	status = smb_wr16(SECOCEC_STATUS_REG_1, val);
++	if (status)
++		goto err;
++
++	/* Disable the interrupts */
++	status = smb_rd16(SECOCEC_ENABLE_REG_1, &val);
++	if (status)
++		goto err;
++
++	status = smb_wr16(SECOCEC_ENABLE_REG_1, val &
++			  ~SECOCEC_ENABLE_REG_1_CEC & ~SECOCEC_ENABLE_REG_1_IR);
++	if (status)
++		goto err;
++
++	return 0;
++
++err:
++	dev_err(dev, "Suspend failed (err: %d)", status);
++	return status;
++}
++
++static int secocec_resume(struct device *dev)
++{
++	int status;
++	u16 val;
++
++	dev_dbg(dev, "Resuming device from suspend");
++
++	/* Clear the status register */
++	status = smb_rd16(SECOCEC_STATUS_REG_1, &val);
++	if (status)
++		goto err;
++
++	status = smb_wr16(SECOCEC_STATUS_REG_1, val);
++	if (status)
++		goto err;
++
++	/* Enable the interrupts */
++	status = smb_rd16(SECOCEC_ENABLE_REG_1, &val);
++	if (status)
++		goto err;
++
++	status = smb_wr16(SECOCEC_ENABLE_REG_1, val | SECOCEC_ENABLE_REG_1_CEC);
++	if (status)
++		goto err;
++
++	dev_dbg(dev, "Device resumed from suspend");
++
++	return 0;
++
++err:
++	dev_err(dev, "Resume failed (err: %d)", status);
++	return status;
++}
++
++static SIMPLE_DEV_PM_OPS(secocec_pm_ops, secocec_suspend, secocec_resume);
++#define SECOCEC_PM_OPS (&secocec_pm_ops)
++#else
++#define SECOCEC_PM_OPS NULL
++#endif
++
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id secocec_acpi_match[] = {
++	{"CEC00001", 0},
++	{},
++};
++
++MODULE_DEVICE_TABLE(acpi, secocec_acpi_match);
++#endif
++
++static struct platform_driver secocec_driver = {
++	.driver = {
++		   .name = SECOCEC_DEV_NAME,
++		   .acpi_match_table = ACPI_PTR(secocec_acpi_match),
++		   .pm = SECOCEC_PM_OPS,
++	},
++	.probe = secocec_probe,
++	.remove = secocec_remove,
++};
++
++module_platform_driver(secocec_driver);
++
++MODULE_DESCRIPTION("SECO CEC X86 Driver");
++MODULE_AUTHOR("Ettore Chimenti <ek5.chimenti@gmail.com>");
++MODULE_LICENSE("Dual BSD/GPL");
+diff --git a/drivers/media/platform/seco-cec/seco-cec.h b/drivers/media/platform/seco-cec/seco-cec.h
+new file mode 100644
+index 000000000000..93020900935e
+--- /dev/null
++++ b/drivers/media/platform/seco-cec/seco-cec.h
+@@ -0,0 +1,130 @@
++/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
++/*
++ * SECO X86 Boards CEC register defines
++ *
++ * Author:  Ettore Chimenti <ek5.chimenti@gmail.com>
++ * Copyright (C) 2018, SECO Srl.
++ * Copyright (C) 2018, Aidilab Srl.
++ */
++
++#ifndef __SECO_CEC_H__
++#define __SECO_CEC_H__
++
++#define SECOCEC_MAX_ADDRS		1
++#define SECOCEC_DEV_NAME		"secocec"
++#define SECOCEC_LATEST_FW		0x0f0b
++
++#define SMBTIMEOUT			0xffff
++#define SMB_POLL_UDELAY			10
++
++#define SMBUS_WRITE			0
++#define SMBUS_READ			1
++
++#define CMD_BYTE_DATA			0
++#define CMD_WORD_DATA			1
++
++/*
++ * SMBus definitons for Braswell
++ */
++
++#define BRA_DONE_STATUS			BIT(7)
++#define BRA_INUSE_STS			BIT(6)
++#define BRA_FAILED_OP			BIT(4)
++#define BRA_BUS_ERR			BIT(3)
++#define BRA_DEV_ERR			BIT(2)
++#define BRA_INTR			BIT(1)
++#define BRA_HOST_BUSY			BIT(0)
++#define BRA_HSTS_ERR_MASK   (BRA_FAILED_OP | BRA_BUS_ERR | BRA_DEV_ERR)
++
++#define BRA_PEC_EN			BIT(7)
++#define BRA_START			BIT(6)
++#define BRA_LAST__BYTE			BIT(5)
++#define BRA_INTREN			BIT(0)
++#define BRA_SMB_CMD			(7 << 2)
++#define BRA_SMB_CMD_QUICK		(0 << 2)
++#define BRA_SMB_CMD_BYTE		(1 << 2)
++#define BRA_SMB_CMD_BYTE_DATA		(2 << 2)
++#define BRA_SMB_CMD_WORD_DATA		(3 << 2)
++#define BRA_SMB_CMD_PROCESS_CALL	(4 << 2)
++#define BRA_SMB_CMD_BLOCK		(5 << 2)
++#define BRA_SMB_CMD_I2CREAD		(6 << 2)
++#define BRA_SMB_CMD_BLOCK_PROCESS	(7 << 2)
++
++#define BRA_SMB_BASE_ADDR  0x2040
++#define HSTS               (BRA_SMB_BASE_ADDR + 0)
++#define HCNT               (BRA_SMB_BASE_ADDR + 2)
++#define HCMD               (BRA_SMB_BASE_ADDR + 3)
++#define XMIT_SLVA          (BRA_SMB_BASE_ADDR + 4)
++#define HDAT0              (BRA_SMB_BASE_ADDR + 5)
++#define HDAT1              (BRA_SMB_BASE_ADDR + 6)
++
++/*
++ * Microcontroller Address
++ */
++
++#define SECOCEC_MICRO_ADDRESS		0x40
++
++/*
++ * STM32 SMBus Registers
++ */
++
++#define SECOCEC_VERSION			0x00
++#define SECOCEC_ENABLE_REG_1		0x01
++#define SECOCEC_ENABLE_REG_2		0x02
++#define SECOCEC_STATUS_REG_1		0x03
++#define SECOCEC_STATUS_REG_2		0x04
++
++#define SECOCEC_STATUS			0x28
++#define SECOCEC_DEVICE_LA		0x29
++#define SECOCEC_READ_OPERATION_ID	0x2a
++#define SECOCEC_READ_DATA_LENGTH	0x2b
++#define SECOCEC_READ_DATA_00		0x2c
++#define SECOCEC_READ_DATA_02		0x2d
++#define SECOCEC_READ_DATA_04		0x2e
++#define SECOCEC_READ_DATA_06		0x2f
++#define SECOCEC_READ_DATA_08		0x30
++#define SECOCEC_READ_DATA_10		0x31
++#define SECOCEC_READ_DATA_12		0x32
++#define SECOCEC_READ_BYTE0		0x33
++#define SECOCEC_WRITE_OPERATION_ID	0x34
++#define SECOCEC_WRITE_DATA_LENGTH	0x35
++#define SECOCEC_WRITE_DATA_00		0x36
++#define SECOCEC_WRITE_DATA_02		0x37
++#define SECOCEC_WRITE_DATA_04		0x38
++#define SECOCEC_WRITE_DATA_06		0x39
++#define SECOCEC_WRITE_DATA_08		0x3a
++#define SECOCEC_WRITE_DATA_10		0x3b
++#define SECOCEC_WRITE_DATA_12		0x3c
++#define SECOCEC_WRITE_BYTE0		0x3d
++
++#define SECOCEC_IR_READ_DATA		0x3e
++
++/*
++ * Enabling register
++ */
++
++#define SECOCEC_ENABLE_REG_1_CEC		0x1000
++#define SECOCEC_ENABLE_REG_1_IR			0x2000
++#define SECOCEC_ENABLE_REG_1_IR_PASSTHROUGH	0x4000
++
++/*
++ * Status register
++ */
++
++#define SECOCEC_STATUS_REG_1_CEC	SECOCEC_ENABLE_REG_1_CEC
++#define SECOCEC_STATUS_REG_1_IR		SECOCEC_ENABLE_REG_1_IR
++#define SECOCEC_STATUS_REG_1_IR_PASSTHR	SECOCEC_ENABLE_REG_1_IR_PASSTHR
++
++/*
++ * Status data
++ */
++
++#define SECOCEC_STATUS_MSG_RECEIVED_MASK	BIT(0)
++#define SECOCEC_STATUS_RX_ERROR_MASK		BIT(1)
++#define SECOCEC_STATUS_MSG_SENT_MASK		BIT(2)
++#define SECOCEC_STATUS_TX_ERROR_MASK		BIT(3)
++
++#define SECOCEC_STATUS_TX_NACK_ERROR		BIT(4)
++#define SECOCEC_STATUS_RX_OVERFLOW_MASK		BIT(5)
++
++#endif /* __SECO_CEC_H__ */
+-- 
+2.18.0
+
