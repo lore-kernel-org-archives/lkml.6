@@ -2,54 +2,54 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4C1ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A879DECDE35
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7454921526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BB2721526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:43:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NaDmmUrG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7454921526
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iqQ/Ttv4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BB2721526
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeJQPhX (ORCPT
+        id S1727711AbeJQPh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:37:23 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:56662 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbeJQPhS (ORCPT
+        Wed, 17 Oct 2018 11:37:29 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:60660 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727652AbeJQPh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:37:18 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9H7gdO2023149;
-        Wed, 17 Oct 2018 02:42:39 -0500
+        Wed, 17 Oct 2018 11:37:28 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9H7gueP054099;
+        Wed, 17 Oct 2018 02:42:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539762159;
-        bh=TJTKFDSXgapb2zFN4WzS4ePydA0M0F3UQ+j0dbzHS1Q=;
+        s=ti-com-17Q1; t=1539762176;
+        bh=zxAbqT5mwnQ0yf4Gth6G3KMxef3pL6xYIy++EsgoCT8=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=NaDmmUrGsuN6+/FTceZnZveXi0OJRSpLwvSrwmnJRb8jqWkNydLJ9gibE0dS45cBx
-         AbLMBJkXWVdPSbTWJTCajYes9utlZxSdsUKWuMsJoQ1E+aCgAX+AttmrH6DvUwAPUT
-         298oCYDm9cb7MUaOeseUFGfwLbpO7Err6oO9QoeI=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7gd2q025329;
-        Wed, 17 Oct 2018 02:42:39 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+        b=iqQ/Ttv4hmBuxmfG7L1lX5unnQKDcr1aKy+cb3WrHhIQ0jjImWetMUu1Ry3KPEmPY
+         wR5k+jlwrZx02TARIR2Hf5BiSHQ7KPhT117nSSniyyNGWWbMI+PuGAQMDbpZcJ7jI/
+         M0TgnLq/LuVI+QZ18QzYdG8UHK7wKmw2xukPB9OU=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7gu8q010261;
+        Wed, 17 Oct 2018 02:42:56 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 17
- Oct 2018 02:42:40 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
+ Oct 2018 02:42:56 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 17 Oct 2018 02:42:39 -0500
+ Wed, 17 Oct 2018 02:42:56 -0500
 Received: from a0393678ub.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7fgSb009413;
-        Wed, 17 Oct 2018 02:42:36 -0500
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7fgSg009413;
+        Wed, 17 Oct 2018 02:42:53 -0500
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Bjorn Helgaas <bhelgaas@google.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -60,9 +60,9 @@ CC:     Rob Herring <robh+dt@kernel.org>, <linux-pci@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH v2 16/21] PCI: keystone: Cleanup set_dbi_mode and get_dbi_mode
-Date:   Wed, 17 Oct 2018 13:11:09 +0530
-Message-ID: <20181017074114.28239-17-kishon@ti.com>
+Subject: [PATCH v2 21/21] PCI: keystone: Cleanup macros defined in pci-keystone.c
+Date:   Wed, 17 Oct 2018 13:11:14 +0530
+Message-ID: <20181017074114.28239-22-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181017074114.28239-1-kishon@ti.com>
 References: <20181017074114.28239-1-kishon@ti.com>
@@ -74,57 +74,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No functional change. Use BIT() macro for DBI_CS2 and cleanup
-set_dbimode and get_dbi_mode
+No functional change. Cleanup macros defined in pci-keystone.c
+by removing unused macros, grouping the macros and aligning
+it properly.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/pci/controller/dwc/pci-keystone.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/pci/controller/dwc/pci-keystone.c | 41 +++++++++--------------
+ 1 file changed, 16 insertions(+), 25 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index 3576a184b9eb..2decbaec81a3 100644
+index 0cfeaad1d013..14f2b0b4ed5e 100644
 --- a/drivers/pci/controller/dwc/pci-keystone.c
 +++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -40,7 +40,7 @@
- #define LTSSM_EN_VAL		        BIT(0)
- #define LTSSM_STATE_MASK		0x1f
- #define LTSSM_STATE_L0			0x11
--#define DBI_CS2_EN_VAL			0x20
-+#define DBI_CS2				BIT(5)
- #define OB_XLAT_EN_VAL		        BIT(1)
+@@ -28,21 +28,14 @@
  
+ #include "pcie-designware.h"
+ 
+-#define DRIVER_NAME	"keystone-pcie"
+-
+ #define PCIE_VENDORID_MASK	0xffff
+ #define PCIE_DEVICEID_SHIFT	16
+ 
+-/* DEV_STAT_CTRL */
+-#define PCIE_CAP_BASE		0x70
+-
+-/* Application register defines */
+-#define LTSSM_EN_VAL		        BIT(0)
+-#define DBI_CS2				BIT(5)
+-#define OB_XLAT_EN_VAL		        BIT(1)
+-
  /* Application registers */
-@@ -315,11 +315,12 @@ static void ks_pcie_set_dbi_mode(struct keystone_pcie *ks_pcie)
- 	u32 val;
+ #define CMD_STATUS			0x004
++#define LTSSM_EN_VAL		        BIT(0)
++#define OB_XLAT_EN_VAL		        BIT(1)
++#define DBI_CS2				BIT(5)
  
- 	val = ks_pcie_app_readl(ks_pcie, CMD_STATUS);
--	ks_pcie_app_writel(ks_pcie, CMD_STATUS, DBI_CS2_EN_VAL | val);
-+	val |= DBI_CS2;
-+	ks_pcie_app_writel(ks_pcie, CMD_STATUS, val);
+ #define CFG_SETUP			0x008
+ #define CFG_BUS(x)			(((x) & 0xff) << 16)
+@@ -70,27 +63,25 @@
+ #define IRQ_STATUS			0x184
+ #define MSI_IRQ_OFFSET			4
  
- 	do {
- 		val = ks_pcie_app_readl(ks_pcie, CMD_STATUS);
--	} while (!(val & DBI_CS2_EN_VAL));
-+	} while (!(val & DBI_CS2));
- }
+-/* Error IRQ bits */
+-#define ERR_AER		BIT(5)	/* ECRC error */
+-#define ERR_AXI		BIT(4)	/* AXI tag lookup fatal error */
+-#define ERR_CORR	BIT(3)	/* Correctable error */
+-#define ERR_NONFATAL	BIT(2)	/* Non-fatal error */
+-#define ERR_FATAL	BIT(1)	/* Fatal error */
+-#define ERR_SYS		BIT(0)	/* System (fatal, non-fatal, or correctable) */
+-#define ERR_IRQ_ALL	(ERR_AER | ERR_AXI | ERR_CORR | \
+-			 ERR_NONFATAL | ERR_FATAL | ERR_SYS)
+ #define ERR_IRQ_STATUS			0x1c4
+ #define ERR_IRQ_ENABLE_SET		0x1c8
+-#define ERR_IRQ_ENABLE_CLR		0x1cc
++#define ERR_AER				BIT(5)	/* ECRC error */
++#define ERR_AXI				BIT(4)	/* AXI tag lookup fatal error */
++#define ERR_CORR			BIT(3)	/* Correctable error */
++#define ERR_NONFATAL			BIT(2)	/* Non-fatal error */
++#define ERR_FATAL			BIT(1)	/* Fatal error */
++#define ERR_SYS				BIT(0)	/* System error */
++#define ERR_IRQ_ALL			(ERR_AER | ERR_AXI | ERR_CORR | \
++					 ERR_NONFATAL | ERR_FATAL | ERR_SYS)
  
- /**
-@@ -333,11 +334,12 @@ static void ks_pcie_clear_dbi_mode(struct keystone_pcie *ks_pcie)
- 	u32 val;
+ #define MAX_MSI_HOST_IRQS		8
+ /* PCIE controller device IDs */
+-#define PCIE_RC_K2HK		0xb008
+-#define PCIE_RC_K2E		0xb009
+-#define PCIE_RC_K2L		0xb00a
+-#define PCIE_RC_K2G		0xb00b
++#define PCIE_RC_K2HK			0xb008
++#define PCIE_RC_K2E			0xb009
++#define PCIE_RC_K2L			0xb00a
++#define PCIE_RC_K2G			0xb00b
  
- 	val = ks_pcie_app_readl(ks_pcie, CMD_STATUS);
--	ks_pcie_app_writel(ks_pcie, CMD_STATUS, ~DBI_CS2_EN_VAL & val);
-+	val &= ~DBI_CS2;
-+	ks_pcie_app_writel(ks_pcie, CMD_STATUS, val);
+-#define to_keystone_pcie(x)	dev_get_drvdata((x)->dev)
++#define to_keystone_pcie(x)		dev_get_drvdata((x)->dev)
  
- 	do {
- 		val = ks_pcie_app_readl(ks_pcie, CMD_STATUS);
--	} while (val & DBI_CS2_EN_VAL);
-+	} while (val & DBI_CS2);
- }
- 
- static void ks_pcie_setup_rc_app_regs(struct keystone_pcie *ks_pcie)
+ struct keystone_pcie {
+ 	struct dw_pcie		*pci;
 -- 
 2.17.1
 
