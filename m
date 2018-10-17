@@ -2,448 +2,143 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FC8ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 454F4ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D40392151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:55:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D40392151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 04AAB2151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:55:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="tg4xYssa";
+	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="BAnXOoWE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04AAB2151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=raspberrypi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeJQRty (ORCPT
+        id S1727265AbeJQRuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 13:49:54 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:48318 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbeJQRty (ORCPT
+        Wed, 17 Oct 2018 13:50:20 -0400
+Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:5439 "EHLO
+        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726976AbeJQRuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 13:49:54 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9H9suNK044873;
-        Wed, 17 Oct 2018 18:54:56 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Wed, 17 Oct 2018 18:54:56 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9H9sp71044747
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 17 Oct 2018 18:54:56 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v4] printk: Add line-buffered printk() API.
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <1539405580-4569-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181016140744.dviqn6yvm5brr2gu@pathway.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <179a676a-0768-9969-6480-8c4d48af3b67@i-love.sakura.ne.jp>
-Date:   Wed, 17 Oct 2018 18:54:52 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 17 Oct 2018 13:50:20 -0400
+Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
+        by mx07-00252a01.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9H9rJeU020484
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 10:55:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=pp; bh=iWrG4H3562DqofSZnEETaSKBiRB5u25Y6J2x2L0MvjI=;
+ b=tg4xYssa+SY9JCMLYEoOA6e7G2cHkLsH1V8RCo0yCmkEikPiJAbEcdezXAyd2bn36mRM
+ xvECtJ4NK21be236VaSnH0LnYlEyULPZdgR7DiBC0Tn0CjKPIHLju107HgFtsQEAfedE
+ 236orSzqfYIdBmuV19TdJuONhUqn0RywFrmOBYYOjePKdFRgktk/SQYl6afG3/7n7yKZ
+ QTiX1chJLbEATyqVM2Tpr8N3ax+sd1zbQZn/bwaAUeePteOcgd+77OYinUQvBFm9I6lD
+ Zclv9VUCftc/x8qWbJUWVk8lPw59cbG83PCI/oPfCa7hwT7PMj2nRLTG14dkcz6z7Mbb Bg== 
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+        by mx07-00252a01.pphosted.com with ESMTP id 2n3641a49r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 10:55:22 +0100
+Received: by mail-pl1-f198.google.com with SMTP id b23-v6so20321127pls.8
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 02:55:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iWrG4H3562DqofSZnEETaSKBiRB5u25Y6J2x2L0MvjI=;
+        b=BAnXOoWENf29poweo4JTozaLEmmjyqrJFd/VB9Foz6UBTPcW0064/j3CU45Wifbh96
+         TzHN+EtSGZHUBveDTzYlfmi6tzXDR1bImJYUNVp+rhLCu9wMIwrVXOyuDXWkpOTsXJ4I
+         zL2VeMoJqTVUMeEgKMFTPz3av1fZwTgwjWRjUIL3VlOxxOmNlXqm8BCi+XjjHfSpYdJE
+         pTmwcIuMAkC4/8YVNSnLVuhjH99ZRmLV1e8LJ+ZSoNdWR+90aCXEMoA5+Sne2h/GJW1F
+         yy/6v4LUnYGIUUtw9/+NyRTPEX0Xyu/mJDKBQx4juYgeVZUrTQUMwbN/fw2SLFup/+Vl
+         AKIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iWrG4H3562DqofSZnEETaSKBiRB5u25Y6J2x2L0MvjI=;
+        b=BA0VyE3hycuVu6eM4jFW7U55YGEe/eQI2A0xHwZ91RAAf0NxLm0eM8W899hLNsB0t0
+         o/JN/PrFqxNoTD9LXxXWJq6z933aqn7nmChUyaJAPO4dJAfbma3ItY/IKHTv1Nv7zSyZ
+         rxOz9UBjuoyTL0fPmt9oFVfYY86/1O1nINBjSR2RrGbT21AcocrFdQUXm4mBiKy6r5LH
+         HIH3TlltJe//l6km7D74DuHRByqlW8xX2HhHSpv138An/8Yabaw1DOE23EXW/e/nChoD
+         0O0t8KjuFIkUFUE+w2OnYr0ozesCYWPAfJ1egjt79a690I8RBSU8yDz/hNstbeBaXe2x
+         vyLQ==
+X-Gm-Message-State: ABuFfojteiSwRxSV+JSsJUVDlZqrR6xI6vo4IMs6EAOxk7CC5qwZ6lp7
+        urgQ3tKqVmjGGR4KJrDp1kI32ow9fvom9MR5uSuDh3wct+jY1y+j+/GUgWGqr3ftBVsb6t7nyPw
+        uvSPdvq8VKwKOuqBjOmhb9YxaC+y3Ar3/jAQb9KA=
+X-Received: by 2002:a62:5441:: with SMTP id i62-v6mr25974351pfb.155.1539770120416;
+        Wed, 17 Oct 2018 02:55:20 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV638P+81PnmyFPqQL1AkI86+qOz3L9pBNbTG+kuEc24tCGyyBp6BLt/QwcqC5G75Mcaq26cHvK6eGY7oAbTJvu0=
+X-Received: by 2002:a62:5441:: with SMTP id i62-v6mr25974335pfb.155.1539770120144;
+ Wed, 17 Oct 2018 02:55:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181016140744.dviqn6yvm5brr2gu@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181004093747.21750-1-tuomas.tynkkynen@iki.fi>
+ <1715113043.52878.1538821118324@email.1und1.de> <87a7nf5gr9.fsf@anholt.net>
+In-Reply-To: <87a7nf5gr9.fsf@anholt.net>
+From:   Dave Stevenson <dave.stevenson@raspberrypi.org>
+Date:   Wed, 17 Oct 2018 10:55:06 +0100
+Message-ID: <CAAoAYcN_xVvi2-dUcGobVcMEtjFTV=Hi7OFr2vuEF08aQkVWHA@mail.gmail.com>
+Subject: Re: [PATCH 0/7] staging: vc04_services: Some dead code removal
+To:     Eric Anholt <eric@anholt.net>
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>, tuomas.tynkkynen@iki.fi,
+        Phil Elwell <phil@raspberrypi.org>, devel@driverdev.osuosl.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_14:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Petr Mladek wrote:
-> On Sat 2018-10-13 13:39:40, Tetsuo Handa wrote:
-> > +struct printk_buffer;
-> > +#if defined(CONFIG_PRINTK_LINE_BUFFERED)
-> > +struct printk_buffer *get_printk_buffer(void);
-> > +void flush_printk_buffer(struct printk_buffer *ptr);
-> > +__printf(2, 3)
-> > +int buffered_printk(struct printk_buffer *ptr, const char *fmt, ...);
-> > +__printf(2, 0)
-> > +int buffered_vprintk(struct printk_buffer *ptr, const char *fmt, va_list args);
-> > +void put_printk_buffer(struct printk_buffer *ptr);
-> > +#else
-> > +static inline struct printk_buffer *get_printk_buffer(void)
-> > +{
-> > +	return NULL;
-> > +}
-> > +static inline void flush_printk_buffer(struct printk_buffer *ptr)
-> > +{
-> > +}
-> > +#define buffered_printk(ptr, fmt, ...) printk(fmt, ##__VA_ARGS__)
-> > +#define buffered_vprintk(ptr, fmt, args) vprintk(fmt, args)
-> > +static inline void put_printk_buffer(struct printk_buffer *ptr)
-> > +{
-> > +}
-> > +#endif
-> 
-> Is there any reason to allow to disable this feature?
-> The current cont buffer is always enabled.
+On Mon, 15 Oct 2018 at 17:27, Eric Anholt <eric@anholt.net> wrote:
+>
+> Stefan Wahren <stefan.wahren@i2se.com> writes:
+>
+> > Hi Tuomas,
+> >
+> >> Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi> hat am 4. Oktober 2018 um 11:37 geschrieben:
+> >>
+> >>
+> >> Drop various pieces of dead code from here and there to get rid of
+> >> the remaining users of VCHI_CONNECTION_T. After that we get to drop
+> >> entire header files worth of unused code.
+> >>
+> >> I've tested on a Raspberry Pi Model B (bcm2835_defconfig) that
+> >> snd-bcm2835 can still play analog audio just fine.
+> >>
+> >
+> > thanks and i'm fine with your patch series:
+> >
+> > Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+> >
+> > Unfortunately this would break compilation of the downstream vchi
+> > drivers like vcsm [1]. Personally i don't want to maintain another
+> > one, because i cannot see the gain of the resulting effort.
+> >
+> > [1] - https://github.com/raspberrypi/linux/tree/rpi-4.14.y/drivers/char/broadcom/vc_sm
 
-We need this dummy version anyway because CONFIG_PRINTK_LINE_BUFFERED
-depends on CONFIG_PRINTK=y.
+I'm happy enough to work around these changes. Once the change is in a
+released kernel we can merge a modified version of vc_sm into the
+downstream kernel branch. It's not as if it requires big changes.
 
-Even with CONFIG_PRINTK=y, until the cont buffer is removed in future, some
-embedded users might want to save memory footprint for printk_buffers.
+> I think the main concern would be if we removed things necessary for
+> 6by9's new vcsm (the one that will let us do dma-buf sharing between
+> media decode and DRM).
 
-> > @@ -604,6 +604,37 @@ config PRINTK_SAFE_LOG_BUF_SHIFT
-> >  		     13 =>   8 KB for each CPU
-> >  		     12 =>   4 KB for each CPU
-> >  
-> > +config PRINTK_LINE_BUFFERED
-> > +	bool "Allow line buffered printk()"
-> > +	default y
-> > +	depends on PRINTK
-> > +	help
-> > +	  The line buffered printk() tries to buffer printk() output up to '\n'
-> > +	  so that incomplete lines won't be mixed when there are multiple
-> > +	  threads concurrently calling printk() which does not end with '\n'.
-> 
-> I would prefer to always enable it.
+The new vcsm uses the same VCHI service as the existing downstream vc_sm driver.
+The video codec driver don't use any VCHI functionality over and above
+the camera. It goes via a slightly extended version of the
+mmal-vchiq.c, which I have split out into a shared module.
 
-But embedded users might have very low traffic where buffering is not useful.
+> On the other hand, git revert is a thing, so it's not like we actually
+> lose anything.
 
+:-)
 
-
-> > +config PRINTK_NUM_LINE_BUFFERS
-> > +	int "Number of buffers for line buffered printk()"
-> > +	range 1 4096
-> > +	default 16
-> > +	depends on PRINTK_LINE_BUFFERED
-> > +	help
-> > +	  Specify the number of statically preallocated "struct printk_buffer"
-> > +	  for line buffered printk(). You don't need to specify a large number
-> > +	  here because "struct printk_buffer" makes difference only when there
-> > +	  are multiple threads concurrently calling printk() which does not end
-> > +	  with '\n', and line buffered printk() will fallback to normal
-> > +	  printk() when out of statically preallocated "struct printk_buffer"
-> > +	  happened.
-> 
-> I would prefer to start with a hard-coded number. There is a sane
-> fallback. We need to motivate people to send feedback so that we could
-> tune it and eventually remove the fallback (current cont buffer code).
-
-I think that we don't need kernel command line parameters for tuning this number.
-But having a kernel config option will help encouraging people to try this API,
-for there might be some users who can't try this API without a lot of printk
-buffers (syzbot-like systems or huge systems which generate huge traffic).
-
-
-
-> > +config PRINTK_REPORT_OUT_OF_LINE_BUFFERS
-> > +	bool "Report out of buffers for line buffered printk()"
-> > +	default n
-> > +	depends on PRINTK_LINE_BUFFERED && STACKTRACE
-> > +	help
-> > +	  Select this if you want to know who is using statically preallocated
-> > +	  "struct printk_buffer" when out of "struct printk_buffer" happened.
-> > +
-> 
-> I like this approach with the configurable debug functionality. It is
-> safe and straightforward.
-
-I didn't get what "the configurable debug functionality" means. You mean
-enable/disable via debugfs entry? We can later hear from users whether we
-want to allow enable/disable at kernel boot command line and/or debugfs entry.
-
-
-
-> > +/**
-> > + * get_printk_buffer - Try to get printk_buffer.
-> > + *
-> > + * Returns pointer to "struct printk_buffer" on success, NULL otherwise.
-> > + *
-> > + * If this function returned "struct printk_buffer", the caller is responsible
-> > + * for passing it to put_printk_buffer() so that "struct printk_buffer" can be
-> > + * reused in the future.
-> > + *
-> > + * Even if this function returned NULL, the caller does not need to check for
-> > + * NULL, for passing NULL to buffered_printk() simply acts like normal printk()
-> > + * and passing NULL to flush_printk_buffer()/put_printk_buffer() is a no-op.
-> > + */
-> > +struct printk_buffer *get_printk_buffer(void)
-> > +{
-> 
-> It does not make much sense to use the buffered printk in context
-> where printk_safe() or printk_nmi() is used. I suggest to define
-> something like:
-> 
-> static inline bool in_printk_safe_buffered_context(void)
-> {
-> 	int this_printk_context = this_cpu_read(printk_context);
-> 
-> 	if (this_printk_context && PRINTK_NMI_DIRECT_CONTEXT_MASK)
-> 		return false;
-> 
-> 	if (this_printk_context &&
-> 	    (PRINTK_SAFE_CONTEXT_MASH || PRINTK_NMI_CONTEXT_MASK))
-> 		return true;
-> 
-> 	return true;
-> 
-> and do
-> 
-> 	/*
-> 	 * Messages are already concatenated when temporary
-> 	 * stored into the safe per-CPU buffers.
-> 	 */
-> 	if (in_printk_safe_buffered_context())
-> 		return NULL;
-
-After this API is accepted, I will try thinking how we can inject caller
-information when printk() is called. That's the origin of this thread.
-
-To do that, we need to make sure that one line is stored (with caller
-information) whenever printk() is called, which means that we can't count on
-implicit line buffering provided for printk_safe() or printk_nmi() context.
-
-Therefore, this buffering makes sense even if the caller is known to be
-already printk_safe() or printk_nmi() context.
-
-
-
-> > +#ifdef CONFIG_PRINTK_REPORT_OUT_OF_LINE_BUFFERS
-> > +	static DECLARE_WORK(work, report_buffer_users);
-> > +#endif
-> > +	long i;
-> > +
-> > +	for (i = 0; i < CONFIG_PRINTK_NUM_LINE_BUFFERS; i++) {
-> > +		if (test_bit(i, printk_buffers_in_use) ||
-> > +		    test_and_set_bit(i, printk_buffers_in_use))
-> 
-> I would use test_and_set_bit_lock() to make it more likely that
-> the barriers are right. Otherwise, there is missing the complementary
-> barrier with clear_bit() in put_printk_buffer().
-
-Really? I think this is accurate enough.
-
-get_printk_buffer() tolerates race window, as long as get_printk_buffer()
-does not return same buffer to multiple callers. For example, when
-get_printk_buffer() checks for printk_buffers[1] after
-checking printk_buffers[0] is in use, put_printk_buffer() might set
-printk_buffers[0] as free. get_printk_buffer() will return NULL if
-printk_buffers[0] was the only buffer which became available in this
-race window, but it is not a critical problem.
-
-Likewise, put_printk_buffer() tolerates race window, as long as writing
-to printk_buffer[i] completes before printk_buffer[i] becomes visible to
-get_printk_buffer().
-
-And since test_and_set_bit() and clear_bit() are atomic, I think that
-there is no possibility that
-
-  (1) get_printk_buffer() from CPU0 finds that
-      test_bit(0, printk_buffers_in_use) is false.
-
-  (2) get_printk_buffer() from CPU1 finds that
-      test_bit(0, printk_buffers_in_use) is false.
-
-  (3) get_printk_buffer() from CPU0 finds that
-      test_and_set_bit(0, printk_buffers_in_use) is false.
-
-  (4) get_printk_buffer() from CPU1 finds that
-      test_and_set_bit(0, printk_buffers_in_use) is true.
-
-  (5) put_printk_buffer() from CPU0 calls
-      clear_bit(0, printk_buffers_in_use).
-
-  (6) get_printk_buffer() from CPU1 leaves
-      test_bit(0, printk_buffers_in_use) true due to (4),
-      which results in leaking printk_buffers[0].
-
-happens.
-
-
-
-> > +#ifdef CONFIG_PRINTK_REPORT_OUT_OF_LINE_BUFFERS
-> > +	/*
-> > +	 * Oops, out of "struct printk_buffer" happened. Fallback to normal
-> > +	 * printk(). You might notice it by partial lines being printed.
-> > +	 *
-> > +	 * If you think that it might be due to missing put_printk_buffer()
-> > +	 * calls, you can enable CONFIG_PRINTK_REPORT_OUT_OF_LINE_BUFFERS.
-> > +	 * Then, who is using the buffers will be reported (from workqueue
-> > +	 * context because reporting CONFIG_PRINTK_NUM_LINE_BUFFERS entries
-> > +	 * from atomic context might be too slow). If it does not look like
-> > +	 * missing put_printk_buffer() calls, you might want to increase
-> > +	 * CONFIG_PRINTK_NUM_LINE_BUFFERS.
-> > +	 *
-> > +	 * But if it turns out that allocating "struct printk_buffer" on stack
-> > +	 * or in .bss section or from kzalloc() is more suitable than tuning
-> > +	 * CONFIG_PRINTK_NUM_LINE_BUFFERS, we can update to do so.
-> > +	 */
-> > +	if (!in_nmi() && !cmpxchg(&buffer_users_report_scheduled, 0, 1))
-> > +		queue_work(system_unbound_wq, &work);
-> 
-> We should limit the number of this reports especially when the buffers
-> leaked and are never released again. I would either limit the total
-> count of these reports or I would allow scheduling only when
-> any get_printk_buffer() succeeded in the meantime.
-
-These reports will have at least 60 seconds interval.
-
-> 
-> Also we should know when the debugging makes sense. Therefore, we should
-> write something even when the debugging is off. Something like:
-> 
-> #else
->       printk_once("Out of printk buffers. Please, consider enabling with CONFIG_DEBUG_BUFFERED_PRINTK\n");
-> #endif
-
-I think we can know "when CONFIG_DEBUG_BUFFERED_PRINTK=y makes sense"
-when partial lines are printed frequent enough to suspect permanently
-out of buffers.
-
-
-
-> > +/**
-> > + * buffered_vprintk - Try to vprintk() in line buffered mode.
-> > + *
-> > + * @ptr:  Pointer to "struct printk_buffer". It can be NULL.
-> > + * @fmt:  printk() format string.
-> > + * @args: va_list structure.
-> > + *
-> > + * Returns the return value of vprintk().
-> > + *
-> > + * Try to store to @ptr first. If it fails, flush @ptr and then try to store to
-> > + * @ptr again. If it still fails, use unbuffered printing.
-> > + */
-> > +int buffered_vprintk(struct printk_buffer *ptr, const char *fmt, va_list args)
-> > +{
-> > +	va_list tmp_args;
-> > +	unsigned short int i;
-> > +	int r;
-> > +
-> > +	if (!ptr)
-> > +		goto unbuffered;
-> > +	for (i = 0; i < 2; i++) {
-> > +		unsigned int pos = ptr->used;
-> > +		char *text = ptr->buf + pos;
-> > +
-> > +		va_copy(tmp_args, args);
-> > +		r = vsnprintf(text, sizeof(ptr->buf) - pos, fmt, tmp_args);
-> > +		va_end(tmp_args);
-> > +		if (r + pos < sizeof(ptr->buf)) {
-> > +			/*
-> > +			 * Eliminate KERN_CONT at this point because we can
-> > +			 * concatenate incomplete lines inside printk_buffer.
-> > +			 */
-> > +			if (r >= 2 && printk_get_level(text) == 'c') {
-> > +				memmove(text, text + 2, r - 2);
-> > +				ptr->used += r - 2;
-> 
-> I believe that KERN_CONT is always passed via @fmt parameter. Therefore
-> we could skip it already in fmt and avoid this memmove. Also note that
-> printk_get_level() is safe even for empty string. The following
-> should work:
-> 
-> 		if (printk_get_level(fmt) == 'c')
-> 			fmt += 2;
-> 
-
-Don't we need to care about vprintk(fmt, args) fallback path? That is,
-
-   const int fmt_offset = (printk_get_level(fmt) == 'c') ? 2 : 0;
-   r = vsnprintf(text, sizeof(ptr->buf) - pos, fmt + fmt_offset, tmp_args);
-
-for now?
-
-But hmm, unconditionally triminng KERN_CONT is OK as long as ptr != NULL because
-"we have to use vprintk(fmt, args) fallback path when ptr != NULL" implies that
-"the output is too long to store into global buffer (if not in safe/nmi context)
-or per-CPU buffers (if in safe/nmi context) from vprintk(), and thus KERN_CONT
-won't work as expected after all" ?
-
-> > +			} else {
-> > +				ptr->used += r;
-> > +			}
-> > +			/* Flush already completed lines if any. */
-> > +			while (1) {
-> > +				char *cp = memchr(ptr->buf, '\n', ptr->used);
-> > +
-> > +				if (!cp)
-> > +					break;
-> > +				*cp = '\0';
-> > +				printk("%s\n", ptr->buf);
-> > +				i = cp - ptr->buf + 1;
-> > +				ptr->used -= i;
-> > +				memmove(ptr->buf, ptr->buf + i, ptr->used);
-> > +			}
-> > +			return r;
-> > +		}
-> > +		if (i)
-> > +			break;
-> > +		flush_printk_buffer(ptr);
-> 
-> It makes sense to repeat the cycle only when something was flushed.
-> I would would modify flush_printk_buffer() to return the number of
-> flushed characters.
-
-OK.
-
-		if (i || flush_printk_buffer(ptr) == 0)
-			break;
-
-will work.
-
-> 
-> Also it might be easier to read with goto, I mean to use:
-> 
-> try_again:   instead of for (i = 0; i < 2; i++) {
-> 
-> and then
-> 
-> 	if (flush_printk_buffer(ptr))
-> 		goto try_again;
-
-Doesn't it disable possible optimization by the compiler (e.g. unroll
-the for() loop if the compiler thinks it worth doing)? Since this "ptr"
-is dedicated to the caller, there is no possibility of executing
-"goto try_again" twice in one buffered_vprintk() call.
-
-
-
-> > +	}
-> > + unbuffered:
-> > +	return vprintk(fmt, args);
-> > +}
-> > +
-> > +
-> > +/**
-> > + * put_printk_buffer - Release printk_buffer.
-> > + *
-> > + * @ptr: Pointer to "struct printk_buffer". It can be NULL.
-> > + *
-> > + * Returns nothing.
-> > + *
-> > + * Flush and release @ptr.
-> > + */
-> > +void put_printk_buffer(struct printk_buffer *ptr)
-> > +{
-> > +	long i = ptr - printk_buffers;
-> > +
-> > +	if (!ptr || i < 0 || i >= CONFIG_PRINTK_NUM_LINE_BUFFERS)
-> > +		return;
-> 
-> It would deserve a warning when i is out of bounds.
-
-The reason I changed to split printk_buffers_in_use out of printk_buffer
-is that some architectures do not support cmpxchg() on "bool", and thus
-we need to assign "int" for in_use flag. If that is not a problem (even
-if we allow use of dynamically allocated or on-stack buffers in future),
-I can bring in_use flag back to printk_buffer. Which choice do you prefer?
-
+  Dave
