@@ -2,253 +2,144 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1347FECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F385ECDE37
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD55421529
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:18:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UmiHZNqd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mw6UX4UV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD55421529
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 30D9B21523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:18:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30D9B21523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeJQVOW (ORCPT
+        id S1727430AbeJQVOX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 17 Oct 2018 17:14:23 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52871 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727255AbeJQVOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 17 Oct 2018 17:14:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37276 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbeJQVOV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:14:21 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8866D601B4; Wed, 17 Oct 2018 13:18:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539782321;
-        bh=Rzg9h6ME6gSn75fmacRY+9pij5l6oJvVYYKkBO3wOHU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UmiHZNqd/FKY7swgoCDGwiwWe6u30UwoiZiilW7TKIVYwCYwSaGvjX4LP89e22ddE
-         qr/yhsJ0RDerHxYYl5LPEXT0Dg1Q4qsWmJ2d2Aw+4QBLERREAG0hTrV5PYMoRwv96b
-         un3UX+aruWFSB+++wDfIhHxJvaGUEFmSUjz0y5oc=
-Received: from vgarodia-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vgarodia@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E32CF6130B;
-        Wed, 17 Oct 2018 13:18:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539782320;
-        bh=Rzg9h6ME6gSn75fmacRY+9pij5l6oJvVYYKkBO3wOHU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mw6UX4UVL3QVEjnDTXS0+XjG9QL+kXQ70wJQgWwHeZKpvORhW5Lq8Su9YLITivfTr
-         EQ6bYMb3IMcg2A8bGKIQ45So8+skpNRnyE/Rp+N89zVEz00yMFU4S4bHSA1wuPM8dn
-         GB5AoclioTxNpI8VQRnaXI8G8gy8qU5tuC3VKseo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E32CF6130B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
-From:   Vikash Garodia <vgarodia@codeaurora.org>
-To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
-        mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
-        vgarodia@codeaurora.org
-Subject: [PATCH v12 1/5] venus: firmware: add routine to reset ARM9
-Date:   Wed, 17 Oct 2018 18:48:19 +0530
-Message-Id: <1539782303-4091-2-git-send-email-vgarodia@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1539782303-4091-1-git-send-email-vgarodia@codeaurora.org>
-References: <1539782303-4091-1-git-send-email-vgarodia@codeaurora.org>
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id AD9A4207C4; Wed, 17 Oct 2018 15:18:39 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-7-245.w90-88.abo.wanadoo.fr [90.88.129.245])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E3D9520712;
+        Wed, 17 Oct 2018 15:18:28 +0200 (CEST)
+Date:   Wed, 17 Oct 2018 15:18:29 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     gregkh <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Peter Rosin <peda@axentia.se>, mshettel@codeaurora.org,
+        swboyd@chromium.org
+Subject: Re: [PATCH v8 00/10] Add the I3C subsystem
+Message-ID: <20181017151829.470930a7@bbrezillon>
+In-Reply-To: <CAK8P3a2C+FHiPnHKEAanhD=RpqDG1VywTEGhpdBvvKQ8zmwdUA@mail.gmail.com>
+References: <20181003132212.12619-1-boris.brezillon@bootlin.com>
+        <CAK8P3a2C+FHiPnHKEAanhD=RpqDG1VywTEGhpdBvvKQ8zmwdUA@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add routine to reset the ARM9 and brings it out of reset. Also
-abstract the Venus CPU state handling with a new function. This
-is in preparation to add PIL functionality in venus driver.
+Hi Greg,
 
-Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
----
- drivers/media/platform/qcom/venus/core.h         |  2 ++
- drivers/media/platform/qcom/venus/firmware.c     | 33 ++++++++++++++++++++++++
- drivers/media/platform/qcom/venus/firmware.h     | 11 ++++++++
- drivers/media/platform/qcom/venus/hfi_venus.c    | 13 +++-------
- drivers/media/platform/qcom/venus/hfi_venus_io.h |  7 +++++
- 5 files changed, 57 insertions(+), 9 deletions(-)
+On Mon, 8 Oct 2018 12:47:21 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-index 2f02365..8b85dc8 100644
---- a/drivers/media/platform/qcom/venus/core.h
-+++ b/drivers/media/platform/qcom/venus/core.h
-@@ -98,6 +98,7 @@ struct venus_caps {
-  * @dev:		convenience struct device pointer
-  * @dev_dec:	convenience struct device pointer for decoder device
-  * @dev_enc:	convenience struct device pointer for encoder device
-+ * @use_tz:	a flag that suggests presence of trustzone
-  * @lock:	a lock for this strucure
-  * @instances:	a list_head of all instances
-  * @insts_count:	num of instances
-@@ -129,6 +130,7 @@ struct venus_core {
- 	struct device *dev;
- 	struct device *dev_dec;
- 	struct device *dev_enc;
-+	unsigned int use_tz;
- 	struct mutex lock;
- 	struct list_head instances;
- 	atomic_t insts_count;
-diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-index c4a5778..0e21a90 100644
---- a/drivers/media/platform/qcom/venus/firmware.c
-+++ b/drivers/media/platform/qcom/venus/firmware.c
-@@ -22,10 +22,43 @@
- #include <linux/sizes.h>
- #include <linux/soc/qcom/mdt_loader.h>
- 
-+#include "core.h"
- #include "firmware.h"
-+#include "hfi_venus_io.h"
- 
- #define VENUS_PAS_ID			9
- #define VENUS_FW_MEM_SIZE		(6 * SZ_1M)
-+#define VENUS_FW_START_ADDR		0x0
-+
-+static void venus_reset_cpu(struct venus_core *core)
-+{
-+	void __iomem *base = core->base;
-+
-+	writel(0, base + WRAPPER_FW_START_ADDR);
-+	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_FW_END_ADDR);
-+	writel(0, base + WRAPPER_CPA_START_ADDR);
-+	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_CPA_END_ADDR);
-+	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_START_ADDR);
-+	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_END_ADDR);
-+	writel(0x0, base + WRAPPER_CPU_CGC_DIS);
-+	writel(0x0, base + WRAPPER_CPU_CLOCK_CONFIG);
-+
-+	/* Bring ARM9 out of reset */
-+	writel(0, base + WRAPPER_A9SS_SW_RESET);
-+}
-+
-+int venus_set_hw_state(struct venus_core *core, bool resume)
-+{
-+	if (core->use_tz)
-+		return qcom_scm_set_remote_state(resume, 0);
-+
-+	if (resume)
-+		venus_reset_cpu(core);
-+	else
-+		writel(1, core->base + WRAPPER_A9SS_SW_RESET);
-+
-+	return 0;
-+}
- 
- int venus_boot(struct device *dev, const char *fwname)
- {
-diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
-index 428efb5..397570c 100644
---- a/drivers/media/platform/qcom/venus/firmware.h
-+++ b/drivers/media/platform/qcom/venus/firmware.h
-@@ -18,5 +18,16 @@
- 
- int venus_boot(struct device *dev, const char *fwname);
- int venus_shutdown(struct device *dev);
-+int venus_set_hw_state(struct venus_core *core, bool suspend);
-+
-+static inline int venus_set_hw_state_suspend(struct venus_core *core)
-+{
-+	return venus_set_hw_state(core, false);
-+}
-+
-+static inline int venus_set_hw_state_resume(struct venus_core *core)
-+{
-+	return venus_set_hw_state(core, true);
-+}
- 
- #endif
-diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
-index 1240855..074837e 100644
---- a/drivers/media/platform/qcom/venus/hfi_venus.c
-+++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-@@ -19,7 +19,6 @@
- #include <linux/interrupt.h>
- #include <linux/iopoll.h>
- #include <linux/kernel.h>
--#include <linux/qcom_scm.h>
- #include <linux/slab.h>
- 
- #include "core.h"
-@@ -27,6 +26,7 @@
- #include "hfi_msgs.h"
- #include "hfi_venus.h"
- #include "hfi_venus_io.h"
-+#include "firmware.h"
- 
- #define HFI_MASK_QHDR_TX_TYPE		0xff000000
- #define HFI_MASK_QHDR_RX_TYPE		0x00ff0000
-@@ -55,11 +55,6 @@
- #define IFACEQ_VAR_LARGE_PKT_SIZE	512
- #define IFACEQ_VAR_HUGE_PKT_SIZE	(1024 * 12)
- 
--enum tzbsp_video_state {
--	TZBSP_VIDEO_STATE_SUSPEND = 0,
--	TZBSP_VIDEO_STATE_RESUME
--};
--
- struct hfi_queue_table_header {
- 	u32 version;
- 	u32 size;
-@@ -575,7 +570,7 @@ static int venus_power_off(struct venus_hfi_device *hdev)
- 	if (!hdev->power_enabled)
- 		return 0;
- 
--	ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
-+	ret = venus_set_hw_state_suspend(hdev->core);
- 	if (ret)
- 		return ret;
- 
-@@ -595,7 +590,7 @@ static int venus_power_on(struct venus_hfi_device *hdev)
- 	if (hdev->power_enabled)
- 		return 0;
- 
--	ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_RESUME, 0);
-+	ret = venus_set_hw_state_resume(hdev->core);
- 	if (ret)
- 		goto err;
- 
-@@ -608,7 +603,7 @@ static int venus_power_on(struct venus_hfi_device *hdev)
- 	return 0;
- 
- err_suspend:
--	qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
-+	venus_set_hw_state_suspend(hdev->core);
- err:
- 	hdev->power_enabled = false;
- 	return ret;
-diff --git a/drivers/media/platform/qcom/venus/hfi_venus_io.h b/drivers/media/platform/qcom/venus/hfi_venus_io.h
-index def0926..d69f51b 100644
---- a/drivers/media/platform/qcom/venus/hfi_venus_io.h
-+++ b/drivers/media/platform/qcom/venus/hfi_venus_io.h
-@@ -112,6 +112,13 @@
- #define WRAPPER_CPU_STATUS			(WRAPPER_BASE + 0x2014)
- #define WRAPPER_CPU_STATUS_WFI			BIT(0)
- #define WRAPPER_SW_RESET			(WRAPPER_BASE + 0x3000)
-+#define WRAPPER_CPA_START_ADDR			(WRAPPER_BASE + 0x1020)
-+#define WRAPPER_CPA_END_ADDR			(WRAPPER_BASE + 0x1024)
-+#define WRAPPER_FW_START_ADDR			(WRAPPER_BASE + 0x1028)
-+#define WRAPPER_FW_END_ADDR			(WRAPPER_BASE + 0x102C)
-+#define WRAPPER_NONPIX_START_ADDR		(WRAPPER_BASE + 0x1030)
-+#define WRAPPER_NONPIX_END_ADDR			(WRAPPER_BASE + 0x1034)
-+#define WRAPPER_A9SS_SW_RESET			(WRAPPER_BASE + 0x3000)
- 
- /* Venus 4xx */
- #define WRAPPER_VCODEC0_MMCC_POWER_STATUS	(WRAPPER_BASE + 0x90)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> On Wed, Oct 3, 2018 at 3:22 PM Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> >
+> > Sorry for the huge delay between v7 and v8 despite the small amount of
+> > things I was asked to fix/rework.
+> >
+> > This patch series is adding a new subsystem to support I3C devices.
+> >
+> > This is just adding support for basic features. Extra features will
+> > be added afterwards.
+> >
+> > There are a few design choices that are worth mentioning because they
+> > impact the way I3C device drivers can interact with their devices:
+> >
+> > - all functions used to send I3C/I2C frames must be called in
+> >   non-atomic context. Mainly done this way to ease implementation, but
+> >   this is still open to discussion. Please let me know if you think it's
+> >   worth considering an asynchronous model here
+> > - the I3C bus and I3C master controller are now tightly coupled even
+> >   though they're still allocated separately. There's now a 1:1
+> >   relationship between these objects, and the I3C master is no longer
+> >   represented under the I3C bus object.
+> >   Arnd, let me know if you had something different in mind, and I'll
+> >   rework the implementation accordingly.  
+> 
+> I looked at the entire series again and I'm rather happy with how
+> it turned out. I've commented on a tiny issue about the readsl()
+> that should be easy to resolve one way or another, with that
+> you can add my
+> 
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> There is one additional issue that we've talked about previously
+> and that I'd like to hear about from GregKH or maybe other
+> subsystem maintainers: In the current version, you have a single
+> 'bus_type' object, and this is used to represent both a 'host' and
+> a 'device'. I think we concluded that this is done in other
+> subsystems as well, and that this is fitting here because a
+> host (master device) can hand over being a master to another
+> device (slave), which then becomes the host and sees this
+> one as a slave. Also a lot of the sysfs attributes are the same
+> because of this relationship.
+> 
+> It also means that you get a mix of things in sysfs:
+> 
+> /sys/devices/i3c/<bus>
+> /sys/devices/i3c/<device>
+> /sys/devices/i3c/<bus>/<device>
+> 
+> which is a bit like what we have on USB where we can have hub
+> devices that are again parents of other USB devices, but I don't
+> think we can have i3c hubs or multiplexers in the same way, so
+> it's only a single level.
+> 
+> I'm ok with this model after our previous discussion and couldn't
+> come up with a better one. If anyone else still sees it as
+> problematic and has a better idea, please let us know now.
 
+I know you're quite busy with the 4.19 release, but if you find a bit
+of time, that'd be great to have your feedback on this.
+
+Thanks,
+
+Boris
