@@ -2,119 +2,152 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328F1ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3223ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9860214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53216214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:03:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OjT5spgC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9860214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="L9WQiaLU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53216214C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbeJQP5R (ORCPT
+        id S1727290AbeJQP6A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:57:17 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54158 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbeJQP5C (ORCPT
+        Wed, 17 Oct 2018 11:58:00 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:14465 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbeJQP6A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:57:02 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5013B1277;
-        Wed, 17 Oct 2018 10:02:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1539763351;
-        bh=i8tQelRIexuQA8qiqi7BaH93AXnrPtlzelfeQfbOi/o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OjT5spgC5+uo8Krs/CjO1PErFDFvNgeDileHmOmr9biC4EFfGsQttBWaEzTZ+Ubfq
-         CQmUlwqxYBZbV/+5ktbO02wMqGa0QWj+w3CGyKH0VTElRvWtZNOeofOMBrKIQw8P13
-         4Z8Zv7b2cX76PllUl12AAs2zRmQ/mxIwcN4ED2xA=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Heng-Ruey Hsu <henryhsu@chromium.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jcliang@chromium.org, tfiga@chromium.org
-Subject: Re: [PATCH] media: uvcvideo: Add boottime clock support
-Date:   Wed, 17 Oct 2018 11:02:40 +0300
-Message-ID: <13883852.6N9L7C0n48@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20181017075242.21790-1-henryhsu@chromium.org>
-References: <20181017075242.21790-1-henryhsu@chromium.org>
+        Wed, 17 Oct 2018 11:58:00 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bc6ecd70000>; Wed, 17 Oct 2018 01:03:35 -0700
+Received: from HQMAIL103.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 17 Oct 2018 01:03:31 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 17 Oct 2018 01:03:31 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 17 Oct
+ 2018 08:03:31 +0000
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 17 Oct
+ 2018 08:03:30 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Wed, 17 Oct 2018 08:03:30 +0000
+Received: from prpatel-System-Product-Name.nvidia.com (Not Verified[10.24.229.63]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5bc6ecd00000>; Wed, 17 Oct 2018 01:03:30 -0700
+From:   Prateek Patel <prpatel@nvidia.com>
+To:     <catalin.marinas@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-tegra@vger.kernel.org>, <snikam@nvidia.com>,
+        <vdumpa@nvidia.com>, <talho@nvidia.com>, <swarren@nvidia.com>,
+        <prpatel@nvidia.com>, "Sri Krishna chowdary" <schowdary@nvidia.com>
+Subject: [PATCH] kmemleak: Add config to select auto scan
+Date:   Wed, 17 Oct 2018 13:33:28 +0530
+Message-ID: <1539763408-22085-1-git-send-email-prpatel@nvidia.com>
+X-Mailer: git-send-email 2.1.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1539763415; bh=ynQt3JpL6UcVlULe3g/L1fR5EB/M0ItkbnrVl7SdaTE=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:Content-Type;
+        b=L9WQiaLUwkcN3ygi9lz46ZPqxDRyCpHOf1S86zkM3WTGTroWvKY2jvd6v1/xvD+ut
+         kig6l+NOaP0dUyotTKAEZiBvQYMN5a6BBISq5mkGXbGfdiT8oX9Ygik7q94vG6MVJD
+         gdl0hGcSosVcVDjPMnwbJqVkmcKABziHZO+SH7oa9AXQfJJdTpU95kfGkxp+Yn2hEz
+         jJWAYPoWIKLxaGf2dHPD9ZBDciWFyXvOGYkgD8Oe1b6EG3Wce24/Y2OFC72PuHxQRf
+         sFRa1C2geT8DnEuh1tL/FSE3OyxDvgfYNX/6ikXSIJlPWxUeMlpAD1G9jvplvLKJKQ
+         WKGtxyzDX8L6A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heng-Ruey,
+From: Sri Krishna chowdary <schowdary@nvidia.com>
 
-Thank you for the patch.
+Kmemleak scan is cpu intensive and can stall user tasks at times.
+To prevent this, add config DEBUG_KMEMLEAK_SCAN_ON to enable/disable
+auto scan on boot up.
+Also protect first_run with CONFIG_DEBUG_KMEMLEAK_SCAN_ON as this is
+meant for only first automatic scan.
 
-On Wednesday, 17 October 2018 10:52:42 EEST Heng-Ruey Hsu wrote:
-> Android requires camera timestamps to be reported with
-> CLOCK_BOOTTIME to sync timestamp with other sensor sources.
+Signed-off-by: Sri Krishna chowdary <schowdary@nvidia.com>
+Signed-off-by: Sachin Nikam <snikam@nvidia.com>
+Signed-off-by: Prateek <prpatel@nvidia.com>
+---
+ lib/Kconfig.debug | 11 +++++++++++
+ mm/kmemleak.c     |  6 ++++++
+ 2 files changed, 17 insertions(+)
 
-What's the rationale behind this, why can't CLOCK_MONOTONIC work ? If the 
-monotonic clock has shortcomings that make its use impossible for proper 
-synchronization, then we should consider switching to CLOCK_BOOTTIME globally 
-in V4L2, not in selected drivers only.
-
-> Signed-off-by: Heng-Ruey Hsu <henryhsu@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_driver.c | 4 ++++
->  drivers/media/usb/uvc/uvc_video.c  | 2 ++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c
-> b/drivers/media/usb/uvc/uvc_driver.c index d46dc432456c..a9658f38c586
-> 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -2287,6 +2287,8 @@ static int uvc_clock_param_get(char *buffer, const
-> struct kernel_param *kp) {
->  	if (uvc_clock_param == CLOCK_MONOTONIC)
->  		return sprintf(buffer, "CLOCK_MONOTONIC");
-> +	else if (uvc_clock_param == CLOCK_BOOTTIME)
-> +		return sprintf(buffer, "CLOCK_BOOTTIME");
->  	else
->  		return sprintf(buffer, "CLOCK_REALTIME");
->  }
-> @@ -2298,6 +2300,8 @@ static int uvc_clock_param_set(const char *val, const
-> struct kernel_param *kp)
-> 
->  	if (strcasecmp(val, "monotonic") == 0)
->  		uvc_clock_param = CLOCK_MONOTONIC;
-> +	else if (strcasecmp(val, "boottime") == 0)
-> +		uvc_clock_param = CLOCK_BOOTTIME;
->  	else if (strcasecmp(val, "realtime") == 0)
->  		uvc_clock_param = CLOCK_REALTIME;
->  	else
-> diff --git a/drivers/media/usb/uvc/uvc_video.c
-> b/drivers/media/usb/uvc/uvc_video.c index 86a99f461fd8..d4248d5cd9cd 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -425,6 +425,8 @@ static inline ktime_t uvc_video_get_time(void)
->  {
->  	if (uvc_clock_param == CLOCK_MONOTONIC)
->  		return ktime_get();
-> +	else if (uvc_clock_param == CLOCK_BOOTTIME)
-> +		return ktime_get_boottime();
->  	else
->  		return ktime_get_real();
->  }
-
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index e5e7c03..9542852 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -593,6 +593,17 @@ config DEBUG_KMEMLEAK_DEFAULT_OFF
+ 	  Say Y here to disable kmemleak by default. It can then be enabled
+ 	  on the command line via kmemleak=on.
+ 
++config DEBUG_KMEMLEAK_SCAN_ON
++	bool "Enable kmemleak auto scan thread on boot up"
++	default y
++	depends on DEBUG_KMEMLEAK
++	help
++	  Kmemleak scan is cpu intensive and can stall user tasks at times.
++	  This option enables/disables automatic kmemleak scan at boot up.
++
++	  Say N here to disable kmemleak auto scan thread to stop automatic
++	  scanning.
++
+ config DEBUG_STACK_USAGE
+ 	bool "Stack utilization instrumentation"
+ 	depends on DEBUG_KERNEL && !IA64
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 877de4f..ac53678 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1647,11 +1647,14 @@ static void kmemleak_scan(void)
+  */
+ static int kmemleak_scan_thread(void *arg)
+ {
++#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
+ 	static int first_run = 1;
++#endif
+ 
+ 	pr_info("Automatic memory scanning thread started\n");
+ 	set_user_nice(current, 10);
+ 
++#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
+ 	/*
+ 	 * Wait before the first scan to allow the system to fully initialize.
+ 	 */
+@@ -1661,6 +1664,7 @@ static int kmemleak_scan_thread(void *arg)
+ 		while (timeout && !kthread_should_stop())
+ 			timeout = schedule_timeout_interruptible(timeout);
+ 	}
++#endif
+ 
+ 	while (!kthread_should_stop()) {
+ 		signed long timeout = jiffies_scan_wait;
+@@ -2141,9 +2145,11 @@ static int __init kmemleak_late_init(void)
+ 		return -ENOMEM;
+ 	}
+ 
++#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
+ 	mutex_lock(&scan_mutex);
+ 	start_scan_thread();
+ 	mutex_unlock(&scan_mutex);
++#endif
+ 
+ 	pr_info("Kernel memory leak detector initialized\n");
+ 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
+2.1.4
 
