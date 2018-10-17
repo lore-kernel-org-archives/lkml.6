@@ -2,450 +2,390 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F587ECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DA3ECDE39
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD8D221476
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:27:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4218A214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:28:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFUNhOKd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD8D221476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="md85NIFP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4218A214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbeJRCYc (ORCPT
+        id S1728211AbeJRCZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 22:24:32 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35887 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJRCYc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 22:24:32 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f18-v6so12941505pgv.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 11:27:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2nTQRd5ucsrdGmOHMMgLwwde7mUOK7l8LFNWnracXA0=;
-        b=mFUNhOKdKh6nX92un91/h56/D8m4gYXpdT9pWNINUxK0P8A4TQVRAy1KGRuHCwgFRQ
-         x2sQ26xm29oZgLNY4DVuEjyTdk7ZRJyVh5Q98G5I3k2cymedWKiTDokd3ymffcNGwF8T
-         1FJuck3ue45Yz75d1NCjyZZCk2U7Xwq3e1n1xI6AWl/VQOvUf6lwi1ZZQ0C3UaskZF5k
-         oqyExsC311m4XaaDIdgt+x0Pp5nWJ7u2eKMtF2EvYJ7MBP0W5EVZqeu3duB0L8DWl076
-         aIs4pVc93YR/qDPzo7cT19Oz0oMgmBTwSzYm7ll605o2yX2d2xfuenBmmec1LD/lJnQi
-         9d8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2nTQRd5ucsrdGmOHMMgLwwde7mUOK7l8LFNWnracXA0=;
-        b=AQu2qjh2fE1XNHIZ4Crg4orC1cDqtGxUm+uD/Bad0faYiCy4tzKTo3WPrHkcYEGzOk
-         VMpTuK6hc2nvn1haarcvdvMNzGJr0ojra3ZnHTaGOGdCdmFC8CJ92udp1cPA+q0jkQwH
-         QiXb1zGGRZ4a7zv5AcHAVBVTCrcYgY71cqNtXJr0Aoq88fCdO5yH0XNh6ke/yxcHywpe
-         h4Qh6c0zXfC043cDHZDjqIKiMtLD4S/nz5Qz91Yz9MuSSkWII3oe9hSqW5YA8ffCS7bb
-         4Xhwgqc/9P2+/uIwq33hHyJZt3/Svtg1aKnUL6PxCEW6N5reaFrYY727zOzIfHZZRG2p
-         Qi9g==
-X-Gm-Message-State: ABuFfogU+EbAJpB42pmJE4X6Wax2W73PFIfQnh2pqfPLDFmsn5tCR2zL
-        po2ND0hz7Ne54jRmiantFApG9AkdeiU=
-X-Google-Smtp-Source: ACcGV61ZKdJnRGgZP5pOgU4AJOr9QZextC25ODLKGQmifal2ChCHxF1q08M7OGwdzDsdBVx4cjXuwg==
-X-Received: by 2002:a63:2f42:: with SMTP id v63-v6mr11281949pgv.202.1539800855652;
-        Wed, 17 Oct 2018 11:27:35 -0700 (PDT)
-Received: from localhost.localdomain (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id i188-v6sm19302024pfc.127.2018.10.17.11.27.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 11:27:34 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Kyle McMartin <kyle@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] tools: Add 'firmware' category and add ihex2fw tool
-Date:   Wed, 17 Oct 2018 11:27:18 -0700
-Message-Id: <20181017182718.32740-1-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 17 Oct 2018 22:25:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46804 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727014AbeJRCZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 22:25:09 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C5A621476;
+        Wed, 17 Oct 2018 18:28:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539800893;
+        bh=K2pOno0f/K+kPLJA+5kirAewh2HGPggHCqA2pElvfrk=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=md85NIFPAAg35ogFBQZ1SolZ1/4y5a2BjRcpz9naMqkf4KV5utSu/ZMpH4cZ0fez2
+         zGFFR/Zrq2XmT3pchbWR+LlBt9ogWzXbJzSasa/HYT6+iqsUG7oYC4Bu1ak/8xAxtA
+         R9HVEfC5h4BLmvaAXzk7cOW9kWkpOPgdBWAIC+Rg=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180922181709.13007-4-gregory.clement@bootlin.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+References: <20180922181709.13007-1-gregory.clement@bootlin.com>
+ <20180922181709.13007-4-gregory.clement@bootlin.com>
+Message-ID: <153980089252.5275.819540708953283855@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 3/6] clk: mvebu: add CPU clock driver for Armada 7K/8K
+Date:   Wed, 17 Oct 2018 11:28:12 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 5620a0d1aacd ("firmware: delete in-kernel firmware") removed
-ihex2fw tool together with the rest of the contents of firmware/
-folder. Since that tool is quite useful for doing .ihex -> .fw
-converstion, restore its original source code to tools/firmware
+Quoting Gregory CLEMENT (2018-09-22 11:17:06)
+> diff --git a/drivers/clk/mvebu/ap-cpu-clk.c b/drivers/clk/mvebu/ap-cpu-cl=
+k.c
+> new file mode 100644
+> index 000000000000..1b498cfe9191
+> --- /dev/null
+> +++ b/drivers/clk/mvebu/ap-cpu-clk.c
+> @@ -0,0 +1,265 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Marvell Armada AP CPU Clock Controller
+> + *
+> + * Copyright (C) 2018 Marvell
+> + *
+> + * Omri Itach <omrii@marvell.com>
+> + * Gregory Clement <gregory.clement@bootlin.com>
+> + */
+> +
+> +#define pr_fmt(fmt) "ap-cpu-clk: " fmt
+> +
+> +#include "armada_ap_cp_helper.h"
 
-Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kyle McMartin <kyle@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- tools/Makefile           |   7 +-
- tools/firmware/Makefile  |  13 ++
- tools/firmware/ihex2fw.c | 281 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 298 insertions(+), 3 deletions(-)
- create mode 100644 tools/firmware/Makefile
- create mode 100644 tools/firmware/ihex2fw.c
+Does this include need to come first? Preferably local includes come
+after any <linux> ones.
 
-diff --git a/tools/Makefile b/tools/Makefile
-index be02c8b904db..4a2d31c48e03 100644
---- a/tools/Makefile
-+++ b/tools/Makefile
-@@ -13,6 +13,7 @@ help:
- 	@echo '  cgroup                 - cgroup tools'
- 	@echo '  cpupower               - a tool for all things x86 CPU power'
- 	@echo '  firewire               - the userspace part of nosy, an IEEE-1394 traffic sniffer'
-+	@echo '  firmware               - Firmware tools'
- 	@echo '  freefall               - laptop accelerometer program for disk protection'
- 	@echo '  gpio                   - GPIO tools'
- 	@echo '  hv                     - tools used when in Hyper-V clients'
-@@ -59,7 +60,7 @@ acpi: FORCE
- cpupower: FORCE
- 	$(call descend,power/$@)
- 
--cgroup firewire hv guest spi usb virtio vm bpf iio gpio objtool leds wmi: FORCE
-+cgroup firewire hv guest spi usb virtio vm bpf iio gpio objtool leds wmi firmware: FORCE
- 	$(call descend,$@)
- 
- liblockdep: FORCE
-@@ -136,7 +137,7 @@ acpi_clean:
- cpupower_clean:
- 	$(call descend,power/cpupower,clean)
- 
--cgroup_clean hv_clean firewire_clean spi_clean usb_clean virtio_clean vm_clean wmi_clean bpf_clean iio_clean gpio_clean objtool_clean leds_clean:
-+cgroup_clean hv_clean firewire_clean spi_clean usb_clean virtio_clean vm_clean wmi_clean bpf_clean iio_clean gpio_clean objtool_clean leds_clean firmware_clean:
- 	$(call descend,$(@:_clean=),clean)
- 
- liblockdep_clean:
-@@ -174,6 +175,6 @@ clean: acpi_clean cgroup_clean cpupower_clean hv_clean firewire_clean \
- 		perf_clean selftests_clean turbostat_clean spi_clean usb_clean virtio_clean \
- 		vm_clean bpf_clean iio_clean x86_energy_perf_policy_clean tmon_clean \
- 		freefall_clean build_clean libbpf_clean libsubcmd_clean liblockdep_clean \
--		gpio_clean objtool_clean leds_clean wmi_clean
-+		gpio_clean objtool_clean leds_clean wmi_clean firmware_clean
- 
- .PHONY: FORCE
-diff --git a/tools/firmware/Makefile b/tools/firmware/Makefile
-new file mode 100644
-index 000000000000..d329825aa31b
---- /dev/null
-+++ b/tools/firmware/Makefile
-@@ -0,0 +1,13 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# Makefile for firmware tools
-+
-+CFLAGS = -Wall -Wextra -g
-+
-+all: ihex2fw
-+%: %.c
-+	$(CC) $(CFLAGS) -o $@ $^
-+
-+clean:
-+	$(RM) ihex2fw
-+
-+.PHONY: all clean
-\ No newline at end of file
-diff --git a/tools/firmware/ihex2fw.c b/tools/firmware/ihex2fw.c
-new file mode 100644
-index 000000000000..b58dd061e978
---- /dev/null
-+++ b/tools/firmware/ihex2fw.c
-@@ -0,0 +1,281 @@
-+/*
-+ * Parser/loader for IHEX formatted data.
-+ *
-+ * Copyright © 2008 David Woodhouse <dwmw2@infradead.org>
-+ * Copyright © 2005 Jan Harkes <jaharkes@cs.cmu.edu>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <stdint.h>
-+#include <arpa/inet.h>
-+#include <stdio.h>
-+#include <errno.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <sys/mman.h>
-+#include <fcntl.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#define _GNU_SOURCE
-+#include <getopt.h>
-+
-+
-+struct ihex_binrec {
-+	struct ihex_binrec *next; /* not part of the real data structure */
-+        uint32_t addr;
-+        uint16_t len;
-+        uint8_t data[];
-+};
-+
-+/**
-+ * nybble/hex are little helpers to parse hexadecimal numbers to a byte value
-+ **/
-+static uint8_t nybble(const uint8_t n)
-+{
-+	if      (n >= '0' && n <= '9') return n - '0';
-+	else if (n >= 'A' && n <= 'F') return n - ('A' - 10);
-+	else if (n >= 'a' && n <= 'f') return n - ('a' - 10);
-+	return 0;
-+}
-+
-+static uint8_t hex(const uint8_t *data, uint8_t *crc)
-+{
-+	uint8_t val = (nybble(data[0]) << 4) | nybble(data[1]);
-+	*crc += val;
-+	return val;
-+}
-+
-+static int process_ihex(uint8_t *data, ssize_t size);
-+static void file_record(struct ihex_binrec *record);
-+static int output_records(int outfd);
-+
-+static int sort_records = 0;
-+static int wide_records = 0;
-+static int include_jump = 0;
-+
-+static int usage(void)
-+{
-+	fprintf(stderr, "ihex2fw: Convert ihex files into binary "
-+		"representation for use by Linux kernel\n");
-+	fprintf(stderr, "usage: ihex2fw [<options>] <src.HEX> <dst.fw>\n");
-+	fprintf(stderr, "       -w: wide records (16-bit length)\n");
-+	fprintf(stderr, "       -s: sort records by address\n");
-+	fprintf(stderr, "       -j: include records for CS:IP/EIP address\n");
-+	return 1;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	int infd, outfd;
-+	struct stat st;
-+	uint8_t *data;
-+	int opt;
-+
-+	while ((opt = getopt(argc, argv, "wsj")) != -1) {
-+		switch (opt) {
-+		case 'w':
-+			wide_records = 1;
-+			break;
-+		case 's':
-+			sort_records = 1;
-+			break;
-+		case 'j':
-+			include_jump = 1;
-+			break;
-+		default:
-+			return usage();
-+		}
-+	}
-+
-+	if (optind + 2 != argc)
-+		return usage();
-+
-+	if (!strcmp(argv[optind], "-"))
-+		infd = 0;
-+	else
-+		infd = open(argv[optind], O_RDONLY);
-+	if (infd == -1) {
-+		fprintf(stderr, "Failed to open source file: %s",
-+			strerror(errno));
-+		return usage();
-+	}
-+	if (fstat(infd, &st)) {
-+		perror("stat");
-+		return 1;
-+	}
-+	data = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, infd, 0);
-+	if (data == MAP_FAILED) {
-+		perror("mmap");
-+		return 1;
-+	}
-+
-+	if (!strcmp(argv[optind+1], "-"))
-+		outfd = 1;
-+	else
-+		outfd = open(argv[optind+1], O_TRUNC|O_CREAT|O_WRONLY, 0644);
-+	if (outfd == -1) {
-+		fprintf(stderr, "Failed to open destination file: %s",
-+			strerror(errno));
-+		return usage();
-+	}
-+	if (process_ihex(data, st.st_size))
-+		return 1;
-+
-+	return output_records(outfd);
-+}
-+
-+static int process_ihex(uint8_t *data, ssize_t size)
-+{
-+	struct ihex_binrec *record;
-+	uint32_t offset = 0;
-+	uint32_t data32;
-+	uint8_t type, crc = 0, crcbyte = 0;
-+	int i, j;
-+	int line = 1;
-+	int len;
-+
-+	i = 0;
-+next_record:
-+	/* search for the start of record character */
-+	while (i < size) {
-+		if (data[i] == '\n') line++;
-+		if (data[i++] == ':') break;
-+	}
-+
-+	/* Minimum record length would be about 10 characters */
-+	if (i + 10 > size) {
-+		fprintf(stderr, "Can't find valid record at line %d\n", line);
-+		return -EINVAL;
-+	}
-+
-+	len = hex(data + i, &crc); i += 2;
-+	if (wide_records) {
-+		len <<= 8;
-+		len += hex(data + i, &crc); i += 2;
-+	}
-+	record = malloc((sizeof (*record) + len + 3) & ~3);
-+	if (!record) {
-+		fprintf(stderr, "out of memory for records\n");
-+		return -ENOMEM;
-+	}
-+	memset(record, 0, (sizeof(*record) + len + 3) & ~3);
-+	record->len = len;
-+
-+	/* now check if we have enough data to read everything */
-+	if (i + 8 + (record->len * 2) > size) {
-+		fprintf(stderr, "Not enough data to read complete record at line %d\n",
-+			line);
-+		return -EINVAL;
-+	}
-+
-+	record->addr  = hex(data + i, &crc) << 8; i += 2;
-+	record->addr |= hex(data + i, &crc); i += 2;
-+	type = hex(data + i, &crc); i += 2;
-+
-+	for (j = 0; j < record->len; j++, i += 2)
-+		record->data[j] = hex(data + i, &crc);
-+
-+	/* check CRC */
-+	crcbyte = hex(data + i, &crc); i += 2;
-+	if (crc != 0) {
-+		fprintf(stderr, "CRC failure at line %d: got 0x%X, expected 0x%X\n",
-+			line, crcbyte, (unsigned char)(crcbyte-crc));
-+		return -EINVAL;
-+	}
-+
-+	/* Done reading the record */
-+	switch (type) {
-+	case 0:
-+		/* old style EOF record? */
-+		if (!record->len)
-+			break;
-+
-+		record->addr += offset;
-+		file_record(record);
-+		goto next_record;
-+
-+	case 1: /* End-Of-File Record */
-+		if (record->addr || record->len) {
-+			fprintf(stderr, "Bad EOF record (type 01) format at line %d",
-+				line);
-+			return -EINVAL;
-+		}
-+		break;
-+
-+	case 2: /* Extended Segment Address Record (HEX86) */
-+	case 4: /* Extended Linear Address Record (HEX386) */
-+		if (record->addr || record->len != 2) {
-+			fprintf(stderr, "Bad HEX86/HEX386 record (type %02X) at line %d\n",
-+				type, line);
-+			return -EINVAL;
-+		}
-+
-+		/* We shouldn't really be using the offset for HEX86 because
-+		 * the wraparound case is specified quite differently. */
-+		offset = record->data[0] << 8 | record->data[1];
-+		offset <<= (type == 2 ? 4 : 16);
-+		goto next_record;
-+
-+	case 3: /* Start Segment Address Record */
-+	case 5: /* Start Linear Address Record */
-+		if (record->addr || record->len != 4) {
-+			fprintf(stderr, "Bad Start Address record (type %02X) at line %d\n",
-+				type, line);
-+			return -EINVAL;
-+		}
-+
-+		memcpy(&data32, &record->data[0], sizeof(data32));
-+		data32 = htonl(data32);
-+		memcpy(&record->data[0], &data32, sizeof(data32));
-+
-+		/* These records contain the CS/IP or EIP where execution
-+		 * starts. If requested output this as a record. */
-+		if (include_jump)
-+			file_record(record);
-+		goto next_record;
-+
-+	default:
-+		fprintf(stderr, "Unknown record (type %02X)\n", type);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct ihex_binrec *records;
-+
-+static void file_record(struct ihex_binrec *record)
-+{
-+	struct ihex_binrec **p = &records;
-+
-+	while ((*p) && (!sort_records || (*p)->addr < record->addr))
-+		p = &((*p)->next);
-+
-+	record->next = *p;
-+	*p = record;
-+}
-+
-+static int output_records(int outfd)
-+{
-+	unsigned char zeroes[6] = {0, 0, 0, 0, 0, 0};
-+	struct ihex_binrec *p = records;
-+
-+	while (p) {
-+		uint16_t writelen = (p->len + 9) & ~3;
-+
-+		p->addr = htonl(p->addr);
-+		p->len = htons(p->len);
-+		if (write(outfd, &p->addr, writelen) != writelen)
-+			return 1;
-+		p = p->next;
-+	}
-+	/* EOF record is zero length, since we don't bother to represent
-+	   the type field in the binary version */
-+	if (write(outfd, zeroes, 6) != 6)
-+		return 1;
-+	return 0;
-+}
--- 
-2.17.1
+> +#include <linux/clk-provider.h>
+> +#include <linux/clk.h>
+> +#include <linux/init.h>
 
+Is this used?
+
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#define AP806_CPU_CLUSTER0             0
+> +#define AP806_CPU_CLUSTER1             1
+> +#define AP806_CPUS_PER_CLUSTER         2
+> +#define APN806_CPU1_MASK               0x1
+> +
+> +#define APN806_CLUSTER_NUM_OFFSET      8
+> +#define APN806_CLUSTER_NUM_MASK                (1 << APN806_CLUSTER_NUM_=
+OFFSET)
+> +
+> +#define APN806_MAX_DIVIDER             32
+> +
+> +/* AP806 CPU DFS register mapping*/
+> +#define AP806_CA72MP2_0_PLL_CR_0_REG_OFFSET            0x278
+> +#define AP806_CA72MP2_0_PLL_CR_1_REG_OFFSET            0x280
+> +#define AP806_CA72MP2_0_PLL_CR_2_REG_OFFSET            0x284
+> +#define AP806_CA72MP2_0_PLL_SR_REG_OFFSET              0xC94
+> +
+> +#define AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET          0x14
+> +#define AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_OFFSET                0
+> +#define AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_MASK \
+> +                       (0x3f << AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_OFFSET)
+> +#define AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_OFFSET     24
+> +#define AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_MASK \
+> +                       (0x1 << AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_OFFSE=
+T)
+> +#define AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET     16
+> +#define AP806_CA72MP2_0_PLL_RATIO_STATE                        11
+> +
+> +#define to_clk(hw) container_of(hw, struct ap_cpu_clk, hw)
+> +
+> +/*
+> + * struct ap806_clk: CPU cluster clock controller instance
+> + * @cluster: Cluster clock controller index
+> + * @clk_name: Cluster clock controller name
+> + * @dev : Cluster clock device
+> + * @hw: HW specific structure of Cluster clock controller
+> + * @pll_cr_base: CA72MP2 Register base (Device Sample at Reset register)
+> + */
+> +struct ap_cpu_clk {
+> +       int cluster;
+
+unsigned?
+
+> +       const char *clk_name;
+> +       struct device *dev;
+> +       struct clk_hw hw;
+> +       struct regmap *pll_cr_base;
+> +};
+> +
+> +static struct clk **cluster_clks;
+> +static struct clk_onecell_data clk_data;
+
+Can you give these some better names that are ap_cpu specific? Grepping
+for clk_data will make lots of hits otherwise because they're so
+generic.
+
+> +
+> +static unsigned long ap_cpu_clk_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long parent_rate)
+> +{
+> +       struct ap_cpu_clk *clk =3D to_clk(hw);
+> +       unsigned int cpu_clkdiv_reg =3D AP806_CA72MP2_0_PLL_CR_0_REG_OFFS=
+ET +
+> +               (clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
+
+Nitpick: This is pretty unreadable. Can you just declare the variables
+up here and then do the assignment later on in the function and avoid
+splitting across many lines?
+
+> +       int cpu_clkdiv_ratio;
+> +
+> +       regmap_read(clk->pll_cr_base, cpu_clkdiv_reg, &cpu_clkdiv_ratio);
+> +       cpu_clkdiv_ratio &=3D AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_MASK;
+> +       cpu_clkdiv_ratio >>=3D AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_OFFSET;
+> +
+> +       return parent_rate / cpu_clkdiv_ratio;
+> +}
+> +
+> +static int ap_cpu_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                             unsigned long parent_rate)
+> +{
+> +       struct ap_cpu_clk *clk =3D to_clk(hw);
+> +       int reg, divider =3D parent_rate / rate;
+> +       unsigned int cpu_clkdiv_reg, cpu_force_reg, cpu_ratio_reg;
+> +
+> +       cpu_clkdiv_reg =3D AP806_CA72MP2_0_PLL_CR_0_REG_OFFSET +
+> +               (clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
+> +       cpu_force_reg =3D AP806_CA72MP2_0_PLL_CR_1_REG_OFFSET +
+> +               (clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
+> +       cpu_ratio_reg =3D AP806_CA72MP2_0_PLL_CR_2_REG_OFFSET +
+> +               (clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
+> +
+> +       /* 1. Set CPU divider */
+> +       regmap_update_bits(clk->pll_cr_base, cpu_clkdiv_reg,
+> +                          AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_MASK, divider=
+);
+> +
+> +       /* 2. Set Reload force */
+> +       regmap_update_bits(clk->pll_cr_base, cpu_force_reg,
+> +                          AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_MASK,
+> +                          AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_MASK);
+> +
+> +       /* 3. Set Reload ratio */
+> +       regmap_update_bits(clk->pll_cr_base, cpu_ratio_reg,
+> +                          BIT(AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET=
+),
+> +                          BIT(AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET=
+));
+> +
+> +
+> +       /* 4. Wait for stabilizing CPU Clock */
+> +       do {
+> +               regmap_read(clk->pll_cr_base,
+> +                           AP806_CA72MP2_0_PLL_SR_REG_OFFSET,
+> +                           &reg);
+> +       } while (!(reg & BIT(clk->cluster * AP806_CA72MP2_0_PLL_RATIO_STA=
+TE)));
+
+Use regmap_read_poll_timeout() API here and give some large timeout
+value so that we don't get stuck waiting here forever?
+
+> +
+> +       /* 5. Clear Reload ratio */
+
+I'm not sure we really need these comments. They're just saying what the
+code is doing, so they don't add much value.
+
+> +       regmap_update_bits(clk->pll_cr_base, cpu_ratio_reg,
+> +                          BIT(AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET=
+), 0);
+> +
+> +       return 0;
+> +}
+> +
+> +
+> +static long ap_cpu_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                                unsigned long *parent_rate)
+> +{
+> +       int divider =3D *parent_rate / rate;
+> +
+> +       if (divider > APN806_MAX_DIVIDER)
+> +               divider =3D APN806_MAX_DIVIDER;
+
+	divider =3D min(divider, APN806_MAX_DIVIDER);
+
+> +
+> +       return *parent_rate / divider;
+> +}
+> +
+> +static const struct clk_ops ap_cpu_clk_ops =3D {
+> +       .recalc_rate    =3D ap_cpu_clk_recalc_rate,
+> +       .round_rate     =3D ap_cpu_clk_round_rate,
+> +       .set_rate       =3D ap_cpu_clk_set_rate,
+> +};
+> +
+> +static int ap_cpu_clock_probe(struct platform_device *pdev)
+> +{
+> +       int ret, nclusters =3D 0, cluster_index =3D 0;
+> +       struct device *dev =3D &pdev->dev;
+> +       struct device_node *dn, *np =3D dev->of_node;
+> +       struct ap_cpu_clk *ap_cpu_clk;
+> +       struct regmap *regmap;
+> +
+> +       regmap =3D syscon_node_to_regmap(np->parent);
+
+Can we just call dev_get_remap() on pdev->dev.parent?
+
+> +       if (IS_ERR(regmap)) {
+> +               pr_err("cannot get pll_cr_base regmap\n");
+> +               return PTR_ERR(regmap);
+> +       }
+> +
+> +       /*
+> +        * AP806 has 4 cpus and DFS for AP806 is controlled per
+> +        * cluster (2 CPUs per cluster), cpu0 and cpu1 are fixed to
+> +        * cluster0 while cpu2 and cpu3 are fixed to cluster1 whether
+> +        * they are enabled or not.  Since cpu0 is the boot cpu, then
+> +        * cluster0 must exist.  If cpu2 or cpu3 is enabled, cluster1
+> +        * will exist and the cluster number is 2; otherwise the
+> +        * cluster number is 1.
+> +        */
+> +       nclusters =3D 1;
+> +       for_each_node_by_type(dn, "cpu") {
+
+Isn't there some sort of for_each_cpu_node() API that can be used here?
+
+> +               int cpu, err;
+> +
+> +               err =3D of_property_read_u32(dn, "reg", &cpu);
+> +               if (WARN_ON(err))
+> +                       return err;
+> +
+> +               /* If cpu2 or cpu3 is enabled */
+> +               if ((cpu & APN806_CLUSTER_NUM_MASK)) {
+> +                       nclusters =3D 2;
+> +                       break;
+> +               }
+> +       }
+> +       /*
+> +        * DFS for AP806 is controlled per cluster (2 CPUs per cluster),
+> +        * so allocate structs per cluster
+> +        */
+> +       ap_cpu_clk =3D devm_kcalloc(dev, nclusters, sizeof(*ap_cpu_clk),
+> +                                 GFP_KERNEL);
+> +       if (WARN_ON(!ap_cpu_clk))
+> +               return -ENOMEM;
+> +
+> +       cluster_clks =3D devm_kcalloc(dev, nclusters, sizeof(*cluster_clk=
+s),
+> +                                   GFP_KERNEL);
+> +       if (WARN_ON(!cluster_clks))
+
+Drop the WARN_ON please. If allocation fails we'll already get a large
+stack trace and messages.
+
+> +               return -ENOMEM;
+> +
+> +       for_each_node_by_type(dn, "cpu") {
+> +               char *clk_name =3D "cpu-cluster-0";
+> +               struct clk_init_data init;
+> +               const char *parent_name;
+> +               struct clk *clk, *parent;
+> +               int cpu, err;
+> +
+> +               err =3D of_property_read_u32(dn, "reg", &cpu);
+> +               if (WARN_ON(err))
+> +                       return err;
+> +
+> +               cluster_index =3D (cpu & APN806_CLUSTER_NUM_MASK);
+
+Nitpick: Drop useless parenthesis please.
+
+> +               cluster_index >>=3D APN806_CLUSTER_NUM_OFFSET;
+> +
+> +               /* Initialize once for one cluster */
+> +               if (cluster_clks[cluster_index])
+> +                       continue;
+> +
+> +               parent =3D of_clk_get(np, cluster_index);
+> +               if (IS_ERR(parent)) {
+> +                       dev_err(dev, "Could not get the clock parent\n");
+> +                       return -EINVAL;
+> +               }
+> +               parent_name =3D  __clk_get_name(parent);
+> +               clk_name[12] +=3D cluster_index;
+> +               ap_cpu_clk[cluster_index].clk_name =3D
+> +                       ap_cp_unique_name(dev, np->parent, clk_name);
+> +               ap_cpu_clk[cluster_index].cluster =3D cluster_index;
+> +               ap_cpu_clk[cluster_index].pll_cr_base =3D regmap;
+> +               ap_cpu_clk[cluster_index].hw.init =3D &init;
+> +               ap_cpu_clk[cluster_index].dev =3D dev;
+> +
+> +               init.name =3D ap_cpu_clk[cluster_index].clk_name;
+> +               init.ops =3D &ap_cpu_clk_ops;
+> +               init.num_parents =3D 1;
+> +               init.parent_names =3D &parent_name;
+> +               init.flags =3D CLK_GET_RATE_NOCACHE;
+
+Can you add a comment why we need NOCACHE here? It isn't clear why this
+is important.
+
+> +
+> +               clk =3D devm_clk_register(dev, &ap_cpu_clk[cluster_index]=
+.hw);
+
+Please use the clk_hw based registration APIs.
+
+> +               if (IS_ERR(clk))
+> +                       return PTR_ERR(clk);
+> +
+> +               cluster_clks[cluster_index] =3D clk;
+> +       }
+> +
+> +       clk_data.clk_num =3D cluster_index + 1;
+> +       clk_data.clks =3D cluster_clks;
+> +
+> +       ret =3D of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data=
+);
+
+And the clk_hw based provider APIs.
+
+> +       if (ret)
+> +               dev_err(dev, "failed to register OF clock provider\n");
+> +
+> +       return ret;
+> +}
+> +
