@@ -2,232 +2,99 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50FF9ECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA40ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA94C20645
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:47:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA94C20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+	by mail.kernel.org (Postfix) with ESMTP id 6C67A213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:48:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="iUPxVU4V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C67A213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbeJRAnn (ORCPT
+        id S1727441AbeJRAp3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 20:43:43 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:58171 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727053AbeJRAnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 20:43:43 -0400
-Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 4BFDB2012D0DCD;
-        Wed, 17 Oct 2018 18:47:09 +0200 (CEST)
-Subject: Re: What happens before or in `schedule_preempt_disabled()`?
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
-References: <70649a6c-e9a2-3b38-58d6-62f63fc2792e@molgen.mpg.de>
- <alpine.DEB.2.21.1810171829100.1517@nanos.tec.linutronix.de>
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-Message-ID: <cfe32337-d1de-d57c-080b-6d4ab852e22b@molgen.mpg.de>
-Date:   Wed, 17 Oct 2018 18:47:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 17 Oct 2018 20:45:29 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43956 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727053AbeJRAp3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 20:45:29 -0400
+Received: by mail-ed1-f66.google.com with SMTP id y20-v6so25516757eds.10
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:48:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xcDmeePrpewnH6pESDvdQ4mHrQ6Kc4wKvGV2Wd6BQJM=;
+        b=iUPxVU4V8sWrEDpQAjBpz6CjYAEsUoNWb0f82ZCecAM0BrbuG/hVNXVW1GvtItjapi
+         Vsu17ldOUH4zIIS5Btrc+9X1NLNOuTzSQIH/7mFksc1Cll7G8Rb5MPsX7ei1sDoJY2br
+         feMJyeIeKDAoAUbF7l/+SqudXbCTmpYdWk6+w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xcDmeePrpewnH6pESDvdQ4mHrQ6Kc4wKvGV2Wd6BQJM=;
+        b=hqyH3wCwPa98TNfIX4i5cZYuAYQFluk1n7jYniohSbiXtpfvac6SjVpkTYh2MX3FR3
+         f96MybQ/XhN8yUSi0BxJ3j0TMymG5y2N7ZGmqQyHI4vWjFzDYVD4tWlfymtvP5u96uIE
+         1VTNzfGkTqK3VFx9eJIZqpzUK3NlQICr347+P9gYEdjxze1RVor2QCLJmBOtMKIBzSVW
+         RWuNTvObf5Yb+SWKPqVhV61IEPBQM2xFwfZiCRHCLwjjm19iHSv9SeNAPM1nsNAJjfqW
+         2Z+NMh8aVBrawjEAG5lTIOU+SFl/cv2ctnXSv7zU4Dr+Uoyr51WP0hMfwJnSEQQ+pqTk
+         qAJw==
+X-Gm-Message-State: ABuFfoj5k8NG1k5vZC3pY3XkDWHj3PUqM1A4f/6uK0vHGTUyepIlcNfJ
+        fxl9jgD2XzX3j+qKtDd7Pm5mkA==
+X-Google-Smtp-Source: ACcGV62DTSguD+XfZ13sr6BL9ZDv59k0MMFDd2y0ExQQ8BaHIvbVNSVvUp/7hn2Usl2HKUuRl/1N0Q==
+X-Received: by 2002:a17:906:64c:: with SMTP id t12-v6mr27436292ejb.113.1539794935762;
+        Wed, 17 Oct 2018 09:48:55 -0700 (PDT)
+Received: from andrea (15.152.230.94.awnet.cz. [94.230.152.15])
+        by smtp.gmail.com with ESMTPSA id a3-v6sm3713090ejr.55.2018.10.17.09.48.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 09:48:55 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 18:48:48 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     gregkh@linux-foundation.org,
+        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
+        viro@zeniv.linux.org.uk, sandeen@redhat.com,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] fscache: Fix race in fscache_op_complete() due to
+ split atomic_sub & read
+Message-ID: <20181017164848.GA9795@andrea>
+References: <20181017151134.GA8966@andrea>
+ <153978619457.8478.3813964117489247515.stgit@warthog.procyon.org.uk>
+ <153978621809.8478.2198040871218302573.stgit@warthog.procyon.org.uk>
+ <14408.1539790333@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1810171829100.1517@nanos.tec.linutronix.de>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms080006050604040302070808"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <14408.1539790333@warthog.procyon.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a cryptographically signed message in MIME format.
+On Wed, Oct 17, 2018 at 04:32:13PM +0100, David Howells wrote:
+> Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
+> 
+> > > Fix this by using atomic_sub_return() instead of two calls.
+> > 
+> > Seems a case for atomic_sub_return_relaxed()... why not?
+> 
+> Ummm...  In that case, should it be atomic_sub_return_release()?
 
---------------ms080006050604040302070808
-Content-Type: text/plain; charset=iso-8859-7
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Hard to tell for me: your diff./changelog is all I know about fs-cache
+... (and this suggests -no-, given that atomic_sub() and atomic_read()
+provide no ordering...); good question though. ;-)
 
-Dear Thomas,
-
-
-As always thank you for the quick reply.
-
-
-On 10/17/18 18:39, Thomas Gleixner wrote:
-
-> On Wed, 17 Oct 2018, Paul Menzel wrote:
->>
->> Please find the debug patches attached. The `random: %i` messages are =
-from
->> `crng_fast_load()`.
->>
->> My question is, how can I figure out, what happens in the code below?
->>
->>         complete(&kthreadd_done);
->>         pr_info("After kthreadd_done\n");
->>
->>         /*
->>          * The boot idle thread must execute schedule()
->>          * at least once to get things moving:
->>          */
->>         schedule_preempt_disabled();
->>         pr_info("After schedule_preempt_disabled\n");
->>
->> Looking at `schedule_preempt_disabled()`, it shouldn=A2t take much tim=
-e, and I
->> was unable to find out where `crng_fast_load()` is called from.
->>
->> I guess threading is somehow working at that point, and I would though=
- that
->> it is the `complete()` call, but wonder why the `After kthreadd_done` =
-is
->> printed earlier.
->=20
-> This creates the init thread from the idle thread with preemption
-> disabled. To get the init thread on the CPU the idle thread must schedu=
-le
-> voluntary, which it does by calling schedule_preempt_disabled(). So the=
-
-> scheduler picks the init thread and that executes the init callbacks.
->=20
-> The random calls are invoked by add_interrupt_randomness() or
-> add_hwgenerator_randomness(). But they are probably not consuming all t=
-he
-> time.
->=20
-> The time is consumed by the initcalls which are required before bringin=
-g up
-> the (non boot) CPUs. See kernel_init_freeable() which is called from
-> kernel_init(). If you add initcall_debug to the command line you will g=
-et
-> more information at least about the functions which are marked with
-> initcall.
-
-Thank you for the quick reply. Just a note, that `initcall_debug` is pres=
-ent
-on the Linux kernel command line. (I didn=A2t mention that the full outpu=
-t of
-`dmesg` was attached to my message.
-
-    [    0.078186] Kernel command line: BOOT_IMAGE=3D/boot/vmlinuz-4.19.0=
--rc8-00045-gc92161e11c2a root=3D/dev/sda1 rw noisapnp cryptomgr.notests q=
-uiet initcall_debug init=3D/lib/systemd/systemd-bootchart iomem=3Drelaxed=
- apparmor=3D0 selinux=3D0 kmemleak=3Doff initcall_blacklist=3Dserial8250_=
-init,init_graph_trace udev.children_max=3D2 udev.log_priority=3Dinfo
-
-Thank you again for the pointers. I=A2ll look into those.
+  Andrea
 
 
-Kind regards,
-
-Paul
-
-
---------------ms080006050604040302070808
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
-AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
-VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
-Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
-BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
-IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
-Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
-ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
-FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
-eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
-WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
-xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
-AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
-4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
-/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
-AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
-ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
-MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
-Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
-ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
-eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
-MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
-PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
-2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
-ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
-CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
-dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
-BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
-NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
-BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
-A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
-59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
-G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
-rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
-OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
-Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
-VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
-IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
-BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
-dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
-Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
-Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
-L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
-Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
-dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
-YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
-/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
-jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
-dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
-wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
-qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
-/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
-A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
-VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
-MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
-DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
-DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
-enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
-peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
-6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
-+2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
-ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
-AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
-FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
-ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
-dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
-Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
-dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
-dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
-BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
-dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
-AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
-Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
-aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
-GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
-fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
-1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
-EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
-LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
-RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
-SIb3DQEJBTEPFw0xODEwMTcxNjQ3MDlaMC8GCSqGSIb3DQEJBDEiBCAatNGm/L8YO63+2DOt
-Alg2QcyLhExjcDtt1OFWC8xvsDBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
-BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
-MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
-bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
-gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
-DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
-BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAFqB
-eLvy7mLy1bk/jhafabCmBib/VSZ5kE8vUou/+fn1H2yt3Gv5fVtBQRwJSkQW6DSLu6T7pgOe
-UZP8It7MV5m25pAkA94Zee1UFJVl2Zrk04NRodOAkcf4RCoMuAcL3E6J3+WqWJ46uJwoIHkO
-VJsi9nxK6G8asEePk2E2Yf5WI8zLzOrT7/VSJajkGBOvesdd/f9i5L3gaUsYh+wJdDaOXCk3
-lqAT2aVYW2RQmLQ2X80z2GfA7WgN47yQuaYlZZ/G+8+vj4rqdabnrjtf5i/VH3XKMq8bETtv
-w0GV23hJBfQhvlmb2h2X9y0SiuBY+/cg1/igSLMu/SsxViNVuWQAAAAAAAA=
---------------ms080006050604040302070808--
+> 
+> David
