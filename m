@@ -2,144 +2,267 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDAC8ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9A1ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A0521527
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:00:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ugB1bkRD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A0521527
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 861722150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:00:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 861722150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbeJQW4I (ORCPT
+        id S1727829AbeJQW4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:56:08 -0400
-Received: from mail.efficios.com ([167.114.142.138]:48266 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbeJQW4I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:56:08 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 8AF6D1CA334;
-        Wed, 17 Oct 2018 11:00:02 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id vy9dt85LCHJr; Wed, 17 Oct 2018 11:00:01 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 76C861CA329;
-        Wed, 17 Oct 2018 11:00:01 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 76C861CA329
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1539788401;
-        bh=orzUGg4+ktRKn71rsu7Wy980ToPgO1+aS5n7adEvmcc=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=ugB1bkRDNI9vy1xS2h0Tf9LoNUV5etK7JIyl2DpJgoLBIrpw4PxdfOH7KAK8/q0SG
-         3jCrB4W0xBAjR3cqn8I9w7BaYCRNAEvwiemcjt6STFCIZ/I/VilE6Bzu8yjPWRalis
-         k+J5STuIqfvvbirZXRZRR3l365+uTOnSZrYVRj5AdKzTt851qFVQiAQyhvsKbYh/25
-         4QnAzEqbGml4k2UBBmnqdQ7Kjtzozazu5ZFH6iDXZ90Mj+t9ViElo7vFmjO3bD/l6P
-         Y7zDkpeCiILybZQ7K2dpRggc0r9u53G5tx3yYRJMi0+UcJa7ExwyXqkHOhxvehYONC
-         +KBXskqo7FxQg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id TlcgrknyzC_9; Wed, 17 Oct 2018 11:00:01 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 45D601CA316;
-        Wed, 17 Oct 2018 11:00:01 -0400 (EDT)
-Date:   Wed, 17 Oct 2018 11:00:01 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Message-ID: <1051015468.759.1539788401096.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20181017002722.GA1068@jagdpanzerIV>
-References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com> <20181010191936.7495-5-mathieu.desnoyers@efficios.com> <20181016143016.10da89bd@gandalf.local.home> <20181017002722.GA1068@jagdpanzerIV>
-Subject: Re: [RFC PATCH for 4.21 04/16] mm: Introduce vm_map_user_ram,
- vm_unmap_user_ram
+        Wed, 17 Oct 2018 18:56:11 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:39841 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727571AbeJQW4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 18:56:09 -0400
+Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 688FD2012D0DCD;
+        Wed, 17 Oct 2018 17:00:01 +0200 (CEST)
+Subject: Re: [PATCH] Revert "genirq/affinity: assign vectors to all possible
+ CPUs"
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
+        stable@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        it+linux-scsi@molgen.mpg.de,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        linux-scsi@vger.kernel.org,
+        Raghava Aditya Renukunta 
+        <RaghavaAditya.Renukunta@microsemi.com>,
+        Dave Carroll <david.carroll@microsemi.com>
+References: <f5c57bf7-b8c1-a560-d13a-d74e0f27adbb@molgen.mpg.de>
+ <20180811135021.GA2186@kroah.com> <20180813033157.GA18254@ming.t460p>
+ <89f2b622-3d2a-04ce-a6d1-ffb5d9612763@molgen.mpg.de>
+ <cbd7cb64-dbfe-e085-e80b-67dad4084d69@molgen.mpg.de>
+ <7c51fe1d-d591-90f2-8fb5-81990f8db0fe@molgen.mpg.de>
+ <20181001123508.GA3415@lst.de>
+ <f5dde120-2d14-a7e5-8402-401f117b8c38@molgen.mpg.de>
+ <3480086a-1a3e-adc2-e127-8e34178da101@molgen.mpg.de>
+ <6b7555c7-8796-eae9-6bd2-b698ccf9559d@molgen.mpg.de>
+ <20181015132142.GA389@kroah.com>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <e8137b46-cd82-86fb-af2a-21ff476c2d80@molgen.mpg.de>
+Date:   Wed, 17 Oct 2018 17:00:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3039 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: Introduce vm_map_user_ram, vm_unmap_user_ram
-Thread-Index: gPGMSdyLSfgdOsd0mGALLpA4RUrvCQ==
+In-Reply-To: <20181015132142.GA389@kroah.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms040900020604070002070305"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Oct 16, 2018, at 8:27 PM, Sergey Senozhatsky sergey.senozhatsky.work@gmail.com wrote:
+This is a cryptographically signed message in MIME format.
 
-> On (10/16/18 14:30), Steven Rostedt wrote:
->> > +void vm_unmap_user_ram(const void *mem, unsigned int count)
->> > +{
->> > +	unsigned long size = (unsigned long)count << PAGE_SHIFT;
->> > +	unsigned long addr = (unsigned long)mem;
->> > +	struct vmap_area *va;
->> > +
->> > +	might_sleep();
->> > +	BUG_ON(!addr);
->> > +	BUG_ON(addr < VMALLOC_START);
->> > +	BUG_ON(addr > VMALLOC_END);
->> > +	BUG_ON(!PAGE_ALIGNED(addr));
->> > +
->> > +	debug_check_no_locks_freed(mem, size);
->> > +	va = find_vmap_area(addr);
->> > +	BUG_ON(!va);
->> > +	free_unmap_vmap_area(va);
->> > +}
->> > +EXPORT_SYMBOL(vm_unmap_user_ram);
->> > +
->> 
->> Noticing this from Sergey's question in another patch, why are you
->> using BUG_ON()? That's rather extreme and something we are trying to
->> avoid adding more of (I still need to remove the BUG_ON()s I've added
->> over ten years ago). I don't see why all these BUG_ON's can't be turned
->> into:
-> 
-> +1
-> 
->> 	if (WARN_ON(x))
->> 		return;
-> 
-> Given that this somewhat MM-related, I'd may be say VM_WARN_ON().
+--------------ms040900020604070002070305
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Good point, will do!
+Dear Greg,
 
-So I'll do one cleanup patch for vm_unmap_ram(), and I'll modify the new vm_unmap_user_ram().
 
-Thanks,
+On 10/15/18 15:21, Greg Kroah-Hartman wrote:
+> On Mon, Oct 15, 2018 at 02:17:11PM +0200, Paul Menzel wrote:
 
-Mathieu
+>> On 10/01/18 17:59, Paul Menzel wrote:
+>>
+>>> On 10/01/18 14:43, Paul Menzel wrote:
+>>>
+>>>> On 10/01/18 14:35, Christoph Hellwig wrote:
+>>>>> On Mon, Oct 01, 2018 at 02:33:07PM +0200, Paul Menzel wrote:
+>>>>>> Date: Wed, 29 Aug 2018 17:28:45 +0200
+>>>>>>
+>>>>>> This reverts commit ef86f3a72adb8a7931f67335560740a7ad696d1d.
+>>>>>
+>>>>> This seems rather odd.  If at all you'd revert the patch adding the=
 
-> 
-> 	-ss
+>>>>> PCI_IRQ_AFFINITY to aacraid, not core infrastructure.
+>>>>
+>>>> Thank you for the suggestion, but that flag was added in 2016
+>>>> to the aacraid driver.
+>>>>
+>>>>> commit 0910d8bbdd99856af1394d3d8830955abdefee4a
+>>>>> Author: Hannes Reinecke <hare@suse.de>
+>>>>> Date:   Tue Nov 8 08:11:30 2016 +0100
+>>>>>
+>>>>>     scsi: aacraid: switch to pci_alloc_irq_vectors
+>>>>>    =20
+>>>>>     Use pci_alloc_irq_vectors and drop the hand-crafted interrupt a=
+ffinity
+>>>>>     routines.
+>>>>
+>>>> So what would happen, if `PCI_IRQ_AFFINITY` was removed? Will the
+>>>> system still work with the same performance?
+>>>>
+>>>> As far as I understood, the no regression policy is there for
+>>>> exactly that reason, and it shouldn=E2=80=99t matter if it=E2=80=99s=
+ core
+>>>> infrastructure or not. As written, I have no idea, and just know
+>>>> reverting the commit in question fixes the problem here. So I=E2=80=99=
+ll
+>>>> gladly test other solutions to fix this issue.
+>>>
+>>> Just as another datapoint, with `PCI_IRQ_AFFINITY` removed from
+>>> `drivers/scsi/aacraid/comminit.c` in Linux 4.14.73, the driver
+>>> initializes correctly. I have no idea regarding the performance.
+>>
+>> This commit has not been picked up yet. I guess, you are busy, but
+>> in case there are still objections, it=E2=80=99d be great if the two
+>> questions below were answered.
+>>
+>> 1.  What bug is fixed in the LTS series by backporting the commit
+>>     causing the regression?
+>=20
+> I can't remember anymore, but unwinding this mess is going to be a
+> pain :(
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Agreed.
+
+>> 2.  Why does the *no regression* policy *not* apply in this case?
+>=20
+> It does, but also we are following the "stick to what mainline does",
+
+Hmm, but I thought only for bug fixes.
+
+> and the fact that this is not showing up in mainline seems just to be a=
+
+> lucky accident at the moment.  My real worry is that suddenly you are
+> going to have problems there and that this is just the early-warning
+> system happening...
+
+It is still a mystery for me, why it doesn=E2=80=99t happen in master.
+
+In the current situation, where the SCSI/AACRAID subsystem folks haven=E2=
+=80=99t
+joined the discussion, I still think, the best way for the Linux 4.14
+series is to revert.
+
+Additionally, there are other reports about errors with the aacraid
+driver [1]. I heard they develop against the Linux kernel version in
+the enterprise distributions, and then port that to master. Maybe
+that is one of the reasons for the current state. (But also off-topic.)
+
+
+Kind regards,
+
+Paul
+
+
+[1]: https://www.spinics.net/lists/linux-scsi/threads.html#123414
+
+
+--------------ms040900020604070002070305
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
+AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
+VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
+Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
+BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
+IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
+Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
+FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
+eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
+WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
+xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
+AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
+4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
+/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
+AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
+ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
+MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
+Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
+ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
+eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
+MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
+PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
+2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
+ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
+CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
+dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
+BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
+NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
+BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
+A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
+59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
+G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
+rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
+OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
+Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
+VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
+IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
+BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
+dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
+Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
+Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
+L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
+Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
+dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
+YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
+/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
+jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
+dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
+wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
+qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
+/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
+A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
+VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
+MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
+DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
+DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
+enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
+peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
+6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
++2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
+ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
+AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
+FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
+ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
+dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
+Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
+dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
+dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
+BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
+dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
+AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
+Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
+aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
+GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
+fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
+1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
+EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
+LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
+RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
+SIb3DQEJBTEPFw0xODEwMTcxNTAwMDFaMC8GCSqGSIb3DQEJBDEiBCAzxiWJkAoAxtNsNo5S
+Z0ITz6wwFMpNwxNHKukzunJdCTBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
+BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
+MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
+bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
+gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
+DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
+BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAD9l
+i92/Uhe2ovTkwUJ7/qRT5hIxo8cGzAR/w9Oncm8s3tFAIrtcBjSGj+Rj/NNPdbyAHTroaINg
+2tlnNx6rO0p9tt/HCE9Aif6/FhfG64oZVUgQuAZKdgRhTaK4Y3P77mx7oF5/Rqat21nSKn9R
+QC122etK3P7R2dJI7St15cZG9s+LRuUojMBziqMzf6jNGKdpZuhxgImfH2G6xtKMdYeVzy7N
+gpUeomMfrWtk8hxO+/brY5BJadpTe/B9daI6kuCS5hyPwSKG3RdRi5DEgiK0KOrCiuIfdp+X
+tDqXk+9qAD7gOUh2oEUvHXJkB9NXv2CZxSSOO/7xLKiHe8HL7aoAAAAAAAA=
+--------------ms040900020604070002070305--
