@@ -2,179 +2,193 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23952ECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A0DECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA5C22145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:56:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="eI4D1xUJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5C22145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 7361C21476
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:02:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7361C21476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbeJRAwc (ORCPT
+        id S1727378AbeJRA7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 20:52:32 -0400
-Received: from mail-sn1nam01on0110.outbound.protection.outlook.com ([104.47.32.110]:21906
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727053AbeJRAwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 20:52:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LcwMSzhpZu2DRsKxAgOLvnru2XqPRfuJfdhesGQQKAg=;
- b=eI4D1xUJpqSEbqXii+Rzu68/Da4mGJP5RyOrrWZVbVH+AlsYdYdeTMQNzXbaH1F36J3UVckWuoIZ6TTp5NQsF8BnkduJ1+fDXJ36HISMbPSeFq7W+JiVnkSqhVjXBhHGHnEU/CN1a8J4o3A6NU5C591N3Tzv/sBglXs52omyzWM=
-Received: from MWHPR21MB0766.namprd21.prod.outlook.com (10.173.51.20) by
- MWHPR21MB0864.namprd21.prod.outlook.com (10.173.51.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1273.2; Wed, 17 Oct 2018 16:55:16 +0000
-Received: from MWHPR21MB0766.namprd21.prod.outlook.com
- ([fe80::1982:5e59:2489:88e6]) by MWHPR21MB0766.namprd21.prod.outlook.com
- ([fe80::1982:5e59:2489:88e6%14]) with mapi id 15.20.1273.008; Wed, 17 Oct
- 2018 16:55:16 +0000
-From:   Michael Kelley <mikelley@microsoft.com>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>
-CC:     Michael Kelley <mikelley@microsoft.com>
-Subject: [PATCH char-misc 1/1] x86/hyperv: Fix PIT shutdown quirk
-Thread-Topic: [PATCH char-misc 1/1] x86/hyperv: Fix PIT shutdown quirk
-Thread-Index: AQHUZjot/0c0fZteAkGdKEI9fZzBDg==
-Date:   Wed, 17 Oct 2018 16:55:16 +0000
-Message-ID: <1539795298-11804-1-git-send-email-mikelley@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR22CA0046.namprd22.prod.outlook.com
- (2603:10b6:300:69::32) To MWHPR21MB0766.namprd21.prod.outlook.com
- (2603:10b6:300:76::20)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [131.107.159.136]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR21MB0864;6:at8W7JuyHbHP78eS0qzVU61doHbS5aFBHnn+gS5zoaP9BjUUmfKR75rZnjsxrvFATRZRsBqhuZuM1cqRw0nIiblw7sPL9ghQfsLk/pGQCi0Kc2jNoa2aEG9ZeGEjIoqBj2+ysZ0XCu6zI527Jw7dMmcxtCKs/qNazkgL0BmNLZevkpEpTBpfB0dqCgLm5on42TpH+sAEDqameIEwq4Qxk/9dSY+AMZmWp1uyZDzfZyRMs7szX9qG+RXUhxdJrV5g6ZnmjuGKwE67g5sMhnsEDP427Z85rVqYK9r+HKCQ/A8+GE0Z1wsQTptk+Nb5lzmdk9gYfRq0XbdWEF3W1a6kfrMrG4+XrYj7r8daA9/k74W83MqGed9lkatY0ViUdPBrEvMAWesslCSp2c1dhLCUYjmMKmN1SPZku8NJz+4W4AH2BuYLm5zwg1uTns+tpBH+x/GUYwYBr4zHNqS5IqT9Bw==;5:7U3lcDeghBnx9R+xHZ9SoxChGsJyMvv7YT9wWFTX/Y18/5TnfYcuPspTJP9O8RxPvBC8px5xrpNp1EnBzbwjXMsxEKHrK4khD/QwLfcske60Vf2JL6Ho7NlEKQJFay3P1jaxCKrPDCV0WFlZAg1Y/9JbP4vKtukFZzo6Tv1Bxk4=;7:mSl6DS0u5IR6WzzGh6iTldavFOVgPkylLF+4LcXTQxLQUWb/c+9HOnP5PhEZ1NEe5R9pOJ6IG0aXH2Uj57nFhVhdDCMEtTjCYG/EWymotTyGEUHtovJ6rOGsew6VlsUEBdOE6sLvHQ0//ylbIQvwiQ==
-x-ms-office365-filtering-correlation-id: 4c118daf-2e1d-4e1b-4142-08d63451500d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:MWHPR21MB0864;
-x-ms-traffictypediagnostic: MWHPR21MB0864:
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-o365ent-eop-header: Message processed by -  O365_ENT: Allow from ranges
- (Engineering ONLY)
-x-microsoft-antispam-prvs: <MWHPR21MB0864DECF0531B70A2C80139BD7FF0@MWHPR21MB0864.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(788757137089)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(10201501046)(3002001)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:MWHPR21MB0864;BCL:0;PCL:0;RULEID:;SRVR:MWHPR21MB0864;
-x-forefront-prvs: 08286A0BE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39860400002)(396003)(136003)(376002)(199004)(189003)(6512007)(110136005)(52116002)(86362001)(97736004)(6436002)(10090500001)(36756003)(2201001)(99286004)(86612001)(53936002)(66066001)(5660300001)(1511001)(2906002)(3846002)(6116002)(478600001)(10290500003)(14454004)(4326008)(107886003)(6636002)(5250100002)(25786009)(2501003)(7736002)(305945005)(256004)(7416002)(8676002)(14444005)(71200400001)(81156014)(2900100001)(71190400001)(81166006)(68736007)(22452003)(316002)(8936002)(2616005)(186003)(476003)(106356001)(6346003)(26005)(486006)(386003)(105586002)(6486002)(6506007)(102836004)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR21MB0864;H:MWHPR21MB0766.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mikelley@microsoft.com; 
-x-microsoft-antispam-message-info: wW6xv7l+cXw8cqGLfaldTkGHjZm4Xy1gSVorcrfWNxEyIxbnKRQUWaz9yG8KkuaTs1QVmJThjHFD25at7iml3K4GhOJrVWZ5UawBv1DWi7m+uLG9Mk0KL0fU5wbTdk34yUUfRqQIM/KrkJeWEHkvFvRcNtzaHHlghiR1TasAMYR6qoa0FzoEg2/JZuqogd2yeFzdVKYokWyXEh9GoSEmJp0/tJ5+m6ut9HEKgZ56uBRm/W9pHOJTvjARtcw7F2LaR2zfcn62z1H7yZD0FAlO2hZYpEmOZvrFZE53ngwoiaV2Hiwyn77duz80/59dM+oa5ze8qAtJjr/HbNyxxFoj3Jie6ZqVuUD3snbn/7LoeaU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c118daf-2e1d-4e1b-4142-08d63451500d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 16:55:16.1107
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR21MB0864
+        Wed, 17 Oct 2018 20:59:17 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51185 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727246AbeJRA7R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 20:59:17 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gCpDS-0001oK-TB; Wed, 17 Oct 2018 19:02:38 +0200
+Message-ID: <1539795757.4729.15.camel@pengutronix.de>
+Subject: Re: [PATCH 2/2] ASoC: max98927: Add reset-gpio support
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Cheng-yi Chiang <cychiang@chromium.org>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ryan Lee <ryans.lee@maximintegrated.com>,
+        alsa-devel@alsa-project.org, Dylan Reid <dgreid@chromium.org>,
+        tzungbi@chromium.org
+Date:   Wed, 17 Oct 2018 19:02:37 +0200
+In-Reply-To: <20181012134620.fhhkyvvdgoq4sxqi@flea>
+References: <20180912121955.33048-1-cychiang@chromium.org>
+         <20180912121955.33048-2-cychiang@chromium.org>
+         <20180920161905.GM2471@sirena.org.uk>
+         <CAFv8NwLpS9r=jD2wyBsVgJJofkS1xJNo6YssgYXuVHDmGDLogg@mail.gmail.com>
+         <1539338716.6204.2.camel@pengutronix.de>
+         <20181012134620.fhhkyvvdgoq4sxqi@flea>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pit_shutdown() doesn't work on Hyper-V because of a quirk in the
-PIT emulation. After shutdown the emulated PIT continues to interrupt
-every 18.2 seconds. This problem exists in all versions of Hyper-V
-and just had not previously been noticed. So replace the normal PIT
-shutdown function with an alternate version that works on Hyper-V.
+Hi Maxime,
 
-The alternate shutdown function could go in the i8253.c module,
-but it seems better to keep the hack with the Hyper-V code rather
-than clutter up i8253.c with #ifdef CONFIG_HYPERV.
+On Fri, 2018-10-12 at 15:46 +0200, Maxime Ripard wrote:
+> On Fri, Oct 12, 2018 at 12:05:16PM +0200, Philipp Zabel wrote:
+[...]
+> > What I would like better would be to let the consumers keep their reset-
+> > gpios bindings, but add an optional hold time override in the DT:
+> > 
+> > 	c1 {
+> > 		reset-gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
+> > 		reset-delays-us = <10000>;
+> > 	};
+> > 
+> > 	c2 {
+> > 		reset-gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
+> > 		reset-delays-us = <10000>;
+> > 	};
+> > 
+> > The reset framework could create a reset_control backed by a gpio
+> > instead of a rcdev. I have an unfinished patch for this, but without the
+> > sharing requirement adding the reset framework abstraction between gpiod
+> > and drivers never seemed really worth it.
+> 
+> I don't remember the exact details of our past discussion, but I
+> (still) don't really think that this would work well.
 
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
----
- arch/x86/hyperv/hv_init.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+It has been a while :) Thanks for jumping back in.
 
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index 7abb09e..54326af 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -32,6 +32,9 @@
- #include <linux/slab.h>
- #include <linux/cpuhotplug.h>
-=20
-+#include <linux/io.h>
-+#include <linux/i8253.h>
-+
- #ifdef CONFIG_HYPERV_TSCPAGE
-=20
- static struct ms_hyperv_tsc_page *tsc_pg;
-@@ -97,6 +100,26 @@ static u64 read_hv_clock_msr(struct clocksource *arg)
-=20
- u32 hv_max_vp_index;
-=20
-+#if defined(CONFIG_CLKEVT_I8253)
-+/*
-+ * Hyper-V emulation of the PIT has a quirk such that the
-+ * normal i8253 pit_shutdown() routine doesn't stop the PIT.
-+ * It keeps interrupting every 18.2 seconds.  This alternate
-+ * shutdown routine mirrors the normal one, but does not
-+ * set the counter value to zero.
-+ */
-+static int hyperv_pit_shutdown(struct clock_event_device *evt)
-+{
-+	if (!clockevent_state_oneshot(evt) && !clockevent_state_periodic(evt))
-+		return 0;
-+
-+	raw_spin_lock(&i8253_lock);
-+	outb_p(0x30, PIT_MODE);
-+	raw_spin_unlock(&i8253_lock);
-+	return 0;
-+}
-+#endif
-+
- static int hv_cpu_init(unsigned int cpu)
- {
- 	u64 msr_vp_index;
-@@ -325,6 +348,14 @@ void __init hyperv_init(void)
- 	if (cpuhp < 0)
- 		goto free_vp_assist_page;
-=20
-+#if defined(CONFIG_CLKEVT_I8253)
-+	/*
-+	 * Override the PIT shutdown routine due to a quirk in
-+	 * Hyper-V emulation of the PIT.
-+	 */
-+	i8253_clockevent.set_state_shutdown =3D hyperv_pit_shutdown;
-+#endif
-+
- 	/*
- 	 * Setup the hypercall page and enable hypercalls.
- 	 * 1. Register the guest ID
---=20
-1.8.3.1
+> I see two main shortcomings with that approach:
+> 
+>   - I guess that the main reason you want to do that would be to have
+>     easy DT backward compatibility.
 
+Yes, that is true. The other reason is that I'd like devices to have a
+single binding, regardless of whether somebody decided to put them onto
+a board with shared reset lines.
+
+I'd find it hard to advocate for changing the thankfully common case
+of device-exclusive reset gpios from:
+
+	some-device {
+		reset-gpios = <&gpiox y>;
+	};
+
+to:
+
+	rstc: reset-controller {
+		compatible = "gpio-reset";
+		reset-gpios <&gpiox y>;
+	};
+
+	some-device {
+		resets = <&rstc 0>;
+	};
+
+even for new bindings.
+
+If the reset framework only supports the latter, and not the former,
+drivers for devices which already have reset-gpios would have to handle
+both reset_control and gpiod functionality, which I think should not be
+necessary.
+
+Note that this is not really an argument against a "gpio-reset"
+controller driver, but an argument for reset-gpios support integrated
+into the reset framework.
+My argument against a "gpio-reset" device node in the DT is only that it
+is basically a virtual device that would only be used to work around
+missing reset-gpios support in the reset framework. Physically, this
+"device" consists of no more than a few PCB traces.
+
+>     Yet, the addition of the
+>     reset-delay-us would break that compatibility, since drivers that
+>     would have been converted now need to have it somehow, but older
+>     DTs wouldn't have it
+
+That is why such a property would have to be optional, and the drivers
+would have to keep providing the reset delay themselves, as they
+currently do when handling GPIOs directly.
+It would only serve to override the driver default in case of additional
+delay requirements due to board specifics (such as delay elements, or
+shared resets).
+
+>   - There's so many variations of the reset-gpios property name that
+>     you wouldn't be able to cover all the cases anyhow, at least
+>     without breaking the compatibility (again).
+
+This is true, and I do not have a solution for this. Especially for
+those cases that don't use gpiod yet.
+
+	of_get_named_gpio(node, "reset-gpio")
+
+is still quite common, but I'd really like on gpiolib for polarity
+support.
+
+> But I also see your point, and you're right that converting everyone
+> to a gpio-reset node will not happen (even though I'd still really
+> like to have that binding).
+
+See above. I'd be a lot less reluctant to support this binding if
+somebody could demonstrate a real gpio controlled reset controller
+device of some kind. And even then I would not want to have to use
+this device just to connect a single GPIO with a single reset input.
+
+> What about having a function that would be called by the consumer to
+> instantiate that reset controller from a GPIO for us, instead of
+> trying to do it automatically? That function could take the property
+> name that holds the GPIO, which would cover the second drawback, and
+> the delay, which would cover the first.
+
+I like this idea.
+
+I'd like to avoid having to fall back from gpiod to of_get_named_gpio if
+possible, so maybe we'd have to extend gpiolib-of.c with an
+of_find_reset_gpio function, as is done for SPI and regulators already.
+
+We probably would have to support delay ranges. I see a lot of
+usleep_range calls between reset GPIO toggles in the drivers.
+
+> And in order to cover shared GPIO reset lines, we could just look at
+> the one already created by other drivers, and if one has been created,
+> we just give the reference to that one instead of creating it.
+> 
+> Does that make sense?
+
+I'm not quite sure how to match an already requested reset control from
+the list given of_node and gpio property name at the moment - this might
+involve exporting gpiod_find from gpiolib, but API wise I think this is
+a sane proposal.
+
+I would not want to add reset controller devices for each of these GPIO
+reset controls, but rather store the gpio_desc reference in the
+reset_control instead of the rcdev reference.
+
+regards
+Philipp
