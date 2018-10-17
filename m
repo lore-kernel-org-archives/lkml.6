@@ -3,101 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E29DFECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B53ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFD7F21480
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:39:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD7F21480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 24C2C214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:42:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C2C214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbeJRAfx (ORCPT
+        id S1727563AbeJRAjF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 20:35:53 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:60736 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbeJRAfx (ORCPT
+        Wed, 17 Oct 2018 20:39:05 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:44586 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727128AbeJRAjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 20:35:53 -0400
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gCoqt-00038C-Bg; Wed, 17 Oct 2018 18:39:19 +0200
-Date:   Wed, 17 Oct 2018 18:39:18 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-cc:     x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: What happens before or in `schedule_preempt_disabled()`?
-In-Reply-To: <70649a6c-e9a2-3b38-58d6-62f63fc2792e@molgen.mpg.de>
-Message-ID: <alpine.DEB.2.21.1810171829100.1517@nanos.tec.linutronix.de>
-References: <70649a6c-e9a2-3b38-58d6-62f63fc2792e@molgen.mpg.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-773028384-1539794015=:1517"
-Content-ID: <alpine.DEB.2.21.1810171834060.1517@nanos.tec.linutronix.de>
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Wed, 17 Oct 2018 20:39:05 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id F105D136DD15A;
+        Wed, 17 Oct 2018 09:42:34 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 09:42:32 -0700 (PDT)
+Message-Id: <20181017.094232.2240871178683881504.davem@davemloft.net>
+To:     acme@redhat.com
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: Add Sparc annotate support.
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181017123902.GA4041@redhat.com>
+References: <20181016.205555.1070918198627611771.davem@davemloft.net>
+        <20181017123902.GA4041@redhat.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 17 Oct 2018 09:42:35 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Date: Wed, 17 Oct 2018 09:39:02 -0300
 
---8323329-773028384-1539794015=:1517
-Content-Type: text/plain; CHARSET=ISO-8859-7
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.DEB.2.21.1810171834061.1517@nanos.tec.linutronix.de>
-
-Paul,
-
-On Wed, 17 Oct 2018, Paul Menzel wrote:
+> Em Tue, Oct 16, 2018 at 08:55:55PM -0700, David Miller escreveu:
 > 
-> Please find the debug patches attached. The `random: %i` messages are from
-> `crng_fast_load()`.
+> Great!
 > 
-> My question is, how can I figure out, what happens in the code below?
+> Could you try something like:
 > 
->         complete(&kthreadd_done);
->         pr_info("After kthreadd_done\n");
+> # perf record some_workload
+> # perf annotate --stdio2 hot_function
 > 
->         /*
->          * The boot idle thread must execute schedule()
->          * at least once to get things moving:
->          */
->         schedule_preempt_disabled();
->         pr_info("After schedule_preempt_disabled\n");
+> So that we can see this thing in action, i.e. sparc assembly annotated?
+> :-)
 > 
-> Looking at `schedule_preempt_disabled()`, it shouldn¢t take much time, and I
-> was unable to find out where `crng_fast_load()` is called from.
-> 
-> I guess threading is somehow working at that point, and I would though that
-> it is the `complete()` call, but wonder why the `After kthreadd_done` is
-> printed earlier.
+> With 'perf annotate --tui hot_function' or 'perf top' 'A' you can
+> navigate, but for showing it in action in a git changelog comment
+> example --stdio is more convenient :-)
 
-This creates the init thread from the idle thread with preemption
-disabled. To get the init thread on the CPU the idle thread must schedule
-voluntary, which it does by calling schedule_preempt_disabled(). So the
-scheduler picks the init thread and that executes the init callbacks.
+Sure :-)
 
-The random calls are invoked by add_interrupt_randomness() or
-add_hwgenerator_randomness(). But they are probably not consuming all the
-time.
+This is run on __gettimeofday when running perf record on your "gtod"
+test.  (Still working on getting glibc to use the VDSO properly on
+sparc :-( )
 
-The time is consumed by the initcalls which are required before bringing up
-the (non boot) CPUs. See kernel_init_freeable() which is called from
-kernel_init(). If you add initcall_debug to the command line you will get
-more information at least about the functions which are marked with
-initcall.
-
-Thanks,
-
-	tglx
-
---8323329-773028384-1539794015=:1517--
+Samples: 7K of event 'cycles:ppp', 4000 Hz, Event count (approx.): 3086733887                                   
+__gettimeofday  /lib32/libc-2.27.so [Percent: local period]                                                     
+Percent$B("(B
+       $B("(B
+       $B("(B
+       $B("(B    Disassembly of section .text:
+       $B("(B
+       $B("(B    000a6fa0 <__gettimeofday@@GLIBC_2.0>:
+  0.47 $B("(B      save   %sp, -96, %sp
+  0.73 $B("(B      sethi  %hi(0xe9000), %l7
+       $B("(B    $B"*(B call   __frame_state_for@@GLIBC_2.0+0x480
+  0.30 $B("(B      add    %l7, 0x58, %l7     ! e9058 <nftw64@@GLIBC_2.3.3+0x818>
+  1.33 $B("(B      mov    %i0, %o0
+       $B("(B      mov    %i1, %o1
+  0.43 $B("(B      mov    0x74, %g1
+       $B("(B      ta     0x10
+ 88.92 $B("(B    $B"-(B bcc    30
+  2.95 $B("(B      clr    %g1
+       $B("(B      neg    %o0
+       $B("(B      mov    1, %g1
+  0.31 $B("(B30:   cmp    %g1, 0
+       $B("(B      bne,pn %icc, a6fe4 <__gettimeofday@@GLIBC_2.0+0x44>
+       $B("(B      mov    %o0, %i0
+  1.96 $B("(B    $B"+(B return %i7 + 8
+  2.62 $B("(B      nop
+       $B("(B      sethi  %hi(0), %g1
+       $B("(B      neg    %o0, %g2
+       $B("(B      add    %g1, 0x160, %g1
+       $B("(B      ld     [ %l7 + %g1 ], %g1
+       $B("(B      st     %g2, [ %g7 + %g1 ]
+       $B("(B    $B"+(B return %i7 + 8
+       $B("(B      mov    -1, %o0
