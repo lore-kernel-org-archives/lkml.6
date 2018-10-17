@@ -2,160 +2,137 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 366C1ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BDCECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEA332150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0895D2150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:29:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yv7faaiQ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fa1Fcdq6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEA332150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Z1Ljtu0p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0895D2150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbeJQTXI (ORCPT
+        id S1727158AbeJQTYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:23:08 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43662 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbeJQTXI (ORCPT
+        Wed, 17 Oct 2018 15:24:47 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:45042 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbeJQTYr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:23:08 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 58FBD612F6; Wed, 17 Oct 2018 11:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539775671;
-        bh=TLOEKPKFLxEc0Tmbpb2oOwgeF6MRjfPMkLQZfPUWPTc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Yv7faaiQm15UyKgux25dmKa5LWeJRm6UqJwOkuCiCPscEq46OX+6qIb2boz2oNCyi
-         4OEyU6oV7+iC4mM3Kb2Kp1+ufhEn1ZrRXJMUlJFtOce/bQiBGXyuZwnL2cg+wl5rV1
-         UBt1aTIL8GXb6EZmhAisP3LTLOqGvnxqRqavqNkE=
-Received: from [10.79.129.10] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1F28E6034D;
-        Wed, 17 Oct 2018 11:27:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539775670;
-        bh=TLOEKPKFLxEc0Tmbpb2oOwgeF6MRjfPMkLQZfPUWPTc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=fa1Fcdq6wfIScAxE2cKHGrHkzno/nRubnGYW4IRNNZGTGCptu9pSkQb1TWJzTBahj
-         Yytv3ONeyhaPYUgQ9NHlTCdUI3PpxmpqG4D8zMAnyMt/hHlvE4J72bS9bd3AhHk4GR
-         IINDuUFgAY6btVrCJJsD6/k/9yZss2KUPYoOLrvE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F28E6034D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Geliang Tang <geliangtang@gmail.com>,
+        Wed, 17 Oct 2018 15:24:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wb7hS7VTR8IKb91xP9AUV/YiywTtzX4ymRCjWQVtEsw=; b=Z1Ljtu0pGpVomkPEapqzijA8I
+        znolUa/vr8cINmHdHQUc5r7w9Elcb3COmiXio6V+S2DtwyCkdq7Qz+WlhWGvsKGgXPYZ4dBW5Jt7/
+        Lfh02Ro7R7Fwgkghx2lSL58rqOW0cIUEeM4CGUBQyV3OGny9J/p//e/6o+gCHMlDyUjfA=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:47216)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gCk0x-0003kd-5Y; Wed, 17 Oct 2018 12:29:23 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gCk0r-0004UJ-C8; Wed, 17 Oct 2018 12:29:17 +0100
+Date:   Wed, 17 Oct 2018 12:29:14 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pramod Gurav <gpramod@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
- <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
- <20181016141610.639b9000@gandalf.local.home>
- <accdce6d-8fd2-9f15-d4cd-704cbf0b32eb@codeaurora.org>
- <20181016144123.24c47b38@gandalf.local.home>
- <7781815e-cba2-9e36-db6d-268298747876@codeaurora.org>
- <20181016150328.3450d718@gandalf.local.home>
- <c94103d2-ed5d-bf43-fc71-c60e108f303e@codeaurora.org>
- <20181016151516.786b16cc@gandalf.local.home>
- <0b014d85-9988-0bf5-7b72-911dbbcdadfc@codeaurora.org>
- <153972306834.5275.7510298070540576604@swboyd.mtv.corp.google.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <17116a6b-156e-af2f-c20c-88bea10bfc92@codeaurora.org>
-Date:   Wed, 17 Oct 2018 16:57:42 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/3] driver core: add probe_err log helper
+Message-ID: <20181017112914.GH30658@n2100.armlinux.org.uk>
+References: <CGME20181016072249eucas1p2303b8c06a9f7c839a971fe065b0c752e@eucas1p2.samsung.com>
+ <20181016072244.1216-1-a.hajda@samsung.com>
+ <20181016072244.1216-2-a.hajda@samsung.com>
+ <CAHp75VfVxEkTzc=1hBrvc4K7r=L28vXipb=j9jSRJbTJE4GtLQ@mail.gmail.com>
+ <605bd00e-ed0d-4259-bdc3-1784b2b3b16a@samsung.com>
+ <20181016125543eucas1p1f23b3482179a9cd465f509e0abf782c1~eGAecmAv93038330383eucas1p1j@eucas1p1.samsung.com>
+ <CAHp75VecquoNrzOuRvWcZ-Qa1b-5P0V0MWq=sNj-SnVcd2EhRw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <153972306834.5275.7510298070540576604@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VecquoNrzOuRvWcZ-Qa1b-5P0V0MWq=sNj-SnVcd2EhRw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 2:21 AM, Stephen Boyd wrote:
-> Quoting Sai Prakash Ranjan (2018-10-16 12:35:57)
->> On 10/17/2018 12:45 AM, Steven Rostedt wrote:
->>> On Wed, 17 Oct 2018 00:36:05 +0530
->>> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
->>>
->>>> On 10/17/2018 12:33 AM, Steven Rostedt wrote:
->>>>> On Wed, 17 Oct 2018 00:31:03 +0530
->>>>> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
->>>>>     
->>>>>> Haa seems like you are right! With "ftrace=function
->>>>>> ftrace_filter=msm_read" , I can trigger the crash, but
->>>>>> sadly "ftrace_notrace=msm_read" also crashes.
->>>>>
->>>>> So there's more than one problem area.
->>>>>
->>>>> What about ftrace_notrace=m*
->>>>>
->>>>> ?
->>>>>     
->>>>
->>>> That too crashes.
->>>>
->>>
->>> Which compiler are you using and can you send me your config.
->>>
->> Config attached.
->>
->> Compiler: aarch64-linux-gnu-gcc (Linaro GCC 6.3-2017.02) 6.3.1 20170109
->>
->>> I wonder if there's something screwing up with the way ftrace nops are
->>> working on this board.
->>>
->>> A couple things of note, 1) it works fine after boot up. 2) it crashes
->>> in the initcall code, so it's not due to ftrace being enabled too early.
->>>
->>> I'd like to see the full command line as well. I bet if you remove the
->>> qcom,msm-uartdm from the command line, and had just ftrace=function, it
->>> may also boot fine too. Can you try that?
->>>
->>
->> Kernel command line: root=/dev/disk/by-partlabel/rootfs rw rootwait
->> ftrace=function ftrace_notrace=m* earlycon console=ttyMSM0,115200n8
->>
->> qcom,msm-uartdm is not in command line, it is the earlycon. So without
->> earlycon(bootconsole), board boots fine as we discussed earlier.
->>
+On Tue, Oct 16, 2018 at 04:55:00PM +0300, Andy Shevchenko wrote:
+> On Tue, Oct 16, 2018 at 3:55 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
+> > On 16.10.2018 13:29, Andrzej Hajda wrote:
+> > > On 16.10.2018 13:01, Andy Shevchenko wrote:
+> > >> On Tue, Oct 16, 2018 at 10:22 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
+> > >>> During probe every time driver gets resource it should usually check for error
+> > >>> printk some message if it is not -EPROBE_DEFER and return the error. This
+> > >>> pattern is simple but requires adding few lines after any resource acquisition
+> > >>> code, as a result it is often omited or implemented only partially.
+> > >>> probe_err helps to replace such code seqences with simple call, so code:
+> > >>>         if (err != -EPROBE_DEFER)
+> > >>>                 dev_err(dev, ...);
+> > >>>         return err;
+> > >>> becomes:
+> > >>>         return probe_err(dev, err, ...);
 > 
-> Have you tried with earlycon and no ftrace things on the commandline?
+> > >>> +               va_start(args, fmt);
+> > >>> +
+> > >>> +               vaf.fmt = fmt;
+> > >>> +               vaf.va = &args;
+> > >>> +
+> > >>> +               __dev_printk(KERN_ERR, dev, &vaf);
 > 
->   root=/dev/disk/by-partlabel/rootfs rw rootwait earlycon console=ttyMSM0,115200n8
+> > >> It would be nice to print an error code as well, wouldn't it?
+> > > Hmm, on probe fail error is printed anyway (with exception of
+> > > EPROBE_DEFER, ENODEV and ENXIO):
+> > >     "probe of %s failed with error %d\n"
+> > > On the other side currently some drivers prints the error code anyway
+> > > via dev_err or similar, so I guess during conversion to probe_err it
+> > > should be removed then.
+> > >
+> > > If we add error code to probe_err is it OK to report it this way?
+> > >     dev_err(dev, "%V, %d\n", &vaf, err);
+> >
+> > Ups, I forgot that message passed to probe_err will contain already
+> > newline character.
 > 
-> If earlycon is causing problems, it sounds like this may be another case
-> of earlycon uart handing off to the uart driver and that failing because
-> something gets printed while the uart is transitioning from the earlycon
-> console to the kernel boot console. I recall the uart would trample on
-> itself in interesting ways.
-> 
+> You may consider not to pass it.
 
-Yes I have tried with only earlycon enabled and everything is fine. 
-Issue is reproduced only with ftrace=function cmdline.
+It's normal to pass the '\n', so by doing this, we create the situation
+where this function becomes the exception to the norm.  That's not a
+good idea - we will see people forget that appending '\n' should not
+be done for this particular function.
+
+While we could add a checkpatch rule, that's hassle (extra rework).  In
+any case, I think the message would be much better formatted if we did:
+
+	dev_err(dev, "error %d: %V", err, &vaf);
+
+which means we end up with (eg):
+
+	error -5: request_irq failed for irq 9
+
+rather than:
+
+	request_irq failed for irq 9, -5
+
+which is more confusing.
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
