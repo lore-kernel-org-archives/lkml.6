@@ -2,90 +2,127 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8901DECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F151ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 476762151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:11:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 476762151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 1719F2151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:13:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=igel-co-jp.20150623.gappssmtp.com header.i=@igel-co-jp.20150623.gappssmtp.com header.b="izlxtBta"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1719F2151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=igel.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbeJQQGO (ORCPT
+        id S1727387AbeJQQHr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 12:06:14 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:39406 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726967AbeJQQGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 12:06:13 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 9RHYY0zw4XRO; Wed, 17 Oct 2018 10:11:24 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC91B00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:1b00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 276151EC0319;
-        Wed, 17 Oct 2018 10:11:24 +0200 (CEST)
-Date:   Wed, 17 Oct 2018 10:11:15 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
-Cc:     lkcamp@lists.libreplanetbr.org,
-        Matthew Wilcox <willy6545@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH 1/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
-Message-ID: <20181017081115.GA22535@zn.tnic>
-References: <20181017000809.GA21292@WindFlash>
+        Wed, 17 Oct 2018 12:07:47 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38359 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727008AbeJQQHr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 12:07:47 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f8-v6so12156280pgq.5
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 01:13:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=igel-co-jp.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=y/USgmVy81vs1yDCG0JKx/xH46DxdkkeWmnKpjvt0sw=;
+        b=izlxtBtaSMGU43UMOyk/sqsIiSQQ9VFSDtcHWKw1sNCjhPHAt7yOYpJ+TVR2GBzOk4
+         DYJdZ5H8y2AhM2+kvuW2lI1YQ5HhVWNYVQ9U4lExn863g/Ze9E+ULBkgY7jUPkJ6bEn6
+         S3dkjZ1QHj+d9VJ2T4hb1PP/xw9DHXXj9CL6VCnHtbQeD3mBhHfWzr8OwxY4aGbNgPJx
+         pEnQi4tFdX5ManwuDI65p1L9yGFocCXIJNYMjwy12n4XlbRywDyXu8zDJZzs76Qoi6HG
+         54jtxsrVuDfagqGKyp92bsOtnBQri6ZdOBrlmzVeI1IDfy3bquKnE/RMRBdpDFF9LOKp
+         FPSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=y/USgmVy81vs1yDCG0JKx/xH46DxdkkeWmnKpjvt0sw=;
+        b=c6bdztS2sqzv/x4Bt6tWF0hmU32lLCpjx1Bm1oIkYq991q68455/JQTCriKShJP9Aq
+         Tf/ts/Ynqf+cpn8Yv/qjJ5Yn3axtiG7DiSRfYoNKMAnXf072/hCmbNrVNOfSY8xDr1uZ
+         b0ia9qQplOMNkeGGNzHnWs5l+S3YurXhTUElkDVyLHpyJ2qoVljWhIPOEFXzJGfm2OO5
+         xF2UWqSJ3es1AJs9gVQGvcSLDGsm07GoYZzg+sfnpAnfd0yvaHB+EFCDi8Z2yX8oG8P9
+         +XEdpdfASZcdTLYbIHaqt5fLaklz7370dFAYgqmk7wKDR6Wm0ecDyxNF9goc005TGZ24
+         RD7A==
+X-Gm-Message-State: ABuFfohBuHEVVLfkTudprAiq9Uq87kxbvzgMDk87o7DBzMTTrdN6j/yS
+        HZml1klXCGiOAQF9eui6wphCcQ==
+X-Google-Smtp-Source: ACcGV61KHjTVzAcbJtiXw4B0l/vx+sAjuuCVTA/Oumc92EJSkMJk1p6ltGaWr4WTjTVCf+nj9BIWuA==
+X-Received: by 2002:a62:6d04:: with SMTP id i4-v6mr16301637pfc.131.1539763995872;
+        Wed, 17 Oct 2018 01:13:15 -0700 (PDT)
+Received: from ake-ubuntu.hq.igel.co.jp (napt.igel.co.jp. [219.106.231.132])
+        by smtp.gmail.com with ESMTPSA id k12-v6sm15547018pgo.34.2018.10.17.01.13.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 17 Oct 2018 01:13:14 -0700 (PDT)
+From:   Ake Koomsin <ake@igel.co.jp>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     ake@igel.co.jp, "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] virtio_net: avoid using netif_tx_disable() for serializing tx routine
+Date:   Wed, 17 Oct 2018 16:59:18 +0900
+Message-Id: <20181017075918.7043-1-ake@igel.co.jp>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <f04bee7a-3892-102d-2be0-f4fda4048e74@redhat.com>
+References: <f04bee7a-3892-102d-2be0-f4fda4048e74@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181017000809.GA21292@WindFlash>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 09:08:09PM -0300, Leonardo Brás wrote:
-> Adds -Wshadow=local on KBUILD_HOSTCFLAGS to show shadow warnings
-> on tools built for HOST.
-> 
-> Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
-> ---
->  Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index e8b599b4dcde..fb0a9ac195e7 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -360,7 +360,7 @@ HOST_LFS_LIBS := $(shell getconf LFS_LIBS 2>/dev/null)
->  
->  HOSTCC       = gcc
->  HOSTCXX      = g++
-> -KBUILD_HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 \
-> +KBUILD_HOSTCFLAGS   := -Wall -Wshadow=local -Wmissing-prototypes -Wstrict-prototypes -O2 \
->  		-fomit-frame-pointer -std=gnu89 $(HOST_LFS_CFLAGS) \
->  		$(HOSTCFLAGS)
->  KBUILD_HOSTCXXFLAGS := -O2 $(HOST_LFS_CFLAGS) $(HOSTCXXFLAGS)
-> -- 
+Commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+introduces netif_tx_disable() after netif_device_detach() in order to
+avoid use-after-free of tx queues. However, there are two issues.
 
-You might wanna take a look at scripts/Makefile.extrawarn which already
-has -Wshadow.
+1) Its operation is redundant with netif_device_detach() if the interface
+   is running.
+2) In case of the interface is not running before suspending and
+   resuming, the tx does not get resumed by netif_device_attach().
+   This results in losing network connectivity.
 
+It is better to use netif_tx_lock()/netif_tx_unlock() instead for
+serializing tx routine during reset. This also preserves the symmetry
+of netif_device_detach() and netif_device_attach().
+
+Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+Signed-off-by: Ake Koomsin <ake@igel.co.jp>
+---
+ drivers/net/virtio_net.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 3f5aa59c37b7..41ccf9c994a4 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2267,8 +2267,9 @@ static void virtnet_freeze_down(struct virtio_device *vdev)
+ 	/* Make sure no work handler is accessing the device */
+ 	flush_work(&vi->config_work);
+ 
++	netif_tx_lock(vi->dev);
+ 	netif_device_detach(vi->dev);
+-	netif_tx_disable(vi->dev);
++	netif_tx_unlock(vi->dev);
+ 	cancel_delayed_work_sync(&vi->refill);
+ 
+ 	if (netif_running(vi->dev)) {
+@@ -2304,7 +2305,9 @@ static int virtnet_restore_up(struct virtio_device *vdev)
+ 		}
+ 	}
+ 
++	netif_tx_lock(vi->dev);
+ 	netif_device_attach(vi->dev);
++	netif_tx_unlock(vi->dev);
+ 	return err;
+ }
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.19.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
