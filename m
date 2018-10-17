@@ -2,134 +2,74 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 838A2ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA95ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F4DF21486
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:42:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F4DF21486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0CD7821486
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:43:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CD7821486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbeJRCjx (ORCPT
+        id S1728298AbeJRCk3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 22:39:53 -0400
-Received: from mga18.intel.com ([134.134.136.126]:60469 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727435AbeJRCjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 22:39:53 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 11:42:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="asc'?scan'208";a="83418271"
-Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.96])
-  by orsmga006.jf.intel.com with ESMTP; 17 Oct 2018 11:42:53 -0700
-Message-ID: <540496d168b9fa0d799fdc88990f569b615e5847.camel@intel.com>
-Subject: Re: [PATCH net-next] ixgbe: fix XFRM_ALGO dependency
-From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Reply-To: jeffrey.t.kirsher@intel.com
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     shannon.nelson@oracle.com, David Miller <davem@davemloft.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        =?ISO-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        intel-wired-lan@lists.osuosl.org,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 17 Oct 2018 11:46:20 -0700
-In-Reply-To: <CAK8P3a3RiMHVkoA+Wp_abPJ5Fzwk5UdhoOaxt++q4_YnzDRwfA@mail.gmail.com>
-References: <20181016100848.1329843-1-arnd@arndb.de>
-         <07e372cb-06da-bf95-bc53-64ee09fc8e76@oracle.com>
-         <3f8e7a6e9532abcd772927432d5f00cebeba08b8.camel@intel.com>
-         <CAK8P3a3RiMHVkoA+Wp_abPJ5Fzwk5UdhoOaxt++q4_YnzDRwfA@mail.gmail.com>
-Organization: Intel
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-HRpEtTPxq8VgKuRp6Ztb"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Wed, 17 Oct 2018 22:40:29 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45491 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727435AbeJRCk2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 22:40:28 -0400
+Received: by mail-ot1-f68.google.com with SMTP id u22so27199808ota.12;
+        Wed, 17 Oct 2018 11:43:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fEdKiaalyLRsvukTA2HosQmD/Jwci5A4PjJMS15VXzE=;
+        b=TxS1pK2jGNNYddNSvIV2CS+Nnu6KnIpDsYGLaFrgjkixccd447OZdjR8OQWx03eVlU
+         8W3JK315bT/jzdyZNv5ZUvQjYK5ScbqSloBghN6hDc7eC2+HD+a4lu0yPSB54LV6SNlG
+         Pz1xcKymViJPcwaxXRlcVa6YKznaHbg+MnkYQXE5T6haVd6kwVTN+ZvIhUoMokTz7HgG
+         t3TM/EkqG/rA9GVChdxBMmb0qvS0YGBfAT0IRrTP0iHH6pnoFDGwZO/u+z610NblYmXx
+         P12JwL5sJI347vNslGadxnFU/0YC5lXCJdv+yx3TwAQIwtZSy7ApSFvtRzkjB9ZklFx5
+         5GZg==
+X-Gm-Message-State: ABuFfojtMVxEHmBz+LVOla2+wcj1/YnhH0TMFrjxIqmrQnw48Ss86SJO
+        CmfHKwLjgRLLhNJ4MplqlVYXpvE=
+X-Google-Smtp-Source: ACcGV60ITbzQTz0KRySaUg5o+Xgkrk3vlLDaxxK+AqEp8Yerjx8pHIjyoHCy6J3B2pKjRG+Ru6PDRA==
+X-Received: by 2002:a9d:7692:: with SMTP id j18mr9462561otl.217.1539801809002;
+        Wed, 17 Oct 2018 11:43:29 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id b49sm9334311otb.33.2018.10.17.11.43.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 11:43:28 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 13:43:27 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Add OLPC vendor prefix
+Message-ID: <20181017184327.GA7317@bogus>
+References: <20181010163824.269277-1-lkundrak@v3.sk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010163824.269277-1-lkundrak@v3.sk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 10, 2018 at 06:38:24PM +0200, Lubomir Rintel wrote:
+> One Laptop Per Child is a non-profit that produced the XO series of
+> eductional laptops for children.
+> 
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
---=-HRpEtTPxq8VgKuRp6Ztb
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2018-10-17 at 18:04 +0200, Arnd Bergmann wrote:
-> On Wed, Oct 17, 2018 at 5:53 PM Jeff Kirsher
-> <jeffrey.t.kirsher@intel.com> wrote:
-> > On Tue, 2018-10-16 at 09:35 -0700, Shannon Nelson wrote:
-> > > On 10/16/2018 3:03 AM, Arnd Bergmann wrote:
-> > > > A separate Kconfig symbol now controls whether we include the
-> > > > ipsec
-> > > > offload code. To keep the old behavior, this is left as
-> > > > 'default
-> > > > y'. The
-> > > > dependency in XFRM_OFFLOAD still causes a circular dependency
-> > > > but
-> > > > is
-> > > > not actually needed because this symbol is not user visible, so
-> > > > removing
-> > > > that dependency on top makes it all work.
-> > > >=20
-> > > > Fixes: eda0333ac293 ("ixgbe: add VF IPsec management")
-> > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >=20
-> > I agree with Shannon's suggested changes.  Arnd, are you working on
-> > v2?
-> > Or would you like me to take care of it?
->=20
-> I was planning to respin it, but didn't get around to it yet, and
-> will
-> be travelling for the next week, so I'd welcome if you can take over
-> from here. Shannon's comments all make sense to me as well.
-
-Ok, I will run with it and make a v2 for you.
-
->=20
-> > > > +config IXGBE_IPSEC
-> > > > +   bool "IPSec XFRM cryptography-offload accelaration"
-> > > > +   default n
-> > >=20
-> > > remove this "default n" line?
->=20
-> I meant for this to say "default y", as I said in the changelog,
-> but feel free to pick whichever default makes sense to you
-> make make the description match ;-)
-
-
---=-HRpEtTPxq8VgKuRp6Ztb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlvHg3wACgkQ5W/vlVpL
-7c6bPA//TaEREo7cqHg6pzP4THZhqErcX7RUY32RvIXfik9/t2ns3o7FIdC59rSt
-1Lz4Ptu2pHCB2gX97SasXTlYqFvpRFMlbtaoyAlDC77k+Kc2mHsoh+KmXSSsCnVf
-TIrYMwKjyNm1dB35kEmEx+ddCmnFnIcG2uROcgW1XaJv3rLufufgGKGbHnUC3/Kg
-rEQ/QZSVHXhZtfcZq09PUP6FKtO8aR4XND+JGW3e4r06FudNrkpwDoIOE9pHspqC
-gJq6PGEp+hBxijiR2acn8FX7YQvLaVEze+LIq34IenJ+t718CM5bq0GdO6qviPUs
-xYlsFUbJ/Uefv8u5H6QpEOoKbgtZT4zmPRs4t0OgiSnm/rE9enr+gEOOeLhrgnV7
-fbN2evxpZAPWo3biEsGfMjjIPeONajH2+Wjt4DBtls2nXymx40oFLplbMDO2pP4s
-6fjRmBYcPnfseas+mAW/VMWZaH6/X/1BbN88rUaWOh23laHgds5CpbqpaRKg1+4a
-nicrSZ2qHYymLdUZti5H7Axzf2cnuie+2GrIZUTmYeoPwQ+RaAkR7Hf05kkg01M0
-oh4h+eW/ul/iIoNlJOBYNm+4cgYFskZVb2if6SqOiy6njCxgt60ro5mUPSD2zPHC
-tGlp+fJvrbG+cvsaeXj12JLHkYOhjielXMjuxPJqZDJguLB7dh4=
-=pi1S
------END PGP SIGNATURE-----
-
---=-HRpEtTPxq8VgKuRp6Ztb--
-
+Applied.
