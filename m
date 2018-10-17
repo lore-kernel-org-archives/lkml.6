@@ -2,176 +2,187 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB9BC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 02:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EEF0C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 02:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87CF8214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 02:01:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBYGwup4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87CF8214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BA114214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 02:02:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA114214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbeJQJy2 (ORCPT
+        id S1727368AbeJQJzs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 05:54:28 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42667 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbeJQJy2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 05:54:28 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c8-v6so11867195plo.9;
-        Tue, 16 Oct 2018 19:01:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Q7+PbnMvoyetgGp3wV/YhTZ/rXs3vFfSTLZJ4DH4+VY=;
-        b=XBYGwup4Ii4uF4Mr2fN/f+EieUw1EwPQnStEUvd8PXxJP8nIj54YzPDjQJJ5ImtgLE
-         bnlYWiRa4okqNWE/iytaNCktXyKPRg0zYRzT9mUf+pQDlYWO92RQYI3KBJtsT+JY+q0V
-         R3Cms+xlsfe7uYHV6X8z9+UIozYuHB/Jk8SwWLyhbRg5pAHCsvH69f7KW6UfVNJdchBI
-         t2vxL8njU11+zs6sGKKw/lDXsjDHTuPGZZJKyGTuCGrynSUilu9hECE0ktkeeNx/FGiu
-         sYYolv0Wcsda91dq7zUHREWwO/fa+/Iuzw8SOxoHEZS0BkDpqFYBX5R7IKQq7iBxFDds
-         takQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q7+PbnMvoyetgGp3wV/YhTZ/rXs3vFfSTLZJ4DH4+VY=;
-        b=skandd8vqdmig6uX2OzlaExs2Ybr48XwTFllKVOu0O/L8y3bj5Z5V4Yt1ZBiZOSb4d
-         /cQx/esYhCEfxbSwE/V//rwxXrpj+26MwSr8oJzqcPVGqfAHIQHoXxVKwAEbaYnZf/TW
-         6Eat4JChWE3ISov345WHu7tM6uSOaInt+xKNn0WV+9QWv7y7eVPxvakgHOlpOUv3TEE5
-         ni6dzEp9Lq8R9+QoGgve5lY8lgTf9+K4FvUozB4u1JCanZkY3cUZe2i3ZuH18ZMjk0+c
-         pNqwkWWucljcktLZcob9lLHIbKmExNH38kFB4ZNK/cpeLnAXDstwN1yd0UU/GYa9AJ/8
-         J8MA==
-X-Gm-Message-State: ABuFfohkaHGvC3er2hILEF1tGZHR+JWvvKVtadJLQ91fOL77LFC1CF0n
-        BcHpPsNNZxe5hQjY3w22Edw=
-X-Google-Smtp-Source: ACcGV60NIXvldayeAu8WoEXCaCeqic4ICWyVSIWEeVYQWlmyB4yvjyr4dkKX/FnHGyWa023AKGP7gg==
-X-Received: by 2002:a17:902:9a45:: with SMTP id x5-v6mr23792979plv.213.1539741669626;
-        Tue, 16 Oct 2018 19:01:09 -0700 (PDT)
-Received: from icarus ([2001:268:c0a4:1899:c8a2:53ea:c386:fc53])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm18095772pff.128.2018.10.16.19.01.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 19:01:09 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 11:01:17 +0900
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     jic23@kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, fabrice.gasnier@st.com,
-        benjamin.gaignard@st.com, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, akpm@linux-foundation.org
-Subject: Re: [PATCH v9 00/11] Introduce the Counter subsystem
-Message-ID: <20181017020117.GB3307@icarus>
-References: <cover.1532298882.git.vilhelm.gray@gmail.com>
+        Wed, 17 Oct 2018 05:55:48 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:49150 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727053AbeJQJzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 05:55:48 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AF12386D3B55D;
+        Wed, 17 Oct 2018 10:02:27 +0800 (CST)
+Received: from [127.0.0.1] (10.57.77.109) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Wed, 17 Oct 2018
+ 10:02:25 +0800
+Subject: Re: [PATCH v3 0/8] vfio/mdev: IOMMU aware mediated device
+To:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+References: <20181012051632.26064-1-baolu.lu@linux.intel.com>
+ <5BC1AC09.1060507@huawei.com>
+ <f3ffd1a3-be4b-f041-e4da-2bbf065aa065@linux.intel.com>
+ <5BC454DF.6010109@huawei.com>
+ <40fc685e-a0be-5e54-2de7-6cd87c36dd80@linux.intel.com>
+CC:     <kevin.tian@intel.com>, <ashok.raj@intel.com>,
+        <tiwei.bie@intel.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        <sanjay.k.kumar@intel.com>, <iommu@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <yi.y.sun@intel.com>,
+        <jacob.jun.pan@intel.com>, <kvm@vger.kernel.org>
+From:   Xu Zaibo <xuzaibo@huawei.com>
+Message-ID: <5BC69830.707@huawei.com>
+Date:   Wed, 17 Oct 2018 10:02:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1532298882.git.vilhelm.gray@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <40fc685e-a0be-5e54-2de7-6cd87c36dd80@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.57.77.109]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 22, 2018 at 06:49:49PM -0400, William Breathitt Gray wrote:
-> Changes in v9:
->  - Prefix exported symbols with "counter_" to make counter namespace
->    explicit and clear
->  - Replace scnprintf and snprintf lines with sprintf in 104-quad-8.c
->    since we're dealing with sysfs files
-> 
-> This revision is functionally identical to the last; changes in this
-> version were made to improve code clarity. Andrew Morton suggested
-> improving the names of the exported symbols to clean up the Counter
-> subsytem namespace. This revision adds a "counter_" prefix to the
-> exported symbols to keep the namespace tidy and these symbols as
-> clearly part of the Counter subsystem.
-> 
-> Andrew Morton also brought up a good point that the Generic Counter
-> "signal" terminology could conflict with the existing established use of
-> the term in other areas of the Linux kernel. I've changed the major
-> exported symbols in counter.h that used the "signal_" naming covention
-> to now use a "counter_signal_" naming convention in order to help
-> prevent this confusion; I've made similar changes to symbols in
-> counter.c as well. If this naming still causes trouble, we can consider
-> alternative names for this component.
-> 
-> William Breathitt Gray
-> 
-> Benjamin Gaignard (2):
->   counter: Add STM32 Timer quadrature encoder
->   dt-bindings: counter: Document stm32 quadrature encoder
-> 
-> Fabrice Gasnier (2):
->   counter: stm32-lptimer: add counter device
->   dt-bindings: counter: Adjust dt-bindings for STM32 lptimer move
-> 
-> William Breathitt Gray (7):
->   counter: Introduce the Generic Counter interface
->   counter: Documentation: Add Generic Counter sysfs documentation
->   docs: Add Generic Counter interface documentation
->   iio: 104-quad-8: Update license boilerplate
->   counter: 104-quad-8: Add Generic Counter interface support
->   counter: 104-quad-8: Documentation: Add Generic Counter sysfs
->     documentation
->   iio: counter: Add deprecation markings for IIO Counter attributes
-> 
->  Documentation/ABI/testing/sysfs-bus-counter   |  230 +++
->  .../ABI/testing/sysfs-bus-counter-104-quad-8  |   36 +
->  Documentation/ABI/testing/sysfs-bus-iio       |    8 +
->  .../testing/sysfs-bus-iio-counter-104-quad-8  |   16 +
->  .../{iio => }/counter/stm32-lptimer-cnt.txt   |    0
->  .../bindings/counter/stm32-timer-cnt.txt      |   31 +
->  .../devicetree/bindings/mfd/stm32-lptimer.txt |    2 +-
->  .../devicetree/bindings/mfd/stm32-timers.txt  |    7 +
->  Documentation/driver-api/generic-counter.rst  |  342 ++++
->  Documentation/driver-api/index.rst            |    1 +
->  MAINTAINERS                                   |   15 +-
->  drivers/Kconfig                               |    2 +
->  drivers/Makefile                              |    1 +
->  drivers/{iio => }/counter/104-quad-8.c        |  782 +++++++-
->  drivers/counter/Kconfig                       |   51 +
->  drivers/{iio => }/counter/Makefile            |    5 +-
->  drivers/counter/counter.c                     | 1567 +++++++++++++++++
->  drivers/{iio => }/counter/stm32-lptimer-cnt.c |  361 +++-
->  drivers/counter/stm32-timer-cnt.c             |  390 ++++
->  drivers/iio/Kconfig                           |    1 -
->  drivers/iio/Makefile                          |    1 -
->  drivers/iio/counter/Kconfig                   |   34 -
->  include/linux/counter.h                       |  510 ++++++
->  include/linux/counter_enum.h                  |   45 +
->  24 files changed, 4352 insertions(+), 86 deletions(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-counter
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-counter-104-quad-8
->  rename Documentation/devicetree/bindings/{iio => }/counter/stm32-lptimer-cnt.txt (100%)
->  create mode 100644 Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
->  create mode 100644 Documentation/driver-api/generic-counter.rst
->  rename drivers/{iio => }/counter/104-quad-8.c (44%)
->  create mode 100644 drivers/counter/Kconfig
->  rename drivers/{iio => }/counter/Makefile (46%)
->  create mode 100644 drivers/counter/counter.c
->  rename drivers/{iio => }/counter/stm32-lptimer-cnt.c (48%)
->  create mode 100644 drivers/counter/stm32-timer-cnt.c
->  delete mode 100644 drivers/iio/counter/Kconfig
->  create mode 100644 include/linux/counter.h
->  create mode 100644 include/linux/counter_enum.h
-> 
-> -- 
-> 2.18.0
+Hi,
 
-Hi Greg,
+On 2018/10/16 9:21, Lu Baolu wrote:
+> Hi,
+>
+> On 10/15/2018 04:50 PM, Xu Zaibo wrote:
+>> Hi,
+>>
+>> On 2018/10/15 10:48, Lu Baolu wrote:
+>>> Hi,
+>>>
+>>> On 10/13/2018 04:25 PM, Xu Zaibo wrote:
+>>>> Hi,
+>>>>
+>>>> On 2018/10/12 13:16, Lu Baolu wrote:
+>>>>> Hi,
+>>>>>
+>>>>> The Mediate Device is a framework for fine-grained physical device
+>>>>> sharing across the isolated domains. Currently the mdev framework
+>>>>> is designed to be independent of the platform IOMMU support. As the
+>>>>> result, the DMA isolation relies on the mdev parent device in a
+>>>>> vendor specific way.
+>>>>>
+>>>>> There are several cases where a mediated device could be protected
+>>>>> and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
+>>>>> [1] introduces a new translation mode called 'scalable mode', which
+>>>>> enables PASID-granular translations. The vt-d scalable mode is the
+>>>>> key ingredient for Scalable I/O Virtualization [2] [3] which allows
+>>>>> sharing a device in minimal possible granularity (ADI - Assignable
+>>>>> Device Interface).
+>>>>>
+>>>>> A mediated device backed by an ADI could be protected and isolated
+>>>>> by the IOMMU since 1) the parent device supports tagging an unique
+>>>>> PASID to all DMA traffic out of the mediated device; and 2) the DMA
+>>>>> translation unit (IOMMU) supports the PASID granular translation.
+>>>>> We can apply IOMMU protection and isolation to this kind of devices
+>>>>> just as what we are doing with an assignable PCI device.
+>>>>>
+>>>>> In order to distinguish the IOMMU-capable mediated devices from those
+>>>>> which still need to rely on parent devices, this patch set adds two
+>>>>> new members in struct mdev_device.
+>>>>>
+>>>>> * iommu_device
+>>>>>    - This, if set, indicates that the mediated device could
+>>>>>      be fully isolated and protected by IOMMU via attaching
+>>>>>      an iommu domain to this device. If empty, it indicates
+>>>>>      using vendor defined isolation.
+>>>>>
+>>>>> * iommu_domain
+>>>>>    - This is a place holder for an iommu domain. A domain
+>>>>>      could be store here for later use once it has been
+>>>>>      attached to the iommu_device of this mdev.
+>>>>>
+>>>>> Below helpers are added to set and get above iommu device
+>>>>> and iommu domain pointers in mdev core implementation.
+>>>>>
+>>>>> * mdev_set/get_iommu_device(dev, iommu_device)
+>>>>>    - Set or get the iommu device which represents this mdev
+>>>>>      in IOMMU's device scope. Drivers don't need to set the
+>>>>>      iommu device if it uses vendor defined isolation.
+>>>>>
+>>>>> * mdev_set/get_iommu_domain(domain)
+>>>>>    - A iommu domain which has been attached to the iommu
+>>>>>      device in order to protect and isolate the mediated
+>>>>>      device will be kept in the mdev data structure and
+>>>>>      could be retrieved later.
+>>>>>
+>>>>> The mdev parent device driver could opt-in that the mdev could be
+>>>>> fully isolated and protected by the IOMMU when the mdev is being
+>>>>> created by invoking mdev_set_iommu_device() in its @create().
+>>>> I just cannot understand here, how to get an iommu_device while I 
+>>>> create mediated
+>>>> device in my parent device driver?
+>>>
+>>> When you are creating an mdev in your parent driver, you should know
+>>> which PCI device this mdev belonging to.
+>>>
+>>
+>> So, generally, I can set the parent device as mdev's iommu_device?
+>> If that, however, Mdev already holds its parent device. So, I just 
+>> figure what
+>> differences between Mdev's parent device and iommu_device are.
+>>>>
+>>>> And why not reuse the device of MDEV instread of adding a new 
+>>>> device here?
+>>>
+>>> iommu_device in the mdev_device structure represents the PCI device
+>>> that represents this mdev in iommu's device scope. IOMMU is only aware
+>>> of pci devices, it's not aware of mdev device.
+>>
+>> Could I understand like that: IOMMU can be aware of the parent device 
+>> of Mdev?
+>> And more, I am doubting the necessary of iommu_device in Mdev.
+>>
+>
+> The "mdev parent device" and "mdev iommu device" are different although
+> they might be the same in practice. "mdev parent device" represents the
+> device who created the mdev. "mdev iommu device" represents the device
+> who shares the device context entry in iommu tables.
+>
+> "mdev iommu device" is always a PCI/PCIe device since IOMMU always use
+> source id (bus:dev:func) to walk the device context table. But there is
+> no limitation on who can create an mdev, right?
+>
+Actually, I am not sure.
 
-It's been some time now since this patchset was submitted so I want to
-check up and see if I should try to merge it in through IIO or some
-other subsystem, or wait for now for additional reviews.
+My understanding:
+The DMA address will be issued by the parent device with PASID or 
+something like that to IOMMU
+facilities. However, the translation units such as iommu （PASID/page 
+.etx）tables are from another
+device node.  I cannot figure out how to control this in hardware level, 
+or whether there will be
+conflicts between the DMA transation of iommu_device and parent device.
 
-Sincerely,
+Thanks,
+Zaibo
 
-William Breathitt Gray
+.
+
+
+
+
+
+
+
