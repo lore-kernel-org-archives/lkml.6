@@ -2,89 +2,93 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC75ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA5BECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93D1020866
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:59:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93D1020866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 5C79C20869
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:01:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C79C20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeJRG46 (ORCPT
+        id S1727523AbeJRG7X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 02:56:58 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:45438 "EHLO mail.skyhub.de"
+        Thu, 18 Oct 2018 02:59:23 -0400
+Received: from mga02.intel.com ([134.134.136.20]:53352 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727259AbeJRG46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 02:56:58 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id LGZ4fKIA5EgQ; Thu, 18 Oct 2018 00:58:43 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC91B00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:1b00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 642781EC04DF;
-        Thu, 18 Oct 2018 00:58:42 +0200 (CEST)
-Date:   Thu, 18 Oct 2018 00:58:29 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v5 03/27] x86/fpu/xstate: Introduce XSAVES system states
-Message-ID: <20181017225829.GA32023@zn.tnic>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
- <20181011151523.27101-4-yu-cheng.yu@intel.com>
- <20181017104137.GE22535@zn.tnic>
- <32da559b-7958-60db-e328-f0eb316e668e@infradead.org>
+        id S1727196AbeJRG7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 02:59:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 16:01:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
+   d="scan'208";a="98357807"
+Received: from unknown (HELO jsakkine-mobl1) ([10.249.254.40])
+  by fmsmga004.fm.intel.com with ESMTP; 17 Oct 2018 16:01:23 -0700
+Date:   Thu, 18 Oct 2018 02:01:22 +0300 (EEST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Tomas Winkler <tomas.winkler@intel.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: tpm_try_transmit() ignore value of go_to_idle()
+In-Reply-To: <20181015111434.7777-1-tomas.winkler@intel.com>
+Message-ID: <alpine.DEB.2.21.1810180057470.5022@jsakkine-mobl1>
+References: <20181015111434.7777-1-tomas.winkler@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <32da559b-7958-60db-e328-f0eb316e668e@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 03:39:47PM -0700, Randy Dunlap wrote:
-> Would you mind explaining this request? (requirement?)
-> Other than to say that it is the preference of some maintainers,
-> please say Why it is preferred.
-> 
-> and since the <type>s above won't typically be the same length,
-> it's not for variable name alignment, right?
+On Mon, 15 Oct 2018, Tomas Winkler wrote:
+> Ignore the return value of go_to_idle() in tpm_try_transmit().
+> Once it may shadow the return value of actual tpm operation,
+> second the consequent command will fail as well and the error
+> will be caought anyway.
+> Last fix wrong goto, that jumped back instead of forward.
+>
+> Fixes: 627448e85c76 ("tpm: separate cmd_ready/go_idle from runtime_pm")
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+> drivers/char/tpm/tpm-interface.c | 4 +---
+> 1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 129f640424b7..f69c711bf74a 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -547,9 +547,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> 		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+>
+> out:
+> -	rc = tpm_go_idle(chip, flags);
+> -	if (rc)
+> -		goto out;
+> +	(void)tpm_go_idle(chip, flags);
+>
+> 	if (need_locality)
+> 		tpm_relinquish_locality(chip, flags);
+> -- 
+> 2.14.4
+>
+>
 
-Searching the net a little, it shows you have asked that question
-before. So what is it you really wanna know?
+LGTM. Should be probably Cc'd to stable (can add).
 
--- 
-Regards/Gruss,
-    Boris.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+/Jarkko
