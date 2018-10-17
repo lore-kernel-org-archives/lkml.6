@@ -3,31 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE6CECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B91B2ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B037021523
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:11:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B037021523
+	by mail.kernel.org (Postfix) with ESMTP id 84EBE21523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:17:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84EBE21523
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbeJQPFO (ORCPT
+        id S1727421AbeJQPMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:05:14 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40189 "EHLO mail.bootlin.com"
+        Wed, 17 Oct 2018 11:12:08 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40395 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727162AbeJQPFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:05:13 -0400
+        id S1727090AbeJQPMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 11:12:08 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 1BCD52079D; Wed, 17 Oct 2018 09:10:55 +0200 (CEST)
+        id 01F76208F4; Wed, 17 Oct 2018 09:17:48 +0200 (CEST)
 Received: from bbrezillon (AAubervilliers-681-1-7-245.w90-88.abo.wanadoo.fr [90.88.129.245])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B5477206A1;
-        Wed, 17 Oct 2018 09:10:44 +0200 (CEST)
-Date:   Wed, 17 Oct 2018 09:10:45 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 943FF20379;
+        Wed, 17 Oct 2018 09:17:37 +0200 (CEST)
+Date:   Wed, 17 Oct 2018 09:17:38 +0200
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
 To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
 Cc:     Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
@@ -45,8 +44,8 @@ Cc:     Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
         "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>
 Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
  SPI NOR flash memories
-Message-ID: <20181017091045.124e0266@bbrezillon>
-In-Reply-To: <20181017090724.12f2cd79@bbrezillon>
+Message-ID: <20181017091738.2619dd06@bbrezillon>
+In-Reply-To: <20181017091045.124e0266@bbrezillon>
 References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
         <20180911154007.17195-2-tudor.ambarus@microchip.com>
         <VI1PR04MB103888BC18F3C5AD0C02DEF699FE0@VI1PR04MB1038.eurprd04.prod.outlook.com>
@@ -54,6 +53,7 @@ References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
         <de0f7245-2557-12be-a306-67b08e55ae7b@wedev4u.fr>
         <VI1PR04MB1038AB25EABDC8507984ADC799FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
         <20181017090724.12f2cd79@bbrezillon>
+        <20181017091045.124e0266@bbrezillon>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -63,30 +63,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Oct 2018 09:07:24 +0200
+On Wed, 17 Oct 2018 09:10:45 +0200
 Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-> On Wed, 17 Oct 2018 02:07:43 +0000
-> Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+> On Wed, 17 Oct 2018 09:07:24 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 > 
-> > >     
-> > Actually there is no entry of s25fs512s in current spi-nor.c file.
-> > For my connected flash part, jedec ID read points to s25fl512s. I
-> > have asked my board team to confirm the name of exact connected flash
-> > part. When I check the data sheet of s25fs512s, it also points to the
-> > same Jedec ID information. { "s25fl512s",  INFO(0x010220, 0x4d00, 256
-> > * 1024, 256, ....}
+> > On Wed, 17 Oct 2018 02:07:43 +0000
+> > Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+> >   
+> > > >       
+> > > Actually there is no entry of s25fs512s in current spi-nor.c file.
+> > > For my connected flash part, jedec ID read points to s25fl512s. I
+> > > have asked my board team to confirm the name of exact connected flash
+> > > part. When I check the data sheet of s25fs512s, it also points to the
+> > > same Jedec ID information. { "s25fl512s",  INFO(0x010220, 0x4d00, 256
+> > > * 1024, 256, ....}
+> > > 
+> > > But as stated earlier, if I skip reading SFDP or read using 1-1-1
+> > > protocol then read are always correct. For 1-4-4 protocol read are
+> > > wrong and on further debugging found that Read code of 0x6C is being
+> > > send as opcode instead of 0xEC.
+> > > 
+> > > If I revert this patch, reads are working fine.    
 > > 
-> > But as stated earlier, if I skip reading SFDP or read using 1-1-1
-> > protocol then read are always correct. For 1-4-4 protocol read are
-> > wrong and on further debugging found that Read code of 0x6C is being
-> > send as opcode instead of 0xEC.
-> > 
-> > If I revert this patch, reads are working fine.  
+> > Can you try with the following patch?
+> >   
 > 
-> Can you try with the following patch?
+> Hm, nevermind. The problem is actually not related to 4B vs non-4B mode
+> but 1-1-4 vs 1-4-4 modes.
 > 
 
-Hm, nevermind. The problem is actually not related to 4B vs non-4B mode
-but 1-1-4 vs 1-4-4 modes.
+Can you add traces in this loop [1] to see which features are flagged
+as supported and which ones are not.
+
+[1]https://elixir.bootlin.com/linux/v4.19-rc8/source/drivers/mtd/spi-nor/spi-nor.c#L2259
 
