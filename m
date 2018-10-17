@@ -2,90 +2,106 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23706C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD59AC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEA072148D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:03:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 891752147E
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:07:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kEjpdEJH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEA072148D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sc7l7THG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 891752147E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbeJQH4G (ORCPT
+        id S1727360AbeJQIAW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:56:06 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:46249 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbeJQH4F (ORCPT
+        Wed, 17 Oct 2018 04:00:22 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35019 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbeJQIAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:56:05 -0400
-Received: by mail-ot1-f67.google.com with SMTP id o21so24369811otb.13
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 17:03:14 -0700 (PDT)
+        Wed, 17 Oct 2018 04:00:22 -0400
+Received: by mail-qt1-f195.google.com with SMTP id d21-v6so15650935qtq.2;
+        Tue, 16 Oct 2018 17:07:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2sMUxT205HmbQShPvHfeDzKS3yTEbKJ1KBOkS/XXA1M=;
-        b=kEjpdEJHAyFrG+5xsDLneRPU7YYEKmuX5qQBa1yEc6cIGWlMv4nob1Gy7xlTSfFxZD
-         lSBk5BV//uX37TiWFuhEbFfhOBDgiKBs6U0/e/1tAGPIC/rdIJZyFMbdBuURajeCJXOZ
-         tLT8pWHFCJR7A5+JX95ajEJkLtWUq74m+sT78PlJrBpGh4vO2r71UapDWCU7ZLKq9wYY
-         jUtu5k90cK1YwslHa6NkFpLadoB2hyg5oyw9e89L5gsLBh3zf302qNiFjrG82w13G8+0
-         2XJFCUPv+8w2DJmH4fJPoQw/62krqBn568p052y4BcAIlXVRLJa3Rl0el+5mxe8UzvEY
-         9H2A==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=iK7JrRXQ4BzZv59cX0PNNSA+/mYdwzHsLtoaqmIVT+0=;
+        b=sc7l7THGn0Adn/KdCZ7TCG5pyXcTfZSNmfwX6u7ehLZBVoeTHuvUEGknFMbxbjSRrD
+         LzorrkNxor3sxqgnoFBeNxqsqxMcuSToisIEaM/C5eIDDINLmYEkOvBCm4IPpWKf/3eY
+         C/hRiSzzaOIpZPhBEuAeBSliCo5HyWALyDLxL8bA7kfX2x69ouTkXss6EwtYRP7MboBv
+         1EWBRttEssjgKnKcdHYGBcc9ziepJufvyZn3wGPlf9tb4vDoXHqVZASXtL8eYpRtZsbu
+         ghjmipE1Q5N75U9K3FJ7k3E66xkxSUS789Al4h0LqSBQCv4Arxj9Nmocov2kHF99afMH
+         bknw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2sMUxT205HmbQShPvHfeDzKS3yTEbKJ1KBOkS/XXA1M=;
-        b=e8PnL8RaQCQP2IRuoaBdG1Q+NrNqoLnXN6TW2hJUcPKnorFc7VTW/MEiVP4t1tiBae
-         /IBHWXNVMjDW030nJwhEu62yU5A+CMD8g90+a0EEE1qpxSPBjDY9BTGdvjd/EQunndi4
-         YXEySEoKMG062mA8QyH/N3KMt17KKwPq4FyIFkqGTAmvYc6hjPDPPIqKzJPbBNDJu3zE
-         rn5CzPlib2FwSELn9T2IyB/D7oQj71b214iBouQMepCGfygdQSNkScsLK4AaFXRqW/H9
-         Vx3YTrD/Kf5Jl+qQ9BRG0VxhHhTJm2JVRIqPJrpgiN9b1T1TrhGMuAfSSjoScDGkR/a6
-         amsg==
-X-Gm-Message-State: ABuFfogq6bf6gM7hH25TfCBmEIVzBwEwkAoExQUmkQuPLxl5yPF6pYRk
-        BvRxnsi8BhvVJSjp2euSIkNVglb49eIKFmo5GL0Xew==
-X-Google-Smtp-Source: ACcGV616VdpN3wXQ7WPROSKnTHCoDZzwOlDGKicArYCtIXp/+K8tcDH/r0A7PapgpoqMseT4BYWDw2LmFsdhvrhRjuI=
-X-Received: by 2002:a9d:2117:: with SMTP id i23mr14536965otb.230.1539734593534;
- Tue, 16 Oct 2018 17:03:13 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=iK7JrRXQ4BzZv59cX0PNNSA+/mYdwzHsLtoaqmIVT+0=;
+        b=nvBeFAU5ZZ84UiGdphAlGDQkxdqfrRUSP3E+gOE/VjcmOZjVy5q37OJgq7aeeRJYSd
+         blCUIxQae5iTVo3UGvva1SLT0xBjW/ioJETzxxYhu2hiHLYd8MDQvfKN4kgS7jUDbjSu
+         +cY6iiFnfWYIHLXCzXPANyfrSmTqGmxtW4wchXCa+Fs0IYA8/A/zRwCpqNjlLVy2EzuZ
+         cVns3hmSkdSZQ4aDMM9HPJ06n0XbyO+Blh3rqsRzMeLtGhaHXokiTRgXBNr4XoUpOkCi
+         sgvuXFwixQp++HwOFPJg07nG3F1YXJ2+jOOTn8Hw6NbQY+CBZvhJE0a5bmsiCkrzdTcl
+         ZgRA==
+X-Gm-Message-State: ABuFfojPM8Cl1NbXp4BvR6wKVmdd7J5tBziA42/25DYUtVpHnGdGNcNX
+        wAfWl91i/p1sKz/YZvy5ShIL4kdh
+X-Google-Smtp-Source: ACcGV63QGOYF2i8Ea+47dPZKHG56Qya4fj/oDzcdit3TkkxLTCIeHKpgeD0XRQyOmNd4O9B+e0hdLQ==
+X-Received: by 2002:ac8:7c6:: with SMTP id m6-v6mr23213726qth.365.1539734849095;
+        Tue, 16 Oct 2018 17:07:29 -0700 (PDT)
+Received: from WindFlash ([179.159.21.48])
+        by smtp.gmail.com with ESMTPSA id g127-v6sm10067732qke.59.2018.10.16.17.07.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 17:07:28 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 21:07:22 -0300
+From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
+To:     lkcamp@lists.libreplanetbr.org
+Cc:     Matthew Wilcox <willy6545@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: [PATCH 0/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
+Message-ID: <20181017000722.GA20892@WindFlash>
 MIME-Version: 1.0
-References: <20181016235120.138227-1-brendanhiggins@google.com>
- <20181016235120.138227-13-brendanhiggins@google.com> <bad13afe8c71860a85f12130a57fe9a96f017cf3.camel@perches.com>
-In-Reply-To: <bad13afe8c71860a85f12130a57fe9a96f017cf3.camel@perches.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 16 Oct 2018 17:03:01 -0700
-Message-ID: <CAFd5g44VQqJVhUPQLHWzaXMbjJeGNs2nDZYTmzQ8OV7dyTXfVg@mail.gmail.com>
-Subject: Re: [RFC v1 12/31] checkpatch: added support for struct MOCK(foo) syntax
-To:     joe@perches.com
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, mcgrof@kernel.org,
-        shuah@kernel.org, Joel Stanley <joel@jms.id.au>,
-        mpe@ellerman.id.au, brakmo@fb.com, rostedt@goodmis.org,
-        Tim.Bird@sony.com, khilman@baylibre.com, julia.lawall@lip6.fr,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 4:59 PM Joe Perches <joe@perches.com> wrote:
->
-> On Tue, 2018-10-16 at 16:51 -0700, Brendan Higgins wrote:
-> > This adds struct MOCK(foo) as a NonptrType so that it is recognized
-> > correctly in declarations.
->
-> I think this commit message is lacking context.
+This patchset add -Wshadow=local on KBUILD_HOSTCFLAGS and fixes 
+all code that show this warning.
 
-Oh sorry, you are right. We added macros for generating mocks from
-types, so we decided to name the generated mock types struct MOCK(foo)
-(where the base type is struct foo); this commit makes checkpatch not
-complain at this new syntax.
+The third patch was already submitted, but was not merged yet.
+I like to think it's part of this patchset, but if it was 
+already merged, please ignore it.
+
+Leonardo Brás (4):
+  Adds -Wshadow=local on KBUILD_HOSTCFLAGS
+  Renames variable to fix shadow warning.
+  kbuild: Removes unnecessary shadowed local variable and optimize
+    testing.
+  Changes macro usage to avoid shadowing a variable.
+
+ Makefile                     |  2 +-
+ arch/x86/entry/vdso/vdso2c.h |  4 ++--
+ scripts/asn1_compiler.c      |  7 +++----
+ scripts/mod/file2alias.c     | 14 ++++++++------
+ 4 files changed, 14 insertions(+), 13 deletions(-)
+
+-- 
+2.19.1
+
