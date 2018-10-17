@@ -2,596 +2,150 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B875ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBF0ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9954D2150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:19:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tPTcMmHh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9954D2150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id B3FB821526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:20:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3FB821526
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbeJQXQD (ORCPT
+        id S1727975AbeJQXQM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:16:03 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:40690 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeJQXQC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:16:02 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C1D181A81;
-        Wed, 17 Oct 2018 17:19:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1539789589;
-        bh=FznIEh0Ue8XNcqYugA7E1ECYFNyKwOXdN7PIWLSrBJ8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tPTcMmHhZN3+qsAksIFy3kgbYN106gYFXmRSDMFGBwo47d/uDNSALP3mHnwccbkOz
-         sncXeq5biXPEE8m5XxsCroseYp5oz57vdVX9VQUmKjHx1XkzdtLhVmxtz//sZKT/oF
-         rbvJ4STwDM1yHyby06fzZyohDn+hdyL4cLoiH0PM=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin =?utf-8?B?KOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen =?utf-8?B?KOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        ezequiel@collabora.com
-Subject: Re: [PATCH 2/2] media: docs-rst: Document memory-to-memory video encoder interface
-Date:   Wed, 17 Oct 2018 18:19:57 +0300
-Message-ID: <2699352.udkuklTee2@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180724140621.59624-3-tfiga@chromium.org>
-References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-3-tfiga@chromium.org>
+        Wed, 17 Oct 2018 19:16:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:53452 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727948AbeJQXQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:16:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A1DB80D;
+        Wed, 17 Oct 2018 08:20:02 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (unknown [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92C023F59C;
+        Wed, 17 Oct 2018 08:19:59 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 16:19:54 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     honghui.zhang@mediatek.com
+Cc:     bhelgaas@google.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ryder.lee@mediatek.com,
+        ulf.hansson@linaro.org, marc.zyngier@arm.com,
+        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        youlin.pei@mediatek.com, yt.shen@mediatek.com,
+        jianjun.wang@mediatek.com, yong.wu@mediatek.com
+Subject: Re: [PATCH v8 0/9] PCI: mediatek: fixup find_port, enable_msi and
+ add PM, module support
+Message-ID: <20181017151954.GA9374@e107981-ln.cambridge.arm.com>
+References: <1539590940-13355-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539590940-13355-1-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+On Mon, Oct 15, 2018 at 04:08:51PM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
+> 
+> This patchset includes misc patchs:
+> 
+> The patch 1 fixup the mtk_pcie_find_port logic which will cause system
+> could not touch the EP's configuration space that connected to PCIe slot 1.
+> 
+> The patch 2 fixup the class type for MT7622.
+> The patch 6 fixup the enable msi logic, the operation to enable MSI
+> should be after system clock is enabled. Call mtk_pcie_enable_msi in
+> mtk_pcie_startup_port_v2 since the clock was all enabled at that time.
+> 
+> The patch 7 was rebased and refactor of the v4 patch[1], changes are:
+>  -Add PM support for MT7622.
+>  -Using mtk_pcie_enable_port to re-establish the link when resumed.
+>  -Rebased on this patchset.
+> 
+> The patch 9 add loadable kernel module support.
+> 
+> [1] https://patchwork.kernel.org/patch/10479079
 
-Thank you for the patch.
+I have pushed out (after basically rewriting all commit logs and
+squashing two patches) this version of the patchset to my pci/mediatek
+branch for v4.20, keeping in mind that you must follow-up with Bjorn on
+this patch:
 
-On Tuesday, 24 July 2018 17:06:21 EEST Tomasz Figa wrote:
-> Due to complexity of the video encoding process, the V4L2 drivers of
-> stateful encoder hardware require specific sequences of V4L2 API calls
-> to be followed. These include capability enumeration, initialization,
-> encoding, encode parameters change, drain and reset.
->=20
-> Specifics of the above have been discussed during Media Workshops at
-> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
-> Conference Europe 2014 in D=FCsseldorf. The de facto Codec API that
-> originated at those events was later implemented by the drivers we already
-> have merged in mainline, such as s5p-mfc or coda.
->=20
-> The only thing missing was the real specification included as a part of
-> Linux Media documentation. Fix it now and document the encoder part of
-> the Codec API.
->=20
-> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> ---
->  Documentation/media/uapi/v4l/dev-encoder.rst | 550 +++++++++++++++++++
->  Documentation/media/uapi/v4l/devices.rst     |   1 +
->  Documentation/media/uapi/v4l/v4l2.rst        |   2 +
->  3 files changed, 553 insertions(+)
->  create mode 100644 Documentation/media/uapi/v4l/dev-encoder.rst
->=20
-> diff --git a/Documentation/media/uapi/v4l/dev-encoder.rst
-> b/Documentation/media/uapi/v4l/dev-encoder.rst new file mode 100644
-> index 000000000000..28be1698e99c
-> --- /dev/null
-> +++ b/Documentation/media/uapi/v4l/dev-encoder.rst
-> @@ -0,0 +1,550 @@
-> +.. -*- coding: utf-8; mode: rst -*-
-> +
-> +.. _encoder:
-> +
-> +****************************************
-> +Memory-to-memory Video Encoder Interface
-> +****************************************
-> +
-> +Input data to a video encoder are raw video frames in display order
-> +to be encoded into the output bitstream. Output data are complete chunks=
- of
-> +valid bitstream, including all metadata, headers, etc. The resulting
-> stream
-> +must not need any further post-processing by the client.
-> +
-> +Performing software stream processing, header generation etc. in the dri=
-ver
-> +in order to support this interface is strongly discouraged. In case such
-> +operations are needed, use of Stateless Video Encoder Interface (in
+https://patchwork.ozlabs.org/patch/984668/
 
-s/use of/use of the/
+that we shall still consider for v4.21.
 
-(and in various places below, as pointed out in the review of patch 1/2)
+Lorenzo
 
-> +development) is strongly advised.
-> +
-> +Conventions and notation used in this document
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-[snip]
-
-> +Glossary
-> +=3D=3D=3D=3D=3D=3D=3D=3D
-
-[snip]
-
-Let's try to share these two sections between the two documents.
-
-[snip]
-
-> +Initialization
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +1. *[optional]* Enumerate supported formats and resolutions. See
-> +   capability enumeration.
-> +
-> +2. Set a coded format on the ``CAPTURE`` queue via :c:func:`VIDIOC_S_FMT`
-> +
-> +   * **Required fields:**
-> +
-> +     ``type``
-> +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``
-> +
-> +     ``pixelformat``
-> +         set to a coded format to be produced
-> +
-> +   * **Return fields:**
-> +
-> +     ``width``, ``height``
-> +         coded resolution (based on currently active ``OUTPUT`` format)
-
-Shouldn't userspace then set the resolution on the CAPTURE queue first ?
-
-> +   .. note::
-> +
-> +      Changing ``CAPTURE`` format may change currently set ``OUTPUT``
-> +      format. The driver will derive a new ``OUTPUT`` format from
-> +      ``CAPTURE`` format being set, including resolution, colorimetry
-> +      parameters, etc. If the client needs a specific ``OUTPUT`` format,
-> +      it must adjust it afterwards.
-
-Doesn't this contradict the "based on currently active ``OUTPUT`` format"=20
-above ?
-
-> +3. *[optional]* Enumerate supported ``OUTPUT`` formats (raw formats for
-> +   source) for the selected coded format via :c:func:`VIDIOC_ENUM_FMT`.
-> +
-> +   * **Required fields:**
-> +
-> +     ``type``
-> +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-> +
-> +     ``index``
-> +         follows standard semantics
-> +
-> +   * **Return fields:**
-> +
-> +     ``pixelformat``
-> +         raw format supported for the coded format currently selected on
-> +         the ``OUTPUT`` queue.
-> +
-> +4. The client may set the raw source format on the ``OUTPUT`` queue via
-> +   :c:func:`VIDIOC_S_FMT`.
-> +
-> +   * **Required fields:**
-> +
-> +     ``type``
-> +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-> +
-> +     ``pixelformat``
-> +         raw format of the source
-> +
-> +     ``width``, ``height``
-> +         source resolution
-> +
-> +     ``num_planes`` (for _MPLANE)
-> +         set to number of planes for pixelformat
-> +
-> +     ``sizeimage``, ``bytesperline``
-> +         follow standard semantics
-> +
-> +   * **Return fields:**
-> +
-> +     ``width``, ``height``
-> +         may be adjusted by driver to match alignment requirements, as
-> +         required by the currently selected formats
-> +
-> +     ``sizeimage``, ``bytesperline``
-> +         follow standard semantics
-> +
-> +   * Setting the source resolution will reset visible resolution to the
-> +     adjusted source resolution rounded up to the closest visible
-> +     resolution supported by the driver. Similarly, coded resolution will
-> +     be reset to source resolution rounded up to the closest coded
-> +     resolution supported by the driver (typically a multiple of
-> +     macroblock size).
-> +
-> +   .. note::
-> +
-> +      This step is not strictly required, since ``OUTPUT`` is expected to
-> +      have a valid default format. However, the client needs to ensure t=
-hat
-
-s/needs to/must/
-
-> +      ``OUTPUT`` format matches its expectations via either
-> +      :c:func:`VIDIOC_S_FMT` or :c:func:`VIDIOC_G_FMT`, with the former
-> +      being the typical scenario, since the default format is unlikely to
-> +      be what the client needs.
-> +
-> +5. *[optional]* Set visible resolution for the stream metadata via
-> +   :c:func:`VIDIOC_S_SELECTION` on the ``OUTPUT`` queue.
-> +
-> +   * **Required fields:**
-> +
-> +     ``type``
-> +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-> +
-> +     ``target``
-> +         set to ``V4L2_SEL_TGT_CROP``
-> +
-> +     ``r.left``, ``r.top``, ``r.width``, ``r.height``
-> +         visible rectangle; this must fit within the framebuffer resolut=
-ion
-> +         and might be subject to adjustment to match codec and hardware
-> +         constraints
-
-Just for my information, are there use cases for r.left !=3D 0 or r.top !=
-=3D 0 ?
-
-> +   * **Return fields:**
-> +
-> +     ``r.left``, ``r.top``, ``r.width``, ``r.height``
-> +         visible rectangle adjusted by the driver
-> +
-> +   * The driver must expose following selection targets on ``OUTPUT``:
-> +
-> +     ``V4L2_SEL_TGT_CROP_BOUNDS``
-> +         maximum crop bounds within the source buffer supported by the
-> +         encoder
-
-Will this always match the format on the OUTPUT queue, or can it differ ?
-
-> +     ``V4L2_SEL_TGT_CROP_DEFAULT``
-> +         suggested cropping rectangle that covers the whole source pictu=
-re
-
-How can the driver know what to report here, apart from the same value as=20
-V4L2_SET_TGT_CROP_BOUNDS ?
-
-> +     ``V4L2_SEL_TGT_CROP``
-> +         rectangle within the source buffer to be encoded into the
-> +         ``CAPTURE`` stream; defaults to ``V4L2_SEL_TGT_CROP_DEFAULT``
-> +
-> +     ``V4L2_SEL_TGT_COMPOSE_BOUNDS``
-> +         maximum rectangle within the coded resolution, which the cropped
-> +         source frame can be output into; always equal to (0, 0)x(width =
-of
-> +         ``V4L2_SEL_TGT_CROP``, height of ``V4L2_SEL_TGT_CROP``), if the
-> +         hardware does not support compose/scaling
-> +
-> +     ``V4L2_SEL_TGT_COMPOSE_DEFAULT``
-> +         equal to ``V4L2_SEL_TGT_CROP``
-> +
-> +     ``V4L2_SEL_TGT_COMPOSE``
-> +         rectangle within the coded frame, which the cropped source frame
-> +         is to be output into; defaults to
-> +         ``V4L2_SEL_TGT_COMPOSE_DEFAULT``; read-only on hardware without
-> +         additional compose/scaling capabilities; resulting stream will
-> +         have this rectangle encoded as the visible rectangle in its
-> +         metadata
-> +
-> +     ``V4L2_SEL_TGT_COMPOSE_PADDED``
-> +         always equal to coded resolution of the stream, as selected by =
-the
-> +         encoder based on source resolution and crop/compose rectangles
-> +
-> +   .. note::
-> +
-> +      The driver may adjust the crop/compose rectangles to the nearest
-> +      supported ones to meet codec and hardware requirements.
-> +
-> +6. Allocate buffers for both ``OUTPUT`` and ``CAPTURE`` via
-> +   :c:func:`VIDIOC_REQBUFS`. This may be performed in any order.
-> +
-> +   * **Required fields:**
-> +
-> +     ``count``
-> +         requested number of buffers to allocate; greater than zero
-> +
-> +     ``type``
-> +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT`` or
-> +         ``CAPTURE``
-> +
-> +     ``memory``
-> +         follows standard semantics
-> +
-> +   * **Return fields:**
-> +
-> +     ``count``
-> +         adjusted to allocated number of buffers
-> +
-> +   * The driver must adjust count to minimum of required number of
-> +     buffers for given format and count passed.
-
-s/minimum/maximum/ ?
-
-> The client must
-> +     check this value after the ioctl returns to get the number of
-> +     buffers actually allocated.
-> +
-> +   .. note::
-> +
-> +      To allocate more than minimum number of buffers (for pipeline
-> +      depth), use G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``) or
-> +      G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_CAPTURE``), respectively,
-> +      to get the minimum number of buffers required by the
-> +      driver/format, and pass the obtained value plus the number of
-> +      additional buffers needed in count field to :c:func:`VIDIOC_REQBUF=
-S`.
-> +
-> +7. Begin streaming on both ``OUTPUT`` and ``CAPTURE`` queues via
-> +   :c:func:`VIDIOC_STREAMON`. This may be performed in any order. Actual
-> +   encoding process starts when both queues start streaming.
-> +
-> +.. note::
-> +
-> +   If the client stops ``CAPTURE`` during the encode process and then
-> +   restarts it again, the encoder will be expected to generate a stream
-> +   independent from the stream generated before the stop. Depending on t=
-he
-> +   coded format, that may imply that:
-> +
-> +   * encoded frames produced after the restart must not reference any
-> +     frames produced before the stop, e.g. no long term references for
-> +     H264,
-> +
-> +   * any headers that must be included in a standalone stream must be
-> +     produced again, e.g. SPS and PPS for H264.
-
-s/H264/H.264/
-
-(and in other places too)
-
-> +Encoding
-> +=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +This state is reached after a successful initialization sequence. In
-> +this state, client queues and dequeues buffers to both queues via
-> +:c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`, following standard
-> +semantics.
-> +
-> +Both queues operate independently, following standard behavior of V4L2
-> +buffer queues and memory-to-memory devices. In addition, the order of
-> +encoded frames dequeued from ``CAPTURE`` queue may differ from the order=
- of
-> +queuing raw frames to ``OUTPUT`` queue, due to properties of selected
-> coded
-> +format, e.g. frame reordering. The client must not assume any direct
-> +relationship between ``CAPTURE`` and ``OUTPUT`` buffers, other than
-> +reported by :c:type:`v4l2_buffer` ``timestamp``.
-> +
-> +Encoding parameter changes
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> +
-> +The client is allowed to use :c:func:`VIDIOC_S_CTRL` to change encoder
-> +parameters at any time. The availability of parameters is driver-specific
-> +and the client must query the driver to find the set of available contro=
-ls.
-> +
-> +The ability to change each parameter during encoding of is driver-specif=
-ic,
-> +as per standard semantics of the V4L2 control interface. The client may
-> +attempt setting a control of its interest during encoding and if it the
-> +operation fails with the -EBUSY error code, ``CAPTURE`` queue needs to be
-> +stopped for the configuration change to be allowed (following the drain
-> +sequence will be  needed to avoid losing already queued/encoded frames).
-> +
-> +The timing of parameter update is driver-specific, as per standard
-> +semantics of the V4L2 control interface. If the client needs to apply the
-> +parameters exactly at specific frame and the encoder supports it, using
-> +Request API should be considered.
-> +
-> +Drain
-> +=3D=3D=3D=3D=3D
-> +
-> +To ensure that all queued ``OUTPUT`` buffers have been processed and
-> +related ``CAPTURE`` buffers output to the client, the following drain
-> +sequence may be followed. After the drain sequence is complete, the clie=
-nt
-> +has received all encoded frames for all ``OUTPUT`` buffers queued before
-> +the sequence was started.
-> +
-> +1. Begin drain by issuing :c:func:`VIDIOC_ENCODER_CMD`.
-> +
-> +   * **Required fields:**
-> +
-> +     ``cmd``
-> +         set to ``V4L2_ENC_CMD_STOP``
-> +
-> +     ``flags``
-> +         set to 0
-> +
-> +     ``pts``
-> +         set to 0
-> +
-> +2. The driver must process and encode as normal all ``OUTPUT`` buffers
-> +   queued by the client before the :c:func:`VIDIOC_ENCODER_CMD` was issu=
-ed.
-> +
-> +3. Once all ``OUTPUT`` buffers queued before ``V4L2_ENC_CMD_STOP`` are
-> +   processed:
-> +
-> +   * Once all decoded frames (if any) are ready to be dequeued on the
-> +     ``CAPTURE`` queue
-
-I understand this condition to be equivalent to the main step 3 condition. =
-I=20
-would thus write it as
-
-"At this point all decoded frames (if any) are ready to be dequeued on the=
-=20
-``CAPTURE`` queue. The driver must send a ``V4L2_EVENT_EOS``."
-
-> the driver must send a ``V4L2_EVENT_EOS``. The
-> +     driver must also set ``V4L2_BUF_FLAG_LAST`` in :c:type:`v4l2_buffer`
-> +     ``flags`` field on the buffer on the ``CAPTURE`` queue containing t=
-he
-> +     last frame (if any) produced as a result of processing the ``OUTPUT=
-``
-> +     buffers queued before
-
-Unneeded line break ?
-
-> +     ``V4L2_ENC_CMD_STOP``.
-> +
-> +   * If no more frames are left to be returned at the point of handling
-> +     ``V4L2_ENC_CMD_STOP``, the driver must return an empty buffer (with
-> +     :c:type:`v4l2_buffer` ``bytesused`` =3D 0) as the last buffer with
-> +     ``V4L2_BUF_FLAG_LAST`` set.
-> +
-> +   * Any attempts to dequeue more buffers beyond the buffer marked with
-> +     ``V4L2_BUF_FLAG_LAST`` will result in a -EPIPE error code returned =
-by
-> +     :c:func:`VIDIOC_DQBUF`.
-> +
-> +4. At this point, encoding is paused and the driver will accept, but not
-> +   process any newly queued ``OUTPUT`` buffers until the client issues
-> +   ``V4L2_ENC_CMD_START`` or restarts streaming on any queue.
-> +
-> +* Once the drain sequence is initiated, the client needs to drive it to
-> +  completion, as described by the above steps, unless it aborts the proc=
-ess
-> +  by issuing :c:func:`VIDIOC_STREAMOFF` on ``CAPTURE`` queue.  The client
-> +  is not allowed to issue ``V4L2_ENC_CMD_START`` or ``V4L2_ENC_CMD_STOP``
-> +  again while the drain sequence is in progress and they will fail with
-> +  -EBUSY error code if attempted.
-> +
-> +* Restarting streaming on ``CAPTURE`` queue will implicitly end the paus=
-ed
-> +  state and make the encoder continue encoding, as long as other encoding
-> +  conditions are met. Restarting ``OUTPUT`` queue will not affect an
-> +  in-progress drain sequence.
-
-The last sentence seems to contradict the "on any queue" part of step 4. Wh=
-at=20
-happens if the client restarts streaming on the OUTPUT queue while a drain=
-=20
-sequence is in progress ?
-
-> +* The drivers must also implement :c:func:`VIDIOC_TRY_ENCODER_CMD`, as a
-> +  way to let the client query the availability of encoder commands.
-> +
-> +Reset
-> +=3D=3D=3D=3D=3D
-> +
-> +The client may want to request the encoder to reinitialize the encoding,
-> +so that the stream produced becomes independent from the stream generated
-> +before. Depending on the coded format, that may imply that:
-> +
-> +* encoded frames produced after the restart must not reference any frames
-> +  produced before the stop, e.g. no long term references for H264,
-> +
-> +* any headers that must be included in a standalone stream must be produ=
-ced
-> +  again, e.g. SPS and PPS for H264.
-> +
-> +This can be achieved by performing the reset sequence.
-> +
-> +1. *[optional]* If the client is interested in encoded frames resulting
-> +   from already queued source frames, it needs to perform the Drain
-> +   sequence. Otherwise, the reset sequence would cause the already
-> +   encoded and not dequeued encoded frames to be lost.
-> +
-> +2. Stop streaming on ``CAPTURE`` queue via :c:func:`VIDIOC_STREAMOFF`. T=
-his
-> +   will return all currently queued ``CAPTURE`` buffers to the client,
-> +   without valid frame data.
-> +
-> +3. *[optional]* Restart streaming on ``OUTPUT`` queue via
-> +   :c:func:`VIDIOC_STREAMOFF` followed by :c:func:`VIDIOC_STREAMON` to
-> +   drop any source frames enqueued to the encoder before the reset
-> +   sequence. This is useful if the client requires the new stream to beg=
-in
-> +   at specific source frame. Otherwise, the new stream might include
-> +   frames encoded from source frames queued before the reset sequence.
-> +
-> +4. Restart streaming on ``CAPTURE`` queue via :c:func:`VIDIOC_STREAMON` =
-and
-> +   continue with regular encoding sequence. The encoded frames produced
-> +   into ``CAPTURE`` buffers from now on will contain a standalone stream
-> +   that can be decoded without the need for frames encoded before the re=
-set
-> +   sequence.
-> +
-> +Commit points
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Setting formats and allocating buffers triggers changes in the behavior
-> +of the driver.
-> +
-> +1. Setting format on ``CAPTURE`` queue may change the set of formats
-> +   supported/advertised on the ``OUTPUT`` queue. In particular, it also
-> +   means that ``OUTPUT`` format may be reset and the client must not
-> +   rely on the previously set format being preserved.
-> +
-> +2. Enumerating formats on ``OUTPUT`` queue must only return formats
-> +   supported for the ``CAPTURE`` format currently set.
-> +
-> +3. Setting/changing format on ``OUTPUT`` queue does not change formats
-
-Just "Setting" ?
-
-> +   available on ``CAPTURE`` queue. An attempt to set ``OUTPUT`` format t=
-hat
-> +   is not supported for the currently selected ``CAPTURE`` format must
-> +   result in the driver adjusting the requested format to an acceptable
-> +   one.
-> +
-> +4. Enumerating formats on ``CAPTURE`` queue always returns the full set =
-of
-> +   supported coded formats, irrespective of the current ``OUTPUT``
-> +   format.
-> +
-> +5. After allocating buffers on the ``CAPTURE`` queue, it is not possible=
- to
-> +   change format on it.
-> +
-> +To summarize, setting formats and allocation must always start with the
-> +``CAPTURE`` queue and the ``CAPTURE`` queue is the master that governs t=
-he
-> +set of supported formats for the ``OUTPUT`` queue.
-
-[snip]
-
-=2D-=20
-Regards,
-
-Laurent Pinchart
-
-
-
+> Change since v7:
+>  - Add Acked-by tags from Ryder Lee.
+>  - Add Fix tags for patch 2(Fix calss type for MT7622 as PCI_CLASS_BRIDGE_PCI)
+>    and patch 6(Fixup enable MSI logic by enable MSI after clock enabled)
+> 
+> Change since v6:
+>  - Remove the pci_unmap_iospace when remove the device since the
+>    devm_pci_remap_iospace is an devm_ version.
+>  - Commit message changed for patch 2(Fix class type for MT7622 as PCI_CLASS_BRIDGE_PCI).
+>  - Capitilizing "MSI" and "PM" in the patch title.
+> 
+> Change since v5:
+>  - A bit improvement of mtk_pcie_find_port suggest by Lorenzo.
+>    MSI after clock enabled).
+>  - Add Acked-by tags from Ryder.
+> 
+> Change since v4:
+>  - Add patch 2 to fixup class type for MT7622.
+>  - Add patch 3 to remove the redundant dev->pm_domain check
+>  - Add patch 4 to covert to use pci_host_probe
+>  - Add patch 5 to re-arrange the function define, this is a prepare patch for
+>    fixup the enable_msi logic, no functional changed have been made by this one.
+>  - Add patch 8 to save the GIC IRQ in mtk_pcie_port as a prepare patch for tear
+>    down the irq when remove the kernel module.
+>  - Re-arrange the find_port flow suggest by Lorenzo to make the code parse easier
+>    for the patch 1.
+>  - Remove the .pm_support in mtk_pcie_soc in patch 7 since if system pm was not
+>    supported, then those pm callbacks will never be executed for MT7622. So the
+>    .pm_support is not needed.
+> 
+> Change since v3:
+>  - Remove pm_runtime_XXX ops in suspend and resume callbacks in the third patch.
+>  - Rebase to 4.19-rc1.
+> 
+> Change since v2:
+>  - Fix the list_for_each_entry_safe parameter error.
+>  - Add Ryder's Acked-by flag.
+> 
+> Change since v1:
+>  - A bit of code refact of the first patch suggested by Andy Shevchenko, and
+>    commit message updated.
+> 
+> Honghui Zhang (9):
+>   PCI: mediatek: Using slot's devfn for compare to fix
+>     mtk_pcie_find_port logic
+>   PCI: mediatek: Fix class type for MT7622 as PCI_CLASS_BRIDGE_PCI
+>   PCI: mediatek: Remove the redundant dev->pm_domain check
+>   PCI: mediatek: Convert to use pci_host_probe()
+>   PCI: mediatek: Move the mtk_pcie_startup_port_v2 function's define
+>     after mtk_pcie_setup_irq
+>   PCI: mediatek: Fixup enable MSI logic by enable MSI after clock
+>     enabled
+>   PCI: mediatek: Add system PM support for MT2712 and MT7622
+>   PCI: mediatek: Save the GIC IRQ in mtk_pcie_port
+>   PCI: mediatek: Add loadable kernel module support
+> 
+>  drivers/pci/controller/Kconfig         |   2 +-
+>  drivers/pci/controller/pcie-mediatek.c | 319 +++++++++++++++++++++------------
+>  2 files changed, 204 insertions(+), 117 deletions(-)
+> 
+> -- 
+> 2.6.4
+> 
