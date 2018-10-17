@@ -2,281 +2,198 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31BAECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA09AECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4F9321477
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F63214D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:54:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJM0tjbM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F9321477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NpJzU6Em"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66F63214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728131AbeJRDsv (ORCPT
+        id S1727993AbeJRDvP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 23:48:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727186AbeJRDsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 23:48:50 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E446C2145D;
-        Wed, 17 Oct 2018 19:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539805896;
-        bh=3cZWgSbJz6QOo4+sKFC0BRwcUF6DXysyiT5nPE3u/i0=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=gJM0tjbMj79fVZ/H7x7HtewXyBWLsKJyQuYblIkhZEA5fb0AKxYMfbfOXy/yZVeoy
-         xxYTXz5lo5z7ydpxa3tciEwhjawAvc/VEvluuhjj7T/6ZOkNML/fUTsBf5KDW9s3wK
-         fs4WmNoU9oYg4kQKa/8m6jZMXFBjX4r7Vwx/tfEA=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 17 Oct 2018 23:51:15 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43838 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbeJRDvP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 23:51:15 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d8-v6so1804049pgv.10
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 12:54:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=x6OaPB+36JBdWhkZ++BX81AZlRsiJSO6bUvHIW4LpB4=;
+        b=NpJzU6EmmPaKmHBxYryq5Dl9zA8MR6rWSzW6K9WedtO/m99IWFhQInQ5gspGkTMvy3
+         tS6mvPdyJa5JkaJK1gFD2FPDjQXxbRyLYmkAq6we0glpgNk4N1Epx/lXrQsXtO9m4Ssc
+         qZECUcbeutXEAZi8TQ4J/BHWB1rDw2LvTo+Gs5c3kln4wWpuUQk5h9Jrwbqmg16DJRpw
+         mfYs1juvYZ9yt4h+Rx7go7ikBG6ff0hJeG8SPUAokwq+Xflup78xmvJesPN1pqfc9Pmv
+         3iMOQAKsr9lyrZmnhcX4TLtnFJjkFmSgsevVK4rxtjVwlUxRnFcRiRhsVyrmI60H/dAs
+         8bNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=x6OaPB+36JBdWhkZ++BX81AZlRsiJSO6bUvHIW4LpB4=;
+        b=BXV5TdD99+d9CZ2hmaNWrhHWmq5hl4bVKkxDbITpcJlMpqonwKNkqKeHq5SNyU3x2h
+         vLb5EFsxD53vpdG2xUM5EkiNca4Id+O7N4Qi0utppJMhnYsQ/CGqXc8fZUH8hPA3+MSo
+         rZa6G1EBOoIYNIj4Y/H9s2biaRXeV9aVBIp/AU5puo/P334o0DOHS1/vqt7/1QsEW67B
+         ltbBkgVqNOMY1IIiqrsVk+NnKM2BeXrxUCKk/CHXpJXRt9avMUqlMMZh6Wfl0HGjQIL/
+         gtpPF6fAYmaEP8oFZQL+rtXvXjbM5fHyG04+iIfCQlwd2JZ/ZCYV41RmIC5TguGDIkWt
+         l3zw==
+X-Gm-Message-State: ABuFfoi+ktX0+4nRJA40A6B+HV8sm3c/QPa64DMTut+f/lGzTwylhmiP
+        7Y2qKAYbNv2WAV3/adt89Hs=
+X-Google-Smtp-Source: ACcGV638EmeaMI02fP4zFHHSlnA+l8p5euKLCyKWhMrk6ui7z/xfHLUSLXzsEUeJH8F1cZ2IAqA2Eg==
+X-Received: by 2002:a65:40c2:: with SMTP id u2-v6mr25680649pgp.123.1539806039738;
+        Wed, 17 Oct 2018 12:53:59 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id m20-v6sm19232009pgv.93.2018.10.17.12.53.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 12:53:59 -0700 (PDT)
+Subject: Re: [Ksummit-discuss] [PATCH v3 1/3] code-of-conduct: Fix the
+ ambiguity about collecting email addresses
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        ksummit-discuss@lists.linuxfoundation.org
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>
+References: <1539701820.2805.6.camel@HansenPartnership.com>
+ <1539701896.2805.7.camel@HansenPartnership.com>
+ <e332116b-62e8-9930-c263-d022edb5828e@gmail.com>
+ <1539744091.2805.108.camel@HansenPartnership.com>
+ <16a20416-0045-dfe6-d937-63f2f0cff269@gmail.com>
+ <1539803331.3769.62.camel@HansenPartnership.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <b056cdc3-29de-b6c8-b2a7-67b93b0fd730@gmail.com>
+Date:   Wed, 17 Oct 2018 12:53:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Abel Vesa <abel.vesa@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1537785597-26499-5-git-send-email-abel.vesa@nxp.com>
-Cc:     linux-imx@nxp.com, Abel Vesa <abelvesa@linux.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
- <1537785597-26499-5-git-send-email-abel.vesa@nxp.com>
-Message-ID: <153980589525.5275.9065338436630625817@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v9 4/5] clk: imx: add imx composite clock
-Date:   Wed, 17 Oct 2018 12:51:35 -0700
+In-Reply-To: <1539803331.3769.62.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Abel Vesa (2018-09-24 03:39:56)
-> diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-compos=
-ite.c
-> new file mode 100644
-> index 0000000..4b03107
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-composite.c
-> @@ -0,0 +1,181 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2018 NXP
-> + */
-> +
-> +#include <linux/errno.h>
-> +#include <linux/slab.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk.h>
+On 10/17/18 12:08, James Bottomley wrote:
+> On Wed, 2018-10-17 at 11:49 -0700, Frank Rowand wrote:
+>> On 10/16/18 19:41, James Bottomley wrote:
+>>> On Tue, 2018-10-16 at 19:10 -0700, Frank Rowand wrote:
+> [...]
+>>>> Repeating my comment on version 1:
+>>>>
+>>>> My understanding of the concern behind this change is that we
+>>>> should be able to use an email address for the current
+>>>> development practices, such as Reported-by, Suggested-by, etc
+>>>> tags when the email address was provided in what is a public
+>>>> space for the project.  The public space is visible to anyone in
+>>>> the world who desires to access it.
+>>>>
+>>>> I do not understand how "ordinarily collected by the project" is
+>>>> equivalent to "an email address that was provided in a public
+>>>> space for the project".
+>>>
+>>> I don't think it is ... or should be.  This section is specifically
+>>> enumerating unacceptable behaviours.  The carve out "email address
+>>> not ordinarily collected by the project" means that adding
+>>> someone's email address in a tag isn't immediately sanctionable in
+>>> the code of conduct as unacceptable behaviour if a question about
+>>> whether you asked explicit permission arises.  Equally, a carve out
+>>> from unacceptable behaviours doesn't make the action always
+>>> acceptable, so it's not a licence to publish someone's email
+>>> address regardless of context.
+>>
+>> The patch says "Publishing ... electronic address not ordinarily
+>> collected by the project, without explicit permission".  (I think it
+>> is fair to abstract here with "...".)  This phrase specifies which
+>> email addresses can be published.  It does not specify in what cases
+>> the email address can be published.  The desired goal is to be able
+>> to publish email addresses in patch and commit tags.
+> 
+> No, that's not my desired goal.   The section is not about giving
+> permission it's about making sure listed unacceptable behaviours don't
+> overlap what we normally do.  The goal is to exclude email the project
+> ordinarily collects from immediate sanction under the unacceptable
+> behaviours clause.  I deliberately didn't add anything about permission
+> because that's up to the project to define in its more standard
+> contribution documents.
 
-Is this include used?
+OK.  I am fine with the goal of wording that excludes certain things
+from unacceptable behavior instead providing permissions for certain
+things.  I think me phrasing as permission instead of carve out is
+creating a lot of the miscommunication.
 
-> +
-> +#include "clk.h"
-> +
-> +#define PCG_PREDIV_SHIFT       16
-> +#define PCG_PREDIV_WIDTH       3
-> +#define PCG_PREDIV_MAX         8
-> +
-> +#define PCG_DIV_SHIFT          0
-> +#define PCG_DIV_WIDTH          6
-> +#define PCG_DIV_MAX            64
-> +
-> +#define PCG_PCS_SHIFT          24
-> +#define PCG_PCS_MASK           0x7
-> +
-> +#define PCG_CGC_SHIFT          28
-> +
-> +static unsigned long imx_clk_composite_divider_recalc_rate(struct clk_hw=
- *hw,
-> +                                               unsigned long parent_rate)
-> +{
-> +       struct clk_divider *divider =3D to_clk_divider(hw);
-> +       unsigned long prediv_rate;
-> +       unsigned int prediv_value;
-> +       unsigned int div_value;
-> +
-> +       prediv_value =3D clk_readl(divider->reg) >> divider->shift;
-> +       prediv_value &=3D clk_div_mask(divider->width);
-> +
-> +       prediv_rate =3D divider_recalc_rate(hw, parent_rate, prediv_value,
-> +                                               NULL, divider->flags,
-> +                                               divider->width);
-> +
-> +       div_value =3D clk_readl(divider->reg) >> PCG_DIV_SHIFT;
-> +       div_value &=3D clk_div_mask(PCG_DIV_WIDTH);
-> +
-> +       return divider_recalc_rate(hw, prediv_rate, div_value, NULL,
-> +                                  divider->flags, PCG_DIV_WIDTH);
-> +}
-> +
-> +static int imx_clk_composite_compute_dividers(unsigned long rate,
-> +                                               unsigned long parent_rate,
-> +                                               int *prediv, int *postdiv)
-> +{
-> +       int div1, div2;
-> +       int error =3D INT_MAX;
-> +       int ret =3D -EINVAL;
-> +
-> +       /* default values */
-> +       *prediv =3D 1;
-> +       *postdiv =3D 1;
-> +
-> +       for (div1 =3D 1; div1 <=3D PCG_PREDIV_MAX; div1++) {
-> +               for (div2 =3D 1; div2 <=3D PCG_DIV_MAX; div2++) {
-> +                       int new_error =3D ((parent_rate / div1) / div2) -=
- rate;
-> +
-> +                       if (abs(new_error) < abs(error)) {
-> +                               *prediv =3D div1;
-> +                               *postdiv =3D div2;
-> +                               error =3D new_error;
-> +                               ret =3D 0;
-> +                       }
-> +               }
-> +       }
-> +       return ret;
-> +}
-> +
-> +static long imx_clk_composite_divider_round_rate(struct clk_hw *hw,
-> +                                               unsigned long rate,
-> +                                               unsigned long *prate)
-> +{
-> +       int prediv_value;
-> +       int div_value;
-> +
-> +       imx_clk_composite_compute_dividers(rate, *prate,
-> +                                               &prediv_value, &div_value=
-);
-> +
-> +       rate =3D DIV_ROUND_UP_ULL((u64)*prate, prediv_value);
-> +       rate =3D DIV_ROUND_UP_ULL((u64)rate, div_value);
-> +
-> +       return rate;
+Please re-read my comments, but in every place where I state things
+in a way of providing permissions, re-state it in your mind as the
+same sentence _except_ phrased as excluding from unacceptable
+behavior.  (I started to do that explicitly, but it looked like
+I was just going to create a whole lot of distracting text.)
 
-Looks the same as another patch, maybe it is?
 
-Anyway, same nitpick about returning the DIV_ROUND_UP_ULL() result.
+>> Which email addresses are allowed to be published?  (This is the
+>> point of my original comment.)  To me, the patch wording is
+>> describing how I can determine whether I can put a specific email
+>> address in a tag in a patch that I submit or commit.  I can put an
+>> email address in a tag _if_ it is "ordinarily collected by the
+>> project".
+>>
+>> This then leads my mental process down the path of the disclosures
+>> (from all of the companies that I do business with) that tell me what
+>> they are going to do with my personal information, such as my
+>> address.  (They usually plan to share it with the world for their
+>> financial benefit.) In that context, my personal information is not
+>> _public_, but it is _ordinarily collected_ by the company.  I hope
+>> this provides some insight into what I am reading into "ordinarily
+>> collected by the project".
+>>
+>> My original comment was trying to provide the concept behind a way to
+>> create an alternate wording in the patch to define "which email
+>> addresses".
+>>
+>> Where are email addresses allowed to be published?  I do not
+>> understand the patch wording to address this at all.
+> 
+> I agree, but, as I said, my goal wasn't to provide explicit permission
+> (because the list is too long and too dependent on the way the project
+> operates) it was to carve out an exclusion from sanction for stuff the
+> kernel normally does.  The carve out doesn't translate into explicit
+> permission because the project can define other standards for the way
+> email addresses are added to the tags.
+> 
+>> Trying to understand how you are understanding my comment vs what I
+>> intended to communicate, it seems to me that you are focused on the
+>> "where allowed" and I am focused on the "which email addresses".
+>>
+>> More clear?  Or am I still not communicating well enough?
+> 
+> I think the crux of the disagreement is that you think the carve out
+> equates to a permission which is not specific enough and I think it
 
-> +}
-> +
-> +static int imx_clk_composite_divider_set_rate(struct clk_hw *hw,
-> +                                       unsigned long rate,
-> +                                       unsigned long parent_rate)
-> +{
-> +       struct clk_divider *divider =3D to_clk_divider(hw);
-> +       unsigned long flags =3D 0;
-> +       int prediv_value;
-> +       int div_value;
-> +       int ret =3D 0;
-> +       u32 val;
-> +
-> +       ret =3D imx_clk_composite_compute_dividers(rate, parent_rate,
-> +                                               &prediv_value, &div_value=
-);
-> +       if (ret)
-> +               return -EINVAL;
-> +
-> +       spin_lock_irqsave(divider->lock, flags);
-> +
-> +       val =3D clk_readl(divider->reg);
-> +       val &=3D ~((clk_div_mask(divider->width) << divider->shift) |
-> +                       (clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
-> +
-> +       val |=3D (u32)(prediv_value  - 1) << divider->shift;
-> +       val |=3D (u32)(div_value - 1) << PCG_DIV_SHIFT;
-> +       clk_writel(val, divider->reg);
+Nope.  That is a big place where I was not transferring my thoughts
+to clear communication.  I agree that what I wrote should have been
+written in terms of carve out instead of permission.
 
-Please don't use clk_writel().
 
-> +
-> +       spin_unlock_irqrestore(divider->lock, flags);
-> +
-> +       return ret;
-> +}
-> +
-> +static const struct clk_ops imx_clk_composite_divider_ops =3D {
-> +       .recalc_rate =3D imx_clk_composite_divider_recalc_rate,
-> +       .round_rate =3D imx_clk_composite_divider_round_rate,
-> +       .set_rate =3D imx_clk_composite_divider_set_rate,
-> +};
-> +
-> +struct clk *imx_clk_composite_flags(const char *name,
-> +                                       const char **parent_names,
-> +                                       int num_parents, void __iomem *re=
-g,
-> +                                       unsigned long flags)
-> +{
-> +       struct clk_hw *mux_hw =3D NULL, *div_hw =3D NULL, *gate_hw =3D NU=
-LL;
-> +       struct clk_divider *div =3D NULL;
-> +       struct clk_gate *gate =3D NULL;
-> +       struct clk_mux *mux =3D NULL;
-> +       struct clk *clk =3D ERR_PTR(-ENOMEM);
-> +
-> +       mux =3D kzalloc(sizeof(*mux), GFP_KERNEL);
-> +       if (!mux)
-> +               goto fail;
-> +
-> +       mux_hw =3D &mux->hw;
-> +       mux->reg =3D reg;
-> +       mux->shift =3D PCG_PCS_SHIFT;
-> +       mux->mask =3D PCG_PCS_MASK;
-> +
-> +       div =3D kzalloc(sizeof(*div), GFP_KERNEL);
-> +       if (!div)
-> +               goto fail;
-> +
-> +       div_hw =3D &div->hw;
-> +       div->reg =3D reg;
-> +       div->shift =3D PCG_PREDIV_SHIFT;
-> +       div->width =3D PCG_PREDIV_WIDTH;
-> +       div->lock =3D &imx_ccm_lock;
-> +       div->flags =3D CLK_DIVIDER_ROUND_CLOSEST;
-> +
-> +       gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
-> +       if (!gate)
-> +               goto fail;
-> +
-> +       gate_hw =3D &gate->hw;
-> +       gate->reg =3D reg;
-> +       gate->bit_idx =3D PCG_CGC_SHIFT;
-> +
-> +       clk =3D clk_register_composite(NULL, name, parent_names, num_pare=
-nts,
-> +                                       mux_hw, &clk_mux_ops, div_hw,
-> +                                       &imx_clk_composite_divider_ops, g=
-ate_hw,
-> +                                       &clk_gate_ops, flags);
+> doesn't equate to a permission at all, which is why there's no need to
+> make it more explicit.  Is that a fair characterisation?
 
-Didn't I already review this? I'd prefer we move this to using clk_hw
-based APIs and then return the clk pointer if needed.
+Nope.  My concern is "which email addresses".
 
-> +       if (IS_ERR(clk))
-> +               goto fail;
-> +
-> +       return clk;
-> +
-> +fail:
-> +       kfree(gate);
-> +       kfree(div);
-> +       kfree(mux);
-> +       return clk;
-> +}
+-Frank
+
+
+> James
+> 
+> 
+
