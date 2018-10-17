@@ -2,113 +2,156 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3913AECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC95ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0096B21528
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:39:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGlAHmny"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0096B21528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5138A2150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:40:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5138A2150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbeJQXfm (ORCPT
+        id S1727601AbeJQXgm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:35:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727028AbeJQXfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:35:42 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E3732150F;
-        Wed, 17 Oct 2018 15:39:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539790766;
-        bh=fbMRY1yP5Ng3nsdoUh09s5sgvUUzw43IsYM/3Dpu+g0=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=jGlAHmnykwhvYA8XJGIq1pNRmslWjzLinPUNq/22POBSo3frLtyAxg7tmBNtkoDNI
-         +t0KfqskosiZjSBn5wTiRKSC2u+B2yPy2dIok+hkDp3jvGjrm4W+fZ9XXGSdv1BLiH
-         lbL/k6VWHF1N4dB56NGjHLbAe92cl3aeMxAYpEBA=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 17 Oct 2018 19:36:42 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:59400 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727028AbeJQXgl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:36:41 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-176-dq-bm2mcOlOFsEfRMVaHPw-1; Wed, 17 Oct 2018 16:40:23 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 17 Oct 2018 16:40:25 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 17 Oct 2018 16:40:25 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Pavel Tatashin' <pasha.tatashin@gmail.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "pavel.tatashin@microsoft.com" <pavel.tatashin@microsoft.com>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "yi.z.zhang@linux.intel.com" <yi.z.zhang@linux.intel.com>,
+        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
+        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "ldufour@linux.vnet.ibm.com" <ldufour@linux.vnet.ibm.com>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+Subject: RE: [mm PATCH v3 1/6] mm: Use mm_zero_struct_page from SPARC on all
+ 64b architectures
+Thread-Topic: [mm PATCH v3 1/6] mm: Use mm_zero_struct_page from SPARC on all
+ 64b architectures
+Thread-Index: AQHUZivJtg+QWoUX/US9F2ZPoC/HcaUjkqFQ
+Date:   Wed, 17 Oct 2018 15:40:25 +0000
+Message-ID: <7d313318f1234a1eb45b608bd853c17c@AcuMS.aculab.com>
+References: <20181015202456.2171.88406.stgit@localhost.localdomain>
+ <20181015202656.2171.92963.stgit@localhost.localdomain>
+ <20181017084744.GH18839@dhcp22.suse.cz>
+ <9700b00f-a8a4-e318-f6a8-71fd1e7021b3@linux.intel.com>
+ <8aaa0fa2-5f12-ea3c-a0ca-ded9e1a639e2@gmail.com>
+In-Reply-To: <8aaa0fa2-5f12-ea3c-a0ca-ded9e1a639e2@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     ilia.lin@gmail.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180614215358.11264-3-ilia.lin@gmail.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ilia Lin <ilialin@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180614215358.11264-1-ilia.lin@gmail.com>
- <20180614215358.11264-3-ilia.lin@gmail.com>
-Message-ID: <153979076609.5275.11289929616133786271@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v13 2/8] clk: qcom: Make clk_alpha_pll_configure available to
- modules
-Date:   Wed, 17 Oct 2018 08:39:26 -0700
+X-MC-Unique: dq-bm2mcOlOFsEfRMVaHPw-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting ilia.lin@gmail.com (2018-06-14 14:53:49)
-> From: Rajendra Nayak <rnayak@codeaurora.org>
-> =
+RnJvbTogUGF2ZWwgVGF0YXNoaW4NCj4gU2VudDogMTcgT2N0b2JlciAyMDE4IDE2OjEyDQo+IE9u
+IDEwLzE3LzE4IDExOjA3IEFNLCBBbGV4YW5kZXIgRHV5Y2sgd3JvdGU6DQo+ID4gT24gMTAvMTcv
+MjAxOCAxOjQ3IEFNLCBNaWNoYWwgSG9ja28gd3JvdGU6DQo+ID4+IE9uIE1vbiAxNS0xMC0xOCAx
+MzoyNjo1NiwgQWxleGFuZGVyIER1eWNrIHdyb3RlOg0KPiA+Pj4gVGhpcyBjaGFuZ2UgbWFrZXMg
+aXQgc28gdGhhdCB3ZSB1c2UgdGhlIHNhbWUgYXBwcm9hY2ggdGhhdCB3YXMNCj4gPj4+IGFscmVh
+ZHkgaW4NCj4gPj4+IHVzZSBvbiBTcGFyYyBvbiBhbGwgdGhlIGFyY2h0ZWN0dXJlcyB0aGF0IHN1
+cHBvcnQgYSA2NGIgbG9uZy4NCj4gPj4+DQo+ID4+PiBUaGlzIGlzIG1vc3RseSBtb3RpdmF0ZWQg
+YnkgdGhlIGZhY3QgdGhhdCA4IHRvIDEwIHN0b3JlL21vdmUNCj4gPj4+IGluc3RydWN0aW9ucw0K
+PiA+Pj4gYXJlIGxpa2VseSBhbHdheXMgZ29pbmcgdG8gYmUgZmFzdGVyIHRoYW4gaGF2aW5nIHRv
+IGNhbGwgaW50byBhIGZ1bmN0aW9uDQo+ID4+PiB0aGF0IGlzIG5vdCBzcGVjaWFsaXplZCBmb3Ig
+aGFuZGxpbmcgcGFnZSBpbml0Lg0KPiA+Pj4NCj4gPj4+IEFuIGFkZGVkIGFkdmFudGFnZSB0byBk
+b2luZyBpdCB0aGlzIHdheSBpcyB0aGF0IHRoZSBjb21waWxlciBjYW4gZ2V0DQo+ID4+PiBhd2F5
+DQo+ID4+PiB3aXRoIGNvbWJpbmluZyB3cml0ZXMgaW4gdGhlIF9faW5pdF9zaW5nbGVfcGFnZSBj
+YWxsLiBBcyBhIHJlc3VsdCB0aGUNCj4gPj4+IG1lbXNldCBjYWxsIHdpbGwgYmUgcmVkdWNlZCB0
+byBvbmx5IGFib3V0IDQgd3JpdGUgb3BlcmF0aW9ucywgb3IgYXQNCj4gPj4+IGxlYXN0DQo+ID4+
+PiB0aGF0IGlzIHdoYXQgSSBhbSBzZWVpbmcgd2l0aCBHQ0MgNi4yIGFzIHRoZSBmbGFncywgTFJV
+IHBvaXRuZXJzLCBhbmQNCj4gPj4+IGNvdW50L21hcGNvdW50IHNlZW0gdG8gYmUgY2FuY2VsbGlu
+ZyBvdXQgYXQgbGVhc3QgNCBvZiB0aGUgOA0KPiA+Pj4gYXNzaWdubWVudHMgb24NCj4gPj4+IG15
+IHN5c3RlbS4NCj4gPj4+DQo+ID4+PiBPbmUgY2hhbmdlIEkgaGFkIHRvIG1ha2UgdG8gdGhlIGZ1
+bmN0aW9uIHdhcyB0byByZWR1Y2UgdGhlIG1pbmltdW0gcGFnZQ0KPiA+Pj4gc2l6ZSB0byA1NiB0
+byBzdXBwb3J0IHNvbWUgcG93ZXJwYzY0IGNvbmZpZ3VyYXRpb25zLg0KPiA+Pg0KPiA+PiBUaGlz
+IHJlYWxseSBiZWdzIGZvciBudW1iZXJzLiBJIGRvIG5vdCBtaW5kIHRoZSBjaGFuZ2UgaXRzZWxm
+IHdpdGggc29tZQ0KPiA+PiBtaW5vciBjb21tZW50cyBiZWxvdy4NCj4gPj4NCj4gPj4gWy4uLl0N
+Cj4gPj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L21tLmggYi9pbmNsdWRlL2xpbnV4L21t
+LmgNCj4gPj4+IGluZGV4IGJiMGRlNDA2ZjhlNy4uZWM2ZTU3YTBjMTRlIDEwMDY0NA0KPiA+Pj4g
+LS0tIGEvaW5jbHVkZS9saW51eC9tbS5oDQo+ID4+PiArKysgYi9pbmNsdWRlL2xpbnV4L21tLmgN
+Cj4gPj4+IEBAIC0xMDIsOCArMTAyLDQyIEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBzZXRfbWF4X21h
+cG5yKHVuc2lnbmVkIGxvbmcNCj4gPj4+IGxpbWl0KSB7IH0NCj4gPj4+IMKgwqAgKiB6ZXJvaW5n
+IGJ5IGRlZmluaW5nIHRoaXMgbWFjcm8gaW4gPGFzbS9wZ3RhYmxlLmg+Lg0KPiA+Pj4gwqDCoCAq
+Lw0KPiA+Pj4gwqAgI2lmbmRlZiBtbV96ZXJvX3N0cnVjdF9wYWdlDQo+ID4+DQo+ID4+IERvIHdl
+IHN0aWxsIG5lZWQgdGhpcyBpZmRlZj8gSSBndWVzcyB3ZSBjYW4gd2FpdCBmb3IgYW4gYXJjaCB3
+aGljaA0KPiA+PiBkb2Vzbid0IGxpa2UgdGhpcyBjaGFuZ2UgYW5kIHRoZW4gYWRkIHRoZSBvdmVy
+cmlkZS4gSSB3b3VsZCByYXRoZXIgZ28NCj4gPj4gc2ltcGxlIGlmIHBvc3NpYmxlLg0KPiA+DQo+
+ID4gV2UgcHJvYmFibHkgZG9uJ3QsIGJ1dCBhcyBzb29uIGFzIEkgcmVtb3ZlIGl0IHNvbWVib2R5
+IHdpbGwgcHJvYmFibHkNCj4gPiBjb21wbGFpbiBzb21ld2hlcmUuIEkgZ3Vlc3MgSSBjb3VsZCBk
+cm9wIGl0IGZvciBub3cgYW5kIHNlZSBpZiBhbnlib2R5DQo+ID4gc2NyZWFtcy4gQWRkaW5nIGl0
+IGJhY2sgc2hvdWxkIGJlIHByZXR0eSBzdHJhaWdodCBmb3J3YXJkIHNpbmNlIGl0IHdvdWxkDQo+
+ID4gb25seSBiZSAyIGxpbmVzLg0KPiA+DQo+ID4+PiArI2lmIEJJVFNfUEVSX0xPTkcgPT0gNjQN
+Cj4gPj4+ICsvKiBUaGlzIGZ1bmN0aW9uIG11c3QgYmUgdXBkYXRlZCB3aGVuIHRoZSBzaXplIG9m
+IHN0cnVjdCBwYWdlIGdyb3dzDQo+ID4+PiBhYm92ZSA4MA0KPiA+Pj4gKyAqIG9yIHJlZHVjZXMg
+YmVsb3cgNjQuIFRoZSBpZGVhIHRoYXQgY29tcGlsZXIgb3B0aW1pemVzIG91dCBzd2l0Y2goKQ0K
+PiA+Pj4gKyAqIHN0YXRlbWVudCwgYW5kIG9ubHkgbGVhdmVzIG1vdmUvc3RvcmUgaW5zdHJ1Y3Rp
+b25zDQo+ID4+PiArICovDQo+ID4+PiArI2RlZmluZcKgwqDCoCBtbV96ZXJvX3N0cnVjdF9wYWdl
+KHBwKSBfX21tX3plcm9fc3RydWN0X3BhZ2UocHApDQo+ID4+PiArc3RhdGljIGlubGluZSB2b2lk
+IF9fbW1femVyb19zdHJ1Y3RfcGFnZShzdHJ1Y3QgcGFnZSAqcGFnZSkNCj4gPj4+ICt7DQo+ID4+
+PiArwqDCoMKgIHVuc2lnbmVkIGxvbmcgKl9wcCA9ICh2b2lkICopcGFnZTsNCj4gPj4+ICsNCj4g
+Pj4+ICvCoMKgwqDCoCAvKiBDaGVjayB0aGF0IHN0cnVjdCBwYWdlIGlzIGVpdGhlciA1NiwgNjQs
+IDcyLCBvciA4MCBieXRlcyAqLw0KPiA+Pj4gK8KgwqDCoCBCVUlMRF9CVUdfT04oc2l6ZW9mKHN0
+cnVjdCBwYWdlKSAmIDcpOw0KPiA+Pj4gK8KgwqDCoCBCVUlMRF9CVUdfT04oc2l6ZW9mKHN0cnVj
+dCBwYWdlKSA8IDU2KTsNCj4gPj4+ICvCoMKgwqAgQlVJTERfQlVHX09OKHNpemVvZihzdHJ1Y3Qg
+cGFnZSkgPiA4MCk7DQo+ID4+PiArDQo+ID4+PiArwqDCoMKgIHN3aXRjaCAoc2l6ZW9mKHN0cnVj
+dCBwYWdlKSkgew0KPiA+Pj4gK8KgwqDCoCBjYXNlIDgwOg0KPiA+Pj4gK8KgwqDCoMKgwqDCoMKg
+IF9wcFs5XSA9IDA7wqDCoMKgIC8qIGZhbGx0aHJvdWdoICovDQo+ID4+PiArwqDCoMKgIGNhc2Ug
+NzI6DQo+ID4+PiArwqDCoMKgwqDCoMKgwqAgX3BwWzhdID0gMDvCoMKgwqAgLyogZmFsbHRocm91
+Z2ggKi8NCj4gPj4+ICvCoMKgwqAgZGVmYXVsdDoNCj4gPj4+ICvCoMKgwqDCoMKgwqDCoCBfcHBb
+N10gPSAwO8KgwqDCoCAvKiBmYWxsdGhyb3VnaCAqLw0KPiA+Pj4gK8KgwqDCoCBjYXNlIDU2Og0K
+PiA+Pj4gK8KgwqDCoMKgwqDCoMKgIF9wcFs2XSA9IDA7DQo+ID4+PiArwqDCoMKgwqDCoMKgwqAg
+X3BwWzVdID0gMDsNCj4gPj4+ICvCoMKgwqDCoMKgwqDCoCBfcHBbNF0gPSAwOw0KPiA+Pj4gK8Kg
+wqDCoMKgwqDCoMKgIF9wcFszXSA9IDA7DQo+ID4+PiArwqDCoMKgwqDCoMKgwqAgX3BwWzJdID0g
+MDsNCj4gPj4+ICvCoMKgwqDCoMKgwqDCoCBfcHBbMV0gPSAwOw0KPiA+Pj4gK8KgwqDCoMKgwqDC
+oMKgIF9wcFswXSA9IDA7DQo+ID4+PiArwqDCoMKgIH0NCj4gPj4NCj4gPj4gVGhpcyBqdXN0IGhp
+dCBteSBleWVzLiBJIGhhdmUgdG8gY29uZmVzcyBJIGhhdmUgbmV2ZXIgc2VlbiBkZWZhdWx0OiB0
+bw0KPiA+PiBiZSBub3QgdGhlIGxhc3Qgb25lIGluIHRoZSBzd2l0Y2guIENhbiB3ZSBoYXZlIGNh
+c2UgNjQgaW5zdGVhZCBvciBkb2VzDQo+ID4+IGdjYw0KPiA+PiBjb21wbGFpbj8gSSB3b3VsZCBi
+ZSBzdXJwcmlzZWQgd2l0aCB0aGUgc2V0IG9mIEJVSUxEX0JVR19PTnMuDQo+IA0KPiBJdCB3YXMg
+bWUsIEMgZG9lcyBub3QgcmVhbGx5IGNhcmUgd2hlcmUgZGVmYXVsdCBpcyBwbGFjZWQsIEkgd2Fz
+IHRyeWluZw0KPiB0byBrZWVwIHN0b3JlcyBzZXF1ZW50aWFsIGZvciBiZXR0ZXIgY2FjaGUgbG9j
+YWxpdHksIGJ1dCAiY2FzZSA2NCINCj4gc2hvdWxkIGJlIE9LLCBhbmQgZXZlbiBiZXR0ZXIgZm9y
+IHRoaXMgcHVycG9zZS4NCg0KWW91J2QgbmVlZCB0byBwdXQgbWVtb3J5IGJhcnJpZXJzIGJldHdl
+ZW4gdGhlbSB0byBmb3JjZSBzZXF1ZW50aWFsIHN0b3Jlcy4NCkknbSBhbHNvIHN1cnByaXNlZCB0
+aGF0IGdjYyBkb2Vzbid0IGlubGluZSB0aGUgbWVtc2V0KCkuDQoNCglEYXZpZA0KDQotDQpSZWdp
+c3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9u
+IEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
-> Allow clk_alpha_pll_configure to be called from loadable
-> kernel modules.
-> =
-
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
-
-Oh I think this one came via another patch series. Either way, keep
-resending this along with everything else to make kbuild happy.
-
->  drivers/clk/qcom/clk-alpha-pll.c | 1 +
->  1 file changed, 1 insertion(+)
-> =
-
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alph=
-a-pll.c
-> index 3c49a60072f1..a43f80ac94a4 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -228,6 +228,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pl=
-l, struct regmap *regmap,
->         if (pll->flags & SUPPORTS_FSM_MODE)
->                 qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
->  }
-> +EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
->  =
-
->  static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
->  {
-> -- =
-
-> 2.11.0
-> =
-
-> =
-
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
