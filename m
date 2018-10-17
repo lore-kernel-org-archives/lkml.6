@@ -2,90 +2,97 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A37CECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E1BECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F78C2150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:12:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O9jky8YQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F78C2150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 046A821526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:12:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 046A821526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbeJQXIP (ORCPT
+        id S1727370AbeJQXI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:08:15 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33329 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJQXIP (ORCPT
+        Wed, 17 Oct 2018 19:08:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49290 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727014AbeJQXI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:08:15 -0400
-Received: by mail-qt1-f194.google.com with SMTP id q40-v6so30444685qte.0;
-        Wed, 17 Oct 2018 08:12:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZOLe8Zin178/08jruIXW3lOa2XVHqgyRzxpRLU7TLAY=;
-        b=O9jky8YQ56anrV+FCIyWWMv25MkPHWb3/G1eNF3erewkrZuBqKdMSnWQ3Kb9rZmz29
-         yrFd236go3B6Xz1FJtReh+Z8dMTHZ4rQc35ByA3nKE+OnK3wu9oPuKWT7wW3LHdoYuK8
-         pF/i+gIOYBYYiHpaV4jE8GSurkEvUUoyxTqlnAybN8qc8XTgtiQJMzOqIciUDK5CzZiw
-         OLZYvNNcJx+9cB9jb2L7csuHVgr7dW7w0J5+PtOuCCflmE7ZQsAVV2aeprNHNHKpdIx4
-         VDh+XanVWVi1O1dp/nn+EKTPsA+cKLibvdrM0acUnfFK9l+Z67/2073FMPUdhDLQ4B6t
-         HgcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZOLe8Zin178/08jruIXW3lOa2XVHqgyRzxpRLU7TLAY=;
-        b=BnoqPtt32G1eLIdwwzSBgDOccKpf4wqF3DNmEcR8Jvbe3ifkGa0+F2U2o0FB6MPdzq
-         ieoAMIwKVk2i2DQ2y04engnGM9x5xnlwYr7h0oAApryIA4zLgOmGJeOrkLh7Y+iw+IbO
-         COVMiNGjyloNggEAbPdjBxt+2c3YzuPxXVri8tSogWNj5BB3LvoYa//xRtiL0BkyTl7p
-         7bATKCnyAUnPA/LZ8EWy2Hqnwrvt16UjX31td3YwT4qvpaULpXti8S6v0+ewgUrm7ugR
-         U9QCb4t085sYDFak+KueFDbbRpBuIa4pLD3yatKc6pm2U1tSCs355AbMNX13CsLKvfpu
-         eQzA==
-X-Gm-Message-State: ABuFfogimcg6q74axVWvW/UTk9+p1JTy60jKtFCuN7Rp04PoGzmbD+EP
-        a/tBEkmnuecKfsgPVSzZtjUS0T2U
-X-Google-Smtp-Source: ACcGV603hgU4IxPb+WTvEX0RVtfWS/X/qyeh0ZtIJyRpb3zBS9809GdqlNkRo1YnP/DzTpKNAdzbUA==
-X-Received: by 2002:ac8:1967:: with SMTP id g36-v6mr24062385qtk.193.1539789126420;
-        Wed, 17 Oct 2018 08:12:06 -0700 (PDT)
-Received: from [192.168.1.10] (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id i26-v6sm14352799qta.34.2018.10.17.08.12.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 08:12:05 -0700 (PDT)
-Subject: Re: [mm PATCH v3 1/6] mm: Use mm_zero_struct_page from SPARC on all
- 64b architectures
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        davem@davemloft.net, yi.z.zhang@linux.intel.com,
-        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
-        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-References: <20181015202456.2171.88406.stgit@localhost.localdomain>
- <20181015202656.2171.92963.stgit@localhost.localdomain>
- <20181017084744.GH18839@dhcp22.suse.cz>
- <9700b00f-a8a4-e318-f6a8-71fd1e7021b3@linux.intel.com>
-From:   Pavel Tatashin <pasha.tatashin@gmail.com>
-Message-ID: <8aaa0fa2-5f12-ea3c-a0ca-ded9e1a639e2@gmail.com>
-Date:   Wed, 17 Oct 2018 11:12:04 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 17 Oct 2018 19:08:28 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9HF9UhU135835
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 11:12:19 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n64rrrr50-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 11:12:10 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Wed, 17 Oct 2018 11:10:34 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 17 Oct 2018 11:10:30 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9HFAT4C2162964
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 17 Oct 2018 15:10:29 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8FB87AC065;
+        Wed, 17 Oct 2018 15:10:29 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 06515AC075;
+        Wed, 17 Oct 2018 15:10:26 +0000 (GMT)
+Received: from [9.79.213.117] (unknown [9.79.213.117])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 17 Oct 2018 15:10:25 +0000 (GMT)
+Subject: Re: [PATCH v6 03/20] tpm: factor out tpm 1.x duration calculation to
+ tpm1-cmd.c
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>
+References: <20181017064613.19746-1-tomas.winkler@intel.com>
+ <20181017064613.19746-4-tomas.winkler@intel.com>
+ <05fea3e6-91a3-b508-83c0-d8f06d6bbd5c@linux.ibm.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9F4691@hasmsx109.ger.corp.intel.com>
+From:   Nayna Jain <nayna@linux.ibm.com>
+Date:   Wed, 17 Oct 2018 20:37:21 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <9700b00f-a8a4-e318-f6a8-71fd1e7021b3@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9F4691@hasmsx109.ger.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18101715-0052-0000-0000-0000034522E9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009892; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01104018; UDB=6.00571503; IPR=6.00884070;
+ MB=3.00023795; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-17 15:10:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101715-0053-0000-0000-00005E723821
+Message-Id: <650c00b1-d53e-27e8-3e1f-94e34c2ae2e9@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810170130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -93,100 +100,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 10/17/18 11:07 AM, Alexander Duyck wrote:
-> On 10/17/2018 1:47 AM, Michal Hocko wrote:
->> On Mon 15-10-18 13:26:56, Alexander Duyck wrote:
->>> This change makes it so that we use the same approach that was
->>> already in
->>> use on Sparc on all the archtectures that support a 64b long.
->>>
->>> This is mostly motivated by the fact that 8 to 10 store/move
->>> instructions
->>> are likely always going to be faster than having to call into a function
->>> that is not specialized for handling page init.
->>>
->>> An added advantage to doing it this way is that the compiler can get
->>> away
->>> with combining writes in the __init_single_page call. As a result the
->>> memset call will be reduced to only about 4 write operations, or at
->>> least
->>> that is what I am seeing with GCC 6.2 as the flags, LRU poitners, and
->>> count/mapcount seem to be cancelling out at least 4 of the 8
->>> assignments on
->>> my system.
->>>
->>> One change I had to make to the function was to reduce the minimum page
->>> size to 56 to support some powerpc64 configurations.
+On 10/17/2018 05:54 PM, Winkler, Tomas wrote:
 >>
->> This really begs for numbers. I do not mind the change itself with some
->> minor comments below.
+>>>    	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+>>> -	rc = i2c_nuvoton_wait_for_data_avail(chip,
+>>> -					     tpm_calc_ordinal_duration(chip,
+>>> -								       ordinal),
+>>> -					     &priv->read_queue);
+>>> +	duration = tpm1_calc_ordinal_duration(chip, ordinal);
 >>
->> [...]
->>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>> index bb0de406f8e7..ec6e57a0c14e 100644
->>> --- a/include/linux/mm.h
->>> +++ b/include/linux/mm.h
->>> @@ -102,8 +102,42 @@ static inline void set_max_mapnr(unsigned long
->>> limit) { }
->>>    * zeroing by defining this macro in <asm/pgtable.h>.
->>>    */
->>>   #ifndef mm_zero_struct_page
->>
->> Do we still need this ifdef? I guess we can wait for an arch which
->> doesn't like this change and then add the override. I would rather go
->> simple if possible.
-> 
-> We probably don't, but as soon as I remove it somebody will probably
-> complain somewhere. I guess I could drop it for now and see if anybody
-> screams. Adding it back should be pretty straight forward since it would
-> only be 2 lines.
-> 
->>> +#if BITS_PER_LONG == 64
->>> +/* This function must be updated when the size of struct page grows
->>> above 80
->>> + * or reduces below 64. The idea that compiler optimizes out switch()
->>> + * statement, and only leaves move/store instructions
->>> + */
->>> +#define    mm_zero_struct_page(pp) __mm_zero_struct_page(pp)
->>> +static inline void __mm_zero_struct_page(struct page *page)
->>> +{
->>> +    unsigned long *_pp = (void *)page;
->>> +
->>> +     /* Check that struct page is either 56, 64, 72, or 80 bytes */
->>> +    BUILD_BUG_ON(sizeof(struct page) & 7);
->>> +    BUILD_BUG_ON(sizeof(struct page) < 56);
->>> +    BUILD_BUG_ON(sizeof(struct page) > 80);
->>> +
->>> +    switch (sizeof(struct page)) {
->>> +    case 80:
->>> +        _pp[9] = 0;    /* fallthrough */
->>> +    case 72:
->>> +        _pp[8] = 0;    /* fallthrough */
->>> +    default:
->>> +        _pp[7] = 0;    /* fallthrough */
->>> +    case 56:
->>> +        _pp[6] = 0;
->>> +        _pp[5] = 0;
->>> +        _pp[4] = 0;
->>> +        _pp[3] = 0;
->>> +        _pp[2] = 0;
->>> +        _pp[1] = 0;
->>> +        _pp[0] = 0;
->>> +    }
->>
->> This just hit my eyes. I have to confess I have never seen default: to
->> be not the last one in the switch. Can we have case 64 instead or does
->> gcc
->> complain? I would be surprised with the set of BUILD_BUG_ONs.
+>> This version of the patch didn't address my previous comment - "The original
+>> code in the nuvoton driver does not differentiate between TPM 1.2 and TPM
+>> 2.0 as it does in tpm_tis_core.c.
+>> Before making any changes, I would first fix it, so that it could easily be
+>> backported. Only then do the refactoring."
+> This patch doesn't change the original behavior, just change the name of the function,  so there is no regression.
+> I would suggest there is another bug in those drivers/devices that is orthogonal to this refactoring and should not block this from merging.
 
-It was me, C does not really care where default is placed, I was trying
-to keep stores sequential for better cache locality, but "case 64"
-should be OK, and even better for this purpose.
+The problem is that you are inadvertently fixing a bug without realizing 
+it - [Patch 04/20]. Bug fixes should be addressed independently
+of this change, so that they can be backported properly.
 
-Pavel
+> According to what you say  it can call just tpm_calc_oridnal_duration() instead of tpm1_calc_ordinal_duration(chip, ordinal),
+> but I prefer that someone that has those devices will do that change on top of this series as  I cannot test it.
 
-> 
-> I can probably just replace the "default:" with "case 64:". I think I
-> have seen other switch statements in the kernel without a default so
-> odds are it should be okay.
-> 
+The problem is:
+
+1. This patch calls tpm1_calc_ordinal_duration for both the TPM 1.2 and 
+TPM 2.0.
+2. In the next patch, it adds a new function tpm_calc_ordinal_duration 
+as a wrapper for both the TPM 1.2 and TPM 2.0. After this change when it 
+calls tpm_calc_ordinal_duration(),
+it now calls different functions for TPM 1.2 and TPM 2.0. This is a 
+change in behavior.
+
+Thanks & Regards,
+    - Nayna
+
+> Thanks
+> Tomas
+>
+
