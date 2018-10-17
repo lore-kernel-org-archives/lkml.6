@@ -2,105 +2,106 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FA1ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06618ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E514F2151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:21:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E514F2151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+	by mail.kernel.org (Postfix) with ESMTP id C1B5C21526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:21:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=as-electronics.de header.i=@as-electronics.de header.b="j+bnPm8k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1B5C21526
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exceet.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbeJQXRW (ORCPT
+        id S1727708AbeJQXRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:17:22 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:39671 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeJQXRW (ORCPT
+        Wed, 17 Oct 2018 19:17:36 -0400
+Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.132]:35518 "EHLO
+        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeJQXRg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:17:22 -0400
-Received: from localhost (50-39-174-102.bvtn.or.frontiernet.net [50.39.174.102])
-        (Authenticated sender: josh@joshtriplett.org)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 573AB240007;
-        Wed, 17 Oct 2018 15:21:06 +0000 (UTC)
-Date:   Wed, 17 Oct 2018 08:21:02 -0700
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     ksummit-discuss@lists.linuxfoundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        tomi.valkeinen@iki.fi
-Subject: Re: [Ksummit-discuss] [PATCH] code-of-conduct: Remove explicit list
- of discrimination factors
-Message-ID: <20181017152101.GA17531@localhost>
-References: <20181017071902.30102-1-geert@linux-m68k.org>
- <20181017091325.GA15991@localhost>
- <CAMuHMdX0G767xYYcd8TDMLBp3cY9+fz_aJFAuz8OxgmCmhbNrg@mail.gmail.com>
+        Wed, 17 Oct 2018 19:17:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1539789683;
+        s=strato-dkim-0002; d=as-electronics.de;
+        h=Date:Message-ID:Subject:From:Cc:To:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=C6EY7uOX0QNZR871Nv8ev4y4/7sFWMIzE+oda5L4baU=;
+        b=j+bnPm8kkeNbdip+qcok4YjWhu3jik73/poEmr6rYAjyLR70LTwfCMhk/YHCMSO0MG
+        Owp1Bj0hXl5vxq4oRPdyMJXqQrVmkWwg+QM7WIeY3ZvZWKr90bzljK7QNO0WTDiFw+Xu
+        RiJmmumrV1rni/CN9UsuUlJieS77miJ1IwhbzOqGCBXI5FrCYl785igILmkkHS/JI1aw
+        QuKXpdD0Xq98TTtPA9rFpKahn68zwRpmWg7nMEinr1LyIhAdudjTROZ0dtB+knB0BEeq
+        QYgBWSac9FSyJV3h0uSw8cxuXA0iznbn/LK9ACmVsRxwQcjxWjR6SQlffx7FQb5BRupe
+        vOOQ==
+X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx2zAOrX/r2ZbrrxoyOl37jyAS87PDYc9YKfwuBYn/jMBd7vlJpQPmeB0vtXIc5Jks="
+X-RZG-CLASS-ID: mo05
+Received: from [IPv6:2001:16b8:2486:2400:6544:b26:3ad8:8c5e]
+        by smtp.strato.de (RZmta 44.3 AUTH)
+        with ESMTPSA id j097e4u9HFLCDgg
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 17 Oct 2018 17:21:12 +0200 (CEST)
+To:     Steve Glendinning <steve.glendinning@shawell.net>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     Oliver Neukum <oneukum@suse.com>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Frieder Schrempf <frieder.schrempf@exceet.de>
+Subject: SMSC9730 Autosuspend/Resume Questions
+Message-ID: <69e14429-a4d9-dd5c-5e70-c22086490cc0@exceet.de>
+Date:   Wed, 17 Oct 2018 17:21:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX0G767xYYcd8TDMLBp3cY9+fz_aJFAuz8OxgmCmhbNrg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 11:31:35AM +0200, Geert Uytterhoeven wrote:
-> Hi Josh,
-> 
-> Thanks for your comments!
-> 
-> On Wed, Oct 17, 2018 at 11:13 AM Josh Triplett <josh@joshtriplett.org> wrote:
-> > On Wed, Oct 17, 2018 at 09:19:01AM +0200, Geert Uytterhoeven wrote:
-> > > Providing an explicit list of discrimination factors may give the false
-> > > impression that discrimination based on other unlisted factors would be
-> > > allowed.
-> >
-> > This impression is, in fact, false, as has already been discussed
-> > elsewhere. I had hoped that discussion would suffice.
-> 
-> The CoC FAQ is not part of the CoC, and not part of the Linux kernel.
+Hi,
 
-I wasn't referring just to that; I'm referring to the discussion we've
-already had on this exact point.
+I recently tested a board with SMSC9730 connected via USB HSIC to an 
+i.MX6S SOC. I used these patches on top of v4.14-rc8 for the USB HSIC 
+support: [1].
 
-> > refers to. Listing explicit cases to cover does not imply other cases
-> > are not covered;
-> 
-> It does, if not accompanied by "examples of...", like in the other sections.
+When I turned on autosuspend, the smsc95xx stopped in the middle of the 
+suspending routine and 
+/sys/bus/usb/devices/usb3/3-1/power/runtime_status reported "suspending" 
+forever.
 
-"for everyone, regardless of ..." still says "for everyone", making the
-"regardless of ..." inherently a non-exhaustive list of factors.
+With some debug logs I found out, that the last line of code that was 
+executed is [2], after that I didn't get any further messages.
 
-> > it does, however, ensure that the listed cases *are*,
-> > and helps people know that they're covered.
-> 
-> So you agree people cannot know if the unlisted cases are covered or not?
+Then I applied the following diff and the suspend/resume started to work 
+reliably:
 
-People in underrepresented and commonly marginalized groups, especially
-those more commonly overlooked, don't always know if a given group has
-taken their particular group into account or given any thought to it.
-Explicit inclusion helps, and this is a standard guideline often cited
-for good codes of conduct.
+@@ -1382,10 +1385,11 @@ static int smsc95xx_link_ok_nopm(struct usbnet *dev)
+         ret = smsc95xx_mdio_read_nopm(dev->net, mii->phy_id, MII_BMSR);
+         if (ret < 0)
+                 return ret;
+-
++       /*
+         ret = smsc95xx_mdio_read_nopm(dev->net, mii->phy_id, MII_BMSR);
+         if (ret < 0)
+                 return ret;
++       */
 
-That doesn't make other groups *not* covered. But *if* there is a
-particular commonly marginalized group that you feel this should
-*explicitly* cover and doesn't, I'd suggest *adding* that group rather
-than deleting the existing effort to be explicitly inclusive. (And
-again, I'd suggest doing so upstream first.)
+         return !!(ret & BMSR_LSTATUS);
+  }
 
-> > This patch is not OK, and defeats one of the purposes of the original
-> > change.
-> 
-> So the purpose of the original change was to list a number of factors,
-> without saying that it was just a list of examples?
+So it seems like the dummy read, that is commented with "first, a dummy 
+read, needed to latch some MII phys" causes problems in my setup. Do you 
+have an idea what could be the reason? Is this a proper fix?
 
-You seem to be actively trying to read something more into what I said.
-One of the key purposes of the original change was to make the kernel a
-"a welcoming environment to participate in", and to provide "explicit
-guidelines".
+Thanks,
+Frieder
+
+[1] https://patchwork.kernel.org/cover/10643089/
+[2] 
+https://github.com/torvalds/linux/blob/bab5c80b211035739997ebd361a679fa85b39465/drivers/net/usb/smsc95xx.c#L1382
