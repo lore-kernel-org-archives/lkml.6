@@ -2,109 +2,137 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA1BECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDD8ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F96421527
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:11:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9924214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:11:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e4lQ/Cid"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F96421527
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GG5XkhP9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9924214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727539AbeJQWGy (ORCPT
+        id S1727563AbeJQWHr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:06:54 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40152 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbeJQWGx (ORCPT
+        Wed, 17 Oct 2018 18:07:47 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39807 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727037AbeJQWHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:06:53 -0400
-Received: by mail-wm1-f68.google.com with SMTP id z204-v6so2357040wmc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 07:11:00 -0700 (PDT)
+        Wed, 17 Oct 2018 18:07:47 -0400
+Received: by mail-pl1-f196.google.com with SMTP id e67-v6so3779935plb.6;
+        Wed, 17 Oct 2018 07:11:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=256DI5Jjz6Hr7kJYrpIaNnaNUVkHxyLPILqbsIZhtZo=;
-        b=e4lQ/Cidgok476ekW4Cp469aXenb5cWmUG7XwdHPVQ8mCnKjExlyz9F0ew3YGUJHiH
-         v1cfciiGM3vnYcWMLcW1jSqwvl5tnAEHkkvueKbu7gQG1c/F+L5AhHmoIY7ygtvIIxPd
-         1BQO2WZb5shJM5EEYGqJHcetGcXbCc+QHB5Sk=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FaPs55bqnuyP+FLEaAyUF6ZVLn1DpC5Q1ZV5DDxmVWE=;
+        b=GG5XkhP98u4EMlVzOg/HseeCXBGQEGCq1wcI+2ysjM1JnHVUCjB3Elf5VFyB0cUUFk
+         brjT4E9WcBlJYIa01FUQami5ezSqlqQRRDLd+8mOg9/4K/EyGc9SK/U/+F5MtdEMZZAx
+         f11x8VChaFs+/83qlX6XGlO7uUch3c5zMgd9xmwY2ETyD16MzRlVYTVmg31JbhNQPMWq
+         hljhbmz8oW8L2ROMDgYeyKOOsE0A7vm/UUGsOqGwrLZrrPFYgSX21KiYWdZZ071ifFdZ
+         QAI3T9p4z2X3oWiZ3zAykAmvQGOF69yuIDWw+hJ37XMU7n2c9aDjHl+gl0+GRwxvWc3C
+         x7gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=256DI5Jjz6Hr7kJYrpIaNnaNUVkHxyLPILqbsIZhtZo=;
-        b=Of95KSjpD7V5u7ZVWiI03rYabknR4rD6mvDB7WRqbahuWIdkEXWhPws7ZiTCGiihVL
-         wSCUxGQBs5LzKGvD2zhjnCykloTtMjskz9h4tDrJXnWBNi2fkWfdkiE9Rdy6hIrZk0l3
-         J7GTiCLlFg5ygal9IlrpDJi4ujeuI6citGAl2SAkIokGzvGKNDyRmai6yyGf0fvj4mal
-         h/sbTHbukCiFWGa4TbPtIDogMm/nE2K8lHV/Sri8AIQ1NVw9OBoErk46SCYbmzfoV+7n
-         GtVR1QP6ebUQwXqigRk2AJqZ84f1/XUPwo8huYXrqE+ZJNQyU29KLl0gWQGfQbTEcvbS
-         sezw==
-X-Gm-Message-State: ABuFfojknjGAaLoMXm8tKyHb+a9sTdlGUvPFuMhZgdn3ZhlPM0HK56sf
-        TF6pfEyO0xTP9pvwtgfxrPXwDQ==
-X-Google-Smtp-Source: ACcGV62W+0x17e0lx2oaE+6F2PucxdS4hv345tVP+kE47cW1BEU1MG7ncKcB8/mvL+eGBLWQjPW7VA==
-X-Received: by 2002:a1c:1984:: with SMTP id 126-v6mr2973913wmz.7.1539785459197;
-        Wed, 17 Oct 2018 07:10:59 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id y4-v6sm24155144wrd.25.2018.10.17.07.10.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 07:10:58 -0700 (PDT)
-Subject: Re: [PATCH v12 0/5] Venus updates - PIL
-To:     Vikash Garodia <vgarodia@codeaurora.org>,
-        stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
-        mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, acourbot@chromium.org
-References: <1539782303-4091-1-git-send-email-vgarodia@codeaurora.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <5a6bf95a-da0f-2304-3f42-68aedd6f88c8@linaro.org>
-Date:   Wed, 17 Oct 2018 17:10:56 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FaPs55bqnuyP+FLEaAyUF6ZVLn1DpC5Q1ZV5DDxmVWE=;
+        b=Ia+JNi/0yP7U6oqTXToGI0mHLHw43nvGZTHncpAzEX+GlTcy+PwrV9VoVk5V1e/i0H
+         aGtzUxVWN/i/ztRrXcbyjXdLLD0n3/rgO9wHymm9bRPwqUh29sWEvsWZ3t7j02VncY4h
+         +2WR+5KCiNDIfqkWGybBfcxAE+xvZv85B+NuWZtE86dSkRfzAhhlC3ZtcMWdt4mTUSKL
+         OtVy9GW08ALQ68NArpniScIq9mqIGXaJ1Z4Py9IcZOPHf4nGkBox0ZhItksxFeMvWi/l
+         8Ed1sk+xg9cT84evCDmaouwZRcg2dSQQXaT+BhDtGT8Im0tXUrbQu0bHl1egxPxRgS+T
+         Ylag==
+X-Gm-Message-State: ABuFfoj4pAUdTZRXL99zwABfjyOb8PQVepz5CtL2dykw8123gF7camJH
+        ZOWfy3A7u2YM7V1mjPeeEaw=
+X-Google-Smtp-Source: ACcGV604vbnaYACb/pZtykEZIR0bkCgs67WnJ5iTjfK9Di33TUdI109HyVeqOfgi50s0OKtDRZ4JXA==
+X-Received: by 2002:a17:902:b70d:: with SMTP id d13-v6mr25819322pls.44.1539785514600;
+        Wed, 17 Oct 2018 07:11:54 -0700 (PDT)
+Received: from mail.google.com ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
+        by smtp.gmail.com with ESMTPSA id y24-v6sm34215688pfi.24.2018.10.17.07.11.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 07:11:54 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 14:11:52 +0000
+From:   Du Changbin <changbin.du@gmail.com>
+To:     bhelgaas@google.com, changbin.du@gmail.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: make pci_size() return real size
+Message-ID: <20181017135151.mg22ki76ywta6c5i@mail.google.com>
+References: <20181013004919.3202-1-changbin.du@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1539782303-4091-1-git-send-email-vgarodia@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181013004919.3202-1-changbin.du@gmail.com>
+User-Agent: NeoMutt/20180716-508-7c9a6d
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vikash, thanks for the patches!
+Hi Bjorn. Have you checked this little improvment? The idea here is that
+this is not a hotspot, so readbility matters than trick. Thanks!
 
-On 10/17/2018 04:18 PM, Vikash Garodia wrote:
-> This version of the series
-> * updates the tz flag to unsigned
+On Sat, Oct 13, 2018 at 08:49:19AM +0800, changbin.du@gmail.com wrote:
+> From: Du Changbin <changbin.du@gmail.com>
 > 
-> Stanimir Varbanov (1):
->   venus: firmware: register separate platform_device for firmware loader
+> Currently, the pci_size() function actually return 'size-1'.
+> Make it return real size to avoid confusing.
 > 
-> Vikash Garodia (4):
->   venus: firmware: add routine to reset ARM9
->   venus: firmware: move load firmware in a separate function
->   venus: firmware: add no TZ boot and shutdown routine
->   dt-bindings: media: Document bindings for venus firmware device
+> Signed-off-by: Du Changbin <changbin.du@gmail.com>
+> ---
+>  drivers/pci/probe.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
->  .../devicetree/bindings/media/qcom,venus.txt       |  14 +-
->  drivers/media/platform/qcom/venus/core.c           |  24 ++-
->  drivers/media/platform/qcom/venus/core.h           |   6 +
->  drivers/media/platform/qcom/venus/firmware.c       | 235 +++++++++++++++++++--
->  drivers/media/platform/qcom/venus/firmware.h       |  17 +-
->  drivers/media/platform/qcom/venus/hfi_venus.c      |  13 +-
->  drivers/media/platform/qcom/venus/hfi_venus_io.h   |   8 +
->  7 files changed, 274 insertions(+), 43 deletions(-)
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 201f9e5ff55c..8ff2b1413865 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -121,13 +121,13 @@ static u64 pci_size(u64 base, u64 maxbase, u64 mask)
+>  	 * Get the lowest of them to find the decode size, and from that
+>  	 * the extent.
+>  	 */
+> -	size = (size & ~(size-1)) - 1;
+> +	size = size & ~(size-1);
+>  
+>  	/*
+>  	 * base == maxbase can be valid only if the BAR has already been
+>  	 * programmed with all 1s.
+>  	 */
+> -	if (base == maxbase && ((base | size) & mask) != mask)
+> +	if (base == maxbase && ((base | (size - 1)) & mask) != mask)
+>  		return 0;
+>  
+>  	return size;
+> @@ -278,7 +278,7 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
+>  			/* Above 32-bit boundary; try to reallocate */
+>  			res->flags |= IORESOURCE_UNSET;
+>  			res->start = 0;
+> -			res->end = sz64;
+> +			res->end = sz64 - 1;
+>  			pci_info(dev, "reg 0x%x: can't handle BAR above 4GB (bus address %#010llx)\n",
+>  				 pos, (unsigned long long)l64);
+>  			goto out;
+> @@ -286,7 +286,7 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
+>  	}
+>  
+>  	region.start = l64;
+> -	region.end = l64 + sz64;
+> +	region.end = l64 + sz64 - 1;
+>  
+>  	pcibios_bus_to_resource(dev->bus, res, &region);
+>  	pcibios_resource_to_bus(dev->bus, &inverted_region, res);
+> -- 
+> 2.17.1
 > 
-
-Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 
 -- 
-regards,
-Stan
+Thanks,
+Du Changbin
