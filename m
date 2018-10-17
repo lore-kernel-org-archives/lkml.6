@@ -2,142 +2,167 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE673ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A4DECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F99A2151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:41:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="BqCFt4Wx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F99A2151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id BBCB121526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:41:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCB121526
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeJQWhA (ORCPT
+        id S1727672AbeJQWhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:37:00 -0400
-Received: from mail-eopbgr680055.outbound.protection.outlook.com ([40.107.68.55]:12438
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727018AbeJQWhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:37:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=znCXfe+AP1y8MJBkp02Ypx+p0mO1rMPsE9foG8Uxur8=;
- b=BqCFt4Wx3taFwQ/Rv0XRGPq06wr3hoZoyPQT7ABxZwzSvYpQ1SWA8vhExoqh8tibdydys7BJXw6cVIWfBrxW9Y77O+VKhEzj9VKluiBCBkwlPPc79dYdEdvGYFkQDLhH9XRgJP4P6VnvNmw7RgWsx5Ffwb9dxHEpSiW44hoaKVM=
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1932.namprd12.prod.outlook.com (10.175.89.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.23; Wed, 17 Oct 2018 14:40:42 +0000
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::bd60:9d30:b818:b828]) by DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::bd60:9d30:b818:b828%3]) with mapi id 15.20.1250.020; Wed, 17 Oct 2018
- 14:40:40 +0000
-From:   "Moger, Babu" <Babu.Moger@amd.com>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        James Morse <james.morse@arm.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/7] selftests/resctrl: Add resctrl selftest
-Thread-Topic: [PATCH 0/7] selftests/resctrl: Add resctrl selftest
-Thread-Index: AQHUZXHOqsT656eCL0G131BxPAQCYqUhz9GAgACE8N+AAS8VgA==
-Date:   Wed, 17 Oct 2018 14:40:40 +0000
-Message-ID: <bc44fb0c-1ce2-031d-f2b4-3941f1517bbf@amd.com>
-References: <1539709001-38018-1-git-send-email-fenghua.yu@intel.com>
- <933e752f-2533-c982-cf0f-acd59ac50cde@amd.com>
- <FFF73D592F13FD46B8700F0A279B802F485D47DE@ORSMSX114.amr.corp.intel.com>
- <20181016203215.GA39177@romley-ivt3.sc.intel.com>
-In-Reply-To: <20181016203215.GA39177@romley-ivt3.sc.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN6PR04CA0030.namprd04.prod.outlook.com
- (2603:10b6:805:3e::43) To DM5PR12MB2471.namprd12.prod.outlook.com
- (2603:10b6:4:b5::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1932;20:Y1wM8S/59LXcWBiaXzhkATSkVQkHNkW9EPTOaKbo6AUwB+MotmWCtiFEZCg23b3x/2UV/o9sNF0BtstLmQcfnTLdoSXKCcbpshnFCJ3cSxWKllsw4b5fLFp6bglhCjveQj4nIKw4QGdvd59BIciVaUcPQu/LJ7NZnMXaA1aNxylZownMGDQEGVbFlEl4OFr5NyoFhRB1KsT8F1djnLPIIpH6a2/zPoDL+kOQSB6JgODockRPFLGFYXuTLt7ogyrc
-x-ms-office365-filtering-correlation-id: 9568b870-5f35-4279-a7fb-08d6343e81e8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1932;
-x-ms-traffictypediagnostic: DM5PR12MB1932:
-x-microsoft-antispam-prvs: <DM5PR12MB1932C973C2004A82C2E96DDC95FF0@DM5PR12MB1932.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(767451399110)(166708455590820)(788757137089)(278428928389397);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1932;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1932;
-x-forefront-prvs: 08286A0BE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(376002)(39860400002)(396003)(346002)(199004)(189003)(14454004)(31696002)(52116002)(966005)(105586002)(305945005)(106356001)(72206003)(6116002)(3846002)(86362001)(2906002)(7416002)(7736002)(99286004)(31686004)(66066001)(54906003)(478600001)(316002)(93886005)(5660300001)(486006)(8936002)(8676002)(71190400001)(6916009)(11346002)(476003)(71200400001)(446003)(2616005)(5250100002)(6436002)(81166006)(6512007)(97736004)(4326008)(36756003)(6306002)(6246003)(229853002)(14444005)(256004)(6486002)(386003)(53546011)(2900100001)(6506007)(26005)(102836004)(76176011)(68736007)(81156014)(53936002)(25786009)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1932;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: xEEKiKVtWDYmVnuqBY0fZH1Gq43bJlcOUSBbskb+7gEyXR2+jh6hPTJOoRF/xvk+qhOid29qvzihWu/md0UFqaGWvnTN+itdjf8izUykmg2E1lgTwAx1a2wPtvykid8C3UTAHjnHU3WHh78tXsFXbSb/O65ay3VReC/lrLIGja70YBZ27vqfbpjAMRENKpLuWkZK4NXvpfnbnzhPazadTPhPMDyVnrtwoOBTV19/m7AoLas6A8GS6uVh6So4mf6UXLp6Lq6V3AVW/cxXH5QXHxwZlwQFk208dTMzDkTGxgcqoiFcAY5F8IYPjkCC/VYh1SVn2LXGHb3Uog+PNtZoCTnIaVrvi1+PQ2nwoXyFZOo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E9D247315937A746B84CCF9E5A142394@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 17 Oct 2018 18:37:48 -0400
+Received: from gateway33.websitewelcome.com ([192.185.145.23]:20900 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727048AbeJQWhr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 18:37:47 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 4593E160714
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:41:46 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id Cn0pgwCBrRPojCn0zgCuey; Wed, 17 Oct 2018 09:41:45 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:59040 helo=[192.168.1.41])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gCn0o-003UTP-6g; Wed, 17 Oct 2018 09:41:26 -0500
+To:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Kees Cook <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181008191712.GA12892@embeddedor.com>
+ <CAGXu5j+a=81mGFrF5igMXe46mv_PsqzUKCzLWj0oCEMk1PY62g@mail.gmail.com>
+ <9fa270bc-502d-5ff5-2acb-88ababcc9262@embeddedor.com>
+ <20181017061741.qr23stkwqf36fet6@gondor.apana.org.au>
+ <20181017072034.GD28572@kwain>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] crypto: inside-secure: safexcel - fix memory allocation
+Message-ID: <0529a397-f104-5f3a-663e-7ef2d883dcb2@embeddedor.com>
+Date:   Wed, 17 Oct 2018 16:41:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9568b870-5f35-4279-a7fb-08d6343e81e8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 14:40:40.3957
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1932
+In-Reply-To: <20181017072034.GD28572@kwain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gCn0o-003UTP-6g
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:59040
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDEwLzE2LzIwMTggMDM6MzIgUE0sIEZlbmdodWEgWXUgd3JvdGU6DQo+PiBGcm9tOiBN
-b2dlciwgQmFidSBbbWFpbHRvOkJhYnUuTW9nZXJAYW1kLmNvbV0gDQo+PiBPbiAxMC8xNi8yMDE4
-IDExOjU2IEFNLCBGZW5naHVhIFl1IHdyb3RlOg0KPj4+IFdpdGggbW9yZSBhbmQgbW9yZSByZXNj
-dHJsIGZlYXR1cmVzIGFyZSBiZWluZyBhZGRlZCBieSBJbnRlbCwgQU1EIGFuZCANCj4+PiBBUk0s
-IGEgdGVzdCB0b29sIGlzIGJlY29taW5nIG1vcmUgYW5kIG1vcmUgdXNlZnVsIHRvIHZhbGlkYXRl
-IHRoYXQgDQo+Pj4gYm90aCBoYXJkd2FyZSBhbmQgc29mdHdhcmUgZnVuY3Rpb25hbGl0aWVzIHdv
-cmsgYXMgZXhwZWN0ZWQuDQo+Pg0KPj4gSSBsaWtlIHRoZSBpbml0aWF0aXZlIGhlcmUuIEl0IGlz
-IGFsd2F5cyBnb29kIHRvIGhhdmUgYSBzaW5nbGUgY29kZSBiYXNlLg0KPj4NCj4+IE9uZSBxdWVz
-dGlvbi4gSSBzZWUgdGhhdCB0aGVyZSBpcyBhIHRvb2wgYXQgaHR0cHM6Ly9naXRodWIuY29tL2lu
-dGVsL2ludGVsLWNtdC1jYXQgdG8gdGVzdCBhbmQgdmVyaWZ5IHRoZSBmdW5jdGlvbmFsaXR5IG9m
-IHJlc2N0cmwgZmVhdHVyZS4gSSBhbHNvIHNlZSBzb21lIG9mIHRoZSBkaXN0cm9zIGhhdmUgdGhp
-cyB0b29sIGFscmVhZHkuDQo+PiBJcyB0aGlzIHRvb2wgZ29pbmcgdG8gcmVwbGFjZSBpbnRlbC1j
-bXQtY2F0PyBJIGhhdmUgbm90IGxvb2tlZCBhdCB0aGUNCj4+IHBhdGNoZXMgY2xvc2VseSB5ZXQu
-DQo+IA0KPiBObywgdGhlIHNlbGZ0ZXN0IGluIHRoaXMgcGF0Y2ggc2V0IHdpbGwgbm90IHJlcGxh
-Y2UgaW50ZWwtY210LWNhdCBvcg0KPiB2aWNlIHZlcnNhLg0KPiANCj4gVGhlIHNlbGZ0ZXN0IGlu
-IHRoaXMgcGF0Y2ggc2V0IGhhcyBhIGRpZmZlcmVudCBwdXJwb3NlIGZyb20gaW50ZWwtY210LWNh
-dDoNCj4gdGhlIHNlbGZ0ZXN0IGlzIGEgdGVzdCB0b29sIHdoaWNoIHZhbGlkYXRlcyByZXNjdHJs
-IGZ1bmN0aW9uYWxpdGllcyB3aGlsZQ0KPiBpbnRlbC1jbXQtY2F0IGlzIG1haW5seSBhIHV0aWxp
-dHkgdGhhdCBwcm92aWRlcyBiYXNlIGxpYnJhcnkgZm9yIGhpZ2hlcg0KPiBsZXZlbCBhcHBsaWNh
-dGlvbnMgaW5jbHVkaW5nIHBlcmZvcm1hbmNlIGFuYWx5c2lzIHRvb2xzLCBiZW5jaG1hcmsgbWVh
-c3VyZW1lbnQNCj4gdG9vbHMsIGFuZCBwb3RlbnRpYWwgcmVzY3RybCB0ZXN0cy4gRm9yIGV4YW1w
-bGUsIHJ1bm5pbmcgTUJBIHRlc3QgaW4gdGhlDQo+IHNlbGZ0ZXN0cyB0ZWxscyBNQkEgd29ya2lu
-ZyBvciBub3Qgd29ya2luZyAoZmFpbC9wYXNzKSByaWdodCB3YXkuIFRoZQ0KDQpPay4gU3VyZS4g
-TGV0IG1lIHRha2UgYSBsb29rIGF0IHNlbGZ0ZXN0IGNsb3NlbHkuIFdpbGwgc2VuZCBteSBmZWVk
-YmFjayBzb29uLg0KDQo+IGludGVsLWNtdC1jYXQgZG9lc24ndCBoYXZlIHRoaXMgdGVzdGluZyBj
-YXBhYmlsaXR5IHVubGVzcyB3ZSBleHRlbmQgdGhlDQo+IHRvb2wuDQo+IA0KPiBBbmQgaW50ZWwt
-Y210LWNhdCBpcyBtYWludGFpbmVkIGFuZCBkZXZlbG9wZWQgYnkgSW50ZWwuIEkgZG9uJ3QgdGhp
-bmsgaXQncw0KPiBlYXN5IHRvIGV4dGVuZCBpdCB0byBBTUQgYW5kIEFSTSBmZWF0dXJlcy4gVGhl
-IHNlbGZ0ZXN0IHdpbGwgYmUgbWFpbnRhaW5lZA0KDQpXZTFsLi4gV2Ugd2VyZSBob3BpbmcgdG8g
-aGF2ZSBhIGNvbW1vbiB0b29sIGFjcm9zcy4gSXQgbWFrZXMgaXQgZWFzeSBmb3INCmRpc3Ryb3Mu
-IFByb2JhYmx5LCB3ZSBjYW4gaGF2ZSBhIHNlcGFyYXRlIGRpc2N1c3Npb24gb24gdGhpcy4NCg0K
-PiBhbmQgZGV2ZWxvcGVkIGJ5IHRoZSBjb21tdW5pdHkgYW5kIHdpbGwgaG9wZWZ1bGx5IGNvdmVy
-IGFsbCBhcmNoaXRlY3R1cmVzLg0KPiANCj4gV2UgaGF2ZSBzZWVuIGEgZmV3IGlzc3VlcyByZWNl
-bnRseSBpbiByZXNjdHJsIGFuZCBtYXkgc2VlIG1vcmUgaXNzdWVzDQo+IHdoaWxlIGV4cGVuZGlu
-ZyB0aGUgZmVhdHVyZXMuIEEgY29udmV2aWVudCBzZWxmdGVzdCBtYXkgYmUgdXNlZnVsIHRvIGhl
-bHANCj4gaWRlbnRpZnkgYW5kIGZpeCB0aG9zZSBwb3RlbnRpYWwgaXNzdWVzLg0KPiANCj4gVGhh
-bmtzLg0KPiANCj4gLUZlbmdodWEgDQo+ICANCj4gDQo=
+
+
+On 10/17/18 9:20 AM, Antoine Tenart wrote:
+> Hi,
+> 
+> On Wed, Oct 17, 2018 at 02:17:41PM +0800, Herbert Xu wrote:
+>> On Tue, Oct 16, 2018 at 09:44:02PM +0200, Gustavo A. R. Silva wrote:
+>>> On 10/9/18 12:20 AM, Kees Cook wrote:
+>>>> On Mon, Oct 8, 2018 at 12:17 PM, Gustavo A. R. Silva
+>>>> <gustavo@embeddedor.com> wrote:
+>>>>> The original intention is to allocate space for EIP197_DEFAULT_RING_SIZE
+>>>>> *pointers* to struct, so sizeof(priv->ring[i].rdr_req) should be
+>>>>> sizeof(*priv->ring[i].rdr_req).
+>>>>>
+>>>>> Addresses-Coverity-ID: 1473962 ("Sizeof not portable")
+>>>>> Fixes: 9744fec95f06 ("crypto: inside-secure - remove request list to improve performance")
+>>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>>>
+>>>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>>>>
+>>>
+>>>
+>>> Friendly ping. Who can take this?
+>>
+>> Well I tried to take it but it doesn't apply against cryptodev.
+>> So I presume this can go into the tree that carried the change
+>> which it depended on?
+> 
+> I would say this should go in cryptodev. The issue is probably because
+> of other changes that got applied in the meantime. Gustavo can probably
+> rebase his patch on top of cryptodev, and re-send it.
+> 
+
+cryptodev is missing the previous commit 329e09893909d409039f6a79757d9b80b67efe39
+to which this patch applies.
+
+Kees, did you apply the commit above to your tree?
+
+If so, could you take this patch?
+
+Thanks
+--
+Gustavo
