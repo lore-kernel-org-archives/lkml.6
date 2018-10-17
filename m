@@ -2,102 +2,88 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AF4ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F014ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5304421523
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:01:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5304421523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 12D1D214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:02:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12D1D214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbeJQR4O (ORCPT
+        id S1727213AbeJQR5H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 13:56:14 -0400
-Received: from mga09.intel.com ([134.134.136.24]:38731 "EHLO mga09.intel.com"
+        Wed, 17 Oct 2018 13:57:07 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:43892 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726947AbeJQR4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 13:56:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 03:01:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,392,1534834800"; 
-   d="scan'208";a="99946849"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.61])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Oct 2018 03:01:13 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] docs: Introduce deprecated APIs list
-In-Reply-To: <aed0041d-7c28-4dfb-91b5-fc83174d8744@infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20181017021708.GA22211@beast> <aed0041d-7c28-4dfb-91b5-fc83174d8744@infradead.org>
-Date:   Wed, 17 Oct 2018 13:00:56 +0300
-Message-ID: <875zy0ki3r.fsf@intel.com>
+        id S1726727AbeJQR5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 13:57:07 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id fcIN18UMCuxn; Wed, 17 Oct 2018 12:01:51 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BC91B00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:1b00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E7B191EC03AC;
+        Wed, 17 Oct 2018 12:01:50 +0200 (CEST)
+Date:   Wed, 17 Oct 2018 12:01:43 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 03/11] x86/fpu: make __raw_xsave_addr() use feature
+ number instead of mask
+Message-ID: <20181017100143.GD22535@zn.tnic>
+References: <20181004140547.13014-1-bigeasy@linutronix.de>
+ <20181004140547.13014-4-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181004140547.13014-4-bigeasy@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Oct 2018, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 10/16/18 7:17 PM, Kees Cook wrote:
->> As discussed in the "API replacement/deprecation" thread[1], this
->> makes an effort to document what things shouldn't get (re)added to the
->> kernel, by introducing Documentation/process/deprecated.rst. It also
->> adds the overflow kerndoc to ReST output, and tweaks the struct_size()
->> documentation to parse correctly.
->> 
->> [1] https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2018-September/005282.html
->> 
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->>  Documentation/driver-api/basics.rst  |  3 +
->>  Documentation/process/deprecated.rst | 99 ++++++++++++++++++++++++++++
->>  Documentation/process/index.rst      |  1 +
->>  include/linux/overflow.h             |  2 +-
->>  4 files changed, 104 insertions(+), 1 deletion(-)
->>  create mode 100644 Documentation/process/deprecated.rst
->
->
->> diff --git a/include/linux/overflow.h b/include/linux/overflow.h
->> index 40b48e2133cb..2f224f43dd06 100644
->> --- a/include/linux/overflow.h
->> +++ b/include/linux/overflow.h
->> @@ -291,7 +291,7 @@ static inline __must_check size_t __ab_c_size(size_t n, size_t size, size_t c)
->>  }
->>  
->>  /**
->> - * struct_size() - Calculate size of structure with trailing array.
->> + * function struct_size() - Calculate size of structure with trailing array.
->
-> That syntax is not explained nor documented in Documentation/doc-guide/kernel-doc.rst.
->
-> Is the root problem that the function name begins with "struct"?
-> Please explain in the patch description.
+On Thu, Oct 04, 2018 at 04:05:39PM +0200, Sebastian Andrzej Siewior wrote:
+> Most users of __raw_xsave_addr() use a feature number, shift it to a
+> mask and then __raw_xsave_addr() shifts it back to the feature number.
+> 
+> Make __raw_xsave_addr() use the feature number as argument.
+> 
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  arch/x86/kernel/fpu/xstate.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+> index 87a57b7642d36..38d0b5ea40425 100644
+> --- a/arch/x86/kernel/fpu/xstate.c
+> +++ b/arch/x86/kernel/fpu/xstate.c
+> @@ -811,10 +811,8 @@ void fpu__resume_cpu(void)
+>   *
+>   * Note: does not work for compacted buffers.
+>   */
+> -void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
+> +void *__raw_xsave_addr(struct xregs_state *xsave, int feature_nr)
 
-Indeed, shouldn't be needed.
+Don't forget to update the comment above it too - it still says "mask".
 
-BR,
-Jani.
-
->
->>   * @p: Pointer to the structure.
->>   * @member: Name of the array member.
->>   * @n: Number of elements in the array.
->
->
-> thanks.
+Otherwise nice.
 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
