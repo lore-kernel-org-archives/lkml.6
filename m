@@ -2,155 +2,259 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DE5C5ACCE
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602BCC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D9C21523
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:12:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TXL/V97O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D9C21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 1316921523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:13:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1316921523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbeJQOGM (ORCPT
+        id S1727280AbeJQOHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 10:06:12 -0400
-Received: from mail-eopbgr20076.outbound.protection.outlook.com ([40.107.2.76]:11568
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726663AbeJQOGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 10:06:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FOjGy3/zBPn+SEbPR8LwGZsHmr+SeGkQJhOgkK7x5/U=;
- b=TXL/V97OMBQsZmYko0N0eWZiYyTsbv0ngDhkrGz5uQJENFZP2Hmk1PfJh56s/7SjisndvAG2zxWbKz3k1v8TwZxtEMRHpEazixcg4vSlAAJHj/c2N9SwYsOsoTVVEvXU4gkvv6OJH3N+qG0oXuOjlKTCs5GaHS2TK2pnn5T2COI=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3802.eurprd04.prod.outlook.com (52.134.71.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.20; Wed, 17 Oct 2018 06:12:04 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::ddfd:3571:1813:2ee4]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::ddfd:3571:1813:2ee4%3]) with mapi id 15.20.1250.020; Wed, 17 Oct 2018
- 06:12:04 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH 2/2] clk: imx7d: remove CLK_IS_CRITICAL flag for
- arm_a7_root_clk
-Thread-Topic: [PATCH 2/2] clk: imx7d: remove CLK_IS_CRITICAL flag for
- arm_a7_root_clk
-Thread-Index: AQHUZeBT5yWP/06UtkGmmrLiGQA/ug==
-Date:   Wed, 17 Oct 2018 06:12:04 +0000
-Message-ID: <1539756441-18776-2-git-send-email-Anson.Huang@nxp.com>
-References: <1539756441-18776-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1539756441-18776-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0023.apcprd03.prod.outlook.com
- (2603:1096:203:2e::35) To DB3PR0402MB3916.eurprd04.prod.outlook.com
- (2603:10a6:8:10::18)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3802;6:W8eqdetNsunrB1YArXh6/NNM07Uo9I4EbVINObm9DVzVRfz3q9uF1VIJPNP66Ci9UHJ3n5pGvFX5CISaUnmMzGv1BhnaX6RP1PiIYfqqcUvsHE2GwgknGXUheHD3JdC2tiZxVtK6W3A54at7sxHt9N1+hUWEsDTmOWaj+CdMc/DUlPuk7E7VzFIx37hLGVf5VK2lB+5q0FJIhuiOG15nNqm9hXtdImUG4rZvmWjUeijPG9FYMI2ZvZ8tfOJGOQL4xwu3NZJnF1L8uiNel8QhslxG99OZ88cXm3Ty2NiPiznsdVxJVm92vEFQhDEAJN1wEUyDgXmBAilcrCk93uGNK+vnGEBUryQ99zCnncVzaFhs0YLvxI3CL6F4rcYpqt6WPyvBmZZ3d2En2NMfIj2ZUqJyVYo6PinpINGLuKryvuBQUAtc73ew2t9J+nSsUeaj1zM15wGyyhprB2sd8us35w==;5:5f+P8Ip8gYU43SriPl/xLuSIQR5YhQubqNqlc86/fUiVjybrTzNj5afWW32kZXGwDTdBjGTNUiHBMduftnqLUzFUqFNiqdk4oJSJR/fGeIbsEdv8EgSI+FvbTSDQvqTqOft8uUWAKxPFLUR8txv9Li9P5cVAkgO3ZIdbOWUH3qg=;7:ywq/3uFxn8NV/M6O0AM0Z/LYpTaA5pnd/IiF9qMdYbFCW7t9j6tCKeSQhlPCEWTRo9+V2i6UNOV726osZXQBE5tcEcJJCr6nGiqOpRHX+E5gvyP4tH/GhEdUG8oeAqWNL9JjD9rR2Jvo9X95afPcD/2fS3yu8K8XrY8teS8HI8p9ju21EE6cfJtcPv8tYReg4y2sIHWBPD4NI6BIUVarOnC4M9vfuulcYTqO0LFAKIXY6XvLBDxs/L7gFGM6KAEg
-x-ms-office365-filtering-correlation-id: 158417a3-e5c5-4bd1-f603-08d633f7756c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3802;
-x-ms-traffictypediagnostic: DB3PR0402MB3802:
-x-microsoft-antispam-prvs: <DB3PR0402MB3802683F7AF9B83498842DCAF5FF0@DB3PR0402MB3802.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991092);SRVR:DB3PR0402MB3802;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3802;
-x-forefront-prvs: 08286A0BE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(396003)(136003)(366004)(199004)(189003)(3846002)(386003)(6116002)(76176011)(2906002)(97736004)(66066001)(5250100002)(102836004)(2201001)(86362001)(2501003)(4326008)(2900100001)(52116002)(36756003)(25786009)(6506007)(99286004)(5660300001)(14454004)(68736007)(110136005)(316002)(105586002)(106356001)(186003)(71200400001)(478600001)(256004)(6486002)(14444005)(71190400001)(6346003)(8676002)(50226002)(26005)(6512007)(8936002)(81156014)(11346002)(7736002)(305945005)(6436002)(53936002)(81166006)(476003)(486006)(2616005)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3802;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-microsoft-antispam-message-info: JmXvpkJBxDjEAOcV73jxNp6Wto0WGsWkaORYiqIUen3TqsrUbUqSmwXXvkX1wCZtfl/1+MmaI41UQxVjPsUemHK6aw0EC6hB5s7GjO4+pDYkgkKQZpCrTC9MhMrK5xWgsmh6wIPY9NZxIJCw5lF6gIZmVZHd+ozH1YxB7quHVYsqT2aaaHdrsRvRTE4BXfVnvblC9nexnCYVRl+UYHE9IGwmeEOG6gDoeBkbGy9LiGqtyaIDRdPdiB6CJ9AY8iidOaPv6PZ/rQusGj1ZazR/fcFIAgDNsqNyrVGgvkya3F1dxRgUXJl7XEglwHHm2bKKhrW7UCjkyFTEyzv1O8admOVsBZdknxsNjncgxvMAWqE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 17 Oct 2018 10:07:17 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41747 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbeJQOHR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 10:07:17 -0400
+Received: by mail-ed1-f66.google.com with SMTP id x31-v6so23664341edd.8;
+        Tue, 16 Oct 2018 23:13:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t5pUGGV8ybD9pUNx6d59Rl5A0ZkqVrd9KjHYob1JJ+E=;
+        b=jAC3lSJn18C7/XeYJYcLT4KpTwP3U//RsNsHY2botPLjD536Qhu4eO7R+p4QLZc9uQ
+         R1yjs8QCWUcmnAulThwnetOcy3r+AETZy8Y59be5FtjOCY6JMxkbMrMjKD9gE9X0yYVk
+         9uHP51akdwZ9aDLPcuraNk0CCvOAqmYP0O08cADGudq6KMM16zXR1zhvjgB8AIam6BAs
+         +gm8EmOg/0NduGKf61TiayMBaGZZs9XHzZnsJwuRjwuu0knv2orfGZYW59tohTYbsBE/
+         uxIJFyTbjZ3XZ61QfsqjbGDZl78VIHpNj8oZF56kcwKddYfdFlypjnruhbEsqYO+KvyG
+         ZSTg==
+X-Gm-Message-State: ABuFfoj9ZWR/FNQa9eBsJr1qVbOmOWl1yviaddDsLP7pqm8ewyiUXmaB
+        sKXPorBwYXTjwVtADoYHABCelTqt
+X-Google-Smtp-Source: ACcGV61LxQY+fIbFxWsJPcPCVJsEa7AunTixCwJo3Pd1l+5U9b48IUA6dxcJ0iwTcyu5ZwrnQoB2ZQ==
+X-Received: by 2002:a50:930e:: with SMTP id m14-v6mr33778470eda.114.1539756792463;
+        Tue, 16 Oct 2018 23:13:12 -0700 (PDT)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
+        by smtp.gmail.com with ESMTPSA id y32-v6sm6197420edb.66.2018.10.16.23.13.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Oct 2018 23:13:12 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id d2-v6so28166354wro.7;
+        Tue, 16 Oct 2018 23:13:12 -0700 (PDT)
+X-Received: by 2002:a5d:5649:: with SMTP id j9-v6mr20562063wrw.41.1539756791392;
+ Tue, 16 Oct 2018 23:13:11 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 158417a3-e5c5-4bd1-f603-08d633f7756c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 06:12:04.2017
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3802
+References: <20181013080848.29894-1-oskari@lemmela.net> <20181013080848.29894-6-oskari@lemmela.net>
+In-Reply-To: <20181013080848.29894-6-oskari@lemmela.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 17 Oct 2018 14:12:57 +0800
+X-Gmail-Original-Message-ID: <CAGb2v646PM4s+MvFt3MRS7g6O7_DBw8Jha24dd=a0DmMsvcAoQ@mail.gmail.com>
+Message-ID: <CAGb2v646PM4s+MvFt3MRS7g6O7_DBw8Jha24dd=a0DmMsvcAoQ@mail.gmail.com>
+Subject: Re: [PATCH v4 5/7] power: supply: add AC power supply driver for AXP813
+To:     oskari@lemmela.net
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX7D uses virtual cpu clock of "arm" clock to be child clock
-of "arm_a7_root_clk" and it is with CLK_IS_CRITICAL flag set, so
-no need to add CLK_IS_CRITICAL flag for keeping "arm_a7_root_clk"
-use count correct, latest clock tree is as below in clk_summary:
+On Sat, Oct 13, 2018 at 4:09 PM Oskari Lemmela <oskari@lemmela.net> wrote:
+>
+> AXP813 and AXP803 PMICs can control input current and
+> minimum voltage.
+>
+> Both of these values are configurable.
+>
+> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> ---
+>  drivers/power/supply/axp20x_ac_power.c | 92 ++++++++++++++++++++++++++
+>  include/linux/mfd/axp20x.h             |  1 +
+>  2 files changed, 93 insertions(+)
+>
+> diff --git a/drivers/power/supply/axp20x_ac_power.c b/drivers/power/supply/axp20x_ac_power.c
+> index 0771f951b11f..059a97d6e14c 100644
+> --- a/drivers/power/supply/axp20x_ac_power.c
+> +++ b/drivers/power/supply/axp20x_ac_power.c
+> @@ -27,6 +27,16 @@
+>  #define AXP20X_PWR_STATUS_ACIN_PRESENT BIT(7)
+>  #define AXP20X_PWR_STATUS_ACIN_AVAIL   BIT(6)
+>
+> +#define AXP813_VHOLD_MASK              GENMASK(5, 3)
+> +#define AXP813_VHOLD_UV_TO_BIT(x)      ((((x) / 100000) - 40) << 3)
+> +#define AXP813_VHOLD_REG_TO_UV(x)      \
+> +       (((((x) & AXP813_VHOLD_MASK) >> 3) + 40) * 100000)
+> +
+> +#define AXP813_CURR_LIMIT_MASK         GENMASK(2, 0)
+> +#define AXP813_CURR_LIMIT_UA_TO_BIT(x) (((x) / 500000) - 3)
+> +#define AXP813_CURR_LIMIT_REG_TO_UA(x) \
+> +       ((((x) & AXP813_CURR_LIMIT_MASK) + 3) * 500000)
+> +
+>  #define DRVNAME "axp20x-ac-power-supply"
+>
+>  struct axp20x_ac_power {
+> @@ -102,6 +112,55 @@ static int axp20x_ac_power_get_property(struct power_supply *psy,
+>
+>                 return 0;
+>
+> +       case POWER_SUPPLY_PROP_VOLTAGE_MIN:
+> +               ret = regmap_read(power->regmap, AXP813_ACIN_PATH_CTRL, &reg);
+> +               if (ret)
+> +                       return ret;
+> +
+> +               val->intval = AXP813_VHOLD_REG_TO_UV(reg);
+> +
+> +               return 0;
+> +
+> +       case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
+> +               ret = regmap_read(power->regmap, AXP813_ACIN_PATH_CTRL, &reg);
+> +               if (ret)
+> +                       return ret;
+> +
+> +               val->intval = AXP813_CURR_LIMIT_REG_TO_UA(reg);
 
-pll_arm_main                         1        1        0   792000000       =
-   0
-      pll_arm_main_bypass            1        1        0   792000000       =
-   0
-         pll_arm_main_clk            1        1        0   792000000       =
-   0
-            arm_a7_src               1        1        0   792000000       =
-   0
-               arm_a7_cg             1        1        0   792000000       =
-   0
-                  arm_a7_div         1        1        0   792000000       =
-   0
-                     arm_a7_root_clk       1        1        0   792000000 =
-   0
-                        arm          1        1        0   792000000
+This doesn't handle the case where the register value is set to 0x6 or 0x7,
+which should still mean 4000 mA.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +
+> +               return 0;
+> +
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +
+> +       return -EINVAL;
+> +}
+> +
+> +static int axp813_ac_power_set_property(struct power_supply *psy,
+> +                                       enum power_supply_property psp,
+> +                                       const union power_supply_propval *val)
+> +{
+> +       struct axp20x_ac_power *power = power_supply_get_drvdata(psy);
+> +
+> +       switch (psp) {
+> +       case POWER_SUPPLY_PROP_VOLTAGE_MIN:
+> +               if (val->intval < 4000000 || val->intval > 4700000)
+> +                       return -EINVAL;
+> +
+> +               return regmap_update_bits(power->regmap, AXP813_ACIN_PATH_CTRL,
+> +                                         AXP813_VHOLD_MASK,
+> +                                         AXP813_VHOLD_UV_TO_BIT(val->intval));
+> +
+> +       case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
+> +               if (val->intval < 1500000 || val->intval > 4000000)
+> +                       return -EINVAL;
+> +
+> +               return regmap_update_bits(power->regmap, AXP813_ACIN_PATH_CTRL,
+> +                                         AXP813_CURR_LIMIT_MASK,
+> +                                         AXP813_CURR_LIMIT_UA_TO_BIT
+> +                                         (val->intval));
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 076460b..adb08f6 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -775,7 +775,7 @@ static void __init imx7d_clocks_init(struct device_node=
- *ccm_node)
- 	clks[IMX7D_CLKO1_ROOT_DIV] =3D imx_clk_divider2("clko1_post_div", "clko1_=
-pre_div", base + 0xbd80, 0, 6);
- 	clks[IMX7D_CLKO2_ROOT_DIV] =3D imx_clk_divider2("clko2_post_div", "clko2_=
-pre_div", base + 0xbe00, 0, 6);
-=20
--	clks[IMX7D_ARM_A7_ROOT_CLK] =3D imx_clk_gate2_flags("arm_a7_root_clk", "a=
-rm_a7_div", base + 0x4000, 0, CLK_IS_CRITICAL | CLK_OPS_PARENT_ENABLE);
-+	clks[IMX7D_ARM_A7_ROOT_CLK] =3D imx_clk_gate2_flags("arm_a7_root_clk", "a=
-rm_a7_div", base + 0x4000, 0, CLK_OPS_PARENT_ENABLE);
- 	clks[IMX7D_ARM_M4_ROOT_CLK] =3D imx_clk_gate4("arm_m4_root_clk", "arm_m4_=
-div", base + 0x4010, 0);
- 	clks[IMX7D_MAIN_AXI_ROOT_CLK] =3D imx_clk_gate2_flags("main_axi_root_clk"=
-, "axi_post_div", base + 0x4040, 0, CLK_IS_CRITICAL | CLK_OPS_PARENT_ENABLE=
-);
- 	clks[IMX7D_DISP_AXI_ROOT_CLK] =3D imx_clk_gate4("disp_axi_root_clk", "dis=
-p_axi_post_div", base + 0x4050, 0);
---=20
-2.7.4
+Nit, don't wrap this part. Even if it exceeds the 80 character limit, it's
+still easier to read that way.
 
+ChenYu
+
+> +
+>         default:
+>                 return -EINVAL;
+>         }
+> @@ -109,6 +168,13 @@ static int axp20x_ac_power_get_property(struct power_supply *psy,
+>         return -EINVAL;
+>  }
+>
+> +static int axp813_ac_power_prop_writeable(struct power_supply *psy,
+> +                                         enum power_supply_property psp)
+> +{
+> +       return psp == POWER_SUPPLY_PROP_VOLTAGE_MIN ||
+> +              psp == POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT;
+> +}
+> +
+>  static enum power_supply_property axp20x_ac_power_properties[] = {
+>         POWER_SUPPLY_PROP_HEALTH,
+>         POWER_SUPPLY_PROP_PRESENT,
+> @@ -123,6 +189,14 @@ static enum power_supply_property axp22x_ac_power_properties[] = {
+>         POWER_SUPPLY_PROP_ONLINE,
+>  };
+>
+> +static enum power_supply_property axp813_ac_power_properties[] = {
+> +       POWER_SUPPLY_PROP_HEALTH,
+> +       POWER_SUPPLY_PROP_PRESENT,
+> +       POWER_SUPPLY_PROP_ONLINE,
+> +       POWER_SUPPLY_PROP_VOLTAGE_MIN,
+> +       POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
+> +};
+> +
+>  static const struct power_supply_desc axp20x_ac_power_desc = {
+>         .name = "axp20x-ac",
+>         .type = POWER_SUPPLY_TYPE_MAINS,
+> @@ -139,6 +213,16 @@ static const struct power_supply_desc axp22x_ac_power_desc = {
+>         .get_property = axp20x_ac_power_get_property,
+>  };
+>
+> +static const struct power_supply_desc axp813_ac_power_desc = {
+> +       .name = "axp813-ac",
+> +       .type = POWER_SUPPLY_TYPE_MAINS,
+> +       .properties = axp813_ac_power_properties,
+> +       .num_properties = ARRAY_SIZE(axp813_ac_power_properties),
+> +       .property_is_writeable = axp813_ac_power_prop_writeable,
+> +       .get_property = axp20x_ac_power_get_property,
+> +       .set_property = axp813_ac_power_set_property,
+> +};
+> +
+>  struct axp_data {
+>         const struct power_supply_desc  *power_desc;
+>         bool                            acin_adc;
+> @@ -154,6 +238,11 @@ static const struct axp_data axp22x_data = {
+>         .acin_adc = false,
+>  };
+>
+> +static const struct axp_data axp813_data = {
+> +       .power_desc = &axp813_ac_power_desc,
+> +       .acin_adc = false,
+> +};
+> +
+>  static int axp20x_ac_power_probe(struct platform_device *pdev)
+>  {
+>         struct axp20x_dev *axp20x = dev_get_drvdata(pdev->dev.parent);
+> @@ -234,6 +323,9 @@ static const struct of_device_id axp20x_ac_power_match[] = {
+>         }, {
+>                 .compatible = "x-powers,axp221-ac-power-supply",
+>                 .data = &axp22x_data,
+> +       }, {
+> +               .compatible = "x-powers,axp813-ac-power-supply",
+> +               .data = &axp813_data,
+>         }, { /* sentinel */ }
+>  };
+>  MODULE_DEVICE_TABLE(of, axp20x_ac_power_match);
+> diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
+> index 517e60eecbcb..2302b620d238 100644
+> --- a/include/linux/mfd/axp20x.h
+> +++ b/include/linux/mfd/axp20x.h
+> @@ -266,6 +266,7 @@ enum axp20x_variants {
+>  #define AXP288_RT_BATT_V_H             0xa0
+>  #define AXP288_RT_BATT_V_L             0xa1
+>
+> +#define AXP813_ACIN_PATH_CTRL          0x3a
+>  #define AXP813_ADC_RATE                        0x85
+>
+>  /* Fuel Gauge */
+> --
+> 2.17.1
+>
