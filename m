@@ -7,63 +7,65 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAEB7ECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD64ECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97C6A2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:26:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D7D42145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:27:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bfWeciy/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97C6A2145D
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ddhw3KSS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D7D42145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbeJRGYh (ORCPT
+        id S1727497AbeJRGZE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 02:24:37 -0400
-Received: from mail-it1-f202.google.com ([209.85.166.202]:36638 "EHLO
-        mail-it1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727392AbeJRGYg (ORCPT
+        Thu, 18 Oct 2018 02:25:04 -0400
+Received: from mail-ot1-f73.google.com ([209.85.210.73]:50445 "EHLO
+        mail-ot1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727470AbeJRGZE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 02:24:36 -0400
-Received: by mail-it1-f202.google.com with SMTP id p125-v6so3965187itg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:26:51 -0700 (PDT)
+        Thu, 18 Oct 2018 02:25:04 -0400
+Received: by mail-ot1-f73.google.com with SMTP id m91so15456396otc.17
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:27:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:message-id:mime-version:subject:from:cc;
-        bh=p8DLWVPHFdDh+XLJZJQGOyjP3fo46ff91OpQ4glEXl4=;
-        b=bfWeciy/6udWJikIHpD/LgP+JWGKXe0ZOriVFNXcXy4bAFPQ3KXUm3Uv+fp6p+LDiq
-         ZTqPEvrS/7/S+YJn/oKBkQhKENmairZrPOsrCvTv1yxY24upudsrd/eBy9yMpGdifLm9
-         d87MC0BlpB27xSQTMBqK452DLHIFglVSSyWap0TvThozxiBhnVPeeRNlPdfLMtQET0Xh
-         sGkC0jiPFqqd6nVHfdKQev2bjuC46Oi7BS4SpntJxmEM9Bn6UkxvxXg/oRY2ijBLLKO9
-         8g7rLl9+zh6SOqG1Gj44E9X3PqZZSecBL8gyRg7OP+akcCVSlXFjhjmP+HrkazA4WJbs
-         ydPw==
+        bh=Y3dOOoJ3k1/pt/2HO0ztXr3ZxTEqnAXn7l1xFrknVgw=;
+        b=ddhw3KSS1y5kiwUCrxcc/gPSedSWZ5YAPlcbWsQ8dG0PQaKyF7s/GHnq432VdkNiYa
+         YBIqLMTdhmKcMLDVnfSyLYr+pgynNAoswfVGNvbKh246/b42znnOwgToka3y66CqKQVS
+         rz6OMfff1PcHjWezBksDi4nFxRA/+pj8zYhKKSg9mmsHLktb5cUX2nxb5D7DqB2ey2Ip
+         k8ukAyWI95xeU73s7HKdkmZ10Vds2N90FUO93eIV6++rjDAYJnhTluuFdrt7rlSdHgpY
+         JSF+NZrKCsJfYeNWGET4s75CtVmscuDnUrwSztaD330O/CKSvjbueQnBEmmRTt6VhZTL
+         SBrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:message-id:mime-version:subject:from:cc;
-        bh=p8DLWVPHFdDh+XLJZJQGOyjP3fo46ff91OpQ4glEXl4=;
-        b=oR1yNVEPjY3MbwwRjNmK1bONb/UwMJxGjGCYqBhN5VE1STx6AiK9Mv3iEm+uut6ggf
-         QRv+TlCUIkunJhig5+zd/Un+5+r3F8Jt2t416Qhe08iCiCHNZdEtk+KLb1GcXMzlgFo6
-         EkjBHFaJpEVCz0ugyF+iBml+REtEygGM5hLEUCB5rdbe49sBkrj+DgwcOkI97broSN+H
-         KXZIQGGFiV5uHsUNxYSWqnm3L/1eNxwFflG+uhLvPAxP1AzBwaRKZJtNT6JCM3oqvHgw
-         u703FXRFFAkH/62n0QGL0FHl7VdQ/m9ZCe3we9I3/GfiZ49CCXLi2PBwHGlU+UYldqyy
-         mIvw==
-X-Gm-Message-State: ABuFfohxMiyjPLNeSkcnv1tvqcsiu90tRupMwsc7XFuRwiTLpvcWfciv
-        URwj4ZHh+99KlfKlWNaUmTj90Uf2wQ==
-X-Google-Smtp-Source: ACcGV60Vh6hxtijV8dVp1Z0QoZIdErAIy7LyqiVmuvuBbcDXP95iUA3UyyD7dye7dxVIAExsCdztnwfH1w==
-X-Received: by 2002:a05:660c:310:: with SMTP id u16mr3422596itj.1.1539815210606;
- Wed, 17 Oct 2018 15:26:50 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 15:26:39 -0700
-Message-Id: <20181017222639.254434-1-kunyi@google.com>
+        bh=Y3dOOoJ3k1/pt/2HO0ztXr3ZxTEqnAXn7l1xFrknVgw=;
+        b=hoHsKMfx03CpXfsoRxrA1606ctxlU3exe4WDZkPfYjQDqpTCVzNFvXA/fhskg5s7F9
+         XpwXmkjs4RO07ljNXoULJLEvDmm/WNRXyhlrxxZBPAuPc7vdb+1IAzjFs3CNbXFcLPsy
+         G9p4l1tQmR9Q/Y+j2P4qfvbB9iuGsQnOXQdpl/tEgDkOtgR+JLkINbnemG3jDjIAEf6+
+         H8H4pShcxZR9zRH+yel2mQlXJMSE4IHfhO4ZV+aD3jvuSyJltY8pLmL70IvzAUPgaZ79
+         g+KAxg2oCm3szEZ7DsoOv3xKt80G8rBS5yp9THoWMk9eL/ZYKQgFiDH7D9r60UaMVnB6
+         rkzw==
+X-Gm-Message-State: ABuFfojn5I8jMPjb9CTsarvzn5c/SnlkGdWOc3K22Csrddhq9Xs/Lkve
+        EmHNSPPyzNuF564VEXQ/tAxQ15zbyA==
+X-Google-Smtp-Source: ACcGV62Oo+q7GwylrMubYABFZdqNKgCCqLgaZV+JF5xgx5JVeNHyDG9uJsNW/FCuyUSJvo5Q9MrKjZHjxw==
+X-Received: by 2002:a9d:5b74:: with SMTP id e49mr21433135otj.56.1539815238695;
+ Wed, 17 Oct 2018 15:27:18 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 15:27:09 -0700
+Message-Id: <20181017222710.254994-1-kunyi@google.com>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
-Subject: [PATCH v3 1/2] hwmon: (adm1275): Allow setting shunt reg value
+Subject: [PATCH v3 2/2] dt-bindings: hwmon: Add adm127x documentation
 From:   Kun Yi <kunyi@google.com>
 Cc:     openbmc@lists.ozlabs.org, kunyi@google.com,
-        Guenter Roeck <linux@roeck-us.net>,
         Jean Delvare <jdelvare@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -71,83 +73,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ADM series of hotswap controllers support extending
-the current measurement range by using a sensing resistor
-value other than the typical 1 mOhm. For example, using a 0.5 mOhm
-sensing resistor doubles the maximal current can be measured.
-
-Current driver assumes a shunt resistor value of 1 mOhm in calculation,
-meaning for other resistor values, hwmon will report scaled
-current/power measurements. This patch parses device tree parameter
-"shunt-resistor-micro-ohms", if there is one.
+adm127x are hot-swap controllers that allow a circuit board to be removed from
+or inserted into a live backplane. This patch adds the device tree
+bindings documentation.
 
 Signed-off-by: Kun Yi <kunyi@google.com>
 ---
-Changes in v3:
-- splitted hwmon and device tree binding patches
+ .../devicetree/bindings/hwmon/adm1275.txt     | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/adm1275.txt
 
- Documentation/hwmon/adm1275   |  3 +++
- drivers/hwmon/pmbus/adm1275.c | 15 +++++++++++++--
- 2 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/hwmon/adm1275 b/Documentation/hwmon/adm1275
-index 39033538eb03..5e277b0d91ce 100644
---- a/Documentation/hwmon/adm1275
-+++ b/Documentation/hwmon/adm1275
-@@ -58,6 +58,9 @@ The ADM1075, unlike many other PMBus devices, does not support internal voltage
- or current scaling. Reported voltages, currents, and power are raw measurements,
- and will typically have to be scaled.
- 
-+The shunt value in micro-ohms can be set via device tree at compile-time. Please
-+refer to the Documentation/devicetree/bindings/hwmon/adm1275.txt for bindings
-+if the device tree is used.
- 
- Platform data support
- ---------------------
-diff --git a/drivers/hwmon/pmbus/adm1275.c b/drivers/hwmon/pmbus/adm1275.c
-index 13600fa79e7f..f569372c9204 100644
---- a/drivers/hwmon/pmbus/adm1275.c
-+++ b/drivers/hwmon/pmbus/adm1275.c
-@@ -373,6 +373,7 @@ static int adm1275_probe(struct i2c_client *client,
- 	const struct coefficients *coefficients;
- 	int vindex = -1, voindex = -1, cindex = -1, pindex = -1;
- 	int tindex = -1;
-+	u32 shunt;
- 
- 	if (!i2c_check_functionality(client->adapter,
- 				     I2C_FUNC_SMBUS_READ_BYTE_DATA
-@@ -421,6 +422,13 @@ static int adm1275_probe(struct i2c_client *client,
- 	if (!data)
- 		return -ENOMEM;
- 
-+	if (of_property_read_u32(client->dev.of_node,
-+				 "shunt-resistor-micro-ohms", &shunt))
-+		shunt = 1000; /* 1 mOhm if not set via DT */
+diff --git a/Documentation/devicetree/bindings/hwmon/adm1275.txt b/Documentation/devicetree/bindings/hwmon/adm1275.txt
+new file mode 100644
+index 000000000000..1ecd03f3da4d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/adm1275.txt
+@@ -0,0 +1,25 @@
++adm1275 properties
 +
-+	if (shunt == 0)
-+		return -EINVAL;
++Required properties:
++- compatible: Must be one of the supported compatible strings:
++	- "adi,adm1075" for adm1075
++	- "adi,adm1272" for adm1272
++	- "adi,adm1275" for adm1275
++	- "adi,adm1276" for adm1276
++	- "adi,adm1278" for adm1278
++	- "adi,adm1293" for adm1293
++	- "adi,adm1294" for adm1294
++- reg: I2C address
 +
- 	data->id = mid->driver_data;
- 
- 	info = &data->info;
-@@ -654,12 +662,15 @@ static int adm1275_probe(struct i2c_client *client,
- 		info->R[PSC_VOLTAGE_OUT] = coefficients[voindex].R;
- 	}
- 	if (cindex >= 0) {
--		info->m[PSC_CURRENT_OUT] = coefficients[cindex].m;
-+		/* Scale current with sense resistor value */
-+		info->m[PSC_CURRENT_OUT] =
-+			coefficients[cindex].m * shunt / 1000;
- 		info->b[PSC_CURRENT_OUT] = coefficients[cindex].b;
- 		info->R[PSC_CURRENT_OUT] = coefficients[cindex].R;
- 	}
- 	if (pindex >= 0) {
--		info->m[PSC_POWER] = coefficients[pindex].m;
-+		info->m[PSC_POWER] =
-+			coefficients[pindex].m * shunt / 1000;
- 		info->b[PSC_POWER] = coefficients[pindex].b;
- 		info->R[PSC_POWER] = coefficients[pindex].R;
- 	}
++Optional properties:
++
++- shunt-resistor-micro-ohms
++	Shunt resistor value in micro-Ohm
++
++Example:
++
++adm1272@10 {
++	compatible = "adi,adm1272";
++	reg = <0x10>;
++	shunt-resistor-micro-ohms = <500>;
++};
 -- 
 2.19.1.331.ge82ca0e54c-goog
 
