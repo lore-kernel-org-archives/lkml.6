@@ -2,145 +2,181 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56459ECDE30
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DC9ECDE39
 	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:31:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 187FA2086E
+	by mail.kernel.org (Postfix) with ESMTP id 4F95021528
 	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:31:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="xr1YQCTZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 187FA2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F95021528
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbeJRA1j (ORCPT
+        id S1728022AbeJRA1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 20:27:39 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:43620 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727028AbeJRA1i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 20:27:38 -0400
-Received: by mail-oi1-f196.google.com with SMTP id s69-v6so21555331oie.10
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:31:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n6OJQa0b0+5Rqnwd0TW3Zw2yzTH2CaznLfLuu3nTkEI=;
-        b=xr1YQCTZh9774kzqSNu0Zqtkfz43bxu0otbfO6Jp/7oOX24K1TCHnN9jGB2Gys2kiF
-         SSy6fGz/LA/4+jIXg46JhaMl3bjdXyP8hFvUQFQq2WtwTxiRiFTzCr8jO0XXwCvZoo7D
-         HEjI/9oruv/4BnbBO8bcvf5TdMLNZ8O8+jknqrYUtJmYcJHjw0McI9gHnYlU6Go+QTqI
-         vA4zvksWdA3YiJkqpVZutZ8Yx+CXX52eken1h6dh0DzHz8Nrs2Ul6iB2Fo92h7CTShcR
-         FC75ESuZmLkzM7tDOnycjzwPm+U1F/2fLvEqN9t99dhFxDvYeiQPGTD10cEnHg2WX6Ap
-         ctfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n6OJQa0b0+5Rqnwd0TW3Zw2yzTH2CaznLfLuu3nTkEI=;
-        b=LBOxwToIkiplrzC5MtTVBoIXQ4dcrL7vs8uzLAqkQURJuE0W0o1PDwSbqAR7mUA8aD
-         DxOSQTTMp0/zpZf8bTCm9DUeejbdZGv/+JRp4uzvGkkPWxUQOx2CT99s837tbpmS8cJa
-         V5jZy0rx0+Zu7lB71oc08bjdj9Nk0opE1shdFAjpkOdw64b/x5q06RWzzOfcmkgWbfm+
-         v4erX8tx+XkgD9LdpVy0l4lYLCnqTYrdClMdZac5Xbbk8ThwY/XJPfmyMWCBtsBWvF3s
-         Ave8XLtbPIzqSBEHoLJ2uovH3dlTI8DmK17k3PTtBGqh0SIf7qH+yjs/9oTafcdLEx1g
-         DDSA==
-X-Gm-Message-State: ABuFfojfOyg3s0igyBHb18ber14qRpJ1g1lbWkzfonizF6ZTfaQ5VLdP
-        JTvHkVe0vjAMx9VKaMQbk2wyZIsyCWmAbS4Rok8r3w==
-X-Google-Smtp-Source: ACcGV62MgGY08JiN0RDvo1M/wirvopR7NBsdu8OyeGsCHIbYFlgUCSxa1TwEitZf3zbd5k56PmL46u0i/70OyrBAWhE=
-X-Received: by 2002:a54:4516:: with SMTP id l22-v6mr14893537oil.0.1539793869815;
- Wed, 17 Oct 2018 09:31:09 -0700 (PDT)
+        Wed, 17 Oct 2018 20:27:42 -0400
+Received: from mga01.intel.com ([192.55.52.88]:26498 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727028AbeJRA1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 20:27:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 09:31:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
+   d="scan'208";a="83384536"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.154]) ([10.7.198.154])
+  by orsmga006.jf.intel.com with ESMTP; 17 Oct 2018 09:31:12 -0700
+Subject: Re: [mm PATCH v3 1/6] mm: Use mm_zero_struct_page from SPARC on all
+ 64b architectures
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Pavel Tatashin' <pasha.tatashin@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "pavel.tatashin@microsoft.com" <pavel.tatashin@microsoft.com>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "yi.z.zhang@linux.intel.com" <yi.z.zhang@linux.intel.com>,
+        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
+        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "ldufour@linux.vnet.ibm.com" <ldufour@linux.vnet.ibm.com>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+References: <20181015202456.2171.88406.stgit@localhost.localdomain>
+ <20181015202656.2171.92963.stgit@localhost.localdomain>
+ <20181017084744.GH18839@dhcp22.suse.cz>
+ <9700b00f-a8a4-e318-f6a8-71fd1e7021b3@linux.intel.com>
+ <8aaa0fa2-5f12-ea3c-a0ca-ded9e1a639e2@gmail.com>
+ <7d313318f1234a1eb45b608bd853c17c@AcuMS.aculab.com>
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Message-ID: <e7cd1e6f-cc04-31ea-3322-5c8e25a6e58a@linux.intel.com>
+Date:   Wed, 17 Oct 2018 09:31:12 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <153936657159.1198040.4489957977352276272.stgit@dwillia2-desk3.amr.corp.intel.com>
- <153936657702.1198040.119388737535638846.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181017081753.GG18839@dhcp22.suse.cz>
-In-Reply-To: <20181017081753.GG18839@dhcp22.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 17 Oct 2018 09:30:58 -0700
-Message-ID: <CAPcyv4hMFQYekvZWMzKYckuVLSGd3GizRtoDudFBQj5bfxD3Mw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/7] mm, devm_memremap_pages: Mark devm_memremap_pages()
- EXPORT_SYMBOL_GPL
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7d313318f1234a1eb45b608bd853c17c@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 1:18 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Fri 12-10-18 10:49:37, Dan Williams wrote:
-> > devm_memremap_pages() is a facility that can create struct page entries
-> > for any arbitrary range and give drivers the ability to subvert core
-> > aspects of page management.
-> >
-> > Specifically the facility is tightly integrated with the kernel's memory
-> > hotplug functionality. It injects an altmap argument deep into the
-> > architecture specific vmemmap implementation to allow allocating from
-> > specific reserved pages, and it has Linux specific assumptions about
-> > page structure reference counting relative to get_user_pages() and
-> > get_user_pages_fast(). It was an oversight and a mistake that this was
-> > not marked EXPORT_SYMBOL_GPL from the outset.
->
-> One thing is still not clear to me. Both devm_memremap_* and
-> hmm_devmem_add essentially do the same thing AFAICS. They both allow to
-> hotplug a device memory. Both rely on the hotplug code (namely
-> add_pages) which itself is not exported to modules. One is GPL only
-> while the later is a general export. Is this mismatch desirable?
+On 10/17/2018 8:40 AM, David Laight wrote:
+> From: Pavel Tatashin
+>> Sent: 17 October 2018 16:12
+>> On 10/17/18 11:07 AM, Alexander Duyck wrote:
+>>> On 10/17/2018 1:47 AM, Michal Hocko wrote:
+>>>> On Mon 15-10-18 13:26:56, Alexander Duyck wrote:
+>>>>> This change makes it so that we use the same approach that was
+>>>>> already in
+>>>>> use on Sparc on all the archtectures that support a 64b long.
+>>>>>
+>>>>> This is mostly motivated by the fact that 8 to 10 store/move
+>>>>> instructions
+>>>>> are likely always going to be faster than having to call into a function
+>>>>> that is not specialized for handling page init.
+>>>>>
+>>>>> An added advantage to doing it this way is that the compiler can get
+>>>>> away
+>>>>> with combining writes in the __init_single_page call. As a result the
+>>>>> memset call will be reduced to only about 4 write operations, or at
+>>>>> least
+>>>>> that is what I am seeing with GCC 6.2 as the flags, LRU poitners, and
+>>>>> count/mapcount seem to be cancelling out at least 4 of the 8
+>>>>> assignments on
+>>>>> my system.
+>>>>>
+>>>>> One change I had to make to the function was to reduce the minimum page
+>>>>> size to 56 to support some powerpc64 configurations.
+>>>>
+>>>> This really begs for numbers. I do not mind the change itself with some
+>>>> minor comments below.
+>>>>
+>>>> [...]
+>>>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>>>>> index bb0de406f8e7..ec6e57a0c14e 100644
+>>>>> --- a/include/linux/mm.h
+>>>>> +++ b/include/linux/mm.h
+>>>>> @@ -102,8 +102,42 @@ static inline void set_max_mapnr(unsigned long
+>>>>> limit) { }
+>>>>>     * zeroing by defining this macro in <asm/pgtable.h>.
+>>>>>     */
+>>>>>    #ifndef mm_zero_struct_page
+>>>>
+>>>> Do we still need this ifdef? I guess we can wait for an arch which
+>>>> doesn't like this change and then add the override. I would rather go
+>>>> simple if possible.
+>>>
+>>> We probably don't, but as soon as I remove it somebody will probably
+>>> complain somewhere. I guess I could drop it for now and see if anybody
+>>> screams. Adding it back should be pretty straight forward since it would
+>>> only be 2 lines.
+>>>
+>>>>> +#if BITS_PER_LONG == 64
+>>>>> +/* This function must be updated when the size of struct page grows
+>>>>> above 80
+>>>>> + * or reduces below 64. The idea that compiler optimizes out switch()
+>>>>> + * statement, and only leaves move/store instructions
+>>>>> + */
+>>>>> +#define    mm_zero_struct_page(pp) __mm_zero_struct_page(pp)
+>>>>> +static inline void __mm_zero_struct_page(struct page *page)
+>>>>> +{
+>>>>> +    unsigned long *_pp = (void *)page;
+>>>>> +
+>>>>> +     /* Check that struct page is either 56, 64, 72, or 80 bytes */
+>>>>> +    BUILD_BUG_ON(sizeof(struct page) & 7);
+>>>>> +    BUILD_BUG_ON(sizeof(struct page) < 56);
+>>>>> +    BUILD_BUG_ON(sizeof(struct page) > 80);
+>>>>> +
+>>>>> +    switch (sizeof(struct page)) {
+>>>>> +    case 80:
+>>>>> +        _pp[9] = 0;    /* fallthrough */
+>>>>> +    case 72:
+>>>>> +        _pp[8] = 0;    /* fallthrough */
+>>>>> +    default:
+>>>>> +        _pp[7] = 0;    /* fallthrough */
+>>>>> +    case 56:
+>>>>> +        _pp[6] = 0;
+>>>>> +        _pp[5] = 0;
+>>>>> +        _pp[4] = 0;
+>>>>> +        _pp[3] = 0;
+>>>>> +        _pp[2] = 0;
+>>>>> +        _pp[1] = 0;
+>>>>> +        _pp[0] = 0;
+>>>>> +    }
+>>>>
+>>>> This just hit my eyes. I have to confess I have never seen default: to
+>>>> be not the last one in the switch. Can we have case 64 instead or does
+>>>> gcc
+>>>> complain? I would be surprised with the set of BUILD_BUG_ONs.
+>>
+>> It was me, C does not really care where default is placed, I was trying
+>> to keep stores sequential for better cache locality, but "case 64"
+>> should be OK, and even better for this purpose.
+> 
+> You'd need to put memory barriers between them to force sequential stores.
+> I'm also surprised that gcc doesn't inline the memset().
+> 
+> 	David
 
-That is resolved by the last patch in this series.
+We don't need them to be sequential. The general idea is we have have to 
+fill a given amount of space with 0s. After that we have some calls that 
+are initialing the memory that doesn't have to be zero. Ideally the 
+compiler is smart enough to realize that since we don't have barriers 
+and we are performing assignments after the assignment of zero it can 
+just combine the two writes into one and drop the zero assignment.
 
-> API exported by the core hotplug is ad-hoc to say the least. Symbols
-> that we actually export are GPL mostly (only try_offline_node is
-> EXPORT_SYMBOL without any explanation whatsoever). So I would call it a
-> general mess tweaked for specific usecases.
->
-> I personally do not care about EXPORT_SYMBOL vs. EXPORT_SYMBOL_GPL
-> much to be honest. I understand an argument that we do not care about
-> out-of-tree modules a wee bit. I would just be worried those will find a
-> way around and my experience tells me that it would be much uglier than
-> what the core kernel can provide. But this seems more political than
-> technical discussion.
-
-I'm not worried about people finding a way around, I'm sure
-cringe-worthy workarounds of core kernel details happen on a regular
-basis in out-of-tree code. EXPORT_SYMBOL_GPL in this instance is not a
-political statement, it is a statement of the rate of evolution and
-depth of the api.
-
->
-> > Again, devm_memremap_pagex() exposes and relies upon core kernel
-> > internal assumptions and will continue to evolve along with 'struct
-> > page', memory hotplug, and support for new memory types / topologies.
-> > Only an in-kernel GPL-only driver is expected to keep up with this
-> > ongoing evolution. This interface, and functionality derived from this
-> > interface, is not suitable for kernel-external drivers.
->
-> I do not follow this line of argumentation though. We generally do not
-> care about out-of-tree modules and breaking them if the interface has to
-> be updated.
-
-Exactly right. The EXPORT_SYMBOL_GPL is there to say that this api has
-deep enough ties into the core kernel to lower the confidence that the
-API will stay stable from one kernel revision to the next. It's also
-an api that is attracting widening and varied reuse and the long term
-health of the implementation depends on being able to peer deeply into
-its users and refactor the interface and the core kernel as a result.
-
-> Also what about GPL out of tree modules?
-
-These are precisely the modules we want upstream.
-
-> That being said, I do not mind this patch. You and Christoph are the
-> authors and therefore it is you to decide. I just find the current
-> situation confusing to say the least.
-
-Hopefully I clarified, let me know if not.
+- Alex
