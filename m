@@ -2,315 +2,192 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A93FECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24458ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAFB32151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:00:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D54AA2151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:03:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1aCdJlnp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAFB32151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gR94kALd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D54AA2151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbeJQV4s (ORCPT
+        id S1727263AbeJQV7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:56:48 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:52050 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbeJQV4r (ORCPT
+        Wed, 17 Oct 2018 17:59:17 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34670 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727061AbeJQV7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:56:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=A0XIpTmZkyT/rZDyLZYHfWpFmc4juPHbdRbVMizOW3o=; b=1aCdJlnpzroyuzKpjfaqPzGxK
-        U/dflovY0MYMG3vZsdddHbDftqLVisLOMiMjz1QMBLcqb6jSujIIytXBJagtvmFQ/HOlJc1Hro7hL
-        y5gZDxsfEccUS4IgD/qaSvT1FfP8ZxCMr6JcgkP74PHoSSMAR/jx7KqS+KQVuLHOyB2KlMa3wGwd7
-        DgdSlRjNhYfMJhn8Hj2gnFjBCok7eXA+ftGvEs27I6lPTHiJ6GF2XkusnmuZzGuoQOCC119BQcRdr
-        c/2oGYAZULix6brM3erUBTMHofDOkSkmeUs6vFPX90RHqMuZmkzkvKrQG4bFHvNmjKtoXw70g8cYX
-        2jGaBrDqw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gCmNR-0001zo-Qv; Wed, 17 Oct 2018 14:00:46 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3FBDB2029856A; Wed, 17 Oct 2018 16:00:44 +0200 (CEST)
-Date:   Wed, 17 Oct 2018 16:00:44 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        john.ogness@linutronix.de
-Subject: Re: [RFC][PATCHv2 2/4] printk: move printk_safe macros to printk
- header
-Message-ID: <20181017140044.GK3121@hirez.programming.kicks-ass.net>
-References: <20181016050428.17966-1-sergey.senozhatsky@gmail.com>
- <20181016050428.17966-3-sergey.senozhatsky@gmail.com>
- <20181016072719.GB4030@hirez.programming.kicks-ass.net>
- <20181016114006.6q5atyaitapcwbud@pathway.suse.cz>
- <20181016121752.GA2537@hirez.programming.kicks-ass.net>
- <20181017105015.udzegzfh7cxgatso@pathway.suse.cz>
+        Wed, 17 Oct 2018 17:59:16 -0400
+Received: by mail-lf1-f66.google.com with SMTP id n26-v6so1207119lfl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 07:03:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2OVLIv4pvK4XbXbssL49o+sbDOxAj20Y8ait05owHZA=;
+        b=gR94kALd7TJgf5KSzQ0BeBDO/KnKugVpX9MaEe+IiXNjdnMswjUbw438EFPpKm5AlY
+         ZZ/kZg6v3/jiTOVcfi87k7bW9a6ENuj0Z9+4rG5ko1xiZhNhLgfHSb660qUcKzeTSWrk
+         MxtQtUJwYi67/q3bWfr7p5XqoGMYBdzC9ltXQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2OVLIv4pvK4XbXbssL49o+sbDOxAj20Y8ait05owHZA=;
+        b=Ab5kvUdH7YXOpAZYFSOUxF38726OmeURzer7A6pKVWyGrbXRymryxJky+71fy7LXK7
+         nI+uZGIJr9XcjR8xr6V+5RHjle7rOu+6ChbCr85rIwio/YTYZAyn5f6dxZNQP5cUdJ+4
+         YV3unqgulmpYPNgL7hBNadWrYtnqG8n8/8Jhx9kldJdcmMSaJZhfPOu4jLvWNzKa1rbh
+         OezCIjd00k7DkTN+YAQf9xE4eOX9lavVfCrXFMoRVFN2x9A1UXTS/2as9JMDQ7xsyJE0
+         m1urP53469M8NE0LxfDY32B2hYs7/IiCOYc51ej+AEgBKU78cQQkW8Ak+bjvpPa+KVhG
+         VG+w==
+X-Gm-Message-State: ABuFfog2wzbmkUiR9Jxoj7v1tSvHPS5zaISGZ4kbaFw88Z120wBEphTi
+        b9fbPL4deXqWRmH5Se+FY+W02w==
+X-Google-Smtp-Source: ACcGV63+7PHqdPWkwXKKgC0n01Ja+9wkJ/YFluFvwY90yj5/x8DubZbWZNEG4KjqPiKeWd/s8CvWew==
+X-Received: by 2002:a19:e013:: with SMTP id x19-v6mr15182454lfg.89.1539785003149;
+        Wed, 17 Oct 2018 07:03:23 -0700 (PDT)
+Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
+        by smtp.gmail.com with ESMTPSA id y3-v6sm4093739ljy.95.2018.10.17.07.03.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 07:03:22 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     linux@armlinux.org.uk, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        tj@kernel.org, Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 1/2] serial: set suppress_bind_attrs flag only if builtin
+Date:   Wed, 17 Oct 2018 16:03:10 +0200
+Message-Id: <20181017140311.28679-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017105015.udzegzfh7cxgatso@pathway.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 12:50:15PM +0200, Petr Mladek wrote:
+When the test 'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled,
+arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init).
+devtmpfs gets killed because we try to remove a file and decrement the
+wb reference count before the noop_backing_device_info gets initialized.
 
-> > If you have a lockless buffer and a trailing printk thread, that's
-> > deferred.
-> > 
-> > And earlycon _should_ be lockless (yes, I know, some suck)
-> > 
-> > But if you do this deferred nonsense that's currently in printk, then
-> > you risk never seeing the message -- the same problem I have with the
-> > whole printk_safe thing too.
-> 
-> What do you mean with printing the message, please? Storing it
-> into a buffer or showing on console?
-> 
-> I guess that it is storing because you suggest handling
-> the console by a printk kthread.
+[    0.332075] Serial: AMBA PL011 UART driver
+[    0.485276] 9000000.pl011: ttyAMA0 at MMIO 0x9000000 (irq = 39, base_baud = 0) is a PL011 rev1
+[    0.502382] console [ttyAMA0] enabled
+[    0.515710] Unable to handle kernel paging request at virtual address 0000800074c12000
+[    0.516053] Mem abort info:
+[    0.516222]   ESR = 0x96000004
+[    0.516417]   Exception class = DABT (current EL), IL = 32 bits
+[    0.516641]   SET = 0, FnV = 0
+[    0.516826]   EA = 0, S1PTW = 0
+[    0.516984] Data abort info:
+[    0.517149]   ISV = 0, ISS = 0x00000004
+[    0.517339]   CM = 0, WnR = 0
+[    0.517553] [0000800074c12000] user address but active_mm is swapper
+[    0.517928] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+[    0.518305] Modules linked in:
+[    0.518839] CPU: 0 PID: 13 Comm: kdevtmpfs Not tainted 4.19.0-rc5-next-20180928-00002-g2ba39ab0cd01-dirty #82
+[    0.519307] Hardware name: linux,dummy-virt (DT)
+[    0.519681] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[    0.519959] pc : __destroy_inode+0x94/0x2a8
+[    0.520212] lr : __destroy_inode+0x78/0x2a8
+[    0.520401] sp : ffff0000098c3b20
+[    0.520590] x29: ffff0000098c3b20 x28: 00000000087a3714
+[    0.520904] x27: 0000000000002000 x26: 0000000000002000
+[    0.521179] x25: ffff000009583000 x24: 0000000000000000
+[    0.521467] x23: ffff80007bb52000 x22: ffff80007bbaa7c0
+[    0.521737] x21: ffff0000093f9338 x20: 0000000000000000
+[    0.522033] x19: ffff80007bbb05d8 x18: 0000000000000400
+[    0.522376] x17: 0000000000000000 x16: 0000000000000000
+[    0.522727] x15: 0000000000000400 x14: 0000000000000400
+[    0.523068] x13: 0000000000000001 x12: 0000000000000001
+[    0.523421] x11: 0000000000000000 x10: 0000000000000970
+[    0.523749] x9 : ffff0000098c3a60 x8 : ffff80007bbab190
+[    0.524017] x7 : ffff80007bbaa880 x6 : 0000000000000c88
+[    0.524305] x5 : ffff0000093d96c8 x4 : 61c8864680b583eb
+[    0.524567] x3 : ffff0000093d6180 x2 : ffffffffffffffff
+[    0.524872] x1 : 0000800074c12000 x0 : 0000800074c12000
+[    0.525207] Process kdevtmpfs (pid: 13, stack limit = 0x(____ptrval____))
+[    0.525529] Call trace:
+[    0.525806]  __destroy_inode+0x94/0x2a8
+[    0.526108]  destroy_inode+0x34/0x88
+[    0.526370]  evict+0x144/0x1c8
+[    0.526636]  iput+0x184/0x230
+[    0.526871]  dentry_unlink_inode+0x118/0x130
+[    0.527152]  d_delete+0xd8/0xe0
+[    0.527420]  vfs_unlink+0x240/0x270
+[    0.527665]  handle_remove+0x1d8/0x330
+[    0.527875]  devtmpfsd+0x138/0x1c8
+[    0.528085]  kthread+0x14c/0x158
+[    0.528291]  ret_from_fork+0x10/0x18
+[    0.528720] Code: 92800002 aa1403e0 d538d081 8b010000 (c85f7c04)
+[    0.529367] ---[ end trace 5a3dee47727f877c ]---
 
-I'm not sure from the context you quoted.
+Rework to set suppress_bind_attrs flag to avoid removing the device when
+CONFIG_DEBUG_TEST_DRIVER_REMOVE=y. This applies for pic32_uart and
+xilinx_uartps as well.
 
-> Now, please, what is your vision of the lock less buffer?
-> Would it be similar with the one used by ftrace?
+Cc: Arnd Bergmann <arnd@arndb.de>
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/tty/serial/amba-pl011.c    | 2 ++
+ drivers/tty/serial/pic32_uart.c    | 1 +
+ drivers/tty/serial/xilinx_uartps.c | 1 +
+ 3 files changed, 4 insertions(+)
 
-No, exactly not like ftrace in fact.
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index ebd33c0232e6..89ade213a1a9 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -2780,6 +2780,7 @@ static struct platform_driver arm_sbsa_uart_platform_driver = {
+ 		.name	= "sbsa-uart",
+ 		.of_match_table = of_match_ptr(sbsa_uart_of_match),
+ 		.acpi_match_table = ACPI_PTR(sbsa_uart_acpi_match),
++		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
+ 	},
+ };
+ 
+@@ -2808,6 +2809,7 @@ static struct amba_driver pl011_driver = {
+ 	.drv = {
+ 		.name	= "uart-pl011",
+ 		.pm	= &pl011_dev_pm_ops,
++		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
+ 	},
+ 	.id_table	= pl011_ids,
+ 	.probe		= pl011_probe,
+diff --git a/drivers/tty/serial/pic32_uart.c b/drivers/tty/serial/pic32_uart.c
+index fd80d999308d..0bdf1687983f 100644
+--- a/drivers/tty/serial/pic32_uart.c
++++ b/drivers/tty/serial/pic32_uart.c
+@@ -919,6 +919,7 @@ static struct platform_driver pic32_uart_platform_driver = {
+ 	.driver		= {
+ 		.name	= PIC32_DEV_NAME,
+ 		.of_match_table	= of_match_ptr(pic32_serial_dt_ids),
++		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_PIC32),
+ 	},
+ };
+ 
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index 0e3dae461f71..806a953ac8d4 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1717,6 +1717,7 @@ static struct platform_driver cdns_uart_platform_driver = {
+ 		.name = CDNS_UART_NAME,
+ 		.of_match_table = cdns_uart_of_match,
+ 		.pm = &cdns_uart_dev_pm_ops,
++		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_XILINX_PS_UART),
+ 		},
+ };
+ 
+-- 
+2.19.1
 
-> The current implementation of the lockless buffer is very tricky
-> and supports only one reader. It will be even bigger maze
-> of code when we add such a support.
-
-The ftrace thing is way complicated and unsuitable. It does what it
-does, but I would've never build it that way around.
-
-> IMHO, the current printk buffer is much more easy from
-> this point of view. It is one global buffer plus
-> two per-cpu buffers that are mostly empty.
-
-I'm arguing for a single (global) lockless buffer with per-cpu line
-buffers.
-
-> I still think that the buffer is the minor problem these
-> days. The big problem are consoles and I do not see
-> how any lockless buffer could help with it.
-
-Yes, the consoles are horrible unfixable crap (some far worse than
-others).
-
-But the logbuf is also horrible, and that we can in fact fix.
-
-> Also note that by deferred printk I mean deferring the console
-> handling! IMHO, there are _no more problems_ with storing
-> the messages into the buffer if we accept that the current
-> very limited use of printk_safe per-cpu buffers is easier
-> than any complicated generic lockless buffer.
-
-They hide messages. The whole two radically different printk paths is
-also quite horrible.
-
-And lockless buffers aren't all _that_ complicated, esp. not when
-performance isn't the top priority.
-
-And earlycon is mostly usable, esp. the serial ones. Those, when
-configured, should synchronously print along. The current design
-also makes that difficult.
-
-A wee little like so; typed in a hurry, never been near a compiler.
-
-struct ll_buffer {
-	void *buffer;
-	unsigned int size;
-
-	unsigned int tail, reserve, head;
-
-	unsigned int cpu;
-	unsigned int ctx;
-};
-
-struct ll_entry {
-	unsigned int size;
-	char data[0];
-};
-
-struct ll_handle {
-	unsigned int cpu;
-	struct ll_entry *lhe;
-};
-
-static struct ll_buffer logbuf = {
-	.buffer = /* static storage */,
-	.cpu = -1;
-};
-
-static void __ll_get(struct ll_buffer *llb, struct ll_handle *llh)
-{
-	unsigned int cpu, old;
-
-	cpu = smp_processor_id();
-	for (;;) {
-		old = READ_ONCE(llb->cpu);
-		if (old == -1) {
-			if (try_cmpxchg_acquire(&llb->cpu, &old, cpu))
-				break;
-		}
-		if (old == cpu)
-			break;
-
-		cpu_relax();
-	}
-
-	llh->cpu = old;
-}
-
-static void __ll_put(struct ll_buffer *llb, struct ll_handle *llh)
-{
-	smp_store_release(llb->cpu, llh->cpu);
-}
-
-static char *__ll_reserve(struct ll_buffer *llb, struct ll_hande *llh, unsigned int size)
-{
-	unsigned int tail, res;
-	struct ll_entry *lle;
-
-	__ll_get(llb, llh);
-
-	llb->ctx++;
-
-	size += sizeof(struct ll_entry);
-	size += 3;
-	size &= ~3;
-
-	do {
-		for (;;) {
-			tail = READ_ONCE(llb->tail);
-			res = READ_ONCE(llb->resserve);
-
-			if (CIRC_SPACE(tail, res, llb->size) > size)
-				break;
-
-			lle = llb->buffer + (tail % llb->size);
-			cmpxchg(&llb->tail, tail, tail + lhe->size);
-		}
-
-	} while (cmpxchg(&llb->reserve, res, res + size) != res);
-
-	llh->lhe = llb->buffer + (res % llb->size);
-	llh->lhe->size = size;
-}
-
-static void __ll_commit(struct ll_buffer *llb, struct ll_handle *llh)
-{
-	for (;;) {
-		unsigned int ctx, res;
-
-		res = READ_ONCE(llb->res);
-		barrier();
-		ctx = --llb->ctx;
-		if (ctx)
-			break;
-
-		smp_store_release(llb->head, res);
-
-		if (likely(READ_ONCE(llb->res) == res))
-			break;
-
-		llb->ctx++;
-	}
-
-	__ll_put(llb, llh);
-}
-
-#define MAX_LINE	1020
-#define MAX_CTX		4
-
-struct line_buffers {
-	int ctx;
-	char buffers[MAX_CTX][MAX_LINE];
-};
-
-static DEFINE_PER_CPU(struct line_buffers, linbufs);
-
-int vprintk(const char *fmt, va_list args)
-{
-	struct ll_handle handle;
-	struct line_buffers *lb;
-	struct ll_entry *lhe;
-	char linbuf;
-	int sz;
-
-	preempt_disable();
-	lb = this_cpu_ptr(&linbufs);
-	linbuf = lb->buffers[lb->ctx++];
-
-	sz = scnprintf(linbuf, MAX_LINE, fmt, args);
-
-	__ll_reserve(&logbuf, &handle, sz);
-	memcpy(llh->lhe->data, linbuf, sz); // XXX doesn't wrap on llb->size
-	__ll_commit(&logbuf, &handle);
-
-	ln->ctx--;
-	preempt_enable();
-}
-
-
-struct ll_reader {
-	unsigned int tail;
-	char line[MAX_LINE];
-};
-
-static bool __ll_read(struct ll_buffer *llb, struct ll_reader *llr)
-{
-	unsigned int tail, reader, head, sz;
-	struct ll_entry *lhe;
-	bool lost = false;
-
-	for (;;) {
-		head = READ_ONCE(llb->head);
-		smp_rmb();
-		tail = READ_ONCE(llb->tail);
-		reader = READ_ONCE(llr->tail);
-		if (unlikely((signed)(tail - reader) < 0)) {
-			lost = true;
-			reader = tail;
-		}
-		smp_rmb();
-		lhe = llb->buffer + reader;
-		sz = lhe->size;
-		llr->tail = reader + sz;
-		sz -= sizeof(struct ll_entry);
-
-		if ((signed)(head - reader) > 0)
-			memcpy(llr->line, lhe->data, sz); // XXX wrap
-
-		smp_rmb();
-		tail = READ_ONCE(llb->tail);
-		if ((signed)(tail - reader) >= 0)
-			break;
-	}
-
-	return lost;
-}
