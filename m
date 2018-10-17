@@ -2,167 +2,110 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85895ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FABCECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B892098A
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:29:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQFJx4ub"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B892098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3FFFD2098A
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:30:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FFFD2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbeJQUY3 (ORCPT
+        id S1727246AbeJQUZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 16:24:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50776 "EHLO mail.kernel.org"
+        Wed, 17 Oct 2018 16:25:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52472 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeJQUY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 16:24:29 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726974AbeJQUZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 16:25:52 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A47F2098A;
-        Wed, 17 Oct 2018 12:28:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539779339;
-        bh=2cql87JkCo6UuTz0KbPSqxwMJlMbys2/cJ7/7N3yUfs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mQFJx4ubjK8ivF+u27gSolbnxTdtuD4UhV9araYIRFzo3W07QVGHzxi9KuFy3wdRe
-         kwr8WMrrUrarxbb73/oDVqoRMtNQn5yXm539bekMNxoRh+5IY73qQtAloe5mGfsWF1
-         Wfr9zqza75LufS8zrc9dzl3dsFl44xsttjQNcFvs=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 27063142C5E; Wed, 17 Oct 2018 09:28:55 -0300 (-03)
-Date:   Wed, 17 Oct 2018 09:28:55 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@gmail.com>
-Subject: Re: perf's handling of unfindable user symbols...
-Message-ID: <20181017122855.GB31465@kernel.org>
-References: <20181014.004238.292485794143606801.davem@davemloft.net>
- <20181015222546.GA2159@redhat.com>
- <20181015.160246.58484704665215987.davem@davemloft.net>
- <20181016184506.GB3254@redhat.com>
- <20181017172226.7274498db2bbe3431c3f4057@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 01474308404C;
+        Wed, 17 Oct 2018 12:30:23 +0000 (UTC)
+Received: from [10.72.12.94] (ovpn-12-94.pek2.redhat.com [10.72.12.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 433475C69C;
+        Wed, 17 Oct 2018 12:30:11 +0000 (UTC)
+Subject: Re: [PATCH v3] virtio_net: avoid using netif_tx_disable() for
+ serializing tx routine
+To:     Ake Koomsin <ake@igel.co.jp>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <276ac5bb-90f7-5fb6-a826-0bb05ecfa069@redhat.com>
+ <20181017104419.13003-1-ake@igel.co.jp>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <9e3b3279-44b2-63a0-326c-90840c1c210d@redhat.com>
+Date:   Wed, 17 Oct 2018 20:30:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017172226.7274498db2bbe3431c3f4057@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181017104419.13003-1-ake@igel.co.jp>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 17 Oct 2018 12:30:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Oct 17, 2018 at 05:22:26PM +0900, Masami Hiramatsu escreveu:
-> On Tue, 16 Oct 2018 15:45:06 -0300
-> Arnaldo Carvalho de Melo <acme@redhat.com> wrote:
-> > So, I thought something had changed and in the past we would somehow
-> > find that address in the kallsyms, but I couldn't find anything to back
-> > that up, the patch introducing this is over a decade old, lots of things
-> > changed, so I was just thinking I was missing something.
 
-> > I tried a gtod busy loop to generate vdso activity and added a 'perf
-> > probe' at that branch, on x86_64 to see if it ever gets hit:
+On 2018/10/17 下午6:44, Ake Koomsin wrote:
+> Commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+> introduces netif_tx_disable() after netif_device_detach() in order to
+> avoid use-after-free of tx queues. However, there are two issues.
+>
+> 1) Its operation is redundant with netif_device_detach() in case the
+>     interface is running.
+> 2) In case of the interface is not running before suspending and
+>     resuming, the tx does not get resumed by netif_device_attach().
+>     This results in losing network connectivity.
+>
+> It is better to use netif_tx_lock_bh()/netif_tx_unlock_bh() instead for
+> serializing tx routine during reset. This also preserves the symmetry
+> of netif_device_detach() and netif_device_attach().
+>
+> Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+> Signed-off-by: Ake Koomsin <ake@igel.co.jp>
+> ---
+>   drivers/net/virtio_net.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 3f5aa59c37b7..3e2c041d76ac 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -2267,8 +2267,9 @@ static void virtnet_freeze_down(struct virtio_device *vdev)
+>   	/* Make sure no work handler is accessing the device */
+>   	flush_work(&vi->config_work);
+>   
+> +	netif_tx_lock_bh(vi->dev);
+>   	netif_device_detach(vi->dev);
+> -	netif_tx_disable(vi->dev);
+> +	netif_tx_unlock_bh(vi->dev);
+>   	cancel_delayed_work_sync(&vi->refill);
+>   
+>   	if (netif_running(vi->dev)) {
+> @@ -2304,7 +2305,9 @@ static int virtnet_restore_up(struct virtio_device *vdev)
+>   		}
+>   	}
+>   
+> +	netif_tx_lock_bh(vi->dev);
+>   	netif_device_attach(vi->dev);
+> +	netif_tx_unlock_bh(vi->dev);
+>   	return err;
+>   }
+>   
 
-> > Made thread__find_map() noinline, as 'perf probe' in lines of inline
-> > functions seems to not be working, only at function start. (Masami?)
- 
-> Thank you for reporting it. Hmm, what happened when you did it?
-> I checked some points, but seems no problem.
-> (Would you see no line number? or defined event didn't work?)
 
-So, the problem is with a function in the perf tool that ends up inlined
-in five places, then when I ask for a line inside of this function to be
-probed, it creates 4 probes, one in each of the function it inlines,
-see:
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-[root@jouet ~]# perf probe -x ~/bin/perf -L thread__find_map:43
-<thread__find_map@/home/acme/git/perf/tools/perf/util/event.c:43>
-     43                 return NULL;
-                }
-         
-     46         al->map = map_groups__find(mg, al->addr);
-     47         if (al->map != NULL) {
-                        /*
-                         * Kernel maps might be changed when loading symbols so loading
-                         * must be done prior to using kernel maps.
-                         */
-                        if (load_map)
-     53                         map__load(al->map);
-     54                 al->addr = al->map->map_ip(al->map, al->addr);
-                }
-         
-     57         return al->map;
-     58  }
-         
-         struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
-                                           u64 addr, struct addr_location *al)
+Thanks
 
-[root@jouet ~]# 
-
-So I know that everytime we look for a mmap in a thread and we find that map,
-we get to line 54, lets try to add it:
-
-[root@jouet ~]# perf probe -x ~/bin/perf thread__find_map:54
-Added new events:
-  probe_perf:thread__find_map (on thread__find_map:54 in /home/acme/bin/perf)
-  probe_perf:thread__find_map_1 (on thread__find_map:54 in /home/acme/bin/perf)
-  probe_perf:thread__find_map_2 (on thread__find_map:54 in /home/acme/bin/perf)
-  probe_perf:thread__find_map_3 (on thread__find_map:54 in /home/acme/bin/perf)
-  probe_perf:thread__find_map_4 (on thread__find_map:54 in /home/acme/bin/perf)
-
-You can now use it in all perf tools, such as:
-
-	perf record -e probe_perf:thread__find_map_4 -aR sleep 1
-
-[root@jouet ~]#
-
-Now I run 'perf top' and then, on another terminal, run this to get system wide
-events to get a few of those probes:
-
-[root@jouet ~]# perf trace -a -e *perf:*/max-stack=7/ sleep 0.02
-     0.000 probe_perf:thread__find_map_3:(4be2e3)
-                                       machine__resolve (/home/acme/bin/perf)
-                                       perf_top__mmap_read_idx (/home/acme/bin/perf)
-                                       perf_top__mmap_read (/home/acme/bin/perf)
-                                       cmd_top (/home/acme/bin/perf)
-                                       run_builtin (/home/acme/bin/perf)
-                                       handle_internal_command (/home/acme/bin/perf)
-                                       main (/home/acme/bin/perf)
-     0.023 probe_perf:thread__find_map_3:(4be2e3)
-                                       machine__resolve (/home/acme/bin/perf)
-                                       perf_top__mmap_read_idx (/home/acme/bin/perf)
-                                       perf_top__mmap_read (/home/acme/bin/perf)
-                                       cmd_top (/home/acme/bin/perf)
-                                       run_builtin (/home/acme/bin/perf)
-                                       handle_internal_command (/home/acme/bin/perf)
-                                       main (/home/acme/bin/perf)
-     0.048 probe_perf:thread__find_map_3:(4be2e3)
-                                       machine__resolve (/home/acme/bin/perf)
-                                       perf_top__mmap_read_idx (/home/acme/bin/perf)
-                                       perf_top__mmap_read (/home/acme/bin/perf)
-                                       cmd_top (/home/acme/bin/perf)
-                                       run_builtin (/home/acme/bin/perf)
-                                       handle_internal_command (/home/acme/bin/perf)
-                                       main (/home/acme/bin/perf)
-<SNIP>
-[root@jouet ~]# 
-
-So it now I'm not being able to reproduce... Erm, nevermind then, I'll report
-back if I notice this again... :-)
-
-Thanks for checking, sorry for the noise.
-
-- Arnaldo
