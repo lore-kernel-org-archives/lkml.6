@@ -2,76 +2,62 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495E3ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A37ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9C42214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:37:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9C42214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0EF6E214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:39:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EF6E214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbeJQScE (ORCPT
+        id S1727047AbeJQSee (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:32:04 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:39009 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbeJQScE (ORCPT
+        Wed, 17 Oct 2018 14:34:34 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59950 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbeJQSee (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:32:04 -0400
-Received: by mail-oi1-f196.google.com with SMTP id y81-v6so20646751oia.6;
-        Wed, 17 Oct 2018 03:36:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6qFiedoxrkhxqEF/1z2mlyHKJWlbMv4+3NU70UTmsiw=;
-        b=dOGwAcYcdCURCLYoRO8i8sfOKLWwLMLJ6GqxX93z7vpSPkrylWW+xNp2GD4GyGUwyW
-         QCbwZidXMn9TtcJqc566JCO/dkei+JXBD1EMAQw1j1nkkuUdD7V/M1R9N32XxGdvLHGk
-         tvmxcoZqVdmpk7ko//Hd9eHmQPgPHkvkD7K1YxS1AzAdeacg2GJ4/3jvOO9DB0xvq8Zd
-         jtxZZQJFvdClR/CEcCx7tBq2uyZXGRFP4y2yAEhC0Jqg3gVkMYrkc9jQrTpp9a1nLEyE
-         VBmFECewg7cqEvwYhaIInAsodgfZDTfzEcxwQLTneYVDru4gEjpZ1dxmL+dlNMqieR++
-         CbJQ==
-X-Gm-Message-State: ABuFfojvttKTJgBt6F/b6eWty1AFfqmW8HXuoV+u60lV9HXOsCfws9EV
-        KUhItjzEPu37GnAf7r1/MzGJoeGgyBtLZoC57P0=
-X-Google-Smtp-Source: ACcGV61zuEP2BfRejkgIOZvCnjYfvNySKhhJBtw/N8eCo5Modmz6GFt/ThKI2fzblgFn6K2FrN51olZ9ZlYD6AZazZc=
-X-Received: by 2002:aca:b655:: with SMTP id g82-v6mr12844987oif.195.1539772619281;
- Wed, 17 Oct 2018 03:36:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <9077862.OKK49htnqA@aspire.rjw.lan>
-In-Reply-To: <9077862.OKK49htnqA@aspire.rjw.lan>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 17 Oct 2018 12:36:48 +0200
-Message-ID: <CAJZ5v0hzn2XiH0-3VmHxzprFdAtijqmWjw528fiOpf9Jj6FkLA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] cpuidle: menu: Two more refinements
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wed, 17 Oct 2018 14:34:34 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gCjEd-0005j2-6F; Wed, 17 Oct 2018 12:39:27 +0200
+Date:   Wed, 17 Oct 2018 12:39:27 +0200
+From:   'Sebastian Andrzej Siewior' <bigeasy@linutronix.de>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Doug Smythies <dsmythies@telus.net>
-Content-Type: text/plain; charset="UTF-8"
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH 1/3] x86/mm/pat: Disable preemption around
+ __flush_tlb_all()
+Message-ID: <20181017103926.okjwwinlsyegyrhu@linutronix.de>
+References: <20181016202525.29437-1-bigeasy@linutronix.de>
+ <20181016202525.29437-2-bigeasy@linutronix.de>
+ <acaca255a70b411488b889db9d1c31e4@AcuMS.aculab.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <acaca255a70b411488b889db9d1c31e4@AcuMS.aculab.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 1:57 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> Hi All,
->
-> The following patches are two more refinements of the menu governor (on top
-> of the recent changes in linux-next now).  The are not expected to change the
-> overall behavior of it.
->
-> Please refer to the patch changelogs for details.
+On 2018-10-17 09:54:38 [+0000], David Laight wrote:
+> Can it make any sense to flush the tlb with preemption enabled?
+it might. Usually it is disabled for other reasons.
 
-Any objections or concerns regarding the two patches?
+> Surely preemption must be disabled over something else as well?
+In this case it is due to the CR3 reload. I don't see anything else.
 
-If not, I will queue them up.
+> 	David
 
-Thanks,
-Rafael
+Sebastian
