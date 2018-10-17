@@ -2,108 +2,102 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3E3ECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD02ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 141DE208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:26:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDYHeb55"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 141DE208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9E13D205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:26:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E13D205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbeJREX4 (ORCPT
+        id S1727708AbeJREX6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 00:23:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727303AbeJREXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 00:23:55 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A21F0205C9;
-        Wed, 17 Oct 2018 20:26:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539807993;
-        bh=zpT7UireD1ItP5RiktIpblweOZprE+CUfevI/Lmaa1k=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=PDYHeb55KtGc+CSKy0mVjMIvJM4VrvdL8uSKIt4Nevwhje880pKmXzrYlP2RcVdSy
-         LCycqjFJxalnuW0xpFqzvXsLXYvVI1Peg5xb2OO7slh3Un1EdpLnp47wv8Sx34BIxF
-         WovOROrusOCl1tsm2t5O6hCtoZxI8iJB/w7p+y7s=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 18 Oct 2018 00:23:58 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37307 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbeJREX5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 00:23:57 -0400
+Received: by mail-ot1-f68.google.com with SMTP id o14so27579288oth.4;
+        Wed, 17 Oct 2018 13:26:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ymd5wralDBwI1+nvWrInzavSha2pjNT5R8MNAt3lHjs=;
+        b=IJNEeuu32CBbx8FVAsB9pUOUbRBmJau1d3YF+6OFWdx98U0ufrge+vtfC+QZuynNps
+         GCA/hUI+cffpy1hz3jXNffHkWIBEUemivpBAFcp1vqx6IVMbtAa4he/hG35rwZi5zA23
+         6n2VH1PIIyWE1HfdlLWv8NGnQA4J0+zTHwzQJp3Y9BbHxvkjbNsmQWX8L3vdilO5CVvw
+         hhOnH2cZ1SAQEZO4ZmIrVdsQVt9/a+CbTZaDjrbAYbcKENh9nH6Y1ueKhgyF6b1Y05nz
+         BK4Qc9TOZLjgWU77jo9VY6SLhYetn1G+6NGUwhVbbiC77D+LRKsUsyW9HdZCx1jDUAZf
+         I4LA==
+X-Gm-Message-State: ABuFfohYWCg9okHInbL6+VUwunR+7dLluNBlyP2ZXu1TN8C2qUzeiotq
+        fzc5qsJKmWcaGEfoTO1AmqCroPcLS/pNfTkLweQkDkF1F4g=
+X-Google-Smtp-Source: ACcGV62x+Z7nz/E8dRPJzUgVEXNeJ6lIBa5mTdv/llLukctvmcYRZkOVFtuHkNCo+W0r/ZazXX5apH/2yWN3IscUIkM=
+X-Received: by 2002:a9d:59ae:: with SMTP id u46mr16612272oth.243.1539807994864;
+ Wed, 17 Oct 2018 13:26:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Evan Green <evgreen@chromium.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        sayalil@codeaurora.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181005172732.203793-1-evgreen@chromium.org>
-Cc:     Evan Green <evgreen@chromium.org>
-References: <20181005172732.203793-1-evgreen@chromium.org>
-Message-ID: <153980799299.5275.16452063085933398872@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] scsi: ufs: Schedule clk gating work on correct queue
-Date:   Wed, 17 Oct 2018 13:26:32 -0700
+References: <20180606193811.16007-1-malat@debian.org> <20180724204757.qrgjttepzcfdzxlv@pburton-laptop>
+ <20180831203752.37rsceiwotcmeses@pburton-laptop> <20180831205857.nb3ij3rzhfs2fu42@pburton-laptop>
+ <CA+7wUswC1SfC3G0RRH7OV4C6nQsp59R62FN_NiDSyCpxRDf__Q@mail.gmail.com>
+In-Reply-To: <CA+7wUswC1SfC3G0RRH7OV4C6nQsp59R62FN_NiDSyCpxRDf__Q@mail.gmail.com>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Wed, 17 Oct 2018 22:26:22 +0200
+Message-ID: <CA+7wUsycUxKoCEk1CW+RKfJ5e9AxOumyfKoF93JYw3qmU5r=nQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] MIPS: jz4780: Allow access to jz4740-i2s
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     James Hogan <jhogan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        LKML <linux-kernel@vger.kernel.org>, alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Evan Green (2018-10-05 10:27:32)
-> With commit 10e5e37581fc ("scsi: ufs: Add clock ungating to a separate
-> workqueue"), clock gating work was moved to a
-> separate work queue with WQ_MEM_RECLAIM set, since clock
-> gating could occur from a memory reclaim context. Unfortunately,
-> clk_gating.gate_work was left queued via schedule_delayed_work,
-> which is a system workqueue that does not have WQ_MEM_RECLAIM set.
-> Because ufshcd_ungate_work attempts to cancel gate_work, the
-> following warning appears:
-> =
+Paul,
 
-> [   14.174170] workqueue: WQ_MEM_RECLAIM ufs_clk_gating_0:ufshcd_ungate_w=
-ork is flushing !WQ_MEM_RECLAIM events:ufshcd_gate_work
-> [   14.174179] WARNING: CPU: 4 PID: 173 at kernel/workqueue.c:2440 check_=
-flush_dependency+0x110/0x118
-> [   14.205725] CPU: 4 PID: 173 Comm: kworker/u16:3 Not tainted 4.14.68 #1
-> [   14.212437] Hardware name: Google Cheza (rev1) (DT)
-> [   14.217459] Workqueue: ufs_clk_gating_0 ufshcd_ungate_work
-> [   14.223107] task: ffffffc0f6a40080 task.stack: ffffff800a490000
-> [   14.229195] PC is at check_flush_dependency+0x110/0x118
-> [   14.234569] LR is at check_flush_dependency+0x110/0x118
-> [   14.239944] pc : [<ffffff80080cad14>] lr : [<ffffff80080cad14>] pstate=
-: 60c001c9
-> [   14.333050] Call trace:
-> [   14.427767] [<ffffff80080cad14>] check_flush_dependency+0x110/0x118
-> [   14.434219] [<ffffff80080cafec>] start_flush_work+0xac/0x1fc
-> [   14.440046] [<ffffff80080caeec>] flush_work+0x40/0x94
-> [   14.445246] [<ffffff80080cb288>] __cancel_work_timer+0x11c/0x1b8
-> [   14.451433] [<ffffff80080cb4b8>] cancel_delayed_work_sync+0x20/0x30
-> [   14.457886] [<ffffff80085b9294>] ufshcd_ungate_work+0x24/0xd0
-> [   14.463800] [<ffffff80080cfb04>] process_one_work+0x32c/0x690
-> [   14.469713] [<ffffff80080d0154>] worker_thread+0x218/0x338
-> [   14.475361] [<ffffff80080d527c>] kthread+0x120/0x130
-> [   14.480470] [<ffffff8008084814>] ret_from_fork+0x10/0x18
-> =
+On Mon, Sep 3, 2018 at 8:15 AM Mathieu Malaterre <malat@debian.org> wrote:
+>
+> On Fri, Aug 31, 2018 at 10:59 PM Paul Burton <paul.burton@mips.com> wrote:
+> >
+> > On Fri, Aug 31, 2018 at 01:37:52PM -0700, Paul Burton wrote:
+> > > Further to that, this series doesn't seem to work for me. With
+> > > v4.19-rc1, with the patch from [1] & then this series applied I see the
+> > > following when booting a ci20_defconfig kernel:
+> > >
+> > >   [    0.846684] ALSA device list:
+> > >   [    0.849642]   No soundcards found.
+> >
+> > D'oh! Apparently I haven't drunk enough coffee today - missing link can
+> > be found below:
+> >
+> > [1] https://www.spinics.net/lists/linux-gpio/msg31965.html
+>
+> Awesome, thanks for testing. I'll return to this series once I receive
+> replacement for my laptop hard drive.
 
-> The simple solution is to put the gate_work on the same WQ_MEM_RECLAIM
-> work queue as the ungate_work.
-> =
+I see it now :
 
-> Fixes: 10e5e37581fc ("scsi: ufs: Add clock ungating to a separate workque=
-ue")
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> =
+[    0.289701] bus: 'platform': really_probe: probing driver
+jz4740-i2s with device 10020000.i2s
+[    0.289713] jz4740-i2s 10020000.i2s: no pinctrl handle
+[    0.289782] OF: /i2s@10020000: could not find phandle
 
-> ---
+I'll try to make sense of this.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-
+> thanks,
+> -M
