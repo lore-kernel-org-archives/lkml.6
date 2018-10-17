@@ -2,83 +2,91 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D9DECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE6CECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B26F21528
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:08:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B26F21528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B037021523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:11:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B037021523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeJQPCn (ORCPT
+        id S1727483AbeJQPFO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:02:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59734 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727257AbeJQPCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:02:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 909B9AD25;
-        Wed, 17 Oct 2018 07:08:26 +0000 (UTC)
-Date:   Wed, 17 Oct 2018 09:08:25 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Mel Gorman <mgorman@suse.de>,
-        David Rientjes <rientjes@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Argangeli <andrea@kernel.org>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
- mappings
-Message-ID: <20181017070825.GD18839@dhcp22.suse.cz>
-References: <20181009130034.GD6931@suse.de>
- <20181009142510.GU8528@dhcp22.suse.cz>
- <20181009230352.GE9307@redhat.com>
- <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
- <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
- <20181016074606.GH6931@suse.de>
- <20181016153715.b40478ff2eebe8d6cf1aead5@linux-foundation.org>
- <20181016231149.GJ30832@redhat.com>
- <20181016161643.9c16164889b4d99d6eff6763@linux-foundation.org>
+        Wed, 17 Oct 2018 11:05:14 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40189 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727162AbeJQPFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 11:05:13 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 1BCD52079D; Wed, 17 Oct 2018 09:10:55 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-7-245.w90-88.abo.wanadoo.fr [90.88.129.245])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B5477206A1;
+        Wed, 17 Oct 2018 09:10:44 +0200 (CEST)
+Date:   Wed, 17 Oct 2018 09:10:45 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>
+Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
+ SPI NOR flash memories
+Message-ID: <20181017091045.124e0266@bbrezillon>
+In-Reply-To: <20181017090724.12f2cd79@bbrezillon>
+References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
+        <20180911154007.17195-2-tudor.ambarus@microchip.com>
+        <VI1PR04MB103888BC18F3C5AD0C02DEF699FE0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <31a8f6a9-1459-443a-6ef8-2b2c17769ae4@microchip.com>
+        <de0f7245-2557-12be-a306-67b08e55ae7b@wedev4u.fr>
+        <VI1PR04MB1038AB25EABDC8507984ADC799FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <20181017090724.12f2cd79@bbrezillon>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016161643.9c16164889b4d99d6eff6763@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 16-10-18 16:16:43, Andrew Morton wrote:
-> On Tue, 16 Oct 2018 19:11:49 -0400 Andrea Arcangeli <aarcange@redhat.com> wrote:
-> 
-> > This was a severe regression
-> > compared to previous kernels that made important workloads unusable
-> > and it starts when __GFP_THISNODE was added to THP allocations under
-> > MADV_HUGEPAGE. It is not a significant risk to go to the previous
-> > behavior before __GFP_THISNODE was added, it worked like that for
-> > years.@s1@s2@s1
-> 
-> 5265047ac301 ("mm, thp: really limit transparent hugepage allocation to
-> local node") was April 2015.  That's a long time for a "severe
-> regression" to go unnoticed?
+On Wed, 17 Oct 2018 09:07:24 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-Well, it gets some time to adopt changes in enterprise and we start
-seeing people reporting this issue. That is why I believe we should
-start with something really simple and stable tree backportable first
-and then build something more complex on top.
--- 
-Michal Hocko
-SUSE Labs
+> On Wed, 17 Oct 2018 02:07:43 +0000
+> Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+> 
+> > >     
+> > Actually there is no entry of s25fs512s in current spi-nor.c file.
+> > For my connected flash part, jedec ID read points to s25fl512s. I
+> > have asked my board team to confirm the name of exact connected flash
+> > part. When I check the data sheet of s25fs512s, it also points to the
+> > same Jedec ID information. { "s25fl512s",  INFO(0x010220, 0x4d00, 256
+> > * 1024, 256, ....}
+> > 
+> > But as stated earlier, if I skip reading SFDP or read using 1-1-1
+> > protocol then read are always correct. For 1-4-4 protocol read are
+> > wrong and on further debugging found that Read code of 0x6C is being
+> > send as opcode instead of 0xEC.
+> > 
+> > If I revert this patch, reads are working fine.  
+> 
+> Can you try with the following patch?
+> 
+
+Hm, nevermind. The problem is actually not related to 4B vs non-4B mode
+but 1-1-4 vs 1-4-4 modes.
+
