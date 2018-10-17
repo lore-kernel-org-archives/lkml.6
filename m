@@ -2,118 +2,114 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA2DECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9ADECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 463CC21526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:21:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95A2321523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:21:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVel2bXx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 463CC21526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="envR4Imv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A2321523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeJQQQJ (ORCPT
+        id S1727361AbeJQQQZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 12:16:09 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43107 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbeJQQQJ (ORCPT
+        Wed, 17 Oct 2018 12:16:25 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:23171 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeJQQQZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 12:16:09 -0400
-Received: by mail-ed1-f66.google.com with SMTP id y20-v6so23974037eds.10;
-        Wed, 17 Oct 2018 01:21:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ms9d1niz/4VScBsJqzALxhkeGS1pF6S1ndIf0eoHiuw=;
-        b=dVel2bXxIbVpddElkux8ISXLJCh5Hzfz9TCd1Ydq6ym3hvbjVaWTBEatnwX3HGz/Ea
-         6OdMqC7oP/JKNK4ClX7MizVrFWZtZQPk7F/SeLiq2AIpP1lRABsSpaD8ri6MGM9jJ0iz
-         EaTQRGHsKbIq3k+RI7Q0+/GRCsHG38J0+cYfJICKrAe8qyibSGwWY8cNjisfojDZ2v5w
-         PCCtDuKfsbxBoTILFEd2mCrarZYuxjKWbPrXJxWP3JbPesLXuMGXyHhfkwkhBT6/jwUi
-         RLee8/zefaagqlNknN9XpSJi0J0oK2eWfRSXbIPxzKNpzt55Bt6p5s7SAbK1OAl/rHgw
-         gxGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ms9d1niz/4VScBsJqzALxhkeGS1pF6S1ndIf0eoHiuw=;
-        b=jHXG+bII87cBw69XgLw3yj4GBI50YbkiRjxizLtMzlbpGwFnXiHf1GHUXpdKNUSyuV
-         LlezT5XiYZEb3pwvH3U5AHrFlPILraDqBWAqjhGm9CV4CRK8oSbqHAGVmDaUjdhFQLe5
-         Wb3eiArMmRhhvSy1vsn0rq7zk9lzSyzu6OJlaP+oMA2M623kfogehJSzWEO9/daaIAyv
-         5IMln2lfTeP8DVt4rNRK0UBMreLaPhJ+0YtOCDoKq/iwEpecc72PUwQstIy5UqW+Iyd4
-         ptLT5aYHw1SjFHUYbNDN2frJLuuEpLLKZfzSUTZDckiLBWxlLgHAyhhqvUw0hRbfLRK2
-         gdCw==
-X-Gm-Message-State: ABuFfohCNA6kw+ADnPPj4uhrv0IJOLBoDGEs9wfPnM1CfrwxSdGhK73S
-        wsTYZqA4QYUg7esyG553epE18TdT8UV5thsrd1K9DYWb
-X-Google-Smtp-Source: ACcGV615iXG64pXDkewjaqV0xQ0OWlAt5gdzs2sPc0/OsjTSxdWLuUEeI93PW+sjkvuq1PdyFF2tSddpHhhNvXtbb7w=
-X-Received: by 2002:a17:906:731d:: with SMTP id d29-v6mr26413049ejl.26.1539764495098;
- Wed, 17 Oct 2018 01:21:35 -0700 (PDT)
+        Wed, 17 Oct 2018 12:16:25 -0400
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id w9H8LcFA028359;
+        Wed, 17 Oct 2018 17:21:38 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w9H8LcFA028359
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539764499;
+        bh=VQ7DNcwGQ4f+sJ08vqiT3mXYi94gyDIUN8MHYj6lU4g=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=envR4Imv+x7Ypver6PEJJWReUhQuPEXl12XabC7Pmt4wUtJrmp9XrZuLygKHtZgjb
+         mbxOb/9Pxksfx/ESUnlamgEed93Y7eAOHClTvrqjL1ep5YUEivnUFKQ7qWSCTfCN7G
+         WZp7qmfIwVWzrPW0iuorDWztmJwRbPAwDaALP1efSR6ukMjILpkeqxl+yKhrnZbJ83
+         TFNjE2EQUQsLLzWkg5CPb1j/DCbj2fIIpiJVMaCwKYRxy6ke+oIvlQ0uT6wmGLzXBb
+         2DtZCS2r0h3k/mqlBSR6rDE9bRlXWalJexphduyW1+TsTDDaw+ifoQ6kmrEtLrTm2H
+         b3hLYs4g3iqJA==
+X-Nifty-SrcIP: [209.85.217.53]
+Received: by mail-vs1-f53.google.com with SMTP id y195so4452941vsc.7;
+        Wed, 17 Oct 2018 01:21:38 -0700 (PDT)
+X-Gm-Message-State: ABuFfojrueMckXLU+t8gQdJJYB/R26AgCkvXaPzJq7c1dxWnEF19Fe1g
+        xY4z/faOn7X/I4/+z7ZMy0YSItF8tODuHJ9myQE=
+X-Google-Smtp-Source: ACcGV61t0O7LUjlhfMtrCO2E2d2CGWmy/4R6mtWyr0GTQX0Dtv4NBDQsot3x+++Ooi+ZUFRZpUjNEofnpGzJ99dHCcE=
+X-Received: by 2002:a67:65c3:: with SMTP id z186mr10393250vsb.54.1539764497518;
+ Wed, 17 Oct 2018 01:21:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181016225522.13077-1-pbonzini@redhat.com>
-In-Reply-To: <20181016225522.13077-1-pbonzini@redhat.com>
-From:   Wincy Van <fanwenyi0529@gmail.com>
-Date:   Wed, 17 Oct 2018 16:21:23 +0800
-Message-ID: <CACzj_yWW1q+oQ8Wuf1n_hRgQFVFJLQ0oPZO2Ze18eoJaER+YZA@mail.gmail.com>
-Subject: Re: [PATCH] KVM: VMX: enable nested virtualization by default
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Liran Alon <liran.alon@oracle.com>,
-        Jim Mattson <jmattson@google.com>
+References: <20181017000809.GA21292@WindFlash> <20181017081115.GA22535@zn.tnic>
+In-Reply-To: <20181017081115.GA22535@zn.tnic>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 17 Oct 2018 17:21:01 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASVn7CB5uL9tCtNC2u4Ary5eb-vyiB_sS2ey5AZNweKAA@mail.gmail.com>
+Message-ID: <CAK7LNASVn7CB5uL9tCtNC2u4Ary5eb-vyiB_sS2ey5AZNweKAA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     =?UTF-8?Q?Leonardo_Br=C3=A1s?= <leobras.c@gmail.com>,
+        lkcamp@lists.libreplanetbr.org, willy6545@gmail.com,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 6:57 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+On Wed, Oct 17, 2018 at 5:11 PM Borislav Petkov <bp@alien8.de> wrote:
 >
-> With live migration support and finally a good solution for CR2/DR6
-> exception payloads, nested VMX should finally be ready for having a stable
-> userspace ABI.  The results of syzkaller fuzzing are not perfect but not
-> horrible either (and might be partially due to running on GCE, so that
-> effectively we're testing three-level nesting on a fork of upstream KVM!).
-> Enabling it by default seems like a nice way to conclude the 4.20
-> pull request. :)
+> On Tue, Oct 16, 2018 at 09:08:09PM -0300, Leonardo Br=C3=A1s wrote:
+> > Adds -Wshadow=3Dlocal on KBUILD_HOSTCFLAGS to show shadow warnings
+> > on tools built for HOST.
+> >
+> > Signed-off-by: Leonardo Br=C3=A1s <leobras.c@gmail.com>
+> > ---
+> >  Makefile | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index e8b599b4dcde..fb0a9ac195e7 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -360,7 +360,7 @@ HOST_LFS_LIBS :=3D $(shell getconf LFS_LIBS 2>/dev/=
+null)
+> >
+> >  HOSTCC       =3D gcc
+> >  HOSTCXX      =3D g++
+> > -KBUILD_HOSTCFLAGS   :=3D -Wall -Wmissing-prototypes -Wstrict-prototype=
+s -O2 \
+> > +KBUILD_HOSTCFLAGS   :=3D -Wall -Wshadow=3Dlocal -Wmissing-prototypes -=
+Wstrict-prototypes -O2 \
+> >               -fomit-frame-pointer -std=3Dgnu89 $(HOST_LFS_CFLAGS) \
+> >               $(HOSTCFLAGS)
+> >  KBUILD_HOSTCXXFLAGS :=3D -O2 $(HOST_LFS_CFLAGS) $(HOSTCXXFLAGS)
+> > --
 >
-> Unfortunately, enabling nested SVM in 2009 was a bit premature.  However,
-> until live migration support is in place we can reasonably expect that
-> it does not offer much in terms of ABI guarantees.  Therefore we are
-> still in time to break things and conform as much as possible to the
-> interface used for VMX.
->
-> Suggested-by: Jim Mattson <jmattson@google.com>
-> Suggested-by: Liran Alon <liran.alon@oracle.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->  arch/x86/kvm/vmx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index e665aa7167cf..89fc2a744d7f 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -107,7 +107,7 @@ module_param_named(enable_shadow_vmcs, enable_shadow_vmcs, bool, S_IRUGO);
->   * VMX and be a hypervisor for its own guests. If nested=0, guests may not
->   * use VMX instructions.
->   */
-> -static bool __read_mostly nested = 0;
-> +static bool __read_mostly nested = 1;
->  module_param(nested, bool, S_IRUGO);
->
->  static u64 __read_mostly host_xss;
-> --
-> 2.17.1
->
+> You might wanna take a look at scripts/Makefile.extrawarn which already
+> has -Wshadow.
 
 
-bravo!   :-)
+scripts/Makefile.extrawarn provides options for the target compiler (CC),
+whereas this patch adds -Wshadow=3Dlocal for the host compiler (HOSTCC).
 
-Thanks,
-Wincy
+
+
+--=20
+Best Regards
+Masahiro Yamada
