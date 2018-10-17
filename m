@@ -2,129 +2,125 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2912ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627A7ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A8A32150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:43:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CC202150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:44:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNberKtF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A8A32150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uk6W5kA3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC202150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727596AbeJQXj6 (ORCPT
+        id S1727693AbeJQXkT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:39:58 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41339 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeJQXj5 (ORCPT
+        Wed, 17 Oct 2018 19:40:19 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34940 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727461AbeJQXkT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:39:57 -0400
-Received: by mail-pf1-f195.google.com with SMTP id m77-v6so13391289pfi.8;
-        Wed, 17 Oct 2018 08:43:41 -0700 (PDT)
+        Wed, 17 Oct 2018 19:40:19 -0400
+Received: by mail-oi1-f194.google.com with SMTP id 22-v6so21470998oiz.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 08:44:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=frAx4qwIJKyvoQ6OKQmKnVvCEvDLL2FXOZbZSN9O/EU=;
-        b=BNberKtFEcGcAIvtPpZtxVf+7dHGbzsPc+dfIpso8I0QIA2Cftv1QcU1KitQopyqQ8
-         Rpp259bhWr5NHOYMu7RPI+4yKrds0Er1wbNPkv1FhGaGU0m3rELPQvOn3uifLjAakmtI
-         RG9BSWkR9J5fuIiSsm05l5Fi18PeijY6PsvlJFfbcLqQOpeGDOOPWkIdKg0+JXbw0BjZ
-         pB2+8uLFctkkn/zPEg/zJEEH1y0b9xFJNyrvdx4yyd7uvyNwosr8xo21vrBVCvjI7bbo
-         /jjjQNokpBTx04RHEIZfGnch1aM3ELJRv5SDYgdQkLLzOj0sur4SyoeDkuAWZs06UDB5
-         nXEw==
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=M2Gp6gH80q43/tis0ptqhRINfH7JLOnQD2dCmFrdWQI=;
+        b=uk6W5kA3p3oUFI/6kzMIVNAJOh/JDlNUk8R0N7krrq2PfgQH+osftkDMWsZXg02vGw
+         sMNUa/II4hRzZpraf8rd10+7x6GJOJogDSh8RyvhgS+qHKnVWNu1bjWYDOL1eFuotS6O
+         uippIMMD+0Pedk1Y4lFbezZs/kY6CfkVPVzIQA5blHOSqATxuOmRURUPBYjz23oGjGGa
+         f1Lg8RmFcVU+ZOcy01MvkI6yHypUKKBvsFv/xeiqLHkSHkGccK/piDo6EtzefNsot76z
+         JrgyaAkbxc3p8z43+Oa36A8OLKDJVK2Q50ToF7qOE3HOim0ffVfYDTY7sDxff8QW8W3+
+         90Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=frAx4qwIJKyvoQ6OKQmKnVvCEvDLL2FXOZbZSN9O/EU=;
-        b=UA3mEKnB1yXkuCUrLLdB0AaMZUHgDHatAYnx8cgv4j45lGqP2fyH9yoGEhv4MeTYMp
-         1m8RKMpgolHZ5d+ka1ZXCBYFvSxnBWx4yT4+nd+yt0rJfqooHDwJiP6200iEbW11oKxV
-         AgnjuMcwL+tEb8wTaALfQMtakUrD7+HWdU71PCwjaX6uZhH+CUiXSAGs3aZHyrIToEE+
-         vlKyGFvMYaL22rBUzryDSJ7rqnYDVbXYPZd0JqMTyV0B31mhvOuWTSIP1JMoX714KlF0
-         D4nl/iE7P5nYXu/KeNtaf8qbxYDUmx7MzTcrF8263F1/j4q9nH3Em+21IF1gxa350UeL
-         Ab7w==
-X-Gm-Message-State: ABuFfojiMERfD1d0Yapr5MAgRNfkA47YePTsBwMcCxv+opKuxvqKsBhk
-        omC/jRYWicyDivKdYGeTJ20=
-X-Google-Smtp-Source: ACcGV63CbYYXkJ/SS1vO0dq2UOEYi6WbaMI0kEyCmV9fFgpEmeYDw/qLPlJpD+OcyFTxZI4LGge06A==
-X-Received: by 2002:a63:1066:: with SMTP id 38-v6mr25200909pgq.254.1539791020145;
-        Wed, 17 Oct 2018 08:43:40 -0700 (PDT)
-Received: from ?IPv6:2601:647:4201:6700:b990:46cf:5e72:63f5? ([2601:647:4201:6700:b990:46cf:5e72:63f5])
-        by smtp.gmail.com with ESMTPSA id z70-v6sm23033709pgd.64.2018.10.17.08.43.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 08:43:39 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 08:43:30 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <0100016682aaae79-d1382d3d-83f8-4972-b4b9-6220367f4f65-000000@email.amazonses.com>
-References: <000000000000e5f76c057664e73d@google.com> <CAKdAkRS7PSXv65MTnvKOewqESxt0_FtKohd86ioOuYR3R0z9dw@mail.gmail.com> <CACT4Y+YOb6M=xuPG64PAvd=0bcteicGtwQO60CevN_V67SJ=MQ@mail.gmail.com> <010001660c1fafb2-6d0dc7e1-d898-4589-874c-1be1af94e22d-000000@email.amazonses.com> <CACT4Y+ayX8vzd2JPrLeFhf3K_Quf4x6SDtmtkNJuwNLyOh67tQ@mail.gmail.com> <010001660c4a8bbe-91200766-00df-48bd-bc60-a03da2ccdb7d-000000@email.amazonses.com> <20180924184158.GA156847@dtor-ws> <20180927143537.GB19006@bombadil.infradead.org> <20181017000955.GG230131@dtor-ws> <0100016682aaae79-d1382d3d-83f8-4972-b4b9-6220367f4f65-000000@email.amazonses.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=M2Gp6gH80q43/tis0ptqhRINfH7JLOnQD2dCmFrdWQI=;
+        b=muFadE4cp/J3n1KsiGrXMcoq44/itq+FedtAKAH+9Mt0d3Ycd/c/jHbi/M/SC5dkYQ
+         OMpNuZTbb8F68diGgiTg1oNlmFiy6bg+NOHvhzR0JqmyX+gNGE59vCmiE833TxkbDBha
+         Vu99+H6X/FzMzkxeOBzI9oxJSfVgLLnpe/9XdD7hYl1579PybtjmjpB9/sohDwdQg+rI
+         jduNtmSFeqLh18jUNcGa+4OSdR7hjl9Y+9MWpHs/snpawZb8t7fk9psV/7FrHeH8dGxV
+         zUSBNFVCjGkLWdNEs1pF1/erb54XN+uqwbouybZRk7LGjfziXVkSfkl9Qu7yEsAmUnK0
+         9ggw==
+X-Gm-Message-State: ABuFfojdQTAxejQkJQs6muUWFbXp3c/UTdri0G2p7QzNMaPoQp7kzQLm
+        E3RwivOBfynb5oU7Ge9d8KFj/PYDKqi9Uu39BEVRZw==
+X-Google-Smtp-Source: ACcGV61MsUqWv2ejYRihgJn2u0rzwYtAkhtFUZAY1bKL3vrQcLOcrF9ngRbtek/EebFgj/zAnLGcJcCLVc3Uj3130aM=
+X-Received: by 2002:aca:d451:: with SMTP id l78-v6mr15236818oig.52.1539791041764;
+ Wed, 17 Oct 2018 08:44:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: WARNING: kmalloc bug in input_mt_init_slots
-To:     Christopher Lameter <cl@linux.com>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot+87829a10073277282ad1@syzkaller.appspotmail.com,
-        Pekka Enberg <penberg@kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Message-ID: <CE3D3608-F320-4DAB-8BEB-3EFDDB54F97E@gmail.com>
+Received: by 2002:ac9:56d8:0:0:0:0:0 with HTTP; Wed, 17 Oct 2018 08:44:01
+ -0700 (PDT)
+In-Reply-To: <20181017120829.GA19731@infradead.org>
+References: <20181009222042.9781-1-joel@joelfernandes.org> <20181017095155.GA354@infradead.org>
+ <20181017103958.GB230639@joelaf.mtv.corp.google.com> <20181017120829.GA19731@infradead.org>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 17 Oct 2018 08:44:01 -0700
+Message-ID: <CAKOZuesr_8vrob-XfEpGmyeKFEhWWXZo4BEC0PixfjT2ibaRZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mm: Add an F_SEAL_FS_WRITE seal to memfd
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com, John Reck <jreck@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Minchan Kim <minchan@google.com>, Shuah Khan <shuah@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On October 17, 2018 8:35:15 AM PDT, Christopher Lameter <cl@linux=2Ecom> wr=
-ote:
->On Tue, 16 Oct 2018, Dmitry Torokhov wrote:
->
->> On Thu, Sep 27, 2018 at 07:35:37AM -0700, Matthew Wilcox wrote:
->> > On Mon, Sep 24, 2018 at 11:41:58AM -0700, Dmitry Torokhov wrote:
->> > > > How large is the allocation? AFACIT nRequests larger than
->KMALLOC_MAX_SIZE
->> > > > are larger than the maximum allowed by the page allocator=2E Thus
->the warning
->> > > > and the NULL return=2E
->> > >
->> > > The size in this particular case is being derived from a value
->passed
->> > > from userspace=2E Input core does not care about any limits on size
->of
->> > > memory kmalloc() can support and is perfectly happy with getting
->NULL
->> > > and telling userspace to go away with their silly requests by
->returning
->> > > -ENOMEM=2E
->> > >
->> > > For the record: I definitely do not want to pre-sanitize size
->neither in
->> > > uinput nor in input core=2E
+On Wed, Oct 17, 2018 at 5:08 AM, Christoph Hellwig <hch@infradead.org> wrote:
+> On Wed, Oct 17, 2018 at 03:39:58AM -0700, Joel Fernandes wrote:
+>> > > This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
+>> > > To support the usecase, this patch adds a new F_SEAL_FS_WRITE seal which
+>> > > prevents any future mmap and write syscalls from succeeding while
+>> > > keeping the existing mmap active. The following program shows the seal
+>> > > working in action:
 >> >
->> > Probably should be using kvzalloc then=2E
+>> > Where does the FS come from?  I'd rather expect this to be implemented
+>> > as a 'force' style flag that applies the seal even if the otherwise
+>> > required precondition is not met.
 >>
->> No=2E No sane input device can track so many contacts so we need to use
->> kvzalloc()=2E Failing to allocate memory is proper response here=2E
+>> The "FS" was meant to convey that the seal is preventing writes at the VFS
+>> layer itself, for example vfs_write checks FMODE_WRITE and does not proceed,
+>> it instead returns an error if the flag is not set. I could not find a better
+>> name for it, I could call it F_SEAL_VFS_WRITE if you prefer?
 >
->What is a "contact" here? Are we talking about SG segments?
+> I don't think there is anything VFS or FS about that - at best that
+> is an implementation detail.
+>
+> Either do something like the force flag I suggested in the last mail,
+> or give it a name that matches the intention, e.g F_SEAL_FUTURE_WRITE.
 
-No, we are talking about maximum number of fingers a person can have=2E De=
-vices don't usually track more than 10 distinct contacts on the touch surfa=
-ce at a time=2E
++1
 
+>> > This seems to lack any synchronization for f_mode.
+>>
+>> The f_mode is set when the struct file is first created and then memfd sets
+>> additional flags in memfd_create. Then later we are changing it here at the
+>> time of setting the seal. I donot see any possiblity of a race since it is
+>> impossible to set the seal before memfd_create returns. Could you provide
+>> more details about what kind of synchronization is needed and what is the
+>> race condition scenario you were thinking off?
+>
+> Even if no one changes these specific flags we still need a lock due
+> to rmw cycles on the field.  For example fadvise can set or clear
+> FMODE_RANDOM.  It seems to use file->f_lock for synchronization.
 
-Thanks=2E
-
---=20
-Dmitry
+Compare-and-exchange will suffice, right?
