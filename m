@@ -2,187 +2,110 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FC7ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E45ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 007472150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:14:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0BCF20869
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:19:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="OIxgDhHB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 007472150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KaRwnyou"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0BCF20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeJQSI6 (ORCPT
+        id S1727035AbeJQSOW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:08:58 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44948 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbeJQSI6 (ORCPT
+        Wed, 17 Oct 2018 14:14:22 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:33772 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbeJQSOW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:08:58 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r9-v6so12956805pff.11
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 03:13:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cC/01CYnU4eCV09wqICajD0UyDpnS446Kr0hex3xitk=;
-        b=OIxgDhHBuQh2ggxEbIHTvtu44/G2RkHyQpt4KnKulZsbZUBcBrcXE9MU7eeAmFwDlz
-         5odO7QXxKfrr4HkMrCF+DKvD0hM2g8XXjKNtR2GcCsFasxbjZ35WKiHmp9Lhkuc0USJ5
-         JnZ8zXyEXOAXspx7km1ZmtvhP54ABv22Dbwa4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cC/01CYnU4eCV09wqICajD0UyDpnS446Kr0hex3xitk=;
-        b=dQtUBTRaGYEG171BWV+aFTzxIvKr/VumMEUqoVmPdrGEaXf2DnBBJvHWeJTG2Ni/4m
-         a8bdzJyw2SQtYqYkKPqTTXik+2Ueu0ija0KoJqJ66NbjcZWgFARGmUhTt7OH9mhTSuND
-         Woie1ulP02YivxUZoKiSjTGYrwf1YzXnZbv9494V+vCWeGIJ5D92JyX0sNXXkme0OKS0
-         0X6ae/xJQjw7w6M8lMpv0WLVy9IP4AGIo9RNbhOmJrCUxtShNe+7VMfC6lZndLifaVqq
-         saBYicmBTazL4ZoCtu3jv7b6SKlXdOfj4dFpdF+3in/LDJb/hRghyIVTGFPbbhTkdd3P
-         2yWg==
-X-Gm-Message-State: ABuFfogn/dK1mfy/QRnmOVmjfKgT09hGiXX2fqV7FUq7G3UxPUx92hWu
-        LjjGTdd/10qXZGsUdoXalLzgDw==
-X-Google-Smtp-Source: ACcGV6326wBameac7xn3xrkwGcsPTpVi/PE01AnqMgBjYf08ktqrqIrtq6mPM2GKo0VTsB5CKSR7XQ==
-X-Received: by 2002:a62:5103:: with SMTP id f3-v6mr25797667pfb.107.1539771237770;
-        Wed, 17 Oct 2018 03:13:57 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id g87-v6sm15819023pfj.34.2018.10.17.03.13.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 03:13:56 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 03:13:55 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
-        Geliang Tang <geliangtang@gmail.com>,
+        Wed, 17 Oct 2018 14:14:22 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9HAIpM3182653;
+        Wed, 17 Oct 2018 10:18:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=TuXzmfD3eux8r3w9ljgHHREkHl3kBAYLjhd9J1lgT9g=;
+ b=KaRwnyouz0ux/9YA58qX/prtZLKXu2F9M8vadQhJfd133P+Jh0M1FQvN2+F5+tl7j5Z9
+ q6/BGSlBiqKba635MKySzkdn12ZS5URqI9ai7m4dWYNnhzDO6KlVvNTPh9ZusWD5tinR
+ DPewCnfW3YL+KmUCMKpfHgkOL/37ywUb6xurRtCHJZGTt9O+MEKrwcGoalGM0XChnULT
+ 68iGjLQWGn/uGgFUMtdor6zeTZjWFSOcG/rRfWqugoVBlGqvTDrzr68ltTQFzPlVOqy0
+ f1RRnExkXQje8MuishxOdOQI/6sKy5110scXSiX8WQSF2UTbN7bhg9M9KNnkBRH9+/kc AA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2n384u65cn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Oct 2018 10:18:50 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9HAIhSa019781
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Oct 2018 10:18:44 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9HAIeHE029986;
+        Wed, 17 Oct 2018 10:18:41 GMT
+Received: from mwanda (/129.205.6.86)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Oct 2018 03:18:40 -0700
+Date:   Wed, 17 Oct 2018 13:18:31 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, phil@raspberrypi.org,
+        Eric Anholt <eric@anholt.net>, devel@driverdev.osuosl.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pramod Gurav <gpramod@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
-Message-ID: <20181017101355.GA230639@joelaf.mtv.corp.google.com>
-References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
- <20181016112928.4b52afb5@gandalf.local.home>
- <CAGXu5jLBtBU1eX7tGX1gOVKSFKeLMeoke3bGHUuqxk86dLSnng@mail.gmail.com>
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/7] staging: vc04_services: Some dead code removal
+Message-ID: <20181017101831.b5kvh5jw3sqqhbat@mwanda>
+References: <20181004093747.21750-1-tuomas.tynkkynen@iki.fi>
+ <1715113043.52878.1538821118324@email.1und1.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jLBtBU1eX7tGX1gOVKSFKeLMeoke3bGHUuqxk86dLSnng@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1715113043.52878.1538821118324@email.1und1.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9048 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=733
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810170093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kees,
-
-On Tue, Oct 16, 2018 at 10:02:53AM -0700, Kees Cook wrote:
-> On Tue, Oct 16, 2018 at 8:29 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> > On Tue, 16 Oct 2018 17:08:25 +0530
-> > Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
-> >> One more thing is for pstore dmesg-ramoops, I had to change
-> >> late_initcall to postcore_initcall which brings the question as to why
-> >> we changed to late_initcall?
-> >> Simple git blame shows to support crypto compress api, but is it really
-> >> helpful? A lot of boottime issues can be caught with pstore enabled at
-> >> postcore_initcall rather than late_initcall, this backtrace
-> >> is just one example. Is there any way we could change this?
-> >
-> > Does it break if the crypto is not initialized? Perhaps add a command
-> > line flag to have it happen earlier:
-> >
-> >  ramoops=earlyinit
-> >
-> > and add a postcore_initcall that checks if that flag is set, and if so,
-> > it does the work then, and the late_initcall() will do nothing.
-> >
-> > That way, you can still have unmodified kernels use pstore when it
-> > crashes at boot up.
+On Sat, Oct 06, 2018 at 12:18:38PM +0200, Stefan Wahren wrote:
+> Hi Tuomas,
 > 
-> Even better, if we could find a way to make it work with a late
-> initialization of compression (i.e. postcore_initcall() by default
-> means anything caught would be uncompressed, but anything after
-> late_initcall() would be compressed). I'd be very happy to review
-> patches for that!
+> > Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi> hat am 4. Oktober 2018 um 11:37 geschrieben:
+> > 
+> > 
+> > Drop various pieces of dead code from here and there to get rid of
+> > the remaining users of VCHI_CONNECTION_T. After that we get to drop
+> > entire header files worth of unused code.
+> > 
+> > I've tested on a Raspberry Pi Model B (bcm2835_defconfig) that
+> > snd-bcm2835 can still play analog audio just fine.
+> > 
+> 
+> thanks and i'm fine with your patch series:
+> 
+> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+> 
+> Unfortunately this would break compilation of the downstream vchi
+> drivers like vcsm [1]. Personally i don't want to maintain another
+> one, because i cannot see the gain of the resulting effort.
+> 
+> [1] - https://github.com/raspberrypi/linux/tree/rpi-4.14.y/drivers/char/broadcom/vc_sm
 
-What do you think about the (untested) patch below? It seems to me that it
-should solve the issue of missing early crash dumps, but I have not tested it
-yet. Sai, would you mind trying it out and let me know if you can see the
-early crash dumps properly now?
 
-----8<---
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: [RFC] pstore: allocate compression during late_initcall
+I feel like everyone else already knows the answer but why don't we just
+merge that code into staging?
 
-ramoop's pstore registration (using pstore_register) has to run during
-late_initcall because crypto backend may not be ready during
-postcore_initcall. This causes missing of dmesg crash dumps which could
-have been caught by pstore.
-
-Instead, lets allow ramoops pstore registration earlier, and once crypto
-is ready we can initialize the compression.
-
-Reported-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- fs/pstore/platform.c | 13 +++++++++++++
- fs/pstore/ram.c      |  2 +-
- 2 files changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index 15e99d5a681d..f09066db2d4d 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -780,6 +780,19 @@ void __init pstore_choose_compression(void)
- 	}
- }
- 
-+static int __init pstore_compression_late_init(void)
-+{
-+	/*
-+	 * Check if any pstore backends registered earlier but did not allocate
-+	 * for compression because crypto was not ready, if so then initialize
-+	 * compression.
-+	 */
-+	if (psinfo && !tfm)
-+		allocate_buf_for_compression();
-+	return 0;
-+}
-+late_initcall(pstore_compression_late_init);
-+
- module_param(compress, charp, 0444);
- MODULE_PARM_DESC(compress, "Pstore compression to use");
- 
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index bbd1e357c23d..98e48d1a9776 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -940,7 +940,7 @@ static int __init ramoops_init(void)
- 	ramoops_register_dummy();
- 	return platform_driver_register(&ramoops_driver);
- }
--late_initcall(ramoops_init);
-+postcore_initcall(ramoops_init);
- 
- static void __exit ramoops_exit(void)
- {
--- 
-2.19.1.331.ge82ca0e54c-goog
+regards,
+dan carpenter
 
