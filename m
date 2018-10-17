@@ -2,79 +2,93 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE241ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2470EECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:19:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8061B21477
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:17:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8061B21477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D4F7321486
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:19:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zo82dkkJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4F7321486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbeJRBOU (ORCPT
+        id S1727944AbeJRBPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 21:14:20 -0400
-Received: from mga18.intel.com ([134.134.136.126]:53440 "EHLO mga18.intel.com"
+        Wed, 17 Oct 2018 21:15:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeJRBOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 21:14:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 10:17:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="96076007"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga002.fm.intel.com with ESMTP; 17 Oct 2018 10:17:36 -0700
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH] tpm: fix kdoc for tpm2_flush_context_cmd()
-Date:   Wed, 17 Oct 2018 20:13:31 +0300
-Message-Id: <20181017171331.13393-1-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.14.4
+        id S1727013AbeJRBPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 21:15:43 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0940121477;
+        Wed, 17 Oct 2018 17:19:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539796744;
+        bh=5wuvp4GW/XB8Mln5fn1vNVJR8WnMlp1joJivA7xQwK8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zo82dkkJ70yGxsiTYDH0Z19jGL2gSnnqmuO/eQxdlXW9CsCv5bfkUmJhVJ1TnR29p
+         HIcY0G4cHNqVUXG4mOV7o0+6J5/h3et9cEqpg17Ifuc5j48IhKFrF4DklWXdrDb0FG
+         7LjZTQomigRVmoAoY52OZGmzIWVDvbHvsIVKb28A=
+Date:   Wed, 17 Oct 2018 12:19:02 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] PCI/P2PDMA: Fix NULL check in pci_p2pmem_publish()
+Message-ID: <20181017171902.GH5906@bhelgaas-glaptop.roam.corp.google.com>
+References: <20181017160510.17926-1-logang@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017160510.17926-1-logang@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kdoc for tpm2_flush_context_cmd() was off.
+On Wed, Oct 17, 2018 at 10:05:10AM -0600, Logan Gunthorpe wrote:
+> We should only assign 'p2pmem_published' if 'pdev->p2pdma' is not NULL.
+> The extra check on 'publish' makes no sense.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
 
-Fixes: commit 9aa36b399a50 ("tpm: export tpm2_flush_context_cmd")'
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/char/tpm/tpm2-cmd.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+I folded this into the original commit on pci/peer-to-peer, thanks!
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 3acf4fd4e5a5..26cc31451290 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -352,10 +352,9 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- /**
-  * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
-  * @chip: TPM chip to use
-- * @payload: the key data in clear and encrypted form
-- * @options: authentication values and other options
-+ * @handle: context handle
-+ * @flags: tpm transmit flags - bitmap
-  *
-- * Return: same as with tpm_transmit_cmd
-  */
- void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
- 			    unsigned int flags)
--- 
-2.14.4
-
+> ---
+>  drivers/pci/p2pdma.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index da66c7e31730..d710b5ef65a1 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -678,10 +678,8 @@ EXPORT_SYMBOL_GPL(pci_p2pmem_free_sgl);
+>   */
+>  void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
+>  {
+> -	if (publish && !pdev->p2pdma)
+> -		return;
+> -
+> -	pdev->p2pdma->p2pmem_published = publish;
+> +	if (pdev->p2pdma)
+> +		pdev->p2pdma->p2pmem_published = publish;
+>  }
+>  EXPORT_SYMBOL_GPL(pci_p2pmem_publish);
+>  
+> -- 
+> 2.19.0
+> 
