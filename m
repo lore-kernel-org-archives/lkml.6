@@ -2,228 +2,108 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE3CECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8440ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01AA221526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:04:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01AA221526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6D3A62151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:05:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZTCdQz62"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D3A62151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbeJQQ64 (ORCPT
+        id S1727097AbeJQQ7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 12:58:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51014 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726904AbeJQQ6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 12:58:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 918C5AFBC;
-        Wed, 17 Oct 2018 09:04:09 +0000 (UTC)
-Date:   Wed, 17 Oct 2018 11:04:07 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        davem@davemloft.net, yi.z.zhang@linux.intel.com,
-        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
-        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-Subject: Re: [mm PATCH v3 2/6] mm: Drop meminit_pfn_in_nid as it is redundant
-Message-ID: <20181017090407.GI18839@dhcp22.suse.cz>
-References: <20181015202456.2171.88406.stgit@localhost.localdomain>
- <20181015202703.2171.40829.stgit@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181015202703.2171.40829.stgit@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 17 Oct 2018 12:59:51 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46468 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726904AbeJQQ7u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 12:59:50 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9H8x5Qx068727;
+        Wed, 17 Oct 2018 09:05:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=y7rKbbJdqQCdGCoY1rQMiXNazzJMR6aKmUNiKWKlilc=;
+ b=ZTCdQz62RqBk9evuWTB8Woi9uhBjlw9Zduss5nB5fW5L+eA0l0fy9N5O52iA3tL6R0Q+
+ ++3EjV2v3O0UhtMpsUQ9s96ZAPVcrkgYZEzgkXTBwJBAKfR9AjJPKJrpPEDx3DQ76bQp
+ avNz+Z5aI285lYRbTkPADm18josUI5um0DGvhyu9kfIl92XerrVx6LDn45NNbj7C14wf
+ UxDwfmvet3+jsjcvRV53FS4Nlri6Zhbc4TqozHeBeEArWfugp1sKHH5KC0+eweNz1jry
+ 7Ua34ibyLxJhU+atUn4TK/Clio+hVNNIbol19FSAty/RzOXuHYzAlmeuCHEjN753+Ko6 /g== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2n39brdgyj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Oct 2018 09:05:01 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9H950Gb013026
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Oct 2018 09:05:00 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9H94xAA024720;
+        Wed, 17 Oct 2018 09:05:00 GMT
+Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Oct 2018 02:04:59 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     hch@lst.de, keith.busch@linux.intel.com, ming.lei@redhat.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2 0/3] blk-mq: introduce bio retrieve mechanism
+Date:   Wed, 17 Oct 2018 17:07:09 +0800
+Message-Id: <1539767232-9389-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9048 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=618
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810170082
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 15-10-18 13:27:03, Alexander Duyck wrote:
-> As best as I can tell the meminit_pfn_in_nid call is completely redundant.
-> The deferred memory initialization is already making use of
-> for_each_free_mem_range which in turn will call into __next_mem_range which
-> will only return a memory range if it matches the node ID provided assuming
-> it is not NUMA_NO_NODE.
-> 
-> I am operating on the assumption that there are no zones or pgdata_t
-> structures that have a NUMA node of NUMA_NO_NODE associated with them. If
-> that is the case then __next_mem_range will never return a memory range
-> that doesn't match the zone's node ID and as such the check is redundant.
-> 
-> So one piece I would like to verfy on this is if this works for ia64.
-> Technically it was using a different approach to get the node ID, but it
-> seems to have the node ID also encoded into the memblock. So I am
-> assuming this is okay, but would like to get confirmation on that.
+Hi Jenss
 
-Good catch. Both for_each_free_mem_range and __early_pfn_to_nid rely on
-the memblock layer to properly map ranges to nids. I haven't checked too
-closely whether this was really necessary in the original deferred
-implementatiob by Mel but it is much more clear that it is not needed
-now with the clear iterator.
+This patchset introduces a new bio retrieve mechanism. It will
+flush all the requests, take the bios down from them and end them,
+then submit the bios again later. Then we could
+avoid:
+ - fail requests on the dying hw queues, this could be fatal for
+   filesystem.
+ - depend on storage device to drain the queue before update hw queues.
+   this could introduce hung into nvme_reset_work.
 
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+The 1st patch introduce the bio retrieve mechanism
+The 2nd patch apply the bio retrieve mechanism in updating hw queues
+The 3rd patch unquiesces the queues after updating hw queues in nvme_reset_work
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+V2:
+ - clear BIO_QUEUE_ENTERED of requeued bios (1/3)
+ - sync bio_requeue_work in blk_cleanup_queue (1/3)
+ - discard the unnecessary synchronize_sched (2/3)
+ - discard the 4th patch which is wrong
+ - some misc comment changes
 
-> ---
->  mm/page_alloc.c |   50 ++++++++++++++------------------------------------
->  1 file changed, 14 insertions(+), 36 deletions(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 4bd858d1c3ba..a766a15fad81 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1301,36 +1301,22 @@ int __meminit early_pfn_to_nid(unsigned long pfn)
->  #endif
->  
->  #ifdef CONFIG_NODES_SPAN_OTHER_NODES
-> -static inline bool __meminit __maybe_unused
-> -meminit_pfn_in_nid(unsigned long pfn, int node,
-> -		   struct mminit_pfnnid_cache *state)
-> +/* Only safe to use early in boot when initialisation is single-threaded */
-> +static inline bool __meminit early_pfn_in_nid(unsigned long pfn, int node)
->  {
->  	int nid;
->  
-> -	nid = __early_pfn_to_nid(pfn, state);
-> +	nid = __early_pfn_to_nid(pfn, &early_pfnnid_cache);
->  	if (nid >= 0 && nid != node)
->  		return false;
->  	return true;
->  }
->  
-> -/* Only safe to use early in boot when initialisation is single-threaded */
-> -static inline bool __meminit early_pfn_in_nid(unsigned long pfn, int node)
-> -{
-> -	return meminit_pfn_in_nid(pfn, node, &early_pfnnid_cache);
-> -}
-> -
->  #else
-> -
->  static inline bool __meminit early_pfn_in_nid(unsigned long pfn, int node)
->  {
->  	return true;
->  }
-> -static inline bool __meminit  __maybe_unused
-> -meminit_pfn_in_nid(unsigned long pfn, int node,
-> -		   struct mminit_pfnnid_cache *state)
-> -{
-> -	return true;
-> -}
->  #endif
->  
->  
-> @@ -1459,21 +1445,13 @@ static inline void __init pgdat_init_report_one_done(void)
->   *
->   * Then, we check if a current large page is valid by only checking the validity
->   * of the head pfn.
-> - *
-> - * Finally, meminit_pfn_in_nid is checked on systems where pfns can interleave
-> - * within a node: a pfn is between start and end of a node, but does not belong
-> - * to this memory node.
->   */
-> -static inline bool __init
-> -deferred_pfn_valid(int nid, unsigned long pfn,
-> -		   struct mminit_pfnnid_cache *nid_init_state)
-> +static inline bool __init deferred_pfn_valid(unsigned long pfn)
->  {
->  	if (!pfn_valid_within(pfn))
->  		return false;
->  	if (!(pfn & (pageblock_nr_pages - 1)) && !pfn_valid(pfn))
->  		return false;
-> -	if (!meminit_pfn_in_nid(pfn, nid, nid_init_state))
-> -		return false;
->  	return true;
->  }
->  
-> @@ -1481,15 +1459,14 @@ static inline void __init pgdat_init_report_one_done(void)
->   * Free pages to buddy allocator. Try to free aligned pages in
->   * pageblock_nr_pages sizes.
->   */
-> -static void __init deferred_free_pages(int nid, int zid, unsigned long pfn,
-> +static void __init deferred_free_pages(unsigned long pfn,
->  				       unsigned long end_pfn)
->  {
-> -	struct mminit_pfnnid_cache nid_init_state = { };
->  	unsigned long nr_pgmask = pageblock_nr_pages - 1;
->  	unsigned long nr_free = 0;
->  
->  	for (; pfn < end_pfn; pfn++) {
-> -		if (!deferred_pfn_valid(nid, pfn, &nid_init_state)) {
-> +		if (!deferred_pfn_valid(pfn)) {
->  			deferred_free_range(pfn - nr_free, nr_free);
->  			nr_free = 0;
->  		} else if (!(pfn & nr_pgmask)) {
-> @@ -1509,17 +1486,18 @@ static void __init deferred_free_pages(int nid, int zid, unsigned long pfn,
->   * by performing it only once every pageblock_nr_pages.
->   * Return number of pages initialized.
->   */
-> -static unsigned long  __init deferred_init_pages(int nid, int zid,
-> +static unsigned long  __init deferred_init_pages(struct zone *zone,
->  						 unsigned long pfn,
->  						 unsigned long end_pfn)
->  {
-> -	struct mminit_pfnnid_cache nid_init_state = { };
->  	unsigned long nr_pgmask = pageblock_nr_pages - 1;
-> +	int nid = zone_to_nid(zone);
->  	unsigned long nr_pages = 0;
-> +	int zid = zone_idx(zone);
->  	struct page *page = NULL;
->  
->  	for (; pfn < end_pfn; pfn++) {
-> -		if (!deferred_pfn_valid(nid, pfn, &nid_init_state)) {
-> +		if (!deferred_pfn_valid(pfn)) {
->  			page = NULL;
->  			continue;
->  		} else if (!page || !(pfn & nr_pgmask)) {
-> @@ -1582,12 +1560,12 @@ static int __init deferred_init_memmap(void *data)
->  	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
->  		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
->  		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
-> -		nr_pages += deferred_init_pages(nid, zid, spfn, epfn);
-> +		nr_pages += deferred_init_pages(zone, spfn, epfn);
->  	}
->  	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
->  		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
->  		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
-> -		deferred_free_pages(nid, zid, spfn, epfn);
-> +		deferred_free_pages(spfn, epfn);
->  	}
->  	pgdat_resize_unlock(pgdat, &flags);
->  
-> @@ -1676,7 +1654,7 @@ static int __init deferred_init_memmap(void *data)
->  		while (spfn < epfn && nr_pages < nr_pages_needed) {
->  			t = ALIGN(spfn + PAGES_PER_SECTION, PAGES_PER_SECTION);
->  			first_deferred_pfn = min(t, epfn);
-> -			nr_pages += deferred_init_pages(nid, zid, spfn,
-> +			nr_pages += deferred_init_pages(zone, spfn,
->  							first_deferred_pfn);
->  			spfn = first_deferred_pfn;
->  		}
-> @@ -1688,7 +1666,7 @@ static int __init deferred_init_memmap(void *data)
->  	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
->  		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
->  		epfn = min_t(unsigned long, first_deferred_pfn, PFN_DOWN(epa));
-> -		deferred_free_pages(nid, zid, spfn, epfn);
-> +		deferred_free_pages(spfn, epfn);
->  
->  		if (first_deferred_pfn == epfn)
->  			break;
-> 
+Jianchao Wang(3)
+blk-mq: introduce bio retrieve mechanism
+blk-mq: retrieve bios before update nr_hw_queues
+nvme-pci: unquiesce queues after update hw queues
 
--- 
-Michal Hocko
-SUSE Labs
+
+ block/blk-core.c        |  2 ++
+ block/blk-mq-sched.c    | 88 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ block/blk-mq.c          | 47 ++++++++++++++++++++++++++++++++++++++++++++++-
+ drivers/nvme/host/pci.c |  4 ++--
+ include/linux/blk-mq.h  |  4 ++++
+ include/linux/blkdev.h  |  2 ++
+ 6 files changed, 144 insertions(+), 3 deletions(-)
+
+Thanks
+Jianchao
