@@ -2,84 +2,105 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0721FECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FD8ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0E182150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:00:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mpkO3PZn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E182150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 010D82150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:01:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 010D82150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbeJQU4X (ORCPT
+        id S1727210AbeJQU5U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 16:56:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43944 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726961AbeJQU4X (ORCPT
+        Wed, 17 Oct 2018 16:57:20 -0400
+Received: from gateway24.websitewelcome.com ([192.185.50.252]:21440 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726961AbeJQU5T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 16:56:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Fs1D7wYZueiWIUgIpfYlZttAIkEuB2iER5LXd+yz1Oo=; b=mpkO3PZnNW3F6/YGdANZctrbm
-        e78Dc6tMu3ksZIpZSdhKBlo0Df3bYxb9P6aFzj/nG83Y/Wr+Y11ati/OeaG+lo8GFPxhjOAJ8bYSf
-        OorazqRxy8yln/eLiITveEzbDxZcTn7ZXNE2evpKve5KZAFSJ25N6VtBc/vQoY/QrwsUbuPKULVhX
-        DgNB8sxkuRzQwyktNX58KCfASLyK1I3gAgYXVOCO2D8hnOcroCmczcuB8XzPOJbHDs+a+t7VuVDLR
-        k60mgwu4n+4aASeY7NBhLGdhI/C0pwIdeVh24gAUvsrW4Yyc9FzU6ASQUztHrEAzma3vHtPaPsD94
-        9S9/Yhu/A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gClR1-0004WH-RH; Wed, 17 Oct 2018 13:00:23 +0000
-Date:   Wed, 17 Oct 2018 06:00:22 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     YueHaibing <yuehaibing@huawei.com>, hare@suse.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH -next] advansys: remove set but not used variable
- 'srb_tag' in adv_isr_callback
-Message-ID: <20181017130022.GA3575@bombadil.infradead.org>
-References: <20181017123432.18304-1-yuehaibing@huawei.com>
- <4950b4fe-61b5-e1c3-9d16-7643107857a5@suse.de>
+        Wed, 17 Oct 2018 16:57:19 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 236E91730598
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 08:01:41 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ClSGggxeeBcCXClSHgxc6P; Wed, 17 Oct 2018 08:01:41 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:60694 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gClSF-002JcJ-Hm; Wed, 17 Oct 2018 08:01:39 -0500
+Date:   Wed, 17 Oct 2018 15:01:37 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] net: skbuff.h: Mark expected switch fall-throughs
+Message-ID: <20181017130137.GA739@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4950b4fe-61b5-e1c3-9d16-7643107857a5@suse.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gClSF-002JcJ-Hm
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:60694
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 02:49:50PM +0200, Johannes Thumshirn wrote:
-> On 17/10/18 14:34, YueHaibing wrote:
-> > -	srb_tag = le32_to_cpu(scsiqp->srb_tag);
-> >  	scp = scsi_host_find_tag(boardp->shost, scsiqp->srb_tag);
-> 
-> Shouldn't this be:
-> 	scp = scsi_host_find_tag(boardp->shost,
-> 					le32_to_cpu(scsiqp->srb_tag));
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-I don't think so.  Look at how scsiqp->srb_tag is set:
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ include/linux/skbuff.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- adv_build_req(struct asc_board *boardp, struct scsi_cmnd *scp,
-              ADV_SCSI_REQ_Q **adv_scsiqpp)
- {
-+       u32 srb_tag = scp->request->tag;
-...
-+       scsiqp->srb_tag = srb_tag;
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 119d092..0ba6874 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -3505,13 +3505,19 @@ static inline bool __skb_metadata_differs(const struct sk_buff *skb_a,
+ #define __it(x, op) (x -= sizeof(u##op))
+ #define __it_diff(a, b, op) (*(u##op *)__it(a, op)) ^ (*(u##op *)__it(b, op))
+ 	case 32: diffs |= __it_diff(a, b, 64);
++		 /* fall through */
+ 	case 24: diffs |= __it_diff(a, b, 64);
++		 /* fall through */
+ 	case 16: diffs |= __it_diff(a, b, 64);
++		 /* fall through */
+ 	case  8: diffs |= __it_diff(a, b, 64);
+ 		break;
+ 	case 28: diffs |= __it_diff(a, b, 64);
++		 /* fall through */
+ 	case 20: diffs |= __it_diff(a, b, 64);
++		 /* fall through */
+ 	case 12: diffs |= __it_diff(a, b, 64);
++		 /* fall through */
+ 	case  4: diffs |= __it_diff(a, b, 32);
+ 		break;
+ 	}
+-- 
+2.7.4
 
-If we're not converting it to le32 on the way in, we probably don't want
-to convert it back on the way out.
-
-Please don't make me power up my PA-RISC machine with an Advansys card
-in it, just to find out ...
