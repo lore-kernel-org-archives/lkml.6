@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E038ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E74DECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FE8E214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:49:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FE8E214C3
+	by mail.kernel.org (Postfix) with ESMTP id 31468214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:49:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31468214C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbeJQSoN (ORCPT
+        id S1727266AbeJQSoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:44:13 -0400
-Received: from foss.arm.com ([217.140.101.70]:49640 "EHLO foss.arm.com"
+        Wed, 17 Oct 2018 14:44:20 -0400
+Received: from foss.arm.com ([217.140.101.70]:49658 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726868AbeJQSoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:44:12 -0400
+        id S1726868AbeJQSoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 14:44:20 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 498FD1650;
-        Wed, 17 Oct 2018 03:49:05 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB1991596;
+        Wed, 17 Oct 2018 03:49:12 -0700 (PDT)
 Received: from a75553-lin.blr.arm.com (unknown [10.162.0.175])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 596C23F71D;
-        Wed, 17 Oct 2018 03:49:01 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E01993F71D;
+        Wed, 17 Oct 2018 03:49:08 -0700 (PDT)
 From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Christoffer Dall <christoffer.dall@arm.com>,
@@ -42,9 +42,9 @@ Cc:     Christoffer Dall <christoffer.dall@arm.com>,
         linux-kernel@vger.kernel.org,
         Amit Daniel Kachhap <amit.kachhap@arm.com>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v3 4/7] arm64/kvm: enable pointer authentication cpufeature conditionally
-Date:   Wed, 17 Oct 2018 16:17:57 +0530
-Message-Id: <1539773280-4159-5-git-send-email-amit.kachhap@arm.com>
+Subject: [PATCH v3 5/7] arm64/kvm: control accessibility of ptrauth key registers
+Date:   Wed, 17 Oct 2018 16:17:58 +0530
+Message-Id: <1539773280-4159-6-git-send-email-amit.kachhap@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1539773280-4159-1-git-send-email-amit.kachhap@arm.com>
 References: <1539773280-4159-1-git-send-email-amit.kachhap@arm.com>
@@ -53,8 +53,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to userspace settings, pointer authentication cpufeature
-is enabled/disabled from guests.
+According to userspace settings, ptrauth key registers are conditionally
+present in guest system register list based on user specified flag
+KVM_ARM_VCPU_PTRAUTH.
 
 Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
@@ -62,109 +63,127 @@ Cc: Christoffer Dall <christoffer.dall@arm.com>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
 Cc: kvmarm@lists.cs.columbia.edu
 ---
- arch/arm64/kvm/sys_regs.c | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+ arch/arm64/kvm/sys_regs.c | 42 +++++++++++++++++++++++++++++++-----------
+ 1 file changed, 31 insertions(+), 11 deletions(-)
 
 diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 6af6c7d..ce6144a 100644
+index ce6144a..09302b2 100644
 --- a/arch/arm64/kvm/sys_regs.c
 +++ b/arch/arm64/kvm/sys_regs.c
-@@ -1055,7 +1055,7 @@ static bool access_cntp_cval(struct kvm_vcpu *vcpu,
+@@ -1343,12 +1343,6 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+ 	{ SYS_DESC(SYS_TTBR1_EL1), access_vm_reg, reset_unknown, TTBR1_EL1 },
+ 	{ SYS_DESC(SYS_TCR_EL1), access_vm_reg, reset_val, TCR_EL1, 0 },
+ 
+-	PTRAUTH_KEY(APIA),
+-	PTRAUTH_KEY(APIB),
+-	PTRAUTH_KEY(APDA),
+-	PTRAUTH_KEY(APDB),
+-	PTRAUTH_KEY(APGA),
+-
+ 	{ SYS_DESC(SYS_AFSR0_EL1), access_vm_reg, reset_unknown, AFSR0_EL1 },
+ 	{ SYS_DESC(SYS_AFSR1_EL1), access_vm_reg, reset_unknown, AFSR1_EL1 },
+ 	{ SYS_DESC(SYS_ESR_EL1), access_vm_reg, reset_unknown, ESR_EL1 },
+@@ -1500,6 +1494,14 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+ 	{ SYS_DESC(SYS_FPEXC32_EL2), NULL, reset_val, FPEXC32_EL2, 0x70 },
+ };
+ 
++static const struct sys_reg_desc ptrauth_reg_descs[] = {
++	PTRAUTH_KEY(APIA),
++	PTRAUTH_KEY(APIB),
++	PTRAUTH_KEY(APDA),
++	PTRAUTH_KEY(APDB),
++	PTRAUTH_KEY(APGA),
++};
++
+ static bool trap_dbgidr(struct kvm_vcpu *vcpu,
+ 			struct sys_reg_params *p,
+ 			const struct sys_reg_desc *r)
+@@ -2100,6 +2102,8 @@ static int emulate_sys_reg(struct kvm_vcpu *vcpu,
+ 	r = find_reg(params, table, num);
+ 	if (!r)
+ 		r = find_reg(params, sys_reg_descs, ARRAY_SIZE(sys_reg_descs));
++	if (!r && kvm_arm_vcpu_ptrauth_allowed(vcpu))
++		r = find_reg(params, ptrauth_reg_descs, ARRAY_SIZE(ptrauth_reg_descs));
+ 
+ 	if (likely(r)) {
+ 		perform_access(vcpu, params, r);
+@@ -2213,6 +2217,8 @@ static const struct sys_reg_desc *index_to_sys_reg_desc(struct kvm_vcpu *vcpu,
+ 	r = find_reg_by_id(id, &params, table, num);
+ 	if (!r)
+ 		r = find_reg(&params, sys_reg_descs, ARRAY_SIZE(sys_reg_descs));
++	if (!r && kvm_arm_vcpu_ptrauth_allowed(vcpu))
++		r = find_reg(&params, ptrauth_reg_descs, ARRAY_SIZE(ptrauth_reg_descs));
+ 
+ 	/* Not saved in the sys_reg array and not otherwise accessible? */
+ 	if (r && !(r->reg || r->get_user))
+@@ -2494,18 +2500,22 @@ static int walk_one_sys_reg(const struct sys_reg_desc *rd,
  }
  
- /* Read a sanitised cpufeature ID register by sys_reg_desc */
--static u64 read_id_reg(struct sys_reg_desc const *r, bool raz)
-+static u64 read_id_reg(struct kvm_vcpu *vcpu, struct sys_reg_desc const *r, bool raz)
+ /* Assumed ordered tables, see kvm_sys_reg_table_init. */
+-static int walk_sys_regs(struct kvm_vcpu *vcpu, u64 __user *uind)
++static int walk_sys_regs(struct kvm_vcpu *vcpu, u64 __user *uind,
++			const struct sys_reg_desc *desc, unsigned int len)
  {
- 	u32 id = sys_reg((u32)r->Op0, (u32)r->Op1,
- 			 (u32)r->CRn, (u32)r->CRm, (u32)r->Op2);
-@@ -1066,6 +1066,15 @@ static u64 read_id_reg(struct sys_reg_desc const *r, bool raz)
- 			kvm_debug("SVE unsupported for guests, suppressing\n");
- 
- 		val &= ~(0xfUL << ID_AA64PFR0_SVE_SHIFT);
-+	} else if (id == SYS_ID_AA64ISAR1_EL1) {
-+		const u64 ptrauth_mask = (0xfUL << ID_AA64ISAR1_APA_SHIFT) |
-+					 (0xfUL << ID_AA64ISAR1_API_SHIFT) |
-+					 (0xfUL << ID_AA64ISAR1_GPA_SHIFT) |
-+					 (0xfUL << ID_AA64ISAR1_GPI_SHIFT);
-+		if (!kvm_arm_vcpu_ptrauth_allowed(vcpu)) {
-+			kvm_debug("ptrauth unsupported for guests, suppressing\n");
-+			val &= ~ptrauth_mask;
-+		}
- 	} else if (id == SYS_ID_AA64MMFR1_EL1) {
- 		if (val & (0xfUL << ID_AA64MMFR1_LOR_SHIFT))
- 			kvm_debug("LORegions unsupported for guests, suppressing\n");
-@@ -1086,7 +1095,7 @@ static bool __access_id_reg(struct kvm_vcpu *vcpu,
- 	if (p->is_write)
- 		return write_to_read_only(vcpu, p, r);
- 
--	p->regval = read_id_reg(r, raz);
-+	p->regval = read_id_reg(vcpu, r, raz);
- 	return true;
- }
- 
-@@ -1115,17 +1124,17 @@ static u64 sys_reg_to_index(const struct sys_reg_desc *reg);
-  * are stored, and for set_id_reg() we don't allow the effective value
-  * to be changed.
-  */
--static int __get_id_reg(const struct sys_reg_desc *rd, void __user *uaddr,
--			bool raz)
-+static int __get_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
-+			void __user *uaddr, bool raz)
- {
- 	const u64 id = sys_reg_to_index(rd);
--	const u64 val = read_id_reg(rd, raz);
-+	const u64 val = read_id_reg(vcpu, rd, raz);
- 
- 	return reg_to_user(uaddr, &val, id);
- }
- 
--static int __set_id_reg(const struct sys_reg_desc *rd, void __user *uaddr,
--			bool raz)
-+static int __set_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
-+			void __user *uaddr, bool raz)
- {
- 	const u64 id = sys_reg_to_index(rd);
+ 	const struct sys_reg_desc *i1, *i2, *end1, *end2;
+ 	unsigned int total = 0;
+ 	size_t num;
  	int err;
-@@ -1136,7 +1145,7 @@ static int __set_id_reg(const struct sys_reg_desc *rd, void __user *uaddr,
+ 
++	if (desc == ptrauth_reg_descs && !kvm_arm_vcpu_ptrauth_allowed(vcpu))
++		return total;
++
+ 	/* We check for duplicates here, to allow arch-specific overrides. */
+ 	i1 = get_target_table(vcpu->arch.target, true, &num);
+ 	end1 = i1 + num;
+-	i2 = sys_reg_descs;
+-	end2 = sys_reg_descs + ARRAY_SIZE(sys_reg_descs);
++	i2 = desc;
++	end2 = desc + len;
+ 
+ 	BUG_ON(i1 == end1 || i2 == end2);
+ 
+@@ -2533,7 +2543,10 @@ unsigned long kvm_arm_num_sys_reg_descs(struct kvm_vcpu *vcpu)
+ {
+ 	return ARRAY_SIZE(invariant_sys_regs)
+ 		+ num_demux_regs()
+-		+ walk_sys_regs(vcpu, (u64 __user *)NULL);
++		+ walk_sys_regs(vcpu, (u64 __user *)NULL, sys_reg_descs,
++				ARRAY_SIZE(sys_reg_descs))
++		+ walk_sys_regs(vcpu, (u64 __user *)NULL, ptrauth_reg_descs,
++				ARRAY_SIZE(ptrauth_reg_descs));
+ }
+ 
+ int kvm_arm_copy_sys_reg_indices(struct kvm_vcpu *vcpu, u64 __user *uindices)
+@@ -2548,7 +2561,12 @@ int kvm_arm_copy_sys_reg_indices(struct kvm_vcpu *vcpu, u64 __user *uindices)
+ 		uindices++;
+ 	}
+ 
+-	err = walk_sys_regs(vcpu, uindices);
++	err = walk_sys_regs(vcpu, uindices, sys_reg_descs, ARRAY_SIZE(sys_reg_descs));
++	if (err < 0)
++		return err;
++	uindices += err;
++
++	err = walk_sys_regs(vcpu, uindices, ptrauth_reg_descs, ARRAY_SIZE(ptrauth_reg_descs));
+ 	if (err < 0)
  		return err;
+ 	uindices += err;
+@@ -2582,6 +2600,7 @@ void kvm_sys_reg_table_init(void)
+ 	BUG_ON(check_sysreg_table(cp15_regs, ARRAY_SIZE(cp15_regs)));
+ 	BUG_ON(check_sysreg_table(cp15_64_regs, ARRAY_SIZE(cp15_64_regs)));
+ 	BUG_ON(check_sysreg_table(invariant_sys_regs, ARRAY_SIZE(invariant_sys_regs)));
++	BUG_ON(check_sysreg_table(ptrauth_reg_descs, ARRAY_SIZE(ptrauth_reg_descs)));
  
- 	/* This is what we mean by invariant: you can't change it. */
--	if (val != read_id_reg(rd, raz))
-+	if (val != read_id_reg(vcpu, rd, raz))
- 		return -EINVAL;
+ 	/* We abuse the reset function to overwrite the table itself. */
+ 	for (i = 0; i < ARRAY_SIZE(invariant_sys_regs); i++)
+@@ -2623,6 +2642,7 @@ void kvm_reset_sys_regs(struct kvm_vcpu *vcpu)
  
- 	return 0;
-@@ -1145,25 +1154,25 @@ static int __set_id_reg(const struct sys_reg_desc *rd, void __user *uaddr,
- static int get_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
- 		      const struct kvm_one_reg *reg, void __user *uaddr)
- {
--	return __get_id_reg(rd, uaddr, false);
-+	return __get_id_reg(vcpu, rd, uaddr, false);
- }
+ 	/* Generic chip reset first (so target could override). */
+ 	reset_sys_reg_descs(vcpu, sys_reg_descs, ARRAY_SIZE(sys_reg_descs));
++	reset_sys_reg_descs(vcpu, ptrauth_reg_descs, ARRAY_SIZE(ptrauth_reg_descs));
  
- static int set_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
- 		      const struct kvm_one_reg *reg, void __user *uaddr)
- {
--	return __set_id_reg(rd, uaddr, false);
-+	return __set_id_reg(vcpu, rd, uaddr, false);
- }
- 
- static int get_raz_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
- 			  const struct kvm_one_reg *reg, void __user *uaddr)
- {
--	return __get_id_reg(rd, uaddr, true);
-+	return __get_id_reg(vcpu, rd, uaddr, true);
- }
- 
- static int set_raz_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
- 			  const struct kvm_one_reg *reg, void __user *uaddr)
- {
--	return __set_id_reg(rd, uaddr, true);
-+	return __set_id_reg(vcpu, rd, uaddr, true);
- }
- 
- /* sys_reg_desc initialiser for known cpufeature ID registers */
+ 	table = get_target_table(vcpu->arch.target, true, &num);
+ 	reset_sys_reg_descs(vcpu, table, num);
 -- 
 2.7.4
 
