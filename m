@@ -2,91 +2,105 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C84ECDE3C
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEE1ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68F4A208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:45:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68F4A208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A9B1208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:50:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DrtlBXQC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A9B1208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbeJRHnp (ORCPT
+        id S1727349AbeJRHsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 03:43:45 -0400
-Received: from mga18.intel.com ([134.134.136.126]:18151 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727309AbeJRHno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 03:43:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 16:45:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="82066623"
-Received: from unknown (HELO jsakkine-mobl1) ([10.249.254.40])
-  by orsmga007.jf.intel.com with ESMTP; 17 Oct 2018 16:45:28 -0700
-Date:   Thu, 18 Oct 2018 02:45:27 +0300 (EEST)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-X-Sender: jsakkine@jsakkine-mobl1
-To:     Pavel Machek <pavel@ucw.cz>
-cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 19/19] x86/sgx: Driver documentation
-In-Reply-To: <20181015205436.GA28500@amd>
-Message-ID: <alpine.DEB.2.21.1810180205490.5022@jsakkine-mobl1>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com> <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com> <20181015205436.GA28500@amd>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 18 Oct 2018 03:48:07 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46277 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbeJRHsH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 03:48:07 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r64-v6so13938923pfb.13
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 16:50:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2VouO04QRaIBjzO+RSNJ9hEYO7dF/UmzI2scWHWf/bk=;
+        b=DrtlBXQCohvGNZnl38voyWsyjdZguj/ylNWj8RZbD35CKbzr42acg/caPP/BRff+le
+         ucoTmyJ5Hj0z69RXaDoyPfKMNuy5fYjDUi1YBAwJE0Gfh5B0VKiyYMHw9V94D96crR02
+         e7XewtcER2t2Glj1eBZdeZ+aOa6ikl5pbGB18=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2VouO04QRaIBjzO+RSNJ9hEYO7dF/UmzI2scWHWf/bk=;
+        b=RtZUikX1k7qjoQB2o7JEDyBgYm8qu/SNDp96WyugCLFOu3+8eI8aR3DoTIcSzTnz3A
+         dnD4VBw3VpO150vw+uJ6s7aTnyvksOez3WPmsVX+7g97Lwl10G+bMMjE8thClcV8523e
+         gUcwYKFPuncZerjDvqLogZAj9HgAoZneVFC33iBSOPn03MkQETCj0zEKyGJQPSV2algJ
+         7TR+tFVZ80Xhkw+FOjQiFZoC0rHMM+YjkI2WWuOTqdP/IrV78Vyijc9j73t5PH0dVROC
+         e0J7h4SG28aB+a1dL7MJyks6+QAtcj7rA69papO5yKjG68FVbqoR2fwsPS7AiYGAJmoH
+         yYmg==
+X-Gm-Message-State: ABuFfogEv7Y5BiwNbKs/QvOSC5pYh86ndFEB3F6qrIq1krXZcEo80KQl
+        dwJ+RHMfv/QgodXXK69mSYrnBg==
+X-Google-Smtp-Source: ACcGV61cFSfdBntPaVH1T9pN6hAm56tnIi+5nz/5xF7SjsQrRsb87YoutZ0ki2ho/BT1VYXOE5Zjig==
+X-Received: by 2002:a63:de46:: with SMTP id y6-v6mr26182145pgi.198.1539820200300;
+        Wed, 17 Oct 2018 16:50:00 -0700 (PDT)
+Received: from rodete-desktop-imager.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id 187-v6sm28544629pfu.129.2018.10.17.16.49.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 16:49:58 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 16:49:56 -0700
+From:   Brian Norris <briannorris@chromium.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [RFC PATCH] soc: qcom: rmtfs_mem: Control remoteproc from
+ rmtfs_mem
+Message-ID: <20181017234954.GA179852@rodete-desktop-imager.corp.google.com>
+References: <20180925080607.30565-1-bjorn.andersson@linaro.org>
+ <20180925172943.GA118699@ban.mtv.corp.google.com>
+ <20181002193445.GP2523@minitux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181002193445.GP2523@minitux>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Oct 2018, Pavel Machek wrote:
-> On Tue 2018-09-25 16:06:56, Jarkko Sakkinen wrote:
->> +Intel(R) SGX is a set of CPU instructions that can be used by applications to
->> +set aside private regions of code and data. The code outside the enclave is
->> +disallowed to access the memory inside the enclave by the CPU access control.
->> +In a way you can think that SGX provides inverted sandbox. It protects the
->> +application from a malicious host.
->
-> Well, recently hardware had some problems keeping its
-> promises. So... what about rowhammer, meltdown and spectre?
+Hi Bjorn,
 
-Doesn't hardware always have this problem over time?
+Sorry for getting back to this late.
 
-> Which ones apply, which ones do not, and on what cpu generations?
+On Tue, Oct 02, 2018 at 12:34:45PM -0700, Bjorn Andersson wrote:
+> On Tue 25 Sep 10:29 PDT 2018, Brian Norris wrote:
+> For the record; I did consider making the rmtfs implementation the one
+> driving the remoteproc state through /sys/class/remoteproc, but that
+> would not cope with abnormal termination of the rmtfs implementation.
 
-Definitely should be refined.
+It could, if you had rmtfs always power cycle the modem on startup. But
+we'd be in a bad situation in the meantime, so that might not be great.
 
-Meltdowns approach AFAIK does not work because reads outside the enclave
-will always have a predefined value (-1) but only if the page is present,
-which was later exploited in the Foreshadow attack.
+> I will work up a patch making the remoteproc driver observe the presence
+> of the RMTFS_QMI_SERVICE and see how that looks.
 
-> Encryption, that sounds nice, but it is hard to do right. If SGX
-> protected code changes single bit in its memory, how many bits will be
-> changed in physical RAM?
+I believe Sibi Sankar already sent a v2 with the rmtfs driver doing this
+instead. He also replied to this email with slightly different
+suggestions; I'll try to reply to both of those.
 
-512-bit blocks and merkle tree based mac. It is pretty well documented
-in https://eprint.iacr.org/2016/204.pdf. I'll take not to myself to add
-this to the references.
-
-Thanks for the feedback. The ocumentation is hard to drive forward w/o it.
-
-/Jarkko
+Thanks,
+Brian
