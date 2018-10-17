@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24458ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60070ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D54AA2151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:03:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25A9E2151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:03:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gR94kALd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D54AA2151D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O4IetBcJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A9E2151D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbeJQV7R (ORCPT
+        id S1727482AbeJQV70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:59:17 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34670 "EHLO
+        Wed, 17 Oct 2018 17:59:26 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46207 "EHLO
         mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbeJQV7Q (ORCPT
+        with ESMTP id S1727050AbeJQV70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:59:16 -0400
-Received: by mail-lf1-f66.google.com with SMTP id n26-v6so1207119lfl.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 07:03:24 -0700 (PDT)
+        Wed, 17 Oct 2018 17:59:26 -0400
+Received: by mail-lf1-f66.google.com with SMTP id p143-v6so8862580lfp.13
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 07:03:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2OVLIv4pvK4XbXbssL49o+sbDOxAj20Y8ait05owHZA=;
-        b=gR94kALd7TJgf5KSzQ0BeBDO/KnKugVpX9MaEe+IiXNjdnMswjUbw438EFPpKm5AlY
-         ZZ/kZg6v3/jiTOVcfi87k7bW9a6ENuj0Z9+4rG5ko1xiZhNhLgfHSb660qUcKzeTSWrk
-         MxtQtUJwYi67/q3bWfr7p5XqoGMYBdzC9ltXQ=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=FYD5OgbslaSN2IMFW2M3a1vvfCw0/W1XvkhV0Wehs50=;
+        b=O4IetBcJP4FShQawjKO6gD6lkk5p+jXVhrvJjpxnlEbgSrp6i/UyAMQVXvVlNYshZa
+         EguhuuvDlRAJCOPsDRf0dztrSz2A7vIkoDmMjSp2yUrhMgf9aU7SipV+RsEUNZozm+Hj
+         f8KkWtM8gK//jIKmnWh8upOytH4pJ5PUNe+3k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2OVLIv4pvK4XbXbssL49o+sbDOxAj20Y8ait05owHZA=;
-        b=Ab5kvUdH7YXOpAZYFSOUxF38726OmeURzer7A6pKVWyGrbXRymryxJky+71fy7LXK7
-         nI+uZGIJr9XcjR8xr6V+5RHjle7rOu+6ChbCr85rIwio/YTYZAyn5f6dxZNQP5cUdJ+4
-         YV3unqgulmpYPNgL7hBNadWrYtnqG8n8/8Jhx9kldJdcmMSaJZhfPOu4jLvWNzKa1rbh
-         OezCIjd00k7DkTN+YAQf9xE4eOX9lavVfCrXFMoRVFN2x9A1UXTS/2as9JMDQ7xsyJE0
-         m1urP53469M8NE0LxfDY32B2hYs7/IiCOYc51ej+AEgBKU78cQQkW8Ak+bjvpPa+KVhG
-         VG+w==
-X-Gm-Message-State: ABuFfog2wzbmkUiR9Jxoj7v1tSvHPS5zaISGZ4kbaFw88Z120wBEphTi
-        b9fbPL4deXqWRmH5Se+FY+W02w==
-X-Google-Smtp-Source: ACcGV63+7PHqdPWkwXKKgC0n01Ja+9wkJ/YFluFvwY90yj5/x8DubZbWZNEG4KjqPiKeWd/s8CvWew==
-X-Received: by 2002:a19:e013:: with SMTP id x19-v6mr15182454lfg.89.1539785003149;
-        Wed, 17 Oct 2018 07:03:23 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=FYD5OgbslaSN2IMFW2M3a1vvfCw0/W1XvkhV0Wehs50=;
+        b=V7U3YKapbOaIzkEcyUoJSqIkMKnlWSobh0KCpk73kHle7scQ9BmUvEIBZL4lejU5RI
+         EaQLR5NvQFkyp9lH5hKR+/tKwOTUnRKnznahYMRO5hHZw+knJNsp9ZS64LC9lzgZ5vrM
+         KKvoWRdo7soOtuz56adBwEmRF5my4yvJSYOxxJWQb86JA/fM1hN1+RAnPuepmCWlyuKc
+         mgqaAZj2t9YLLtchX6DVXQKew/KGWmAlhA4hdZnb8NjF9Ij4GuherlEfzSbTFd/HtczZ
+         2X9k9zS3oz2kXxCgQtlsDgSLCEm+9BZgcuYrD3ZX6xn+a4JrHPeKZpLZeAXxlVIE0pLW
+         Q6TA==
+X-Gm-Message-State: ABuFfogg+kiA55wAj5oP+2f7dPr9hFs73Zfjc/FEIvacc9ZxW3rHEZGR
+        Hd5+wbKqthbSrEb7Saon/7Ct3w==
+X-Google-Smtp-Source: ACcGV63oXudWyvUqX71gA0NBw/l59Ng2ymIskw4Cf2YDo5cX7uwVlXjZXnw2R1nnePcu2vSpH/RvvQ==
+X-Received: by 2002:a19:c189:: with SMTP id r131-v6mr14739969lff.59.1539785012982;
+        Wed, 17 Oct 2018 07:03:32 -0700 (PDT)
 Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
-        by smtp.gmail.com with ESMTPSA id y3-v6sm4093739ljy.95.2018.10.17.07.03.22
+        by smtp.gmail.com with ESMTPSA id o101-v6sm3931820lfg.53.2018.10.17.07.03.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 07:03:22 -0700 (PDT)
+        Wed, 17 Oct 2018 07:03:32 -0700 (PDT)
 From:   Anders Roxell <anders.roxell@linaro.org>
 To:     linux@armlinux.org.uk, gregkh@linuxfoundation.org,
         akpm@linux-foundation.org
@@ -63,10 +63,12 @@ Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
         tj@kernel.org, Anders Roxell <anders.roxell@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 1/2] serial: set suppress_bind_attrs flag only if builtin
-Date:   Wed, 17 Oct 2018 16:03:10 +0200
-Message-Id: <20181017140311.28679-1-anders.roxell@linaro.org>
+Subject: [PATCH 2/2] writeback: don't decrement wb->refcnt if !wb->bdi
+Date:   Wed, 17 Oct 2018 16:03:11 +0200
+Message-Id: <20181017140311.28679-2-anders.roxell@linaro.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181017140311.28679-1-anders.roxell@linaro.org>
+References: <20181017140311.28679-1-anders.roxell@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,10 +76,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the test 'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled,
-arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init).
-devtmpfs gets killed because we try to remove a file and decrement the
-wb reference count before the noop_backing_device_info gets initialized.
+When enabling CONFIG_DEBUG_TEST_DRIVER_REMOVE devtmpfs gets killed
+because we try to remove a file and decrement the wb reference count
+before the noop_backing_device_info gets initialized.
+
+Since arch_initcall(pl011_init) came before
+subsys_initcall(default_bdi_init), devtmpfs' handle_remove() crashes
+because the reference count is a NULL pointer only because bdi->wb
+hasn't been initialized yet.
 
 [    0.332075] Serial: AMBA PL011 UART driver
 [    0.485276] 9000000.pl011: ttyAMA0 at MMIO 0x9000000 (irq = 39, base_baud = 0) is a PL011 rev1
@@ -131,62 +137,30 @@ wb reference count before the noop_backing_device_info gets initialized.
 [    0.528720] Code: 92800002 aa1403e0 d538d081 8b010000 (c85f7c04)
 [    0.529367] ---[ end trace 5a3dee47727f877c ]---
 
-Rework to set suppress_bind_attrs flag to avoid removing the device when
-CONFIG_DEBUG_TEST_DRIVER_REMOVE=y. This applies for pic32_uart and
-xilinx_uartps as well.
+Rework so that wb_put have an extra check if wb->bdi before decrement
+wb->refcnt and also add a WARN_ON to get a warning if it happens again
+in other drivers.
 
+Fixes: 52ebea749aae ("writeback: make backing_dev_info host cgroup-specific bdi_writebacks")
 Cc: Arnd Bergmann <arnd@arndb.de>
 Co-developed-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- drivers/tty/serial/amba-pl011.c    | 2 ++
- drivers/tty/serial/pic32_uart.c    | 1 +
- drivers/tty/serial/xilinx_uartps.c | 1 +
- 3 files changed, 4 insertions(+)
+ include/linux/backing-dev-defs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index ebd33c0232e6..89ade213a1a9 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -2780,6 +2780,7 @@ static struct platform_driver arm_sbsa_uart_platform_driver = {
- 		.name	= "sbsa-uart",
- 		.of_match_table = of_match_ptr(sbsa_uart_of_match),
- 		.acpi_match_table = ACPI_PTR(sbsa_uart_acpi_match),
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
- 	},
- };
- 
-@@ -2808,6 +2809,7 @@ static struct amba_driver pl011_driver = {
- 	.drv = {
- 		.name	= "uart-pl011",
- 		.pm	= &pl011_dev_pm_ops,
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
- 	},
- 	.id_table	= pl011_ids,
- 	.probe		= pl011_probe,
-diff --git a/drivers/tty/serial/pic32_uart.c b/drivers/tty/serial/pic32_uart.c
-index fd80d999308d..0bdf1687983f 100644
---- a/drivers/tty/serial/pic32_uart.c
-+++ b/drivers/tty/serial/pic32_uart.c
-@@ -919,6 +919,7 @@ static struct platform_driver pic32_uart_platform_driver = {
- 	.driver		= {
- 		.name	= PIC32_DEV_NAME,
- 		.of_match_table	= of_match_ptr(pic32_serial_dt_ids),
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_PIC32),
- 	},
- };
- 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 0e3dae461f71..806a953ac8d4 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1717,6 +1717,7 @@ static struct platform_driver cdns_uart_platform_driver = {
- 		.name = CDNS_UART_NAME,
- 		.of_match_table = cdns_uart_of_match,
- 		.pm = &cdns_uart_dev_pm_ops,
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_XILINX_PS_UART),
- 		},
- };
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 9a6bc0951cfa..20721550d32a 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -258,7 +258,7 @@ static inline void wb_get(struct bdi_writeback *wb)
+  */
+ static inline void wb_put(struct bdi_writeback *wb)
+ {
+-	if (wb != &wb->bdi->wb)
++	if (!WARN_ON(!wb->bdi) && wb != &wb->bdi->wb)
+ 		percpu_ref_put(&wb->refcnt);
+ }
  
 -- 
 2.19.1
