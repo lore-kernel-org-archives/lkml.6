@@ -4,154 +4,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EA6ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D1EECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ACE12086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:13:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90318213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:15:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t3sVszuw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ACE12086E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UOTjXQv3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90318213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727446AbeJRGLf (ORCPT
+        id S1727370AbeJRGNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 02:11:35 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40382 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbeJRGLf (ORCPT
+        Thu, 18 Oct 2018 02:13:08 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:33045 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbeJRGNI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 02:11:35 -0400
-Received: by mail-wm1-f66.google.com with SMTP id z204-v6so3755885wmc.5;
-        Wed, 17 Oct 2018 15:13:50 -0700 (PDT)
+        Thu, 18 Oct 2018 02:13:08 -0400
+Received: by mail-yw1-f68.google.com with SMTP id m127-v6so11036065ywb.0;
+        Wed, 17 Oct 2018 15:15:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=z1nZgFuSAWF4xak9H7pvf35PBoIZxIEAvPRBU2/+bmg=;
-        b=t3sVszuw3/PkJBe/BCtjH9klhqUCOAjVpQIPDErgDVRS/88mjVVdLgUwhhA3Bgqgii
-         3v25watMk7PT3bg7CjwMVmMtnMzCJtfByrw5eHxBrtIQkDCfM2fKW4FogvZMGjSOjQXz
-         fLbZN2vDdu4duC3miQP7FbENwlhoP/dVXAJIQTVQ7EDgQVqR4REzCAegu25oi/XkaVa6
-         +RobBQQE6SkGyoaKtyrT0qTXHu0Mdz3YJQIlQtqECgvE3P1DB6XAy0Xquvw9T6xXc6Uj
-         9ckulN0jj3lOKHh/90wSOGXlWS/MDLl8tzK1Lj+7hC2Uy+MB8aMKqODcQzRVMGlqanX5
-         R/8Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a6gNPQuA8wjAYjUFtN6tALZQinYGmG/L6svoW1XvOXg=;
+        b=UOTjXQv36ESUeeaV5SEQVXnQYLeTATGS8j+2FrVEf/g7k6IMynZNxomwEeHJNXvsLg
+         B4wAeEta5vbHIuZ0fCfrdszdN7CIyRli1OX1P6S26bme2slZ8mnnHx2H9HOV/Gdq8Tdp
+         rTu5QYnarGRmhbfrGosGFRHmdyF5CkJW3oylfcWNZ62HldG4sMWXgY+IKjBpmygcCLNu
+         QZESKuvBF8sLbyyclfl3SRas/f7TFJsoVx9f6l6gtlOQhYuESFFtj4rxhIc8T+Nh2+c4
+         5Hxb/zXfH64ymYTrthvGcezKXjHEsRmm20MA2ft/4WUWVY714AY/W5SscFbr2RnE5XpQ
+         b40w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=z1nZgFuSAWF4xak9H7pvf35PBoIZxIEAvPRBU2/+bmg=;
-        b=fTaLDHN/kMwxohwHlJelwwuyMpkFWPnGQCtlkN3dlA49RSiS+No4RJirJMrwfDCD6M
-         RNFDLvn2AICQN1mwR4YwnC5ljsxb0jEtqlJdPPHJk3iAXVVat+28YJijYiVg9NFwHqM+
-         /q14LbPyh9qjLD/AqHH7+50Zb4FeX6NzQzoPiAj+OX1szUMBZGmar1phJpxRpWslYkSf
-         E2DBsXJlUUvdtFPSsNiEyTTMPhFB5JrzKbFPpXeZkbzQEi/9lP40ib1tlCddGcHgOAmZ
-         invzjjVD6TDXybdp9meAuBaImSJOiSRsZmCO3HUcnuIWPwTYua6M2Is/R5o+7AnXEEtV
-         6qTw==
-X-Gm-Message-State: ABuFfohYVBqyH0ncEkXz3HBcfn4W2uRSQcAMQD2dzH1l5JdifWirttfQ
-        RRvaCxhKm7NxvbReIluAB1g7awmdjso=
-X-Google-Smtp-Source: ACcGV60z3CMIBlFKJasl3rbqtxz/tScx3N2QaIo93sNtIBzIYR+3G1/MuGc+jFRY73Dttfbyio7ycQ==
-X-Received: by 2002:a1c:4385:: with SMTP id q127-v6mr4672146wma.111.1539814429367;
-        Wed, 17 Oct 2018 15:13:49 -0700 (PDT)
-Received: from [172.16.8.139] (host-89-243-172-161.as13285.net. [89.243.172.161])
-        by smtp.gmail.com with ESMTPSA id 33-v6sm5509982wra.48.2018.10.17.15.13.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 15:13:48 -0700 (PDT)
-From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Subject: Re: [PATCH 31/34] vfs: syscall: Add fspick() to select a superblock
- for reconfiguration [ver #12]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>, linux-api@vger.kernel.org,
-        torvalds@linux-foundation.org, ebiederm@xmission.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mszeredi@redhat.com
-References: <f6f2553e-f64d-9c26-4290-baf43e5f533b@gmail.com>
- <19866.1539782101@warthog.procyon.org.uk>
- <68a2107f-bf70-055b-86cf-1ba2ba9422bf@gmail.com>
- <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
- <153754766004.17872.9829232103614083565.stgit@warthog.procyon.org.uk>
- <9b8bf436-65de-13b9-0002-0479d11c18ca@gmail.com>
- <20181013061141.GR32577@ZenIV.linux.org.uk>
- <28710.1539782412@warthog.procyon.org.uk>
- <15867.1539791153@warthog.procyon.org.uk>
-Message-ID: <240b2620-02cd-89de-4c22-293af6c5ac8b@gmail.com>
-Date:   Wed, 17 Oct 2018 23:13:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a6gNPQuA8wjAYjUFtN6tALZQinYGmG/L6svoW1XvOXg=;
+        b=silA9IjzMiIR9ougp4QfzuzVatGR3v4tQd8DU4j/VlYkXsD3tnzVWjj5pDajEF0UX6
+         bscobOJcBR2Zv+YFyBLyDi0o3nywK1D2R9xXAGuqCv8pWnofrJOZEcVbngDmgtlyh6zB
+         WhjLc1rANj9nLFkv+h+AqtiSyUar+bEFVQO+yLcbJxJLr8+CKqYLOz4MQF4PE7wxTZz8
+         /DCrHMDZXgDNoBfETSl0TVEPoiqI3+gwLbyHQd+0o1e2WZUh0nyygD5aNhjVdhGaq12a
+         hrJQ5pOmrJkEtjkOG7tBMnb4eEtlzUetYDZO1NjnPkT6jczLzlIKdZS2YBwFc53du9M5
+         u04w==
+X-Gm-Message-State: ABuFfojYBzhroy64jBpKLujCYaLr38jDJsldPJopTQwb5tSokU0XopmH
+        tWVomXkmjGooXQD8LdWnyLx/xw2qRolw2y17Oro=
+X-Google-Smtp-Source: ACcGV60nHhQYJuFu+owFTz6emgxTumx2Gji6JBc40peQopz5KZR9QTbOkoPf2oMe+gToR9UnG7jpju1mN0DAeA6h1GE=
+X-Received: by 2002:a0d:c947:: with SMTP id l68-v6mr16732891ywd.404.1539814524342;
+ Wed, 17 Oct 2018 15:15:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <15867.1539791153@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+References: <CAJfpegsxFUGeczcC-pzK0WWROjv48_PvXtNun-f5QJMoUDn1Dw@mail.gmail.com>
+ <006890C4-64D4-4DE2-A1F0-335FFFD585BB@dilger.ca> <CAJfpeguvJZbP83mSULc74Yhpp_CPMBW1XvcgbvCbLnF7QCncUA@mail.gmail.com>
+In-Reply-To: <CAJfpeguvJZbP83mSULc74Yhpp_CPMBW1XvcgbvCbLnF7QCncUA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 18 Oct 2018 01:15:13 +0300
+Message-ID: <CAOQ4uxjqS3R_0O6gKVFEUJR7BvB+rpaHekjZm+fhMA+7on8AwQ@mail.gmail.com>
+Subject: Re: statx(2) API and documentation
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Andreas Dilger <adilger@dilger.ca>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[resent, hopefully with slightly less formatting damage]
+On Wed, Oct 17, 2018 at 10:12 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-On 17/10/2018 16:45, David Howells wrote:
-
-> Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
+> >> - STATX_ALL definition is unclear, can this change, or is it fixed?
+> >> If it's the former, than that's a backward compatibility nightmare.
+> >> If it's the latter, then what's the point?
+> >
+> > The value can change over time.  It is intended to reflect the current
+> > state of affairs at the time the userspace program and kernel are compiled.
+> > The value sent from userspace lets the kernel know what fields are in
+> > the userspace struct, so it doesn't try to set fields that aren't there.
 >
->> I agree. I'm happy to see this is using the same check as do_remount().
->>
->>
->> * change filesystem flags. dir should be a physical root of filesystem.
->> * If you've mounted a non-root directory somewhere and want to do remount
->> * on it - tough luck.
->> */
-> Are you suggesting that it should only work at the ultimate root of a
-> superblock and not a bind mount somewhere within?
+> What's the point of a userspace program specifying STATX_ALL?  Without
+> a way to programmatically query the interface definition it's useless:
+> there's no way to guess which mask bit corresponds to which field, and
+> what that field represents.
 >
-> That's tricky to make work for NFS because s_root is a dummy dentry.
+> And there will be programs out there which specify STATX_ALL without
+> considering that in the future it may become slower as it is now due
+> to a recompile.
 >
-> David
+> So what's the point exactly?
+>
+> > The value in the kernel allows masking off new fields from userspace that
+> > it doesn't understand.
+>
+> Okay, but that has nothing to do with the UAPI.  Even as an internal
+> flag we should be careful, as it might grow uses which can have
+> similar issues as the userspace one above.
+>
 
+FYI, I identified a similar anti-pattern in fanotify UAPI when I wanted to
+add new flags and did not want to change the UAPI _ALL_ constants.
+This is how we plan to solve it:
+https://github.com/amir73il/linux/commit/8c2b1acadb88ee4505ccc8bfdc665863111fb4cc
 
-Retro-actively: I do not suggest that.
-
-I tried to answer this question in my reply to Eric correcting me. Eric 
-was right to correct me.  I now understand the comment above 
-do_remount() is incorrect.  I re-reviewed your diff in light of that.  I 
-re-endorse your diff as a way to solve the problem I raised.
-
-(I think it would be useful to remove the misleading comment above 
-do_remount(), to avoid future confusion.)
-
-
-> @@ -186,6 +186,10 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags
->   	if (ret < 0)
->   		goto err;
->   
-> +	ret = -EINVAL;
-> +	if (target.mnt->mnt_root != target.dentry)
-> +		goto err_path;
-> +
->   	fc = vfs_new_fs_context(target.dentry->d_sb->s_type, target.dentry,
->   				0, 0, FS_CONTEXT_FOR_RECONFIGURE);
->   	if (IS_ERR(fc)) {
-
-
-( the "if" statement it adds to fspick() is equivalent to the second 
-"if" statement in do_remount(): )
-
-static int do_remount(struct path *path, int ms_flags, int sb_flags,
-		      int mnt_flags, void *data)
-{
-	int err;
-	struct super_block *sb = path->mnt->mnt_sb;
-	struct mount *mnt = real_mount(path->mnt);
-
-	if (!check_mnt(mnt))
-		return -EINVAL;
-
-	if (path->dentry != path->mnt->mnt_root)
-		return -EINVAL;
-
-Thanks
-
-Alan
+Thanks,
+Amir.
