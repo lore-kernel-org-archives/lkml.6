@@ -2,97 +2,83 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC05ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D59D4ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8945721526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:17:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8945721526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A72E22150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:17:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A72E22150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbeJQXNP (ORCPT
+        id S1727494AbeJQXNc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:13:15 -0400
-Received: from mga18.intel.com ([134.134.136.126]:43202 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727090AbeJQXNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:13:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 08:17:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,392,1534834800"; 
-   d="scan'208";a="83363268"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.154]) ([10.7.198.154])
-  by orsmga006.jf.intel.com with ESMTP; 17 Oct 2018 08:17:05 -0700
-Subject: Re: [mm PATCH v3 3/6] mm: Use memblock/zone specific iterator for
- handling deferred page init
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        davem@davemloft.net, yi.z.zhang@linux.intel.com,
-        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
-        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-References: <20181015202456.2171.88406.stgit@localhost.localdomain>
- <20181015202709.2171.75580.stgit@localhost.localdomain>
- <20181017091154.GK18839@dhcp22.suse.cz>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <ff1add3a-446b-1e30-c4c2-cfab035f11f2@linux.intel.com>
-Date:   Wed, 17 Oct 2018 08:17:05 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 17 Oct 2018 19:13:32 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33252 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727095AbeJQXNb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:13:31 -0400
+Received: by mail-qt1-f196.google.com with SMTP id q40-v6so30468548qte.0;
+        Wed, 17 Oct 2018 08:17:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GJhucte1JFR8QoTgASjpGTR2zSKbY51DYcyxve2bl5o=;
+        b=KxPB/LgoUiaq7E3iqqwudlEzMbVVpBCi4vS9KXZ+zNbdjtbf0D+T+uH1MAefzFC/8m
+         9OmNzhGwhvdNFGe8kmPM42I1dRL9LqXSv5RtznKVxYmLecl/5xIwBh6rWIE02T0yUHZp
+         +DwhmM7riN3xCPn9VO+AhmB+w2B1aBkvDHQMLPdXAy5vIvdVGUfcF97/YhMK0TE5vCGF
+         C+Q90dGaCTHEitQ24/NEatgJQgTlMR0KUAoqsqyBk5mvlFtAk7QOawPda1It4HMo34BQ
+         JrYUdMn3yDVYK+WI7H2N+2asWyaX66EBCUEFB5c4RYoeg0/SIFrlOum9GL3myBtmlEKD
+         WCIA==
+X-Gm-Message-State: ABuFfogOzAWNbtzBaUDNiQDQP0Dug/XBlll2LClyTATRjgPw3f4YNNJp
+        DUzXdReVT9xAFt3ApL7cb/odypNHrtO1wq4x7FY=
+X-Google-Smtp-Source: ACcGV60ZHQ3RBQCC/HvlNpvDDjaHR/0qjq4xyYeu/zbU71xt1ID42y91ZXPaUvXiQLPEVehHVIZaxRXqivVuR2+dlHo=
+X-Received: by 2002:ac8:2bf0:: with SMTP id n45-v6mr25707902qtn.152.1539789441913;
+ Wed, 17 Oct 2018 08:17:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181017091154.GK18839@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1539655731.git.ren_guo@c-sky.com> <efb6c9bb87f68c6f579ef497096086413effa5c2.1539655732.git.ren_guo@c-sky.com>
+In-Reply-To: <efb6c9bb87f68c6f579ef497096086413effa5c2.1539655732.git.ren_guo@c-sky.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 17 Oct 2018 17:17:05 +0200
+Message-ID: <CAK8P3a2x_ECC0bjYGUHm5mO9KrWviyWg8xVWNqXkSeNmpjdDxA@mail.gmail.com>
+Subject: Re: [PATCH V9 11/21] csky: Atomic operations
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        David Miller <davem@davemloft.net>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com,
+        andrea.parri@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 2:11 AM, Michal Hocko wrote:
-> On Mon 15-10-18 13:27:09, Alexander Duyck wrote:
->> This patch introduces a new iterator for_each_free_mem_pfn_range_in_zone.
->>
->> This iterator will take care of making sure a given memory range provided
->> is in fact contained within a zone. It takes are of all the bounds checking
->> we were doing in deferred_grow_zone, and deferred_init_memmap. In addition
->> it should help to speed up the search a bit by iterating until the end of a
->> range is greater than the start of the zone pfn range, and will exit
->> completely if the start is beyond the end of the zone.
->>
->> This patch adds yet another iterator called
->> for_each_free_mem_range_in_zone_from and then uses it to support
->> initializing and freeing pages in groups no larger than MAX_ORDER_NR_PAGES.
->> By doing this we can greatly improve the cache locality of the pages while
->> we do several loops over them in the init and freeing process.
->>
->> We are able to tighten the loops as a result since we only really need the
->> checks for first_init_pfn in our first iteration and after that we can
->> assume that all future values will be greater than this. So I have added a
->> function called deferred_init_mem_pfn_range_in_zone that primes the
->> iterators and if it fails we can just exit.
-> 
-> Numbers please.
-> 
-> Besides that, this adds a lot of code and I am not convinced the result
-> is so much better to justify that.
-If I recall most of the gains are due to better cache locality. Instead 
-of running through all of memory once for init, and once for freeing 
-this patch has us doing it in MAX_ORDER_NR_PAGES sized chunks. So the 
-advantage is that we can keep most of the pages structs in the L2 cache 
-at least on x86 processors to avoid having to go to memory as much.
+On Tue, Oct 16, 2018 at 5:02 AM Guo Ren <ren_guo@c-sky.com> wrote:
+>
+> This patch adds atomic, cmpxchg, spinlock files.
+>
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
 
-I'll run performance numbers per patch today and try to make certain I 
-have a line mentioning the delta for each patch in the v4 patch set.
+I'd wait for Peter to give his final Ack here.
 
-- Alex
+     Arnd
