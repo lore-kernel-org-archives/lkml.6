@@ -7,191 +7,187 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C43ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 561B7ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 132132151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BBB821528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:58:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NZpJ2o2O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 132132151D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KWht7aTR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BBB821528
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbeJQQxR (ORCPT
+        id S1727219AbeJQQxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 12:53:17 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40100 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbeJQQxR (ORCPT
+        Wed, 17 Oct 2018 12:53:37 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36279 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbeJQQxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 12:53:17 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181017085834euoutp028baae7162b3e2e3a480f5b44889bf589~eWasogqg21870518705euoutp021;
-        Wed, 17 Oct 2018 08:58:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181017085834euoutp028baae7162b3e2e3a480f5b44889bf589~eWasogqg21870518705euoutp021
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539766714;
-        bh=KZ/e2xySQS+OE+AFMvIGc6tBNmknZ1uPpkiJ7OxGnvg=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=NZpJ2o2Ox2Y+es08qKpIVPY0XCkHjDeIa7NuOpewB8TJA/PYTX0t0ETyhY0Fuxdmd
-         gNSSBgL+YzYJOns5zhTR5F6IiSIFtnjgyBu38bvJh1YHylFGOuQr04/E8LwvkM1NLE
-         Br3jJqSRIl4e3s7ktclgxbxNZyoSzLirYPHtaLtA=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181017085833eucas1p285833f4f82de46a976d7d673518a7b35~eWasIwXnZ0823608236eucas1p2T;
-        Wed, 17 Oct 2018 08:58:33 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 99.43.04441.9B9F6CB5; Wed, 17
-        Oct 2018 09:58:33 +0100 (BST)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181017085832eucas1p23dbb86230149a13634b8a091c3b1301f~eWarb_6p90824808248eucas1p2C;
-        Wed, 17 Oct 2018 08:58:32 +0000 (GMT)
-X-AuditID: cbfec7f2-5c9ff70000001159-8e-5bc6f9b958e7
-Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E6.C8.04128.8B9F6CB5; Wed, 17
-        Oct 2018 09:58:32 +0100 (BST)
-Received: from AMDC2768.DIGITAL.local ([106.120.43.17]) by
-        eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
-        (built May  5 2014)) with ESMTPA id <0PGQ00HKSJLJEQ40@eusync4.samsung.com>;
-        Wed, 17 Oct 2018 09:58:32 +0100 (BST)
-From:   Andrzej Hajda <a.hajda@samsung.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, andy.shevchenko@gmail.com,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH v2 1/3] driver core: add probe_err log helper
-Date:   Wed, 17 Oct 2018 10:58:24 +0200
-Message-id: <20181017085824.30806-1-a.hajda@samsung.com>
-X-Mailer: git-send-email 2.18.0
-In-reply-to: <CAHp75VecquoNrzOuRvWcZ-Qa1b-5P0V0MWq=sNj-SnVcd2EhRw@mail.gmail.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsWy7djP87o7fx6LNrj0Stri1rpzrBYvJxxm
-        tNg4Yz2rxdSHT9gsmhevZ7NYOG05o8Wmx9dYLS7vmsNmsfbIXXaLuV+mMjtweeycdZfdY9Oq
-        TjaP/XPXsHtsXlLv8X7fVTaPvi2rGD0+b5ILYI/isklJzcksSy3St0vgyrjw+wprwSPRiuf/
-        nrI0MJ4V7GLk5JAQMJHYsLOdrYuRi0NIYAWjxJtdh6Gcz4wSlyf0scFUvf/8mhEisYxR4tTq
-        b1DOf0aJvjVnGUGq2AQ0Jf5uvgnWISJgLNF/dhY7SBGzwBsmiScPpjCBJIQFbCV+9c8FK2IR
-        UJVYvX0jK4jNK2AhMf1cHwvEOnmJh8fbwYZyCgRL9C6YBxVfwSbRuVKpi5EDyHaROLCCCyIs
-        LPHq+BZ2CFtG4vLkbqjyeommmVeYQW6QEOhglDixeDnUO9YSh49fBNvLLMAnMWnbdGaImbwS
-        HW1CECUeEtuajkKDYgmjRPO1PcwTGCUXMDKsYhRPLS3OTU8tNsxLLdcrTswtLs1L10vOz93E
-        CIzY0/+Of9rB+PVS0iFGAQ5GJR7eHWLHooVYE8uKK3MPMUpwMCuJ8GYuBgrxpiRWVqUW5ccX
-        leakFh9ilOZgURLnXTZvY7SQQHpiSWp2ampBahFMlomDU6qBMVGjZ4ZuqAVT2kzlrNmcWSwL
-        E5c5vHk3e5vxiqDi0HUvPcttc0+8WSjOsO5r0on3Elltm5crbnssks2k9Hm9xlY/zZpikwWS
-        CY7Sh0LOs5X+dlj5hefvc3OxdVYn2/hCxd9u1+1heZwnLGJd2fwrRHKq2JSp7xZKtCsx/Ge7
-        LalnJ/HLu15RiaU4I9FQi7moOBEAjXLxs9QCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPLMWRmVeSWpSXmKPExsVy+t/xa7o7fh6LNpj+3dLi1rpzrBYvJxxm
-        tNg4Yz2rxdSHT9gsmhevZ7NYOG05o8Wmx9dYLS7vmsNmsfbIXXaLuV+mMjtweeycdZfdY9Oq
-        TjaP/XPXsHtsXlLv8X7fVTaPvi2rGD0+b5ILYI/isklJzcksSy3St0vgyrjw+wprwSPRiuf/
-        nrI0MJ4V7GLk5JAQMJF4//k1I4gtJLCEUeLQA+UuRi4gu5FJ4vrVNawgCTYBTYm/m2+ygdgi
-        AsYS/WdnsYMUMQu8Y5KY9eQFWLewgK3Er/65YEUsAqoSq7dvBGvmFbCQmH6ujwVim7zEw+Pt
-        YPWcAsESPe8vsUFsDpD4fHky6wRGngWMDKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzECg23b
-        sZ9bdjB2vQs+xCjAwajEw7tD7Fi0EGtiWXFl7iFGCQ5mJRHezMVAId6UxMqq1KL8+KLSnNTi
-        Q4zSHCxK4rznDSqjhATSE0tSs1NTC1KLYLJMHJxSDYwHzpxOKXbYdeubV6jHkhWx8wwYTtsp
-        ndCpPRF+Ma2p3HPWRqb4v1P2v3c6MU9DzPDa4bwnlys+rejQSWs2em0WcFBup3/G3qXl5xI5
-        kp0M1GNO/mU6sOpX+ayABVsZX6zLaNlw29m7q2jm/Qu1Hx4UJ/Xej27yvGSwxShvbYOJktCj
-        6qeTDxsqsRRnJBpqMRcVJwIA999RMTICAAA=
-X-CMS-MailID: 20181017085832eucas1p23dbb86230149a13634b8a091c3b1301f
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181017085832eucas1p23dbb86230149a13634b8a091c3b1301f
-References: <CAHp75VecquoNrzOuRvWcZ-Qa1b-5P0V0MWq=sNj-SnVcd2EhRw@mail.gmail.com>
-        <CGME20181017085832eucas1p23dbb86230149a13634b8a091c3b1301f@eucas1p2.samsung.com>
+        Wed, 17 Oct 2018 12:53:36 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l81-v6so12873697pfg.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 01:58:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=uD+DH1P0SFFdY+Fa3qAgij6eAcAFeaVCmZBUuVfGQX4=;
+        b=KWht7aTRlkiKCBtRfVeJNsP4i4VUhahGY5ijojCW63jtUpOs4tO1YQPPfBRq28ztKf
+         pwbjKA+NcHMq8buohff8sKTcAm83Kq4FsjvkNQ8NruvsG8+UC9EEZTm1B4i1M1GZzYKV
+         /TGgaHI/3co+Gf+NZmGh6yKSrf0Lb5Ptunwso=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uD+DH1P0SFFdY+Fa3qAgij6eAcAFeaVCmZBUuVfGQX4=;
+        b=a7kYSUbkXi/Ev5Sz4Xd+Nbwn6C+TRIAksg+uhZEtXYlEHQJx+VMxbmzy//ZEMaWIsH
+         SHf9ahJvLocuBwi32YMIRzHLOO6Ds27GaxuKMQX9aJ90n4M1ZBvsvMdqFjEXrEoWB2gf
+         QN8WZMZVgC0BGLcD/H5SyLEAJO/1ir5IpHXuAw/+Z1LHRyTBhBju2iM77LaknVjBQ8vy
+         vsT6YA7VMci5IlO44YRLSsZYh6vBxYP2ZiAvGsx5GZPWL59TeTbxe745pTBWi24fBjlC
+         pPz9OrLVJkt4Hdiab1eHCPOKIPlgBl4WRYc/Nd30FS7IrMuTEe28GrG8VIPx5hHe29p8
+         VVQA==
+X-Gm-Message-State: ABuFfogQUGOTGztErFLpRcc+50gLyY8oqieKhBVBXcwlwng5QiUao9CX
+        ImDzBxnstHfNumtjYdjn8bB/
+X-Google-Smtp-Source: ACcGV60qBnultztrjkNHwdH05ny71X4T7UVJPkAsnQ7nnm6Q6mWRPLq2U4LFEdHzL+DnQc8fyM1B6g==
+X-Received: by 2002:a63:5c1f:: with SMTP id q31-v6mr23803403pgb.452.1539766734448;
+        Wed, 17 Oct 2018 01:58:54 -0700 (PDT)
+Received: from vovoy-z840.tpe.corp.google.com ([2401:fa00:1:b:d89e:cfa6:3c8:e61b])
+        by smtp.gmail.com with ESMTPSA id 84-v6sm28477983pfs.108.2018.10.17.01.58.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 01:58:53 -0700 (PDT)
+From:   Kuo-Hsin Yang <vovoy@chromium.org>
+To:     vovoy@chromium.org
+Cc:     akpm@linux-foundation.org, chris@chris-wilson.co.uk,
+        corbet@lwn.net, dave.hansen@intel.com, hoegsberg@chromium.org,
+        hughd@google.com, intel-gfx@lists.freedesktop.org,
+        joonas.lahtinen@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, marcheu@chromium.org, mhocko@suse.com,
+        peterz@infradead.org
+Subject: [PATCH v2] shmem, drm/i915: mark pinned shmemfs pages as unevictable
+Date:   Wed, 17 Oct 2018 16:58:01 +0800
+Message-Id: <20181017085801.220742-1-vovoy@chromium.org>
+X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
+In-Reply-To: <20181016174300.197906-1-vovoy@chromium.org>
+References: <20181016174300.197906-1-vovoy@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During probe every time driver gets resource it should usually check for error
-printk some message if it is not -EPROBE_DEFER and return the error. This
-pattern is simple but requires adding few lines after any resource acquisition
-code, as a result it is often omited or implemented only partially.
-probe_err helps to replace such code sequences with simple call, so code:
-	if (err != -EPROBE_DEFER)
-		dev_err(dev, ...);
-	return err;
-becomes:
-	return probe_err(dev, err, ...);
+The i915 driver uses shmemfs to allocate backing storage for gem
+objects. These shmemfs pages can be pinned (increased ref count) by
+shmem_read_mapping_page_gfp(). When a lot of pages are pinned, vmscan
+wastes a lot of time scanning these pinned pages. In some extreme case,
+all pages in the inactive anon lru are pinned, and only the inactive
+anon lru is scanned due to inactive_ratio, the system cannot swap and
+invokes the oom-killer. Mark these pinned pages as unevictable to speed
+up vmscan.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+By exporting shmem_unlock_mapping, drivers can: 1. mark a shmemfs
+address space as unevictable with mapping_set_unevictable(), pages in
+the address space will be moved to unevictable list in vmscan. 2. mark
+an address space as evictable with mapping_clear_unevictable(), and move
+these pages back to evictable list with shmem_unlock_mapping().
 
+This patch was inspired by Chris Wilson's change [1].
+
+[1]: https://patchwork.kernel.org/patch/9768741/
+
+Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
 ---
-v2:
-  - added error value to log message,
-  - fixed code style,
-  - added EXPORT_SYMBOL_GPL,
-  - Added R-B by Javier (I hope the changes did not invalidate it).
----
- drivers/base/core.c    | 37 +++++++++++++++++++++++++++++++++++++
- include/linux/device.h |  2 ++
- 2 files changed, 39 insertions(+)
+Changes for v2:
+ Squashed the two patches.
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 04bbcd779e11..aa6f3229d066 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -3067,6 +3067,43 @@ define_dev_printk_level(_dev_info, KERN_INFO);
+ Documentation/vm/unevictable-lru.rst | 4 +++-
+ drivers/gpu/drm/i915/i915_gem.c      | 8 ++++++++
+ mm/shmem.c                           | 2 ++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/vm/unevictable-lru.rst b/Documentation/vm/unevictable-lru.rst
+index fdd84cb8d511..a812fb55136d 100644
+--- a/Documentation/vm/unevictable-lru.rst
++++ b/Documentation/vm/unevictable-lru.rst
+@@ -143,7 +143,7 @@ using a number of wrapper functions:
+ 	Query the address space, and return true if it is completely
+ 	unevictable.
  
- #endif
+-These are currently used in two places in the kernel:
++These are currently used in three places in the kernel:
  
-+/**
-+ * probe_err - probe error check and log helper
-+ * @dev: the pointer to the struct device
-+ * @err: error value to test
-+ * @fmt: printf-style format string, not ended with newline
-+ * @...: arguments as specified in the format string
-+ *
-+ * This helper implements common pattern present in probe functions for error
-+ * checking: print message if the error is not -EPROBE_DEFER and propagate it.
-+ * It replaces code sequence:
-+ * 	if (err != -EPROBE_DEFER)
-+ * 		dev_err(dev, ...);
-+ * 	return err;
-+ * with
-+ * 	return probe_err(dev, err, ...);
-+ *
-+ * Returns @err.
-+ *
-+ */
-+int probe_err(const struct device *dev, int err, const char *fmt, ...)
-+{
-+	struct va_format vaf;
-+	va_list args;
+  (1) By ramfs to mark the address spaces of its inodes when they are created,
+      and this mark remains for the life of the inode.
+@@ -154,6 +154,8 @@ These are currently used in two places in the kernel:
+      swapped out; the application must touch the pages manually if it wants to
+      ensure they're in memory.
+ 
++ (3) By the i915 driver to mark pinned address space until it's unpinned.
 +
-+	if (err == -EPROBE_DEFER)
-+		return err;
-+
-+	va_start(args, fmt);
-+	vaf.fmt = fmt;
-+	vaf.va = &args;
-+	dev_err(dev, "%pV, %d\n", &vaf, err);
-+	va_end(args);
-+
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(probe_err);
-+
- static inline bool fwnode_is_primary(struct fwnode_handle *fwnode)
+ 
+ Detecting Unevictable Pages
+ ---------------------------
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index fcc73a6ab503..e0ff5b736128 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -2390,6 +2390,7 @@ i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
  {
- 	return fwnode && !IS_ERR(fwnode->secondary);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 90224e75ade4..06c2c797d132 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1577,6 +1577,8 @@ do {									\
- 	WARN_ONCE(condition, "%s %s: " format, \
- 			dev_driver_string(dev), dev_name(dev), ## arg)
+ 	struct sgt_iter sgt_iter;
+ 	struct page *page;
++	struct address_space *mapping;
  
-+int probe_err(const struct device *dev, int err, const char *fmt, ...);
+ 	__i915_gem_object_release_shmem(obj, pages, true);
+ 
+@@ -2409,6 +2410,10 @@ i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
+ 	}
+ 	obj->mm.dirty = false;
+ 
++	mapping = file_inode(obj->base.filp)->i_mapping;
++	mapping_clear_unevictable(mapping);
++	shmem_unlock_mapping(mapping);
 +
- /* Create alias, so I can be autoloaded. */
- #define MODULE_ALIAS_CHARDEV(major,minor) \
- 	MODULE_ALIAS("char-major-" __stringify(major) "-" __stringify(minor))
+ 	sg_free_table(pages);
+ 	kfree(pages);
+ }
+@@ -2551,6 +2556,7 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
+ 	 * Fail silently without starting the shrinker
+ 	 */
+ 	mapping = obj->base.filp->f_mapping;
++	mapping_set_unevictable(mapping);
+ 	noreclaim = mapping_gfp_constraint(mapping, ~__GFP_RECLAIM);
+ 	noreclaim |= __GFP_NORETRY | __GFP_NOWARN;
+ 
+@@ -2664,6 +2670,8 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
+ err_pages:
+ 	for_each_sgt_page(page, sgt_iter, st)
+ 		put_page(page);
++	mapping_clear_unevictable(mapping);
++	shmem_unlock_mapping(mapping);
+ 	sg_free_table(st);
+ 	kfree(st);
+ 
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 446942677cd4..d1ce34c09df6 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -786,6 +786,7 @@ void shmem_unlock_mapping(struct address_space *mapping)
+ 		cond_resched();
+ 	}
+ }
++EXPORT_SYMBOL_GPL(shmem_unlock_mapping);
+ 
+ /*
+  * Remove range of pages and swap entries from radix tree, and free them.
+@@ -3874,6 +3875,7 @@ int shmem_lock(struct file *file, int lock, struct user_struct *user)
+ void shmem_unlock_mapping(struct address_space *mapping)
+ {
+ }
++EXPORT_SYMBOL_GPL(shmem_unlock_mapping);
+ 
+ #ifdef CONFIG_MMU
+ unsigned long shmem_get_unmapped_area(struct file *file,
 -- 
-2.18.0
+2.19.1.331.ge82ca0e54c-goog
 
