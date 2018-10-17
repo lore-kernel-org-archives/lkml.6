@@ -2,75 +2,140 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E45DBC5ACC6
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAB3C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2B802150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:02:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZgeOQxk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B802150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 492682151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 06:03:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 492682151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbeJQN45 (ORCPT
+        id S1727152AbeJQN54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 09:56:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49742 "EHLO mail.kernel.org"
+        Wed, 17 Oct 2018 09:57:56 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:46386 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbeJQN44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 09:56:56 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD5E821521;
-        Wed, 17 Oct 2018 06:02:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539756176;
-        bh=uDr33l50Z5i+I5XCgjmDt5cKY2gHdrctNNq2igEYTxw=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=TZgeOQxkBg6NcWSZrux8i9Kw0GudenYNZ6Ehka/Z+4zhujXLEmHhIN450kZaeh9OI
-         +rXYjO4Y59B4BnHwXxNy1HSqsAQxqzYlkfSLKv0kqkyGTun0K10GUU58ZDX1auZdRW
-         KCMKAFsHsxqZAWc5JtocEA6kGjfezfh+OBAWNuoo=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        afaerber@suse.de, mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180810095113.25292-10-manivannan.sadhasivam@linaro.org>
-Cc:     linux-clk@vger.kernel.org, liuwei@actions-semi.com,
-        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
-        devicetree@vger.kernel.org, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
-        bdong@ucrobotics.com, manivannanece23@gmail.com,
-        thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
-        pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
- <20180810095113.25292-10-manivannan.sadhasivam@linaro.org>
-Message-ID: <153975617621.5275.9640335448212639842@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 9/9] clk: actions: Add Actions Semi S900 SoC Reset Management
- Unit support
-Date:   Tue, 16 Oct 2018 23:02:56 -0700
+        id S1726429AbeJQN54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 09:57:56 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BEA6E2001C2;
+        Wed, 17 Oct 2018 08:03:54 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6D2AD20019B;
+        Wed, 17 Oct 2018 08:03:48 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7143D402AE;
+        Wed, 17 Oct 2018 14:03:40 +0800 (SGT)
+From:   Peng Ma <peng.ma@nxp.com>
+To:     vkoul@kernel.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        leoyang.li@nxp.com, dan.j.williams@intel.com, zw@zh-kernel.org,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, Wen He <wen.he_1@nxp.com>,
+        Peng Ma <peng.ma@nxp.com>
+Subject: [v9 1/7] dmaengine: fsldma: Replace DMA_IN/OUT by FSL_DMA_IN/OUT
+Date:   Wed, 17 Oct 2018 13:59:51 +0800
+Message-Id: <20181017055957.542-1-peng.ma@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2018-08-10 02:51:13)
-> Add Reset Management Unit (RMU) support for Actions Semi S900 SoC.
-> =
+From: Wen He <wen.he_1@nxp.com>
 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+This patch implement a standard macro call functions is
+used to NXP dma drivers.
 
-Applied to clk-next
+Signed-off-by: Wen He <wen.he_1@nxp.com>
+Signed-off-by: Peng Ma <peng.ma@nxp.com>
+---
+change in v9:
+	- no
+
+ drivers/dma/fsldma.c |   16 ++++++++--------
+ drivers/dma/fsldma.h |    4 ++--
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/dma/fsldma.c b/drivers/dma/fsldma.c
+index 1117b51..39871e0 100644
+--- a/drivers/dma/fsldma.c
++++ b/drivers/dma/fsldma.c
+@@ -53,42 +53,42 @@
+ 
+ static void set_sr(struct fsldma_chan *chan, u32 val)
+ {
+-	DMA_OUT(chan, &chan->regs->sr, val, 32);
++	FSL_DMA_OUT(chan, &chan->regs->sr, val, 32);
+ }
+ 
+ static u32 get_sr(struct fsldma_chan *chan)
+ {
+-	return DMA_IN(chan, &chan->regs->sr, 32);
++	return FSL_DMA_IN(chan, &chan->regs->sr, 32);
+ }
+ 
+ static void set_mr(struct fsldma_chan *chan, u32 val)
+ {
+-	DMA_OUT(chan, &chan->regs->mr, val, 32);
++	FSL_DMA_OUT(chan, &chan->regs->mr, val, 32);
+ }
+ 
+ static u32 get_mr(struct fsldma_chan *chan)
+ {
+-	return DMA_IN(chan, &chan->regs->mr, 32);
++	return FSL_DMA_IN(chan, &chan->regs->mr, 32);
+ }
+ 
+ static void set_cdar(struct fsldma_chan *chan, dma_addr_t addr)
+ {
+-	DMA_OUT(chan, &chan->regs->cdar, addr | FSL_DMA_SNEN, 64);
++	FSL_DMA_OUT(chan, &chan->regs->cdar, addr | FSL_DMA_SNEN, 64);
+ }
+ 
+ static dma_addr_t get_cdar(struct fsldma_chan *chan)
+ {
+-	return DMA_IN(chan, &chan->regs->cdar, 64) & ~FSL_DMA_SNEN;
++	return FSL_DMA_IN(chan, &chan->regs->cdar, 64) & ~FSL_DMA_SNEN;
+ }
+ 
+ static void set_bcr(struct fsldma_chan *chan, u32 val)
+ {
+-	DMA_OUT(chan, &chan->regs->bcr, val, 32);
++	FSL_DMA_OUT(chan, &chan->regs->bcr, val, 32);
+ }
+ 
+ static u32 get_bcr(struct fsldma_chan *chan)
+ {
+-	return DMA_IN(chan, &chan->regs->bcr, 32);
++	return FSL_DMA_IN(chan, &chan->regs->bcr, 32);
+ }
+ 
+ /*
+diff --git a/drivers/dma/fsldma.h b/drivers/dma/fsldma.h
+index 4787d48..982845b 100644
+--- a/drivers/dma/fsldma.h
++++ b/drivers/dma/fsldma.h
+@@ -223,10 +223,10 @@ static void out_le64(u64 __iomem *addr, u64 val)
+ }
+ #endif
+ 
+-#define DMA_IN(fsl_chan, addr, width)					\
++#define FSL_DMA_IN(fsl_chan, addr, width)				\
+ 		(((fsl_chan)->feature & FSL_DMA_BIG_ENDIAN) ?		\
+ 			in_be##width(addr) : in_le##width(addr))
+-#define DMA_OUT(fsl_chan, addr, val, width)				\
++#define FSL_DMA_OUT(fsl_chan, addr, val, width)			\
+ 		(((fsl_chan)->feature & FSL_DMA_BIG_ENDIAN) ?		\
+ 			out_be##width(addr, val) : out_le##width(addr, val))
+ 
+-- 
+1.7.1
 
