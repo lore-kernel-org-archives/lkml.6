@@ -2,117 +2,119 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3A1ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328F1ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC2721523
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:02:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9860214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:02:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u/6mX1Tv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC2721523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OjT5spgC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9860214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbeJQP5F (ORCPT
+        id S1727866AbeJQP5R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:57:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51260 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbeJQP5E (ORCPT
+        Wed, 17 Oct 2018 11:57:17 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54158 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727787AbeJQP5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:57:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=DSIcN8qvKnhJpO2lDoKlSVpfkVyqz30hx1fZYoixgSg=; b=u/6mX1TvMw8AdPho/rmSRqorzT
-        kXVR0CCU+M1Y4bbWm8f+lgDZRNR4TwqFs9Y3GWuK+ydrNqU5BhbtVBvR0djiWYBQc2jghEfFet0CP
-        h+E4l+5lNFTtAegER7DLVr4KDp9VK4eW2yjWN6Bomq/dBd70yg9BK7ARTJDCUHA+nSL8kgbmvsWSS
-        XaPoRGDrihh3DsK2+lEYCYwQHVH+XtuoMZ9f4henXgfJoxifdBbtc+RAYM833AMmt6brR0NqFJVoo
-        Uy+eY2oUBk1FQX+2U1ChxFrWEBWWYHabd8RAnJjbvXYKzmij2UGoe6zx0roLJSwOH7QqYBP6tPlox
-        U9nGemPw==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gCgmi-0003O9-51; Wed, 17 Oct 2018 08:02:28 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alex.bou9@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-kbuild@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 8/8] kconfig: remove CONFIG_MCA leftovers
-Date:   Wed, 17 Oct 2018 10:02:01 +0200
-Message-Id: <20181017080201.10866-9-hch@lst.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181017080201.10866-1-hch@lst.de>
-References: <20181017080201.10866-1-hch@lst.de>
+        Wed, 17 Oct 2018 11:57:02 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5013B1277;
+        Wed, 17 Oct 2018 10:02:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1539763351;
+        bh=i8tQelRIexuQA8qiqi7BaH93AXnrPtlzelfeQfbOi/o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OjT5spgC5+uo8Krs/CjO1PErFDFvNgeDileHmOmr9biC4EFfGsQttBWaEzTZ+Ubfq
+         CQmUlwqxYBZbV/+5ktbO02wMqGa0QWj+w3CGyKH0VTElRvWtZNOeofOMBrKIQw8P13
+         4Z8Zv7b2cX76PllUl12AAs2zRmQ/mxIwcN4ED2xA=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Heng-Ruey Hsu <henryhsu@chromium.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jcliang@chromium.org, tfiga@chromium.org
+Subject: Re: [PATCH] media: uvcvideo: Add boottime clock support
+Date:   Wed, 17 Oct 2018 11:02:40 +0300
+Message-ID: <13883852.6N9L7C0n48@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181017075242.21790-1-henryhsu@chromium.org>
+References: <20181017075242.21790-1-henryhsu@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/powerpc/Kconfig | 4 ----
- drivers/scsi/Kconfig | 6 +++---
- 2 files changed, 3 insertions(+), 7 deletions(-)
+Hi Heng-Ruey,
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index f2001fff14d1..f3ec13765639 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -944,10 +944,6 @@ config FSL_GTM
- 	help
- 	  Freescale General-purpose Timers support
- 
--# Yes MCA RS/6000s exist but Linux-PPC does not currently support any
--config MCA
--	bool
--
- config PCI_DOMAINS
- 	def_bool PCI
- 
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 7c097006c54d..d3734c54aec9 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -535,7 +535,7 @@ config SCSI_HPTIOP
- 
- config SCSI_BUSLOGIC
- 	tristate "BusLogic SCSI support"
--	depends on (PCI || ISA || MCA) && SCSI && ISA_DMA_API && VIRT_TO_BUS
-+	depends on (PCI || ISA) && SCSI && ISA_DMA_API && VIRT_TO_BUS
- 	---help---
- 	  This is support for BusLogic MultiMaster and FlashPoint SCSI Host
- 	  Adapters. Consult the SCSI-HOWTO, available from
-@@ -1142,12 +1142,12 @@ config SCSI_LPFC_DEBUG_FS
- 
- config SCSI_SIM710
- 	tristate "Simple 53c710 SCSI support (Compaq, NCR machines)"
--	depends on (EISA || MCA) && SCSI
-+	depends on EISA && SCSI
- 	select SCSI_SPI_ATTRS
- 	---help---
- 	  This driver is for NCR53c710 based SCSI host adapters.
- 
--	  It currently supports Compaq EISA cards and NCR MCA cards
-+	  It currently supports Compaq EISA cards.
- 
- config SCSI_DC395x
- 	tristate "Tekram DC395(U/UW/F) and DC315(U) SCSI support"
+Thank you for the patch.
+
+On Wednesday, 17 October 2018 10:52:42 EEST Heng-Ruey Hsu wrote:
+> Android requires camera timestamps to be reported with
+> CLOCK_BOOTTIME to sync timestamp with other sensor sources.
+
+What's the rationale behind this, why can't CLOCK_MONOTONIC work ? If the 
+monotonic clock has shortcomings that make its use impossible for proper 
+synchronization, then we should consider switching to CLOCK_BOOTTIME globally 
+in V4L2, not in selected drivers only.
+
+> Signed-off-by: Heng-Ruey Hsu <henryhsu@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 4 ++++
+>  drivers/media/usb/uvc/uvc_video.c  | 2 ++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c
+> b/drivers/media/usb/uvc/uvc_driver.c index d46dc432456c..a9658f38c586
+> 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -2287,6 +2287,8 @@ static int uvc_clock_param_get(char *buffer, const
+> struct kernel_param *kp) {
+>  	if (uvc_clock_param == CLOCK_MONOTONIC)
+>  		return sprintf(buffer, "CLOCK_MONOTONIC");
+> +	else if (uvc_clock_param == CLOCK_BOOTTIME)
+> +		return sprintf(buffer, "CLOCK_BOOTTIME");
+>  	else
+>  		return sprintf(buffer, "CLOCK_REALTIME");
+>  }
+> @@ -2298,6 +2300,8 @@ static int uvc_clock_param_set(const char *val, const
+> struct kernel_param *kp)
+> 
+>  	if (strcasecmp(val, "monotonic") == 0)
+>  		uvc_clock_param = CLOCK_MONOTONIC;
+> +	else if (strcasecmp(val, "boottime") == 0)
+> +		uvc_clock_param = CLOCK_BOOTTIME;
+>  	else if (strcasecmp(val, "realtime") == 0)
+>  		uvc_clock_param = CLOCK_REALTIME;
+>  	else
+> diff --git a/drivers/media/usb/uvc/uvc_video.c
+> b/drivers/media/usb/uvc/uvc_video.c index 86a99f461fd8..d4248d5cd9cd 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -425,6 +425,8 @@ static inline ktime_t uvc_video_get_time(void)
+>  {
+>  	if (uvc_clock_param == CLOCK_MONOTONIC)
+>  		return ktime_get();
+> +	else if (uvc_clock_param == CLOCK_BOOTTIME)
+> +		return ktime_get_boottime();
+>  	else
+>  		return ktime_get_real();
+>  }
+
 -- 
-2.19.1
+Regards,
+
+Laurent Pinchart
+
+
 
