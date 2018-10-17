@@ -2,135 +2,100 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A771C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1EBC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1CED214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:23:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DiBZEKbM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1CED214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id A5E3D214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:24:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E3D214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbeJQLQk (ORCPT
+        id S1727437AbeJQLS1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 07:16:40 -0400
-Received: from ozlabs.org ([203.11.71.1]:41419 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727071AbeJQLQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 07:16:40 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42ZcvD10GKz9s8T;
-        Wed, 17 Oct 2018 14:23:03 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539746586;
-        bh=kVTjVNkCUs8Z3hsRS2WQCbVYefnOXos9h09B4LRhlGQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=DiBZEKbMJp2GA3Hoc7IG3angOJCNfjd3A+jkXh2ExIAdkt229IqSJ/+cSS3IDTT2N
-         Oa34PlWEE6sF51e8e1gCF85jLbYIb7AN5GgX8+8fGWR+v/wlTpiFM0/gZ+GSiAO01I
-         gStZALP6wXeiRcwsR/2BNqsGjEwp/0wQ5fQQAwaOf8W9uSEvLpNKV0/DsD2SxOKlPJ
-         jV8OZ7arS0MXRRGO6IFnrxwCVoVYzwaRL4tQC1fbf5DhlQqOZPU9UXpXrbwK3Kk74z
-         2Ge7Cv9lJ39YR6I81hOhxxHoY+9MUqWngm2HJWPAmBYJ9K0QeUlPdAe/bA8nVWErq8
-         iuMcEdBO628jA==
-Date:   Wed, 17 Oct 2018 14:22:57 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
-        Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: linux-next: manual merge of the char-misc tree with the drm tree
-Message-ID: <20181017142257.5002799b@canb.auug.org.au>
+        Wed, 17 Oct 2018 07:18:27 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:53812 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbeJQLS1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 07:18:27 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id D191F28E1A;
+        Tue, 16 Oct 2018 23:24:47 -0400 (EDT)
+Date:   Wed, 17 Oct 2018 14:24:47 +1100 (AEDT)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: ips: fix missing break in switch
+In-Reply-To: <yq1r2gppdyf.fsf@oracle.com>
+Message-ID: <alpine.LNX.2.21.1810171327290.8@nippy.intranet>
+References: <20181016091223.GA19765@embeddedor.com>        <yq1ftx5sgw1.fsf@oracle.com>        <alpine.LNX.2.21.1810170922480.130@nippy.intranet> <yq1r2gppdyf.fsf@oracle.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/u6tzD0qr8bKobG/tey.t=0x"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/u6tzD0qr8bKobG/tey.t=0x
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 16 Oct 2018, Martin K. Petersen wrote:
 
-Hi all,
+> 
+> Finn,
+> 
+> > This looks wrong to me. I think you've just prevented all START STOP 
+> > commands sent to logical volumes from reaching
+> >
+> >         return ((*ha->func.issue) (ha, scb));
+> >
+> > I think a better patch is to add a "fall though" comment not a "break" 
+> > statement. (I no longer have access to a ServeRAID board so I can't 
+> > test.)
+> 
+> When I looked at this a few days ago, it seemed that the fallthrough to 
+> the TUR/INQUIRY case statement was accidental and that the intent was to 
+> quickly complete START_STOP unit (which probably doesn't make much sense 
+> for a RAID device anyway).
+> 
+> See the case statements above for another fast exit scenario.
+> 
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+But that's an error path.
 
-  MAINTAINERS
+Also note that START_STOP also appears in ips_chkstatus(), which suggests 
+to me that this command may be submitted legitimately.
 
-between commit:
+> Sadly I have no way to test this. It just stuck out like a false 
+> positive in Gustavo's fallthrough markup patch.
+> 
 
-  fbb0de795078 ("Add udmabuf misc device")
+Without testers, and without another maintainer to review this, I'd 
+advocate a more prudent approach. I wonder whether there is another 
+maintainer to do a review. The MAINTAINERS file seems to contradict 
+itself.
 
-from the drm tree and commit:
+$ grep -C5 drivers/scsi/ips MAINTAINERS 
+...
+IBM ServeRAID RAID DRIVER
+S:      Orphan
+F:      drivers/scsi/ips.*
+...
+IPS SCSI RAID DRIVER
+M:      Adaptec OEM Raid Solutions <aacraid@microsemi.com>
+L:      linux-scsi@vger.kernel.org
+W:      http://www.adaptec.com/
+S:      Maintained
+F:      drivers/scsi/ips*
+...
 
-  9793c1fd1775 ("MAINTAINERS: Clarify UIO vs UIOVEC maintainer")
+Note that 'drivers/scsi/ips*' got assigned to Microsemi by a janitorial 
+change, as part of commit 679655daffdd ("MAINTAINERS - Add file patterns") 
+in 2009. But for ips.c, the last acked-by from the vendor was in 2008.
 
-from the char-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc MAINTAINERS
-index 7d70a6c5eeee,a38c13c7da9a..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -15594,14 -15365,12 +15595,20 @@@ F:	arch/x86/um
-  F:	fs/hostfs/
-  F:	fs/hppfs/
- =20
-+ USERSPACE COPYIN/COPYOUT (UIOVEC)
-+ M:	Alexander Viro <viro@zeniv.linux.org.uk>
-+ S:	Maintained
-+ F:	lib/iov_iter.c
-+ F:	include/linux/uio.h
-+=20
- +USERSPACE DMA BUFFER DRIVER
- +M:	Gerd Hoffmann <kraxel@redhat.com>
- +S:	Maintained
- +L:	dri-devel@lists.freedesktop.org
- +F:	drivers/dma-buf/udmabuf.c
- +F:	include/uapi/linux/udmabuf.h
- +T:	git git://anongit.freedesktop.org/drm/drm-misc
- +
-  USERSPACE I/O (UIO)
-  M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-  S:	Maintained
-
---Sig_/u6tzD0qr8bKobG/tey.t=0x
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvGqxEACgkQAVBC80lX
-0Gw6iQf/cDYDE0VokyqOGGwFDaVpEMwzmWcDAm/nI3Df0a43ROCRebxEFJkBCE/X
-XR9ERvs44oXOBvMIC3MVYBXkZJVb5jhjgcXQtNoUPjVpEwQiL5rIQhZ8JQDQC7lO
-7BLGYi08A92x0r+kBd4gB+IxbczbuMeONVhBivfEprDlmxXB3xeykAkDb2I98V7m
-706r1WuhI1p6TkgGzKOS6g68JVXBNpGFc9Y8kkeY3hFO+hbKijvdmdoVenqULSYW
-u0ErCgxjSqntIu1s6mzltEvjTh4FV75PJZ1rtOriDGY3mcXzli2uicehIAvDxkND
-rWwFKXt0AGW/4/h1PMP1HE3gXjE5DQ==
-=bMUP
------END PGP SIGNATURE-----
-
---Sig_/u6tzD0qr8bKobG/tey.t=0x--
+-- 
