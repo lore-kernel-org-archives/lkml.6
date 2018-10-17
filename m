@@ -2,88 +2,128 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F014ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D55F7ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12D1D214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:02:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12D1D214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id A38A9214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:06:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38A9214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbeJQR5H (ORCPT
+        id S1727097AbeJQSBW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 13:57:07 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:43892 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbeJQR5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 13:57:07 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id fcIN18UMCuxn; Wed, 17 Oct 2018 12:01:51 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC91B00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:1b00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E7B191EC03AC;
-        Wed, 17 Oct 2018 12:01:50 +0200 (CEST)
-Date:   Wed, 17 Oct 2018 12:01:43 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 03/11] x86/fpu: make __raw_xsave_addr() use feature
- number instead of mask
-Message-ID: <20181017100143.GD22535@zn.tnic>
-References: <20181004140547.13014-1-bigeasy@linutronix.de>
- <20181004140547.13014-4-bigeasy@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181004140547.13014-4-bigeasy@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 17 Oct 2018 14:01:22 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59164 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbeJQSBW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 14:01:22 -0400
+Received: from fsav109.sakura.ne.jp (fsav109.sakura.ne.jp [27.133.134.236])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9HA6Num052266;
+        Wed, 17 Oct 2018 19:06:23 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav109.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp);
+ Wed, 17 Oct 2018 19:06:23 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9HA6Jff052195
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 17 Oct 2018 19:06:23 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, guro@fb.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        rientjes@google.com, yang.s@alibaba-inc.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Michal Hocko <mhocko@suse.com>,
+        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
+Subject: [PATCH v3] mm: memcontrol: Don't flood OOM messages with no eligible task.
+Date:   Wed, 17 Oct 2018 19:06:22 +0900
+Message-Id: <1539770782-3343-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 04:05:39PM +0200, Sebastian Andrzej Siewior wrote:
-> Most users of __raw_xsave_addr() use a feature number, shift it to a
-> mask and then __raw_xsave_addr() shifts it back to the feature number.
-> 
-> Make __raw_xsave_addr() use the feature number as argument.
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  arch/x86/kernel/fpu/xstate.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-> index 87a57b7642d36..38d0b5ea40425 100644
-> --- a/arch/x86/kernel/fpu/xstate.c
-> +++ b/arch/x86/kernel/fpu/xstate.c
-> @@ -811,10 +811,8 @@ void fpu__resume_cpu(void)
->   *
->   * Note: does not work for compacted buffers.
->   */
-> -void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
-> +void *__raw_xsave_addr(struct xregs_state *xsave, int feature_nr)
+syzbot is hitting RCU stall at shmem_fault() [1].
+This is because memcg-OOM events with no eligible task (current thread
+is marked as OOM-unkillable) continued calling dump_header() from
+out_of_memory() enabled by commit 3100dab2aa09dc6e ("mm: memcontrol:
+print proper OOM header when no eligible victim left.").
 
-Don't forget to update the comment above it too - it still says "mask".
+Michal proposed ratelimiting dump_header() [2]. But I don't think that
+that patch is appropriate because that patch does not ratelimit
 
-Otherwise nice.
+  "%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n"
+  "Out of memory and no killable processes...\n"
 
+messages which can be printed for every few milliseconds (i.e. effectively
+denial of service for console users) until the OOM situation is solved.
+
+Let's make sure that next dump_header() waits for at least 60 seconds from
+previous "Out of memory and no killable processes..." message. Michal is
+thinking that any interval is meaningless without knowing the printk()
+throughput. But since printk() is synchronous unless handed over to
+somebody else by commit dbdda842fe96f893 ("printk: Add console owner and
+waiter logic to load balance console writes"), it is likely that all OOM
+messages from this out_of_memory() request is already flushed to consoles
+when pr_warn("Out of memory and no killable processes...\n") returned.
+Thus, we will be able to allow console users to do what they need to do.
+
+To summarize, this patch allows threads in requested memcg to complete
+memory allocation requests for doing recovery operation, and also allows
+administrators to manually do recovery operation from console if
+OOM-unkillable thread is failing to solve the OOM situation automatically.
+
+[1] https://syzkaller.appspot.com/bug?id=4ae3fff7fcf4c33a47c1192d2d62d2e03efffa64
+[2] https://lkml.kernel.org/r/20181010151135.25766-1-mhocko@kernel.org
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@suse.com>
+---
+ mm/oom_kill.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f10aa53..9056f9b 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -1106,6 +1106,11 @@ bool out_of_memory(struct oom_control *oc)
+ 	select_bad_process(oc);
+ 	/* Found nothing?!?! */
+ 	if (!oc->chosen) {
++		static unsigned long last_warned;
++
++		if ((is_sysrq_oom(oc) || is_memcg_oom(oc)) &&
++		    time_in_range(jiffies, last_warned, last_warned + 60 * HZ))
++			return false;
+ 		dump_header(oc, NULL);
+ 		pr_warn("Out of memory and no killable processes...\n");
+ 		/*
+@@ -1115,6 +1120,7 @@ bool out_of_memory(struct oom_control *oc)
+ 		 */
+ 		if (!is_sysrq_oom(oc) && !is_memcg_oom(oc))
+ 			panic("System is deadlocked on memory\n");
++		last_warned = jiffies;
+ 	}
+ 	if (oc->chosen && oc->chosen != (void *)-1UL)
+ 		oom_kill_process(oc, !is_memcg_oom(oc) ? "Out of memory" :
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+1.8.3.1
