@@ -2,181 +2,120 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77952ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59472ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 331232152C
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAB4A21527
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 12:08:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PvMYFxUT";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="i0PuzvVq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 331232152C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EU3G2Elc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAB4A21527
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeJQT7m (ORCPT
+        id S1727049AbeJQUDz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:59:42 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41156 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeJQT7m (ORCPT
+        Wed, 17 Oct 2018 16:03:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44250 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbeJQUDz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:59:42 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 97CD6612F8; Wed, 17 Oct 2018 12:04:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539777857;
-        bh=S7RnobJyql3BkZQjoqrvG61iLOEMZE+Oqov9+xP5MeM=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=PvMYFxUTDINiIa1Yzrc13qmSmehuWNgwwXTevXaTbDwEblFI+tfYNhWW2/WA8KUgG
-         U+GOpezAzYjkYiyBVzAD2NpoWJ5fTwcZvMVCy5HqKoG3R6y/0qM9HJJFRXtka9N5tf
-         fUpXCqbaloAj9hhpEO/gPBFxavMzs8GRYoLe0eiM=
-Received: from [192.168.225.247] (unknown [49.33.192.137])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 155C1612F8;
-        Wed, 17 Oct 2018 12:04:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539777856;
-        bh=S7RnobJyql3BkZQjoqrvG61iLOEMZE+Oqov9+xP5MeM=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=i0PuzvVqx/96ETEOLwNuHcRSfsK3s0JUhgL1LtY5FVaLtFknsVeLQbaeyegmCp2RW
-         fDo6fUIfQjE1YQndUV0iV5dLCgSl+RqkF4CA5IoTwadEtqOueVElvrzVlaC5CsEzMK
-         S7CAGmC8S79/TIWrl9B/mf80m8aqNxr67bHGMD4Q=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 155C1612F8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for
- SDM845
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
- <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
- <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
- <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
- <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
- <7d4012b9-e71d-f114-b228-7198f07ea767@codeaurora.org>
- <153936574404.5275.10513827793530511886@swboyd.mtv.corp.google.com>
- <7ad2344b-2307-3fb3-c34e-7443fb3a1ec8@codeaurora.org>
-Message-ID: <42e20a5e-beb4-fdc1-cf4a-f6329b09a476@codeaurora.org>
-Date:   Wed, 17 Oct 2018 17:34:10 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 17 Oct 2018 16:03:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=INthpbZcLMtOLXqHlawkIhN/DbRyhVWYqCFt/3e1ceY=; b=EU3G2ElcsM8cnxl+IeHs5JSOB
+        ZJNg5lndXqe1xKDAfksa6ghs01HzoIiRe0th8sO8GXlFsfqB6nIy+JoK4vI1dNj6v8X6SU8jAO4uD
+        5fePp3r/ximdVrTjtyhpY20srB9iC6rLrGfStpPEYPSmhLev0oGfRKjxA54GHYZvs/luJDnn8Y4wJ
+        84EvL3wV/TxX2SuXlJ2mdI43IpyuDzk1BkFr39ZADtGEa13KSIEhsuDHRqDQQ39sAnUzpxDZ8T97m
+        af2yOZ0tNf0zDy50r/3nN72mBD1XZFNjdIcGRLry0d95/DJ7L1v5UbjH9tdAMQCqHOmuTcvQdbUsr
+        CuK+G/AcQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gCkco-00008F-3d; Wed, 17 Oct 2018 12:08:30 +0000
+Date:   Wed, 17 Oct 2018 05:08:29 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org, kernel-team@android.com,
+        jreck@google.com, john.stultz@linaro.org, tkjos@google.com,
+        gregkh@linuxfoundation.org,
+        Andrew Morton <akpm@linux-foundation.org>, dancol@google.com,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm@kvack.org, Mike Kravetz <mike.kravetz@oracle.com>,
+        minchan@google.com, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH v2 1/2] mm: Add an F_SEAL_FS_WRITE seal to memfd
+Message-ID: <20181017120829.GA19731@infradead.org>
+References: <20181009222042.9781-1-joel@joelfernandes.org>
+ <20181017095155.GA354@infradead.org>
+ <20181017103958.GB230639@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <7ad2344b-2307-3fb3-c34e-7443fb3a1ec8@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017103958.GB230639@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/17/2018 5:07 PM, Taniya Das wrote:
-> Hello Stephen,
+On Wed, Oct 17, 2018 at 03:39:58AM -0700, Joel Fernandes wrote:
+> > > This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
+> > > To support the usecase, this patch adds a new F_SEAL_FS_WRITE seal which
+> > > prevents any future mmap and write syscalls from succeeding while
+> > > keeping the existing mmap active. The following program shows the seal
+> > > working in action:
+> > 
+> > Where does the FS come from?  I'd rather expect this to be implemented
+> > as a 'force' style flag that applies the seal even if the otherwise
+> > required precondition is not met.
 > 
-> On 10/12/2018 11:05 PM, Stephen Boyd wrote:
->> Quoting Taniya Das (2018-10-09 23:12:27)
->>>
->>>
->>> On 10/10/2018 2:22 AM, Stephen Boyd wrote:
->>>> Quoting Taniya Das (2018-10-09 10:26:38)
->>>>> Hello Stephen,
->>>>>
->>>>> On 10/8/2018 8:14 AM, Stephen Boyd wrote:
->>>>>> Quoting Taniya Das (2018-10-04 05:02:26)
->>>>>>> Add support for the lpass clock controller found on SDM845 based 
->>>>>>> devices.
->>>>>>> This would allow lpass peripheral loader drivers to control the 
->>>>>>> clocks to
->>>>>>> bring the subsystem out of reset.
->>>>>>> LPASS clocks present on the global clock controller would be 
->>>>>>> registered
->>>>>>> with the clock framework based on the device tree flag. Also do 
->>>>>>> not gate
->>>>>>> these clocks if they are left unused.
->>>>>>
->>>>>> Why not gate them? This statement states what the code is doing, 
->>>>>> not why
->>>>>> it's doing it which is the more crucial information that should be
->>>>>> described in the commit text. Also, please add a comment about it 
->>>>>> to the
->>>>>> code next to the flag.
->>>>>>
->>>>>> I am concerned that it doesn't make any sense though, so probably it
->>>>>> shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over some
->>>>>> other larger bug that needs to be fixed.
->>>>>>
->>>>>
->>>>> It does not have any bug, it is just that to access these lpass
->>>>> registers we would need the GCC lpass registers to be enabled. I would
->>>>> update the same in the commit text.
->>>>>
->>>>> During clock late_init these clocks should not be accessed to check 
->>>>> the
->>>>> clock status as they would result in unclocked access. The client 
->>>>> would
->>>>> request these clocks in the correct order and it would not have any 
->>>>> issue.
->>>>>
->>>>
->>>> That seems like the bug right there. If the LPASS registers can't be
->>>> accessed unless the clks in GCC are enabled then this driver needs to
->>>> turn the clks on before reading/writing registers. Marking the clks as
->>>> ignore unused is skipping around the real problem.
->>>>
->>>
->>> If the driver requests for the clocks they would maintain the order. But
->>> if the clock late init call is invoked before the driver requests, there
->>> is no way I could manage this dependency, that is the only reason to
->>> mark them unused.
->>>
->>
->> Which driver are we talking about here? The lpass clk driver? Presumably
->> the lpass clk driver would request the GCC clks and turn them on in
->> probe and then register any lpass clks. If the lpass clk driver probes
->> bfeore late init, then the gcc clks will be enabled and everything
->> works, and if the lpass clk driver probes after late init then the clks
->> that can't be touched without gcc clks enabled won't be registered, and
->> then they won't be touched. What goes wrong?
->>
->>
+> The "FS" was meant to convey that the seal is preventing writes at the VFS
+> layer itself, for example vfs_write checks FMODE_WRITE and does not proceed,
+> it instead returns an error if the flag is not set. I could not find a better
+> name for it, I could call it F_SEAL_VFS_WRITE if you prefer?
+
+I don't think there is anything VFS or FS about that - at best that
+is an implementation detail.
+
+Either do something like the force flag I suggested in the last mail,
+or give it a name that matches the intention, e.g F_SEAL_FUTURE_WRITE.
+
+> I could make it such that this seal would not be allowed unless F_SEAL_SHRINK
+> and F_SEAL_GROW are either previously set, or they are passed along with this
+> seal. Would that make more sense to you?
+
+Yes.
+
+> > >  static int memfd_add_seals(struct file *file, unsigned int seals)
+> > >  {
+> > > @@ -219,6 +220,9 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
+> > >  		}
+> > >  	}
+> > >  
+> > > +	if ((seals & F_SEAL_FS_WRITE) && !(*file_seals & F_SEAL_FS_WRITE))
+> > > +		file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
+> > > +
+> > 
+> > This seems to lack any synchronization for f_mode.
 > 
-> Okay, sure, I will take the GCC clock handles and then enable/disable 
-> them accordingly.
-> 
-> I missed earlier, so here is what you suggest
+> The f_mode is set when the struct file is first created and then memfd sets
+> additional flags in memfd_create. Then later we are changing it here at the
+> time of setting the seal. I donot see any possiblity of a race since it is
+> impossible to set the seal before memfd_create returns. Could you provide
+> more details about what kind of synchronization is needed and what is the
+> race condition scenario you were thinking off?
 
-gcc_probe --> GCC LPASS clocks registered.
-lpass_probe --> clk_get on gcc_lpass_clocks/ clk_prepare_enable -->
-register the lpass clocks --> clk_disable_unprepare gcc_lpass_clocks.
-
-But the problem is not during the above. It is the below
-static void clk_disable_unused_subtree(struct clk_core *core)
-{
-....
-
-         if (clk_core_is_enabled(core)) {  --> This access fails.
-....
-
-}
-
-Please let me know your comments in case I missed something.
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Even if no one changes these specific flags we still need a lock due
+to rmw cycles on the field.  For example fadvise can set or clear
+FMODE_RANDOM.  It seems to use file->f_lock for synchronization.
