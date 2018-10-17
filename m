@@ -2,147 +2,65 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF32ECDE3B
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16600ECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17CF4208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:20:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17CF4208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C9B2E208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:20:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9B2E208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeJRFSJ (ORCPT
+        id S1727390AbeJRFSb convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 01:18:09 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40264 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726412AbeJRFSI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 01:18:08 -0400
-Received: by mail-qt1-f193.google.com with SMTP id b4-v6so31858490qtc.7;
-        Wed, 17 Oct 2018 14:20:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z5N42SE15vLGSaeXRwXiC/wqscOsPOQ9tRgCgL795TI=;
-        b=TgnF2UvIasQLAtS1jGd18F5J/4hRd0dOCtWvlHiz7tnFqihWeFQB77yRRWwEYW6PZw
-         DSBb8WQ+v9ForlpQtMHDMl86gLx4hAKfCN+8qFkRP8rP280v9ultc6fylTlODCsIhx+I
-         tNgVFef2Q67SfQ6GDjlUd7novShw63EOFgX/Y0o1P+9R2TGaMBNnqbNhJVB1umnLrGob
-         ijsBiW62jSDpRADwmdUcckLFxC9KyxJr6bqX111ijwwq4vMkv21LJ5D3rpvsrRg2KJAx
-         HVN5HnT5fvK1mttAU7AIhn1cpDyUTtkvYrfgnudg2NQ5H95+CmXsuVcDoehcTCOCHhXY
-         pzqg==
-X-Gm-Message-State: ABuFfoil/ZynCNGrVpzEBl7eTKHM/IGIA6u38DCXOyhqCadYG6FZoDCC
-        Rws+kG2RQpfy2wy18IqQU7VSXxN2Ipc=
-X-Google-Smtp-Source: ACcGV60Oc9WhIYTVuq8jbZEYIcmQXXhZ4dfjPEWXUd0dWhO6xkvoNri0eamBLDc9/dAhIrcNpYOMxw==
-X-Received: by 2002:aed:3882:: with SMTP id k2-v6mr25405081qte.345.1539811234971;
-        Wed, 17 Oct 2018 14:20:34 -0700 (PDT)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::5:df1a])
-        by smtp.gmail.com with ESMTPSA id l18-v6sm1186346qki.83.2018.10.17.14.20.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 14:20:33 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 17:20:29 -0400
-From:   Dennis Zhou <dennis@kernel.org>
-To:     valdis.kletnieks@vt.edu
-Cc:     Dennis Zhou <dennis@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [BUG] ext4/block null pointer crashes in linux-next
-Message-ID: <20181017212029.GA85639@dennisz-mbp.dhcp.thefacebook.com>
-References: <13987.1539646128@turing-police.cc.vt.edu>
- <20181016160203.GA88193@dennisz-mbp.dhcp.thefacebook.com>
- <20181016182513.GA9886@dennisz-mbp.dhcp.thefacebook.com>
- <13448.1539791255@turing-police.cc.vt.edu>
+        Thu, 18 Oct 2018 01:18:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43624 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726412AbeJRFSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 01:18:30 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D51AFC05D3F3;
+        Wed, 17 Oct 2018 21:20:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 120E118A4D;
+        Wed, 17 Oct 2018 21:20:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <7b409325-9e23-aa5e-916f-cb362a6940aa@gmail.com>
+References: <7b409325-9e23-aa5e-916f-cb362a6940aa@gmail.com> <f6f2553e-f64d-9c26-4290-baf43e5f533b@gmail.com> <19866.1539782101@warthog.procyon.org.uk> <68a2107f-bf70-055b-86cf-1ba2ba9422bf@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754766004.17872.9829232103614083565.stgit@warthog.procyon.org.uk> <9b8bf436-65de-13b9-0002-0479d11c18ca@gmail.com> <20181013061141.GR32577@ZenIV.linux.org.uk> <28710.1539782412@warthog.procyon.org.uk> <15867.1539791153@warthog.procyon.org.uk>
+To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Cc:     dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-api@vger.kernel.org, torvalds@linux-foundation.org,
+        ebiederm@xmission.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mszeredi@redhat.com
+Subject: Re: [PATCH 31/34] vfs: syscall: Add fspick() to select a superblock for reconfiguration [ver #12]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <13448.1539791255@turing-police.cc.vt.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <6468.1539811255.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 17 Oct 2018 22:20:55 +0100
+Message-ID: <6469.1539811255@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 17 Oct 2018 21:20:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 11:47:35AM -0400, valdis.kletnieks@vt.edu wrote:
-> On Tue, 16 Oct 2018 14:25:13 -0400, Dennis Zhou said:
-> 
-> > > >  grep execve /root/rpm-exec-strace
-> > > > execve("/usr/bin/rpm", ["rpm", "-Uvh", "--force", "dracut-049-4.git20181010.fc30.x8"...], 0x7ffc9d967d80 /* 33 vars */) = 0
-> 
-> > > Thanks for testing and reporting this! Do you mind sending me your
-> > > reproducer?
-> 
-> See above. An 'rpm' command blows it up....
-> 
-> > I've spent some time thinking about this, and this is my guess at what
-> > is happening without seeing your reproducer. The system is under memory
-> > pressure and a new cgroup is being created. The cgroup allocation fails
-> > causing the request_list code to fallback and walk up the blkg tree.
-> > There is special handling for the root cgroup, but I missed that case
-> > and it fails there I believe.
-> 
-> Hmm... I boot to single-user, do a cd, and run 'rpm -Uvh --force' on an RPM
-> that was already installed. (I originally hit this with 'dnf', but running 'dnf
-> update' wouldn't trigger a crash if the system was up to date.  To make a
-> bisect workable, I ended up using RPM to re-install an already installed
-> package or 3 triggered it as well.
-> 
-> That's a consistent reproducer for me.  rpm does an execve() (actually,
-> it does 5), and one of them goes kablam.  I've also managed to hit it
-> once doing an 'rm'.
-> 
-> And my laptop has 16G of ram.  Shouldn't be any memory pressure at all in
-> single-user mode.  So it looks like you fixed a bug, but not the one I was hitting.
-> 
-> > In addition to sending me the reproducer and your config, can you please
-> > try the patch below?
-> 
-> Tried the patch, didn't make a difference. So there's at least one more bug
-> out there to find. :)
-> 
-> Config attached.
+Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
 
-I apologize, but I'm having a hard time reproducing this myself. I am
-not able to hit this issue in my qemu instance with linux-next built
-with your config. I have been running 'rpm -Hvh --force fio.rpm' several
-times and haven't seen the issue.
+> static  int  do_remount <https://elixir.bootlin.com/linux/v4.18/ident/do_remount>(struct  path <https://elixir.bootlin.com/linux/v4.18/ident/path>  *path <https://elixir.bootlin.com/linux/v4.18/ident/path>,  int  ms_flags,  int  sb_flags,
+> 		int  mnt_flags,  void  *data)
 
-Would it be possible for you to create a minimal qemu image that
-reproduces the issue as I'm having issues reproducing it with my setup?
-Additionally, I've added some more debug text in the diff below. If you
-could apply that and send me the full dmesg that would be great. Lastly,
-can you just confirm for me that the commit before, f0fcb3ec89f3
-"blkcg: remove additional reference to the css", isn't seeing this
-issue?
+What happened there?  You seem to have had a load of URLs substituted in.
 
-Thanks,
-Dennis
----
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 4dbc93f43b38..1b56cec40301 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1538,6 +1538,19 @@ static struct request *get_request(struct request_queue *q, unsigned int op,
- 
- 	rl = blk_get_rl(q, bio);	/* transferred to @rq on success */
- retry:
-+	printk_once(KERN_INFO "dennis zhou");
-+	if (q != rl->q) {
-+		printk(KERN_INFO "dennis: q %px != rl->q %px", q, rl->q);
-+		if (bio && bio->bi_blkg)
-+			printk(KERN_INFO "dennis: bio: %px, root: %px",
-+			       bio->bi_blkg->blkcg, &blkcg_root);
-+	}
-+	if (!q)
-+		printk(KERN_INFO "dennis: q is null!");
-+	if (!rl)
-+		printk(KERN_INFO "dennis: rl is null!");
-+	if (!rl->q)
-+		printk(KERN_INFO "dennis: rl->q is null!");
- 	rq = __get_request(rl, op, bio, flags, gfp);
- 	if (!IS_ERR(rq))
- 		return rq;
+David
