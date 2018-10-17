@@ -2,84 +2,78 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D967ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB67FECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C5DC21523
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:20:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C5DC21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B24C421523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:20:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAGiO0Sy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B24C421523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbeJQVP5 convert rfc822-to-8bit (ORCPT
+        id S1727542AbeJQVQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:15:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47664 "EHLO mx1.redhat.com"
+        Wed, 17 Oct 2018 17:16:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726974AbeJQVP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:15:57 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726974AbeJQVQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 17:16:01 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 54BE9BCD2C;
-        Wed, 17 Oct 2018 13:20:17 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 233268B946;
-        Wed, 17 Oct 2018 13:20:13 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <19866.1539782101@warthog.procyon.org.uk>
-References: <19866.1539782101@warthog.procyon.org.uk> <68a2107f-bf70-055b-86cf-1ba2ba9422bf@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754766004.17872.9829232103614083565.stgit@warthog.procyon.org.uk> <9b8bf436-65de-13b9-0002-0479d11c18ca@gmail.com> <20181013061141.GR32577@ZenIV.linux.org.uk>
-Cc:     dhowells@redhat.com,
-        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>, linux-api@vger.kernel.org,
-        torvalds@linux-foundation.org, ebiederm@xmission.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mszeredi@redhat.com
-Subject: Re: [PATCH 31/34] vfs: syscall: Add fspick() to select a superblock for reconfiguration [ver #12]
+        by mail.kernel.org (Postfix) with ESMTPSA id BB24521523;
+        Wed, 17 Oct 2018 13:20:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539782421;
+        bh=QdYca3m+5VCf5CWCISHBrFraVoSGQxrTT8mI5zcaQJA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZAGiO0SyXLhGSuOhOyfMV6VV51K1SKml/FJHhamZrhre0KMDHYEQHwXaAaSQdOhLX
+         l6QofFFUWr4Wu2K5T/dDeQBFkA4euJ8Kl/L2FrEvYHINxT2fi8gdoTbuQrUQtJtFxy
+         ipUzQyFvtUjCITR4U8vgSiTQ9JyhBo0rjhTIjhxw=
+Date:   Wed, 17 Oct 2018 09:20:18 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Haiyang Zhang <haiyangz@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: Re: [PATCH 4.18 101/135] hv_netvsc: pair VF based on serial number
+Message-ID: <20181017132018.GA135013@sasha-vm>
+References: <20181016170515.447235311@linuxfoundation.org>
+ <20181016170522.303317746@linuxfoundation.org>
+ <DM5PR2101MB10138BCFD40D703FEE14EC35CAFE0@DM5PR2101MB1013.namprd21.prod.outlook.com>
+ <20181017074629.GD25537@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <28709.1539782412.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 17 Oct 2018 14:20:12 +0100
-Message-ID: <28710.1539782412@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 17 Oct 2018 13:20:17 +0000 (UTC)
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181017074629.GD25537@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+On Wed, Oct 17, 2018 at 09:46:29AM +0200, Greg Kroah-Hartman wrote:
+>Also, this really feels like a "new feature" to me.  Can someone explain
+>what bug this is fixing?
 
-> I should probably check that the picked point is actually a mountpoint.
+Reading the commit log/code it seems that it was possible for 2 (or
+more) synthetic devices to have the same MAC address even though the
+current code treats them as unique and uses it as a lookup index.
 
-The root of the mount object at the path specified, that is, perhaps with
-something like the attached.
+Let me confirm with Stephen. This came through the regular AUTOSEL
+process and I don't really know more about this patch than you do at
+this point.
 
-David
----
-diff --git a/fs/fsopen.c b/fs/fsopen.c
-index f673e93ac456..aaaaa17a233c 100644
---- a/fs/fsopen.c
-+++ b/fs/fsopen.c
-@@ -186,6 +186,10 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags
- 	if (ret < 0)
- 		goto err;
- 
-+	ret = -EINVAL;
-+	if (target.mnt->mnt_root != target.dentry)
-+		goto err_path;
-+
- 	fc = vfs_new_fs_context(target.dentry->d_sb->s_type, target.dentry,
- 				0, 0, FS_CONTEXT_FOR_RECONFIGURE);
- 	if (IS_ERR(fc)) {
 
+--
+Thanks,
+Sasha
