@@ -2,144 +2,219 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F385ECDE37
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACB4ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30D9B21523
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:18:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30D9B21523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 83F9621523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:18:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SkUeSg+W";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FVrjd+Th"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83F9621523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbeJQVOX (ORCPT
+        id S1727447AbeJQVO2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:14:23 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52871 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727255AbeJQVOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:14:22 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AD9A4207C4; Wed, 17 Oct 2018 15:18:39 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-7-245.w90-88.abo.wanadoo.fr [90.88.129.245])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E3D9520712;
-        Wed, 17 Oct 2018 15:18:28 +0200 (CEST)
-Date:   Wed, 17 Oct 2018 15:18:29 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     gregkh <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>, mshettel@codeaurora.org,
-        swboyd@chromium.org
-Subject: Re: [PATCH v8 00/10] Add the I3C subsystem
-Message-ID: <20181017151829.470930a7@bbrezillon>
-In-Reply-To: <CAK8P3a2C+FHiPnHKEAanhD=RpqDG1VywTEGhpdBvvKQ8zmwdUA@mail.gmail.com>
-References: <20181003132212.12619-1-boris.brezillon@bootlin.com>
-        <CAK8P3a2C+FHiPnHKEAanhD=RpqDG1VywTEGhpdBvvKQ8zmwdUA@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 17 Oct 2018 17:14:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727053AbeJQVO1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 17:14:27 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5AA0D60A34; Wed, 17 Oct 2018 13:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539782327;
+        bh=au+DdCLnjRnVoVQ1LSmOAwNGCxOeoC4eB7lxO6mPKQw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SkUeSg+WaZ1sxLRqvTNKy92efRiAG0KRMFCmAeMb57IjlmKeGmEXjmzWsUxzcw1my
+         FYhCQ1DRhinykx6P4sShpWVmqR3JD9YdbejB4ZTSFAqnKW4voQ6YBX1CNbrnJw5woc
+         aDQwqwhi+w0a+pcPMX/7tu1T9hGbABvT8iHY0tTU=
+Received: from vgarodia-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vgarodia@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5B90861313;
+        Wed, 17 Oct 2018 13:18:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539782326;
+        bh=au+DdCLnjRnVoVQ1LSmOAwNGCxOeoC4eB7lxO6mPKQw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FVrjd+ThuitP/KDvSanbXuD6+R6n3sq2KJQwu0eoOVBwUB4QsIKdMHFe6g9bJtEdi
+         4feh3oQGKuGfMj1eTfFxXyA7lZ+mroDeV5VDH/aC+VqNeiAeAOY4Ir1elOtZfYM345
+         eteUJtwcWkDL3DpZw2q3wgWzdVJx7SvAKLsGNgzM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B90861313
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
+From:   Vikash Garodia <vgarodia@codeaurora.org>
+To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org
+Subject: [PATCH v12 2/5] venus: firmware: move load firmware in a separate function
+Date:   Wed, 17 Oct 2018 18:48:20 +0530
+Message-Id: <1539782303-4091-3-git-send-email-vgarodia@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1539782303-4091-1-git-send-email-vgarodia@codeaurora.org>
+References: <1539782303-4091-1-git-send-email-vgarodia@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Separate firmware loading part into a new function.
 
-On Mon, 8 Oct 2018 12:47:21 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+---
+ drivers/media/platform/qcom/venus/core.c     |  4 +-
+ drivers/media/platform/qcom/venus/firmware.c | 55 ++++++++++++++++++----------
+ drivers/media/platform/qcom/venus/firmware.h |  2 +-
+ 3 files changed, 38 insertions(+), 23 deletions(-)
 
-> On Wed, Oct 3, 2018 at 3:22 PM Boris Brezillon
-> <boris.brezillon@bootlin.com> wrote:
-> >
-> > Sorry for the huge delay between v7 and v8 despite the small amount of
-> > things I was asked to fix/rework.
-> >
-> > This patch series is adding a new subsystem to support I3C devices.
-> >
-> > This is just adding support for basic features. Extra features will
-> > be added afterwards.
-> >
-> > There are a few design choices that are worth mentioning because they
-> > impact the way I3C device drivers can interact with their devices:
-> >
-> > - all functions used to send I3C/I2C frames must be called in
-> >   non-atomic context. Mainly done this way to ease implementation, but
-> >   this is still open to discussion. Please let me know if you think it's
-> >   worth considering an asynchronous model here
-> > - the I3C bus and I3C master controller are now tightly coupled even
-> >   though they're still allocated separately. There's now a 1:1
-> >   relationship between these objects, and the I3C master is no longer
-> >   represented under the I3C bus object.
-> >   Arnd, let me know if you had something different in mind, and I'll
-> >   rework the implementation accordingly.  
-> 
-> I looked at the entire series again and I'm rather happy with how
-> it turned out. I've commented on a tiny issue about the readsl()
-> that should be easy to resolve one way or another, with that
-> you can add my
-> 
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> There is one additional issue that we've talked about previously
-> and that I'd like to hear about from GregKH or maybe other
-> subsystem maintainers: In the current version, you have a single
-> 'bus_type' object, and this is used to represent both a 'host' and
-> a 'device'. I think we concluded that this is done in other
-> subsystems as well, and that this is fitting here because a
-> host (master device) can hand over being a master to another
-> device (slave), which then becomes the host and sees this
-> one as a slave. Also a lot of the sysfs attributes are the same
-> because of this relationship.
-> 
-> It also means that you get a mix of things in sysfs:
-> 
-> /sys/devices/i3c/<bus>
-> /sys/devices/i3c/<device>
-> /sys/devices/i3c/<bus>/<device>
-> 
-> which is a bit like what we have on USB where we can have hub
-> devices that are again parents of other USB devices, but I don't
-> think we can have i3c hubs or multiplexers in the same way, so
-> it's only a single level.
-> 
-> I'm ok with this model after our previous discussion and couldn't
-> come up with a better one. If anyone else still sees it as
-> problematic and has a better idea, please let us know now.
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index bb6add9..75b9785 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -84,7 +84,7 @@ static void venus_sys_error_handler(struct work_struct *work)
+ 
+ 	pm_runtime_get_sync(core->dev);
+ 
+-	ret |= venus_boot(core->dev, core->res->fwname);
++	ret |= venus_boot(core);
+ 
+ 	ret |= hfi_core_resume(core, true);
+ 
+@@ -284,7 +284,7 @@ static int venus_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_runtime_disable;
+ 
+-	ret = venus_boot(dev, core->res->fwname);
++	ret = venus_boot(core);
+ 	if (ret)
+ 		goto err_runtime_disable;
+ 
+diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+index 0e21a90..1d4f066 100644
+--- a/drivers/media/platform/qcom/venus/firmware.c
++++ b/drivers/media/platform/qcom/venus/firmware.c
+@@ -60,20 +60,18 @@ int venus_set_hw_state(struct venus_core *core, bool resume)
+ 	return 0;
+ }
+ 
+-int venus_boot(struct device *dev, const char *fwname)
++static int venus_load_fw(struct venus_core *core, const char *fwname,
++			 phys_addr_t *mem_phys, size_t *mem_size)
+ {
+ 	const struct firmware *mdt;
+ 	struct device_node *node;
+-	phys_addr_t mem_phys;
++	struct device *dev;
+ 	struct resource r;
+ 	ssize_t fw_size;
+-	size_t mem_size;
+ 	void *mem_va;
+ 	int ret;
+ 
+-	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER) || !qcom_scm_is_available())
+-		return -EPROBE_DEFER;
+-
++	dev = core->dev;
+ 	node = of_parse_phandle(dev->of_node, "memory-region", 0);
+ 	if (!node) {
+ 		dev_err(dev, "no memory-region specified\n");
+@@ -84,16 +82,16 @@ int venus_boot(struct device *dev, const char *fwname)
+ 	if (ret)
+ 		return ret;
+ 
+-	mem_phys = r.start;
+-	mem_size = resource_size(&r);
++	*mem_phys = r.start;
++	*mem_size = resource_size(&r);
+ 
+-	if (mem_size < VENUS_FW_MEM_SIZE)
++	if (*mem_size < VENUS_FW_MEM_SIZE)
+ 		return -EINVAL;
+ 
+-	mem_va = memremap(r.start, mem_size, MEMREMAP_WC);
++	mem_va = memremap(r.start, *mem_size, MEMREMAP_WC);
+ 	if (!mem_va) {
+ 		dev_err(dev, "unable to map memory region: %pa+%zx\n",
+-			&r.start, mem_size);
++			&r.start, *mem_size);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -108,23 +106,40 @@ int venus_boot(struct device *dev, const char *fwname)
+ 		goto err_unmap;
+ 	}
+ 
+-	ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
+-			    mem_size, NULL);
++	if (core->use_tz)
++		ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID,
++				    mem_va, *mem_phys, *mem_size, NULL);
++	else
++		ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
++					    mem_va, *mem_phys, *mem_size, NULL);
+ 
+ 	release_firmware(mdt);
+ 
+-	if (ret)
+-		goto err_unmap;
+-
+-	ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
+-	if (ret)
+-		goto err_unmap;
+-
+ err_unmap:
+ 	memunmap(mem_va);
+ 	return ret;
+ }
+ 
++int venus_boot(struct venus_core *core)
++{
++	struct device *dev = core->dev;
++	phys_addr_t mem_phys;
++	size_t mem_size;
++	int ret;
++
++	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER) ||
++	    (core->use_tz && !qcom_scm_is_available()))
++		return -EPROBE_DEFER;
++
++	ret = venus_load_fw(core, core->res->fwname, &mem_phys, &mem_size);
++	if (ret) {
++		dev_err(dev, "fail to load video firmware\n");
++		return -EINVAL;
++	}
++
++	return qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
++}
++
+ int venus_shutdown(struct device *dev)
+ {
+ 	return qcom_scm_pas_shutdown(VENUS_PAS_ID);
+diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
+index 397570c..1343747 100644
+--- a/drivers/media/platform/qcom/venus/firmware.h
++++ b/drivers/media/platform/qcom/venus/firmware.h
+@@ -16,7 +16,7 @@
+ 
+ struct device;
+ 
+-int venus_boot(struct device *dev, const char *fwname);
++int venus_boot(struct venus_core *core);
+ int venus_shutdown(struct device *dev);
+ int venus_set_hw_state(struct venus_core *core, bool suspend);
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-I know you're quite busy with the 4.19 release, but if you find a bit
-of time, that'd be great to have your feedback on this.
-
-Thanks,
-
-Boris
