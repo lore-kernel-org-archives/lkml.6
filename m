@@ -2,137 +2,117 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52042ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA4A0ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22A0D21526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:24:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22A0D21526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C73C204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:25:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C73C204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbeJQVUD (ORCPT
+        id S1727336AbeJQVUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:20:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52486 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726990AbeJQVUC (ORCPT
+        Wed, 17 Oct 2018 17:20:46 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35699 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbeJQVUq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:20:02 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9HDOJp5011905
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:24:20 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n64aavvrw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:24:19 -0400
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Wed, 17 Oct 2018 07:24:03 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 17 Oct 2018 07:23:59 -0600
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9HDNxh747710356
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 17 Oct 2018 06:23:59 -0700
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E50086E052;
-        Wed, 17 Oct 2018 13:23:58 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3F326E04E;
-        Wed, 17 Oct 2018 13:23:56 +0000 (GMT)
-Received: from [9.102.2.58] (unknown [9.102.2.58])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 17 Oct 2018 13:23:56 +0000 (GMT)
-Subject: Re: [PATCH] powerpc/book3e: redefine pte_mkprivileged() and
- pte_mkuser()
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <19885260cc71182f8c03840204e2553ef42acb67.1539781367.git.christophe.leroy@c-s.fr>
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Date:   Wed, 17 Oct 2018 18:53:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 17 Oct 2018 17:20:46 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 14so22141212oth.2;
+        Wed, 17 Oct 2018 06:25:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JqOqw3V8YwEmgAhLIO4EalN/+h6GeD1TvUcxpYuBVAc=;
+        b=eUECntwmbWoyTXWqPODLEXIFTKqrkogZYQPDlK7s1NM/NbjUDiuWt3kSkyUuHQW+UL
+         /8BEIoGE0Suz+eh/dz/JGLJ+KlDOyMC4efyvbv3adIdl1DNrXLjF3O2yUZGVRqNNFkP5
+         6hoiTPsTzz+dp2rFAoCqrp/K6bqJco/7LV9JhHSlyCPvMEFRgxglxICUDLlS+uF0FNoy
+         VtLyu2Ngw+NWgBstwSqv5JfngNXw06QXJ1WsFyH3ItUZcRFLQxHe1bpOhWUPWnD2hxG6
+         TKXZ0YeebNpyAEadjYTTslwKqSOh//75HOwtwhaMmc94i4zpfYJjJ4xfM1x/HXSCeNQK
+         yfew==
+X-Gm-Message-State: ABuFfoimWlkjRWayTPvcl6f3ElmMr21Sg2gI51NWcpgmVPLFSWmo9e+L
+        jxdchCMYXMnFOqrdgzg5dA==
+X-Google-Smtp-Source: ACcGV63SzjoL6tL+nLZQ4b1yhPrTdZvT852hummCkhMcLYV3ZcvC9aZZcCqpC4RVZeX82pdgNwmsMQ==
+X-Received: by 2002:a9d:2f9b:: with SMTP id r27mr17266234otb.298.1539782703549;
+        Wed, 17 Oct 2018 06:25:03 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id j22sm5835861ote.61.2018.10.17.06.25.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 06:25:02 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 08:25:01 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Maciej Purski <m.purski@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH v1 05/11] dt-bindings: regulator: Change
+ regulator-coupled-max-spread property
+Message-ID: <20181017132501.GA19385@bogus>
+References: <20181005153638.1886-1-digetx@gmail.com>
+ <20181005153638.1886-6-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <19885260cc71182f8c03840204e2553ef42acb67.1539781367.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18101713-0036-0000-0000-00000A4BFDA8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009891; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01103982; UDB=6.00571481; IPR=6.00884035;
- MB=3.00023793; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-17 13:24:02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101713-0037-0000-0000-000049513656
-Message-Id: <99072b0a-5650-46cf-28b9-1083e1919a36@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810170117
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005153638.1886-6-digetx@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/18 6:33 PM, Christophe Leroy wrote:
-> Book3e defines both _PAGE_USER and _PAGE_PRIVILEGED, so the nohash
-> default pte_mkprivileged() and pte_mkuser() are not usable.
+On Fri, Oct 05, 2018 at 06:36:32PM +0300, Dmitry Osipenko wrote:
+> Redefine binding for regulator-coupled-max-spread property in a way that
+> max-spread values are defined per regulator couple instead of defining
+> single max-spread for the whole group of coupled regulators.
 > 
-> This patch redefines them for book3e.
+> With that change the following regulators coupling configuration will be
+> possible:
 > 
-> In theorie, only pte_mkprivileged() needs to be redefined because
-> _PAGE_USER includes _PAGE_PRIVILEGED, but it is less confusing
-> to redefine both.
+> regA: regulatorA {
+> 	regulator-coupled-with = <&regB &regC>;
+> 	regulator-coupled-max-spread = <100000 300000>;
+> };
 > 
-> Fixes: a0da4bc166f2 ("powerpc/mm: Allow platforms to redefine some helpers")
-
-  Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> regB: regulatorB {
+> 	regulator-coupled-with = <&regA &regC>;
+> 	regulator-coupled-max-spread = <100000 200000>;
+> };
+> 
+> regC: regulatorC {
+> 	regulator-coupled-with = <&regA &regB>;
+> 	regulator-coupled-max-spread = <300000 200000>;
+> };
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->   arch/powerpc/include/asm/nohash/pte-book3e.h | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
+>  Documentation/devicetree/bindings/regulator/regulator.txt | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/powerpc/include/asm/nohash/pte-book3e.h b/arch/powerpc/include/asm/nohash/pte-book3e.h
-> index 58eef8cb569d..fa1451e15b4e 100644
-> --- a/arch/powerpc/include/asm/nohash/pte-book3e.h
-> +++ b/arch/powerpc/include/asm/nohash/pte-book3e.h
-> @@ -109,5 +109,21 @@
->   #define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
->   #define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
->   
-> +#ifndef __ASSEMBLY__
-> +static inline pte_t pte_mkprivileged(pte_t pte)
-> +{
-> +	return __pte((pte_val(pte) & ~_PAGE_USER) | _PAGE_PRIVILEGED);
-> +}
-> +
-> +#define pte_mkprivileged pte_mkprivileged
-> +
-> +static inline pte_t pte_mkuser(pte_t pte)
-> +{
-> +	return __pte((pte_val(pte) & ~_PAGE_PRIVILEGED) | _PAGE_USER);
-> +}
-> +
-> +#define pte_mkuser pte_mkuser
-> +#endif /* __ASSEMBLY__ */
-> +
->   #endif /* __KERNEL__ */
->   #endif /*  _ASM_POWERPC_NOHASH_PTE_BOOK3E_H */
-> 
+> diff --git a/Documentation/devicetree/bindings/regulator/regulator.txt b/Documentation/devicetree/bindings/regulator/regulator.txt
+> index a7cd36877bfe..9b525b657fca 100644
+> --- a/Documentation/devicetree/bindings/regulator/regulator.txt
+> +++ b/Documentation/devicetree/bindings/regulator/regulator.txt
+> @@ -76,8 +76,9 @@ Optional properties:
+>  - regulator-coupled-with: Regulators with which the regulator
+>    is coupled. The linkage is 2-way - all coupled regulators should be linked
+>    with each other. A regulator should not be coupled with its supplier.
+> -- regulator-coupled-max-spread: Max spread between voltages of coupled regulators
+> -  in microvolts.
+> +- regulator-coupled-max-spread: Array of maximum spread between voltages of
+> +  coupled regulators in microvolts, each value in the array relates to the
+> +  corresponding couple specified by the regulator-coupled-with property.
 
+Is this in use already? How is a single entry handled?
+
+Rob
