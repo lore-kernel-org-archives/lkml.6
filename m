@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D47ECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E705ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26F8621476
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:32:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26F8621476
+	by mail.kernel.org (Postfix) with ESMTP id 495EE214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 495EE214AB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbeJRC3w (ORCPT
+        id S1728385AbeJRC3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 22:29:52 -0400
+        Wed, 17 Oct 2018 22:29:54 -0400
 Received: from mga12.intel.com ([192.55.52.136]:29659 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728348AbeJRC3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 22:29:52 -0400
+        id S1728348AbeJRC3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 22:29:53 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 11:32:56 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 11:32:57 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="82003891"
+   d="scan'208";a="82003896"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by orsmga007.jf.intel.com with ESMTP; 17 Oct 2018 11:32:56 -0700
+  by orsmga007.jf.intel.com with ESMTP; 17 Oct 2018 11:32:57 -0700
 From:   Tim Chen <tim.c.chen@linux.intel.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -48,9 +48,9 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Arjan van de Ven <arjan@linux.intel.com>,
         Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
         x86@kernel.org
-Subject: [Patch v3 05/13] x86/smt: Create cpu_smt_enabled static key for SMT specific code
-Date:   Wed, 17 Oct 2018 10:59:33 -0700
-Message-Id: <ed49c63227dcfa8fd6e53c492e38ce0e22a5b11f.1539798901.git.tim.c.chen@linux.intel.com>
+Subject: [Patch v3 06/13] mm: Pass task instead of task->mm as argument to set_dumpable
+Date:   Wed, 17 Oct 2018 10:59:34 -0700
+Message-Id: <c793fcd092063a68f1de7ce982df2ebb347a3542.1539798901.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1539798901.git.tim.c.chen@linux.intel.com>
 References: <cover.1539798901.git.tim.c.chen@linux.intel.com>
@@ -61,108 +61,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create the cpu_smt_enabled static key to indicate if we are
-using SMT.  SMT specific code paths are executed only when SMT
-code paths are enabled by this key.
+Change the argument to set_dumpable from task->mm to task.  This allows us
+to later add hooks to modify a task's property according to whether it is
+a non-dumpable task. Non dumpable tasks demand a higher level of security.
+Changes the dumpable value from in to unsigned int as negative number is
+not allowed.
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/bugs.c |  2 +-
- arch/x86/kvm/vmx.c         |  2 +-
- include/linux/cpu.h        |  1 +
- kernel/cpu.c               | 12 ++++++++++--
- 4 files changed, 13 insertions(+), 4 deletions(-)
+ fs/exec.c                      | 14 ++++++++------
+ include/linux/sched/coredump.h |  2 +-
+ kernel/cred.c                  |  2 +-
+ kernel/sys.c                   |  2 +-
+ 4 files changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 6ed82ea..0338fa1 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -358,7 +358,7 @@ void arch_smt_update(void)
- 
- 	mutex_lock(&spec_ctrl_mutex);
- 	mask = x86_spec_ctrl_base;
--	if (cpu_smt_control == CPU_SMT_ENABLED)
-+	if (static_branch_likely(&cpu_smt_enabled))
- 		mask |= SPEC_CTRL_STIBP;
+diff --git a/fs/exec.c b/fs/exec.c
+index 1ebf6e5..e204830 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1362,9 +1362,9 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
+ 	    !(uid_eq(current_euid(), current_uid()) &&
+ 	      gid_eq(current_egid(), current_gid())))
+-		set_dumpable(current->mm, suid_dumpable);
++		set_dumpable(current, (unsigned int) suid_dumpable);
  	else
- 		mask &= ~SPEC_CTRL_STIBP;
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 533a327..8ec0ea3 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -11072,7 +11072,7 @@ static int vmx_vm_init(struct kvm *kvm)
- 			 * Warn upon starting the first VM in a potentially
- 			 * insecure environment.
- 			 */
--			if (cpu_smt_control == CPU_SMT_ENABLED)
-+			if (static_branch_likely(&cpu_smt_enabled))
- 				pr_warn_once(L1TF_MSG_SMT);
- 			if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER)
- 				pr_warn_once(L1TF_MSG_L1D);
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index 218df7f..b54f085 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -188,5 +188,6 @@ static inline void cpu_smt_disable(bool force) { }
- static inline void cpu_smt_check_topology_early(void) { }
- static inline void cpu_smt_check_topology(void) { }
- #endif
-+DECLARE_STATIC_KEY_TRUE(cpu_smt_enabled);
+-		set_dumpable(current->mm, SUID_DUMP_USER);
++		set_dumpable(current, SUID_DUMP_USER);
  
- #endif /* _LINUX_CPU_H_ */
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 3adecda..ad28afc 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -349,6 +349,8 @@ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
- #ifdef CONFIG_HOTPLUG_SMT
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
- EXPORT_SYMBOL_GPL(cpu_smt_control);
-+DEFINE_STATIC_KEY_TRUE(cpu_smt_enabled);
-+EXPORT_SYMBOL_GPL(cpu_smt_enabled);
+ 	arch_setup_new_exec();
+ 	perf_event_exec();
+@@ -1943,17 +1943,19 @@ EXPORT_SYMBOL(set_binfmt);
+ /*
+  * set_dumpable stores three-value SUID_DUMP_* into mm->flags.
+  */
+-void set_dumpable(struct mm_struct *mm, int value)
++void set_dumpable(struct task_struct *tsk, unsigned int value)
+ {
+ 	unsigned long old, new;
  
- static bool cpu_smt_available __read_mostly;
+-	if (WARN_ON((unsigned)value > SUID_DUMP_ROOT))
++	if (WARN_ON(value > SUID_DUMP_ROOT))
++		return;
++	if (WARN_ON(!tsk->mm))
+ 		return;
  
-@@ -364,6 +366,7 @@ void __init cpu_smt_disable(bool force)
- 	} else {
- 		cpu_smt_control = CPU_SMT_DISABLED;
+ 	do {
+-		old = READ_ONCE(mm->flags);
++		old = READ_ONCE(tsk->mm->flags);
+ 		new = (old & ~MMF_DUMPABLE_MASK) | value;
+-	} while (cmpxchg(&mm->flags, old, new) != old);
++	} while (cmpxchg(&tsk->mm->flags, old, new) != old);
+ }
+ 
+ SYSCALL_DEFINE3(execve,
+diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
+index ec912d0..c02b1ab 100644
+--- a/include/linux/sched/coredump.h
++++ b/include/linux/sched/coredump.h
+@@ -14,7 +14,7 @@
+ #define MMF_DUMPABLE_BITS 2
+ #define MMF_DUMPABLE_MASK ((1 << MMF_DUMPABLE_BITS) - 1)
+ 
+-extern void set_dumpable(struct mm_struct *mm, int value);
++extern void set_dumpable(struct task_struct *tsk, unsigned int value);
+ /*
+  * This returns the actual value of the suid_dumpable flag. For things
+  * that are using this for checking for privilege transitions, it must
+diff --git a/kernel/cred.c b/kernel/cred.c
+index ecf0365..18ef774 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -446,7 +446,7 @@ int commit_creds(struct cred *new)
+ 	    !gid_eq(old->fsgid, new->fsgid) ||
+ 	    !cred_cap_issubset(old, new)) {
+ 		if (task->mm)
+-			set_dumpable(task->mm, suid_dumpable);
++			set_dumpable(task, (unsigned int) suid_dumpable);
+ 		task->pdeath_signal = 0;
+ 		smp_wmb();
  	}
-+	static_branch_disable(&cpu_smt_enabled);	
- }
+diff --git a/kernel/sys.c b/kernel/sys.c
+index cf5c675..d0892cd 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2292,7 +2292,7 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 			error = -EINVAL;
+ 			break;
+ 		}
+-		set_dumpable(me->mm, arg2);
++		set_dumpable(me, (unsigned int) arg2);
+ 		break;
  
- /*
-@@ -373,8 +376,10 @@ void __init cpu_smt_disable(bool force)
-  */
- void __init cpu_smt_check_topology_early(void)
- {
--	if (!topology_smt_supported())
-+	if (!topology_smt_supported()) {
- 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+		static_branch_disable(&cpu_smt_enabled);	
-+	}
- }
- 
- /*
-@@ -386,8 +391,10 @@ void __init cpu_smt_check_topology_early(void)
-  */
- void __init cpu_smt_check_topology(void)
- {
--	if (!cpu_smt_available)
-+	if (!cpu_smt_available) {
- 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+		static_branch_disable(&cpu_smt_enabled);	
-+	}
- }
- 
- static int __init smt_cmdline_disable(char *str)
-@@ -2072,6 +2079,7 @@ static int cpuhp_smt_enable(void)
- 
- 	cpu_maps_update_begin();
- 	cpu_smt_control = CPU_SMT_ENABLED;
-+	static_branch_enable(&cpu_smt_enabled);
- 	arch_smt_update();
- 	for_each_present_cpu(cpu) {
- 		/* Skip online CPUs and CPUs on offline nodes */
+ 	case PR_SET_UNALIGN:
 -- 
 2.9.4
 
