@@ -2,261 +2,140 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D6CECDE3D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7686ECDE3E
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4D68213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:55:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4D68213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 79C4C213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:56:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C4C213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbeJRHxs (ORCPT
+        id S1727377AbeJRHzD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 03:53:48 -0400
-Received: from mga11.intel.com ([192.55.52.93]:62545 "EHLO mga11.intel.com"
+        Thu, 18 Oct 2018 03:55:03 -0400
+Received: from mga18.intel.com ([134.134.136.126]:18839 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727500AbeJRHxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 03:53:48 -0400
+        id S1727186AbeJRHzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 03:55:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 16:54:37 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 16:56:52 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="100366649"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
-  by orsmga001.jf.intel.com with ESMTP; 17 Oct 2018 16:54:37 -0700
-Subject: [mm PATCH v4 6/6] mm: Use common iterator for deferred_init_pages
- and deferred_free_pages
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     linux-mm@kvack.org, akpm@linux-foundation.org
-Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.jiang@intel.com, alexander.h.duyck@linux.intel.com,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        davem@davemloft.net, yi.z.zhang@linux.intel.com,
-        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
-        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-Date:   Wed, 17 Oct 2018 16:54:36 -0700
-Message-ID: <20181017235436.17213.15091.stgit@localhost.localdomain>
-In-Reply-To: <20181017235043.17213.92459.stgit@localhost.localdomain>
-References: <20181017235043.17213.92459.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
+   d="scan'208";a="89168711"
+Received: from ray.sc.intel.com (HELO [10.232.0.41]) ([10.232.0.41])
+  by FMSMGA003.fm.intel.com with ESMTP; 17 Oct 2018 16:56:51 -0700
+Subject: Re: [PATCH v14 19/19] x86/sgx: Driver documentation
+To:     Pavel Machek <pavel@ucw.cz>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
+ <20181015205436.GA28500@amd>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <fe28962d-367b-b8bb-8280-fe48c7d08813@intel.com>
+Date:   Wed, 17 Oct 2018 16:56:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181015205436.GA28500@amd>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch creates a common iterator to be used by both deferred_init_pages
-and deferred_free_pages. By doing this we can cut down a bit on code
-overhead as they will likely both be inlined into the same function anyway.
+On 10/15/2018 01:54 PM, Pavel Machek wrote:
+>> +Intel(R) SGX is a set of CPU instructions that can be used by applications to
+>> +set aside private regions of code and data. The code outside the enclave is
+>> +disallowed to access the memory inside the enclave by the CPU access control.
+>> +In a way you can think that SGX provides inverted sandbox. It protects the
+>> +application from a malicious host.
+> Well, recently hardware had some problems keeping its
+> promises. So... what about rowhammer, meltdown and spectre?
 
-This new approach allows deferred_init_pages to make use of
-__init_pageblock. By doing this we can cut down on the code size by sharing
-code between both the hotplug and deferred memory init code paths.
+There's a ton of documentation out there about what kinds of protections
+SGX provides.  I don't think this is an appropriate place to have an
+exhaustive discussion about it.  But, there's extensive discussion of it
+on Intel's security site:
 
-An additional benefit to this approach is that we improve in cache locality
-of the memory init as we can focus on the memory areas related to
-identifying if a given PFN is valid and keep that warm in the cache until
-we transition to a region of a different type. So we will stream through a
-chunk of valid blocks before we turn to initializing page structs.
+https://software.intel.com/security-software-guidance/
 
-On my x86_64 test system with 384GB of memory per node I saw a reduction in
-initialization time from 1.38s to 1.06s as a result of this patch.
+There's documentation on how L1TF affects SGX here:
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
----
- mm/page_alloc.c |  134 +++++++++++++++++++++++++++----------------------------
- 1 file changed, 65 insertions(+), 69 deletions(-)
+https://software.intel.com/security-software-guidance/software-guidance/l1-terminal-fault
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index e7fee7a5f8a3..f47d02e42cf7 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1484,32 +1484,6 @@ void clear_zone_contiguous(struct zone *zone)
- }
- 
- #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
--static void __init deferred_free_range(unsigned long pfn,
--				       unsigned long nr_pages)
--{
--	struct page *page;
--	unsigned long i;
--
--	if (!nr_pages)
--		return;
--
--	page = pfn_to_page(pfn);
--
--	/* Free a large naturally-aligned chunk if possible */
--	if (nr_pages == pageblock_nr_pages &&
--	    (pfn & (pageblock_nr_pages - 1)) == 0) {
--		set_pageblock_migratetype(page, MIGRATE_MOVABLE);
--		__free_pages_core(page, pageblock_order);
--		return;
--	}
--
--	for (i = 0; i < nr_pages; i++, page++, pfn++) {
--		if ((pfn & (pageblock_nr_pages - 1)) == 0)
--			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
--		__free_pages_core(page, 0);
--	}
--}
--
- /* Completion tracking for deferred_init_memmap() threads */
- static atomic_t pgdat_init_n_undone __initdata;
- static __initdata DECLARE_COMPLETION(pgdat_init_all_done_comp);
-@@ -1521,48 +1495,77 @@ static inline void __init pgdat_init_report_one_done(void)
- }
- 
- /*
-- * Returns true if page needs to be initialized or freed to buddy allocator.
-+ * Returns count if page range needs to be initialized or freed
-  *
-- * First we check if pfn is valid on architectures where it is possible to have
-- * holes within pageblock_nr_pages. On systems where it is not possible, this
-- * function is optimized out.
-+ * First, we check if a current large page is valid by only checking the
-+ * validity of the head pfn.
-  *
-- * Then, we check if a current large page is valid by only checking the validity
-- * of the head pfn.
-+ * Then we check if the contiguous pfns are valid on architectures where it
-+ * is possible to have holes within pageblock_nr_pages. On systems where it
-+ * is not possible, this function is optimized out.
-  */
--static inline bool __init deferred_pfn_valid(unsigned long pfn)
-+static unsigned long __next_pfn_valid_range(unsigned long *i,
-+					    unsigned long end_pfn)
- {
--	if (!pfn_valid_within(pfn))
--		return false;
--	if (!(pfn & (pageblock_nr_pages - 1)) && !pfn_valid(pfn))
--		return false;
--	return true;
-+	unsigned long pfn = *i;
-+	unsigned long count;
-+
-+	while (pfn < end_pfn) {
-+		unsigned long t = ALIGN(pfn + 1, pageblock_nr_pages);
-+		unsigned long pageblock_pfn = min(t, end_pfn);
-+
-+#ifndef CONFIG_HOLES_IN_ZONE
-+		count = pageblock_pfn - pfn;
-+		pfn = pageblock_pfn;
-+		if (!pfn_valid(pfn))
-+			continue;
-+#else
-+		for (count = 0; pfn < pageblock_pfn; pfn++) {
-+			if (pfn_valid_within(pfn)) {
-+				count++;
-+				continue;
-+			}
-+
-+			if (count)
-+				break;
-+		}
-+
-+		if (!count)
-+			continue;
-+#endif
-+		*i = pfn;
-+		return count;
-+	}
-+
-+	return 0;
- }
- 
-+#define for_each_deferred_pfn_valid_range(i, start_pfn, end_pfn, pfn, count) \
-+	for (i = (start_pfn),						     \
-+	     count = __next_pfn_valid_range(&i, (end_pfn));		     \
-+	     count && ({ pfn = i - count; 1; });			     \
-+	     count = __next_pfn_valid_range(&i, (end_pfn)))
- /*
-  * Free pages to buddy allocator. Try to free aligned pages in
-  * pageblock_nr_pages sizes.
-  */
--static void __init deferred_free_pages(unsigned long pfn,
-+static void __init deferred_free_pages(unsigned long start_pfn,
- 				       unsigned long end_pfn)
- {
--	unsigned long nr_pgmask = pageblock_nr_pages - 1;
--	unsigned long nr_free = 0;
--
--	for (; pfn < end_pfn; pfn++) {
--		if (!deferred_pfn_valid(pfn)) {
--			deferred_free_range(pfn - nr_free, nr_free);
--			nr_free = 0;
--		} else if (!(pfn & nr_pgmask)) {
--			deferred_free_range(pfn - nr_free, nr_free);
--			nr_free = 1;
--			touch_nmi_watchdog();
-+	unsigned long i, pfn, count;
-+
-+	for_each_deferred_pfn_valid_range(i, start_pfn, end_pfn, pfn, count) {
-+		struct page *page = pfn_to_page(pfn);
-+
-+		if (count == pageblock_nr_pages) {
-+			__free_pages_core(page, pageblock_order);
- 		} else {
--			nr_free++;
-+			while (count--)
-+				__free_pages_core(page++, 0);
- 		}
-+
-+		touch_nmi_watchdog();
- 	}
--	/* Free the last block of pages to allocator */
--	deferred_free_range(pfn - nr_free, nr_free);
- }
- 
- /*
-@@ -1571,29 +1574,22 @@ static void __init deferred_free_pages(unsigned long pfn,
-  * Return number of pages initialized.
-  */
- static unsigned long  __init deferred_init_pages(struct zone *zone,
--						 unsigned long pfn,
-+						 unsigned long start_pfn,
- 						 unsigned long end_pfn)
- {
--	unsigned long nr_pgmask = pageblock_nr_pages - 1;
-+	unsigned long i, pfn, count;
- 	int nid = zone_to_nid(zone);
- 	unsigned long nr_pages = 0;
- 	int zid = zone_idx(zone);
--	struct page *page = NULL;
- 
--	for (; pfn < end_pfn; pfn++) {
--		if (!deferred_pfn_valid(pfn)) {
--			page = NULL;
--			continue;
--		} else if (!page || !(pfn & nr_pgmask)) {
--			page = pfn_to_page(pfn);
--			touch_nmi_watchdog();
--		} else {
--			page++;
--		}
--		__init_single_page(page, pfn, zid, nid);
--		nr_pages++;
-+	for_each_deferred_pfn_valid_range(i, start_pfn, end_pfn, pfn, count) {
-+		nr_pages += count;
-+		__init_pageblock(pfn, count, zid, nid, NULL, false);
-+
-+		touch_nmi_watchdog();
- 	}
--	return (nr_pages);
-+
-+	return nr_pages;
- }
- 
- /*
+Or Spectre v2 here:
+
+https://software.intel.com/security-software-guidance/software-guidance/bounds-check-bypass
+
+> Which ones apply, which ones do not, and on what cpu generations?
+
+The CVEs list this in pretty exhaustive detail.  The L1TF/SGX one, for
+example:
+
+https://nvd.nist.gov/vuln/detail/CVE-2018-3615
+
+Lists a bunch of processor models.
 
