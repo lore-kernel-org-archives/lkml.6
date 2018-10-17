@@ -2,175 +2,197 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44033ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC87BECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11482214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:18:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11482214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 38CE421526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:20:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpov/5Pd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CE421526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbeJQWOF (ORCPT
+        id S1727509AbeJQWQL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:14:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53330 "EHLO mx1.redhat.com"
+        Wed, 17 Oct 2018 18:16:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbeJQWOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:14:05 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726727AbeJQWQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 18:16:11 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9A4967F6B0;
-        Wed, 17 Oct 2018 14:18:10 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DFC045E7A1;
-        Wed, 17 Oct 2018 14:18:00 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 3/4] fscache: Fix incomplete initialisation of inline key
- space
-From:   David Howells <dhowells@redhat.com>
-To:     gregkh@linux-foundation.org
-Cc:     syzbot+a95b989b2dde8e806af8@syzkaller.appspotmail.com,
-        Eric Sandeen <sandeen@redhat.com>, viro@zeniv.linux.org.uk,
-        sandeen@redhat.com, dhowells@redhat.com, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 17 Oct 2018 15:17:59 +0100
-Message-ID: <153978587907.7579.9994972857439463419.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153978580402.7579.15833925372019979447.stgit@warthog.procyon.org.uk>
-References: <153978580402.7579.15833925372019979447.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
+        by mail.kernel.org (Postfix) with ESMTPSA id E4EF3214DD;
+        Wed, 17 Oct 2018 14:20:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539786016;
+        bh=8ABrtQaFyflS1g8D6vB31XUEojZl1LYEINfveOomCoE=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=rpov/5PdvdSQaraANmlrDqi9B8EHcBCmkM62quuMAjuHMCFUIl8yBvVU8C3tbG2xW
+         n4ESonyX1gHPyZJamH6h1MbUWjge9jEaLab6HUyO1QWXQ1SNsCL8xQNgawUS1YQ9H6
+         vbOyswTPJzkB22mVqTW8bzQ7Yl/ivPzTxqWvdVfI=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 17 Oct 2018 14:18:10 +0000 (UTC)
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <42e20a5e-beb4-fdc1-cf4a-f6329b09a476@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
+ <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
+ <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
+ <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
+ <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
+ <7d4012b9-e71d-f114-b228-7198f07ea767@codeaurora.org>
+ <153936574404.5275.10513827793530511886@swboyd.mtv.corp.google.com>
+ <7ad2344b-2307-3fb3-c34e-7443fb3a1ec8@codeaurora.org>
+ <42e20a5e-beb4-fdc1-cf4a-f6329b09a476@codeaurora.org>
+Message-ID: <153978601529.5275.17218656685998024623@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for SDM845
+Date:   Wed, 17 Oct 2018 07:20:15 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The inline key in struct rxrpc_cookie is insufficiently initialized,
-zeroing only 3 of the 4 slots, therefore an index_key_len between 13 and 15
-bytes will end up hashing uninitialized memory because the memcpy only
-partially fills the last buf[] element.
+Quoting Taniya Das (2018-10-17 05:04:10)
+> =
 
-Fix this by clearing fscache_cookie objects on allocation rather than using
-the slab constructor to initialise them.  We're going to pretty much fill
-in the entire struct anyway, so bringing it into our dcache writably
-shouldn't incur much overhead.
+> =
 
-This removes the need to do clearance in fscache_set_key() (where we aren't
-doing it correctly anyway).
+> On 10/17/2018 5:07 PM, Taniya Das wrote:
+> > Hello Stephen,
+> > =
 
-Also, we don't need to set cookie->key_len in fscache_set_key() as we
-already did it in the only caller, so remove that.
+> > On 10/12/2018 11:05 PM, Stephen Boyd wrote:
+> >> Quoting Taniya Das (2018-10-09 23:12:27)
+> >>>
+> >>>
+> >>> On 10/10/2018 2:22 AM, Stephen Boyd wrote:
+> >>>> Quoting Taniya Das (2018-10-09 10:26:38)
+> >>>>> Hello Stephen,
+> >>>>>
+> >>>>> On 10/8/2018 8:14 AM, Stephen Boyd wrote:
+> >>>>>> Quoting Taniya Das (2018-10-04 05:02:26)
+> >>>>>>> Add support for the lpass clock controller found on SDM845 based =
 
-Fixes: ec0328e46d6e ("fscache: Maintain a catalogue of allocated cookies")
-Reported-by: syzbot+a95b989b2dde8e806af8@syzkaller.appspotmail.com
-Reported-by: Eric Sandeen <sandeen@redhat.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+> >>>>>>> devices.
+> >>>>>>> This would allow lpass peripheral loader drivers to control the =
 
- fs/fscache/cookie.c   |   23 ++++-------------------
- fs/fscache/internal.h |    1 -
- fs/fscache/main.c     |    4 +---
- 3 files changed, 5 insertions(+), 23 deletions(-)
+> >>>>>>> clocks to
+> >>>>>>> bring the subsystem out of reset.
+> >>>>>>> LPASS clocks present on the global clock controller would be =
 
-diff --git a/fs/fscache/cookie.c b/fs/fscache/cookie.c
-index 83bfe04456b6..b52f1dcd5dea 100644
---- a/fs/fscache/cookie.c
-+++ b/fs/fscache/cookie.c
-@@ -69,19 +69,6 @@ void fscache_free_cookie(struct fscache_cookie *cookie)
- 	}
- }
- 
--/*
-- * initialise an cookie jar slab element prior to any use
-- */
--void fscache_cookie_init_once(void *_cookie)
--{
--	struct fscache_cookie *cookie = _cookie;
--
--	memset(cookie, 0, sizeof(*cookie));
--	spin_lock_init(&cookie->lock);
--	spin_lock_init(&cookie->stores_lock);
--	INIT_HLIST_HEAD(&cookie->backing_objects);
--}
--
- /*
-  * Set the index key in a cookie.  The cookie struct has space for a 12-byte
-  * key plus length and hash, but if that's not big enough, it's instead a
-@@ -95,8 +82,6 @@ static int fscache_set_key(struct fscache_cookie *cookie,
- 	u32 *buf;
- 	int i;
- 
--	cookie->key_len = index_key_len;
--
- 	if (index_key_len > sizeof(cookie->inline_key)) {
- 		buf = kzalloc(index_key_len, GFP_KERNEL);
- 		if (!buf)
-@@ -104,9 +89,6 @@ static int fscache_set_key(struct fscache_cookie *cookie,
- 		cookie->key = buf;
- 	} else {
- 		buf = (u32 *)cookie->inline_key;
--		buf[0] = 0;
--		buf[1] = 0;
--		buf[2] = 0;
- 	}
- 
- 	memcpy(buf, index_key, index_key_len);
-@@ -161,7 +143,7 @@ struct fscache_cookie *fscache_alloc_cookie(
- 	struct fscache_cookie *cookie;
- 
- 	/* allocate and initialise a cookie */
--	cookie = kmem_cache_alloc(fscache_cookie_jar, GFP_KERNEL);
-+	cookie = kmem_cache_zalloc(fscache_cookie_jar, GFP_KERNEL);
- 	if (!cookie)
- 		return NULL;
- 
-@@ -192,6 +174,9 @@ struct fscache_cookie *fscache_alloc_cookie(
- 	cookie->netfs_data	= netfs_data;
- 	cookie->flags		= (1 << FSCACHE_COOKIE_NO_DATA_YET);
- 	cookie->type		= def->type;
-+	spin_lock_init(&cookie->lock);
-+	spin_lock_init(&cookie->stores_lock);
-+	INIT_HLIST_HEAD(&cookie->backing_objects);
- 
- 	/* radix tree insertion won't use the preallocation pool unless it's
- 	 * told it may not wait */
-diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
-index f83328a7f048..d6209022e965 100644
---- a/fs/fscache/internal.h
-+++ b/fs/fscache/internal.h
-@@ -51,7 +51,6 @@ extern struct fscache_cache *fscache_select_cache_for_object(
- extern struct kmem_cache *fscache_cookie_jar;
- 
- extern void fscache_free_cookie(struct fscache_cookie *);
--extern void fscache_cookie_init_once(void *);
- extern struct fscache_cookie *fscache_alloc_cookie(struct fscache_cookie *,
- 						   const struct fscache_cookie_def *,
- 						   const void *, size_t,
-diff --git a/fs/fscache/main.c b/fs/fscache/main.c
-index 7dce110bf17d..30ad89db1efc 100644
---- a/fs/fscache/main.c
-+++ b/fs/fscache/main.c
-@@ -143,9 +143,7 @@ static int __init fscache_init(void)
- 
- 	fscache_cookie_jar = kmem_cache_create("fscache_cookie_jar",
- 					       sizeof(struct fscache_cookie),
--					       0,
--					       0,
--					       fscache_cookie_init_once);
-+					       0, 0, NULL);
- 	if (!fscache_cookie_jar) {
- 		pr_notice("Failed to allocate a cookie jar\n");
- 		ret = -ENOMEM;
+> >>>>>>> registered
+> >>>>>>> with the clock framework based on the device tree flag. Also do =
+
+> >>>>>>> not gate
+> >>>>>>> these clocks if they are left unused.
+> >>>>>>
+> >>>>>> Why not gate them? This statement states what the code is doing, =
+
+> >>>>>> not why
+> >>>>>> it's doing it which is the more crucial information that should be
+> >>>>>> described in the commit text. Also, please add a comment about it =
+
+> >>>>>> to the
+> >>>>>> code next to the flag.
+> >>>>>>
+> >>>>>> I am concerned that it doesn't make any sense though, so probably =
+it
+> >>>>>> shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over so=
+me
+> >>>>>> other larger bug that needs to be fixed.
+> >>>>>>
+> >>>>>
+> >>>>> It does not have any bug, it is just that to access these lpass
+> >>>>> registers we would need the GCC lpass registers to be enabled. I wo=
+uld
+> >>>>> update the same in the commit text.
+> >>>>>
+> >>>>> During clock late_init these clocks should not be accessed to check =
+
+> >>>>> the
+> >>>>> clock status as they would result in unclocked access. The client =
+
+> >>>>> would
+> >>>>> request these clocks in the correct order and it would not have any =
+
+> >>>>> issue.
+> >>>>>
+> >>>>
+> >>>> That seems like the bug right there. If the LPASS registers can't be
+> >>>> accessed unless the clks in GCC are enabled then this driver needs to
+> >>>> turn the clks on before reading/writing registers. Marking the clks =
+as
+> >>>> ignore unused is skipping around the real problem.
+> >>>>
+> >>>
+> >>> If the driver requests for the clocks they would maintain the order. =
+But
+> >>> if the clock late init call is invoked before the driver requests, th=
+ere
+> >>> is no way I could manage this dependency, that is the only reason to
+> >>> mark them unused.
+> >>>
+> >>
+> >> Which driver are we talking about here? The lpass clk driver? Presumab=
+ly
+> >> the lpass clk driver would request the GCC clks and turn them on in
+> >> probe and then register any lpass clks. If the lpass clk driver probes
+> >> bfeore late init, then the gcc clks will be enabled and everything
+> >> works, and if the lpass clk driver probes after late init then the clks
+> >> that can't be touched without gcc clks enabled won't be registered, and
+> >> then they won't be touched. What goes wrong?
+> >>
+> >>
+> > =
+
+> > Okay, sure, I will take the GCC clock handles and then enable/disable =
+
+> > them accordingly.
+> > =
+
+> > I missed earlier, so here is what you suggest
+> =
+
+> gcc_probe --> GCC LPASS clocks registered.
+> lpass_probe --> clk_get on gcc_lpass_clocks/ clk_prepare_enable -->
+> register the lpass clocks --> clk_disable_unprepare gcc_lpass_clocks.
+
+Why did the gcc_lpass_clocks get turned off? Shouldn't they just stay
+enabled all the time?
+
+> =
+
+> But the problem is not during the above. It is the below
+> static void clk_disable_unused_subtree(struct clk_core *core)
+> {
+> ....
+> =
+
+>          if (clk_core_is_enabled(core)) {  --> This access fails.
+> ....
+> =
+
+> }
+> =
+
+
+You may need to add some prepare_ops to turn on clks needed to
+read/write lpass registers. Or you can look into using some sort of
+genpd to enable required clks when these clks are enabled or disabled.
+But I suspect it would be easier to just leave the clks in GCC for lpass
+always enabled and not worry about the complicated genpd things.
 
