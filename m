@@ -2,137 +2,160 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDD8ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83151ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9924214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34914214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:14:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GG5XkhP9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9924214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V1az7oqm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34914214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbeJQWHr (ORCPT
+        id S1727410AbeJQWKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:07:47 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39807 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbeJQWHr (ORCPT
+        Wed, 17 Oct 2018 18:10:43 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37135 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbeJQWKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:07:47 -0400
-Received: by mail-pl1-f196.google.com with SMTP id e67-v6so3779935plb.6;
-        Wed, 17 Oct 2018 07:11:54 -0700 (PDT)
+        Wed, 17 Oct 2018 18:10:43 -0400
+Received: by mail-io1-f68.google.com with SMTP id m16-v6so18875766ioj.4
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 07:14:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FaPs55bqnuyP+FLEaAyUF6ZVLn1DpC5Q1ZV5DDxmVWE=;
-        b=GG5XkhP98u4EMlVzOg/HseeCXBGQEGCq1wcI+2ysjM1JnHVUCjB3Elf5VFyB0cUUFk
-         brjT4E9WcBlJYIa01FUQami5ezSqlqQRRDLd+8mOg9/4K/EyGc9SK/U/+F5MtdEMZZAx
-         f11x8VChaFs+/83qlX6XGlO7uUch3c5zMgd9xmwY2ETyD16MzRlVYTVmg31JbhNQPMWq
-         hljhbmz8oW8L2ROMDgYeyKOOsE0A7vm/UUGsOqGwrLZrrPFYgSX21KiYWdZZ071ifFdZ
-         QAI3T9p4z2X3oWiZ3zAykAmvQGOF69yuIDWw+hJ37XMU7n2c9aDjHl+gl0+GRwxvWc3C
-         x7gA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=5Ux/Fi7ep7dYg3pEqecG3tdShbwa+jT3j31RNyLErzY=;
+        b=V1az7oqmQ8BCna3c5XUv0vSAgKKFN6OnE82wXgXqVTbWWzzwrQM48SyLA3tFo0AvqK
+         Pt95JH9i0m3OjdmHeiAtA4N33kwvuc55rGjvTH2rn9/3gSHdKGQH1iOrqZqioxPTFhUh
+         9Ujp/kPlhbF5Mc/5Y1rCexDYnC5WgXBKn5zBQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FaPs55bqnuyP+FLEaAyUF6ZVLn1DpC5Q1ZV5DDxmVWE=;
-        b=Ia+JNi/0yP7U6oqTXToGI0mHLHw43nvGZTHncpAzEX+GlTcy+PwrV9VoVk5V1e/i0H
-         aGtzUxVWN/i/ztRrXcbyjXdLLD0n3/rgO9wHymm9bRPwqUh29sWEvsWZ3t7j02VncY4h
-         +2WR+5KCiNDIfqkWGybBfcxAE+xvZv85B+NuWZtE86dSkRfzAhhlC3ZtcMWdt4mTUSKL
-         OtVy9GW08ALQ68NArpniScIq9mqIGXaJ1Z4Py9IcZOPHf4nGkBox0ZhItksxFeMvWi/l
-         8Ed1sk+xg9cT84evCDmaouwZRcg2dSQQXaT+BhDtGT8Im0tXUrbQu0bHl1egxPxRgS+T
-         Ylag==
-X-Gm-Message-State: ABuFfoj4pAUdTZRXL99zwABfjyOb8PQVepz5CtL2dykw8123gF7camJH
-        ZOWfy3A7u2YM7V1mjPeeEaw=
-X-Google-Smtp-Source: ACcGV604vbnaYACb/pZtykEZIR0bkCgs67WnJ5iTjfK9Di33TUdI109HyVeqOfgi50s0OKtDRZ4JXA==
-X-Received: by 2002:a17:902:b70d:: with SMTP id d13-v6mr25819322pls.44.1539785514600;
-        Wed, 17 Oct 2018 07:11:54 -0700 (PDT)
-Received: from mail.google.com ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
-        by smtp.gmail.com with ESMTPSA id y24-v6sm34215688pfi.24.2018.10.17.07.11.53
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=5Ux/Fi7ep7dYg3pEqecG3tdShbwa+jT3j31RNyLErzY=;
+        b=P3QAR8rFpnjWDGnyT8cnVsbRir6VtYtYoHLnFtUBfxBRKZvXQINRAVnpbWJwvsjVzz
+         RH9FRJ/38e8Y2UoXjsCJEcToHjWG0UcMLrGdavo24HhwI7ZXeJc2icXMWM2VtdNByHsC
+         2rSnCrH6GUjO0QLtuS2R1xKUR1B3T2Oja1GjaHCVPNlBM0cM5GRmvEzyy1xfiBQB3ae1
+         wHzpvkVD1bthvvflDte4bCwTyjpU7R2JfSAYQLne45vg2KM6HA7oQK8YHLpG7x560Gkk
+         9OGzET4Diwh685wP7yKIZsiYvQ4phxYez/Z3nlISriJnDBNEEHthS8aIpzTna8Ft2ZDd
+         qpsA==
+X-Gm-Message-State: ABuFfojTi8Fgwz/rVzm+wmWaw378RxR2mhK3cOB+PagsfB4BjwUEb4bw
+        sv7wuMMRnQLy5SsKks1valEQzg==
+X-Google-Smtp-Source: ACcGV61sZUDsOHC9rPi0iPgpw69dyJF2u1NgM7nl6eHoSeqRZY4y6VttNgHsfqy3bP8GVa+XVAwbfw==
+X-Received: by 2002:a6b:b20b:: with SMTP id b11-v6mr17027107iof.172.1539785688920;
+        Wed, 17 Oct 2018 07:14:48 -0700 (PDT)
+Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
+        by smtp.gmail.com with ESMTPSA id d75-v6sm916883itc.41.2018.10.17.07.14.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 07:11:54 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 14:11:52 +0000
-From:   Du Changbin <changbin.du@gmail.com>
-To:     bhelgaas@google.com, changbin.du@gmail.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: make pci_size() return real size
-Message-ID: <20181017135151.mg22ki76ywta6c5i@mail.google.com>
-References: <20181013004919.3202-1-changbin.du@gmail.com>
+        Wed, 17 Oct 2018 07:14:47 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 09:14:46 -0500
+From:   Dan Rue <dan.rue@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.18 000/135] 4.18.15-stable review
+Message-ID: <20181017141446.ecg2ri5bv26jfozc@xps.therub.org>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+References: <20181016170515.447235311@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181013004919.3202-1-changbin.du@gmail.com>
-User-Agent: NeoMutt/20180716-508-7c9a6d
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181016170515.447235311@linuxfoundation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn. Have you checked this little improvment? The idea here is that
-this is not a hotspot, so readbility matters than trick. Thanks!
+On Tue, Oct 16, 2018 at 07:03:50PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.18.15 release.
+> There are 135 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Oct 18 17:04:43 UTC 2018.
+> Anything received after that time might be too late.
 
-On Sat, Oct 13, 2018 at 08:49:19AM +0800, changbin.du@gmail.com wrote:
-> From: Du Changbin <changbin.du@gmail.com>
-> 
-> Currently, the pci_size() function actually return 'size-1'.
-> Make it return real size to avoid confusing.
-> 
-> Signed-off-by: Du Changbin <changbin.du@gmail.com>
-> ---
->  drivers/pci/probe.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 201f9e5ff55c..8ff2b1413865 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -121,13 +121,13 @@ static u64 pci_size(u64 base, u64 maxbase, u64 mask)
->  	 * Get the lowest of them to find the decode size, and from that
->  	 * the extent.
->  	 */
-> -	size = (size & ~(size-1)) - 1;
-> +	size = size & ~(size-1);
->  
->  	/*
->  	 * base == maxbase can be valid only if the BAR has already been
->  	 * programmed with all 1s.
->  	 */
-> -	if (base == maxbase && ((base | size) & mask) != mask)
-> +	if (base == maxbase && ((base | (size - 1)) & mask) != mask)
->  		return 0;
->  
->  	return size;
-> @@ -278,7 +278,7 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
->  			/* Above 32-bit boundary; try to reallocate */
->  			res->flags |= IORESOURCE_UNSET;
->  			res->start = 0;
-> -			res->end = sz64;
-> +			res->end = sz64 - 1;
->  			pci_info(dev, "reg 0x%x: can't handle BAR above 4GB (bus address %#010llx)\n",
->  				 pos, (unsigned long long)l64);
->  			goto out;
-> @@ -286,7 +286,7 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
->  	}
->  
->  	region.start = l64;
-> -	region.end = l64 + sz64;
-> +	region.end = l64 + sz64 - 1;
->  
->  	pcibios_bus_to_resource(dev->bus, res, &region);
->  	pcibios_resource_to_bus(dev->bus, &inverted_region, res);
-> -- 
-> 2.17.1
-> 
+Results from Linaro’s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.18.15-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.18.y
+git commit: 62569d12d9372bc0c50a04fe8923c47fd89435fc
+git describe: v4.18.14-136-g62569d12d937
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.18-oe/build/v4.18.14-136-g62569d12d937
+
+
+No regressions (compared to build v4.18.14)
+
+
+No fixes (compared to build v4.18.14)
+
+
+Ran 21140 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
 
 -- 
-Thanks,
-Du Changbin
+Linaro LKFT
+https://lkft.linaro.org
