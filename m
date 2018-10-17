@@ -2,242 +2,211 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7396ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 981C1ECDE3C
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55C3F21477
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:33:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3759221486
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:33:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Air49CyY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C3F21477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="X69A5WCP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3759221486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeJRGbk (ORCPT
+        id S1727810AbeJRGbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 02:31:40 -0400
-Received: from mail-ed1-f48.google.com ([209.85.208.48]:38007 "EHLO
-        mail-ed1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbeJRGbi (ORCPT
+        Thu, 18 Oct 2018 02:31:42 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33403 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727778AbeJRGbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 02:31:38 -0400
-Received: by mail-ed1-f48.google.com with SMTP id c1-v6so26418661ede.5
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:33:50 -0700 (PDT)
+        Thu, 18 Oct 2018 02:31:41 -0400
+Received: by mail-qk1-f195.google.com with SMTP id 84-v6so17624125qkf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eyynqJuJVIWno7SP4WJLk1vGE9NWCrid9lrnLL31ZdU=;
-        b=Air49CyY9Fx9HQvay4WiPUJNXIBmiZjast9GXtRMPrBrZeywq7VzOn7CvTnafft14N
-         E5FYERfsD1LyRiJxNgcua7nqQdbmGpAZyzxBHTLtYUkVQXRUNa9jcdN4VXxCbFa+PNAr
-         EIFJK829gWqmNY5Xj0igF06UXP/NP5ntcoKmI=
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ojxHCS8JGo29W8RBYlCrc4TuCIJLhI6sWMX6g3eLN7U=;
+        b=X69A5WCPGDnelCLRCcVCKfAL4+ojx7TP64d++8iQk4IPq3GBDZpV1/lMSNskzPBdWm
+         bzgr6wMW9s5b40ozV7+L/fDj/R7oIAbx1Z5Ov6nZ8Q6gCephZbVcMWSJIcvzIZYqEDI4
+         50qrtLHr2REIQBWy7FxvSbweypzkbnEgz7a33FewlZLtDbR8m1AFEurpjydd5aF18foA
+         dxVMG/8mXReHxM3c94MOYD4ed3/EbdxmAvdUfDKEvVtSrBCi51I/K24pyOGTS/csasP2
+         QYcbI7x9ndmOR7vZPUUTl83wgytQcAHl/7aCVDP7yExvQxy+tM3BGvZ5wP9gcKhD9LWy
+         rHxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eyynqJuJVIWno7SP4WJLk1vGE9NWCrid9lrnLL31ZdU=;
-        b=QQ4iNujLk/M4WAj2uJuzorVQ8kIEv3xb1zqV0CByrDJXbYMyy0t+wAMKCSNgqhLtA6
-         bwjUUDtGbIFujZPe9pzT+9bhUTyKLZ8D1wmAZ3iUQTJDcrSn06wQF/xG7MUVsjb82B2K
-         wRjyRrFK7xm3u1sQDM6t5bioD5YEeqGGsol7ajdxAH9juYB/GcmFAD8a7X00e6ZSiFT/
-         KCQWAoROpeLLSYXidKWXGSqWxHefYrZ2HDceoAVd15ay2y+25I3U9JFRwe/NHNGLJYMm
-         9OV4zJxbpsZLkQq1iHFgY1WgcTnkNQm7TfvAihcQmeQ8o6aF8xEDFx5xq/yjdQSg3cCc
-         +mvw==
-X-Gm-Message-State: ABuFfohalbahFYRjHLnSJWRp+efQMKXnOQDYHxNABk4O/jayiIebkuqc
-        swZ4vSPKDYcOcvFUo8M9mbQBzlJ07E0=
-X-Google-Smtp-Source: ACcGV62WmlDr1ZHqtNrJx93vAv5G69jrYXRAyja1SXiWBPWz0dOdgMAsBnYuQBmJ2Qh5/3qChsu0vw==
-X-Received: by 2002:a17:906:c28f:: with SMTP id r15-v6mr27442596ejz.188.1539815629769;
-        Wed, 17 Oct 2018 15:33:49 -0700 (PDT)
-Received: from prevas-ravi.waoo.dk (dhcp-5-186-114-252.cgn.ip.fibianet.dk. [5.186.114.252])
-        by smtp.gmail.com with ESMTPSA id e30-v6sm7001555edd.25.2018.10.17.15.33.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 17 Oct 2018 15:33:49 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [POC 11/12] x86-64: implement _rai_bucket_shift
-Date:   Thu, 18 Oct 2018 00:33:31 +0200
-Message-Id: <20181017223332.11964-11-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.19.1.6.gbde171bbf5
-In-Reply-To: <20181017223332.11964-1-linux@rasmusvillemoes.dk>
-References: <20181017223332.11964-1-linux@rasmusvillemoes.dk>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ojxHCS8JGo29W8RBYlCrc4TuCIJLhI6sWMX6g3eLN7U=;
+        b=D94sAtO84rbnVFFPKjM668BLfhS55aNfUvx3FfIm+LwZ+IdqMAO6lnDdzf0Fe6at38
+         zmC0fARQVsM65ksKYUJunvFrXTIdl5N1iNZMn35RoxGcDhJmSre/L+He8Z5uZ9GZYvsr
+         1XQYW+oQQHV5Tklg3myUMApn0IC9DuqDb4hUgRoO0BRGxesQk6tOALLif6PehN3pzaMy
+         XqDbhUqIy1gG+g3TFqJl1aHR9Vp13xpx+yrnlp6Kr8sAvsLUpZDSINQx7VNJ256Jg/oV
+         0ayZYT1au4p4z1ggLm+qfVFI1iTJVUDV7AI5m1GdQjSFi18ue8qdVppe3obxO8wydprP
+         wjXQ==
+X-Gm-Message-State: ABuFfogNK1qFUEgkWSfXS5NjThfoHR+JUK+fOnmuaZoIBotHgVhFwzUC
+        1Nvw/h/B/nmbYGBXLEUoD6EpcA==
+X-Google-Smtp-Source: ACcGV604qYX9vxnsMOKm5SDnzrehGjzWaLHVC6r5Qc0UsTnuVZfWYkqkudDsWhTTygWmQuqQr0IcRA==
+X-Received: by 2002:a37:2307:: with SMTP id j7-v6mr26946993qkj.146.1539815631912;
+        Wed, 17 Oct 2018 15:33:51 -0700 (PDT)
+Received: from cisco ([173.38.117.94])
+        by smtp.gmail.com with ESMTPSA id 14-v6sm10469744qke.3.2018.10.17.15.33.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 15:33:50 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 16:33:47 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Jann Horn <jannh@google.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v7 1/6] seccomp: add a return code to trap to userspace
+Message-ID: <20181017223347.GC14047@cisco>
+References: <20180927151119.9989-1-tycho@tycho.ws>
+ <20180927151119.9989-2-tycho@tycho.ws>
+ <CAGXu5jJr3JWLYGrJ+knu3sj4wwJ_irVvs+JRrY5MuYT3voLegg@mail.gmail.com>
+ <20181017202933.GB14047@cisco>
+ <CAGXu5jK5yN7zcPUMzFYnUbRrVkLNE0YDCioYdNC3P6mF437+5g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jK5yN7zcPUMzFYnUbRrVkLNE0YDCioYdNC3P6mF437+5g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The only slightly tricky issue is that for implementing the thunk, we
-need some temporary registers (with %ecx being one of them), and we
-don't know whether the hash input and/or destination register collide
-with whichever we choose. One _could_ attempt text parsing in asm in
-order to find a safe set of temps, but they would need to be restored
-anyway.
+On Wed, Oct 17, 2018 at 03:21:02PM -0700, Kees Cook wrote:
+> On Wed, Oct 17, 2018 at 1:29 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+> > On Thu, Sep 27, 2018 at 02:31:24PM -0700, Kees Cook wrote:
+> >> On Thu, Sep 27, 2018 at 8:11 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> >> > @@ -60,4 +62,29 @@ struct seccomp_data {
+> >> >         __u64 args[6];
+> >> >  };
+> >> >
+> >> > +struct seccomp_notif {
+> >> > +       __u16 len;
+> >> > +       __u64 id;
+> >> > +       __u32 pid;
+> >> > +       __u8 signaled;
+> >> > +       struct seccomp_data data;
+> >> > +};
+> >> > +
+> >> > +struct seccomp_notif_resp {
+> >> > +       __u16 len;
+> >> > +       __u64 id;
+> >> > +       __s32 error;
+> >> > +       __s64 val;
+> >> > +};
+> >>
+> >> So, len has to come first, for versioning. However, since it's ahead
+> >> of a u64, this leaves a struct padding hole. pahole output:
+> >>
+> >> struct seccomp_notif {
+> >>         __u16                      len;                  /*     0     2 */
+> >>
+> >>         /* XXX 6 bytes hole, try to pack */
+> >>
+> >>         __u64                      id;                   /*     8     8 */
+> >>         __u32                      pid;                  /*    16     4 */
+> >>         __u8                       signaled;             /*    20     1 */
+> >>
+> >>         /* XXX 3 bytes hole, try to pack */
+> >>
+> >>         struct seccomp_data        data;                 /*    24    64 */
+> >>         /* --- cacheline 1 boundary (64 bytes) was 24 bytes ago --- */
+> >>
+> >>         /* size: 88, cachelines: 2, members: 5 */
+> >>         /* sum members: 79, holes: 2, sum holes: 9 */
+> >>         /* last cacheline: 24 bytes */
+> >> };
+> >> struct seccomp_notif_resp {
+> >>         __u16                      len;                  /*     0     2 */
+> >>
+> >>         /* XXX 6 bytes hole, try to pack */
+> >>
+> >>         __u64                      id;                   /*     8     8 */
+> >>         __s32                      error;                /*    16     4 */
+> >>
+> >>         /* XXX 4 bytes hole, try to pack */
+> >>
+> >>         __s64                      val;                  /*    24     8 */
+> >>
+> >>         /* size: 32, cachelines: 1, members: 4 */
+> >>         /* sum members: 22, holes: 2, sum holes: 10 */
+> >>         /* last cacheline: 32 bytes */
+> >> };
+> >>
+> >> How about making len u32, and moving pid and error above "id"? This
+> >> leaves a hole after signaled, so changing "len" won't be sufficient
+> >> for versioning here. Perhaps move it after data?
+> >
+> > Just to confirm my understanding; I've got these as:
+> >
+> > struct seccomp_notif {
+> >         __u32                      len;                  /*     0     4 */
+> >         __u32                      pid;                  /*     4     4 */
+> >         __u64                      id;                   /*     8     8 */
+> >         __u8                       signaled;             /*    16     1 */
+> >
+> >         /* XXX 7 bytes hole, try to pack */
+> >
+> >         struct seccomp_data        data;                 /*    24    64 */
+> >         /* --- cacheline 1 boundary (64 bytes) was 24 bytes ago --- */
+> >
+> >         /* size: 88, cachelines: 2, members: 5 */
+> >         /* sum members: 81, holes: 1, sum holes: 7 */
+> >         /* last cacheline: 24 bytes */
+> > };
+> > struct seccomp_notif_resp {
+> >         __u32                      len;                  /*     0     4 */
+> >         __s32                      error;                /*     4     4 */
+> >         __u64                      id;                   /*     8     8 */
+> >         __s64                      val;                  /*    16     8 */
+> >
+> >         /* size: 24, cachelines: 1, members: 4 */
+> >         /* last cacheline: 24 bytes */
+> > };
+> >
+> > in the next version. Since the structure has no padding at the end of
+> > it, I think the Right Thing will happen. Note that this is slightly
+> > different than what Kees suggested, if I add signaled after data, then
+> > I end up with:
+> >
+> > struct seccomp_notif {
+> >         __u32                      len;                  /*     0     4 */
+> >         __u32                      pid;                  /*     4     4 */
+> >         __u64                      id;                   /*     8     8 */
+> >         struct seccomp_data        data;                 /*    16    64 */
+> >         /* --- cacheline 1 boundary (64 bytes) was 16 bytes ago --- */
+> >         __u8                       signaled;             /*    80     1 */
+> >
+> >         /* size: 88, cachelines: 2, members: 5 */
+> >         /* padding: 7 */
+> >         /* last cacheline: 24 bytes */
+> > };
+> >
+> > which I think will have the versioning problem if the next member
+> > introduces is < 7 bytes.
+> 
+> It'll be a problem in either place. What I was thinking was that
+> specific versioning is required instead of just length.
 
-So instead, just pick %edx and %ecx, and start by pushing them on the
-stack. Then compute the result we need, push that to the stack, restore
-%edx and %ecx, and finally pop the result into the destination
-register (which may be %rdx or %rcx or any other) and adjust the stack
-pointer.
+Oh, if we decide to use the padded space? Yes, that makes sense. Ok,
+I'll switch it to a version.
 
-The patched code does need to do a shr, so I don't think there's a way
-around the cc clobber.
-
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- arch/x86/include/asm/rai.S | 59 ++++++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/rai.h | 21 +++++++++++++-
- arch/x86/kernel/rai.c      | 13 +++++++++
- 3 files changed, 92 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/rai.S b/arch/x86/include/asm/rai.S
-index f42cdd8db876..144697e146b6 100644
---- a/arch/x86/include/asm/rai.S
-+++ b/arch/x86/include/asm/rai.S
-@@ -54,5 +54,64 @@
- 	.popsection
- .endm /* rai_load */
- 
-+	/*
-+	 * For convenience, and because it should not cause that much
-+	 * worse code gen, we tie the hash to an output register, to
-+	 * avoid it being given in the same register where we must
-+	 * place the actual output. Since the hash output is unused,
-+	 * gcc is free to pick that register for anything immediately
-+	 * afterwards.
-+	 */
-+.macro rai_bucket_shift dst, hash, hashq, base, shift
-+	.pushsection .rai_templ, "aw"
-+10:	movabs $0x1234567812345678, \dst
-+	/*
-+	 * Actually, the hash output contains the shifted hash
-+	 * value. But I don't think there's a way to inform gcc about
-+	 * that, and I don't know how useful it would be anyway. So in
-+	 * the thunk below, we don't do anything to have the same
-+	 * property, though it would be doable.
-+	 */
-+	shr $6, \hash
-+	lea (\dst, \hashq, 8), \dst
-+11:
-+	.popsection
-+
-+	.pushsection .text.rai_thunk, "ax"
-+20:	/* dst and hash are registers, we can clobber hash */
-+	push %rdx
-+	push %rcx
-+	mov \hash, %edx
-+	mov \shift(%rip), %ecx
-+	shr %cl,%edx
-+	/* move the shifted value into \hash, so the below works regardless of whether \dst is %rdx or not */
-+	mov %edx, \hash
-+	mov \base(%rip), \dst
-+	lea (\dst, \hashq, 8), \dst
-+	/* We have our final value. */
-+	push \dst
-+	/* Now restore %rdx and %rcx, then finally restore \dst and adjust the stack pointer */
-+	mov 0x8(%rsp), %rcx
-+	mov 0x10(%rsp), %rdx
-+	pop \dst
-+	add $0x10, %rsp
-+	jmp 32f
-+21:
-+	.popsection
-+	/* The part that goes into .text */
-+30:	jmp 20b
-+31:	.skip -(((11b - 10b)-(31b - 30b)) > 0)*((11b - 10b)-(31b - 30b)), 0x90
-+32:
-+
-+	.pushsection .rai_data, "a"
-+40:
-+	rai_entry RAI_BUCKET_SHIFT_8_4_4 30b 32b 10b 11b 20b
-+	.quad \base   /* .bucket_shift.base_addr */
-+	.quad \shift  /* .bucket_shift.shift_addr */
-+41:
-+	rai_entry_pad 40b 41b
-+	.popsection
-+.endm /* rai_bucket_shift */
-+
- 
- #endif
-diff --git a/arch/x86/include/asm/rai.h b/arch/x86/include/asm/rai.h
-index b57494c98d0f..c9726d1e40ed 100644
---- a/arch/x86/include/asm/rai.h
-+++ b/arch/x86/include/asm/rai.h
-@@ -3,8 +3,9 @@
- 
- #define RAI_LOAD_4 0
- #define RAI_LOAD_8 1
-+#define RAI_BUCKET_SHIFT_8_4_4 2
- 
--#define STRUCT_RAI_ENTRY_SIZE 32
-+#define STRUCT_RAI_ENTRY_SIZE 40
- 
- /* Put the asm macros in a separate file for easier editing. */
- #include <asm/rai.S>
-@@ -23,6 +24,10 @@ struct rai_entry {
- 		struct {
- 			void *addr;
- 		} load;
-+		struct {
-+			void *base_addr;
-+			void *shift_addr;
-+		} bucket_shift;
- 	};
- };
- _Static_assert(sizeof(struct rai_entry) == STRUCT_RAI_ENTRY_SIZE,
-@@ -48,6 +53,20 @@ _Static_assert(sizeof(struct rai_entry) == STRUCT_RAI_ENTRY_SIZE,
- 		ret__;							\
- 	})
- 
-+#define _rai_bucket_shift(base, shift, hash) ({				\
-+		typeof(base) ret__;					\
-+		typeof(hash) unused__;					\
-+		if (sizeof(*(base)) == 8 && sizeof(shift) == 4		\
-+		    && sizeof(hash) == 4)				\
-+			asm("rai_bucket_shift %0 %1 %q1 %c3 %c4"	\
-+			    : "=r" (ret__), "=r" (unused__)		\
-+			    : "1" (hash), "i" (&(base)), "i" (&(shift))	\
-+			    : "cc");					\
-+		else							\
-+			ret__ = _rai_bucket_shift_fallback(base, shift, hash); \
-+		ret__;							\
-+	})
-+
- #endif /* !__ASSEMBLY */
- 
- #endif /* _ASM_X86_RAI_H */
-diff --git a/arch/x86/kernel/rai.c b/arch/x86/kernel/rai.c
-index c4284ce7478f..3aa2e3b2c31b 100644
---- a/arch/x86/kernel/rai.c
-+++ b/arch/x86/kernel/rai.c
-@@ -32,6 +32,19 @@ rai_patch_one(const struct rai_entry *r)
- 		memcpy(templ + r->templ_len - sizeof(*imm), imm, sizeof(*imm));
- 		break;
- 	}
-+	case RAI_BUCKET_SHIFT_8_4_4: {
-+		const u32 *shiftp = r->bucket_shift.shift_addr;
-+		const u64 *basep = r->bucket_shift.base_addr;
-+		/*
-+		 * This should be made more robust. For now, assume we
-+		 * have a 10-byte movabs followed by a 3-byte shr. And
-+		 * while *shiftp is 4 bytes wide, we just need the
-+		 * LSB.
-+		 */
-+		memcpy(templ + 2, basep, sizeof(*basep));
-+		memcpy(templ + 12, shiftp, 1);
-+		break;
-+	}
- 	default:
- 		WARN_ONCE(1, "unhandled RAI type %d\n", r->type);
- 		return;
--- 
-2.19.1.6.gbde171bbf5
-
+Tycho
