@@ -2,67 +2,93 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD89ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBA9ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85D5521526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:13:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D5521526
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+	by mail.kernel.org (Postfix) with ESMTP id 8E66B21523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:14:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E66B21523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbeJQRIS (ORCPT
+        id S1727257AbeJQRIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 13:08:18 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:58401 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbeJQRIS (ORCPT
+        Wed, 17 Oct 2018 13:08:54 -0400
+Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:17139 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbeJQRIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 13:08:18 -0400
-X-Originating-IP: 50.39.174.102
-Received: from localhost (50-39-174-102.bvtn.or.frontiernet.net [50.39.174.102])
-        (Authenticated sender: josh@joshtriplett.org)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id A8D586003E;
-        Wed, 17 Oct 2018 09:13:28 +0000 (UTC)
-Date:   Wed, 17 Oct 2018 02:13:26 -0700
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     ksummit-discuss@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tomi Valkeinen <tomi.valkeinen@iki.fi>
-Subject: Re: [Ksummit-discuss] [PATCH] code-of-conduct: Remove explicit list
- of discrimination factors
-Message-ID: <20181017091325.GA15991@localhost>
-References: <20181017071902.30102-1-geert@linux-m68k.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017071902.30102-1-geert@linux-m68k.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 17 Oct 2018 13:08:53 -0400
+Received: from ubuntu-CJ.clients.t30.sncf.fr ([109.190.253.13])
+        by mwinf5d23 with ME
+        id oZE01y00A0J6jfR03ZE0HA; Wed, 17 Oct 2018 11:14:05 +0200
+X-ME-Helo: ubuntu-CJ.clients.t30.sncf.fr
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 17 Oct 2018 11:14:05 +0200
+X-ME-IP: 109.190.253.13
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     clm@fb.com, jbacik@fb.com, dsterba@suse.com
+Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] btrfs: Fix the return value in case of error in 'btrfs_mark_extent_written()'
+Date:   Wed, 17 Oct 2018 11:13:59 +0200
+Message-Id: <20181017091359.3763-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 09:19:01AM +0200, Geert Uytterhoeven wrote:
-> Providing an explicit list of discrimination factors may give the false
-> impression that discrimination based on other unlisted factors would be
-> allowed.
+We return 0 unconditionally in most of the error handling paths of
+'btrfs_mark_extent_written()'.
+However, 'ret' is set to some error codes in several error handling paths.
 
-This impression is, in fact, false, as has already been discussed
-elsewhere. I had hoped that discussion would suffice.
+Return 'ret' instead to propagate the error code.
 
-As mentioned there: The original commit explicitly said "Explicit
-guidelines have demonstrated success in other projects and other areas
-of the kernel."; this is precisely the kind of explicit guideline it
-refers to. Listing explicit cases to cover does not imply other cases
-are not covered; it does, however, ensure that the listed cases *are*,
-and helps people know that they're covered.
+Fixes: 9c8e63db1de9 ("Btrfs: kill BUG_ON()'s in btrfs_mark_extent_written")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch proposal is purely speculative.
+I'm not sure at all that returning 'ret' is correct (but it looks like it
+is :) )
 
-This patch is not OK, and defeats one of the purposes of the original
-change.
+What puzzles me is when 'ret' is set, 'btrfs_abort_transaction()' is also
+called.
+However, the only caller of 'btrfs_mark_extent_written()' (i.e.
+'btrfs_finish_ordered_io()') also calls 'btrfs_abort_transaction()' if an
+error is returned.
+So returning an error code here, would lead to a double call to this abort
+function.
+
+I'm usure of if it is correct and/or intented.
+If returning 'ret' is correct, should we also axe the 'btrfs_abort_transaction()'
+calls here, and leave the caller do the clean-up?
+
+Before the commit in the Fixes tag, we were BUGing_ON in case of errror. So
+propagating the error was pointless.
+---
+ fs/btrfs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 15b925142793..cac0bd744de3 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1374,7 +1374,7 @@ int btrfs_mark_extent_written(struct btrfs_trans_handle *trans,
+ 	}
+ out:
+ 	btrfs_free_path(path);
+-	return 0;
++	return ret;
+ }
+ 
+ /*
+-- 
+2.17.1
+
