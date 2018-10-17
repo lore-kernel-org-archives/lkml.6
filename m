@@ -2,171 +2,139 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E76ECDE3E
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19AEEECDE3D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67740208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:54:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67740208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BCA75213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 23:55:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA75213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeJRHwm (ORCPT
+        id S1727503AbeJRHxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 03:52:42 -0400
-Received: from mga11.intel.com ([192.55.52.93]:62545 "EHLO mga11.intel.com"
+        Thu, 18 Oct 2018 03:53:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57906 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727478AbeJRHwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 03:52:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 16:54:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="100366643"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
-  by orsmga001.jf.intel.com with ESMTP; 17 Oct 2018 16:54:31 -0700
-Subject: [mm PATCH v4 5/6] mm: Add reserved flag setting to set_page_links
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     linux-mm@kvack.org, akpm@linux-foundation.org
-Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.jiang@intel.com, alexander.h.duyck@linux.intel.com,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        davem@davemloft.net, yi.z.zhang@linux.intel.com,
-        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
-        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-Date:   Wed, 17 Oct 2018 16:54:31 -0700
-Message-ID: <20181017235431.17213.11512.stgit@localhost.localdomain>
-In-Reply-To: <20181017235043.17213.92459.stgit@localhost.localdomain>
-References: <20181017235043.17213.92459.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
+        id S1727196AbeJRHxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 03:53:42 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0D58C307D858;
+        Wed, 17 Oct 2018 23:55:34 +0000 (UTC)
+Received: from sky.random (ovpn-120-228.rdu2.redhat.com [10.10.120.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B034C1779A;
+        Wed, 17 Oct 2018 23:55:33 +0000 (UTC)
+Date:   Wed, 17 Oct 2018 19:55:32 -0400
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     syzbot <syzbot+5b1df0420c523b45a953@syzkaller.appspotmail.com>,
+        bcrl@kvack.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org
+Subject: Re: possible deadlock in aio_poll
+Message-ID: <20181017235532.GC4568@redhat.com>
+References: <000000000000cbb35d05757f7a3a@google.com>
+ <20180910165317.GA3237@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180910165317.GA3237@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 17 Oct 2018 23:55:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch modifies the set_page_links function to include the setting of
-the reserved flag via a simple AND and OR operation. The motivation for
-this is the fact that the existing __set_bit call still seems to have
-effects on performance as replacing the call with the AND and OR can reduce
-initialization time.
+On Mon, Sep 10, 2018 at 09:53:17AM -0700, Christoph Hellwig wrote:
+> On Mon, Sep 10, 2018 at 12:41:05AM -0700, syzbot wrote:
+> > =====================================================
+> > WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
+> > 4.19.0-rc2+ #229 Not tainted
+> > -----------------------------------------------------
+> > syz-executor2/9399 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+> > 00000000126506e0 (&ctx->fd_wqh){+.+.}, at: spin_lock
+> > include/linux/spinlock.h:329 [inline]
+> > 00000000126506e0 (&ctx->fd_wqh){+.+.}, at: aio_poll+0x760/0x1420
+> > fs/aio.c:1747
+> > 
+> > and this task is already holding:
+> > 000000002bed6bf6 (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq
+> > include/linux/spinlock.h:354 [inline]
+> > 000000002bed6bf6 (&(&ctx->ctx_lock)->rlock){..-.}, at: aio_poll+0x738/0x1420
+> > fs/aio.c:1746
+> > which would create a new lock dependency:
+> >  (&(&ctx->ctx_lock)->rlock){..-.} -> (&ctx->fd_wqh){+.+.}
+> 
+> ctx->fd_wqh seems to only exist in userfaultfd, which indeed seems
+> to do strange open coded waitqueue locking, and seems to fail to disable
+> irqs.  Something like this should fix it:
+> 
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index bfa0ec69f924..356d2b8568c1 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -1026,7 +1026,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
+>  	struct userfaultfd_ctx *fork_nctx = NULL;
+>  
+>  	/* always take the fd_wqh lock before the fault_pending_wqh lock */
+> -	spin_lock(&ctx->fd_wqh.lock);
+> +	spin_lock_irq(&ctx->fd_wqh.lock);
+>  	__add_wait_queue(&ctx->fd_wqh, &wait);
+>  	for (;;) {
+>  		set_current_state(TASK_INTERRUPTIBLE);
+> @@ -1112,13 +1112,13 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
+>  			ret = -EAGAIN;
+>  			break;
+>  		}
+> -		spin_unlock(&ctx->fd_wqh.lock);
+> +		spin_unlock_irq(&ctx->fd_wqh.lock);
+>  		schedule();
+> -		spin_lock(&ctx->fd_wqh.lock);
+> +		spin_lock_irq(&ctx->fd_wqh.lock);
+>  	}
+>  	__remove_wait_queue(&ctx->fd_wqh, &wait);
+>  	__set_current_state(TASK_RUNNING);
+> -	spin_unlock(&ctx->fd_wqh.lock);
+> +	spin_unlock_irq(&ctx->fd_wqh.lock);
+>  
+>  	if (!ret && msg->event == UFFD_EVENT_FORK) {
+>  		ret = resolve_userfault_fork(ctx, fork_nctx, msg);
+> 
 
-Looking over the assembly code before and after the change the main
-difference between the two is that the reserved bit is stored in a value
-that is generated outside of the main initialization loop and is then
-written with the other flags field values in one write to the page->flags
-value. Previously the generated value was written and then then a btsq
-instruction was issued.
+Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
 
-On my x86_64 test system with 3TB of persistent memory per node I saw the
-persistent memory initialization time on average drop from 23.49s to
-19.12s per node.
+This is lock inversion with userfaultfd_poll that takes the fq_wqh
+after the irqsafe aio lock. And the aio lock can be taken from softirq
+(so potentially for interrupts) leading to a potential lock inversion
+deadlock.
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
----
- include/linux/mm.h |    9 ++++++++-
- mm/page_alloc.c    |   29 +++++++++++++++++++----------
- 2 files changed, 27 insertions(+), 11 deletions(-)
+I suggest to add a comment about the above in the code before the
+first spin_lock_irq to explain why it needs to be _irq or it's not
+obvious.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 6e2c9631af05..14d06d7d2986 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1171,11 +1171,18 @@ static inline void set_page_node(struct page *page, unsigned long node)
- 	page->flags |= (node & NODES_MASK) << NODES_PGSHIFT;
- }
- 
-+static inline void set_page_reserved(struct page *page, bool reserved)
-+{
-+	page->flags &= ~(1ul << PG_reserved);
-+	page->flags |= (unsigned long)(!!reserved) << PG_reserved;
-+}
-+
- static inline void set_page_links(struct page *page, enum zone_type zone,
--	unsigned long node, unsigned long pfn)
-+	unsigned long node, unsigned long pfn, bool reserved)
- {
- 	set_page_zone(page, zone);
- 	set_page_node(page, node);
-+	set_page_reserved(page, reserved);
- #ifdef SECTION_IN_PAGE_FLAGS
- 	set_page_section(page, pfn_to_section_nr(pfn));
- #endif
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index a0b81e0bef03..e7fee7a5f8a3 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1179,7 +1179,7 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
- 				unsigned long zone, int nid)
- {
- 	mm_zero_struct_page(page);
--	set_page_links(page, zone, nid, pfn);
-+	set_page_links(page, zone, nid, pfn, false);
- 	init_page_count(page);
- 	page_mapcount_reset(page);
- 	page_cpupid_reset_last(page);
-@@ -1195,7 +1195,8 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
- static void __meminit __init_pageblock(unsigned long start_pfn,
- 				       unsigned long nr_pages,
- 				       unsigned long zone, int nid,
--				       struct dev_pagemap *pgmap)
-+				       struct dev_pagemap *pgmap,
-+				       bool is_reserved)
- {
- 	unsigned long nr_pgmask = pageblock_nr_pages - 1;
- 	struct page *start_page = pfn_to_page(start_pfn);
-@@ -1231,19 +1232,16 @@ static void __meminit __init_pageblock(unsigned long start_pfn,
- 		 * call because of the fact that the pfn number is used to
- 		 * get the section_nr and this function should not be
- 		 * spanning more than a single section.
-+		 *
-+		 * We can use a non-atomic operation for setting the
-+		 * PG_reserved flag as we are still initializing the pages.
- 		 */
--		set_page_links(page, zone, nid, start_pfn);
-+		set_page_links(page, zone, nid, start_pfn, is_reserved);
- 		init_page_count(page);
- 		page_mapcount_reset(page);
- 		page_cpupid_reset_last(page);
- 
- 		/*
--		 * We can use the non-atomic __set_bit operation for setting
--		 * the flag as we are still initializing the pages.
--		 */
--		__SetPageReserved(page);
--
--		/*
- 		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
- 		 * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
- 		 * page is ever freed or placed on a driver-private list.
-@@ -5612,7 +5610,18 @@ static void __meminit __memmap_init_hotplug(unsigned long size, int nid,
- 		pfn = max(ALIGN_DOWN(pfn - 1, pageblock_nr_pages), start_pfn);
- 		stride -= pfn;
- 
--		__init_pageblock(pfn, stride, zone, nid, pgmap);
-+		/*
-+		 * The last argument of __init_pageblock is a boolean
-+		 * value indicating if the page will be marked as reserved.
-+		 *
-+		 * Mark page reserved as it will need to wait for onlining
-+		 * phase for it to be fully associated with a zone.
-+		 *
-+		 * Under certain circumstances ZONE_DEVICE pages may not
-+		 * need to be marked as reserved, however there is still
-+		 * code that is depending on this being set for now.
-+		 */
-+		__init_pageblock(pfn, stride, zone, nid, pgmap, true);
- 
- 		cond_resched();
- 	}
+c430d1e848ff1240d126e79780f3c26208b8aed9 was just a false positive
+instead.
 
+I didn't comment on c430d1e848ff1240d126e79780f3c26208b8aed9 because I
+was too busy with the speculative execution issues at the time and it
+was just fine to drop the microoptimization, but while at it can we
+look in how to add a spin_acquire or find a way to teach lockdep in
+another way, so it's happy even if we restore the microoptimization?
+
+If we do that, in addition we should also initialize the
+ctx->fault_wqh spinlock to locked in the same patch (a spin_lock
+during uffd ctx creation will do) to be sure nobody takes it as
+further robustness feature against future modification (it gets more
+self documenting too that it's not supposed to be taken and the
+fault_pending_wq.lock has to be taken instead).
+
+Thanks,
+Andrea
