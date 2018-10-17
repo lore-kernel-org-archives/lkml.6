@@ -2,258 +2,160 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 730A6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F26C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:56:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 007CE214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:56:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 007CE214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 076F1214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 03:56:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eR3qLhkj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 076F1214FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbeJQLth (ORCPT
+        id S1727485AbeJQLuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 07:49:37 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:34422 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbeJQLtg (ORCPT
+        Wed, 17 Oct 2018 07:50:24 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36143 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727376AbeJQLuY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 07:49:36 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 01089133E9F99;
-        Tue, 16 Oct 2018 20:55:57 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 20:55:55 -0700 (PDT)
-Message-Id: <20181016.205555.1070918198627611771.davem@davemloft.net>
-To:     acme@redhat.com
-CC:     linux-kernel@vger.kernel.org
-Subject: [PATCH] perf: Add Sparc annotate support.
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 16 Oct 2018 20:55:58 -0700 (PDT)
+        Wed, 17 Oct 2018 07:50:24 -0400
+Received: by mail-io1-f68.google.com with SMTP id p4-v6so17977316iom.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 20:56:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=37qfKIQn2F/zuG3mSaFIQxcnlRXFrQCwgR47g9iRnds=;
+        b=eR3qLhkj/cnfYG5BLIB37/9jHtum4kuIzgrrJ/0XfrR9eSxXIDs4qzt9/VWJldGxRj
+         1lkTX6DdTdFiWK6VkqBUNC82D4gsFfL+VsFn9xlaTkzRTnLZwNHcwFqRf9ai30xTW3Pf
+         /cD4k52NKBF7AcD/T+9etQcIWXdgWggNUVDcQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=37qfKIQn2F/zuG3mSaFIQxcnlRXFrQCwgR47g9iRnds=;
+        b=nsSAYbTCATQYe0uqUNt6ONzoRv6IC2mXYd3AT8+PdORaOBOlJh2ba0F7LHxQHFF8OQ
+         aFsRK09P5PBI+NMrYctjzQq1LG+onsJBxITYz2Py20aYO68cIoxCxUyCosB5xUUvyzZD
+         f9dwsLYe+i3LtI9IdMDRoZp+XjydTQ640tQLJAEG4lAcwDRjg0xWRmzua2x8c3rYlDtF
+         Ohg9m/Uptt0UUJROm7UMC7WRTxsikHRqQU3oBch3KA6WHF2AtbAVhm1KVBbkyviiyKUi
+         7y+eGtN/DGzCNKa0MixLEZTPCLWJAakH6jHAjfjXeFvDj6WXXiZed4pUZxkvnFbdwIwZ
+         PLSw==
+X-Gm-Message-State: ABuFfoh3B/JotuQZLPE+m7/JqgrO8s1UGGcL6ZthR5/soZZJC0guwLy9
+        RL5CMnOJyJvvIGTrj/efDzIPzw==
+X-Google-Smtp-Source: ACcGV6045Cu3NOwe0rUGTmvOePnUviGdgWIKo3LGp6OM1wbAtCFAvUQy5joGJhJz27f5dE6CQjTWuw==
+X-Received: by 2002:a6b:2c08:: with SMTP id s8-v6mr16725223ios.217.1539748604595;
+        Tue, 16 Oct 2018 20:56:44 -0700 (PDT)
+Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
+        by smtp.gmail.com with ESMTPSA id b130-v6sm376261itb.28.2018.10.16.20.56.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Oct 2018 20:56:43 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 22:56:42 -0500
+From:   Dan Rue <dan.rue@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 000/109] 4.14.77-stable review
+Message-ID: <20181017035642.33i6jcg2bsr7lhq2@xps.therub.org>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+References: <20181016170524.530541524@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181016170524.530541524@linuxfoundation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 16, 2018 at 07:04:28PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.77 release.
+> There are 109 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Oct 18 17:04:58 UTC 2018.
+> Anything received after that time might be too late.
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- tools/perf/arch/sparc/annotate/instructions.c | 169 ++++++++++++++++++
- tools/perf/util/annotate.c                    |   8 +
- 2 files changed, 177 insertions(+)
- create mode 100644 tools/perf/arch/sparc/annotate/instructions.c
+Results from Linaro’s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-diff --git a/tools/perf/arch/sparc/annotate/instructions.c b/tools/perf/arch/sparc/annotate/instructions.c
-new file mode 100644
-index 000000000000..2614c010c235
---- /dev/null
-+++ b/tools/perf/arch/sparc/annotate/instructions.c
-@@ -0,0 +1,169 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+static int is_branch_cond(const char *cond)
-+{
-+	if (cond[0] == '\0')
-+		return 1;
-+
-+	if (cond[0] == 'a' && cond[1] == '\0')
-+		return 1;
-+
-+	if (cond[0] == 'c' &&
-+	    (cond[1] == 'c' || cond[1] == 's') &&
-+	    cond[2] == '\0')
-+		return 1;
-+
-+	if (cond[0] == 'e' &&
-+	    (cond[1] == '\0' ||
-+	     (cond[1] == 'q' && cond[2] == '\0')))
-+		return 1;
-+
-+	if (cond[0] == 'g' &&
-+	    (cond[1] == '\0' ||
-+	     (cond[1] == 't' && cond[2] == '\0') ||
-+	     (cond[1] == 'e' && cond[2] == '\0') ||
-+	     (cond[1] == 'e' && cond[2] == 'u' && cond[3] == '\0')))
-+		return 1;
-+
-+	if (cond[0] == 'l' &&
-+	    (cond[1] == '\0' ||
-+	     (cond[1] == 't' && cond[2] == '\0') ||
-+	     (cond[1] == 'u' && cond[2] == '\0') ||
-+	     (cond[1] == 'e' && cond[2] == '\0') ||
-+	     (cond[1] == 'e' && cond[2] == 'u' && cond[3] == '\0')))
-+		return 1;
-+
-+	if (cond[0] == 'n' &&
-+	    (cond[1] == '\0' ||
-+	     (cond[1] == 'e' && cond[2] == '\0') ||
-+	     (cond[1] == 'z' && cond[2] == '\0') ||
-+	     (cond[1] == 'e' && cond[2] == 'g' && cond[3] == '\0')))
-+		return 1;
-+
-+	if (cond[0] == 'b' &&
-+	    cond[1] == 'p' &&
-+	    cond[2] == 'o' &&
-+	    cond[3] == 's' &&
-+	    cond[4] == '\0')
-+		return 1;
-+
-+	if (cond[0] == 'v' &&
-+	    (cond[1] == 'c' || cond[1] == 's') &&
-+	    cond[2] == '\0')
-+		return 1;
-+
-+	if (cond[0] == 'b' &&
-+	    cond[1] == 'z' &&
-+	    cond[2] == '\0')
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static int is_branch_reg_cond(const char *cond)
-+{
-+	if ((cond[0] == 'n' || cond[0] == 'l') &&
-+	    cond[1] == 'z' &&
-+	    cond[2] == '\0')
-+		return 1;
-+
-+	if (cond[0] == 'z' &&
-+	    cond[1] == '\0')
-+		return 1;
-+
-+	if ((cond[0] == 'g' || cond[0] == 'l') &&
-+	    cond[1] == 'e' &&
-+	    cond[2] == 'z' &&
-+	    cond[3] == '\0')
-+		return 1;
-+
-+	if (cond[0] == 'g' &&
-+	    cond[1] == 'z' &&
-+	    cond[2] == '\0')
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static int is_branch_float_cond(const char *cond)
-+{
-+	if (cond[0] == '\0')
-+		return 1;
-+
-+	if ((cond[0] == 'a' || cond[0] == 'e' ||
-+	     cond[0] == 'z' || cond[0] == 'g' ||
-+	     cond[0] == 'l' || cond[0] == 'n' ||
-+	     cond[0] == 'o' || cond[0] == 'u') &&
-+	    cond[1] == '\0')
-+		return 1;
-+
-+	if (((cond[0] == 'g' && cond[1] == 'e') ||
-+	     (cond[0] == 'l' && (cond[1] == 'e' ||
-+				 cond[1] == 'g')) ||
-+	     (cond[0] == 'n' && (cond[1] == 'e' ||
-+				 cond[1] == 'z')) ||
-+	     (cond[0] == 'u' && (cond[1] == 'e' ||
-+				 cond[1] == 'g' ||
-+				 cond[1] == 'l'))) &&
-+	    cond[2] == '\0')
-+		return 1;
-+
-+	if (cond[0] == 'u' &&
-+	    (cond[1] == 'g' || cond[1] == 'l') &&
-+	    cond[2] == 'e' &&
-+	    cond[3] == '\0')
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static struct ins_ops *sparc__associate_instruction_ops(struct arch *arch, const char *name)
-+{
-+	struct ins_ops *ops = NULL;
-+
-+	if (!strcmp(name, "call") ||
-+	    !strcmp(name, "jmp") ||
-+	    !strcmp(name, "jmpl")) {
-+		ops = &call_ops;
-+	} else if (!strcmp(name, "ret") ||
-+		   !strcmp(name, "retl") ||
-+		   !strcmp(name, "return")) {
-+		ops = &ret_ops;
-+	} else if (!strcmp(name, "mov")) {
-+		ops = &mov_ops;
-+	} else {
-+		if (name[0] == 'c' &&
-+		    (name[1] == 'w' || name[1] == 'x'))
-+			name += 2;
-+
-+		if (name[0] == 'b') {
-+			const char *cond = name + 1;
-+
-+			if (cond[0] == 'r') {
-+				if (is_branch_reg_cond(cond + 1))
-+					ops = &jump_ops;
-+			} else if (is_branch_cond(cond)) {
-+				ops = &jump_ops;
-+			}
-+		} else if (name[0] == 'f' && name[1] == 'b') {
-+			if (is_branch_float_cond(name + 2))
-+				ops = &jump_ops;
-+		}
-+	}
-+
-+	if (ops)
-+		arch__associate_ins_ops(arch, name, ops);
-+
-+	return ops;
-+}
-+
-+static int sparc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
-+{
-+	if (!arch->initialized) {
-+		arch->initialized = true;
-+		arch->associate_instruction_ops = sparc__associate_instruction_ops;
-+		arch->objdump.comment_char = '#';
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 28cd6a17491b..6936daf89ddd 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -139,6 +139,7 @@ static int arch__associate_ins_ops(struct arch* arch, const char *name, struct i
- #include "arch/x86/annotate/instructions.c"
- #include "arch/powerpc/annotate/instructions.c"
- #include "arch/s390/annotate/instructions.c"
-+#include "arch/sparc/annotate/instructions.c"
- 
- static struct arch architectures[] = {
- 	{
-@@ -170,6 +171,13 @@ static struct arch architectures[] = {
- 			.comment_char = '#',
- 		},
- 	},
-+	{
-+		.name = "sparc",
-+		.init = sparc__annotate_init,
-+		.objdump = {
-+			.comment_char = '#',
-+		},
-+	},
- };
- 
- static void ins__delete(struct ins_operands *ops)
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.14.77-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.14.y
+git commit: 3dbba66c8671a97270f35e072c54f74ddca6954e
+git describe: v4.14.76-110-g3dbba66c8671
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/build/v4.14.76-110-g3dbba66c8671
+
+
+No regressions (compared to build v4.14.76)
+
+
+No fixes (compared to build v4.14.76)
+
+
+Ran 21021 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* libhugetlbfs
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* kselftest
+* ltp-cap_bounds-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
 -- 
-2.19.1.328.g5a0cc8aca
-
+Linaro LKFT
+https://lkft.linaro.org
