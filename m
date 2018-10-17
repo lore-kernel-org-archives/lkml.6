@@ -2,141 +2,300 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E05ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 033E0ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:35:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B1D214D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B1D214D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id BB33F21523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:35:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB33F21523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727214AbeJQSaO (ORCPT
+        id S1727245AbeJQSaw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:30:14 -0400
-Received: from gateway36.websitewelcome.com ([192.185.199.121]:49143 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726768AbeJQSaN (ORCPT
+        Wed, 17 Oct 2018 14:30:52 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35782 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbeJQSaw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:30:13 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 0FE4A400E2D3E
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 04:42:12 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id CjASgqt8hRPojCjASg7dcS; Wed, 17 Oct 2018 05:35:08 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:55050 helo=[192.168.1.41])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gCjAS-000qk5-C3; Wed, 17 Oct 2018 05:35:08 -0500
-Subject: Re: [PATCH] drm/bufs: Fix Spectre v1 vulnerability
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20181016095549.GA23586@embeddedor.com>
- <20181017071916.GI31561@phenom.ffwll.local>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <ba298894-f463-c553-708a-ba033e81155c@embeddedor.com>
-Date:   Wed, 17 Oct 2018 12:35:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 17 Oct 2018 14:30:52 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 14so21657319oth.2;
+        Wed, 17 Oct 2018 03:35:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VpY7DEoVkPKId/asZO0ktMSN2EwMNI3Sxvkepc0/1bw=;
+        b=Fds6Ge7e0TCgIqwLe1RMni0byvd6kKGzJdYxu6j8PWC9Wyq6jkENHNMZeU9rplZyyf
+         K6TBOUioidXX4dhj4+hpTYvpuHqABTb2Yga5tFaxLfl0lSF26eM6PgBcbLgLqsPTZD1x
+         thiEaz8KaqjZPRu18KosKxun0Veb/gkug4IoERKXBMB5MJp4f1QlqdRtMiHe3bWl9zub
+         QKjsQtx+s2rX7vkU9aApMdRCnYO7HuW3wg9KEpfBqW/Te5ykQoaI8IDWv8IKTth9J4pf
+         YsvLE6VPD+r7Diwz0b5SQkpbi1Ii8gUIE16KaeQyVu2+Xf6nvdoLqFg9j8GbTZNd+Ygw
+         L3XA==
+X-Gm-Message-State: ABuFfoi9g6s3T5KbSFILFHCKSi+bO17y9HU9jFtCaMGBAFRdWbD1WsY1
+        DD5cBvBd4A/rU5q7dxZcVQCeXbJD75PavwqWG/XIQg==
+X-Google-Smtp-Source: ACcGV627v6Pm/myy8vCShvnZQWCOBF0Pnm8WCCwcQ0fFDjz2sGYqZOXUttuOrAuDGLypyOeV0EFFIvw0E6vdiuVArgI=
+X-Received: by 2002:a9d:538c:: with SMTP id w12mr17067700otg.139.1539772546961;
+ Wed, 17 Oct 2018 03:35:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181017071916.GI31561@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gCjAS-000qk5-C3
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:55050
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <3560687.cIWiBQCOek@aspire.rjw.lan>
+In-Reply-To: <3560687.cIWiBQCOek@aspire.rjw.lan>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 17 Oct 2018 12:35:35 +0200
+Message-ID: <CAJZ5v0hYbcGaf9kOWvqEona6qz6UgLXk5CQhvPa0qTqcqsO=GA@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: TAD: Add low-level support for real time capability
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/17/18 9:19 AM, Daniel Vetter wrote:
-
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Applied since it's correct, but I dropped the cc: stable. This code is
-> very dead and full of security issues, and spectre is the least of your
-> worries. If you want to a stab at fixing the real spectre issues in drm,
-> then look anywhere that isn't full of drm_legacy_* functions.
+On Mon, Oct 15, 2018 at 1:59 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
 >
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Add low-level support for the (optional) real time capability of the
+> ACPI Time and Alarm Device (TAD) to the ACPI TAD driver.
+>
+> This allows the real time to be acquired or set via sysfs with the
+> help of the _GRT and _SRT methods of the TAD, respectively.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-OK. I've got it.
+Any objections or concerns here?
 
-> The most important file is probably drm_ioctl.c.
-> -Daniel
-> 
+If not, I will queue this up.
 
-Thanks for the feedback, Daniel.
---
-Gustavo
+> ---
+>  drivers/acpi/acpi_tad.c |  201 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 201 insertions(+)
+>
+> Index: linux-pm/drivers/acpi/acpi_tad.c
+> ===================================================================
+> --- linux-pm.orig/drivers/acpi/acpi_tad.c
+> +++ linux-pm/drivers/acpi/acpi_tad.c
+> @@ -52,6 +52,201 @@ struct acpi_tad_driver_data {
+>         u32 capabilities;
+>  };
+>
+> +struct acpi_tad_rt {
+> +       u16 year;  /* 1900 - 9999 */
+> +       u8 month;  /* 1 - 12 */
+> +       u8 day;    /* 1 - 31 */
+> +       u8 hour;   /* 0 - 23 */
+> +       u8 minute; /* 0 - 59 */
+> +       u8 second; /* 0 - 59 */
+> +       u8 valid;  /* 0 (failed) or 1 (success) for reads, 0 for writes */
+> +       u16 msec;  /* 1 - 1000 */
+> +       s16 tz;    /* -1440 to 1440 or 2047 (unspecified) */
+> +       u8 daylight;
+> +       u8 padding[3]; /* must be 0 */
+> +} __packed;
+> +
+> +static int acpi_tad_set_real_time(struct device *dev, struct acpi_tad_rt *rt)
+> +{
+> +       acpi_handle handle = ACPI_HANDLE(dev);
+> +       union acpi_object args[] = {
+> +               { .type = ACPI_TYPE_BUFFER, },
+> +       };
+> +       struct acpi_object_list arg_list = {
+> +               .pointer = args,
+> +               .count = ARRAY_SIZE(args),
+> +       };
+> +       unsigned long long retval;
+> +       acpi_status status;
+> +
+> +       if (rt->year < 1900 || rt->year > 9999 ||
+> +           rt->month < 1 || rt->month > 12 ||
+> +           rt->hour > 23 || rt->minute > 59 || rt->second > 59 ||
+> +           rt->tz < -1440 || (rt->tz > 1440 && rt->tz != 2047) ||
+> +           rt->daylight > 3)
+> +               return -ERANGE;
+> +
+> +       args[0].buffer.pointer = (u8 *)rt;
+> +       args[0].buffer.length = sizeof(*rt);
+> +
+> +       pm_runtime_get_sync(dev);
+> +
+> +       status = acpi_evaluate_integer(handle, "_SRT", &arg_list, &retval);
+> +
+> +       pm_runtime_put_sync(dev);
+> +
+> +       if (ACPI_FAILURE(status) || retval)
+> +               return -EIO;
+> +
+> +       return 0;
+> +}
+> +
+> +static int acpi_tad_get_real_time(struct device *dev, struct acpi_tad_rt *rt)
+> +{
+> +       acpi_handle handle = ACPI_HANDLE(dev);
+> +       struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER };
+> +       union acpi_object *out_obj;
+> +       struct acpi_tad_rt *data;
+> +       acpi_status status;
+> +       int ret = -EIO;
+> +
+> +       pm_runtime_get_sync(dev);
+> +
+> +       status = acpi_evaluate_object(handle, "_GRT", NULL, &output);
+> +
+> +       pm_runtime_put_sync(dev);
+> +
+> +       if (ACPI_FAILURE(status))
+> +               goto out_free;
+> +
+> +       out_obj = output.pointer;
+> +       if (out_obj->type != ACPI_TYPE_BUFFER)
+> +               goto out_free;
+> +
+> +       if (out_obj->buffer.length != sizeof(*rt))
+> +               goto out_free;
+> +
+> +       data = (struct acpi_tad_rt *)(out_obj->buffer.pointer);
+> +       if (!data->valid)
+> +               goto out_free;
+> +
+> +       memcpy(rt, data, sizeof(*rt));
+> +       ret = 0;
+> +
+> +out_free:
+> +       ACPI_FREE(output.pointer);
+> +       return ret;
+> +}
+> +
+> +static char *acpi_tad_rt_next_field(char *s, int *val)
+> +{
+> +       char *p;
+> +
+> +       p = strchr(s, ':');
+> +       if (!p)
+> +               return NULL;
+> +
+> +       *p = '\0';
+> +       if (kstrtoint(s, 10, val))
+> +               return NULL;
+> +
+> +       return p + 1;
+> +}
+> +
+> +static ssize_t time_store(struct device *dev, struct device_attribute *attr,
+> +                         const char *buf, size_t count)
+> +{
+> +       struct acpi_tad_rt rt;
+> +       char *str, *s;
+> +       int val, ret = -ENODATA;
+> +
+> +       str = kmemdup_nul(buf, count, GFP_KERNEL);
+> +       if (!str)
+> +               return -ENOMEM;
+> +
+> +       s = acpi_tad_rt_next_field(str, &val);
+> +       if (!s)
+> +               goto out_free;
+> +
+> +       rt.year = val;
+> +
+> +       s = acpi_tad_rt_next_field(s, &val);
+> +       if (!s)
+> +               goto out_free;
+> +
+> +       rt.month = val;
+> +
+> +       s = acpi_tad_rt_next_field(s, &val);
+> +       if (!s)
+> +               goto out_free;
+> +
+> +       rt.day = val;
+> +
+> +       s = acpi_tad_rt_next_field(s, &val);
+> +       if (!s)
+> +               goto out_free;
+> +
+> +       rt.hour = val;
+> +
+> +       s = acpi_tad_rt_next_field(s, &val);
+> +       if (!s)
+> +               goto out_free;
+> +
+> +       rt.minute = val;
+> +
+> +       s = acpi_tad_rt_next_field(s, &val);
+> +       if (!s)
+> +               goto out_free;
+> +
+> +       rt.second = val;
+> +
+> +       s = acpi_tad_rt_next_field(s, &val);
+> +       if (!s)
+> +               goto out_free;
+> +
+> +       rt.tz = val;
+> +
+> +       if (kstrtoint(s, 10, &val))
+> +               goto out_free;
+> +
+> +       rt.daylight = val;
+> +
+> +       rt.valid = 0;
+> +       rt.msec = 0;
+> +       memset(rt.padding, 0, 3);
+> +
+> +       ret = acpi_tad_set_real_time(dev, &rt);
+> +
+> +out_free:
+> +       kfree(str);
+> +       return ret ? ret : count;
+> +}
+> +
+> +static ssize_t time_show(struct device *dev, struct device_attribute *attr,
+> +                        char *buf)
+> +{
+> +       struct acpi_tad_rt rt;
+> +       int ret;
+> +
+> +       ret = acpi_tad_get_real_time(dev, &rt);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return sprintf(buf, "%u:%u:%u:%u:%u:%u:%d:%u\n",
+> +                      rt.year, rt.month, rt.day, rt.hour, rt.minute, rt.second,
+> +                      rt.tz, rt.daylight);
+> +}
+> +
+> +static DEVICE_ATTR(time, S_IRUSR | S_IWUSR, time_show, time_store);
+> +
+> +static struct attribute *acpi_tad_time_attrs[] = {
+> +       &dev_attr_time.attr,
+> +       NULL,
+> +};
+> +static const struct attribute_group acpi_tad_time_attr_group = {
+> +       .attrs  = acpi_tad_time_attrs,
+> +};
+> +
+>  static int acpi_tad_wake_set(struct device *dev, char *method, u32 timer_id,
+>                              u32 value)
+>  {
+> @@ -447,6 +642,12 @@ static int acpi_tad_probe(struct platfor
+>                 if (ret)
+>                         goto fail;
+>         }
+> +
+> +       if (caps & ACPI_TAD_RT) {
+> +               ret = sysfs_create_group(&dev->kobj, &acpi_tad_time_attr_group);
+> +               if (ret)
+> +                       goto fail;
+> +       }
+>
+>         return 0;
+>
+>
