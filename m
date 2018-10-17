@@ -6,76 +6,96 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 830C4ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D39E0ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45B982148D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:02:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45B982148D
+	by mail.kernel.org (Postfix) with ESMTP id 956A32148D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:03:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 956A32148D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727510AbeJQO4P (ORCPT
+        id S1727525AbeJQO5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 10:56:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57942 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727219AbeJQO4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 10:56:14 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2DA4C30820DD;
-        Wed, 17 Oct 2018 07:02:01 +0000 (UTC)
-Received: from plouf.redhat.com (unknown [10.40.205.62])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A26335D995;
-        Wed, 17 Oct 2018 07:01:56 +0000 (UTC)
+        Wed, 17 Oct 2018 10:57:39 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43505 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727219AbeJQO5j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 10:57:39 -0400
+Received: by mail-lf1-f68.google.com with SMTP id p34-v6so18929809lfg.10
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 00:03:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KyRTlU7dUazYBNZfdRoBS3BJUOLw+w6qfmZrPKhB8jU=;
+        b=ILKYBFYra/uhDxsdtPwdKSqRad7WuQfWSJZzFdu9sjYOYXqo4ZmKH41L6vmAgjsN48
+         O2MO1vAmT5MiUI6UzxGP5ipjssd81xw4lDnznlNxPMEhCnDbz/nxVoI0nLirXmF6mk/k
+         LLEqU/01cFN634yOimAf16ZgyXrDLsqKE13rE2mkDm846LtGiYp144xEHJK9HI9CM+w5
+         uuNoQ4OVz77qAmHeCMQRNuK7IvZy7WZtcAMe3f4dMxAhhh3n0EzQ1XhU2f1ic+dl1c2l
+         ktrBEa7D5tm2V8QOkNW8Qp1ySDBqNUHk0lox9NRt0XWoo/aG0VtrQSmthOF1mHWztMUF
+         Bj7w==
+X-Gm-Message-State: ABuFfohWqBGFmmNK8Yv5At54mzSpkJNePIiNplO3ZSDsQ8RufvWrG0GX
+        uwUbLW4EP8aD2wB7K2nY3g7U1Ad8XXK9p6+P8AU1xA==
+X-Google-Smtp-Source: ACcGV60pEVldjnyGDPiE2Y/3oWu8d2nuOaD+VgBE7dkGihbVMtl2TmPRbZvzWXyzHKGtBMpv9hUNW1GKxJ6HxPkuh9I=
+X-Received: by 2002:a19:cd81:: with SMTP id d123-v6mr9994859lfg.104.1539759803759;
+ Wed, 17 Oct 2018 00:03:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181017001443.GA232819@dtor-ws>
+In-Reply-To: <20181017001443.GA232819@dtor-ws>
 From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Laurent Bigonville <bigon@bigon.be>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH] Revert "HID: add NOGET quirk for Eaton Ellipse MAX UPS"
-Date:   Wed, 17 Oct 2018 09:01:53 +0200
-Message-Id: <20181017070153.465-1-benjamin.tissoires@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 17 Oct 2018 07:02:01 +0000 (UTC)
+Date:   Wed, 17 Oct 2018 09:03:12 +0200
+Message-ID: <CAO-hwJL1QEASk37NuYwkHhmW9N4pGWULnizpHi+4=65OdXe4yQ@mail.gmail.com>
+Subject: Re: [PATCH] Input: synaptics - avoid using uninitialized variable
+ when probing
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 67ddbb3e6568fb1820b2cc45b00c50702b114801.
+On Wed, Oct 17, 2018 at 2:14 AM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> synaptics_detect() does not check whether sending commands to the
+> device succeeds and instead relies on getting unique data from the
+> device. Let's make sure we seed entire buffer with zeroes to make sure
+> we not use garbage on stack that just happen to be 0x47.
+>
+> Reported-by: syzbot+13cb3b01d0784e4ffc3f@syzkaller.appspotmail.com
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
 
-67ddbb3e656 ("HID: add NOGET quirk for Eaton Ellipse MAX UPS") was reported
-by Laurent Bigonville. It turns out that a later model Laurent got
-doesn't need the quirk after all.
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-My take is that Eaton upgraded their firmwares, so we don't need it
-anymore.
+Cheers,
+Benjamin
 
-The old model was from 2012, so better make sure the new line works
-properly by removing the quirk. This allows upower to actually fetch
-the current data.
-
-Reported-by: Laurent Bigonville <bigon@bigon.be>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
----
- drivers/hid/hid-quirks.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-index 279f410618c6..e260bdeb51a7 100644
---- a/drivers/hid/hid-quirks.c
-+++ b/drivers/hid/hid-quirks.c
-@@ -107,7 +107,6 @@ static const struct hid_device_id hid_quirks[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_C05A), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_C06A), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MCS, USB_DEVICE_ID_MCS_GAMEPADBLOCK), HID_QUIRK_MULTI_INPUT },
--	{ HID_USB_DEVICE(USB_VENDOR_ID_MGE, USB_DEVICE_ID_MGE_UPS), HID_QUIRK_NOGET },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_POWER_COVER), HID_QUIRK_NO_INIT_REPORTS },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_SURFACE_PRO_2), HID_QUIRK_NO_INIT_REPORTS },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_TOUCH_COVER_2), HID_QUIRK_NO_INIT_REPORTS },
--- 
-2.14.3
-
+>  drivers/input/mouse/synaptics.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+> index 55d33500d55e..5e85f3cca867 100644
+> --- a/drivers/input/mouse/synaptics.c
+> +++ b/drivers/input/mouse/synaptics.c
+> @@ -99,9 +99,7 @@ static int synaptics_mode_cmd(struct psmouse *psmouse, u8 mode)
+>  int synaptics_detect(struct psmouse *psmouse, bool set_properties)
+>  {
+>         struct ps2dev *ps2dev = &psmouse->ps2dev;
+> -       u8 param[4];
+> -
+> -       param[0] = 0;
+> +       u8 param[4] = { 0 };
+>
+>         ps2_command(ps2dev, param, PSMOUSE_CMD_SETRES);
+>         ps2_command(ps2dev, param, PSMOUSE_CMD_SETRES);
+> --
+> 2.19.1.331.ge82ca0e54c-goog
+>
+>
+> --
+> Dmitry
