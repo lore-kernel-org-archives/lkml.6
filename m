@@ -2,166 +2,103 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 596B3ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35392ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DE542150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:17:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8e4fy8x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE542150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BBCE0214DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:20:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCE0214DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbeJQTMo (ORCPT
+        id S1727090AbeJQTQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:12:44 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41086 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726989AbeJQTMo (ORCPT
+        Wed, 17 Oct 2018 15:16:00 -0400
+Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:41156 "EHLO
+        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726904AbeJQTP7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:12:44 -0400
-Received: by mail-pf1-f193.google.com with SMTP id m77-v6so13044187pfi.8
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 04:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9Fnui3J9Mw3d/jPUyzNryp7ca7wKy5LtfhZ5CfPEzzM=;
-        b=W8e4fy8xsJmKfIjqWOmyhcDETP+f1b+BHQxgQ/kuavzLEc4MIeQkSk9aYCrwhbyquq
-         8PYn0J1LS3+adxkduv2kz5HeMpVfOEeh2+SsMySucijJcfCoIM8wTgsU/WBZOEKo9c4W
-         bdBFbQbZob/oUni4E1JKMXz1G8yFuBVLkPufIwg9Lt8VYfv0S2Jk+0DXHrI0hsNuL3SN
-         5kspcBeLjh521ESZQ9OqYTIPGdUR9InQDdC5db1b8RQUV07jtg+Adruk1HtaF9UGzpjR
-         JuQc1KcviEXsGCBBHv+rYEqEIkIwJB7pX5PexRPnIsYRSsvwGFIlvM8jUcBThNGIuaav
-         7R/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9Fnui3J9Mw3d/jPUyzNryp7ca7wKy5LtfhZ5CfPEzzM=;
-        b=qwQV/ZJVr5BBA7an1wx76/2mOYIwzsybtAdJEm8Pt34sXb5oXDBmAgP5j7UdRPyZZp
-         TehDDWSrS1ja9HyVbZjn3RnP5K+GWpdVHxtvsjPpKMAdg7Ir2/G910QZYDey2gStca5M
-         g6KgI4wDULZ/sv8hnt3Anz6171RiSiFnIr/8Q76Js8ms65VrH4m9E6z7xyV9VRR2BFHK
-         wnkek38RDZDBQUR3tiC1PXHak+/b256IrRE97iHDf5al2tpthCzcI6Ok6e5R6EhIw5SH
-         L0+ZISEPcciGu6Zexu+xXUcE5dcNPzo33LUY7LHQWjExfEo5ivKdsarTVRUUzesajHcT
-         x+Sw==
-X-Gm-Message-State: ABuFfohIFMesTd8LuKhblJ4mmaRuFMogQ2jmz5uLTt8R+IKp2T5OvkTb
-        vSlAGSQadPz/f5B+rLgxegYBU5pG
-X-Google-Smtp-Source: ACcGV62Z7peDMDtGWrxvE/hs7O+zSa0iN6T4LvgRfwWPkPQ1DnyM4LaGltt+FJYXSxuI8ay5mnnHFw==
-X-Received: by 2002:a63:a42:: with SMTP id z2-v6mr23544723pgk.209.1539775049917;
-        Wed, 17 Oct 2018 04:17:29 -0700 (PDT)
-Received: from localhost ([110.70.53.52])
-        by smtp.gmail.com with ESMTPSA id o9-v6sm23536219pgn.30.2018.10.17.04.17.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 04:17:28 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 20:17:24 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Michal Hocko <mhocko@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com,
+        Wed, 17 Oct 2018 15:15:59 -0400
+Received: from mail.blacknight.com (pemlinmail02.blacknight.ie [81.17.254.11])
+        by outbound-smtp10.blacknight.com (Postfix) with ESMTPS id D881F1C2FB7
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 12:20:43 +0100 (IST)
+Received: (qmail 26267 invoked from network); 17 Oct 2018 11:20:43 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.142])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 17 Oct 2018 11:20:43 -0000
+Date:   Wed, 17 Oct 2018 12:20:42 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Aaron Lu <aaron.lu@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
-Subject: Re: [PATCH v3] mm: memcontrol: Don't flood OOM messages with no
- eligible task.
-Message-ID: <20181017111724.GA459@jagdpanzerIV>
-References: <1539770782-3343-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181017102821.GM18839@dhcp22.suse.cz>
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>
+Subject: Re: [RFC v4 PATCH 3/5] mm/rmqueue_bulk: alloc without touching
+ individual page structure
+Message-ID: <20181017112042.GK5819@techsingularity.net>
+References: <20181017063330.15384-1-aaron.lu@intel.com>
+ <20181017063330.15384-4-aaron.lu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20181017102821.GM18839@dhcp22.suse.cz>
+In-Reply-To: <20181017063330.15384-4-aaron.lu@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (10/17/18 12:28), Michal Hocko wrote:
-> > Michal proposed ratelimiting dump_header() [2]. But I don't think that
-> > that patch is appropriate because that patch does not ratelimit
-> > 
-> >   "%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n"
-> >   "Out of memory and no killable processes...\n"
-[..]
-> > Let's make sure that next dump_header() waits for at least 60 seconds from
-> > previous "Out of memory and no killable processes..." message.
+On Wed, Oct 17, 2018 at 02:33:28PM +0800, Aaron Lu wrote:
+> Profile on Intel Skylake server shows the most time consuming part
+> under zone->lock on allocation path is accessing those to-be-returned
+> page's "struct page" on the free_list inside zone->lock. One explanation
+> is, different CPUs are releasing pages to the head of free_list and
+> those page's 'struct page' may very well be cache cold for the allocating
+> CPU when it grabs these pages from free_list' head. The purpose here
+> is to avoid touching these pages one by one inside zone->lock.
 > 
-> Could you explain why this is any better than using a well established
-> ratelimit approach?
 
-Tetsuo, let's use a well established rate-limit approach both in
-dump_hedaer() and out_of_memory(). I actually was under impression
-that Michal added rate-limiting to both of these functions.
+I didn't read this one in depth because it's somewhat ortogonal to the
+lazy buddy merging which I think would benefit from being finalised and
+ensuring that there are no reductions in high-order allocation success
+rates.  Pages being allocated on one CPU and freed on another is not that
+unusual -- ping-pong workloads or things like netperf used to exhibit
+this sort of pattern.
 
-The appropriate rate-limit value looks like something that printk()
-should know and be able to tell to the rest of the kernel. I don't
-think that middle ground will ever be found elsewhere.
+However, this part stuck out
 
+> +static inline void zone_wait_cluster_alloc(struct zone *zone)
+> +{
+> +	while (atomic_read(&zone->cluster.in_progress))
+> +		cpu_relax();
+> +}
+> +
 
-printk() knows what consoles are registered, and printk() also knows
-(sometimes) what console="..." options the kernel was provided with.
-If baud rates ware not provided as console= options, then serial
-consoles usually use some default value. We can probably ask consoles.
+RT has had problems with cpu_relax in the past but more importantly, as
+this delay for parallel compactions and allocations of contig ranges,
+we could be stuck here for very long periods of time with interrupts
+disabled. It gets even worse if it's from an interrupt context such as
+jumbo frame allocation or a high-order slab allocation that is atomic.
+These potentially large periods of time with interrupts disabled is very
+hazardous. It may be necessary to consider instead minimising the number
+of struct page update when merging to PCP and then either increasing the
+size of the PCP or allowing it to exceed pcp->high for short periods of
+time to batch the struct page updates.
 
-So *maybe* we can do something like this
+I didn't read the rest of the series as it builds upon this patch.
 
-//
-// WARNING: this is just a sketch. A silly idea.
-//          I don't know if we can make it usable.
-//
-
----
-
-int printk_ratelimit_interval(void)
-{
-       int ret = DEFAULT_RATELIMIT_INTERVAL;
-       struct tty_driver *driver = NULL;
-       speed_t min_baud = MAX_INT;
-
-       console_lock();
-       for_each_console(c) {
-               speed_t br;
-
-               if (!c->device)
-                       continue;
-               if (!(c->flags & CON_ENABLED))
-                       continue;
-               if (!c->write)
-                       continue;
-               driver = c->device(c, index);
-               if (!driver)
-                       continue;
-
-               br = tty_get_baud_rate(tty_driver to tty_struct [???]);
-               min_baud = min(min_baud, br);
-       }
-       console_unlock();
-
-       switch (min_baud) {
-       case 115200:
-               return ret;
-
-       case ...blah blah...:
-               return ret * 2;
-
-       case 9600:
-               return ret * 4;
-       }
-       return ret;
-}
-
----
-
-	-ss
+-- 
+Mel Gorman
+SUSE Labs
