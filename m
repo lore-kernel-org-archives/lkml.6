@@ -2,96 +2,74 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9DCECDE3C
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706D3ECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D854208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:16:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZwEr7fC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D854208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 25D142087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:19:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25D142087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbeJREOO (ORCPT
+        id S1727410AbeJREQq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 00:14:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50458 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 00:16:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbeJREOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 00:14:14 -0400
-Received: from localhost (unknown [104.132.0.74])
+        id S1725737AbeJREQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 00:16:46 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C84132087A;
-        Wed, 17 Oct 2018 20:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539807413;
-        bh=6uS8qxv84gXii5oCsFhQlxC9wIWv+MFbTAoVic9TDiQ=;
-        h=From:To:References:In-Reply-To:Subject:Date:From;
-        b=MZwEr7fCMBJJ1PS9lBw58/NXXiQssnGmsYmcBgNypIVK4Yem95LFj4AZz7ndEEZKD
-         o6AvenjF0Bjc++VkT2+lnNMDNeFjRCS7vEIKEDxrS/7vr5K8mOqSkVifiEhYhY1nLd
-         KTbxPLWrSVO9KBE8n94jnqCqdSV5YTrGBwBxjmaE=
-Content-Type: text/plain; charset="utf-8"
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D6C42087A;
+        Wed, 17 Oct 2018 20:19:25 +0000 (UTC)
+Date:   Wed, 17 Oct 2018 16:19:23 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Export trace_dump_stack to modules
+Message-ID: <20181017161923.310ca1a4@gandalf.local.home>
+In-Reply-To: <1539759103-5923-1-git-send-email-nborisov@suse.com>
+References: <1539759103-5923-1-git-send-email-nborisov@suse.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.7
-To:     Craig <ctatlor97@gmail.com>,
-        Sricharan R <sricharan@codeaurora.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux@arm.linux.org.uk,
-        linux@armlinux.org.uk, mark.rutland@arm.com,
-        mturquette@baylibre.com, niklas.cassel@linaro.org,
-        rjw@rjwysocki.net, robh@kernel.org, sboyd@codeaurora.org,
-        sudeep.holla@arm.com, thierry.escande@linaro.org,
-        viresh.kumar@linaro.org
-References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
- <2ae96741-94c0-ba4c-fc19-05d33179683c@codeaurora.org>
- <d682580d-5070-0271-197f-29d988172937@codeaurora.org>
- <D8FC68C0-2572-4A86-81D9-D0099D314A45@gmail.com>
- <F5A89365-C613-4FE2-AD32-DC0AC6DF380B@gmail.com>
- <fb81b8d5-3d24-b413-8d59-33cb70e46f8b@codeaurora.org>
- <153979105280.5275.841088095583550635@swboyd.mtv.corp.google.com>
-In-Reply-To: <153979105280.5275.841088095583550635@swboyd.mtv.corp.google.com>
-Message-ID: <153980741313.5275.10376918222904341760@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH V12 00/14] Krait clocks + Krait CPUfreq
-Date:   Wed, 17 Oct 2018 13:16:53 -0700
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Boyd (2018-10-17 08:44:12)
-> Quoting Sricharan R (2018-09-20 06:03:31)
-> > =
+On Wed, 17 Oct 2018 09:51:43 +0300
+Nikolay Borisov <nborisov@suse.com> wrote:
 
-> > =
+> There is no reason for this function to be unexprted and it's a useful
+> debugging aid.
+> 
+> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
 
-> > On 9/20/2018 1:54 AM, Craig wrote:
-> > > Yup, this patch seems to have fixed the higher frequencies from the q=
-uick test I did.
-> > >
-> >       Thanks !!. Can i take that as =
+Thanks, I added this to my queue for the merge window.
 
-> >           Tested-by: Craig Tatlor <ctatlor97@gmail.com>  ?
-> > =
+-- Steve
 
-> =
-
-> Is this patch series going to be resent?
-> =
-
-
-Nevermind. Looking at it I think I can apply all the clk ones and we're
-good to go. If you can send a followup patch series to change the
-registration and provider APIs to be clk_hw instead of clk based I would
-appreciate it.
+> ---
+>  kernel/trace/trace.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index bf6f1d70484d..15c7a7d01505 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -2727,6 +2727,7 @@ void trace_dump_stack(int skip)
+>  	__ftrace_trace_stack(global_trace.trace_buffer.buffer,
+>  			     flags, skip, preempt_count(), NULL);
+>  }
+> +EXPORT_SYMBOL_GPL(trace_dump_stack);
+>  
+>  static DEFINE_PER_CPU(int, user_stack_count);
+>  
 
