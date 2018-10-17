@@ -2,116 +2,79 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92331ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EBAECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D90A2150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:56:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D90A2150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id DD262214D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:58:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rXzS6psd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD262214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbeJQSvt (ORCPT
+        id S1727155AbeJQSxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:51:49 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.239]:31493 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726861AbeJQSvt (ORCPT
+        Wed, 17 Oct 2018 14:53:11 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4544 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726922AbeJQSxK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:51:49 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 6E48D3D32C
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 05:56:38 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id CjUhgoiXakBj6CjV2gt8DL; Wed, 17 Oct 2018 05:56:37 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:55344 helo=[192.168.1.41])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gCjUe-0011uN-PN; Wed, 17 Oct 2018 05:56:00 -0500
-Subject: Re: [PATCH] skbuff: Mark expected switch fall-throughs
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181013115646.GA3516@embeddedor.com>
- <CAGXu5j+rLGyGCozaSMqFV0p+cHoJFmJBXWXHz5WfYEaDkHJdGw@mail.gmail.com>
- <CAGXu5j+Bv5LMBJw_W0w5VHk-zWNzWb=1cev0G+TrX_65YPy1XA@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <b84ed764-7e49-4101-6323-edeaf4720c2f@embeddedor.com>
-Date:   Wed, 17 Oct 2018 12:55:57 +0200
+        Wed, 17 Oct 2018 14:53:10 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bc715b50000>; Wed, 17 Oct 2018 03:57:57 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 17 Oct 2018 03:58:00 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 17 Oct 2018 03:58:00 -0700
+Received: from [10.26.11.110] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 17 Oct
+ 2018 10:57:56 +0000
+Subject: Re: [PATCH v2 8/9] ASoC: tegra_sgtl5000: fix device_node refcounting
+To:     Marcel Ziswiler <marcel@ziswiler.com>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        <alsa-devel@alsa-project.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+References: <20181016104730.4598-1-marcel@ziswiler.com>
+ <20181016104730.4598-9-marcel@ziswiler.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <af707410-9954-b1a1-6d9b-5ad085604446@nvidia.com>
+Date:   Wed, 17 Oct 2018 11:57:53 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+Bv5LMBJw_W0w5VHk-zWNzWb=1cev0G+TrX_65YPy1XA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <20181016104730.4598-9-marcel@ziswiler.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gCjUe-0011uN-PN
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:55344
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1539773877; bh=hQuU0Wyvxg2PFTdqbUFfXN9F1upsQ8uRJKdrH8lH9Rw=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=rXzS6psd0nPOAX9JvziYTgEw9Z/gJXXEleyVpTxJ3WSzbjnnkUg0p4B49BU+u9Ctg
+         AAZIi3RMW3GpY93Q9JbGASK+CkzsO1v6SwC82f6XEWikzUOgxHcVVPZ3D/SsuWzzlt
+         NT8EcFxtpfWi5xza8S/aoO+kbiBuPVsg/h+VphM99M/n7X1RDS2WH5an9BOw1mvrR6
+         2Ix1hqFkmMGoyyJstvGn/iBURsI918HSGr8c04b5ZRgjej4rwywt2SA6Vi5Fr58y2X
+         q6b81MNyTZFb6nrTL04v1Dm4IylFy01ax8THHlNlVgOl9Qb4SCbVH0vgxMqDxVQtHL
+         8oDTQQ93NLm1g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -119,16 +82,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 10/17/18 12:41 AM, Kees Cook wrote:
-
+On 16/10/2018 11:47, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> Actually, since this is skbuff, can you resend this to netdev instead?
-> Andrew took the other two, but this one seems like it should go via
-> David Miller.
+> Similar to the following:
 > 
+> commit 4321723648b0 ("ASoC: tegra_alc5632: fix device_node refcounting")
+> 
+> commit 7c5dfd549617 ("ASoC: tegra: fix device_node refcounting")
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> ---
+> 
+> Changes in v2: New patch
+> 
+>  sound/soc/tegra/tegra_sgtl5000.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
+> index 45a4aa9d2a47..901457da25ec 100644
+> --- a/sound/soc/tegra/tegra_sgtl5000.c
+> +++ b/sound/soc/tegra/tegra_sgtl5000.c
+> @@ -149,14 +149,14 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
+>  		dev_err(&pdev->dev,
+>  			"Property 'nvidia,i2s-controller' missing/invalid\n");
+>  		ret = -EINVAL;
+> -		goto err;
+> +		goto err_put_codec_of_node;
+>  	}
+>  
+>  	tegra_sgtl5000_dai.platform_of_node = tegra_sgtl5000_dai.cpu_of_node;
+>  
+>  	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
+>  	if (ret)
+> -		goto err;
+> +		goto err_put_cpu_of_node;
+>  
+>  	ret = snd_soc_register_card(card);
+>  	if (ret) {
+> @@ -169,6 +169,13 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
+>  
+>  err_fini_utils:
+>  	tegra_asoc_utils_fini(&machine->util_data);
+> +err_put_cpu_of_node:
+> +	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
+> +	tegra_sgtl5000_dai.cpu_of_node = NULL;
+> +	tegra_sgtl5000_dai.platform_of_node = NULL;
+> +err_put_codec_of_node:
+> +	of_node_put(tegra_sgtl5000_dai.codec_of_node);
+> +	tegra_sgtl5000_dai.codec_of_node = NULL;
+>  err:
+>  	return ret;
+>  }
+> @@ -183,6 +190,12 @@ static int tegra_sgtl5000_driver_remove(struct platform_device *pdev)
+>  
+>  	tegra_asoc_utils_fini(&machine->util_data);
+>  
+> +	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
+> +	tegra_sgtl5000_dai.cpu_of_node = NULL;
+> +	tegra_sgtl5000_dai.platform_of_node = NULL;
+> +	of_node_put(tegra_sgtl5000_dai.codec_of_node);
+> +	tegra_sgtl5000_dai.codec_of_node = NULL;
+> +
+>  	return ret;
+>  }
+>  
 
-Sure thing. Will do.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-Thanks
---
-Gustavo
+Cheers
+Jon
+
+-- 
+nvpublic
