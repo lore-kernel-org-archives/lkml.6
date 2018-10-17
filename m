@@ -2,379 +2,207 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 244D2ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FA2ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C393821528
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:41:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C393821528
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 6BD54214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:42:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BD54214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeJQSgZ (ORCPT
+        id S1727188AbeJQShK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:36:25 -0400
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:52676 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726954AbeJQSgZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:36:25 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id CjGHgVgvi0ZZECjGKgFEvt; Wed, 17 Oct 2018 12:41:16 +0200
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v4 2/2] media: platform: Add Aspeed Video Engine driver
-To:     Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, andrew@aj.id.au,
-        openbmc@lists.ozlabs.org, robh+dt@kernel.org, mchehab@kernel.org,
-        linux-media@vger.kernel.org, joel@jms.id.au
-References: <1538769466-14860-1-git-send-email-eajames@linux.ibm.com>
- <1538769466-14860-3-git-send-email-eajames@linux.ibm.com>
-Message-ID: <4a02833e-67a6-ec4f-d2f6-e0368412eca8@xs4all.nl>
-Date:   Wed, 17 Oct 2018 12:41:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 17 Oct 2018 14:37:10 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:45772 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726961AbeJQShK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 14:37:10 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Ijdcz5t17VPH; Wed, 17 Oct 2018 12:41:44 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BC91B00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:1b00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6D1C21EC0104;
+        Wed, 17 Oct 2018 12:41:44 +0200 (CEST)
+Date:   Wed, 17 Oct 2018 12:41:37 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [PATCH v5 03/27] x86/fpu/xstate: Introduce XSAVES system states
+Message-ID: <20181017104137.GE22535@zn.tnic>
+References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
+ <20181011151523.27101-4-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1538769466-14860-3-git-send-email-eajames@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfH6lrgfWkM3qB6MCYFudDpDvTJytOjxFFenLQIbktv0DU67izTv0sJYMZC/YYLyUVZWOFVIUwqhHLGjQXfrB8BwMhVs6UcmCeJF6Mo6ZAlhxww9iO+si
- 5W8r/v9718KCZTqQ+uHsfimjXnmTrrYk/89WXUXrgJfux4N/WR92wGBP7bVqOSF9H4AHe6T8QSWQEW6TP0W0PHdedL8HXx5unniHzyIkeKyn4Ln1GPwiJFZ/
- S6SUOWnpDtyq7P6e1W629o8oTa8x3Wm1GZLND6XSwu6AUE7FclZiIYw6vwyAvl7diW98ePo9fRyf5JSEIqVs0Fzns4Z5iBNaZ34R9kCYkhCJQoX+L1RBeUQh
- sGYIsGqkb/Qzhg6All/YzsEmI800nlWOItA81LsKXxldSwqjZ/6w2VTITFXMZsXM7RgjXYF1feaV593meU3YoUhGTeBpM93QhjwPRjn1fryu8KasItrxJVVE
- 73mw192veVosM+tU8yy0rmc/dHORwAYVtNUDXqXbWHFL0VPsc9pYDLrcvqI=
+Content-Disposition: inline
+In-Reply-To: <20181011151523.27101-4-yu-cheng.yu@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/05/2018 09:57 PM, Eddie James wrote:
-> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
-> can capture and compress video data from digital or analog sources. With
-> the Aspeed chip acting a service processor, the Video Engine can capture
-> the host processor graphics output.
-> 
-> Add a V4L2 driver to capture video data and compress it to JPEG images.
-> Make the video frames available through the V4L2 streaming interface.
-> 
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+On Thu, Oct 11, 2018 at 08:14:59AM -0700, Yu-cheng Yu wrote:
+> Control Flow Enforcement (CET) MSRs are XSAVES system states.
+
+That sentence needs massaging. MSRs are system states?!?!
+
+> To support CET, we introduce XSAVES system states first.
+
+Pls drop the "we" in all commit messages and convert the tone to
+impartial and passive.
+
+Also, this commit message needs to explain *why* you're doing this - it
+is too laconic.
+
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 > ---
->  MAINTAINERS                           |    8 +
->  drivers/media/platform/Kconfig        |    8 +
->  drivers/media/platform/Makefile       |    1 +
->  drivers/media/platform/aspeed-video.c | 1674 +++++++++++++++++++++++++++++++++
->  4 files changed, 1691 insertions(+)
->  create mode 100644 drivers/media/platform/aspeed-video.c
+>  arch/x86/include/asm/fpu/internal.h |  3 +-
+>  arch/x86/include/asm/fpu/xstate.h   |  4 +-
+>  arch/x86/kernel/fpu/core.c          |  6 +-
+>  arch/x86/kernel/fpu/init.c          | 10 ----
+>  arch/x86/kernel/fpu/xstate.c        | 86 ++++++++++++++++++-----------
+>  5 files changed, 62 insertions(+), 47 deletions(-)
 > 
+> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+> index 02c4296478c8..9a5db5a63f60 100644
+> --- a/arch/x86/include/asm/fpu/internal.h
+> +++ b/arch/x86/include/asm/fpu/internal.h
+> @@ -45,7 +45,6 @@ extern void fpu__init_cpu_xstate(void);
+>  extern void fpu__init_system(struct cpuinfo_x86 *c);
+>  extern void fpu__init_check_bugs(void);
+>  extern void fpu__resume_cpu(void);
+> -extern u64 fpu__get_supported_xfeatures_mask(void);
+>  
+>  /*
+>   * Debugging facility:
+> @@ -93,7 +92,7 @@ static inline void fpstate_init_xstate(struct xregs_state *xsave)
+>  	 * XRSTORS requires these bits set in xcomp_bv, or it will
+>  	 * trigger #GP:
+>  	 */
+> -	xsave->header.xcomp_bv = XCOMP_BV_COMPACTED_FORMAT | xfeatures_mask_user;
+> +	xsave->header.xcomp_bv = XCOMP_BV_COMPACTED_FORMAT | xfeatures_mask_all;
+>  }
+>  
+>  static inline void fpstate_init_fxstate(struct fxregs_state *fx)
+> diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
+> index 76f83d2ac10e..d8e2ec99f635 100644
+> --- a/arch/x86/include/asm/fpu/xstate.h
+> +++ b/arch/x86/include/asm/fpu/xstate.h
+> @@ -19,9 +19,6 @@
+>  #define XSAVE_YMM_SIZE	    256
+>  #define XSAVE_YMM_OFFSET    (XSAVE_HDR_SIZE + XSAVE_HDR_OFFSET)
+>  
+> -/* Supervisor features */
+> -#define XFEATURE_MASK_SUPERVISOR (XFEATURE_MASK_PT)
+> -
+>  /* All currently supported features */
+>  #define SUPPORTED_XFEATURES_MASK (XFEATURE_MASK_FP | \
+>  				  XFEATURE_MASK_SSE | \
+> @@ -40,6 +37,7 @@
+>  #endif
+>  
+>  extern u64 xfeatures_mask_user;
+> +extern u64 xfeatures_mask_all;
 
-<snip>
+You have a bunch of places where you generate the system mask by doing
+~xfeatures_mask_user.
 
-> +static void aspeed_video_check_polarity(struct aspeed_video *video)
-> +{
-> +	int i;
-> +	int hsync_counter = 0;
-> +	int vsync_counter = 0;
-> +	u32 sts;
-> +
-> +	for (i = 0; i < NUM_POLARITY_CHECKS; ++i) {
-> +		sts = aspeed_video_read(video, VE_MODE_DETECT_STATUS);
-> +		if (sts & VE_MODE_DETECT_STATUS_VSYNC)
-> +			vsync_counter--;
-> +		else
-> +			vsync_counter++;
-> +
-> +		if (sts & VE_MODE_DETECT_STATUS_HSYNC)
-> +			hsync_counter--;
-> +		else
-> +			hsync_counter++;
-> +	}
-> +
-> +	if (hsync_counter < 0 || vsync_counter < 0) {
-> +		u32 ctrl;
-> +
-> +		if (hsync_counter < 0)
-> +			ctrl = VE_CTRL_HSYNC_POL;
-> +		else
-> +			video->timings.polarities |= V4L2_DV_HSYNC_POS_POL;
-> +
-> +		if (vsync_counter < 0)
-> +			ctrl = VE_CTRL_VSYNC_POL;
-> +		else
-> +			video->timings.polarities |= V4L2_DV_VSYNC_POS_POL;
-> +
-> +		aspeed_video_update(video, VE_CTRL, 0, ctrl);
-> +	}
-> +}
-> +
-> +static bool aspeed_video_alloc_buf(struct aspeed_video *video,
-> +				   struct aspeed_video_addr *addr,
-> +				   unsigned int size)
-> +{
-> +	addr->virt = dma_alloc_coherent(video->dev, size, &addr->dma,
-> +					GFP_KERNEL);
-> +	if (!addr->virt)
-> +		return false;
-> +
-> +	addr->size = size;
-> +	return true;
-> +}
-> +
-> +static void aspeed_video_free_buf(struct aspeed_video *video,
-> +				  struct aspeed_video_addr *addr)
-> +{
-> +	dma_free_coherent(video->dev, addr->size, addr->virt, addr->dma);
-> +	addr->size = 0;
-> +	addr->dma = 0ULL;
-> +	addr->virt = NULL;
-> +}
-> +
-> +/*
-> + * Get the minimum HW-supported compression buffer size for the frame size.
-> + * Assume worst-case JPEG compression size is 1/8 raw size. This should be
-> + * plenty even for maximum quality; any worse and the engine will simply return
-> + * incomplete JPEGs.
-> + */
-> +static void aspeed_video_calc_compressed_size(struct aspeed_video *video)
-> +{
-> +	int i, j;
-> +	u32 compression_buffer_size_reg = 0;
-> +	unsigned int size;
-> +	const unsigned int num_compression_packets = 4;
-> +	const unsigned int compression_packet_size = 1024;
-> +	const unsigned int max_compressed_size =
-> +		video->width * video->height / 2;	/* 4 Bpp / 8 */
-> +
-> +	video->max_compressed_size = UINT_MAX;
-> +
-> +	for (i = 0; i < 6; ++i) {
-> +		for (j = 0; j < 8; ++j) {
-> +			size = (num_compression_packets << i) *
-> +				(compression_packet_size << j);
-> +			if (size < max_compressed_size)
-> +				continue;
-> +
-> +			if (size < video->max_compressed_size) {
-> +				compression_buffer_size_reg = (i << 3) | j;
-> +				video->max_compressed_size = size;
-> +			}
-> +		}
-> +	}
-> +
-> +	aspeed_video_write(video, VE_STREAM_BUF_SIZE,
-> +			   compression_buffer_size_reg);
-> +
-> +	dev_dbg(video->dev, "max compressed size: %x\n",
-> +		video->max_compressed_size);
-> +}
-> +
-> +#define res_check(v) test_and_clear_bit(VIDEO_MODE_DETECT_DONE, &(v)->flags)
-> +
-> +static int aspeed_video_get_resolution(struct aspeed_video *video)
-> +{
-> +	bool invalid_resolution = true;
-> +	int rc;
-> +	int tries = 0;
-> +	unsigned int bottom;
-> +	unsigned int left;
-> +	unsigned int right;
-> +	unsigned int size;
-> +	unsigned int top;
-> +	u32 mds;
-> +	u32 src_lr_edge;
-> +	u32 src_tb_edge;
-> +	u32 sync;
-> +	struct aspeed_video_addr src;
-> +
-> +	if (video->srcs[1].size)
-> +		aspeed_video_free_buf(video, &video->srcs[1]);
-> +
-> +	if (video->srcs[0].size >= VE_MAX_SRC_BUFFER_SIZE) {
-> +		src = video->srcs[0];
-> +	} else {
-> +		if (video->srcs[0].size)
-> +			aspeed_video_free_buf(video, &video->srcs[0]);
-> +
-> +		if (!aspeed_video_alloc_buf(video, &src,
-> +					    VE_MAX_SRC_BUFFER_SIZE))
-> +			goto err_mem;
-> +	}
-> +
-> +	aspeed_video_write(video, VE_SRC0_ADDR, src.dma);
-> +
-> +	video->width = 0;
-> +	video->height = 0;
-> +
-> +	do {
-> +		if (tries) {
-> +			set_current_state(TASK_INTERRUPTIBLE);
-> +			if (schedule_timeout(INVALID_RESOLUTION_DELAY))
-> +				return -EINTR;
-> +		}
-> +
-> +		aspeed_video_start_mode_detect(video);
-> +
-> +		rc = wait_event_interruptible_timeout(video->wait,
-> +						      res_check(video),
-> +						      MODE_DETECT_TIMEOUT);
-> +		if (!rc) {
-> +			dev_err(video->dev, "timed out on 1st mode detect\n");
-> +			aspeed_video_disable_mode_detect(video);
-> +			return -ETIMEDOUT;
-> +		}
-> +
-> +		/* Disable mode detect in order to re-trigger */
-> +		aspeed_video_update(video, VE_SEQ_CTRL,
-> +				    VE_SEQ_CTRL_TRIG_MODE_DET, 0);
-> +
-> +		aspeed_video_check_polarity(video);
-> +
-> +		aspeed_video_start_mode_detect(video);
-> +
-> +		rc = wait_event_interruptible_timeout(video->wait,
-> +						      res_check(video),
-> +						      MODE_DETECT_TIMEOUT);
-> +		if (!rc) {
-> +			dev_err(video->dev, "timed out on 2nd mode detect\n");
-> +			aspeed_video_disable_mode_detect(video);
-> +			return -ETIMEDOUT;
-> +		}
-> +
-> +		src_lr_edge = aspeed_video_read(video, VE_SRC_LR_EDGE_DET);
-> +		src_tb_edge = aspeed_video_read(video, VE_SRC_TB_EDGE_DET);
-> +		mds = aspeed_video_read(video, VE_MODE_DETECT_STATUS);
-> +		sync = aspeed_video_read(video, VE_SYNC_STATUS);
-> +
-> +		bottom = (src_tb_edge & VE_SRC_TB_EDGE_DET_BOT) >>
-> +			VE_SRC_TB_EDGE_DET_BOT_SHF;
-> +		top = src_tb_edge & VE_SRC_TB_EDGE_DET_TOP;
-> +		video->timings.vfrontporch = top;
-> +		video->timings.vbackporch = ((mds & VE_MODE_DETECT_V_LINES) >>
-> +			VE_MODE_DETECT_V_LINES_SHF) - bottom;
-> +		video->timings.vsync = (sync & VE_SYNC_STATUS_VSYNC) >>
-> +			VE_SYNC_STATUS_VSYNC_SHF;
-> +		if (top > bottom)
-> +			continue;
-> +
-> +		right = (src_lr_edge & VE_SRC_LR_EDGE_DET_RT) >>
-> +			VE_SRC_LR_EDGE_DET_RT_SHF;
-> +		left = src_lr_edge & VE_SRC_LR_EDGE_DET_LEFT;
-> +		video->timings.hfrontporch = left;
-> +		video->timings.hbackporch = (mds & VE_MODE_DETECT_H_PIXELS) -
-> +			right;
-> +		video->timings.hsync = sync & VE_SYNC_STATUS_HSYNC;
+Why not define
 
-It's a bit odd that timings.width/height isn't set here.
+	xfeatures_mask_system
 
-> +		if (left > right)
-> +			continue;
-> +
-> +		invalid_resolution = false;
-> +	} while (invalid_resolution && (tries++ < INVALID_RESOLUTION_RETRIES));
-> +
-> +	if (invalid_resolution) {
-> +		dev_err(video->dev, "invalid resolution detected\n");
-> +		return -ERANGE;
-> +	}
+instead and generate the _all mask at the places you need it by doing
 
-So far, so good. You now have detected the new resolution, but...
+	xfeatures_mask_user | xfeatures_mask_system
 
-> +
-> +	video->height = (bottom - top) + 1;
-> +	video->width = (right - left) + 1;
-> +	size = video->height * video->width;
+?
 
-here and below you appear to actually switch the capture timings to the new
-resolution as well.
+We are differentiating user and system states now so it is only logical
+to have that mirrored in the variables, right?
 
-That should only happen when s_dv_timings is called.
+You even do that in fpu__init_system_xstate().
 
-It is always very dangerous to automatically switch resolution since a new
-resolution might mean larger buffers, and userspace has to prepare for that.
+...
 
-The normal sequence is:
+> @@ -225,20 +230,19 @@ void fpu__init_cpu_xstate(void)
+>  	 * set here.
+>  	 */
+>  
+> -	xfeatures_mask_user &= ~XFEATURE_MASK_SUPERVISOR;
+> -
+>  	cr4_set_bits(X86_CR4_OSXSAVE);
+>  	xsetbv(XCR_XFEATURE_ENABLED_MASK, xfeatures_mask_user);
 
-1) the driver detects a change in resolution (or the video signal disappears
-completely). It will send V4L2_EVENT_SOURCE_CHANGE to let userspace know.
+<---- newline here.
 
-2) Userspace stops streaming, frees all buffers, calls QUERY_DV_TIMINGS and,
-   if valid, follows with S_DV_TIMINGS.
+> +	/*
+> +	 * MSR_IA32_XSS sets which XSAVES system states to be managed by
 
-3) Userspace calls REQBUFS to allocate the new buffers sized for the new timings
-   and starts streaming again.
+Improve:
 
-That way everything remains under control of the application.
+"MSR_IA32_XSS controls which system (not user) states are going to be
+managed by XSAVES."
 
-> +
-> +	/* Don't use direct mode below 1024 x 768 (irqs don't fire) */
-> +	if (size < DIRECT_FETCH_THRESHOLD) {
-> +		aspeed_video_write(video, VE_TGS_0,
-> +				   FIELD_PREP(VE_TGS_FIRST, left - 1) |
-> +				   FIELD_PREP(VE_TGS_LAST, right));
-> +		aspeed_video_write(video, VE_TGS_1,
-> +				   FIELD_PREP(VE_TGS_FIRST, top) |
-> +				   FIELD_PREP(VE_TGS_LAST, bottom + 1));
-> +		aspeed_video_update(video, VE_CTRL, 0, VE_CTRL_INT_DE);
-> +	} else {
-> +		aspeed_video_update(video, VE_CTRL, 0, VE_CTRL_DIRECT_FETCH);
-> +	}
-> +
-> +	aspeed_video_write(video, VE_CAP_WINDOW,
-> +			   video->width << 16 | video->height);
-> +	aspeed_video_write(video, VE_COMP_WINDOW,
-> +			   video->width << 16 | video->height);
-> +	aspeed_video_write(video, VE_SRC_SCANLINE_OFFSET, video->width * 4);
-> +
-> +	aspeed_video_update(video, VE_INTERRUPT_CTRL, 0,
-> +			    VE_INTERRUPT_MODE_DETECT_WD);
-> +	aspeed_video_update(video, VE_SEQ_CTRL, 0,
-> +			    VE_SEQ_CTRL_AUTO_COMP | VE_SEQ_CTRL_EN_WATCHDOG);
-> +
-> +	dev_dbg(video->dev, "got resolution[%dx%d]\n", video->width,
-> +		video->height);
-> +
-> +	size *= 4;
-> +	if (size == src.size / 2) {
-> +		aspeed_video_write(video, VE_SRC1_ADDR, src.dma + size);
-> +		video->srcs[0] = src;
-> +	} else if (size == src.size) {
-> +		video->srcs[0] = src;
-> +
-> +		if (!aspeed_video_alloc_buf(video, &video->srcs[1], size))
-> +			goto err_mem;
-> +
-> +		aspeed_video_write(video, VE_SRC1_ADDR, video->srcs[1].dma);
-> +	} else {
-> +		aspeed_video_free_buf(video, &src);
-> +
-> +		if (!aspeed_video_alloc_buf(video, &video->srcs[0], size))
-> +			goto err_mem;
-> +
-> +		if (!aspeed_video_alloc_buf(video, &video->srcs[1], size))
-> +			goto err_mem;
-> +
-> +		aspeed_video_write(video, VE_SRC0_ADDR, video->srcs[0].dma);
-> +		aspeed_video_write(video, VE_SRC1_ADDR, video->srcs[1].dma);
-> +	}
-> +
-> +	aspeed_video_calc_compressed_size(video);
-> +
-> +	return 0;
-> +
-> +err_mem:
-> +	dev_err(video->dev, "failed to allocate source buffers\n");
-> +
-> +	if (video->srcs[0].size)
-> +		aspeed_video_free_buf(video, &video->srcs[0]);
-> +
-> +	return -ENOMEM;
-> +}
+> @@ -702,6 +703,7 @@ static int init_xstate_size(void)
+>   */
+>  static void fpu__init_disable_system_xstate(void)
+>  {
+> +	xfeatures_mask_all = 0;
+>  	xfeatures_mask_user = 0;
+>  	cr4_clear_bits(X86_CR4_OSXSAVE);
+>  	fpu__xstate_clear_all_cpu_caps();
+> @@ -717,6 +719,8 @@ void __init fpu__init_system_xstate(void)
+>  	static int on_boot_cpu __initdata = 1;
+>  	int err;
+>  	int i;
+> +	u64 cpu_user_xfeatures_mask;
+> +	u64 cpu_system_xfeatures_mask;
 
-Regards,
+Please sort function local variables declaration in a reverse christmas
+tree order:
 
-	Hans
+	<type> longest_variable_name;
+	<type> shorter_var_name;
+	<type> even_shorter;
+	<type> i;
+
+>  
+>  	WARN_ON_FPU(!on_boot_cpu);
+>  	on_boot_cpu = 0;
+
+...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
