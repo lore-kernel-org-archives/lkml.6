@@ -2,151 +2,250 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A75C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E70DFC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E50F82147E
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:59:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E50F82147E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 9EB52214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:01:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="p31Z6sBz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EB52214C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbeJQIwS (ORCPT
+        id S1727028AbeJQIyV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 04:52:18 -0400
-Received: from ozlabs.org ([203.11.71.1]:52133 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbeJQIwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 04:52:17 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42ZYj94TF9z9s2P;
-        Wed, 17 Oct 2018 11:59:09 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Geoff Levand <geoff@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Kumar Gala <galak@kernel.crashing.org>,
-        Li Yang <leoyang.li@nxp.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Scott Wood <oss@buserror.net>, aneesh.kumar@linux.vnet.ibm.com,
-        "benh\@kernel.crashing.org" <benh@kernel.crashing.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-Subject: Crash on FSL Book3E due to pte_pgprot()? (was Re: [PATCH v3 12/24] powerpc/mm: use pte helpers in generic code)
-In-Reply-To: <343c844bbc5081d13ee4c9aa27ff3118f607e1cc.1539092112.git.christophe.leroy@c-s.fr>
-References: <cover.1539092111.git.christophe.leroy@c-s.fr> <343c844bbc5081d13ee4c9aa27ff3118f607e1cc.1539092112.git.christophe.leroy@c-s.fr>
-Date:   Wed, 17 Oct 2018 11:59:09 +1100
-Message-ID: <87va61jsma.fsf@concordia.ellerman.id.au>
+        Wed, 17 Oct 2018 04:54:21 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:6808 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbeJQIyU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 04:54:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1539738076; x=1571274076;
+  h=from:subject:to:cc:references:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=qzltMKBFD9GBZjcn5ePHd3WcmyNOpRLo7a7/Sa9inz0=;
+  b=p31Z6sBz0gUn/V4e2n7K4xLE8At2QFLwJVQZBtlS16FDnrP9qdO7078v
+   hnagTBBK4QxRE/oO6m6FNl2/HusOHnqglS4KmnwXr8sNVGXFdNsvU6OQy
+   DwUiMpKEtBd8E6rPdDLhULnGKhErA4aQ8wUkztXtcHH1V8iZPzwU/4/kE
+   SGMbtg4oUehtr0qqJMCQw2AJyGi9vdUTq3l9dZ9U/jTUGz+ZsymMRqzOz
+   4HPfMHpL2z2ExOIvCZrazFp1UDsH3HGhxT2m2jdK2k4Y9qYPIF9+BS47W
+   9PeaCmSpyxAxWIjX6oeR8k/5MyQaXXqJe+BgjsGcCPTWa/1cypPAx5YNG
+   w==;
+X-IronPort-AV: E=Sophos;i="5.54,389,1534780800"; 
+   d="scan'208";a="92111020"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Oct 2018 09:01:15 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 16 Oct 2018 17:46:20 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.73.114]) ([10.111.73.114])
+  by uls-op-cesaip02.wdc.com with ESMTP; 16 Oct 2018 18:01:15 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+Subject: Re: [RFC 4/4] gpio: sifive: Add GPIO driver for SiFive SoCs
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Christoph Hellwig <hch@infradead.org>
+References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
+ <1539111085-25502-5-git-send-email-atish.patra@wdc.com>
+ <CACRpkdaoBwqQ4V5Hm9f_G5_jrdkvjT5anhBK1_HoFTj6=cba-Q@mail.gmail.com>
+Message-ID: <d8fe9a17-283c-e2ad-9e01-2754b35699b4@wdc.com>
+Date:   Tue, 16 Oct 2018 18:01:13 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CACRpkdaoBwqQ4V5Hm9f_G5_jrdkvjT5anhBK1_HoFTj6=cba-Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+On 10/10/18 5:35 AM, Linus Walleij wrote:
+> Hi Atish,
+> 
+> thanks for your patch!
+> 
+> On Tue, Oct 9, 2018 at 8:51 PM Atish Patra <atish.patra@wdc.com> wrote:
+> 
+>> From: "Wesley W. Terpstra" <wesley@sifive.com>
+>>
+>> Adds the GPIO driver for SiFive RISC-V SoCs.
+>>
+>> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+>> [Atish: Various fixes and code cleanup]
+>> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> 
+> (...)
+> 
+>> +config GPIO_SIFIVE
+>> +       bool "SiFive GPIO support"
+>> +       depends on OF_GPIO
+>> +       select GPIOLIB_IRQCHIP
+> 
+> I suggest to add
+> select GPIO_GENERIC as per below.
+> 
+> Maybe select REGMAP_MMIO as well.
 
-> Get rid of platform specific _PAGE_XXXX in powerpc common code and
-> use helpers instead.
->
-> mm/dump_linuxpagetables.c will be handled separately
->
-> Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  arch/powerpc/include/asm/book3s/32/pgtable.h |  9 +++------
->  arch/powerpc/include/asm/nohash/32/pgtable.h | 12 ++++++++----
->  arch/powerpc/include/asm/nohash/pgtable.h    |  3 +--
->  arch/powerpc/mm/pgtable.c                    | 21 +++++++--------------
->  arch/powerpc/mm/pgtable_32.c                 | 15 ++++++++-------
->  arch/powerpc/mm/pgtable_64.c                 | 14 +++++++-------
->  arch/powerpc/xmon/xmon.c                     | 12 +++++++-----
->  7 files changed, 41 insertions(+), 45 deletions(-)
+ok.
 
-So turns out this patch *also* breaks my p5020ds :)
+> 
+>> +       help
+>> +         Say yes here to support the GPIO device on SiFive SoCs.
+>> +
+> 
+>> +#include <linux/of_irq.h>
+>> +#include <linux/irqchip/chained_irq.h>
+> 
+> Do you need these two? I think <linux/gpio/driver.h>
+> will bring them in for you.
+> 
 
-Even with patch 4 merged, see next.
+driver.h only brings chained_irq.h. of_irq.h is still required. Right ?
 
-It's the same crash:
+>> +#include <linux/pinctrl/consumer.h>
+> 
+> Are you using this?
 
-  pcieport 2000:00:00.0: AER enabled with IRQ 480
-  Unable to handle kernel paging request for data at address 0x8000080080080000
-  Faulting instruction address: 0xc0000000000192cc
-  Oops: Kernel access of bad area, sig: 11 [#1]
-  BE SMP NR_CPUS=24 CoreNet Generic
-  Modules linked in:
-  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc3-gcc7x-g98c847323b3a #1
-  NIP:  c0000000000192cc LR: c0000000005d0f9c CTR: 0000000000100000
-  REGS: c0000000f31bb400 TRAP: 0300   Not tainted  (4.19.0-rc3-gcc7x-g98c847323b3a)
-  MSR:  0000000080029000 <CE,EE,ME>  CR: 24000224  XER: 00000000
-  DEAR: 8000080080080000 ESR: 0000000000800000 IRQMASK: 0 
-  GPR00: c0000000005d0f84 c0000000f31bb688 c00000000117dc00 8000080080080000 
-  GPR04: 0000000000000000 0000000000400000 00000ffbff241010 c0000000f31b8000 
-  GPR08: 0000000000000000 0000000000100000 0000000000000000 c0000000012d4710 
-  GPR12: 0000000084000422 c0000000012ff000 c000000000002774 0000000000000000 
-  GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-  GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-  GPR24: 0000000000000000 0000000000000000 8000080080080000 c0000000ffff89a8 
-  GPR28: c0000000f3576400 c0000000f3576410 0000000000400000 c0000000012ecc98 
-  NIP [c0000000000192cc] ._memset_io+0x6c/0x9c
-  LR [c0000000005d0f9c] .fsl_qman_probe+0x198/0x928
-  Call Trace:
-  [c0000000f31bb688] [c0000000005d0f84] .fsl_qman_probe+0x180/0x928 (unreliable)
-  [c0000000f31bb728] [c0000000006432ec] .platform_drv_probe+0x60/0xb4
-  [c0000000f31bb7a8] [c00000000064083c] .really_probe+0x294/0x35c
-  [c0000000f31bb848] [c000000000640d2c] .__driver_attach+0x148/0x14c
-  [c0000000f31bb8d8] [c00000000063d7dc] .bus_for_each_dev+0xb0/0x118
-  [c0000000f31bb988] [c00000000063ff28] .driver_attach+0x34/0x4c
-  [c0000000f31bba08] [c00000000063f648] .bus_add_driver+0x174/0x2bc
-  [c0000000f31bbaa8] [c0000000006418bc] .driver_register+0x90/0x180
-  [c0000000f31bbb28] [c000000000643270] .__platform_driver_register+0x60/0x7c
-  [c0000000f31bbba8] [c000000000ee2a70] .fsl_qman_driver_init+0x24/0x38
-  [c0000000f31bbc18] [c0000000000023fc] .do_one_initcall+0x64/0x2b8
-  [c0000000f31bbcf8] [c000000000e9f480] .kernel_init_freeable+0x3a8/0x494
-  [c0000000f31bbda8] [c000000000002798] .kernel_init+0x24/0x148
-  [c0000000f31bbe28] [c0000000000009e8] .ret_from_kernel_thread+0x58/0x70
-  Instruction dump:
-  4e800020 2ba50003 40dd003c 3925fffc 5488402e 7929f082 7d082378 39290001 
-  550a801e 7d2903a6 7d4a4378 794a0020 <91430000> 38630004 4200fff8 70a50003 
+My bad. Left over from the old code. I will remove it.
+
+> 
+>> +struct sifive_gpio {
+>> +       raw_spinlock_t          lock;
+>> +       void __iomem            *base;
+>> +       struct gpio_chip        gc;
+>> +       unsigned long           enabled;
+> 
+> Since max GPIO is 32 why not use an u32 for this?
+> 
+
+Sure.
+
+>> +       unsigned int            trigger[MAX_GPIO];
+>> +       unsigned int            irq_parent[MAX_GPIO];
+>> +       struct sifive_gpio      *self_ptr[MAX_GPIO];
+>> +};
+>> +
+>> +static void sifive_assign_bit(void __iomem *ptr, unsigned int offset, int value)
+>> +{
+>> +       /*
+>> +        * It's frustrating that we are not allowed to use the device atomics
+>> +        * which are GUARANTEED to be supported by this device on RISC-V
+>> +        */
+>> +       u32 bit = BIT(offset), old = ioread32(ptr);
+>> +
+>> +       if (value)
+>> +               iowrite32(old | bit, ptr);
+>> +       else
+>> +               iowrite32(old & ~bit, ptr);
+>> +}
+> 
+> This looks like a mask and set implementation, you are
+> essentially reinventing regmap MMIO and the
+> regmap_update_bits() call. Could you look into
+> just using regmap MMIO in that case?
+> 
+> If you need examples, look at gpio-mvebu.c that calls
+> devm_regmap_init_mmio() for example.
+> 
+
+That's really cool. Sorry, for not checking that earlier.
+I am pretty new to this.
+
+>> +static int sifive_direction_input(struct gpio_chip *gc, unsigned int offset)
+>> +static int sifive_direction_output(struct gpio_chip *gc, unsigned int offset,
+>> +static int sifive_get_direction(struct gpio_chip *gc, unsigned int offset)
+>> +static int sifive_get_value(struct gpio_chip *gc, unsigned int offset)
+>> +static void sifive_set_value(struct gpio_chip *gc, unsigned int offset,
+> 
+> These functions look like a typical hardware that can use
+> 
+> GPIOLIB_GENERIC and bgpio_init() to set up the accessors.
+> 
+> See gpio-ftgpio010.c for an example.
+> 
+> As a bonus you will get .get/.set_multiple implemented by
+> the generic GPIO.
+> 
+
+Great. This will reduce the driver a code by a big factor.
+Thanks for the pointer.
 
 
-Comparing a working vs broken kernel, it seems to boil down to the fact
-that we're filtering out more PTE bits now that we use pte_pgprot() in
-ioremap_prot().
+>> +static void sifive_irq_enable(struct irq_data *d)
+>> +static void sifive_irq_disable(struct irq_data *d)
+> (...)
+>> +static struct irq_chip sifive_irqchip = {
+>> +       .name           = "sifive-gpio",
+>> +       .irq_set_type   = sifive_irq_set_type,
+>> +       .irq_mask       = sifive_irq_mask,
+>> +       .irq_unmask     = sifive_irq_unmask,
+>> +       .irq_enable     = sifive_irq_enable,
+>> +       .irq_disable    = sifive_irq_disable,
+> 
+> The handling of .irq_enable and .irq_disable has
+> changed upstream. Please align with the new codebase
+> as changed by Hans Verkuil:
+> 
+> commit 461c1a7d4733d1dfd5c47b040cf32a5e7eefbc6c
+> "gpiolib: override irq_enable/disable"
+> commit 4e9439ddacea06f35acce4d374bf6bd0acf99bc8
+> "gpiolib: add flag to indicate if the irq is disabled"
+> 
+> You will need to rebase your work on the v4.20-rc1 once it is
+> out. Right now the changes are on linux-next or my devel
+> branch.
 
-With the old code we get:
-  ioremap_prot: addr 0xff800000 flags 0x241215
-  ioremap_prot: addr 0xff800000 flags 0x241215
-  map_kernel_page: ea 0x8000080080080000 pa 0xff800000 pte 0xff800241215
+Will do.
+
+> 
+>> +       ngpio = of_irq_count(node);
+>> +       if (ngpio >= MAX_GPIO) {
+>> +               dev_err(dev, "Too many GPIO interrupts (max=%d)\n", MAX_GPIO);
+>> +               return -ENXIO;
+>> +       }
+> (...)
+>> +       for (gpio = 0; gpio < ngpio; ++gpio) {
+>> +               irq = platform_get_irq(pdev, gpio);
+>> +               if (irq < 0) {
+>> +                       dev_err(dev, "invalid IRQ\n");
+>> +                       gpiochip_remove(&chip->gc);
+>> +                       return -ENODEV;
+>> +               }
+> 
+> This is an hierarchical IRQ so it should use an hierarchical
+> irqdomain.
+> 
+> I am discussing with Thierry to make more generic irq domains
+> for hierarchical IRQ GPIOs, until then you have to look at
+> gpio-thunderx.c, gpio-uniphier.c or gpio-xgene-sb.c that all
+> use hierarchical IRQs.
+> 
+
+Thanks. I will convert them to hierarchical IRQ.
+
+Regards,
+Atish
+> Yours,
+> Linus Walleij
+> 
 
 
-And now we get:
-  ioremap_prot: addr 0xff800000 flags 0x241215 pte 0x241215
-  ioremap_prot: addr 0xff800000 pte 0x241215
-  ioremap_prot: addr 0xff800000 prot 0x241014
-  map_kernel_page: ea 0x8000080080080000 pa 0xff800000 pte 0xff800241014
 
-So we're losing 0x201, which for nohash book3e is:
-
-  #define _PAGE_PRESENT	0x000001 /* software: pte contains a translation */
-  #define _PAGE_PSIZE_4K	0x000200
-
-
-I haven't worked out if it's one or both of those that matter.
-
-The question is what's the right way to fix it? Should pte_pgprot() not
-be filtering those bits out on book3e?
-
-cheers
