@@ -4,35 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DATE_IN_PAST_03_06,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FA2ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB36ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB2712150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:04:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB2712150D
+	by mail.kernel.org (Postfix) with ESMTP id 306BD2150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:04:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 306BD2150D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=skidata.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbeJRAAe (ORCPT
+        id S1728002AbeJRAAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 20:00:34 -0400
-Received: from mail2.skidata.com ([91.230.2.91]:49383 "EHLO mail2.skidata.com"
+        Wed, 17 Oct 2018 20:00:39 -0400
+Received: from mail1.skidata.com ([91.230.2.99]:30634 "EHLO mail1.skidata.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727048AbeJRAAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 20:00:34 -0400
+        id S1727048AbeJRAAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 20:00:38 -0400
 X-IronPort-AV: E=Sophos;i="5.54,393,1534802400"; 
-   d="scan'208";a="1732779"
+   d="scan'208";a="12919620"
 From:   Richard Leitner <richard.leitner@skidata.com>
 To:     <dmitry.torokhov@gmail.com>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>
 CC:     <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: [PATCH v2 7/8] Input: sx8654 - use common of_touchscreen functions
-Date:   Wed, 17 Oct 2018 14:51:15 +0200
-Message-ID: <20181017125116.20077-8-richard.leitner@skidata.com>
+Subject: [PATCH v2 8/8] Input: sx8654 - convert #defined flags to BIT(x)
+Date:   Wed, 17 Oct 2018 14:51:16 +0200
+Message-ID: <20181017125116.20077-9-richard.leitner@skidata.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181017125116.20077-1-richard.leitner@skidata.com>
 References: <20181017125116.20077-1-richard.leitner@skidata.com>
@@ -46,64 +47,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_touchscreen.c provides a common interface for a axis invertion and
-swapping of touchscreens. Therefore use it in the sx8654 driver.
+Some of the #defined register values are one-bit flags. Convert them to
+use the BIT(x) macro instead of 1 byte hexadecimal values. This improves
+readability and clarifies the intent.
 
 Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
 ---
- drivers/input/touchscreen/sx8654.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/input/touchscreen/sx8654.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/input/touchscreen/sx8654.c b/drivers/input/touchscreen/sx8654.c
-index 4939863efbef..b7b263ed52af 100644
+index b7b263ed52af..3746ea855f94 100644
 --- a/drivers/input/touchscreen/sx8654.c
 +++ b/drivers/input/touchscreen/sx8654.c
-@@ -35,6 +35,7 @@
- #include <linux/irq.h>
+@@ -36,6 +36,7 @@
  #include <linux/gpio/consumer.h>
  #include <linux/delay.h>
-+#include <linux/input/touchscreen.h>
+ #include <linux/input/touchscreen.h>
++#include <linux/bitops.h>
  
  /* register addresses */
  #define I2C_REG_TOUCH0			0x00
-@@ -101,6 +102,7 @@ struct sx8654 {
+@@ -46,7 +47,7 @@
+ #define I2C_REG_SOFTRESET		0x3f
  
- 	spinlock_t		lock; /* for input reporting from irq/timer */
- 	struct timer_list	timer;
-+	struct touchscreen_properties props;
+ #define I2C_REG_SX8650_STAT		0x05
+-#define SX8650_STAT_CONVIRQ		0x80
++#define SX8650_STAT_CONVIRQ		BIT(7)
  
- 	const struct sx865x_data *data;
- };
-@@ -178,8 +180,7 @@ static irqreturn_t sx8650_irq(int irq, void *handle)
- 				 chdata);
- 	}
+ /* commands */
+ #define CMD_READ_REGISTER		0x40
+@@ -56,8 +57,8 @@
+ #define SOFTRESET_VALUE			0xde
  
--	input_report_abs(ts->input, ABS_X, x);
--	input_report_abs(ts->input, ABS_Y, y);
-+	touchscreen_report_pos(ts->input, &ts->props, x, y, false);
- 	input_report_key(ts->input, BTN_TOUCH, 1);
- 	input_sync(ts->input);
- 	dev_dbg(dev, "point(%4d,%4d)\n", x, y);
-@@ -226,8 +227,8 @@ static irqreturn_t sx8654_irq(int irq, void *handle)
- 		x = ((data[0] & 0xf) << 8) | (data[1]);
- 		y = ((data[2] & 0xf) << 8) | (data[3]);
+ /* bits for I2C_REG_IRQSRC */
+-#define IRQ_PENTOUCH_TOUCHCONVDONE	0x08
+-#define IRQ_PENRELEASE			0x04
++#define IRQ_PENTOUCH_TOUCHCONVDONE	BIT(7)
++#define IRQ_PENRELEASE			BIT(6)
  
--		input_report_abs(sx8654->input, ABS_X, x);
--		input_report_abs(sx8654->input, ABS_Y, y);
-+		touchscreen_report_pos(sx8654->input, &sx8654->props, x, y,
-+				       false);
- 		input_report_key(sx8654->input, BTN_TOUCH, 1);
- 		input_sync(sx8654->input);
+ /* bits for RegTouch1 */
+ #define CONDIRQ				0x20
+@@ -65,8 +66,8 @@
+ #define FILT_7SA			0x03
  
-@@ -377,6 +378,8 @@ static int sx8654_probe(struct i2c_client *client,
- 	input_set_abs_params(input, ABS_X, 0, MAX_12BIT, 0, 0);
- 	input_set_abs_params(input, ABS_Y, 0, MAX_12BIT, 0, 0);
+ /* bits for I2C_REG_CHANMASK */
+-#define CONV_X				0x80
+-#define CONV_Y				0x40
++#define CONV_X				BIT(7)
++#define CONV_Y				BIT(6)
  
-+	touchscreen_parse_properties(input, false, &sx8654->props);
-+
- 	sx8654->client = client;
- 	sx8654->input = input;
- 
+ /* coordinates rate: higher nibble of CTRL0 register */
+ #define RATE_MANUAL			0x00
 -- 
 2.11.0
 
