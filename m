@@ -2,128 +2,139 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D55F7ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E61BECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A38A9214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:06:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38A9214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id E1AE821526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:08:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="2Pr7LSjz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1AE821526
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbeJQSBW (ORCPT
+        id S1727050AbeJQSDL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:01:22 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:59164 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbeJQSBW (ORCPT
+        Wed, 17 Oct 2018 14:03:11 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39579 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbeJQSDK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:01:22 -0400
-Received: from fsav109.sakura.ne.jp (fsav109.sakura.ne.jp [27.133.134.236])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9HA6Num052266;
-        Wed, 17 Oct 2018 19:06:23 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav109.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp);
- Wed, 17 Oct 2018 19:06:23 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp)
-Received: from ccsecurity.localdomain (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9HA6Jff052195
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 17 Oct 2018 19:06:23 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Michal Hocko <mhocko@suse.com>,
-        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
-Subject: [PATCH v3] mm: memcontrol: Don't flood OOM messages with no eligible task.
-Date:   Wed, 17 Oct 2018 19:06:22 +0900
-Message-Id: <1539770782-3343-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 17 Oct 2018 14:03:10 -0400
+Received: by mail-wm1-f66.google.com with SMTP id y144-v6so1503050wmd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 03:08:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=lx0cw+9rF/07CO1RshCjn2zaAnRoqJpQJvSZ7+l+DRw=;
+        b=2Pr7LSjzhDj0BACYKlsB5/35jjRH/akXhTwsa6UMp0Nzc8IGSpZxeR4CHRTLyYcEkU
+         p66F+8VgHEKrty/uVuldYE0JXfc+PMevT6VVutVlsBmQPLjqCH3I1HHLjhkr1ojEIVVc
+         PVW3CE78UBqztvG/y1J71EhxbgSEsTd/n4CT0IEHxbgJaj3WviHQ4a/5QqGsB10znT8M
+         s+cQWTKAGHRLYg2U/QAigeJ9670cC3vfRqRKAPjOw0ZeLvjEIMpZkHJK5ODNVO/IzMMX
+         Cq5o5egv9DMVCWiCHQCOYscPuiBENr316xgbt3lmhafZlwdTfDNb1iQcqHsr0U1EP33t
+         qxiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=lx0cw+9rF/07CO1RshCjn2zaAnRoqJpQJvSZ7+l+DRw=;
+        b=pUtBOsYVhqXlH+EofoEoQ6G7Pa0IhQWx6GvE0kZb9r+u2xeEOYp7As/QjnId7pmfqr
+         iG5/td8ZccP2kURkVSOig64OxBasQGX1xhgF5Seu8Q+bOkw9Tkw+Hor+ZJ2wEHlK+INL
+         yN+Aoi2YKe6jTnx/ktctDeVxX7ApNuTnmhE9WttIqMuCVztMzQ0jXFUpc31cZt5hUQOT
+         rfTpWJYW4vhAFA6vOtYeyWMbXcdmaBX0/gnt87nqCLwUNbPauH1KTZuwOVD3ZpTuJRfO
+         4Eq/gEfhm5No6bT2A+jWXTyiaH2ELbluLLNU9FQk4wNIQ5j10gzJjyuaU1LceOIykWGR
+         WoRA==
+X-Gm-Message-State: ABuFfoiOi4bXEB37zFUcDmaSfSdLVnpLlKKYyIuvE6Nclnv5kua8U2db
+        1o8j82gUwHab8WnAhPJltHtk4Q==
+X-Google-Smtp-Source: ACcGV62ReuRn8UFxlWuwqj8sKgRib39ILxwvvvOJ+hdAzk81sPI8AwBtcGhUNUQKkLQaHg0QQvmlYw==
+X-Received: by 2002:a1c:5fc2:: with SMTP id t185-v6mr2115908wmb.12.1539770891024;
+        Wed, 17 Oct 2018 03:08:11 -0700 (PDT)
+Received: from pathfinder (62-64-249-96.dynamic.dsl.as9105.com. [62.64.249.96])
+        by smtp.gmail.com with ESMTPSA id o201-v6sm1783038wmg.16.2018.10.17.03.08.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 03:08:10 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 11:08:09 +0100
+From:   Phillip Potter <phil@philpotter.co.uk>
+To:     dushistov@mail.ru
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: ufs: Remove switch statement from ufs_set_de_type
+ function
+Message-ID: <20181017100809.GA9070@pathfinder>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot is hitting RCU stall at shmem_fault() [1].
-This is because memcg-OOM events with no eligible task (current thread
-is marked as OOM-unkillable) continued calling dump_header() from
-out_of_memory() enabled by commit 3100dab2aa09dc6e ("mm: memcontrol:
-print proper OOM header when no eligible victim left.").
+Remove switch statement from ufs_set_de_type function in fs/ufs/util.h
+header and replace with simple assignment. For each case, S_IFx >> 12
+is equal to DT_x, so in valid cases (mode & S_IFMT) >> 12 should give
+us the correct file type. For invalid cases, upper layer validation
+catches this anyway, so this improves readability and arguably
+performance by assigning (mode & S_IFMT) >> 12 directly.
 
-Michal proposed ratelimiting dump_header() [2]. But I don't think that
-that patch is appropriate because that patch does not ratelimit
-
-  "%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n"
-  "Out of memory and no killable processes...\n"
-
-messages which can be printed for every few milliseconds (i.e. effectively
-denial of service for console users) until the OOM situation is solved.
-
-Let's make sure that next dump_header() waits for at least 60 seconds from
-previous "Out of memory and no killable processes..." message. Michal is
-thinking that any interval is meaningless without knowing the printk()
-throughput. But since printk() is synchronous unless handed over to
-somebody else by commit dbdda842fe96f893 ("printk: Add console owner and
-waiter logic to load balance console writes"), it is likely that all OOM
-messages from this out_of_memory() request is already flushed to consoles
-when pr_warn("Out of memory and no killable processes...\n") returned.
-Thus, we will be able to allow console users to do what they need to do.
-
-To summarize, this patch allows threads in requested memcg to complete
-memory allocation requests for doing recovery operation, and also allows
-administrators to manually do recovery operation from console if
-OOM-unkillable thread is failing to solve the OOM situation automatically.
-
-[1] https://syzkaller.appspot.com/bug?id=4ae3fff7fcf4c33a47c1192d2d62d2e03efffa64
-[2] https://lkml.kernel.org/r/20181010151135.25766-1-mhocko@kernel.org
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
 ---
- mm/oom_kill.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/ufs/util.h | 30 ++----------------------------
+ 1 file changed, 2 insertions(+), 28 deletions(-)
 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f10aa53..9056f9b 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -1106,6 +1106,11 @@ bool out_of_memory(struct oom_control *oc)
- 	select_bad_process(oc);
- 	/* Found nothing?!?! */
- 	if (!oc->chosen) {
-+		static unsigned long last_warned;
-+
-+		if ((is_sysrq_oom(oc) || is_memcg_oom(oc)) &&
-+		    time_in_range(jiffies, last_warned, last_warned + 60 * HZ))
-+			return false;
- 		dump_header(oc, NULL);
- 		pr_warn("Out of memory and no killable processes...\n");
- 		/*
-@@ -1115,6 +1120,7 @@ bool out_of_memory(struct oom_control *oc)
- 		 */
- 		if (!is_sysrq_oom(oc) && !is_memcg_oom(oc))
- 			panic("System is deadlocked on memory\n");
-+		last_warned = jiffies;
- 	}
- 	if (oc->chosen && oc->chosen != (void *)-1UL)
- 		oom_kill_process(oc, !is_memcg_oom(oc) ? "Out of memory" :
+diff --git a/fs/ufs/util.h b/fs/ufs/util.h
+index 1fd3011ea623..7e0c0878b9f9 100644
+--- a/fs/ufs/util.h
++++ b/fs/ufs/util.h
+@@ -16,6 +16,7 @@
+  * some useful macros
+  */
+ #define in_range(b,first,len)	((b)>=(first)&&(b)<(first)+(len))
++#define S_SHIFT			12
+ 
+ /*
+  * functions used for retyping
+@@ -158,34 +159,7 @@ ufs_set_de_type(struct super_block *sb, struct ufs_dir_entry *de, int mode)
+ 	if ((UFS_SB(sb)->s_flags & UFS_DE_MASK) != UFS_DE_44BSD)
+ 		return;
+ 
+-	/*
+-	 * TODO turn this into a table lookup
+-	 */
+-	switch (mode & S_IFMT) {
+-	case S_IFSOCK:
+-		de->d_u.d_44.d_type = DT_SOCK;
+-		break;
+-	case S_IFLNK:
+-		de->d_u.d_44.d_type = DT_LNK;
+-		break;
+-	case S_IFREG:
+-		de->d_u.d_44.d_type = DT_REG;
+-		break;
+-	case S_IFBLK:
+-		de->d_u.d_44.d_type = DT_BLK;
+-		break;
+-	case S_IFDIR:
+-		de->d_u.d_44.d_type = DT_DIR;
+-		break;
+-	case S_IFCHR:
+-		de->d_u.d_44.d_type = DT_CHR;
+-		break;
+-	case S_IFIFO:
+-		de->d_u.d_44.d_type = DT_FIFO;
+-		break;
+-	default:
+-		de->d_u.d_44.d_type = DT_UNKNOWN;
+-	}
++	de->d_u.d_44.d_type = (mode & S_IFMT) >> S_SHIFT;
+ }
+ 
+ static inline u32
 -- 
-1.8.3.1
+2.17.0
+
