@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68614ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B36BECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C9AF21526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:56:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41C0521523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:56:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DlXaLHqh";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MmP2j8pd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C9AF21526
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VT3MTbU3";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IV/8CfOj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41C0521523
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbeJQVv6 (ORCPT
+        id S1727610AbeJQVwC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:51:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44438 "EHLO
+        Wed, 17 Oct 2018 17:52:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44534 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeJQVv5 (ORCPT
+        with ESMTP id S1727024AbeJQVwC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:51:57 -0400
+        Wed, 17 Oct 2018 17:52:02 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id AC7586132F; Wed, 17 Oct 2018 13:56:07 +0000 (UTC)
+        id 3CEE161323; Wed, 17 Oct 2018 13:56:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539784567;
-        bh=04y2TahKeW7N1261nI48AyV+3lS5X15YaOUQyCHohC0=;
+        s=default; t=1539784572;
+        bh=+LblrXMLhtDQ9Kdc3zpoX4sqvJus1UMjS5/fDiaXT64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DlXaLHqh/k0zJxxdxayV07Yw47igGXfDSXRS5HzfVlgeTdlSp5icZHrJAJA3cfWGM
-         DnvJujxBhOAypI92hiyurodS9yVOJJue6FNSUMK4iYAqhKRzFeSsvHVDqzgihH+sNC
-         KHguRAtPdvKakyvQpto6Qws+k4vOAJTRJ6hWZ4uM=
+        b=VT3MTbU33k5rppo7Bbg41U9AOPHQ/0NYt/Cm/3B9nO3YVP06uEW4IzQ3fut5GlZ9V
+         KjSdbpzaLdP+m2Z1mpMnbi78/FRbVyqNbbriRP/IJ+GeeZoU/INNx6yNCIwvVmiQqC
+         EMMtijOBT6SVUycOswFyRwNeanKADPH4+yY5VCWc=
 Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 634A26130F;
-        Wed, 17 Oct 2018 13:56:03 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 98A9261400;
+        Wed, 17 Oct 2018 13:56:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539784566;
-        bh=04y2TahKeW7N1261nI48AyV+3lS5X15YaOUQyCHohC0=;
+        s=default; t=1539784571;
+        bh=+LblrXMLhtDQ9Kdc3zpoX4sqvJus1UMjS5/fDiaXT64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MmP2j8pdS+k4/lXflBhq7260k1PvCPFvs4X9LFUveNQN1EMdKks7zdMpHHbg/rAjO
-         Fmr+kyEWkLGJlOt14ThOnJcV2yYQZX4zESDgCDYxSByYYJk+9sDmg4+/jjjcifzkay
-         2yHMigCQMayEo73HXFtIuBVZWSYTFUjGuPKNv3No=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 634A26130F
+        b=IV/8CfOjzdQeMbL7ub/51AcPjN5bYP2ThGz85hI0iH6ZA80CHilEyBcQTmM0Y3+NH
+         bqKXK7x0g9MTvBrDB4ygBiKLmzb6KCG19ON9Pj1oO2LmlOUzx6ZM0FewUPseCMovAP
+         2IPfPR0XI25VnLWSBh9A+LxfO44lWobeLl2KZg2E=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 98A9261400
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
 From:   Sibi Sankar <sibis@codeaurora.org>
@@ -57,9 +58,9 @@ Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org,
         sricharan@codeaurora.org, akdwived@codeaurora.org,
         kyan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v5 4/5] remoteproc: qcom: q6v5-mss: Add custom dump function for modem
-Date:   Wed, 17 Oct 2018 19:25:26 +0530
-Message-Id: <20181017135527.30592-5-sibis@codeaurora.org>
+Subject: [PATCH v5 5/5] remoteproc: qcom: q6v5-mss: Register segments/dumpfn for coredump
+Date:   Wed, 17 Oct 2018 19:25:27 +0530
+Message-Id: <20181017135527.30592-6-sibis@codeaurora.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181017135527.30592-1-sibis@codeaurora.org>
 References: <20181017135527.30592-1-sibis@codeaurora.org>
@@ -70,73 +71,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The per segment dump function is responsible for loading the mba
-before device memory segments associated with coredump can be populated
-and for cleaning up the resources post coredump.
+Register the MDT segments, custom dumpfn and private data with the
+remoteproc core dump functionality.
 
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/remoteproc/qcom_q6v5_mss.c | 33 ++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/remoteproc/qcom_q6v5_mss.c | 42 ++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 87d7f4d0c176..0d3b9d70823e 100644
+index 0d3b9d70823e..8ceebde75d02 100644
 --- a/drivers/remoteproc/qcom_q6v5_mss.c
 +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -168,6 +168,9 @@ struct q6v5 {
- 	bool running;
- 
- 	bool dump_mba_loaded;
-+	unsigned long dump_segment_mask;
-+	unsigned long dump_complete_mask;
-+
- 	phys_addr_t mba_phys;
- 	void *mba_region;
- 	size_t mba_size;
-@@ -961,6 +964,33 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	return ret < 0 ? ret : 0;
+@@ -1064,10 +1064,52 @@ static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
+ 	return qproc->mpss_region + offset;
  }
  
-+static void qcom_q6v5_dump_segment(struct rproc *rproc,
-+				   struct rproc_dump_segment *segment,
-+				   void *dest)
++static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
++				const struct firmware *mba_fw)
 +{
-+	int ret = 0;
++	const struct firmware *fw;
++	const struct elf32_phdr *phdrs;
++	const struct elf32_phdr *phdr;
++	const struct elf32_hdr *ehdr;
 +	struct q6v5 *qproc = rproc->priv;
-+	unsigned long mask = BIT((unsigned long)segment->priv);
-+	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
++	unsigned long i;
++	int ret;
 +
-+	/* Unlock mba before copying segments */
-+	if (!qproc->dump_mba_loaded)
-+		ret = q6v5_mba_load(qproc);
-+
-+	if (!ptr || ret)
-+		memset(dest, 0xff, segment->size);
-+	else
-+		memcpy(dest, ptr, segment->size);
-+
-+	qproc->dump_segment_mask |= mask;
-+
-+	/* Reclaim mba after copying segments */
-+	if (qproc->dump_segment_mask == qproc->dump_complete_mask) {
-+		if (qproc->dump_mba_loaded)
-+			q6v5_mba_reclaim(qproc);
++	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
++	if (ret < 0) {
++		dev_err(qproc->dev, "unable to load modem.mdt\n");
++		return ret;
 +	}
++
++	ehdr = (struct elf32_hdr *)fw->data;
++	phdrs = (struct elf32_phdr *)(ehdr + 1);
++	qproc->dump_complete_mask = 0;
++
++	for (i = 0; i < ehdr->e_phnum; i++) {
++		phdr = &phdrs[i];
++
++		if (!q6v5_phdr_valid(phdr))
++			continue;
++
++		ret = rproc_coredump_add_custom_segment(rproc, phdr->p_paddr,
++							phdr->p_memsz,
++							(void *)i,
++							qcom_q6v5_dump_segment);
++		if (ret)
++			break;
++
++		qproc->dump_complete_mask |= BIT(i);
++	}
++
++	release_firmware(fw);
++	return ret;
 +}
 +
- static int q6v5_start(struct rproc *rproc)
- {
- 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-@@ -989,6 +1019,9 @@ static int q6v5_start(struct rproc *rproc)
- 	if (xfermemop_ret)
- 		dev_err(qproc->dev,
- 			"Failed to reclaim mba buffer system may become unstable\n");
-+
-+	/* Reset Dump Segment Mask */
-+	qproc->dump_segment_mask = 0;
- 	qproc->running = true;
+ static const struct rproc_ops q6v5_ops = {
+ 	.start = q6v5_start,
+ 	.stop = q6v5_stop,
+ 	.da_to_va = q6v5_da_to_va,
++	.parse_fw = qcom_q6v5_register_dump_segments,
+ 	.load = q6v5_load,
+ };
  
- 	return 0;
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
