@@ -2,92 +2,124 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA598ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93076ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA66021528
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:34:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA66021528
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 5C98D21528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:34:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C98D21528
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbeJQS3i (ORCPT
+        id S1727146AbeJQS3k convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:29:38 -0400
-Received: from sauhun.de ([88.99.104.3]:36108 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbeJQS3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:29:38 -0400
-Received: from localhost (p54B338A0.dip0.t-ipconnect.de [84.179.56.160])
-        by pokefinder.org (Postfix) with ESMTPSA id 9210D2E359D;
-        Wed, 17 Oct 2018 12:34:31 +0200 (CEST)
-Date:   Wed, 17 Oct 2018 12:34:31 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-i2c@vger.kernel.org,
-        linux-acpi@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] x86: baytrail/cherrytrail: Rework and move P-Unit
- PMIC bus semaphore code
-Message-ID: <20181017103430.GA1563@kunai>
-References: <20181011142911.13750-1-hdegoede@redhat.com>
- <20181011142911.13750-2-hdegoede@redhat.com>
- <20181014131724.GA863@kunai>
- <f040787b-3f64-e338-7a9c-0d44f968f496@linux.intel.com>
+        Wed, 17 Oct 2018 14:29:40 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59937 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727018AbeJQS3j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 14:29:39 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gCj9s-0005dg-DL; Wed, 17 Oct 2018 12:34:32 +0200
+Date:   Wed, 17 Oct 2018 12:34:32 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: [PATCH 1/3 v2] x86/mm/pat: Disable preemption around
+ __flush_tlb_all()
+Message-ID: <20181017103432.zgv46nlu3hc7k4rq@linutronix.de>
+References: <20181016202525.29437-1-bigeasy@linutronix.de>
+ <20181016202525.29437-2-bigeasy@linutronix.de>
+ <CALCETrWB2kH9d5ui5haY3aRTD9SAU=tcdkTMoAzJ5rhLh3mO3w@mail.gmail.com>
+ <20181016213859.ldx34cab7ggm5nm5@linutronix.de>
+ <CALCETrWf_RqcX7_R_0O0nZ9E8voTB4SE8WX=AP6mk2Uid1CxrQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f040787b-3f64-e338-7a9c-0d44f968f496@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CALCETrWf_RqcX7_R_0O0nZ9E8voTB4SE8WX=AP6mk2Uid1CxrQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I've seen the WARN_ON_ONCE(__read_cr3() != build_cr3()) in
+switch_mm_irqs_off() every once in a while during a snapshotted system
+upgrade.
+I also saw the warning early during which was introduced in commit
+decab0888e6e ("x86/mm: Remove preempt_disable/enable() from
+__native_flush_tlb()"). The callchain is
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  get_page_from_freelist() -> post_alloc_hook() -> __kernel_map_pages()
 
+with CONFIG_DEBUG_PAGEALLOC enabled.
 
-> > For the record: once the designware maintainers are okay with this
-> > change, I am also okay with it going via the x86 platform tree.
-> >=20
-> Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-> Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Turns out, once I disable preemption around __flush_tlb_all() both
+warnings do not appear.
 
-Acked-by: Wolfram Sang <wsa@the-dreams.de>
+Disable preemption during CR3 reset / __flush_tlb_all() and add a
+comment why preemption is disabled.
+Add another preemptible() check in __flush_tlb_all() so we catch users
+with enabled preemption and with the PGE which would not trigger the
+warning in __native_flush_tlb() (suggested by Andy Lutomirski).
 
+Fixes: decab0888e6e ("x86/mm: Remove preempt_disable/enable() from __native_flush_tlb()")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+v1…v2:
+	- Add a comment before disabling preemption explaining why this
+	  is done.
+	- Add a preemption check to __flush_tlb_all().
 
---nFreZHaLTZJo0R7j
-Content-Type: application/pgp-signature; name="signature.asc"
+ arch/x86/include/asm/tlbflush.h | 6 ++++++
+ arch/x86/mm/pageattr.c          | 6 +++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 58ce5288878e8..0e2130d8d6b12 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -469,6 +469,12 @@ static inline void __native_flush_tlb_one_user(unsigned long addr)
+  */
+ static inline void __flush_tlb_all(void)
+ {
++	/*
++	 * This is to catch users with enabled preemption and the PGE feature
++	 * and don't trigger the warning in __native_flush_tlb().
++	 */
++	VM_WARN_ON_ONCE(preemptible());
++
+ 	if (boot_cpu_has(X86_FEATURE_PGE)) {
+ 		__flush_tlb_global();
+ 	} else {
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 51a5a69ecac9f..e2d4b25c7aa44 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -2086,9 +2086,13 @@ void __kernel_map_pages(struct page *page, int numpages, int enable)
+ 
+ 	/*
+ 	 * We should perform an IPI and flush all tlbs,
+-	 * but that can deadlock->flush only current cpu:
++	 * but that can deadlock->flush only current cpu.
++	 * Preemption needs to be disabled around __flush_tlb_all() due to
++	 * CR3 reload in __native_flush_tlb().
+ 	 */
++	preempt_disable();
+ 	__flush_tlb_all();
++	preempt_enable();
+ 
+ 	arch_flush_lazy_mmu_mode();
+ }
+-- 
+2.19.1
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvHEDMACgkQFA3kzBSg
-KbZ8fQ/9GPZzZB/WIcMzmSZHbX0okCplGqCv2Ad1Xpm1dy0XuwTQJUSwAF+vN365
-rsP3Nr8wyYNLj6EYLS6+jJ0Rh5dGuG8mhgDjYMEny7UBr0pUhjzFOQXN9U0NeFYs
-YF1UyppAaX+uViiPz89bcDc5zj3heoFjjGP2r+0vJUw5uscXEQr+hEA6jw2fAL0n
-RgMuB0audo3sj87pyZd8Aur1/gQEfQ4UBW6Z09BYltvGhwsy6SMA/GtbX2lC7+iJ
-d0G2/TeuzpHDXsc4Bot3kbb69hx3CYnyAirFlC/tnNklZqaykC8qTEpXAL3mcMbE
-B2f4uEq1d86pPqqOmNTkcBhFqTbT+HFLqqdOjCdWrR8vW/qAqts/2RzZhr0c2OUh
-0IN7EJcaNbX2oDuuIN1SYAVll84+SCXQ+PesX8vsxPF6/r0DlMXxFrcuqz1L9n0v
-FnyXMGfnqPmIFIiBSkD17k6nRShZm9U0ZDtJThdhWNt2ObnXe9bVlGBg6+3YVLeZ
-U+2TCcoajrZXLVct8XuBj4LwVsg5r9bSjXE6N+w1prgvUkpw4vLkymCEO9Ki6BqP
-ZtlzXwQCmLd3sKZz+UcqrXm0qeXgbCsmQajHyAYHLevMvKKQma5Wn2iWHSOmefnN
-JQcRhwy/pwZFCcH/I5LIcAVZHJEDYH5RP45rmK44/KanQ9QDcCc=
-=U+Xp
------END PGP SIGNATURE-----
-
---nFreZHaLTZJo0R7j--
