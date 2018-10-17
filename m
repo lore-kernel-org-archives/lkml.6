@@ -2,111 +2,157 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88145ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA05ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5129A2151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:42:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="KdQA6yXr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5129A2151D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1B6CA2151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 09:45:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6CA2151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbeJQRhF (ORCPT
+        id S1726974AbeJQRks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 13:37:05 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44836 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726691AbeJQRhF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 13:37:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YvV3E8fDWT33/BF2JN0pyZvn5VEVzOUB1JTN5jmEtPI=; b=KdQA6yXr5WXVMbBpg8tVWF9QE
-        slVHWGdOIaV7K7hCHayhklpjfkX7tZRmkdqQaEfoEfd3J2gmQtfCgiQFlX80sT/H1y1gKqb34A9Yu
-        96FfSqz4FIJ8DB0q89trBAmGGPcqnFQI5EHZavw+/m0HKa6QYokehee56u+tm4RIH8R7Q=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gCiLA-0000kO-QX; Wed, 17 Oct 2018 09:42:08 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 60B7811224C4; Wed, 17 Oct 2018 10:42:08 +0100 (BST)
-Date:   Wed, 17 Oct 2018 10:42:08 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Trent Piepho <tpiepho@impinj.com>
-Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "phil@raspberrypi.org" <phil@raspberrypi.org>
-Subject: Re: [PATCH] spi: Make GPIO CSs honour the SPI_NO_CS flag
-Message-ID: <20181017094208.GA24097@sirena.org.uk>
-References: <1539336198-84179-1-git-send-email-phil@raspberrypi.org>
- <1539628457.30311.5.camel@impinj.com>
- <20181016090310.GA7449@sirena.org.uk>
- <1539718160.30311.10.camel@impinj.com>
+        Wed, 17 Oct 2018 13:40:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33244 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726691AbeJQRkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 13:40:47 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D6FC03AA14;
+        Wed, 17 Oct 2018 09:45:54 +0000 (UTC)
+Received: from [10.36.116.250] (ovpn-116-250.ams2.redhat.com [10.36.116.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BA7E35F7C9;
+        Wed, 17 Oct 2018 09:45:51 +0000 (UTC)
+Subject: Re: [PATCH 2/5] mm/memory_hotplug: Create add/del_device_memory
+ functions
+To:     Oscar Salvador <osalvador@techadventures.net>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com,
+        dan.j.williams@intel.com, yasu.isimatu@gmail.com,
+        rppt@linux.vnet.ibm.com, malat@debian.org,
+        linux-kernel@vger.kernel.org, pavel.tatashin@microsoft.com,
+        jglisse@redhat.com, Jonathan.Cameron@huawei.com, rafael@kernel.org,
+        dave.jiang@intel.com, linux-mm@kvack.org,
+        alexander.h.duyck@linux.intel.com,
+        Oscar Salvador <osalvador@suse.de>
+References: <20181015153034.32203-1-osalvador@techadventures.net>
+ <20181015153034.32203-3-osalvador@techadventures.net>
+ <d0a12eb5-3824-8d25-75f8-3e62f1e81994@redhat.com>
+ <20181017093331.GA25724@techadventures.net>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <883d3ab7-b2df-9b9a-7681-1019ce3b9e18@redhat.com>
+Date:   Wed, 17 Oct 2018 11:45:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
-Content-Disposition: inline
-In-Reply-To: <1539718160.30311.10.camel@impinj.com>
-X-Cookie: No passing zone.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181017093331.GA25724@techadventures.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 17 Oct 2018 09:45:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 17/10/2018 11:33, Oscar Salvador wrote:
+>>>  	/*
+>>>  	 * For device private memory we call add_pages() as we only need to
+>>>  	 * allocate and initialize struct page for the device memory. More-
+>>> @@ -1096,20 +1100,17 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
+>>>  	 * want the linear mapping and thus use arch_add_memory().
+>>>  	 */
+>>
+>> Some parts of this comment should be moved into add_device_memory now.
+>> (e.g. we call add_pages() ...)
+> 
+> I agree.
+> 
+>>> +#ifdef CONFIG_ZONE_DEVICE
+>>> +int del_device_memory(int nid, unsigned long start, unsigned long size,
+>>> +				struct vmem_altmap *altmap, bool mapping)
+>>> +{
+>>> +	int ret;
+>>
+>> nit: personally I prefer short parameters last in the list.
+> 
+> I do not have a strong opinion here.
+> If people think that long parameters should be placed at the end because
+> it improves readability, I am ok with moving them there.
+>  
+>> Can you document for both functions that they should be called with the
+>> memory hotplug lock in write?
+> 
+> Sure, I will do that in the next version, once I get some more feedback.
+> 
+>> Apart from that looks good to me.
+> 
+> Thanks for reviewing it David ;-)!
+> May I assume your Reviewed-by here (if the above comments are addressed)?
 
---qDbXVdCdHGoSgWSk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Here you go ;)
 
-On Tue, Oct 16, 2018 at 07:29:21PM +0000, Trent Piepho wrote:
-> On Tue, 2018-10-16 at 10:03 +0100, Mark Brown wrote:
-> > On Mon, Oct 15, 2018 at 06:34:18PM +0000, Trent Piepho wrote:
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-> > > I imagine it depends on what set_cs needs to do, which might not be
-> > > solely related to changing the CS line.
+I'm planning to look into the other patches as well, but I'll be busy
+with traveling and KVM forum the next 1.5 weeks.
 
-> > It should be.  If something is hanging other work on set_cs() then it's
-> > going to break.
+Cheers!
 
-> IIRC, for spi-dw setting CS is the only way to trigger the master to do
-> anything.  I think orion is the same way.  Even if you don't want a CS
-> line the driver still needs to assert one.  Which CS to use as the
-> dummy CS is a challenge that has come up before.
 
-> bcm2835_spi_set_cs() does check SPI_NO_CS, but it still does a lot of
-> other stuff even if that is set, likely because of the above issue.
+-- 
 
-For hardware that's that broken I'd recommend deferring the actual CS
-setting operation to the transfer operation instead; that way we can
-guarantee it happens for any pattern of access to the chip select (or
-error out if we can't represent it properly, though obviously a lot of
-such systems use a GPIO for the chip select to work around the broken
-hardware).
+Thanks,
 
---qDbXVdCdHGoSgWSk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvHA+wACgkQJNaLcl1U
-h9D7iAf1E+tEL/0/m02X3vYOi4VSrh4lRPpsHO7rts6ytFWFkd2if6GN5KTNI921
-CGCgTeiqOm6csLuUi9LBJ65ccwenslCgyo8/ik8PsHOS722dUg4UCqCeBpCVE9CR
-B3nsnAvJfa3uAk53a8I4OR0iDTtOauGugTs6oPLF1CU2QsJSevLgJeZP5cgg14Pn
-RR5OnK99UQXzMuTThTagDkPhg4lfXrodYGJ4ZpxhlY1ebE1mLhwQ9wqXKGBFKfdT
-nTNmTY0zP5Kl6rPT3M2NvIXaML747kQjqrJOv6rh1uIimZD1kejxXfMTqHIX3aXy
-pncogI5DiwuHvRwgaM9LbeHalGwQ
-=XpV0
------END PGP SIGNATURE-----
-
---qDbXVdCdHGoSgWSk--
+David / dhildenb
