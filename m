@@ -2,143 +2,113 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 026C9C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D24C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0B132087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19389214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:44:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="eVZfxckQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0B132087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0GG2Rqi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19389214C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeJQIcz (ORCPT
+        id S1727541AbeJQIhZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 04:32:55 -0400
-Received: from alln-iport-2.cisco.com ([173.37.142.89]:46104 "EHLO
-        alln-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbeJQIcy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 04:32:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=1480; q=dns/txt; s=iport;
-  t=1539736792; x=1540946392;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=k+wpnzYASk9ONwkxPvmO8mxqNuCZGjxaCVVWWtG4COs=;
-  b=eVZfxckQr1EnrYg9bLgixJTnRFPJQDlpy7hPwQ7qD/x0WVxHBTmqiRa2
-   4hSrO1pUNkjdMvFKMJQq1g3YWOKpSpoXeNoJwapgK5ZqBPTAjRUnk4PUa
-   nnG12v/Ys9kmFaMpgJNcUwB3pNWB7Tk+UN0jITuc8iAdDyx/u/UnCBTjy
-   0=;
-X-IronPort-AV: E=Sophos;i="5.54,389,1534809600"; 
-   d="scan'208";a="187078699"
-Received: from alln-core-11.cisco.com ([173.36.13.133])
-  by alln-iport-2.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 00:39:52 +0000
-Received: from [10.154.208.185] ([10.154.208.185])
-        by alln-core-11.cisco.com (8.15.2/8.15.2) with ESMTP id w9H0dmJu004726;
-        Wed, 17 Oct 2018 00:39:48 GMT
-Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Wed, 17 Oct 2018 04:37:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34774 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727348AbeJQIhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 04:37:25 -0400
+Received: from localhost (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04A8821471;
+        Wed, 17 Oct 2018 00:44:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539737062;
+        bh=fXrre6KmyUt6DvzZFb2ekMe6P8ZBDZAx8KUYSYc8KEo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S0GG2RqiRJ0S2PHBhR6QeWdxLEsIXXQFFWFyp8O0Ol/xiKie4YffWMwpCtP3mn+Id
+         QXpMvu95LM6SlhlKzb4mcyTyYrll8+ilPY9fjlHMnm7M/mGcek4wuT+sMAhU9S2ZVq
+         RzlBl0orLGk0WJtVxGzoUOIedYOcyyEobcFbkQHc=
+Date:   Wed, 17 Oct 2018 02:44:19 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Enke Chen <enkechen@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <20181015120521.GA10146@redhat.com>
- <20398328-4ee1-96b2-5723-4b7eed55f0a2@cisco.com>
- <20181016141405.GA22045@redhat.com>
-From:   Enke Chen <enkechen@cisco.com>
-Message-ID: <f06be2d1-c6fd-21d3-00ae-01b8d4eaaade@cisco.com>
-Date:   Tue, 16 Oct 2018 17:39:48 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        rostedt@goodmis.org
+Subject: Re: [RFC PATCH 12/30] rcu: Prepare rcu_read_[un]lock_bh() for
+ handling softirq mask
+Message-ID: <20181017004419.GA24723@lerouge>
+References: <1539213137-13953-1-git-send-email-frederic@kernel.org>
+ <1539213137-13953-13-git-send-email-frederic@kernel.org>
+ <20181016052844.GA25151@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20181016141405.GA22045@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.154.208.185, [10.154.208.185]
-X-Outbound-Node: alln-core-11.cisco.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016052844.GA25151@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Oleg:
+On Mon, Oct 15, 2018 at 10:28:44PM -0700, Joel Fernandes wrote:
+> > diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
+> > index f8ec3d4..490358c 100644
+> > --- a/crypto/pcrypt.c
+> > +++ b/crypto/pcrypt.c
+> > @@ -73,12 +73,13 @@ struct pcrypt_aead_ctx {
+> >  static int pcrypt_do_parallel(struct padata_priv *padata, unsigned int *cb_cpu,
+> >  			      struct padata_pcrypt *pcrypt)
+> >  {
+> > +	unsigned int bh;
+> >  	unsigned int cpu_index, cpu, i;
+> >  	struct pcrypt_cpumask *cpumask;
+> >  
+> >  	cpu = *cb_cpu;
+> >  
+> > -	rcu_read_lock_bh();
+> > +	bh = rcu_read_lock_bh();
+> >  	cpumask = rcu_dereference_bh(pcrypt->cb_cpumask);
+> >  	if (cpumask_test_cpu(cpu, cpumask->mask))
+> >  			goto out;
+> > @@ -95,7 +96,7 @@ static int pcrypt_do_parallel(struct padata_priv *padata, unsigned int *cb_cpu,
+> >  	*cb_cpu = cpu;
+> >  
+> >  out:
+> > -	rcu_read_unlock_bh();
+> > +	rcu_read_unlock_bh(bh);
+> >  	return padata_do_parallel(pcrypt->pinst, padata, cpu);
+> >  }
+> 
+> This complicates the RCU API for -bh and doesn't look pretty at all. Is there
+> anything better we can do so we don't have to touch existing readers at all?
 
-On 10/16/18 7:14 AM, Oleg Nesterov wrote:
-> On 10/15, Enke Chen wrote:
->>
->>> I don't understand why we need valid_predump_signal() at all.
->>
->> Most of the signals have well-defined semantics, and would not be appropriate
->> for this purpose.
-> 
-> you are going to change the rules anyway.
-> 
->> That is why it is limited to only SIGCHLD, SIGUSR1, SIGUSR2.
-> 
-> Which do not queue. So the parent won't get the 2nd signal if 2 children
-> crash at the same time.
-> 
->>>>  		if (sig_kernel_coredump(signr)) {
->>>> +			/*
->>>> +			 * Notify the parent prior to the coredump if the
->>>> +			 * parent is interested in such a notificaiton.
->>>> +			 */
->>>> +			int p_sig = current->real_parent->predump_signal;
->>>> +
->>>> +			if (valid_predump_signal(p_sig)) {
->>>> +				read_lock(&tasklist_lock);
->>>> +				do_notify_parent_predump(current);
->>>> +				read_unlock(&tasklist_lock);
->>>> +				cond_resched();
->>>
->>> perhaps this should be called by do_coredump() after coredump_wait() kills
->>> all the sub-threads?
->>
->> proc_coredump_connector(current) is located here, they should stay together.
-> 
-> Why?
-> 
-> Once again, other threads are still alive. So if the parent restarts the service
-> after it recieves -predump_signal, the new process can "race" with the old thread.
+Indeed, so I'm going to give up with the idea of converting all the callers
+in once, this is unmaintainable anyway. I'll keep the RCU API as is for now,
+ie: disable all softirqs, and we'll see later if we need per vector granularity.
+Surely that would be too fun to handle, with per vector quiescent states and grace
+periods ;-)
 
-Yes, it is a good idea to do the signal notification in do_coredump() after
-coredump_wait(). Will make the change as suggested.
+> 
+> Also, I thought softirqs were kind of a thing of the past, and threaded
+> interrupts are the more preferred interrupt bottom halves these days,
+> especially for -rt. Maybe that was just wishful thinking on my part :-)
 
-Thanks.  -- Enke
+We all wish that. I think it was the plan but threaded IRQs involve context
+switches and IIUC it's the border that's hard to cross on some performance
+measurements.
