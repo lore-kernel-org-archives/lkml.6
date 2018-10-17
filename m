@@ -2,128 +2,130 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D5BECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FC4ECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CB3E20645
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:32:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFA0021470
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 21:33:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fgvNJzIR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB3E20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="GRX/w9aJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA0021470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=toradex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeJRFaO (ORCPT
+        id S1727457AbeJRFal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 01:30:14 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43614 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbeJRFaN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 01:30:13 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n1-v6so31302906wrt.10;
-        Wed, 17 Oct 2018 14:32:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=0xCAw4f+vtZqMzAQHPtQyZCIPaPnxXCe8PejRsciDGA=;
-        b=fgvNJzIR54IExs2Q6ixhKdrVL6HGzb04VWNOGkPbeXkeaW7BOBwSM8eluDdoseRMcz
-         oZd8bTd06PG0r72zn56OSP6jtGMO283VVKqbmBKkxzEgVg8UghyTnQ6WBrryOPVp5NDL
-         i3vlggn1OFyw9G+/P7zC4sGy49W+PPGDzxhZds9ADANAE/QS4kc+L7FYx4njxp+dZQRw
-         dhVirz4NC9MBWR6EwWZVGst9wJNHiG98Ze1qLZbSBfjDEG0wYlOjCMN86xtSjO1pbf/P
-         Wl5zYk9GNWhDDqi9DIPLW46evtcZ+ph535y+wxZkjJnjD3gmzQpkvz8l7OaUSBEYJkAB
-         2WVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0xCAw4f+vtZqMzAQHPtQyZCIPaPnxXCe8PejRsciDGA=;
-        b=o+NqQbZDZE/V9XwGAUHGQMZ1RpAMnFMckT/6EVjHdhYHqPY1uR7faU2efZJ30jFQzE
-         CvPYl8g/nbs0P33mxNhp6aJrKE+nZeF6tjJYspJV8nw+EvrRoFP4M6Ztd6ervhwdtBea
-         HPvQwszxjW8tdc++tRW7k2NnLtaNJKprrDtXEt+vYnwO5E1W6VZdMZC59WUvHn50dYNn
-         cZ7fIOAQjTIfIPONtxMu7bDn15wvobIhj3i8uc5fi4c9CHj/ujAOKJa7xfqx2npt4PnA
-         2cJyZBzd6ZxTM+3lZTW9CfEHbr8v9qKje/P7Bxd3rW5FL7mnAc2QFoWvm2qOWM/e/Ftj
-         1psQ==
-X-Gm-Message-State: ABuFfojGHcvygRXqxZG69c2zzVUzN14b4KcE/gvQ6hPFTQFwVcDKwygd
-        lG1Ui7hxYxVRS2AuVNIT/gs=
-X-Google-Smtp-Source: ACcGV63bFjEJKNw1yw+j1vxXHxl/5dlxKqQ6sO8XrpeFMTKjAh6lWHBFANLylnkuaq4PfQewOrlPHQ==
-X-Received: by 2002:adf:e28d:: with SMTP id v13-v6mr24568592wri.139.1539811956987;
-        Wed, 17 Oct 2018 14:32:36 -0700 (PDT)
-Received: from localhost.localdomain (164-235-243-213.terrecablate.net. [213.243.235.164])
-        by smtp.gmail.com with ESMTPSA id 4-v6sm3623962wmt.16.2018.10.17.14.32.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 14:32:35 -0700 (PDT)
-From:   ektor5 <ek5.chimenti@gmail.com>
-Cc:     hverkuil@xs4all.nl, luca.pisani@udoo.org, jose.abreu@synopsys.com,
-        sean@mess.org, sakari.ailus@linux.intel.com,
-        ektor5 <ek5.chimenti@gmail.com>, jacopo@jmondi.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v3 0/2] Add SECO Boards CEC device driver
-Date:   Wed, 17 Oct 2018 23:31:40 +0200
-Message-Id: <cover.1539807092.git.ek5.chimenti@gmail.com>
-X-Mailer: git-send-email 2.18.0
-To:     unlisted-recipients:; (no To-header on input)
+        Thu, 18 Oct 2018 01:30:41 -0400
+Received: from mail-ve1eur01on0094.outbound.protection.outlook.com ([104.47.1.94]:28688
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727014AbeJRFal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 01:30:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D2dgPcEEnB/KzidybN6WgiPq0Jg+9LezpgO9D/W0+tw=;
+ b=GRX/w9aJpq+xMqwRi8egzDKJ9XT0r50D9JUIfnh+WP1pMuUcn9tKzeSLrTJh7fhDsvRhPcB/Sw7kCsbFY15vqj4fQyJdutGg97hccArppCY/1HOmy312ns7VNpRBYGK8tqj6nhCyDIlWjaYkhdxutH5gwfu9HX4UWnX7jhTeJPg=
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
+ VI1PR0501MB2605.eurprd05.prod.outlook.com (10.168.137.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.23; Wed, 17 Oct 2018 21:33:01 +0000
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::99b0:2276:18cf:18aa]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::99b0:2276:18cf:18aa%3]) with mapi id 15.20.1228.032; Wed, 17 Oct 2018
+ 21:33:01 +0000
+From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform name vs.
+ of_node assignement
+Thread-Topic: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform name vs.
+ of_node assignement
+Thread-Index: AQHUZT3RvTwR5mXbA0afapHhEfD2LKUjYH2AgAAgVQCAAFCGgIAAJh4A
+Date:   Wed, 17 Oct 2018 21:33:00 +0000
+Message-ID: <1539811978.6233.63.camel@toradex.com>
+References: <20181016104730.4598-1-marcel@ziswiler.com>
+         <20181016104730.4598-10-marcel@ziswiler.com>
+         <35848cb7-36ee-6698-ff17-7f0e73567914@nvidia.com>
+         <1539786500.6233.58.camel@toradex.com>
+         <20181017191633.GL24097@sirena.org.uk>
+In-Reply-To: <20181017191633.GL24097@sirena.org.uk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=marcel.ziswiler@toradex.com; 
+x-originating-ip: [188.155.129.42]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2605;6:hm180A7gMrRx1Sx5IZEjY7hZ0CeFC/9jN1zrNMDxNKw/WrWQF/O3CaYlX9hHOj8LAuSYR5rxl+b6h6+Qb95n3hvjHEiGSeYrHaCLFRWzkXoAuT0lzJyHvSGm+RQNRjOKrL0SLN+vzQd5wrlgSB1lRDBVEYUr0bH8LMB1ygOkMYbSIesOJIG1ajZ2S0BC/iS7ZrRQm96dhuyQtVv6wCvRBYDuf2WILrE0FUYm+fdaimlw9GDORsqXZ8tE+yK7x60Clbao8EaXBbfjYeOkY9PTAf4XHUKfqA1ZP0X2lombU/IXNyWB4UF9NGKErMAr54PBpc91DzqG8LjsODEYqTsM5cyEL63vnGHfmmWFUHVGpq5qi8yoIqXN4n/r3wlCjGygf+NRwUzOBxe8Ry+4ZlHrOpRifmdnkOmPlQ0B6RGyfruAxJqJTvDG0oOLLPogAWGq+MnBRYz4X45bnNtCxYIQ4Q==;5:oE9YQvNV8yfuCriqCfhmDt7bP3hjJKSBfDII6qeOFyTknWCeacP2QLD7apSNcKPqFfuylE/SEYwd71BnHoRMEAp4WhGmEC5TRCqapyDGfK5w48ruDzHdHjdPnt1sQBFaC1SLvau/7PqphmolEF+omZt/jaKmeWM0dmIEfrsc66g=;7:vKTBPQrkZbKL0/DOlUIIyoqddNHYQWGb6OvjkqZcu6Px3PIiRyFwBI1MZwGG2TxitIRJh2Lel4/kBBdrKOqcRYouYh5tfveKF5HM2RBEV9WddZXdoJasueEiWT5oItQA8x4ArHqvxGzrgSjQRgZSXZWb0/bx7dypvY8Iw8CtQGxMTc5wrqzT2DRMzt51IOw/5+yv3T6D30O2peND4rhXbMbSD76z4nLh9c+n/4kCiSsAdcHAE0MlfGTd7kl+qOjD
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 41f2de4c-0ef6-4240-b44e-08d634781d36
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2605;
+x-ms-traffictypediagnostic: VI1PR0501MB2605:
+x-microsoft-antispam-prvs: <VI1PR0501MB2605654EC3307172F6BA2DAFFBFF0@VI1PR0501MB2605.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0501MB2605;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2605;
+x-forefront-prvs: 08286A0BE2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39850400004)(376002)(366004)(136003)(346002)(189003)(199004)(5250100002)(2501003)(14454004)(186003)(5660300001)(6246003)(39060400002)(6512007)(2900100001)(97736004)(4001150100001)(478600001)(106356001)(53936002)(4326008)(25786009)(68736007)(86362001)(446003)(6506007)(26005)(102836004)(105586002)(36756003)(476003)(11346002)(71190400001)(71200400001)(2616005)(8936002)(486006)(305945005)(54906003)(256004)(81156014)(66066001)(76176011)(3846002)(7736002)(316002)(8676002)(1730700003)(5640700003)(6436002)(2906002)(229853002)(6116002)(2351001)(44832011)(93886005)(6916009)(7416002)(81166006)(103116003)(6486002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2605;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: lcJ3lm18IiyckgbJ1uPmXn6T0HMliPHJ4l4LULyt/uCqFgFB3MNg2AJQF8Jo0xqTiBvD3dt0J2/UobHVP6nyGaLoUPThs7QB7ospn/VNHrVyAUM1IP1uMbviCPggdUH3n9OVIbwej2OHUbXKAoDCSY/gjczn6pD1SrvNI2tuYleiZmIZb6S8ID1G39p6pP+YmLc94SavKf3I6HIJ1Xx360APmGDG85i4HP5EY3N8B6i03nTLazVRN5b3KN3Rx2fLxZOu44qKTi/Sp9z2f25TYs4Y+uYF55xk8vOxvSb6vkZxJXAt5tx3F6JH8MZnjeY1U1/YpKMphS3ta6K6h3687oelsWInGXDaN4nlzPBZJ8Y=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <06250A4EB448944599C40A443B9B117D@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41f2de4c-0ef6-4240-b44e-08d634781d36
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 21:33:00.9547
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2605
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series of patches aims to add CEC functionalities to SECO
-devices, in particular UDOO X86.
-
-The communication is achieved via Braswell SMBus (i2c-i801) to the
-onboard STM32 microcontroller that handles the CEC signals. The driver
-use direct access to the PCI addresses, due to the limitations of the
-specific driver in presence of ACPI calls.
-
-The basic functionalities are tested with success with cec-ctl and
-cec-compliance.
-
-v3:
- - Refactored rx/tx for loops
- - Removed more debug prints
- - Sorted headers 
-
-v2:
- - Removed useless debug prints
- - Added DMI && PCI to dependences
- - Removed useless ifdefs
- - Renamed all irda references to ir
- - Fixed SPDX clause
- - Several style fixes
-
-
-Ettore Chimenti (2):
-  media: add SECO cec driver
-  seco-cec: add Consumer-IR support
-
- MAINTAINERS                                |   6 +
- drivers/media/platform/Kconfig             |  22 +
- drivers/media/platform/Makefile            |   2 +
- drivers/media/platform/seco-cec/Makefile   |   1 +
- drivers/media/platform/seco-cec/seco-cec.c | 822 +++++++++++++++++++++
- drivers/media/platform/seco-cec/seco-cec.h | 141 ++++
- 6 files changed, 994 insertions(+)
- create mode 100644 drivers/media/platform/seco-cec/Makefile
- create mode 100644 drivers/media/platform/seco-cec/seco-cec.c
- create mode 100644 drivers/media/platform/seco-cec/seco-cec.h
-
--- 
-2.18.0
-
+T24gV2VkLCAyMDE4LTEwLTE3IGF0IDIwOjE2ICswMTAwLCBNYXJrIEJyb3duIHdyb3RlOg0KPiBP
+biBXZWQsIE9jdCAxNywgMjAxOCBhdCAwMjoyODoyMlBNICswMDAwLCBNYXJjZWwgWmlzd2lsZXIg
+d3JvdGU6DQo+IA0KPiA+IFNvbWUgcXVlc3Rpb25zOg0KPiA+IC0gSG93IGV4YWN0bHkgYXJlIGRl
+dm0gYWxsb2NhdGlvbnMgc3VwcG9zZWQgdG8gd29yayBjb25jZXJuaW5nDQo+ID4gcHJvYmUNCj4g
+PiBkZWZlcnJhbHM/DQo+IA0KPiBQcm9iZSBkZWZlcnJhbHMgYXJlIGp1c3Qgbm9ybWFsIHByb2Jl
+IGVycm9ycywgYW55IGRldm1fIGFsbG9jYXRlZA0KPiBzdHVmZg0KPiBnZXRzIHVud291bmQuDQoN
+Ck9LLCB0aGF0IGlzIHdoZXJlIG15IHVuZGVyc3RhbmRpbmcgd2FzIHdlYXJ5LiBTbyB5b3UgYXJl
+IHNheWluZw0KYW55dGhpbmcgc2hvdWxkIHJlYWxseSBnZXQgYWxsb2NhdGVkIGFnYWluIHVwb24g
+dGhlIHNlY29uZCB0aW1lLg0KDQo+ID4gLSBEb2VzIG9yIHNob3VsZCB0aGUgcGxhdGZvcm0gZ2V0
+IGNsZWFyZWQgZHVyaW5nIGEgcHJvYmUgZGVmZXJyYWwNCj4gPiBjeWNsZT8NCj4gPiAtIElmIHNv
+LCB3aHkgZG9lcyB0aGF0IG5vdCB3b3JrPw0KPiANCj4gSXMgc29tZXRoaW5nIHdyaXRpbmcgdG8g
+c3RhdGljIGRhdGEgd2hlbiBpdCBzaG91bGQgYmUgd3JpdGluZyB0bw0KPiBkeW5hbWljYWxseSBh
+bGxvY2F0ZWQgZGF0YT8gIFRoYXQncyB3aGF0IHRoaXMgc291bmRzIGxpa2UsIHdlDQo+IHNob3Vs
+ZG4ndA0KPiBiZSBtb2RpZnlpbmcgYW55IHN0YXRpYyBkYXRhIGFuZCBhbnkgZGF0YSBkeW5hbWlj
+YWxseSBhbGxvY2F0ZWQNCj4gZHVyaW5nDQo+IHByb2JlIG91Z2h0IHRvIGJlIGJlaW5nIGRpc2Nh
+cmRlZC4NCg0KT0ssIEkgYmVsaWV2ZSBJIHN0YXJ0IHRvIHNlZSB3aGF0IHlvdSBhcmUgc2F5aW5n
+LiBJIGd1ZXNzIHRoZSBidWcgbGF5cw0KaW4gc29jLWNvcmUgdGhlbiBub3QgcHJvcGVybHkgZGlz
+Y2FyZGluZyB0aGUgcGxhdGZvcm0gYW5kIHRoZSBzZWNvbmQNCnRpbWUgYXJvdW5kIGl0IGlzIHVz
+aW5nIGEgc3RhbGUgcG9pbnRlciB0byB0aGF0IHdoaWNoIG5vdyBvZiBjb3Vyc2UNCnBvaW50cyB0
+byB3aGF0ZXZlciBoYXBwZW5zIHRvIGJlIHRoZXJlISBMZXQgbWUgdHJ5IGEgZmV3IG1vcmUgdGhp
+bmdzDQphbmQgSSB3aWxsIGNvb2sgdXAgYSBwcm9wZXIgcGF0Y2ggdG8gZml4IHRoYXQuLi4NCg0K
+PiA+IC0gT3IgaXMgc29tZSBzcGVjaWFsIGltcGxpY2l0IHByb2JlIGRlZmVycmFsIGhhbmRsaW5n
+IG1pc3NpbmcgaW4NCj4gPiBzb2MtDQo+ID4gY29yZT8NCj4gDQo+IExpa2UgSSBzYXkgYSBwcm9i
+ZSBkZWZlcnJhbCBpcyBqdXN0IGEgbm9ybWFsIGVycm9yLg0KDQpZZWFoLCByaWdodC4gVGhhbmtz
+IQ==
