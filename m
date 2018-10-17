@@ -2,94 +2,88 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4E8ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C39A3ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CEEC2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:02:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CEEC2150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 906992150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:02:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 906992150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbeJQW64 (ORCPT
+        id S1727879AbeJQW7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:58:56 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35772 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbeJQW6z (ORCPT
+        Wed, 17 Oct 2018 18:59:01 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:47037 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727047AbeJQW7A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:58:55 -0400
-Received: by mail-qk1-f194.google.com with SMTP id v68-v6so16663038qka.2;
-        Wed, 17 Oct 2018 08:02:50 -0700 (PDT)
+        Wed, 17 Oct 2018 18:59:00 -0400
+Received: by mail-ot1-f66.google.com with SMTP id o21so26461207otb.13;
+        Wed, 17 Oct 2018 08:02:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jcVtJ8jFrYe8lGvm2RH0krjJ1rX8q0qlrQdjHm8p+18=;
-        b=hwNJUQSIyHN6IxEOf0kuj6sIwmwp/KV8380xFgYnuGzhe9kiEqlRmj9XL3qUXPEFx7
-         8ugI9Fnp4sc9KZpzALs1YZKB6iwsSN/9Ndd70fYpNSvbamvsd6eo6pq6BzCZKp+u9Fzi
-         C2mlnS5caU46r464ZGKvARBfjhjcKiOxsrVdvgi1nBFgAjHS7i7V4Y8Fl4SjqfVI6HbT
-         Ok8SEwz9XfvCjX2ThllkUvZRKnZF2n7IqCkDBXC+razuVKd5Ge7L/wq5fpquUIuLKJx3
-         WVnN38dBIk3XoSo3oByW/g4QngedHR7dSG7J+4qMdlretsbT/mOHTruVjrHS7O7UR8Me
-         altA==
-X-Gm-Message-State: ABuFfojWYcptK9LyBS/mzOYhiEtMSTyGM9yT2FSXZEYMoOHtIeoC1Mbg
-        H3SPVgJ3uNuCB0xW3+UuJYtaLL048AOohRrMAuxGH0xK
-X-Google-Smtp-Source: ACcGV61nN88GwQZQqAPVHd6Tl1MgotW7Y71oD/pmr4t4E3L4Abcs6v3jHUj4OcLcLFU3YTSfo4S49lTMtTrM64A115Q=
-X-Received: by 2002:a37:2b66:: with SMTP id r99-v6mr2781481qkh.343.1539788569460;
- Wed, 17 Oct 2018 08:02:49 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Sr0yHn/bIpPjIEWKVM9auosNVcWRDMK2rB2OzBv+BPk=;
+        b=bQHRsnQpo8Q1oH185pm3XKSj8RvoYnHjsHUriCA8EK2G7JazDjHo1dVL2ipytfZuqd
+         jq9vJtWFAMlbE6SdVXrVkUiME0qkAjafRIL+BRzeBQj+9xT5+clUDVUiS0ZbsDA9FDXj
+         z6El91bo12KboAr/Y1DHzWPG+sTyLsQZH3R4N7ogzZ2FB4rpeiRxbUL3k3Yc+VMYokW0
+         fU8uQxvh5qh+kc9gIYCEDvPnZ7C0D2EIEXuFZqrAf9CQwH3TRnkplq0pcJt541x7Y//K
+         zrhr4arKWxXSpRs7Gkg6lPdV0TqeUZjyhUkZZKMo1GOgFUaE0/ruBd5VPZkvO8FXhKGr
+         9h5Q==
+X-Gm-Message-State: ABuFfoiQB/UijICzl3oWINXSaVAsinbMey1Xx5bkraNFfUmfd1nJB+BX
+        XiuKXLDtRaml8JHj4hhGrw==
+X-Google-Smtp-Source: ACcGV63Bda8hDrUIBOuzIXDdbBen29jaelXJsbLKtDBbd8zEjYkvK4xIlmzIEj4vwBpeNm9ON5JHww==
+X-Received: by 2002:a9d:518c:: with SMTP id y12mr17523277otg.58.1539788574087;
+        Wed, 17 Oct 2018 08:02:54 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f84-v6sm5271538oia.44.2018.10.17.08.02.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 08:02:53 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 10:02:52 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Vladimir Zapolskiy <vz@mleia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Vasut <marek.vasut@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-media@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH 3/7] dt-bindings: pinctrl: ds90ux9xx: add description of
+ TI DS90Ux9xx pinmux
+Message-ID: <20181017150252.GA11075@bogus>
+References: <20181008211205.2900-1-vz@mleia.com>
+ <20181008211205.2900-4-vz@mleia.com>
+ <CACRpkdZJMPYWHBUXohjxo12XZpLdz7OzcWRBrrkcB8YLLd5StA@mail.gmail.com>
 MIME-Version: 1.0
-References: <cover.1539655731.git.ren_guo@c-sky.com> <d83762614122402ba4b55524e35b418c9f6baf53.1539655731.git.ren_guo@c-sky.com>
-In-Reply-To: <d83762614122402ba4b55524e35b418c9f6baf53.1539655731.git.ren_guo@c-sky.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 17 Oct 2018 17:02:33 +0200
-Message-ID: <CAK8P3a3bNST+ZuPjLG0_sHjC=Ac0ir1omhHvMn9tz4zs+Kg9yw@mail.gmail.com>
-Subject: Re: [PATCH V9 05/21] csky: System Call
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZJMPYWHBUXohjxo12XZpLdz7OzcWRBrrkcB8YLLd5StA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 5:01 AM Guo Ren <ren_guo@c-sky.com> wrote:
->
-> This patch adds files related to syscall.
->
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
+On Wed, Oct 10, 2018 at 10:45:43AM +0200, Linus Walleij wrote:
+> Hi Vladimir,
+> 
+> thanks for your patch!
+> 
+> Can we change the subject to something like "add DT bindings" rather than
+> "add description" as it is more specific and makes it easier for me as
+> maintainer.
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+To add to the nitpicking, The subject already says DT and bindings, so 
+no need to repeat it. I'd just drop "description of" if anything.
 
-I had a detailed look at this one and provided lots of comments, however
-one tiny thing escaped me:
-
-> +#define __NR_set_thread_area   (__NR_arch_specific_syscall + 0)
-> +__SYSCALL(__NR_set_thread_area, sys_set_thread_area)
-> +#define __NR_cacheflush                (__NR_arch_specific_syscall + 4)
-> +__SYSCALL(__NR_cacheflush, sys_cacheflush)
-
-It's odd that the second one uses __NR_arch_specific_syscall + 4 rather
-than +1. If you can still change that changing too much other stuff,
-that might avoid some head-scratching later. If it causes problems,
-just leave it and maybe add a comment saying that the numbers
-inbetween are still available.
-
-      Arnd
+Rob
