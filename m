@@ -2,234 +2,136 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A63ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2592BECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E69532150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:30:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="P8KYkpGM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E69532150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id D62582150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:32:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D62582150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727288AbeJQTZp (ORCPT
+        id S1727101AbeJQT1o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:25:45 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:36760 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbeJQTZp (ORCPT
+        Wed, 17 Oct 2018 15:27:44 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59060 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbeJQT1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:25:45 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 3BC3110C119F;
-        Wed, 17 Oct 2018 04:30:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1539775828; bh=RsXy62R7i6ki4tJxanJXfts6fwobo8gsNK83seZazn8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=P8KYkpGMQwORD0Xk16LbRcg1rz5syecd8txfZoEH+XLiT/Y0FNza671LpLQmuhHiC
-         1YZ8oBfkkebkpJkwJiiXr/fz0vQbyKNVhuUKs092kLR7ZTYd3BqXf6D8sV3TYA1N5h
-         IHb/CoccgBIN402KcKMs5EFrXBQ2aN1GUzKyrpAsgq3wiHCBtZAH8AsNac/fT4+pq0
-         Tu0SvjDi8v0zjghzIFQ1k/Jy5+y0cpXu/ssmvYg5XRMGy4lDyUm18F6au52IMVMnc4
-         RydoRLALQoWARHS1Ts3pI9ila7VwT5Y3bhoUjlCLE9CrFAOLBTDdNIB+CySzw+rh6h
-         0K5jtxAWJyhUA==
-Received: from abrodkin-7480l.internal.synopsys.com (unknown [10.121.8.88])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 617EC582B;
-        Wed, 17 Oct 2018 04:30:26 -0700 (PDT)
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-snps-arc@lists.infradead.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2] clocksource/drivers/arc_timer: Utilize generic sched_clock
-Date:   Wed, 17 Oct 2018 14:30:20 +0300
-Message-Id: <20181017113020.7551-1-abrodkin@synopsys.com>
-X-Mailer: git-send-email 2.17.2
+        Wed, 17 Oct 2018 15:27:44 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 408888078B; Wed, 17 Oct 2018 13:32:26 +0200 (CEST)
+Date:   Wed, 17 Oct 2018 13:32:26 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     vbabka@suse.cz, hpa@zytor.com, torvalds@linux-foundation.org,
+        ak@linux.intel.com, dave.hansen@intel.com,
+        kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de
+Subject: Re: l1tf: Kernel suggests I throw away third of my memory. I'd
+ rather not
+Message-ID: <20181017113226.GA5176@amd>
+References: <20181017105610.GA4260@amd>
+ <20181017111544.GO18839@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
+Content-Disposition: inline
+In-Reply-To: <20181017111544.GO18839@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It turned out we used to use default implementation of sched_clock()
-from kernel/sched/clock.c which was as precise as 1/HZ, i.e.
-by default we had 10 msec granularity of time measurement.
 
-Now given ARC built-in timers are clocked with the same frequency as
-CPU cores we may get much higher precision of time tracking.
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thus we switch to generic sched_clock which really reads ARC hardware
-counters.
+Hi!
 
-This is especially helpful for measuring short events.
-That's what we used to have:
------------------------------->8------------------------
-$ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
+> > 6a012288 suggests I throw away 1GB on RAM. On 3GB system.. that is not
+> > going to be pleasant.
+> >=20
+> > l1tf.html says:
+> >=20
+> > # The Linux kernel contains a mitigation for this attack vector, PTE
+> > # inversion, which is permanently enabled and has no performance
+> > # impact.
+> >=20
+> > I don't believe it has "no" performance impact, but I guess it is lost
+> > in the noise.
+>=20
+> Please prove otherwise. I would be more than surprised if inverting pfn
+> part of the pte is noticeable. But I can be wrong of course.
 
- Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
+I'm not saying its noticeable. I'm saying that inversion takes few
+clock cycles (including a branch?) and that neither caches nor RAM is
+free.
 
-         10.000000      task-clock (msec)         #    2.832 CPUs utilized
-                 1      context-switches          #    0.100 K/sec
-                 1      cpu-migrations            #    0.100 K/sec
-                63      page-faults               #    0.006 M/sec
-           3049480      cycles                    #    0.305 GHz
-           1091259      instructions              #    0.36  insn per cycle
-            256828      branches                  #   25.683 M/sec
-             27026      branch-misses             #   10.52% of all branches
+"no noticeable performance impact" I'd agree with :).
 
-       0.003530687 seconds time elapsed
+> > #  The kernel ensures that the address bits of PTEs, which are
+> > # not marked present, never point to cacheable physical memory space.
+> >=20
+> > # A system with an up to date kernel is protected against attacks from
+> > # malicious user space applications.
+> >=20
+> > These are not true.
+> >=20
+> > cat /sys/devices/system/cpu/vulnerabilities/l1tf
+> > Vulnerable
+> > uname -a
+> > Linux amd 4.19.0-rc8-next-20181017autobisect1539371050 #189 SMP Wed
+> > Oct 17 12:04:23 CEST 2018 i686 GNU/Linux
+>=20
+> This is a result of you having memory above MAX_PFN/2 right?
 
-       0.000000000 seconds user
-       0.010000000 seconds sys
------------------------------->8------------------------
+Yes.
 
-And now we'll see:
------------------------------->8------------------------
-$ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
+> > Now question is... can we do better? Kernel stores information about
+> > swapped-out pages there, right? That sounds like a cool hack, but
+> > maybe it is time to get rid of that hack?
+>=20
+> Patches are welcome.
 
- Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
+Cooperation will be needed if you want to see patches. As
+in... answering the questions above.
 
-          3.004322      task-clock (msec)         #    0.865 CPUs utilized
-                 1      context-switches          #    0.333 K/sec
-                 1      cpu-migrations            #    0.333 K/sec
-                63      page-faults               #    0.021 M/sec
-           2986734      cycles                    #    0.994 GHz
-           1087466      instructions              #    0.36  insn per cycle
-            255209      branches                  #   84.947 M/sec
-             26002      branch-misses             #   10.19% of all branches
+> > As a workaround, can I simply do swapoff -a to be safe for now?
+>=20
+> Well, that depends. Do you care about PROT_NONE attacks as well? If not
+> then no-swap would help you. But even then no-swap is rather theoretical
+> attack on a physical host unless you allow an arbitrary swapout to a
+> malicious user (e.g. allow a user controlled memcg hard limit that would
+> cause excessive local swapouts).
 
-       0.003474829 seconds time elapsed
+PROT_NONE attack.. aha, so kernel stores not only information about
+swapped-out pages but also about file-backed pages that are currently
+not present? Hmm. That makes it more complex :-(.=20
 
-       0.003519000 seconds user
-       0.000000000 seconds sys
------------------------------->8------------------------
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Note how much more meaningful is the second output - time spent for
-execution pretty much matches number of cycles spent (we're running
-@ 1GHz here).
+--uAKRQypu60I7Lcqm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Changes v1 -> v2:
+iEYEARECAAYFAlvHHcoACgkQMOfwapXb+vLNUgCfWbqpoSLWonc6V6Gr674SjNTX
+7fcAoLzFGJgOme3A4yIyCTGv3LRFW2kl
+=T8qo
+-----END PGP SIGNATURE-----
 
- * Timer read callbacks marked as "notrace"
- * ARC Timer1 explicitly described as 32-bit one on
-   sched_clock_register() invocation
-
- arch/arc/Kconfig                |  1 +
- drivers/clocksource/Kconfig     |  1 +
- drivers/clocksource/arc_timer.c | 22 ++++++++++++++++++++++
- 3 files changed, 24 insertions(+)
-
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index 5151d81476a1..714f769389a4 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -9,6 +9,7 @@
- config ARC
- 	def_bool y
- 	select ARC_TIMERS
-+	select GENERIC_SCHED_CLOCK
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_HAS_SG_CHAIN
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index dec0dd88ec15..3268dad4effe 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -290,6 +290,7 @@ config CLKSRC_MPS2
- 
- config ARC_TIMERS
- 	bool "Support for 32-bit TIMERn counters in ARC Cores" if COMPILE_TEST
-+	depends on GENERIC_SCHED_CLOCK
- 	select TIMER_OF
- 	help
- 	  These are legacy 32-bit TIMER0 and TIMER1 counters found on all ARC cores
-diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
-index 20da9b1d7f7d..b28970ca4a7a 100644
---- a/drivers/clocksource/arc_timer.c
-+++ b/drivers/clocksource/arc_timer.c
-@@ -23,6 +23,7 @@
- #include <linux/cpu.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
-+#include <linux/sched_clock.h>
- 
- #include <soc/arc/timers.h>
- #include <soc/arc/mcip.h>
-@@ -88,6 +89,11 @@ static u64 arc_read_gfrc(struct clocksource *cs)
- 	return (((u64)h) << 32) | l;
- }
- 
-+static notrace u64 arc_gfrc_clock_read(void)
-+{
-+	return arc_read_gfrc(NULL);
-+}
-+
- static struct clocksource arc_counter_gfrc = {
- 	.name   = "ARConnect GFRC",
- 	.rating = 400,
-@@ -111,6 +117,8 @@ static int __init arc_cs_setup_gfrc(struct device_node *node)
- 	if (ret)
- 		return ret;
- 
-+	sched_clock_register(arc_gfrc_clock_read, 64, arc_timer_freq);
-+
- 	return clocksource_register_hz(&arc_counter_gfrc, arc_timer_freq);
- }
- TIMER_OF_DECLARE(arc_gfrc, "snps,archs-timer-gfrc", arc_cs_setup_gfrc);
-@@ -139,6 +147,11 @@ static u64 arc_read_rtc(struct clocksource *cs)
- 	return (((u64)h) << 32) | l;
- }
- 
-+static notrace u64 arc_rtc_clock_read(void)
-+{
-+	return arc_read_rtc(NULL);
-+}
-+
- static struct clocksource arc_counter_rtc = {
- 	.name   = "ARCv2 RTC",
- 	.rating = 350,
-@@ -170,6 +183,8 @@ static int __init arc_cs_setup_rtc(struct device_node *node)
- 
- 	write_aux_reg(AUX_RTC_CTRL, 1);
- 
-+	sched_clock_register(arc_rtc_clock_read, 64, arc_timer_freq);
-+
- 	return clocksource_register_hz(&arc_counter_rtc, arc_timer_freq);
- }
- TIMER_OF_DECLARE(arc_rtc, "snps,archs-timer-rtc", arc_cs_setup_rtc);
-@@ -185,6 +200,11 @@ static u64 arc_read_timer1(struct clocksource *cs)
- 	return (u64) read_aux_reg(ARC_REG_TIMER1_CNT);
- }
- 
-+static notrace u64 arc_timer1_clock_read(void)
-+{
-+	return arc_read_timer1(NULL);
-+}
-+
- static struct clocksource arc_counter_timer1 = {
- 	.name   = "ARC Timer1",
- 	.rating = 300,
-@@ -209,6 +229,8 @@ static int __init arc_cs_setup_timer1(struct device_node *node)
- 	write_aux_reg(ARC_REG_TIMER1_CNT, 0);
- 	write_aux_reg(ARC_REG_TIMER1_CTRL, TIMER_CTRL_NH);
- 
-+	sched_clock_register(arc_timer1_clock_read, 32, arc_timer_freq);
-+
- 	return clocksource_register_hz(&arc_counter_timer1, arc_timer_freq);
- }
- 
--- 
-2.17.2
-
+--uAKRQypu60I7Lcqm--
