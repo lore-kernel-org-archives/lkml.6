@@ -2,104 +2,136 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9853ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AC4ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98FCC21526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:52:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98FCC21526
+	by mail.kernel.org (Postfix) with ESMTP id D84CB214DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:53:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D84CB214DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbeJQWsU (ORCPT
+        id S1727715AbeJQWt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:48:20 -0400
-Received: from mga02.intel.com ([134.134.136.20]:37674 "EHLO mga02.intel.com"
+        Wed, 17 Oct 2018 18:49:29 -0400
+Received: from mga01.intel.com ([192.55.52.88]:17631 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727000AbeJQWsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:48:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1727000AbeJQWt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 18:49:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 07:52:16 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 07:53:21 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,392,1534834800"; 
-   d="scan'208";a="83357843"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.154]) ([10.7.198.154])
-  by orsmga006.jf.intel.com with ESMTP; 17 Oct 2018 07:52:16 -0700
-Subject: Re: [mm PATCH v3 1/6] mm: Use mm_zero_struct_page from SPARC on all
- 64b architectures
-To:     Mike Rapoport <rppt@linux.ibm.com>,
-        Pavel Tatashin <pasha.tatashin@gmail.com>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.jiang@intel.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, davem@davemloft.net,
-        yi.z.zhang@linux.intel.com, khalid.aziz@oracle.com,
-        rppt@linux.vnet.ibm.com, vbabka@suse.cz,
-        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-References: <20181015202456.2171.88406.stgit@localhost.localdomain>
- <20181015202656.2171.92963.stgit@localhost.localdomain>
- <57c559f6-4858-7a52-7fbb-979caa08f240@gmail.com>
- <20181017073045.GA20004@rapoport-lnx>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <debbf05a-5ab8-3886-f199-0bbdede7f50e@linux.intel.com>
-Date:   Wed, 17 Oct 2018 07:52:16 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+   d="scan'208";a="100019606"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 17 Oct 2018 07:53:18 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 17 Oct 2018 17:53:18 +0300
+Date:   Wed, 17 Oct 2018 17:53:17 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/5] device property: Introducing software nodes
+Message-ID: <20181017145317.GA14912@kuha.fi.intel.com>
+References: <20181012113934.29942-1-heikki.krogerus@linux.intel.com>
+ <CAHp75VcWu_6jco6k5to1x1QNG8Ad893J81TPpTbJkLcqw=RR=g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181017073045.GA20004@rapoport-lnx>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VcWu_6jco6k5to1x1QNG8Ad893J81TPpTbJkLcqw=RR=g@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 12:30 AM, Mike Rapoport wrote:
-> On Tue, Oct 16, 2018 at 03:01:11PM -0400, Pavel Tatashin wrote:
->>
->>
->> On 10/15/18 4:26 PM, Alexander Duyck wrote:
->>> This change makes it so that we use the same approach that was already in
->>> use on Sparc on all the archtectures that support a 64b long.
->>>
->>> This is mostly motivated by the fact that 8 to 10 store/move instructions
->>> are likely always going to be faster than having to call into a function
->>> that is not specialized for handling page init.
->>>
->>> An added advantage to doing it this way is that the compiler can get away
->>> with combining writes in the __init_single_page call. As a result the
->>> memset call will be reduced to only about 4 write operations, or at least
->>> that is what I am seeing with GCC 6.2 as the flags, LRU poitners, and
->>> count/mapcount seem to be cancelling out at least 4 of the 8 assignments on
->>> my system.
->>>
->>> One change I had to make to the function was to reduce the minimum page
->>> size to 56 to support some powerpc64 configurations.
->>>
->>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
->>
->>
->> I have tested on Broadcom's Stingray cpu with 48G RAM:
->> __init_single_page() takes 19.30ns / 64-byte struct page
->> Wit the change it takes 17.33ns / 64-byte struct page
->   
-> I gave it a run on an OpenPower (S812LC 8348-21C) with Power8 processor and
-> with 128G of RAM. My results for 64-byte struct page were:
+On Tue, Oct 16, 2018 at 05:35:50PM +0300, Andy Shevchenko wrote:
+> On Fri, Oct 12, 2018 at 2:41 PM Heikki Krogerus
+> <heikki.krogerus@linux.intel.com> wrote:
+> >
+> > Hi guys,
+> >
+> > To continue the discussion started by Dmitry [1], this is my proposal
+> > that I mentioned in my last mail. In short, the idea is that instead
+> > of trying to extend the support for the currently used struct
+> > property_set, I'm proposing that we introduce a completely new,
+> > independent type of fwnode, and replace the struct property_set with
+> > it. I'm calling the type "software node" here.
+> >
+> > The reason for a complete separation of the software nodes from the
+> > generic property handling code is the need to be able to create the
+> > nodes independently from the devices that they are bind to.
+> >
+> > The way this works is that every node that is created will have a
+> > kobject registered. That will take care the ref counting for us, and
+> > also allow us to for example display the properties in sysfs.
+> >
+> > There are a few more details in patch 3/5 about the software nodes in
+> > the commit message.
+> >
+> > [1] https://lkml.org/lkml/2018/9/17/1067
 > 
-> before: 4.6788ns
-> after: 4.5882ns
+> In private discussion I brought a concern that we exposed properties
+> as a part of ABI, but at the same time we have not strict rules which
+> might lead to ambiguous reading, e.g. there is no type exported and
+> thus no possibility to tell what kind of property it is.
 > 
-> My two cents :)
+> Examples:
+> 1. 0x1 and 0x1 ??? are they of the same type?
+> 2. 0x1 ??? is it an array or single value?
+> 3. 0x12345678 ??? is it string or hex?
+> 4. 25 ??? is it hex or decimal?
 
-Thanks. I will add this and Pavel's data to the patch description.
+This is mostly a note to self, but also to let everybody know:
 
-- Alex
+After thinking about this a bit more I realised that the user space
+has to know what the property it is reading contains. An array of
+integers can actually be a string in reality, just like a string may
+contain an integer value(s). String or string array could describe a
+data structure, or even supply the values for one. In reality the type
+of the property, or the fact that it's an array or not, do not help at
+all to determine the content of the property.
+
+So the user space has to know what a property returns if it wants
+to use it, and once the user space knows that, the user space will
+also know the type and other details about the property, including
+knowing is it an array or not.
+
+Based on that, I'm against any kind of grouping or naming of the
+properties, was it based on the type of the property or is it an array
+or not, or supplying any details about the properties in any way to
+the user space. That would only complicate the life for the user
+space, as the grouping or naming, or supplying the details about the
+properties in any way, does not provide any information that the user
+space does not already have. The details about the properties would
+just be a sort of a useless noise for the user space that just has to
+be filtered out.
+
+Therefore I'm going to continue to propose that we expose the
+properties exactly the way I'm doing now: we'll have the "properties"
+directory that contains an attribute file for every property named
+with the names of the properties, and nothing else.
+
+The output formats we can still debate about, but Andy had already
+good proposals for that.
+
+I'm still not planning to include the property exposure at the first
+stage. Well add it after the initial support is in.
+
+
+Thanks,
+
+-- 
+heikki
