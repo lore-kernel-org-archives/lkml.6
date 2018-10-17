@@ -2,167 +2,136 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5628ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD5BECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86D6A2151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:17:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BK2xOmXI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86D6A2151D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E6542151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 08:17:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E6542151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbeJQQM0 (ORCPT
+        id S1727392AbeJQQM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 12:12:26 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34117 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbeJQQM0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 12:12:26 -0400
-Received: by mail-qk1-f195.google.com with SMTP id p6-v6so15960502qkg.1;
-        Wed, 17 Oct 2018 01:17:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eq/Q4iqmrqnB+n1tF28+AEQk6nyh68BnrOd2wA/vhH4=;
-        b=BK2xOmXIBYE7U0osl2Eud36DzY1FuLiv8DY5LnaQPD5tVVD40HO4JcigJ5kwMTgaaf
-         1LoS2P4bRX+JWa96s1yx8Eu5PAzFC0bj+novmpvYWqJzwvzwqKON5/APRtRdJVpof6bW
-         NtECLPPabL0rYrNNjt12M23hOOh556f/eKM0pHqhox0bcp/YcWyCb87CyvJfKFmD7NgH
-         /wSz2swtlvq2RWnCaJYh49SA8QbAcYrrqMYxsiD+NeJutDw8eKSfag0Ie7nIf4GChTQh
-         F+3dnAJ/p1UDT+I6f4lZmvkjXAA/NnaDxm3iBDowS9qVIuq/BDuOZxmekGJRePUS49qK
-         5zJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eq/Q4iqmrqnB+n1tF28+AEQk6nyh68BnrOd2wA/vhH4=;
-        b=b0/T8UASVaIRuUoK9xL5qZL2RSo56MPsshTyRGeXYt5IYi0RRlNYmRpGsDuuOZzRhR
-         R9loy8nxftQjRkCMJCaMKI0KGTee0puITUuSPZnBtpbhxgcylXnTqLbsUHbR8r0U4RKu
-         y6tu6YJdujlVuBom4xmewKzdHWXGD3JwMAxvJgwIsTFme2LxjfntS8OV8nK8DkhQE+Uk
-         6TaYP7einrV16KqG9yEKC76PXkt47rrd8LyX0+wEsGApIviukkkAvH0FEChMtDwfzeOX
-         Sd4dZhHkVZFRtqtD5I3Zbu7Is2hnA8RCaEOafP3q4cWJykpFkbRjrU41U5eZyk6vTbXx
-         kFtA==
-X-Gm-Message-State: ABuFfoiyEBoWFFC0Vj4+vuSsCzyoVXfCqer1Gwof3QvScZGmSPfYQtMF
-        edLiC5Wy9WzIPP+tlf9a7eZOLYSP6Q/JyWEo9kZLiUIWcvA=
-X-Google-Smtp-Source: ACcGV60+Y3174/LPFRxc9MQjDSdxUysyzJJObLKXKIlljHOJadk7K9W14zX164scsy4Eghx2cZ+lSNV5NxKzYN0246E=
-X-Received: by 2002:a37:4787:: with SMTP id u129-v6mr24070614qka.301.1539764273079;
- Wed, 17 Oct 2018 01:17:53 -0700 (PDT)
+        Wed, 17 Oct 2018 12:12:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42006 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727154AbeJQQM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 12:12:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D73EFACF9;
+        Wed, 17 Oct 2018 08:17:53 +0000 (UTC)
+Date:   Wed, 17 Oct 2018 10:17:53 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     akpm@linux-foundation.org,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/7] mm, devm_memremap_pages: Mark
+ devm_memremap_pages() EXPORT_SYMBOL_GPL
+Message-ID: <20181017081753.GG18839@dhcp22.suse.cz>
+References: <153936657159.1198040.4489957977352276272.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <153936657702.1198040.119388737535638846.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-References: <1539755947-27014-1-git-send-email-suganath-prabu.subramani@broadcom.com>
- <1539755947-27014-2-git-send-email-suganath-prabu.subramani@broadcom.com>
-In-Reply-To: <1539755947-27014-2-git-send-email-suganath-prabu.subramani@broadcom.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 17 Oct 2018 11:17:41 +0300
-Message-ID: <CAHp75Veh=CkhD67jb+Qjps-UqtcCBUsA8bWco6kqppm0Q+tcvg@mail.gmail.com>
-Subject: Re: [v5 1/4] mpt3sas: Separate out mpt3sas_wait_for_ioc_to_operational
-To:     Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        ruscur@russell.cc, sbobroff@linux.ibm.com, oohall@gmail.com,
-        Sathya Prakash <Sathya.Prakash@broadcom.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <153936657702.1198040.119388737535638846.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 8:59 AM Suganath Prabu
-<suganath-prabu.subramani@broadcom.com> wrote:
->
-> No functional changes. This section of code
->  "wait for IOC to be operational" is used in many places
->  across the driver, and hence moved this code in to
->  a function "mpt3sas_wait_for_ioc_to_operational()"
+On Fri 12-10-18 10:49:37, Dan Williams wrote:
+> devm_memremap_pages() is a facility that can create struct page entries
+> for any arbitrary range and give drivers the ability to subvert core
+> aspects of page management.
+> 
+> Specifically the facility is tightly integrated with the kernel's memory
+> hotplug functionality. It injects an altmap argument deep into the
+> architecture specific vmemmap implementation to allow allocating from
+> specific reserved pages, and it has Linux specific assumptions about
+> page structure reference counting relative to get_user_pages() and
+> get_user_pages_fast(). It was an oversight and a mistake that this was
+> not marked EXPORT_SYMBOL_GPL from the outset.
 
-> +       ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
-> +       while (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
-> +
+One thing is still not clear to me. Both devm_memremap_* and
+hmm_devmem_add essentially do the same thing AFAICS. They both allow to
+hotplug a device memory. Both rely on the hotplug code (namely
+add_pages) which itself is not exported to modules. One is GPL only
+while the later is a general export. Is this mismatch desirable?
 
-Do we need this blank line?
+API exported by the core hotplug is ad-hoc to say the least. Symbols
+that we actually export are GPL mostly (only try_offline_node is
+EXPORT_SYMBOL without any explanation whatsoever). So I would call it a
+general mess tweaked for specific usecases.
 
-> +               if (wait_state_count++ == timeout) {
-> +                       ioc_err(ioc, "%s: failed due to ioc not operational\n",
-> +                               __func__);
-> +                       return -EFAULT;
-> +               }
-> +               ssleep(1);
-> +               ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
-> +               ioc_info(ioc, "%s: waiting for operational state(count=%d)\n",
-> +                        __func__, wait_state_count);
-> +       }
+I personally do not care about EXPORT_SYMBOL vs. EXPORT_SYMBOL_GPL
+much to be honest. I understand an argument that we do not care about
+out-of-tree modules a wee bit. I would just be worried those will find a
+way around and my experience tells me that it would be much uglier than
+what the core kernel can provide. But this seems more political than
+technical discussion.
+ 
+> Again, devm_memremap_pagex() exposes and relies upon core kernel
+> internal assumptions and will continue to evolve along with 'struct
+> page', memory hotplug, and support for new memory types / topologies.
+> Only an in-kernel GPL-only driver is expected to keep up with this
+> ongoing evolution. This interface, and functionality derived from this
+> interface, is not suitable for kernel-external drivers.
 
-I understand this is part of existing code, but can you consider to
-modify it to something like
+I do not follow this line of argumentation though. We generally do not
+care about out-of-tree modules and breaking them if the interface has to
+be updated. Also what about GPL out of tree modules?
 
-do {
-    ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
-    if (ioc_state == MPI2_IOC_STATE_OPERATIONAL)
-      break;
-    ioc_info(ioc, "%s: waiting for operational state(count=%d)\n",
-__func__, ++wait_state_count);
-while (timeout--);
-if (!timeout) {
-    ioc_err(ioc, "%s: failed due to ioc not operational\n", __func__);
-    return -EFAULT;
-}
-Less lines, more understandable in my view.
+That being said, I do not mind this patch. You and Christoph are the
+authors and therefore it is you to decide. I just find the current
+situation confusing to say the least.
 
-> +       rc = mpt3sas_wait_for_ioc_to_operational(ioc,
-> +                                       IOC_OPERATIONAL_WAIT_COUNT);
-
-This can be one line (yes, I aware that is 82 characters, but it
-improves readability from my p.o.v.).
-
-> +       rc = mpt3sas_wait_for_ioc_to_operational(ioc,
-> +                                       IOC_OPERATIONAL_WAIT_COUNT);
-
-Ditto.
-
->         u16 smid;
-> -       u32 ioc_state;
->         Mpi2ConfigRequest_t *config_request;
->         int r;
->         u8 retry_count, issue_host_reset = 0;
-> -       u16 wait_state_count;
-> +
-
-Usually we don't split definition block.
-
->         struct config_request mem;
->         u32 ioc_status = UINT_MAX;
-
-> +       ret = mpt3sas_wait_for_ioc_to_operational(ioc,
-> +                                       IOC_OPERATIONAL_WAIT_COUNT);
-
-One line?
-
-> +       rc = mpt3sas_wait_for_ioc_to_operational(ioc,
-> +                                       IOC_OPERATIONAL_WAIT_COUNT);
-
-Ditto.
-
-> +       rc = mpt3sas_wait_for_ioc_to_operational(ioc,
-> +                                       IOC_OPERATIONAL_WAIT_COUNT);
-
-Ditto.
-
-> +       rc = mpt3sas_wait_for_ioc_to_operational(ioc,
-> +                                       IOC_OPERATIONAL_WAIT_COUNT);
-
-Ditto.
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: "Jérôme Glisse" <jglisse@redhat.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  kernel/memremap.c                 |    2 +-
+>  tools/testing/nvdimm/test/iomap.c |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/memremap.c b/kernel/memremap.c
+> index 6ec81e0d7a33..1bbb2e892941 100644
+> --- a/kernel/memremap.c
+> +++ b/kernel/memremap.c
+> @@ -232,7 +232,7 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+>   err_array:
+>  	return ERR_PTR(error);
+>  }
+> -EXPORT_SYMBOL(devm_memremap_pages);
+> +EXPORT_SYMBOL_GPL(devm_memremap_pages);
+>  
+>  unsigned long vmem_altmap_offset(struct vmem_altmap *altmap)
+>  {
+> diff --git a/tools/testing/nvdimm/test/iomap.c b/tools/testing/nvdimm/test/iomap.c
+> index ff9d3a5825e1..ed18a0cbc0c8 100644
+> --- a/tools/testing/nvdimm/test/iomap.c
+> +++ b/tools/testing/nvdimm/test/iomap.c
+> @@ -113,7 +113,7 @@ void *__wrap_devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+>  		return nfit_res->buf + offset - nfit_res->res.start;
+>  	return devm_memremap_pages(dev, pgmap);
+>  }
+> -EXPORT_SYMBOL(__wrap_devm_memremap_pages);
+> +EXPORT_SYMBOL_GPL(__wrap_devm_memremap_pages);
+>  
+>  pfn_t __wrap_phys_to_pfn_t(phys_addr_t addr, unsigned long flags)
+>  {
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Michal Hocko
+SUSE Labs
