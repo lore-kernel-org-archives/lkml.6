@@ -2,122 +2,86 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EB0ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B39ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7BEE21526
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:34:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3417421528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 15:35:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GhjC1vBB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7BEE21526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="ZnVRLh5j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3417421528
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727678AbeJQXag (ORCPT
+        id S1727591AbeJQXbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:30:36 -0400
-Received: from mail-pl1-f169.google.com ([209.85.214.169]:39574 "EHLO
-        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbeJQXag (ORCPT
+        Wed, 17 Oct 2018 19:31:31 -0400
+Received: from a9-114.smtp-out.amazonses.com ([54.240.9.114]:46158 "EHLO
+        a9-114.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727090AbeJQXbb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:30:36 -0400
-Received: by mail-pl1-f169.google.com with SMTP id e67-v6so3889828plb.6;
-        Wed, 17 Oct 2018 08:34:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QBRxG95r8ZrcYQnbvom0ck3HkqSUVTuSdsWpCvsF4t4=;
-        b=GhjC1vBBZGFzKw4DQsaJ/PotEPUTG93x7tiizOmV3p+RhRFx0Lwo+h0/ycC33R9TiC
-         I1O1Q5eG5Tq8x55nnvtXkgTHLlNEg0jSd/2dXu77eVdY5104dB/svcyeTWh+q+X0uvZR
-         BBOpVdc25HU8RgGO3GgSK75RV6xesd/qS40CGYG8R0GalZSXsKnwgN0zHE1Vncmc5iFQ
-         LK1wGc34Th6Y7l6xo6KymHJE5cofiPwJMEfgw8usT/SSV8gkvTxR+WXw/vVfsVH3Whcw
-         cL+SVSp7jWHZ4K6B9tot65JpmjJyWVFDq0ys3QlIz2/8FnzvTZdA3mxHuEas7tMLkeG4
-         CBgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QBRxG95r8ZrcYQnbvom0ck3HkqSUVTuSdsWpCvsF4t4=;
-        b=SdO2vwQDaXi+mbHyxjgITKWMVIGf9mH0i0q6Tiv8YzepbiYRtKSMIKmBCb1XMnocdV
-         UL17PCawGZv89edSB3CagmPTcP05tpXkODinnddvvdDCV2C4WOc/v0YPcatfrz/Lz8Ym
-         Uc6idUMNVpT0DSFPg8Fa8X9SuGPzyMk8GGsmYLPyHBx+795RyHemfhn6KOgh30LU5qFA
-         mtWqdOKQu7uqE29WvvU+0Gm8F6mpOGv/Unlo2IBQOJmmLWbaO6ONOHV4pM0FRauNnS9c
-         ss72SNH+eDnAj+p2BjSCyaAbCQZmQz8VZ26zcA95sP1b8GWfqfpLPnxLcPMeDqy3/hOA
-         dwrw==
-X-Gm-Message-State: ABuFfog8WoiTIKxlVMBH7Nc99kahZJkWh/+D00/uWPRp9bHlskXbEMvD
-        gpugD//3b4NSRddSy7iKiww=
-X-Google-Smtp-Source: ACcGV60gUaiTTCKOibj2CfIHg7xlVPMrAB1Evy45v/YzEZINRjtE4fwT+44IPVegF/ph2GfxcolZDQ==
-X-Received: by 2002:a17:902:e185:: with SMTP id cd5-v6mr25518845plb.224.1539790461756;
-        Wed, 17 Oct 2018 08:34:21 -0700 (PDT)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id p24-v6sm24042142pgm.70.2018.10.17.08.34.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 08:34:20 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Thu, 18 Oct 2018 00:34:08 +0900
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Subject: Re: [RFC PATCH for 4.21 04/16] mm: Introduce vm_map_user_ram,
- vm_unmap_user_ram
-Message-ID: <20181017153408.GB426@tigerII.localdomain>
-References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com>
- <20181010191936.7495-5-mathieu.desnoyers@efficios.com>
- <20181016143016.10da89bd@gandalf.local.home>
- <20181017002722.GA1068@jagdpanzerIV>
- <1051015468.759.1539788401096.JavaMail.zimbra@efficios.com>
- <2060193272.771.1539788641739.JavaMail.zimbra@efficios.com>
+        Wed, 17 Oct 2018 19:31:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1539790516;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=/9qDFGIlwUfxNvMNzZ/qogVAU8XGQ7J8Th+UdROAvvQ=;
+        b=ZnVRLh5jsn91ea4+966PUYDyF8pgjuTLx8IlL7GjuG0Mt7642wXG9+1ZqKRn943/
+        RdA6TAd2qCav5ciYPV6ubuxTuHTgsL1kzDcIfp06ekEkss5nZND92yKrjTtEbWDA06I
+        pIMoAGN9yL45I9QmCBXxupxBtRteA+pqbtYKO2iE=
+Date:   Wed, 17 Oct 2018 15:35:15 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+cc:     Matthew Wilcox <willy@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot+87829a10073277282ad1@syzkaller.appspotmail.com,
+        Pekka Enberg <penberg@kernel.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: WARNING: kmalloc bug in input_mt_init_slots
+In-Reply-To: <20181017000955.GG230131@dtor-ws>
+Message-ID: <0100016682aaae79-d1382d3d-83f8-4972-b4b9-6220367f4f65-000000@email.amazonses.com>
+References: <000000000000e5f76c057664e73d@google.com> <CAKdAkRS7PSXv65MTnvKOewqESxt0_FtKohd86ioOuYR3R0z9dw@mail.gmail.com> <CACT4Y+YOb6M=xuPG64PAvd=0bcteicGtwQO60CevN_V67SJ=MQ@mail.gmail.com> <010001660c1fafb2-6d0dc7e1-d898-4589-874c-1be1af94e22d-000000@email.amazonses.com>
+ <CACT4Y+ayX8vzd2JPrLeFhf3K_Quf4x6SDtmtkNJuwNLyOh67tQ@mail.gmail.com> <010001660c4a8bbe-91200766-00df-48bd-bc60-a03da2ccdb7d-000000@email.amazonses.com> <20180924184158.GA156847@dtor-ws> <20180927143537.GB19006@bombadil.infradead.org>
+ <20181017000955.GG230131@dtor-ws>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2060193272.771.1539788641739.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2018.10.17-54.240.9.114
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (10/17/18 11:04), Mathieu Desnoyers wrote:
-> >> 
-> >>> 	if (WARN_ON(x))
-> >>> 		return;
-> >> 
-> >> Given that this somewhat MM-related, I'd may be say VM_WARN_ON().
-> 
-> I notice that VM_WARN_ON() casts the result of WARN_ON() to (void), so it
-> cannot be used in a if () statement.
-> 
-> VM_WARN_ON() will only warn if CONFIG_DEBUG_VM is set.
-> 
-> Is it really what we want ?
+On Tue, 16 Oct 2018, Dmitry Torokhov wrote:
 
-Oh, indeed... Sorry, I forgot that they cast WANR_ON() return to void.
-Let's do what Steven suggested.
+> On Thu, Sep 27, 2018 at 07:35:37AM -0700, Matthew Wilcox wrote:
+> > On Mon, Sep 24, 2018 at 11:41:58AM -0700, Dmitry Torokhov wrote:
+> > > > How large is the allocation? AFACIT nRequests larger than KMALLOC_MAX_SIZE
+> > > > are larger than the maximum allowed by the page allocator. Thus the warning
+> > > > and the NULL return.
+> > >
+> > > The size in this particular case is being derived from a value passed
+> > > from userspace. Input core does not care about any limits on size of
+> > > memory kmalloc() can support and is perfectly happy with getting NULL
+> > > and telling userspace to go away with their silly requests by returning
+> > > -ENOMEM.
+> > >
+> > > For the record: I definitely do not want to pre-sanitize size neither in
+> > > uinput nor in input core.
+> >
+> > Probably should be using kvzalloc then.
+>
+> No. No sane input device can track so many contacts so we need to use
+> kvzalloc(). Failing to allocate memory is proper response here.
 
-	-ss
+What is a "contact" here? Are we talking about SG segments?
+
