@@ -2,313 +2,113 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA30C5ACCD
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 012CDC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03277214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:24:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 910F5214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:26:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQujuozW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03277214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1iqE/b7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 910F5214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemote.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbeJQJRu (ORCPT
+        id S1727280AbeJQJTV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 05:17:50 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40821 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbeJQJRs (ORCPT
+        Wed, 17 Oct 2018 05:19:21 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33083 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbeJQJTU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 05:17:48 -0400
-Received: by mail-pf1-f193.google.com with SMTP id g21-v6so5328273pfi.7;
-        Tue, 16 Oct 2018 18:24:37 -0700 (PDT)
+        Wed, 17 Oct 2018 05:19:20 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y18-v6so11707214pge.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Oct 2018 18:26:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gWfmCcpf7HgzojI1AcY47Q6G9hhldA69dpOLXL491Lo=;
-        b=HQujuozW3vDZEBbemfDyuNW+ctdf9/tGDmrVWoSYVLHeb/7nHKRQccU11BF/MGMDvx
-         y9VYY0nZlqJNPQJjrhjui3iIUkU3c7davttLHIhq4f68UgY/F3d8b8NZlqfM+WO+48PG
-         vSTEDtwESiBpDJLEzLogsxh6dA6Lxhu6xi1qwwPaIY1kFvI/133Hdt8msyvIeGGiIRNW
-         WkvEFjnAcuOLVUlFwcRVrqD3NPHRe/tAivusRl3y9TmusvCNqW+PRcLWraPUtgf7rTaT
-         sAImsmANZZa8+y+JCo1NjYDoFX0ay7vZOgqohYq9l+WvckO1VWeWsK769VmKYuGWfhmj
-         5xHg==
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=CS8dgnIFpYQ7Enn0sLvT3ctTvSkag//XEF+SGM30/ik=;
+        b=V1iqE/b7mbZxVebrEW2TwdC1dnfGW++tJFxMWQF7YcYDpKpnUhl7UJd4ExRPNKXYsv
+         NxCbufA92jY0tk0r+zM888yvi5IRd7P8mT3AlIrRDwTaA2MtVQhjgTt8b6sZaELUtXCc
+         1mzpmtefGlUUaOfh/iPsFIkFw/YYoanuR7FSsmOfaEN6Arb6fKxEAtgCVi0e2RJiRbEe
+         vTJZHkNjCv9mAXNdZmqXtyuCXBc75v5Z5bSqAXNwhoisQ+fuc2emxEHjFPEyNnv0LPvo
+         mhMlLD6ptw9djq/wTjEmEj24CmoAapKuhabv6RcVFqvHP66YZayK75FF1vOZqd4DwzUI
+         Cjqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gWfmCcpf7HgzojI1AcY47Q6G9hhldA69dpOLXL491Lo=;
-        b=p5+Rs6K47QoD3FEFC9rjW2kWY9ZRTjuzcwQz4XQf3pl5OYXpyBk6heJ1Crm2biZIXG
-         cyU2wc/NWMNwKw+4vj8o3O44n/hMhg6A30L+jww6hcsYPw2A0GkI4SNkWcSWoxHQ4B71
-         atisqPhlhulPP8+2zUP8oIlrJm/M6/X74Sh5eVuxqtdjMoqzb68vQOTAXHvwXPWdgPJ4
-         kemuIcOlfDeL/O9MBxfd2+l0/2Elhd67AXLhxDoWEHnR+TU/w3s9XyofSivFXihCtjY/
-         oY+vRviXXWS0J0+l2iN2hq856CcrWZtHNRWQFji7p8LNKak5O6vzvbJ0R5qIRoZn5FD+
-         qq3g==
-X-Gm-Message-State: ABuFfogyKMvZzatX8J8u4h72/1qmklcDEQditYuU7XcQ8k+4Sm3jDpIT
-        kUOm5MA/wVu9VutqOM4PcBo=
-X-Google-Smtp-Source: ACcGV61vg9bKhdnnZ8nsIIuc+ZR8ZvjL3YN9QS18n2MgPUpMzNpbGhaqNhty5iQ9MIm3rNqcjy4Gkw==
-X-Received: by 2002:a62:c186:: with SMTP id i128-v6mr24542472pfg.248.1539739476829;
-        Tue, 16 Oct 2018 18:24:36 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id n64-v6sm22841851pfi.185.2018.10.16.18.24.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 18:24:36 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     jdelvare@suse.com, linux@roeck-us.net
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] hwmon: (ina3221) Add PM runtime support
-Date:   Tue, 16 Oct 2018 18:24:26 -0700
-Message-Id: <20181017012426.26958-6-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181017012426.26958-1-nicoleotsuka@gmail.com>
-References: <20181017012426.26958-1-nicoleotsuka@gmail.com>
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=CS8dgnIFpYQ7Enn0sLvT3ctTvSkag//XEF+SGM30/ik=;
+        b=Lemi9D8RkF7zJxP5kqhd1KhIGqyJPMNkl+nS4+jEsM2YpLtGV5FnJX0pO3u1rkK0SI
+         7r+OBsH5tldSlDuqJ688+0ByJ4UhC0fw9E6bmiweSHg6lkJlfViWjBMLE6A6vlJAjxLk
+         SqVnmNxfV/qMqkpALUUoeF0Bs3MBefzK2vzcJDuaEQkLXP9pjDkJpqkHTNQWIo4stHnw
+         tFQ4ZV6+x35Vs0T1mmItTHFqpRWklTOFnbssm4515WJwbgZRe4Y5S1kv0XaEgkm/uUPo
+         6W0etoAumg8ynoYBNtqqd6G81IFBSghX3kH6Tx1tXrtIhE6ZGL9D+DdQ98y/KaI0AY62
+         MlXQ==
+X-Gm-Message-State: ABuFfojRycMzhH4qoMlNV+LSGLlAYINPQHwQr8lRx5r/4Bx942HutGEQ
+        c5nE6J9u5juIbIetmTSEdCk=
+X-Google-Smtp-Source: ACcGV60GNtiJzp2PHXN/UZtAs9vz6moXmWujTblh55/4MOF2NbPfYHtI1XV9jzM+qLAO6QX1i2KgtA==
+X-Received: by 2002:a62:210:: with SMTP id 16-v6mr25316117pfc.100.1539739570220;
+        Tue, 16 Oct 2018 18:26:10 -0700 (PDT)
+Received: from software.domain.org ([172.247.34.138])
+        by smtp.gmail.com with ESMTPSA id t85-v6sm24126389pfi.73.2018.10.16.18.26.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 16 Oct 2018 18:26:09 -0700 (PDT)
+From:   Huacai Chen <chenhc@lemote.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-kernel@vger.kernel.org, Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>,
+        Huacai Chen <chenhuacai@gmail.com>,
+        Huacai Chen <chenhc@lemote.com>
+Subject: [PATCH] cacheinfo: Keep the old value if of_property_read_u32 fails
+Date:   Wed, 17 Oct 2018 09:26:03 +0800
+Message-Id: <1539739563-1886-1-git-send-email-chenhc@lemote.com>
+X-Mailer: git-send-email 2.7.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all three channels are disabled via in[123]_enable ABI,
-the driver could suspend the chip for power saving purpose.
+Commit 448a5a552f336bd7b847b1951 ("drivers: base: cacheinfo: use OF
+property_read_u32 instead of get_property,read_number") makes cache
+size and number_of_sets be 0 if DT doesn't provide there values. I
+think this is unreasonable so make them keep the old values, which is
+the same as old kernels.
 
-So this patch addsd the PM runtime support in order to gain
-more power control than system suspend and resume use case.
-
-For PM runtime, there are a few related changes happening:
-1) Added a new explicit hdev device pointer for all the pm
-   runtime callbacks. This is because hwmon core registers
-   a child device for each hwmon driver. So there might be
-   a mismatch between two device pointers in the driver if
-   mixing using them.
-2) Added a check in ina3221_is_enabled() to make sure that
-   the chip is resumed.
-3) Bypassed the unchanged status in ina3221_write_enable()
-   in order to keep the pm runtime refcount being matched.
-4) Removed the reset routine in the probe() by calling the
-   resume() via pm_runtime_get_sync(), as they're similar.
-   It's also necessary to do so to match initial refcount
-   with the number of enabled channels.
-
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
 ---
- drivers/hwmon/ina3221.c | 104 +++++++++++++++++++++++++++++++---------
- 1 file changed, 82 insertions(+), 22 deletions(-)
+ drivers/base/cacheinfo.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-index 160ddc404d73..5ad3ab22b07a 100644
---- a/drivers/hwmon/ina3221.c
-+++ b/drivers/hwmon/ina3221.c
-@@ -21,6 +21,7 @@
- #include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/regmap.h>
-+#include <linux/pm_runtime.h>
+diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+index 5d5b598..dd6a685 100644
+--- a/drivers/base/cacheinfo.c
++++ b/drivers/base/cacheinfo.c
+@@ -79,8 +79,7 @@ static void cache_size(struct cacheinfo *this_leaf, struct device_node *np)
+ 	ct_idx = get_cacheinfo_idx(this_leaf->type);
+ 	propname = cache_type_info[ct_idx].size_prop;
  
- #define INA3221_DRIVER_NAME		"ina3221"
- 
-@@ -47,6 +48,7 @@
- #define INA3221_CONFIG_CHx_EN(x)	BIT(14 - (x))
- #define INA3221_CONFIG_CHs_EN_MASK	GENMASK(14, 12)
- 
-+#define INA3221_CONFIG_DEFAULT		0x7127
- #define INA3221_RSHUNT_DEFAULT		10000
- 
- enum ina3221_fields {
-@@ -97,6 +99,7 @@ struct ina3221_input {
- 
- /**
-  * struct ina3221_data - device specific information
-+ * @hdev: Device pointer of hwmon child device, used for pm runtime
-  * @regmap: Register map of the device
-  * @fields: Register fields of the device
-  * @inputs: Array of channel input source specific structures
-@@ -104,6 +107,7 @@ struct ina3221_input {
-  * @reg_config: Register value of INA3221_CONFIG
-  */
- struct ina3221_data {
-+	struct device *hdev;
- 	struct regmap *regmap;
- 	struct regmap_field *fields[F_MAX_FIELDS];
- 	struct ina3221_input inputs[INA3221_NUM_CHANNELS];
-@@ -113,7 +117,8 @@ struct ina3221_data {
- 
- static inline bool ina3221_is_enabled(struct ina3221_data *ina, int channel)
- {
--	return ina->reg_config & INA3221_CONFIG_CHx_EN(channel);
-+	return pm_runtime_active(ina->hdev) &&
-+	       (ina->reg_config & INA3221_CONFIG_CHx_EN(channel));
+-	if (of_property_read_u32(np, propname, &this_leaf->size))
+-		this_leaf->size = 0;
++	of_property_read_u32(np, propname, &this_leaf->size);
  }
  
- static inline int ina3221_wait_for_data_if_active(struct ina3221_data *ina)
-@@ -262,19 +267,33 @@ static int ina3221_write_enable(struct device *dev, int channel, bool enable)
- {
- 	struct ina3221_data *ina = dev_get_drvdata(dev);
- 	u16 config, mask = INA3221_CONFIG_CHx_EN(channel);
-+	u16 config_old = ina->reg_config & mask;
- 	int ret;
+ /* not cache_line_size() because that's a macro in include/linux/cache.h */
+@@ -114,8 +113,7 @@ static void cache_nr_sets(struct cacheinfo *this_leaf, struct device_node *np)
+ 	ct_idx = get_cacheinfo_idx(this_leaf->type);
+ 	propname = cache_type_info[ct_idx].nr_sets_prop;
  
- 	config = enable ? mask : 0;
- 
-+	/* Bypass if enable status is not being changed */
-+	if (config_old == config)
-+		return 0;
-+
-+	/* For enabling routine, increase refcount and resume() at first */
-+	if (enable) {
-+		ret = pm_runtime_get_sync(ina->hdev);
-+		if (ret < 0) {
-+			dev_err(dev, "Failed to get PM runtime");
-+			return ret;
-+		}
-+	}
-+
- 	/* Enable or disable the channel */
- 	ret = regmap_update_bits(ina->regmap, INA3221_CONFIG, mask, config);
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	/* Cache the latest config register value */
- 	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	/* Make sure data conversion is finished */
- 	ret = ina3221_wait_for_data_if_active(ina);
-@@ -283,7 +302,20 @@ static int ina3221_write_enable(struct device *dev, int channel, bool enable)
- 		return ret;
- 	}
- 
-+	/* For disabling routine, decrease refcount or suspend() at last */
-+	if (!enable)
-+		pm_runtime_put_sync(ina->hdev);
-+
- 	return 0;
-+
-+fail:
-+	if (enable) {
-+		dev_err(dev, "Reverting channel%d enabling: %d\n",
-+			channel, ret);
-+		pm_runtime_put_sync(ina->hdev);
-+	}
-+
-+	return ret;
+-	if (of_property_read_u32(np, propname, &this_leaf->number_of_sets))
+-		this_leaf->number_of_sets = 0;
++	of_property_read_u32(np, propname, &this_leaf->number_of_sets);
  }
  
- static int ina3221_read(struct device *dev, enum hwmon_sensor_types type,
-@@ -578,7 +610,6 @@ static int ina3221_probe(struct i2c_client *client,
- {
- 	struct device *dev = &client->dev;
- 	struct ina3221_data *ina;
--	struct device *hwmon_dev;
- 	int i, ret;
- 
- 	ina = devm_kzalloc(dev, sizeof(*ina), GFP_KERNEL);
-@@ -610,44 +641,71 @@ static int ina3221_probe(struct i2c_client *client,
- 		return ret;
- 	}
- 
--	ret = regmap_field_write(ina->fields[F_RST], true);
--	if (ret) {
--		dev_err(dev, "Unable to reset device\n");
--		return ret;
--	}
--
--	/* Sync config register after reset */
--	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
--	if (ret)
--		return ret;
-+	/* The driver will be reset, so use reset value */
-+	ina->reg_config = INA3221_CONFIG_DEFAULT;
- 
- 	/* Disable channels if their inputs are disconnected */
- 	for (i = 0; i < INA3221_NUM_CHANNELS; i++) {
- 		if (ina->inputs[i].disconnected)
- 			ina->reg_config &= ~INA3221_CONFIG_CHx_EN(i);
- 	}
--	ret = regmap_write(ina->regmap, INA3221_CONFIG, ina->reg_config);
--	if (ret)
--		return ret;
- 
- 	mutex_init(&ina->lock);
- 	dev_set_drvdata(dev, ina);
- 
--	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, ina,
-+	/* Fence sysfs nodes till pm_runtime is resumed */
-+	mutex_lock(&ina->lock);
-+
-+	/* Use the returned hdev for pm_runtime */
-+	ina->hdev = devm_hwmon_device_register_with_info(dev, client->name, ina,
- 							 &ina3221_chip_info,
- 							 ina3221_groups);
--	if (IS_ERR(hwmon_dev)) {
-+	if (IS_ERR(ina->hdev)) {
- 		dev_err(dev, "Unable to register hwmon device\n");
--		mutex_destroy(&ina->lock);
--		return PTR_ERR(hwmon_dev);
-+		ret = PTR_ERR(ina->hdev);
-+		goto fail_lock;
- 	}
- 
-+	/* Enable PM runtime -- status is suspended by default */
-+	pm_runtime_enable(ina->hdev);
-+
-+	/* Initialize (resume) the device */
-+	for (i = 0; i < INA3221_NUM_CHANNELS; i++) {
-+		if (ina->inputs[i].disconnected)
-+			continue;
-+		/* Match the refcount with number of enabled channels */
-+		ret = pm_runtime_get_sync(ina->hdev);
-+		if (ret < 0)
-+			goto fail_pm;
-+	}
-+
-+	mutex_unlock(&ina->lock);
-+
- 	return 0;
-+
-+fail_pm:
-+	pm_runtime_disable(ina->hdev);
-+	pm_runtime_set_suspended(ina->hdev);
-+	for (i = 0; i < INA3221_NUM_CHANNELS; i++)
-+		pm_runtime_put_noidle(ina->hdev);
-+fail_lock:
-+	mutex_unlock(&ina->lock);
-+	mutex_destroy(&ina->lock);
-+
-+	return ret;
- }
- 
- static int ina3221_remove(struct i2c_client *client)
- {
- 	struct ina3221_data *ina = dev_get_drvdata(&client->dev);
-+	int i;
-+
-+	pm_runtime_disable(ina->hdev);
-+	pm_runtime_set_suspended(ina->hdev);
-+
-+	/* Decrease the PM refcount */
-+	for (i = 0; i < INA3221_NUM_CHANNELS; i++)
-+		pm_runtime_put_noidle(ina->hdev);
- 
- 	mutex_destroy(&ina->lock);
- 
-@@ -712,7 +770,9 @@ static int __maybe_unused ina3221_resume(struct device *dev)
- }
- 
- static const struct dev_pm_ops ina3221_pm = {
--	SET_SYSTEM_SLEEP_PM_OPS(ina3221_suspend, ina3221_resume)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
-+	SET_RUNTIME_PM_OPS(ina3221_suspend, ina3221_resume, NULL)
- };
- 
- static const struct of_device_id ina3221_of_match_table[] = {
+ static void cache_associativity(struct cacheinfo *this_leaf)
 -- 
-2.17.1
+2.7.0
 
