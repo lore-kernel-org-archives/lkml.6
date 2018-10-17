@@ -2,184 +2,158 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C22ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A738ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 386882150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:12:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RW+kydhu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 386882150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 142B72150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 16:13:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142B72150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbeJRAIY (ORCPT
+        id S1727966AbeJRAJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 20:08:24 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:34163 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbeJRAIX (ORCPT
+        Wed, 17 Oct 2018 20:09:30 -0400
+Received: from gateway30.websitewelcome.com ([192.185.145.3]:26131 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727016AbeJRAJa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 20:08:23 -0400
-Received: by mail-vs1-f67.google.com with SMTP id q15so6840755vso.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SzRLyX6uES2dOIWmXA/MqMQUxJNWjgiy74t6SwzRozs=;
-        b=RW+kydhuyojLwIvtOUKIx98A8okPoqeqGuFEUtxZjMzc7cRrfuRDFHYqL0E+w0y5Pf
-         1B5YSVAHwoumlx4zeytEunLFGLou+uKEXoTTLRzkDElZaFJA2uVVPuucmfOGr4lrbA+L
-         3TfNTHTK1Hu0IfWq6vNKPJnHZsOAON5x7ULZs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SzRLyX6uES2dOIWmXA/MqMQUxJNWjgiy74t6SwzRozs=;
-        b=Am5/8GQUh5x8jmINMJ2HNCNPusk4hy81sd8axsjhhMfhhUhds03sz2iNg5hlpjMGOt
-         lEEpAPNAOitAGFiUDwpXHK2O23cU6E1kUPfey1rJ45N+yzF/mtBUYBqL4WNVgkWT1uy8
-         T9GP70gORqtLNZSo5jduaay2kGt3SwbAO9glqbCI0qIWUx3lr/Lbqwm2ZKLx3fAtP0dX
-         jjs0c0sAI3/nx251RsjTCbvqs39EwQoGEBKFwzUQ5xKfd2o9edhFZAuriYJwkn2kVxzA
-         Oa1Fw4GFOg6EYbCVfv+Y4umFnDCJm/FZWLPw71XYAF0EhMxWzHV1qDU6S1KzWNO23Sxj
-         SCUA==
-X-Gm-Message-State: ABuFfogwYwEdGq4Zlbx9JZie/znLa8lPmiSm1VcM6hLacIr22pGbpeZt
-        khHOaSmbgvItuAiiLe0E+jlus5hTrOs=
-X-Google-Smtp-Source: ACcGV62msCNAnSlTQA+xC7a5lpNzDLmveOUv5WRWuK4nBz5BcY3iLN9iwK62MSQ/iyYqrJxL5sOgnA==
-X-Received: by 2002:a67:ea05:: with SMTP id g5mr2991150vso.61.1539792718353;
-        Wed, 17 Oct 2018 09:11:58 -0700 (PDT)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id c6sm3056303vsg.20.2018.10.17.09.11.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 09:11:57 -0700 (PDT)
-Received: by mail-vs1-f43.google.com with SMTP id w85so21130706vsa.10
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:11:56 -0700 (PDT)
-X-Received: by 2002:a67:1144:: with SMTP id 65mr2895516vsr.213.1539792715912;
- Wed, 17 Oct 2018 09:11:55 -0700 (PDT)
+        Wed, 17 Oct 2018 20:09:30 -0400
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id CD0CE30B15F2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 10:37:55 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id CntNgUOdMSjJACntRgzsub; Wed, 17 Oct 2018 10:37:55 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:60778 helo=[192.168.1.41])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gCntN-0045Fw-50; Wed, 17 Oct 2018 10:37:49 -0500
+Subject: Re: [PATCH 2/2] phy: ocelot-serdes: fix out-of-bounds read
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+References: <cover.1539036280.git.gustavo@embeddedor.com>
+ <30c1dcb4a8d3707238fcf0a996b9e0bf0a4a7bbc.1539036280.git.gustavo@embeddedor.com>
+ <20181009072808.5eynmktmkgjpi2ho@qschulz>
+ <f60ee2ae-6b19-4a61-6d9c-38acdebd7fbe@embeddedor.com>
+ <93008479-9e81-1d27-bd31-0cff75c4dd12@ti.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <d4347a46-ff54-3b02-97b7-58ad7017c2c0@embeddedor.com>
+Date:   Wed, 17 Oct 2018 17:37:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181012213926.253765-1-dianders@chromium.org>
- <CAFp+6iFy8V34cs6pEOie_tBX5wJqM7teUnH_XLLZ7cioPrX_hA@mail.gmail.com>
- <CAD=FV=WYM5OOigy+81cVzPtAJXhvrhB1znr9zHzMf3q5iFOtFw@mail.gmail.com>
- <CAFp+6iGxvDoptnjM18ggnHqX6MV0+HFqsnCMi61b8gquBxaYmw@mail.gmail.com>
- <CAD=FV=XWC8q4Cx4GF0yXCgj2APwd5ZfccVBC_ORwnJg0vRsS7A@mail.gmail.com> <1ce7b24c-b154-4ce6-2b4c-9eb0fd0d71cb@codeaurora.org>
-In-Reply-To: <1ce7b24c-b154-4ce6-2b4c-9eb0fd0d71cb@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 17 Oct 2018 09:11:43 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XSjfRSHP6B6GtiTqrQuUZaoA=hZNW_L1=71MU9fEXpDQ@mail.gmail.com>
-Message-ID: <CAD=FV=XSjfRSHP6B6GtiTqrQuUZaoA=hZNW_L1=71MU9fEXpDQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: ufs: Fix the compatible string definition
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        cang@codeaurora.org, Evan Green <evgreen@chromium.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        sayalil@codeaurora.org, Asutosh Das <asutoshd@codeaurora.org>,
-        devicetree@vger.kernel.org, liwei213@huawei.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <93008479-9e81-1d27-bd31-0cff75c4dd12@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gCntN-0045Fw-50
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:60778
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Kishon,
 
-On Tue, Oct 16, 2018 at 11:28 PM Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
->
-> Hi Doug,
->
->
-> On 10/16/2018 10:29 PM, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Mon, Oct 15, 2018 at 10:51 PM Vivek Gautam
-> > <vivek.gautam@codeaurora.org> wrote:
-> >>>> P.S.: While you are at it, can you please move 'ufs-qcom.txt'
-> >>>> to Documentation/devicetree/bindings/phy/qcom,ufs-phy.txt.
-> >>>> The current name and file location is misleading.
-> >>> I'd rather someone at Qualcomm do this.  Do you have a suggested
-> >>> person?  The reason I feel that Qualcomm needs to get involved is that
-> >>> I see that when I look at the file you refer to says it's for:
-> >>>
-> >>>    "qcom,ufs-phy-qmp-20nm" for 20nm ufs phy,
-> >>>    "qcom,ufs-phy-qmp-14nm" for legacy 14nm ufs phy,
-> >>>    "qcom,msm8996-ufs-phy-qmp-14nm" for 14nm ufs phy
-> >>>    present on MSM8996 chipset.
-> >>>
-> >>> ...but there's another Qualcomm file, 'qcom-qmp-phy.txt'.  That
-> >>> handles the compatible string:
-> >>>
-> >>>         "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845.
-> >>>
-> >>> So I'm a little confused.  Should the SDM845 UFS PHY been handled by
-> >>> the older UFS PHY driver?  ...or should all the older UFS PHYs be
-> >>> moved to be handled by the newer QMP PHY driver?  ...or are they
-> >>> really different hardware blocks, in which case how would you describe
-> >>> the difference (both are described as UFS QMP PHYs I think).
-> >> As you rightly said "ufs/ufs-qcom.txt" describes the bindings for
-> >> 14nm, and 20nm ufs phy. These phys are however handled by the older
-> >> ufs phy driver present at:
-> >> drivers/phy/qualcomm/phy-qcom-ufs-qmp-{14nm,20nm}.c
-> >> The sdm845 UFS phy driver is handled by the new consolidated qmp phy
-> >> driver: drivers/phy/qualcomm/phy-qcom-qmp.c whose bindings are
-> >> described by 'qcom-qmp-phy.txt'.
-> >> We didn't attempt to move the 14nm phy to new driver as we already had
-> >> 8996 using the bindings.
-> >>
-> >> So, really these are two separate drivers with different bindings. I
-> >> believe it should be okay to move the file. If you are fine, I can
-> >> attempt to post a small patch to do that.
-> > I guess what I should have said was that the new name you're proposing
-> > "qcom,ufs-phy.txt" is confusing and opening the file doesn't help
-> > clarify things.  The name and the binding make it sound like this is
-> > _the_ file to look at for Qualcomm UFS PHYs.  ...and then you look in
-> > the examples in the file and it seems that this even includes Qualcomm
-> > QMP PHYs for UFS.
-> >
-> > ...so while I agree that the file "ufs-qcom.txt" needs to be moved to
-> > the "PHY" directory, I think at the same time we need to change the
-> > name of the file and maybe the contents to disambiguate which things
-> > belong in this file vs. the "qcom-qmp-phy.txt".  ...and I feel like
-> > someone at Qualcomm will have the most information to properly do
-> > that.
-> >
-> > For instance, you could call the older bindings
-> > "qcom-qmp-phy-14nm-20nm.txt" or something like that.
->
-> Sure, I get your point. I will propose something that removes the confusion.
->
-> >
-> > One point of clarification I'd like to know is if there's really a
-> > good reason to have two drivers here.  Certainly if the hardware is
-> > really different then a new driver can make sense, but if there are
-> > two drivers for arbitrary reasons then maybe they should be combined
-> > into one eventually?
->
-> Right, the 14nm phy driver can be happily merged into the new qmp-phy
-> driver.
-> But we should take care of older bindings. Removing the driver will break
-> things on targets with older bindings, precisely 8996.
->
-> 20nm is bit tricky as it exported few APIs directly to ufs host
-> controller, and
-> that's the reason we have declared that as BROKEN after the ufs cleanup.
-> So, until we are really in a kill mode, the old ufs-phy driver will have
-> to live.
+On 10/16/18 10:48 AM, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Tuesday 16 October 2018 02:16 PM, Gustavo A. R. Silva wrote:
+>> Hi,
+>>
+>> On 10/9/18 9:28 AM, Quentin Schulz wrote:
+>>> Hi Gustavo,
+>>>
+>>> On Tue, Oct 09, 2018 at 12:22:33AM +0200, Gustavo A. R. Silva wrote:
+>>>> Currently, there is an out-of-bounds read on array ctrl->phys,
+>>>> once variable i reaches the maximum array size of SERDES_MAX
+>>>> in the for loop.
+>>>>
+>>>> Fix this by changing the condition in the for loop from
+>>>> i <= SERDES_MAX to i < SERDES_MAX.
+>>>>
+>>>
+>>> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
+>>>
+>>
+>> Friendly ping. Who can you take this?
+> 
+> This can go during the 4.20 -rc cycle.
+> 
 
-OK, sounds like a plan.  I'll assume you're posting the patch to move
-the old PHY bindings and add some of the above information to them so
-people aren't confused.
+Should I resend the following patch to you, so the whole series is
+applied to your phy tree?
 
-...all this is sort off the original subject, though.  ;-)  Just a
-quick summary here is that nothing suggests ${SUBJECT} patch shouldn't
-land and all the additional discussion has been about making further
-improvements to the bindings situation for UFS on Qualcomm.
+https://lore.kernel.org/patchwork/patch/997326/
 
--Doug
+Thanks
+--
+Gustavo
