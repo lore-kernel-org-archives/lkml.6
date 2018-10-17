@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC63C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E27FC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3240F2147E
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:09:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14D1F2147E
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:09:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQwfadr9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3240F2147E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t1OqtJYc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14D1F2147E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbeJQICM (ORCPT
+        id S1727575AbeJQICo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 04:02:12 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:38598 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbeJQICM (ORCPT
+        Wed, 17 Oct 2018 04:02:44 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:43659 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbeJQICn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 04:02:12 -0400
-Received: by mail-qk1-f195.google.com with SMTP id 204-v6so15368888qkd.5;
-        Tue, 16 Oct 2018 17:09:18 -0700 (PDT)
+        Wed, 17 Oct 2018 04:02:43 -0400
+Received: by mail-qk1-f194.google.com with SMTP id 12-v6so15368083qkj.10;
+        Tue, 16 Oct 2018 17:09:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :content-transfer-encoding:user-agent;
-        bh=Du6wml9VVnou4jAkLBGM3hlzod6FF9zbSLCzf+JCveM=;
-        b=fQwfadr91a5AmyHL08cXCsMHfp0fqJCUcmYZiXoprz3VziZ5qrrfnU5tEQJYzMh+HK
-         /X06MimgPOluZywapGGBft4kszDXVnOfsgbQNNTxLhZ2dQgzoJGcWTJbnwNuCC/x/Vwc
-         eKsIkHXneVtPRYGuQrtcBbaqSXnNDiVoMvsvpDjvukqUEAK0FLmBpFjyPioRX857h4jP
-         2Lzqf+3SUYN/drc2FJWI86kFFXA3fl/fXOy24COSX5fACIUOVxHXsk0NMTGIdx1rlbn/
-         fSqWqh8r5xY7ASkR3udc4qN4APAvX2qVF8vSrgojwOFUItzKGJIywZGFAyBSEQgFdmDv
-         6M2A==
+        bh=Rk/ypljEkW1Kxbdg+0tIBavPRfEkfxYVRHQuJ41aF3s=;
+        b=t1OqtJYcXFA6LqjDddeMT4zKkFkpfwzkkvbwyQ6J1ypLUqyOHK51xPjP3Lkv7hxnEP
+         Oay3FStrJdAO4vFp+0OvHjcN7J43YW7EUiOM48tFLhXCSzEW8VoaQSoD4WKuBbZ/cX6+
+         Ti3nN/C/VR21IgEV4pfpf2qrfuC4BBSprmzWLMCeWYwcQ3YQ/IQJAqFfbefB2sK3UmzP
+         A9jBrcIYRgJGBeKCzRTCDG1NvStrUmlcyvc30TOwjh51C2Jyi0UWN2qlMMdxyqbfDjit
+         0y7yYUfKHWX0wzbV7VVQwyMbRCdYweGADjzw0v4yxSyv7mHqzSpC3DmCrRO3Tb0m+ZFX
+         C78g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:content-transfer-encoding:user-agent;
-        bh=Du6wml9VVnou4jAkLBGM3hlzod6FF9zbSLCzf+JCveM=;
-        b=D4GB1H6KszFK92T/8nCdD0L18AUhTo1bidV8RlF4xH5q6QjlX7HJN2DhwQuPZETcno
-         KlmX6DRP8m7zMKWjQNwvNb43PRqu+jDRBr0Ar1KPtS+I4LLt2YQE7YkvSa9yi5fTN7NF
-         vYTGMYzFVnFN8p6OqtDMRWj5nJ+m69CUiJX4GAdwgZBG9omUeV+lpLeFLc4OV/9Uo/Ch
-         EP10+sNUc7TV0nQMcRga2gjyuBUYyF3B4fgX8DT805oCgFEbcQovSOV3yug5VAXktgNy
-         3JGoPGLT5RUOjdRYe4/d0dZRFmHAZ5V5cO7Yx33RRNiEcWnEXQdYkv56hoY0VAIZmYYr
-         0G9A==
-X-Gm-Message-State: ABuFfojADJwStt81tNPCl15XjMwgWwgFKJRUPaWeOTa0lLlvCOsH1UR1
-        SOrLmxxo00+Ir8gXkPHJOiVYCaRQ
-X-Google-Smtp-Source: ACcGV60Kx2VZtZjsmf8vexcO8pwt5URdSQ4/2O0lQOTObvxA2XSWV63/+U2AFS2ZLWJCJUJZYdC9lA==
-X-Received: by 2002:a37:2d46:: with SMTP id t67-v6mr22525808qkh.351.1539734957923;
-        Tue, 16 Oct 2018 17:09:17 -0700 (PDT)
+        bh=Rk/ypljEkW1Kxbdg+0tIBavPRfEkfxYVRHQuJ41aF3s=;
+        b=EtvKDDueDexHPaRyasnSIeOh9iVUwu3OjagyOd77d2XoIGLSxXxF9y5HxAHQ06MMMh
+         iy1qBfkn7YUWRkJJOhEc/9dRl2ntBEjOyuSxgDJ2n/yRCu75ZMpvwNPPwnkIPnmohMPk
+         zph8lD0IU658s2Z2QddVePBrSqBjjW8CqRgBLyTBaLLP16PUnHMs1boCD77j7JLw0/fc
+         X7Hi/EJ0o+cY8qkaHnqzypGTaYvqr5emXfpV1j41Z5C66ZqVEPlH56q5HUsje5Nian6D
+         sABltB8OeuvkV2kPOe5F17X8KMxnvodohoxvB36tiXqDDIM0St6PHjZLbSFx9xdJnCwP
+         NfGQ==
+X-Gm-Message-State: ABuFfog+JOr5eRmsvty8kBZRiLu4mhP/S0UbjEvg8WMKZSozAbJJ2K4w
+        XDCMSlri/KbMrtma9fHbnCk=
+X-Google-Smtp-Source: ACcGV63cEACIKB7l583zFxXY5FKQwHFhD0T+RmE9SLRSmNIrF1ZFDk6LTjn2se0MlkoQc+X7I3vq8A==
+X-Received: by 2002:a37:b042:: with SMTP id z63-v6mr22028105qke.94.1539734989116;
+        Tue, 16 Oct 2018 17:09:49 -0700 (PDT)
 Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id a72-v6sm8297662qkc.19.2018.10.16.17.09.14
+        by smtp.gmail.com with ESMTPSA id j41-v6sm11694149qta.43.2018.10.16.17.09.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 17:09:17 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 21:09:12 -0300
+        Tue, 16 Oct 2018 17:09:48 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 21:09:43 -0300
 From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
 To:     lkcamp@lists.libreplanetbr.org
 Cc:     Matthew Wilcox <willy6545@gmail.com>,
@@ -70,9 +70,8 @@ Cc:     Matthew Wilcox <willy6545@gmail.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>,
         linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: [PATCH 3/4] kbuild: Removes unnecessary shadowed local variable and
- optimize testing.
-Message-ID: <20181017000912.GA21339@WindFlash>
+Subject: [PATCH 4/4] Changes macro usage to avoid shadowing a variable.
+Message-ID: <20181017000943.GA21382@WindFlash>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -83,41 +82,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-    Removes an unnecessary shadowed local variable (start).
-    Optimize test of isdigit:
-    - If isalpha returns true, isdigit will return false, so no need to test.
+Changes the usage of DEF_FIELD_ADDR in this function to create a
+reference and operate over it using an aux variable.
+It also changes the loop logic used to find duplicates, to avoid
+creating another variable.
 
 Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- scripts/asn1_compiler.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ scripts/mod/file2alias.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/scripts/asn1_compiler.c b/scripts/asn1_compiler.c
-index c146020fc783..08bb6e5fd6ad 100644
---- a/scripts/asn1_compiler.c
-+++ b/scripts/asn1_compiler.c
-@@ -413,7 +413,7 @@ static void tokenise(char *buffer, char *end)
+diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+index 7be43697ff84..9ea1db2aefdb 100644
+--- a/scripts/mod/file2alias.c
++++ b/scripts/mod/file2alias.c
+@@ -641,25 +641,27 @@ static void do_pnp_card_entries(void *symval, unsigned long size,
+ 	unsigned int i;
  
- 			/* Handle string tokens */
- 			if (isalpha(*p)) {
--				const char **dir, *start = p;
-+				const char **dir;
+ 	device_id_check(mod->name, "pnp", size, id_size, symval);
++	DEF_FIELD_ADDR(symval, pnp_card_device_id, devs);
++	typeof(devs) devs_last;
  
- 				/* Can be a directive, type name or element
- 				 * name.  Find the end of the name.
-@@ -454,10 +454,9 @@ static void tokenise(char *buffer, char *end)
+ 	for (i = 0; i < count; i++) {
+ 		unsigned int j;
+-		DEF_FIELD_ADDR(symval + i*id_size, pnp_card_device_id, devs);
++		devs_last = devs + i * id_size;
  
- 				tokens[tix++].token_type = TOKEN_TYPE_NAME;
- 				continue;
--			}
-+			} else if (isdigit(*p)) {
-+				/* Handle numbers */
+ 		for (j = 0; j < PNP_MAX_DEVICES; j++) {
+-			const char *id = (char *)(*devs)[j].id;
+-			int i2, j2;
++			const char *id = (char *)(*devs_last)[j].id;
++			int j2;
+ 			int dup = 0;
  
--			/* Handle numbers */
--			if (isdigit(*p)) {
- 				/* Find the end of the number */
- 				q = p + 1;
- 				while (q < nl && (isdigit(*q)))
+ 			if (!id[0])
+ 				break;
+ 
+ 			/* find duplicate, already added value */
+-			for (i2 = 0; i2 < i && !dup; i2++) {
+-				DEF_FIELD_ADDR(symval + i2*id_size, pnp_card_device_id, devs);
++			while ((devs_last -= id_size) >= devs) {
+ 
+ 				for (j2 = 0; j2 < PNP_MAX_DEVICES; j2++) {
+-					const char *id2 = (char *)(*devs)[j2].id;
++					const char *id2 =
++						(char *)(*devs_last)[j2].id;
+ 
+ 					if (!id2[0])
+ 						break;
 -- 
 2.19.1
 
