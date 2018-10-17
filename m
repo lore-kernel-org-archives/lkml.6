@@ -2,423 +2,157 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A69ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C5AECDE39
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF7152148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F103E2148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 17:41:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jkDhdYN4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF7152148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EHBzKqHo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F103E2148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbeJRBf6 (ORCPT
+        id S1727825AbeJRBiL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 21:35:58 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56086 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbeJRBf6 (ORCPT
+        Wed, 17 Oct 2018 21:38:11 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51343 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727095AbeJRBiL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 21:35:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=EvOXUUzqPeQaXtZXEXHSSOb+dfs/kflB13B4iED8uDk=; b=jkDhdYN4v/lBez9l1BQmGuW8O2
-        0EaNT2oi0+rSiKT47/etioQza7cWuMbLP5kK/gkPV/pfiLke0Yt40cCeTwbhzFK17B80pdgaXiSSQ
-        LW+mx5gyqWisM2vDt4lhtHDsHDBBKenxN6KFy8cBPdLkUBwwLt834w9cGre9p2LIxOUZnTucZSGwB
-        bV4Df4SIp7DOBHTWnP4cSmEO9tuQnxngvAVpoXjgLJKwC4LOmXAnrfEUuezhhq91TOaOjg8lFeycp
-        mBEiCFKF4AeSHfNaiPL3OWXgw0bh976qQvGdA3FuweRLpzQlewyp9qPqB8LtWGklhhD1Ll4zkpVhe
-        4pzb3W4w==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gCpmm-0003Hn-KL; Wed, 17 Oct 2018 17:39:09 +0000
-Subject: Re: [PATCH 3/3] crypto: qce: ice: Add support for Inline Crypto
- Engine
-To:     AnilKumar Chimata <anilc@codeaurora.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net
-Cc:     linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1539789476-6098-1-git-send-email-anilc@codeaurora.org>
- <1539789476-6098-4-git-send-email-anilc@codeaurora.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <48c7da0d-4e57-bc36-a683-94088b3b8319@infradead.org>
-Date:   Wed, 17 Oct 2018 10:39:07 -0700
+        Wed, 17 Oct 2018 21:38:11 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 143-v6so2833795wmf.1;
+        Wed, 17 Oct 2018 10:41:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=BaB1/ce/hClSK2KU+l/jGQZH5ku1viGcKGjClrGj5CU=;
+        b=EHBzKqHorV+fOacP9lG+jrNem57ALDL41SMD+xRiNEwYORjrTqhS5g3e/3hFOJpK95
+         9F3JHgRQyZjJJuc0hL2QFx/r19zjZJix2Ph58wdrX4l+O35KdaonDqoGAp2VdC0yUqhi
+         mtxaCXL3lGJ8oUf49Lrrw2w8fr6p+lM9YXqxBkZxfM/+okoskKCsnncGowLCqLH8GQiO
+         /lHb40e3EAu6Vcyjj7zwyqaN9QdZ/+LsNtUBS/JTYl/+t9L8iiiji+fawVF3GQoJhP0a
+         nwt8OvCOb7Em0b/DB/EOZl5aMdV+Oya7Q86wpD4N9JfU6mX5l22yy/Me4aQJ6TKeDPy2
+         3klg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=BaB1/ce/hClSK2KU+l/jGQZH5ku1viGcKGjClrGj5CU=;
+        b=b1g6Y4HChjdtqBT0hyP0ayuT47cBaSES6DpAvIKMbjcF2ejmVAsr2GG1JoWdJaKFXB
+         UTAzIW5povax2Eop+M/U3AoIWZQyzmmDWvbWil6hYAr7H6axaYPr60cxuYLnlgI12ZgX
+         vPlihJAiH8oZV6ibYES/z5yUvKafgZLmgfEgJbOQiAEKdwKZuNfp4F3HmZcpKnRhV7Es
+         wwm8VK338GM2CCO3016kRD9boPd5N4EzKh8Gb80hlElIAGAdZe+IpCq5JajQOAD/J3jI
+         Ws0NHkIPCfqZoXD1r2RNihklqXcxDt6ojeqqrS8E5RJSEAR7ZAQA999YdXN+AP5l9PwJ
+         BZGQ==
+X-Gm-Message-State: ABuFfoi2XHxQwVgsseENk636PGstQ1XvEyDcbFZIC+up4O1XIHbtaSux
+        zmJve3byP/oQLPDzg9ZR8ft1Awo4zhU=
+X-Google-Smtp-Source: ACcGV61d1Lxsc64pTbJsJHnWawv5T5KTK+8Ss+4mB21cPGBZNoqc23gAK+yI1DULeYdY54yvRDp5iw==
+X-Received: by 2002:a1c:ed07:: with SMTP id l7-v6mr3828490wmh.47.1539798085828;
+        Wed, 17 Oct 2018 10:41:25 -0700 (PDT)
+Received: from [172.16.8.139] (host-89-243-172-161.as13285.net. [89.243.172.161])
+        by smtp.gmail.com with ESMTPSA id z12-v6sm16357505wrv.46.2018.10.17.10.41.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 10:41:25 -0700 (PDT)
+Subject: Re: [PATCH 31/34] vfs: syscall: Add fspick() to select a superblock
+ for reconfiguration [ver #12]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>, linux-api@vger.kernel.org,
+        torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+References: <f6f2553e-f64d-9c26-4290-baf43e5f533b@gmail.com>
+ <19866.1539782101@warthog.procyon.org.uk>
+ <68a2107f-bf70-055b-86cf-1ba2ba9422bf@gmail.com>
+ <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
+ <153754766004.17872.9829232103614083565.stgit@warthog.procyon.org.uk>
+ <9b8bf436-65de-13b9-0002-0479d11c18ca@gmail.com>
+ <20181013061141.GR32577@ZenIV.linux.org.uk>
+ <28710.1539782412@warthog.procyon.org.uk>
+ <15867.1539791153@warthog.procyon.org.uk>
+From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Message-ID: <7b409325-9e23-aa5e-916f-cb362a6940aa@gmail.com>
+Date:   Wed, 17 Oct 2018 18:41:24 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1539789476-6098-4-git-send-email-anilc@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <15867.1539791153@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/18 8:17 AM, AnilKumar Chimata wrote:
-> This patch adds support for Inline Crypto Engine (ICE), which
-> is embedded into storage device/controller such as UFS/eMMC.
-> ICE is intended for high throughput cryptographic encryption
-> or decryption of storage data.
-> 
-> Signed-off-by: AnilKumar Chimata <anilc@codeaurora.org>
-> ---
->  Documentation/crypto/msm/ice.txt |  235 ++++++
->  drivers/crypto/Kconfig           |   10 +
->  drivers/crypto/qce/Makefile      |    1 +
->  drivers/crypto/qce/ice.c         | 1613 ++++++++++++++++++++++++++++++++++++++
->  drivers/crypto/qce/iceregs.h     |  159 ++++
->  include/crypto/ice.h             |   80 ++
->  6 files changed, 2098 insertions(+)
->  create mode 100644 Documentation/crypto/msm/ice.txt
->  create mode 100644 drivers/crypto/qce/ice.c
->  create mode 100644 drivers/crypto/qce/iceregs.h
->  create mode 100644 include/crypto/ice.h
-> 
-> diff --git a/Documentation/crypto/msm/ice.txt b/Documentation/crypto/msm/ice.txt
-> new file mode 100644
-> index 0000000..58f7081
-> --- /dev/null
-> +++ b/Documentation/crypto/msm/ice.txt
-> @@ -0,0 +1,235 @@
-> +Introduction:
-> +=============
-> +Storage encryption has been one of the most required feature from security
+On 17/10/2018 16:45, David Howells wrote:
+> Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
+>
+>> I agree.  I'm happy to see this is using the same check as do_remount().
+>>
+>>
+>> * change filesystem flags. dir should be a physical root of filesystem.
+>> * If you've mounted a non-root directory somewhere and want to do remount
+>> * on it - tough luck.
+>> */
+> Are you suggesting that it should only work at the ultimate root of a
+> superblock and not a bind mount somewhere within?
+>
+> That's tricky to make work for NFS because s_root is a dummy dentry.
+>
+> David
 
-                                                        features
 
-> +point of view. QTI based storage encryption solution uses general purpose
-> +crypto engine. While this kind of solution provide a decent amount of
+Retro-actively: I do not suggest that.
 
-                                              provides
+I tried to answer this question in my reply to Eric correcting me.  Eric 
+was right to correct me.  I now understand the comment above 
+do_remount() is incorrect.  I re-reviewed your diff in light of that.  I 
+re-endorse your diff as a way to solve the problem I raised.
 
-> +performance, it falls short as storage speed is improving significantly
-> +continuously. To overcome performance degradation, newer chips are going to
-> +have Inline Crypto Engine (ICE) embedded into storage device. ICE is supposed
-> +to meet the line speed of storage devices.
-> +
-> +Hardware Description
-> +====================
-> +ICE is a HW block that is embedded into storage device such as UFS/eMMC. By
+(I think it would be useful to remove the misleading comment above 
+do_remount(), to avoid future confusion.)
 
-s/HW/hardware/                                     devices
+ > @@ -186,6 +186,10 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char 
+__user *, path, unsigned int, flags
 
-> +default, ICE works in bypass mode i.e. ICE HW does not perform any crypto
-> +operation on data to be processed by storage device. If required, ICE can be
-> +configured to perform crypto operation in one direction (i.e. either encryption
-> +or decryption) or in both direction(both encryption & decryption).
-
-                             directions (both ...
-
-> +
-> +When a switch between the operation modes(plain to crypto or crypto to plain)
-
-                                       modes (plain ...
-
-> +is desired for a particular partition, SW must complete all transactions for
-
-s/SW/software/
-
-> +that particular partition before switching the crypto mode i.e. no crypto, one
-
-                                                  crypto mode;
-
-> +direction crypto or both direction crypto operation. Requests for other
-
-                            directions
-
-> +partitions are not impacted due to crypto mode switch.
-> +
-> +ICE HW currently supports AES128/256 bit ECB & XTS mode encryption algorithms.
-> +
-> +Keys for crypto operations are loaded from SW. Keys are stored in a lookup
-> +table(LUT) located inside ICE HW. Maximum of 32 keys can be loaded in ICE key
-> +LUT. A Key inside the LUT can be referred using a key index.
-
-                                    referred to using
-
-> +
-> +SW Description
-> +==============
-> +ICE HW has categorized ICE registers in 2 groups: those which can be accessed by
-> +only secure side i.e. TZ and those which can be accessed by non-secure side such
-
-at least tell the reader what TZ and HLOS mean...
-
-> +as HLOS as well. This requires that ICE driver to be split in two pieces: one
-
-                                  that the ICE driver be split into two pieces: one
-
-> +running from TZ space and another from HLOS space.
-> +
-> +ICE driver from TZ would configure keys as requested by HLOS side.
-> +
-> +ICE driver on HLOS side is responsible for initialization of ICE HW.
-> +
-> +SW Architecture Diagram
-> +=======================
-> +Following are all the components involved in the ICE driver for control path:
-> +
-> ++++++++++++++++++++++++++++++++++++++++++
-> ++               App layer               +
-> ++++++++++++++++++++++++++++++++++++++++++
-> ++             System layer              +
-> ++   ++++++++         +++++++            +
-> ++   + VOLD +         + PFM +            +
-> ++   ++++++++         +++++++            +
-> ++         ||         ||                 +
-> ++         ||         ||                 +
-> ++         \/         \/                 +
-> ++     +++++++++++++++++++++++++++       +
-> ++     + LibQSEECom / cryptfs_hw +       +
-> ++     +++++++++++++++++++++++++++       +
-> ++++++++++++++++++++++++++++++++++++++++++
-> ++             Kernel                    +       +++++++++++++++++
-> ++                                       +       +     KMS       +
-> ++  +++++++  +++++++++++  +++++++++++    +       +++++++++++++++++
-> ++  + ICE +  + Storage +  + QSEECom +    +       +   ICE Driver  +
-> ++++++++++++++++++++++++++++++++++++++++++ <===> +++++++++++++++++
-> +               ||                                    ||
-> +               ||                                    ||
-> +               \/                                    \/
-> ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> ++                      Storage Device                           +
-> ++                      ++++++++++++++                           +
-> ++                      +   ICE HW   +                           +
-> ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> +
-> +Use Cases:
-> +----------
-> +a) Device bootup
-> +ICE HW is detected during bootup time and corresponding probe function is
-> +called. ICE driver parses its data from device tree node. ICE HW and storage
-> +HW are tightly coupled. Storage device probing is dependent upon ICE device
-> +probing. ICE driver configures all the required registers to put the ICE HW
-> +in bypass mode.
-> +
-> +b) Configuring keys
-> +Currently, there are couple of use cases to configure the keys.
-> +
-> +1) Full Disk Encryption(FDE)
-> +System layer(VOLD) at invocation of apps layer would call libqseecom to create
-> +the encryption key. Libqseecom calls qseecom driver to communicate with KMS
-> +module on the secure side i.e. TZ. KMS would call ICE driver on the TZ side to
-> +create and set the keys in ICE HW. At the end of transaction, VOLD would have
-> +key index of key LUT where encryption key is present.
-> +
-> +2) Per File Encryption (PFE)
-> +Per File Manager(PFM) calls QSEECom api to create the key. PFM has a peer comp-
-
-Preferably don't split (hyphenate) "component."  But if you must, it should be com-
-ponent.
-
-> +onent(PFT) at kernel layer which gets the corresponding key index from PFM.
-> +
-> +Following are all the components involved in the ICE driver for data path:
-> +
-> +       +++++++++++++++++++++++++++++++++++++++++
-> +       +               App layer               +
-> +       +++++++++++++++++++++++++++++++++++++++++
-> +       +              VFS                      +
-> +       +---------------------------------------+
-> +       +         File System (EXT4)            +
-> +       +---------------------------------------+
-> +       +             Block Layer               +
-> +       + --------------------------------------+
-> +       +                              +++++++  +
-> +       +              dm-req-crypt => + PFT +  +
-> +       +                              +++++++  +
-> +       +                                       +
-> +       +---------------------------------------+
-> +       +    +++++++++++           +++++++      +
-> +       +    + Storage +           + ICE +      +
-> +       +++++++++++++++++++++++++++++++++++++++++
-> +       +                  ||                   +
-> +       +                  || (Storage Req with +
-> +       +                  \/  ICE parameters ) +
-> +       +++++++++++++++++++++++++++++++++++++++++
-> +       +          Storage Device               +
-> +       +          ++++++++++++++               +
-> +       +          +   ICE HW   +               +
-> +       +++++++++++++++++++++++++++++++++++++++++
-> +
-> +c) Data transaction
-> +Once the crypto key has been configured, VOLD/PFM creates device mapping for
-> +data partition. As part of device mapping VOLD passes key index, crypto
-> +algorithm, mode and key length to dm layer. In case of PFE, keys are provided
-> +by PFT as and when request is processed by dm-req-crypt. When any application
-> +needs to read/write data, it would go through DM layer which would add crypto
-> +information, provided by VOLD/PFT, to Request. For each Request, Storage driver
-> +would ask ICE driver to configure crypto part of request. ICE driver extracts
-> +crypto data from Request structure and provide it to storage driver which would
-
-                                          provides
-
-> +finally dispatch request to storage device.
-> +
-> +d) Error Handling
-> +Due to issue # 1 mentioned in "Known Issues", ICE driver does not register for
-> +any interrupt. However, it enables sources of interrupt for ICE HW. After each
-> +data transaction, Storage driver receives transaction completion event. As part
-> +of event handling, storage driver calls  ICE driver to check if any of ICE
-> +interrupt status is set. If yes, storage driver returns error to upper layer.
-> +
-> +Error handling would be changed in future chips.
-> +
-> +Interfaces
-> +==========
-> +ICE driver exposes interfaces for storage driver to :
-
-                                                    to:
-
-> +1. Get the global instance of ICE driver
-> +2. Get the implemented interfaces of the particular ice instance
-> +3. Initialize the ICE HW
-> +4. Reset the ICE HW
-> +5. Resume/Suspend the ICE HW
-> +6. Get the Crypto configuration for the data request for storage
-> +7. Check if current data transaction has generated any interrupt
-> +
-> +Driver Parameters
-> +=================
-> +This driver is built and statically linked into the kernel; therefore,
-> +there are no module parameters supported by this driver.
-> +
-> +There are no kernel command line parameters supported by this driver.
-> +
-> +Power Management
-> +================
-> +ICE driver does not do power management on its own as it is part of storage
-> +hardware. Whenever storage driver receives request for power collapse/suspend
-> +resume, it would call ICE driver which exposes APIs for Storage HW. ICE HW
-> +during power collapse or reset, wipes crypto configuration data. When ICE
-
-                                 ^no comma
-
-> +driver receives request to resume, it would ask ICE driver on TZ side to
-> +restore the configuration. ICE driver does not do anything as part of power
-> +collapse or suspend event.
-> +
-> +Interface:
-> +==========
-> +ICE driver exposes following APIs for storage driver to use:
-> +
-> +int (*init)(struct platform_device *, void *, ice_success_cb, ice_error_cb);
-> +	-- This function is invoked by storage controller during initialization of
-> +	storage controller. Storage controller would provide success and error call
-> +	backs which would be invoked asynchronously once ICE HW init is done.
-> +
-> +int (*reset)(struct platform_device *);
-> +	-- ICE HW reset as part of storage controller reset. When storage controller
-> +	received reset command, it would call reset on ICE HW. As of now, ICE HW
-> +	does not need to do anything as part of reset.
-> +
-> +int (*resume)(struct platform_device *);
-> +	-- ICE HW while going to reset, wipes all crypto keys and other data from ICE
-
-                                      ^no comma
-
-> +	HW. ICE driver would reconfigure those data as part of resume operation.
-> +
-> +int (*suspend)(struct platform_device *);
-> +	-- This API would be called by storage driver when storage device is going to
-> +	suspend mode. As of today, ICE driver does not do anything to handle suspend.
-> +
-> +int (*config)(struct platform_device *, struct request* , struct ice_data_setting*);
-> +	-- Storage driver would call this interface to get all crypto data required to
-> +	perform crypto operation.
-> +
-> +int (*status)(struct platform_device *);
-> +	-- Storage driver would call this interface to check if previous data transfer
-> +	generated any error.
-> +
-> +Config options
-> +==============
-> +This driver is enabled by the kernel config option CONFIG_CRYPTO_DEV_MSM_ICE.
-> +
-> +Dependencies
-> +============
-> +ICE driver depends upon corresponding ICE driver on TZ side to function
-> +appropriately.
-> +
-> +Known Issues
-> +============
-> +1. ICE HW emits 0s even if it has generated an interrupt
-
-That statement is unclear.  Emits where?  in a data stream?  in interrupt status?
-
-> +This issue has significant impact on how ICE interrupts are handled. Currently,
-> +ICE driver does not register for any of the ICE interrupts but enables the
-> +sources of interrupt. Once storage driver asks to check the status of interrupt,
-> +it reads and clears the clear status and provide read status to storage driver.
-
-               "clears the clear status"???         s/provide/provides/
-
-> +This mechanism though not optimal but prevents file-system corruption.
-
-mangled sentence above.
-
-> +This issue has been fixed in newer chips.
-> +
-> +2. ICE HW wipes all crypto data during power collapse
-> +This issue necessitate that ICE driver on TZ side store the crypto material
-
-              necessitates
-
-> +which is not required in the case of general purpose crypto engine.
-> +This issue has been fixed in newer chips.
-> +
-> +Further Improvements
-> +====================
-> +Currently, Due to PFE use case, ICE driver is dependent upon dm-req-crypt to
-
-              due
-
-> +provide the keys as part of request structure. This couples ICE driver with
-> +dm-req-crypt based solution. It is under discussion to expose an IOCTL based
-
-                                                       to expose IOCTL based
-
-> +and registration based interface APIs from ICE driver. ICE driver would use
-> +these two interfaces to find out if any key exists for current request. If
-> +yes, choose the right key index received from IOCTL or registration based
-> +APIs. If not, dont set any crypto parameter in the request.
-
-                 don't
-
-> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-> index a8c4ce0..e40750e 100644
-> --- a/drivers/crypto/Kconfig
-> +++ b/drivers/crypto/Kconfig
-> @@ -596,6 +596,16 @@ config CRYPTO_DEV_QCOM_RNG
->  	  To compile this driver as a module, choose M here. The
->            module will be called qcom-rng. If unsure, say N.
+>  	if (ret < 0)
+>  		goto err;
 >  
-> +config CRYPTO_DEV_QTI_ICE
-> +	tristate "Qualcomm inline crypto engine accelerator"
-> +	default n
-
-Please drop the redundant "default n" since n is already the default.
-
-> +	depends on (ARCH_QCOM || COMPILE_TEST) && BLK_DEV_DM
-> +	help
-> +	  This driver supports Inline Crypto Engine for QTI chipsets, MSM8994
-> +	  and later, to accelerate crypto operations for storage needs.
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called ice.
+> +	ret = -EINVAL;
+> +	if (target.mnt->mnt_root != target.dentry)
+> +		goto err_path;
 > +
->  config CRYPTO_DEV_VMX
->  	bool "Support for VMX cryptographic acceleration instructions"
->  	depends on PPC64 && VSX
 
--- 
-~Randy
+( the "if" statement it adds to fspick() is equivalent to the second 
+"if" statement in do_remount(): )
+
+static  int  do_remount <https://elixir.bootlin.com/linux/v4.18/ident/do_remount>(struct  path <https://elixir.bootlin.com/linux/v4.18/ident/path>  *path <https://elixir.bootlin.com/linux/v4.18/ident/path>,  int  ms_flags,  int  sb_flags,
+		int  mnt_flags,  void  *data)
+{
+	int  err;
+	struct  super_block <https://elixir.bootlin.com/linux/v4.18/ident/super_block>  *sb  =  path <https://elixir.bootlin.com/linux/v4.18/ident/path>->mnt 
+<https://elixir.bootlin.com/linux/v4.18/ident/mnt>->mnt_sb;
+	struct  mount <https://elixir.bootlin.com/linux/v4.18/ident/mount>  *mnt <https://elixir.bootlin.com/linux/v4.18/ident/mnt>  =  real_mount 
+<https://elixir.bootlin.com/linux/v4.18/ident/real_mount>(path 
+<https://elixir.bootlin.com/linux/v4.18/ident/path>->mnt 
+<https://elixir.bootlin.com/linux/v4.18/ident/mnt>);
+
+	if  (!check_mnt <https://elixir.bootlin.com/linux/v4.18/ident/check_mnt>(mnt 
+<https://elixir.bootlin.com/linux/v4.18/ident/mnt>))
+		return  -EINVAL <https://elixir.bootlin.com/linux/v4.18/ident/EINVAL>;
+
+	if  (path <https://elixir.bootlin.com/linux/v4.18/ident/path>->dentry  !=  path <https://elixir.bootlin.com/linux/v4.18/ident/path>->mnt 
+<https://elixir.bootlin.com/linux/v4.18/ident/mnt>->mnt_root)
+		return  -EINVAL <https://elixir.bootlin.com/linux/v4.18/ident/EINVAL>;
+
+Thanks
+
+Alan
+
