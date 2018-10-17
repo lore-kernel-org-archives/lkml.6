@@ -2,102 +2,134 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4127CECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 430B5ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:41:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F25F12150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:40:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRLLyrMS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F25F12150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1426421523
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 13:41:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1426421523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbeJQVgl (ORCPT
+        id S1727431AbeJQVg7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 17:36:41 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35477 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbeJQVgl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 17:36:41 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 32-v6so1383060pgu.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 06:40:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=+HPXULssA1ETXhgVOaq0s/IubK54frOSNrsZ6GVnq2A=;
-        b=VRLLyrMSQgGZvfej1UT9pzfFgcD68zGsohjfYRj6V1AdWrnoSq91PVyB40Ko6H7Xo6
-         wKMczcpzSTymMoFtd9ffa8E/Y1C7OyKWFiSBLZ+zheIYhBe8Bkcg57mpEWfXp6D6Jpe7
-         xWH02HUbbKp4EtusdOw2by4mFJMzUZDCFGFHp2EsbLKiB+kkaRO8eDwAj9z2Jfv61rV+
-         /ADKnGVl/27f3IRxVkzxCGfH+fqVFV/0QCH8vzZtxtg//9nOlLqxhWJOQ7t2EWIZE//A
-         fcsI3LytQT3QPO7oPcJR8yCk0KzPEMwqW2s7qzy8eRkCEdS5682hQeT+qsVfQ1sSDNtZ
-         Xdkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+HPXULssA1ETXhgVOaq0s/IubK54frOSNrsZ6GVnq2A=;
-        b=nYgp+y9nNmLZqiHyLIolb34KeRMM6Z2uWv3BL6X0opxPqf2Vu2uMCOG/6fe0YfZTYF
-         t8lfSnMN6IKZCqg0g43xL5I0B+Pp3OdDM2wccle4RsjnPGV0fjYCRdor9rP+lN/g5k0+
-         dkIyUb5Hm8JzBiqLcIvBNbbMtLzmnF2xzeCgchvl7ZJOjuExv0itZ4Zw9LQFlAyk4nMF
-         rZWmuDpKfJTZbxrOQqlesM7Hl4+g0jyWt7g42ydV1ApYA5BQgF6vtju0KKvMil+nTrsY
-         06VwR29JS6UAsyKFdVItkVn8tVOjf2aYVXDx75ZqylxQfDWXhPPoM4TRgtA06PsMMboL
-         P2nA==
-X-Gm-Message-State: ABuFfogTvMiKTjuiGsKKA5ktEP41RT8uOVa+1nsIrUZsfbZdHwp89Eji
-        h8pmjz/e2ev09FI323SFlu0=
-X-Google-Smtp-Source: ACcGV62iCtnOEnghBE5ZztdYslKNFIrQl3dNINno9Vn82U9tTaYCjci9e69JcWKp14jDc4nxqv81Lw==
-X-Received: by 2002:a62:384c:: with SMTP id f73-v6mr26533406pfa.242.1539783655883;
-        Wed, 17 Oct 2018 06:40:55 -0700 (PDT)
-Received: from vultr.guest ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
-        by smtp.gmail.com with ESMTPSA id 187-v6sm27236216pfu.129.2018.10.17.06.40.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 06:40:55 -0700 (PDT)
-From:   Du Changbin <changbin.du@gmail.com>
-To:     jan.kiszka@siemens.com, kbingham@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Du Changbin <changbin.du@gmail.com>
-Subject: [PATCH v2] scripts/gdb: fix lx-version for gdb 7.3-
-Date:   Wed, 17 Oct 2018 13:40:51 +0000
-Message-Id: <20181017134051.3934-1-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 17 Oct 2018 17:36:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51778 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726727AbeJQVg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 17:36:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5B3280D;
+        Wed, 17 Oct 2018 06:41:13 -0700 (PDT)
+Received: from arrakis.emea.arm.com (unknown [10.1.196.80])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D45F3F5D3;
+        Wed, 17 Oct 2018 06:41:11 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 14:41:09 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Prateek Patel <prpatel@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-tegra@vger.kernel.org, snikam@nvidia.com, vdumpa@nvidia.com,
+        talho@nvidia.com, swarren@nvidia.com,
+        Sri Krishna chowdary <schowdary@nvidia.com>
+Subject: Re: [PATCH] kmemleak: Add config to select auto scan
+Message-ID: <20181017134109.GA223677@arrakis.emea.arm.com>
+References: <1539763408-22085-1-git-send-email-prpatel@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539763408-22085-1-git-send-email-prpatel@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For gdb version less than 7.3, lx-version only prints one character.
-(gdb) lx-version
-L(gdb)
+On Wed, Oct 17, 2018 at 01:33:28PM +0530, Prateek Patel wrote:
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index e5e7c03..9542852 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -593,6 +593,17 @@ config DEBUG_KMEMLEAK_DEFAULT_OFF
+>  	  Say Y here to disable kmemleak by default. It can then be enabled
+>  	  on the command line via kmemleak=on.
+>  
+> +config DEBUG_KMEMLEAK_SCAN_ON
 
-This can be fixed by casting 'linux_banner' as (char *).
-(gdb) lx-version
-Linux version 4.19.0-rc1+ (changbin@acer) (gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #21 SMP Sat Sep 1 21:43:30 CST 2018
+Nitpick: DEBUG_KMEMLEAK_AUTO_SCAN may be a better name since you don't
+aim to disable scanning altogether.
 
-gdb 7.4 seems to be no such issue.
+> +	bool "Enable kmemleak auto scan thread on boot up"
+> +	default y
+> +	depends on DEBUG_KMEMLEAK
+> +	help
+> +	  Kmemleak scan is cpu intensive and can stall user tasks at times.
 
-Signed-off-by: Du Changbin <changbin.du@gmail.com>
----
- scripts/gdb/linux/proc.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I guess that depends on the CPU.
 
-diff --git a/scripts/gdb/linux/proc.py b/scripts/gdb/linux/proc.py
-index 086d27223c0c..0aebd7565b03 100644
---- a/scripts/gdb/linux/proc.py
-+++ b/scripts/gdb/linux/proc.py
-@@ -41,7 +41,7 @@ class LxVersion(gdb.Command):
- 
-     def invoke(self, arg, from_tty):
-         # linux_banner should contain a newline
--        gdb.write(gdb.parse_and_eval("linux_banner").string())
-+        gdb.write(gdb.parse_and_eval("(char *)linux_banner").string())
- 
- LxVersion()
- 
+> +	  This option enables/disables automatic kmemleak scan at boot up.
+> +
+> +	  Say N here to disable kmemleak auto scan thread to stop automatic
+> +	  scanning.
+
+You should also mention that disabling this option also disables
+automatic reporting of memory leaks. And I'd add a "if unsure, say Y".
+
+> +
+>  config DEBUG_STACK_USAGE
+>  	bool "Stack utilization instrumentation"
+>  	depends on DEBUG_KERNEL && !IA64
+> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+> index 877de4f..ac53678 100644
+> --- a/mm/kmemleak.c
+> +++ b/mm/kmemleak.c
+> @@ -1647,11 +1647,14 @@ static void kmemleak_scan(void)
+>   */
+>  static int kmemleak_scan_thread(void *arg)
+>  {
+> +#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
+>  	static int first_run = 1;
+> +#endif
+
+	static int first_run = IS_ENABLED(CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN);
+
+>  
+>  	pr_info("Automatic memory scanning thread started\n");
+>  	set_user_nice(current, 10);
+>  
+> +#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
+>  	/*
+>  	 * Wait before the first scan to allow the system to fully initialize.
+>  	 */
+> @@ -1661,6 +1664,7 @@ static int kmemleak_scan_thread(void *arg)
+>  		while (timeout && !kthread_should_stop())
+>  			timeout = schedule_timeout_interruptible(timeout);
+>  	}
+> +#endif
+
+With the first_run change above, this #ifdef is no longer needed.
+
+>  
+>  	while (!kthread_should_stop()) {
+>  		signed long timeout = jiffies_scan_wait;
+> @@ -2141,9 +2145,11 @@ static int __init kmemleak_late_init(void)
+>  		return -ENOMEM;
+>  	}
+>  
+> +#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
+>  	mutex_lock(&scan_mutex);
+>  	start_scan_thread();
+>  	mutex_unlock(&scan_mutex);
+> +#endif
+
+Please use:
+
+	if (IS_ENABLED(CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN)) {
+		...
+	}
+
 -- 
-2.17.1
-
+Catalin
