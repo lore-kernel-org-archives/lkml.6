@@ -2,97 +2,201 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DBFECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C0EECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6490A205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:28:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6490A205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	by mail.kernel.org (Postfix) with ESMTP id 09A51205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 20:29:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="gQF6Cfbx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09A51205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727821AbeJREZm (ORCPT
+        id S1727883AbeJRE07 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 00:25:42 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43064 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbeJREZl (ORCPT
+        Thu, 18 Oct 2018 00:26:59 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40509 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbeJRE07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 00:25:41 -0400
-Received: by mail-oi1-f194.google.com with SMTP id s69-v6so22156632oie.10;
-        Wed, 17 Oct 2018 13:28:19 -0700 (PDT)
+        Thu, 18 Oct 2018 00:26:59 -0400
+Received: by mail-pl1-f195.google.com with SMTP id 1-v6so13223581plv.7
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 13:29:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FCQASoYRSaFzlH8fQN2IkGFzJDnxB4c3yZeFtDyQ6uA=;
+        b=gQF6CfbxT7dpq9qMO4/5h2rOPvSTIRIInP2kk+siMkC8QOg5c5kinUWfEPzzOcXAh9
+         xdoHyqV69ZALqv07+soF0Lzy28MM9rFbCCpf4CJKcNInmgQhfeIWojx2v+3cVPXqAHhf
+         3GPeuHEioN8QuZJ3Wod2YPINzCOX8gIGuj3c7cU8C77/QQIQedv1xvpTXIKKvFE2sZkW
+         XrXrxvqQa0uGNEDDj1+eltlM9AtXcsIE6p+NgYebPb44ZQU26XeaM3Ys7XJhJFW0rvLy
+         Ptr8dKXLpeflNRonHH/RubGK6FmZKGJ3s3IdUxmhWyM2YCOYFuqOR7CIJWHkxInrlneW
+         dOoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nEcdy7QEDbNlcX07BFBN89zLOirmmnq91X/i2VMyaL8=;
-        b=LBzmzB54J3c9Ulg9gv/o0GOVOyFrWdvy5AAoILkCJcfC+NlXWF6yCPLhYzYBVrpj5H
-         /bSn4KbIoycfCE0MYURngdi6vjt+ZwqCQOHrMH2IBg5I3UtUaVmbQ5dJ7M9KVfszMdNZ
-         wC9iTnoV8DRcWOwx9aeqRwKX9bm6fkff7h7+i0GpvP9pjjFBTv0vvc+kPlaoOmeSAvWZ
-         bmaP6zBeNobmx9duXVKKcSwSUrcKuZ66Wr4WePu1BqRdToA7EczemTc7NjhmtCHNEWUf
-         beuinU4ecTtURIh6SmGpGcHs8nlnqQkvXV+cOheqTxooHVUh8CDWjAlbXw1F4gCXsdFN
-         lDzw==
-X-Gm-Message-State: ABuFfojBwJ4Y3HttlKVEUMaARpatsZBMGPcuIHJ2PLF6N7HWvOEPkEUI
-        bXI+sqcsjwwbov9OHpKcBiUrBJguzzR+bicwoTs=
-X-Google-Smtp-Source: ACcGV63AaImc1z7tHmL0M6Msh6TSOdjWNVL1mke8ThowGM2MOldlYt/WOW24+5D3Tl4K3VZSolDd5sb68toPmLpKSvg=
-X-Received: by 2002:aca:ab8b:: with SMTP id u133-v6mr15347446oie.57.1539808099156;
- Wed, 17 Oct 2018 13:28:19 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FCQASoYRSaFzlH8fQN2IkGFzJDnxB4c3yZeFtDyQ6uA=;
+        b=OSpdZMgPB817z1o5qA2aMZvGxMCDX+cXHWvvZRLbYIy6GKLQljS/tnJbEIdwiIiseW
+         ow+Ic0xR4AWOTyVr0ca6CfwkHx7Mw47SD6XbB+7h3sKlWNsMrhYgf30D1R/RdJN/KRYL
+         QzHtqherQOFxZoBe7wXxVHlb3idrt1B6kNSyro7Ob0LCjiA9XNjwATvnpU9CxAdlN+u4
+         MypaqZbwtQEwN6zKaE5/gZSjJr4Cq0I4pT6pJWdrpMzOlvrabzSIzov7LL7HFfp/NH+k
+         bD24fN4maoZQ1XF6bBNabQIR4OBbszJ7fT531Kz/2a75bm+Xtc/W6208lknXJ0hDVuFh
+         yTlQ==
+X-Gm-Message-State: ABuFfogvbVr0GyYyWmsYXWo/GmnFWrC+bI8rMeKOil5cXHhM2G3/REG0
+        KQcpgAUq3UdQ8p0Z/qTvNxIvJg==
+X-Google-Smtp-Source: ACcGV61fhAxrZa9j28teOHkm2u6RSoGloLQmvEhcVJSuVXAcMVzN+xh3fJZTEzWasc3qMABnlmlQVg==
+X-Received: by 2002:a17:902:9047:: with SMTP id w7-v6mr27183566plz.4.1539808176278;
+        Wed, 17 Oct 2018 13:29:36 -0700 (PDT)
+Received: from cisco ([128.107.241.189])
+        by smtp.gmail.com with ESMTPSA id y7-v6sm20459392pfl.57.2018.10.17.13.29.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 13:29:35 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 14:29:33 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Jann Horn <jannh@google.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v7 1/6] seccomp: add a return code to trap to userspace
+Message-ID: <20181017202933.GB14047@cisco>
+References: <20180927151119.9989-1-tycho@tycho.ws>
+ <20180927151119.9989-2-tycho@tycho.ws>
+ <CAGXu5jJr3JWLYGrJ+knu3sj4wwJ_irVvs+JRrY5MuYT3voLegg@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180606193811.16007-1-malat@debian.org> <20180606193811.16007-2-malat@debian.org>
-In-Reply-To: <20180606193811.16007-2-malat@debian.org>
-From:   Mathieu Malaterre <malat@debian.org>
-Date:   Wed, 17 Oct 2018 22:28:08 +0200
-Message-ID: <CA+7wUswf1+3E12-qs0c0L7PjPWsndYo2oe_b=Gv5vXF0gd+Ttg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] MIPS: Ci20: Enable SND_JZ4740_SOC driver
-To:     James Hogan <jhogan@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        LKML <linux-kernel@vger.kernel.org>, alsa-devel@alsa-project.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJr3JWLYGrJ+knu3sj4wwJ_irVvs+JRrY5MuYT3voLegg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 9:38 PM Mathieu Malaterre <malat@debian.org> wrote:
->
-> Update the Ci20's defconfig to enable the JZ4780's SND driver.
->
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->  arch/mips/configs/ci20_defconfig | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
-> index e1c14f6af824..0c08c7675b42 100644
-> --- a/arch/mips/configs/ci20_defconfig
-> +++ b/arch/mips/configs/ci20_defconfig
-> @@ -104,6 +104,10 @@ CONFIG_REGULATOR=y
->  CONFIG_REGULATOR_DEBUG=y
->  CONFIG_REGULATOR_FIXED_VOLTAGE=y
->  # CONFIG_VGA_CONSOLE is not set
-> +CONFIG_SOUND=y
-> +CONFIG_SND=y
-> +CONFIG_SND_SOC=y
-> +CONFIG_SND_JZ4740_SOC=y
+On Thu, Sep 27, 2018 at 02:31:24PM -0700, Kees Cook wrote:
+> On Thu, Sep 27, 2018 at 8:11 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> > @@ -60,4 +62,29 @@ struct seccomp_data {
+> >         __u64 args[6];
+> >  };
+> >
+> > +struct seccomp_notif {
+> > +       __u16 len;
+> > +       __u64 id;
+> > +       __u32 pid;
+> > +       __u8 signaled;
+> > +       struct seccomp_data data;
+> > +};
+> > +
+> > +struct seccomp_notif_resp {
+> > +       __u16 len;
+> > +       __u64 id;
+> > +       __s32 error;
+> > +       __s64 val;
+> > +};
+> 
+> So, len has to come first, for versioning. However, since it's ahead
+> of a u64, this leaves a struct padding hole. pahole output:
+> 
+> struct seccomp_notif {
+>         __u16                      len;                  /*     0     2 */
+> 
+>         /* XXX 6 bytes hole, try to pack */
+> 
+>         __u64                      id;                   /*     8     8 */
+>         __u32                      pid;                  /*    16     4 */
+>         __u8                       signaled;             /*    20     1 */
+> 
+>         /* XXX 3 bytes hole, try to pack */
+> 
+>         struct seccomp_data        data;                 /*    24    64 */
+>         /* --- cacheline 1 boundary (64 bytes) was 24 bytes ago --- */
+> 
+>         /* size: 88, cachelines: 2, members: 5 */
+>         /* sum members: 79, holes: 2, sum holes: 9 */
+>         /* last cacheline: 24 bytes */
+> };
+> struct seccomp_notif_resp {
+>         __u16                      len;                  /*     0     2 */
+> 
+>         /* XXX 6 bytes hole, try to pack */
+> 
+>         __u64                      id;                   /*     8     8 */
+>         __s32                      error;                /*    16     4 */
+> 
+>         /* XXX 4 bytes hole, try to pack */
+> 
+>         __s64                      val;                  /*    24     8 */
+> 
+>         /* size: 32, cachelines: 1, members: 4 */
+>         /* sum members: 22, holes: 2, sum holes: 10 */
+>         /* last cacheline: 32 bytes */
+> };
+> 
+> How about making len u32, and moving pid and error above "id"? This
+> leaves a hole after signaled, so changing "len" won't be sufficient
+> for versioning here. Perhaps move it after data?
 
-technically I am also missing: CONFIG_SND_JZ4740_SOC_I2S=y
+Just to confirm my understanding; I've got these as:
 
->  # CONFIG_HID is not set
->  # CONFIG_USB_SUPPORT is not set
->  CONFIG_MMC=y
-> --
-> 2.11.0
->
+struct seccomp_notif {
+	__u32                      len;                  /*     0     4 */
+	__u32                      pid;                  /*     4     4 */
+	__u64                      id;                   /*     8     8 */
+	__u8                       signaled;             /*    16     1 */
+
+	/* XXX 7 bytes hole, try to pack */
+
+	struct seccomp_data        data;                 /*    24    64 */
+	/* --- cacheline 1 boundary (64 bytes) was 24 bytes ago --- */
+
+	/* size: 88, cachelines: 2, members: 5 */
+	/* sum members: 81, holes: 1, sum holes: 7 */
+	/* last cacheline: 24 bytes */
+};
+struct seccomp_notif_resp {
+	__u32                      len;                  /*     0     4 */
+	__s32                      error;                /*     4     4 */
+	__u64                      id;                   /*     8     8 */
+	__s64                      val;                  /*    16     8 */
+
+	/* size: 24, cachelines: 1, members: 4 */
+	/* last cacheline: 24 bytes */
+};
+
+in the next version. Since the structure has no padding at the end of
+it, I think the Right Thing will happen. Note that this is slightly
+different than what Kees suggested, if I add signaled after data, then
+I end up with:
+
+struct seccomp_notif {
+	__u32                      len;                  /*     0     4 */
+	__u32                      pid;                  /*     4     4 */
+	__u64                      id;                   /*     8     8 */
+	struct seccomp_data        data;                 /*    16    64 */
+	/* --- cacheline 1 boundary (64 bytes) was 16 bytes ago --- */
+	__u8                       signaled;             /*    80     1 */
+
+	/* size: 88, cachelines: 2, members: 5 */
+	/* padding: 7 */
+	/* last cacheline: 24 bytes */
+};
+
+which I think will have the versioning problem if the next member
+introduces is < 7 bytes.
+
+Tycho
