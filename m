@@ -7,67 +7,65 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3337ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A5EECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80AEB21470
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:34:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1F9321473
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:34:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="NjdT4doq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80AEB21470
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="WhyZKqL5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F9321473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbeJRGbe (ORCPT
+        id S1727518AbeJRGb3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 02:31:34 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35678 "EHLO
+        Thu, 18 Oct 2018 02:31:29 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40094 "EHLO
         mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727245AbeJRGbd (ORCPT
+        with ESMTP id S1726644AbeJRGb3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 02:31:33 -0400
-Received: by mail-ed1-f65.google.com with SMTP id y19-v6so26409453edd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:33:44 -0700 (PDT)
+        Thu, 18 Oct 2018 02:31:29 -0400
+Received: by mail-ed1-f65.google.com with SMTP id r1-v6so26424475edd.7
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 15:33:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=omqU9a54n/sTLmAr8r2fMZvXfZnMhL7iqECIfHXLtPw=;
-        b=NjdT4doq+PKHcf7Ur/fRhuE9CqE8KCWbKReFKXjxgMUS0QYh7f84hGmPmsY6UlpemQ
-         YuvD2NPHyu4ceMI1Wkz/ztDt/JFF+nAvbJUBEew8AlVY3owar8vRXoC1QyxPkuLl6cuJ
-         pKA+DYl4FM6hmbe1p/sMKm7Yyiwonq0YDQvok=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AundlnETdPac4xvhDRjsgdvex9/IrvteaWUKjQaagI8=;
+        b=WhyZKqL5GSkwgjXT/n6/DYhgKBRBrTBSYx451s9YR1lOCkYjDX/c3sGtACdYVlc4iV
+         YNbbS9rMX4xKykZiUGmJDFvIIA9fF8c8ZrnlwkaM//Gt6FnN/6satXyKQxwquEixn0og
+         nX5DZhc7tEy9VJuoH7H8G1QnEsIkTF7pIsZ7A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=omqU9a54n/sTLmAr8r2fMZvXfZnMhL7iqECIfHXLtPw=;
-        b=k5MeZlW35wPU6xBQQvG8GeJULodRgv0QRrBTgDsEIrtO+oAKslMxY1M707sV0IkFpX
-         GD+DkdDYVaboNGk1pAu/unAFXxP9oqbOiBpqzknLrVArOd8oglvmaXlNmOkG+1/KxFCz
-         +mT61J+a0tn+DCDS1BDwnWd8IaPOBjY3k9feNufv7xqUWcFLoeTqz3j5/taY/oD+rOk9
-         dL6/FOE6JfEmFPY0qszmU1vC1WJkdUhwdYF1r5+BwWXd2eKI6z4jMEiqYMa2pXsAWhO4
-         sNCVgqG1O2mIh80rfxNZO7D6qfKEr5nqMadlSul+tTL8wIM8CoLYPFFjvwj5CK9GxaI9
-         HyAQ==
-X-Gm-Message-State: ABuFfohgaa1FNt7XnkSEwiOCsQg9kxz/C6PYAUSWQWg0tDby5/sHPDoS
-        Uwuo9yB613FrLevo1pJ231eZ5Od3BIQ=
-X-Google-Smtp-Source: ACcGV61DEDS3IFjW0vnK9OptbJldGU8BmwJoXQ36NrAxvKwqlzATkwu19GAgmeBrHocgcJ8kKHRGYA==
-X-Received: by 2002:a05:6402:2c9:: with SMTP id b9mr1772339edx.149.1539815623589;
-        Wed, 17 Oct 2018 15:33:43 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AundlnETdPac4xvhDRjsgdvex9/IrvteaWUKjQaagI8=;
+        b=sq3bcilHhdJjtr+zcXc138cIjJOOYEQ31eR6trsY/7MyuK+I7r2oUBuxVLCTy1IhMJ
+         5GQ/RzuSHJ0p7vIFmE3E9YvQ+IOaeAnYM5wLJ1XLBrvFZj7JWYVH9qa4kRkch9wsD3Fl
+         I88AZmfseF+cVazfrDTVtPIPcyuQFsNK1zVukqrfjowUAz3Josbv2Z11SNUqTAlaRI9t
+         KmyKkbL9ka99G8yTme1U8JVRmLsuKtfi4Njf1aHxiYU20JAw5yCHT1ZQih0h7eBCVbgS
+         tQV14C7ubO0igWRhuF2S9Ia4rvWSTdmDJMEJ669VQfHI98e6NKdrLcn3EQKbu4fnzrkY
+         a+qw==
+X-Gm-Message-State: ABuFfoggYKiMDQESOyCnbLdBalwEnK+smwcYZ/ejJhCzCXINCS0gplL6
+        nKo3s3n8cBl9E6SPU5rO2D72JT66/ms=
+X-Google-Smtp-Source: ACcGV62+HUziUWgOSdlfYrLsVeBArDmWkH2BE7xrWET/27TShlfutY2aqJLjXsRvDJDiY61CSeN9JA==
+X-Received: by 2002:a50:94d2:: with SMTP id t18-v6mr1781442eda.86.1539815619711;
+        Wed, 17 Oct 2018 15:33:39 -0700 (PDT)
 Received: from prevas-ravi.waoo.dk (dhcp-5-186-114-252.cgn.ip.fibianet.dk. [5.186.114.252])
-        by smtp.gmail.com with ESMTPSA id e30-v6sm7001555edd.25.2018.10.17.15.33.42
+        by smtp.gmail.com with ESMTPSA id e30-v6sm7001555edd.25.2018.10.17.15.33.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 17 Oct 2018 15:33:43 -0700 (PDT)
+        Wed, 17 Oct 2018 15:33:39 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
         Ingo Molnar <mingo@kernel.org>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [POC 05/12] x86-64: initial ro-after-init patching support
-Date:   Thu, 18 Oct 2018 00:33:25 +0200
-Message-Id: <20181017223332.11964-5-linux@rasmusvillemoes.dk>
+Subject: [POC 01/12] Accessing __ro_after_init variables as immediates
+Date:   Thu, 18 Oct 2018 00:33:21 +0200
+Message-Id: <20181017223332.11964-1-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.19.1.6.gbde171bbf5
-In-Reply-To: <20181017223332.11964-1-linux@rasmusvillemoes.dk>
-References: <20181017223332.11964-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,155 +73,172 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This just sets things up so that the ARCH_HAS_RAI symbol gets selected,
-and prepare the arch-specific headers and support functions.
+[This is on top of 58d20fcbd005 "Merge branch 'x86/grub2'" from the -tip
+tree, to have the macros.S mechanism available].
+
+One can replace various uses of variables that are initialized at init
+and then never changed, so that the code never actually loads the
+variable from memory. Instead, the value of the variable gets encoded as
+an immediate operand. For example, many code paths do something like
+
+  p = kmem_cache_alloc(foo_cachep, GFP_KERNEL)
+
+where foo_cachep is some global variable that is set in an init
+function. The theory is that one can avoid the cost of a D$ miss by
+having the cpu load the value of foo_cachep directly into %rdi from the
+instruction stream. There's no way around the I$ cost of running a piece
+of code.
+
+For system hash tables there are typically two __ro_after_init variables
+in play, the base and either a shift (e.g. dcache) or a
+mask (e.g. futex). In both cases, one can implement the entire
+computation of the relevant hash bucket using just the hash value as
+input.
+
+For now, this just aims at giving a POC implementation of the above
+access patterns for x86-64, but one can rather easily identify other
+patterns one might want to support. For example, pgdir_shift could give
+rise to implementing rai_shl() and rai_shr(), and rai_and() is also an
+obvious candidate.
+
+Going a bit further, and no longer restricting to __ro_after_init
+variables, one can imagine implementing rai_gt(), rai_leq() etc. via asm
+goto, to allow comparisons to sysctl limits. But while that might be
+able to reuse some of this infrastructure, one would need some way to
+trigger (another) .text update from the sysctl handler.
+
+I'm not enforcing that referenced variables are actually
+__ro_after_init, partly because many of the obvious subjects are merely
+__read_mostly, partly to be able to change some test variables
+deliberately and see that the rai_load still returns the initial value.
+
+The prefix rai_ is probably awful, but seemed to be an available
+three-letter acronym. Suggestions for better naming are much welcome.
+
+Implementation-wise, each access to a rai variable that should be
+patched shortly after init needs to be annotated using one of the rai_*
+macros. Doing anything more automatic would likely require a gcc plugin,
+and I'm not sure all read accesses to rai variables from non-init code
+should necessarily be patched. I'd really like kmalloc(128, GFP_KERNEL)
+to do a rai_load() of the appropriate kmalloc cache, but it's likely one runs
+into some __builtin_constant_p trouble.
+
+At each such access, we create four pieces of data: A template with the
+right instructions for patching in, but with dummy immediates; a thunk
+which may be slow and stupid, but which computes the correct result
+until patching is done (and which is also used as an int3 handler), and
+which is careful not to clobber any registers; a short piece of .text
+that simply jumps to the thunk, plus nops to make room for the full
+template; and finally a struct describing the type of access, the
+variables involved and where to find the template, thunk and instruction
+to be patched. I'm sure some of this metadata can eventually be
+discarded with __initdata, but for now I'm just keeping it simple. It's
+not a big deal when there's only a handful of core users, but if the
+kmalloc() thing gets implemented, we're going to have lots more
+rai_entry's.
+
+I have no idea how to benchmark this, or if it is worth it at all. Any
+micro-benchmark would probably just keep the variable in L1 cache, but
+if one accesses the variable sufficiently rarely that it's no longer in
+L1, that extra cache miss is hardly noticable.
+
+Comments? Flames?
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- arch/x86/Kconfig           |  1 +
- arch/x86/include/asm/rai.S | 18 ++++++++++++++++++
- arch/x86/include/asm/rai.h | 25 ++++++++++++++++++++++++
- arch/x86/kernel/Makefile   |  1 +
- arch/x86/kernel/macros.S   |  1 +
- arch/x86/kernel/rai.c      | 39 ++++++++++++++++++++++++++++++++++++++
- 6 files changed, 85 insertions(+)
- create mode 100644 arch/x86/include/asm/rai.S
- create mode 100644 arch/x86/include/asm/rai.h
- create mode 100644 arch/x86/kernel/rai.c
+ include/linux/rai.h | 83 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 include/linux/rai.h
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 5136a1281870..3f1679f258c9 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -62,6 +62,7 @@ config X86
- 	select ARCH_HAS_MEMBARRIER_SYNC_CORE
- 	select ARCH_HAS_PMEM_API		if X86_64
- 	select ARCH_HAS_PTE_SPECIAL
-+	select ARCH_HAS_RAI			if X86_64
- 	select ARCH_HAS_REFCOUNT
- 	select ARCH_HAS_UACCESS_FLUSHCACHE	if X86_64
- 	select ARCH_HAS_UACCESS_MCSAFE		if X86_64 && X86_MCE
-diff --git a/arch/x86/include/asm/rai.S b/arch/x86/include/asm/rai.S
+diff --git a/include/linux/rai.h b/include/linux/rai.h
 new file mode 100644
-index 000000000000..253d27453416
+index 000000000000..e839454000ee
 --- /dev/null
-+++ b/arch/x86/include/asm/rai.S
-@@ -0,0 +1,18 @@
-+#ifdef __ASSEMBLY__
++++ b/include/linux/rai.h
+@@ -0,0 +1,83 @@
++#ifndef _LINUX_RAI_H
++#define _LINUX_RAI_H
 +
-+.macro rai_entry type instr instr_end templ templ_end thunk
-+	.long \type
-+	.long \instr - .
-+	.long \instr_end - \instr
-+	.long \templ - .
-+	.long \templ_end - \templ
-+	.long \thunk - .
-+.endm
-+	
-+.macro rai_entry_pad start end
-+	.ifgt STRUCT_RAI_ENTRY_SIZE-(\end-\start)
-+	.skip STRUCT_RAI_ENTRY_SIZE-(\end-\start), 0x00
-+	.endif
-+.endm
++/*
++ * These document the behaviour any arch implementation of _rai_*
++ * should have, and can be used by those in cases the arch does not
++ * want to handle (e.g. _rai_load of a 2-byte quantity).
++ */
++#define _rai_load_fallback(var)                       (var)
++#define _rai_bucket_shift_fallback(base, shift, hash) (&(base)[(hash) >> (shift)])
++#define _rai_bucket_mask_fallback(base, mask, hash)   (&(base)[(hash) & (mask)])
 +
-+#endif
-diff --git a/arch/x86/include/asm/rai.h b/arch/x86/include/asm/rai.h
-new file mode 100644
-index 000000000000..269d696255b0
---- /dev/null
-+++ b/arch/x86/include/asm/rai.h
-@@ -0,0 +1,25 @@
-+#ifndef _ASM_X86_RAI_H
-+#define _ASM_X86_RAI_H
-+
-+#define STRUCT_RAI_ENTRY_SIZE 24
-+
-+/* Put the asm macros in a separate file for easier editing. */
-+#include <asm/rai.S>
-+
-+#ifndef __ASSEMBLY__
-+
-+struct rai_entry {
-+	int type;         /* RAI_xxx constant */
-+	s32 instr_offset; /* member-relative offset to instructions-to-be-patched */
-+	s32 instr_len;    /* size of area, >= templ_len */
-+	s32 templ_offset; /* member-relative offset to template */
-+	s32 templ_len;    /* length of template */
-+	s32 thunk_offset; /* member-relative offset to ool thunk */
-+	/* type-specific data follows */
-+};
-+_Static_assert(sizeof(struct rai_entry) == STRUCT_RAI_ENTRY_SIZE,
-+	       "please update STRUCT_RAI_ENTRY_SIZE");
-+
-+#endif /* !__ASSEMBLY */
-+
-+#endif /* _ASM_X86_RAI_H */
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 8824d01c0c35..b4dea4e72081 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -58,6 +58,7 @@ obj-$(CONFIG_SYSFS)	+= ksysfs.o
- obj-y			+= bootflag.o e820.o
- obj-y			+= pci-dma.o quirks.o topology.o kdebugfs.o
- obj-y			+= alternative.o i8253.o hw_breakpoint.o
-+obj-$(CONFIG_ARCH_HAS_RAI)	+= rai.o
- obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
- obj-y			+= pci-iommu_table.o
- obj-y			+= resource.o
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index 161c95059044..af5672a302d4 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -14,3 +14,4 @@
- #include <asm/asm.h>
- #include <asm/cpufeature.h>
- #include <asm/jump_label.h>
++#ifdef CONFIG_ARCH_HAS_RAI
 +#include <asm/rai.h>
-diff --git a/arch/x86/kernel/rai.c b/arch/x86/kernel/rai.c
-new file mode 100644
-index 000000000000..2c6ff06f7a34
---- /dev/null
-+++ b/arch/x86/kernel/rai.c
-@@ -0,0 +1,39 @@
-+#include <linux/memory.h>
-+#include <linux/mutex.h>
-+#include <linux/rai.h>
-+#include <asm/text-patching.h>
++void update_rai_access(void);
++#else
++static inline void update_rai_access(void) {}
++#endif
 +
-+extern struct rai_entry __start_rai_data[];
-+extern struct rai_entry __stop_rai_data[];
++#ifdef MODULE /* don't bother with modules for now */
++#undef _rai_load
++#undef _rai_bucket_shift
++#undef _rai_bucket_mask
++#endif
 +
-+static void
-+rai_patch_one(const struct rai_entry *r)
-+{
-+	u8 *instr = (u8*)&r->instr_offset + r->instr_offset;
-+	u8 *templ = (u8*)&r->templ_offset + r->templ_offset;
-+	u8 *thunk = (u8*)&r->thunk_offset + r->thunk_offset;
++/* Make sure all _rai_* are defined. */
++#ifndef _rai_load
++#define _rai_load _rai_load_fallback
++#endif
++#ifndef _rai_bucket_shift
++#define _rai_bucket_shift _rai_bucket_shift_fallback
++#endif
++#ifndef _rai_bucket_mask
++#define _rai_bucket_mask _rai_bucket_mask_fallback
++#endif
 +
-+	switch (r->type) {
-+	default:
-+		WARN_ONCE(1, "unhandled RAI type %d\n", r->type);
-+		return;
-+	}
-+	text_poke_bp(instr, templ, r->templ_len, thunk);
-+}
 +
-+static void
-+rai_patch(const struct rai_entry *start, const struct rai_entry *stop)
-+{
-+	const struct rai_entry *r;
++/* 
++ * The non-underscored rai_* are property of this header, so that it
++ * can do tricks like defining debugging versions. Usually, it just
++ * defines rai_foo as _rai_foo, with the latter being guaranteed to be
++ * defined by the above logic.
++ */
++#if defined(CONFIG_RAI_DEBUG)
 +
-+	for (r = start; r < stop; ++r)
-+		rai_patch_one(r);
-+}
++#include <bug.h>
 +
-+void
-+update_rai_access(void)
-+{
-+	mutex_lock(&text_mutex);
-+	rai_patch(__start_rai_data, __stop_rai_data);
-+	mutex_unlock(&text_mutex);
-+}
++#define rai_warn(what, expect, got)					\
++	WARN_ONCE(expect != got,					\
++		  "%s:%d: %s() returned %*phN, expected %*phN\n",	\
++		  __FILE__, __LINE__, what,				\
++		  (int)sizeof(got), &(got),				\
++		  (int)sizeof(expect), &(expect))
++
++#define rai_load(var) ({						\
++		typeof(var) v1 = _rai_load_fallback(var);		\
++		typeof(var) v2 = _rai_load(var);			\
++		rai_warn("rai_load", v1, v2);				\
++		(v1); /* chicken */					\
++	})
++
++#define rai_bucket_shift(base, shift, hash) ({				\
++		typeof(hash) h = (hash);				\
++		typeof(base) b1 = _rai_bucket_shift_fallback(base, shift, h); \
++		typeof(base) b2 = _rai_bucket_shift(base, shift, h);	\
++		rai_warn("rai_bucket_shift", b1, b2);			\
++		(b1);							\
++	})
++
++#define rai_bucket_mask(base, mask, hash) ({				\
++		typeof(hash) h = (hash);				\
++		typeof(base) b1 = _rai_bucket_mask_fallback(base, mask, h); \
++		typeof(base) b2 = _rai_bucket_mask(base, mask, h);	\
++		rai_warn("rai_bucket_mask", b1, b2);			\
++		(b1);							\
++	})
++#else
++#define rai_load         _rai_load
++#define rai_bucket_shift _rai_bucket_shift
++#define rai_bucket_mask  _rai_bucket_mask
++#endif
++
++#endif /* _LINUX_RAI_H */
 -- 
 2.19.1.6.gbde171bbf5
 
