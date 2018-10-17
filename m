@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB5B4ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D0DECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CEEE2148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CEEE2148E
+	by mail.kernel.org (Postfix) with ESMTP id 173402148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 173402148E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbeJRCad (ORCPT
+        id S1728500AbeJRCam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 22:30:33 -0400
+        Wed, 17 Oct 2018 22:30:42 -0400
 Received: from mga12.intel.com ([192.55.52.136]:29659 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728386AbeJRC3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 22:29:55 -0400
+        id S1728371AbeJRC3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 22:29:53 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 11:32:59 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 11:32:57 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="82003912"
+   d="scan'208";a="82003901"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by orsmga007.jf.intel.com with ESMTP; 17 Oct 2018 11:32:59 -0700
+  by orsmga007.jf.intel.com with ESMTP; 17 Oct 2018 11:32:57 -0700
 From:   Tim Chen <tim.c.chen@linux.intel.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -48,9 +48,9 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Arjan van de Ven <arjan@linux.intel.com>,
         Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
         x86@kernel.org
-Subject: [Patch v3 09/13] x86/speculation: Reorganize SPEC_CTRL MSR update
-Date:   Wed, 17 Oct 2018 10:59:37 -0700
-Message-Id: <23d8ffaac99be49aa163eb16dd131399141fc432.1539798901.git.tim.c.chen@linux.intel.com>
+Subject: [Patch v3 07/13] x86/process Add arch_set_dumpable
+Date:   Wed, 17 Oct 2018 10:59:35 -0700
+Message-Id: <6c8538c428d6335efae926c1e6a6fd26a3f9a1b8.1539798901.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1539798901.git.tim.c.chen@linux.intel.com>
 References: <cover.1539798901.git.tim.c.chen@linux.intel.com>
@@ -61,86 +61,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reorganize the spculation control MSR update code. Currently it is limited
-to only dynamic update of the Speculative Store Bypass Disable bit.
-This patch consolidates the logic to check for AMD CPUs that may or may
-not use this MSR to control SSBD. This prepares us to add logic to update
-other bits in the SPEC_CTRL MSR cleanly.
+Add arch_set_dumpable for setting architecture specific security
+modifications on processes according to its dumpable properties.
+Non dumpable processes are security sensitive and they can be modified
+to gain architecture specific security defenses via arch_set_dumpable.
 
-Originally-by: Thomas Lendacky <Thomas.Lendacky@amd.com>
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- arch/x86/kernel/process.c | 39 +++++++++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 10 deletions(-)
+ fs/exec.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 8aa4960..789f1bada 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -397,25 +397,45 @@ static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
+diff --git a/fs/exec.c b/fs/exec.c
+index e204830..6f329fc 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1940,6 +1940,11 @@ void set_binfmt(struct linux_binfmt *new)
+ }
+ EXPORT_SYMBOL(set_binfmt);
  
- static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
- {
--	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
-+	u64 msr = x86_spec_ctrl_base;
++void __weak arch_set_dumpable(struct task_struct *tsk, unsigned int value)
++{
++	return;
++}
 +
-+	/*
-+	 * If X86_FEATURE_SSBD is not set, the SSBD
-+	 * bit is not to be touched.
-+	 */
-+	if (static_cpu_has(X86_FEATURE_SSBD))
-+		msr |= ssbd_tif_to_spec_ctrl(tifn);
- 
- 	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
- }
- 
--static __always_inline void __speculation_ctrl_update(unsigned long tifn)
-+static __always_inline void __speculation_ctrl_update(unsigned long tifp,
-+						      unsigned long tifn)
- {
--	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
--		amd_set_ssb_virt_state(tifn);
--	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
--		amd_set_core_ssb_state(tifn);
--	else
-+	bool updmsr = false;
-+
-+	/* Check for AMD cpu to see if it uses SPEC_CTRL MSR for SSBD */
-+	if ((tifp ^ tifn) & _TIF_SSBD) {
-+		if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
-+			amd_set_ssb_virt_state(tifn);
-+		else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
-+			amd_set_core_ssb_state(tifn);
-+		else if (static_cpu_has(X86_FEATURE_SSBD))
-+			updmsr  = true;
-+	}
-+
-+	if (updmsr)
- 		spec_ctrl_update_msr(tifn);
- }
- 
- void speculation_ctrl_update(unsigned long tif)
- {
-+	/*
-+	 * On this path we're forcing the update, so use ~tif as the
-+	 * previous flags.
-+	 */
- 	preempt_disable();
--	__speculation_ctrl_update(tif);
-+	__speculation_ctrl_update(~tif, tif);
- 	preempt_enable();
- }
- 
-@@ -451,8 +471,7 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
- 	if ((tifp ^ tifn) & _TIF_NOCPUID)
- 		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
- 
--	if ((tifp ^ tifn) & _TIF_SSBD)
--		__speculation_ctrl_update(tifn);
-+	__speculation_ctrl_update(tifp, tifn);
- }
- 
  /*
+  * set_dumpable stores three-value SUID_DUMP_* into mm->flags.
+  */
+@@ -1956,6 +1961,7 @@ void set_dumpable(struct task_struct *tsk, unsigned int value)
+ 		old = READ_ONCE(tsk->mm->flags);
+ 		new = (old & ~MMF_DUMPABLE_MASK) | value;
+ 	} while (cmpxchg(&tsk->mm->flags, old, new) != old);
++	arch_set_dumpable(tsk, value);
+ }
+ 
+ SYSCALL_DEFINE3(execve,
 -- 
 2.9.4
 
