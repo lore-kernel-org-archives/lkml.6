@@ -2,217 +2,276 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A07EBECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B114ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC3F20658
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:28:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Y9GarFWU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FC3F20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B14A20658
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 14:29:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B14A20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeJQWYl (ORCPT
+        id S1727665AbeJQWZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 18:24:41 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:43048 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbeJQWYl (ORCPT
+        Wed, 17 Oct 2018 18:25:17 -0400
+Received: from gateway30.websitewelcome.com ([192.185.145.3]:14997 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726974AbeJQWZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 18:24:41 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 3EC9310C1329;
-        Wed, 17 Oct 2018 07:28:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1539786524; bh=kH5jMq5RpNl9rfdBkq70R98QwWqvgrWMd1M3agQw26s=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=Y9GarFWUKRYU/mmWxXy+4rUqtZQRgJKGFRISAHlCBWZE2AO2aX2HG94CLO5R9iOxd
-         kdmiRf9zkaStCGOOiEswwzqC+eTE3o5Ic9zoMB9AS72EPuUH/JfE3oGVdbzui9pAkA
-         b9tcSn+Zgx+Aw6mNsocv1DMvKQvMcG/kWP91uok1XhSnXMMnQ8ueqpOSOfpcqUVAYC
-         S6zxu6/8XmqEftKjX+lEJ08eIi8VFA4wuEliv8HsFbHzakmWed/qavJYNW95wWIfqj
-         LWN/YZKg4E+zmfZ9d3COPXbq3aBhuXIiUcgP9WXiflpE8wbUZVz+aSdeJXS3XnK3FX
-         A7MopDtigQB9A==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 29DFD3B62;
-        Wed, 17 Oct 2018 07:28:44 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 17 Oct 2018 07:28:44 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
- 17 Oct 2018 16:28:41 +0200
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC:     "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: RE: [PATCH] ARC: Get rid of toolchain check
-Thread-Topic: [PATCH] ARC: Get rid of toolchain check
-Thread-Index: AQHUS5/LFJti3lZQgEWo8euu+Bn3iKTukc8AgDUhM4A=
-Date:   Wed, 17 Oct 2018 14:28:41 +0000
-Message-ID: <4881796E12491D4BB15146FE0209CE6468174FE0@DE02WEMBXB.internal.synopsys.com>
-References: <20180913202428.7284-1-abrodkin@synopsys.com>
- <CABGGisxY5yLxT1QDQYOOQYJEJ+Wx8uK3ZmSvPEqvYyfAHbhScQ@mail.gmail.com>
-In-Reply-To: <CABGGisxY5yLxT1QDQYOOQYJEJ+Wx8uK3ZmSvPEqvYyfAHbhScQ@mail.gmail.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jWVdKeWIyUnJhVzVjWVhCd1pHRjBZVnh5YjJGdGFXNW5YREE1WkRnME9X?=
- =?utf-8?B?STJMVE15WkRNdE5HRTBNQzA0TldWbExUWmlPRFJpWVRJNVpUTTFZbHh0YzJk?=
- =?utf-8?B?elhHMXpaeTFtTURSbVltSTRNQzFrTWpFNExURXhaVGd0WW1VNU9DMDRPR0l4?=
- =?utf-8?B?TVRGalpHVXlNVGRjWVcxbExYUmxjM1JjWmpBMFptSmlPREl0WkRJeE9DMHhN?=
- =?utf-8?B?V1U0TFdKbE9UZ3RPRGhpTVRFeFkyUmxNakUzWW05a2VTNTBlSFFpSUhONlBT?=
- =?utf-8?B?SXlNamczSWlCMFBTSXhNekU0TkRJMk1ERXhPVGMzTmpRd05qY2lJR2c5SW1w?=
- =?utf-8?B?QlR6aFhSM1ZKU0RJNE5teEtSRFJxYUhaUFRIWjVTSGhoUVQwaUlHbGtQU0lp?=
- =?utf-8?B?SUdKc1BTSXdJaUJpYnowaU1TSWdZMms5SW1OQlFVRkJSVkpJVlRGU1UxSlZS?=
- =?utf-8?B?azVEWjFWQlFVSlJTa0ZCUkdvdllXVjVTbGRpVlVGaFMwVkVVazVDVkZOeVpH?=
- =?utf-8?B?OXZVVTVGTUVaT1MzUXdUMEZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRklRVUZCUVVOclEwRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGRlFVRlJRVUpCUVVGQlVEaFFjR1ZuUVVGQlFVRkJRVUZCUVVGQlFVRkJT?=
- =?utf-8?B?alJCUVVGQ2JVRkhhMEZpWjBKb1FVYzBRVmwzUW14QlJqaEJZMEZDYzBGSFJV?=
- =?utf-8?B?RmlaMEoxUVVkclFXSm5RbTVCUmpoQlpIZENhRUZJVVVGYVVVSjVRVWN3UVZs?=
- =?utf-8?B?UlFubEJSM05CUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlowRkJRVUZCUVc1blFVRkJSMWxCWW5kQ01VRkhORUZhUVVKNVFVaHJRVmgz?=
- =?utf-8?B?UW5kQlIwVkJZMmRDTUVGSE5FRmFVVUo1UVVoTlFWaDNRbTVCUjFsQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRlJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRMEZCUVVGQlFVTmxRVUZCUVZwblFuWkJTRlZCWW1kQ2Ew?=
- =?utf-8?B?RklTVUZsVVVKbVFVaEJRVmxSUW5sQlNGRkJZbWRDYkVGSVNVRmpkMEptUVVo?=
- =?utf-8?B?TlFWbFJRblJCU0UxQlpGRkNkVUZIWTBGWWQwSnFRVWM0UVdKblFtMUJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZDUVVGQlFVRkJRVUZCUVVsQlFVRkJRVUZLTkVGQlFVSnRRVWM0?=
- =?utf-8?B?UVdSUlFuVkJSMUZCWTJkQ05VRkdPRUZqUVVKb1FVaEpRV1JCUW5WQlIxVkJZ?=
- =?utf-8?B?MmRDZWtGR09FRmpkMEpvUVVjd1FXTjNRakZCUnpSQlduZENaa0ZJU1VGYVVV?=
- =?utf-8?B?SjZRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlJVRkJRVUZCUVVGQlFVRm5RVUZCUVVGQmJt?=
- =?utf-8?B?ZEJRVUZIV1VGaWQwSXhRVWMwUVZwQlFubEJTR3RCV0hkQ2QwRkhSVUZqWjBJ?=
- =?utf-8?B?d1FVYzBRVnBSUW5sQlNFMUJXSGRDZWtGSE1FRmhVVUpxUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVkZCUVVGQlFVRkJRVUZE?=
- =?utf-8?B?UVVGQlFVRkJRMlZCUVVGQldtZENka0ZJVlVGaVowSnJRVWhKUVdWUlFtWkJT?=
- =?utf-8?B?RUZCV1ZGQ2VVRklVVUZpWjBKc1FVaEpRV04zUW1aQlNFMUJaRUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVKQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlNVRkJRVUZCUVVvMFFVRkJRbTFCUnpoQlpGRkNkVUZIVVVG?=
- =?utf-8?B?alowSTFRVVk0UVdOQlFtaEJTRWxCWkVGQ2RVRkhWVUZqWjBKNlFVWTRRV1JC?=
- =?utf-8?B?UW5wQlJ6QkJXWGRCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkZRVUZCUVVGQlFVRkJRV2RCUVVGQlFVRnVaMEZCUVVkWlFXSjNR?=
- =?utf-8?B?akZCUnpSQldrRkNlVUZJYTBGWWQwSjNRVWRGUVdOblFqQkJSelJCV2xGQ2VV?=
- =?utf-8?B?RklUVUZZZDBJeFFVY3dRVmwzUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCVVVGQlFVRkJRVUZCUVVOQlFVRkJRVUZEWlVG?=
- =?utf-8?B?QlFVRmFkMEl3UVVoTlFWaDNRbmRCU0VsQlluZENhMEZJVlVGWmQwSXdRVVk0?=
- =?utf-8?B?UVdSQlFubEJSMFZCWVZGQ2RVRkhhMEZpWjBKdVFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFrRkJRVUZCUVVGQlFVRkpR?=
- =?utf-8?B?VUZCUVVGQlNqUkJRVUZDZWtGSFJVRmlRVUpzUVVoTlFWaDNRbWhCUjAxQldY?=
- =?utf-8?B?ZENka0ZJVlVGaVowSXdRVVk0UVdOQlFuTkJSMFZCWW1kQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVVZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCWjBGQlFVRkJRVzVuUVVGQlNFMUJXVkZDYzBGSFZVRmpkMEpt?=
- =?utf-8?B?UVVoRlFXUlJRblpCU0ZGQldsRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGUlFVRkJRVUZCUVVGQlEwRkJRVUZCUVVObFFVRkJRV04zUW5WQlNF?=
- =?utf-8?B?RkJZM2RDWmtGSGQwRmhVVUpxUVVkVlFXSm5RbnBCUjFWQldIZENNRUZIVlVG?=
- =?utf-8?B?alowSjBRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkNRVUZCUVVGQlFVRkJRVWxCUVVGQlFVRktORUZC?=
- =?utf-8?B?UVVKNlFVYzBRV05CUW5wQlJqaEJZa0ZDY0VGSFRVRmFVVUoxUVVoTlFWcFJR?=
- =?utf-8?B?bVpCU0ZGQldsRkNlVUZITUVGWWQwSjZRVWhSUVdSUlFtdEJSMVZCWW1kQ01F?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUlVGQlFVRkJRVUZCUVVGblFV?=
- =?utf-8?B?RkJRVUZCYm1kQlFVRklXVUZhZDBKbVFVZHpRVnBSUWpWQlNHTkJZbmRDZVVG?=
- =?utf-8?B?SFVVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFWRkJRVUZC?=
- =?utf-8?Q?QUFBQUFDQUFBQUFBQT0iLz48L21ldGE+?=
-x-dg-rorf: 
-x-originating-ip: [10.225.15.19]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 17 Oct 2018 18:25:17 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 49E9D2ED00
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 09:29:17 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id CmojgyllakBj6Cmotg39sN; Wed, 17 Oct 2018 09:29:16 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:33436 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gCmoi-003KYO-AT; Wed, 17 Oct 2018 09:28:57 -0500
+Date:   Wed, 17 Oct 2018 16:28:51 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] drm/nouveau/nvkm: mark expected switch fall-throughs
+Message-ID: <20181017142851.GA15329@embeddedor.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gCmoi-003KYO-AT
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:33436
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIEhlcnJp
-bmcgW21haWx0bzpyb2JoQGtlcm5lbC5vcmddDQo+IFNlbnQ6IEZyaWRheSwgU2VwdGVtYmVyIDE0
-LCAyMDE4IDEyOjA0IEFNDQo+IFRvOiBBbGV4ZXkuQnJvZGtpbkBzeW5vcHN5cy5jb20NCj4gQ2M6
-IGxpbnV4LXNucHMtYXJjQGxpc3RzLmluZnJhZGVhZC5vcmc7IExpbnV4IEtlcm5lbCBNYWlsaW5n
-IExpc3QgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBWaW5lZXQuR3VwdGExQHN5bm9w
-c3lzLmNvbQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBBUkM6IEdldCByaWQgb2YgdG9vbGNoYWlu
-IGNoZWNrDQo+IA0KPiBPbiBUaHUsIFNlcCAxMywgMjAxOCBhdCAzOjI0IFBNIEFsZXhleSBCcm9k
-a2luDQo+IDxBbGV4ZXkuQnJvZGtpbkBzeW5vcHN5cy5jb20+IHdyb3RlOg0KPiA+DQo+ID4gVGhp
-cyBjaGVjayBpcyB2ZXJ5IG5haXZlOiB3ZSBzaW1wbHkgdGVzdCBpZiBHQ0MgaW52b2tlZCB3aXRo
-b3V0DQo+ID4gIi1tY3B1PVhYWCIgaGFzIEFSQzcwMCBkZWZpbmUgc2V0LiBJbiB0aGF0IGNhc2Ug
-d2UgdGhpbmsgdGhhdCBHQ0MNCj4gPiB3YXMgYnVpbHQgd2l0aCAiLS13aXRoLWNwdT1hcmM3MDAi
-IGFuZCBoYXMgbGliZ2NjIGJ1aWx0IGZvciBBUkM3MDAuDQo+ID4NCj4gPiBPdGhlcndpc2UgaWYg
-QVJDNzAwIGlzIG5vdCBkZWZpbmVkIHdlIHRoaW5rIHRoYXQgZXZlcnl0aG5nIHdhcyBidWlsdA0K
-PiA+IGZvciBBUkN2Mi4NCj4gPg0KPiA+IEJ1dCBpbiByZWFsaXR5IG91ciBsaWZlIGlzIG11Y2gg
-bW9yZSBpbnRlcmVzdGluZy4NCj4gPg0KPiA+IDEuIFJlZ2FyZGxlc3Mgb2YgR0NDIGNvbmZpZ3Vy
-YXRpb24gKGkuZS4gd2hhdCB3ZSBwYXNzIGluICItLXdpdGgtY3B1Ig0KPiA+ICAgIGl0IG1heSBn
-ZW5lcmF0ZSBjb2RlIGZvciBhbnkgQVJDIGNvcmUpLg0KPiA+DQo+ID4gMi4gbGliZ2NjIG1pZ2h0
-IGJlIGJ1aWx0IHdpdGggZXhwbGljaXRseSBzcGVjaWZpZWQgIi0tbWNwdT1ZWVkiDQo+ID4NCj4g
-PiBUaGF0J3MgZXhhY3RseSB3aGF0IGhhcHBlbnMgaW4gY2FzZSBvZiBtdWx0aWxpYmJlZCB0b29s
-Y2hhaW5zOg0KPiA+ICAtIEdDQyBpcyBjb25maWd1cmVkIHdpdGggZGVmYXVsdCBzZXR0aW5ncw0K
-PiA+ICAtIEFsbCB0aGUgbGlicyBidWlsdCBmb3IgbWFueSBkaWZmZXJlbnQgQ1BVIGZsYXZvcnMN
-Cj4gPg0KPiA+IEkuZS4gdGhhdCBjaGVjayBnZXRzIGluIHRoZSB3YXkgb2YgdXNhZ2Ugb2YgbXVs
-dGlsaWJiZWQNCj4gPiB0b29sY2hhaW5zLiBBbmQgZXZlbiBub24tbXVsdGlsaWJiZWQgdG9vbGNo
-YWlucyBhcmUgYWZmZWN0ZWQuDQo+ID4gT3BlbkVtYmVkZGVkIGFsc28gYnVpbGRzIEdDQyB3aXRo
-b3V0ICItLXdpdGgtY3B1IiBiZWNhdXNlDQo+ID4gZWFjaCBhbmQgZXZlcnkgdGFyZ2V0IGNvbXBv
-bmVudCBsYXRlciBpcyBjb21waWxlZCB3aXRoIGV4cGxpY2l0bHkNCj4gPiBzZXQgIi1tY3B1PVpa
-WiIuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBBbGV4ZXkgQnJvZGtpbiA8YWJyb2RraW5Ac3lu
-b3BzeXMuY29tPg0KPiA+IC0tLQ0KPiA+ICBhcmNoL2FyYy9NYWtlZmlsZSB8IDE0IC0tLS0tLS0t
-LS0tLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxNCBkZWxldGlvbnMoLSkNCj4gDQo+ICsxIGZv
-ciB0aGlzLiBSZW1vdmluZyBpdCBhbHNvIGhlbHBzIHdpdGggbXkgd29yayB0byBiZSBhYmxlIHRv
-IGJ1aWxkDQo+IGFsbCB0aGUgLmR0cyBmaWxlcyB3aXRoIG9ubHkgYSBob3N0IGNvbXBpbGVyLiBU
-aGF0IGFsc28gbmVlZHMgdGhlIGh1bmsNCj4gc2V0dGluZyBDUk9TU19DT01QSUxFIHJlbW92ZWQg
-YW5kIG5vdCBoYXZpbmcgYSBidWlsdC1pbiBkdGIgYnkNCj4gZGVmYXVsdCwgYnV0IHRoaXMgaXMg
-YSBzdGVwIGluIHRoZSByaWdodCBkaXJlY3Rpb24uDQo+IA0KPiBBY2tlZC1ieTogUm9iIEhlcnJp
-bmcgPHJvYmhAa2VybmVsLm9yZz4NCg0KTWF5IHdlIGdldCB0aGlzIG9uZSBiYWNrLXBvcnRlZCB0
-byBzdGFibGUgdHJlZXM/DQoNClVwc3RyZWFtIGNvbW1pdCBpbiBMaW51cycgdHJlZSBpcw0KNjE1
-ZjY0NDU4YWQ4ICgiQVJDOiBidWlsZDogR2V0IHJpZCBvZiB0b29sY2hhaW4gY2hlY2siKS4NCg0K
-VGhpcyBmaXhlcyBrZXJuZWwgY29uZmlndXJhdGlvbiBmb3IgQVJDIGluIGNhc2Ugb2YgbWlzc2lu
-Zw0KQVJDIGNyb3NzLXRvb2xzIGluIGN1cnJlbnQgUEFUSC4NCg0KLUFsZXhleQ0K
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
+
+This patch aims to suppress 29 missing-break-in-switch false positives.
+
+Addresses-Coverity-ID: 1456891 ("Missing break in switch")
+Addresses-Coverity-ID: 1324063 ("Missing break in switch")
+Addresses-Coverity-ID: 1324063 ("Missing break in switch")
+Addresses-Coverity-ID: 141432 ("Missing break in switch")
+Addresses-Coverity-ID: 141433 ("Missing break in switch")
+Addresses-Coverity-ID: 141434 ("Missing break in switch")
+Addresses-Coverity-ID: 141435 ("Missing break in switch")
+Addresses-Coverity-ID: 141436 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/hdmi.c    | 17 +++++++++++++++++
+ drivers/gpu/drm/nouveau/nvkm/engine/dma/usernv04.c |  1 +
+ drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv04.c    |  2 ++
+ drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv40.c    |  1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/bios/perf.c    |  1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/bios/pll.c     |  1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c     |  1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/mcp77.c    |  1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramnv40.c   |  2 ++
+ drivers/gpu/drm/nouveau/nvkm/subdev/mxm/nv50.c     |  1 +
+ 10 files changed, 28 insertions(+)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/hdmi.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/hdmi.c
+index d131cca..10f2aa9 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/hdmi.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/hdmi.c
+@@ -23,38 +23,55 @@ void pack_hdmi_infoframe(struct packed_hdmi_infoframe *packed_frame,
+ 		 */
+ 	case 17:
+ 		subpack1_high = (raw_frame[16] << 16);
++		/* fall through */
+ 	case 16:
+ 		subpack1_high |= (raw_frame[15] << 8);
++		/* fall through */
+ 	case 15:
+ 		subpack1_high |= raw_frame[14];
++		/* fall through */
+ 	case 14:
+ 		subpack1_low = (raw_frame[13] << 24);
++		/* fall through */
+ 	case 13:
+ 		subpack1_low |= (raw_frame[12] << 16);
++		/* fall through */
+ 	case 12:
+ 		subpack1_low |= (raw_frame[11] << 8);
++		/* fall through */
+ 	case 11:
+ 		subpack1_low |= raw_frame[10];
++		/* fall through */
+ 	case 10:
+ 		subpack0_high = (raw_frame[9] << 16);
++		/* fall through */
+ 	case 9:
+ 		subpack0_high |= (raw_frame[8] << 8);
++		/* fall through */
+ 	case 8:
+ 		subpack0_high |= raw_frame[7];
++		/* fall through */
+ 	case 7:
+ 		subpack0_low = (raw_frame[6] << 24);
++		/* fall through */
+ 	case 6:
+ 		subpack0_low |= (raw_frame[5] << 16);
++		/* fall through */
+ 	case 5:
+ 		subpack0_low |= (raw_frame[4] << 8);
++		/* fall through */
+ 	case 4:
+ 		subpack0_low |= raw_frame[3];
++		/* fall through */
+ 	case 3:
+ 		header = (raw_frame[2] << 16);
++		/* fall through */
+ 	case 2:
+ 		header |= (raw_frame[1] << 8);
++		/* fall through */
+ 	case 1:
+ 		header |= raw_frame[0];
++		/* fall through */
+ 	case 0:
+ 		break;
+ 	}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/dma/usernv04.c b/drivers/gpu/drm/nouveau/nvkm/engine/dma/usernv04.c
+index 49ef7e5..7f1adab 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/dma/usernv04.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/dma/usernv04.c
+@@ -122,6 +122,7 @@ nv04_dmaobj_new(struct nvkm_dma *dma, const struct nvkm_oclass *oclass,
+ 		break;
+ 	case NV_MEM_ACCESS_WO:
+ 		dmaobj->flags0 |= 0x00008000;
++		/* fall through */
+ 	case NV_MEM_ACCESS_RW:
+ 		dmaobj->flags2 |= 0x00000002;
+ 		break;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv04.c b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv04.c
+index ad707ff..93493b3 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv04.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv04.c
+@@ -117,8 +117,10 @@ nv04_fifo_swmthd(struct nvkm_device *device, u32 chid, u32 addr, u32 data)
+ 	switch (mthd) {
+ 	case 0x0000 ... 0x0000: /* subchannel's engine -> software */
+ 		nvkm_wr32(device, 0x003280, (engine &= ~mask));
++		/* fall through */
+ 	case 0x0180 ... 0x01fc: /* handle -> instance */
+ 		data = nvkm_rd32(device, 0x003258) & 0x0000ffff;
++		/* fall through */
+ 	case 0x0100 ... 0x017c:
+ 	case 0x0200 ... 0x1ffc: /* pass method down to sw */
+ 		if (!(engine & mask) && sw)
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv40.c b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv40.c
+index 8c7ba32..47c1682 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv40.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv40.c
+@@ -81,6 +81,7 @@ nv40_fifo_init(struct nvkm_fifo *base)
+ 	case 0x49:
+ 	case 0x4b:
+ 		nvkm_wr32(device, 0x002230, 0x00000001);
++		/* fall through */
+ 	case 0x40:
+ 	case 0x41:
+ 	case 0x42:
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/perf.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/perf.c
+index c306835..7112992 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/perf.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/perf.c
+@@ -135,6 +135,7 @@ nvbios_perfEp(struct nvkm_bios *bios, int idx,
+ 		break;
+ 	case 0x30:
+ 		info->script   = nvbios_rd16(bios, perf + 0x02);
++		/* fall through */
+ 	case 0x35:
+ 		info->fanspeed = nvbios_rd08(bios, perf + 0x06);
+ 		info->voltage  = nvbios_rd08(bios, perf + 0x07);
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/pll.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/pll.c
+index e6e804c..bda6cc9 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/pll.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/pll.c
+@@ -134,6 +134,7 @@ pll_map(struct nvkm_bios *bios)
+ 		    device->chipset == 0xaa ||
+ 		    device->chipset == 0xac)
+ 			return g84_pll_mapping;
++		/* fall through */
+ 	default:
+ 		return NULL;
+ 	}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
+index ba6a868d..40e5645 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
+@@ -90,6 +90,7 @@ nvkm_cstate_valid(struct nvkm_clk *clk, struct nvkm_cstate *cstate,
+ 			case NVKM_CLK_BOOST_NONE:
+ 				if (clk->base_khz && freq > clk->base_khz)
+ 					return false;
++				/* fall through */
+ 			case NVKM_CLK_BOOST_BIOS:
+ 				if (clk->boost_khz && freq > clk->boost_khz)
+ 					return false;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/mcp77.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/mcp77.c
+index 1c21b8b..4f00023 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/mcp77.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/mcp77.c
+@@ -363,6 +363,7 @@ mcp77_clk_prog(struct nvkm_clk *base)
+ 	switch (clk->vsrc) {
+ 	case nv_clk_src_cclk:
+ 		mast |= 0x00400000;
++		/* fall through */
+ 	default:
+ 		nvkm_wr32(device, 0x4600, clk->vdiv);
+ 	}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramnv40.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramnv40.c
+index 2b12e38..5f4c287 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramnv40.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramnv40.c
+@@ -131,11 +131,13 @@ nv40_ram_prog(struct nvkm_ram *base)
+ 		nvkm_mask(device, 0x00402c, 0xc0771100, ram->ctrl);
+ 		nvkm_wr32(device, 0x004048, ram->coef);
+ 		nvkm_wr32(device, 0x004030, ram->coef);
++		/* fall through */
+ 	case 0x43:
+ 	case 0x49:
+ 	case 0x4b:
+ 		nvkm_mask(device, 0x004038, 0xc0771100, ram->ctrl);
+ 		nvkm_wr32(device, 0x00403c, ram->coef);
++		/* fall through */
+ 	default:
+ 		nvkm_mask(device, 0x004020, 0xc0771100, ram->ctrl);
+ 		nvkm_wr32(device, 0x004024, ram->coef);
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/mxm/nv50.c b/drivers/gpu/drm/nouveau/nvkm/subdev/mxm/nv50.c
+index 844971e..2a6150a 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/mxm/nv50.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/mxm/nv50.c
+@@ -159,6 +159,7 @@ mxm_dcb_sanitise_entry(struct nvkm_bios *bios, void *data, int idx, u16 pdcb)
+ 		break;
+ 	case 0x0e: /* eDP, falls through to DPint */
+ 		ctx.outp[1] |= 0x00010000;
++		/* fall through */
+ 	case 0x07: /* DP internal, wtf is this?? HP8670w */
+ 		ctx.outp[1] |= 0x00000004; /* use_power_scripts? */
+ 		type = DCB_CONNECTOR_eDP;
+-- 
+2.7.4
+
