@@ -2,113 +2,150 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B93ECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FE4ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B4B72145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:18:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61FE721470
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:20:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="Zf5TtIHk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B4B72145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGJST7k8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61FE721470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbeJRCPW (ORCPT
+        id S1728155AbeJRCR3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 22:15:22 -0400
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:45696 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbeJRCPV (ORCPT
+        Wed, 17 Oct 2018 22:17:29 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42295 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727610AbeJRCR2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 22:15:21 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id CF50F2B9
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 18:18:27 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p5.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ce2FRuw1mLMp for <linux-kernel@vger.kernel.org>;
-        Wed, 17 Oct 2018 13:18:27 -0500 (CDT)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id A59E75BF
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 13:18:27 -0500 (CDT)
-Received: by mail-io1-f69.google.com with SMTP id s15-v6so25147428iob.11
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 11:18:27 -0700 (PDT)
+        Wed, 17 Oct 2018 22:17:28 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g15-v6so30766952wru.9
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 11:20:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=iHhie0xt3E+9d9DUTJDeOg9pQf3MJnJnRkIXolVtctI=;
-        b=Zf5TtIHkzZiCqEogoyaheSCqbUaIVK06zyO94egjwwT9reagP+fbQfIr8ajlTX5xOy
-         y2ll1pe5qBaXR6XS5dhk7SpA1s7d0NeIt227ZXc5xBt10S2HZrjt+Dgv5bCXrxyYfWCl
-         gYuVfPPp56tYgLmgEBvcZ7RZiTAmMK8G1oFCIyqwKIR1Xp778xHSVamCLfsyt78eFI2d
-         9Y1bdWQ6FgFW9qAVbp5RpK9Mtqxkfs1NfkWLh991zj/ir8HSXEXuKneQrbbWNZhpasU/
-         aChGAW/t6fgxxy52LLBFHg5nBDCxP8RjfLnZNUCXIi72byd7rvHtQC1Pw5/Dui0lepa8
-         15vQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UoNJnelEFmPdb35EGMG0P1d3GYcJ8yPZ6YszMr1od94=;
+        b=AGJST7k8GS7pIdo0SoUOy/X/ee3lmyVJ1rvb/TE8rHpfmOyDwLUyX6HGFIovjqTK7l
+         yfxeoMRoeEtnOWBcoQCgs3+GtqdL/n9r4SiGSLKRHxzdwzugcexek9cwL7H8pXptX6QR
+         T2cqhbu3TloodPrrjukW70sCYs+2QM/f0KNcE7SybhFaRuC+qg+pCWtfbEE2FNBHKEoe
+         YD6yGNh8f9g1ZLQZ6uIHEmjUGt2mJjCpLYDys5DKI8dfxoi7gmqlySRX6ukXLmzCdhpx
+         Zwy7nWTNf+E70B69Z1814sAunXOWHOTJyyKC9rCp8irnzZmHiDqsLMGYr4Kwd/To5fM2
+         j66w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=iHhie0xt3E+9d9DUTJDeOg9pQf3MJnJnRkIXolVtctI=;
-        b=W/ILIaSO7NHGxBZyfvrrWsSR3WxHevhzMvI79crbRD3vw94caGjWC4QNa/OeUgxAy8
-         hV5AlGUcAjqKVNM5Qdtov79cY5jYo4DqlWCK+34nenYfkHUMH4QdLfOT0a78BvYv3BDl
-         BzgUWTwC5mXBZStZE+vy/C90zLva1086+S84bOh4B5np40U/pgOpPRgMa/YxvQAip9r4
-         2pPEj5N1B/gyHUppaFSiJPkPEQi6I/v39c6gdkri3Ex8nlXxCXdpboxeCEN62Y877+4n
-         I5tg45OioCR5nHLxdDBhM44I+mDE4odxqFT/+nUDCzmaBwv5c2jy0QWRVhTceHfQJOIm
-         zbvg==
-X-Gm-Message-State: ABuFfoga/ZeJ8CK1WKnwccHG//u66On7dy4GrKqhxcuybCcZo+cEU5HA
-        uSJYb45lyHNRnwhafGRslnk8cVAbqakIWpboh+wDL9tlbqle1RhVXzneB8VI3CexgZMF08xYHxv
-        X2zt80sbYvw7PlXKf2mCkN9Z3pREl
-X-Received: by 2002:a02:13:: with SMTP id 19-v6mr20158971jaa.68.1539800307346;
-        Wed, 17 Oct 2018 11:18:27 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV61lV3oKA0N/f9lQOX6rEdZO1bET+m461j4az1UTM++HXMTrlX+RWefH7lPmU6bFfi7gYPfziw==
-X-Received: by 2002:a02:13:: with SMTP id 19-v6mr20158959jaa.68.1539800307073;
-        Wed, 17 Oct 2018 11:18:27 -0700 (PDT)
-Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
-        by smtp.gmail.com with ESMTPSA id z186-v6sm999844itd.43.2018.10.17.11.18.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 17 Oct 2018 11:18:26 -0700 (PDT)
-From:   Wenwen Wang <wang6495@umn.edu>
-To:     Wenwen Wang <wang6495@umn.edu>
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        kvm@vger.kernel.org (open list:VFIO DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drivers/vfio: Fix an 8-byte alignment issue
-Date:   Wed, 17 Oct 2018 13:18:19 -0500
-Message-Id: <1539800299-2787-1-git-send-email-wang6495@umn.edu>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UoNJnelEFmPdb35EGMG0P1d3GYcJ8yPZ6YszMr1od94=;
+        b=WQbl70l0muDWg9LDFTsJUSr3JfujD/iIAVebG9SDR5RseoCQIG4XNz+3M7wzlZb9OB
+         kHwYmNdFakgCSaqhQmaBaM+I+TiR4IA02o2KQ0+2xMd+tEqE/9c/Dbd4a4xcHk5hxAcV
+         i6AYt8yDy5Mth3Kdg0vAap2nOs/05azLoifxa3nBsRmJ/HTICzTkAWLfQ7ZPwVsM3P9L
+         VMS1nGhrV8AVK7yotTL/WT8NmqHLmWrsr5wuLWmM+klpfdBmAgzn4PggB/sMe8iKw2pD
+         lB+MqosmHsrqm6QnofJ4KeKIO1ErxG1zlON4jm7AGcCnZ9aGRZXrmPD1mHmaq012HCr1
+         Whhg==
+X-Gm-Message-State: ABuFfohWkCzqY/6qvxA+2oFywTHP8QES8kgsG8FrqtMBkNoMUjLuyPFy
+        NLOBIH/oqjxjpy/Y5N0DRGI=
+X-Google-Smtp-Source: ACcGV63PP/VV6Wm0J23JoSM18Z4OUm5NKBcdGUgEAi8W3GJs6D5gCEKKE/OVD5r82uANQZHewj2H0g==
+X-Received: by 2002:adf:f404:: with SMTP id g4-v6mr3629301wro.198.1539800433902;
+        Wed, 17 Oct 2018 11:20:33 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id 91-v6sm4126720wrb.95.2018.10.17.11.20.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 11:20:33 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 11:20:31 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] misc: atmel-ssc: Fix section annotation on
+ atmel_ssc_get_driver_data
+Message-ID: <20181017182031.GA9678@flashbox>
+References: <20181017170901.13119-1-natechancellor@gmail.com>
+ <20181017181625.GW17341@piout.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017181625.GW17341@piout.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a 4-byte reserved field in the structure
-vfio_eeh_pe_op to make sure that the u64 fields in the structure
-vfio_eeh_pe_err are 8-byte aligned.
+On Wed, Oct 17, 2018 at 08:16:25PM +0200, Alexandre Belloni wrote:
+> On 17/10/2018 10:09:02-0700, Nathan Chancellor wrote:
+> > After building the kernel with Clang, the following section mismatch
+> > warning appears:
+> > 
+> > WARNING: vmlinux.o(.text+0x3bf19a6): Section mismatch in reference from
+> > the function ssc_probe() to the function
+> > .init.text:atmel_ssc_get_driver_data()
+> > The function ssc_probe() references
+> > the function __init atmel_ssc_get_driver_data().
+> > This is often because ssc_probe lacks a __init
+> > annotation or the annotation of atmel_ssc_get_driver_data is wrong.
+> > 
+> > Remove __init from atmel_ssc_get_driver_data to get rid of the mismatch.
+> > 
+> 
+> Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> 
+> I would add:
+> 
+> Fixes: 5c86ac695c7e ("ASoC: atmel-ssc: use module_platform_driver macro")
+> 
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> > 
+> > Alternatively, ssc_probe could be marked as __init, I don't think there
+> > is any way for the probe to defer. I decided to go with the more
+> > conservative option first but I'm happy to respin if necessary.
+> > 
+> 
+> A probe function should never be marked __init, unless you ensure there
+> is no way to bind/unbind the driver at runtime.
+> 
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
----
- include/uapi/linux/vfio.h | 1 +
- 1 file changed, 1 insertion(+)
+Thank you for the review and that clarification, wasn't able to find
+much regarding __init on probe functions in my research.
 
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index 1aa7b82..3e71ded 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -729,6 +729,7 @@ struct vfio_eeh_pe_op {
- 	__u32 argsz;
- 	__u32 flags;
- 	__u32 op;
-+	__u32 __res;
- 	union {
- 		struct vfio_eeh_pe_err err;
- 	};
--- 
-2.7.4
+> > Thanks!
+> > 
+> >  drivers/misc/atmel-ssc.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/misc/atmel-ssc.c b/drivers/misc/atmel-ssc.c
+> > index b2a0340f277e..d8e3cc2dc747 100644
+> > --- a/drivers/misc/atmel-ssc.c
+> > +++ b/drivers/misc/atmel-ssc.c
+> > @@ -132,7 +132,7 @@ static const struct of_device_id atmel_ssc_dt_ids[] = {
+> >  MODULE_DEVICE_TABLE(of, atmel_ssc_dt_ids);
+> >  #endif
+> >  
+> > -static inline const struct atmel_ssc_platform_data * __init
+> > +static inline const struct atmel_ssc_platform_data *
+> >  	atmel_ssc_get_driver_data(struct platform_device *pdev)
+> >  {
+> >  	if (pdev->dev.of_node) {
+> > -- 
+> > 2.19.1
+> > 
+> 
+> -- 
+> Alexandre Belloni, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
+Cheers,
+Nathan
