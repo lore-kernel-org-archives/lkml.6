@@ -2,175 +2,120 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C51ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787D3ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6D502150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:53:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6D502150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E77221526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:54:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0rKAiiIk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E77221526
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbeJQTtR (ORCPT
+        id S1727337AbeJQTtW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:49:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44502 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727013AbeJQTtR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:49:17 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9HBoktC086877
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 07:53:55 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n62npnawv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 07:53:55 -0400
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Wed, 17 Oct 2018 05:53:54 -0600
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 17 Oct 2018 05:53:47 -0600
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9HBrkhH59900108
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 17 Oct 2018 04:53:46 -0700
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C5FBC6E053;
-        Wed, 17 Oct 2018 11:53:46 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9A5546E050;
-        Wed, 17 Oct 2018 11:53:40 +0000 (GMT)
-Received: from [9.102.2.58] (unknown [9.102.2.58])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 17 Oct 2018 11:53:40 +0000 (GMT)
-Subject: Re: Crash on FSL Book3E due to pte_pgprot()? (was Re: [PATCH v3
- 12/24] powerpc/mm: use pte helpers in generic code)
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Geoff Levand <geoff@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Kumar Gala <galak@kernel.crashing.org>,
-        Li Yang <leoyang.li@nxp.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Scott Wood <oss@buserror.net>, aneesh.kumar@linux.vnet.ibm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-References: <cover.1539092111.git.christophe.leroy@c-s.fr>
- <343c844bbc5081d13ee4c9aa27ff3118f607e1cc.1539092112.git.christophe.leroy@c-s.fr>
- <87va61jsma.fsf@concordia.ellerman.id.au>
- <236d72cd-e6d7-61e5-2c80-e4311e41b4f6@c-s.fr>
- <87efcoeudx.fsf@concordia.ellerman.id.au>
- <6ec9cf4b-abd2-8244-4780-4564a7ffb1ad@c-s.fr>
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Date:   Wed, 17 Oct 2018 17:23:38 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 17 Oct 2018 15:49:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37044 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727013AbeJQTtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 15:49:22 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFCC22150D;
+        Wed, 17 Oct 2018 11:53:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539777240;
+        bh=srnI9OkrYFEfk6mRqTE3Wjyf68qQZWzXSPjOarQe2Oo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0rKAiiIkYyPZQY5bNs5LkJ8XNtKbzGpMWsk/gl+RHzkJ0aQ/FfULIPJR8ARY/glhr
+         AGRtkEAbw5ivrlnN9sy++WMXbYkPj5rqfgUNiWFhsv2M1ukUhFAUzBea02wx2KYMxX
+         66isl5yr9J61xDoiIqgC/OE7jabA47/IX3Fjgs8Y=
+Date:   Wed, 17 Oct 2018 13:53:57 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Lars Poeschel <poeschel@lemonage.de>
+Cc:     Samuel Ortiz <sameo@linux.intel.com>, Jiri Slaby <jslaby@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: Re: [PATCH 1/3] nfc: pn533: add UART phy driver
+Message-ID: <20181017115357.GC32302@kroah.com>
+References: <20181017102037.28537-1-poeschel@lemonage.de>
 MIME-Version: 1.0
-In-Reply-To: <6ec9cf4b-abd2-8244-4780-4564a7ffb1ad@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18101711-0036-0000-0000-00000A4BEEEF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009891; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01103952; UDB=6.00571463; IPR=6.00884004;
- MB=3.00023791; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-17 11:53:52
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101711-0037-0000-0000-00004950FC29
-Message-Id: <e3b03750-f76a-0a70-69ff-3767382859c6@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810170105
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017102037.28537-1-poeschel@lemonage.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/18 4:42 PM, Christophe Leroy wrote:
-> 
-> 
-> On 10/17/2018 10:32 AM, Michael Ellerman wrote:
->> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->>> On 10/17/2018 12:59 AM, Michael Ellerman wrote:
->> ...
->>>> The question is what's the right way to fix it? Should pte_pgprot() not
->>>> be filtering those bits out on book3e?
->>>
->>> I think we should not use pte_pggrot() for that then. What about the
->>> below fix ?
->>
->> Thanks, that almost works.
->>
->> pte_mkprivileged() also needs to not strip _PAGE_BAP_SR.
-> 
-> Oops, I missed it allthough I knew it. Patch below.
-> 
-> From: Christophe Leroy <christophe.leroy@c-s.fr>
-> Date: Wed, 17 Oct 2018 10:46:24 +0000
-> Subject: [PATCH] powerpc/book3e: redefine pte_mkprivileged() and 
-> pte_mkuser()
-> To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras 
-> <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
-> Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-> 
-> Book3e defines both _PAGE_USER and _PAGE_PRIVILEGED, so the nohash
-> default pte_mkprivileged() and pte_mkuser() are not usable.
-> 
-> This patch redefines them for book3e.
-> 
-> Fixes: a0da4bc166f2 ("powerpc/mm: Allow platforms to redefine some 
-> helpers")
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->   arch/powerpc/include/asm/nohash/pte-book3e.h | 14 ++++++++++++++
->   1 file changed, 14 insertions(+)
-> 
-> diff --git a/arch/powerpc/include/asm/nohash/pte-book3e.h 
-> b/arch/powerpc/include/asm/nohash/pte-book3e.h
-> index 58eef8cb569d..fb4297dff3e2 100644
-> --- a/arch/powerpc/include/asm/nohash/pte-book3e.h
-> +++ b/arch/powerpc/include/asm/nohash/pte-book3e.h
-> @@ -109,5 +109,19 @@
->   #define PAGE_READONLY    __pgprot(_PAGE_BASE | _PAGE_USER)
->   #define PAGE_READONLY_X    __pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
-> 
-> +static inline pte_t pte_mkprivileged(pte_t pte)
-> +{
-> +    return __pte((pte_val(pte) & ~_PAGE_USER) | _PAGE_PRIVILEGED);
-> +}
+On Wed, Oct 17, 2018 at 12:20:35PM +0200, Lars Poeschel wrote:
+> This adds the UART phy interface for the pn533 driver.
+> The pn533 driver can be used through UART interface this way.
+> It is implemented as a tty line discipline.
+
+Why not use the serdev interface instead?
+
+> --- /dev/null
+> +++ b/drivers/nfc/pn533/uart.c
+> @@ -0,0 +1,399 @@
+> +/*
+> + * Driver for NXP PN532 NFC Chip - UART transport layer
+> + *
+> + * Copyright (C) 2018 Lemonage Software GmbH
+> + * Author: Lars Poeschel <poeschel@lemonage.de>
+> + * All rights reserved.
+
+Please use checkpatch.pl on patches so you do not get grumpy maintainers
+telling you to use checkpatch.pl on your patches :)
+
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program; if not, see <http://www.gnu.org/licenses/>.
+
+These three paragraphs can all be dropped because you are going to add
+the correct SPDX line at the top of this file, right?  :)
+
+
+> + */
 > +
-> +#define pte_mkprivileged pte_mkprivileged
+> +#include <linux/device.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/tty.h>
+> +#include <linux/nfc.h>
+> +#include <linux/netdevice.h>
+> +#include <net/nfc/nfc.h>
+> +#include "pn533.h"
 > +
-> +static inline pte_t pte_mkuser(pte_t pte)
-> +{
-> +    return __pte((pte_val(pte) & ~_PAGE_PRIVILEGED) | _PAGE_USER);
-> +}
+> +#define VERSION "0.1"
 > +
-> +#define pte_mkuser pte_mkuser
+> +#define PN532_I2C_DRIVER_NAME "pn532_uart"
 > +
+> +#define PN532_MAGIC		0x162f
 
-I was build testing a similar patch. We would need to put #ifndef 
-__ASSEMBLY__ around it.
+The whole old model of "magic" tty numbers can just be removed.  It
+never really did anything except to try to protect you from other broken
+kernel code.  You can drop it all if you really do end up making a tty
+device here.
 
+thanks,
 
-
--aneesh
-
+greg k-h
