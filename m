@@ -5,51 +5,51 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B44ECDE30
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 544D7ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E23F621527
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D3AF21526
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 07:42:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OBHCxJvx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E23F621527
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YpO+XlIR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D3AF21526
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbeJQPhB (ORCPT
+        id S1727522AbeJQPhC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 11:37:01 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:56520 "EHLO
+        Wed, 17 Oct 2018 11:37:02 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:56522 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727435AbeJQPhB (ORCPT
+        with ESMTP id S1727466AbeJQPhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 11:37:01 -0400
+        Wed, 17 Oct 2018 11:37:02 -0400
 Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9H7gKHF022931;
-        Wed, 17 Oct 2018 02:42:20 -0500
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9H7gUHV023032;
+        Wed, 17 Oct 2018 02:42:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539762140;
-        bh=I+8oB3slUMP8h64wG5S3UqrQQp1pEImCeexOuq//BTs=;
+        s=ti-com-17Q1; t=1539762150;
+        bh=ILMjiYkOHboc47kfN6ITeEWYFEUBY2mHSEbgxF4Ns1Q=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=OBHCxJvxGbPQsUzweKOMWKfjjHbvfiG7NTSGJUsyt3K0mgOOysc/65gBM5Q/M/BWi
-         Hn8u07wS6+ZyltSl15FDZb1/D50/8fQcBZcAxaeHllEA/WYMAVK3epWrUb0iRVqHee
-         KtMl6sJAX9oJVOOf37cg8lFnv7T6ovKQ0lLo1D/8=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7gKMG009200;
-        Wed, 17 Oct 2018 02:42:20 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+        b=YpO+XlIRq1RSfWczK8RSyejv4GAZ3zKuHPGw2mc5jPyMirrPonDT/Qp1+liDGVXIs
+         e/xcIPfPCopxAKr0L7gb4vEp0ntxJEg2sqsAQH771J0fWl1A0SoF6eFhtRuJw51tul
+         TCvLWfWQ8UoQrNHdqbn4P5uaaoqqixSefY7pXyNc=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7gTXP009467;
+        Wed, 17 Oct 2018 02:42:29 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 17
- Oct 2018 02:42:20 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
+ Oct 2018 02:42:29 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 17 Oct 2018 02:42:19 -0500
+ Wed, 17 Oct 2018 02:42:29 -0500
 Received: from a0393678ub.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7fgSV009413;
-        Wed, 17 Oct 2018 02:42:16 -0500
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9H7fgSY009413;
+        Wed, 17 Oct 2018 02:42:26 -0500
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Bjorn Helgaas <bhelgaas@google.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -60,9 +60,9 @@ CC:     Rob Herring <robh+dt@kernel.org>, <linux-pci@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH v2 10/21] PCI: keystone: Use SYSCON APIs to get device ID from control module
-Date:   Wed, 17 Oct 2018 13:11:03 +0530
-Message-ID: <20181017074114.28239-11-kishon@ti.com>
+Subject: [PATCH v2 13/21] PCI: keystone: Cleanup configuration space access
+Date:   Wed, 17 Oct 2018 13:11:06 +0530
+Message-ID: <20181017074114.28239-14-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181017074114.28239-1-kishon@ti.com>
 References: <20181017074114.28239-1-kishon@ti.com>
@@ -74,116 +74,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Control module registers should be read using syscon APIs.
-pci-keystone.c uses platform_get_resource to get control module registers.
-Fix it here by using syscon APIs to get device id from control module.
+Cleanup configuration space access by removing ks_pcie_cfg_setup
+which has an unncessary check of "if (bus == 0)" which will never be the
+case of *_other_conf() and adding macros for configuring the CFG_SETUP
+register required for accessing the configuration space of the device.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/pci/controller/dwc/pci-keystone.c | 45 ++++++++++++++++-------
- 1 file changed, 32 insertions(+), 13 deletions(-)
+ drivers/pci/controller/dwc/pci-keystone.c | 70 +++++++----------------
+ 1 file changed, 20 insertions(+), 50 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index e2045b5d2af2..e22328f89c84 100644
+index 4f764ec49a4c..1f14de0ef27f 100644
 --- a/drivers/pci/controller/dwc/pci-keystone.c
 +++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -15,12 +15,14 @@
- #include <linux/interrupt.h>
- #include <linux/irqdomain.h>
- #include <linux/init.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/msi.h>
- #include <linux/of_irq.h>
- #include <linux/of.h>
- #include <linux/of_pci.h>
- #include <linux/platform_device.h>
- #include <linux/phy/phy.h>
-+#include <linux/regmap.h>
- #include <linux/resource.h>
- #include <linux/signal.h>
+@@ -45,7 +45,13 @@
  
-@@ -28,6 +30,9 @@
- 
- #define DRIVER_NAME	"keystone-pcie"
- 
-+#define PCIE_VENDORID_MASK	0xffff
-+#define PCIE_DEVICEID_SHIFT	16
+ /* Application registers */
+ #define CMD_STATUS			0x004
 +
- /* DEV_STAT_CTRL */
- #define PCIE_CAP_BASE		0x70
- 
-@@ -744,10 +749,34 @@ static int ks_pcie_fault(unsigned long addr, unsigned int fsr,
- 	return 0;
+ #define CFG_SETUP			0x008
++#define CFG_BUS(x)			(((x) & 0xff) << 16)
++#define CFG_DEVICE(x)			(((x) & 0x1f) << 8)
++#define CFG_FUNC(x)			((x) & 0x7)
++#define CFG_TYPE1			BIT(24)
++
+ #define OB_SIZE				0x030
+ #define CFG_PCIM_WIN_SZ_IDX		3
+ #define CFG_PCIM_WIN_CNT		32
+@@ -364,60 +370,21 @@ static void ks_pcie_setup_rc_app_regs(struct keystone_pcie *ks_pcie)
+ 	ks_pcie_app_writel(ks_pcie, CMD_STATUS, OB_XLAT_EN_VAL | val);
  }
  
-+static int __init ks_pcie_init_id(struct keystone_pcie *ks_pcie)
-+{
-+	int ret;
-+	unsigned int id;
-+	struct regmap *devctrl_regs;
-+	struct dw_pcie *pci = ks_pcie->pci;
-+	struct device *dev = pci->dev;
-+	struct device_node *np = dev->of_node;
-+
-+	devctrl_regs = syscon_regmap_lookup_by_phandle(np, "ti,syscon-pcie-id");
-+	if (IS_ERR(devctrl_regs))
-+		return PTR_ERR(devctrl_regs);
-+
-+	ret = regmap_read(devctrl_regs, 0, &id);
-+	if (ret)
-+		return ret;
-+
-+	dw_pcie_writew_dbi(pci, PCI_VENDOR_ID, id & PCIE_VENDORID_MASK);
-+	dw_pcie_writew_dbi(pci, PCI_DEVICE_ID, id >> PCIE_DEVICEID_SHIFT);
-+
-+	return 0;
-+}
-+
- static int __init ks_pcie_host_init(struct pcie_port *pp)
+-/**
+- * ks_pcie_cfg_setup() - Set up configuration space address for a device
+- *
+- * @ks_pcie: ptr to keystone_pcie structure
+- * @bus: Bus number the device is residing on
+- * @devfn: device, function number info
+- *
+- * Forms and returns the address of configuration space mapped in PCIESS
+- * address space 0.  Also configures CFG_SETUP for remote configuration space
+- * access.
+- *
+- * The address space has two regions to access configuration - local and remote.
+- * We access local region for bus 0 (as RC is attached on bus 0) and remote
+- * region for others with TYPE 1 access when bus > 1.  As for device on bus = 1,
+- * we will do TYPE 0 access as it will be on our secondary bus (logical).
+- * CFG_SETUP is needed only for remote configuration access.
+- */
+-static void __iomem *ks_pcie_cfg_setup(struct keystone_pcie *ks_pcie, u8 bus,
+-				       unsigned int devfn)
+-{
+-	u8 device = PCI_SLOT(devfn), function = PCI_FUNC(devfn);
+-	struct dw_pcie *pci = ks_pcie->pci;
+-	struct pcie_port *pp = &pci->pp;
+-	u32 regval;
+-
+-	if (bus == 0)
+-		return pci->dbi_base;
+-
+-	regval = (bus << 16) | (device << 8) | function;
+-
+-	/*
+-	 * Since Bus#1 will be a virtual bus, we need to have TYPE0
+-	 * access only.
+-	 * TYPE 1
+-	 */
+-	if (bus != 1)
+-		regval |= BIT(24);
+-
+-	ks_pcie_app_writel(ks_pcie, CFG_SETUP, regval);
+-	return pp->va_cfg0_base;
+-}
+-
+ static int ks_pcie_rd_other_conf(struct pcie_port *pp, struct pci_bus *bus,
+ 				 unsigned int devfn, int where, int size,
+ 				 u32 *val)
  {
  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
  	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
-+	int ret;
+-	u8 bus_num = bus->number;
+-	void __iomem *addr;
++	u32 reg;
  
- 	dw_pcie_setup_rc(pp);
+-	addr = ks_pcie_cfg_setup(ks_pcie, bus_num, devfn);
++	reg = CFG_BUS(bus->number) | CFG_DEVICE(PCI_SLOT(devfn)) |
++		CFG_FUNC(PCI_FUNC(devfn));
++	if (bus->parent->number != pp->root_bus_nr)
++		reg |= CFG_TYPE1;
++	ks_pcie_app_writel(ks_pcie, CFG_SETUP, reg);
  
-@@ -757,8 +786,9 @@ static int __init ks_pcie_host_init(struct pcie_port *pp)
- 	writew(PCI_IO_RANGE_TYPE_32 | (PCI_IO_RANGE_TYPE_32 << 8),
- 			pci->dbi_base + PCI_IO_BASE);
+-	return dw_pcie_read(addr + where, size, val);
++	return dw_pcie_read(pp->va_cfg0_base + where, size, val);
+ }
  
--	/* update the Vendor ID */
--	writew(ks_pcie->device_id, pci->dbi_base + PCI_DEVICE_ID);
-+	ret = ks_pcie_init_id(ks_pcie);
-+	if (ret < 0)
-+		return ret;
+ static int ks_pcie_wr_other_conf(struct pcie_port *pp, struct pci_bus *bus,
+@@ -426,12 +393,15 @@ static int ks_pcie_wr_other_conf(struct pcie_port *pp, struct pci_bus *bus,
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+ 	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
+-	u8 bus_num = bus->number;
+-	void __iomem *addr;
++	u32 reg;
  
- 	/*
- 	 * PCIe access errors that result into OCP errors are caught by ARM as
-@@ -864,8 +894,6 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct dw_pcie *pci;
- 	struct keystone_pcie *ks_pcie;
--	struct resource *res;
--	void __iomem *reg_p;
- 	struct phy *phy;
- 	int ret;
+-	addr = ks_pcie_cfg_setup(ks_pcie, bus_num, devfn);
++	reg = CFG_BUS(bus->number) | CFG_DEVICE(PCI_SLOT(devfn)) |
++		CFG_FUNC(PCI_FUNC(devfn));
++	if (bus->parent->number != pp->root_bus_nr)
++		reg |= CFG_TYPE1;
++	ks_pcie_app_writel(ks_pcie, CFG_SETUP, reg);
  
-@@ -893,15 +921,6 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
- 			return ret;
- 	}
+-	return dw_pcie_write(addr + where, size, val);
++	return dw_pcie_write(pp->va_cfg0_base + where, size, val);
+ }
  
--	/* index 2 is to read PCI DEVICE_ID */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	reg_p = devm_ioremap_resource(dev, res);
--	if (IS_ERR(reg_p))
--		return PTR_ERR(reg_p);
--	ks_pcie->device_id = readl(reg_p) >> 16;
--	devm_iounmap(dev, reg_p);
--	devm_release_mem_region(dev, res->start, resource_size(res));
--
- 	ks_pcie->np = dev->of_node;
- 	platform_set_drvdata(pdev, ks_pcie);
- 	ks_pcie->clk = devm_clk_get(dev, "pcie");
+ /**
 -- 
 2.17.1
 
