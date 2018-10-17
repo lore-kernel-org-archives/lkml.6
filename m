@@ -2,205 +2,152 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E29ECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B749ECDE39
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11CF921476
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:07:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11CF921476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0874621479
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 19:09:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="w8Cf4wl5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0874621479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbeJRDEF (ORCPT
+        id S1728333AbeJRDF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 23:04:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56162 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727128AbeJRDEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 23:04:05 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 17 Oct 2018 23:05:57 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55620 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727128AbeJRDF4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 23:05:56 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 78FE88EE2BB;
+        Wed, 17 Oct 2018 12:08:52 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4eTASSC7lapD; Wed, 17 Oct 2018 12:08:52 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5D133804E3;
-        Wed, 17 Oct 2018 19:07:01 +0000 (UTC)
-Received: from treble (ovpn-122-46.rdu2.redhat.com [10.10.122.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3311D8AB40;
-        Wed, 17 Oct 2018 19:06:59 +0000 (UTC)
-Date:   Wed, 17 Oct 2018 14:06:57 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 06/12] livepatch: Simplify API by removing
- registration step
-Message-ID: <20181017190657.dv3kwx467brzhdnz@treble>
-References: <20181015123713.25868-1-pmladek@suse.com>
- <20181015123713.25868-7-pmladek@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181015123713.25868-7-pmladek@suse.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 17 Oct 2018 19:07:01 +0000 (UTC)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 105238EE0D2;
+        Wed, 17 Oct 2018 12:08:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1539803332;
+        bh=OjL0LE2ysyLEhBZGAf1ftUfiSj4vZeQy0iOFZVhlIKE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=w8Cf4wl5BumqUzJa+9/5ZztbzI92q5aA0hEwCyGWVMr9kiDfrVUecRi05nm9DkP+g
+         ZjypJQVz1yDfYCDPtBRdUeOp49AwysU2l3m5OBg6Vs2SqlzfkFd/X8b+IaYKt59zeK
+         1ciBgEAYWZDXKLSFIyvLQiFa1yj0h1kxw8GBGfd0=
+Message-ID: <1539803331.3769.62.camel@HansenPartnership.com>
+Subject: Re: [Ksummit-discuss] [PATCH v3 1/3] code-of-conduct: Fix the
+ ambiguity about collecting email addresses
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Frank Rowand <frowand.list@gmail.com>,
+        ksummit-discuss@lists.linuxfoundation.org
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Wed, 17 Oct 2018 12:08:51 -0700
+In-Reply-To: <16a20416-0045-dfe6-d937-63f2f0cff269@gmail.com>
+References: <1539701820.2805.6.camel@HansenPartnership.com>
+         <1539701896.2805.7.camel@HansenPartnership.com>
+         <e332116b-62e8-9930-c263-d022edb5828e@gmail.com>
+         <1539744091.2805.108.camel@HansenPartnership.com>
+         <16a20416-0045-dfe6-d937-63f2f0cff269@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 02:37:07PM +0200, Petr Mladek wrote:
-> @@ -319,96 +316,66 @@ forced it is guaranteed that no task sleeps or runs in the old code.
->  5. Livepatch life-cycle
->  =======================
->  
-> -Livepatching defines four basic operations that define the life cycle of each
-> -live patch: registration, enabling, disabling and unregistration.  There are
-> -several reasons why it is done this way.
-> +Livepatches get automatically enabled when the respective module is loaded.
+On Wed, 2018-10-17 at 11:49 -0700, Frank Rowand wrote:
+> On 10/16/18 19:41, James Bottomley wrote:
+> > On Tue, 2018-10-16 at 19:10 -0700, Frank Rowand wrote:
+[...]
+> > > Repeating my comment on version 1:
+> > > 
+> > > My understanding of the concern behind this change is that we
+> > > should be able to use an email address for the current
+> > > development practices, such as Reported-by, Suggested-by, etc
+> > > tags when the email address was provided in what is a public
+> > > space for the project.  The public space is visible to anyone in
+> > > the world who desires to access it.
+> > > 
+> > > I do not understand how "ordinarily collected by the project" is
+> > > equivalent to "an email address that was provided in a public
+> > > space for the project".
+> > 
+> > I don't think it is ... or should be.  This section is specifically
+> > enumerating unacceptable behaviours.  The carve out "email address
+> > not ordinarily collected by the project" means that adding
+> > someone's email address in a tag isn't immediately sanctionable in
+> > the code of conduct as unacceptable behaviour if a question about
+> > whether you asked explicit permission arises.  Equally, a carve out
+> > from unacceptable behaviours doesn't make the action always
+> > acceptable, so it's not a licence to publish someone's email
+> > address regardless of context.
+> 
+> The patch says "Publishing ... electronic address not ordinarily
+> collected by the project, without explicit permission".  (I think it
+> is fair to abstract here with "...".)  This phrase specifies which
+> email addresses can be published.  It does not specify in what cases
+> the email address can be published.  The desired goal is to be able
+> to publish email addresses in patch and commit tags.
 
-(only true if the module enables the patch in its init function)
+No, that's not my desired goal.   The section is not about giving
+permission it's about making sure listed unacceptable behaviours don't
+overlap what we normally do.  The goal is to exclude email the project
+ordinarily collects from immediate sanction under the unacceptable
+behaviours clause.  I deliberately didn't add anything about permission
+because that's up to the project to define in its more standard
+contribution documents.
 
-> @@ -502,6 +483,9 @@ static void klp_free_objects(struct klp_patch *patch)
->  }
->  
->  /*
-> + * The synchronous variant is needed when the patch is freed in
-> + * the klp_enable_patch() error paths.
-> + *
+> Which email addresses are allowed to be published?  (This is the
+> point of my original comment.)  To me, the patch wording is
+> describing how I can determine whether I can put a specific email
+> address in a tag in a patch that I submit or commit.  I can put an
+> email address in a tag _if_ it is "ordinarily collected by the
+> project".
+> 
+> This then leads my mental process down the path of the disclosures
+> (from all of the companies that I do business with) that tell me what
+> they are going to do with my personal information, such as my
+> address.  (They usually plan to share it with the world for their
+> financial benefit.) In that context, my personal information is not
+> _public_, but it is _ordinarily collected_ by the company.  I hope
+> this provides some insight into what I am reading into "ordinarily
+> collected by the project".
+> 
+> My original comment was trying to provide the concept behind a way to
+> create an alternate wording in the patch to define "which email
+> addresses".
+> 
+> Where are email addresses allowed to be published?  I do not
+> understand the patch wording to address this at all.
 
-Hm?  This comment seems confusingly out of context.
+I agree, but, as I said, my goal wasn't to provide explicit permission
+(because the list is too long and too dependent on the way the project
+operates) it was to carve out an exclusion from sanction for stuff the
+kernel normally does.  The carve out doesn't translate into explicit
+permission because the project can define other standards for the way
+email addresses are added to the tags.
 
-> @@ -528,6 +512,23 @@ static void klp_free_patch_finish(struct klp_patch *patch)
->  		kobject_put(&patch->kobj);
->  		wait_for_completion(&patch->finish);
->  	}
-> +
-> +	/* Put the module after the last access to struct klp_patch. */
-> +	if (patch->module_put)
-> +		module_put(patch->mod);
-> +}
-> +
-> +/*
-> + * The livepatch might be freed from sysfs interface created by the patch.
-> + * This work allows to wait until the interface is destroyed in a separate
-> + * context.
-> + */
-> +static void klp_free_patch_fn(struct work_struct *work)
+> Trying to understand how you are understanding my comment vs what I
+> intended to communicate, it seems to me that you are focused on the
+> "where allowed" and I am focused on the "which email addresses".
+> 
+> More clear?  Or am I still not communicating well enough?
 
-To clarify that it's a work function, how about calling it
-"klp_free_patch_work_fn"?
+I think the crux of the disagreement is that you think the carve out
+equates to a permission which is not specific enough and I think it
+doesn't equate to a permission at all, which is why there's no need to
+make it more explicit.  Is that a fair characterisation?
 
->  static int klp_init_func(struct klp_object *obj, struct klp_func *func)
-> @@ -642,116 +643,38 @@ static int klp_init_patch(struct klp_patch *patch)
->  	struct klp_object *obj;
->  	int ret;
->  
-> -	if (!patch->objs)
-> -		return -EINVAL;
-> -
-> -	mutex_lock(&klp_mutex);
-> -
->  	patch->enabled = false;
-> -	patch->forced = false;
-> +	patch->module_put = false;
->  	INIT_LIST_HEAD(&patch->list);
-> +	INIT_WORK(&patch->free_work, klp_free_patch_fn);
->  	init_completion(&patch->finish);
->  
-> +	if (!patch->objs)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * A reference is taken on the patch module to prevent it from being
-> +	 * unloaded.
-> +	 */
-> +	if (!try_module_get(patch->mod))
-> +		return -ENODEV;
+James
 
-This comment isn't needed.  It describes what try_module_get() does,
-which is common kernel knowledge.
-
-> +	patch->module_put = true;
-
-The naming and semantics of the 'module_put' field are a little
-confusing.  It's false in two cases:
-
-1) try_module_get() failure
-2) forced patch
-
-Maybe we can get rid of the need for the first case by moving the
-try_module_get() call to klp_enable_patch(), before calling
-klp_init_lists().  Then klp_free_patch_finish() will always be called
-with a module reference, so it doesn't have to check the 'module_put'
-field.
-
-We'd still need it for the force case, but then it can just be called
-'forced' again.
-
-> --- a/samples/livepatch/livepatch-callbacks-demo.c
-> +++ b/samples/livepatch/livepatch-callbacks-demo.c
-> @@ -184,22 +184,11 @@ static struct klp_patch patch = {
->  
->  static int livepatch_callbacks_demo_init(void)
->  {
-> -	int ret;
-> -
-> -	ret = klp_register_patch(&patch);
-> -	if (ret)
-> -		return ret;
-> -	ret = klp_enable_patch(&patch);
-> -	if (ret) {
-> -		WARN_ON(klp_unregister_patch(&patch));
-> -		return ret;
-> -	}
-> -	return 0;
-> +	return klp_enable_patch(&patch);
->  }
->  
->  static void livepatch_callbacks_demo_exit(void)
->  {
-> -	WARN_ON(klp_unregister_patch(&patch));
->  }
-
-This module exit function is no longer needed.
-
->  
->  module_init(livepatch_callbacks_demo_init);
-> diff --git a/samples/livepatch/livepatch-sample.c b/samples/livepatch/livepatch-sample.c
-> index de30d1ba4791..88afb708a48d 100644
-> --- a/samples/livepatch/livepatch-sample.c
-> +++ b/samples/livepatch/livepatch-sample.c
-> @@ -66,22 +66,11 @@ static struct klp_patch patch = {
->  
->  static int livepatch_init(void)
->  {
-> -	int ret;
-> -
-> -	ret = klp_register_patch(&patch);
-> -	if (ret)
-> -		return ret;
-> -	ret = klp_enable_patch(&patch);
-> -	if (ret) {
-> -		WARN_ON(klp_unregister_patch(&patch));
-> -		return ret;
-> -	}
-> -	return 0;
-> +	return klp_enable_patch(&patch);
->  }
->  
->  static void livepatch_exit(void)
->  {
-> -	WARN_ON(klp_unregister_patch(&patch));
->  }
-
-Ditto.
-
--- 
-Josh
