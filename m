@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D81C5ACC6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8513C5ACCC
 	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7148214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:24:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B32A214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 01:24:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uQVuRfKt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7148214C2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rrEc41ih"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B32A214C2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727157AbeJQJRp (ORCPT
+        id S1727184AbeJQJRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 05:17:45 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46049 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbeJQJRo (ORCPT
+        Wed, 17 Oct 2018 05:17:46 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43076 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbeJQJRp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 05:17:44 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u12-v6so12306999pfn.12;
-        Tue, 16 Oct 2018 18:24:34 -0700 (PDT)
+        Wed, 17 Oct 2018 05:17:45 -0400
+Received: by mail-pf1-f195.google.com with SMTP id p24-v6so12319680pff.10;
+        Tue, 16 Oct 2018 18:24:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jpZN/UlmIedOp/RKX94XiVdcF9ZfG+QGI91FHkbRWhk=;
-        b=uQVuRfKtHlivOgY0ZxSOL9P+Hxz4gRsS2sD/9p0zKKEsIc6ZmC5IuhVYWLRVmUsbc8
-         68JSzV2PfmYzj/saIZcAjhnpJ4yKxEkGComQyCOnWDGkBXF8iwEs3axTdI94YRFkPDRR
-         v55r5B7VJ1drDS3topuadQJPFtlctvYrCQmfwUzJuNy/4OB/RQyvpdExIZuCCn3Tb6Ia
-         1ZpekuXBaaV83/lD0icqDODzwTdHIqQbeBQgyW4rDVIxBuv0HNlWRIf4d7X+DsjOkbIy
-         Bb6Yr+wLGPj6RgTqHMDTdkdyCVHWPQcch4RTnu4WUeeNfdQ7C2GnoYOBOHfNHHOoAs4I
-         sjbw==
+        bh=cZrnXJgpaLW8wt9ct/fjPUh76p1CqfOkjQzMlSnZDKI=;
+        b=rrEc41ih1H/0RdIOtR2MK0KuQuFiGiL6x97XOrhcVGKupcpN9gLBdNB2BmCL4egfs5
+         8SRYfsMnOgB+VA2z5Y1xSKvaelYo9zNum83MeUjaLPaI9OwyBYIaP5R33EoOr/Tcy4U7
+         Oc/ejs9vI4pEWE25D0yv/EvDWLVW19fVHCFZNJwMg0t2mVeL86ZRzhw75qi2gnWdzo+Q
+         zkwGNdTky7dkJfxIaSee5MFzJKadDh9eQpqgRSLxWByYdV/g6bno8648eiu5/YL4I2ah
+         IfvM/IT3KOUUfVeJKNhB4+rpP0ixRF39+pvysdECIq/GYLpAr9Og3KjOahUoIto0Ddoe
+         UMyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=jpZN/UlmIedOp/RKX94XiVdcF9ZfG+QGI91FHkbRWhk=;
-        b=Yabwtaiz8woRV13HMt4KqWlM83WOhCmeg6TapxlNYVBaepm9BnkJdYf8ePlbaXUJwf
-         WYr46AMURpR4Ik43xCTtODeLOYyWugT6mY6bTADSkLpCBmtUlCJnA36tNSyPL4ioLTkX
-         h0VeSMtVW1/QWqcH7/qLszqno4x2i/S4AjJmgIoRJvGe51RmgojE3iYkKzL5zpPA3rYb
-         MqmP6DfKRseeVUU6gpX+LI/bmoXMmAGCgkFujQxioMyWxhFPgwZuzRPNS6mv/Y469YI4
-         xq0ixNFZA7xqbtBhlthY/La+kR1LNes1CvNNB1D0LNLtbI42Kt56uydy8CPmxPEwjt1H
-         ThDg==
-X-Gm-Message-State: ABuFfoiTM1oDo4zVQMlQK8zmPcaMpfLsGrgPasN9a06Kx3+SReL2SMWQ
-        g21w0OGjmgwwdZgXZ7NzOCE=
-X-Google-Smtp-Source: ACcGV62dkkPktNSuueU1ZXn0foP9qAQS7q6lJUax7eTR8b1CYQLGgSa6Gt0TlpFE97ivKlG7DrUPXQ==
-X-Received: by 2002:a62:15ce:: with SMTP id 197-v6mr15679172pfv.222.1539739473915;
-        Tue, 16 Oct 2018 18:24:33 -0700 (PDT)
+        bh=cZrnXJgpaLW8wt9ct/fjPUh76p1CqfOkjQzMlSnZDKI=;
+        b=a6tZAQc0iws5+oJSie78hMZbwFNHkSmDWPSJZh9yLYYdb5kiTiMff97uAEtq7ArbE+
+         uV45gNNmDEp4G5nkgCzEFEsR8epiG8wpx7roEtfrreS4PWkcDR0eJtyA4zwWBE876ED/
+         ntuGp//1PG8dJbwB2PkeIWvPFPqCR+mJK0JzNMua9mJx+2ARhpAkJTjUDVKHhKYHPGlq
+         d+0p/0KNp1KISU+QdxLMXblPW2u0G5rzDyr4gxFUS/RJJJkgQ8CumJ8a06nXcPNtPjfC
+         SwDYBA7rvladgMjU9EOQhLanKs13JlIDArew60CKKTAaqPfRhEJHOy7CsE56esl117WT
+         F61w==
+X-Gm-Message-State: ABuFfoiAB+HMCvsth59OBldOtS9UYGPCsvB4VxTxD6Pqk3fuaICoMInz
+        qhPw785ykVm0LR+d3q4bhq/3nr46
+X-Google-Smtp-Source: ACcGV63HxtBWJckFAFod1epEucyG0sr5Hlv8m1PtRMdrwEpmI5lXf56Mf8ZwwOoaGsqCAz4c87ZPrg==
+X-Received: by 2002:a62:583:: with SMTP id 125-v6mr12152154pff.186.1539739474592;
+        Tue, 16 Oct 2018 18:24:34 -0700 (PDT)
 Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
         by smtp.gmail.com with ESMTPSA id n64-v6sm22841851pfi.185.2018.10.16.18.24.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 18:24:33 -0700 (PDT)
+        Tue, 16 Oct 2018 18:24:34 -0700 (PDT)
 From:   Nicolin Chen <nicoleotsuka@gmail.com>
 To:     jdelvare@suse.com, linux@roeck-us.net
 Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] hwmon: (core) Inherit power properties to hdev
-Date:   Tue, 16 Oct 2018 18:24:22 -0700
-Message-Id: <20181017012426.26958-2-nicoleotsuka@gmail.com>
+Subject: [PATCH 2/5] hwmon: (ina3221) Return -ENODATA for two alarms attributes
+Date:   Tue, 16 Oct 2018 18:24:23 -0700
+Message-Id: <20181017012426.26958-3-nicoleotsuka@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181017012426.26958-1-nicoleotsuka@gmail.com>
 References: <20181017012426.26958-1-nicoleotsuka@gmail.com>
@@ -72,37 +72,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new hdev is a child device related to the original parent
-hwmon driver and its device. However, it doesn't support the
-power features, typically being defined in the parent driver.
-
-So this patch inherits three necessary power properties from
-the parent dev to hdev: power, pm_domain and driver pointers.
-
-Note that the dev->driver pointer is the place that contains
-a dev_pm_ops pointer defined in the parent device driver and
-the pm runtime core also checks this pointer:
-       if (!cb && dev->driver && dev->driver->pm)
+There is nothing critically wrong to read these two attributes
+without having a is_enabled() check at this point. But reading
+the MASK_ENABLE register would clear the CVRF bit according to
+the datasheet. So it'd be safer to fence for disabled channels
+in order to add pm runtime feature.
 
 Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 ---
- drivers/hwmon/hwmon.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/hwmon/ina3221.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index 975c95169884..7c064e1218ba 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -625,6 +625,9 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
- 	hwdev->name = name;
- 	hdev->class = &hwmon_class;
- 	hdev->parent = dev;
-+	hdev->driver = dev->driver;
-+	hdev->power = dev->power;
-+	hdev->pm_domain = dev->pm_domain;
- 	hdev->of_node = dev ? dev->of_node : NULL;
- 	hwdev->chip = chip;
- 	dev_set_drvdata(hdev, drvdata);
+diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
+index d61688f04594..3e98b59108ee 100644
+--- a/drivers/hwmon/ina3221.c
++++ b/drivers/hwmon/ina3221.c
+@@ -200,6 +200,8 @@ static int ina3221_read_curr(struct device *dev, u32 attr,
+ 		return 0;
+ 	case hwmon_curr_crit_alarm:
+ 	case hwmon_curr_max_alarm:
++		if (!ina3221_is_enabled(ina, channel))
++			return -ENODATA;
+ 		ret = regmap_field_read(ina->fields[reg], &regval);
+ 		if (ret)
+ 			return ret;
 -- 
 2.17.1
 
