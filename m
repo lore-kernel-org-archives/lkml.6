@@ -2,136 +2,153 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2592BECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44495ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D62582150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:32:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D62582150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 0A14F2150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 11:33:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="thrbiJF/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A14F2150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbeJQT1o (ORCPT
+        id S1727257AbeJQT2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:27:44 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59060 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbeJQT1o (ORCPT
+        Wed, 17 Oct 2018 15:28:38 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42291 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbeJQT2h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:27:44 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 408888078B; Wed, 17 Oct 2018 13:32:26 +0200 (CEST)
-Date:   Wed, 17 Oct 2018 13:32:26 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     vbabka@suse.cz, hpa@zytor.com, torvalds@linux-foundation.org,
-        ak@linux.intel.com, dave.hansen@intel.com,
-        kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de
-Subject: Re: l1tf: Kernel suggests I throw away third of my memory. I'd
- rather not
-Message-ID: <20181017113226.GA5176@amd>
-References: <20181017105610.GA4260@amd>
- <20181017111544.GO18839@dhcp22.suse.cz>
+        Wed, 17 Oct 2018 15:28:37 -0400
+Received: by mail-qt1-f193.google.com with SMTP id j46-v6so29495695qtc.9
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 04:33:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mHNQy+TtQ0F8MQ5t2Kb6nCFPUjzCI8OsSYuq57JXksE=;
+        b=thrbiJF/GbFBIt06Q1f4P2IyS2FXw2+4t/WuWu8TLLaAXB7nBpaNCUvw7hu2f36laz
+         RLz3tLGXeE4coGRryi5ywEEpPxcI9ZOtfk2jp2Od7pXZH0atd7FZTA8Z1cJQjTc57GHa
+         1yLdbiJjZWZGememSHfKV9ANbu0k7iAkQGcqkuCei+uOemooMHDxq/Moid5CPMG4susp
+         6Eig8sW5CULQ3tQ4iKwOJwARgVP6vCObpYlYCgZfUW2CZ/+HOhKFXIsHuM+S/JR+zybf
+         3Qgl0IqmLtheO7RTp9RkUT43IRQuGdWW1og6rtzZk5E3SUXaL9kZSIib5pcJ4OniRtSj
+         crJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mHNQy+TtQ0F8MQ5t2Kb6nCFPUjzCI8OsSYuq57JXksE=;
+        b=aaL6ynsGoxSKtKYJ2TKt0JZ+jk+JPy0li73yi8lchs3jHuWWHhBdE00ijr2saa3k5x
+         yKPHx0NziCMGDdTE/v2SnNmAwh4UiIlQvbeLb6jT07+Z8pXJqL0mJly6Q0NB0ga0qkse
+         fFbBDcfD1uRSwWFRo+NeqSAtSaT3F2iLZlwrjYLozJ47UVBom6CQh8Lt9hJuWpUu0rOg
+         8SrR/vcqjmTST3PxjOFahH2ZVoGdre753h9M1CnMH2IxVYABiq4vab/rZZLjEo8iPuqB
+         VsTf1D6Lgex2wvZJCTDWKA0QBOlmgaa7feV8Ml3/PSQhdJWanMdjybePnOAQyOGePpFY
+         TJcg==
+X-Gm-Message-State: ABuFfoiA28Ceznl4mp5EDtfQjLYU9Vne1UzfE06wRXKI6I8UrrJSNq2a
+        Sr28Hqbe2XfZ5rfXUelSKcO49n1zkXgsnq5CsHc=
+X-Google-Smtp-Source: ACcGV60t//0vuCgf6HGQOHRcgjzTdCZdd7/wf0ngQERaM/KEAxu0XTnHce/zGdvxWpeEPi8CondCF8FTW8JKBwg1Aew=
+X-Received: by 2002:aed:2de3:: with SMTP id i90-v6mr5618806qtd.229.1539775999909;
+ Wed, 17 Oct 2018 04:33:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
-Content-Disposition: inline
-In-Reply-To: <20181017111544.GO18839@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <CGME20181016072249eucas1p2303b8c06a9f7c839a971fe065b0c752e@eucas1p2.samsung.com>
+ <20181016072244.1216-1-a.hajda@samsung.com> <20181016072244.1216-2-a.hajda@samsung.com>
+ <CAHp75VfVxEkTzc=1hBrvc4K7r=L28vXipb=j9jSRJbTJE4GtLQ@mail.gmail.com>
+ <605bd00e-ed0d-4259-bdc3-1784b2b3b16a@samsung.com> <20181016125543eucas1p1f23b3482179a9cd465f509e0abf782c1~eGAecmAv93038330383eucas1p1j@eucas1p1.samsung.com>
+ <CAHp75VecquoNrzOuRvWcZ-Qa1b-5P0V0MWq=sNj-SnVcd2EhRw@mail.gmail.com> <20181017112914.GH30658@n2100.armlinux.org.uk>
+In-Reply-To: <20181017112914.GH30658@n2100.armlinux.org.uk>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 17 Oct 2018 14:33:08 +0300
+Message-ID: <CAHp75Vd1JQVx96FLEtTO7a7-OBaC1nUKcoSk4S6wvO6BtjJ-3w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] driver core: add probe_err log helper
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 17, 2018 at 2:29 PM Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+>
+> On Tue, Oct 16, 2018 at 04:55:00PM +0300, Andy Shevchenko wrote:
+> > On Tue, Oct 16, 2018 at 3:55 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
+> > > On 16.10.2018 13:29, Andrzej Hajda wrote:
+> > > > On 16.10.2018 13:01, Andy Shevchenko wrote:
+> > > >> On Tue, Oct 16, 2018 at 10:22 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
+> > > >>> During probe every time driver gets resource it should usually check for error
+> > > >>> printk some message if it is not -EPROBE_DEFER and return the error. This
+> > > >>> pattern is simple but requires adding few lines after any resource acquisition
+> > > >>> code, as a result it is often omited or implemented only partially.
+> > > >>> probe_err helps to replace such code seqences with simple call, so code:
+> > > >>>         if (err != -EPROBE_DEFER)
+> > > >>>                 dev_err(dev, ...);
+> > > >>>         return err;
+> > > >>> becomes:
+> > > >>>         return probe_err(dev, err, ...);
+> >
+> > > >>> +               va_start(args, fmt);
+> > > >>> +
+> > > >>> +               vaf.fmt = fmt;
+> > > >>> +               vaf.va = &args;
+> > > >>> +
+> > > >>> +               __dev_printk(KERN_ERR, dev, &vaf);
+> >
+> > > >> It would be nice to print an error code as well, wouldn't it?
+> > > > Hmm, on probe fail error is printed anyway (with exception of
+> > > > EPROBE_DEFER, ENODEV and ENXIO):
+> > > >     "probe of %s failed with error %d\n"
+> > > > On the other side currently some drivers prints the error code anyway
+> > > > via dev_err or similar, so I guess during conversion to probe_err it
+> > > > should be removed then.
+> > > >
+> > > > If we add error code to probe_err is it OK to report it this way?
+> > > >     dev_err(dev, "%V, %d\n", &vaf, err);
+> > >
+> > > Ups, I forgot that message passed to probe_err will contain already
+> > > newline character.
+> >
+> > You may consider not to pass it.
+>
+> It's normal to pass the '\n', so by doing this, we create the situation
+> where this function becomes the exception to the norm.  That's not a
+> good idea - we will see people forget that appending '\n' should not
+> be done for this particular function.
+>
+> While we could add a checkpatch rule, that's hassle (extra rework).  In
+> any case, I think the message would be much better formatted if we did:
+>
+>         dev_err(dev, "error %d: %V", err, &vaf);
+>
+> which means we end up with (eg):
+>
+>         error -5: request_irq failed for irq 9
+>
+> rather than:
+>
+>         request_irq failed for irq 9, -5
+>
+> which is more confusing.
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As I said earlier, I'm fine to either variant and I see your point
+here, so, I tend to agree to this variant.
 
-Hi!
+P.S. Andrzej, in any case my Rb tag, which I just gave, stays.
 
-> > 6a012288 suggests I throw away 1GB on RAM. On 3GB system.. that is not
-> > going to be pleasant.
-> >=20
-> > l1tf.html says:
-> >=20
-> > # The Linux kernel contains a mitigation for this attack vector, PTE
-> > # inversion, which is permanently enabled and has no performance
-> > # impact.
-> >=20
-> > I don't believe it has "no" performance impact, but I guess it is lost
-> > in the noise.
->=20
-> Please prove otherwise. I would be more than surprised if inverting pfn
-> part of the pte is noticeable. But I can be wrong of course.
-
-I'm not saying its noticeable. I'm saying that inversion takes few
-clock cycles (including a branch?) and that neither caches nor RAM is
-free.
-
-"no noticeable performance impact" I'd agree with :).
-
-> > #  The kernel ensures that the address bits of PTEs, which are
-> > # not marked present, never point to cacheable physical memory space.
-> >=20
-> > # A system with an up to date kernel is protected against attacks from
-> > # malicious user space applications.
-> >=20
-> > These are not true.
-> >=20
-> > cat /sys/devices/system/cpu/vulnerabilities/l1tf
-> > Vulnerable
-> > uname -a
-> > Linux amd 4.19.0-rc8-next-20181017autobisect1539371050 #189 SMP Wed
-> > Oct 17 12:04:23 CEST 2018 i686 GNU/Linux
->=20
-> This is a result of you having memory above MAX_PFN/2 right?
-
-Yes.
-
-> > Now question is... can we do better? Kernel stores information about
-> > swapped-out pages there, right? That sounds like a cool hack, but
-> > maybe it is time to get rid of that hack?
->=20
-> Patches are welcome.
-
-Cooperation will be needed if you want to see patches. As
-in... answering the questions above.
-
-> > As a workaround, can I simply do swapoff -a to be safe for now?
->=20
-> Well, that depends. Do you care about PROT_NONE attacks as well? If not
-> then no-swap would help you. But even then no-swap is rather theoretical
-> attack on a physical host unless you allow an arbitrary swapout to a
-> malicious user (e.g. allow a user controlled memcg hard limit that would
-> cause excessive local swapouts).
-
-PROT_NONE attack.. aha, so kernel stores not only information about
-swapped-out pages but also about file-backed pages that are currently
-not present? Hmm. That makes it more complex :-(.=20
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvHHcoACgkQMOfwapXb+vLNUgCfWbqpoSLWonc6V6Gr674SjNTX
-7fcAoLzFGJgOme3A4yIyCTGv3LRFW2kl
-=T8qo
------END PGP SIGNATURE-----
-
---uAKRQypu60I7Lcqm--
+-- 
+With Best Regards,
+Andy Shevchenko
