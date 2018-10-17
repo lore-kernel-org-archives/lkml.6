@@ -7,68 +7,71 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4705AC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFE8C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D98402087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:01:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF7AC2087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:01:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjPbI2qa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D98402087A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUZYG6X3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF7AC2087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbeJQHxf (ORCPT
+        id S1727495AbeJQHxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 03:53:35 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40666 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727471AbeJQHxf (ORCPT
+        Wed, 17 Oct 2018 03:53:33 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44641 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbeJQHxb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 03:53:35 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n31-v6so11604572pgm.7;
-        Tue, 16 Oct 2018 17:00:43 -0700 (PDT)
+        Wed, 17 Oct 2018 03:53:31 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r9-v6so12230477pff.11;
+        Tue, 16 Oct 2018 17:00:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tGupLtCrLcyDF9k/0ilGtmDXmWL8CPouV9cE/AdG6B4=;
-        b=kjPbI2qaKW35r63115kiKXIgPDfzfjjNHlngeXi2UVwPKqUQBvXo5YiRR1HX9id1Mi
-         mh6v4JaLvZs0wfP1VPIjtwduE3Qg8LAu3oCs0pqdnjFt3Yc7z3eWRslQLqzUxM/BYhag
-         jVsHlDFWtTVzB4a4O4fYRRlfYcQvWYGr3WPahibtRULUZTDRPFvQYbd7z27rDoLQb9fs
-         VntjpEajhOXk3sSX+Z1+Y+/UUPUSni0Yrp9eXOpMKAFdthxw49D3kKB8ckIeOggXYSd7
-         c4uxsvSvz4eShuz4ZmzSoN2njsplmvnEKUWy9brADbiI5Kny0KvJ4Lpo2drhjMapkx+X
-         8bWA==
+        bh=Qm4xfTw+EXkRYWczhf78ede2S6Obp9s1X/mYBD38YOs=;
+        b=lUZYG6X3dicbSjJrEi1ShPvNpSWhTX7pUqlfNMdcj1P2Yksa10gVRiOZHoAU+HilCk
+         gcPJEWhz5L2dW8oDjxelLEOoC2PMYNkMDyObo3XFgdcA82eazvwD+01EffYnsUXBHmWU
+         xv6UB/H+Vtu70P7mCbNMMHzOOLFMB1vOY4K9wgbxFbOTRcsIndCHkuJdZGeIT+o2GJ9s
+         XJZCvP9vmfRsF2El+vcn/6/vVX0EPW8NPbFB9jYYrRtiEVuC7LDRfih4ZNSPXbm6dS5M
+         696fTJobj2MilUbukQIqR6RkWKJe/aD4yoTc+XHV13UxwyseVQ4kzcBvnnXVJlG26rQ5
+         1I6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tGupLtCrLcyDF9k/0ilGtmDXmWL8CPouV9cE/AdG6B4=;
-        b=W9muXsax2OdtXXvykWKTmYpfNwZJJe+SosSpL6Up8AoEGluINpAoGFkKCt8b8o2KeK
-         SjOd1peCUXBskk6YHMqXqDrmYbnfc8DtZDQSU2zlxidPbHuM4XjFpG8qyt8vikZyVQiT
-         FvUo9sDOCBMjqNKhT1IdxVcAc6QeMuubbnfU+U3nFWyy+i/WuPw6S5CTx+RauEOPoTnm
-         JP76Gvg0KCslc6u17xqzX46n7FS8/MAVr1n44SJkK+2Yhc5E2DCEYaxHLrgKpJ0vpuzG
-         rqXeUEjaKGKlgZq7toAnl4a/brw6fpbWPeCKdRqOHPr+gJHDdHm34CipGSnQ0YBN4tfz
-         +gNg==
-X-Gm-Message-State: ABuFfoh4njUB1b0YKb1oGqJPynbbnVB6FSlIRtHg0yLrGMijzfIA11W3
-        xw4Ggf5+jkpq1QcHXwe8B6pI4eDA
-X-Google-Smtp-Source: ACcGV611laWqjTCTn7zPu1ZmDhnPj8r9ifJDYsgCCO+U6IfaBIuUF+r+yUHkJrejzhc2VseiKdQbpQ==
-X-Received: by 2002:a62:fcd8:: with SMTP id e207-v6mr23752706pfh.132.1539734443032;
-        Tue, 16 Oct 2018 17:00:43 -0700 (PDT)
+        bh=Qm4xfTw+EXkRYWczhf78ede2S6Obp9s1X/mYBD38YOs=;
+        b=JhtQiWkuOIrv1jaddEbeRrfBkGZ6A0D/4MKij1gKa91gn3+xxYoTpKR4zpkoFF4ghS
+         7hGadfCivT2h5bsAWKhRvUuN4VU85QlWBYuvCnq6Kj9QEHMPnJgxMsPnnFt0NV0/SBRJ
+         /BfAttRDCNtopcFsXcYU1hl6WzrJLnDA2KFyWmM2FUiHiro9eiV1pdyWUBv/CBDZ6+eu
+         dyBwHWdNxqRI0F7EmwXS3szWHi5pNcgDbEF4eJ0rYn391Z8hGWN/JYIxdZgTio+AZPvt
+         O+FIDhyeKMhShZPhN3Q/eDn1qzFgoAGCvk7TfUJnc2hln1EyohurCxIu7Iu6XGUfjcU2
+         xb9w==
+X-Gm-Message-State: ABuFfojGa//Y47rpphD98WRonlLr39sqvL6feHG54YL3WOML54oEAjND
+        AlhwSRt71onAdchRN9uaM9BvvMMm
+X-Google-Smtp-Source: ACcGV611UtF11i9YxA+MBIo20H7EKT+z2kuzgOgYei0OyytjGJjWa6jUTgKrqBTbklKtlPIdhzdbfw==
+X-Received: by 2002:a63:3642:: with SMTP id d63-v6mr21917268pga.404.1539734439630;
+        Tue, 16 Oct 2018 17:00:39 -0700 (PDT)
 Received: from majic.sklembedded.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
-        by smtp.googlemail.com with ESMTPSA id o12-v6sm17033117pgv.7.2018.10.16.17.00.41
+        by smtp.googlemail.com with ESMTPSA id o12-v6sm17033117pgv.7.2018.10.16.17.00.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Oct 2018 17:00:42 -0700 (PDT)
+        Tue, 16 Oct 2018 17:00:38 -0700 (PDT)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 To:     linux-media@vger.kernel.org
 Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
+        IMX), linux-kernel@vger.kernel.org (open list),
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 04/12] media: imx: Fix field negotiation
-Date:   Tue, 16 Oct 2018 17:00:19 -0700
-Message-Id: <20181017000027.23696-5-slongerbeam@gmail.com>
+        linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER)
+Subject: [PATCH v5 02/12] gpu: ipu-csi: Swap fields according to input/output field types
+Date:   Tue, 16 Oct 2018 17:00:17 -0700
+Message-Id: <20181017000027.23696-3-slongerbeam@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181017000027.23696-1-slongerbeam@gmail.com>
 References: <20181017000027.23696-1-slongerbeam@gmail.com>
@@ -77,271 +80,273 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IDMAC interlaced scan, a.k.a. interweave, should be enabled in the
-IDMAC output channels only if the IDMAC output pad field type is
-'seq-bt' or 'seq-tb', and field type at the capture interface is
-'interlaced*'.
+The function ipu_csi_init_interface() was inverting the F-bit for
+NTSC case, in the CCIR_CODE_1/2 registers. The result being that
+for NTSC bottom-top field order, the CSI would swap fields and
+capture in top-bottom order.
 
-V4L2_FIELD_HAS_BOTH() macro should not be used on the input to determine
-enabling interlaced/interweave scan. That macro includes the 'interlaced'
-field types, and in those cases the data is already interweaved with
-top/bottom field lines.
+Instead, base field swap on the field order of the input to the CSI,
+and the field order of the requested output. If the input/output
+fields are sequential but different, swap fields, otherwise do
+not swap. This requires passing both the input and output mbus
+frame formats to ipu_csi_init_interface().
 
-The CSI will capture whole frames when the source specifies alternate
-field mode. So the CSI also enables interweave for alternate input
-field type and the field type at capture interface is interlaced.
+Move this code to a new private function ipu_csi_set_bt_interlaced_codes()
+that programs the CCIR_CODE_1/2 registers for interlaced BT.656 (and
+possibly interlaced BT.1120 in the future).
 
-Fix the logic for setting field type in try_fmt in CSI entity.
-The behavior should be:
-
-- No restrictions on field type at sink pad.
-
-- At the output pads, allow sequential fields in TB order, if the sink pad
-  field type is sequential or alternate. Otherwise passthrough the field
-  type from sink to source pad.
-
-Move this logic to new function csi_try_field().
-
-These changes result in the following allowed field transformations
-from CSI sink -> source pads (all other field types at sink are passed
-through to source):
-
-seq-tb -> seq-tb
-seq-bt -> seq-tb
-alternate -> seq-tb
-
-In a future patch, the CSI sink -> source will allow:
-
-seq-tb -> seq-bt
-seq-bt -> seq-bt
-alternate -> seq-bt
-
-This will require supporting interweave with top/bottom line swapping.
-Until then seq-bt is not allowed at the CSI source pad because there is
-no way to swap top/bottom lines when interweaving to INTERLACED_BT --
-note that despite the name, INTERLACED_BT is top-bottom order in memory.
-The BT in this case refers to field dominance: the bottom lines are
-older in time than the top lines.
-
-The capture interface device allows selecting IDMAC interweave by
-choosing INTERLACED_TB if the CSI/PRPENCVF source pad is seq-tb and
-INTERLACED_BT if the source pad is seq-bt (for future support of seq-bt).
+When detecting input video standard from the input frame width/height,
+make sure to double height if input field type is alternate, since
+in that case input height only includes lines for one field.
 
 Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/staging/media/imx/imx-ic-prpencvf.c   | 21 ++++--
- drivers/staging/media/imx/imx-media-capture.c | 14 ++++
- drivers/staging/media/imx/imx-media-csi.c     | 64 ++++++++++++++-----
- 3 files changed, 76 insertions(+), 23 deletions(-)
+Changes since v4:
+- Cleaned up some convoluted code in ipu_csi_init_interface(), suggested
+  by Philipp Zabel.
+- Fixed a regression in csi_setup(), caught by Philipp.
+---
+ drivers/gpu/ipu-v3/ipu-csi.c              | 119 +++++++++++++++-------
+ drivers/staging/media/imx/imx-media-csi.c |  17 +---
+ include/video/imx-ipu-v3.h                |   3 +-
+ 3 files changed, 88 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
-index af7224846bd5..1a03d4c9d7b8 100644
---- a/drivers/staging/media/imx/imx-ic-prpencvf.c
-+++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
-@@ -354,12 +354,13 @@ static int prp_setup_channel(struct prp_priv *priv,
- {
- 	struct imx_media_video_dev *vdev = priv->vdev;
- 	const struct imx_media_pixfmt *outcc;
--	struct v4l2_mbus_framefmt *infmt;
-+	struct v4l2_mbus_framefmt *outfmt;
- 	unsigned int burst_size;
- 	struct ipu_image image;
-+	bool interweave;
- 	int ret;
- 
--	infmt = &priv->format_mbus[PRPENCVF_SINK_PAD];
-+	outfmt = &priv->format_mbus[PRPENCVF_SRC_PAD];
- 	outcc = vdev->cc;
- 
- 	ipu_cpmem_zero(channel);
-@@ -369,6 +370,15 @@ static int prp_setup_channel(struct prp_priv *priv,
- 	image.rect.width = image.pix.width;
- 	image.rect.height = image.pix.height;
- 
-+	/*
-+	 * If the field type at capture interface is interlaced, and
-+	 * the output IDMAC pad is sequential, enable interweave at
-+	 * the IDMAC output channel.
-+	 */
-+	interweave = V4L2_FIELD_IS_INTERLACED(image.pix.field) &&
-+		V4L2_FIELD_IS_SEQUENTIAL(outfmt->field) &&
-+		channel == priv->out_ch;
-+
- 	if (rot_swap_width_height) {
- 		swap(image.pix.width, image.pix.height);
- 		swap(image.rect.width, image.rect.height);
-@@ -409,9 +419,7 @@ static int prp_setup_channel(struct prp_priv *priv,
- 	if (rot_mode)
- 		ipu_cpmem_set_rotation(channel, rot_mode);
- 
--	if (image.pix.field == V4L2_FIELD_NONE &&
--	    V4L2_FIELD_HAS_BOTH(infmt->field) &&
--	    channel == priv->out_ch)
-+	if (interweave)
- 		ipu_cpmem_interlaced_scan(channel, image.pix.bytesperline,
- 					  image.pix.pixelformat);
- 
-@@ -839,8 +847,7 @@ static void prp_try_fmt(struct prp_priv *priv,
- 	infmt = __prp_get_fmt(priv, cfg, PRPENCVF_SINK_PAD, sdformat->which);
- 
- 	if (sdformat->pad == PRPENCVF_SRC_PAD) {
--		if (sdformat->format.field != V4L2_FIELD_NONE)
--			sdformat->format.field = infmt->field;
-+		sdformat->format.field = infmt->field;
- 
- 		prp_bound_align_output(&sdformat->format, infmt,
- 				       priv->rot_mode);
-diff --git a/drivers/staging/media/imx/imx-media-capture.c b/drivers/staging/media/imx/imx-media-capture.c
-index b37e1186eb2f..01ec9443de55 100644
---- a/drivers/staging/media/imx/imx-media-capture.c
-+++ b/drivers/staging/media/imx/imx-media-capture.c
-@@ -239,6 +239,20 @@ static int capture_try_fmt_vid_cap(struct file *file, void *fh,
- 		cc = cc_src;
- 	}
- 
-+	/* allow IDMAC interweave but enforce field order from source */
-+	if (V4L2_FIELD_IS_INTERLACED(f->fmt.pix.field)) {
-+		switch (fmt_src.format.field) {
-+		case V4L2_FIELD_SEQ_TB:
-+			fmt_src.format.field = V4L2_FIELD_INTERLACED_TB;
-+			break;
-+		case V4L2_FIELD_SEQ_BT:
-+			fmt_src.format.field = V4L2_FIELD_INTERLACED_BT;
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
- 	imx_media_mbus_fmt_to_pix_fmt(&f->fmt.pix, &fmt_src.format, cc);
- 
+diff --git a/drivers/gpu/ipu-v3/ipu-csi.c b/drivers/gpu/ipu-v3/ipu-csi.c
+index aa0e30a2ba18..4a15e513fa05 100644
+--- a/drivers/gpu/ipu-v3/ipu-csi.c
++++ b/drivers/gpu/ipu-v3/ipu-csi.c
+@@ -325,6 +325,15 @@ static int mbus_code_to_bus_cfg(struct ipu_csi_bus_config *cfg, u32 mbus_code,
  	return 0;
-diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index 4aa20ae72608..176978c7dfe7 100644
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -398,16 +398,18 @@ static int csi_idmac_setup_channel(struct csi_priv *priv)
- 	struct imx_media_video_dev *vdev = priv->vdev;
- 	const struct imx_media_pixfmt *incc;
- 	struct v4l2_mbus_framefmt *infmt;
-+	struct v4l2_mbus_framefmt *outfmt;
-+	bool passthrough, interweave;
- 	struct ipu_image image;
- 	u32 passthrough_bits;
- 	u32 passthrough_cycles;
- 	dma_addr_t phys[2];
--	bool passthrough;
- 	u32 burst_size;
- 	int ret;
- 
- 	infmt = &priv->format_mbus[CSI_SINK_PAD];
- 	incc = priv->cc[CSI_SINK_PAD];
-+	outfmt = &priv->format_mbus[CSI_SRC_PAD_IDMAC];
- 
- 	ipu_cpmem_zero(priv->idmac_ch);
- 
-@@ -424,6 +426,14 @@ static int csi_idmac_setup_channel(struct csi_priv *priv)
- 	passthrough = requires_passthrough(&priv->upstream_ep, infmt, incc);
- 	passthrough_cycles = 1;
- 
-+	/*
-+	 * If the field type at capture interface is interlaced, and
-+	 * the output IDMAC pad is sequential, enable interweave at
-+	 * the IDMAC output channel.
-+	 */
-+	interweave = V4L2_FIELD_IS_INTERLACED(image.pix.field) &&
-+		V4L2_FIELD_IS_SEQUENTIAL(outfmt->field);
-+
- 	switch (image.pix.pixelformat) {
- 	case V4L2_PIX_FMT_SBGGR8:
- 	case V4L2_PIX_FMT_SGBRG8:
-@@ -509,8 +519,7 @@ static int csi_idmac_setup_channel(struct csi_priv *priv)
- 
- 	ipu_smfc_set_burstsize(priv->smfc, burst_size);
- 
--	if (image.pix.field == V4L2_FIELD_NONE &&
--	    V4L2_FIELD_HAS_BOTH(infmt->field))
-+	if (interweave)
- 		ipu_cpmem_interlaced_scan(priv->idmac_ch,
- 					  image.pix.bytesperline,
- 					  image.pix.pixelformat);
-@@ -1302,6 +1311,38 @@ static int csi_get_fmt(struct v4l2_subdev *sd,
- 	return ret;
  }
  
-+static void csi_try_field(struct csi_priv *priv,
-+			  struct v4l2_subdev_pad_config *cfg,
-+			  struct v4l2_subdev_format *sdformat)
++/* translate alternate field mode based on given standard */
++static inline enum v4l2_field
++ipu_csi_translate_field(enum v4l2_field field, v4l2_std_id std)
 +{
-+	struct v4l2_mbus_framefmt *infmt =
-+		__csi_get_fmt(priv, cfg, CSI_SINK_PAD, sdformat->which);
-+
-+	/* no restrictions on sink pad field type */
-+	if (sdformat->pad == CSI_SINK_PAD)
-+		return;
-+
-+	switch (infmt->field) {
-+	case V4L2_FIELD_SEQ_TB:
-+	case V4L2_FIELD_SEQ_BT:
-+	case V4L2_FIELD_ALTERNATE:
-+		/*
-+		 * If the sink is sequential or alternating fields,
-+		 * allow only SEQ_TB at the source.
-+		 *
-+		 * This driver does not support alternate field mode, and
-+		 * the CSI captures a whole frame, so the CSI never presents
-+		 * alternate mode at its source pads.
-+		 */
-+		sdformat->format.field = V4L2_FIELD_SEQ_TB;
-+		break;
-+	default:
-+		/* Passthrough for all other input field types */
-+		sdformat->format.field = infmt->field;
-+		break;
-+	}
++	return (field != V4L2_FIELD_ALTERNATE) ? field :
++		((std & V4L2_STD_525_60) ?
++		 V4L2_FIELD_SEQ_BT : V4L2_FIELD_SEQ_TB);
 +}
 +
- static void csi_try_fmt(struct csi_priv *priv,
- 			struct v4l2_fwnode_endpoint *upstream_ep,
- 			struct v4l2_subdev_pad_config *cfg,
-@@ -1341,25 +1382,14 @@ static void csi_try_fmt(struct csi_priv *priv,
- 			}
- 		}
+ /*
+  * Fill a CSI bus config struct from mbus_config and mbus_framefmt.
+  */
+@@ -374,22 +383,75 @@ static int fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
+ 	return 0;
+ }
  
--		if (sdformat->pad == CSI_SRC_PAD_DIRECT ||
--		    sdformat->format.field != V4L2_FIELD_NONE)
--			sdformat->format.field = infmt->field;
--
--		/*
--		 * translate V4L2_FIELD_ALTERNATE to SEQ_TB or SEQ_BT
--		 * depending on input height (assume NTSC top-bottom
--		 * order if 480 lines, otherwise PAL bottom-top order).
--		 */
--		if (sdformat->format.field == V4L2_FIELD_ALTERNATE) {
--			sdformat->format.field =  (infmt->height == 480) ?
--				V4L2_FIELD_SEQ_TB : V4L2_FIELD_SEQ_BT;
--		}
-+		csi_try_field(priv, cfg, sdformat);
- 
- 		/* propagate colorimetry from sink */
- 		sdformat->format.colorspace = infmt->colorspace;
- 		sdformat->format.xfer_func = infmt->xfer_func;
- 		sdformat->format.quantization = infmt->quantization;
- 		sdformat->format.ycbcr_enc = infmt->ycbcr_enc;
++static int ipu_csi_set_bt_interlaced_codes(struct ipu_csi *csi,
++					   struct v4l2_mbus_framefmt *infmt,
++					   struct v4l2_mbus_framefmt *outfmt,
++					   v4l2_std_id std)
++{
++	enum v4l2_field infield, outfield;
++	bool swap_fields;
 +
++	/* get translated field type of input and output */
++	infield = ipu_csi_translate_field(infmt->field, std);
++	outfield = ipu_csi_translate_field(outfmt->field, std);
++
++	/*
++	 * Write the H-V-F codes the CSI will match against the
++	 * incoming data for start/end of active and blanking
++	 * field intervals. If input and output field types are
++	 * sequential but not the same (one is SEQ_BT and the other
++	 * is SEQ_TB), swap the F-bit so that the CSI will capture
++	 * field 1 lines before field 0 lines.
++	 */
++	swap_fields = (V4L2_FIELD_IS_SEQUENTIAL(infield) &&
++		       V4L2_FIELD_IS_SEQUENTIAL(outfield) &&
++		       infield != outfield);
++
++	if (!swap_fields) {
++		/*
++		 * Field0BlankEnd  = 110, Field0BlankStart  = 010
++		 * Field0ActiveEnd = 100, Field0ActiveStart = 000
++		 * Field1BlankEnd  = 111, Field1BlankStart  = 011
++		 * Field1ActiveEnd = 101, Field1ActiveStart = 001
++		 */
++		ipu_csi_write(csi, 0x40596 | CSI_CCIR_ERR_DET_EN,
++			      CSI_CCIR_CODE_1);
++		ipu_csi_write(csi, 0xD07DF, CSI_CCIR_CODE_2);
++	} else {
++		dev_dbg(csi->ipu->dev, "capture field swap\n");
++
++		/* same as above but with F-bit inverted */
++		ipu_csi_write(csi, 0xD07DF | CSI_CCIR_ERR_DET_EN,
++			      CSI_CCIR_CODE_1);
++		ipu_csi_write(csi, 0x40596, CSI_CCIR_CODE_2);
++	}
++
++	ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
++
++	return 0;
++}
++
++
+ int ipu_csi_init_interface(struct ipu_csi *csi,
+ 			   struct v4l2_mbus_config *mbus_cfg,
+-			   struct v4l2_mbus_framefmt *mbus_fmt)
++			   struct v4l2_mbus_framefmt *infmt,
++			   struct v4l2_mbus_framefmt *outfmt)
+ {
+ 	struct ipu_csi_bus_config cfg;
+ 	unsigned long flags;
+ 	u32 width, height, data = 0;
++	v4l2_std_id std;
+ 	int ret;
+ 
+-	ret = fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
++	ret = fill_csi_bus_cfg(&cfg, mbus_cfg, infmt);
+ 	if (ret < 0)
+ 		return ret;
+ 
+ 	/* set default sensor frame width and height */
+-	width = mbus_fmt->width;
+-	height = mbus_fmt->height;
++	width = infmt->width;
++	height = infmt->height;
++	if (infmt->field == V4L2_FIELD_ALTERNATE)
++		height *= 2;
+ 
+ 	/* Set the CSI_SENS_CONF register remaining fields */
+ 	data |= cfg.data_width << CSI_SENS_CONF_DATA_WIDTH_SHIFT |
+@@ -416,42 +478,22 @@ int ipu_csi_init_interface(struct ipu_csi *csi,
+ 		ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
  		break;
- 	case CSI_SINK_PAD:
- 		v4l_bound_align_image(&sdformat->format.width, MIN_W, MAX_W,
-@@ -1387,6 +1417,8 @@ static void csi_try_fmt(struct csi_priv *priv,
- 			sdformat->format.code = (*cc)->codes[0];
+ 	case IPU_CSI_CLK_MODE_CCIR656_INTERLACED:
+-		if (mbus_fmt->width == 720 && mbus_fmt->height == 576) {
+-			/*
+-			 * PAL case
+-			 *
+-			 * Field0BlankEnd = 0x6, Field0BlankStart = 0x2,
+-			 * Field0ActiveEnd = 0x4, Field0ActiveStart = 0
+-			 * Field1BlankEnd = 0x7, Field1BlankStart = 0x3,
+-			 * Field1ActiveEnd = 0x5, Field1ActiveStart = 0x1
+-			 */
+-			height = 625; /* framelines for PAL */
+-
+-			ipu_csi_write(csi, 0x40596 | CSI_CCIR_ERR_DET_EN,
+-					  CSI_CCIR_CODE_1);
+-			ipu_csi_write(csi, 0xD07DF, CSI_CCIR_CODE_2);
+-			ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
+-		} else if (mbus_fmt->width == 720 && mbus_fmt->height == 480) {
+-			/*
+-			 * NTSC case
+-			 *
+-			 * Field0BlankEnd = 0x7, Field0BlankStart = 0x3,
+-			 * Field0ActiveEnd = 0x5, Field0ActiveStart = 0x1
+-			 * Field1BlankEnd = 0x6, Field1BlankStart = 0x2,
+-			 * Field1ActiveEnd = 0x4, Field1ActiveStart = 0
+-			 */
+-			height = 525; /* framelines for NTSC */
+-
+-			ipu_csi_write(csi, 0xD07DF | CSI_CCIR_ERR_DET_EN,
+-					  CSI_CCIR_CODE_1);
+-			ipu_csi_write(csi, 0x40596, CSI_CCIR_CODE_2);
+-			ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
++		if (width == 720 && height == 480) {
++			std = V4L2_STD_NTSC;
++			height = 525;
++		} else if (width == 720 && height == 576) {
++			std = V4L2_STD_PAL;
++			height = 625;
+ 		} else {
+ 			dev_err(csi->ipu->dev,
+-				"Unsupported CCIR656 interlaced video mode\n");
+-			spin_unlock_irqrestore(&csi->lock, flags);
+-			return -EINVAL;
++				"Unsupported interlaced video mode\n");
++			ret = -EINVAL;
++			goto out_unlock;
  		}
- 
-+		csi_try_field(priv, cfg, sdformat);
 +
- 		imx_media_fill_default_mbus_fields(
- 			&sdformat->format, infmt,
- 			priv->active_output_pad == CSI_SRC_PAD_DIRECT);
++		ret = ipu_csi_set_bt_interlaced_codes(csi, infmt, outfmt, std);
++		if (ret)
++			goto out_unlock;
+ 		break;
+ 	case IPU_CSI_CLK_MODE_CCIR1120_PROGRESSIVE_DDR:
+ 	case IPU_CSI_CLK_MODE_CCIR1120_PROGRESSIVE_SDR:
+@@ -476,9 +518,10 @@ int ipu_csi_init_interface(struct ipu_csi *csi,
+ 	dev_dbg(csi->ipu->dev, "CSI_ACT_FRM_SIZE = 0x%08X\n",
+ 		ipu_csi_read(csi, CSI_ACT_FRM_SIZE));
+ 
++out_unlock:
+ 	spin_unlock_irqrestore(&csi->lock, flags);
+ 
+-	return 0;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(ipu_csi_init_interface);
+ 
+diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+index 4223f8d418ae..7ecbd4d76d09 100644
+--- a/drivers/staging/media/imx/imx-media-csi.c
++++ b/drivers/staging/media/imx/imx-media-csi.c
+@@ -663,15 +663,14 @@ static void csi_idmac_stop(struct csi_priv *priv)
+ /* Update the CSI whole sensor and active windows */
+ static int csi_setup(struct csi_priv *priv)
+ {
+-	struct v4l2_mbus_framefmt *infmt, *outfmt;
++	struct v4l2_mbus_framefmt infmt, outfmt;
+ 	const struct imx_media_pixfmt *incc;
+ 	struct v4l2_mbus_config mbus_cfg;
+-	struct v4l2_mbus_framefmt if_fmt;
+ 	struct v4l2_rect crop;
+ 
+-	infmt = &priv->format_mbus[CSI_SINK_PAD];
++	infmt = priv->format_mbus[CSI_SINK_PAD];
+ 	incc = priv->cc[CSI_SINK_PAD];
+-	outfmt = &priv->format_mbus[priv->active_output_pad];
++	outfmt = priv->format_mbus[priv->active_output_pad];
+ 
+ 	/* compose mbus_config from the upstream endpoint */
+ 	mbus_cfg.type = priv->upstream_ep.bus_type;
+@@ -679,12 +678,6 @@ static int csi_setup(struct csi_priv *priv)
+ 		priv->upstream_ep.bus.parallel.flags :
+ 		priv->upstream_ep.bus.mipi_csi2.flags;
+ 
+-	/*
+-	 * we need to pass input frame to CSI interface, but
+-	 * with translated field type from output format
+-	 */
+-	if_fmt = *infmt;
+-	if_fmt.field = outfmt->field;
+ 	crop = priv->crop;
+ 
+ 	/*
+@@ -692,7 +685,7 @@ static int csi_setup(struct csi_priv *priv)
+ 	 * generic/bayer data
+ 	 */
+ 	if (is_parallel_bus(&priv->upstream_ep) && incc->cycles) {
+-		if_fmt.width *= incc->cycles;
++		infmt.width *= incc->cycles;
+ 		crop.width *= incc->cycles;
+ 	}
+ 
+@@ -702,7 +695,7 @@ static int csi_setup(struct csi_priv *priv)
+ 			     priv->crop.width == 2 * priv->compose.width,
+ 			     priv->crop.height == 2 * priv->compose.height);
+ 
+-	ipu_csi_init_interface(priv->csi, &mbus_cfg, &if_fmt);
++	ipu_csi_init_interface(priv->csi, &mbus_cfg, &infmt, &outfmt);
+ 
+ 	ipu_csi_set_dest(priv->csi, priv->dest);
+ 
+diff --git a/include/video/imx-ipu-v3.h b/include/video/imx-ipu-v3.h
+index abbad94e14a1..f44a35192313 100644
+--- a/include/video/imx-ipu-v3.h
++++ b/include/video/imx-ipu-v3.h
+@@ -352,7 +352,8 @@ int ipu_prg_channel_configure(struct ipuv3_channel *ipu_chan,
+ struct ipu_csi;
+ int ipu_csi_init_interface(struct ipu_csi *csi,
+ 			   struct v4l2_mbus_config *mbus_cfg,
+-			   struct v4l2_mbus_framefmt *mbus_fmt);
++			   struct v4l2_mbus_framefmt *infmt,
++			   struct v4l2_mbus_framefmt *outfmt);
+ bool ipu_csi_is_interlaced(struct ipu_csi *csi);
+ void ipu_csi_get_window(struct ipu_csi *csi, struct v4l2_rect *w);
+ void ipu_csi_set_window(struct ipu_csi *csi, struct v4l2_rect *w);
 -- 
 2.17.1
 
