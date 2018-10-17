@@ -2,158 +2,156 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCBBECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EA6ECDE32
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEA1A2086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:13:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEA1A2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1ACE12086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 22:13:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t3sVszuw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ACE12086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbeJRGLT (ORCPT
+        id S1727446AbeJRGLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 02:11:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53330 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbeJRGLS (ORCPT
+        Thu, 18 Oct 2018 02:11:35 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40382 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbeJRGLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 02:11:18 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 057D6344F;
-        Wed, 17 Oct 2018 22:13:34 +0000 (UTC)
-Date:   Wed, 17 Oct 2018 15:13:34 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     linux@armlinux.org.uk, gregkh@linuxfoundation.org,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        tj@kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/2] writeback: don't decrement wb->refcnt if !wb->bdi
-Message-Id: <20181017151334.e6017d0ee91be973514605df@linux-foundation.org>
-In-Reply-To: <20181017140311.28679-2-anders.roxell@linaro.org>
-References: <20181017140311.28679-1-anders.roxell@linaro.org>
-        <20181017140311.28679-2-anders.roxell@linaro.org>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 18 Oct 2018 02:11:35 -0400
+Received: by mail-wm1-f66.google.com with SMTP id z204-v6so3755885wmc.5;
+        Wed, 17 Oct 2018 15:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=z1nZgFuSAWF4xak9H7pvf35PBoIZxIEAvPRBU2/+bmg=;
+        b=t3sVszuw3/PkJBe/BCtjH9klhqUCOAjVpQIPDErgDVRS/88mjVVdLgUwhhA3Bgqgii
+         3v25watMk7PT3bg7CjwMVmMtnMzCJtfByrw5eHxBrtIQkDCfM2fKW4FogvZMGjSOjQXz
+         fLbZN2vDdu4duC3miQP7FbENwlhoP/dVXAJIQTVQ7EDgQVqR4REzCAegu25oi/XkaVa6
+         +RobBQQE6SkGyoaKtyrT0qTXHu0Mdz3YJQIlQtqECgvE3P1DB6XAy0Xquvw9T6xXc6Uj
+         9ckulN0jj3lOKHh/90wSOGXlWS/MDLl8tzK1Lj+7hC2Uy+MB8aMKqODcQzRVMGlqanX5
+         R/8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=z1nZgFuSAWF4xak9H7pvf35PBoIZxIEAvPRBU2/+bmg=;
+        b=fTaLDHN/kMwxohwHlJelwwuyMpkFWPnGQCtlkN3dlA49RSiS+No4RJirJMrwfDCD6M
+         RNFDLvn2AICQN1mwR4YwnC5ljsxb0jEtqlJdPPHJk3iAXVVat+28YJijYiVg9NFwHqM+
+         /q14LbPyh9qjLD/AqHH7+50Zb4FeX6NzQzoPiAj+OX1szUMBZGmar1phJpxRpWslYkSf
+         E2DBsXJlUUvdtFPSsNiEyTTMPhFB5JrzKbFPpXeZkbzQEi/9lP40ib1tlCddGcHgOAmZ
+         invzjjVD6TDXybdp9meAuBaImSJOiSRsZmCO3HUcnuIWPwTYua6M2Is/R5o+7AnXEEtV
+         6qTw==
+X-Gm-Message-State: ABuFfohYVBqyH0ncEkXz3HBcfn4W2uRSQcAMQD2dzH1l5JdifWirttfQ
+        RRvaCxhKm7NxvbReIluAB1g7awmdjso=
+X-Google-Smtp-Source: ACcGV60z3CMIBlFKJasl3rbqtxz/tScx3N2QaIo93sNtIBzIYR+3G1/MuGc+jFRY73Dttfbyio7ycQ==
+X-Received: by 2002:a1c:4385:: with SMTP id q127-v6mr4672146wma.111.1539814429367;
+        Wed, 17 Oct 2018 15:13:49 -0700 (PDT)
+Received: from [172.16.8.139] (host-89-243-172-161.as13285.net. [89.243.172.161])
+        by smtp.gmail.com with ESMTPSA id 33-v6sm5509982wra.48.2018.10.17.15.13.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 15:13:48 -0700 (PDT)
+From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Subject: Re: [PATCH 31/34] vfs: syscall: Add fspick() to select a superblock
+ for reconfiguration [ver #12]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>, linux-api@vger.kernel.org,
+        torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+References: <f6f2553e-f64d-9c26-4290-baf43e5f533b@gmail.com>
+ <19866.1539782101@warthog.procyon.org.uk>
+ <68a2107f-bf70-055b-86cf-1ba2ba9422bf@gmail.com>
+ <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
+ <153754766004.17872.9829232103614083565.stgit@warthog.procyon.org.uk>
+ <9b8bf436-65de-13b9-0002-0479d11c18ca@gmail.com>
+ <20181013061141.GR32577@ZenIV.linux.org.uk>
+ <28710.1539782412@warthog.procyon.org.uk>
+ <15867.1539791153@warthog.procyon.org.uk>
+Message-ID: <240b2620-02cd-89de-4c22-293af6c5ac8b@gmail.com>
+Date:   Wed, 17 Oct 2018 23:13:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <15867.1539791153@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Oct 2018 16:03:11 +0200 Anders Roxell <anders.roxell@linaro.org> wrote:
+[resent, hopefully with slightly less formatting damage]
 
-> When enabling CONFIG_DEBUG_TEST_DRIVER_REMOVE devtmpfs gets killed
-> because we try to remove a file and decrement the wb reference count
-> before the noop_backing_device_info gets initialized.
-> 
-> Since arch_initcall(pl011_init) came before
-> subsys_initcall(default_bdi_init), devtmpfs' handle_remove() crashes
-> because the reference count is a NULL pointer only because bdi->wb
-> hasn't been initialized yet.
+On 17/10/2018 16:45, David Howells wrote:
 
-Is this changelog correct?  What does drivers/tty/serial/amba-pl011.c
-have to do with page writeback?  Confused.
+> Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
+>
+>> I agree. I'm happy to see this is using the same check as do_remount().
+>>
+>>
+>> * change filesystem flags. dir should be a physical root of filesystem.
+>> * If you've mounted a non-root directory somewhere and want to do remount
+>> * on it - tough luck.
+>> */
+> Are you suggesting that it should only work at the ultimate root of a
+> superblock and not a bind mount somewhere within?
+>
+> That's tricky to make work for NFS because s_root is a dummy dentry.
+>
+> David
 
-> [    0.332075] Serial: AMBA PL011 UART driver
-> [    0.485276] 9000000.pl011: ttyAMA0 at MMIO 0x9000000 (irq = 39, base_baud = 0) is a PL011 rev1
-> [    0.502382] console [ttyAMA0] enabled
-> [    0.515710] Unable to handle kernel paging request at virtual address 0000800074c12000
-> [    0.516053] Mem abort info:
-> [    0.516222]   ESR = 0x96000004
-> [    0.516417]   Exception class = DABT (current EL), IL = 32 bits
-> [    0.516641]   SET = 0, FnV = 0
-> [    0.516826]   EA = 0, S1PTW = 0
-> [    0.516984] Data abort info:
-> [    0.517149]   ISV = 0, ISS = 0x00000004
-> [    0.517339]   CM = 0, WnR = 0
-> [    0.517553] [0000800074c12000] user address but active_mm is swapper
-> [    0.517928] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-> [    0.518305] Modules linked in:
-> [    0.518839] CPU: 0 PID: 13 Comm: kdevtmpfs Not tainted 4.19.0-rc5-next-20180928-00002-g2ba39ab0cd01-dirty #82
-> [    0.519307] Hardware name: linux,dummy-virt (DT)
-> [    0.519681] pstate: 80000005 (Nzcv daif -PAN -UAO)
-> [    0.519959] pc : __destroy_inode+0x94/0x2a8
-> [    0.520212] lr : __destroy_inode+0x78/0x2a8
-> [    0.520401] sp : ffff0000098c3b20
-> [    0.520590] x29: ffff0000098c3b20 x28: 00000000087a3714
-> [    0.520904] x27: 0000000000002000 x26: 0000000000002000
-> [    0.521179] x25: ffff000009583000 x24: 0000000000000000
-> [    0.521467] x23: ffff80007bb52000 x22: ffff80007bbaa7c0
-> [    0.521737] x21: ffff0000093f9338 x20: 0000000000000000
-> [    0.522033] x19: ffff80007bbb05d8 x18: 0000000000000400
-> [    0.522376] x17: 0000000000000000 x16: 0000000000000000
-> [    0.522727] x15: 0000000000000400 x14: 0000000000000400
-> [    0.523068] x13: 0000000000000001 x12: 0000000000000001
-> [    0.523421] x11: 0000000000000000 x10: 0000000000000970
-> [    0.523749] x9 : ffff0000098c3a60 x8 : ffff80007bbab190
-> [    0.524017] x7 : ffff80007bbaa880 x6 : 0000000000000c88
-> [    0.524305] x5 : ffff0000093d96c8 x4 : 61c8864680b583eb
-> [    0.524567] x3 : ffff0000093d6180 x2 : ffffffffffffffff
-> [    0.524872] x1 : 0000800074c12000 x0 : 0000800074c12000
-> [    0.525207] Process kdevtmpfs (pid: 13, stack limit = 0x(____ptrval____))
-> [    0.525529] Call trace:
-> [    0.525806]  __destroy_inode+0x94/0x2a8
-> [    0.526108]  destroy_inode+0x34/0x88
-> [    0.526370]  evict+0x144/0x1c8
-> [    0.526636]  iput+0x184/0x230
-> [    0.526871]  dentry_unlink_inode+0x118/0x130
-> [    0.527152]  d_delete+0xd8/0xe0
-> [    0.527420]  vfs_unlink+0x240/0x270
-> [    0.527665]  handle_remove+0x1d8/0x330
-> [    0.527875]  devtmpfsd+0x138/0x1c8
-> [    0.528085]  kthread+0x14c/0x158
-> [    0.528291]  ret_from_fork+0x10/0x18
-> [    0.528720] Code: 92800002 aa1403e0 d538d081 8b010000 (c85f7c04)
 
-Seems that there is indeed some form of linkage.  Can this be spelled
-out more in the changelog please?
+Retro-actively: I do not suggest that.
 
-> 
-> Rework so that wb_put have an extra check if wb->bdi before decrement
-> wb->refcnt and also add a WARN_ON to get a warning if it happens again
-> in other drivers.
-> 
-> Fixes: 52ebea749aae ("writeback: make backing_dev_info host cgroup-specific bdi_writebacks")
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+I tried to answer this question in my reply to Eric correcting me. Eric 
+was right to correct me.  I now understand the comment above 
+do_remount() is incorrect.  I re-reviewed your diff in light of that.  I 
+re-endorse your diff as a way to solve the problem I raised.
 
-Signed-off-by: Arnd, please.
+(I think it would be useful to remove the misleading comment above 
+do_remount(), to avoid future confusion.)
 
-> --- a/include/linux/backing-dev-defs.h
-> +++ b/include/linux/backing-dev-defs.h
-> @@ -258,7 +258,7 @@ static inline void wb_get(struct bdi_writeback *wb)
->   */
->  static inline void wb_put(struct bdi_writeback *wb)
->  {
-> -	if (wb != &wb->bdi->wb)
-> +	if (!WARN_ON(!wb->bdi) && wb != &wb->bdi->wb)
->  		percpu_ref_put(&wb->refcnt);
->  }
 
-The !WARN_ON(!expr) isn't very easy to follow.   This:
+> @@ -186,6 +186,10 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags
+>   	if (ret < 0)
+>   		goto err;
+>   
+> +	ret = -EINVAL;
+> +	if (target.mnt->mnt_root != target.dentry)
+> +		goto err_path;
+> +
+>   	fc = vfs_new_fs_context(target.dentry->d_sb->s_type, target.dentry,
+>   				0, 0, FS_CONTEXT_FOR_RECONFIGURE);
+>   	if (IS_ERR(fc)) {
 
+
+( the "if" statement it adds to fspick() is equivalent to the second 
+"if" statement in do_remount(): )
+
+static int do_remount(struct path *path, int ms_flags, int sb_flags,
+		      int mnt_flags, void *data)
 {
-	if (WARN_ON_ONCE(!wb->bdi)) {
-		/*
-		 * Nice comment explaining how this situation comes about
-		 */
-		return;
-	}
+	int err;
+	struct super_block *sb = path->mnt->mnt_sb;
+	struct mount *mnt = real_mount(path->mnt);
 
-	if (wb != &wb->bdi->wb)
-		percpu_ref_put(&wb->refcnt);
-}
+	if (!check_mnt(mnt))
+		return -EINVAL;
 
-is better, no?
+	if (path->dentry != path->mnt->mnt_root)
+		return -EINVAL;
 
-Also, please note the s/WARN_ON/WARN_ON_ONCE/.  I don't think we gain
-anything from reporting the same thing many times?
+Thanks
 
+Alan
