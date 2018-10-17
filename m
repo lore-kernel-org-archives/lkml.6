@@ -2,144 +2,379 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4952ECDE32
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 244D2ECDE30
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 785A0214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:40:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="l7wcJtTc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 785A0214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id C393821528
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 10:41:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C393821528
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbeJQSfH (ORCPT
+        id S1727146AbeJQSgZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 14:35:07 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45035 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbeJQSfH (ORCPT
+        Wed, 17 Oct 2018 14:36:25 -0400
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:52676 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726954AbeJQSgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:35:07 -0400
-Received: by mail-pl1-f195.google.com with SMTP id p25-v6so12486169pli.11
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 03:40:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=20XLGh+wl6wYfEjrd60GEa6/zAKWSBNJE49uyQDUgqs=;
-        b=l7wcJtTcnneuVqFC+1izIEZiJ+lFGlcKSDWa2MAqsSQJTmFpdVFXKOESGhXw/i637w
-         rjIjrfCuJYrKBELe7VCeESBY7hs0bl9s1G37cKskfu40rDXY2TyCTt1GBOfUL/kAxUW9
-         6iYV+jvlu6o239O08tKPMCOqFEvf4cgmisILY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=20XLGh+wl6wYfEjrd60GEa6/zAKWSBNJE49uyQDUgqs=;
-        b=sHHmKVvxD5TzGmMhq3B7zjrlS0xvryBj0kgZZXoVXpB3AfKLIEbNxi+FKarYxoGm1M
-         8JbT+zyESHLn1jZCnSumBBa6/mB4o2H10vmNqUYdrLBRUTR70/qRc4BgFskbD4/pKMqV
-         01IYSTO701vIHzfxpf0CZxDL0e0yX/SFANCQIagn8E0uJ9aEsx9nT6+2NsvZahkFL5mc
-         F+GWMLTUkNA8swo7udwUtB8Om0qxAi8S8q5RXyqR2718oHNYuiwjVMUruT+NQC50aSeK
-         zZ8199yVX+O8wkRKPy1TTeCiaYT68mZW2NN9VntQAeviV8hiv8heT3vVmyJUKfiKqZtb
-         29sw==
-X-Gm-Message-State: ABuFfog21996F79yt0QUxPw8OZxEwG1jllGsk4iEi13eCnW+1g00KHaM
-        2Tgdzh2sbdJN5lT8lSRr5sWmxg==
-X-Google-Smtp-Source: ACcGV61gJPpfy7XOZMUbu6/6Jxgt2BLQUQGEuWEfViheVH6OTQJdjBSHSbOBLbma/05yEW3UIZxBRA==
-X-Received: by 2002:a17:902:be01:: with SMTP id r1-v6mr24631972pls.143.1539772801140;
-        Wed, 17 Oct 2018 03:40:01 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id v33-v6sm4946172pgn.57.2018.10.17.03.39.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 03:39:59 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 03:39:58 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        jreck@google.com, john.stultz@linaro.org, tkjos@google.com,
-        gregkh@linuxfoundation.org,
-        Andrew Morton <akpm@linux-foundation.org>, dancol@google.com,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org, Mike Kravetz <mike.kravetz@oracle.com>,
-        minchan@google.com, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH v2 1/2] mm: Add an F_SEAL_FS_WRITE seal to memfd
-Message-ID: <20181017103958.GB230639@joelaf.mtv.corp.google.com>
-References: <20181009222042.9781-1-joel@joelfernandes.org>
- <20181017095155.GA354@infradead.org>
+        Wed, 17 Oct 2018 14:36:25 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id CjGHgVgvi0ZZECjGKgFEvt; Wed, 17 Oct 2018 12:41:16 +0200
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v4 2/2] media: platform: Add Aspeed Video Engine driver
+To:     Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, andrew@aj.id.au,
+        openbmc@lists.ozlabs.org, robh+dt@kernel.org, mchehab@kernel.org,
+        linux-media@vger.kernel.org, joel@jms.id.au
+References: <1538769466-14860-1-git-send-email-eajames@linux.ibm.com>
+ <1538769466-14860-3-git-send-email-eajames@linux.ibm.com>
+Message-ID: <4a02833e-67a6-ec4f-d2f6-e0368412eca8@xs4all.nl>
+Date:   Wed, 17 Oct 2018 12:41:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017095155.GA354@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1538769466-14860-3-git-send-email-eajames@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfH6lrgfWkM3qB6MCYFudDpDvTJytOjxFFenLQIbktv0DU67izTv0sJYMZC/YYLyUVZWOFVIUwqhHLGjQXfrB8BwMhVs6UcmCeJF6Mo6ZAlhxww9iO+si
+ 5W8r/v9718KCZTqQ+uHsfimjXnmTrrYk/89WXUXrgJfux4N/WR92wGBP7bVqOSF9H4AHe6T8QSWQEW6TP0W0PHdedL8HXx5unniHzyIkeKyn4Ln1GPwiJFZ/
+ S6SUOWnpDtyq7P6e1W629o8oTa8x3Wm1GZLND6XSwu6AUE7FclZiIYw6vwyAvl7diW98ePo9fRyf5JSEIqVs0Fzns4Z5iBNaZ34R9kCYkhCJQoX+L1RBeUQh
+ sGYIsGqkb/Qzhg6All/YzsEmI800nlWOItA81LsKXxldSwqjZ/6w2VTITFXMZsXM7RgjXYF1feaV593meU3YoUhGTeBpM93QhjwPRjn1fryu8KasItrxJVVE
+ 73mw192veVosM+tU8yy0rmc/dHORwAYVtNUDXqXbWHFL0VPsc9pYDLrcvqI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 02:51:55AM -0700, Christoph Hellwig wrote:
-> On Tue, Oct 09, 2018 at 03:20:41PM -0700, Joel Fernandes (Google) wrote:
-> > One of the main usecases Android has is the ability to create a region
-> > and mmap it as writeable, then drop its protection for "future" writes
-> > while keeping the existing already mmap'ed writeable-region active.
+On 10/05/2018 09:57 PM, Eddie James wrote:
+> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+> can capture and compress video data from digital or analog sources. With
+> the Aspeed chip acting a service processor, the Video Engine can capture
+> the host processor graphics output.
 > 
-> s/drop/add/ ?
+> Add a V4L2 driver to capture video data and compress it to JPEG images.
+> Make the video frames available through the V4L2 streaming interface.
 > 
-> Otherwise this doesn't make much sense to me.
-
-Sure, you are right that "add" is more appropriate. I'll change it to that.
-
-> > This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
-> > To support the usecase, this patch adds a new F_SEAL_FS_WRITE seal which
-> > prevents any future mmap and write syscalls from succeeding while
-> > keeping the existing mmap active. The following program shows the seal
-> > working in action:
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
+>  MAINTAINERS                           |    8 +
+>  drivers/media/platform/Kconfig        |    8 +
+>  drivers/media/platform/Makefile       |    1 +
+>  drivers/media/platform/aspeed-video.c | 1674 +++++++++++++++++++++++++++++++++
+>  4 files changed, 1691 insertions(+)
+>  create mode 100644 drivers/media/platform/aspeed-video.c
 > 
-> Where does the FS come from?  I'd rather expect this to be implemented
-> as a 'force' style flag that applies the seal even if the otherwise
-> required precondition is not met.
 
-The "FS" was meant to convey that the seal is preventing writes at the VFS
-layer itself, for example vfs_write checks FMODE_WRITE and does not proceed,
-it instead returns an error if the flag is not set. I could not find a better
-name for it, I could call it F_SEAL_VFS_WRITE if you prefer?
+<snip>
 
-> > Note: This seal will also prevent growing and shrinking of the memfd.
-> > This is not something we do in Android so it does not affect us, however
-> > I have mentioned this behavior of the seal in the manpage.
-> 
-> This seems odd, as that is otherwise split into the F_SEAL_SHRINK /
-> F_SEAL_GROW flags.
+> +static void aspeed_video_check_polarity(struct aspeed_video *video)
+> +{
+> +	int i;
+> +	int hsync_counter = 0;
+> +	int vsync_counter = 0;
+> +	u32 sts;
+> +
+> +	for (i = 0; i < NUM_POLARITY_CHECKS; ++i) {
+> +		sts = aspeed_video_read(video, VE_MODE_DETECT_STATUS);
+> +		if (sts & VE_MODE_DETECT_STATUS_VSYNC)
+> +			vsync_counter--;
+> +		else
+> +			vsync_counter++;
+> +
+> +		if (sts & VE_MODE_DETECT_STATUS_HSYNC)
+> +			hsync_counter--;
+> +		else
+> +			hsync_counter++;
+> +	}
+> +
+> +	if (hsync_counter < 0 || vsync_counter < 0) {
+> +		u32 ctrl;
+> +
+> +		if (hsync_counter < 0)
+> +			ctrl = VE_CTRL_HSYNC_POL;
+> +		else
+> +			video->timings.polarities |= V4L2_DV_HSYNC_POS_POL;
+> +
+> +		if (vsync_counter < 0)
+> +			ctrl = VE_CTRL_VSYNC_POL;
+> +		else
+> +			video->timings.polarities |= V4L2_DV_VSYNC_POS_POL;
+> +
+> +		aspeed_video_update(video, VE_CTRL, 0, ctrl);
+> +	}
+> +}
+> +
+> +static bool aspeed_video_alloc_buf(struct aspeed_video *video,
+> +				   struct aspeed_video_addr *addr,
+> +				   unsigned int size)
+> +{
+> +	addr->virt = dma_alloc_coherent(video->dev, size, &addr->dma,
+> +					GFP_KERNEL);
+> +	if (!addr->virt)
+> +		return false;
+> +
+> +	addr->size = size;
+> +	return true;
+> +}
+> +
+> +static void aspeed_video_free_buf(struct aspeed_video *video,
+> +				  struct aspeed_video_addr *addr)
+> +{
+> +	dma_free_coherent(video->dev, addr->size, addr->virt, addr->dma);
+> +	addr->size = 0;
+> +	addr->dma = 0ULL;
+> +	addr->virt = NULL;
+> +}
+> +
+> +/*
+> + * Get the minimum HW-supported compression buffer size for the frame size.
+> + * Assume worst-case JPEG compression size is 1/8 raw size. This should be
+> + * plenty even for maximum quality; any worse and the engine will simply return
+> + * incomplete JPEGs.
+> + */
+> +static void aspeed_video_calc_compressed_size(struct aspeed_video *video)
+> +{
+> +	int i, j;
+> +	u32 compression_buffer_size_reg = 0;
+> +	unsigned int size;
+> +	const unsigned int num_compression_packets = 4;
+> +	const unsigned int compression_packet_size = 1024;
+> +	const unsigned int max_compressed_size =
+> +		video->width * video->height / 2;	/* 4 Bpp / 8 */
+> +
+> +	video->max_compressed_size = UINT_MAX;
+> +
+> +	for (i = 0; i < 6; ++i) {
+> +		for (j = 0; j < 8; ++j) {
+> +			size = (num_compression_packets << i) *
+> +				(compression_packet_size << j);
+> +			if (size < max_compressed_size)
+> +				continue;
+> +
+> +			if (size < video->max_compressed_size) {
+> +				compression_buffer_size_reg = (i << 3) | j;
+> +				video->max_compressed_size = size;
+> +			}
+> +		}
+> +	}
+> +
+> +	aspeed_video_write(video, VE_STREAM_BUF_SIZE,
+> +			   compression_buffer_size_reg);
+> +
+> +	dev_dbg(video->dev, "max compressed size: %x\n",
+> +		video->max_compressed_size);
+> +}
+> +
+> +#define res_check(v) test_and_clear_bit(VIDEO_MODE_DETECT_DONE, &(v)->flags)
+> +
+> +static int aspeed_video_get_resolution(struct aspeed_video *video)
+> +{
+> +	bool invalid_resolution = true;
+> +	int rc;
+> +	int tries = 0;
+> +	unsigned int bottom;
+> +	unsigned int left;
+> +	unsigned int right;
+> +	unsigned int size;
+> +	unsigned int top;
+> +	u32 mds;
+> +	u32 src_lr_edge;
+> +	u32 src_tb_edge;
+> +	u32 sync;
+> +	struct aspeed_video_addr src;
+> +
+> +	if (video->srcs[1].size)
+> +		aspeed_video_free_buf(video, &video->srcs[1]);
+> +
+> +	if (video->srcs[0].size >= VE_MAX_SRC_BUFFER_SIZE) {
+> +		src = video->srcs[0];
+> +	} else {
+> +		if (video->srcs[0].size)
+> +			aspeed_video_free_buf(video, &video->srcs[0]);
+> +
+> +		if (!aspeed_video_alloc_buf(video, &src,
+> +					    VE_MAX_SRC_BUFFER_SIZE))
+> +			goto err_mem;
+> +	}
+> +
+> +	aspeed_video_write(video, VE_SRC0_ADDR, src.dma);
+> +
+> +	video->width = 0;
+> +	video->height = 0;
+> +
+> +	do {
+> +		if (tries) {
+> +			set_current_state(TASK_INTERRUPTIBLE);
+> +			if (schedule_timeout(INVALID_RESOLUTION_DELAY))
+> +				return -EINTR;
+> +		}
+> +
+> +		aspeed_video_start_mode_detect(video);
+> +
+> +		rc = wait_event_interruptible_timeout(video->wait,
+> +						      res_check(video),
+> +						      MODE_DETECT_TIMEOUT);
+> +		if (!rc) {
+> +			dev_err(video->dev, "timed out on 1st mode detect\n");
+> +			aspeed_video_disable_mode_detect(video);
+> +			return -ETIMEDOUT;
+> +		}
+> +
+> +		/* Disable mode detect in order to re-trigger */
+> +		aspeed_video_update(video, VE_SEQ_CTRL,
+> +				    VE_SEQ_CTRL_TRIG_MODE_DET, 0);
+> +
+> +		aspeed_video_check_polarity(video);
+> +
+> +		aspeed_video_start_mode_detect(video);
+> +
+> +		rc = wait_event_interruptible_timeout(video->wait,
+> +						      res_check(video),
+> +						      MODE_DETECT_TIMEOUT);
+> +		if (!rc) {
+> +			dev_err(video->dev, "timed out on 2nd mode detect\n");
+> +			aspeed_video_disable_mode_detect(video);
+> +			return -ETIMEDOUT;
+> +		}
+> +
+> +		src_lr_edge = aspeed_video_read(video, VE_SRC_LR_EDGE_DET);
+> +		src_tb_edge = aspeed_video_read(video, VE_SRC_TB_EDGE_DET);
+> +		mds = aspeed_video_read(video, VE_MODE_DETECT_STATUS);
+> +		sync = aspeed_video_read(video, VE_SYNC_STATUS);
+> +
+> +		bottom = (src_tb_edge & VE_SRC_TB_EDGE_DET_BOT) >>
+> +			VE_SRC_TB_EDGE_DET_BOT_SHF;
+> +		top = src_tb_edge & VE_SRC_TB_EDGE_DET_TOP;
+> +		video->timings.vfrontporch = top;
+> +		video->timings.vbackporch = ((mds & VE_MODE_DETECT_V_LINES) >>
+> +			VE_MODE_DETECT_V_LINES_SHF) - bottom;
+> +		video->timings.vsync = (sync & VE_SYNC_STATUS_VSYNC) >>
+> +			VE_SYNC_STATUS_VSYNC_SHF;
+> +		if (top > bottom)
+> +			continue;
+> +
+> +		right = (src_lr_edge & VE_SRC_LR_EDGE_DET_RT) >>
+> +			VE_SRC_LR_EDGE_DET_RT_SHF;
+> +		left = src_lr_edge & VE_SRC_LR_EDGE_DET_LEFT;
+> +		video->timings.hfrontporch = left;
+> +		video->timings.hbackporch = (mds & VE_MODE_DETECT_H_PIXELS) -
+> +			right;
+> +		video->timings.hsync = sync & VE_SYNC_STATUS_HSYNC;
 
-I could make it such that this seal would not be allowed unless F_SEAL_SHRINK
-and F_SEAL_GROW are either previously set, or they are passed along with this
-seal. Would that make more sense to you?
+It's a bit odd that timings.width/height isn't set here.
 
-> >  static int memfd_add_seals(struct file *file, unsigned int seals)
-> >  {
-> > @@ -219,6 +220,9 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
-> >  		}
-> >  	}
-> >  
-> > +	if ((seals & F_SEAL_FS_WRITE) && !(*file_seals & F_SEAL_FS_WRITE))
-> > +		file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
-> > +
-> 
-> This seems to lack any synchronization for f_mode.
+> +		if (left > right)
+> +			continue;
+> +
+> +		invalid_resolution = false;
+> +	} while (invalid_resolution && (tries++ < INVALID_RESOLUTION_RETRIES));
+> +
+> +	if (invalid_resolution) {
+> +		dev_err(video->dev, "invalid resolution detected\n");
+> +		return -ERANGE;
+> +	}
 
-The f_mode is set when the struct file is first created and then memfd sets
-additional flags in memfd_create. Then later we are changing it here at the
-time of setting the seal. I donot see any possiblity of a race since it is
-impossible to set the seal before memfd_create returns. Could you provide
-more details about what kind of synchronization is needed and what is the
-race condition scenario you were thinking off?
+So far, so good. You now have detected the new resolution, but...
 
-thanks for the review,
+> +
+> +	video->height = (bottom - top) + 1;
+> +	video->width = (right - left) + 1;
+> +	size = video->height * video->width;
 
- - Joel
+here and below you appear to actually switch the capture timings to the new
+resolution as well.
 
+That should only happen when s_dv_timings is called.
+
+It is always very dangerous to automatically switch resolution since a new
+resolution might mean larger buffers, and userspace has to prepare for that.
+
+The normal sequence is:
+
+1) the driver detects a change in resolution (or the video signal disappears
+completely). It will send V4L2_EVENT_SOURCE_CHANGE to let userspace know.
+
+2) Userspace stops streaming, frees all buffers, calls QUERY_DV_TIMINGS and,
+   if valid, follows with S_DV_TIMINGS.
+
+3) Userspace calls REQBUFS to allocate the new buffers sized for the new timings
+   and starts streaming again.
+
+That way everything remains under control of the application.
+
+> +
+> +	/* Don't use direct mode below 1024 x 768 (irqs don't fire) */
+> +	if (size < DIRECT_FETCH_THRESHOLD) {
+> +		aspeed_video_write(video, VE_TGS_0,
+> +				   FIELD_PREP(VE_TGS_FIRST, left - 1) |
+> +				   FIELD_PREP(VE_TGS_LAST, right));
+> +		aspeed_video_write(video, VE_TGS_1,
+> +				   FIELD_PREP(VE_TGS_FIRST, top) |
+> +				   FIELD_PREP(VE_TGS_LAST, bottom + 1));
+> +		aspeed_video_update(video, VE_CTRL, 0, VE_CTRL_INT_DE);
+> +	} else {
+> +		aspeed_video_update(video, VE_CTRL, 0, VE_CTRL_DIRECT_FETCH);
+> +	}
+> +
+> +	aspeed_video_write(video, VE_CAP_WINDOW,
+> +			   video->width << 16 | video->height);
+> +	aspeed_video_write(video, VE_COMP_WINDOW,
+> +			   video->width << 16 | video->height);
+> +	aspeed_video_write(video, VE_SRC_SCANLINE_OFFSET, video->width * 4);
+> +
+> +	aspeed_video_update(video, VE_INTERRUPT_CTRL, 0,
+> +			    VE_INTERRUPT_MODE_DETECT_WD);
+> +	aspeed_video_update(video, VE_SEQ_CTRL, 0,
+> +			    VE_SEQ_CTRL_AUTO_COMP | VE_SEQ_CTRL_EN_WATCHDOG);
+> +
+> +	dev_dbg(video->dev, "got resolution[%dx%d]\n", video->width,
+> +		video->height);
+> +
+> +	size *= 4;
+> +	if (size == src.size / 2) {
+> +		aspeed_video_write(video, VE_SRC1_ADDR, src.dma + size);
+> +		video->srcs[0] = src;
+> +	} else if (size == src.size) {
+> +		video->srcs[0] = src;
+> +
+> +		if (!aspeed_video_alloc_buf(video, &video->srcs[1], size))
+> +			goto err_mem;
+> +
+> +		aspeed_video_write(video, VE_SRC1_ADDR, video->srcs[1].dma);
+> +	} else {
+> +		aspeed_video_free_buf(video, &src);
+> +
+> +		if (!aspeed_video_alloc_buf(video, &video->srcs[0], size))
+> +			goto err_mem;
+> +
+> +		if (!aspeed_video_alloc_buf(video, &video->srcs[1], size))
+> +			goto err_mem;
+> +
+> +		aspeed_video_write(video, VE_SRC0_ADDR, video->srcs[0].dma);
+> +		aspeed_video_write(video, VE_SRC1_ADDR, video->srcs[1].dma);
+> +	}
+> +
+> +	aspeed_video_calc_compressed_size(video);
+> +
+> +	return 0;
+> +
+> +err_mem:
+> +	dev_err(video->dev, "failed to allocate source buffers\n");
+> +
+> +	if (video->srcs[0].size)
+> +		aspeed_video_free_buf(video, &video->srcs[0]);
+> +
+> +	return -ENOMEM;
+> +}
+
+Regards,
+
+	Hans
