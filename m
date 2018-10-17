@@ -2,64 +2,64 @@ Return-Path: <SRS0=uOC5=M5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD59AC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA150C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 891752147E
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:07:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D6422147E
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 00:08:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sc7l7THG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 891752147E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="adLddh31"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D6422147E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbeJQIAW (ORCPT
+        id S1727471AbeJQIBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 04:00:22 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35019 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbeJQIAW (ORCPT
+        Wed, 17 Oct 2018 04:01:09 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38736 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbeJQIBI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 04:00:22 -0400
-Received: by mail-qt1-f195.google.com with SMTP id d21-v6so15650935qtq.2;
-        Tue, 16 Oct 2018 17:07:29 -0700 (PDT)
+        Wed, 17 Oct 2018 04:01:08 -0400
+Received: by mail-qt1-f196.google.com with SMTP id l9-v6so28024553qtf.5;
+        Tue, 16 Oct 2018 17:08:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :content-transfer-encoding:user-agent;
-        bh=iK7JrRXQ4BzZv59cX0PNNSA+/mYdwzHsLtoaqmIVT+0=;
-        b=sc7l7THGn0Adn/KdCZ7TCG5pyXcTfZSNmfwX6u7ehLZBVoeTHuvUEGknFMbxbjSRrD
-         LzorrkNxor3sxqgnoFBeNxqsqxMcuSToisIEaM/C5eIDDINLmYEkOvBCm4IPpWKf/3eY
-         C/hRiSzzaOIpZPhBEuAeBSliCo5HyWALyDLxL8bA7kfX2x69ouTkXss6EwtYRP7MboBv
-         1EWBRttEssjgKnKcdHYGBcc9ziepJufvyZn3wGPlf9tb4vDoXHqVZASXtL8eYpRtZsbu
-         ghjmipE1Q5N75U9K3FJ7k3E66xkxSUS789Al4h0LqSBQCv4Arxj9Nmocov2kHF99afMH
-         bknw==
+        bh=VrnIrgBHqN7A7q86ytiSO2+obkna/A+3MKssGl3QH9Q=;
+        b=adLddh31vQgKSwRE+gPgkd9igVDWf/2imqllqD8P0hJbajwWGbtEwFIOHVJkp0DYnG
+         NHhsXmd8JT6yzvSug85vrOzPUV/ymHtrYZZGm/tbzsaOUEJEht6uENY4aQIkZot3h3C9
+         RO1EXIYOJqARWYmcRYdlQOxPkkJJhdEDBLifjj108694dKR8RpiWzAmtPWVmQJBL7gEn
+         p6CdzsG9eYOxCLbDk2ZUlFllchXVU7pg5Ii3EMGWLAQm2B3RPoaFC6WL56AKM1GiSGyi
+         CpIrf0+ziy4guSWmcrmdCVSPPY9Qvyk3ITiHEbhYpOd0MJnC8qZcOgQbViykkLAyxW2N
+         sh+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:content-transfer-encoding:user-agent;
-        bh=iK7JrRXQ4BzZv59cX0PNNSA+/mYdwzHsLtoaqmIVT+0=;
-        b=nvBeFAU5ZZ84UiGdphAlGDQkxdqfrRUSP3E+gOE/VjcmOZjVy5q37OJgq7aeeRJYSd
-         blCUIxQae5iTVo3UGvva1SLT0xBjW/ioJETzxxYhu2hiHLYd8MDQvfKN4kgS7jUDbjSu
-         +cY6iiFnfWYIHLXCzXPANyfrSmTqGmxtW4wchXCa+Fs0IYA8/A/zRwCpqNjlLVy2EzuZ
-         cVns3hmSkdSZQ4aDMM9HPJ06n0XbyO+Blh3rqsRzMeLtGhaHXokiTRgXBNr4XoUpOkCi
-         sgvuXFwixQp++HwOFPJg07nG3F1YXJ2+jOOTn8Hw6NbQY+CBZvhJE0a5bmsiCkrzdTcl
-         ZgRA==
-X-Gm-Message-State: ABuFfojPM8Cl1NbXp4BvR6wKVmdd7J5tBziA42/25DYUtVpHnGdGNcNX
-        wAfWl91i/p1sKz/YZvy5ShIL4kdh
-X-Google-Smtp-Source: ACcGV63QGOYF2i8Ea+47dPZKHG56Qya4fj/oDzcdit3TkkxLTCIeHKpgeD0XRQyOmNd4O9B+e0hdLQ==
-X-Received: by 2002:ac8:7c6:: with SMTP id m6-v6mr23213726qth.365.1539734849095;
-        Tue, 16 Oct 2018 17:07:29 -0700 (PDT)
+        bh=VrnIrgBHqN7A7q86ytiSO2+obkna/A+3MKssGl3QH9Q=;
+        b=LV9MiakyyJFD7kJiePIQyd3+4mR6ff14o7oiZSWIgvq3fjGoD18wqC4uM8u6xmq0Yc
+         BqEh2/h2AFjWhKmLWCK1tGAvDr0B+Gi09Y+Vvvv/vbOzcAVs30UqecbKcQOoVja69rOV
+         GllSf+AqOZABkDOM64ky7jLJ4kHksMjqSEYhLZMaS+Lk+Wk/wDAH9lV6AfKHTfytcrzT
+         /xAFkimVxxteB77k026tMQ5T6fbXlwhnm8WaA9o835/UI714T1enRwsLJ083wdr8g5Lk
+         LTxodR5HOMv0axl2j26hZahnmd4oZBThO7Ml5q+8UHF1WPADanZb2L4Mu8f7QjLQlKgG
+         5LYg==
+X-Gm-Message-State: ABuFfohowRqeLHtstYMYQXCMCX5czy+jPLnqZtapbvW5RrBIHKU/QjnU
+        OCpeoDkTMJP7QXcAYg4ejsA=
+X-Google-Smtp-Source: ACcGV62s/i1JBDY5MaQxsQjbQ/Bo4tewL2r9YrCRDxVBFvf7p7wKBYbEv1jA148LUopQ7MaMr8L4Wg==
+X-Received: by 2002:ac8:7482:: with SMTP id v2-v6mr23227319qtq.251.1539734895531;
+        Tue, 16 Oct 2018 17:08:15 -0700 (PDT)
 Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id g127-v6sm10067732qke.59.2018.10.16.17.07.24
+        by smtp.gmail.com with ESMTPSA id q84-v6sm692576qki.40.2018.10.16.17.08.11
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 17:07:28 -0700 (PDT)
-Date:   Tue, 16 Oct 2018 21:07:22 -0300
+        Tue, 16 Oct 2018 17:08:14 -0700 (PDT)
+Date:   Tue, 16 Oct 2018 21:08:09 -0300
 From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
 To:     lkcamp@lists.libreplanetbr.org
 Cc:     Matthew Wilcox <willy6545@gmail.com>,
@@ -70,8 +70,8 @@ Cc:     Matthew Wilcox <willy6545@gmail.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>,
         linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: [PATCH 0/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
-Message-ID: <20181017000722.GA20892@WindFlash>
+Subject: [PATCH 1/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
+Message-ID: <20181017000809.GA21292@WindFlash>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -82,26 +82,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset add -Wshadow=local on KBUILD_HOSTCFLAGS and fixes 
-all code that show this warning.
+Adds -Wshadow=local on KBUILD_HOSTCFLAGS to show shadow warnings
+on tools built for HOST.
 
-The third patch was already submitted, but was not merged yet.
-I like to think it's part of this patchset, but if it was 
-already merged, please ignore it.
+Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Leonardo Brás (4):
-  Adds -Wshadow=local on KBUILD_HOSTCFLAGS
-  Renames variable to fix shadow warning.
-  kbuild: Removes unnecessary shadowed local variable and optimize
-    testing.
-  Changes macro usage to avoid shadowing a variable.
-
- Makefile                     |  2 +-
- arch/x86/entry/vdso/vdso2c.h |  4 ++--
- scripts/asn1_compiler.c      |  7 +++----
- scripts/mod/file2alias.c     | 14 ++++++++------
- 4 files changed, 14 insertions(+), 13 deletions(-)
-
+diff --git a/Makefile b/Makefile
+index e8b599b4dcde..fb0a9ac195e7 100644
+--- a/Makefile
++++ b/Makefile
+@@ -360,7 +360,7 @@ HOST_LFS_LIBS := $(shell getconf LFS_LIBS 2>/dev/null)
+ 
+ HOSTCC       = gcc
+ HOSTCXX      = g++
+-KBUILD_HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 \
++KBUILD_HOSTCFLAGS   := -Wall -Wshadow=local -Wmissing-prototypes -Wstrict-prototypes -O2 \
+ 		-fomit-frame-pointer -std=gnu89 $(HOST_LFS_CFLAGS) \
+ 		$(HOSTCFLAGS)
+ KBUILD_HOSTCXXFLAGS := -O2 $(HOST_LFS_CFLAGS) $(HOSTCXXFLAGS)
 -- 
 2.19.1
 
