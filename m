@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08201ECDE39
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3F2ECDE3B
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2F1821476
-	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2F1821476
+	by mail.kernel.org (Postfix) with ESMTP id 1DF3821476
+	for <linux-kernel@archiver.kernel.org>; Wed, 17 Oct 2018 18:33:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DF3821476
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbeJRC3z (ORCPT
+        id S1728417AbeJRC34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 17 Oct 2018 22:29:55 -0400
+        Wed, 17 Oct 2018 22:29:56 -0400
 Received: from mga12.intel.com ([192.55.52.136]:29659 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728348AbeJRC3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Oct 2018 22:29:54 -0400
+        id S1728399AbeJRC34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Oct 2018 22:29:56 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 11:32:58 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 11:33:00 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="82003907"
+   d="scan'208";a="82003915"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by orsmga007.jf.intel.com with ESMTP; 17 Oct 2018 11:32:58 -0700
+  by orsmga007.jf.intel.com with ESMTP; 17 Oct 2018 11:32:59 -0700
 From:   Tim Chen <tim.c.chen@linux.intel.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -48,9 +48,9 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Arjan van de Ven <arjan@linux.intel.com>,
         Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
         x86@kernel.org
-Subject: [Patch v3 08/13] x86/speculation: Rename SSBD update functions
-Date:   Wed, 17 Oct 2018 10:59:36 -0700
-Message-Id: <831010fc27a9009ce3c00d86d1647d499278da66.1539798901.git.tim.c.chen@linux.intel.com>
+Subject: [Patch v3 10/13] x86/speculation: Add per thread STIBP flag
+Date:   Wed, 17 Oct 2018 10:59:38 -0700
+Message-Id: <1e4031d6642d6a835d33651fd5d8f614d95daee5.1539798901.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1539798901.git.tim.c.chen@linux.intel.com>
 References: <cover.1539798901.git.tim.c.chen@linux.intel.com>
@@ -61,107 +61,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a clean up patch that doesn't change any
-functionality.  We rename intel_set_ssb_state to
-spec_ctrl_update_msr, speculative_store_bypass_update to
-speculation_ctrl_update and speculative_store_bypass_update_current to
-speculation_ctrl_update_current.  This prepares us to update
-of other bits in the SPEC_CTRL MSR dynamically.
+Add per thread STIBP flag. When context switching to a process thread that
+has the STIBP flag, the STIBP bit in the SPEC_CTRL MSR will be turned
+on to guard against application to application Spectre v2 attack. When
+switching to a non-security sensitive thread that doesn't have STIBP flag,
+the STIBP bit in the SPEC_CTRL MSR is turned off.
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- arch/x86/include/asm/spec-ctrl.h |  6 +++---
- arch/x86/kernel/cpu/bugs.c       |  4 ++--
- arch/x86/kernel/process.c        | 12 ++++++------
- 3 files changed, 11 insertions(+), 11 deletions(-)
+ arch/x86/include/asm/msr-index.h   |  6 +++++-
+ arch/x86/include/asm/spec-ctrl.h   | 12 ++++++++++++
+ arch/x86/include/asm/thread_info.h |  5 ++++-
+ arch/x86/kernel/process.c          | 10 +++++++++-
+ 4 files changed, 30 insertions(+), 3 deletions(-)
 
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 4731f0c..bd19452 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -41,7 +41,11 @@
+ 
+ #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
+ #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
+-#define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
++#define SPEC_CTRL_STIBP_SHIFT		1          /*
++						    * Single Thread Indirect Branch
++						    * Predictor (STIBP) bit
++						    */
++#define SPEC_CTRL_STIBP			(1 << SPEC_CTRL_STIBP_SHIFT) /* STIBP mask */
+ #define SPEC_CTRL_SSBD_SHIFT		2	   /* Speculative Store Bypass Disable bit */
+ #define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)   /* Speculative Store Bypass Disable */
+ 
 diff --git a/arch/x86/include/asm/spec-ctrl.h b/arch/x86/include/asm/spec-ctrl.h
-index ae7c2c5..8e2f841 100644
+index 8e2f841..b593779 100644
 --- a/arch/x86/include/asm/spec-ctrl.h
 +++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -70,11 +70,11 @@ extern void speculative_store_bypass_ht_init(void);
- static inline void speculative_store_bypass_ht_init(void) { }
- #endif
+@@ -53,12 +53,24 @@ static inline u64 ssbd_tif_to_spec_ctrl(u64 tifn)
+ 	return (tifn & _TIF_SSBD) >> (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
+ }
  
--extern void speculative_store_bypass_update(unsigned long tif);
-+extern void speculation_ctrl_update(unsigned long tif);
- 
--static inline void speculative_store_bypass_update_current(void)
-+static inline void speculation_ctrl_update_current(void)
++static inline u64 stibp_tif_to_spec_ctrl(u64 tifn)
++{
++	BUILD_BUG_ON(TIF_STIBP < SPEC_CTRL_STIBP_SHIFT);
++	return (tifn & _TIF_STIBP) >> (TIF_STIBP - SPEC_CTRL_STIBP_SHIFT);
++}
++
+ static inline unsigned long ssbd_spec_ctrl_to_tif(u64 spec_ctrl)
  {
--	speculative_store_bypass_update(current_thread_info()->flags);
-+	speculation_ctrl_update(current_thread_info()->flags);
+ 	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
+ 	return (spec_ctrl & SPEC_CTRL_SSBD) << (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
  }
  
- #endif
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 0338fa1..673d434 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -205,7 +205,7 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
- 		tif = setguest ? ssbd_spec_ctrl_to_tif(guestval) :
- 				 ssbd_spec_ctrl_to_tif(hostval);
++static inline unsigned long stibp_spec_ctrl_to_tif(u64 spec_ctrl)
++{
++	BUILD_BUG_ON(TIF_STIBP < SPEC_CTRL_STIBP_SHIFT);
++	return (spec_ctrl & SPEC_CTRL_STIBP) << (TIF_STIBP - SPEC_CTRL_STIBP_SHIFT);
++}
++
+ static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
+ {
+ 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index 2ff2a30..a3ec545 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -83,6 +83,7 @@ struct thread_info {
+ #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
+ #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+ #define TIF_SECCOMP		8	/* secure computing */
++#define TIF_STIBP              9       /* Single threaded indirect branch predict */
+ #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+ #define TIF_UPROBE		12	/* breakpointed or singlestepping */
+ #define TIF_PATCH_PENDING	13	/* pending live patching update */
+@@ -110,6 +111,7 @@ struct thread_info {
+ #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
++#define _TIF_STIBP		(1 << TIF_STIBP)
+ #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+ #define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+@@ -146,7 +148,8 @@ struct thread_info {
  
--		speculative_store_bypass_update(tif);
-+		speculation_ctrl_update(tif);
- 	}
- }
- EXPORT_SYMBOL_GPL(x86_virt_spec_ctrl);
-@@ -647,7 +647,7 @@ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
- 	 * mitigation until it is next scheduled.
- 	 */
- 	if (task == current && update)
--		speculative_store_bypass_update_current();
-+		speculation_ctrl_update_current();
+ /* flags to check in __switch_to() */
+ #define _TIF_WORK_CTXSW							\
+-	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
++	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
++	 _TIF_SSBD|_TIF_STIBP)
  
- 	return 0;
- }
+ #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
+ #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
 diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index c93fcfd..8aa4960 100644
+index 789f1bada..a65b456 100644
 --- a/arch/x86/kernel/process.c
 +++ b/arch/x86/kernel/process.c
-@@ -395,27 +395,27 @@ static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
- 	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
- }
+@@ -406,13 +406,21 @@ static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
+ 	if (static_cpu_has(X86_FEATURE_SSBD))
+ 		msr |= ssbd_tif_to_spec_ctrl(tifn);
  
--static __always_inline void intel_set_ssb_state(unsigned long tifn)
-+static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
- {
- 	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
- 
++	/*
++	 * Need STIBP defense against Spectre v2 attack
++	 * if SMT is in use and we don't have enhanced IBRS.
++	 */
++	if (static_branch_likely(&cpu_smt_enabled) &&
++	    !static_branch_unlikely(&spectre_v2_enhanced_ibrs))
++		msr |= stibp_tif_to_spec_ctrl(tifn);
++
  	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
  }
  
--static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
-+static __always_inline void __speculation_ctrl_update(unsigned long tifn)
+ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
+ 						      unsigned long tifn)
  {
- 	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
- 		amd_set_ssb_virt_state(tifn);
- 	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
- 		amd_set_core_ssb_state(tifn);
- 	else
--		intel_set_ssb_state(tifn);
-+		spec_ctrl_update_msr(tifn);
- }
+-	bool updmsr = false;
++	bool updmsr = !!((tifp ^ tifn) & _TIF_STIBP);
  
--void speculative_store_bypass_update(unsigned long tif)
-+void speculation_ctrl_update(unsigned long tif)
- {
- 	preempt_disable();
--	__speculative_store_bypass_update(tif);
-+	__speculation_ctrl_update(tif);
- 	preempt_enable();
- }
- 
-@@ -452,7 +452,7 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
- 		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
- 
- 	if ((tifp ^ tifn) & _TIF_SSBD)
--		__speculative_store_bypass_update(tifn);
-+		__speculation_ctrl_update(tifn);
- }
- 
- /*
+ 	/* Check for AMD cpu to see if it uses SPEC_CTRL MSR for SSBD */
+ 	if ((tifp ^ tifn) & _TIF_SSBD) {
 -- 
 2.9.4
 
