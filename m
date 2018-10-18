@@ -6,48 +6,57 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E67ADECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A8CC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B592D2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:21:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B592D2145D
+	by mail.kernel.org (Postfix) with ESMTP id DADC32145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:22:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADC32145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbeJROUu (ORCPT
+        id S1727544AbeJROVq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 10:20:50 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52407 "EHLO
+        Thu, 18 Oct 2018 10:21:46 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33249 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727331AbeJROUu (ORCPT
+        with ESMTP id S1727328AbeJROVp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 10:20:50 -0400
+        Thu, 18 Oct 2018 10:21:45 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9I6KCnX708052
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9I6LHoE708313
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 17 Oct 2018 23:20:12 -0700
+        Wed, 17 Oct 2018 23:21:17 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9I6KBfq708049;
-        Wed, 17 Oct 2018 23:20:11 -0700
-Date:   Wed, 17 Oct 2018 23:20:11 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9I6LFT7708302;
+        Wed, 17 Oct 2018 23:21:15 -0700
+Date:   Wed, 17 Oct 2018 23:21:15 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Milian Wolff <tipbot@zytor.com>
-Message-ID: <tip-d4046e8e17b9f378cb861982ef71c63911b5dff3@git.kernel.org>
-Cc:     hpa@zytor.com, grasland@lal.in2p3.fr, acme@redhat.com,
-        yao.jin@linux.intel.com, namhyung@kernel.org, tglx@linutronix.de,
-        mingo@kernel.org, jolsa@kernel.org, milian.wolff@kdab.com,
-        linux-kernel@vger.kernel.org
-Reply-To: acme@redhat.com, yao.jin@linux.intel.com, grasland@lal.in2p3.fr,
-          hpa@zytor.com, milian.wolff@kdab.com,
-          linux-kernel@vger.kernel.org, jolsa@kernel.org, mingo@kernel.org,
-          tglx@linutronix.de, namhyung@kernel.org
-In-Reply-To: <20180926135207.30263-3-milian.wolff@kdab.com>
-References: <20180926135207.30263-3-milian.wolff@kdab.com>
+From:   tip-bot for Jan Kiszka <tipbot@zytor.com>
+Message-ID: <tip-04f4f954b69526d7af8ffb8e5780f08b8a6cda2d@git.kernel.org>
+Cc:     jkosina@suse.cz, jpoimboe@redhat.com, x86@kernel.org,
+        jgross@suse.com, aarcange@redhat.com, linux-kernel@vger.kernel.org,
+        jroedel@suse.de, gregkh@linuxfoundation.org, mingo@kernel.org,
+        luto@kernel.org, boris.ostrovsky@oracle.com, linux-mm@kvack.org,
+        torvalds@linux-foundation.org, dave.hansen@intel.com,
+        jan.kiszka@siemens.com, eduval@amazon.com, hpa@zytor.com,
+        dvlasenk@redhat.com, tglx@linutronix.de, brgerst@gmail.com,
+        David.Laight@aculab.com, peterz@infradead.org, bp@suse.de,
+        will.deacon@arm.com
+Reply-To: jgross@suse.com, jpoimboe@redhat.com, jkosina@suse.cz,
+          x86@kernel.org, gregkh@linuxfoundation.org, luto@kernel.org,
+          mingo@kernel.org, linux-kernel@vger.kernel.org,
+          aarcange@redhat.com, jroedel@suse.de, hpa@zytor.com,
+          dvlasenk@redhat.com, boris.ostrovsky@oracle.com,
+          torvalds@linux-foundation.org, linux-mm@kvack.org,
+          dave.hansen@intel.com, jan.kiszka@siemens.com, eduval@amazon.com,
+          bp@suse.de, will.deacon@arm.com, tglx@linutronix.de,
+          David.Laight@aculab.com, brgerst@gmail.com, peterz@infradead.org
+In-Reply-To: <f271c747-1714-5a5b-a71f-ae189a093b8d@siemens.com>
+References: <f271c747-1714-5a5b-a71f-ae189a093b8d@siemens.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf report: Don't crash on invalid inline debug
- information
-Git-Commit-ID: d4046e8e17b9f378cb861982ef71c63911b5dff3
+Subject: [tip:x86/urgent] x86/entry/32: Clear the CS high bits
+Git-Commit-ID: 04f4f954b69526d7af8ffb8e5780f08b8a6cda2d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,80 +70,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d4046e8e17b9f378cb861982ef71c63911b5dff3
-Gitweb:     https://git.kernel.org/tip/d4046e8e17b9f378cb861982ef71c63911b5dff3
-Author:     Milian Wolff <milian.wolff@kdab.com>
-AuthorDate: Wed, 26 Sep 2018 15:52:07 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 16 Oct 2018 14:52:21 -0300
+Commit-ID:  04f4f954b69526d7af8ffb8e5780f08b8a6cda2d
+Gitweb:     https://git.kernel.org/tip/04f4f954b69526d7af8ffb8e5780f08b8a6cda2d
+Author:     Jan Kiszka <jan.kiszka@siemens.com>
+AuthorDate: Mon, 15 Oct 2018 16:09:29 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 17 Oct 2018 12:30:20 +0200
 
-perf report: Don't crash on invalid inline debug information
+x86/entry/32: Clear the CS high bits
 
-When the function name for an inline frame is invalid, we must not try
-to demangle this symbol, otherwise we crash with:
+Even if not on an entry stack, the CS's high bits must be
+initialized because they are unconditionally evaluated in
+PARANOID_EXIT_TO_KERNEL_MODE.
 
-  #0  0x0000555555895c01 in bfd_demangle ()
-  #1  0x0000555555823262 in demangle_sym (dso=0x555555d92b90, elf_name=0x0, kmodule=0) at util/symbol-elf.c:215
-  #2  dso__demangle_sym (dso=dso@entry=0x555555d92b90, kmodule=<optimized out>, kmodule@entry=0, elf_name=elf_name@entry=0x0) at util/symbol-elf.c:400
-  #3  0x00005555557fef4b in new_inline_sym (funcname=0x0, base_sym=0x555555d92b90, dso=0x555555d92b90) at util/srcline.c:89
-  #4  inline_list__append_dso_a2l (dso=dso@entry=0x555555c7bb00, node=node@entry=0x555555e31810, sym=sym@entry=0x555555d92b90) at util/srcline.c:264
-  #5  0x00005555557ff27f in addr2line (dso_name=dso_name@entry=0x555555d92430 "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce5/elf", addr=addr@entry=2888, file=file@entry=0x0,
-      line=line@entry=0x0, dso=dso@entry=0x555555c7bb00, unwind_inlines=unwind_inlines@entry=true, node=0x555555e31810, sym=0x555555d92b90) at util/srcline.c:313
-  #6  0x00005555557ffe7c in addr2inlines (sym=0x555555d92b90, dso=0x555555c7bb00, addr=2888, dso_name=0x555555d92430 "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce5/elf")
-      at util/srcline.c:358
+Failing to do so broke the boot on Galileo Gen2 and IOT2000 boards.
 
-So instead handle the case where we get invalid function names for
-inlined frames and use a fallback '??' function name instead.
+ [ bp: Make the commit message tone passive and impartial. ]
 
-While this crash was originally reported by Hadrien for rust code, I can
-now also reproduce it with trivial C++ code. Indeed, it seems like
-libbfd fails to interpret the debug information for the inline frame
-symbol name:
-
-  $ addr2line -e /home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce5/elf -if b48
-  main
-  /usr/include/c++/8.2.1/complex:610
-  ??
-  /usr/include/c++/8.2.1/complex:618
-  ??
-  /usr/include/c++/8.2.1/complex:675
-  ??
-  /usr/include/c++/8.2.1/complex:685
-  main
-  /home/milian/projects/kdab/rnd/hotspot/tests/test-clients/cpp-inlining/main.cpp:39
-
-I've reported this bug upstream and also attached a patch there which
-should fix this issue:
-
-https://sourceware.org/bugzilla/show_bug.cgi?id=23715
-
-Reported-by: Hadrien Grasland <grasland@lal.in2p3.fr>
-Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: a64489c56c30 ("perf report: Find the inline stack for a given address")
-[ The above 'Fixes:' cset is where originally the problem was
-  introduced, i.e.  using a2l->funcname without checking if it is NULL,
-  but this current patch fixes the current codebase, i.e. multiple csets
-  were applied after a64489c56c30 before the problem was reported by Hadrien ]
-Link: http://lkml.kernel.org/r/20180926135207.30263-3-milian.wolff@kdab.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: b92a165df17e ("x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack")
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Acked-by: Joerg Roedel <jroedel@suse.de>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Andrea Arcangeli <aarcange@redhat.com>
+CC: Andy Lutomirski <luto@kernel.org>
+CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: Brian Gerst <brgerst@gmail.com>
+CC: Dave Hansen <dave.hansen@intel.com>
+CC: David Laight <David.Laight@aculab.com>
+CC: Denys Vlasenko <dvlasenk@redhat.com>
+CC: Eduardo Valentin <eduval@amazon.com>
+CC: Greg KH <gregkh@linuxfoundation.org>
+CC: Ingo Molnar <mingo@kernel.org>
+CC: Jiri Kosina <jkosina@suse.cz>
+CC: Josh Poimboeuf <jpoimboe@redhat.com>
+CC: Juergen Gross <jgross@suse.com>
+CC: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Will Deacon <will.deacon@arm.com>
+CC: aliguori@amazon.com
+CC: daniel.gruss@iaik.tugraz.at
+CC: hughd@google.com
+CC: keescook@google.com
+CC: linux-mm <linux-mm@kvack.org>
+CC: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/f271c747-1714-5a5b-a71f-ae189a093b8d@siemens.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/perf/util/srcline.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/entry/entry_32.S | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
-index 09d6746e6ec8..e767c4a9d4d2 100644
---- a/tools/perf/util/srcline.c
-+++ b/tools/perf/util/srcline.c
-@@ -85,6 +85,9 @@ static struct symbol *new_inline_sym(struct dso *dso,
- 	struct symbol *inline_sym;
- 	char *demangled = NULL;
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 2767c625a52c..fbbf1ba57ec6 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -389,6 +389,13 @@
+ 	 * that register for the time this macro runs
+ 	 */
  
-+	if (!funcname)
-+		funcname = "??";
++	/*
++	 * The high bits of the CS dword (__csh) are used for
++	 * CS_FROM_ENTRY_STACK and CS_FROM_USER_CR3. Clear them in case
++	 * hardware didn't do this for us.
++	 */
++	andl	$(0x0000ffff), PT_CS(%esp)
 +
- 	if (dso) {
- 		demangled = dso__demangle_sym(dso, 0, funcname);
- 		if (demangled)
+ 	/* Are we on the entry stack? Bail out if not! */
+ 	movl	PER_CPU_VAR(cpu_entry_area), %ecx
+ 	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
+@@ -407,12 +414,6 @@
+ 	/* Load top of task-stack into %edi */
+ 	movl	TSS_entry2task_stack(%edi), %edi
+ 
+-	/*
+-	 * Clear unused upper bits of the dword containing the word-sized CS
+-	 * slot in pt_regs in case hardware didn't clear it for us.
+-	 */
+-	andl	$(0x0000ffff), PT_CS(%esp)
+-
+ 	/* Special case - entry from kernel mode via entry stack */
+ #ifdef CONFIG_VM86
+ 	movl	PT_EFLAGS(%esp), %ecx		# mix EFLAGS and CS
