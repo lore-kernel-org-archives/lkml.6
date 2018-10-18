@@ -2,135 +2,136 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61950ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D12C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5A952098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:22:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8729C2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:23:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=rainbow-software.org header.i=@rainbow-software.org header.b="Cgge1T7T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5A952098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rainbow-software.org
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="AaEbPwvI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8729C2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbeJSEZ0 (ORCPT
+        id S1727405AbeJSE0I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 00:25:26 -0400
-Received: from smtp-1b-out-4.atlantis.sk ([80.94.52.30]:58797 "EHLO
-        smtp-1b-out-4.atlantis.sk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725751AbeJSEZZ (ORCPT
+        Fri, 19 Oct 2018 00:26:08 -0400
+Received: from mail-qt1-f175.google.com ([209.85.160.175]:36019 "EHLO
+        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726916AbeJSE0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 00:25:25 -0400
-Received: from [192.168.0.2] (188-167-58-14.dynamic.chello.sk [188.167.58.14])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp-1b.atlantis.sk (Postfix) with ESMTPSA id 0E5BB8352DE3;
-        Thu, 18 Oct 2018 22:22:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rainbow-software.org;
-        s=atlsmtp; t=1539894164;
-        bh=0jyFCF34wDxrF1E3lR1qMOppH/Sz+8992KgGRDKA+i4=;
-        h=From:To:Subject:Date:Cc:References:In-Reply-To;
-        b=Cgge1T7TC7Y3CjN6kEIsI5xz3jjvM1pe2bjqnSVvLGC3AnWYxQo8AlCUVVxnUIHkR
-         2gZdEPsQwXiSiT1GVFWWCZD0ToCNUIZqRzdJ5v20s3zK14e6k9Mm3rROaCp+BjvK+F
-         xAMayKLCt3UUeHjXrAY5+kujBK4fQ7XKgetMlQog=
-From:   Ondrej Zary <linux@rainbow-software.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Subject: Re: bioset changes in 4.18 broke aha1542
-Date:   Thu, 18 Oct 2018 22:22:41 +0200
-User-Agent: KMail/1.9.10 (enterprise35 0.20100827.1168748)
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <201810182034.51724.linux@rainbow-software.org> <201810182204.36894.linux@rainbow-software.org> <fe5cf33d-8653-c43c-dbff-89a8f3413eb4@kernel.dk>
-In-Reply-To: <fe5cf33d-8653-c43c-dbff-89a8f3413eb4@kernel.dk>
-X-KMail-QuotePrefix: > 
-MIME-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-Message-Id: <201810182222.41789.linux@rainbow-software.org>
+        Fri, 19 Oct 2018 00:26:08 -0400
+Received: by mail-qt1-f175.google.com with SMTP id u34-v6so35862760qth.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 13:23:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id;
+        bh=DWidnD6qko/sL4ed97MdEuO7mHJAyViTAX5kCV+6cyc=;
+        b=AaEbPwvIQ2uGM6aHQ3euKHdNj9EWEgUN/aAWClr4BNjuZiV6sYn0RLHAKPODu9L+21
+         It7zKNOR8t4h8dy8WuSA8VLm8gdQgFnZZG8TCqZLHdJBcWGhh+HD7IJlaox4FetBBFL2
+         vH3mWAR5w+6QRzx3xgXDCUNFbz91FarZqclXCcOZYT+pPgNeuCR8osS0rJblLspEcig3
+         iSrMhaN7aNcVI6/blu1MxEbaNIUEYCiRt6EvB95nyXS9yHaxFALWO2EX8bx0EPgsFe/Q
+         IZxe9iXQMiXWLbBsDkvwhbnnlEqaKPCsiVOENxGCJNMp0xwgu1Y36SrlsG1i+DbOnAi+
+         Z60Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=DWidnD6qko/sL4ed97MdEuO7mHJAyViTAX5kCV+6cyc=;
+        b=Yy5uUUCJ8TdeQV4Q/yMszlOFQf11G97PgKs7nn2loI1UCP0oVwu7PU9sccpIRiGZan
+         4SnNvoeKjAZ+fuH7hoe90kyK9mqH8bpctW+3DsRkeUXJExkzKnXwO5fcCtd3k2fONxpW
+         /6HqGMMX6A8UWCC/5nCRk9HBMMSL50diSVYMNshKpB68D9+rBQhNSOH4MxwPghMr2YIm
+         tMri6AN4hkbLvjNIazj5GhGtSCioCI4zkpNyxn1vRaQhCr4eF7Fkf1+tmBkfVHqm5Zg+
+         WPrBMUeazcUCvCVxFov6CpDR8ijQ2MQVN669l3LO5JcCJ8gJy4LoXaorukLR23gPtqW4
+         avJQ==
+X-Gm-Message-State: ABuFfojNA63I3Wt3uIG9sGLCncU+tJuX4tMchmT9ELFsfDc1lHX83JJw
+        BSmGnpamFiqtjTDJW4KHCUEHWA==
+X-Google-Smtp-Source: ACcGV621niN4CxiCk1QbZve+IXGD5RNKB8F0Jf8D1W8k6JAqYonGTomE0k+mgIsNeKz01saE6vuAaQ==
+X-Received: by 2002:a0c:95e6:: with SMTP id t35mr31999009qvt.163.1539894207297;
+        Thu, 18 Oct 2018 13:23:27 -0700 (PDT)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id q24-v6sm14344124qtb.26.2018.10.18.13.23.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 13:23:26 -0700 (PDT)
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     kernel-team@fb.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org, david@fromorbit.com,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, riel@fb.com, linux-mm@kvack.org
+Subject: [PATCH 0/7][V3] drop the mmap_sem when doing IO in the fault path
+Date:   Thu, 18 Oct 2018 16:23:11 -0400
+Message-Id: <20181018202318.9131-1-josef@toxicpanda.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 18 October 2018 22:10:31 Jens Axboe wrote:
-> On 10/18/18 2:04 PM, Ondrej Zary wrote:
-> > On Thursday 18 October 2018 21:59:09 Jens Axboe wrote:
-> >> On 10/18/18 1:55 PM, Ondrej Zary wrote:
-> >>> On Thursday 18 October 2018 20:58:57 Jens Axboe wrote:
-> >>>> On 10/18/18 12:34 PM, Ondrej Zary wrote:
-> >>>>> Hello,
-> >>>>> aha1542 works fine in 4.17 but crashes in 4.18. It's hard to bisect because
-> >>>>> of many commits that don't compile.
-> >>>>> # only skipped commits left to test
-> >>>>> # possible first bad commit: [52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b] fs: convert block_dev.c to bioset_init()
-> >>>>> # possible first bad commit: [a47a28b74a5c7c27bf621276b85ad6c124651236] target: convert to bioset_init()/mempool_init()
-> >>>>> # possible first bad commit: [6f1c819c219f7841079f0f43ab62727a55b0d849] dm: convert to bioset_init()/mempool_init()
-> >>>>> # possible first bad commit: [afeee514ce7f4cab605beedd03be71ebaf0c5fc8] md: convert to bioset_init()/mempool_init()
-> >>>>> # possible first bad commit: [d19936a26658a7a53edd5619d631ee2c2c3151a2] bcache: convert to bioset_init()/mempool_init()
-> >>>>> # possible first bad commit: [b906bbb6997785d9ea0bd3f5585537afa6257c43] lightnvm: convert to bioset_init()/mempool_init()
-> >>>>>
-> >>>>> Testing manually, a47a28b74a5c7c27bf621276b85ad6c124651236 works.
-> >>>>> 52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b does not compile
-> >>>>> 8ac9f7c1fd1d342e82ddf078425423b050652ba0 does not compile
-> >>>>> e292d7bc63c8f2adb3dfda27910e805f1b6557f9 does not compile
-> >>>>> dad08527525f9a8ac9c7f278864c65f94bc5e9b3 does not compile
-> >>>>> 943cf9f3ca16133dbd00f9a4cbfea46512fcb0e8 works
-> >>>>> ..
-> >>>>> fedc3abe7bd2dcc4c80bcf3cff8708a3908d8219 works
-> >>>>> 04c4950d5b373ba712d928592e05e73510785bca crashes
-> >>>>
-> >>>> It looks like the ISA bioset pool isn't being initialized. You should
-> >>>> have messages like this in your dmesg:
-> >>>>
-> >>>> isa pool size: 16 pages
-> >>>>
-> >>>> (which you do), but also something on the bioset section. Do you have
-> >>>> this one:
-> >>>>
-> >>>> pool size: 64 pages
-> >>>>
-> >>>> as well?
-> >>>>
-> >>>
-> >>> No, it's not there.
-> >>
-> >> Can you attach your .config? I'm guessing CONFIG_HIGHMEM* isn't set.
-> >>
-> > 
-> > It is.
-> 
-> Puzzled... Does this work?
-> 
-> 
-> diff --git a/block/bounce.c b/block/bounce.c
-> index b30071ac4ec6..49564a1bfd22 100644
-> --- a/block/bounce.c
-> +++ b/block/bounce.c
-> @@ -35,10 +35,6 @@ static mempool_t page_pool, isa_page_pool;
->  static __init int init_emergency_pool(void)
->  {
->  	int ret;
-> -#if defined(CONFIG_HIGHMEM) && !defined(CONFIG_MEMORY_HOTPLUG)
-> -	if (max_pfn <= max_low_pfn)
-> -		return 0;
-> -#endif
->  
->  	ret = mempool_init_page_pool(&page_pool, POOL_SIZE, 0);
->  	BUG_ON(ret);
-> 
+Getting some production testing running on these patches shortly to verify they
+are ready for primetime, but in the meantime they've had a bunch of xfstests
+runs on xfs, btrfs, and ext4 using kvm-xfstests.
 
-Yes, it does! 
-bounce: pool size: 64 pages
-and aha1542 works.
+v2->v3:
+- dropped the RFC, ready for a real review.
+- fixed a kbuild error for !MMU configs.
+- dropped the swapcache patches since Johannes is still working on those parts.
 
-Also added printks for pfn:
-max_pfn=65520, max_low_pfn=65520
+v1->v2:
+- reworked so it only affects x86, since its the only arch I can build and test.
+- fixed the fact that do_page_mkwrite wasn't actually sending ALLOW_RETRY down
+  to ->page_mkwrite.
+- fixed error handling in do_page_mkwrite/callers to explicitly catch
+  VM_FAULT_RETRY.
+- fixed btrfs to set ->cached_page properly.
 
--- 
-Ondrej Zary
+This time I've verified that the ->page_mkwrite retry path is actually getting
+used (apparently I only verified the read side last time).  xfstests is still
+running but it passed the couple of mmap tests I ran directly.  Again this is an
+RFC, I'm still doing a bunch of testing, but I'd appreciate comments on the
+overall strategy.
+
+-- Original message --
+
+Now that we have proper isolation in place with cgroups2 we have started going
+through and fixing the various priority inversions.  Most are all gone now, but
+this one is sort of weird since it's not necessarily a priority inversion that
+happens within the kernel, but rather because of something userspace does.
+
+We have giant applications that we want to protect, and parts of these giant
+applications do things like watch the system state to determine how healthy the
+box is for load balancing and such.  This involves running 'ps' or other such
+utilities.  These utilities will often walk /proc/<pid>/whatever, and these
+files can sometimes need to down_read(&task->mmap_sem).  Not usually a big deal,
+but we noticed when we are stress testing that sometimes our protected
+application has latency spikes trying to get the mmap_sem for tasks that are in
+lower priority cgroups.
+
+This is because any down_write() on a semaphore essentially turns it into a
+mutex, so even if we currently have it held for reading, any new readers will
+not be allowed on to keep from starving the writer.  This is fine, except a
+lower priority task could be stuck doing IO because it has been throttled to the
+point that its IO is taking much longer than normal.  But because a higher
+priority group depends on this completing it is now stuck behind lower priority
+work.
+
+In order to avoid this particular priority inversion we want to use the existing
+retry mechanism to stop from holding the mmap_sem at all if we are going to do
+IO.  This already exists in the read case sort of, but needed to be extended for
+more than just grabbing the page lock.  With io.latency we throttle at
+submit_bio() time, so the readahead stuff can block and even page_cache_read can
+block, so all these paths need to have the mmap_sem dropped.
+
+The other big thing is ->page_mkwrite.  btrfs is particularly shitty here
+because we have to reserve space for the dirty page, which can be a very
+expensive operation.  We use the same retry method as the read path, and simply
+cache the page and verify the page is still setup properly the next pass through
+->page_mkwrite().
+
+I've tested these patches with xfstests and there are no regressions.  Let me
+know what you think.  Thanks,
+
+Josef
+
