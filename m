@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449BFC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982B5C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C6D82148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ACEC21479
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmKtU0X8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C6D82148D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhQ7VzEV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ACEC21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730289AbeJSCHd (ORCPT
+        id S1730298AbeJSCHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:07:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56224 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:07:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728791AbeJSCHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:07:32 -0400
+        id S1726599AbeJSCHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:07:35 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 851B2204FD;
-        Thu, 18 Oct 2018 18:05:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D46F021479;
+        Thu, 18 Oct 2018 18:05:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885925;
-        bh=q5+Um497V+gdNjV8GcEMY88jcnknYW/2RQ0EdTJ7OLo=;
+        s=default; t=1539885928;
+        bh=VyIGnZnoysgWAfAyhtGyVKOvKhodWh23c3bbSE6NQEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bmKtU0X8r5j5lRoxY3iWQ2dpofosrTvJfZeQQRotuNyz1RGIg5vtC4gY6sHCGmc2+
-         2EQG0liprJIGJNuJcYjv2YYNGwh+4VXEXeYopxsP02WxL8OdQGsI65bGl+hnKZYyEb
-         znSwBaJReHURVMVVm6y3m4TwfRiIdhj7sgc1SUhU=
+        b=HhQ7VzEVtqNMEP1pmPlndSZETH6ueBazcy4oQMI8pLLN5mdGsfpnjHNamYv/abmMb
+         XRtTKObI2j3SsZObW7nzTqJiiL8jgzfVlotVWMbmaJN9ULmGXQfzuQdIFbFBSv3pQi
+         u4rFdqBxXEgm6NCEsXdVf6uEYQbvz8MfMGXyXL/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Danny Smith <dannys@axis.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 02/48] ASoC: sigmadsp: safeload should not have lower byte limit
-Date:   Thu, 18 Oct 2018 19:54:37 +0200
-Message-Id: <20181018175427.748988586@linuxfoundation.org>
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 20/48] ip_tunnel: be careful when accessing the inner header
+Date:   Thu, 18 Oct 2018 19:54:55 +0200
+Message-Id: <20181018175429.102250702@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -64,33 +63,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Danny Smith <danny.smith@axis.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 5ea752c6efdf5aa8a57aed816d453a8f479f1b0a ]
+[ Upstream commit ccfec9e5cb2d48df5a955b7bf47f7782157d3bc2]
 
-Fixed range in safeload conditional to allow safeload to up to 20 bytes,
-without a lower limit.
+Cong noted that we need the same checks introduced by commit 76c0ddd8c3a6
+("ip6_tunnel: be careful when accessing the inner header")
+even for ipv4 tunnels.
 
-Signed-off-by: Danny Smith <dannys@axis.com>
-Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: c54419321455 ("GRE: Refactor GRE tunneling code.")
+Suggested-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/codecs/sigmadsp.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/ipv4/ip_tunnel.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/sound/soc/codecs/sigmadsp.c
-+++ b/sound/soc/codecs/sigmadsp.c
-@@ -117,8 +117,7 @@ static int sigmadsp_ctrl_write(struct si
- 	struct sigmadsp_control *ctrl, void *data)
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -597,6 +597,7 @@ void ip_tunnel_xmit(struct sk_buff *skb,
+ 		    const struct iphdr *tnl_params, u8 protocol)
  {
- 	/* safeload loads up to 20 bytes in a atomic operation */
--	if (ctrl->num_bytes > 4 && ctrl->num_bytes <= 20 && sigmadsp->ops &&
--	    sigmadsp->ops->safeload)
-+	if (ctrl->num_bytes <= 20 && sigmadsp->ops && sigmadsp->ops->safeload)
- 		return sigmadsp->ops->safeload(sigmadsp, ctrl->addr, data,
- 			ctrl->num_bytes);
- 	else
+ 	struct ip_tunnel *tunnel = netdev_priv(dev);
++	unsigned int inner_nhdr_len = 0;
+ 	const struct iphdr *inner_iph;
+ 	struct flowi4 fl4;
+ 	u8     tos, ttl;
+@@ -607,6 +608,14 @@ void ip_tunnel_xmit(struct sk_buff *skb,
+ 	int err;
+ 	bool connected;
+ 
++	/* ensure we can access the inner net header, for several users below */
++	if (skb->protocol == htons(ETH_P_IP))
++		inner_nhdr_len = sizeof(struct iphdr);
++	else if (skb->protocol == htons(ETH_P_IPV6))
++		inner_nhdr_len = sizeof(struct ipv6hdr);
++	if (unlikely(!pskb_may_pull(skb, inner_nhdr_len)))
++		goto tx_error;
++
+ 	inner_iph = (const struct iphdr *)skb_inner_network_header(skb);
+ 	connected = (tunnel->parms.iph.daddr != 0);
+ 
 
 
