@@ -2,168 +2,72 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 822F9ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0746CC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A78C2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:40:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A78C2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id B02F62145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:41:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TekopGdQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B02F62145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbeJRUlQ (ORCPT
+        id S1727217AbeJRUmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 16:41:16 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:56387 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726506AbeJRUlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 16:41:16 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 9B08B15D3E0;
-        Thu, 18 Oct 2018 12:40:18 +0000 (UTC)
-Message-ID: <f71d442412f31828c466e3483e9d42f5e96ddc1d.camel@aosc.io>
-Subject: Re: [PATCH 4/9] dt-bindings: Add ANX6345 DP/eDP transmitter binding
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     devicetree@vger.kernel.org, Archit Taneja <architt@codeaurora.org>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Thu, 18 Oct 2018 20:40:11 +0800
-In-Reply-To: <2778638.na8ndVNUfi@avalon>
-References: <20181018073327.64942-1-icenowy@aosc.io>
-         <1886367.eljNk7jKYl@avalon>
-         <c68f0da9607805e1f6673a9a16a7dcfff4d8fe91.camel@aosc.io>
-         <2778638.na8ndVNUfi@avalon>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 18 Oct 2018 16:42:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41598 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbeJRUmN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 16:42:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BbCoSgNmevvgmxCCTgwkYBHerA8NR3F72BNH3r91svk=; b=TekopGdQalCMYPZZw32Gm7/T4
+        FVjsft4peNWAYy9jG0jcVjMmu2J6XTLZy/8L++QseK1fnDrxLaPeKXzw1heBphf2iN92D1QwQj13d
+        ABVDG+D46O4zRnvzOY0coJMNZwJMYMzDN9DlIag+Rlh9wfrwnH7NbAEhII6H7hoio0IEMJ4umFkAr
+        g1iqEhdpbjOlM9IIp5yFbYjo9e5SYbsg0ikxqvQ9pmjP9Hf+OKtnnxNMUOhQbqE4gWwImEzUevXKi
+        4wyFuRw4pm4wqTOF7r7csucNk4RIKquA1Cl+SDCKxVhO3zxgfOhx/KyRw+GGWPllwFvw4dhwCkfvb
+        4IgmkPkMQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gD7c6-0004en-MA; Thu, 18 Oct 2018 12:41:18 +0000
+Date:   Thu, 18 Oct 2018 05:41:18 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ata: add Buddha PATA controller driver
+Message-ID: <20181018124118.GA10376@infradead.org>
+References: <CGME20181018122951eucas1p2be43dc17df8d2c754e771785b3ad7457@eucas1p2.samsung.com>
+ <20181018122951eucas1p2be43dc17df8d2c754e771785b3ad7457~es8dn4Tg90035600356eucas1p2H@eucas1p2.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181018122951eucas1p2be43dc17df8d2c754e771785b3ad7457~es8dn4Tg90035600356eucas1p2H@eucas1p2.samsung.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018-10-18四的 14:23 +0300，Laurent Pinchart写道：
-> Hi Icenowy,
-> 
-> On Thursday, 18 October 2018 13:00:05 EEST Icenowy Zheng wrote:
-> > 在 2018-10-18四的 11:53 +0300，Laurent Pinchart写道：
-> > > On Thursday, 18 October 2018 10:33:22 EEST Icenowy Zheng wrote:
-> > > > The ANX6345 is an ultra-low power DisplayPort/eDP transmitter
-> > > > designed
-> > > > for portable devices.
-> > > > 
-> > > > Add a binding document for it.
-> > > > 
-> > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > > ---
-> > > > 
-> > > >  .../bindings/display/bridge/anx6345.txt       | 39
-> > > > +++++++++++++++++++
-> > > > 
-> > > >  1 file changed, 39 insertions(+)
-> > > >  create mode 100644
-> > > > 
-> > > > Documentation/devicetree/bindings/display/bridge/anx6345.txt
-> > > > 
-> > > > diff --git
-> > > > a/Documentation/devicetree/bindings/display/bridge/anx6345.txt
-> > > > b/Documentation/devicetree/bindings/display/bridge/anx6345.txt
-> > > > new
-> > > > file
-> > > > mode 100644
-> > > > index 000000000000..0689d4eb5f65
-> > > > --- /dev/null
-> > > > +++
-> > > > b/Documentation/devicetree/bindings/display/bridge/anx6345.txt
-> > > > @@ -0,0 +1,39 @@
-> > > > +Analogix ANX6345 eDP Transmitter
-> > > > +--------------------------------
-> > > > +
-> > > > +The ANX6345 is an ultra-low power Full-HD eDP transmitter
-> > > > designed
-> > > > for
-> > > > +portable devices.
-> > > > +
-> > > > +Required properties:
-> > > > +
-> > > > + - compatible		: "analogix,anx6345"
-> > > > + - reg			: I2C address of the device
-> > > > + - reset-gpios		: Which GPIO to use for reset
-> > > > +
-> > > > +Optional properties:
-> > > > +
-> > > > + - dvdd12-supply	: Regulator for 1.2V digital core
-> > > > power.
-> > > > + - dvdd25-supply	: Regulator for 2.5V digital core
-> > > > power.
-> > > 
-> > > Shouldn't these to supplies be mandatory ?
-> > 
-> > Yes they should.
-> > 
-> > > > + - panel-supply		: Regulator for the power of
-> > > > the panel.
-> > > 
-> > > Shouldn't the panel supply for specified in the DT node of the
-> > > panel
-> > > ?
-> > 
-> > However, eDP panel can be probed, may vary on the same device, and
-> > we
-> > don't have a generic binding for it...
-> 
-> Shouldn't we fix that ? :-)
+> +static int __init pata_buddha_init_one(void)
+> +{
+> +	struct zorro_dev *z = NULL;
+> +
+> +	while ((z = zorro_find_device(ZORRO_WILDCARD, z))) {
 
-Maybe we should create a connector binding instead of a panel binding?
-
-> 
-> > > > + - edid			: verbatim EDID data block
-> > > > describing
-> > > > attached
-> > > > +			  panel, only used when the panel has
-> > > > no EDID
-> > > > info.
-> > > 
-> > > This should also be specified in the panel DT node.
-> > > 
-> > > > + - Video port for RGB input, using the DT bindings defined in
-> > > > [1].
-> > > 
-> > > I think you should also add a port for the output.
-> > 
-> > What will it point to?
-> 
-> The panel DT node ?
-> 
-> > > > +[1]: Documentation/devicetree/bindings/media/video-
-> > > > interfaces.txt
-> > > > +
-> > > > +Example:
-> > > > +
-> > > > +anx6345: anx6345@38 {
-> > > > +	compatible = "analogix,anx6345";
-> > > > +	reg = <0x38>;
-> > > > +	reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* PD24 */
-> > > > +	panel-supply = <&reg_dc1sw>;
-> > > > +	dvdd25-supply = <&reg_dldo2>;
-> > > > +	dvdd12-supply = <&reg_fldo1>;
-> > > > +
-> > > > +	port {
-> > > > +		anx6345_in: endpoint {
-> > > > +			remote-endpoint = <&tcon0_out_anx6345>;
-> > > > +		};
-> > > > +	};
-> > > > +};
-> 
-> 
-
+I'm not really an m68k expert, but shouldn't this implement a
+struct zorro_driver instead?  (or maybe two of them as xsurf
+seems sufficiently different).
