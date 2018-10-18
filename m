@@ -2,100 +2,143 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A6DC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 643E8C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3553621477
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:06:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3553621477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 14058214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:10:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14058214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbeJRSGq (ORCPT
+        id S1727988AbeJRSKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 14:06:46 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:44586 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbeJRSGq (ORCPT
+        Thu, 18 Oct 2018 14:10:31 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37014 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727363AbeJRSKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 14:06:46 -0400
-Received: by mail-oi1-f195.google.com with SMTP id u74-v6so23511909oia.11;
-        Thu, 18 Oct 2018 03:06:30 -0700 (PDT)
+        Thu, 18 Oct 2018 14:10:30 -0400
+Received: by mail-ed1-f67.google.com with SMTP id c22-v6so27699244edc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 03:10:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WwzdNZx3gJx2M0KmABNdu06gDJeek7qBjHjTpkhBEu8=;
-        b=JTorg/Nemp83H+nyXqIM0zaWGe0KLdfPHSPYe09cglZEobbynndNKU8dGoBEQCAz07
-         ug6EN8aRg7rXnkjZa2fjyH3QuSiQ98zocUnPNOu9TkgP7rpHsVlNpGFimphgnmnXTnqw
-         aSIbckwlyJqhIQfO5kLudS/G+fn2XtsPEPh9aeEU9boWg0ZWm0BBQ6bIU5VxaRtksmNm
-         I42wDXDzlucq6XZIh6j7TrEEBoEpk+gJwNdNkVUr+dO42Su8fm3+bj2zm38n3mo7/mr7
-         BWsXTBQMbfM2WuAhRu3JX378vXf0+iahKYY7Hk3SsDlGl0ONeTIfv5hEKgPU5jn4yxUk
-         LGqw==
-X-Gm-Message-State: ABuFfog8HY5+waFRT4WL9PKAPlmuYsVgabv8/pO6d4xqegz0UBG8ulYq
-        ffiPha9aA+oMuxHoNlzg3uFw9w1tDluS1mt2EoiXCQ==
-X-Google-Smtp-Source: ACcGV61VLY2S2kZuR40/INyVl7ZaPaDxJQJXtw1xgVg8IjcK+oQI3esH1nhJBtrqkZGLYDv3M32GfZ1c065npZRkPWs=
-X-Received: by 2002:aca:6244:: with SMTP id w65-v6mr16271308oib.76.1539857189606;
- Thu, 18 Oct 2018 03:06:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7E0dkRK11RNn7ysnlvgsaF1hIhZQEgcUevKDa/GhHaU=;
+        b=jAWwhyebb1lmSRsC78c65MyxX6XUnn/+T1oE0213Adr3qPsUKBZZSuOhIYRBMoBxD/
+         IZAryr3xnRRy7soLy/C7oTevkc6GH01tJrpfzOrQ5IsSUeFsOvviTLGCSsnuLjkh0yPG
+         Zb+Kvf4gymTy+GqTAobeYQVOdGXqC26lKcBWGz81nCK4tv1XFadc3UuSN40ciRV+uL0x
+         5LdyDerEWPfe9j6wkzgLlLw2NV3AbrXNuTHanpaps7byH3PyVQpTJRArcPzVDXv+Djze
+         sn/WMeLVxcTQ6W+ob6uFGt+956rExcYUUWfI6KNV5XqcUVlBA+07Yz/1mHDE6ubNZt6I
+         EyIw==
+X-Gm-Message-State: ABuFfoiaQEB4ZoG6ysNfxXYCwp80oOVTbwmqirePXGh/Ol5ifA6LW261
+        0ybAEbFyr7ZBSr4nljdGme47qA==
+X-Google-Smtp-Source: ACcGV60mCJ/b3xJQfSSNT9lVGx2quJXVsz9CUQ128RrzRQAayDE7lAuqeJKG4wkJelEvCD12HHdSuA==
+X-Received: by 2002:a50:89ab:: with SMTP id g40-v6mr2782629edg.257.1539857411965;
+        Thu, 18 Oct 2018 03:10:11 -0700 (PDT)
+Received: from localhost.localdomain (p200300EF2BD1D76FE429868C6209AAF5.dip0.t-ipconnect.de. [2003:ef:2bd1:d76f:e429:868c:6209:aaf5])
+        by smtp.gmail.com with ESMTPSA id c40-v6sm7086401edb.41.2018.10.18.03.10.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 03:10:11 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 12:10:08 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Juri Lelli <juri.lelli@gmail.com>,
+        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        nstange@suse.de, syzkaller-bugs@googlegroups.com,
+        Luca Abeni <luca.abeni@santannapisa.it>, henrik@austad.us,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: INFO: rcu detected stall in do_idle
+Message-ID: <20181018101008.GB21611@localhost.localdomain>
+References: <000000000000a4ee200578172fde@google.com>
+ <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
+ <20181016140322.GB3121@hirez.programming.kicks-ass.net>
+ <20181016144045.GF9130@localhost.localdomain>
+ <alpine.DEB.2.21.1810161643540.7787@nanos.tec.linutronix.de>
+ <20181016153608.GH9130@localhost.localdomain>
+ <20181018082838.GA21611@localhost.localdomain>
+ <20181018094850.GW3121@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <CAJZ5v0iALqLw+Y_tKw86dh2oxnmvALhoVJxEcWWA+x1jU3GjdA@mail.gmail.com>
- <1539855372-11472-1-git-send-email-daniel.lezcano@linaro.org>
- <CAJZ5v0ikpPk12PshjB7EwtGSz6kF5WJyKgDHB8cnXaEusy38UQ@mail.gmail.com> <8585bac0-c72c-edf4-2e93-c8740a3b1b6c@linaro.org>
-In-Reply-To: <8585bac0-c72c-edf4-2e93-c8740a3b1b6c@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 18 Oct 2018 12:06:18 +0200
-Message-ID: <CAJZ5v0ia6jc80=xTkOSZofhmx80UXn2Kv-mPJ6B4JZ-Sc75kBA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] sched/cpufreq: Reorganize the cpufreq files
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Zhang, Rui" <rui.zhang@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        ionela.voinescu@arm.com,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181018094850.GW3121@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 11:54 AM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 18/10/2018 11:42, Rafael J. Wysocki wrote:
-> > On Thu, Oct 18, 2018 at 11:36 AM Daniel Lezcano
-> > <daniel.lezcano@linaro.org> wrote:
-> >>
-> >> It was suggested to set the scene for the PM components in the
-> >> scheduler code organization in the recent discussion about making the
-> >> scheduler aware of the capacity capping from the thermal framework.
-> >>
-> >> Move the cpufreq files into its own directory as suggested at:
-> >>
-> >> https://lkml.org/lkml/2018/10/18/353
-> >> https://lkml.org/lkml/2018/10/18/408
-> >
-> > Fair enough, but do we need to do that right now?
->
-> I'm not planning to do more code reorg than this patch right now. Up to
-> you to decide if you are willing to take them.
+On 18/10/18 11:48, Peter Zijlstra wrote:
+> On Thu, Oct 18, 2018 at 10:28:38AM +0200, Juri Lelli wrote:
+> 
+> > Another side problem seems also to be that with such tiny parameters we
+> > spend lot of time in the while (dl_se->runtime <= 0) loop of replenish_dl_
+> > entity() (actually uselessly, as deadline is most probably going to
+> > still be in the past when eventually runtime becomes positive again), as
+> > delta_exec is huge w.r.t. runtime and runtime has to keep up with tiny
+> > increments of dl_runtime. I guess we could ameliorate things here by
+> > limiting the number of time we execute the loop before bailing out.
+> 
+> That's the "DL replenish lagged too much" case, right? Yeah, there is
+> only so much we can recover from.
 
-The SPDX one certainly is applicable, but I'm not sure about the other one TBH.
+Right.
 
-Why don't you add the SPDX IDs to those files as they are for now?
+> Funny that GCC actually emits that loop; sometimes we've had to fight
+> GCC not to turn that into a division.
+> 
+> But yes, I suppose we can put a limit on how many periods we can lag
+> before just giving up.
+
+OK.
+
+> > So, I tend to think that we might want to play safe and put some higher
+> > minimum value for dl_runtime (it's currently at 1ULL << DL_SCALE).
+> > Guess the problem is to pick a reasonable value, though. Maybe link it
+> > someway to HZ? Then we might add a sysctl (or similar) thing with which
+> > knowledgeable users can do whatever they think their platform/config can
+> > support?
+> 
+> Yes, a HZ related limit sounds like something we'd want. But if we're
+> going to do a minimum sysctl, we should also consider adding a maximum,
+> if you set a massive period/deadline, you can, even with a relatively
+> low u, incur significant delays.
+> 
+> And do we want to put the limit on runtime or on period ?
+> 
+> That is, something like:
+> 
+>   TICK_NSEC/2 < period < 10*TICK_NSEC
+> 
+> and/or
+> 
+>   TICK_NSEC/2 < runtime < 10*TICK_NSEC
+> 
+> Hmm, for HZ=1000 that ends up with a max period of 10ms, that's far too
+> low, 24Hz needs ~41ms. We can of course also limit the runtime by
+> capping u for users (as we should anyway).
+
+I also thought of TICK_NSEC/2 as a reasonably safe lower limit, that
+will implicitly limit period as well since
+
+   runtime <= deadline <= period
+
+Not sure about the upper limit, though. Lower limit is something related
+to the inherent granularity of the platform/config, upper limit is more
+to do with highest prio stuff with huge period delaying everything else;
+doesn't seem to be related to HZ?
+
+Maybe we could just pick something that seems reasonably big to handle
+SCHED_DEADLINE users needs and not too big to jeopardize everyone else,
+say 0.5s?
