@@ -2,200 +2,153 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 385A0C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 597B8ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:24:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2906208E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:24:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC470208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:24:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQkmefHT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2906208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YuxunfCa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC470208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727700AbeJRQYM (ORCPT
+        id S1727751AbeJRQYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 12:24:12 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35072 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbeJRQYM (ORCPT
+        Thu, 18 Oct 2018 12:24:21 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36453 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbeJRQYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 12:24:12 -0400
-Received: by mail-pf1-f194.google.com with SMTP id l17-v6so14538491pff.2;
-        Thu, 18 Oct 2018 01:24:19 -0700 (PDT)
+        Thu, 18 Oct 2018 12:24:21 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f18-v6so13861487pgv.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 01:24:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=ierBnNcOqwgF8btn3PEYVbXUGzFZZr4qNpa/uiO7pcA=;
-        b=VQkmefHTQbvnwB7wTBcEoq6L1OmEoP0hV3OIUDw/VctK7GCl7HFZL8qdxiVa4hp3ue
-         wbc5uyfhuETx6Up6fSJ+4e5Ot1eNGQSB87mgGhic3z0+AeQaSld7OOwrfnERnAP32lnX
-         jTXJUgo8qcEDaZFltSDolpHPw6t7XP8jviicLZufqau1iixfGv6r92TpdUrDYwMutxPs
-         hh4ibFuZHJmzYhVesx+cdfprCEeFSpdu+cCkPp2cPLGQ6MwlvRjNjPvIwYiwAnWAR7Y2
-         Jdt3bZLI4q2kId+AzkBnosiaxrNPZ/dpnbZciv9PkV+NtPU4nUv9Xuee2HQb5bvXLGUt
-         dQgw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=lQ4qM7GVWLol2Q0OL4g4jfd2pwuqVD0wkT6TvnQ9zEY=;
+        b=YuxunfCakbkPChj/mEm6Z3PK98m5UoevAT/QvMtCbQqUB8Rw7pOKlHw4rQtZMDxhNr
+         B/i62CRmyVgi4JxH8YByPhgXH12aQYXOmS4u7FBiObX1BDo4Gst2k4U5syMruhGru5TK
+         q9ipi9ryA9hsmxgjdMVY1VH6Eahk+2mE+AcAQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ierBnNcOqwgF8btn3PEYVbXUGzFZZr4qNpa/uiO7pcA=;
-        b=QCusVwflxrgBwRI71/wWjYdKMRQSSwfYReFvdje48jWIt1K4A6i9FBI9JLPrY72aex
-         m2T+ks/Wcy6yaH2ddoia+va8cwvgTCptfkQEc8H8yw5B2tRZeT2yK2xUE2otZZF/eOyX
-         41d3x8FaN6a03d3O7PX2jbrlIS5DBxyNH9zqy2BWA9QdfkHAoTWdR/a3dzdka9oW7c2X
-         8WE8Rdft2NeK/GALVzwj3ZwCAJhOEZJ0QcP7Y2n/1wIZNdplzpYHRhwjXw5FF4zIbfUO
-         9G4Tm7UmXeTfGT/sCkkgLP8j2GFL1vWVpraVVhVSVv8Pt/McTQw9WNv6RKiyKb9nbzCO
-         k2qg==
-X-Gm-Message-State: ABuFfoiXC1TutzQnLqLhQiVvGDND17mXn8yN/7SZCUcVdooNMbCyI3gz
-        qJIRG+Dz4/I/09nLnm2yZ3JltMkoygs=
-X-Google-Smtp-Source: ACcGV61309p0Jw3pDgFY7B3E/RrgbUl00iyASLGiJ4sGZ8mPJ4wRYHha7Klt0JD4ryBiWnlwf1LB9w==
-X-Received: by 2002:a62:670a:: with SMTP id b10-v6mr29533487pfc.243.1539851059270;
-        Thu, 18 Oct 2018 01:24:19 -0700 (PDT)
-Received: from [0.0.0.0] (104.176.229.35.bc.googleusercontent.com. [35.229.176.104])
-        by smtp.gmail.com with ESMTPSA id 126-v6sm26680152pfd.16.2018.10.18.01.24.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 01:24:18 -0700 (PDT)
-From:   Song Qiang <songqiang1304521@gmail.com>
-Subject: Re: [PATCH v4 3/3] iio: magnetometer: Add driver support for PNI
- RM3100
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        robh+dt@kernel.org, mark.rutland@arm.com, preid@electromag.com.au,
-        himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181002143812.3661-1-songqiang1304521@gmail.com>
- <20181012073536.20339-1-songqiang1304521@gmail.com>
- <20181012073536.20339-4-songqiang1304521@gmail.com>
- <20181013111935.00a2e1af@archlinux>
-Message-ID: <e1715942-8fd8-152f-49c8-2a9e081d8a2a@gmail.com>
-Date:   Thu, 18 Oct 2018 16:24:15 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181013111935.00a2e1af@archlinux>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=lQ4qM7GVWLol2Q0OL4g4jfd2pwuqVD0wkT6TvnQ9zEY=;
+        b=SPa2i5aNNxikZ0nHsWdHz+r5C2dDbpSlRP9RL9ErbFn0OvrJAiTII9cr46L+Tk5KqA
+         PgvXJj0+nsdqy+SwzjoqBq2vHE0eqAnVK4X7LGiIGAdDCpbZzc0x2/bAuCGRreB6w+v5
+         aWSQMlB3zqAxu0cnzDKYJqJUI5ggeMIqxweOJ1ITbp4NcCGid3BiuM4itvCU71a1cNdc
+         hyG+XEFkQXcn/1HnHlbMuw5xBcMh06o7zjeSFxWr1SXlxL+qhXQmkap2iRrLF1BE5A4j
+         EF54jvH6sFEKYeQvXL4/fl5Uija53B4T2j316cuQqq6dhuJnAJ7zf43sZPjkqv9Bpr+4
+         fUuw==
+X-Gm-Message-State: ABuFfoh4sszX4Vf7V03TxCffFfSncLCm60pmD/w0jYJvRYqRX7myqf5C
+        O7BlxXkyMwfjfM+HWTMftx1P9A==
+X-Google-Smtp-Source: ACcGV62CQ1AfBglm9yOGYNwyeFh8efoO20DS0F1pM1Wet8/f2Et28cNa5aKh2SEt9mjaWRRfZv4COA==
+X-Received: by 2002:a65:498b:: with SMTP id r11-v6mr27357237pgs.153.1539851069283;
+        Thu, 18 Oct 2018 01:24:29 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id o76-v6sm36743049pfi.162.2018.10.18.01.24.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 18 Oct 2018 01:24:28 -0700 (PDT)
+From:   Chunyan Zhang <zhang.chunyan@linaro.org>
+To:     Russell King <linux@armlinux.org.uk>,
+        Marc Zyngier <Marc.Zyngier@arm.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH] ARM: prevent tracing IPI_CPU_BACKTRACE
+Date:   Thu, 18 Oct 2018 16:23:59 +0800
+Message-Id: <1539851039-15778-1-git-send-email-zhang.chunyan@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1538019697-14673-1-git-send-email-chunyan.zhang@unisoc.com>
+References: <1538019697-14673-1-git-send-email-chunyan.zhang@unisoc.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Arnd Bergmann <arnd@arndb.de>
 
-On 2018/10/13 下午6:19, Jonathan Cameron wrote:
-> On Fri, 12 Oct 2018 15:35:36 +0800
-> Song Qiang<songqiang1304521@gmail.com>  wrote:
->
->> PNI RM3100 is a high resolution, large signal immunity magnetometer,
->> composed of 3 single sensors and a processing chip with a MagI2C
->> interface.
->>
->> Following functions are available:
->>   - Single-shot measurement from
->>     /sys/bus/iio/devices/iio:deviceX/in_magn_{axis}_raw
->>   - Triggerd buffer measurement.
->>   - DRDY pin for data ready trigger.
->>   - Both i2c and spi interface are supported.
->>   - Both interrupt and polling measurement is supported, depends on if
->>     the 'interrupts' in DT is declared.
->>
->> Signed-off-by: Song Qiang<songqiang1304521@gmail.com>
-> A few questions for you (getting very close to being good to go btw!)
->
-> Why do we have the 3second additional wait for conversions?  I know we
-> rarely wait that long, but still seems excessive.
->
-> Few more comments inline.
->
-> Thanks,
->
-> Jonathan
+When function tracing for IPIs is enabled, we get a warning for an
+overflow of the ipi_types array with the IPI_CPU_BACKTRACE type
+as triggered by raise_nmi():
 
-Hi Jonathan,
+arch/arm/kernel/smp.c: In function 'raise_nmi':
+arch/arm/kernel/smp.c:489:2: error: array subscript is above array bounds [-Werror=array-bounds]
+	trace_ipi_raise(target, ipi_types[ipinr]);
 
+This is a correct warning as we actually overflow the array here.
 
-The measurement time of this device varies from 1.7ms to 13 seconds, 3 seconds 
-is just a number in the middle between them. This may be worth discussing, 
-hoping to get a better solution from the community.
+This patch raise_nmi() to call __smp_cross_call() instead of
+smp_cross_call(), to avoid calling into ftrace. For clarification,
+I'm also adding a two new code comments describing how this one
+is special.
 
+The warning appears to have shown up after patch e7273ff49acf
+("ARM: 8488/1: Make IPI_CPU_BACKTRACE a "non-secure" SGI"), which
+changed the number assignment from '15' to '8', but as far as I can
+tell has existed since the IPI tracepoints were first introduced.
+If we decide to backport this patch to stable kernels, we probably
+need to backport e7273ff49acf as well.
 
->> ---
->>   MAINTAINERS                            |   7 +
->>   drivers/iio/magnetometer/Kconfig       |  29 ++
->>   drivers/iio/magnetometer/Makefile      |   4 +
->>   drivers/iio/magnetometer/rm3100-core.c | 627 +++++++++++++++++++++++++
->>   drivers/iio/magnetometer/rm3100-i2c.c  |  58 +++
->>   drivers/iio/magnetometer/rm3100-spi.c  |  64 +++
->>   drivers/iio/magnetometer/rm3100.h      |  17 +
->>   7 files changed, 806 insertions(+)
->>   create mode 100644 drivers/iio/magnetometer/rm3100-core.c
->>   create mode 100644 drivers/iio/magnetometer/rm3100-i2c.c
->>   create mode 100644 drivers/iio/magnetometer/rm3100-spi.c
->>   create mode 100644 drivers/iio/magnetometer/rm3100.h
->>
+Resubmitting this patch is because that I found coverity is complaining
+the issue this patch fixed, and also I got the traces like below:
+"ipi_raise: target_mask=00000001 (machine_suspend)" which actually was
+the TPS of suspend_resume[1] rather that ipi_raise.
 
-...
+[1]
+https://elixir.bootlin.com/linux/latest/source/kernel/power/suspend.c#L80
 
->
->> +static irqreturn_t rm3100_trigger_handler(int irq, void *p)
->> +{
->> +	struct iio_poll_func *pf = p;
->> +	struct iio_dev *indio_dev = pf->indio_dev;
->> +	unsigned long scan_mask = *indio_dev->active_scan_mask;
->> +	unsigned int mask_len = indio_dev->masklength;
->> +	struct rm3100_data *data = iio_priv(indio_dev);
->> +	struct regmap *regmap = data->regmap;
->> +	int ret, i, bit;
->> +
->> +	mutex_lock(&data->lock);
->> +	switch (scan_mask) {
->> +	case BIT(0) | BIT(1) | BIT(2):
->> +		ret = regmap_bulk_read(regmap, RM3100_REG_MX2, data->buffer, 9);
->> +		mutex_unlock(&data->lock);
->> +		if (ret < 0)
->> +			goto done;
->> +	break;
->> +	case BIT(0) | BIT(1):
->> +		ret = regmap_bulk_read(regmap, RM3100_REG_MX2, data->buffer, 6);
->> +		mutex_unlock(&data->lock);
->> +		if (ret < 0)
->> +			goto done;
->> +	break;
->> +	case BIT(1) | BIT(2):
->> +		ret = regmap_bulk_read(regmap, RM3100_REG_MY2, data->buffer, 6);
->> +		mutex_unlock(&data->lock);
->> +		if (ret < 0)
->> +			goto done;
->> +	break;
-> What about BIT(0) | BIT(2)?
->
-> Now you can do it like you have here and on that one corner case let the iio core
-> demux code take care of it, but then you will need to provide available_scan_masks
-> so the core knows it needs to handle this case.
->
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: e7273ff49acf ("ARM: 8488/1: Make IPI_CPU_BACKTRACE a "non-secure" SGI")
+Fixes: 365ec7b17327 ("ARM: add IPI tracepoints") # v3.17
+Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+---
+ arch/arm/include/asm/hardirq.h | 1 +
+ arch/arm/kernel/smp.c          | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-This confused me a little. The available_scan_masks I was using is {BIT(0) | 
-BIT(1) | BIT(2), 0x0}. Apparently in this version of patch I would like it to 
-handle every circumstances like BIT(0), BIT(0) | BIT(2), BIT(1) | BIT(2), etc. 
-Since Phil mentioned he would like this to reduce bus usage as much as we can 
-and I want it, too, I think these three circumstances can be read consecutively 
-while others can be read one axis at a time. So I plan to let  BIT(0) | BIT(2) 
-fall into the 'default' section, which reads axis one by one.
+diff --git a/arch/arm/include/asm/hardirq.h b/arch/arm/include/asm/hardirq.h
+index cba23ea..7a88f16 100644
+--- a/arch/arm/include/asm/hardirq.h
++++ b/arch/arm/include/asm/hardirq.h
+@@ -6,6 +6,7 @@
+ #include <linux/threads.h>
+ #include <asm/irq.h>
+ 
++/* number of IPIS _not_ including IPI_CPU_BACKTRACE */
+ #define NR_IPI	7
+ 
+ typedef struct {
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index 0978282..ddd48e2 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -75,6 +75,10 @@ enum ipi_msg_type {
+ 	IPI_CPU_STOP,
+ 	IPI_IRQ_WORK,
+ 	IPI_COMPLETION,
++	/*
++	 * CPU_BACKTRACE is special and not included in NR_IPI
++	 * or tracable with trace_ipi_*
++	 */
+ 	IPI_CPU_BACKTRACE,
+ 	/*
+ 	 * SGI8-15 can be reserved by secure firmware, and thus may
+@@ -755,7 +759,7 @@ core_initcall(register_cpufreq_notifier);
+ 
+ static void raise_nmi(cpumask_t *mask)
+ {
+-	smp_cross_call(mask, IPI_CPU_BACKTRACE);
++	__smp_cross_call(mask, IPI_CPU_BACKTRACE);
+ }
+ 
+ void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
+-- 
+2.7.4
 
-My question is, since this handles every possible combination, do I still need 
-to list every available scan masks in available_scan_masks?
-
-
-All other problems will be fixed in the next patch.
-
-yours,
-
-Song Qiang
-
-
-...
